@@ -10,10 +10,12 @@
 #include "PanelData.h"
 #include "MessageBox.h"
 #include "MainWindowController.h"
+#include "FileAlreadyExistSheetController.h"
 #include <sys/types.h>
 #include <sys/dirent.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include "Common.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
 #define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
@@ -355,7 +357,8 @@ domkdir:
 
 void FileOpMassCopy::ProcessFile(const char *_path)
 {
-    volatile int ret = 0;
+    volatile int ret = 0, *retp = &ret;
+    bool remember_choice = false, *remember_choicep = &remember_choice;
     struct stat src_stat_buffer, dst_stat_buffer;
     char sourcepath[__DARWIN_MAXPATHLEN];
     char destinationpath[__DARWIN_MAXPATHLEN];
@@ -371,6 +374,7 @@ void FileOpMassCopy::ProcessFile(const char *_path)
     __block unsigned long totalread;
     __block unsigned long totalwrote;
     __block bool docancel;
+    FileAlreadyExistSheetController *fa;
 
     
     assert(_path[strlen(_path)-1] != '/'); // sanity check
@@ -427,7 +431,6 @@ statsource:
     }
     
     // stat destination
-//    dstopenflags=0;
     startwriteoff = 0;
     totaldestsize = src_stat_buffer.st_size;
     memset(&dst_stat_buffer, 0, sizeof(struct stat));
@@ -438,33 +441,42 @@ statsource:
         if(m_OverwriteAll) goto decoverwrite;
         if(m_AppendAll) goto decappend;
         
-        MessageBoxOverwriteOverwriteallAppendAppenallSkipSkipAllCancel(@"File already exist.",
-                                                                       @"What to do?",
-                                                                       [m_Wnd window],
-                                                                       &ret);
+        ret = 0;
+        
+        fa = [[FileAlreadyExistSheetController alloc] init];
+        [fa ShowSheet:[m_Wnd window]
+             destpath:[NSString stringWithUTF8String:destinationpath]
+              newsize:src_stat_buffer.st_size
+              newtime:src_stat_buffer.st_mtimespec.tv_sec
+              exisize:dst_stat_buffer.st_size
+              exitime:dst_stat_buffer.st_mtimespec.tv_sec
+              handler:^(int _ret, bool _remember){
+                  *retp = _ret;
+                  *remember_choicep = _remember;
+              }];
+        
         while(!ret) SleepForSomeTime();
-        if(ret == NSAlertFirstButtonReturn) // overwrite
-            goto decoverwrite;;
-        if(ret == NSAlertSecondButtonReturn) // overwrite all
+        fa = nil;
+        
+        if(ret == DialogResult::Overwrite) // overwrite
         {
-            m_OverwriteAll = true;
+            if(remember_choice)
+                m_OverwriteAll = true;
             goto decoverwrite;
         }
-        if(ret == NSAlertThirdButtonReturn) // append
-            goto decappend;
-        if(ret == NSAlertThirdButtonReturn+1) // append all
+        if(ret == DialogResult::Append) // append
         {
-            m_AppendAll = true;
+            if(remember_choice)
+                m_AppendAll = true;
             goto decappend;
         }
-        if(ret == NSAlertThirdButtonReturn+2) // skip
-            goto cleanup;
-        if(ret == NSAlertThirdButtonReturn+3) // skip all
+        if(ret == DialogResult::Skip) // skip
         {
-            m_SkipAll = true;
+            if(remember_choice)
+                m_SkipAll = true;
             goto cleanup;
         }
-        if(ret == NSAlertThirdButtonReturn+4) // cancel
+        if(ret == DialogResult::Cancel) // cancel
         {
             m_Cancel = true;
             goto cleanup;

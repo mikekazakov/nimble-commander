@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */; };
+		CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3C88DB16D92B22006346CD /* CopyAsSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D916D92B22006346CD /* CopyAsSheetController.mm */; };
 		CF3C88DC16D92B22006346CD /* CopyAsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF3C88DA16D92B22006346CD /* CopyAsSheetController.xib */; };
@@ -21,7 +23,6 @@
 		CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */; };
 		CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */; };
 		CFC4342B16E727FC001B0512 /* KQueueDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */; };
-		CFC4343116E75F49001B0512 /* FSEventsDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342F16E75F49001B0512 /* FSEventsDirUpdate.mm */; };
 		CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121416C4BD3D00D247EE /* Cocoa.framework */; };
 		CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFC5122116C4BD3D00D247EE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122016C4BD3D00D247EE /* main.m */; };
@@ -31,16 +32,21 @@
 		CFC5123316C5164300D247EE /* DirRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123116C5164300D247EE /* DirRead.cpp */; };
 		CFC5123616C5284800D247EE /* PanelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123416C5284800D247EE /* PanelData.cpp */; };
 		CFC5123916C5287B00D247EE /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
-		CFC5123C16C52C5700D247EE /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123A16C52C5700D247EE /* Encodings.cpp */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
 		CFE2697316EEFEAD0048A393 /* FileOpMassCopy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697116EEFEAD0048A393 /* FileOpMassCopy.mm */; };
 		CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */; };
 		CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CFE2697C16F01BAB0048A393 /* FlexChainedStringsChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */; };
+		CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */; };
+		CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSEventsDirUpdate.h; sourceTree = "<group>"; };
+		CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSEventsDirUpdate.mm; sourceTree = "<group>"; };
+		CF02F1D516F38805000AF870 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encodings.cpp; sourceTree = "<group>"; };
+		CF02F1D616F38805000AF870 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encodings.h; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
 		CF3C88D816D92B22006346CD /* CopyAsSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyAsSheetController.h; sourceTree = "<group>"; };
@@ -67,8 +73,6 @@
 		CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CreateDirectorySheetController.xib; sourceTree = "<group>"; };
 		CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KQueueDirUpdate.mm; sourceTree = "<group>"; };
 		CFC4342A16E727FC001B0512 /* KQueueDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KQueueDirUpdate.h; sourceTree = "<group>"; };
-		CFC4342F16E75F49001B0512 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FSEventsDirUpdate.mm; path = ../FSEventsDirUpdate.mm; sourceTree = "<group>"; };
-		CFC4343016E75F49001B0512 /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FSEventsDirUpdate.h; path = ../FSEventsDirUpdate.h; sourceTree = "<group>"; };
 		CFC5121116C4BD3D00D247EE /* Directories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Directories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFC5121416C4BD3D00D247EE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFC5121716C4BD3D00D247EE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -88,8 +92,6 @@
 		CFC5123516C5284800D247EE /* PanelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelData.h; sourceTree = "<group>"; };
 		CFC5123716C5287B00D247EE /* PanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelView.h; sourceTree = "<group>"; };
 		CFC5123816C5287B00D247EE /* PanelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelView.mm; sourceTree = "<group>"; };
-		CFC5123A16C52C5700D247EE /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Encodings.cpp; path = ../../ViewerBase/ViewerBase/ViewerBase/Encodings.cpp; sourceTree = "<group>"; };
-		CFC5123B16C52C5700D247EE /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encodings.h; path = ../../ViewerBase/ViewerBase/ViewerBase/Encodings.h; sourceTree = "<group>"; };
 		CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		CFE1A4F216C632F700EFBA3C /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
@@ -101,6 +103,9 @@
 		CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetController.xib; sourceTree = "<group>"; };
 		CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexChainedStringsChunk.cpp; sourceTree = "<group>"; };
 		CFE2697B16F01BAA0048A393 /* FlexChainedStringsChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexChainedStringsChunk.h; sourceTree = "<group>"; };
+		CFF6052F16F4572700AB3287 /* FileAlreadyExistSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileAlreadyExistSheetController.h; sourceTree = "<group>"; };
+		CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileAlreadyExistSheetController.mm; sourceTree = "<group>"; };
+		CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileAlreadyExistSheetController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,8 +136,8 @@
 		CF7784BF16EAFA3E00A07466 /* UpdateEvt */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4342F16E75F49001B0512 /* FSEventsDirUpdate.mm */,
-				CFC4343016E75F49001B0512 /* FSEventsDirUpdate.h */,
+				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
+				CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */,
 				CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */,
 				CFC4342A16E727FC001B0512 /* KQueueDirUpdate.h */,
 			);
@@ -223,9 +228,12 @@
 		CFC5121A16C4BD3D00D247EE /* Directories */ = {
 			isa = PBXGroup;
 			children = (
+				CF02F1D516F38805000AF870 /* Encodings.cpp */,
+				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CFC4342216E0E09B001B0512 /* Common.h */,
 				CF7784BF16EAFA3E00A07466 /* UpdateEvt */,
 				CFC4342816E0E1EB001B0512 /* CreateDirectorySheet */,
+				CFF6053416F4573000AB3287 /* FileAlreadyExistSheetController */,
 				CFE2697916EF0E490048A393 /* MassCopySheetController */,
 				CFC4342116E05587001B0512 /* CopyAsSheet */,
 				CFC4341D16E05409001B0512 /* Job */,
@@ -241,8 +249,6 @@
 				CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */,
 				CF8B09C516EB59680013B6A8 /* wcwidth.h */,
 				CF8B09C616EB59680013B6A8 /* wcwidth.c */,
-				CFC5123A16C52C5700D247EE /* Encodings.cpp */,
-				CFC5123B16C52C5700D247EE /* Encodings.h */,
 				CFC5123216C5164300D247EE /* DirRead.h */,
 				CFC5123116C5164300D247EE /* DirRead.cpp */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
@@ -275,6 +281,16 @@
 				CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */,
 			);
 			name = MassCopySheetController;
+			sourceTree = "<group>";
+		};
+		CFF6053416F4573000AB3287 /* FileAlreadyExistSheetController */ = {
+			isa = PBXGroup;
+			children = (
+				CFF6052F16F4572700AB3287 /* FileAlreadyExistSheetController.h */,
+				CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */,
+				CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */,
+			);
+			name = FileAlreadyExistSheetController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -335,6 +351,7 @@
 				CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */,
 				CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */,
 				CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */,
+				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,7 +367,6 @@
 				CFC5123316C5164300D247EE /* DirRead.cpp in Sources */,
 				CFC5123616C5284800D247EE /* PanelData.cpp in Sources */,
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
-				CFC5123C16C52C5700D247EE /* Encodings.cpp in Sources */,
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
@@ -362,12 +378,14 @@
 				CFC4342016E05560001B0512 /* JobController.mm in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
 				CFC4342B16E727FC001B0512 /* KQueueDirUpdate.mm in Sources */,
-				CFC4343116E75F49001B0512 /* FSEventsDirUpdate.mm in Sources */,
 				CF8B09C716EB59680013B6A8 /* wcwidth.c in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.m in Sources */,
 				CFE2697316EEFEAD0048A393 /* FileOpMassCopy.mm in Sources */,
 				CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* FlexChainedStringsChunk.cpp in Sources */,
+				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */,
+				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
+				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

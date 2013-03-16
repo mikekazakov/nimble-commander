@@ -15,7 +15,11 @@ struct DialogResult
         OK,
         Cancel,
         Create,
-        Copy
+        Copy,
+        Overwrite,
+        Append,
+        Skip,
+        Rename
     };
 };
 

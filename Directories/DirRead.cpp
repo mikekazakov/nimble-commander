@@ -10,39 +10,45 @@
 #include <stdlib.h>
 #include <assert.h>
 
+// hack to access function from libc implementation directly.
+// this func does readdir but without mutex locking
+struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
+
 int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformation> *_target)
 {
     _target->clear();
-    
+        
     DIR *dirp = opendir(_path);
     if(!dirp)
         return -1;
     
-    struct stat stat_buffer;
     dirent *entp;
-    DirectoryEntryInformation current;
     int num_of_entries = 0;
 
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
     
+    dispatch_group_t statg = dispatch_group_create();
+    dispatch_queue_t statq = dispatch_queue_create(0, DISPATCH_QUEUE_CONCURRENT);
+    
     
     char full_filename[__DARWIN_MAXPATHLEN]; // this buffer will be used for composing long filenames for stat()
+    char *full_filenamep = &full_filename[0];
     strcpy(full_filename, _path);
     if(_path[strlen(_path)-1] != '/' ) strcat(full_filename, "/");
     char *full_filename_var = full_filename + strlen(full_filename);
     
-    while((entp = readdir(dirp)) != NULL)
+    while((entp = _readdir_unlocked(dirp, 1)) != NULL)
     {
-        if(entp->d_ino == 0) continue;
-        if(strcmp(entp->d_name, ".") == 0) continue;
-        if(strcmp(entp->d_name, "..") == 0 && strcmp(_path, "/") == 0)
+        if(entp->d_ino == 0) continue; // apple's documentation suggest to skip such files
+        if(entp->d_namlen == 1 && strcmp(entp->d_name, ".") == 0) continue;
+        if(entp->d_namlen == 2 && strcmp(entp->d_name, "..") == 0 && strcmp(_path, "/") == 0)
         {
             need_to_add_dot_dot = false;
             continue; // skip .. for root directory
         }
         ++num_of_entries;
         
-        if(strcmp(entp->d_name, "..") == 0) // special case for dot-dot directory
+        if(entp->d_namlen == 2 && strcmp(entp->d_name, "..") == 0) // special case for dot-dot directory
         {
             need_to_add_dot_dot = false;
             
@@ -53,7 +59,10 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
             if(entp->d_type == 0)
                 entp->d_type = DT_DIR; // a very-very strange bugfix
         }
-
+        
+        _target->push_back(DirectoryEntryInformation());
+        
+        DirectoryEntryInformation &current = _target->back();
         memset(&current, 0, sizeof(DirectoryEntryInformation));
         current.type = entp->d_type;
         current.ino  = entp->d_ino;
@@ -68,44 +77,55 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
             memcpy(news, &entp->d_name[0], current.namelen+1);
             *(char**)(&current.namebuf[0]) = news;
         }
-        
-        // stat the file
-        strcpy(full_filename_var, entp->d_name);
-        memset(&stat_buffer, 0, sizeof(stat_buffer));        
-        if(stat(full_filename, &stat_buffer) == 0)
-        {
-            current.size = stat_buffer.st_size;
-            current.atime = stat_buffer.st_atimespec.tv_sec;
-            current.mtime = stat_buffer.st_mtimespec.tv_sec;
-            current.ctime = stat_buffer.st_ctimespec.tv_sec;
-            current.btime = stat_buffer.st_birthtimespec.tv_sec;
-            
-            // add other stat info here. there's a lot more
-        }
 
         if(entp->d_type == DT_DIR)
             current.size = DIRENTINFO_INVALIDSIZE;
 
-        // parse extension if any
-        current.extoffset = -1;
-        for(int i = entp->d_namlen - 1; i >= 0; --i)
-            if(entp->d_name[i] == '.')
-            {
-                if(i == entp->d_namlen - 1 || i == 0)
-                    break; // degenerate case, lets think that there's no extension at all
-                current.extoffset = i+1; // CHECK THIS! may be some bugs with UTF
-                break;
-            }
-        
-        _target->push_back(current);
+        // stat the file
+        dispatch_group_async(statg, statq,
+            ^{
+                struct stat stat_buffer;
+                strcpy(full_filename_var, current.namec());
+                memset(&stat_buffer, 0, sizeof(stat_buffer));
+                if(stat(full_filenamep, &stat_buffer) == 0)
+                {
+                    current.size = stat_buffer.st_size;
+                    current.atime = stat_buffer.st_atimespec.tv_sec;
+                    current.mtime = stat_buffer.st_mtimespec.tv_sec;
+                    current.ctime = stat_buffer.st_ctimespec.tv_sec;
+                    current.btime = stat_buffer.st_birthtimespec.tv_sec;
+            
+                    // add other stat info here. there's a lot more
+                }
+
+                // parse extension if any                
+                const char* s = current.namec();
+                current.extoffset = -1;
+                for(int i = current.namelen - 1; i >= 0; --i)
+                    if(s[i] == '.')
+                    {
+                        if(i == current.namelen - 1 || i == 0)
+                            break; // degenerate case, lets think that there's no extension at all
+                        current.extoffset = i+1; // CHECK THIS! may be some bugs with UTF
+                        break;
+                    }
+  
+                current.cf_name = CFStringCreateWithBytesNoCopy(0,
+                                                                (UInt8*)current.name(),
+                                                                current.namelen,
+                                                                kCFStringEncodingUTF8,
+                                                                false,
+                                                                kCFAllocatorNull);
+            });
     }
 
     closedir(dirp);
-    
+
     if(need_to_add_dot_dot)
     {
         // ?? do we need to handle properly the usual ".." appearance, since we have a fix-up way anyhow?
         // add ".." entry by hand
+        DirectoryEntryInformation current;        
         memset(&current, 0, sizeof(DirectoryEntryInformation));
         current.type = DT_DIR;
         current.ino  = 0;
@@ -115,10 +135,11 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
         _target->insert(_target->begin(), current); // this can be looong on biiiiiig directories
     }
     
+    dispatch_group_wait(statg, DISPATCH_TIME_FOREVER);
     
     if(num_of_entries == 0)
         return -1; // something was very wrong
-    
+
     return 0;
 }
 

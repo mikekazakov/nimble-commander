@@ -41,14 +41,22 @@ struct DirectoryEntryInformation // 96b long
     // #64
     unsigned int   cflags;                  // custom flags. volatile - can be changed. up to 32 flags
     // #68
+    CFStringRef    cf_name;        // can be null, otherwise it's a string created with CFStringCreateWithBytesNoCopy, pointing at name()
+    // #76
     signed short   extoffset;               // extension of a file if any. -1 if there's no extension, or position of a first char of an extention
-    // #70
+    // #78
     unsigned char  type;                    // file type from <sys/dirent.h>
-    // #71
-    unsigned char  ___padding[25];
+    // #79
+    unsigned char  ___padding[17];
     // #96
 
-    inline void destroy() { if(namelen > 13) free((void*)*(const unsigned char**)(&namebuf[0])); }    
+    inline void destroy()
+    {
+        if(cf_name != 0)
+            CFRelease(cf_name);
+        if(namelen > 13)
+            free((void*)*(const unsigned char**)(&namebuf[0]));
+    }
     inline unsigned char*   name()
     {
         if(namelen < 14) return namebuf;

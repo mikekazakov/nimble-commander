@@ -63,7 +63,6 @@ bool PanelData::GoToDirectory(const char *_path)
     }
     else
     {
-        
         // error handling?
         delete entries;
         return false;
@@ -190,11 +189,6 @@ int PanelData::FindSortedEntryIndex(unsigned _desired_value)
 void PanelData::GetDirectoryPath(char _buf[__DARWIN_MAXPATHLEN]) const
 {
     strcpy(_buf, m_DirectoryPath);
-/*    if(strlen(_buf) == 0)
-    { // root ("/") case
-        _buf[0] = '/';
-        _buf[1] = 0;
-    }*/
 }
 
 void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const
@@ -249,23 +243,9 @@ struct SortPredLess
         switch(sort_mode.sort)
         {
             case PanelSortMode::SortByName:
-            {
-                CFStringRef first  = CFStringCreateWithBytesNoCopy(0, (UInt8*)val1.name(), val1.namelen, kCFStringEncodingUTF8, false,  kCFAllocatorNull);
-                CFStringRef second = CFStringCreateWithBytesNoCopy(0, (UInt8*)val2.name(), val2.namelen, kCFStringEncodingUTF8, false,  kCFAllocatorNull);
-                CFComparisonResult r = CFStringCompare(first, second, kCFCompareCaseInsensitive);
-                CFRelease(first);
-                CFRelease(second);
-                return r < 0;
-            }
+                return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) < 0;
             case PanelSortMode::SortByNameRev:
-            {
-                CFStringRef first  = CFStringCreateWithBytesNoCopy(0, (UInt8*)val1.name(), val1.namelen, kCFStringEncodingUTF8, false,  kCFAllocatorNull);
-                CFStringRef second = CFStringCreateWithBytesNoCopy(0, (UInt8*)val2.name(), val2.namelen, kCFStringEncodingUTF8, false,  kCFAllocatorNull);
-                CFComparisonResult r = CFStringCompare(first, second, kCFCompareCaseInsensitive);
-                CFRelease(first);
-                CFRelease(second);
-                return r > 0;
-            }
+                return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) > 0;
             case PanelSortMode::SortByExt:
                 if(val1.hasextension() && val2.hasextension() ) return strcmp(val1.extensionc(), val2.extensionc()) < 0;
                 if(val1.hasextension() && !val2.hasextension() ) return false;

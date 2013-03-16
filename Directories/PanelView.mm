@@ -450,7 +450,7 @@ struct CursorSelectionState
     int             m_SymbWidth;
     int             m_SymbHeight;
     int             m_FilesDisplayOffset; // number of a first file which appears on the panel view, on the top
-    std::stack<int> m_DisplatOffsetStack;
+    std::stack<int> m_DisplayOffsetStack;
     int             m_CursorPosition;
     PanelViewType   m_CurrentViewType;
     bool            m_IsActive;
@@ -915,22 +915,22 @@ struct CursorSelectionState
 // reset when going into non-related place
 - (void) PushDirectoryFilesOffset
 {
-    m_DisplatOffsetStack.push(m_FilesDisplayOffset);
+    m_DisplayOffsetStack.push(m_FilesDisplayOffset);
 }
 
 - (void) PopDirectoryFilesOffset
 {
-    if(!m_DisplatOffsetStack.empty())
+    if(!m_DisplayOffsetStack.empty())
     {
-        m_FilesDisplayOffset = m_DisplatOffsetStack.top();
-        m_DisplatOffsetStack.pop();
+        m_FilesDisplayOffset = m_DisplayOffsetStack.top();
+        m_DisplayOffsetStack.pop();
     }
 }
 
 - (void) ResetDirectoryFilesOffset
 {
-    while(!m_DisplatOffsetStack.empty())
-        m_DisplatOffsetStack.pop();
+    while(!m_DisplayOffsetStack.empty())
+        m_DisplayOffsetStack.pop();
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags

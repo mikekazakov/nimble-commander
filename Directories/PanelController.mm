@@ -9,7 +9,6 @@
 #import "PanelController.h"
 #include "FSEventsDirUpdate.h"
 
-
 @interface PanelController ()
 
 @end
@@ -56,6 +55,7 @@
         m_Data->GetDirectoryPathShort(oldpathname);
         m_Data->GetDirectoryPathWithTrailingSlash(oldpathname_full);
         m_Data->ComposeFullPathForEntry(raw_pos, newpath);
+        
         if(m_Data->GoToDirectory(newpath))
         {
             if(gotoparent)
@@ -141,8 +141,9 @@
 {
     char oldpathname_full[__DARWIN_MAXPATHLEN];
     m_Data->GetDirectoryPathWithTrailingSlash(oldpathname_full);
+    
     if(m_Data->GoToDirectory(_dir))
-    {
+    {        
         FSEventsDirUpdate::Inst()->RemoveWatchPath(oldpathname_full);
         FSEventsDirUpdate::Inst()->AddWatchPath(_dir);
         [m_View SetCursorPosition:0];

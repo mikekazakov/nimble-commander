@@ -20,6 +20,8 @@
 
 #include "KQueueDirUpdate.h"
 #include "FSEventsDirUpdate.h"
+#include <pwd.h>
+
 
 @interface MainWindowController ()
 
@@ -58,12 +60,15 @@
     
     m_JobData = new JobData;
     
+    struct passwd *pw = getpwuid(getuid());
+    assert(pw);
+    
     m_LeftPanelData = new PanelData;
     [[self LeftPanelView] SetPanelData:m_LeftPanelData];
     m_LeftPanelController = [PanelController new];
     [m_LeftPanelController SetView:[self LeftPanelView]];
     [m_LeftPanelController SetData:m_LeftPanelData];
-    [m_LeftPanelController GoToDirectory:"/users/migun/"];
+    [m_LeftPanelController GoToDirectory:pw->pw_dir];
     
     m_RightPanelData = new PanelData;
     [[self RightPanelView] SetPanelData:m_RightPanelData];

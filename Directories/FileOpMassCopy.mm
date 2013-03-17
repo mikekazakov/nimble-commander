@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <sys/time.h>
+#include <sys/xattr.h>
 #include "Common.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
@@ -45,6 +46,10 @@ FileOpMassCopy::FileOpMassCopy():
     m_OpState(StateScanning),
     m_CurrentlyProcessingItem(0)
 {
+    // in xattr operations we'll use our big Buf1 and Buf2 - they should be quite enough
+    // in OS X 10.4-10.6 maximum size of xattr value was 4Kb
+    // in OS X 10.7(or in 10.8?) it was increased to 128Kb    
+    assert( BUFFER_SIZE >= 128 * 1024 ); // should be enough to hold any xattr value
 }
 
 FileOpMassCopy::~FileOpMassCopy()
@@ -290,12 +295,12 @@ void FileOpMassCopy::ProcessItem(const FlexChainedStringsChunk::node *_node)
 
 void FileOpMassCopy::ProcessDirectory(const char *_path)
 {
-    // TODO: directory attributes
+    // TODO: directory attributes, time, permissions and xattrs
 
     assert(m_Destination[strlen(m_Destination)-1] == '/');
     assert(_path[strlen(_path)-1] == '/');
     
-    const int maxdepth = 128; // 128 directories depth max
+    const int maxdepth = FlexChainedStringsChunk::maxdepth; // 128 directories depth max
     struct stat stat_buffer;
     short slashpos[maxdepth];
     short absentpos[maxdepth];
@@ -377,6 +382,8 @@ void FileOpMassCopy::ProcessFile(const char *_path)
     __block bool docancel;
     FileAlreadyExistSheetController *fa;
     bool adjust_dst_time = true;
+    bool copy_xattrs = true;
+    bool erase_xattrs = false;
 
     
     assert(_path[strlen(_path)-1] != '/'); // sanity check
@@ -487,12 +494,14 @@ statsource:
 // decisions about what to do with existing destination
 decoverwrite:
         dstopenflags = O_WRONLY;
+        erase_xattrs = true;
         goto decend;
 decappend:
         dstopenflags = O_WRONLY;        
         totaldestsize += dst_stat_buffer.st_size;
         startwriteoff = dst_stat_buffer.st_size;
         adjust_dst_time = false;
+        copy_xattrs = false;
         goto decend;
 decend:;
     }
@@ -661,7 +670,41 @@ dolseek: // find right position in destination file
 //        uint64_t currenttime = mach_absolute_time();
 //        SetBytesPerSecond( double(totalwrote) / (double((currenttime - starttime)/1000000ul) / 1000.) );
     }
-
+    
+    // erase destination's xattrs
+    if(erase_xattrs)
+    {
+        char *xnames = (char*) m_Buffer1;
+        ssize_t xnamesizes = flistxattr(destinationfd, xnames, BUFFER_SIZE, 0);
+        if(xnamesizes > 0)
+        { // iterate and remove
+            char *s = xnames, *e = xnames + xnamesizes;
+            while(s < e)
+            {
+                fremovexattr(destinationfd, s, 0);
+                s += strlen(s)+1;
+            }
+        }
+    }
+    
+    // copy xattrs from src to dest
+    if(copy_xattrs)
+    {
+        char *xnames = (char*) m_Buffer1;
+        ssize_t xnamesizes = flistxattr(sourcefd, xnames, BUFFER_SIZE, 0);
+        if(xnamesizes > 0)
+        { // iterate and copy
+            char *s = xnames, *e = xnames + xnamesizes;
+            while(s < e)
+            {
+                ssize_t xattrsize = fgetxattr(sourcefd, s, m_Buffer2, BUFFER_SIZE, 0, 0);
+                if(xattrsize >= 0) // xattr can be zero-length, just a tag itself
+                    fsetxattr(destinationfd, s, m_Buffer2, xattrsize, 0, 0);
+                s += strlen(s)+1;                
+            }
+        }
+    }
+    
     // adjust destination time as source
     if(adjust_dst_time)
     {
@@ -673,8 +716,9 @@ dolseek: // find right position in destination file
         futimes(destinationfd, v);
         // TODO: investigate why OSX set btime along with atime and mtime - it should not (?)
         // need to find a solid way to set btime
+        // TODO: dig into "fsetattrlist" - maybe it's just that one
     }
-    
+
 cleanup:
     if(sourcefd != -1) close(sourcefd);
     if(destinationfd != -1) close(destinationfd);    

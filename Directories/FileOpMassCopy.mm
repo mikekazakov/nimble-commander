@@ -15,6 +15,7 @@
 #include <sys/dirent.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <sys/time.h>
 #include "Common.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
@@ -375,6 +376,7 @@ void FileOpMassCopy::ProcessFile(const char *_path)
     __block unsigned long totalwrote;
     __block bool docancel;
     FileAlreadyExistSheetController *fa;
+    bool adjust_dst_time = true;
 
     
     assert(_path[strlen(_path)-1] != '/'); // sanity check
@@ -489,7 +491,8 @@ decoverwrite:
 decappend:
         dstopenflags = O_WRONLY;        
         totaldestsize += dst_stat_buffer.st_size;
-        startwriteoff = dst_stat_buffer.st_size;        
+        startwriteoff = dst_stat_buffer.st_size;
+        adjust_dst_time = false;
         goto decend;
 decend:;
     }
@@ -658,8 +661,20 @@ dolseek: // find right position in destination file
 //        uint64_t currenttime = mach_absolute_time();
 //        SetBytesPerSecond( double(totalwrote) / (double((currenttime - starttime)/1000000ul) / 1000.) );
     }
-    
 
+    // adjust destination time as source
+    if(adjust_dst_time)
+    {
+        struct timeval v[2];
+        v[0].tv_sec = src_stat_buffer.st_atimespec.tv_sec; // last access time
+        v[0].tv_usec = (__darwin_suseconds_t)(src_stat_buffer.st_atimespec.tv_nsec / 1000);
+        v[1].tv_sec = src_stat_buffer.st_mtimespec.tv_sec; // last modification time
+        v[1].tv_usec = (__darwin_suseconds_t)(src_stat_buffer.st_mtimespec.tv_nsec / 1000);
+        futimes(destinationfd, v);
+        // TODO: investigate why OSX set btime along with atime and mtime - it should not (?)
+        // need to find a solid way to set btime
+    }
+    
 cleanup:
     if(sourcefd != -1) close(sourcefd);
     if(destinationfd != -1) close(destinationfd);    

@@ -2,6 +2,8 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <sys/dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <deque> // STL is a temporary solution, should be removed later
 #include <stdlib.h>
 #include <time.h>
@@ -41,19 +43,20 @@ struct DirectoryEntryInformation // 96b long
     // #64
     unsigned int   cflags;                  // custom flags. volatile - can be changed. up to 32 flags
     // #68
-    CFStringRef    cf_name;        // can be null, otherwise it's a string created with CFStringCreateWithBytesNoCopy, pointing at name()
+    CFStringRef    cf_name;                 // it's a string created with CFStringCreateWithBytesNoCopy, pointing at name()
     // #76
     signed short   extoffset;               // extension of a file if any. -1 if there's no extension, or position of a first char of an extention
     // #78
-    unsigned char  type;                    // file type from <sys/dirent.h>
-    // #79
-    unsigned char  ___padding[17];
+    mode_t         mode;                    // file type from stat
+    // #80
+    unsigned char  type;                    // file type from <sys/dirent.h> (from readdir)
+    // #81
+    unsigned char  ___padding[15];
     // #96
 
     inline void destroy()
     {
-        if(cf_name != 0)
-            CFRelease(cf_name);
+        CFRelease(cf_name);
         if(namelen > 13)
             free((void*)*(const unsigned char**)(&namebuf[0]));
     }
@@ -72,11 +75,13 @@ struct DirectoryEntryInformation // 96b long
     
     inline bool isdir() const
     {
-        return type == DT_DIR;
+//        return type == DT_DIR;
+        return (mode & S_IFMT) == S_IFDIR;
     }
     inline bool isreg() const
     {
-        return type == DT_REG;
+//        return type == DT_REG;
+        return (mode & S_IFMT) == S_IFREG;        
     }
     inline bool isdotdot() const
     {

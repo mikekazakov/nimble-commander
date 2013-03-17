@@ -37,6 +37,12 @@ void PanelData::DestroyCurrentData()
 bool PanelData::GoToDirectory(const char *_path)
 {
     // TODO: this process should be asynchronous
+
+    // TODO: consider the movement away from current GetRealPath usage - it breaks a symlinks navigation
+    // the only real need of using this - because FSEventsDirUpdate performs case sensivitive path comparison.
+    // Or maybe GetRealPath should be rewrited to tests every filename in filepath chain to compose a real path,
+    // but in that case it'll be a quite heavy operation
+    
     char path[__DARWIN_MAXPATHLEN];
     if(!GetRealPath(_path, path))
         return false; // err code?

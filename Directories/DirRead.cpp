@@ -113,11 +113,12 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
             struct stat stat_buffer;
             if(stat(filename, &stat_buffer) == 0)
             {
-                current->size = stat_buffer.st_size;
+                current->size  = stat_buffer.st_size;
                 current->atime = stat_buffer.st_atimespec.tv_sec;
                 current->mtime = stat_buffer.st_mtimespec.tv_sec;
                 current->ctime = stat_buffer.st_ctimespec.tv_sec;
                 current->btime = stat_buffer.st_birthtimespec.tv_sec;
+                current->mode  = stat_buffer.st_mode;
             
                 // add other stat info here. there's a lot more
             }

@@ -16,18 +16,23 @@ class FSEventsDirUpdate
 public:
     static FSEventsDirUpdate *Inst();
  
-    bool AddWatchPath(const char *_path);
-    bool RemoveWatchPath(const char *_path);
+    unsigned long AddWatchPath(const char *_path);
+    // zero returned value means error. any others - valid observation tickets
+    
+    bool RemoveWatchPath(const char *_path); // will call GetRealPath implicitly - it's not too fast.
+    bool RemoveWatchPathWithTicket(unsigned long _ticket); // it's better to use this method
     
 private:
     struct WatchData
     {
         std::string path; // should include trailing slash
         FSEventStreamRef stream;
+        unsigned long ticket;
         int refcount;
         bool running;
     };
     std::vector<WatchData*> m_Watches;
+    unsigned long           m_LastTicket;
         
     FSEventsDirUpdate();
     static void FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRef,

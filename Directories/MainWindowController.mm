@@ -288,10 +288,10 @@
      }];
 }
 
-- (void) FireDirectoryChanged: (const char*) _dir
+- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
-    [m_LeftPanelController FireDirectoryChanged:_dir];
-    [m_RightPanelController FireDirectoryChanged:_dir];
+    [m_LeftPanelController FireDirectoryChanged:_dir ticket:_ticket];
+    [m_RightPanelController FireDirectoryChanged:_dir ticket:_ticket];
 }
 
 - (void)keyDown:(NSEvent *)event

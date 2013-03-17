@@ -13,6 +13,6 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-- (void) FireDirectoryChanged: (const char*) _dir;
+- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long) _ticket;
 
 @end

@@ -15,6 +15,7 @@
 static FSEventsDirUpdate *g_Inst = 0;
 
 // ask FS about real file path - case sensitive etc
+// also we're getting rid of symlinks - it will be a real file
 // return path with trailing slash
 bool GetRealPath(const char *_path_in, char *_path_out)
 {
@@ -30,7 +31,8 @@ bool GetRealPath(const char *_path_in, char *_path_out)
     return true;
 }
 
-FSEventsDirUpdate::FSEventsDirUpdate()
+FSEventsDirUpdate::FSEventsDirUpdate():
+    m_LastTicket(1) // no tickets #0, since it'is an error code 
 {
 }
 
@@ -62,22 +64,22 @@ void FSEventsDirUpdate::UpdateCallback(ConstFSEventStreamRef streamRef,
     for(size_t i=0; i < numEvents; i++)
     {
         // this checking should be blazing fast, since we can get A LOT of events here (from all sub-dirs)
+        // and we need only events from current-level directory
         // TODO: check this performance
-        
+
         const char *path = ((const char**)eventPaths)[i];
-        //        FSEventStreamEventFlags flags = eventFlags[i];
-        //        bool scan_sd = flags & kFSEventStreamEventFlagMustScanSubDirs;
+
         if(w->path == path)
-            [(AppDelegate*)[NSApp delegate] FireDirectoryChanged: path];
+            [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:path ticket:w->ticket];
     }
 }
 
-bool FSEventsDirUpdate::AddWatchPath(const char *_path)
+unsigned long  FSEventsDirUpdate::AddWatchPath(const char *_path)
 {
     // convert _path into canonical path of OS
     char dirpath[__DARWIN_MAXPATHLEN];
     if(!GetRealPath(_path, dirpath))
-        return false;
+        return 0;
     
     // check if this path already presents in watched paths
     for(auto i = m_Watches.begin(); i < m_Watches.end(); ++i)
@@ -85,13 +87,14 @@ bool FSEventsDirUpdate::AddWatchPath(const char *_path)
         if( (*i)->path == dirpath )
         { // then just increase refcount and exit
             (*i)->refcount++;
-            return true;
+            return (*i)->ticket;
         }
     }
     
     // create new watch stream
     WatchData *w = new WatchData;
     w->path = dirpath;
+    w->ticket = m_LastTicket++;
     w->refcount = 1;
     w->running = true;
     
@@ -120,7 +123,7 @@ bool FSEventsDirUpdate::AddWatchPath(const char *_path)
     
     m_Watches.push_back(w);
     
-    return true;
+    return w->ticket;
 }
 
 bool FSEventsDirUpdate::RemoveWatchPath(const char *_path)
@@ -147,5 +150,31 @@ bool FSEventsDirUpdate::RemoveWatchPath(const char *_path)
             return true;
         }
 
+    return false;
+}
+
+bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
+{
+    if(_ticket == 0)
+        return false;
+    
+    for(auto i = m_Watches.begin(); i < m_Watches.end(); ++i)
+        if((*i)->ticket == _ticket)
+        {
+            WatchData *w = *i;
+            w->refcount--;
+            if(w->refcount == 0)
+            {
+                if(w->running)
+                    FSEventStreamStop(w->stream);
+                FSEventStreamScheduleWithRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+                FSEventStreamInvalidate(w->stream);
+                FSEventStreamRelease(w->stream);
+                delete w;
+                m_Watches.erase(i);
+            }
+            return true;
+        }
+    
     return false;
 }

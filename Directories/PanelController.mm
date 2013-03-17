@@ -17,6 +17,7 @@
 {
     PanelData *m_Data;
     PanelView *m_View;
+    unsigned long m_UpdatesObservationTicket;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -24,6 +25,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Initialization code here.
+        m_UpdatesObservationTicket = 0;
     }
     
     return self;
@@ -70,8 +72,9 @@
             {
                 [m_View DirectoryChanged:0 Type:GoIntoSubDir];
             }
-            FSEventsDirUpdate::Inst()->RemoveWatchPath(oldpathname_full);
-            FSEventsDirUpdate::Inst()->AddWatchPath(newpath);
+//            FSEventsDirUpdate::Inst()->RemoveWatchPath(oldpathname_full);
+            FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
+            m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(newpath);
         }
     }
 }
@@ -125,12 +128,10 @@
     [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];
 }
 
-- (void) FireDirectoryChanged: (const char*) _dir
+- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
-    // TODO: PERFORMANCE!
-    char currdir[__DARWIN_MAXPATHLEN];
-    m_Data->GetDirectoryPathWithTrailingSlash(currdir);
-    if(strcmp(currdir, _dir) == 0)
+    // check if this tickes is ours
+    if(_ticket == m_UpdatesObservationTicket) // integers comparison - just a blazing fast check
     {
         // update directory now!
         [self RefreshDirectory];
@@ -143,9 +144,9 @@
     m_Data->GetDirectoryPathWithTrailingSlash(oldpathname_full);
     
     if(m_Data->GoToDirectory(_dir))
-    {        
-        FSEventsDirUpdate::Inst()->RemoveWatchPath(oldpathname_full);
-        FSEventsDirUpdate::Inst()->AddWatchPath(_dir);
+    {
+        FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
+        m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_dir);
         [m_View SetCursorPosition:0];
         [m_View setNeedsDisplay:true];
         return true;

@@ -30,9 +30,9 @@
     return YES;
 }
 
-- (void) FireDirectoryChanged: (const char*) _dir
+- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long) _ticket
 {
-    [m_MainWindowController FireDirectoryChanged:_dir];    
+    [m_MainWindowController FireDirectoryChanged:_dir ticket:_ticket];
 }
 
 @end

@@ -27,16 +27,12 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
 
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
     
-    dispatch_group_t statg = dispatch_group_create();
-    dispatch_queue_t statq = dispatch_queue_create(0, DISPATCH_QUEUE_CONCURRENT);
-    
-    
-    char full_filename[__DARWIN_MAXPATHLEN]; // this buffer will be used for composing long filenames for stat()
-    char *full_filenamep = &full_filename[0];
-    strcpy(full_filename, _path);
-    if(_path[strlen(_path)-1] != '/' ) strcat(full_filename, "/");
-    char *full_filename_var = full_filename + strlen(full_filename);
-    
+    char pathwithslash[__DARWIN_MAXPATHLEN]; // this buffer will be used for composing long filenames for stat()
+    char *pathwithslashp = &pathwithslash[0];
+    strcpy(pathwithslash, _path);
+    if(_path[strlen(_path)-1] != '/' ) strcat(pathwithslash, "/");
+    size_t pathwithslash_len = strlen(pathwithslash);
+
     while((entp = _readdir_unlocked(dirp, 1)) != NULL)
     {
         if(entp->d_ino == 0) continue; // apple's documentation suggest to skip such files
@@ -80,43 +76,6 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
 
         if(entp->d_type == DT_DIR)
             current.size = DIRENTINFO_INVALIDSIZE;
-
-        // stat the file
-        dispatch_group_async(statg, statq,
-            ^{
-                struct stat stat_buffer;
-                strcpy(full_filename_var, current.namec());
-                memset(&stat_buffer, 0, sizeof(stat_buffer));
-                if(stat(full_filenamep, &stat_buffer) == 0)
-                {
-                    current.size = stat_buffer.st_size;
-                    current.atime = stat_buffer.st_atimespec.tv_sec;
-                    current.mtime = stat_buffer.st_mtimespec.tv_sec;
-                    current.ctime = stat_buffer.st_ctimespec.tv_sec;
-                    current.btime = stat_buffer.st_birthtimespec.tv_sec;
-            
-                    // add other stat info here. there's a lot more
-                }
-
-                // parse extension if any                
-                const char* s = current.namec();
-                current.extoffset = -1;
-                for(int i = current.namelen - 1; i >= 0; --i)
-                    if(s[i] == '.')
-                    {
-                        if(i == current.namelen - 1 || i == 0)
-                            break; // degenerate case, lets think that there's no extension at all
-                        current.extoffset = i+1; // CHECK THIS! may be some bugs with UTF
-                        break;
-                    }
-  
-                current.cf_name = CFStringCreateWithBytesNoCopy(0,
-                                                                (UInt8*)current.name(),
-                                                                current.namelen,
-                                                                kCFStringEncodingUTF8,
-                                                                false,
-                                                                kCFAllocatorNull);
-            });
     }
 
     closedir(dirp);
@@ -134,9 +93,59 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
         current.size = DIRENTINFO_INVALIDSIZE;
         _target->insert(_target->begin(), current); // this can be looong on biiiiiig directories
     }
+
+    // stat files, find extenstions any any and create CFString name representations in several threads
     
+    dispatch_group_t statg = dispatch_group_create();
+    dispatch_queue_t statq = dispatch_queue_create(0, DISPATCH_QUEUE_CONCURRENT);
+
+    auto i = _target->begin(), e = _target->end();
+    for(;i<e;++i)
+    {
+        DirectoryEntryInformation *current = &(*i);
+        
+        dispatch_group_async(statg, statq, ^{
+            char filename[__DARWIN_MAXPATHLEN];
+            memcpy(filename, pathwithslashp, pathwithslash_len);
+            memcpy(filename + pathwithslash_len, current->namec(), current->namelen+1);
+            
+            // stat the file
+            struct stat stat_buffer;
+            if(stat(filename, &stat_buffer) == 0)
+            {
+                current->size = stat_buffer.st_size;
+                current->atime = stat_buffer.st_atimespec.tv_sec;
+                current->mtime = stat_buffer.st_mtimespec.tv_sec;
+                current->ctime = stat_buffer.st_ctimespec.tv_sec;
+                current->btime = stat_buffer.st_birthtimespec.tv_sec;
+            
+                // add other stat info here. there's a lot more
+            }
+
+            // parse extension if any
+            const char* s = current->namec();
+            current->extoffset = -1;
+            for(int i = current->namelen - 1; i >= 0; --i)
+                if(s[i] == '.')
+                {
+                    if(i == current->namelen - 1 || i == 0)
+                        break; // degenerate case, lets think that there's no extension at all
+                    current->extoffset = i+1; // CHECK THIS! may be some bugs with UTF
+                    break;
+                }
+
+            // create CFString name representation
+            current->cf_name = CFStringCreateWithBytesNoCopy(0,
+                                                            (UInt8*)current->name(),
+                                                            current->namelen,
+                                                            kCFStringEncodingUTF8,
+                                                            false,
+                                                            kCFAllocatorNull);
+        });
+    }
+
     dispatch_group_wait(statg, DISPATCH_TIME_FOREVER);
-    
+
     if(num_of_entries == 0)
         return -1; // something was very wrong
 

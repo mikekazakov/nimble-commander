@@ -49,14 +49,18 @@ struct DirectoryEntryInformation // 96b long
     // #78
     mode_t         mode;                    // file type from stat
     // #80
+    const char     *symlink;                // a pointer to symlink's value or NULL if entry is not a symlink or an error has occured
+    // #88
     unsigned char  type;                    // file type from <sys/dirent.h> (from readdir)
-    // #81
-    unsigned char  ___padding[15];
+    // #89
+    unsigned char  ___padding[7];
     // #96
 
     inline void destroy()
     {
         CFRelease(cf_name);
+        if(symlink != 0)
+            free((void*)symlink);
         if(namelen > 13)
             free((void*)*(const unsigned char**)(&namebuf[0]));
     }
@@ -82,6 +86,10 @@ struct DirectoryEntryInformation // 96b long
     {
 //        return type == DT_REG;
         return (mode & S_IFMT) == S_IFREG;        
+    }
+    inline bool issymlink() const
+    {
+        return type == DT_LNK;
     }
     inline bool isdotdot() const
     {

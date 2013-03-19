@@ -142,6 +142,20 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
                                                             kCFStringEncodingUTF8,
                                                             false,
                                                             kCFAllocatorNull);
+
+            // if we're dealing with a symlink - read it's content to know the real file path
+            if( current->type == DT_LNK )
+            {
+                char linkpath[__DARWIN_MAXPATHLEN];
+                ssize_t sz = readlink(filename, linkpath, __DARWIN_MAXPATHLEN);
+                if(sz != -1)
+                {
+                    linkpath[sz] = 0;
+                    char *s = (char*)malloc(sz+1);
+                    memcpy(s, linkpath, sz+1);
+                    current->symlink = s;
+                }
+            }
         });
     }
 

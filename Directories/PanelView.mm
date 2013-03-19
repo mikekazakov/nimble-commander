@@ -332,7 +332,7 @@ static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInfo
             char buf[32];
             memset(buf, 0, sizeof(buf));
             
-            if( _dirent->isdotdot() ) strcpy(buf, "   DIR");
+            if( !_dirent->isdotdot()) strcpy(buf, "   DIR");
             else                      strcpy(buf, "    UP");
             
             for(int i = 0; i < 6; ++i) _out[i] = buf[i];
@@ -442,6 +442,8 @@ static void FormHumanReadableBytesAndFiles128(unsigned long _sz, int _total_file
 
 static const DoubleColor& GetDirectoryEntryTextColor(const DirectoryEntryInformation &_dirent, bool _is_focused)
 {
+    // TODO: consider using special coloring for symlink to distinguish them
+
     if(_dirent.cf_isselected())
         return g_SelFileColor;
     
@@ -459,6 +461,28 @@ static const DoubleColor& GetDirectoryEntryTextColor(const DirectoryEntryInforma
     }
  
     return g_UnkFileColor;
+}
+
+static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dirent, UniChar _buff[256], size_t &_sz)
+{   // output is a direct filename or symlink path in ->filename form
+    if(!_dirent.issymlink())
+    {
+        InterpretUTF8BufferAsUniChar( _dirent.name(), _dirent.namelen, _buff, &_sz, 0xFFFD);
+    }
+    else
+    {
+        if(_dirent.symlink != 0)
+        {
+            _buff[0]='-';
+            _buff[1]='>';
+            InterpretUTF8BufferAsUniChar( (unsigned char*)_dirent.symlink, strlen(_dirent.symlink), _buff+2, &_sz, 0xFFFD);
+            _sz += 2;
+        }
+        else
+        {
+            _sz = 0; // fallback case
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -670,8 +694,7 @@ struct CursorSelectionState
     FormHumanReadableTimeRepresentation14(current_entry.mtime, time_info);
     FormHumanReadableSizeReprentationForDirEnt6(&current_entry, size_info);
     FormHumanReadableSizeReprentationForSortMode1(m_Data->GetCustomSortMode().sort, sort_mode);
-
-    InterpretUTF8BufferAsUniChar( current_entry.name(), current_entry.namelen, buff, &buf_size, 0xFFFD);
+    ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
     
     // draw sorting mode in left-upper corner
     DrawSingleUniChar(sort_mode[0], pX(1), pY(0), context, m_FontCache, g_HeaderInfoColor);

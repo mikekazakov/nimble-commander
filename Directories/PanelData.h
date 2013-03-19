@@ -81,6 +81,9 @@ public:
     void UpdateStatictics();
     unsigned long GetTotalBytesInDirectory() const;
     unsigned long GetTotalFilesInDirectory() const;
+    int           GetSelectedItemsCount() const;
+    unsigned long GetSelectedItemsSizeBytes() const;
+    
     
     // manupulation with user flags for directory entries
     void CustomFlagsSelect(int _at_pos, bool _is_selected);
@@ -104,4 +107,6 @@ private:
     // statistics
     unsigned long                           m_TotalBytesInDirectory; // assuming regular files ONLY!
     unsigned long                           m_TotalFilesInDirectory; // NOT DIRECTORIES! only regular files, maybe + symlinks and other stuff
+    unsigned long                           m_SelectedItemsSizeBytes;
+    int                                     m_SelectedItemsCount;
 };

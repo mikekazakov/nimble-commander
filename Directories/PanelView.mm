@@ -238,7 +238,7 @@ static void DrawString(UniChar *_s,
 
 static void DrawStringWithBackground(UniChar *_s,
                        size_t _start,    // position of a first symbol to draw
-                       size_t _amount,   // number of symbols to draw
+                       size_t _amount,   // number of unichars to draw, not visible symbols - result may be shorter
                        double _x,
                        double _y,
                        CGContextRef _context,
@@ -332,8 +332,8 @@ static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInfo
             char buf[32];
             memset(buf, 0, sizeof(buf));
             
-            if( strcmp(_dirent->namec(), "..") != 0) strcpy(buf, "   DIR");
-            else                                     strcpy(buf, "    UP");
+            if( _dirent->isdotdot() ) strcpy(buf, "   DIR");
+            else                      strcpy(buf, "    UP");
             
             for(int i = 0; i < 6; ++i) _out[i] = buf[i];
         }
@@ -409,6 +409,36 @@ static void FormHumanReadableDirStatInfo32(unsigned long _sz, int _total_files, 
     _symbs = s;
 }
 
+static void FormHumanReadableBytesAndFiles128(unsigned long _sz, int _total_files, UniChar _out[128], size_t &_symbs, bool _space_prefix_and_postfix)
+{
+    // TODO: localization support
+    char buf[128];
+    const char *postfix = _total_files > 1 ? "files" : "file";
+    const char *space = _space_prefix_and_postfix ? " " : "";
+#define __1000_1(a) ( (a) % 1000lu )
+#define __1000_2(a) __1000_1( (a)/1000lu )
+#define __1000_3(a) __1000_1( (a)/1000000lu )
+#define __1000_4(a) __1000_1( (a)/1000000000lu )
+#define __1000_5(a) __1000_1( (a)/1000000000000lu )
+    if(_sz < 1000lu)
+        sprintf(buf, "%s%lu bytes in %d %s%s", space, _sz, _total_files, postfix, space);
+    else if(_sz < 1000lu * 1000lu)
+        sprintf(buf, "%s%lu %03lu bytes in %d %s%s", space, __1000_2(_sz), __1000_1(_sz), _total_files, postfix, space);
+    else if(_sz < 1000lu * 1000lu * 1000lu)
+        sprintf(buf, "%s%lu %03lu %03lu bytes in %d %s%s", space, __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix, space);
+    else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu)
+        sprintf(buf, "%s%lu %03lu %03lu %03lu bytes in %d %s%s", space, __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix, space);
+    else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu)
+        sprintf(buf, "%s%lu %03lu %03lu %03lu %03lu bytes in %d %s%s", space, __1000_5(_sz), __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix, space);
+#undef __1000_1
+#undef __1000_2
+#undef __1000_3
+#undef __1000_4
+#undef __1000_5
+
+    _symbs = strlen(buf);
+    for(int i = 0; i < _symbs; ++i) _out[i] = buf[i];
+}
 
 static const DoubleColor& GetDirectoryEntryTextColor(const DirectoryEntryInformation &_dirent, bool _is_focused)
 {
@@ -596,9 +626,10 @@ struct CursorSelectionState
     auto &raw_entries = m_Data->DirectoryEntries();
     auto &sorted_entries = m_Data->SortedDirectoryEntries();
     UniChar buff[256];
-    bool draw_path_name = false;
+    bool draw_path_name = false, draw_selected_bytes = false;
     int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
-    
+    int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
+    int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
@@ -629,24 +660,22 @@ struct CursorSelectionState
                 pX(X), pY(Y), context, m_FontCache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, g_FocFileBkColor);
     }
     }
-
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw header and footer data
-    size_t footer_dirinfo_size;
     {
     const auto &current_entry = raw_entries[sorted_entries[m_CursorPosition]];
-    UniChar time_info[14], size_info[6], sort_mode[1], dirinfo[32];
+    UniChar time_info[14], size_info[6], sort_mode[1];
     size_t buf_size = 0;
     FormHumanReadableTimeRepresentation14(current_entry.mtime, time_info);
     FormHumanReadableSizeReprentationForDirEnt6(&current_entry, size_info);
     FormHumanReadableSizeReprentationForSortMode1(m_Data->GetCustomSortMode().sort, sort_mode);
-    FormHumanReadableDirStatInfo32(m_Data->GetTotalBytesInDirectory(),
-                                   (int)m_Data->GetTotalFilesInDirectory(),
-                                   dirinfo, footer_dirinfo_size);
+
     InterpretUTF8BufferAsUniChar( current_entry.name(), current_entry.namelen, buff, &buf_size, 0xFFFD);
+    
+    // draw sorting mode in left-upper corner
     DrawSingleUniChar(sort_mode[0], pX(1), pY(0), context, m_FontCache, g_HeaderInfoColor);
-    DrawString(dirinfo, 0, footer_dirinfo_size, pX(2), pY(m_SymbHeight - 1), context, m_FontCache, g_RegFileColor);
-        
+
     if(m_SymbWidth > 14)
     {   // need to draw a path name
         char panelpath[__DARWIN_MAXPATHLEN];
@@ -668,13 +697,14 @@ struct CursorSelectionState
         path_name_end_pos = (m_SymbWidth-symbs_for_path_name) / 2 + symbs_for_path_name;
         
         if(m_IsActive)
-            DrawStringWithBackground(panelpathtrim, 0, chars_for_path_name, pX((m_SymbWidth-symbs_for_path_name) / 2), pY(0),
+            DrawStringWithBackground(panelpathtrim, 0, chars_for_path_name, pX(path_name_start_pos), pY(0),
                                         context, m_FontCache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
         else
-            DrawString(panelpathtrim, 0, chars_for_path_name, pX((m_SymbWidth-symbs_for_path_name) / 2), pY(0),
+            DrawString(panelpathtrim, 0, chars_for_path_name, pX(path_name_start_pos), pY(0),
                                         context, m_FontCache, g_RegFileColor);
     }
-        
+
+    // footer info        
     if(m_SymbWidth > 2 + 14 + 6)
     {   // draw current entry time info, size info and maybe filename
         DrawString(time_info, 0, 14, pX(m_SymbWidth - 15), pY(m_SymbHeight - 2), context, m_FontCache, g_RegFileColor);
@@ -697,13 +727,41 @@ struct CursorSelectionState
             DrawString(time_info, 0, symbs, pX(8), pY(m_SymbHeight-2), context, m_FontCache, g_RegFileColor);
         }
     }
+        
+    if(m_Data->GetSelectedItemsCount() != 0 && m_SymbWidth > 12)
+    { // process selection if any
+        UniChar selectionbuf[128], selectionbuftrim[128];
+        size_t sz;
+        draw_selected_bytes = true;
+        FormHumanReadableBytesAndFiles128(m_Data->GetSelectedItemsSizeBytes(), m_Data->GetSelectedItemsCount(), selectionbuf, sz, true);
+        int unichars = PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
+        symbs_for_selected_bytes = CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
+        selected_bytes_start_pos = (m_SymbWidth-symbs_for_selected_bytes) / 2;
+        selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
+        DrawStringWithBackground(selectionbuftrim, 0, unichars,
+                                 pX(selected_bytes_start_pos), pY(m_SymbHeight-3),
+                                 context, m_FontCache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
+    }
+
+    if(m_SymbWidth > 12)
+    { // process bytes in directory
+        UniChar bytes[128], bytestrim[128];
+        size_t sz;
+        FormHumanReadableBytesAndFiles128(m_Data->GetTotalBytesInDirectory(), (int)m_Data->GetTotalFilesInDirectory(), bytes, sz, true);
+        int unichars = PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(bytes, sz, m_SymbWidth - 2, bytestrim);
+        symbs_for_bytes_in_dir = CalculateSymbolsSpaceForString(bytestrim, unichars);
+        bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
+        bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
+        DrawString(bytestrim, 0, unichars,
+                                 pX(bytes_in_dir_start_pos), pY(m_SymbHeight-1),
+                                 context, m_FontCache, g_RegFileColor);
+    }
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw frames
     [self SetParamsForASCIIArt:context];
-    for(int i = 0; i < m_SymbWidth-4-footer_dirinfo_size; ++i) buff[i] = 0x2550;
-    DrawString(buff, 0, m_SymbWidth-4-footer_dirinfo_size, pX(3+footer_dirinfo_size), pY(m_SymbHeight-1), context, m_FontCache, g_RegFileColor);        // ═
     DrawSingleUniChar(0x2554, pX(0), pY(0), context, m_FontCache, g_RegFileColor);                              // ╔
     for(int i = 1; i < m_SymbHeight - 1; ++i)
         if(i != m_SymbHeight - 3)
@@ -727,15 +785,24 @@ struct CursorSelectionState
     {   DrawSingleUniChar(0x2502, pX(columns_width[0]), pY(i), context, m_FontCache, g_RegFileColor);                          // │
         DrawSingleUniChar(0x2502, pX(columns_width[0]+columns_width[1]), pY(i), context, m_FontCache, g_RegFileColor); }       // │
     for(int i = 1; i < m_SymbWidth - 1; ++i)
+    {
         if( (i != columns_width[0]) && (i != columns_width[0] + columns_width[1]))
         {
             if( (i!=1) &&
                (!draw_path_name || i < path_name_start_pos || i >= path_name_end_pos))
                 DrawSingleUniChar(0x2550, pX(i), pY(0), context, m_FontCache, g_RegFileColor);                      // ═
-            DrawSingleUniChar(0x2500, pX(i), pY(m_SymbHeight-3), context, m_FontCache, g_RegFileColor);         // ─
+            if(!draw_selected_bytes || i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
+                DrawSingleUniChar(0x2500, pX(i), pY(m_SymbHeight-3), context, m_FontCache, g_RegFileColor);         // ─
+            
         }
         else
-            DrawSingleUniChar(0x2534, pX(i), pY(m_SymbHeight-3), context, m_FontCache, g_RegFileColor);         // ┴
+        {
+            if(!draw_selected_bytes || i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
+                DrawSingleUniChar(0x2534, pX(i), pY(m_SymbHeight-3), context, m_FontCache, g_RegFileColor);         // ┴
+        }
+        if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)
+            DrawSingleUniChar(0x2550, pX(i), pY(m_SymbHeight-1), context, m_FontCache, g_RegFileColor);                      // ═
+    }
 }
 
 - (void)drawRect:(NSRect)dirtyRect

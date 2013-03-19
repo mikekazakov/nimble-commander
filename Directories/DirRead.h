@@ -31,7 +31,7 @@ struct DirectoryEntryInformation // 96b long
     // #16
     unsigned long  ino;                     // 64b-long inode number
     // #24
-    unsigned long  size;                    // file size. initial 0xFFFFFFFF for directories, other value means calculated directory size
+    unsigned long  size;                    // file size. initial 0xFFFFFFFFFFFFFFFFu for directories, other value means calculated directory size
     // #32
     time_t         atime;                   // time of last access
     // #40

@@ -13,6 +13,8 @@ PanelData::PanelData()
     m_EntriesByCustomSort = new DirSortIndT;
     m_TotalBytesInDirectory = 0;
     m_TotalFilesInDirectory = 0;
+    m_SelectedItemsSizeBytes = 0;
+    m_SelectedItemsCount = 0;
     
     m_CustomSortMode.sepdir = true;
     m_CustomSortMode.sort = m_CustomSortMode.SortByName;
@@ -323,6 +325,8 @@ void PanelData::UpdateStatictics()
 {
     unsigned long totalbytes = 0;
     unsigned long totalfiles = 0;
+    unsigned long totalselectedbytes = 0;
+    int totalselected = 0;
     for(auto i = m_Entries->begin(); i < m_Entries->end(); ++i)
     {
         if(i->isreg())
@@ -330,10 +334,19 @@ void PanelData::UpdateStatictics()
             totalbytes += i->size;
             totalfiles++;
         }
+        if(i->cf_isselected())
+        {
+            if(i->size != DIRENTINFO_INVALIDSIZE)
+                totalselectedbytes += i->size;
+            totalselected++;
+        }
+
     }
     
     m_TotalBytesInDirectory = totalbytes;
     m_TotalFilesInDirectory = totalfiles;
+    m_SelectedItemsSizeBytes = totalselectedbytes;
+    m_SelectedItemsCount = totalselected;
 }
 
 unsigned long PanelData::GetTotalBytesInDirectory() const
@@ -359,9 +372,39 @@ const DirectoryEntryInformation& PanelData::EntryAtRawPosition(int _pos) const
 void PanelData::CustomFlagsSelect(int _at_pos, bool _is_selected)
 {
     assert(_at_pos >= 0 && _at_pos < m_Entries->size());
-    if(_is_selected) (*m_Entries)[_at_pos].cf_setflag(DirectoryEntryCustomFlags::Selected);
-    else             (*m_Entries)[_at_pos].cf_unsetflag(DirectoryEntryCustomFlags::Selected);
+    auto &entry = (*m_Entries)[_at_pos];
+    if(entry.cf_isselected() == _is_selected) // check if item is already selected
+        return;
+    if(_is_selected)
+    {
+        if(entry.size != DIRENTINFO_INVALIDSIZE)
+            m_SelectedItemsSizeBytes += entry.size;
+        m_SelectedItemsCount++;
+        entry.cf_setflag(DirectoryEntryCustomFlags::Selected);
+    }
+    else
+    {
+        if(entry.size != DIRENTINFO_INVALIDSIZE)
+        {
+            assert(m_SelectedItemsSizeBytes >= entry.size); // sanity check
+            m_SelectedItemsSizeBytes -= entry.size;
+        }
+        assert(m_SelectedItemsCount >= 0); // sanity check
+        m_SelectedItemsCount--;
+        entry.cf_unsetflag(DirectoryEntryCustomFlags::Selected);
+    }
 }
+
+int PanelData::GetSelectedItemsCount() const
+{
+    return m_SelectedItemsCount;
+}
+
+unsigned long PanelData::GetSelectedItemsSizeBytes() const
+{
+    return m_SelectedItemsSizeBytes;
+}
+
 
 
 

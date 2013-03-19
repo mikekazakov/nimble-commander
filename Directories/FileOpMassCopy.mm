@@ -241,8 +241,45 @@ bool FileOpMassCopy::ScanDestination()
             assert(0); //TODO: implement handling of this weird cases
     }
     else
-    {
-        assert(0); // TODO: implement me later. ask user about folder/files choice if need
+    { // ok, it's not a valid entry, now we have to analize what user wants from us
+        if(strchr(m_Destination, '/') == 0)
+        {   // there's no directories mentions in destination path, let's treat destination as an regular absent file
+            // let's think that this destination file should be located in source directory
+            char destpath[__DARWIN_MAXPATHLEN];
+            strcpy(destpath, m_SourceDirectory);
+            strcat(destpath, m_Destination);
+            strcpy(m_Destination, destpath);
+            
+            m_CopyMode = CopyToFile;
+        }
+        else
+        {
+            // TODO: implement me later: ask user about folder/files choice if need
+            // he may want to copy file to /users/abra/FILE.TXT, which is a directory in his mind
+            
+            // TODO: this case will cause fail if user will copy files without directory structure
+            // need to implement a separate code for building copy destination path, or smarter chechking when processing lone files
+
+            // just for now - let's think that it's a directory anyway
+            if(m_Destination[0] != '/')
+            {
+                // relative to source directory
+                char destpath[__DARWIN_MAXPATHLEN];
+                strcpy(destpath, m_SourceDirectory);
+                strcat(destpath, m_Destination);
+                if( destpath[strlen(destpath)-1] != '/' )
+                    strcat(destpath, "/");
+                strcpy(m_Destination, destpath);                
+            }
+            else
+            {
+                // absolute path
+                if( m_Destination[strlen(m_Destination)-1] != '/' )
+                    strcat(m_Destination, "/");
+            }
+            m_CopyMode = CopyToFolder;
+        }
+
     }
     
     return true;

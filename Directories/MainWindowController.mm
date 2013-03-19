@@ -288,6 +288,23 @@
      }];
 }
 
+- (void) HandleSynchronizePanels // ALT+CMD+U
+{
+    assert([self IsPanelActive]);
+    char dirpath[__DARWIN_MAXPATHLEN];
+    
+    if(m_ActiveState == StateLeftPanel)
+    {
+        m_LeftPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
+        [m_RightPanelController GoToDirectory:dirpath];
+    }
+    else
+    {
+        m_RightPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
+        [m_LeftPanelController GoToDirectory:dirpath];
+    }
+}
+
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
     [m_LeftPanelController FireDirectoryChanged:_dir ticket:_ticket];
@@ -337,7 +354,7 @@
         case NSCarriageReturnCharacter: // RETURN key
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSShiftKeyMask) [[self ActivePanelController] HandleShiftReturnButton];
+                if([event modifierFlags] & NSShiftKeyMask) [[self ActivePanelController] HandleShiftReturnButton];
                 else                                         [[self ActivePanelController] HandleReturnButton];
             }
             break;
@@ -347,37 +364,37 @@
         case NSF1FunctionKey:
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSAlternateKeyMask)
+                if([event modifierFlags] & NSAlternateKeyMask)
                    [[self LeftPanelGoToButton] performClick:self];
             }
             break;
         case NSF2FunctionKey:
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSAlternateKeyMask)
+                if([event modifierFlags] & NSAlternateKeyMask)
                     [[self RightPanelGoToButton] performClick:self];
             }
             break;
         case NSF3FunctionKey:
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSControlKeyMask)
+                if([event modifierFlags] & NSControlKeyMask)
                     [[self ActivePanelController] ToggleSortingByName];
             }
             break;
         case NSF4FunctionKey:
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSControlKeyMask)
+                if([event modifierFlags] & NSControlKeyMask)
                     [[self ActivePanelController] ToggleSortingByExt];
             }
             break;
         case NSF5FunctionKey:
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSControlKeyMask)
+                if([event modifierFlags] & NSControlKeyMask)
                     [[self ActivePanelController] ToggleSortingByMTime];
-                else if([NSEvent modifierFlags] & NSShiftKeyMask)
+                else if([event modifierFlags] & NSShiftKeyMask)
                     [self HandleCopyAs];
                 else // TODO: need to check of absence of any key modifiers here
                     [self HandleCopyCommand];
@@ -386,7 +403,7 @@
         case NSF6FunctionKey:
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSControlKeyMask)
+                if([event modifierFlags] & NSControlKeyMask)
                     [[self ActivePanelController] ToggleSortingBySize];
             }
             break;
@@ -399,7 +416,7 @@
         case NSF8FunctionKey:
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSControlKeyMask)
+                if([event modifierFlags] & NSControlKeyMask)
                     [[self ActivePanelController] ToggleSortingByBTime];
             }
             break;
@@ -411,10 +428,21 @@
         {
             if([self IsPanelActive])
             {
-                if([NSEvent modifierFlags] & NSCommandKeyMask)
+                if([event modifierFlags] & NSCommandKeyMask)
                     [[self ActivePanelController] RefreshDirectory];
             }
             break;
+        }
+            
+        case 32: // u button on keyboard
+        {
+            if([self IsPanelActive])
+            {
+                if([event modifierFlags] & (NSCommandKeyMask|NSAlternateKeyMask) )
+                    [self HandleSynchronizePanels];
+                else if([event modifierFlags] & NSCommandKeyMask )
+                    ;// swap panel functionality should be called here            
+            }
         }
     }
 }

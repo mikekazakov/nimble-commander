@@ -71,6 +71,23 @@ static int DoMessageBoxRetrySkipSkipallCancel_WithText(NSString *_text1, NSStrin
     assert(0);
 }
 
+static int DoMessageBoxRetryCancel_WithText(NSString *_text1, NSString *_text2, NSWindow *_wnd)
+{
+    volatile int ret = 0;    
+    MessageBox* mb = [MessageBox new];
+    [mb setAlertStyle:NSCriticalAlertStyle];
+    [mb setMessageText:_text1];
+    [mb setInformativeText:_text2];
+    [mb addButtonWithTitle:@"Retry"];
+    [mb addButtonWithTitle:@"Cancel"];
+    [mb ShowSheet:_wnd ptr:&ret];
+    
+    while(!ret) SleepForSomeTime();
+    if(ret == NSAlertFirstButtonReturn) return DialogResult::Retry;
+    if(ret == NSAlertSecondButtonReturn) return DialogResult::Cancel;
+    assert(0);
+}
+
 static int DoMessageBoxRetrySkipSkipallCancel_CannotAccessSourceFile(const char *_path, NSWindow *_wnd, int _err)
 {
     NSString *text1 = [@"Cannot access source file: " stringByAppendingString: [NSString stringWithUTF8String:_path] ];
@@ -98,6 +115,21 @@ static int DoMessageBoxRetrySkipSkipallCancel_WriteError(const char *_path, NSWi
     NSString *text2 = [NSString stringWithUTF8String:strerror(_err)];
     return DoMessageBoxRetrySkipSkipallCancel_WithText(text1, text2, _wnd);
 }
+
+static int DoMessageBoxRetryCancel_CantCreateDir(const char *_path, NSWindow *_wnd, int _err)
+{
+    NSString *text1 = [@"Can't create directory " stringByAppendingString: [NSString stringWithUTF8String:_path] ];
+    NSString *text2 = [NSString stringWithUTF8String:strerror(_err)];
+    return DoMessageBoxRetryCancel_WithText(text1, text2, _wnd);
+}
+
+static int DoMessageBoxRetrySkipSkipAllCancel_CantCreateDir(const char *_path, NSWindow *_wnd, int _err)
+{
+    NSString *text1 = [@"Can't create directory " stringByAppendingString: [NSString stringWithUTF8String:_path] ];
+    NSString *text2 = [NSString stringWithUTF8String:strerror(_err)];
+    return DoMessageBoxRetrySkipSkipallCancel_WithText(text1, text2, _wnd);
+}
+
 
 FileOpMassCopy::FileOpMassCopy():
     m_Wnd(0),
@@ -171,7 +203,8 @@ const FlexChainedStringsChunk::node *FileOpMassCopy::CurrentlyProcessingItem() c
 
 void FileOpMassCopy::DoRun()
 {
-    ScanDestination();
+    if(!ScanDestination())
+        return ;
     ScanItems();
 
     // we don't need any more - so free memory as soon as possible
@@ -194,7 +227,11 @@ void FileOpMassCopy::DoCleanup()
     m_ReadQueue = 0;
     m_WriteQueue = 0;
     m_IOGroup = 0;
-    FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);
+    if(m_ScannedItems)
+    {
+        FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);
+        m_ScannedItems = 0;
+    }
 }
 
 bool FileOpMassCopy::ScanItems()
@@ -327,12 +364,11 @@ bool FileOpMassCopy::ScanDestination()
         else
         {
             // TODO: implement me later: ask user about folder/files choice if need
-            // he may want to copy file to /users/abra/FILE.TXT, which is a directory in his mind
-            
-            // TODO: this case will cause fail if user will copy files without directory structure
-            // need to implement a separate code for building copy destination path, or smarter checking when processing lone files
+            // he may want to copy file to /users/abra/newdir/FILE.TXT, which is a file in his mind
 
             // just for now - let's think that it's a directory anyway
+            m_CopyMode = CopyToFolder;            
+            
             if(m_Destination[0] != '/')
             {
                 // relative to source directory
@@ -349,11 +385,38 @@ bool FileOpMassCopy::ScanDestination()
                 if( m_Destination[strlen(m_Destination)-1] != '/' )
                     strcat(m_Destination, "/");
             }
-            m_CopyMode = CopyToFolder;
-        }
 
+            // now we need to check every directory here and create them they are not exist
+            
+            // TODO: not very efficient implementation, it does many redundant stat calls
+            // this algorithm iterates from left to right, but it's better to iterate right-left and then left-right
+            // but this work is doing only once per MassCopyOp, so user may not even notice this issue
+            
+            char destpath[__DARWIN_MAXPATHLEN];
+            strcpy(destpath, m_Destination);
+            char* leftmost = strchr(destpath+1, '/');
+            do
+            {
+                *leftmost = 0;
+                if(stat(destpath, &stat_buffer) == -1)
+                {
+                    // absent part - need to create it
+domkdir:            if(mkdir(destpath, 0777) == -1)
+                    {
+                        switch (DoMessageBoxRetryCancel_CantCreateDir(destpath, [m_Wnd window], errno))
+                        {
+                            case DialogResult::Retry: goto domkdir;
+                            case DialogResult::Cancel: m_Cancel = true; return false;
+                        }
+                    }
+                }
+                *leftmost = '/';
+                
+                leftmost = strchr(leftmost+1, '/');
+            } while(leftmost != 0);
+        }
     }
-    
+
     return true;
 }
 
@@ -405,7 +468,6 @@ void FileOpMassCopy::ProcessItem(const FlexChainedStringsChunk::node *_node)
 void FileOpMassCopy::ProcessDirectory(const char *_path)
 {
     // TODO: directory attributes, time, permissions and xattrs
-
     assert(m_Destination[strlen(m_Destination)-1] == '/');
     assert(_path[strlen(_path)-1] == '/');
     
@@ -413,7 +475,6 @@ void FileOpMassCopy::ProcessDirectory(const char *_path)
     struct stat stat_buffer;
     short slashpos[maxdepth];
     short absentpos[maxdepth];
-    volatile int ret = 0;
     int ndirs = 0, nabsent = 0, pathlen = (int)strlen(_path);
 
     char fullpath[__DARWIN_MAXPATHLEN];
@@ -444,30 +505,24 @@ void FileOpMassCopy::ProcessDirectory(const char *_path)
             break; // no need to look up any more
         }
     }
-    
+
     // mkdir absent directories
     for(int i = nabsent-1; i >= 0; --i)
     {
-        fullpath[slashpos[absentpos[i]]] = 0;
-domkdir:
-        int pret = mkdir(fullpath, 0777);
-        fullpath[ slashpos[i] ] = '/';
-        if(pret == -1)
+        fullpath[ slashpos[ absentpos[i] ] ] = 0;
+domkdir:if(mkdir(fullpath, 0777))
         {
-            MessageBoxRetryCancel(@"Cannot create directory:",
-                                  [NSString stringWithUTF8String:strerror(errno)],
-                                  [m_Wnd window],
-                                  &ret);
-            while(!ret) SleepForSomeTime();
-            if(ret == NSAlertFirstButtonReturn) goto domkdir;
-            if(ret == NSAlertSecondButtonReturn) return;
+            if(m_SkipAll) return;
+            switch (DoMessageBoxRetrySkipSkipAllCancel_CantCreateDir(fullpath, [m_Wnd window], errno))
+            {
+                case DialogResult::Retry: goto domkdir;
+                case DialogResult::Skip:  return;
+                case DialogResult::SkipAll: m_SkipAll = true; return;
+                case DialogResult::Cancel: m_Cancel = true; return;
+            }
         }
-
-//        tdone += ddone;
-//        SetDone(tdone);
+        fullpath[ slashpos[ absentpos[i] ] ] = '/';
     }
-    
-    
 }
 
 void FileOpMassCopy::ProcessFile(const char *_path)

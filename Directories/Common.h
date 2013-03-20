@@ -19,7 +19,9 @@ struct DialogResult
         Overwrite,
         Append,
         Skip,
-        Rename
+        SkipAll,
+        Rename,
+        Retry
     };
 };
 

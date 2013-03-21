@@ -5,8 +5,11 @@
 //  Created by Michael G. Kazakov on 21.03.13.
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
-
 #pragma once
+
+#include <sys/param.h>
+#include <sys/mount.h>
+
 
 // see getattrlist function documentation to get info about values
 struct VolumeCapabilitiesInformation
@@ -152,8 +155,12 @@ struct VolumeAttributesInformation
     char      mounted_device[MAXPATHLEN];
     unsigned long long encoding_used;
     uuid_t    uuid;
+    char      fs_type_name[MFSNAMELEN]; // this field is retrieved from statfs, not from getattrlist
+    uid_t     fs_owner;                 // this field is retrieved from statfs, not from getattrlist
+    char      fs_type_verb[256];        // from CFURL framework
 };
 
+// all functions below return 0 on successful completion or errno on error
 int FetchVolumeCapabilitiesInformation(const char *_path,
                                        VolumeCapabilitiesInformation *_c);
 
@@ -163,3 +170,5 @@ int FetchVolumeAttributesInformation(const char *_path,
 // fetches only information available for current volume, choosing it whith _c
 // it fetches available info even it's not native for file system - when drivers layer emulates it
 
+
+int FetchFileSystemRootFromPath(const char *_path, char *_root);

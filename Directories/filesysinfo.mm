@@ -289,7 +289,38 @@ int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilities
         if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
         memcpy(_a->uuid, info.uuid.val, sizeof(info.uuid.val));
     }
+    
+    struct statfs stat_fs;
+    if(statfs(_path, &stat_fs) != 0) return errno;
+    strcpy(_a->fs_type_name, stat_fs.f_fstypename);
+    _a->fs_owner = stat_fs.f_owner;
+    
+
+    {
+    // NB! kCFURLVolumeLocalizedFormatDescriptionKey is available in OSX 10.6 and later
+    // other tasty things in OX10.7 and later: kCFURLVolumeIsEjectableKey, kCFURLVolumeIsRemovableKey, kCFURLVolumeIsInternalKey
+    CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)_path, strlen(_path), false);
+    CFStringRef fsverbname;
+//    CFErrorRef error;
+//    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, &error) == false)
+    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, 0) == false)
+        return -1; // what to return???
+    CFStringGetCString(fsverbname, _a->fs_type_verb, sizeof(_a->fs_type_verb), kCFStringEncodingUTF8);
+//    CFRelease(error);
+    CFRelease(fsverbname);
+    CFRelease(cfurl);
+    }
+    
     return 0;
 }
 
-
+int FetchFileSystemRootFromPath(const char *_path, char *_root)
+{
+    struct statfs info;
+    if(statfs(_path, &info) == 0)
+    {
+        strcpy(_root, info.f_mntonname);
+        return 0;
+    }
+    return errno;
+}

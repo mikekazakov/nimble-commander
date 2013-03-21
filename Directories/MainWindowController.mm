@@ -315,15 +315,18 @@
     char src[__DARWIN_MAXPATHLEN];
     curdata->ComposeFullPathForEntry(rawpos, src);
 
-    VolumeCapabilitiesInformation info;
-    if(FetchVolumeCapabilitiesInformation(src, &info) == 0)
+    char root[MAXPATHLEN];
+    if(FetchFileSystemRootFromPath(src, root) == 0)
     {
-        // do something with information;
-        VolumeAttributesInformation attr;
-        memset(&attr, 0, sizeof(attr));
-        int ret = FetchVolumeAttributesInformation(src, &info, &attr);
-        int a = 10;
-        
+        VolumeCapabilitiesInformation info;
+        if(FetchVolumeCapabilitiesInformation(root, &info) == 0)
+        {
+            // do something with information;
+            VolumeAttributesInformation attr;
+            memset(&attr, 0, sizeof(attr));
+            int ret = FetchVolumeAttributesInformation(root, &info, &attr);
+            int a = 10;
+        }
     }
 }
 

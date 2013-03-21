@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */; };
 		CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
+		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3C88DB16D92B22006346CD /* CopyAsSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D916D92B22006346CD /* CopyAsSheetController.mm */; };
 		CF3C88DC16D92B22006346CD /* CopyAsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF3C88DA16D92B22006346CD /* CopyAsSheetController.xib */; };
@@ -47,6 +48,8 @@
 		CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSEventsDirUpdate.mm; sourceTree = "<group>"; };
 		CF02F1D516F38805000AF870 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encodings.cpp; sourceTree = "<group>"; };
 		CF02F1D616F38805000AF870 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encodings.h; sourceTree = "<group>"; };
+		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
+		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
 		CF3C88D816D92B22006346CD /* CopyAsSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyAsSheetController.h; sourceTree = "<group>"; };
@@ -228,6 +231,8 @@
 		CFC5121A16C4BD3D00D247EE /* Directories */ = {
 			isa = PBXGroup;
 			children = (
+				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
+				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
 				CF02F1D516F38805000AF870 /* Encodings.cpp */,
 				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CFC4342216E0E09B001B0512 /* Common.h */,
@@ -386,6 +391,7 @@
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */,
 				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
+				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

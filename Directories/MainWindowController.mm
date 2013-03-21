@@ -13,6 +13,7 @@
 #include "CopyAsSheetController.h"
 #include "CreateDirectorySheetController.h"
 #include "MassCopySheetController.h"
+#include "filesysinfo.h"
 
 #include "JobData.h"
 #include "FileOp.h"
@@ -305,6 +306,25 @@
     }
 }
 
+- (void) HandleEntryInformation // CTRL+ALT+CMD+I
+{
+    PanelView *curview = [self ActivePanelView];
+    PanelData *curdata = [self ActivePanelData];    
+    int curpos = [curview GetCursorPosition];
+    int rawpos = curdata->SortPosToRawPos(curpos);
+    char src[__DARWIN_MAXPATHLEN];
+    curdata->ComposeFullPathForEntry(rawpos, src);
+
+    VolumeCapabilitiesInformation info;
+    if(FetchVolumeCapabilitiesInformation(src, &info) == 0)
+    {
+        // do something with information;
+        
+        
+        
+    }
+}
+
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
     [m_LeftPanelController FireDirectoryChanged:_dir ticket:_ticket];
@@ -444,6 +464,16 @@
                     ;// swap panel functionality should be called here            
             }
         }
+            
+        case 34: // u button on keyboard
+        {
+            if([self IsPanelActive])
+            {
+                if([event modifierFlags] & (NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask) )
+                    [self HandleEntryInformation];
+            }
+        }
+            
     }
 }
 

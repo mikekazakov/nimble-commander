@@ -20,7 +20,7 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
         u_int32_t                   attr_length;
         vol_capabilities_attr_t     c;
         vol_attributes_attr_t       a;
-    } info;
+    } __attribute__((aligned(4), packed)) info;
 
     int             err;
     struct attrlist attrs;
@@ -142,4 +142,154 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
         return errno;
     }
 };
+
+int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilitiesInformation *_c, VolumeAttributesInformation *_a)
+{
+    struct
+    {
+        u_int32_t                   attr_length;
+        union
+        {
+            struct { u_int32_t val; }                               __attribute__((aligned(4), packed)) fstype;
+            struct { u_int32_t val; }                               __attribute__((aligned(4), packed)) signature;
+            struct { off_t val; }                                   __attribute__((aligned(4), packed)) size;
+            struct { off_t val; }                                   __attribute__((aligned(4), packed)) spacefree;
+            struct { off_t val; }                                   __attribute__((aligned(4), packed)) spaceavail;
+            struct { off_t val; }                                   __attribute__((aligned(4), packed)) minallocation;
+            struct { off_t val; }                                   __attribute__((aligned(4), packed)) allocationclump;
+            struct { u_int32_t val; }                               __attribute__((aligned(4), packed)) ioblocksize;
+            struct { u_int32_t val; }                               __attribute__((aligned(4), packed)) objcount;
+            struct { u_int32_t val; }                               __attribute__((aligned(4), packed)) filecount;
+            struct { u_int32_t val; }                               __attribute__((aligned(4), packed)) dircount;
+            struct { u_int32_t val; }                               __attribute__((aligned(4), packed)) maxobjcount;
+            struct { attrreference val; char buf[MAXPATHLEN]; }     __attribute__((aligned(4), packed)) mountpoint;
+            struct { attrreference val; char buf[NAME_MAX + 1]; }   __attribute__((aligned(4), packed)) name;
+            struct { u_int32_t val; }                               __attribute__((aligned(4), packed)) mountflags;
+            struct { attrreference val; char buf[MAXPATHLEN]; }     __attribute__((aligned(4), packed)) mounteddevice;
+            struct { unsigned long long val; }                      __attribute__((aligned(4), packed)) encodingused;
+            struct { uuid_t val; }                                  __attribute__((aligned(4), packed)) uuid;
+        };
+    } __attribute__((aligned(4), packed)) info;
+    
+    struct attrlist attrs;
+    memset(&attrs, 0, sizeof(attrs));
+    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+
+    if(_c->attr.vol.fs_type[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_FSTYPE;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->fs_type = info.fstype.val;
+    }
+    if(_c->attr.vol.signature[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_SIGNATURE;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->signature = info.signature.val;
+    }
+    if(_c->attr.vol.size[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_SIZE;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->size = info.size.val;
+    }
+    if(_c->attr.vol.space_free[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_SPACEFREE;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->space_free = info.spacefree.val;
+    }
+    if(_c->attr.vol.space_avail[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_SPACEAVAIL;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->space_avail = info.spaceavail.val;
+    }
+    if(_c->attr.vol.min_allocation[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MINALLOCATION;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->min_allocation = info.minallocation.val;
+    }
+    if(_c->attr.vol.allocation_clump[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_ALLOCATIONCLUMP;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->allocation_clump = info.allocationclump.val;
+    }
+    if(_c->attr.vol.io_block_size[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_IOBLOCKSIZE;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->io_block_size = info.ioblocksize.val;
+    }
+    if(_c->attr.vol.obj_count[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_OBJCOUNT;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->obj_count = info.objcount.val;
+    }
+    if(_c->attr.vol.file_count[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_FILECOUNT;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->file_count = info.filecount.val;
+    }
+    if(_c->attr.vol.dir_count[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_DIRCOUNT;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->dir_count = info.dircount.val;
+    }
+    if(_c->attr.vol.max_obj_count[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MAXOBJCOUNT;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->max_obj_count = info.maxobjcount.val;
+    }
+    if(_c->attr.vol.mount_point[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MOUNTPOINT;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        memcpy(_a->mount_point,
+               ((char*)&info.mountpoint.val) + info.mountpoint.val.attr_dataoffset,
+               info.mountpoint.val.attr_length);
+    }
+    if(_c->attr.vol.name[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_NAME;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        memcpy(_a->name,
+               ((char*)&info.name.val) + info.name.val.attr_dataoffset,
+               info.name.val.attr_length);
+    }
+    if(_c->attr.vol.mount_flags[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MOUNTFLAGS;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->mount_flags = info.mountflags.val;
+    }
+    if(_c->attr.vol.mounted_device[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_MOUNTEDDEVICE;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        memcpy(_a->mounted_device,
+               ((char*)&info.mounteddevice.val) + info.mounteddevice.val.attr_dataoffset,
+               info.mounteddevice.val.attr_length);
+    }
+    if(_c->attr.vol.encoding_used[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_ENCODINGSUSED;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        _a->encoding_used = info.encodingused.val;
+    }
+    if(_c->attr.vol.uuid[0])
+    {
+        attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_UUID;
+        if( getattrlist(_path, &attrs, &info, sizeof(info), 0) != 0 ) return errno;
+        memcpy(_a->uuid, info.uuid.val, sizeof(info.uuid.val));
+    }
+    return 0;
+}
+
 

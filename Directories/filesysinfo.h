@@ -132,4 +132,34 @@ struct VolumeCapabilitiesInformation
     } attr;
 };
 
-int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInformation *_c);
+struct VolumeAttributesInformation
+{
+    u_int32_t fs_type;
+    u_int32_t signature;
+    off_t     size;
+    off_t     space_free;
+    off_t     space_avail;
+    off_t     min_allocation;
+    off_t     allocation_clump;
+    u_int32_t io_block_size;
+    u_int32_t obj_count;
+    u_int32_t file_count;
+    u_int32_t dir_count;
+    u_int32_t max_obj_count;
+    char      mount_point[MAXPATHLEN];
+    char      name[NAME_MAX + 1];
+    u_int32_t mount_flags;
+    char      mounted_device[MAXPATHLEN];
+    unsigned long long encoding_used;
+    uuid_t    uuid;
+};
+
+int FetchVolumeCapabilitiesInformation(const char *_path,
+                                       VolumeCapabilitiesInformation *_c);
+
+int FetchVolumeAttributesInformation(const char *_path,
+                                     const VolumeCapabilitiesInformation *_c,
+                                     VolumeAttributesInformation *_a);
+// fetches only information available for current volume, choosing it whith _c
+// it fetches available info even it's not native for file system - when drivers layer emulates it
+

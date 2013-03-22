@@ -43,8 +43,8 @@ void *KQueueDirUpdate::BgThreadThis(void *v)
         int n = kevent(m_QFD, NULL, 0, &ev, 1, &timeout);
         if (n > 0 && ev.filter == EVFILT_VNODE)
         {
-            char *path = (char*)ev.udata;
-            int a = 10 ;
+//            char *path = (char*)ev.udata;
+//            int a = 10 ;
             
 
             
@@ -56,7 +56,7 @@ void *KQueueDirUpdate::BgThreadThis(void *v)
     }
     
     
-    int a = 10;
+//    int a = 10;
     return 0;
 }
 
@@ -76,7 +76,7 @@ bool KQueueDirUpdate::AddWatchPath(const char *_path)
     
     
     int kerr = kevent(m_QFD, &ev, 1, NULL, 0, &nullts);
-    
+    kerr=kerr;
     
     pthread_t tID;
     int tArg = 5120;

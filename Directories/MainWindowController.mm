@@ -13,7 +13,7 @@
 #include "CopyAsSheetController.h"
 #include "CreateDirectorySheetController.h"
 #include "MassCopySheetController.h"
-#include "filesysinfo.h"
+#include "DetailedVolumeInformationSheetController.h"
 
 #include "JobData.h"
 #include "FileOp.h"
@@ -306,7 +306,7 @@
     }
 }
 
-- (void) HandleEntryInformation // CTRL+ALT+CMD+I
+- (void) HandleDetailedVolumeInformation // CMD+ALT+L
 {
     PanelView *curview = [self ActivePanelView];
     PanelData *curdata = [self ActivePanelData];    
@@ -315,19 +315,8 @@
     char src[__DARWIN_MAXPATHLEN];
     curdata->ComposeFullPathForEntry(rawpos, src);
 
-    char root[MAXPATHLEN];
-    if(FetchFileSystemRootFromPath(src, root) == 0)
-    {
-        VolumeCapabilitiesInformation info;
-        if(FetchVolumeCapabilitiesInformation(root, &info) == 0)
-        {
-            // do something with information;
-            VolumeAttributesInformation attr;
-            memset(&attr, 0, sizeof(attr));
-            int ret = FetchVolumeAttributesInformation(root, &info, &attr);
-            int a = 10;
-        }
-    }
+    DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
+    [sheet ShowSheet:[self window] destpath:src];
 }
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
@@ -470,12 +459,12 @@
             }
         }
             
-        case 34: // u button on keyboard
+        case 37: // l button on keyboard
         {
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & (NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask) )
-                    [self HandleEntryInformation];
+                if( [event modifierFlags] & (NSCommandKeyMask|NSAlternateKeyMask) )
+                    [self HandleDetailedVolumeInformation];
             }
         }
             

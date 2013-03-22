@@ -15,6 +15,8 @@
 		CF3C88DC16D92B22006346CD /* CopyAsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF3C88DA16D92B22006346CD /* CopyAsSheetController.xib */; };
 		CF73C59B16DCDBA500F3D44F /* FileOp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59916DCDBA500F3D44F /* FileOp.mm */; };
 		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
+		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
+		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
 		CF8B09C716EB59680013B6A8 /* wcwidth.c in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09C616EB59680013B6A8 /* wcwidth.c */; };
 		CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.m */; };
@@ -59,6 +61,9 @@
 		CF73C59A16DCDBA500F3D44F /* FileOp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileOp.h; sourceTree = "<group>"; };
 		CF73C59C16DE0D2900F3D44F /* MessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBox.h; sourceTree = "<group>"; };
 		CF73C59D16DE0D2900F3D44F /* MessageBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MessageBox.mm; sourceTree = "<group>"; };
+		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailedVolumeInformationSheetController.h; sourceTree = "<group>"; };
+		CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DetailedVolumeInformationSheetController.mm; sourceTree = "<group>"; };
+		CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
 		CF8B09C516EB59680013B6A8 /* wcwidth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wcwidth.h; sourceTree = "<group>"; };
 		CF8B09C616EB59680013B6A8 /* wcwidth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wcwidth.c; sourceTree = "<group>"; };
 		CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
@@ -145,6 +150,16 @@
 				CFC4342A16E727FC001B0512 /* KQueueDirUpdate.h */,
 			);
 			name = UpdateEvt;
+			sourceTree = "<group>";
+		};
+		CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */ = {
+			isa = PBXGroup;
+			children = (
+				CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */,
+				CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */,
+				CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */,
+			);
+			name = DetailedVolumeInformationSheetController;
 			sourceTree = "<group>";
 		};
 		CF8B09CA16ECEE9C0013B6A8 /* MainWindow */ = {
@@ -236,6 +251,7 @@
 				CF02F1D516F38805000AF870 /* Encodings.cpp */,
 				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CFC4342216E0E09B001B0512 /* Common.h */,
+				CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */,
 				CF7784BF16EAFA3E00A07466 /* UpdateEvt */,
 				CFC4342816E0E1EB001B0512 /* CreateDirectorySheet */,
 				CFF6053416F4573000AB3287 /* FileAlreadyExistSheetController */,
@@ -357,6 +373,7 @@
 				CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */,
 				CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */,
 				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
+				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +409,7 @@
 				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
+				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

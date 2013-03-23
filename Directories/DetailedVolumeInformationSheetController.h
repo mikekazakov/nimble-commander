@@ -28,6 +28,7 @@
 @property (strong) IBOutlet NSTextField *IOBlockSizeTextField;
 @property (strong) IBOutlet NSTextField *MinAllocationTextField;
 @property (strong) IBOutlet NSTextField *AllocationClumpTextField;
+@property (strong) IBOutlet NSTextView *AdvancedTextView;
 
 // it's a self-owning object, so we need a retain loop to keep it alive, otherwise ARC will kill it
 @property (strong)  DetailedVolumeInformationSheetController *ME;

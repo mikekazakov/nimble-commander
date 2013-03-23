@@ -31,6 +31,12 @@ static NSString* Bool2ToString(const bool b[2])
     return [NSString stringWithFormat:@"yes native: %@", b[1] ? @"yes" : @"no"];
 }
 
+- (void) UpdateByTimer:(NSTimer*)theTimer
+{
+    if(FetchVolumeAttributesInformation(m_Root, &m_Capabilities, &m_Attributes) == 0)
+        [self PopulateControls];
+}
+
 - (void)windowDidLoad
 {
     [super windowDidLoad];

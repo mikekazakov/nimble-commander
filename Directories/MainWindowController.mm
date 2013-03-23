@@ -376,37 +376,37 @@
         case NSF1FunctionKey:
             if([self IsPanelActive])
             {
-                if(ISMODIFIER(NSAlternateKeyMask))
+                if(ISMODIFIER(NSAlternateKeyMask|NSFunctionKeyMask))
                    [[self LeftPanelGoToButton] performClick:self];
             }
             break;
         case NSF2FunctionKey:
             if([self IsPanelActive])
             {
-                if(ISMODIFIER(NSAlternateKeyMask))
+                if(ISMODIFIER(NSAlternateKeyMask|NSFunctionKeyMask))
                     [[self RightPanelGoToButton] performClick:self];
             }
             break;
         case NSF3FunctionKey:
             if([self IsPanelActive])
             {
-                if(ISMODIFIER(NSControlKeyMask))
+                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
                     [[self ActivePanelController] ToggleSortingByName];
             }
             break;
         case NSF4FunctionKey:
             if([self IsPanelActive])
             {
-                if(ISMODIFIER(NSControlKeyMask))
+                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
                     [[self ActivePanelController] ToggleSortingByExt];
             }
             break;
         case NSF5FunctionKey:
             if([self IsPanelActive])
             {
-                if(ISMODIFIER(NSControlKeyMask))
+                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
                     [[self ActivePanelController] ToggleSortingByMTime];
-                else if(ISMODIFIER(NSShiftKeyMask))
+                else if(ISMODIFIER(NSShiftKeyMask|NSFunctionKeyMask))
                     [self HandleCopyAs];
                 else // TODO: need to check of absence of any key modifiers here
                     [self HandleCopyCommand];
@@ -415,7 +415,7 @@
         case NSF6FunctionKey:
             if([self IsPanelActive])
             {
-                if(ISMODIFIER(NSControlKeyMask))
+                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
                     [[self ActivePanelController] ToggleSortingBySize];
             }
             break;
@@ -428,7 +428,7 @@
         case NSF8FunctionKey:
             if([self IsPanelActive])
             {
-                if(ISMODIFIER(NSControlKeyMask))
+                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
                     [[self ActivePanelController] ToggleSortingByBTime];
             }
             break;

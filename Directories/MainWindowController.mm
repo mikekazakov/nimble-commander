@@ -41,11 +41,6 @@
 
 - (id)init {
     self = [super initWithWindowNibName:@"MainWindowController"];
-    if (self)
-    {
-        m_ActiveState = StateLeftPanel;
-//        [window makeFirstResponder:self]; // ????
-    }
     return self;
 }
 
@@ -57,28 +52,30 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-    
+ 
+    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.    
     m_JobData = new JobData;
-    
+
     struct passwd *pw = getpwuid(getuid());
     assert(pw);
     
     m_LeftPanelData = new PanelData;
-    [[self LeftPanelView] SetPanelData:m_LeftPanelData];
     m_LeftPanelController = [PanelController new];
+    [[self LeftPanelView] SetPanelData:m_LeftPanelData];    
     [m_LeftPanelController SetView:[self LeftPanelView]];
     [m_LeftPanelController SetData:m_LeftPanelData];
     [m_LeftPanelController GoToDirectory:pw->pw_dir];
-    
+
     m_RightPanelData = new PanelData;
-    [[self RightPanelView] SetPanelData:m_RightPanelData];
     m_RightPanelController = [PanelController new];
+    [[self RightPanelView] SetPanelData:m_RightPanelData];    
     [m_RightPanelController SetView:[self RightPanelView]];
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController GoToDirectory:"/"];
     
+    m_ActiveState = StateLeftPanel;
     [[self LeftPanelView] Activate];
+
     [[self JobView] SetJobData:m_JobData];
     
     [[self window] makeFirstResponder:self];
@@ -91,7 +88,7 @@
                                   attribute:NSLayoutAttributeWidth
                                  multiplier:1
                                    constant:0]];
-    
+        
     [[[self window] contentView] addConstraint:
      [NSLayoutConstraint constraintWithItem:[self JobView]
                                   attribute:NSLayoutAttributeWidth
@@ -105,14 +102,13 @@
                                                          target: self
                                                        selector:@selector(UpdateByJobsTimer:)
                                                        userInfo: nil
-                                                        repeats:YES];
+                                                        repeats: YES];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(DidBecomeKeyWindow)
                                                  name:NSWindowDidBecomeKeyNotification
                                                object:[self window]];
-    
-    
+        
 //    [[self Window] visualizeConstraints:[[[self Window] contentView] constraints]];
 }
 
@@ -329,8 +325,10 @@
 {
     NSString*  const character = [event charactersIgnoringModifiers];
     if ( [character length] != 1 ) return;
-    unichar const unicode = [character characterAtIndex:0];
+    unichar const unicode        = [character characterAtIndex:0];
     unsigned short const keycode = [event keyCode];
+    NSUInteger const modif       = [event modifierFlags];
+#define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
     switch (unicode)
     {
         case NSHomeFunctionKey:
@@ -368,8 +366,8 @@
         case NSCarriageReturnCharacter: // RETURN key
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSShiftKeyMask) [[self ActivePanelController] HandleShiftReturnButton];
-                else                                         [[self ActivePanelController] HandleReturnButton];
+                if(ISMODIFIER(NSShiftKeyMask)) [[self ActivePanelController] HandleShiftReturnButton];
+                else                           [[self ActivePanelController] HandleReturnButton];
             }
             break;
         case NSTabCharacter: // TAB key
@@ -378,37 +376,37 @@
         case NSF1FunctionKey:
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSAlternateKeyMask)
+                if(ISMODIFIER(NSAlternateKeyMask))
                    [[self LeftPanelGoToButton] performClick:self];
             }
             break;
         case NSF2FunctionKey:
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSAlternateKeyMask)
+                if(ISMODIFIER(NSAlternateKeyMask))
                     [[self RightPanelGoToButton] performClick:self];
             }
             break;
         case NSF3FunctionKey:
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSControlKeyMask)
+                if(ISMODIFIER(NSControlKeyMask))
                     [[self ActivePanelController] ToggleSortingByName];
             }
             break;
         case NSF4FunctionKey:
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSControlKeyMask)
+                if(ISMODIFIER(NSControlKeyMask))
                     [[self ActivePanelController] ToggleSortingByExt];
             }
             break;
         case NSF5FunctionKey:
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSControlKeyMask)
+                if(ISMODIFIER(NSControlKeyMask))
                     [[self ActivePanelController] ToggleSortingByMTime];
-                else if([event modifierFlags] & NSShiftKeyMask)
+                else if(ISMODIFIER(NSShiftKeyMask))
                     [self HandleCopyAs];
                 else // TODO: need to check of absence of any key modifiers here
                     [self HandleCopyCommand];
@@ -417,7 +415,7 @@
         case NSF6FunctionKey:
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSControlKeyMask)
+                if(ISMODIFIER(NSControlKeyMask))
                     [[self ActivePanelController] ToggleSortingBySize];
             }
             break;
@@ -430,7 +428,7 @@
         case NSF8FunctionKey:
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSControlKeyMask)
+                if(ISMODIFIER(NSControlKeyMask))
                     [[self ActivePanelController] ToggleSortingByBTime];
             }
             break;
@@ -442,7 +440,7 @@
         {
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & NSCommandKeyMask)
+                if(ISMODIFIER(NSCommandKeyMask))
                     [[self ActivePanelController] RefreshDirectory];
             }
             break;
@@ -452,7 +450,7 @@
         {
             if([self IsPanelActive])
             {
-                if([event modifierFlags] & (NSCommandKeyMask|NSAlternateKeyMask) )
+                if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask))
                     [self HandleSynchronizePanels];
                 else if([event modifierFlags] & NSCommandKeyMask )
                     ;// swap panel functionality should be called here            
@@ -463,23 +461,21 @@
         {
             if([self IsPanelActive])
             {
-                if( [event modifierFlags] & (NSCommandKeyMask|NSAlternateKeyMask) )
+
+                if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask))
                     [self HandleDetailedVolumeInformation];
             }
         }
             
     }
+#undef ISMODIFIER
 }
 
 - (void)flagsChanged:(NSEvent *)theEvent
 {
     if([self IsPanelActive])
     {
-//        int a = 10;
-//        if()
-//        modifierFlags
         unsigned long flags = [theEvent modifierFlags];
-//        [[self ActivePanelView] ModifierFlagsChanged:flags];
         [[self LeftPanelView] ModifierFlagsChanged:flags];
         [[self RightPanelView] ModifierFlagsChanged:flags];
     }

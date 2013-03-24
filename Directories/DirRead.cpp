@@ -23,7 +23,6 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
         return -1;
     
     dirent *entp;
-    int num_of_entries = 0;
 
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
     
@@ -36,18 +35,14 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
     while((entp = _readdir_unlocked(dirp, 1)) != NULL)
     {
         if(entp->d_ino == 0) continue; // apple's documentation suggest to skip such files
-        if(entp->d_namlen == 1 && strcmp(entp->d_name, ".") == 0) continue;
-        if(entp->d_namlen == 2 && strcmp(entp->d_name, "..") == 0 && strcmp(_path, "/") == 0)
-        {
-            need_to_add_dot_dot = false;
-            continue; // skip .. for root directory
-        }
-        ++num_of_entries;
-        
+        if(entp->d_namlen == 1 && strcmp(entp->d_name, ".") == 0) continue; // do not process self entry
         if(entp->d_namlen == 2 && strcmp(entp->d_name, "..") == 0) // special case for dot-dot directory
         {
             need_to_add_dot_dot = false;
             
+            if(strcmp(_path, "/") == 0)
+                continue; // skip .. for root directory
+
             // TODO: handle situation when ".." is not the #0 entry
 
             // it's very nice that sometimes OSX can not set a valid flags on ".." file in a mount point
@@ -94,6 +89,8 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
     // stat files, find extenstions any any and create CFString name representations in several threads
     
     dispatch_group_t statg = dispatch_group_create();
+    // TODO: consider using dispatch_get_global_queue() if it works well.
+    // we can save some cpu cycles on queue creation and destruction
     dispatch_queue_t statq = dispatch_queue_create(0, DISPATCH_QUEUE_CONCURRENT);
 
     auto i = _target->begin(), e = _target->end();
@@ -103,8 +100,9 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
         
         dispatch_group_async(statg, statq, ^{
             char filename[__DARWIN_MAXPATHLEN];
+            const char *entryname = current->namec();
             memcpy(filename, pathwithslashp, pathwithslash_len);
-            memcpy(filename + pathwithslash_len, current->namec(), current->namelen+1);
+            memcpy(filename + pathwithslash_len, entryname, current->namelen+1);
             
             // stat the file
             struct stat stat_buffer;
@@ -115,19 +113,18 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
                 current->ctime = stat_buffer.st_ctimespec.tv_sec;
                 current->btime = stat_buffer.st_birthtimespec.tv_sec;
                 current->mode  = stat_buffer.st_mode;
+                current->flags = stat_buffer.st_flags;
                 if( (stat_buffer.st_mode & S_IFMT) != S_IFDIR )
                     current->size  = stat_buffer.st_size;
                 else
                     current->size = DIRENTINFO_INVALIDSIZE;
-                    
+
                 // add other stat info here. there's a lot more
             }
 
             // parse extension if any
-            const char* s = current->namec();
-            current->extoffset = -1;
             for(int i = current->namelen - 1; i >= 0; --i)
-                if(s[i] == '.')
+                if(entryname[i] == '.')
                 {
                     if(i == current->namelen - 1 || i == 0)
                         break; // degenerate case, lets think that there's no extension at all
@@ -137,7 +134,7 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
 
             // create CFString name representation
             current->cf_name = CFStringCreateWithBytesNoCopy(0,
-                                                            (UInt8*)current->name(),
+                                                            (UInt8*)entryname,
                                                             current->namelen,
                                                             kCFStringEncodingUTF8,
                                                             false,
@@ -161,7 +158,7 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
 
     dispatch_group_wait(statg, DISPATCH_TIME_FOREVER);
 
-    if(num_of_entries == 0)
+    if(_target->size() == 0)
         return -1; // something was very wrong
 
     return 0;

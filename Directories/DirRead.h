@@ -45,15 +45,17 @@ struct DirectoryEntryInformation // 96b long
     // #68
     CFStringRef    cf_name;                 // it's a string created with CFStringCreateWithBytesNoCopy, pointing at name()
     // #76
-    signed short   extoffset;               // extension of a file if any. -1 if there's no extension, or position of a first char of an extention
+    unsigned short extoffset;               // extension of a file if any. 0 if there's no extension, or position of a first char of an extention
     // #78
     mode_t         mode;                    // file type from stat
     // #80
+    uint32_t       flags;                   // st_flags field from stat, see chflags(2)
+    // #84
     const char     *symlink;                // a pointer to symlink's value or NULL if entry is not a symlink or an error has occured
-    // #88
+    // #92
     unsigned char  type;                    // file type from <sys/dirent.h> (from readdir)
-    // #89
-    unsigned char  ___padding[7];
+    // #93
+    unsigned char  ___padding[3];
     // #96
 
     inline void destroy()
@@ -79,12 +81,10 @@ struct DirectoryEntryInformation // 96b long
     
     inline bool isdir() const
     {
-//        return type == DT_DIR;
         return (mode & S_IFMT) == S_IFDIR;
     }
     inline bool isreg() const
     {
-//        return type == DT_REG;
         return (mode & S_IFMT) == S_IFREG;        
     }
     inline bool issymlink() const
@@ -97,15 +97,14 @@ struct DirectoryEntryInformation // 96b long
     }
     inline bool ishidden() const
     {
-        return !isdotdot() && namec()[0] == '.';
+        return !isdotdot() && (namec()[0] == '.' || (flags & UF_HIDDEN));
     }
     inline bool hasextension() const
     {
-        return extoffset != -1;
+        return extoffset != 0;
     }
-    inline const char* extensionc() const // undefined behaviour if called for file without extension
+    inline const char* extensionc() const
     {
-        assert(extoffset != -1);
         return namec() + extoffset;
     }
     inline bool cf_isselected() const

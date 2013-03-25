@@ -30,6 +30,10 @@ public:
     void Resume();
     void RequestStop();
     
+    // Returns value in range from 0 to 1.
+    // TODO: remove, refactor, ....
+    float GetProgress() const;
+    
     bool IsFinished() const;
     bool IsPaused() const;
     
@@ -55,6 +59,10 @@ protected:
     // }
     bool CheckPauseOrStop(int _sleep_in_ms);
     
+    // Sets the current progress of the job. Value must be in [0..1] range.
+    // TODO: remove, refactor, ...
+    void SetProgress(float _progress);
+    
 private:
     // Current state of the job.
     volatile State m_State;
@@ -66,6 +74,8 @@ private:
     // Requests internal thread to stop execution.
     // Internal thread only reads this variable.
     volatile bool m_RequestStop;
+    
+    float m_Progress;
     
     // Disable copy constructor and operator.
     OperationJob(const OperationJob&);

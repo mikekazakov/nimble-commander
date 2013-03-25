@@ -11,7 +11,8 @@
 OperationJob::OperationJob()
 :   m_State(StateReady),
     m_Paused(false),
-    m_RequestStop(false)
+    m_RequestStop(false),
+    m_Progress(0.f)
 {
     
 }
@@ -52,6 +53,11 @@ void OperationJob::RequestStop()
     m_RequestStop = true;
 }
 
+float OperationJob::GetProgress() const
+{
+    return m_Progress;
+}
+
 bool OperationJob::IsFinished() const
 {
     return m_State == StateStopped || m_State == StateCompleted;
@@ -86,4 +92,11 @@ bool OperationJob::CheckPauseOrStop(int _sleep_in_ms)
     while (m_Paused && !m_RequestStop) usleep(_sleep_in_ms*1000);
     
     return m_RequestStop;
+}
+
+void OperationJob::SetProgress(float _progress)
+{
+    if (_progress < 0.f) _progress = 0.f;
+    else if (_progress > 1.f) _progress = 1.f;
+    m_Progress = _progress;
 }

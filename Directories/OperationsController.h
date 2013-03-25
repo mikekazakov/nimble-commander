@@ -12,8 +12,8 @@
 
 @interface OperationsController : NSObject
 
--(void)AddOperation:(Operation *)_op;
-
--(void)Update;
+- (void)AddOperation:(Operation *)_op;
+- (Operation *)GetOperation:(NSUInteger)_index;
+- (NSUInteger)GetOperationsCount;
 
 @end

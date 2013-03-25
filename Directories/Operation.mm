@@ -10,12 +10,13 @@
 
 #import "OperationJob.h"
 
+
 @implementation Operation
 {
     OperationJob *m_Job;
 }
 
--(id)initWithJob:(OperationJob *)_job
+- (id)initWithJob:(OperationJob *)_job
 {
     self = [super init];
     if (self)
@@ -25,48 +26,58 @@
     return self;
 }
 
--(void)Start
+- (float)GetProgress
+{
+    return m_Job->GetProgress();
+}
+
+- (NSString *)GetCaption
+{
+    return [NSString stringWithFormat:@"Dummy caption %p", self];
+}
+
+- (void)Start
 {
     if (m_Job->GetState() == OperationJob::StateReady)
         m_Job->Start();
 }
 
--(void)Pause
+- (void)Pause
 {
     m_Job->Pause();
 }
 
--(void)Resume
+- (void)Resume
 {
     m_Job->Resume();
 }
 
--(void)Stop
+- (void)Stop
 {
     m_Job->RequestStop();
 }
 
--(BOOL)IsStarted
+- (BOOL)IsStarted
 {
     return m_Job->GetState() != OperationJob::StateReady;
 }
 
--(BOOL)IsPaused
+- (BOOL)IsPaused
 {
     return m_Job->IsPaused();
 }
 
--(BOOL)IsFinished
+- (BOOL)IsFinished
 {
     return m_Job->IsFinished();
 }
 
--(BOOL)IsCompleted
+- (BOOL)IsCompleted
 {
     return m_Job->GetState() == OperationJob::StateCompleted;
 }
 
--(BOOL)IsStopped
+- (BOOL)IsStopped
 {
     return m_Job->GetState() == OperationJob::StateStopped;
 }

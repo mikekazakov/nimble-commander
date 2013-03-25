@@ -12,24 +12,23 @@ class OperationJob;
 
 @interface Operation : NSObject
 
--(id)initWithJob:(OperationJob *)_job;
+- (id)initWithJob:(OperationJob *)_job;
 
--(void)Start;
--(void)Pause;
--(void)Resume;
--(void)Stop;
+- (float)GetProgress;
+- (NSString *)GetCaption;
 
--(BOOL)IsStarted;
+- (void)Start;
+- (void)Pause;
+- (void)Resume;
+- (void)Stop;
 
--(BOOL)IsPaused;
-
+- (BOOL)IsStarted;
+- (BOOL)IsPaused;
 // Returns true if the operation finished execution.
--(BOOL)IsFinished;
-
+- (BOOL)IsFinished;
 // Returns true if the operation finished successfully (it completed all required actions).
--(BOOL)IsCompleted;
-
+- (BOOL)IsCompleted;
 // Returns true if operation was stopped (it finished before it could complete all required actions).
--(BOOL)IsStopped;
+- (BOOL)IsStopped;
 
 @end

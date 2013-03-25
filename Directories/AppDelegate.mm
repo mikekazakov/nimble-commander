@@ -7,6 +7,9 @@
 //
 
 #import "AppDelegate.h"
+
+#import "TestWindowController.h"
+
 #include "DirRead.h"
 #include "PanelData.h"
 #include "MainWindowController.h"
@@ -14,15 +17,26 @@
 @implementation AppDelegate
 {
     MainWindowController *m_MainWindowController;
+    TestWindowController *m_TestWindowController;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
 
-    MainWindowController *mwc = [[MainWindowController alloc] init];
-    [mwc showWindow:self];
-    m_MainWindowController = mwc;
+    // TODO: remove test window
+    // fast switch between main window and test window
+    if (true)
+    {
+        MainWindowController *mwc = [[MainWindowController alloc] init];
+        [mwc showWindow:self];
+        m_MainWindowController = mwc;
+    }
+    else
+    {
+        m_TestWindowController = [[TestWindowController alloc] init];
+        [m_TestWindowController showWindow:self];
+    }
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication

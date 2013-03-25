@@ -7,10 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B5101AA517004A4E003E2354 /* TimedDummyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5101AA417004A4E003E2354 /* TimedDummyOperation.mm */; };
+		B5101AAB17004A88003E2354 /* TimedDummyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5101AA917004A88003E2354 /* TimedDummyOperationJob.mm */; };
 		B528012216FCF361004E260D /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011A16FCF361004E260D /* OperationStats.mm */; };
 		B528012316FCF361004E260D /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011C16FCF361004E260D /* OperationsController.mm */; };
 		B528012416FCF361004E260D /* OperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011E16FCF361004E260D /* OperationJob.mm */; };
 		B528012516FCF361004E260D /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528012016FCF361004E260D /* Operation.mm */; };
+		B528012C16FDEC31004E260D /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528012A16FDEC30004E260D /* OperationsSummaryViewController.mm */; };
+		B528012D16FDEC31004E260D /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B528012B16FDEC30004E260D /* OperationsSummaryViewController.xib */; };
+		B528012F16FE2A27004E260D /* TestWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B528012E16FE2A27004E260D /* TestWindow.xib */; };
+		B528013216FE2A71004E260D /* TestWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528013116FE2A71004E260D /* TestWindowController.mm */; };
+		B5EF662516FF8BD4006721CB /* OperationsSummaryView.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5EF662416FF8BD3006721CB /* OperationsSummaryView.mm */; };
 		CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */; };
 		CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
@@ -50,6 +57,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B5101AA317004A4E003E2354 /* TimedDummyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperation.h; sourceTree = "<group>"; };
+		B5101AA417004A4E003E2354 /* TimedDummyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperation.mm; sourceTree = "<group>"; };
+		B5101AA917004A88003E2354 /* TimedDummyOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperationJob.mm; sourceTree = "<group>"; };
+		B5101AAA17004A88003E2354 /* TimedDummyOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationJob.h; sourceTree = "<group>"; };
 		B528011A16FCF361004E260D /* OperationStats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationStats.mm; sourceTree = "<group>"; };
 		B528011B16FCF361004E260D /* OperationStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationStats.h; sourceTree = "<group>"; };
 		B528011C16FCF361004E260D /* OperationsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationsController.mm; sourceTree = "<group>"; };
@@ -58,6 +69,14 @@
 		B528011F16FCF361004E260D /* OperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationJob.h; sourceTree = "<group>"; };
 		B528012016FCF361004E260D /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation.mm; sourceTree = "<group>"; };
 		B528012116FCF361004E260D /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Operation.h; sourceTree = "<group>"; };
+		B528012916FDEC30004E260D /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationsSummaryViewController.h; sourceTree = "<group>"; };
+		B528012A16FDEC30004E260D /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationsSummaryViewController.mm; sourceTree = "<group>"; };
+		B528012B16FDEC30004E260D /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OperationsSummaryViewController.xib; sourceTree = "<group>"; };
+		B528012E16FE2A27004E260D /* TestWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestWindow.xib; sourceTree = "<group>"; };
+		B528013016FE2A71004E260D /* TestWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWindowController.h; sourceTree = "<group>"; };
+		B528013116FE2A71004E260D /* TestWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestWindowController.mm; sourceTree = "<group>"; };
+		B5EF662316FF8BD3006721CB /* OperationsSummaryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationsSummaryView.h; sourceTree = "<group>"; };
+		B5EF662416FF8BD3006721CB /* OperationsSummaryView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationsSummaryView.mm; sourceTree = "<group>"; };
 		CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSEventsDirUpdate.h; sourceTree = "<group>"; };
 		CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSEventsDirUpdate.mm; sourceTree = "<group>"; };
 		CF02F1D516F38805000AF870 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encodings.cpp; sourceTree = "<group>"; };
@@ -140,9 +159,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B5101AA217004A32003E2354 /* DummyOperations */ = {
+			isa = PBXGroup;
+			children = (
+				B5101AA317004A4E003E2354 /* TimedDummyOperation.h */,
+				B5101AA417004A4E003E2354 /* TimedDummyOperation.mm */,
+				B5101AA917004A88003E2354 /* TimedDummyOperationJob.mm */,
+				B5101AAA17004A88003E2354 /* TimedDummyOperationJob.h */,
+			);
+			name = DummyOperations;
+			sourceTree = "<group>";
+		};
+		B5253B4516FFACDF000E010A /* OperationsSummaryView */ = {
+			isa = PBXGroup;
+			children = (
+				B528012916FDEC30004E260D /* OperationsSummaryViewController.h */,
+				B528012A16FDEC30004E260D /* OperationsSummaryViewController.mm */,
+				B5EF662316FF8BD3006721CB /* OperationsSummaryView.h */,
+				B5EF662416FF8BD3006721CB /* OperationsSummaryView.mm */,
+				B528012B16FDEC30004E260D /* OperationsSummaryViewController.xib */,
+			);
+			name = OperationsSummaryView;
+			sourceTree = "<group>";
+		};
 		B528011916FCF347004E260D /* Operation */ = {
 			isa = PBXGroup;
 			children = (
+				B5101AA217004A32003E2354 /* DummyOperations */,
 				B528011A16FCF361004E260D /* OperationStats.mm */,
 				B528011B16FCF361004E260D /* OperationStats.h */,
 				B528011C16FCF361004E260D /* OperationsController.mm */,
@@ -151,6 +194,9 @@
 				B528011F16FCF361004E260D /* OperationJob.h */,
 				B528012016FCF361004E260D /* Operation.mm */,
 				B528012116FCF361004E260D /* Operation.h */,
+				B528012E16FE2A27004E260D /* TestWindow.xib */,
+				B528013016FE2A71004E260D /* TestWindowController.h */,
+				B528013116FE2A71004E260D /* TestWindowController.mm */,
 			);
 			name = Operation;
 			sourceTree = "<group>";
@@ -273,6 +319,7 @@
 		CFC5121A16C4BD3D00D247EE /* Directories */ = {
 			isa = PBXGroup;
 			children = (
+				B5253B4516FFACDF000E010A /* OperationsSummaryView */,
 				B528011916FCF347004E260D /* Operation */,
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
 				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
@@ -402,6 +449,8 @@
 				CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */,
 				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,
+				B528012D16FDEC31004E260D /* OperationsSummaryViewController.xib in Resources */,
+				B528012F16FE2A27004E260D /* TestWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,6 +491,11 @@
 				B528012316FCF361004E260D /* OperationsController.mm in Sources */,
 				B528012416FCF361004E260D /* OperationJob.mm in Sources */,
 				B528012516FCF361004E260D /* Operation.mm in Sources */,
+				B528012C16FDEC31004E260D /* OperationsSummaryViewController.mm in Sources */,
+				B528013216FE2A71004E260D /* TestWindowController.mm in Sources */,
+				B5EF662516FF8BD4006721CB /* OperationsSummaryView.mm in Sources */,
+				B5101AA517004A4E003E2354 /* TimedDummyOperation.mm in Sources */,
+				B5101AAB17004A88003E2354 /* TimedDummyOperationJob.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,6 +595,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Directories/Directories-Prefix.pch";
 				INFOPLIST_FILE = "Directories/Directories-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -553,6 +608,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Directories/Directories-Prefix.pch";
 				INFOPLIST_FILE = "Directories/Directories-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

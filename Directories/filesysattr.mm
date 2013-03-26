@@ -79,7 +79,7 @@ void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
                                  gid_t &_gid,
                                  bool &_has_common_gid)
 {
-    bool first = true, common_uid = true, common_gid = true;
+    bool first = true, common_uid = false, common_gid = false;
     uid_t first_uid=-1;
     gid_t first_gid=-1;
     const auto &entries = _pd.DirectoryEntries();
@@ -94,6 +94,8 @@ void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
                 first = false;
                 first_uid = item.unix_uid;
                 first_gid = item.unix_gid;
+                common_uid = true;
+                common_gid = true;
             }
             else
             {
@@ -103,6 +105,7 @@ void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
         }
     }
     _has_common_uid = common_uid;
+    _has_common_gid = common_gid;
     _uid = common_uid ? first_uid : -1;
     _gid = common_gid ? first_gid : -1;
 }

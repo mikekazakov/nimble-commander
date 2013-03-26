@@ -34,6 +34,7 @@ class PanelData;
 @property (strong) IBOutlet NSButton *SystemImmutableCheck;
 @property (strong) IBOutlet NSButton *SystemAppendCheck;
 @property (strong) IBOutlet NSPopUpButton *UsersPopUpButton;
+@property (strong) IBOutlet NSPopUpButton *GroupsPopUpButton;
 
 
 

@@ -11,10 +11,12 @@
 #include <grp.h>
 #include <vector>
 #include <algorithm>
+#include  <OpenDirectory/OpenDirectory.h>
 #include "FileSysEntryAttrSheetController.h"
 #include "Common.h"
 #include "PanelData.h"
 #include "filesysattr.h"
+
 
 struct user_info
 {
@@ -24,6 +26,14 @@ struct user_info
     inline bool operator<(const user_info &_r) const { return pw_uid < _r.pw_uid; }
 };
 
+struct group_info
+{
+    gid_t gr_gid;
+    const char *gr_name;
+    const char *gr_gecos;
+    inline bool operator<(const group_info &_r) const { return gr_gid < _r.gr_gid; }
+};
+        
 static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
 {
     if(_s == FileSysAttrAlterCommand::fsf_off) return NSOffState;
@@ -39,6 +49,7 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
     gid_t                             m_CommonGID;
     bool                              m_HasCommonGID;
     std::vector<user_info>            m_SystemUsers;
+    std::vector<group_info>           m_SystemGroups;
 }
 
 - (id)init
@@ -53,6 +64,11 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
     {
         free((void*)i.pw_name);
         free((void*)i.pw_gecos);
+    }
+    for(const auto &i: m_SystemGroups)
+    {
+        free((void*)i.gr_name);
+        free((void*)i.gr_gecos);
     }
 }
 
@@ -135,7 +151,11 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
      m_FSFState[FileSysAttrAlterCommand::fsf_sf_append] == FileSysAttrAlterCommand::fsf_mixed];
     [[self SystemAppendCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_sf_append])];
     
+    NSSize menu_pic_size;
+    menu_pic_size.width = menu_pic_size.height = [[NSFont menuFontOfSize:0] pointSize];
     
+    NSImage *img_user = [NSImage imageNamed:NSImageNameUser];
+    [img_user setSize:menu_pic_size];
     [[self UsersPopUpButton] removeAllItems];
     for(const auto &i: m_SystemUsers)
     {
@@ -145,22 +165,47 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
                          [NSString stringWithUTF8String:i.pw_gecos]
                         ];
         [[self UsersPopUpButton] addItemWithTitle:ent];
-        
+        [[[self UsersPopUpButton] lastItem] setImage:img_user];
         if(m_HasCommonUID && m_CommonUID == i.pw_uid)
             [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
     }
     
     if(!m_HasCommonUID)
     {
-        [[self UsersPopUpButton] addItemWithTitle:@"???"];
+        [[self UsersPopUpButton] addItemWithTitle:@"[Mixed]"];
+        [[[self UsersPopUpButton] lastItem] setImage:img_user];        
         [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
     }
     
+    NSImage *img_group = [NSImage imageNamed:NSImageNameUserGroup];
+    [img_group setSize:menu_pic_size];
+    [[self GroupsPopUpButton] removeAllItems];
+    for(const auto &i: m_SystemGroups)
+    {
+        NSString *ent = [NSString stringWithFormat:@"%@ (%d) - %@",
+                         [NSString stringWithUTF8String:i.gr_name],
+                         i.gr_gid,
+                         [NSString stringWithUTF8String:i.gr_gecos]
+                         ];
+        [[self GroupsPopUpButton] addItemWithTitle:ent];
+        [[[self GroupsPopUpButton] lastItem] setImage:img_group];
+        if(m_HasCommonGID && m_CommonGID == i.gr_gid)
+            [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
+    }
+    
+    if(!m_HasCommonGID)
+    {
+        [[self GroupsPopUpButton] addItemWithTitle:@"[Mixed]"];
+        [[[self GroupsPopUpButton] lastItem] setImage:img_group];        
+        [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
+    }
     
 }
 
 - (void) LoadUsers
 {
+    // here we use old getpwent for users enumeration and modern OpenDirectory service for groups enumeration
+    // that's because getgrent doesn't provide us with all information OSX has
     setpwent();
     while(struct passwd *ent = getpwent())
     {
@@ -173,14 +218,30 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
     endpwent();
     std::sort(m_SystemUsers.begin(), m_SystemUsers.end());
     
-    setgrent();
-    
-    while(struct group *ent = getgrent())
+    ODSession *s = [ODSession defaultSession];
+    ODNode *root = [ODNode nodeWithSession:s name:@"/Local/Default" error:nil];
+    ODQuery *q = [ODQuery queryWithNode:root
+                         forRecordTypes:kODRecordTypeGroups
+                              attribute:nil
+                              matchType:0
+                            queryValues:nil
+                       returnAttributes:nil
+                         maximumResults:0
+                                  error:nil];
+    NSArray *results = [q resultsAllowingPartial:NO error:nil];
+    for (ODRecord *r in results)
     {
-        // TODO: find where to get gecos for group???
+        NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+        assert([gecos count] > 0);
+        NSArray *gid = [r valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
+        assert([gid count] > 0);
+        group_info curr;
+        curr.gr_gid = (gid_t) [[gid objectAtIndex:0] integerValue];
+        curr.gr_name = strdup( [[r recordName] UTF8String] );
+        curr.gr_gecos = strdup( [(NSString*)[gecos objectAtIndex:0] UTF8String] );
+        m_SystemGroups.push_back(curr);
     }
-    
-    endgrent();
+    std::sort(m_SystemGroups.begin(), m_SystemGroups.end());
 }
 
 - (void)ShowSheet: (NSWindow *)_window entries: (const PanelData*)_data

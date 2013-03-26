@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include "Common.h"
+#include "FlexChainedStringsChunk.h"
 
 PanelData::PanelData()
 {
@@ -405,6 +406,20 @@ unsigned long PanelData::GetSelectedItemsSizeBytes() const
     return m_SelectedItemsSizeBytes;
 }
 
+FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries()
+{
+    FlexChainedStringsChunk *chunk = FlexChainedStringsChunk::Allocate();
+    FlexChainedStringsChunk *last = chunk;
+
+    size_t i = 0, e = (int)m_Entries->size();
+    for(;i!=e;++i)
+    {
+        const auto &item = (*m_Entries)[i];
+        if(item.cf_isselected())
+            last = last->AddString(item.namec(), item.namelen, 0);
+    }
+    return chunk;
+}
 
 
 

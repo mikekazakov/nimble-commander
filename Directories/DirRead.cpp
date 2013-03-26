@@ -16,12 +16,13 @@ struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked)
 
 int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformation> *_target)
 {
+    assert(sizeof(DirectoryEntryInformation) == 128);
     _target->clear();
         
     DIR *dirp = opendir(_path);
     if(!dirp)
         return -1;
-    
+
     dirent *entp;
 
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
@@ -55,7 +56,7 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
         
         DirectoryEntryInformation &current = _target->back();
         memset(&current, 0, sizeof(DirectoryEntryInformation));
-        current.type = entp->d_type;
+        current.unix_type = entp->d_type;
         current.ino  = entp->d_ino;
         current.namelen = entp->d_namlen;
         if(current.namelen < 14)
@@ -78,7 +79,7 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
         // add ".." entry by hand
         DirectoryEntryInformation current;        
         memset(&current, 0, sizeof(DirectoryEntryInformation));
-        current.type = DT_DIR;
+        current.unix_type = DT_DIR;
         current.ino  = 0;
         current.namelen = 2;
         memcpy(&current.namebuf[0], "..", current.namelen+1);
@@ -112,8 +113,10 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
                 current->mtime = stat_buffer.st_mtimespec.tv_sec;
                 current->ctime = stat_buffer.st_ctimespec.tv_sec;
                 current->btime = stat_buffer.st_birthtimespec.tv_sec;
-                current->mode  = stat_buffer.st_mode;
-                current->flags = stat_buffer.st_flags;
+                current->unix_mode  = stat_buffer.st_mode;
+                current->unix_flags = stat_buffer.st_flags;
+                current->unix_uid   = stat_buffer.st_uid;
+                current->unix_gid   = stat_buffer.st_gid;
                 if( (stat_buffer.st_mode & S_IFMT) != S_IFDIR )
                     current->size  = stat_buffer.st_size;
                 else
@@ -141,7 +144,7 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
                                                             kCFAllocatorNull);
 
             // if we're dealing with a symlink - read it's content to know the real file path
-            if( current->type == DT_LNK )
+            if( current->unix_type == DT_LNK )
             {
                 char linkpath[__DARWIN_MAXPATHLEN];
                 ssize_t sz = readlink(filename, linkpath, __DARWIN_MAXPATHLEN);

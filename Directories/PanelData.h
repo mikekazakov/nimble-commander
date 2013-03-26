@@ -5,6 +5,8 @@
 
 #include "DirRead.h"
 
+struct FlexChainedStringsChunk;
+
 struct PanelSortMode
 {
     // TODO: add sensivity flags, numerical flags
@@ -49,6 +51,7 @@ public:
     
     const DirEntryInfoT&    DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
+    FlexChainedStringsChunk* StringsFromSelectedEntries();
     
     int SortPosToRawPos(int _pos) const; // does SortedDirectoryEntries()[_pos]
     const DirectoryEntryInformation& EntryAtRawPosition(int _pos) const; // does DirectoryEntries()[_pos]

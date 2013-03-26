@@ -22,7 +22,7 @@ struct DirectoryEntryCustomFlags
     };
 };
 
-struct DirectoryEntryInformation // 96b long
+struct DirectoryEntryInformation // 128b long
 {
     // #0
     unsigned char  namebuf[14];             // UTF-8, including null-term. if namelen >13 => (char**)&name[0] is a buffer from malloc for namelen+1 bytes
@@ -33,30 +33,34 @@ struct DirectoryEntryInformation // 96b long
     // #24
     unsigned long  size;                    // file size. initial 0xFFFFFFFFFFFFFFFFu for directories, other value means calculated directory size
     // #32
-    time_t         atime;                   // time of last access
+    time_t         atime;                   // time of last access. we're dropping st_atimespec.tv_nsec information
     // #40
-    time_t         mtime;                   // time of last data modification
+    time_t         mtime;                   // time of last data modification. we're dropping st_mtimespec.tv_nsec information
     // #48
-    time_t         ctime;                   // time of last status change (data modification OR access changes, hardlink changes etc)
+    time_t         ctime;                   // time of last status change (data modification OR access changes, hardlink changes etc). we're dropping st_ctimespec.tv_nsec information
     // #56
-    time_t         btime;                   // time of file creation(birth);
+    time_t         btime;                   // time of file creation(birth). we're dropping st_birthtimespec.tv_nsec information
     // #64
     unsigned int   cflags;                  // custom flags. volatile - can be changed. up to 32 flags
     // #68
+    mode_t         unix_mode;               // file type from stat
+    // #72
     CFStringRef    cf_name;                 // it's a string created with CFStringCreateWithBytesNoCopy, pointing at name()
-    // #76
-    unsigned short extoffset;               // extension of a file if any. 0 if there's no extension, or position of a first char of an extention
-    // #78
-    mode_t         mode;                    // file type from stat
     // #80
-    uint32_t       flags;                   // st_flags field from stat, see chflags(2)
-    // #84
     const char     *symlink;                // a pointer to symlink's value or NULL if entry is not a symlink or an error has occured
+    // #88
+    uint32_t       unix_flags;              // st_flags field from stat, see chflags(2)
     // #92
-    unsigned char  type;                    // file type from <sys/dirent.h> (from readdir)
-    // #93
-    unsigned char  ___padding[3];
+    uid_t          unix_uid;                // user ID of the file
     // #96
+    gid_t          unix_gid;                // group ID of the file
+    // #100
+    unsigned short extoffset;               // extension of a file if any. 0 if there's no extension, or position of a first char of an extention
+    // #102
+    unsigned char  unix_type;               // file type from <sys/dirent.h> (from readdir)
+    // #103
+    unsigned char  ___padding[25];
+    // #128
 
     inline void destroy()
     {
@@ -81,15 +85,15 @@ struct DirectoryEntryInformation // 96b long
     
     inline bool isdir() const
     {
-        return (mode & S_IFMT) == S_IFDIR;
+        return (unix_mode & S_IFMT) == S_IFDIR;
     }
     inline bool isreg() const
     {
-        return (mode & S_IFMT) == S_IFREG;        
+        return (unix_mode & S_IFMT) == S_IFREG;
     }
     inline bool issymlink() const
     {
-        return type == DT_LNK;
+        return unix_type == DT_LNK;
     }
     inline bool isdotdot() const
     {
@@ -97,7 +101,7 @@ struct DirectoryEntryInformation // 96b long
     }
     inline bool ishidden() const
     {
-        return !isdotdot() && (namec()[0] == '.' || (flags & UF_HIDDEN));
+        return !isdotdot() && (namec()[0] == '.' || (unix_flags & UF_HIDDEN));
     }
     inline bool hasextension() const
     {
@@ -119,9 +123,6 @@ struct DirectoryEntryInformation // 96b long
     {
         cflags = cflags & ~_flag;
     }
-    
-    
-
 };
 
 int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformation> *_target);

@@ -14,7 +14,8 @@
 #include "CreateDirectorySheetController.h"
 #include "MassCopySheetController.h"
 #include "DetailedVolumeInformationSheetController.h"
-
+#include "FileSysEntryAttrSheetController.h"
+#include "FlexChainedStringsChunk.h"
 #include "JobData.h"
 #include "FileOp.h"
 #include "FileOpMassCopy.h"
@@ -305,7 +306,7 @@
 - (void) HandleDetailedVolumeInformation // CMD+ALT+L
 {
     PanelView *curview = [self ActivePanelView];
-    PanelData *curdata = [self ActivePanelData];    
+    PanelData *curdata = [self ActivePanelData];
     int curpos = [curview GetCursorPosition];
     int rawpos = curdata->SortPosToRawPos(curpos);
     char src[__DARWIN_MAXPATHLEN];
@@ -313,6 +314,13 @@
 
     DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
     [sheet ShowSheet:[self window] destpath:src];
+}
+
+- (void) HandleEntryAttributes // CTRL+A
+{
+    FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
+    [sheet ShowSheet:[self window] entries:[self ActivePanelData] ];
+    // TODO: callback delegate to grab result and to start background attrs altering process
 }
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
@@ -436,6 +444,16 @@
     
     switch (keycode)
     {
+        case 0: // a button on keyboard
+        {
+            if([self IsPanelActive])
+            {
+                if(ISMODIFIER(NSControlKeyMask))
+                    [self HandleEntryAttributes];
+            }
+            break;
+        }
+            
         case 15: // r button on keyboard
         {
             if([self IsPanelActive])

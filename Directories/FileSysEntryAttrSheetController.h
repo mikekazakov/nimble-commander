@@ -12,6 +12,16 @@ class PanelData;
 
 @interface FileSysEntryAttrSheetController : NSWindowController
 - (IBAction)OnCancel:(id)sender;
+- (IBAction)OnATimeClear:(id)sender;
+- (IBAction)OnATimeSet:(id)sender;
+- (IBAction)OnMTimeClear:(id)sender;
+- (IBAction)OnMTimeSet:(id)sender;
+- (IBAction)OnCTimeClear:(id)sender;
+- (IBAction)OnCTimeSet:(id)sender;
+- (IBAction)OnBTimeClear:(id)sender;
+- (IBAction)OnBTimeSet:(id)sender;
+
+
 - (void)ShowSheet: (NSWindow *)_window entries: (const PanelData*)_data;
 
 // it's a self-owning object, so we need a retain loop to keep it alive, otherwise ARC will kill it
@@ -25,6 +35,7 @@ class PanelData;
 @property (strong) IBOutlet NSButton *OthersReadCheck;
 @property (strong) IBOutlet NSButton *OthersWriteCheck;
 @property (strong) IBOutlet NSButton *OthersExecCheck;
+@property (strong) IBOutlet NSButton *StickyCheck;
 @property (strong) IBOutlet NSButton *NoDumpCheck;
 @property (strong) IBOutlet NSButton *UserImmutableCheck;
 @property (strong) IBOutlet NSButton *UserAppendCheck;
@@ -35,6 +46,13 @@ class PanelData;
 @property (strong) IBOutlet NSButton *SystemAppendCheck;
 @property (strong) IBOutlet NSPopUpButton *UsersPopUpButton;
 @property (strong) IBOutlet NSPopUpButton *GroupsPopUpButton;
+@property (strong) IBOutlet NSButton *SetUIDCheck;
+@property (strong) IBOutlet NSButton *SetGIDCheck;
+@property (strong) IBOutlet NSDatePicker *ATimePicker;
+@property (strong) IBOutlet NSDatePicker *MTimePicker;
+@property (strong) IBOutlet NSDatePicker *CTimePicker;
+@property (strong) IBOutlet NSDatePicker *BTimePicker;
+
 
 
 

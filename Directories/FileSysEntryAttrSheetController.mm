@@ -41,6 +41,12 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
     else return NSMixedState;
 }
 
+// return a long-long-time-ago date in GMT+0
+static NSDate *LongTimeAgo()
+{
+    return [NSDate dateWithString:@"0001-01-01 00:00:00 +0000"];
+}
+        
 @implementation FileSysEntryAttrSheetController
 {
     FileSysAttrAlterCommand::fsfstate m_FSFState[FileSysAttrAlterCommand::fsf_totalcount];
@@ -50,6 +56,15 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
     bool                              m_HasCommonGID;
     std::vector<user_info>            m_SystemUsers;
     std::vector<group_info>           m_SystemGroups;
+    
+    time_t                            m_ATime;
+    bool                              m_HasCommonATime;
+    time_t                            m_MTime;
+    bool                              m_HasCommonMTime;
+    time_t                            m_CTime;
+    bool                              m_HasCommonCTime;
+    time_t                            m_BTime;
+    bool                              m_HasCommonBTime;
 }
 
 - (id)init
@@ -118,7 +133,19 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
     [[self OthersExecCheck] setAllowsMixedState:
      m_FSFState[FileSysAttrAlterCommand::fsf_unix_oth_x] == FileSysAttrAlterCommand::fsf_mixed];
     [[self OthersExecCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_oth_x])];
+
+    [[self SetUIDCheck] setAllowsMixedState:
+     m_FSFState[FileSysAttrAlterCommand::fsf_unix_suid] == FileSysAttrAlterCommand::fsf_mixed];
+    [[self SetUIDCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_suid])];
+
+    [[self SetGIDCheck] setAllowsMixedState:
+     m_FSFState[FileSysAttrAlterCommand::fsf_unix_sgid] == FileSysAttrAlterCommand::fsf_mixed];
+    [[self SetGIDCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_sgid])];    
     
+    [[self StickyCheck] setAllowsMixedState:
+     m_FSFState[FileSysAttrAlterCommand::fsf_unix_sticky] == FileSysAttrAlterCommand::fsf_mixed];
+    [[self StickyCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_sticky])];
+
     [[self NoDumpCheck] setAllowsMixedState:
      m_FSFState[FileSysAttrAlterCommand::fsf_uf_nodump] == FileSysAttrAlterCommand::fsf_mixed];
     [[self NoDumpCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_uf_nodump])];
@@ -151,6 +178,7 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
      m_FSFState[FileSysAttrAlterCommand::fsf_sf_append] == FileSysAttrAlterCommand::fsf_mixed];
     [[self SystemAppendCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_sf_append])];
     
+    // UID/GID section
     NSSize menu_pic_size;
     menu_pic_size.width = menu_pic_size.height = [[NSFont menuFontOfSize:0] pointSize];
     
@@ -200,6 +228,28 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
         [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
     }
     
+    // Time section
+    [[self ATimePicker] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    [[self ATimePicker] setDateValue: m_HasCommonATime ?
+     [NSDate dateWithTimeIntervalSince1970:m_ATime+[[NSTimeZone defaultTimeZone]secondsFromGMT]] :
+     LongTimeAgo()];
+
+    [[self MTimePicker] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    [[self MTimePicker] setDateValue: m_HasCommonMTime ?
+     [NSDate dateWithTimeIntervalSince1970:m_MTime+[[NSTimeZone defaultTimeZone]secondsFromGMT]] :
+     LongTimeAgo()];
+    
+    [[self CTimePicker] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    [[self CTimePicker] setDateValue: m_HasCommonCTime ?
+     [NSDate dateWithTimeIntervalSince1970:m_CTime+[[NSTimeZone defaultTimeZone]secondsFromGMT]] :
+     LongTimeAgo()];
+    
+    [[self BTimePicker] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    [[self BTimePicker] setDateValue: m_HasCommonBTime ?
+     [NSDate dateWithTimeIntervalSince1970:m_BTime+[[NSTimeZone defaultTimeZone]secondsFromGMT]] :
+     LongTimeAgo()];
+    
+    
 }
 
 - (void) LoadUsers
@@ -248,6 +298,8 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
 {
     FileSysAttrAlterCommand::GetCommonFSFlagsState(*_data, m_FSFState);
     FileSysAttrAlterCommand::GetCommonFSUIDAndGID(*_data, m_CommonUID, m_HasCommonUID, m_CommonGID, m_HasCommonGID);
+    FileSysAttrAlterCommand::GetCommonFSTimes(*_data, m_ATime, m_HasCommonATime, m_MTime, m_HasCommonMTime,
+                                              m_CTime, m_HasCommonCTime, m_BTime, m_HasCommonBTime);
     
     [self LoadUsers];
     
@@ -259,11 +311,42 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
     self.ME = self;
 }
 
-- (IBAction)OnCancel:(id)sender
-{
+- (IBAction)OnCancel:(id)sender{
     [NSApp endSheet:[self window] returnCode:DialogResult::Cancel];
 }
 
+- (IBAction)OnATimeClear:(id)sender{
+    [[self ATimePicker] setDateValue:LongTimeAgo()];
+}
+        
+- (IBAction)OnATimeSet:(id)sender{
+    [[self ATimePicker] setDateValue:[[NSDate date] dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+}
+
+- (IBAction)OnMTimeClear:(id)sender{
+    [[self MTimePicker] setDateValue:LongTimeAgo()];
+}
+        
+- (IBAction)OnMTimeSet:(id)sender{
+    [[self MTimePicker] setDateValue:[[NSDate date] dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+}
+
+- (IBAction)OnCTimeClear:(id)sender{
+    [[self CTimePicker] setDateValue:LongTimeAgo()];
+}
+        
+- (IBAction)OnCTimeSet:(id)sender{
+    [[self CTimePicker] setDateValue:[[NSDate date] dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+}
+
+- (IBAction)OnBTimeClear:(id)sender{
+    [[self BTimePicker] setDateValue:LongTimeAgo()];
+}
+
+- (IBAction)OnBTimeSet:(id)sender{
+    [[self BTimePicker] setDateValue:[[NSDate date] dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+}
+        
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
     [[self window] orderOut:self];

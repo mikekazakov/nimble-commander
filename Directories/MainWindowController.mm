@@ -26,6 +26,9 @@
 #include "FSEventsDirUpdate.h"
 #include <pwd.h>
 
+// TODO: remove
+#import "TimedDummyOperation.h"
+
 
 @interface MainWindowController ()
 
@@ -500,6 +503,15 @@
             }
         }
             
+        case 17: // t button on keyboard
+        {
+            if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask))
+            {
+                [m_OperationsController AddOperation:
+                 [[TimedDummyOperation alloc] initWithTime:(1 + rand()%10)]];
+            }
+        }
+
     }
 #undef ISMODIFIER
 }

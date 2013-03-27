@@ -173,28 +173,44 @@
 		B528011916FCF347004E260D /* Operation */ = {
 			isa = PBXGroup;
 			children = (
+				B5AD9CDF17030E550099BC6D /* SummaryView */,
+				B5AD9CDE17030DAA0099BC6D /* Dummies */,
+				B528011A16FCF361004E260D /* OperationStats.mm */,
+				B528011B16FCF361004E260D /* OperationStats.h */,
+				B528011E16FCF361004E260D /* OperationJob.mm */,
+				B528011F16FCF361004E260D /* OperationJob.h */,
+				B528012016FCF361004E260D /* Operation.mm */,
+				B528012116FCF361004E260D /* Operation.h */,
+				B528011C16FCF361004E260D /* OperationsController.mm */,
+				B528011D16FCF361004E260D /* OperationsController.h */,
+			);
+			name = Operation;
+			sourceTree = "<group>";
+		};
+		B5AD9CDE17030DAA0099BC6D /* Dummies */ = {
+			isa = PBXGroup;
+			children = (
+				CF76B30F170146240066A49F /* TimedDummyOperation.h */,
+				CF76B310170146240066A49F /* TimedDummyOperation.mm */,
+				CF76B311170146240066A49F /* TimedDummyOperationJob.h */,
+				CF76B312170146240066A49F /* TimedDummyOperationJob.mm */,
+				CF76B30C170146240066A49F /* TestWindow.xib */,
+				CF76B30D170146240066A49F /* TestWindowController.h */,
+				CF76B30E170146240066A49F /* TestWindowController.mm */,
+			);
+			name = Dummies;
+			sourceTree = "<group>";
+		};
+		B5AD9CDF17030E550099BC6D /* SummaryView */ = {
+			isa = PBXGroup;
+			children = (
 				CF76B307170146240066A49F /* OperationsSummaryView.h */,
 				CF76B308170146240066A49F /* OperationsSummaryView.mm */,
 				CF76B309170146240066A49F /* OperationsSummaryViewController.h */,
 				CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */,
 				CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */,
-				CF76B30C170146240066A49F /* TestWindow.xib */,
-				CF76B30D170146240066A49F /* TestWindowController.h */,
-				CF76B30E170146240066A49F /* TestWindowController.mm */,
-				CF76B30F170146240066A49F /* TimedDummyOperation.h */,
-				CF76B310170146240066A49F /* TimedDummyOperation.mm */,
-				CF76B311170146240066A49F /* TimedDummyOperationJob.h */,
-				CF76B312170146240066A49F /* TimedDummyOperationJob.mm */,
-				B528011A16FCF361004E260D /* OperationStats.mm */,
-				B528011B16FCF361004E260D /* OperationStats.h */,
-				B528011C16FCF361004E260D /* OperationsController.mm */,
-				B528011D16FCF361004E260D /* OperationsController.h */,
-				B528011E16FCF361004E260D /* OperationJob.mm */,
-				B528011F16FCF361004E260D /* OperationJob.h */,
-				B528012016FCF361004E260D /* Operation.mm */,
-				B528012116FCF361004E260D /* Operation.h */,
 			);
-			name = Operation;
+			name = SummaryView;
 			sourceTree = "<group>";
 		};
 		CF536C0D16C92EA200F37203 /* Panel */ = {

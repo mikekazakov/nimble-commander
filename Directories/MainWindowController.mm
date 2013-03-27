@@ -19,6 +19,8 @@
 #include "JobData.h"
 #include "FileOp.h"
 #include "FileOpMassCopy.h"
+#import "OperationsController.h"
+#import "OperationsSummaryViewController.h"
 
 #include "KQueueDirUpdate.h"
 #include "FSEventsDirUpdate.h"
@@ -38,10 +40,20 @@
     PanelController *m_RightPanelController;    // creates and owns
     JobData *m_JobData;                         // creates and owns
     NSTimer *m_JobsUpdateTimer;
+    
+    OperationsController *m_OperationsController;
+    OperationsSummaryViewController *m_OpSummaryController;
 }
 
 - (id)init {
     self = [super initWithWindowNibName:@"MainWindowController"];
+    
+    if (self)
+    {
+        m_OperationsController = [[OperationsController alloc] init];
+        m_OpSummaryController = [[OperationsSummaryViewController alloc] initWthController:m_OperationsController];
+    }
+    
     return self;
 }
 
@@ -54,7 +66,10 @@
 {
     [super windowDidLoad];
  
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.    
+    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+    
+    [m_OpSummaryController AddViewTo:self.OpSummaryBox];
+    
     m_JobData = new JobData;
 
     struct passwd *pw = getpwuid(getuid());
@@ -90,14 +105,14 @@
                                  multiplier:1
                                    constant:0]];
         
-    [[[self window] contentView] addConstraint:
-     [NSLayoutConstraint constraintWithItem:[self JobView]
-                                  attribute:NSLayoutAttributeWidth
-                                  relatedBy:NSLayoutRelationEqual
-                                     toItem:0
-                                  attribute:NSLayoutAttributeWidth
-                                 multiplier:0
-                                   constant:163]];
+//    [[[self window] contentView] addConstraint:
+//     [NSLayoutConstraint constraintWithItem:[self JobView]
+//                                  attribute:NSLayoutAttributeWidth
+//                                  relatedBy:NSLayoutRelationEqual
+//                                     toItem:0
+//                                  attribute:NSLayoutAttributeWidth
+//                                 multiplier:0
+//                                   constant:163]];
 
     m_JobsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval: 0.05
                                                          target: self

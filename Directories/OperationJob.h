@@ -52,12 +52,12 @@ protected:
     //   _sleep_in_ms milliseconds
     // - if m_RequestStop is true, it returns true as soon as possible.
     // Typical usage in Do method:
-    // if (CheckPauseOrStop(10))
+    // if (CheckPauseOrStop())
     // {
     //      SetStopped();
     //      return;
     // }
-    bool CheckPauseOrStop(int _sleep_in_ms);
+    bool CheckPauseOrStop(int _sleep_in_ms = 100);
     
     // Sets the current progress of the job. Value must be in [0..1] range.
     // TODO: remove, refactor, ...

@@ -20,7 +20,11 @@ class PanelData;
 - (IBAction)OnCTimeSet:(id)sender;
 - (IBAction)OnBTimeClear:(id)sender;
 - (IBAction)OnBTimeSet:(id)sender;
-
+- (IBAction)OnProcessSubfolders:(id)sender;
+- (IBAction)OnFlag:(id)sender;
+- (IBAction)OnUIDSel:(id)sender;
+- (IBAction)OnGIDSel:(id)sender;
+- (IBAction)OnTimeChange:(id)sender;
 
 - (void)ShowSheet: (NSWindow *)_window entries: (const PanelData*)_data;
 
@@ -44,16 +48,17 @@ class PanelData;
 @property (strong) IBOutlet NSButton *ArchivedCheck;
 @property (strong) IBOutlet NSButton *SystemImmutableCheck;
 @property (strong) IBOutlet NSButton *SystemAppendCheck;
-@property (strong) IBOutlet NSPopUpButton *UsersPopUpButton;
-@property (strong) IBOutlet NSPopUpButton *GroupsPopUpButton;
 @property (strong) IBOutlet NSButton *SetUIDCheck;
 @property (strong) IBOutlet NSButton *SetGIDCheck;
+@property (strong) IBOutlet NSPopUpButton *UsersPopUpButton;
+@property (strong) IBOutlet NSPopUpButton *GroupsPopUpButton;
 @property (strong) IBOutlet NSDatePicker *ATimePicker;
 @property (strong) IBOutlet NSDatePicker *MTimePicker;
 @property (strong) IBOutlet NSDatePicker *CTimePicker;
 @property (strong) IBOutlet NSDatePicker *BTimePicker;
+@property (strong) IBOutlet NSButton *ProcessSubfoldersCheck;
 
-
+ 
 
 
 @end

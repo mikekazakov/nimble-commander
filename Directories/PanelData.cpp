@@ -16,7 +16,8 @@ PanelData::PanelData()
     m_TotalFilesInDirectory = 0;
     m_SelectedItemsSizeBytes = 0;
     m_SelectedItemsCount = 0;
-    
+    m_SelectedItemsFilesCount = 0;
+    m_SelectedItemsDirectoriesCount = 0;
     m_CustomSortMode.sepdir = true;
     m_CustomSortMode.sort = m_CustomSortMode.SortByName;
 }
@@ -325,21 +326,26 @@ PanelSortMode PanelData::GetCustomSortMode() const
 void PanelData::UpdateStatictics()
 {
     unsigned long totalbytes = 0;
-    unsigned long totalfiles = 0;
+    unsigned totalfiles = 0;
     unsigned long totalselectedbytes = 0;
-    int totalselected = 0;
-    for(auto i = m_Entries->begin(); i < m_Entries->end(); ++i)
+    unsigned totalselected = 0;
+    unsigned totalselectedfiles = 0;
+    unsigned totalselecteddirs = 0;
+
+    for(const auto &i: *m_Entries)
     {
-        if(i->isreg())
+        if(i.isreg())
         {
-            totalbytes += i->size;
+            totalbytes += i.size;
             totalfiles++;
         }
-        if(i->cf_isselected())
+        if(i.cf_isselected())
         {
-            if(i->size != DIRENTINFO_INVALIDSIZE)
-                totalselectedbytes += i->size;
+            if(i.size != DIRENTINFO_INVALIDSIZE)
+                totalselectedbytes += i.size;
             totalselected++;
+            if(i.isdir()) totalselecteddirs++;
+            else           totalselectedfiles++;
         }
 
     }
@@ -348,6 +354,8 @@ void PanelData::UpdateStatictics()
     m_TotalFilesInDirectory = totalfiles;
     m_SelectedItemsSizeBytes = totalselectedbytes;
     m_SelectedItemsCount = totalselected;
+    m_SelectedItemsDirectoriesCount = totalselecteddirs;
+    m_SelectedItemsFilesCount = totalselectedfiles;
 }
 
 unsigned long PanelData::GetTotalBytesInDirectory() const
@@ -355,7 +363,7 @@ unsigned long PanelData::GetTotalBytesInDirectory() const
     return m_TotalBytesInDirectory;
 }
 
-unsigned long PanelData::GetTotalFilesInDirectory() const
+unsigned PanelData::GetTotalFilesInDirectory() const
 {
     return m_TotalFilesInDirectory;
 }
@@ -381,6 +389,10 @@ void PanelData::CustomFlagsSelect(int _at_pos, bool _is_selected)
         if(entry.size != DIRENTINFO_INVALIDSIZE)
             m_SelectedItemsSizeBytes += entry.size;
         m_SelectedItemsCount++;
+
+        if(entry.isdir()) m_SelectedItemsDirectoriesCount++;
+        else              m_SelectedItemsFilesCount++;
+
         entry.cf_setflag(DirectoryEntryCustomFlags::Selected);
     }
     else
@@ -392,11 +404,21 @@ void PanelData::CustomFlagsSelect(int _at_pos, bool _is_selected)
         }
         assert(m_SelectedItemsCount >= 0); // sanity check
         m_SelectedItemsCount--;
+        if(entry.isdir())
+        {
+            assert(m_SelectedItemsDirectoriesCount >= 0);
+            m_SelectedItemsDirectoriesCount--;
+        }
+        else
+        {
+            assert(m_SelectedItemsFilesCount >= 0);
+            m_SelectedItemsFilesCount--;
+        }
         entry.cf_unsetflag(DirectoryEntryCustomFlags::Selected);
     }
 }
 
-int PanelData::GetSelectedItemsCount() const
+unsigned PanelData::GetSelectedItemsCount() const
 {
     return m_SelectedItemsCount;
 }
@@ -404,6 +426,16 @@ int PanelData::GetSelectedItemsCount() const
 unsigned long PanelData::GetSelectedItemsSizeBytes() const
 {
     return m_SelectedItemsSizeBytes;
+}
+
+unsigned PanelData::GetSelectedItemsFilesCount() const
+{
+    return m_SelectedItemsFilesCount;
+}
+
+unsigned PanelData::GetSelectedItemsDirectoriesCount() const
+{
+    return m_SelectedItemsDirectoriesCount;
 }
 
 FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries()

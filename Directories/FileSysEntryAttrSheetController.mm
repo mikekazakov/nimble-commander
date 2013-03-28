@@ -23,7 +23,7 @@ struct user_info
     uid_t pw_uid;
     const char *pw_name;
     const char *pw_gecos;
-    inline bool operator<(const user_info &_r) const { return pw_uid < _r.pw_uid; }
+    inline bool operator<(const user_info &_r) const { return (signed)pw_uid < (signed)_r.pw_uid; }
 };
 
 struct group_info
@@ -31,7 +31,7 @@ struct group_info
     gid_t gr_gid;
     const char *gr_name;
     const char *gr_gecos;
-    inline bool operator<(const group_info &_r) const { return gr_gid < _r.gr_gid; }
+    inline bool operator<(const group_info &_r) const { return (signed)gr_gid < (signed)_r.gr_gid; }
 };
         
 static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
@@ -41,35 +41,67 @@ static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
     else return NSMixedState;
 }
 
+static FileSysAttrAlterCommand::fsfstate bs_to_fsfstate(NSButton *_b)
+{
+    NSInteger state = [_b state];
+    if(state == NSOffState) return FileSysAttrAlterCommand::fsf_off;
+    if(state == NSOnState)  return FileSysAttrAlterCommand::fsf_on;
+    return FileSysAttrAlterCommand::fsf_mixed;
+}
+
 // return a long-long-time-ago date in GMT+0
 static NSDate *LongTimeAgo()
 {
     return [NSDate dateWithString:@"0001-01-01 00:00:00 +0000"];
 }
+
+struct OtherAttrs
+{
+    enum
+    {
+        uid=0,
+        gid=1,
+        atime=2,
+        mtime=3,
+        ctime=4,
+        btime=5,
+        total
+    };
+};
         
 @implementation FileSysEntryAttrSheetController
 {
-    FileSysAttrAlterCommand::fsfstate m_FSFState[FileSysAttrAlterCommand::fsf_totalcount];
-    uid_t                             m_CommonUID;
+    struct
+    {
+        FileSysAttrAlterCommand::fsfstate fsfstate[FileSysAttrAlterCommand::fsf_totalcount];
+        uid_t                             uid;
+        gid_t                             gid;
+        time_t                            atime;
+        time_t                            mtime;
+        time_t                            ctime;
+        time_t                            btime;
+    } m_State[2]; // [0] is real situation, [1] is user-choosed variants ( initially [0]==[1] )
+    
+    bool                              m_UserDidEditFlags[FileSysAttrAlterCommand::fsf_totalcount];
+    bool                              m_UserDidEditOthers[OtherAttrs::total];
     bool                              m_HasCommonUID;
-    gid_t                             m_CommonGID;
     bool                              m_HasCommonGID;
+    bool                              m_HasCommonATime;
+    bool                              m_HasCommonMTime;
+    bool                              m_HasCommonCTime;
+    bool                              m_HasCommonBTime;
+    bool                              m_HasDirectoryEntries;
+    bool                              m_ProcessSubfolders;
     std::vector<user_info>            m_SystemUsers;
     std::vector<group_info>           m_SystemGroups;
-    
-    time_t                            m_ATime;
-    bool                              m_HasCommonATime;
-    time_t                            m_MTime;
-    bool                              m_HasCommonMTime;
-    time_t                            m_CTime;
-    bool                              m_HasCommonCTime;
-    time_t                            m_BTime;
-    bool                              m_HasCommonBTime;
 }
 
 - (id)init
 {
     self = [super initWithWindowNibName:@"FileSysEntryAttrSheetController"];
+    memset(m_UserDidEditFlags, 0, sizeof(m_UserDidEditFlags));
+    memset(m_UserDidEditOthers, 0, sizeof(m_UserDidEditOthers));
+    
     return self;
 }
 
@@ -96,92 +128,43 @@ static NSDate *LongTimeAgo()
 
 - (void) PopulateControls
 {
-    // TODO: totally different logic branch with "proceed with directories checkbox"
+    [[self ProcessSubfoldersCheck] setHidden:!m_HasDirectoryEntries];
 
-    [[self OwnerReadCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_usr_r] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self OwnerReadCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_usr_r])];
+#define DOFLAG(_f, _c)\
+    [[self _c] setAllowsMixedState: m_ProcessSubfolders ? true:\
+     m_State[0].fsfstate[FileSysAttrAlterCommand::_f] == FileSysAttrAlterCommand::fsf_mixed];\
+    [[self _c] setState: m_ProcessSubfolders ?\
+     fsfstate_to_bs(m_UserDidEditFlags[FileSysAttrAlterCommand::_f] ?\
+                    m_State[1].fsfstate[FileSysAttrAlterCommand::_f] :\
+                    FileSysAttrAlterCommand::fsf_mixed) :\
+     fsfstate_to_bs(m_State[1].fsfstate[FileSysAttrAlterCommand::_f])\
+     ];
+    DOFLAG(fsf_unix_usr_r  , OwnerReadCheck);
+    DOFLAG(fsf_unix_usr_w  , OwnerWriteCheck);
+    DOFLAG(fsf_unix_usr_x  , OwnerExecCheck);
+    DOFLAG(fsf_unix_grp_r  , GroupReadCheck);
+    DOFLAG(fsf_unix_grp_w  , GroupWriteCheck);
+    DOFLAG(fsf_unix_grp_x  , GroupExecCheck);
+    DOFLAG(fsf_unix_oth_r  , OthersReadCheck);
+    DOFLAG(fsf_unix_oth_w  , OthersWriteCheck);
+    DOFLAG(fsf_unix_oth_x  , OthersExecCheck);
+    DOFLAG(fsf_unix_suid   , SetUIDCheck);
+    DOFLAG(fsf_unix_sgid   , SetGIDCheck);
+    DOFLAG(fsf_unix_sticky , StickyCheck);
+    DOFLAG(fsf_uf_nodump   , NoDumpCheck);
+    DOFLAG(fsf_uf_immutable, UserImmutableCheck);
+    DOFLAG(fsf_uf_append   , UserAppendCheck);
+    DOFLAG(fsf_uf_opaque   , OpaqueCheck);
+    DOFLAG(fsf_uf_hidden   , HiddenCheck);
+    DOFLAG(fsf_sf_archived , ArchivedCheck);
+    DOFLAG(fsf_sf_immutable, SystemImmutableCheck);
+    DOFLAG(fsf_sf_append   , SystemAppendCheck);
+#undef DOFLAG
 
-    [[self OwnerWriteCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_usr_w] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self OwnerWriteCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_usr_w])];
-
-    [[self OwnerExecCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_usr_x] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self OwnerExecCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_usr_x])];
-    
-    [[self GroupReadCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_grp_r] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self GroupReadCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_grp_r])];
-
-    [[self GroupWriteCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_grp_w] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self GroupWriteCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_grp_w])];
-    
-    [[self GroupExecCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_grp_x] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self GroupExecCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_grp_x])];
-    
-    [[self OthersReadCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_oth_r] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self OthersReadCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_oth_r])];
-
-    [[self OthersWriteCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_oth_w] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self OthersWriteCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_oth_w])];
-
-    [[self OthersExecCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_oth_x] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self OthersExecCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_oth_x])];
-
-    [[self SetUIDCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_suid] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self SetUIDCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_suid])];
-
-    [[self SetGIDCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_sgid] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self SetGIDCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_sgid])];    
-    
-    [[self StickyCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_unix_sticky] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self StickyCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_unix_sticky])];
-
-    [[self NoDumpCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_uf_nodump] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self NoDumpCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_uf_nodump])];
-
-    [[self UserImmutableCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_uf_immutable] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self UserImmutableCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_uf_immutable])];
-
-    [[self UserAppendCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_uf_append] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self UserAppendCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_uf_append])];
-
-    [[self OpaqueCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_uf_opaque] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self OpaqueCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_uf_opaque])];
-    
-    [[self HiddenCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_uf_hidden] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self HiddenCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_uf_hidden])];
-
-    [[self ArchivedCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_sf_archived] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self ArchivedCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_sf_archived])];
-
-    [[self SystemImmutableCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_sf_immutable] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self SystemImmutableCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_sf_immutable])];
-
-    [[self SystemAppendCheck] setAllowsMixedState:
-     m_FSFState[FileSysAttrAlterCommand::fsf_sf_append] == FileSysAttrAlterCommand::fsf_mixed];
-    [[self SystemAppendCheck] setState:fsfstate_to_bs(m_FSFState[FileSysAttrAlterCommand::fsf_sf_append])];
-    
     // UID/GID section
     NSSize menu_pic_size;
     menu_pic_size.width = menu_pic_size.height = [[NSFont menuFontOfSize:0] pointSize];
-    
+
     NSImage *img_user = [NSImage imageNamed:NSImageNameUser];
     [img_user setSize:menu_pic_size];
     [[self UsersPopUpButton] removeAllItems];
@@ -194,15 +177,26 @@ static NSDate *LongTimeAgo()
                         ];
         [[self UsersPopUpButton] addItemWithTitle:ent];
         [[[self UsersPopUpButton] lastItem] setImage:img_user];
-        if(m_HasCommonUID && m_CommonUID == i.pw_uid)
-            [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
+        
+        if(m_ProcessSubfolders)
+        {
+            if(m_HasCommonUID && m_UserDidEditOthers[OtherAttrs::uid] && m_State[1].uid == i.pw_uid )
+                [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
+        }
+        else
+        {
+            if(m_HasCommonUID && m_State[1].uid == i.pw_uid)
+                [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
+        }
     }
     
-    if(!m_HasCommonUID)
+    if(!m_HasCommonUID || m_ProcessSubfolders)
     {
         [[self UsersPopUpButton] addItemWithTitle:@"[Mixed]"];
-        [[[self UsersPopUpButton] lastItem] setImage:img_user];        
-        [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
+        [[[self UsersPopUpButton] lastItem] setImage:img_user];
+        
+        if(!m_ProcessSubfolders || !m_UserDidEditOthers[OtherAttrs::uid])
+            [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
     }
     
     NSImage *img_group = [NSImage imageNamed:NSImageNameUserGroup];
@@ -217,90 +211,107 @@ static NSDate *LongTimeAgo()
                          ];
         [[self GroupsPopUpButton] addItemWithTitle:ent];
         [[[self GroupsPopUpButton] lastItem] setImage:img_group];
-        if(m_HasCommonGID && m_CommonGID == i.gr_gid)
+        if(m_ProcessSubfolders)
+        {
+            if(m_HasCommonGID && m_UserDidEditOthers[OtherAttrs::gid] && m_State[1].gid == i.gr_gid )
+                [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
+        }
+        else
+        {
+            if(m_HasCommonGID && m_State[1].gid == i.gr_gid)
+                [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
+        }
+    }
+    
+    if(!m_HasCommonGID || m_ProcessSubfolders)
+    {
+        [[self GroupsPopUpButton] addItemWithTitle:@"[Mixed]"];
+        [[[self GroupsPopUpButton] lastItem] setImage:img_group];
+        if(!m_ProcessSubfolders || !m_UserDidEditOthers[OtherAttrs::gid])
             [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
     }
     
-    if(!m_HasCommonGID)
-    {
-        [[self GroupsPopUpButton] addItemWithTitle:@"[Mixed]"];
-        [[[self GroupsPopUpButton] lastItem] setImage:img_group];        
-        [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
-    }
     
-    // Time section
-    [[self ATimePicker] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-    [[self ATimePicker] setDateValue: m_HasCommonATime ?
-     [NSDate dateWithTimeIntervalSince1970:m_ATime+[[NSTimeZone defaultTimeZone]secondsFromGMT]] :
-     LongTimeAgo()];
 
-    [[self MTimePicker] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-    [[self MTimePicker] setDateValue: m_HasCommonMTime ?
-     [NSDate dateWithTimeIntervalSince1970:m_MTime+[[NSTimeZone defaultTimeZone]secondsFromGMT]] :
-     LongTimeAgo()];
-    
-    [[self CTimePicker] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-    [[self CTimePicker] setDateValue: m_HasCommonCTime ?
-     [NSDate dateWithTimeIntervalSince1970:m_CTime+[[NSTimeZone defaultTimeZone]secondsFromGMT]] :
-     LongTimeAgo()];
-    
-    [[self BTimePicker] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-    [[self BTimePicker] setDateValue: m_HasCommonBTime ?
-     [NSDate dateWithTimeIntervalSince1970:m_BTime+[[NSTimeZone defaultTimeZone]secondsFromGMT]] :
-     LongTimeAgo()];
-    
-    
+    // Time section
+    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMT];
+
+#define DOTIME(_v1, _v2, _c)\
+    [[self _c] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];\
+    [[self _c] setDateValue: (!m_ProcessSubfolders && _v1) || m_UserDidEditOthers[OtherAttrs::_v2] ?\
+     [NSDate dateWithTimeIntervalSince1970:m_State[1]._v2+secsfromgmt] :\
+     LongTimeAgo() ];
+    DOTIME(m_HasCommonATime, atime, ATimePicker);
+    DOTIME(m_HasCommonMTime, mtime, MTimePicker);
+    DOTIME(m_HasCommonCTime, ctime, CTimePicker);
+    DOTIME(m_HasCommonBTime, btime, BTimePicker);
+#undef DOTIME
+
 }
 
 - (void) LoadUsers
-{
-    // here we use old getpwent for users enumeration and modern OpenDirectory service for groups enumeration
-    // that's because getgrent doesn't provide us with all information OSX has
-    setpwent();
-    while(struct passwd *ent = getpwent())
+{    
     {
-        user_info curr;
-        curr.pw_uid = ent->pw_uid;
-        curr.pw_name = strdup(ent->pw_name);
-        curr.pw_gecos = strdup(ent->pw_gecos);
-        m_SystemUsers.push_back(curr);
+        ODNode *root = [ODNode nodeWithSession:[ODSession defaultSession] name:@"/Local/Default" error:nil];
+        ODQuery *q = [ODQuery queryWithNode:root
+                             forRecordTypes:kODRecordTypeUsers
+                                  attribute:nil
+                                  matchType:0
+                                queryValues:nil
+                           returnAttributes:nil
+                             maximumResults:0
+                                      error:nil];
+        for (ODRecord *r in [q resultsAllowingPartial:NO error:nil])
+        {
+            NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+            assert([gecos count] > 0);
+            NSArray *uid = [r valuesForAttribute:kODAttributeTypeUniqueID error:nil];
+            assert([uid count] > 0);
+
+            user_info curr;
+            curr.pw_uid = (uid_t) [[uid objectAtIndex:0] integerValue];
+            curr.pw_name = strdup([[r recordName] UTF8String]);
+            curr.pw_gecos = strdup([(NSString*)[gecos objectAtIndex:0] UTF8String]);
+            m_SystemUsers.push_back(curr);
+        }
     }
-    endpwent();
     std::sort(m_SystemUsers.begin(), m_SystemUsers.end());
     
-    ODSession *s = [ODSession defaultSession];
-    ODNode *root = [ODNode nodeWithSession:s name:@"/Local/Default" error:nil];
-    ODQuery *q = [ODQuery queryWithNode:root
-                         forRecordTypes:kODRecordTypeGroups
-                              attribute:nil
-                              matchType:0
-                            queryValues:nil
-                       returnAttributes:nil
-                         maximumResults:0
-                                  error:nil];
-    NSArray *results = [q resultsAllowingPartial:NO error:nil];
-    for (ODRecord *r in results)
     {
-        NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
-        assert([gecos count] > 0);
-        NSArray *gid = [r valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
-        assert([gid count] > 0);
-        group_info curr;
-        curr.gr_gid = (gid_t) [[gid objectAtIndex:0] integerValue];
-        curr.gr_name = strdup( [[r recordName] UTF8String] );
-        curr.gr_gecos = strdup( [(NSString*)[gecos objectAtIndex:0] UTF8String] );
-        m_SystemGroups.push_back(curr);
+        ODNode *root = [ODNode nodeWithSession:[ODSession defaultSession] name:@"/Local/Default" error:nil];
+        ODQuery *q = [ODQuery queryWithNode:root
+                             forRecordTypes:kODRecordTypeGroups
+                                  attribute:nil
+                                  matchType:0
+                                queryValues:nil
+                           returnAttributes:nil
+                             maximumResults:0
+                                      error:nil];
+        for (ODRecord *r in [q resultsAllowingPartial:NO error:nil])
+        {
+            NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+            assert([gecos count] > 0);
+            NSArray *gid = [r valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
+            assert([gid count] > 0);
+            group_info curr;
+            curr.gr_gid = (gid_t) [[gid objectAtIndex:0] integerValue];
+            curr.gr_name = strdup( [[r recordName] UTF8String] );
+            curr.gr_gecos = strdup( [(NSString*)[gecos objectAtIndex:0] UTF8String] );
+            m_SystemGroups.push_back(curr);
+        }
     }
     std::sort(m_SystemGroups.begin(), m_SystemGroups.end());
 }
 
 - (void)ShowSheet: (NSWindow *)_window entries: (const PanelData*)_data
 {
-    FileSysAttrAlterCommand::GetCommonFSFlagsState(*_data, m_FSFState);
-    FileSysAttrAlterCommand::GetCommonFSUIDAndGID(*_data, m_CommonUID, m_HasCommonUID, m_CommonGID, m_HasCommonGID);
-    FileSysAttrAlterCommand::GetCommonFSTimes(*_data, m_ATime, m_HasCommonATime, m_MTime, m_HasCommonMTime,
-                                              m_CTime, m_HasCommonCTime, m_BTime, m_HasCommonBTime);
+    FileSysAttrAlterCommand::GetCommonFSFlagsState(*_data, m_State[0].fsfstate);
+    FileSysAttrAlterCommand::GetCommonFSUIDAndGID(*_data, m_State[0].uid, m_HasCommonUID, m_State[0].gid, m_HasCommonGID);
+    FileSysAttrAlterCommand::GetCommonFSTimes(*_data, m_State[0].atime, m_HasCommonATime, m_State[0].mtime, m_HasCommonMTime,
+                                              m_State[0].ctime, m_HasCommonCTime, m_State[0].btime, m_HasCommonBTime);
+    memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
     
+    m_HasDirectoryEntries = _data->GetSelectedItemsDirectoriesCount() > 0;
     [self LoadUsers];
     
     [NSApp beginSheet: [self window]
@@ -317,34 +328,149 @@ static NSDate *LongTimeAgo()
 
 - (IBAction)OnATimeClear:(id)sender{
     [[self ATimePicker] setDateValue:LongTimeAgo()];
+    m_UserDidEditOthers[OtherAttrs::atime] = false;
 }
         
 - (IBAction)OnATimeSet:(id)sender{
-    [[self ATimePicker] setDateValue:[[NSDate date] dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    NSDate *cur = [NSDate date];
+    [[self ATimePicker] setDateValue:[cur dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    m_State[1].atime = [cur timeIntervalSince1970];
+    m_UserDidEditOthers[OtherAttrs::atime] = true;
 }
 
 - (IBAction)OnMTimeClear:(id)sender{
     [[self MTimePicker] setDateValue:LongTimeAgo()];
+    m_UserDidEditOthers[OtherAttrs::mtime] = false;
 }
         
 - (IBAction)OnMTimeSet:(id)sender{
-    [[self MTimePicker] setDateValue:[[NSDate date] dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    NSDate *cur = [NSDate date];
+    [[self MTimePicker] setDateValue:[cur dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    m_State[1].mtime = [cur timeIntervalSince1970];
+    m_UserDidEditOthers[OtherAttrs::mtime] = true;
 }
 
 - (IBAction)OnCTimeClear:(id)sender{
     [[self CTimePicker] setDateValue:LongTimeAgo()];
+    m_UserDidEditOthers[OtherAttrs::ctime] = false;
 }
         
 - (IBAction)OnCTimeSet:(id)sender{
-    [[self CTimePicker] setDateValue:[[NSDate date] dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    NSDate *cur = [NSDate date];    
+    [[self CTimePicker] setDateValue:[cur dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    m_State[1].ctime = [cur timeIntervalSince1970];
+    m_UserDidEditOthers[OtherAttrs::ctime] = true;
 }
 
 - (IBAction)OnBTimeClear:(id)sender{
     [[self BTimePicker] setDateValue:LongTimeAgo()];
+    m_UserDidEditOthers[OtherAttrs::btime] = false;
 }
 
 - (IBAction)OnBTimeSet:(id)sender{
-    [[self BTimePicker] setDateValue:[[NSDate date] dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    NSDate *cur = [NSDate date];
+    [[self BTimePicker] setDateValue:[cur dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    m_State[1].btime = [cur timeIntervalSince1970];
+    m_UserDidEditOthers[OtherAttrs::btime] = true;
+}
+
+- (IBAction)OnProcessSubfolders:(id)sender{
+    m_ProcessSubfolders = [[self ProcessSubfoldersCheck] state] == NSOnState;
+    [self PopulateControls];
+}
+        
+- (IBAction)OnFlag:(id)sender
+{
+#define DOFLAG(_f, _c)\
+    if(sender == [self _c]) {\
+     m_UserDidEditFlags[FileSysAttrAlterCommand::_f] = true;\
+     m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]); }
+    DOFLAG(fsf_unix_usr_r  , OwnerReadCheck);
+    DOFLAG(fsf_unix_usr_w  , OwnerWriteCheck);
+    DOFLAG(fsf_unix_usr_x  , OwnerExecCheck);
+    DOFLAG(fsf_unix_grp_r  , GroupReadCheck);
+    DOFLAG(fsf_unix_grp_w  , GroupWriteCheck);
+    DOFLAG(fsf_unix_grp_x  , GroupExecCheck);
+    DOFLAG(fsf_unix_oth_r  , OthersReadCheck);
+    DOFLAG(fsf_unix_oth_w  , OthersWriteCheck);
+    DOFLAG(fsf_unix_oth_x  , OthersExecCheck);
+    DOFLAG(fsf_unix_suid   , SetUIDCheck);
+    DOFLAG(fsf_unix_sgid   , SetGIDCheck);
+    DOFLAG(fsf_unix_sticky , StickyCheck);
+    DOFLAG(fsf_uf_nodump   , NoDumpCheck);
+    DOFLAG(fsf_uf_immutable, UserImmutableCheck);
+    DOFLAG(fsf_uf_append   , UserAppendCheck);
+    DOFLAG(fsf_uf_opaque   , OpaqueCheck);
+    DOFLAG(fsf_uf_hidden   , HiddenCheck);
+    DOFLAG(fsf_sf_archived , ArchivedCheck);
+    DOFLAG(fsf_sf_immutable, SystemImmutableCheck);
+    DOFLAG(fsf_sf_append   , SystemAppendCheck);
+#undef DOFLAG
+}
+
+- (IBAction)OnUIDSel:(id)sender
+{
+    NSInteger ind = [[self UsersPopUpButton] indexOfSelectedItem];
+    if(ind < m_SystemUsers.size())
+    {
+        m_UserDidEditOthers[OtherAttrs::uid]=true;
+        m_State[1].uid = m_SystemUsers[ind].pw_uid;
+    }
+    else
+    {
+        // user choosed [mixed]
+        m_UserDidEditOthers[OtherAttrs::uid]=false;
+        m_State[1].uid = m_State[0].uid; // reset selection to original value if any
+    }
+}
+        
+- (IBAction)OnGIDSel:(id)sender
+{
+    NSInteger ind = [[self GroupsPopUpButton] indexOfSelectedItem];
+    if(ind < m_SystemGroups.size())
+    {
+        m_UserDidEditOthers[OtherAttrs::gid]=true;
+        m_State[1].gid = m_SystemGroups[ind].gr_gid;
+    }
+    else
+    {
+        // user choosed [mixed]
+        m_UserDidEditOthers[OtherAttrs::gid]=false;
+        m_State[1].gid = m_State[0].gid; // reset selection to original value if any
+    }
+}
+
+- (IBAction)OnTimeChange:(id)sender
+{
+    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMT];
+    if(sender == [self ATimePicker])
+    {
+        NSDate *date = [[[self ATimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+        NSTimeInterval since1970 = [date timeIntervalSince1970];
+        m_UserDidEditOthers[OtherAttrs::atime] = since1970 >= 0;
+        m_State[1].atime = since1970 >= 0 ? since1970 : m_State[0].atime;
+    }
+    else if(sender == [self MTimePicker])
+    {
+        NSDate *date = [[[self MTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+        NSTimeInterval since1970 = [date timeIntervalSince1970];
+        m_UserDidEditOthers[OtherAttrs::mtime] = since1970 >= 0;
+        m_State[1].mtime = since1970 >= 0 ? since1970 : m_State[0].mtime;
+    }
+    else if(sender == [self CTimePicker])
+    {
+        NSDate *date = [[[self CTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+        NSTimeInterval since1970 = [date timeIntervalSince1970];
+        m_UserDidEditOthers[OtherAttrs::ctime] = since1970 >= 0;
+        m_State[1].ctime = since1970 >= 0 ? since1970 : m_State[0].ctime;
+    }
+    else if(sender == [self BTimePicker])
+    {
+        NSDate *date = [[[self BTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+        NSTimeInterval since1970 = [date timeIntervalSince1970];
+        m_UserDidEditOthers[OtherAttrs::btime] = since1970 >= 0;
+        m_State[1].btime = since1970 >= 0 ? since1970 : m_State[0].btime;
+    }
 }
         
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo

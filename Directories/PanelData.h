@@ -83,8 +83,10 @@ public:
     // files statistics - notes below
     void UpdateStatictics();
     unsigned long GetTotalBytesInDirectory() const;
-    unsigned long GetTotalFilesInDirectory() const;
-    int           GetSelectedItemsCount() const;
+    unsigned GetTotalFilesInDirectory() const;
+    unsigned GetSelectedItemsCount() const;
+    unsigned GetSelectedItemsFilesCount() const;
+    unsigned GetSelectedItemsDirectoriesCount() const;
     unsigned long GetSelectedItemsSizeBytes() const;
     
     
@@ -109,7 +111,9 @@ private:
     
     // statistics
     unsigned long                           m_TotalBytesInDirectory; // assuming regular files ONLY!
-    unsigned long                           m_TotalFilesInDirectory; // NOT DIRECTORIES! only regular files, maybe + symlinks and other stuff
+    unsigned                                m_TotalFilesInDirectory; // NOT DIRECTORIES! only regular files, maybe + symlinks and other stuff
     unsigned long                           m_SelectedItemsSizeBytes;
-    int                                     m_SelectedItemsCount;
+    unsigned                                m_SelectedItemsCount;
+    unsigned                                m_SelectedItemsFilesCount;
+    unsigned                                m_SelectedItemsDirectoriesCount;
 };

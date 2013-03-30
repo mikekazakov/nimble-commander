@@ -24,8 +24,13 @@
 {
     self.OperationsCountButton.alphaValue = 0.0f;
     [self.OperationsCountButton setEnabled:NO];
+    
     self.TopOperationProgress.alphaValue = 0.0f;
+    
     self.TopOperationCaption.alphaValue = 0.0f;
+    
+    self.DialogButton.alphaValue = 0.0f;
+    [self.DialogButton setEnabled:NO];
 }
 
 - (void)UpdateView
@@ -48,16 +53,11 @@
             // Need to enable and show button.
             [[self.OperationsCountButton animator] setAlphaValue:1.0f];
             [self.OperationsCountButton setEnabled:YES];
-            
-            self.OperationsCountButton.title = [@(count) stringValue];
         }
-        else
-        {
-            // Just change button title.
-            self.OperationsCountButton.title = [@(count) stringValue];
-        }
+        
+        // Just change button title.
+        self.OperationsCountButton.title = [@(count) stringValue];
     }
-    
     
     // Update top operation view.
     Operation *op = [m_OperationsController GetOperation:0];
@@ -88,6 +88,26 @@
             // Update values.
             self.TopOperationCaption.stringValue = [self.TopOperation GetCaption];
             self.TopOperationProgress.doubleValue = 100*[self.TopOperation GetProgress];
+        }
+    }
+    
+    // Update top operation's dialog button.
+    if ([self.TopOperation HasDialog])
+    {
+        if (![self.DialogButton isEnabled])
+        {
+            // Need to show button.
+            [self.DialogButton setEnabled:YES];
+            [self.DialogButton.animator setAlphaValue:1.0f];
+        }
+    }
+    else
+    {
+        if ([self.DialogButton isEnabled])
+        {
+            // Need to hide button.
+            [self.DialogButton setEnabled:NO];
+            [self.DialogButton.animator setAlphaValue:0.0f];
         }
     }
 }
@@ -134,6 +154,13 @@
 - (IBAction)StopButtonAction:(NSButton *)sender
 {
     [self.TopOperation Stop];
+}
+
+- (IBAction)DialogButtonAction:(NSButton *)sender
+{
+    assert(self.TopOperation);
+    
+    [self.TopOperation ShowDialogForWindow:[NSApp mainWindow]];
 }
 
 @end

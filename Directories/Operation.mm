@@ -9,11 +9,12 @@
 #import "Operation.h"
 
 #import "OperationJob.h"
-
+#import "OperationDialogController.h"
 
 @implementation Operation
 {
     OperationJob *m_Job;
+    volatile OperationDialogController *m_Dialog;
 }
 
 - (id)initWithJob:(OperationJob *)_job
@@ -54,6 +55,14 @@
 
 - (void)Stop
 {
+    if (m_Dialog)
+    {
+        if (m_Dialog.IsVisible)
+            [m_Dialog HideDialogWithResult:OperationDialogResultStop];
+        else
+            m_Dialog.Result = OperationDialogResultStop;
+    }
+    
     m_Job->RequestStop();
 }
 
@@ -80,6 +89,34 @@
 - (BOOL)IsStopped
 {
     return m_Job->GetState() == OperationJob::StateStopped;
+}
+
+- (void)EnqueueDialog:(OperationDialogController *)_dialog
+{
+    [_dialog SetOperation:self];
+    m_Dialog = _dialog;
+}
+
+- (BOOL)HasDialog
+{
+    return m_Dialog != nil;
+}
+
+- (void)ShowDialogForWindow:(NSWindow *)_parent
+{
+    assert([self HasDialog]);
+    
+    [m_Dialog ShowDialogFor:_parent];
+}
+
+- (void)OnDialogHidden:(OperationDialogController *)_dialog
+{
+    assert(m_Dialog == _dialog);
+    
+    if (_dialog.Result == OperationDialogResultNone) return;
+    
+    m_Dialog = nil;
+    if (_dialog.Result == OperationDialogResultStop) [self Stop];
 }
 
 @end

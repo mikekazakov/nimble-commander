@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 class OperationJob;
+@class OperationDialogController;
 
 @interface Operation : NSObject
 
@@ -30,5 +31,13 @@ class OperationJob;
 - (BOOL)IsCompleted;
 // Returns true if operation was stopped (it finished before it could complete all required actions).
 - (BOOL)IsStopped;
+
+
+// Should be called from job's inner thread.
+- (void)EnqueueDialog:(OperationDialogController *)_dialog;
+
+- (BOOL)HasDialog;
+- (void)ShowDialogForWindow:(NSWindow *)_parent;
+- (void)OnDialogHidden:(OperationDialogController *)_dialog;
 
 @end

@@ -11,18 +11,23 @@
 
 #import "OperationJob.h"
 
+@class TimedDummyOperation;
+
 class TimedDummyOperationJob : public OperationJob
 {
 public:
     TimedDummyOperationJob();
     
-    void Init(int _seconds);
+    void Init(TimedDummyOperation *_op, int _seconds);
 
 protected:
     virtual void Do();
     
 private:
     int m_CompleteTime;
+    
+    TimedDummyOperation *m_Operation;
+    
 };
 
 #endif /* defined(__Directories__TimedDummyOperationJob__) */

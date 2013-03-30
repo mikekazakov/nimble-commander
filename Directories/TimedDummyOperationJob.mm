@@ -8,14 +8,18 @@
 
 #include "TimedDummyOperationJob.h"
 
+#import "TimedDummyOperation.h"
+
 TimedDummyOperationJob::TimedDummyOperationJob()
-:   m_CompleteTime(1)
+:   m_CompleteTime(1),
+    m_Operation(nil)
 {
     
 }
 
-void TimedDummyOperationJob::Init(int _seconds)
+void TimedDummyOperationJob::Init(TimedDummyOperation *_op, int _seconds)
 {
+    m_Operation = _op;
     m_CompleteTime = _seconds*1000;
 }
 
@@ -29,6 +33,20 @@ void TimedDummyOperationJob::Do()
         {
             SetStopped();
             return;
+        }
+        
+        if (rand()%100 == 0)
+        {
+            TimedDummyOperationTestDialog *dialog = [m_Operation AskUser:elapsed_time];
+            
+            if ([dialog WaitForResult])
+            {
+                SetStopped();
+                return;
+            }
+            
+            if (dialog.NewTime != -1)
+                elapsed_time = dialog.NewTime;
         }
         
         int delay = 33;

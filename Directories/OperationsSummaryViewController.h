@@ -15,6 +15,7 @@
 @property (weak) IBOutlet NSTextField *TopOperationCaption;
 @property (weak) IBOutlet NSProgressIndicator *TopOperationProgress;
 @property (weak) IBOutlet NSButton *OperationsCountButton;
+@property (weak) IBOutlet NSButton *DialogButton;
 @property Operation *TopOperation;
 
 - (id)initWthController:(OperationsController *)_controller;
@@ -24,5 +25,6 @@
 - (IBAction)OperationsCountButtonAction:(NSButton *)sender;
 - (IBAction)PauseButtonAction:(NSButton *)sender;
 - (IBAction)StopButtonAction:(NSButton *)sender;
+- (IBAction)DialogButtonAction:(NSButton *)sender;
 
 @end

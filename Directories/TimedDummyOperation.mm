@@ -20,9 +20,19 @@
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_Job.Init(_seconds);
+        m_Job.Init(self, _seconds);
     }
     return self;
+}
+
+- (TimedDummyOperationTestDialog *)AskUser:(int)_cur_time;
+{
+    TimedDummyOperationTestDialog *dialog = [[TimedDummyOperationTestDialog alloc] init];
+    [dialog SetTime:_cur_time];
+    
+    [self EnqueueDialog:dialog];
+    
+    return dialog;
 }
 
 @end

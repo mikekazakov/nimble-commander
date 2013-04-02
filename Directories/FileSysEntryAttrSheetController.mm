@@ -16,6 +16,7 @@
 #include "Common.h"
 #include "PanelData.h"
 #include "filesysattr.h"
+#include "FlexChainedStringsChunk.h"
 
 
 struct user_info
@@ -55,6 +56,22 @@ static NSDate *LongTimeAgo()
     return [NSDate dateWithString:@"0001-01-01 00:00:00 +0000"];
 }
 
+static NSInteger ZeroSecsFromGMT()
+{
+    //    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMT];
+//    bool b = [[NSTimeZone defaultTimeZone] isDaylightSavingTime];
+//    NSTimeInterval off = [[NSTimeZone defaultTimeZone] daylightSavingTimeOffsetForDate:[NSDate date]];
+    return [[NSTimeZone defaultTimeZone]secondsFromGMTForDate:[NSDate date]];
+}
+
+// TODO: still buggy for __SOME__ files check me twice again!!!!!
+// this weirness appears only for daylight saving timezones
+static NSInteger ZeroSecsFromGMTEpoc()
+{
+    NSTimeInterval off = [[NSTimeZone defaultTimeZone] daylightSavingTimeOffsetForDate:[NSDate date]];
+    return [[NSTimeZone defaultTimeZone]secondsFromGMTForDate:[NSDate date]] - off;
+}
+        
 struct OtherAttrs
 {
     enum
@@ -94,6 +111,11 @@ struct OtherAttrs
     bool                              m_ProcessSubfolders;
     std::vector<user_info>            m_SystemUsers;
     std::vector<group_info>           m_SystemGroups;
+    FlexChainedStringsChunk          *m_Files;
+    char                              m_RootPath[MAXPATHLEN];
+
+    FileSysAttrAlterCommand           *m_Result;
+    FileSysEntryAttrSheetCompletionHandler m_Handler;
 }
 
 - (id)init
@@ -101,6 +123,7 @@ struct OtherAttrs
     self = [super initWithWindowNibName:@"FileSysEntryAttrSheetController"];
     memset(m_UserDidEditFlags, 0, sizeof(m_UserDidEditFlags));
     memset(m_UserDidEditOthers, 0, sizeof(m_UserDidEditOthers));
+    m_Result = 0;
     
     return self;
 }
@@ -117,6 +140,8 @@ struct OtherAttrs
         free((void*)i.gr_name);
         free((void*)i.gr_gecos);
     }
+    if(m_Files)
+        FlexChainedStringsChunk::FreeWithDescendants(&m_Files);
 }
 
 - (void)windowDidLoad
@@ -234,7 +259,10 @@ struct OtherAttrs
     
 
     // Time section
-    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMT];
+//    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMT];
+//    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMTForDate:[NSDate date]];
+//    NSInteger secsfromgmt = ZeroSecsFromGMT();
+    NSInteger secsfromgmt = ZeroSecsFromGMTEpoc();    
 
 #define DOTIME(_v1, _v2, _c)\
     [[self _c] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];\
@@ -246,7 +274,6 @@ struct OtherAttrs
     DOTIME(m_HasCommonCTime, ctime, CTimePicker);
     DOTIME(m_HasCommonBTime, btime, BTimePicker);
 #undef DOTIME
-
 }
 
 - (void) LoadUsers
@@ -303,7 +330,7 @@ struct OtherAttrs
     std::sort(m_SystemGroups.begin(), m_SystemGroups.end());
 }
 
-- (void)ShowSheet: (NSWindow *)_window entries: (const PanelData*)_data
+- (void)ShowSheet: (NSWindow *)_window selentries: (const PanelData*)_data handler: (FileSysEntryAttrSheetCompletionHandler) handler
 {
     FileSysAttrAlterCommand::GetCommonFSFlagsState(*_data, m_State[0].fsfstate);
     FileSysAttrAlterCommand::GetCommonFSUIDAndGID(*_data, m_State[0].uid, m_HasCommonUID, m_State[0].gid, m_HasCommonGID);
@@ -312,6 +339,8 @@ struct OtherAttrs
     memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
     
     m_HasDirectoryEntries = _data->GetSelectedItemsDirectoriesCount() > 0;
+    m_Files               = _data->StringsFromSelectedEntries();
+    _data->GetDirectoryPathWithTrailingSlash(m_RootPath);
     [self LoadUsers];
     
     [NSApp beginSheet: [self window]
@@ -320,6 +349,55 @@ struct OtherAttrs
        didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
           contextInfo: nil];
     self.ME = self;
+    m_Handler = handler;
+}
+        
+- (void)ShowSheet: (NSWindow *)_window data: (const PanelData*)_data index: (unsigned)_ind handler: (FileSysEntryAttrSheetCompletionHandler) handler
+{
+    auto &item = _data->EntryAtRawPosition(_ind);
+    typedef FileSysAttrAlterCommand abr;
+    m_State[0].fsfstate[abr::fsf_unix_usr_r] = item.unix_mode & S_IRUSR ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_usr_w] = item.unix_mode & S_IWUSR ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_usr_x] = item.unix_mode & S_IXUSR ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_grp_r] = item.unix_mode & S_IRGRP ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_grp_w] = item.unix_mode & S_IWGRP ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_grp_x] = item.unix_mode & S_IXGRP ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_oth_r] = item.unix_mode & S_IROTH ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_oth_w] = item.unix_mode & S_IWOTH ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_oth_x] = item.unix_mode & S_IXOTH ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_suid]  = item.unix_mode & S_ISUID ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_sgid]  = item.unix_mode & S_ISGID ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_unix_sticky]= item.unix_mode & S_ISVTX ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_uf_nodump]    = item.unix_flags & UF_NODUMP    ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_uf_immutable] = item.unix_flags & UF_IMMUTABLE ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_uf_append]    = item.unix_flags & UF_APPEND    ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_uf_opaque]    = item.unix_flags & UF_OPAQUE    ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_uf_hidden]    = item.unix_flags & UF_HIDDEN    ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_sf_archived]  = item.unix_flags & SF_ARCHIVED  ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_sf_immutable] = item.unix_flags & SF_IMMUTABLE ? abr::fsf_on : abr::fsf_off;
+    m_State[0].fsfstate[abr::fsf_sf_append]    = item.unix_flags & SF_APPEND    ? abr::fsf_on : abr::fsf_off;
+    m_State[0].uid = item.unix_uid;
+    m_State[0].gid = item.unix_gid;
+    m_State[0].atime = item.atime;
+    m_State[0].mtime = item.mtime;
+    m_State[0].ctime = item.ctime;
+    m_State[0].btime = item.btime;
+    m_HasCommonUID = m_HasCommonGID = m_HasCommonATime = m_HasCommonMTime = m_HasCommonCTime = m_HasCommonBTime = true;
+    memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
+
+    m_HasDirectoryEntries = item.isdir();
+    m_Files = FlexChainedStringsChunk::Allocate();
+    m_Files->AddString(item.namec(), 0);
+    _data->GetDirectoryPathWithTrailingSlash(m_RootPath);
+    
+    [self LoadUsers];
+    [NSApp beginSheet: [self window]
+       modalForWindow: _window
+        modalDelegate: self
+       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+          contextInfo: nil];
+    self.ME = self;
+    m_Handler = handler;
 }
 
 - (IBAction)OnCancel:(id)sender{
@@ -333,7 +411,7 @@ struct OtherAttrs
         
 - (IBAction)OnATimeSet:(id)sender{
     NSDate *cur = [NSDate date];
-    [[self ATimePicker] setDateValue:[cur dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    [[self ATimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
     m_State[1].atime = [cur timeIntervalSince1970];
     m_UserDidEditOthers[OtherAttrs::atime] = true;
 }
@@ -345,7 +423,7 @@ struct OtherAttrs
         
 - (IBAction)OnMTimeSet:(id)sender{
     NSDate *cur = [NSDate date];
-    [[self MTimePicker] setDateValue:[cur dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    [[self MTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
     m_State[1].mtime = [cur timeIntervalSince1970];
     m_UserDidEditOthers[OtherAttrs::mtime] = true;
 }
@@ -357,7 +435,7 @@ struct OtherAttrs
         
 - (IBAction)OnCTimeSet:(id)sender{
     NSDate *cur = [NSDate date];    
-    [[self CTimePicker] setDateValue:[cur dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    [[self CTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
     m_State[1].ctime = [cur timeIntervalSince1970];
     m_UserDidEditOthers[OtherAttrs::ctime] = true;
 }
@@ -369,7 +447,7 @@ struct OtherAttrs
 
 - (IBAction)OnBTimeSet:(id)sender{
     NSDate *cur = [NSDate date];
-    [[self BTimePicker] setDateValue:[cur dateByAddingTimeInterval:[[NSTimeZone defaultTimeZone] secondsFromGMT]]];
+    [[self BTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
     m_State[1].btime = [cur timeIntervalSince1970];
     m_UserDidEditOthers[OtherAttrs::btime] = true;
 }
@@ -442,7 +520,7 @@ struct OtherAttrs
 
 - (IBAction)OnTimeChange:(id)sender
 {
-    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMT];
+    NSInteger secsfromgmt = ZeroSecsFromGMT();
     if(sender == [self ATimePicker])
     {
         NSDate *date = [[[self ATimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
@@ -472,10 +550,75 @@ struct OtherAttrs
         m_State[1].btime = since1970 >= 0 ? since1970 : m_State[0].btime;
     }
 }
+
+- (IBAction)OnApply:(id)sender
+{
+    // get control's value to secure that user will get the same picture as he see it now
+#define DOFLAG(_f, _c)\
+m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
+    DOFLAG(fsf_unix_usr_r  , OwnerReadCheck);
+    DOFLAG(fsf_unix_usr_w  , OwnerWriteCheck);
+    DOFLAG(fsf_unix_usr_x  , OwnerExecCheck);
+    DOFLAG(fsf_unix_grp_r  , GroupReadCheck);
+    DOFLAG(fsf_unix_grp_w  , GroupWriteCheck);
+    DOFLAG(fsf_unix_grp_x  , GroupExecCheck);
+    DOFLAG(fsf_unix_oth_r  , OthersReadCheck);
+    DOFLAG(fsf_unix_oth_w  , OthersWriteCheck);
+    DOFLAG(fsf_unix_oth_x  , OthersExecCheck);
+    DOFLAG(fsf_unix_suid   , SetUIDCheck);
+    DOFLAG(fsf_unix_sgid   , SetGIDCheck);
+    DOFLAG(fsf_unix_sticky , StickyCheck);
+    DOFLAG(fsf_uf_nodump   , NoDumpCheck);
+    DOFLAG(fsf_uf_immutable, UserImmutableCheck);
+    DOFLAG(fsf_uf_append   , UserAppendCheck);
+    DOFLAG(fsf_uf_opaque   , OpaqueCheck);
+    DOFLAG(fsf_uf_hidden   , HiddenCheck);
+    DOFLAG(fsf_sf_archived , ArchivedCheck);
+    DOFLAG(fsf_sf_immutable, SystemImmutableCheck);
+    DOFLAG(fsf_sf_append   , SystemAppendCheck);
+#undef DOFLAG
+    [self OnUIDSel:nil];
+    [self OnGIDSel:nil];
+    [self OnTimeChange:[self ATimePicker]];
+    [self OnTimeChange:[self MTimePicker]];
+    [self OnTimeChange:[self CTimePicker]];
+    [self OnTimeChange:[self BTimePicker]];
+
+    // compose result
+    m_Result = (FileSysAttrAlterCommand*) malloc(sizeof(FileSysAttrAlterCommand));
+    for(int i = 0; i < FileSysAttrAlterCommand::fsf_totalcount; ++i)
+        m_Result->flags[i] = m_State[1].fsfstate[i];
+
+    if((m_Result->set_uid = m_UserDidEditOthers[OtherAttrs::uid]) == true)
+        m_Result->uid = m_State[1].uid;
+    if((m_Result->set_gid = m_UserDidEditOthers[OtherAttrs::gid]) == true)
+        m_Result->gid = m_State[1].gid;
+    if((m_Result->set_atime = m_UserDidEditOthers[OtherAttrs::atime]) == true)
+        m_Result->atime = m_State[1].atime;
+    if((m_Result->set_mtime = m_UserDidEditOthers[OtherAttrs::mtime]) == true)
+        m_Result->mtime = m_State[1].mtime;
+    if((m_Result->set_ctime = m_UserDidEditOthers[OtherAttrs::ctime]) == true)
+        m_Result->ctime = m_State[1].ctime;
+    if((m_Result->set_btime = m_UserDidEditOthers[OtherAttrs::btime]) == true)
+        m_Result->btime = m_State[1].btime;
+    m_Result->process_subdirs = m_ProcessSubfolders;
+    m_Result->files = m_Files;
+    strcpy(m_Result->root_path, m_RootPath);
+    m_Files = 0; // move ownership to m_Result;
+    
+    [NSApp endSheet:[self window] returnCode:DialogResult::Apply];    
+}
         
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
     [[self window] orderOut:self];
+    m_Handler((int)returnCode);
     self.ME = nil; // let ARC do it's duty
 }
+
+- (FileSysAttrAlterCommand*) Result
+{
+    return m_Result;
+}
+
 @end

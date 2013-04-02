@@ -9,11 +9,11 @@
 #pragma once
 
 class PanelData;
+struct FlexChainedStringsChunk;
 
-class FileSysAttrAlterCommand
+struct FileSysAttrAlterCommand
 {
-public:
-    enum fsflags
+    enum fsflags : unsigned char
     {
         fsf_unix_usr_r=0, // R for owner
         fsf_unix_usr_w=1, // W for owner
@@ -42,19 +42,13 @@ public:
 
         fsf_totalcount
     };
-    enum fsfcommands
+    enum fsfstate : unsigned char
     {
-        fsf_clear,
-        fsf_set
+        fsf_mixed = 0, // mixed state in command will state that no change is required
+        fsf_off   = 1,
+        fsf_on    = 2
     };
-    enum fsfstate
-    {
-        fsf_off,
-        fsf_on,
-        fsf_mixed
-    };
-    
-    enum fstmvals // we give to abitily to view and edit msec and nsec. but who cares?
+    enum fstmvals : unsigned char // we give no abitily to view and edit msec and nsec. but who cares?
     {
         fstm_year=0,
         fstm_mon=1,
@@ -64,6 +58,23 @@ public:
         fstm_sec=5,
         fstm_totalcount
     };
+
+    fsfstate flags[fsf_totalcount];
+    bool     set_uid;
+    uid_t    uid;
+    bool     set_gid;
+    gid_t    gid;
+    bool     set_atime;
+    time_t   atime;
+    bool     set_mtime;
+    time_t   mtime;
+    bool     set_ctime;
+    time_t   ctime;
+    bool     set_btime;
+    time_t   btime;
+    bool     process_subdirs;
+    FlexChainedStringsChunk *files;
+    char     root_path[MAXPATHLEN];
 
     // section that operates with selected panel items
     static void GetCommonFSFlagsState(const PanelData& _pd, fsfstate _state[fsf_totalcount]);

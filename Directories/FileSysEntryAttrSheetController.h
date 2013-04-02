@@ -9,8 +9,12 @@
 #import <Cocoa/Cocoa.h>
 
 class PanelData;
+struct FileSysAttrAlterCommand;
+
+typedef void (^FileSysEntryAttrSheetCompletionHandler)(int result);
 
 @interface FileSysEntryAttrSheetController : NSWindowController
+- (IBAction)OnApply:(id)sender;
 - (IBAction)OnCancel:(id)sender;
 - (IBAction)OnATimeClear:(id)sender;
 - (IBAction)OnATimeSet:(id)sender;
@@ -26,7 +30,13 @@ class PanelData;
 - (IBAction)OnGIDSel:(id)sender;
 - (IBAction)OnTimeChange:(id)sender;
 
-- (void)ShowSheet: (NSWindow *)_window entries: (const PanelData*)_data;
+- (void)ShowSheet: (NSWindow *)_window
+       selentries: (const PanelData*)_data
+          handler: (FileSysEntryAttrSheetCompletionHandler) handler;
+- (void)ShowSheet: (NSWindow *)_window
+             data: (const PanelData*)_data
+            index:(unsigned)_ind
+          handler: (FileSysEntryAttrSheetCompletionHandler) handler;
 
 // it's a self-owning object, so we need a retain loop to keep it alive, otherwise ARC will kill it
 @property (strong) FileSysEntryAttrSheetController *ME;
@@ -58,7 +68,8 @@ class PanelData;
 @property (strong) IBOutlet NSDatePicker *BTimePicker;
 @property (strong) IBOutlet NSButton *ProcessSubfoldersCheck;
 
- 
 
+- (FileSysAttrAlterCommand*) Result; // Result is allocated with malloc, and it's freeing is up to caller
+                                     // it's only available on Apply sheet result
 
 @end

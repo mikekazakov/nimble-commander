@@ -438,7 +438,7 @@ unsigned PanelData::GetSelectedItemsDirectoriesCount() const
     return m_SelectedItemsDirectoriesCount;
 }
 
-FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries()
+FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries() const
 {
     FlexChainedStringsChunk *chunk = FlexChainedStringsChunk::Allocate();
     FlexChainedStringsChunk *last = chunk;

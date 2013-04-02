@@ -21,6 +21,7 @@
 #include "FileOpMassCopy.h"
 #import "OperationsController.h"
 #import "OperationsSummaryViewController.h"
+#include "FileSysAttrChangeOperation.h"
 
 #include "KQueueDirUpdate.h"
 #include "FSEventsDirUpdate.h"
@@ -337,8 +338,27 @@
 - (void) HandleEntryAttributes // CTRL+A
 {
     FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
-    [sheet ShowSheet:[self window] entries:[self ActivePanelData] ];
-    // TODO: callback delegate to grab result and to start background attrs altering process
+    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
+        if(result == DialogResult::Apply)
+        {
+            FileSysAttrAlterCommand *command = [sheet Result];
+            [m_OperationsController AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:command]];            
+        }
+    };
+    
+    if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
+    {
+        [sheet ShowSheet:[self window] selentries:[self ActivePanelData] handler:handler];
+    }
+    else
+    {
+        PanelView *curview = [self ActivePanelView];
+        PanelData *curdata = [self ActivePanelData];
+        int curpos = [curview GetCursorPosition];
+        int rawpos = curdata->SortPosToRawPos(curpos);
+        if(!curdata->EntryAtRawPosition(rawpos).isdotdot())
+            [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
+    }
 }
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket

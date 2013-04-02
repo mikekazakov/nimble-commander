@@ -51,7 +51,7 @@ public:
     
     const DirEntryInfoT&    DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
-    FlexChainedStringsChunk* StringsFromSelectedEntries();
+    FlexChainedStringsChunk* StringsFromSelectedEntries() const;
     
     int SortPosToRawPos(int _pos) const; // does SortedDirectoryEntries()[_pos]
     const DirectoryEntryInformation& EntryAtRawPosition(int _pos) const; // does DirectoryEntries()[_pos]

@@ -10,6 +10,7 @@
 
 #import "OperationJob.h"
 #include "filesysattr.h"
+#include "FlexChainedStringsChunk.h"
 
 @class FileSysAttrChangeOperation;
 
@@ -21,10 +22,13 @@ public:
     
 protected:
     virtual void Do();
-
+    void ScanDirs();
+    void ScanDir(const char *_full_path, const FlexChainedStringsChunk::node *_prefix);
+    
 private:
     void DoFile(const char *_full_path);
     
     FileSysAttrAlterCommand *m_Command;
+    FlexChainedStringsChunk *m_Files, *m_FilesLast;
 };
 

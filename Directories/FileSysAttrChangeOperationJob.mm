@@ -20,7 +20,7 @@
 #include <sys/mount.h>
 #include <unistd.h>
 
-// TODO: cleanup code to prevent leaking 
+// TODO: cleanup code to prevent leaking
 
 void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand *_command)
 {
@@ -29,10 +29,13 @@ void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand *_command)
 
 void FileSysAttrChangeOperationJob::Do()
 {
-    // TODO: subfolders scanning for variant when subfolders are turned on
+    if(m_Command->process_subdirs)
+        ScanDirs();
+    else
+        m_Files = m_Command->files;
     
     int sn = 0;
-    FlexChainedStringsChunk *current = m_Command->files;
+    FlexChainedStringsChunk *current = m_Files;
     
     while(true)
     {
@@ -46,10 +49,11 @@ void FileSysAttrChangeOperationJob::Do()
         if( current->amount == sn )
             break;
   
-        char fn[MAXPATHLEN];
+        char fn[MAXPATHLEN], entpath[MAXPATHLEN];
+        current->strings[sn].str_with_pref(entpath);
         strcpy(fn, m_Command->root_path);
-        strcat(fn, current->strings[sn].str());
-        
+        strcat(fn, entpath); // TODO: optimize me
+
         DoFile(fn);
         
         sn++;
@@ -58,6 +62,99 @@ void FileSysAttrChangeOperationJob::Do()
     SetCompleted();
 }
 
+void FileSysAttrChangeOperationJob::ScanDirs()
+{
+    // iterates on original files list, find if entry is a dir, and if so then process it recursively
+    m_FilesLast = m_Files = FlexChainedStringsChunk::Allocate();
+    
+    int sn = 0;
+    FlexChainedStringsChunk *current = m_Command->files;
+    while(true)
+    {
+        if(sn == FlexChainedStringsChunk::strings_per_chunk && current->next != 0)
+        {
+            sn = 0;
+            current = current->next;
+            continue;
+        }
+        
+        if( current->amount == sn )
+            break;
+        
+        char fn[MAXPATHLEN];
+        strcpy(fn, m_Command->root_path);
+        strcat(fn, current->strings[sn].str());
+        
+        struct stat st;
+        if(stat(fn, &st) == 0)
+        {
+            if((st.st_mode&S_IFMT) == S_IFREG)
+            {
+                // trivial case
+                m_FilesLast = m_FilesLast->AddString(current->strings[sn].str(),
+                                                     current->strings[sn].len,
+                                                     0);
+            }
+            else if((st.st_mode&S_IFMT) == S_IFDIR)
+            {
+                char tmp[MAXPATHLEN];
+                strcpy(tmp, current->strings[sn].str());
+                strcat(tmp, "/");
+                m_FilesLast = m_FilesLast->AddString(tmp, 0); // optimize it to exclude strlen using
+                const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->strings[m_FilesLast->amount-1];
+                ScanDir(fn, dirnode);
+            }
+            
+        }
+        
+        sn++;
+    }
+}
+
+void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const FlexChainedStringsChunk::node *_prefix)
+{
+    char fn[MAXPATHLEN];    
+    DIR *dirp = opendir(_full_path);
+    if( dirp != 0)
+    {
+        dirent *entp;
+        while((entp = readdir(dirp)) != NULL)
+        {
+            if(strcmp(entp->d_name, ".") == 0 ||
+               strcmp(entp->d_name, "..") == 0) continue; // TODO: optimize me
+            
+            sprintf(fn, "%s/%s", _full_path, entp->d_name); // TODO: optimize me
+            
+            struct stat st;
+            if(stat(fn, &st) == 0)
+            {
+                if((st.st_mode&S_IFMT) == S_IFREG)
+                {
+                    m_FilesLast = m_FilesLast->AddString(entp->d_name, entp->d_namlen, _prefix);
+                }
+                else if((st.st_mode&S_IFMT) == S_IFDIR)
+                {
+                    char tmp[MAXPATHLEN];
+                    memcpy(tmp, entp->d_name, entp->d_namlen);
+                    tmp[entp->d_namlen] = '/';
+                    tmp[entp->d_namlen+1] = 0;
+                    m_FilesLast = m_FilesLast->AddString(tmp, entp->d_namlen+1, _prefix);
+                    const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->strings[m_FilesLast->amount-1];
+                    ScanDir(fn, dirnode);
+                }
+            }
+            else
+            {
+                // TODO: error handling
+            }
+        }        
+        closedir(dirp);
+    }
+    else
+    {
+        //TODO: error handling. maybe rights issue?
+    }
+}
 
 void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
 {

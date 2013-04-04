@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <assert.h>
 
 struct FlexChainedStringsChunk
 {
@@ -57,6 +58,58 @@ struct FlexChainedStringsChunk
     
     FlexChainedStringsChunk* AddString(const char *_str, const node *_prefix);
     
+    unsigned CountStringsWithDescendants() const;
+    
+    
+    
+    struct iterator
+    {
+        const FlexChainedStringsChunk *current;
+        unsigned index;
+        inline void operator++()
+        {
+            index++;
+            assert(index <= current->amount);            
+            if(index == strings_per_chunk && current->next != 0)
+            {
+                index = 0;
+                current = current->next;
+            }
+        }
+        inline bool operator==(const iterator& _right)
+        {
+            if(_right.current == (FlexChainedStringsChunk *)0xDEADBEEFDEADBEEF)
+            { // caller asked us if we're finished
+                assert(index <= current->amount);
+                return index == current->amount;
+
+            }
+            else
+                return current == _right.current && index == _right.index;
+        }
+        
+        inline bool operator!=(const iterator& _right)
+        {
+            if(_right.current == (FlexChainedStringsChunk *)0xDEADBEEFDEADBEEF)
+            { // caller asked us if we're finished
+                assert(index <= current->amount);
+                return index < current->amount;
+                
+            }
+            else
+                return current != _right.current || index != _right.index;
+        }
+        
+        inline const node& operator*() const
+        {
+            assert(index <= current->amount);
+            return current->strings[index];
+        }
+    };
+    
+    inline iterator begin() const { return {this, 0}; }
+    inline iterator end()   const { return {(FlexChainedStringsChunk *)0xDEADBEEFDEADBEEF, (unsigned)-1}; }
+
 private:
     FlexChainedStringsChunk();                        // no implementation
     ~FlexChainedStringsChunk();                       // no implementation

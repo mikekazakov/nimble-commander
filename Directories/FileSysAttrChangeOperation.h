@@ -12,5 +12,6 @@ struct FileSysAttrAlterCommand;
 @interface FileSysAttrChangeOperation : Operation
 
 - (id)initWithCommand:(FileSysAttrAlterCommand*)_command; // passing with ownership, operation will free it on finish
+- (NSString *)GetCaption;
 
 @end

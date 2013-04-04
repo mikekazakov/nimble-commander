@@ -94,3 +94,16 @@ FlexChainedStringsChunk* FlexChainedStringsChunk::AddString(const char *_str, co
 {
     return AddString(_str, (int)strlen(_str), _prefix);
 }
+
+unsigned FlexChainedStringsChunk::CountStringsWithDescendants() const
+{
+    unsigned stock = 0;
+    const FlexChainedStringsChunk *p = this;
+    while(p)
+    {
+        stock += p->amount;
+        p = p->next;
+    }
+    return stock;
+}
+

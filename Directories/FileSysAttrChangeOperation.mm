@@ -25,5 +25,17 @@
     return self;
 }
 
+- (NSString *)GetCaption
+{
+    unsigned items_total, item_no;
+    FileSysAttrChangeOperationJob::State state = m_Job.StateDetail(item_no, items_total);
+    switch(state)
+    {
+        case FileSysAttrChangeOperationJob::StateScanning: return @"Scanning...";
+        case FileSysAttrChangeOperationJob::StateSetting:
+            return [NSString stringWithFormat:@"Processing file %d of %d.", item_no, items_total];
+        default: return @"";
+    }
+}
 
 @end

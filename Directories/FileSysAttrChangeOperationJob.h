@@ -17,9 +17,20 @@
 class FileSysAttrChangeOperationJob : public OperationJob
 {
 public:
-
+    FileSysAttrChangeOperationJob();
+    ~FileSysAttrChangeOperationJob();
     void Init(FileSysAttrAlterCommand *_command);
     
+    
+    enum State
+    {
+        StateInvalid,
+        StateScanning,
+        StateSetting
+    };
+    
+    State StateDetail(unsigned &_it_no, unsigned &_it_tot) const;
+
 protected:
     virtual void Do();
     void ScanDirs();
@@ -30,5 +41,8 @@ private:
     
     FileSysAttrAlterCommand *m_Command;
     FlexChainedStringsChunk *m_Files, *m_FilesLast;
+    unsigned m_ItemsCount;
+    unsigned m_CurrentItemNumber;
+    State m_State;
 };
 

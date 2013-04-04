@@ -511,6 +511,7 @@
                 else if([event modifierFlags] & NSCommandKeyMask )
                     ;// swap panel functionality should be called here            
             }
+            break;
         }
             
         case 37: // l button on keyboard
@@ -521,6 +522,7 @@
                 if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask))
                     [self HandleDetailedVolumeInformation];
             }
+            break;            
         }
             
         case 17: // t button on keyboard
@@ -530,8 +532,8 @@
                 [m_OperationsController AddOperation:
                  [[TimedDummyOperation alloc] initWithTime:(1 + rand()%10)]];
             }
+            break;
         }
-
     }
 #undef ISMODIFIER
 }

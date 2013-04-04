@@ -12,6 +12,8 @@
 
 @interface OperationsController : NSObject
 
+@property (readonly) NSArray *Operations;
+
 - (void)AddOperation:(Operation *)_op;
 - (Operation *)GetOperation:(NSUInteger)_index;
 - (NSUInteger)GetOperationsCount;

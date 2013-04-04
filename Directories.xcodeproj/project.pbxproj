@@ -25,7 +25,7 @@
 		CF73C59B16DCDBA500F3D44F /* FileOp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59916DCDBA500F3D44F /* FileOp.mm */; };
 		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CF76B30617000C090066A49F /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
-		CF76B313170146240066A49F /* OperationsSummaryView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* OperationsSummaryView.mm */; };
+		CF76B313170146240066A49F /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
 		CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
 		CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
 		CF76B316170146240066A49F /* TestWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30C170146240066A49F /* TestWindow.xib */; };
@@ -99,8 +99,8 @@
 		CF73C59D16DE0D2900F3D44F /* MessageBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MessageBox.mm; sourceTree = "<group>"; };
 		CF76B30417000C090066A49F /* filesysattr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysattr.mm; sourceTree = "<group>"; };
 		CF76B30517000C090066A49F /* filesysattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysattr.h; sourceTree = "<group>"; };
-		CF76B307170146240066A49F /* OperationsSummaryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationsSummaryView.h; sourceTree = "<group>"; };
-		CF76B308170146240066A49F /* OperationsSummaryView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationsSummaryView.mm; sourceTree = "<group>"; };
+		CF76B307170146240066A49F /* GenericOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericOperationView.h; sourceTree = "<group>"; };
+		CF76B308170146240066A49F /* GenericOperationView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GenericOperationView.mm; sourceTree = "<group>"; };
 		CF76B309170146240066A49F /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationsSummaryViewController.h; sourceTree = "<group>"; };
 		CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationsSummaryViewController.mm; sourceTree = "<group>"; };
 		CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OperationsSummaryViewController.xib; sourceTree = "<group>"; };
@@ -235,8 +235,8 @@
 		B5AD9CDF17030E550099BC6D /* SummaryView */ = {
 			isa = PBXGroup;
 			children = (
-				CF76B307170146240066A49F /* OperationsSummaryView.h */,
-				CF76B308170146240066A49F /* OperationsSummaryView.mm */,
+				CF76B307170146240066A49F /* GenericOperationView.h */,
+				CF76B308170146240066A49F /* GenericOperationView.mm */,
 				CF76B309170146240066A49F /* OperationsSummaryViewController.h */,
 				CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */,
 				CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */,
@@ -563,7 +563,7 @@
 				B528012416FCF361004E260D /* OperationJob.mm in Sources */,
 				B528012516FCF361004E260D /* Operation.mm in Sources */,
 				CF76B30617000C090066A49F /* filesysattr.mm in Sources */,
-				CF76B313170146240066A49F /* OperationsSummaryView.mm in Sources */,
+				CF76B313170146240066A49F /* GenericOperationView.mm in Sources */,
 				CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */,
 				CF76B317170146240066A49F /* TestWindowController.mm in Sources */,
 				CF76B318170146240066A49F /* TimedDummyOperation.mm in Sources */,

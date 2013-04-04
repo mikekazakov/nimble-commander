@@ -8,11 +8,27 @@
 
 #import "OperationsController.h"
 
+// "Private" methods' declarations.
+@interface OperationsController ()
+
+- (BOOL)CanOperationStart:(Operation *)_op;
+
+- (void)Update;
+
+// Insertion and removal of operations in/from array. Necessary for bindings.
+- (void)insertObject:(Operation *)_object inOperationsAtIndex:(NSUInteger)_index;
+- (void)removeObjectFromOperationsAtIndex:(NSUInteger)_index;
+
+@end
+
+
 @implementation OperationsController
 {
     NSMutableArray *m_Operations;
     NSTimer* m_UpdateTimer;
 }
+
+@synthesize Operations = m_Operations;
 
 - (BOOL)CanOperationStart:(Operation *)_op
 {
@@ -34,12 +50,22 @@
         if ([op IsFinished])
         {
             // Remove finished operation from the collection.
-            [m_Operations removeObjectAtIndex:i];
+            [self removeObjectFromOperationsAtIndex:i];
             continue;
         }
         
         ++i;
     }
+}
+
+- (void)insertObject:(Operation *)_object inOperationsAtIndex:(NSUInteger)_index
+{
+    [m_Operations insertObject:_object atIndex:_index];
+}
+
+- (void)removeObjectFromOperationsAtIndex:(NSUInteger)_index
+{
+    [m_Operations removeObjectAtIndex:_index];
 }
 
 - (id)init
@@ -63,7 +89,7 @@
     assert(_op);
     assert(![_op IsStarted]);
     
-    [m_Operations addObject:_op];
+    [self insertObject:_op inOperationsAtIndex:m_Operations.count];
     
     if ([self CanOperationStart:_op])
         [_op Start];

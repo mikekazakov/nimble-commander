@@ -28,7 +28,7 @@ enum ActiveState
 @property (strong) IBOutlet JobView *JobView;
 @property (strong) IBOutlet MainWndGoToButton *LeftPanelGoToButton;
 @property (strong) IBOutlet MainWndGoToButton *RightPanelGoToButton;
-@property (weak) IBOutlet NSBox *OpSummaryBox;
+@property (weak) IBOutlet NSView *OpSummaryBox;
 
 // NIB actions
 - (IBAction)LeftPanelGoToButtonAction:(id)sender;

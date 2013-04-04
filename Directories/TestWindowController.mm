@@ -10,6 +10,7 @@
 
 #import "OperationsSummaryViewController.h"
 #import "TimedDummyOperation.h"
+#import "OperationsController.h"
 
 @interface TestWindowController ()
 

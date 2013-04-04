@@ -8,23 +8,27 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "OperationsController.h"
+@class OperationsController;
 
 @interface OperationsSummaryViewController : NSViewController
 
-@property (weak) IBOutlet NSTextField *TopOperationCaption;
-@property (weak) IBOutlet NSProgressIndicator *TopOperationProgress;
-@property (weak) IBOutlet NSButton *OperationsCountButton;
-@property (weak) IBOutlet NSButton *DialogButton;
-@property Operation *TopOperation;
+// Outlets and actions.
+@property (weak) IBOutlet NSTextField *OperationsCountLabel;
+@property (weak) IBOutlet NSTextField *DialogsCountLabel;
+@property (weak) IBOutlet NSTextField *NoOperationsLabel;
+@property (weak) IBOutlet NSCollectionView *CollectionView;
+@property (strong) IBOutlet NSScrollView *ScrollView;
+@property (strong) IBOutlet NSArrayController *OperationsArrayController;
+@property (weak) IBOutlet NSBox *Box;
+- (IBAction)ShowOpListButtonAction:(NSButton *)sender;
+- (IBAction)OperationPauseButtonAction:(NSButton *)sender;
+- (IBAction)OperationStopButtonAction:(NSButton *)sender;
+- (IBAction)OperationDialogButtonAction:(NSButton *)sender;
+
+
+@property (readonly) OperationsController *OperationsController;
 
 - (id)initWthController:(OperationsController *)_controller;
-
 - (void)AddViewTo:(NSView *)_parent;
-
-- (IBAction)OperationsCountButtonAction:(NSButton *)sender;
-- (IBAction)PauseButtonAction:(NSButton *)sender;
-- (IBAction)StopButtonAction:(NSButton *)sender;
-- (IBAction)DialogButtonAction:(NSButton *)sender;
 
 @end

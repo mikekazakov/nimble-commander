@@ -205,6 +205,7 @@ void FileOpMassCopy::DoRun()
 {
     if(!ScanDestination())
         return ;
+
     ScanItems();
 
     // we don't need any more - so free memory as soon as possible
@@ -345,7 +346,11 @@ bool FileOpMassCopy::ScanDestination()
         if(isfile)
             m_CopyMode = CopyToFile;
         else if(isdir)
+        {
             m_CopyMode = CopyToFolder;
+            if(m_Destination[strlen(m_Destination)-1] != '/')
+                strcat(m_Destination, "/"); // add slash at the end
+        }
         else
             assert(0); //TODO: implement handling of this weird cases
     }

@@ -31,7 +31,8 @@ FileSysAttrChangeOperationJob::~FileSysAttrChangeOperationJob()
 {
     if(m_Files != m_Command->files)
         FlexChainedStringsChunk::FreeWithDescendants(&m_Files);
-    FlexChainedStringsChunk::FreeWithDescendants(&m_Command->files);    
+    FlexChainedStringsChunk::FreeWithDescendants(&m_Command->files);
+    free(m_Command);
 }
 
 void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand *_command)
@@ -106,7 +107,7 @@ void FileSysAttrChangeOperationJob::ScanDirs()
                 strcpy(tmp, i.str());
                 strcat(tmp, "/");
                 m_FilesLast = m_FilesLast->AddString(tmp, 0); // optimize it to exclude strlen using
-                const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->strings[m_FilesLast->amount-1];
+                const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->back();
                 ScanDir(fn, dirnode);
             }
         }
@@ -142,7 +143,7 @@ void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const FlexCh
                     tmp[entp->d_namlen] = '/';
                     tmp[entp->d_namlen+1] = 0;
                     m_FilesLast = m_FilesLast->AddString(tmp, entp->d_namlen+1, _prefix);
-                    const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->strings[m_FilesLast->amount-1];
+                    const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->back();
                     ScanDir(fn, dirnode);
                 }
             }

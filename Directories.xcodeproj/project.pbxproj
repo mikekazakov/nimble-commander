@@ -39,6 +39,8 @@
 		CF8B09C716EB59680013B6A8 /* wcwidth.c in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09C616EB59680013B6A8 /* wcwidth.c */; };
 		CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.m */; };
+		CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */; };
+		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
 		CFC4341816E05395001B0512 /* JobView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4341716E05395001B0512 /* JobView.mm */; };
@@ -122,6 +124,10 @@
 		CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWndGoToButton.m; sourceTree = "<group>"; };
+		CFA58397170EA3C400E508CF /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperation.h; sourceTree = "<group>"; };
+		CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperation.mm; sourceTree = "<group>"; };
+		CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperationJob.mm; sourceTree = "<group>"; };
+		CFA5839B170EA40F00E508CF /* FileDeletionOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperationJob.h; sourceTree = "<group>"; };
 		CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
 		CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
 		CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
@@ -201,6 +207,7 @@
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				B5AD9CDE17030DAA0099BC6D /* Dummies */,
 				CFC058DD170B27D500A20CF2 /* FileSysAttrChange */,
+				CFA58396170EA35E00E508CF /* FileDeletionOperation */,
 				B528011A16FCF361004E260D /* OperationStats.mm */,
 				B528011B16FCF361004E260D /* OperationStats.h */,
 				B528011E16FCF361004E260D /* OperationJob.mm */,
@@ -298,6 +305,17 @@
 				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.m */,
 			);
 			name = MainWindow;
+			sourceTree = "<group>";
+		};
+		CFA58396170EA35E00E508CF /* FileDeletionOperation */ = {
+			isa = PBXGroup;
+			children = (
+				CFA58397170EA3C400E508CF /* FileDeletionOperation.h */,
+				CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */,
+				CFA5839B170EA40F00E508CF /* FileDeletionOperationJob.h */,
+				CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */,
+			);
+			name = FileDeletionOperation;
 			sourceTree = "<group>";
 		};
 		CFC058DD170B27D500A20CF2 /* FileSysAttrChange */ = {
@@ -573,6 +591,8 @@
 				B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */,
 				CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */,
 				CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */,
+				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
+				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

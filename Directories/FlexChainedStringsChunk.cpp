@@ -41,6 +41,11 @@ FlexChainedStringsChunk* FlexChainedStringsChunk::Allocate()
     return c;
 }
 
+FlexChainedStringsChunk* FlexChainedStringsChunk::AllocateWithSingleString(const char *_str)
+{
+    return Allocate()->AddString(_str, 0);
+}
+
 void FlexChainedStringsChunk::FreeWithDescendants(FlexChainedStringsChunk** _first_chunk)
 {
     assert(_first_chunk != 0);

@@ -22,7 +22,8 @@
 #import "OperationsController.h"
 #import "OperationsSummaryViewController.h"
 #include "FileSysAttrChangeOperation.h"
-
+#include "FileDeletionOperation.h"
+#include "MessageBox.h"
 #include "KQueueDirUpdate.h"
 #include "FSEventsDirUpdate.h"
 #include <pwd.h>
@@ -305,6 +306,52 @@
      }];
 }
 
+- (void) HandleDeleteCommand // F8
+{
+    assert([self IsPanelActive]);
+    
+    __block FlexChainedStringsChunk *files = 0;
+    if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
+    {
+        files = [self ActivePanelData]->StringsFromSelectedEntries();
+    }
+    else
+    {
+        int curpos = [[self ActivePanelView] GetCursorPosition];
+        int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
+        auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
+        if(!item.isdotdot()) // do not try to delete a parent directory
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+    }
+    
+    if(files)
+    {
+        MessageBox *mb = [MessageBox new];
+        [mb setAlertStyle:NSCriticalAlertStyle];
+        [mb setMessageText:@"Are you sure want to delete it?"];
+        [mb addButtonWithTitle:@"Delete"];
+        [mb addButtonWithTitle:@"Cancel"];
+        [mb ShowSheetWithHandler: [self window] handler:^(int ret){
+            if(ret == NSAlertFirstButtonReturn)
+            {
+                // kill it with fire!
+//                FileDeletionOperationType type = FileDeletionOperationType::Delete;
+                FileDeletionOperationType type = FileDeletionOperationType::MoveToTrash;
+                char root_path[MAXPATHLEN];
+                [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+                
+                [m_OperationsController AddOperation:[[FileDeletionOperation alloc] initWithFiles:files
+                                                                                             type:type
+                                                                                         rootpath:root_path]];
+            }
+            else
+            {
+                FlexChainedStringsChunk::FreeWithDescendants(&files);
+            }
+        }];
+    }
+}
+
 - (void) HandleSynchronizePanels // ALT+CMD+U
 {
     assert([self IsPanelActive]);
@@ -476,6 +523,8 @@
             {
                 if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
                     [[self ActivePanelController] ToggleSortingByBTime];
+                else if(ISMODIFIER(NSFunctionKeyMask))
+                    [self HandleDeleteCommand];
             }
             break;
     };

@@ -49,13 +49,13 @@ struct FlexChainedStringsChunk
     
     // allocate and free. nuff said.
     static FlexChainedStringsChunk* Allocate();
+    static FlexChainedStringsChunk* AllocateWithSingleString(const char *_str);
     static void FreeWithDescendants(FlexChainedStringsChunk** _first_chunk);
     
     // AddString return a chunk in which _str was inserted
     // it can be "this" if there was a space here, or it can be a freshly allocated descendant,
     // which is linked with .next field
     FlexChainedStringsChunk* AddString(const char *_str, int _len, const node *_prefix);
-    
     FlexChainedStringsChunk* AddString(const char *_str, const node *_prefix);
     
     unsigned CountStringsWithDescendants() const;
@@ -109,7 +109,8 @@ struct FlexChainedStringsChunk
     
     inline iterator begin() const { return {this, 0}; }
     inline iterator end()   const { return {(FlexChainedStringsChunk *)0xDEADBEEFDEADBEEF, (unsigned)-1}; }
-
+    inline const FlexChainedStringsChunk::node &back() const { assert(amount > 0); return strings[amount-1]; }
+        
 private:
     FlexChainedStringsChunk();                        // no implementation
     ~FlexChainedStringsChunk();                       // no implementation

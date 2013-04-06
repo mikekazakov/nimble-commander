@@ -19,6 +19,15 @@ public:
 
     void Init(FlexChainedStringsChunk *_files, FileDeletionOperationType _type, const char* _root);
     
+    enum State
+    {
+        StateInvalid,
+        StateScanning,
+        StateDeleting
+    };
+    
+    State StateDetail(unsigned &_it_no, unsigned &_it_tot) const;
+    
 protected:
     virtual void Do();
     void DoScan();
@@ -34,4 +43,5 @@ protected:
     char m_RootPath[MAXPATHLEN];
     unsigned m_ItemsCount;
     unsigned m_CurrentItemNumber;
+    State m_State;
 };

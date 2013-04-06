@@ -27,5 +27,17 @@
     return self;
 }
 
+- (NSString *)GetCaption
+{
+    unsigned items_total, item_no;
+    FileDeletionOperationJob::State state = m_Job.StateDetail(item_no, items_total);
+    switch(state)
+    {
+        case FileDeletionOperationJob::StateScanning: return @"Scanning...";
+        case FileDeletionOperationJob::StateDeleting:
+            return [NSString stringWithFormat:@"Deleting item %d of %d.", item_no, items_total];
+        default: return @"";
+    }
+}
 
 @end

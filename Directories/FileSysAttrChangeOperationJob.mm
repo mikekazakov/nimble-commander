@@ -64,12 +64,17 @@ void FileSysAttrChangeOperationJob::Do()
     
     m_State = StateSetting;
 
+    if(GetState() == StateStopped) return;
+    if(CheckPauseOrStop()) { SetStopped(); return; }
+    
     char entryfilename[MAXPATHLEN], *entryfilename_var;
     strcpy(entryfilename, m_Command->root_path);
     entryfilename_var = &entryfilename[0] + strlen(entryfilename);
     
     for(auto &i: *m_Files)
     {
+        if(CheckPauseOrStop()) { SetStopped(); return; }
+        
         i.str_with_pref(entryfilename_var);
 
         DoFile(entryfilename);
@@ -116,6 +121,9 @@ void FileSysAttrChangeOperationJob::ScanDirs()
 
 void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const FlexChainedStringsChunk::node *_prefix)
 {
+    if(GetState() == StateStopped) return;    
+    if(CheckPauseOrStop()) { SetStopped(); return; }
+    
     char fn[MAXPATHLEN];    
     DIR *dirp = opendir(_full_path);
     if( dirp != 0)

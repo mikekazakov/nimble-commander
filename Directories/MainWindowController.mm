@@ -337,6 +337,7 @@
                 // kill it with fire!
 //                FileDeletionOperationType type = FileDeletionOperationType::Delete;
                 FileDeletionOperationType type = FileDeletionOperationType::MoveToTrash;
+//                FileDeletionOperationType type = FileDeletionOperationType::SecureDelete;
                 char root_path[MAXPATHLEN];
                 [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
                 

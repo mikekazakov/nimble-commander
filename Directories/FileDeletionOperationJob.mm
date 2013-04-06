@@ -18,19 +18,29 @@
 #include <sys/param.h>
 #include <sys/mount.h>
 #include <unistd.h>
+#include <stdlib.h>
+
+static void Randomize(unsigned char *_data, unsigned _size)
+{
+    for(unsigned i = 0; i < _size; ++i)
+        _data[i] = rand()%256;
+}
 
 FileDeletionOperationJob::FileDeletionOperationJob():
     m_RequestedFiles(0),
     m_Type(FileDeletionOperationType::Invalid),
     m_ItemsCount(0),
-    m_CurrentItemNumber(0)
+    m_CurrentItemNumber(0),
+    m_State(StateInvalid)
 {
     
 }
 
 FileDeletionOperationJob::~FileDeletionOperationJob()
 {
-    
+    FlexChainedStringsChunk::FreeWithDescendants(&m_RequestedFiles);
+    FlexChainedStringsChunk::FreeWithDescendants(&m_Directories);
+    FlexChainedStringsChunk::FreeWithDescendants(&m_ItemsToDelete);
 }
 
 void FileDeletionOperationJob::Init(FlexChainedStringsChunk *_files, FileDeletionOperationType _type, const char* _root)
@@ -40,18 +50,33 @@ void FileDeletionOperationJob::Init(FlexChainedStringsChunk *_files, FileDeletio
     strcpy(m_RootPath, _root);
 }
 
+FileDeletionOperationJob::State FileDeletionOperationJob::StateDetail(unsigned &_it_no, unsigned &_it_tot) const
+{
+    _it_no = m_CurrentItemNumber;
+    _it_tot = m_ItemsCount;
+    return m_State;
+}
+
 void FileDeletionOperationJob::Do()
 {
+    m_State = StateScanning;
     DoScan();
 
+    if(GetState() == StateStopped) return;
+    if(CheckPauseOrStop()) { SetStopped(); return; }
+    
     m_ItemsCount = m_ItemsToDelete->CountStringsWithDescendants();
     
     char entryfilename[MAXPATHLEN], *entryfilename_var;
     strcpy(entryfilename, m_RootPath);
     entryfilename_var = &entryfilename[0] + strlen(entryfilename);
     
+    m_State = StateDeleting;
+    
     for(auto &i: *m_ItemsToDelete)
     {
+        if(CheckPauseOrStop()) { SetStopped(); return; }
+        
         i.str_with_pref(entryfilename_var);
         
         DoFile(entryfilename, i.str()[i.len-1] == '/');
@@ -59,6 +84,8 @@ void FileDeletionOperationJob::Do()
         SetProgress(float(m_CurrentItemNumber) / float(m_ItemsCount));
         m_CurrentItemNumber++;
     }
+
+    m_State = StateInvalid;
     
     SetCompleted();
 }
@@ -70,10 +97,11 @@ void FileDeletionOperationJob::DoScan()
     
     for(auto &i: *m_RequestedFiles)
     {
+        if (CheckPauseOrStop()) { SetStopped(); return; }
         char fn[MAXPATHLEN];
         strcpy(fn, m_RootPath);
         strcat(fn, i.str()); // TODO: optimize me
-
+        
         struct stat st;
         if(lstat(fn, &st) == 0)
         {
@@ -186,7 +214,6 @@ void FileDeletionOperationJob::DoFile(const char *_full_path, bool _is_dir)
     }
     else if(m_Type == FileDeletionOperationType::MoveToTrash)
     {
-        // Available in OS X v10.8 and later
         // This construction is VERY slow. Thanks, Apple!
         NSString *str = [[NSString alloc ]initWithBytesNoCopy:(void*)_full_path
                                                length:strlen(_full_path)
@@ -195,11 +222,62 @@ void FileDeletionOperationJob::DoFile(const char *_full_path, bool _is_dir)
         NSURL *path = [NSURL fileURLWithPath:str isDirectory:_is_dir];
         NSURL *newpath;
         NSError *error;
+        // Available in OS X v10.8 and later        
         if(![[NSFileManager defaultManager] trashItemAtURL:path resultingItemURL:&newpath error:&error])
         {
             // TODO: error handling
             // current volume may not support trash bin, in this case the should (?) fallback to classic deleting
         }
     }
-    
+    else if(m_Type == FileDeletionOperationType::SecureDelete)
+    {
+        if( !_is_dir )
+        {
+            // fill file content with random data
+            unsigned char data[4096];
+            const int passes=3;
+            int fd = open(_full_path, O_WRONLY|O_EXLOCK|O_NOFOLLOW);
+            if(fd != -1)
+            {
+                // TODO: error handlings!!!
+                off_t size = lseek(fd, 0, SEEK_END);
+                for(int pass=0; pass < passes; ++pass)
+                {
+                    lseek(fd, 0, SEEK_SET);
+                    off_t written=0;
+                    while(written < size)
+                    {
+                        Randomize(data, 4096);
+                        ssize_t wn = write(fd, data, size - written > 4096 ? 4096 : size - written);
+                        if(wn >= 0)
+                        {
+                            written += wn;
+                        }
+                        else
+                        {
+                            // TODO: error handling
+                        }
+                    }
+                }
+                close(fd);
+
+                // now delete it on file system level
+                if(unlink(_full_path) != 0 )
+                {
+                    // TODO: error handling
+                }
+            }
+            else
+            {
+                // TODO: error handling
+            }
+        }
+        else
+        {
+            if(rmdir(_full_path) != 0 )
+            {
+                // TODO: error handling
+            }
+        }
+    }
 }

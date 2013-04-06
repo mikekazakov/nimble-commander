@@ -22,6 +22,6 @@ enum class FileDeletionOperationType
 - (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
                type:(FileDeletionOperationType)_type
            rootpath:(const char*)_path;
-
+- (NSString *)GetCaption;
 
 @end

@@ -332,8 +332,8 @@ static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInfo
             char buf[32];
             memset(buf, 0, sizeof(buf));
             
-            if( !_dirent->isdotdot()) strcpy(buf, "   DIR");
-            else                      strcpy(buf, "    UP");
+            if( !_dirent->isdotdot()) strcpy(buf, "Folder");
+            else                      strcpy(buf, "    Up");
             
             for(int i = 0; i < 6; ++i) _out[i] = buf[i];
         }
@@ -485,6 +485,17 @@ static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dire
     }
 }
 
+static int ColumnsNumberForViewType(PanelViewType _type)
+{
+    switch(_type)
+    {
+        case PanelViewType::ViewShort: return 3;
+        case PanelViewType::ViewMedium: return 2;
+        case PanelViewType::ViewWide: return 1;
+        default: assert(0);
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 struct CursorSelectionState
@@ -587,6 +598,12 @@ struct CursorSelectionState
         int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_view];
         return entries_in_column * columns;
     }
+    if(_view == PanelViewType::ViewWide)
+    {
+        int columns = 1;
+        int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_view];
+        return entries_in_column * columns;
+    }
     else
         assert(0);
     return 1;
@@ -598,6 +615,8 @@ struct CursorSelectionState
         return m_SymbHeight - 4;
     else if(_view == PanelViewType::ViewMedium)
         return m_SymbHeight - 4;        
+    else if(_view == PanelViewType::ViewWide)
+        return m_SymbHeight - 4;
     else
         assert(0);
     return 1;
@@ -643,17 +662,19 @@ struct CursorSelectionState
     CGContextSetTextMatrix( (CGContextRef)context, AFF);
 }
 
-- (void)DrawWithShortOrMediumView:(CGContextRef) context short_view:(bool)_short
+//- (void)DrawWithShortOrMediumView:(CGContextRef) context short_view:(bool)_short
+- (void)DrawWithShortMediumWideView:(CGContextRef) context
 {
     // layout preparation
     const int columns_max = 3;
-    const int columns = _short ? 3 : 2;
-    int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_short ? PanelViewType::ViewShort : PanelViewType::ViewMedium];
+    const int columns = ColumnsNumberForViewType(m_CurrentViewType);
+    int entries_in_column = [self CalcMaxShownFilesPerPanelForView:m_CurrentViewType];
     int max_files_to_show = entries_in_column * columns;
     int column_width = (m_SymbWidth - 1) / columns;
+    if(m_CurrentViewType==PanelViewType::ViewWide) column_width = m_SymbWidth - 8;
     int columns_rest = m_SymbWidth - 1 - column_width*columns;
     int columns_width[columns_max] = {column_width, column_width, column_width};
-    if(_short && columns_rest) { columns_width[2]++;  columns_rest--; }
+    if(m_CurrentViewType==PanelViewType::ViewShort && columns_rest) { columns_width[2]++;  columns_rest--; }
     if(columns_rest) { columns_width[1]++;  columns_rest--; }
 
     auto &raw_entries = m_Data->DirectoryEntries();
@@ -691,6 +712,17 @@ struct CursorSelectionState
         else // cursor
             DrawStringWithBackground(buff, 0, CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
                 pX(X), pY(Y), context, m_FontCache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, g_FocFileBkColor);
+  
+        if(m_CurrentViewType==PanelViewType::ViewWide)
+        { // draw entry size on right side, only for this mode
+            UniChar size_info[6];
+            FormHumanReadableSizeReprentationForDirEnt6(&current, size_info);
+
+            if((m_FilesDisplayOffset + n != m_CursorPosition) || !m_IsActive)
+                DrawString(size_info, 0, 6, pX(columns_width[0]+1), pY(Y), context, m_FontCache, GetDirectoryEntryTextColor(current, false));
+            else // cursor
+                DrawStringWithBackground(size_info, 0, 6, pX(columns_width[0]+1), pY(Y), context, m_FontCache, GetDirectoryEntryTextColor(current, true), 6, g_FocFileBkColor);
+        }
     }
     }
     
@@ -812,10 +844,11 @@ struct CursorSelectionState
     if(!draw_path_name || columns_width[0] < path_name_start_pos || columns_width[0] >= path_name_end_pos)
         DrawSingleUniChar(0x2564, pX(columns_width[0]), pY(0), context, m_FontCache, g_RegFileColor);               // ╤
     if(!draw_path_name || columns_width[0]+columns_width[1] < path_name_start_pos || columns_width[0]+columns_width[1] >= path_name_end_pos)
-        if(_short) DrawSingleUniChar(0x2564, pX(columns_width[0]+columns_width[1]), pY(0), context, m_FontCache, g_RegFileColor);             // ╤
+        if(m_CurrentViewType==PanelViewType::ViewShort)
+            DrawSingleUniChar(0x2564, pX(columns_width[0]+columns_width[1]), pY(0), context, m_FontCache, g_RegFileColor);             // ╤
     for(int i = 1; i < m_SymbHeight - 3; ++i)
     {   DrawSingleUniChar(0x2502, pX(columns_width[0]), pY(i), context, m_FontCache, g_RegFileColor);                          // │
-        if(_short)
+        if(m_CurrentViewType==PanelViewType::ViewShort)
             DrawSingleUniChar(0x2502, pX(columns_width[0]+columns_width[1]), pY(i), context, m_FontCache, g_RegFileColor); // │
     }
     for(int i = 1; i < m_SymbWidth - 1; ++i)
@@ -850,9 +883,11 @@ struct CursorSelectionState
     CGContextFillRect(context, NSRectToCGRect(dirtyRect));
     
     if(m_CurrentViewType == PanelViewType::ViewShort)
-        [self DrawWithShortOrMediumView:context short_view:true];
+        [self DrawWithShortMediumWideView:context];
     else if(m_CurrentViewType == PanelViewType::ViewMedium)
-        [self DrawWithShortOrMediumView:context short_view:false];
+        [self DrawWithShortMediumWideView:context];
+    else if(m_CurrentViewType == PanelViewType::ViewWide)
+        [self DrawWithShortMediumWideView:context];    
 }
 
 - (void)frameDidChange

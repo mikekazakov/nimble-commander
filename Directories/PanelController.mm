@@ -138,6 +138,11 @@
     [m_View ToggleViewType:PanelViewType::ViewMedium];
 }
 
+- (void) ToggleWideViewMode
+{
+    [m_View ToggleViewType:PanelViewType::ViewWide];
+}
+
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
     // check if this tickes is ours

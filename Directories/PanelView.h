@@ -15,7 +15,8 @@ enum class PanelViewType
 {
     ViewShort,
     ViewMedium,
-    ViewLarge
+    ViewFull,
+    ViewWide
 };
 
 @interface PanelView : NSView

@@ -11,6 +11,13 @@
 
 class PanelData;
 
+enum class PanelViewType
+{
+    ViewShort,
+    ViewMedium,
+    ViewLarge
+};
+
 @interface PanelView : NSView
 
 enum DirectoryChangeType
@@ -18,13 +25,6 @@ enum DirectoryChangeType
     GoIntoSubDir,
     GoIntoParentDir,
     GoIntoOtherDir
-};
-
-enum PanelViewType
-{
-    ViewShort,
-    ViewMedium,
-    ViewLarge
 };
 
 // directory traversing
@@ -42,6 +42,9 @@ enum PanelViewType
 - (void) HandleFirstFile;    // home (fn+left)
 - (void) HandleLastFile;     // end (fn+right)
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
+
+// view type
+- (void) ToggleViewType:(PanelViewType)_type;
 
 // focus handling
 - (void) Activate;

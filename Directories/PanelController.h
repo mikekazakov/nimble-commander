@@ -22,6 +22,9 @@
 - (void) ToggleSortingByMTime; // user pressed ctrl+F5 by default
 - (void) ToggleSortingBySize; // user pressed ctrl+F6 by default
 - (void) ToggleSortingByBTime; // user pressed ctrl+F8 by default
+- (void) ToggleShortViewMode; // user pressed ctrl+1 by default
+- (void) ToggleMediumViewMode; // user pressed ctrl+2 by default
+
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;
 - (void) RefreshDirectory; // user pressed cmd+r by default

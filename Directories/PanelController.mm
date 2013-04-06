@@ -128,6 +128,16 @@
     [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];
 }
 
+- (void) ToggleShortViewMode
+{
+    [m_View ToggleViewType:PanelViewType::ViewShort];
+}
+
+- (void) ToggleMediumViewMode
+{
+    [m_View ToggleViewType:PanelViewType::ViewMedium];
+}
+
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
     // check if this tickes is ours

@@ -584,6 +584,18 @@
             }
             break;
         }
+        case 18: // 1 button on keyboard
+        {
+            if([self IsPanelActive] && ISMODIFIER(NSControlKeyMask))
+              [[self ActivePanelController] ToggleShortViewMode];
+            break;
+        }
+        case 19: // 2 button on keyboard
+        {
+            if([self IsPanelActive] && ISMODIFIER(NSControlKeyMask))
+                [[self ActivePanelController] ToggleMediumViewMode];
+            break;
+        }
     }
 #undef ISMODIFIER
 }

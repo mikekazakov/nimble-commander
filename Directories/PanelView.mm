@@ -548,7 +548,7 @@ struct CursorSelectionState
         m_FontCache = new FontCache(m_FontCT);
         m_FilesDisplayOffset = 0;
         m_CursorPosition = 0;
-        m_CurrentViewType = ViewShort;
+        m_CurrentViewType = PanelViewType::ViewMedium;
         m_IsActive = false;
         m_KeysModifiersFlags = 0;
         m_CursorSelectionType = CursorSelectionState::No;
@@ -575,9 +575,15 @@ struct CursorSelectionState
 
 - (int)CalcMaxShownFilesForView:(PanelViewType) _view
 {
-    if(_view == ViewShort)
+    if(_view == PanelViewType::ViewShort)
     {
         int columns = 3;
+        int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_view];
+        return entries_in_column * columns;
+    }
+    if(_view == PanelViewType::ViewMedium)
+    {
+        int columns = 2;
         int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_view];
         return entries_in_column * columns;
     }
@@ -588,8 +594,10 @@ struct CursorSelectionState
 
 - (int)CalcMaxShownFilesPerPanelForView:(PanelViewType) _view
 {
-    if(_view == ViewShort)
+    if(_view == PanelViewType::ViewShort)
         return m_SymbHeight - 4;
+    else if(_view == PanelViewType::ViewMedium)
+        return m_SymbHeight - 4;        
     else
         assert(0);
     return 1;
@@ -635,18 +643,19 @@ struct CursorSelectionState
     CGContextSetTextMatrix( (CGContextRef)context, AFF);
 }
 
-- (void)DrawWithShortView:(CGContextRef) context
+- (void)DrawWithShortOrMediumView:(CGContextRef) context short_view:(bool)_short
 {
     // layout preparation
-    const int columns = 3;
-    int entries_in_column = [self CalcMaxShownFilesPerPanelForView:ViewShort];
+    const int columns_max = 3;
+    const int columns = _short ? 3 : 2;
+    int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_short ? PanelViewType::ViewShort : PanelViewType::ViewMedium];
     int max_files_to_show = entries_in_column * columns;
     int column_width = (m_SymbWidth - 1) / columns;
     int columns_rest = m_SymbWidth - 1 - column_width*columns;
-    int columns_width[columns] = {column_width, column_width, column_width};
-    if(columns_rest) { columns_width[2]++;  columns_rest--; }
+    int columns_width[columns_max] = {column_width, column_width, column_width};
+    if(_short && columns_rest) { columns_width[2]++;  columns_rest--; }
     if(columns_rest) { columns_width[1]++;  columns_rest--; }
-    
+
     auto &raw_entries = m_Data->DirectoryEntries();
     auto &sorted_entries = m_Data->SortedDirectoryEntries();
     UniChar buff[256];
@@ -803,10 +812,12 @@ struct CursorSelectionState
     if(!draw_path_name || columns_width[0] < path_name_start_pos || columns_width[0] >= path_name_end_pos)
         DrawSingleUniChar(0x2564, pX(columns_width[0]), pY(0), context, m_FontCache, g_RegFileColor);               // ╤
     if(!draw_path_name || columns_width[0]+columns_width[1] < path_name_start_pos || columns_width[0]+columns_width[1] >= path_name_end_pos)
-        DrawSingleUniChar(0x2564, pX(columns_width[0]+columns_width[1]), pY(0), context, m_FontCache, g_RegFileColor);             // ╤
+        if(_short) DrawSingleUniChar(0x2564, pX(columns_width[0]+columns_width[1]), pY(0), context, m_FontCache, g_RegFileColor);             // ╤
     for(int i = 1; i < m_SymbHeight - 3; ++i)
     {   DrawSingleUniChar(0x2502, pX(columns_width[0]), pY(i), context, m_FontCache, g_RegFileColor);                          // │
-        DrawSingleUniChar(0x2502, pX(columns_width[0]+columns_width[1]), pY(i), context, m_FontCache, g_RegFileColor); }       // │
+        if(_short)
+            DrawSingleUniChar(0x2502, pX(columns_width[0]+columns_width[1]), pY(i), context, m_FontCache, g_RegFileColor); // │
+    }
     for(int i = 1; i < m_SymbWidth - 1; ++i)
     {
         if( (i != columns_width[0]) && (i != columns_width[0] + columns_width[1]))
@@ -816,7 +827,6 @@ struct CursorSelectionState
                 DrawSingleUniChar(0x2550, pX(i), pY(0), context, m_FontCache, g_RegFileColor);                      // ═
             if(!draw_selected_bytes || i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
                 DrawSingleUniChar(0x2500, pX(i), pY(m_SymbHeight-3), context, m_FontCache, g_RegFileColor);         // ─
-            
         }
         else
         {
@@ -839,7 +849,10 @@ struct CursorSelectionState
     CGContextSetRGBFillColor(context, 0.0,0.0,0.5,1);
     CGContextFillRect(context, NSRectToCGRect(dirtyRect));
     
-    [self DrawWithShortView:context];
+    if(m_CurrentViewType == PanelViewType::ViewShort)
+        [self DrawWithShortOrMediumView:context short_view:true];
+    else if(m_CurrentViewType == PanelViewType::ViewMedium)
+        [self DrawWithShortOrMediumView:context short_view:false];
 }
 
 - (void)frameDidChange
@@ -1085,5 +1098,11 @@ struct CursorSelectionState
                                   m_CursorSelectionType == CursorSelectionState::Selection);
 }
 
+- (void) ToggleViewType:(PanelViewType)_type
+{
+    m_CurrentViewType = _type;
+    [self EnsureCursorIsVisible];
+    [self setNeedsDisplay:true];
+}
 
 @end

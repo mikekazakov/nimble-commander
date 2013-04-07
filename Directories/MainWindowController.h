@@ -22,16 +22,27 @@ enum ActiveState
     // many more will be here
 };
 
-// NIB outlets
+// Window NIB outlets
 @property (strong) IBOutlet JobView *JobView;
 @property (strong) IBOutlet MainWndGoToButton *LeftPanelGoToButton;
 @property (strong) IBOutlet MainWndGoToButton *RightPanelGoToButton;
 @property (weak) IBOutlet NSView *OpSummaryBox;
 
-// NIB actions
+// Window NIB actions
 - (IBAction)LeftPanelGoToButtonAction:(id)sender;
 - (IBAction)RightPanelGoToButtonAction:(id)sender;
 
+// Menu and HK actions
+- (IBAction)ToggleShortViewMode:(id)sender;
+- (IBAction)ToggleMediumViewMode:(id)sender;
+- (IBAction)ToggleWideViewMode:(id)sender;
+- (IBAction)ToggleSortByName:(id)sender;
+- (IBAction)ToggleSortByExt:(id)sender;
+- (IBAction)ToggleSortByMTime:(id)sender;
+- (IBAction)ToggleSortBySize:(id)sender;
+- (IBAction)ToggleSortByBTime:(id)sender;
+- (IBAction)LeftPanelGoto:(id)sender;
+- (IBAction)RightPanelGoto:(id)sender;
 
 // this method will be called by App in all MainWindowControllers with same params
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;

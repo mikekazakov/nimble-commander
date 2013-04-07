@@ -228,6 +228,11 @@
     [self UpdatePanelConstraints:[[self window] frame].size];    
 }
 
+- (void)windowWillClose:(NSNotification *)notification
+{
+    [(AppDelegate*)[NSApp delegate] RemoveMainWindow:self];
+}
+
 - (void)DidBecomeKeyWindow
 {
     // update key modifiers state for views    
@@ -562,66 +567,22 @@
         case NSTabCharacter: // TAB key
             [self HandleTabButton];
             break;
-        case NSF1FunctionKey:
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSAlternateKeyMask|NSFunctionKeyMask))
-                   [[self LeftPanelGoToButton] performClick:self];
-            }
-            break;
-        case NSF2FunctionKey:
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSAlternateKeyMask|NSFunctionKeyMask))
-                    [[self RightPanelGoToButton] performClick:self];
-            }
-            break;
-        case NSF3FunctionKey:
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
-                    [[self ActivePanelController] ToggleSortingByName];
-            }
-            break;
-        case NSF4FunctionKey:
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
-                    [[self ActivePanelController] ToggleSortingByExt];
-            }
-            break;
         case NSF5FunctionKey:
             if([self IsPanelActive])
             {
-                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
-                    [[self ActivePanelController] ToggleSortingByMTime];
-                else if(ISMODIFIER(NSShiftKeyMask|NSFunctionKeyMask))
+                if(ISMODIFIER(NSShiftKeyMask|NSFunctionKeyMask))
                     [self HandleCopyAs];
                 else // TODO: need to check of absence of any key modifiers here
                     [self HandleCopyCommand];
             }
             break;
-        case NSF6FunctionKey:
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
-                    [[self ActivePanelController] ToggleSortingBySize];
-            }
-            break;
         case NSF7FunctionKey:
             if([self IsPanelActive])
-            {
                 [self HandleCreateDirectory];
-            }
             break;            
         case NSF8FunctionKey:
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSControlKeyMask|NSFunctionKeyMask))
-                    [[self ActivePanelController] ToggleSortingByBTime];
-                else if(ISMODIFIER(NSFunctionKeyMask))
-                    [self HandleDeleteCommand];
-            }
+            if([self IsPanelActive] && ISMODIFIER(NSFunctionKeyMask))
+                [self HandleDeleteCommand];
             break;
     };
     
@@ -636,7 +597,6 @@
             }
             break;
         }
-            
         case 15: // r button on keyboard
         {
             if([self IsPanelActive])
@@ -646,7 +606,6 @@
             }
             break;
         }
-            
         case 32: // u button on keyboard
         {
             if([self IsPanelActive])
@@ -658,7 +617,6 @@
             }
             break;
         }
-            
         case 37: // l button on keyboard
         {
             if([self IsPanelActive])
@@ -669,7 +627,6 @@
             }
             break;            
         }
-            
         case 17: // t button on keyboard
         {
             if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask))
@@ -679,18 +636,6 @@
             }
             break;
         }
-        case 18: // 1 button on keyboard
-            if([self IsPanelActive] && ISMODIFIER(NSControlKeyMask))
-              [[self ActivePanelController] ToggleShortViewMode];
-            break;
-        case 19: // 2 button on keyboard
-            if([self IsPanelActive] && ISMODIFIER(NSControlKeyMask))
-                [[self ActivePanelController] ToggleMediumViewMode];
-            break;
-        case 21: // 4 button on keyboard
-            if([self IsPanelActive] && ISMODIFIER(NSControlKeyMask))
-                [[self ActivePanelController] ToggleWideViewMode];
-            break;
     }
 #undef ISMODIFIER
 }
@@ -703,18 +648,54 @@
         [m_LeftPanelView ModifierFlagsChanged:flags];
         [m_RightPanelView ModifierFlagsChanged:flags];
     }
-    
 }
 
-- (IBAction)LeftPanelGoToButtonAction:(id)sender
-{
-    NSString *reqpath = [[self LeftPanelGoToButton] GetCurrentSelectionPath];
-    [m_LeftPanelController GoToDirectory:[reqpath UTF8String]];
+- (IBAction)LeftPanelGoToButtonAction:(id)sender{
+    [m_LeftPanelController GoToDirectory:[[[self LeftPanelGoToButton] GetCurrentSelectionPath] UTF8String]];
 }
 
-- (IBAction)RightPanelGoToButtonAction:(id)sender
-{
-    NSString *reqpath = [[self RightPanelGoToButton] GetCurrentSelectionPath];
-    [m_RightPanelController GoToDirectory:[reqpath UTF8String]];
+- (IBAction)RightPanelGoToButtonAction:(id)sender{
+    [m_RightPanelController GoToDirectory:[[[self RightPanelGoToButton] GetCurrentSelectionPath] UTF8String]];
 }
+
+- (IBAction)ToggleShortViewMode:(id)sender {
+    [[self ActivePanelController] ToggleShortViewMode];
+}
+
+- (IBAction)ToggleMediumViewMode:(id)sender {
+    [[self ActivePanelController] ToggleMediumViewMode];
+}
+
+- (IBAction)ToggleWideViewMode:(id)sender{
+    [[self ActivePanelController] ToggleWideViewMode];
+}
+
+- (IBAction)ToggleSortByName:(id)sender{
+    [[self ActivePanelController] ToggleSortingByName];
+}
+
+- (IBAction)ToggleSortByExt:(id)sender{
+    [[self ActivePanelController] ToggleSortingByExt];
+}
+
+- (IBAction)ToggleSortByMTime:(id)sender{
+    [[self ActivePanelController] ToggleSortingByMTime];
+}
+
+- (IBAction)ToggleSortBySize:(id)sender{
+    [[self ActivePanelController] ToggleSortingBySize];
+}
+
+- (IBAction)ToggleSortByBTime:(id)sender{
+    [[self ActivePanelController] ToggleSortingByBTime];
+}
+
+- (IBAction)LeftPanelGoto:(id)sender{
+    [[self LeftPanelGoToButton] performClick:self];    
+}
+
+- (IBAction)RightPanelGoto:(id)sender{
+    [[self RightPanelGoToButton] performClick:self];
+}
+
 @end

@@ -10,9 +10,13 @@
 #include "PanelView.h"
 #include "JobView.h"
 
+@class MainWindowController;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long) _ticket;
+
+- (IBAction)NewWindow:(id)sender;
+- (void) RemoveMainWindow:(MainWindowController*) _wnd;
 
 @end

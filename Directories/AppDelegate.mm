@@ -13,30 +13,17 @@
 #include "DirRead.h"
 #include "PanelData.h"
 #include "MainWindowController.h"
+#include <vector>
 
 @implementation AppDelegate
 {
-    MainWindowController *m_MainWindowController;
-    TestWindowController *m_TestWindowController;
+    std::vector<MainWindowController *> m_MainWindows;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
-
-    // TODO: remove test window
-    // fast switch between main window and test window
-    if (true)
-    {
-        MainWindowController *mwc = [[MainWindowController alloc] init];
-        [mwc showWindow:self];
-        m_MainWindowController = mwc;
-    }
-    else
-    {
-        m_TestWindowController = [[TestWindowController alloc] init];
-        [m_TestWindowController showWindow:self];
-    }
+    [self NewWindow:nil];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
@@ -46,7 +33,25 @@
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long) _ticket
 {
-    [m_MainWindowController FireDirectoryChanged:_dir ticket:_ticket];
+    for(auto i: m_MainWindows)
+        [i FireDirectoryChanged:_dir ticket:_ticket];
+}
+
+- (IBAction)NewWindow:(id)sender
+{
+    MainWindowController *mwc = [[MainWindowController alloc] init];
+    [mwc showWindow:self];
+    m_MainWindows.push_back(mwc);
+}
+
+- (void) RemoveMainWindow:(MainWindowController*) _wnd
+{
+    for(auto i = m_MainWindows.begin(); i < m_MainWindows.end(); ++i)
+        if(*i == _wnd)
+        {
+            m_MainWindows.erase(i);
+            break;
+        }
 }
 
 @end

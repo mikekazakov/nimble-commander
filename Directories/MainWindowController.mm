@@ -39,10 +39,26 @@
 @implementation MainWindowController
 {
     ActiveState m_ActiveState;                  // creates and owns
+
+    PanelView *m_LeftPanelView;                 // creates and owns
     PanelData *m_LeftPanelData;                 // creates and owns
-    PanelData *m_RightPanelData;                // creates and owns
     PanelController *m_LeftPanelController;     // creates and owns
+    
+    PanelView *m_RightPanelView;                // creates and owns
+    PanelData *m_RightPanelData;                // creates and owns
     PanelController *m_RightPanelController;    // creates and owns
+    struct
+    {
+        NSLayoutConstraint *left_left;
+        NSLayoutConstraint *left_bottom;
+        NSLayoutConstraint *left_top;
+        NSLayoutConstraint *left_right;
+        NSLayoutConstraint *right_left;
+        NSLayoutConstraint *right_bottom;
+        NSLayoutConstraint *right_top;
+        NSLayoutConstraint *right_right;
+    } m_PanelConstraints;
+    
     JobData *m_JobData;                         // creates and owns
     NSTimer *m_JobsUpdateTimer;
     
@@ -80,45 +96,30 @@
     struct passwd *pw = getpwuid(getuid());
     assert(pw);
     
+    [self CreatePanelsAndConstraints];
+    
     m_LeftPanelData = new PanelData;
     m_LeftPanelController = [PanelController new];
-    [[self LeftPanelView] SetPanelData:m_LeftPanelData];    
-    [m_LeftPanelController SetView:[self LeftPanelView]];
+    [m_LeftPanelView SetPanelData:m_LeftPanelData];
+    [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
     [m_LeftPanelController GoToDirectory:pw->pw_dir];
 
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
-    [[self RightPanelView] SetPanelData:m_RightPanelData];    
-    [m_RightPanelController SetView:[self RightPanelView]];
+    [m_RightPanelView SetPanelData:m_RightPanelData];
+    [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController GoToDirectory:"/"];
     
     m_ActiveState = StateLeftPanel;
-    [[self LeftPanelView] Activate];
+    [m_LeftPanelView Activate];
 
     [[self JobView] SetJobData:m_JobData];
     
     [[self window] makeFirstResponder:self];
+    [[self window] setDelegate:self];
     
-    [[[self window] contentView] addConstraint:
-     [NSLayoutConstraint constraintWithItem:[self LeftPanelView]
-                                  attribute:NSLayoutAttributeWidth
-                                  relatedBy:NSLayoutRelationEqual
-                                     toItem:[self RightPanelView]
-                                  attribute:NSLayoutAttributeWidth
-                                 multiplier:1
-                                   constant:0]];
-        
-//    [[[self window] contentView] addConstraint:
-//     [NSLayoutConstraint constraintWithItem:[self JobView]
-//                                  attribute:NSLayoutAttributeWidth
-//                                  relatedBy:NSLayoutRelationEqual
-//                                     toItem:0
-//                                  attribute:NSLayoutAttributeWidth
-//                                 multiplier:0
-//                                   constant:163]];
-
     m_JobsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval: 0.05
                                                          target: self
                                                        selector:@selector(UpdateByJobsTimer:)
@@ -129,16 +130,110 @@
                                              selector:@selector(DidBecomeKeyWindow)
                                                  name:NSWindowDidBecomeKeyNotification
                                                object:[self window]];
-        
-//    [[self Window] visualizeConstraints:[[[self Window] contentView] constraints]];
+    
+//    [[self window] visualizeConstraints:[[[self window] contentView] constraints]];
+}
+
+- (void)CreatePanelsAndConstraints
+{
+    const int topgap = 60;
+    m_LeftPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(0, 200, 100, 100)];
+    [m_LeftPanelView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[[self window] contentView] addSubview:m_LeftPanelView];
+    m_PanelConstraints.left_left = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
+                                                                attribute:NSLayoutAttributeLeft
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:[[self window] contentView]
+                                                                attribute:NSLayoutAttributeLeft
+                                                               multiplier:1
+                                                                 constant:0];
+    m_PanelConstraints.left_top = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
+                                                                attribute:NSLayoutAttributeTop
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:[[self window] contentView]
+                                                                attribute:NSLayoutAttributeTop
+                                                               multiplier:1
+                                                                 constant:topgap];
+    m_PanelConstraints.left_bottom = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
+                                                                attribute:NSLayoutAttributeBottom
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:[[self window] contentView]
+                                                                attribute:NSLayoutAttributeBottom
+                                                               multiplier:1
+                                                                 constant:0];
+    m_PanelConstraints.left_right = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
+                                                               attribute:NSLayoutAttributeRight
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:[[self window] contentView]
+                                                               attribute:NSLayoutAttributeCenterX
+                                                              multiplier:1
+                                                                constant:0];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.left_left];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.left_top];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.left_right];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.left_bottom];
+
+    m_RightPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(100, 100, 100, 100)];
+    [m_RightPanelView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[[self window] contentView] addSubview:m_RightPanelView];
+    m_PanelConstraints.right_left = [NSLayoutConstraint constraintWithItem:m_RightPanelView
+                                                                attribute:NSLayoutAttributeLeft
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:[[self window] contentView]
+                                                                attribute:NSLayoutAttributeCenterX
+                                                               multiplier:1
+                                                                 constant:0];
+    m_PanelConstraints.right_top = [NSLayoutConstraint constraintWithItem:m_RightPanelView
+                                                               attribute:NSLayoutAttributeTop
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:[[self window] contentView]
+                                                               attribute:NSLayoutAttributeTop
+                                                              multiplier:1
+                                                                constant:topgap];
+    m_PanelConstraints.right_bottom = [NSLayoutConstraint constraintWithItem:m_RightPanelView
+                                                                  attribute:NSLayoutAttributeBottom
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:[[self window] contentView]
+                                                                  attribute:NSLayoutAttributeBottom
+                                                                 multiplier:1
+                                                                   constant:0];
+    m_PanelConstraints.right_right = [NSLayoutConstraint constraintWithItem:m_RightPanelView
+                                                                 attribute:NSLayoutAttributeRight
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:[[self window] contentView]
+                                                                 attribute:NSLayoutAttributeRight
+                                                                multiplier:1
+                                                                  constant:0];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.right_left];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.right_top];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.right_right];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.right_bottom];
+
+    [self UpdatePanelConstraints:[[self window] frame].size];
+}
+
+- (void)UpdatePanelConstraints: (NSSize)frameSize
+{
+    float gran = 9.;
+    float center_x = frameSize.width / 2.;
+    float rest = fmod(center_x, gran);
+    m_PanelConstraints.left_right.constant = -rest+1;
+    m_PanelConstraints.right_left.constant = -rest;
+
+    [[[self window] contentView] setNeedsLayout:true];
+}
+
+- (void)windowDidResize:(NSNotification *)notification
+{
+    [self UpdatePanelConstraints:[[self window] frame].size];    
 }
 
 - (void)DidBecomeKeyWindow
 {
     // update key modifiers state for views    
     unsigned long flags = [NSEvent modifierFlags];
-    [[self LeftPanelView] ModifierFlagsChanged:flags];
-    [[self RightPanelView] ModifierFlagsChanged:flags];
+    [m_LeftPanelView ModifierFlagsChanged:flags];
+    [m_RightPanelView ModifierFlagsChanged:flags];
 }
 
 - (void)UpdateByJobsTimer:(NSTimer*)theTimer
@@ -161,11 +256,11 @@
 {
     if(m_ActiveState == StateLeftPanel)
     {
-        return [self LeftPanelView];
+        return m_LeftPanelView;
     }
     else if(m_ActiveState == StateRightPanel)
     {
-        return [self RightPanelView];
+        return m_RightPanelView;
     }
     assert(0);
     return 0;
@@ -204,14 +299,14 @@
     if(m_ActiveState == StateLeftPanel)
     {
         m_ActiveState = StateRightPanel;
-        [[self RightPanelView] Activate];
-        [[self LeftPanelView] Disactivate];
+        [m_RightPanelView Activate];
+        [m_LeftPanelView Disactivate];
     }
     else
     {
         m_ActiveState = StateLeftPanel;
-        [[self LeftPanelView] Activate];
-        [[self RightPanelView] Disactivate];
+        [m_LeftPanelView Activate];
+        [m_RightPanelView Disactivate];
     }
 }
 
@@ -605,8 +700,8 @@
     if([self IsPanelActive])
     {
         unsigned long flags = [theEvent modifierFlags];
-        [[self LeftPanelView] ModifierFlagsChanged:flags];
-        [[self RightPanelView] ModifierFlagsChanged:flags];
+        [m_LeftPanelView ModifierFlagsChanged:flags];
+        [m_RightPanelView ModifierFlagsChanged:flags];
     }
     
 }

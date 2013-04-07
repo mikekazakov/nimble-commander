@@ -13,7 +13,7 @@
 #include "JobView.h"
 #include "MainWndGoToButton.h"
 
-@interface MainWindowController : NSWindowController
+@interface MainWindowController : NSWindowController <NSWindowDelegate>
 
 enum ActiveState
 {
@@ -23,8 +23,6 @@ enum ActiveState
 };
 
 // NIB outlets
-@property (strong) IBOutlet PanelView *LeftPanelView;
-@property (strong) IBOutlet PanelView *RightPanelView;
 @property (strong) IBOutlet JobView *JobView;
 @property (strong) IBOutlet MainWndGoToButton *LeftPanelGoToButton;
 @property (strong) IBOutlet MainWndGoToButton *RightPanelGoToButton;

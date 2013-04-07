@@ -15,29 +15,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "wcwidth.h" // remove me!
-
+#include "OrthodoxMonospace.h"
 
 #define FONTSIZE 15.0f
 #define FONTWIDTH 9
 #define FONTHEIGHT 20
-#define DRAWOFFSETX 9
-#define DRAWOFFSETY 20
-#define pX(a) ((a)*FONTWIDTH)
-#define pY(a) ((a)*FONTHEIGHT)
 
 #define ISUNICODECOMBININGCHARACTER(a) (\
     ((a) >= 0x0300 && (a) <= 0x036F) || \
     ((a) >= 0x1DC0 && (a) <= 0x1DFF) || \
     ((a) >= 0x20D0 && (a) <= 0x20FF) || \
     ((a) >= 0xFE20 && (a) <= 0xFE2F) )
-
-struct DoubleColor
-{
-    double r,g,b,a;
-    DoubleColor(double _r, double _g, double _b, double _a):
-        r(_r), g(_g), b(_b), a(_a) {}
-};
 
 static const DoubleColor g_RegFileColor(0, 1, 1, 1);
 static const DoubleColor g_DirFileColor(1, 1, 1, 1);
@@ -52,210 +40,6 @@ static const DoubleColor g_SelFileColor(1, 1, 0, 1);
 
 static const DoubleColor g_FocFileBkColor(0, 0.5, 0.5, 1);
 static const DoubleColor g_HeaderInfoColor(1, 1, 0, 1);
-
-
-
-
-static int CalculateSymbolsSpaceForString(const UniChar *_s, size_t _amount)
-{
-    int output = 0;
-    for(size_t i = 0; i < _amount; ++i, ++_s)
-    {
-        bool iscomb = ISUNICODECOMBININGCHARACTER(*_s);
-
-        if(!iscomb)
-        {
-            output += g_WCWidthTableFixedMin1[*_s];
-        }
-    }
-    return output;
-}
-
-// calculates maximum amount of unichars that will not exceed _symb_amount when printed
-// returns number of unichars that can be printed starting from 0 pos
-static int CalculateUniCharsAmountForSymbolsFromLeft(const UniChar *_s, size_t _unic_amount, size_t _symb_amount)
-{
-    int cpos = 0, i=0, posdelta = 1;
-    for(; i < _unic_amount; ++i, ++_s)
-    {
-        bool iscomb = ISUNICODECOMBININGCHARACTER(*_s);
-        if(!iscomb)
-        {
-            if(cpos == _symb_amount)
-            {
-                --i;
-                break;
-            }
-            if(cpos + posdelta > _symb_amount) // for width = 2 case
-            {
-                --i;
-                break;
-            }
-            cpos += posdelta;
-            posdelta = g_WCWidthTableFixedMin1[*_s];
-        }
-    }
-    return i+1;
-}
-
-// calculates maximum amount of unichars that will not exceed _symb_amount when printed
-// returns number of unichar that can be printed started for _unic_amount - RET
-static int CalculateUniCharsAmountForSymbolsFromRight(const UniChar *_s, size_t _unic_amount, size_t _symb_amount)
-{
-    int cpos = 0, i=(int)_unic_amount-1;
-    _s += i;
-    for(;; --i, --_s)
-    {
-        bool iscomb = ISUNICODECOMBININGCHARACTER(*_s);        
-
-        if(!iscomb)
-        {
-            if(cpos + g_WCWidthTableFixedMin1[*_s] > _symb_amount)
-                break;
-            cpos += g_WCWidthTableFixedMin1[*_s];
-        }
-        
-        if(cpos == _symb_amount || i == 0) break;
-    }
-    
-    return (int)_unic_amount - i;
-}
-
-// returns a number of actual unichars in _out
-// requires that _symb_amount should be >= 3, otherwise it's meaningless
-static int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const UniChar *_s, size_t _unic_amount, size_t _symb_amount, UniChar *_out)
-{
-    const int ell_num = 3;
-    assert(_symb_amount >= ell_num);
-    int sizenow = CalculateSymbolsSpaceForString(_s, _unic_amount);
-    
-    if(sizenow <= _symb_amount)
-    {
-        // we're fitting pretty well in desired space
-        memcpy(_out, _s, sizeof(UniChar)*_unic_amount);
-        return (int)_unic_amount;
-    }
-    
-    // trim out string
-    int chars = CalculateUniCharsAmountForSymbolsFromRight(_s, _unic_amount, _symb_amount - ell_num);
-    for(int i =0; i < ell_num; ++i)
-        _out[i] = '.';
-    memcpy(_out + ell_num, _s + _unic_amount - chars, sizeof(UniChar)*chars);
-
-    return ell_num + chars;
-}
-
-static inline void DrawSingleUniChar(UniChar _s,
-                                     double _x,
-                                     double _y,
-                                     CGContextRef _context,
-                                     FontCache *_font_cache,
-                                     const DoubleColor &_text_color
-                                     )
-{
-    CGContextSetRGBFillColor(_context,
-                             _text_color.r,
-                             _text_color.g,
-                             _text_color.b,
-                             _text_color.a);
-
-    CGFontRef current_font = _font_cache->cgbasefont;
-    
-    FontCache::Pair p = _font_cache->Get(_s);
-    if( p.glyph != 0 )
-    {
-        if(p.font != 0)
-        { // need to use a fallback font
-            if(_font_cache->cgfallbacks[p.font] != current_font)
-            {
-                CGContextSetFont(_context, _font_cache->cgfallbacks[p.font]);
-                current_font = _font_cache->cgfallbacks[p.font];
-            }
-            CGContextShowGlyphsAtPoint(_context, _x, _y + FONTHEIGHT - 4, &p.glyph, 1);
-        }
-        else
-        { // use current default font
-            if(current_font != _font_cache->cgbasefont)
-            {
-                CGContextSetFont(_context, _font_cache->cgbasefont);
-                current_font = _font_cache->cgbasefont;
-            }
-            CGContextShowGlyphsAtPoint(_context, _x, _y + FONTHEIGHT - 4, &p.glyph, 1);
-        }
-    }
-
-    if(current_font != _font_cache->cgbasefont)
-        CGContextSetFont(_context, _font_cache->cgbasefont);
-}
-
-static void DrawString(UniChar *_s,
-                  size_t _start,    // position of a first symbol to draw
-                  size_t _amount,   // number of symbols to draw. this means UniChar symbols, not visible symbols - result may be shorter
-                  double _x,
-                  double _y,
-                  CGContextRef _context,
-                  FontCache *_font_cache,
-                  const DoubleColor &_text_color
-                  )
-{
-    CGContextSetRGBFillColor(_context,
-                             _text_color.r,
-                             _text_color.g,
-                             _text_color.b,
-                             _text_color.a);
-    UniChar *s = _s + _start;
-    
-    int cpos = -1; // output character position
-    int posdelta = 1;
-    for(size_t i = 0; i < _amount; ++i, ++s)
-    {
-        if(!*s) continue;
-
-        bool iscomb = ISUNICODECOMBININGCHARACTER(*s);
-
-        if(!iscomb)
-        {
-            cpos+=posdelta;
-            posdelta = g_WCWidthTableFixedMin1[*s];
-        }
-
-        FontCache::Pair p = _font_cache->Get(*s);
-        if( p.glyph != 0 )
-        {
-            if(p.font != 0)
-            { // need to use a fallback font
-                CGContextSetFont(_context, _font_cache->cgfallbacks[p.font]); // relying on font cache
-                CGContextShowGlyphsAtPoint(_context, _x + cpos*FONTWIDTH, _y + FONTHEIGHT - 4, &p.glyph, 1);                
-                CGContextSetFont(_context, _font_cache->cgbasefont); // clenup after
-            }
-            else
-            { // use current default font
-                CGContextShowGlyphsAtPoint(_context, _x + cpos*FONTWIDTH, _y + FONTHEIGHT - 4, &p.glyph, 1);
-            }
-        }
-    }
-}
-
-static void DrawStringWithBackground(UniChar *_s,
-                       size_t _start,    // position of a first symbol to draw
-                       size_t _amount,   // number of unichars to draw, not visible symbols - result may be shorter
-                       double _x,
-                       double _y,
-                       CGContextRef _context,
-                       FontCache *_font_cache,
-                       const DoubleColor &_text_color,
-                       size_t _bk_fill_amount, // amount of symbols places to fill with _bk_color
-                       const DoubleColor &_bk_color
-                       )
-{
-    CGContextSetRGBFillColor(_context,
-                             _bk_color.r,
-                             _bk_color.g,
-                             _bk_color.b,
-                             _bk_color.a);
-    CGContextFillRect(_context, CGRectMake(_x, _y, _bk_fill_amount*FONTWIDTH, FONTHEIGHT));
-    DrawString(_s, _start, _amount, _x, _y, _context, _font_cache, _text_color);
-}
 
 // _out will be _not_ null-terminated, just a raw buffer
 static void FormHumanReadableTimeRepresentation14(time_t _in, UniChar _out[14])
@@ -579,11 +363,6 @@ struct CursorSelectionState
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (NSSize)intrinsicContentSize
-{
-    return NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
-}
-
 - (int)CalcMaxShownFilesForView:(PanelViewType) _view
 {
     if(_view == PanelViewType::ViewShort)
@@ -622,47 +401,6 @@ struct CursorSelectionState
     return 1;
 }
 
-- (void)SetParamsForUserReadableText:(CGContextRef) context
-{
-    // font settings
-    CGContextSetFont(context, m_FontCG);
-    CGContextSetFontSize(context, CTFontGetSize(m_FontCT));
-    CGContextSetTextDrawingMode(context, kCGTextFill);
-    CGContextSetShouldSmoothFonts(context, false);
-    CGContextSetShouldAntialias(context, true);
-
-    // font geometry
-    CGAffineTransform AFF;
-    AFF.a = 1;
-    AFF.b = 0;
-    AFF.c = 0;
-    AFF.d = -1;
-    AFF.tx = 0;
-    AFF.ty = 0;
-    CGContextSetTextMatrix( (CGContextRef)context, AFF);
-}
-
-- (void)SetParamsForASCIIArt:(CGContextRef) context
-{
-    // font settings
-    CGContextSetFont(context, m_FontCG);
-    CGContextSetFontSize(context, CTFontGetSize(m_FontCT));
-    CGContextSetTextDrawingMode(context, kCGTextFill);
-    CGContextSetShouldSmoothFonts(context, false);
-    CGContextSetShouldAntialias(context, false);
-    
-    // font geometry
-    CGAffineTransform AFF;
-    AFF.a = 1;
-    AFF.b = 0;
-    AFF.c = 0;
-    AFF.d = -1;
-    AFF.tx = 0;
-    AFF.ty = 0;
-    CGContextSetTextMatrix( (CGContextRef)context, AFF);
-}
-
-//- (void)DrawWithShortOrMediumView:(CGContextRef) context short_view:(bool)_short
 - (void)DrawWithShortMediumWideView:(CGContextRef) context
 {
     // layout preparation
@@ -689,7 +427,7 @@ struct CursorSelectionState
     // draw file names
     {
     int n=0,X,Y;
-    [self SetParamsForUserReadableText:context];
+    oms::SetParamsForUserReadableText(context, m_FontCG, m_FontCT);
     for(auto i = sorted_entries.begin() + m_FilesDisplayOffset; i < sorted_entries.end(); ++i, ++n)
     {
         if(n >= max_files_to_show) break; // draw only visible
@@ -707,11 +445,11 @@ struct CursorSelectionState
         Y = (n % entries_in_column + 1);
         
         if((m_FilesDisplayOffset + n != m_CursorPosition) || !m_IsActive)
-            DrawString(buff, 0, CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
-                pX(X), pY(Y), context, m_FontCache, GetDirectoryEntryTextColor(current, false));
+            oms::DrawStringXY(buff, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
+                X, Y, context, m_FontCache, GetDirectoryEntryTextColor(current, false));
         else // cursor
-            DrawStringWithBackground(buff, 0, CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
-                pX(X), pY(Y), context, m_FontCache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, g_FocFileBkColor);
+            oms::DrawStringWithBackgroundXY(buff, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
+                X, Y, context, m_FontCache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, g_FocFileBkColor);
   
         if(m_CurrentViewType==PanelViewType::ViewWide)
         { // draw entry size on right side, only for this mode
@@ -719,9 +457,9 @@ struct CursorSelectionState
             FormHumanReadableSizeReprentationForDirEnt6(&current, size_info);
 
             if((m_FilesDisplayOffset + n != m_CursorPosition) || !m_IsActive)
-                DrawString(size_info, 0, 6, pX(columns_width[0]+1), pY(Y), context, m_FontCache, GetDirectoryEntryTextColor(current, false));
+                oms::DrawStringXY(size_info, 0, 6, columns_width[0]+1, Y, context, m_FontCache, GetDirectoryEntryTextColor(current, false));
             else // cursor
-                DrawStringWithBackground(size_info, 0, 6, pX(columns_width[0]+1), pY(Y), context, m_FontCache, GetDirectoryEntryTextColor(current, true), 6, g_FocFileBkColor);
+                oms::DrawStringWithBackgroundXY(size_info, 0, 6, columns_width[0]+1, Y, context, m_FontCache, GetDirectoryEntryTextColor(current, true), 6, g_FocFileBkColor);
         }
     }
     }
@@ -738,7 +476,7 @@ struct CursorSelectionState
     ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
     
     // draw sorting mode in left-upper corner
-    DrawSingleUniChar(sort_mode[0], pX(1), pY(0), context, m_FontCache, g_HeaderInfoColor);
+    oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, m_FontCache, g_HeaderInfoColor);
 
     if(m_SymbWidth > 14)
     {   // need to draw a path name
@@ -749,46 +487,46 @@ struct CursorSelectionState
         draw_path_name = true;
         m_Data->GetDirectoryPathWithTrailingSlash(panelpath);
         InterpretUTF8BufferAsUniChar( (unsigned char*)panelpath, strlen(panelpath), panelpathuni, &panelpathsz, 0xFFFD);
-        int chars_for_path_name = PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(panelpathuni, panelpathsz, m_SymbWidth - 7, panelpathtrim);
+        int chars_for_path_name = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(panelpathuni, panelpathsz, m_SymbWidth - 7, panelpathtrim);
 
         // add prefix and postfix - " "
         memmove(panelpathtrim+1, panelpathtrim, sizeof(UniChar)*chars_for_path_name);
         panelpathtrim[0] = ' ';
         panelpathtrim[chars_for_path_name+1] = ' ';
         chars_for_path_name += 2;
-        symbs_for_path_name = CalculateSymbolsSpaceForString(panelpathtrim, chars_for_path_name);
+        symbs_for_path_name = oms::CalculateSymbolsSpaceForString(panelpathtrim, chars_for_path_name);
         path_name_start_pos = (m_SymbWidth-symbs_for_path_name) / 2;
         path_name_end_pos = (m_SymbWidth-symbs_for_path_name) / 2 + symbs_for_path_name;
         
         if(m_IsActive)
-            DrawStringWithBackground(panelpathtrim, 0, chars_for_path_name, pX(path_name_start_pos), pY(0),
+            oms::DrawStringWithBackgroundXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
                                         context, m_FontCache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
         else
-            DrawString(panelpathtrim, 0, chars_for_path_name, pX(path_name_start_pos), pY(0),
+            oms::DrawStringXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
                                         context, m_FontCache, g_RegFileColor);
     }
 
     // footer info        
     if(m_SymbWidth > 2 + 14 + 6)
     {   // draw current entry time info, size info and maybe filename
-        DrawString(time_info, 0, 14, pX(m_SymbWidth - 15), pY(m_SymbHeight - 2), context, m_FontCache, g_RegFileColor);
-        DrawString(size_info, 0, 6, pX(m_SymbWidth - 15 - 7), pY(m_SymbHeight - 2), context, m_FontCache, g_RegFileColor);
+        oms::DrawStringXY(time_info, 0, 14, m_SymbWidth - 15, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
+        oms::DrawStringXY(size_info, 0, 6, m_SymbWidth - 15 - 7, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
         
         int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
         if(symbs_for_name > 0)
         {
-            int symbs = CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, symbs_for_name);
-            DrawString(buff, buf_size-symbs, symbs, pX(1), pY(m_SymbHeight-2), context, m_FontCache, g_RegFileColor);
+            int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, symbs_for_name);
+            oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, m_FontCache, g_RegFileColor);
         }
     }
     else if(m_SymbWidth >= 2 + 6)
     {   // draw current entry size info and maybe filename
-        DrawString(size_info, 0, 6, pX(1), pY(m_SymbHeight - 2), context, m_FontCache, g_RegFileColor);
+        oms::DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
         int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
         if(symbs_for_name > 0)
         {
-            int symbs = CalculateUniCharsAmountForSymbolsFromLeft(time_info, 14, symbs_for_name);
-            DrawString(time_info, 0, symbs, pX(8), pY(m_SymbHeight-2), context, m_FontCache, g_RegFileColor);
+            int symbs = oms::CalculateUniCharsAmountForSymbolsFromLeft(time_info, 14, symbs_for_name);
+            oms::DrawStringXY(time_info, 0, symbs, 8, m_SymbHeight-2, context, m_FontCache, g_RegFileColor);
         }
     }
         
@@ -798,12 +536,12 @@ struct CursorSelectionState
         size_t sz;
         draw_selected_bytes = true;
         FormHumanReadableBytesAndFiles128(m_Data->GetSelectedItemsSizeBytes(), m_Data->GetSelectedItemsCount(), selectionbuf, sz, true);
-        int unichars = PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
-        symbs_for_selected_bytes = CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
+        int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
+        symbs_for_selected_bytes = oms::CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
         selected_bytes_start_pos = (m_SymbWidth-symbs_for_selected_bytes) / 2;
         selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
-        DrawStringWithBackground(selectionbuftrim, 0, unichars,
-                                 pX(selected_bytes_start_pos), pY(m_SymbHeight-3),
+        oms::DrawStringWithBackgroundXY(selectionbuftrim, 0, unichars,
+                                 selected_bytes_start_pos, m_SymbHeight-3,
                                  context, m_FontCache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
     }
 
@@ -812,12 +550,12 @@ struct CursorSelectionState
         UniChar bytes[128], bytestrim[128];
         size_t sz;
         FormHumanReadableBytesAndFiles128(m_Data->GetTotalBytesInDirectory(), (int)m_Data->GetTotalFilesInDirectory(), bytes, sz, true);
-        int unichars = PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(bytes, sz, m_SymbWidth - 2, bytestrim);
-        symbs_for_bytes_in_dir = CalculateSymbolsSpaceForString(bytestrim, unichars);
+        int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(bytes, sz, m_SymbWidth - 2, bytestrim);
+        symbs_for_bytes_in_dir = oms::CalculateSymbolsSpaceForString(bytestrim, unichars);
         bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
         bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
-        DrawString(bytestrim, 0, unichars,
-                                 pX(bytes_in_dir_start_pos), pY(m_SymbHeight-1),
+        oms::DrawStringXY(bytestrim, 0, unichars,
+                                 bytes_in_dir_start_pos, m_SymbHeight-1,
                                  context, m_FontCache, g_RegFileColor);
     }
 
@@ -825,50 +563,54 @@ struct CursorSelectionState
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw frames
-    [self SetParamsForASCIIArt:context];
-    DrawSingleUniChar(0x2554, pX(0), pY(0), context, m_FontCache, g_RegFileColor);                              // ╔
+    oms::SetParamsForUserASCIIArt(context, m_FontCG, m_FontCT);
+    oms::SetFillColor(context, g_RegFileColor);
+    oms::unichars_draw_batch b;
+
+    b.put(u'╔', 0, 0);
     for(int i = 1; i < m_SymbHeight - 1; ++i)
         if(i != m_SymbHeight - 3)
         {
-            DrawSingleUniChar(0x2551, pX(0), pY(i), context, m_FontCache, g_RegFileColor);                      // ║
-            DrawSingleUniChar(0x2551, pX(m_SymbWidth-1), pY(i), context, m_FontCache, g_RegFileColor);          // ║
+            b.put(u'║', 0, i);
+            b.put(u'║', m_SymbWidth-1, i);
         }
         else
         {
-            DrawSingleUniChar(0x255F, pX(0), pY(i), context, m_FontCache, g_RegFileColor);                      // ╟
-            DrawSingleUniChar(0x2562, pX(m_SymbWidth-1), pY(i), context, m_FontCache, g_RegFileColor);          // ╢
+            b.put(u'╟', 0, i);
+            b.put(u'╢', m_SymbWidth-1, i);
         }
-    DrawSingleUniChar(0x255A, pX(0), pY(m_SymbHeight-1), context, m_FontCache, g_RegFileColor);                 // ╚
-    DrawSingleUniChar(0x255D, pX(m_SymbWidth-1), pY(m_SymbHeight-1), context, m_FontCache, g_RegFileColor);     // ╝
-    DrawSingleUniChar(0x2557, pX(m_SymbWidth-1), pY(0), context, m_FontCache, g_RegFileColor);                  // ╗
+    b.put(u'╚', 0, m_SymbHeight-1);
+    b.put(u'╝', m_SymbWidth-1, m_SymbHeight-1);
+    b.put(u'╗', m_SymbWidth-1, 0);
     if(!draw_path_name || columns_width[0] < path_name_start_pos || columns_width[0] >= path_name_end_pos)
-        DrawSingleUniChar(0x2564, pX(columns_width[0]), pY(0), context, m_FontCache, g_RegFileColor);               // ╤
+        b.put(u'╤', columns_width[0], 0);
     if(!draw_path_name || columns_width[0]+columns_width[1] < path_name_start_pos || columns_width[0]+columns_width[1] >= path_name_end_pos)
         if(m_CurrentViewType==PanelViewType::ViewShort)
-            DrawSingleUniChar(0x2564, pX(columns_width[0]+columns_width[1]), pY(0), context, m_FontCache, g_RegFileColor);             // ╤
+            b.put(u'╤', columns_width[0]+columns_width[1], 0);
     for(int i = 1; i < m_SymbHeight - 3; ++i)
-    {   DrawSingleUniChar(0x2502, pX(columns_width[0]), pY(i), context, m_FontCache, g_RegFileColor);                          // │
+    {
+        b.put(u'│', columns_width[0], i);
         if(m_CurrentViewType==PanelViewType::ViewShort)
-            DrawSingleUniChar(0x2502, pX(columns_width[0]+columns_width[1]), pY(i), context, m_FontCache, g_RegFileColor); // │
+            b.put(u'│', columns_width[0]+columns_width[1], i);
     }
     for(int i = 1; i < m_SymbWidth - 1; ++i)
     {
         if( (i != columns_width[0]) && (i != columns_width[0] + columns_width[1]))
         {
-            if( (i!=1) &&
-               (!draw_path_name || i < path_name_start_pos || i >= path_name_end_pos))
-                DrawSingleUniChar(0x2550, pX(i), pY(0), context, m_FontCache, g_RegFileColor);                      // ═
+            if( (i!=1) && (!draw_path_name || i < path_name_start_pos || i >= path_name_end_pos))
+                b.put(u'═', i, 0);
             if(!draw_selected_bytes || i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
-                DrawSingleUniChar(0x2500, pX(i), pY(m_SymbHeight-3), context, m_FontCache, g_RegFileColor);         // ─
+                b.put(u'─', i, m_SymbHeight-3);
         }
         else
         {
             if(!draw_selected_bytes || i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
-                DrawSingleUniChar(0x2534, pX(i), pY(m_SymbHeight-3), context, m_FontCache, g_RegFileColor);         // ┴
+                b.put(u'┴', i, m_SymbHeight-3);
         }
         if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)
-            DrawSingleUniChar(0x2550, pX(i), pY(m_SymbHeight-1), context, m_FontCache, g_RegFileColor);                      // ═
+            b.put(u'═', i, m_SymbHeight-1);
     }
+    oms::DrawUniCharsXY(b, context, m_FontCache);
 }
 
 - (void)drawRect:(NSRect)dirtyRect

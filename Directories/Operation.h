@@ -38,7 +38,7 @@ class OperationJob;
 // Should be called from job's inner thread.
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog;
 
-- (BOOL)HasDialog;
+- (int)GetDialogsCount;
 - (void)ShowDialogForWindow:(NSWindow *)_parent;
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog;
 

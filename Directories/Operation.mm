@@ -11,10 +11,15 @@
 #import "OperationJob.h"
 #import "OperationDialogController.h"
 
+#import <algorithm>
+
+const int MaxDialogs = 2;
+
 @implementation Operation
 {
     OperationJob *m_Job;
-    NSMutableArray *m_Dialogs;
+    id<OperationDialogProtocol> m_Dialogs[MaxDialogs];
+    int m_DialogsCount;
 }
 
 - (id)initWithJob:(OperationJob *)_job
@@ -23,7 +28,8 @@
     if (self)
     {
         m_Job = _job;
-        m_Dialogs = [NSMutableArray array];
+        m_DialogsCount = 0;
+        for (int i = 0; i < MaxDialogs; ++i) m_Dialogs[i] = nil;
     }
     return self;
 }
@@ -56,13 +62,16 @@
 
 - (void)Stop
 {
-    for (id <OperationDialogProtocol> dialog in m_Dialogs)
-    {
-        if (dialog.Result == OperationDialogResult::None)
-            [dialog CloseDialogWithResult:OperationDialogResult::Stop];
-    }
-    
     m_Job->RequestStop();
+    
+    @synchronized(self)
+    {
+        for (int i = 0; i < m_DialogsCount; ++i)
+        {
+            if (m_Dialogs[i].Result == OperationDialogResult::None)
+                [m_Dialogs[i] CloseDialogWithResult:OperationDialogResult::Stop];
+        }
+    }
 }
 
 - (BOOL)IsStarted
@@ -92,35 +101,58 @@
 
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog
 {
-    @synchronized(m_Dialogs)
+    @synchronized(self)
     {
+        // Enqueue dialog.
         [_dialog OnDialogEnqueued:self];
-        [m_Dialogs addObject:_dialog];
+        m_Dialogs[m_DialogsCount++] = _dialog;
+        
+        // If operation is in process of stoppping, close the dialog.
+        if (m_Job->IsStopRequested())
+            [_dialog CloseDialogWithResult:OperationDialogResult::Stop];
     }
 }
 
-- (BOOL)HasDialog
+- (int)GetDialogsCount
 {
-    return m_Dialogs.count > 0;
+    return m_DialogsCount;
 }
 
 - (void)ShowDialogForWindow:(NSWindow *)_parent
 {
-    @synchronized(m_Dialogs)
+    @synchronized(self)
     {
-        if (m_Dialogs.count > 0)
+        if (m_DialogsCount)
             [m_Dialogs[0] ShowDialogForWindow:_parent];
     }
 }
 
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog
 {
-    assert([m_Dialogs containsObject:_dialog]);
-    
-    @synchronized(m_Dialogs)
+    @synchronized(self)
     {
-        [m_Dialogs removeObject:_dialog];
+        // Remove dialog from the queue and shift other dialogs to the left.
+        // Can't use memmove due to ARC, shift by hand.
+        bool swap = false;
+        for (int i = 0; i < m_DialogsCount; ++i)
+        {
+            if (swap)
+            {
+                id <OperationDialogProtocol> tmp = m_Dialogs[i];
+                m_Dialogs[i] = m_Dialogs[i - 1];
+                m_Dialogs[i - 1] = tmp;
+            }
+            else if (m_Dialogs[i] == _dialog)
+            {
+                assert(!swap);
+                swap = true;
+            }
+        }
+        
+        assert(swap);
+        --m_DialogsCount;
     }
+    
     if (_dialog.Result == OperationDialogResult::Stop) [self Stop];
 }
 

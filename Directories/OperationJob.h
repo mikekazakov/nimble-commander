@@ -36,6 +36,7 @@ public:
     
     bool IsFinished() const;
     bool IsPaused() const;
+    bool IsStopRequested() const;
     
     State GetState() const;
     

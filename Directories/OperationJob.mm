@@ -68,6 +68,11 @@ bool OperationJob::IsPaused() const
     return m_Paused;
 }
 
+bool OperationJob::IsStopRequested() const
+{
+    return m_RequestStop;
+}
+
 OperationJob::State OperationJob::GetState() const
 {
     return m_State;

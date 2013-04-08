@@ -69,7 +69,7 @@
     NSUInteger dialogs_count = 0;
     for (NSUInteger i = 0; i < count; ++i)
     {
-        if ([[m_OperationsController GetOperation:i] HasDialog])
+        if ([[m_OperationsController GetOperation:i] GetDialogsCount] != 0)
             ++dialogs_count;
     }
     self.DialogsCountLabel.stringValue = [@(dialogs_count) stringValue];
@@ -94,7 +94,7 @@
         // Update controls in view.
         view.Caption.stringValue = [op GetCaption];
         view.Progress.doubleValue = [op GetProgress]*100;
-        [view.DialogButton setHidden:![op HasDialog]];
+        [view.DialogButton setHidden:![op GetDialogsCount]];
         view.PauseButton.state = ([op IsPaused] ? NSOnState : NSOffState);
     }
 }

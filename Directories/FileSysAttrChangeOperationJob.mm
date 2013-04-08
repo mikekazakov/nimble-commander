@@ -26,7 +26,8 @@ FileSysAttrChangeOperationJob::FileSysAttrChangeOperationJob():
     m_ItemsCount(0),
     m_CurrentItemNumber(0),
     m_State(StateInvalid),
-    m_Operation(nil)
+    m_Operation(nil),
+    m_SkipAllErrors(false)
 {
 }
 
@@ -209,14 +210,19 @@ void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
     if(newmode != st.st_mode)
     {
         int res = chmod(_full_path, newmode);
-        if(res != 0)
+        if(res != 0 && !m_SkipAllErrors)
         {
-            if ([[m_Operation DialogChmodError:errno ForFile:_full_path WithMode:newmode]
-                 WaitForResult] == OperationDialogResultStop)
+            int result = [[m_Operation DialogChmodError:errno
+                                                ForFile:_full_path
+                                               WithMode:newmode] WaitForResult];
+            
+            if (result == OperationDialogResultStop)
             {
                 SetStopped();
                 return;
             }
+            if (result == FileSysAttrChangeOperationDialogSkipAll)
+                m_SkipAllErrors = true;
             
             // TODO: error handling
         }

@@ -45,5 +45,6 @@ private:
     unsigned m_ItemsCount;
     unsigned m_CurrentItemNumber;
     State m_State;
+    bool m_SkipAllErrors;
 };
 

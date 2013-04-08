@@ -52,6 +52,7 @@
         strerror(_error), _path, buff]];
     
     [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResultContinue];
+    [alert AddButtonWithTitle:@"Skip All" andResult:FileSysAttrChangeOperationDialogSkipAll];
     [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResultStop];
     [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResultNone];
     

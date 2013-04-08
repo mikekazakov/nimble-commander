@@ -54,13 +54,13 @@
     [m_Operation OnDialogClosed:self];
 }
 
-- (BOOL)WaitForResult
+- (int)WaitForResult
 {
     while (self.Result == OperationDialogResultNone) {
         usleep(33*1000);
     }
     
-    return self.Result == OperationDialogResultStop;
+    return self.Result;
 }
 
 - (void)OnDialogEnqueued:(Operation *)_operation

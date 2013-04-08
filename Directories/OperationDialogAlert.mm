@@ -69,14 +69,14 @@ const int MaxButtonsCount = 5;
     }
 }
 
-- (BOOL)WaitForResult
+- (int)WaitForResult
 {
     while (self.Result == OperationDialogResultNone)
     {
         usleep(33*1000);
     }
     
-    return self.Result == OperationDialogResultStop;
+    return self.Result;
 }
 
 - (void)OnDialogEnqueued:(Operation *)_operation

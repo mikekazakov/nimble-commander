@@ -13,6 +13,13 @@ struct FileSysAttrAlterCommand;
 
 @interface FileSysAttrChangeOperation : Operation
 
+enum
+{
+    // Custom dialog results:
+    // Skip this and all the following errors.
+    FileSysAttrChangeOperationDialogSkipAll = OperationDialogResultCustom
+};
+
 - (id)initWithCommand:(FileSysAttrAlterCommand*)_command; // passing with ownership, operation will free it on finish
 - (NSString *)GetCaption;
 

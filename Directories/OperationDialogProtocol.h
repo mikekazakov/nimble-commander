@@ -43,7 +43,7 @@ enum
 //     SetStopped();
 //     return;
 // }
-- (BOOL)WaitForResult;
+- (int)WaitForResult;
 
 - (void)OnDialogEnqueued:(Operation *)_operation;
 

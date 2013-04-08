@@ -735,6 +735,22 @@
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
+								<object class="NSMenuItem" id="797452132">
+									<reference key="NSMenu" ref="456788684"/>
+									<string key="NSTitle">Create Directory</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
+								<object class="NSMenuItem" id="430262585">
+									<reference key="NSMenu" ref="456788684"/>
+									<string key="NSTitle">Delete</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
 							</array>
 						</object>
 					</object>
@@ -1514,6 +1530,22 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
+						<string key="label">OnDeleteCommand:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="430262585"/>
+					</object>
+					<int key="connectionID">834</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">OnCreateDirectoryCommand:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="797452132"/>
+					</object>
+					<int key="connectionID">837</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
 						<string key="label">NewWindow:</string>
 						<reference key="source" ref="976324537"/>
 						<reference key="destination" ref="705341025"/>
@@ -2257,6 +2289,8 @@
 							<reference ref="1046841154"/>
 							<reference ref="51366559"/>
 							<reference ref="524972954"/>
+							<reference ref="430262585"/>
+							<reference ref="797452132"/>
 						</array>
 						<reference key="parent" ref="939397169"/>
 					</object>
@@ -2279,6 +2313,16 @@
 						<int key="objectID">829</int>
 						<reference key="object" ref="939356061"/>
 						<reference key="parent" ref="466310130"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">832</int>
+						<reference key="object" ref="430262585"/>
+						<reference key="parent" ref="456788684"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">835</int>
+						<reference key="object" ref="797452132"/>
+						<reference key="parent" ref="456788684"/>
 					</object>
 				</array>
 			</object>
@@ -2397,13 +2441,15 @@
 				<string key="826.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="829.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="83.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="832.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="835.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="92.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">831</int>
+			<int key="maxID">837</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2440,6 +2486,8 @@
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="LeftPanelGoToButtonAction:">id</string>
 						<string key="LeftPanelGoto:">id</string>
+						<string key="OnCreateDirectoryCommand:">id</string>
+						<string key="OnDeleteCommand:">id</string>
 						<string key="OnDetailedVolumeInformation:">id</string>
 						<string key="OnFileAttributes:">id</string>
 						<string key="OnRefreshPanel:">id</string>
@@ -2464,6 +2512,14 @@
 						</object>
 						<object class="IBActionInfo" key="LeftPanelGoto:">
 							<string key="name">LeftPanelGoto:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnCreateDirectoryCommand:">
+							<string key="name">OnCreateDirectoryCommand:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnDeleteCommand:">
+							<string key="name">OnDeleteCommand:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="OnDetailedVolumeInformation:">

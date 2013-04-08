@@ -57,18 +57,3 @@ private:
     
 };
 
-class DirectoryCreate : public AbstractFileJob
-{
-public:
-    DirectoryCreate();
-    ~DirectoryCreate();
-    void InitOpData(const char *_name, const char *_in_dir, MainWindowController *_wnd);
-    void Run();
-
-private:
-    void DoRun();
-    MainWindowController *m_Wnd;
-    char m_Name[__DARWIN_MAXPATHLEN];
-    char m_PathPriorTo[__DARWIN_MAXPATHLEN]; // with trailing slash
-};
-

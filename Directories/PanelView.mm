@@ -435,7 +435,6 @@ struct CursorSelectionState
     auto &raw_entries = m_Data->DirectoryEntries();
     auto &sorted_entries = m_Data->SortedDirectoryEntries();
     UniChar buff[256];
-    bool draw_path_name = false, draw_selected_bytes = false;
     int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
     int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
@@ -501,7 +500,6 @@ struct CursorSelectionState
         UniChar panelpathuni[__DARWIN_MAXPATHLEN];
         UniChar panelpathtrim[256]; // may crash here on weird cases
         size_t panelpathsz;
-        draw_path_name = true;
         m_Data->GetDirectoryPathWithTrailingSlash(panelpath);
         InterpretUTF8BufferAsUniChar( (unsigned char*)panelpath, strlen(panelpath), panelpathuni, &panelpathsz, 0xFFFD);
         int chars_for_path_name = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(panelpathuni, panelpathsz, m_SymbWidth - 7, panelpathtrim);
@@ -551,7 +549,6 @@ struct CursorSelectionState
     { // process selection if any
         UniChar selectionbuf[128], selectionbuftrim[128];
         size_t sz;
-        draw_selected_bytes = true;
         FormHumanReadableBytesAndFiles128(m_Data->GetSelectedItemsSizeBytes(), m_Data->GetSelectedItemsCount(), selectionbuf, sz, true);
         int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
         symbs_for_selected_bytes = oms::CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
@@ -593,9 +590,9 @@ struct CursorSelectionState
     b.put(u'╚', 0, m_SymbHeight-1);
     b.put(u'╝', m_SymbWidth-1, m_SymbHeight-1);
     b.put(u'╗', m_SymbWidth-1, 0);
-    if(!draw_path_name || columns_width[0] < path_name_start_pos || columns_width[0] >= path_name_end_pos)
+    if(columns_width[0] < path_name_start_pos || columns_width[0] >= path_name_end_pos)
         b.put(u'╤', columns_width[0], 0);
-    if(!draw_path_name || columns_width[0]+columns_width[1] < path_name_start_pos || columns_width[0]+columns_width[1] >= path_name_end_pos)
+    if(columns_width[0]+columns_width[1] < path_name_start_pos || columns_width[0]+columns_width[1] >= path_name_end_pos)
         if(m_CurrentViewType==PanelViewType::ViewShort)
             b.put(u'╤', columns_width[0]+columns_width[1], 0);
     for(int i = 1; i < m_SymbHeight - 3; ++i)
@@ -608,14 +605,14 @@ struct CursorSelectionState
     {
         if( (i != columns_width[0]) && (i != columns_width[0] + columns_width[1]))
         {
-            if( (i!=1) && (!draw_path_name || i < path_name_start_pos || i >= path_name_end_pos))
+            if( (i!=1) && (i < path_name_start_pos || i >= path_name_end_pos))
                 b.put(u'═', i, 0);
-            if(!draw_selected_bytes || i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
+            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
                 b.put(u'─', i, m_SymbHeight-3);
         }
         else
         {
-            if(!draw_selected_bytes || i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
+            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
                 b.put(u'┴', i, m_SymbHeight-3);
         }
         if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)

@@ -103,8 +103,6 @@
             // set controls regarding current job type
             if(FileCopy *fc = dynamic_cast<FileCopy*>(topmost))
                 [self SetupForFileCopy:fc];
-            else if(DirectoryCreate *dc = dynamic_cast<DirectoryCreate*>(topmost))
-                [self SetupForDirectoryCreate:dc];
             else if(FileOpMassCopy *mc = dynamic_cast<FileOpMassCopy*>(topmost))
                 [self SetupForMassCopy:mc];
             
@@ -115,8 +113,6 @@
             // update current control set regarding current job state
             if(FileCopy *fc = dynamic_cast<FileCopy*>(m_LastJob))
                 [self UpdateForFileCopy:fc];
-            else if(DirectoryCreate *dc = dynamic_cast<DirectoryCreate*>(topmost))
-                [self UpdateForDirectoryCreate:dc];
             else if(FileOpMassCopy *mc = dynamic_cast<FileOpMassCopy*>(topmost))
                 [self UpdateForMassCopy:mc];
         }
@@ -153,20 +149,6 @@
 {
     [m_Progress setDoubleValue:_fc->Done()];
     [m_Text setDoubleValue:_fc->BytesPerSecond()];    
-}
-
-- (void) SetupForDirectoryCreate: (DirectoryCreate*) _dc
-{
-    [m_Progress setMinValue:0.];
-    [m_Progress setMaxValue:1.];
-    [m_Progress setDoubleValue:_dc->Done()];
-    [m_Progress setHidden:false];
-    [m_Text setHidden:true];
-}
-
-- (void) UpdateForDirectoryCreate: (DirectoryCreate*) _dc
-{
-    [m_Progress setDoubleValue:_dc->Done()];
 }
 
 - (void) SetupForMassCopy: (FileOpMassCopy*) _mc

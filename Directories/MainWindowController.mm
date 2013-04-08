@@ -23,6 +23,7 @@
 #import "OperationsSummaryViewController.h"
 #include "FileSysAttrChangeOperation.h"
 #include "FileDeletionOperation.h"
+#import "CreateDirectoryOperation.h"
 #include "MessageBox.h"
 #include "KQueueDirUpdate.h"
 #include "FSEventsDirUpdate.h"
@@ -362,29 +363,6 @@
 
 }
 
-- (void) HandleCreateDirectory // F7
-{
-    assert([self IsPanelActive]);
-    
-    CreateDirectorySheetController *cd = [[CreateDirectorySheetController alloc] init];
-    [cd ShowSheet:[self window] handler:^(int _ret)
-     {
-         if(_ret == DialogResult::Create)
-         {
-             NSString *name = [[cd TextField] stringValue];
-             
-             PanelData *curdata = [self ActivePanelData];
-             char pdir[__DARWIN_MAXPATHLEN];
-             curdata->GetDirectoryPath(pdir);
-             
-             DirectoryCreate *dc = new DirectoryCreate;
-             dc->InitOpData([name UTF8String], pdir, self);
-             dc->Run();
-             m_JobData->AddJob(dc);
-         }
-     }];
-}
-
 - (void) HandleCopyCommand // F5
 {
     assert([self IsPanelActive]);
@@ -418,53 +396,6 @@
              m_JobData->AddJob(masscopy);
          }
      }];
-}
-
-- (void) HandleDeleteCommand // F8
-{
-    assert([self IsPanelActive]);
-    
-    __block FlexChainedStringsChunk *files = 0;
-    if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
-    {
-        files = [self ActivePanelData]->StringsFromSelectedEntries();
-    }
-    else
-    {
-        int curpos = [[self ActivePanelView] GetCursorPosition];
-        int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
-        auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
-        if(!item.isdotdot()) // do not try to delete a parent directory
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
-    }
-    
-    if(files)
-    {
-        MessageBox *mb = [MessageBox new];
-        [mb setAlertStyle:NSCriticalAlertStyle];
-        [mb setMessageText:@"Are you sure want to delete it?"];
-        [mb addButtonWithTitle:@"Delete"];
-        [mb addButtonWithTitle:@"Cancel"];
-        [mb ShowSheetWithHandler: [self window] handler:^(int ret){
-            if(ret == NSAlertFirstButtonReturn)
-            {
-                // kill it with fire!
-//                FileDeletionOperationType type = FileDeletionOperationType::Delete;
-                FileDeletionOperationType type = FileDeletionOperationType::MoveToTrash;
-//                FileDeletionOperationType type = FileDeletionOperationType::SecureDelete;
-                char root_path[MAXPATHLEN];
-                [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
-                
-                [m_OperationsController AddOperation:[[FileDeletionOperation alloc] initWithFiles:files
-                                                                                             type:type
-                                                                                         rootpath:root_path]];
-            }
-            else
-            {
-                FlexChainedStringsChunk::FreeWithDescendants(&files);
-            }
-        }];
-    }
 }
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
@@ -533,14 +464,6 @@
                 else // TODO: need to check of absence of any key modifiers here
                     [self HandleCopyCommand];
             }
-            break;
-        case NSF7FunctionKey:
-            if([self IsPanelActive])
-                [self HandleCreateDirectory];
-            break;            
-        case NSF8FunctionKey:
-            if([self IsPanelActive] && ISMODIFIER(NSFunctionKeyMask))
-                [self HandleDeleteCommand];
             break;
     };
     
@@ -688,6 +611,73 @@
     
     DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
     [sheet ShowSheet:[self window] destpath:src];
+}
+
+- (IBAction)OnDeleteCommand:(id)sender{
+    assert([self IsPanelActive]);
+    
+    __block FlexChainedStringsChunk *files = 0;
+    if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
+    {
+        files = [self ActivePanelData]->StringsFromSelectedEntries();
+    }
+    else
+    {
+        int curpos = [[self ActivePanelView] GetCursorPosition];
+        int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
+        auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
+        if(!item.isdotdot()) // do not try to delete a parent directory
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+    }
+    
+    if(files)
+    {
+        MessageBox *mb = [MessageBox new];
+        [mb setAlertStyle:NSCriticalAlertStyle];
+        [mb setMessageText:@"Are you sure want to delete it?"];
+        [mb addButtonWithTitle:@"Delete"];
+        [mb addButtonWithTitle:@"Cancel"];
+        [mb ShowSheetWithHandler: [self window] handler:^(int ret){
+            if(ret == NSAlertFirstButtonReturn)
+            {
+                // kill it with fire!
+                //                FileDeletionOperationType type = FileDeletionOperationType::Delete;
+                FileDeletionOperationType type = FileDeletionOperationType::MoveToTrash;
+                //                FileDeletionOperationType type = FileDeletionOperationType::SecureDelete;
+                char root_path[MAXPATHLEN];
+                [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+                
+                [m_OperationsController AddOperation:[[FileDeletionOperation alloc] initWithFiles:files
+                                                                                             type:type
+                                                                                         rootpath:root_path]];
+            }
+            else
+            {
+                FlexChainedStringsChunk::FreeWithDescendants(&files);
+            }
+        }];
+    }
+}
+
+- (IBAction)OnCreateDirectoryCommand:(id)sender{
+    assert([self IsPanelActive]);
+    CreateDirectorySheetController *cd = [[CreateDirectorySheetController alloc] init];
+    [cd ShowSheet:[self window] handler:^(int _ret)
+     {
+         if(_ret == DialogResult::Create)
+         {
+             NSString *name = [[cd TextField] stringValue];
+             
+             PanelData *curdata = [self ActivePanelData];
+             char pdir[__DARWIN_MAXPATHLEN];
+             curdata->GetDirectoryPath(pdir);
+             
+             [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[name UTF8String]
+                                                                                        rootpath:pdir
+                                                   ]];
+             
+         }
+     }];
 }
 
 @end

@@ -585,6 +585,10 @@
     [[self ActivePanelController] ToggleMediumViewMode];
 }
 
+- (IBAction)ToggleFullViewMode:(id)sender{
+    [[self ActivePanelController] ToggleFullViewMode];
+}
+
 - (IBAction)ToggleWideViewMode:(id)sender{
     [[self ActivePanelController] ToggleWideViewMode];
 }

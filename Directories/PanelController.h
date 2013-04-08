@@ -24,7 +24,7 @@
 - (void) ToggleSortingByBTime; // user pressed ctrl+F8 by default
 - (void) ToggleShortViewMode; // user pressed ctrl+1 by default
 - (void) ToggleMediumViewMode; // user pressed ctrl+2 by default
-
+- (void) ToggleFullViewMode; // user pressed ctrl+3 by default
 - (void) ToggleWideViewMode; // user pressed ctrl+4 by default
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;

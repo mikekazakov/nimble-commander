@@ -138,6 +138,11 @@
     [m_View ToggleViewType:PanelViewType::ViewMedium];
 }
 
+- (void) ToggleFullViewMode
+{
+    [m_View ToggleViewType:PanelViewType::ViewFull];
+}
+
 - (void) ToggleWideViewMode
 {
     [m_View ToggleViewType:PanelViewType::ViewWide];

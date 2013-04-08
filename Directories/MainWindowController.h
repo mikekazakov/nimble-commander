@@ -35,6 +35,7 @@ enum ActiveState
 // Menu and HK actions
 - (IBAction)ToggleShortViewMode:(id)sender;
 - (IBAction)ToggleMediumViewMode:(id)sender;
+- (IBAction)ToggleFullViewMode:(id)sender;
 - (IBAction)ToggleWideViewMode:(id)sender;
 - (IBAction)ToggleSortByName:(id)sender;
 - (IBAction)ToggleSortByExt:(id)sender;

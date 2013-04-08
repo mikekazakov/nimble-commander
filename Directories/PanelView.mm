@@ -59,6 +59,31 @@ static void FormHumanReadableTimeRepresentation14(time_t _in, UniChar _out[14])
     for(int i = 0; i < 14; ++i) _out[i] = buf[i];    
 }
 
+static void FormHumanReadableDateRepresentation8(time_t _in, UniChar _out[8])
+{
+    struct tm tt;
+    localtime_r(&_in, &tt);
+    
+    char buf[32];
+    sprintf(buf, "%2.2d.%2.2d.%2.2d",
+            tt.tm_mday,
+            tt.tm_mon + 1,
+            tt.tm_year % 100
+            );
+    for(int i = 0; i < 8; ++i) _out[i] = buf[i];
+}
+
+static void FormHumanReadableTimeRepresentation5(time_t _in, UniChar _out[5])
+{
+    struct tm tt;
+    localtime_r(&_in, &tt);
+
+    char buf[32];
+    sprintf(buf, "%2.2d:%2.2d", tt.tm_hour, tt.tm_min);
+    
+    for(int i = 0; i < 5; ++i) _out[i] = buf[i];
+}
+
 // _out will be _not_ null-terminated, just a raw buffer
 static void FormHumanReadableSizeRepresentation6(unsigned long _sz, UniChar _out[6])
 {
@@ -128,7 +153,7 @@ static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInfo
     }
 }
 
-static void FormHumanReadableSizeReprentationForSortMode1(PanelSortMode::Mode _mode, UniChar _out[1])
+static void FormHumanReadableSortModeReprentation1(PanelSortMode::Mode _mode, UniChar _out[1])
 {
     switch (_mode)
     {
@@ -366,25 +391,15 @@ struct CursorSelectionState
 - (int)CalcMaxShownFilesForView:(PanelViewType) _view
 {
     if(_view == PanelViewType::ViewShort)
-    {
-        int columns = 3;
-        int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_view];
-        return entries_in_column * columns;
-    }
+        return [self CalcMaxShownFilesPerPanelForView:_view] * 3;
     if(_view == PanelViewType::ViewMedium)
-    {
-        int columns = 2;
-        int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_view];
-        return entries_in_column * columns;
-    }
+        return [self CalcMaxShownFilesPerPanelForView:_view] * 2;
+    if(_view == PanelViewType::ViewFull)
+        return [self CalcMaxShownFilesPerPanelForView:_view];
     if(_view == PanelViewType::ViewWide)
-    {
-        int columns = 1;
-        int entries_in_column = [self CalcMaxShownFilesPerPanelForView:_view];
-        return entries_in_column * columns;
-    }
-    else
-        assert(0);
+        return [self CalcMaxShownFilesPerPanelForView:_view];
+
+    assert(0);
     return 1;
 }
 
@@ -393,7 +408,9 @@ struct CursorSelectionState
     if(_view == PanelViewType::ViewShort)
         return m_SymbHeight - 4;
     else if(_view == PanelViewType::ViewMedium)
-        return m_SymbHeight - 4;        
+        return m_SymbHeight - 4;
+    else if(_view == PanelViewType::ViewFull)
+        return m_SymbHeight - 4;
     else if(_view == PanelViewType::ViewWide)
         return m_SymbHeight - 4;
     else
@@ -472,7 +489,7 @@ struct CursorSelectionState
     size_t buf_size = 0;
     FormHumanReadableTimeRepresentation14(current_entry.mtime, time_info);
     FormHumanReadableSizeReprentationForDirEnt6(&current_entry, size_info);
-    FormHumanReadableSizeReprentationForSortMode1(m_Data->GetCustomSortMode().sort, sort_mode);
+    FormHumanReadableSortModeReprentation1(m_Data->GetCustomSortMode().sort, sort_mode);
     ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
     
     // draw sorting mode in left-upper corner
@@ -520,7 +537,7 @@ struct CursorSelectionState
         }
     }
     else if(m_SymbWidth >= 2 + 6)
-    {   // draw current entry size info and maybe filename
+    {   // draw current entry size info and time info
         oms::DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
         int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
         if(symbs_for_name > 0)
@@ -567,18 +584,12 @@ struct CursorSelectionState
     oms::SetFillColor(context, g_RegFileColor);
     oms::unichars_draw_batch b;
 
-    b.put(u'╔', 0, 0);
     for(int i = 1; i < m_SymbHeight - 1; ++i)
-        if(i != m_SymbHeight - 3)
-        {
-            b.put(u'║', 0, i);
-            b.put(u'║', m_SymbWidth-1, i);
-        }
-        else
-        {
-            b.put(u'╟', 0, i);
-            b.put(u'╢', m_SymbWidth-1, i);
-        }
+    {
+        b.put(i != m_SymbHeight - 3 ? u'║' : u'╟', 0, i);
+        b.put(i != m_SymbHeight - 3 ? u'║' : u'╢', m_SymbWidth-1, i);
+    }
+    b.put(u'╔', 0, 0);
     b.put(u'╚', 0, m_SymbHeight-1);
     b.put(u'╝', m_SymbWidth-1, m_SymbHeight-1);
     b.put(u'╗', m_SymbWidth-1, 0);
@@ -613,6 +624,188 @@ struct CursorSelectionState
     oms::DrawUniCharsXY(b, context, m_FontCache);
 }
 
+- (void)DrawWithFullView:(CGContextRef) context
+{
+    const int columns_max = 4;
+    int fn_column_width = m_SymbWidth - 23; if(fn_column_width < 0) fn_column_width = 0;
+    int entries_to_show = [self CalcMaxShownFilesPerPanelForView:m_CurrentViewType];
+    int columns_width[columns_max] = {fn_column_width, 6, 8, 5};
+    int column_fr_pos[columns_max-1] = {columns_width[0],
+                                        columns_width[0] + columns_width[1] + 1,
+                                        columns_width[0] + columns_width[1] + columns_width[2] + 2};
+    int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
+    int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
+    int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;    
+    auto &raw_entries = m_Data->DirectoryEntries();
+    auto &sorted_entries = m_Data->SortedDirectoryEntries();
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw file names
+    {
+        UniChar file_name[256], size_info[6], date_info[8], time_info[5];;
+        size_t fn_size = 0;
+        int n=0;
+        oms::SetParamsForUserReadableText(context, m_FontCG, m_FontCT);
+        for(auto i = sorted_entries.begin() + m_FilesDisplayOffset; i < sorted_entries.end(); ++i, ++n)
+        {
+            if(n >= entries_to_show) break; // draw only visible
+            const auto& current = raw_entries[*i];
+
+            // TODO: need to render extention apart from other filename. (need ?)
+            InterpretUTF8BufferAsUniChar( current.name(), current.namelen, file_name, &fn_size, 0xFFFD);
+            FormHumanReadableSizeReprentationForDirEnt6(&current, size_info);
+            FormHumanReadableDateRepresentation8(current.mtime, date_info);
+            FormHumanReadableTimeRepresentation5(current.mtime, time_info);
+
+            if((m_FilesDisplayOffset + n != m_CursorPosition) || !m_IsActive)
+            {
+                auto &textcolor = GetDirectoryEntryTextColor(current, false);
+                oms::DrawStringXY(file_name, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(file_name, fn_size, columns_width[0] - 1),
+                                  1, n+1, context, m_FontCache, textcolor);
+                
+                oms::DrawStringXY(size_info, 0, 6, 1 + column_fr_pos[0], n+1, context, m_FontCache, textcolor);
+                oms::DrawStringXY(date_info, 0, 8, 1 + column_fr_pos[1], n+1, context, m_FontCache, textcolor);
+                oms::DrawStringXY(time_info, 0, 5, 1 + column_fr_pos[2], n+1, context, m_FontCache, textcolor);
+            }
+            else // cursor
+            {
+                auto &textcolor = GetDirectoryEntryTextColor(current, true);
+                auto &textbkcolor = g_FocFileBkColor;
+                oms::DrawStringWithBackgroundXY(file_name, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(file_name, fn_size, columns_width[0] - 1),
+                                                1, n+1, context, m_FontCache, textcolor, columns_width[0] - 1, textbkcolor);
+                oms::DrawStringWithBackgroundXY(size_info, 0, 6, 1 + column_fr_pos[0], n+1,
+                                                context, m_FontCache, textcolor, 6, textbkcolor);
+                oms::DrawStringWithBackgroundXY(date_info, 0, 8, 1 + column_fr_pos[1], n+1,
+                                                context, m_FontCache, textcolor, 8, textbkcolor);
+                oms::DrawStringWithBackgroundXY(time_info, 0, 5, 1 + column_fr_pos[2], n+1,
+                                                context, m_FontCache, textcolor, 5, textbkcolor);                
+            }
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw directory path
+    if(m_SymbWidth > 14)
+    {   // need to draw a path name
+        char panelpath[__DARWIN_MAXPATHLEN];
+        UniChar panelpathuni[__DARWIN_MAXPATHLEN];
+        UniChar panelpathtrim[256]; // may crash here on weird cases
+        size_t panelpathsz;
+        m_Data->GetDirectoryPathWithTrailingSlash(panelpath);
+        InterpretUTF8BufferAsUniChar( (unsigned char*)panelpath, strlen(panelpath), panelpathuni, &panelpathsz, 0xFFFD);
+        int chars_for_path_name = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(panelpathuni, panelpathsz, m_SymbWidth - 7, panelpathtrim);
+        
+        // add prefix and postfix - " "
+        memmove(panelpathtrim+1, panelpathtrim, sizeof(UniChar)*chars_for_path_name);
+        panelpathtrim[0] = ' ';
+        panelpathtrim[chars_for_path_name+1] = ' ';
+        chars_for_path_name += 2;
+        symbs_for_path_name = oms::CalculateSymbolsSpaceForString(panelpathtrim, chars_for_path_name);
+        path_name_start_pos = (m_SymbWidth-symbs_for_path_name) / 2;
+        path_name_end_pos = (m_SymbWidth-symbs_for_path_name) / 2 + symbs_for_path_name;
+        
+        if(m_IsActive)
+            oms::DrawStringWithBackgroundXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
+                                            context, m_FontCache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
+        else
+            oms::DrawStringXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
+                              context, m_FontCache, g_RegFileColor);
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw sorting mode
+    {
+        UniChar sort_mode[1];
+        FormHumanReadableSortModeReprentation1(m_Data->GetCustomSortMode().sort, sort_mode);
+        oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, m_FontCache, g_HeaderInfoColor);
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw bytes in directory
+    if(m_SymbWidth > 12)
+    { // process bytes in directory
+        UniChar bytes[128], bytestrim[128];
+        size_t sz;
+        FormHumanReadableBytesAndFiles128(m_Data->GetTotalBytesInDirectory(), (int)m_Data->GetTotalFilesInDirectory(), bytes, sz, true);
+        int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(bytes, sz, m_SymbWidth - 2, bytestrim);
+        symbs_for_bytes_in_dir = oms::CalculateSymbolsSpaceForString(bytestrim, unichars);
+        bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
+        bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
+        oms::DrawStringXY(bytestrim, 0, unichars, bytes_in_dir_start_pos, m_SymbHeight-1, context, m_FontCache, g_RegFileColor);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw selection if any
+    if(m_Data->GetSelectedItemsCount() != 0 && m_SymbWidth > 12)
+    {
+        UniChar selectionbuf[128], selectionbuftrim[128];
+        size_t sz;
+        FormHumanReadableBytesAndFiles128(m_Data->GetSelectedItemsSizeBytes(), m_Data->GetSelectedItemsCount(), selectionbuf, sz, true);
+        int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
+        symbs_for_selected_bytes = oms::CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
+        selected_bytes_start_pos = (m_SymbWidth-symbs_for_selected_bytes) / 2;
+        selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
+        oms::DrawStringWithBackgroundXY(selectionbuftrim, 0, unichars,
+                                        selected_bytes_start_pos, m_SymbHeight-3,
+                                        context, m_FontCache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw footer data
+    {
+        UniChar buff[256];
+        size_t buf_size;
+        const auto &current_entry = raw_entries[sorted_entries[m_CursorPosition]];
+        ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
+        int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, m_SymbWidth-2);
+        oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, m_FontCache, g_RegFileColor);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw frames
+    oms::SetParamsForUserASCIIArt(context, m_FontCG, m_FontCT);
+    oms::SetFillColor(context, g_RegFileColor);
+    oms::unichars_draw_batch b;
+    
+    b.put(u'╔', 0, 0);
+    b.put(u'╚', 0, m_SymbHeight-1);
+    b.put(u'╝', m_SymbWidth-1, m_SymbHeight-1);
+    b.put(u'╗', m_SymbWidth-1, 0);
+    for(int i = 1; i < m_SymbHeight - 3; ++i)
+    {
+        b.put(u'│', column_fr_pos[0], i);
+        b.put(u'│', column_fr_pos[1], i);
+        b.put(u'│', column_fr_pos[2], i);
+    }
+
+    for(int i = 1; i < m_SymbHeight - 1; ++i)
+    {
+        b.put(i != m_SymbHeight - 3 ? u'║' : u'╟', 0, i);
+        b.put(i != m_SymbHeight - 3 ? u'║' : u'╢', m_SymbWidth-1, i);
+    }
+    
+    for(int i = 1; i < m_SymbWidth - 1; ++i)
+    {
+        if(i != column_fr_pos[0] && i != column_fr_pos[1] && i != column_fr_pos[2])
+        {
+            if( (i!=1) && (i < path_name_start_pos || i >= path_name_end_pos))
+                b.put(u'═', i, 0);
+            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
+                b.put(u'─', i, m_SymbHeight-3);
+        }
+        else
+        {
+            if( (i!=1) && (i < path_name_start_pos || i >= path_name_end_pos))
+                b.put(u'╤', i, 0);
+            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
+                b.put(u'┴', i, m_SymbHeight-3);
+        }
+        if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)
+            b.put(u'═', i, m_SymbHeight-1);
+    }
+    
+    oms::DrawUniCharsXY(b, context, m_FontCache);
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
     if(!m_Data) return;
@@ -629,7 +822,9 @@ struct CursorSelectionState
     else if(m_CurrentViewType == PanelViewType::ViewMedium)
         [self DrawWithShortMediumWideView:context];
     else if(m_CurrentViewType == PanelViewType::ViewWide)
-        [self DrawWithShortMediumWideView:context];    
+        [self DrawWithShortMediumWideView:context];
+    else if(m_CurrentViewType == PanelViewType::ViewFull)
+        [self DrawWithFullView:context];
 }
 
 - (void)frameDidChange

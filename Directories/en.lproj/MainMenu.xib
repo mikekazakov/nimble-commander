@@ -842,6 +842,15 @@
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
+								<object class="NSMenuItem" id="939356061">
+									<reference key="NSMenu" ref="466310130"/>
+									<string key="NSTitle">Toggle Full View Mode</string>
+									<string key="NSKeyEquiv">3</string>
+									<int key="NSKeyEquivModMask">262144</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
 								<object class="NSMenuItem" id="652754230">
 									<reference key="NSMenu" ref="466310130"/>
 									<string key="NSTitle">Toggle Wide View Mode</string>
@@ -1497,6 +1506,14 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
+						<string key="label">ToggleFullViewMode:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="939356061"/>
+					</object>
+					<int key="connectionID">831</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
 						<string key="label">NewWindow:</string>
 						<reference key="source" ref="976324537"/>
 						<reference key="destination" ref="705341025"/>
@@ -2119,6 +2136,7 @@
 							<reference ref="414350096"/>
 							<reference ref="359647219"/>
 							<reference ref="1003320049"/>
+							<reference ref="939356061"/>
 						</array>
 						<reference key="parent" ref="586577488"/>
 					</object>
@@ -2257,6 +2275,11 @@
 						<reference key="object" ref="524972954"/>
 						<reference key="parent" ref="456788684"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">829</int>
+						<reference key="object" ref="939356061"/>
+						<reference key="parent" ref="466310130"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -2372,6 +2395,7 @@
 				<string key="821.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="823.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="826.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="829.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="83.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="92.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
@@ -2379,7 +2403,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">828</int>
+			<int key="maxID">831</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2423,6 +2447,7 @@
 						<string key="OnSyncPanels:">id</string>
 						<string key="RightPanelGoToButtonAction:">id</string>
 						<string key="RightPanelGoto:">id</string>
+						<string key="ToggleFullViewMode:">id</string>
 						<string key="ToggleMediumViewMode:">id</string>
 						<string key="ToggleShortViewMode:">id</string>
 						<string key="ToggleSortByBTime:">id</string>
@@ -2467,6 +2492,10 @@
 						</object>
 						<object class="IBActionInfo" key="RightPanelGoto:">
 							<string key="name">RightPanelGoto:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleFullViewMode:">
+							<string key="name">ToggleFullViewMode:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="ToggleMediumViewMode:">

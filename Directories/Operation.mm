@@ -14,7 +14,7 @@
 @implementation Operation
 {
     OperationJob *m_Job;
-    volatile OperationDialogController *m_Dialog;
+    volatile id <OperationDialogProtocol> m_Dialog;
 }
 
 - (id)initWithJob:(OperationJob *)_job
@@ -55,12 +55,9 @@
 
 - (void)Stop
 {
-    if (m_Dialog)
+    if (m_Dialog && m_Dialog.Result == OperationDialogResultNone)
     {
-        if (m_Dialog.IsVisible)
-            [m_Dialog HideDialogWithResult:OperationDialogResultStop];
-        else
-            m_Dialog.Result = OperationDialogResultStop;
+        [m_Dialog CloseDialogWithResult:OperationDialogResultStop];
     }
     
     m_Job->RequestStop();
@@ -91,9 +88,9 @@
     return m_Job->GetState() == OperationJob::StateStopped;
 }
 
-- (void)EnqueueDialog:(OperationDialogController *)_dialog
+- (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog
 {
-    [_dialog SetOperation:self];
+    [_dialog OnDialogEnqueued:self];
     m_Dialog = _dialog;
 }
 
@@ -106,14 +103,12 @@
 {
     assert([self HasDialog]);
     
-    [m_Dialog ShowDialogFor:_parent];
+    [m_Dialog ShowDialogForWindow:_parent];
 }
 
-- (void)OnDialogHidden:(OperationDialogController *)_dialog
+- (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog
 {
     assert(m_Dialog == _dialog);
-    
-    if (_dialog.Result == OperationDialogResultNone) return;
     
     m_Dialog = nil;
     if (_dialog.Result == OperationDialogResultStop) [self Stop];

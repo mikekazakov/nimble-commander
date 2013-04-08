@@ -15,6 +15,7 @@
 		B528012516FCF361004E260D /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528012016FCF361004E260D /* Operation.mm */; };
 		B5AD9CE31706D5350099BC6D /* TimedDummyOperationTestDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */; };
 		B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
+		B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
 		CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */; };
 		CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
@@ -84,6 +85,9 @@
 		B5AD9CE01706D5350099BC6D /* TimedDummyOperationTestDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationTestDialog.h; sourceTree = "<group>"; };
 		B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperationTestDialog.mm; sourceTree = "<group>"; };
 		B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TimedDummyOperationTestDialog.xib; sourceTree = "<group>"; };
+		B5F00AC91711FCC200176F79 /* OperationDialogAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationDialogAlert.h; sourceTree = "<group>"; };
+		B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationDialogAlert.mm; sourceTree = "<group>"; };
+		B5F00ACF1712012C00176F79 /* OperationDialogProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OperationDialogProtocol.h; sourceTree = "<group>"; };
 		CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSEventsDirUpdate.h; sourceTree = "<group>"; };
 		CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSEventsDirUpdate.mm; sourceTree = "<group>"; };
 		CF02F1D516F38805000AF870 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encodings.cpp; sourceTree = "<group>"; };
@@ -207,6 +211,7 @@
 		B528011916FCF347004E260D /* Operation */ = {
 			isa = PBXGroup;
 			children = (
+				B5F00AC51711F22E00176F79 /* Base */,
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				B5AD9CDE17030DAA0099BC6D /* Dummies */,
 				CFC058DD170B27D500A20CF2 /* FileSysAttrChange */,
@@ -221,6 +226,9 @@
 				B528011D16FCF361004E260D /* OperationsController.h */,
 				B51014D217078B2A0023FF24 /* OperationDialogController.h */,
 				B51014D317078B2B0023FF24 /* OperationDialogController.mm */,
+				B5F00AC91711FCC200176F79 /* OperationDialogAlert.h */,
+				B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */,
+				B5F00ACF1712012C00176F79 /* OperationDialogProtocol.h */,
 			);
 			name = Operation;
 			sourceTree = "<group>";
@@ -252,6 +260,13 @@
 				CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */,
 			);
 			name = SummaryView;
+			sourceTree = "<group>";
+		};
+		B5F00AC51711F22E00176F79 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Base;
 			sourceTree = "<group>";
 		};
 		CF536C0D16C92EA200F37203 /* Panel */ = {
@@ -599,6 +614,7 @@
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
+				B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

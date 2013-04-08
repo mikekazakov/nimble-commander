@@ -8,11 +8,13 @@
 
 #import "Operation.h"
 #import "TimedDummyOperationTestDialog.h"
+#import "OperationDialogAlert.h"
 
 @interface TimedDummyOperation : Operation
 
 - (id)initWithTime:(int)_seconds;
 
 - (TimedDummyOperationTestDialog *)AskUser:(int)_cur_time;
+- (OperationDialogAlert *)AskUserAlert;
 
 @end

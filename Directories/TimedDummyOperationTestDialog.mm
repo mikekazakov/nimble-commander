@@ -39,23 +39,23 @@
 
 - (IBAction)OkButtonAction:(NSButton *)sender
 {
-    [self HideDialogWithResult:OperationDialogResultContinue];
+    [self CloseDialogWithResult:OperationDialogResultContinue];
 }
 
 - (IBAction)CancelButtonAction:(NSButton *)sender
 {
-    [self HideDialogWithResult:OperationDialogResultStop];
+    [self CloseDialogWithResult:OperationDialogResultStop];
 }
 
 - (IBAction)PostponeButtonAction:(NSButton *)sender
 {
-    [self HideDialogWithResult:OperationDialogResultNone];
+    [self HideDialog];
 }
 
 - (IBAction)SetTimeButtonAction:(NSButton *)sender
 {
     self.NewTime = [self.TimeField intValue];
-    [self HideDialogWithResult:OperationDialogResultContinue];
+    [self CloseDialogWithResult:OperationDialogResultContinue];
 }
 
 - (void)SetTime:(int)_optime

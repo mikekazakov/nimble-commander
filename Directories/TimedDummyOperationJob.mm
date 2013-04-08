@@ -10,6 +10,8 @@
 
 #import "TimedDummyOperation.h"
 
+#import "OperationDialogAlert.h"
+
 TimedDummyOperationJob::TimedDummyOperationJob()
 :   m_CompleteTime(1),
     m_Operation(nil)
@@ -37,22 +39,37 @@ void TimedDummyOperationJob::Do()
         
         if (rand()%100 == 0)
         {
-            TimedDummyOperationTestDialog *dialog = [m_Operation AskUser:elapsed_time];
-            
-            if ([dialog WaitForResult])
+            if (false)
             {
-                SetStopped();
-                return;
-            }
+                TimedDummyOperationTestDialog *dialog = [m_Operation AskUser:elapsed_time];
             
-            if (dialog.NewTime != -1)
-                elapsed_time = dialog.NewTime;
+                if ([dialog WaitForResult] == OperationDialogResultStop)
+                {
+                    SetStopped();
+                    return;
+                }
+            
+                if (dialog.NewTime != -1)
+                    elapsed_time = dialog.NewTime;
+            }
+            else
+            {
+                OperationDialogAlert *alert = [m_Operation AskUserAlert];
+                if ([alert WaitForResult] == OperationDialogResultStop)
+                {
+                    SetStopped();
+                    return;
+                }
+            
+                if (alert.Result == OperationDialogResultCustom)
+                    elapsed_time = 0;
+            }
         }
         
         int delay = 33;
         
         usleep(1000*delay);
-        
+
         elapsed_time += delay;
         
         SetProgress((float)elapsed_time/m_CompleteTime);

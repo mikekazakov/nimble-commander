@@ -35,4 +35,19 @@
     return dialog;
 }
 
+- (OperationDialogAlert *)AskUserAlert
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    [alert SetAlertStyle:NSInformationalAlertStyle];
+    [alert SetMessageText:@"This is error"];
+    [alert SetInformativeText:@"............."];
+    [alert AddButtonWithTitle:@"Continue" andResult:OperationDialogResultContinue];
+    [alert AddButtonWithTitle:@"Restart" andResult:OperationDialogResultCustom];
+    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResultStop];
+    [alert AddButtonWithTitle:@"Later" andResult:OperationDialogResultNone];
+    
+    [self EnqueueDialog:alert];
+    return alert;
+}
+
 @end

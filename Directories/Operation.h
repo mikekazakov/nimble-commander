@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "OperationDialogProtocol.h"
+
 class OperationJob;
 @class OperationDialogController;
 
@@ -34,10 +36,10 @@ class OperationJob;
 
 
 // Should be called from job's inner thread.
-- (void)EnqueueDialog:(OperationDialogController *)_dialog;
+- (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog;
 
 - (BOOL)HasDialog;
 - (void)ShowDialogForWindow:(NSWindow *)_parent;
-- (void)OnDialogHidden:(OperationDialogController *)_dialog;
+- (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog;
 
 @end

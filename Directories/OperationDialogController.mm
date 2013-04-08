@@ -18,9 +18,10 @@
 {
     Operation *m_Operation;
 }
+@synthesize Result = m_Result;
 
-- (void)ShowDialogFor:(NSWindow *)_parent
-{
+- (void)ShowDialogForWindow:(NSWindow *)_parent
+{    
     [NSApp beginSheet: self.window
        modalForWindow: _parent
         modalDelegate: nil
@@ -35,25 +36,22 @@
 
 - (void)HideDialog
 {
-    [self HideDialogWithResult:OperationDialogResultNone];
-}
-
-- (void)HideDialogWithResult:(OperationDialogResult)_result
-{
     assert([self IsVisible]);
-    assert(m_Operation);
-    
-    _Result = _result;
     
     [NSApp endSheet:self.window];
     [self.window orderOut:nil];
-    
-    [m_Operation OnDialogHidden:self];
 }
 
-- (void)SetOperation:(Operation *)_op
+- (void)CloseDialogWithResult:(int)_result
 {
-    m_Operation = _op;
+    assert(m_Operation);
+    assert(_result != OperationDialogResultNone);
+    
+    m_Result = _result;
+ 
+    if ([self IsVisible]) [self HideDialog];
+    
+    [m_Operation OnDialogClosed:self];
 }
 
 - (BOOL)WaitForResult
@@ -63,6 +61,12 @@
     }
     
     return self.Result == OperationDialogResultStop;
+}
+
+- (void)OnDialogEnqueued:(Operation *)_operation
+{
+    m_Operation = _operation;
+    m_Result = OperationDialogResultNone;
 }
 
 @end

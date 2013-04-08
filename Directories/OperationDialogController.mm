@@ -45,7 +45,7 @@
 - (void)CloseDialogWithResult:(int)_result
 {
     assert(m_Operation);
-    assert(_result != OperationDialogResultNone);
+    assert(_result != OperationDialogResult::None);
     
     m_Result = _result;
  
@@ -56,7 +56,7 @@
 
 - (int)WaitForResult
 {
-    while (self.Result == OperationDialogResultNone) {
+    while (self.Result == OperationDialogResult::None) {
         usleep(33*1000);
     }
     
@@ -66,7 +66,7 @@
 - (void)OnDialogEnqueued:(Operation *)_operation
 {
     m_Operation = _operation;
-    m_Result = OperationDialogResultNone;
+    m_Result = OperationDialogResult::None;
 }
 
 @end

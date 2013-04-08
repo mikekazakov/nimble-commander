@@ -39,12 +39,12 @@
 
 - (IBAction)OkButtonAction:(NSButton *)sender
 {
-    [self CloseDialogWithResult:OperationDialogResultContinue];
+    [self CloseDialogWithResult:OperationDialogResult::Continue];
 }
 
 - (IBAction)CancelButtonAction:(NSButton *)sender
 {
-    [self CloseDialogWithResult:OperationDialogResultStop];
+    [self CloseDialogWithResult:OperationDialogResult::Stop];
 }
 
 - (IBAction)PostponeButtonAction:(NSButton *)sender
@@ -55,7 +55,7 @@
 - (IBAction)SetTimeButtonAction:(NSButton *)sender
 {
     self.NewTime = [self.TimeField intValue];
-    [self CloseDialogWithResult:OperationDialogResultContinue];
+    [self CloseDialogWithResult:OperationDialogResult::Continue];
 }
 
 - (void)SetTime:(int)_optime

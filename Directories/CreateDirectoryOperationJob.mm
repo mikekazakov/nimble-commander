@@ -81,7 +81,7 @@ void CreateDirectoryOperationJob::Do()
             int result = [[m_Operation DialogOnCrDirError:errno ForDir:m_Name] WaitForResult];
             if (result == CreateDirectoryOperationRetry)
                 goto domkdir1;
-            if (result == OperationDialogResultStop)
+            if (result == OperationDialogResult::Stop)
             {
                 SetStopped();
                 return;
@@ -98,7 +98,7 @@ domkdir2:
         int result = [[m_Operation DialogOnCrDirError:errno ForDir:m_Name] WaitForResult];
         if (result == CreateDirectoryOperationRetry)
             goto domkdir2;
-        if (result == OperationDialogResultStop)
+        if (result == OperationDialogResult::Stop)
         {
             SetStopped();
             return;

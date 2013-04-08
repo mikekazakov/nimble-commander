@@ -43,7 +43,7 @@ void TimedDummyOperationJob::Do()
             {
                 TimedDummyOperationTestDialog *dialog = [m_Operation AskUser:elapsed_time];
             
-                if ([dialog WaitForResult] == OperationDialogResultStop)
+                if ([dialog WaitForResult] == OperationDialogResult::Stop)
                 {
                     SetStopped();
                     return;
@@ -55,13 +55,13 @@ void TimedDummyOperationJob::Do()
             else
             {
                 OperationDialogAlert *alert = [m_Operation AskUserAlert];
-                if ([alert WaitForResult] == OperationDialogResultStop)
+                if ([alert WaitForResult] == OperationDialogResult::Stop)
                 {
                     SetStopped();
                     return;
                 }
             
-                if (alert.Result == OperationDialogResultCustom)
+                if (alert.Result == OperationDialogResult::Custom)
                     elapsed_time = 0;
             }
         }

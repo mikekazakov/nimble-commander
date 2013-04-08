@@ -14,7 +14,7 @@
 @implementation Operation
 {
     OperationJob *m_Job;
-    volatile id <OperationDialogProtocol> m_Dialog;
+    NSMutableArray *m_Dialogs;
 }
 
 - (id)initWithJob:(OperationJob *)_job
@@ -23,6 +23,7 @@
     if (self)
     {
         m_Job = _job;
+        m_Dialogs = [NSMutableArray array];
     }
     return self;
 }
@@ -55,9 +56,10 @@
 
 - (void)Stop
 {
-    if (m_Dialog && m_Dialog.Result == OperationDialogResultNone)
+    for (id <OperationDialogProtocol> dialog in m_Dialogs)
     {
-        [m_Dialog CloseDialogWithResult:OperationDialogResultStop];
+        if (dialog.Result == OperationDialogResult::None)
+            [dialog CloseDialogWithResult:OperationDialogResult::Stop];
     }
     
     m_Job->RequestStop();
@@ -90,28 +92,36 @@
 
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog
 {
-    [_dialog OnDialogEnqueued:self];
-    m_Dialog = _dialog;
+    @synchronized(m_Dialogs)
+    {
+        [_dialog OnDialogEnqueued:self];
+        [m_Dialogs addObject:_dialog];
+    }
 }
 
 - (BOOL)HasDialog
 {
-    return m_Dialog != nil;
+    return m_Dialogs.count > 0;
 }
 
 - (void)ShowDialogForWindow:(NSWindow *)_parent
 {
-    assert([self HasDialog]);
-    
-    [m_Dialog ShowDialogForWindow:_parent];
+    @synchronized(m_Dialogs)
+    {
+        if (m_Dialogs.count > 0)
+            [m_Dialogs[0] ShowDialogForWindow:_parent];
+    }
 }
 
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog
 {
-    assert(m_Dialog == _dialog);
+    assert([m_Dialogs containsObject:_dialog]);
     
-    m_Dialog = nil;
-    if (_dialog.Result == OperationDialogResultStop) [self Stop];
+    @synchronized(m_Dialogs)
+    {
+        [m_Dialogs removeObject:_dialog];
+    }
+    if (_dialog.Result == OperationDialogResult::Stop) [self Stop];
 }
 
 @end

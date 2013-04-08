@@ -37,8 +37,8 @@
                                strerror(_error), _path]];
 
     [alert AddButtonWithTitle:@"Retry" andResult:CreateDirectoryOperationRetry];
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResultStop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResultNone];
+    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
+    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
     
     [self EnqueueDialog:alert];
     

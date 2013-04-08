@@ -32,7 +32,7 @@ const int MaxButtonsCount = 5;
     int result = m_ButtonsResults[button_number];
     m_Result = result;
     
-    if (m_Result != OperationDialogResultNone)
+    if (m_Result != OperationDialogResult::None)
         [m_Operation OnDialogClosed:self];
 }
 
@@ -51,12 +51,12 @@ const int MaxButtonsCount = 5;
 
 - (void)HideDialog
 {
-    [NSApp endSheet:m_Alert.window returnCode:OperationDialogResultNone];
+    [NSApp endSheet:m_Alert.window returnCode:OperationDialogResult::None];
 }
 
 - (void)CloseDialogWithResult:(int)_result
 {
-    assert(_result != OperationDialogResultNone);
+    assert(_result != OperationDialogResult::None);
     
     if ([self IsVisible])
         [NSApp endSheet:m_Alert.window returnCode:_result];
@@ -64,14 +64,14 @@ const int MaxButtonsCount = 5;
     {
         m_Result = _result;
         
-        if (m_Result != OperationDialogResultNone)
+        if (m_Result != OperationDialogResult::None)
             [m_Operation OnDialogClosed:self];
     }
 }
 
 - (int)WaitForResult
 {
-    while (self.Result == OperationDialogResultNone)
+    while (self.Result == OperationDialogResult::None)
     {
         usleep(33*1000);
     }
@@ -82,7 +82,7 @@ const int MaxButtonsCount = 5;
 - (void)OnDialogEnqueued:(Operation *)_operation
 {
     m_Operation = _operation;
-    m_Result = OperationDialogResultNone;
+    m_Result = OperationDialogResult::None;
 }
 
 - (id)init

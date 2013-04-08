@@ -10,22 +10,27 @@
 
 @class Operation;
 
-@protocol OperationDialogProtocol <NSObject>
-
-// Predefined dialog results.
+// Predefined OperationDialogProtocol results.
+namespace OperationDialogResult
+{
 enum
 {
     // No result, dialog is not finished.
-    OperationDialogResultNone       = 0,
+    None = 0,
     // Dialog is finished and the job must stop execution. Closing with this result invokes
     // [ParentOperation Close].
     // Any dialog can be closed with this result by the application.
-    OperationDialogResultStop       = 1,
+    Stop = 1,
     // Dialog is finished and the job can continue execution.
-    OperationDialogResultContinue   = 2,
+    Continue = 2,
     // Add your own custom results starting from this constant.
-    OperationDialogResultCustom     = 100
+    Custom = 100
 };
+}
+
+
+@protocol OperationDialogProtocol <NSObject>
+
 @property (readonly) volatile int Result;
 
 - (void)ShowDialogForWindow:(NSWindow *)_parent;
@@ -38,7 +43,7 @@ enum
 
 // Waits for dialog to close with result. Should be used in job's internal thread.
 // Example usage:
-// if ([[m_Operation askUser] WaitForResult] == OperationDialogResultStop)
+// if ([[m_Operation askUser] WaitForResult] == OperationDialogResult::Stop)
 // {
 //     SetStopped();
 //     return;

@@ -11,20 +11,34 @@
 
 struct FileSysAttrAlterCommand;
 
-@interface FileSysAttrChangeOperation : Operation
-
+// FileSysAttrOperation's custom dialog results:
+namespace FileSysAttrChangeOperationDialogResult
+{
 enum
 {
-    // Custom dialog results:
-    // Skip this and all the following errors.
-    FileSysAttrChangeOperationDialogSkipAll = OperationDialogResultCustom
+    // Skip current and all the following errors.
+    SkipAll = OperationDialogResult::Custom,
+    // Retry the action.
+    Retry   = OperationDialogResult::Custom + 1,
 };
+}
+
+@interface FileSysAttrChangeOperation : Operation
 
 - (id)initWithCommand:(FileSysAttrAlterCommand*)_command; // passing with ownership, operation will free it on finish
 - (NSString *)GetCaption;
 
-- (OperationDialogAlert *)DialogChmodError:(int)_error
+- (OperationDialogAlert *)DialogOnChmodError:(int)_error
                                   ForFile:(const char *)_path
                                  WithMode:(mode_t)_mode;
+
+- (OperationDialogAlert *)DialogOnChflagsError:(int)_error
+                                   ForFile:(const char*)_path
+                                 WithFlags:(uint32_t)_flags;
+
+- (OperationDialogAlert *)DialogOnChownError:(int)_error
+                                     ForFile:(const char*)_path
+                                         Uid:(uid_t)_uid
+                                         Gid:(gid_t)_gid;
 
 @end

@@ -41,10 +41,10 @@
     [alert SetAlertStyle:NSInformationalAlertStyle];
     [alert SetMessageText:@"This is error"];
     [alert SetInformativeText:@"............."];
-    [alert AddButtonWithTitle:@"Continue" andResult:OperationDialogResultContinue];
-    [alert AddButtonWithTitle:@"Restart" andResult:OperationDialogResultCustom];
-    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResultStop];
-    [alert AddButtonWithTitle:@"Later" andResult:OperationDialogResultNone];
+    [alert AddButtonWithTitle:@"Continue" andResult:OperationDialogResult::Continue];
+    [alert AddButtonWithTitle:@"Restart" andResult:OperationDialogResult::Custom];
+    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
+    [alert AddButtonWithTitle:@"Later" andResult:OperationDialogResult::None];
     
     [self EnqueueDialog:alert];
     return alert;

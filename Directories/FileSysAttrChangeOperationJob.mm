@@ -209,20 +209,24 @@ void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
 #undef DOACCESS
     if(newmode != st.st_mode)
     {
+        
+retry_chmod:
         int res = chmod(_full_path, newmode);
         if(res != 0 && !m_SkipAllErrors)
         {
-            int result = [[m_Operation DialogChmodError:errno
-                                                ForFile:_full_path
-                                               WithMode:newmode] WaitForResult];
+            int result = [[m_Operation DialogOnChmodError:errno
+                                                  ForFile:_full_path
+                                                 WithMode:newmode] WaitForResult];
             
-            if (result == OperationDialogResultStop)
+            if (result == OperationDialogResult::Stop)
             {
                 SetStopped();
                 return;
             }
-            if (result == FileSysAttrChangeOperationDialogSkipAll)
+            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
                 m_SkipAllErrors = true;
+            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+                goto retry_chmod;
             
             // TODO: error handling
         }
@@ -244,9 +248,25 @@ void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
 #undef DOFLAGS
     if(newflags != st.st_flags)
     {
+        
+retry_chflags:
         int res = chflags(_full_path, newflags);
-        if(res != 0)
+        if(res != 0 && !m_SkipAllErrors)
         {
+            int result = [[m_Operation DialogOnChflagsError:errno
+                                                    ForFile:_full_path
+                                                  WithFlags:newflags] WaitForResult];
+            
+            if (result == OperationDialogResult::Stop)
+            {
+                SetStopped();
+                return;
+            }
+            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+                m_SkipAllErrors = true;
+            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+                goto retry_chflags;
+                
             // TODO: error handling
         }
     }
@@ -258,9 +278,25 @@ void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
     if(m_Command->set_gid) newgid = m_Command->gid;
     if(newuid != st.st_uid || newgid != st.st_gid)
     {
+retry_chown:
         int res = chown(_full_path, newuid, newgid); // NEED super-user rights here, regular rights are useless almost always
-        if(res != 0)
+        if(res != 0 && !m_SkipAllErrors)
         {
+            int result = [[m_Operation DialogOnChownError:errno
+                                                  ForFile:_full_path
+                                                      Uid:newuid
+                                                      Gid:newgid] WaitForResult];
+            
+            if (result == OperationDialogResult::Stop)
+            {
+                SetStopped();
+                return;
+            }
+            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+                m_SkipAllErrors = true;
+            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+                goto retry_chown;
+            
             // TODO: error handling
         }
     }

@@ -21,7 +21,7 @@
 - (void)SetMessageText:(NSString *)_text;
 - (void)SetInformativeText:(NSString *)_text;
 // Adds a button to the alert. When clicked, it will produce the specified result.
-// Use OperationDialogResultNone result value to make the button hide the alert without closing it.
+// Use OperationDialogResult::None result value to make the button hide the alert without closing it.
 - (NSButton *)AddButtonWithTitle:(NSString *)_title andResult:(int)_result;
 
 @end

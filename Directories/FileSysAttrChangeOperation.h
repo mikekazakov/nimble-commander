@@ -7,11 +7,17 @@
 //
 
 #import "Operation.h"
+#import "OperationDialogAlert.h"
+
 struct FileSysAttrAlterCommand;
 
 @interface FileSysAttrChangeOperation : Operation
 
 - (id)initWithCommand:(FileSysAttrAlterCommand*)_command; // passing with ownership, operation will free it on finish
 - (NSString *)GetCaption;
+
+- (OperationDialogAlert *)DialogChmodError:(int)_error
+                                  ForFile:(const char *)_path
+                                 WithMode:(mode_t)_mode;
 
 @end

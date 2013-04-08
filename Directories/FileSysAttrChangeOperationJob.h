@@ -19,7 +19,7 @@ class FileSysAttrChangeOperationJob : public OperationJob
 public:
     FileSysAttrChangeOperationJob();
     ~FileSysAttrChangeOperationJob();
-    void Init(FileSysAttrAlterCommand *_command);
+    void Init(FileSysAttrAlterCommand *_command, FileSysAttrChangeOperation *_operation);
     
     
     enum State
@@ -41,6 +41,7 @@ private:
     
     FileSysAttrAlterCommand *m_Command;
     FlexChainedStringsChunk *m_Files, *m_FilesLast;
+    FileSysAttrChangeOperation *m_Operation;
     unsigned m_ItemsCount;
     unsigned m_CurrentItemNumber;
     State m_State;

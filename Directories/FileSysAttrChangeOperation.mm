@@ -19,7 +19,7 @@
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_Job.Init(_command);
+        m_Job.Init(_command, self);
     
     }
     return self;
@@ -36,6 +36,28 @@
             return [NSString stringWithFormat:@"Processing file %d of %d.", item_no, items_total];
         default: return @"";
     }
+}
+
+- (OperationDialogAlert *)DialogChmodError:(int)_error
+                                   ForFile:(const char *)_path
+                                  WithMode:(mode_t)_mode
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Chmod Error"];
+    char buff[12];
+    strmode(_mode, buff);
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nFile: %s\nMode: %s",
+        strerror(_error), _path, buff]];
+    
+    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResultContinue];
+    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResultStop];
+    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResultNone];
+    
+    [self EnqueueDialog:alert];
+    
+    return alert;
 }
 
 @end

@@ -20,10 +20,13 @@
 #include <sys/mount.h>
 #include <unistd.h>
 
+#import "FileSysAttrChangeOperation.h"
+
 FileSysAttrChangeOperationJob::FileSysAttrChangeOperationJob():
     m_ItemsCount(0),
     m_CurrentItemNumber(0),
-    m_State(StateInvalid)
+    m_State(StateInvalid),
+    m_Operation(nil)
 {
 }
 
@@ -35,9 +38,10 @@ FileSysAttrChangeOperationJob::~FileSysAttrChangeOperationJob()
     free(m_Command);
 }
 
-void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand *_command)
+void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand *_command, FileSysAttrChangeOperation *_operation)
 {
     m_Command = _command;
+    m_Operation = _operation;
 }
 
 FileSysAttrChangeOperationJob::State FileSysAttrChangeOperationJob::StateDetail(unsigned &_it_no, unsigned &_it_tot) const
@@ -78,6 +82,7 @@ void FileSysAttrChangeOperationJob::Do()
         i.str_with_pref(entryfilename_var);
 
         DoFile(entryfilename);
+        if(GetState() == StateStopped) return;
         
         SetProgress(float(m_CurrentItemNumber) / float(m_ItemsCount));
         m_CurrentItemNumber++;
@@ -178,8 +183,10 @@ void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
     // stat current file. no stat - no change.
     struct stat st;
     if(stat(_full_path, &st) != 0)
-        // error. handle it somehow? maybe ask for super-user rights?
+    {
+        // TODO: error. handle it somehow? maybe ask for super-user rights?
         return;
+    }
     
     // process unix access modes
     mode_t newmode = st.st_mode;
@@ -204,6 +211,13 @@ void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
         int res = chmod(_full_path, newmode);
         if(res != 0)
         {
+            if ([[m_Operation DialogChmodError:errno ForFile:_full_path WithMode:newmode]
+                 WaitForResult] == OperationDialogResultStop)
+            {
+                SetStopped();
+                return;
+            }
+            
             // TODO: error handling
         }
     }

@@ -95,8 +95,9 @@
 
     struct passwd *pw = getpwuid(getuid());
     assert(pw);
-    
-    [self CreatePanelsAndConstraints];
+
+    [self CreatePanels];
+    [self CreatePanelConstraints];
     
     m_LeftPanelData = new PanelData;
     m_LeftPanelController = [PanelController new];
@@ -134,12 +135,29 @@
 //    [[self window] visualizeConstraints:[[[self window] contentView] constraints]];
 }
 
-- (void)CreatePanelsAndConstraints
+- (void)CreatePanels
 {
-    const int topgap = 60;
     m_LeftPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(0, 200, 100, 100)];
     [m_LeftPanelView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [[[self window] contentView] addSubview:m_LeftPanelView];
+
+    m_RightPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(100, 100, 100, 100)];
+    [m_RightPanelView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[[self window] contentView] addSubview:m_RightPanelView];    
+}
+
+- (void)CreatePanelConstraints
+{
+    const int topgap = 60;
+    [[[self window] contentView] removeConstraint:m_PanelConstraints.left_left];
+    [[[self window] contentView] removeConstraint:m_PanelConstraints.left_top];
+    [[[self window] contentView] removeConstraint:m_PanelConstraints.left_right];
+    [[[self window] contentView] removeConstraint:m_PanelConstraints.left_bottom];
+    [[[self window] contentView] removeConstraint:m_PanelConstraints.right_left];
+    [[[self window] contentView] removeConstraint:m_PanelConstraints.right_top];
+    [[[self window] contentView] removeConstraint:m_PanelConstraints.right_right];
+    [[[self window] contentView] removeConstraint:m_PanelConstraints.right_bottom];
+    
     m_PanelConstraints.left_left = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
                                                                 attribute:NSLayoutAttributeLeft
                                                                 relatedBy:NSLayoutRelationEqual
@@ -168,14 +186,6 @@
                                                                attribute:NSLayoutAttributeCenterX
                                                               multiplier:1
                                                                 constant:0];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.left_left];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.left_top];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.left_right];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.left_bottom];
-
-    m_RightPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(100, 100, 100, 100)];
-    [m_RightPanelView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [[[self window] contentView] addSubview:m_RightPanelView];
     m_PanelConstraints.right_left = [NSLayoutConstraint constraintWithItem:m_RightPanelView
                                                                 attribute:NSLayoutAttributeLeft
                                                                 relatedBy:NSLayoutRelationEqual
@@ -204,6 +214,10 @@
                                                                  attribute:NSLayoutAttributeRight
                                                                 multiplier:1
                                                                   constant:0];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.left_left];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.left_top];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.left_right];
+    [[[self window] contentView] addConstraint:m_PanelConstraints.left_bottom];    
     [[[self window] contentView] addConstraint:m_PanelConstraints.right_left];
     [[[self window] contentView] addConstraint:m_PanelConstraints.right_top];
     [[[self window] contentView] addConstraint:m_PanelConstraints.right_right];
@@ -453,62 +467,6 @@
     }
 }
 
-- (void) HandleSynchronizePanels // ALT+CMD+U
-{
-    assert([self IsPanelActive]);
-    char dirpath[__DARWIN_MAXPATHLEN];
-    
-    if(m_ActiveState == StateLeftPanel)
-    {
-        m_LeftPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
-        [m_RightPanelController GoToDirectory:dirpath];
-    }
-    else
-    {
-        m_RightPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
-        [m_LeftPanelController GoToDirectory:dirpath];
-    }
-}
-
-- (void) HandleDetailedVolumeInformation // CMD+ALT+L
-{
-    PanelView *curview = [self ActivePanelView];
-    PanelData *curdata = [self ActivePanelData];
-    int curpos = [curview GetCursorPosition];
-    int rawpos = curdata->SortPosToRawPos(curpos);
-    char src[__DARWIN_MAXPATHLEN];
-    curdata->ComposeFullPathForEntry(rawpos, src);
-
-    DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
-    [sheet ShowSheet:[self window] destpath:src];
-}
-
-- (void) HandleEntryAttributes // CTRL+A
-{
-    FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
-    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
-        if(result == DialogResult::Apply)
-        {
-            FileSysAttrAlterCommand *command = [sheet Result];
-            [m_OperationsController AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:command]];            
-        }
-    };
-    
-    if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
-    {
-        [sheet ShowSheet:[self window] selentries:[self ActivePanelData] handler:handler];
-    }
-    else
-    {
-        PanelView *curview = [self ActivePanelView];
-        PanelData *curdata = [self ActivePanelData];
-        int curpos = [curview GetCursorPosition];
-        int rawpos = curdata->SortPosToRawPos(curpos);
-        if(!curdata->EntryAtRawPosition(rawpos).isdotdot())
-            [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
-    }
-}
-
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
     [m_LeftPanelController FireDirectoryChanged:_dir ticket:_ticket];
@@ -588,45 +546,6 @@
     
     switch (keycode)
     {
-        case 0: // a button on keyboard
-        {
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSControlKeyMask))
-                    [self HandleEntryAttributes];
-            }
-            break;
-        }
-        case 15: // r button on keyboard
-        {
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSCommandKeyMask))
-                    [[self ActivePanelController] RefreshDirectory];
-            }
-            break;
-        }
-        case 32: // u button on keyboard
-        {
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask))
-                    [self HandleSynchronizePanels];
-                else if([event modifierFlags] & NSCommandKeyMask )
-                    ;// swap panel functionality should be called here            
-            }
-            break;
-        }
-        case 37: // l button on keyboard
-        {
-            if([self IsPanelActive])
-            {
-
-                if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask))
-                    [self HandleDetailedVolumeInformation];
-            }
-            break;            
-        }
         case 17: // t button on keyboard
         {
             if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask))
@@ -696,6 +615,75 @@
 
 - (IBAction)RightPanelGoto:(id)sender{
     [[self RightPanelGoToButton] performClick:self];
+}
+
+- (IBAction)OnSyncPanels:(id)sender{
+    assert([self IsPanelActive]);
+    char dirpath[__DARWIN_MAXPATHLEN];
+    if(m_ActiveState == StateLeftPanel)
+    {
+        m_LeftPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
+        [m_RightPanelController GoToDirectory:dirpath];
+    }
+    else
+    {
+        m_RightPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
+        [m_LeftPanelController GoToDirectory:dirpath];
+    }
+}
+
+- (IBAction)OnSwapPanels:(id)sender{
+    assert([self IsPanelActive]);
+    std::swap(m_LeftPanelView, m_RightPanelView);
+    std::swap(m_LeftPanelData, m_RightPanelData);
+    std::swap(m_LeftPanelController, m_RightPanelController);
+    if(m_ActiveState == StateLeftPanel) m_ActiveState = StateRightPanel;
+    else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
+    [self CreatePanelConstraints];    
+}
+
+- (IBAction)OnRefreshPanel:(id)sender{
+    assert([self IsPanelActive]);
+    [[self ActivePanelController] RefreshDirectory];
+}
+
+- (IBAction)OnFileAttributes:(id)sender{
+    assert([self IsPanelActive]);
+    FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
+    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
+        if(result == DialogResult::Apply)
+        {
+            FileSysAttrAlterCommand *command = [sheet Result];
+            [m_OperationsController AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:command]];
+        }
+    };
+
+    if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
+    {
+        [sheet ShowSheet:[self window] selentries:[self ActivePanelData] handler:handler];
+    }
+    else
+    {
+        PanelView *curview = [self ActivePanelView];
+        PanelData *curdata = [self ActivePanelData];
+        int curpos = [curview GetCursorPosition];
+        int rawpos = curdata->SortPosToRawPos(curpos);
+        if(!curdata->EntryAtRawPosition(rawpos).isdotdot())
+            [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
+    }
+}
+
+- (IBAction)OnDetailedVolumeInformation:(id)sender{
+    assert([self IsPanelActive]);
+    PanelView *curview = [self ActivePanelView];
+    PanelData *curdata = [self ActivePanelData];
+    int curpos = [curview GetCursorPosition];
+    int rawpos = curdata->SortPosToRawPos(curpos);
+    char src[__DARWIN_MAXPATHLEN];
+    curdata->ComposeFullPathForEntry(rawpos, src);
+    
+    DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
+    [sheet ShowSheet:[self window] destpath:src];
 }
 
 @end

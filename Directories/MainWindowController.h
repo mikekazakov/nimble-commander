@@ -43,6 +43,11 @@ enum ActiveState
 - (IBAction)ToggleSortByBTime:(id)sender;
 - (IBAction)LeftPanelGoto:(id)sender;
 - (IBAction)RightPanelGoto:(id)sender;
+- (IBAction)OnSyncPanels:(id)sender;
+- (IBAction)OnSwapPanels:(id)sender;
+- (IBAction)OnRefreshPanel:(id)sender;
+- (IBAction)OnFileAttributes:(id)sender;
+- (IBAction)OnDetailedVolumeInformation:(id)sender;
 
 // this method will be called by App in all MainWindowControllers with same params
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;

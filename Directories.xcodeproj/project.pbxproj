@@ -217,7 +217,6 @@
 		B528011916FCF347004E260D /* Operation */ = {
 			isa = PBXGroup;
 			children = (
-				B5F00AC51711F22E00176F79 /* Base */,
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				B5AD9CDE17030DAA0099BC6D /* Dummies */,
 				CFC058DD170B27D500A20CF2 /* FileSysAttrChange */,
@@ -267,13 +266,6 @@
 				CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */,
 			);
 			name = SummaryView;
-			sourceTree = "<group>";
-		};
-		B5F00AC51711F22E00176F79 /* Base */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Base;
 			sourceTree = "<group>";
 		};
 		CF536C0D16C92EA200F37203 /* Panel */ = {

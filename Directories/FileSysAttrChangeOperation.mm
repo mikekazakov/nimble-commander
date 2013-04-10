@@ -7,7 +7,9 @@
 //
 
 #import "FileSysAttrChangeOperation.h"
-#include "FileSysAttrChangeOperationJob.h"
+#import "FileSysAttrChangeOperationJob.h"
+
+#import <sys/attr.h>
 
 @implementation FileSysAttrChangeOperation
 {
@@ -99,6 +101,82 @@
     [alert SetInformativeText:
         [NSString stringWithFormat:@"Can't change owner and/or group.\nError: %s\nFile: %s",
          strerror(_error), _path]];
+    
+    [alert AddButtonWithTitle:@"Retry"
+                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
+    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
+    [alert AddButtonWithTitle:@"Skip All"
+                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
+    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
+    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    
+    [self EnqueueDialog:alert];
+    
+    return alert;
+}
+
+- (OperationDialogAlert *)DialogOnFileTimeError:(int)_error ForFile:(const char *)_path WithAttr:(u_int32_t)_attr Time:(timespec)_time
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    
+    const char *time_string = "(error)";
+    switch (_attr) {
+        case ATTR_CMN_ACCTIME: time_string = "access"; break;
+        case ATTR_CMN_MODTIME: time_string = "modify"; break;
+        case ATTR_CMN_CHGTIME: time_string = "change"; break;
+        case ATTR_CMN_CRTIME: time_string = "create"; break;
+    }
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Set file time error"];
+    [alert SetInformativeText:
+     [NSString stringWithFormat:@"Can't set %s time\nError: %s\nFile: %s",
+      time_string, strerror(_error), _path]];
+    
+    
+    [alert AddButtonWithTitle:@"Retry"
+                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
+    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
+    [alert AddButtonWithTitle:@"Skip All"
+                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
+    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
+    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    
+    [self EnqueueDialog:alert];
+    
+    return alert;
+}
+
+- (OperationDialogAlert *)DialogOnOpendirError:(int)_error ForDir:(const char *)_path
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Directory access error"];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nDirectory: %s",
+                               strerror(_error), _path]];
+    
+    [alert AddButtonWithTitle:@"Retry"
+                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
+    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
+    [alert AddButtonWithTitle:@"Skip All"
+                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
+    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
+    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    
+    [self EnqueueDialog:alert];
+    
+    return alert;
+}
+
+- (OperationDialogAlert *)DialogOnStatError:(int)_error ForPath:(const char *)_path
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Can't get file status"];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %s",
+                               strerror(_error), _path]];
     
     [alert AddButtonWithTitle:@"Retry"
                     andResult:FileSysAttrChangeOperationDialogResult::Retry];

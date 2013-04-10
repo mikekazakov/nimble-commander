@@ -33,12 +33,21 @@ enum
                                  WithMode:(mode_t)_mode;
 
 - (OperationDialogAlert *)DialogOnChflagsError:(int)_error
-                                   ForFile:(const char*)_path
+                                   ForFile:(const char *)_path
                                  WithFlags:(uint32_t)_flags;
 
 - (OperationDialogAlert *)DialogOnChownError:(int)_error
-                                     ForFile:(const char*)_path
+                                     ForFile:(const char *)_path
                                          Uid:(uid_t)_uid
                                          Gid:(gid_t)_gid;
+
+- (OperationDialogAlert *)DialogOnFileTimeError:(int)_error
+                                        ForFile:(const char *)_path
+                                       WithAttr:(u_int32_t)_attr
+                                           Time:(timespec)_time;
+
+- (OperationDialogAlert *)DialogOnOpendirError:(int)_error ForDir:(const char *)_path;
+
+- (OperationDialogAlert *)DialogOnStatError:(int)_error ForPath:(const char *)_path;
 
 @end

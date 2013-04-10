@@ -130,9 +130,28 @@ void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const FlexCh
     if(GetState() == StateStopped) return;    
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
-    char fn[MAXPATHLEN];    
+    char fn[MAXPATHLEN];
+retry_opendir:
     DIR *dirp = opendir(_full_path);
-    if( dirp != 0)
+    if( dirp == 0)
+    {
+        if (!m_SkipAllErrors)
+        {
+            // Handle error.
+            int result = [[m_Operation DialogOnOpendirError:errno ForDir:_full_path]
+                          WaitForResult];
+            if (result == OperationDialogResult::Stop)
+            {
+                SetStopped();
+                return;
+            }
+            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+                m_SkipAllErrors = true;
+            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+                goto retry_opendir;
+        }
+    }
+    else
     {
         dirent *entp;
         while((entp = readdir(dirp)) != NULL)
@@ -144,7 +163,26 @@ void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const FlexCh
             sprintf(fn, "%s/%s", _full_path, entp->d_name); // TODO: optimize me
             
             struct stat st;
-            if(stat(fn, &st) == 0)
+retry_stat:
+            if(stat(fn, &st) != 0)
+            {
+                if (!m_SkipAllErrors)
+                {
+                    // Handle error.
+                    int result = [[m_Operation DialogOnStatError:errno ForPath:_full_path]
+                                  WaitForResult];
+                    if (result == OperationDialogResult::Stop)
+                    {
+                        SetStopped();
+                        break;
+                    }
+                    if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+                        m_SkipAllErrors = true;
+                    if (result == FileSysAttrChangeOperationDialogResult::Retry)
+                        goto retry_stat;
+                }
+            }
+            else
             {
                 if((st.st_mode&S_IFMT) == S_IFREG)
                 {
@@ -161,16 +199,8 @@ void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const FlexCh
                     ScanDir(fn, dirnode);
                 }
             }
-            else
-            {
-                // TODO: error handling
-            }
         }        
         closedir(dirp);
-    }
-    else
-    {
-        //TODO: error handling. maybe rights issue?
     }
 }
 
@@ -183,10 +213,24 @@ void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
     
     // stat current file. no stat - no change.
     struct stat st;
+retry_stat:
     if(stat(_full_path, &st) != 0)
     {
-        // TODO: error. handle it somehow? maybe ask for super-user rights?
-        return;
+        if (!m_SkipAllErrors)
+        {
+            // Handle error.
+            int result = [[m_Operation DialogOnStatError:errno ForPath:_full_path]
+                          WaitForResult];
+            if (result == OperationDialogResult::Stop)
+            {
+                SetStopped();
+                return;
+            }
+            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+                m_SkipAllErrors = true;
+            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+                goto retry_stat;
+        }
     }
     
     // process unix access modes
@@ -227,8 +271,6 @@ retry_chmod:
                 m_SkipAllErrors = true;
             if (result == FileSysAttrChangeOperationDialogResult::Retry)
                 goto retry_chmod;
-            
-            // TODO: error handling
         }
     }
     
@@ -266,8 +308,6 @@ retry_chflags:
                 m_SkipAllErrors = true;
             if (result == FileSysAttrChangeOperationDialogResult::Retry)
                 goto retry_chflags;
-                
-            // TODO: error handling
         }
     }
         
@@ -296,14 +336,21 @@ retry_chown:
                 m_SkipAllErrors = true;
             if (result == FileSysAttrChangeOperationDialogResult::Retry)
                 goto retry_chown;
-            
-            // TODO: error handling
         }
     }
     
     // process file times
     // TODO: still weirdness with timezone stuff
-
+    
+#define HANDLE_FILETIME_RESULT(label) \
+    if (res != 0 && !m_SkipAllErrors) { \
+        int result = [[m_Operation DialogOnFileTimeError:errno \
+                        ForFile:_full_path WithAttr:attrs.commonattr Time:time] WaitForResult]; \
+        if (result == OperationDialogResult::Stop) { SetStopped(); return; } \
+        else if (result == FileSysAttrChangeOperationDialogResult::SkipAll) m_SkipAllErrors = true; \
+        else if (result == FileSysAttrChangeOperationDialogResult::Retry) goto label; \
+    }
+    
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
     attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
@@ -312,43 +359,37 @@ retry_chown:
     {
         attrs.commonattr = ATTR_CMN_ACCTIME;
         timespec time = {m_Command->atime, 0}; // yep, no msec and nsec
+retry_acctime:
         int res = setattrlist(_full_path, &attrs, &time, sizeof(time), 0);
-        if(res != 0)
-        {
-            // TODO: error handling
-        }
+        HANDLE_FILETIME_RESULT(retry_acctime);
     }
 
     if(m_Command->set_mtime && m_Command->mtime != st.st_mtimespec.tv_sec)
     {
         attrs.commonattr = ATTR_CMN_MODTIME;
         timespec time = {m_Command->mtime, 0}; // yep, no msec and nsec
+retry_modtime:
         int res = setattrlist(_full_path, &attrs, &time, sizeof(time), 0);
-        if(res != 0)
-        {
-            // TODO: error handling
-        }
+        HANDLE_FILETIME_RESULT(retry_modtime);
     }
     
     if(m_Command->set_ctime && m_Command->ctime != st.st_ctimespec.tv_sec)
     {
         attrs.commonattr = ATTR_CMN_CHGTIME;
         timespec time = {m_Command->ctime, 0}; // yep, no msec and nsec
+retry_chgtime:
         int res = setattrlist(_full_path, &attrs, &time, sizeof(time), 0);
-        if(res != 0)
-        {
-            // TODO: error handling
-        }
+        HANDLE_FILETIME_RESULT(retry_chgtime);
     }
     
     if(m_Command->set_btime && m_Command->btime != st.st_birthtimespec.tv_sec)
     {
         attrs.commonattr = ATTR_CMN_CRTIME;
         timespec time = {m_Command->btime, 0}; // yep, no msec and nsec
+retry_crtime:
         int res = setattrlist(_full_path, &attrs, &time, sizeof(time), 0);
-        if(res != 0)
-        {
-            // TODO: error handling
-        }
+        HANDLE_FILETIME_RESULT(retry_crtime);
     }
+    
+#undef HANDLE_FILETIME_ERROR
 }

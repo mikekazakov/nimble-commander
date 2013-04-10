@@ -9,13 +9,16 @@
 #import "Operation.h"
 #import "FlexChainedStringsChunk.h"
 #import "OperationDialogAlert.h"
+#import "FileAlreadyExistSheetController.h"
 
 struct FileCopyOperationDR
 {
     enum{
         Retry = OperationDialogResult::Custom,
         Skip,
-        SkipAll
+        SkipAll,
+        Overwrite,
+        Append
     };
 };
 
@@ -31,5 +34,11 @@ struct FileCopyOperationDR
 - (OperationDialogAlert *)OnCopyCantOpenDestFile:(int)_error ForFile:(const char *)_path;
 - (OperationDialogAlert *)OnCopyReadError:(int)_error ForFile:(const char *)_path;
 - (OperationDialogAlert *)OnCopyWriteError:(int)_error ForFile:(const char *)_path;
+- (FileAlreadyExistSheetController *)OnFileExist: (const char*)_path
+                                         newsize: (unsigned long)_newsize
+                                         newtime: (time_t) _newtime
+                                         exisize: (unsigned long)_exisize
+                                         exitime: (time_t) _exitime
+                                        remember: (bool*)  _remb;
 
 @end

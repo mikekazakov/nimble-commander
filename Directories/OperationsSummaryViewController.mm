@@ -57,13 +57,13 @@
 {
     // Update operations count button.
     NSUInteger count = [m_OperationsController GetOperationsCount];
-    self.OperationsCountLabel.stringValue = [@(count) stringValue];
+//    self.OperationsCountLabel.stringValue = [@(count) stringValue];
+    self.OperationsCountLabel.intValue = count;
     
     
     // If there is no operations, show "no operations label".
     // Otherwise, hide it.
     [self.NoOperationsLabel setHidden:(count != 0)];
-    
     
     // Update diaogs count
     NSUInteger dialogs_count = 0;
@@ -72,8 +72,8 @@
         if ([[m_OperationsController GetOperation:i] GetDialogsCount] != 0)
             ++dialogs_count;
     }
-    self.DialogsCountLabel.stringValue = [@(dialogs_count) stringValue];
-    
+//    self.DialogsCountLabel.stringValue = [@(dialogs_count) stringValue];
+    self.DialogsCountLabel.intValue = dialogs_count;
     
     // Shrink list if it is expanded and there is none or only one operation left.
     if (count <= 1 && m_Expanded)

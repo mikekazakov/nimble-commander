@@ -407,6 +407,8 @@ void FileCopyOperationJob::ProcessFile(const char *_path)
     {
         strcpy(destinationpath, m_Destination);
     }
+    
+    if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy file into itself
 
 opensource:
     if((sourcefd = open(sourcepath, O_RDONLY|O_SHLOCK)) == -1)
@@ -430,22 +432,26 @@ statsource: // get information about source file
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
         if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
-    
+
     // stat destination
     totaldestsize = src_stat_buffer.st_size;
     if(stat(destinationpath, &dst_stat_buffer) != -1)
     { // file already exist. what should we do now?
-        assert(0);
-/*        if(m_SkipAll) goto cleanup;
+        int result;
+        if(m_SkipAll) goto cleanup;
         if(m_OverwriteAll) goto decoverwrite;
         if(m_AppendAll) goto decappend;
-        switch(DoFileAlreadyExistSheetController([m_Wnd window], destinationpath, src_stat_buffer, dst_stat_buffer, &remember_choice))
-        {
-            case DialogResult::Overwrite:   if(remember_choice) m_OverwriteAll = true;  goto decoverwrite;
-            case DialogResult::Append:      if(remember_choice) m_AppendAll = true;     goto decappend;
-            case DialogResult::Skip:        if(remember_choice) m_SkipAll = true;       goto cleanup;
-            case DialogResult::Cancel:      m_Cancel = true;                            goto cleanup;
-        }*/
+  
+        result = [[m_Operation OnFileExist:destinationpath
+                                  newsize:src_stat_buffer.st_size
+                                  newtime:src_stat_buffer.st_mtimespec.tv_sec
+                                  exisize:dst_stat_buffer.st_size
+                                  exitime:dst_stat_buffer.st_mtimespec.tv_sec
+                                 remember:&remember_choice] WaitForResult];
+        if(result == FileCopyOperationDR::Overwrite){ if(remember_choice) m_OverwriteAll = true;  goto decoverwrite; }
+        if(result == FileCopyOperationDR::Append)   { if(remember_choice) m_AppendAll = true;     goto decappend;    }
+        if(result == FileCopyOperationDR::Skip)     { if(remember_choice) m_SkipAll = true;       goto cleanup;      }
+        if(result == OperationDialogResult::Stop)   { SetStopped(); goto cleanup; }
         
         // decisions about what to do with existing destination
     decoverwrite:

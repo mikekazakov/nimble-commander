@@ -159,4 +159,24 @@
     return alert;
 }
 
+- (FileAlreadyExistSheetController *)OnFileExist: (const char*)_path
+                                         newsize: (unsigned long)_newsize
+                                         newtime: (time_t) _newtime
+                                         exisize: (unsigned long)_exisize
+                                         exitime: (time_t) _exitime
+                                        remember: (bool*)  _remb
+{
+    FileAlreadyExistSheetController *sheet = [[FileAlreadyExistSheetController alloc]
+                                              initWithFile:_path
+                                              newsize:_newsize
+                                              newtime:_newtime
+                                              exisize:_exisize
+                                              exitime:_exitime
+                                              remember:_remb
+                                              single:m_Job.IsSingleFileCopy()];
+
+    [self EnqueueDialog:sheet];
+    return sheet;
+}
+
 @end

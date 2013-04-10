@@ -7,18 +7,18 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "OperationDialogProtocol.h"
 
-typedef void (^FileAlreadyExistSheetCompletionHandler)(int result, bool _remember_choice);
+@interface FileAlreadyExistSheetController : NSWindowController <OperationDialogProtocol>
 
-@interface FileAlreadyExistSheetController : NSWindowController
+- (id)initWithFile: (const char*)_path
+    newsize: (unsigned long)_newsize
+    newtime: (time_t) _newtime
+    exisize: (unsigned long)_exisize
+    exitime: (time_t) _exitime
+   remember: (bool*)  _remb
+     single: (bool) _single;
 
-- (void)ShowSheet: (NSWindow *)_window
-         destpath: (NSString*)_path
-          newsize: (unsigned long)_newsize
-          newtime: (time_t) _newtime
-          exisize: (unsigned long)_exisize
-          exitime: (time_t) _exitime
-          handler: (FileAlreadyExistSheetCompletionHandler)_handler;
 @property (strong) IBOutlet NSTextField *TargetFilename;
 @property (strong) IBOutlet NSTextField *NewFileSize;
 @property (strong) IBOutlet NSTextField *ExistingFileSize;
@@ -31,6 +31,13 @@ typedef void (^FileAlreadyExistSheetCompletionHandler)(int result, bool _remembe
 - (IBAction)OnAppend:(id)sender;
 - (IBAction)OnRename:(id)sender;
 - (IBAction)OnCancel:(id)sender;
+- (IBAction)OnHide:(id)sender;
 
-
+// protocol implementation
+- (void)ShowDialogForWindow:(NSWindow *)_parent;
+- (BOOL)IsVisible;
+- (void)HideDialog;
+- (void)CloseDialogWithResult:(int)_result;
+- (int)WaitForResult;
+- (void)OnDialogEnqueued:(Operation *)_operation;
 @end

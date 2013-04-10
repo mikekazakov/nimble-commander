@@ -644,4 +644,32 @@
      }];
 }
 
+- (IBAction)OnFileCopyAsCommand:(id)sender{
+    // process only current cursor item
+    assert([self IsPanelActive]);
+    
+    int curpos = [[self ActivePanelView] GetCursorPosition];
+    int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
+    auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
+    if(item.isdotdot())
+        return;
+    
+    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] handler:^(int _ret)
+     {
+         if(_ret == DialogResult::Copy)
+         {
+             NSString *copyto = [[mc TextField] stringValue];
+             
+             char root_path[MAXPATHLEN];
+             [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+             
+             [m_OperationsController AddOperation:
+              [[FileCopyOperation alloc] initWithFiles:FlexChainedStringsChunk::AllocateWithSingleString(item.namec())
+                                                  root:root_path
+                                                  dest:[copyto UTF8String]]];
+         }
+     }];
+}
+
 @end

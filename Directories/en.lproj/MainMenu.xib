@@ -735,10 +735,20 @@
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
-								<object class="NSMenuItem" id="521124988">
+								<object class="NSMenuItem" id="904622550">
 									<reference key="NSMenu" ref="456788684"/>
-									<string key="NSTitle">Copy</string>
+									<string key="NSTitle">Copy To</string>
 									<string key="NSKeyEquiv"></string>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
+								<object class="NSMenuItem" id="877475941">
+									<reference key="NSMenu" ref="456788684"/>
+									<bool key="NSIsAlternate">YES</bool>
+									<string key="NSTitle">Copy As</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSKeyEquivModMask">131072</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
@@ -1556,9 +1566,17 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">OnFileCopyCommand:</string>
 						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="521124988"/>
+						<reference key="destination" ref="904622550"/>
 					</object>
 					<int key="connectionID">840</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">OnFileCopyAsCommand:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="877475941"/>
+					</object>
+					<int key="connectionID">843</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -2307,7 +2325,8 @@
 							<reference ref="524972954"/>
 							<reference ref="430262585"/>
 							<reference ref="797452132"/>
-							<reference ref="521124988"/>
+							<reference ref="904622550"/>
+							<reference ref="877475941"/>
 						</array>
 						<reference key="parent" ref="939397169"/>
 					</object>
@@ -2343,7 +2362,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">838</int>
-						<reference key="object" ref="521124988"/>
+						<reference key="object" ref="904622550"/>
+						<reference key="parent" ref="456788684"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">841</int>
+						<reference key="object" ref="877475941"/>
 						<reference key="parent" ref="456788684"/>
 					</object>
 				</array>
@@ -2466,15 +2490,187 @@
 				<string key="832.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="835.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="838.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="841.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="92.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">840</int>
+			<int key="maxID">843</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">AppDelegate</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">NewWindow:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">NewWindow:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">NewWindow:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/AppDelegate.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">MainWindowController</string>
+					<string key="superclassName">NSWindowController</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="LeftPanelGoToButtonAction:">id</string>
+						<string key="LeftPanelGoto:">id</string>
+						<string key="OnCreateDirectoryCommand:">id</string>
+						<string key="OnDeleteCommand:">id</string>
+						<string key="OnDetailedVolumeInformation:">id</string>
+						<string key="OnFileAttributes:">id</string>
+						<string key="OnFileCopyAsCommand:">id</string>
+						<string key="OnFileCopyCommand:">id</string>
+						<string key="OnRefreshPanel:">id</string>
+						<string key="OnSwapPanels:">id</string>
+						<string key="OnSyncPanels:">id</string>
+						<string key="RightPanelGoToButtonAction:">id</string>
+						<string key="RightPanelGoto:">id</string>
+						<string key="ToggleFullViewMode:">id</string>
+						<string key="ToggleMediumViewMode:">id</string>
+						<string key="ToggleShortViewMode:">id</string>
+						<string key="ToggleSortByBTime:">id</string>
+						<string key="ToggleSortByExt:">id</string>
+						<string key="ToggleSortByMTime:">id</string>
+						<string key="ToggleSortByName:">id</string>
+						<string key="ToggleSortBySize:">id</string>
+						<string key="ToggleWideViewMode:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="LeftPanelGoToButtonAction:">
+							<string key="name">LeftPanelGoToButtonAction:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="LeftPanelGoto:">
+							<string key="name">LeftPanelGoto:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnCreateDirectoryCommand:">
+							<string key="name">OnCreateDirectoryCommand:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnDeleteCommand:">
+							<string key="name">OnDeleteCommand:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnDetailedVolumeInformation:">
+							<string key="name">OnDetailedVolumeInformation:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnFileAttributes:">
+							<string key="name">OnFileAttributes:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnFileCopyAsCommand:">
+							<string key="name">OnFileCopyAsCommand:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnFileCopyCommand:">
+							<string key="name">OnFileCopyCommand:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnRefreshPanel:">
+							<string key="name">OnRefreshPanel:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnSwapPanels:">
+							<string key="name">OnSwapPanels:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnSyncPanels:">
+							<string key="name">OnSyncPanels:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="RightPanelGoToButtonAction:">
+							<string key="name">RightPanelGoToButtonAction:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="RightPanelGoto:">
+							<string key="name">RightPanelGoto:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleFullViewMode:">
+							<string key="name">ToggleFullViewMode:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleMediumViewMode:">
+							<string key="name">ToggleMediumViewMode:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleShortViewMode:">
+							<string key="name">ToggleShortViewMode:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleSortByBTime:">
+							<string key="name">ToggleSortByBTime:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleSortByExt:">
+							<string key="name">ToggleSortByExt:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleSortByMTime:">
+							<string key="name">ToggleSortByMTime:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleSortByName:">
+							<string key="name">ToggleSortByName:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleSortBySize:">
+							<string key="name">ToggleSortBySize:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="ToggleWideViewMode:">
+							<string key="name">ToggleWideViewMode:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="LeftPanelGoToButton">MainWndGoToButton</string>
+						<string key="OpSummaryBox">NSView</string>
+						<string key="RightPanelGoToButton">MainWndGoToButton</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="LeftPanelGoToButton">
+							<string key="name">LeftPanelGoToButton</string>
+							<string key="candidateClassName">MainWndGoToButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="OpSummaryBox">
+							<string key="name">OpSummaryBox</string>
+							<string key="candidateClassName">NSView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="RightPanelGoToButton">
+							<string key="name">RightPanelGoToButton</string>
+							<string key="candidateClassName">MainWndGoToButton</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/MainWindowController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">MainWndGoToButton</string>
+					<string key="superclassName">NSPopUpButton</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/MainWndGoToButton.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

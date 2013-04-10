@@ -509,7 +509,7 @@ dotruncate: // set right size for destination file
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
         if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
-    
+
 dolseek: // find right position in destination file
     if(lseek(destinationfd, startwriteoff, SEEK_SET) == -1)
     {   // failed seek in a file. lolwhat?
@@ -520,7 +520,7 @@ dolseek: // find right position in destination file
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
         if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
-    
+
     while(true)
     {
         __block ssize_t io_nread = 0;
@@ -613,17 +613,22 @@ dolseek: // find right position in destination file
     
     // adjust destination time as source
     if(adjust_dst_time)
-    {
-        struct timeval v[2];
-        v[0].tv_sec = src_stat_buffer.st_atimespec.tv_sec; // last access time
-        v[0].tv_usec = (__darwin_suseconds_t)(src_stat_buffer.st_atimespec.tv_nsec / 1000);
-        v[1].tv_sec = src_stat_buffer.st_mtimespec.tv_sec; // last modification time
-        v[1].tv_usec = (__darwin_suseconds_t)(src_stat_buffer.st_mtimespec.tv_nsec / 1000);
-        futimes(destinationfd, v);
-        // TODO: investigate why OSX set btime along with atime and mtime - it should not (?)
-        // need to find a solid way to set btime
-        // TODO: dig into "fsetattrlist" - maybe it's just that one
-        // YES! do it!
+    {        
+        struct attrlist attrs;
+        memset(&attrs, 0, sizeof(attrs));
+        attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+
+        attrs.commonattr = ATTR_CMN_MODTIME;
+        fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_mtimespec, sizeof(struct timespec), 0);
+
+        attrs.commonattr = ATTR_CMN_CRTIME;
+        fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_birthtimespec, sizeof(struct timespec), 0);
+                
+        attrs.commonattr = ATTR_CMN_ACCTIME;
+        fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_atimespec, sizeof(struct timespec), 0);
+
+        attrs.commonattr = ATTR_CMN_CHGTIME;
+        fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_ctimespec, sizeof(struct timespec), 0);
     }
     
 cleanup:

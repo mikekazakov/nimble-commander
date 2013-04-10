@@ -13,8 +13,6 @@
 
 enum
 {
-    // Custom dialog results:
-    // Skip this and all the following errors.
     CreateDirectoryOperationRetry = OperationDialogResult::Custom
 };
 

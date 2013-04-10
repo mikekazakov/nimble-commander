@@ -21,9 +21,6 @@
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
-		CF3C88DB16D92B22006346CD /* CopyAsSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D916D92B22006346CD /* CopyAsSheetController.mm */; };
-		CF3C88DC16D92B22006346CD /* CopyAsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF3C88DA16D92B22006346CD /* CopyAsSheetController.xib */; };
-		CF73C59B16DCDBA500F3D44F /* FileOp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59916DCDBA500F3D44F /* FileOp.mm */; };
 		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CF76B30617000C090066A49F /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
 		CF76B313170146240066A49F /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
@@ -44,11 +41,10 @@
 		CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */; };
 		CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */; };
 		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
+		CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */; };
+		CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
-		CFC4341816E05395001B0512 /* JobView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4341716E05395001B0512 /* JobView.mm */; };
-		CFC4341B16E053E8001B0512 /* JobData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4341916E053E8001B0512 /* JobData.mm */; };
-		CFC4342016E05560001B0512 /* JobController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4341F16E05560001B0512 /* JobController.mm */; };
 		CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */; };
 		CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */; };
 		CFC4342B16E727FC001B0512 /* KQueueDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */; };
@@ -64,7 +60,6 @@
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
-		CFE2697316EEFEAD0048A393 /* FileOpMassCopy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697116EEFEAD0048A393 /* FileOpMassCopy.mm */; };
 		CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */; };
 		CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CFE2697C16F01BAB0048A393 /* FlexChainedStringsChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */; };
@@ -99,11 +94,6 @@
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
-		CF3C88D816D92B22006346CD /* CopyAsSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyAsSheetController.h; sourceTree = "<group>"; };
-		CF3C88D916D92B22006346CD /* CopyAsSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CopyAsSheetController.mm; sourceTree = "<group>"; };
-		CF3C88DA16D92B22006346CD /* CopyAsSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CopyAsSheetController.xib; sourceTree = "<group>"; };
-		CF73C59916DCDBA500F3D44F /* FileOp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileOp.mm; sourceTree = "<group>"; };
-		CF73C59A16DCDBA500F3D44F /* FileOp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileOp.h; sourceTree = "<group>"; };
 		CF73C59C16DE0D2900F3D44F /* MessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBox.h; sourceTree = "<group>"; };
 		CF73C59D16DE0D2900F3D44F /* MessageBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MessageBox.mm; sourceTree = "<group>"; };
 		CF76B30417000C090066A49F /* filesysattr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysattr.mm; sourceTree = "<group>"; };
@@ -139,16 +129,14 @@
 		CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperation.mm; sourceTree = "<group>"; };
 		CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperationJob.mm; sourceTree = "<group>"; };
 		CFA5839B170EA40F00E508CF /* FileDeletionOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperationJob.h; sourceTree = "<group>"; };
+		CFAC50CE1714018C00A3E5C5 /* FileCopyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperation.h; sourceTree = "<group>"; };
+		CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperation.mm; sourceTree = "<group>"; };
+		CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJob.mm; sourceTree = "<group>"; };
+		CFAC50D21714027F00A3E5C5 /* FileCopyOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJob.h; sourceTree = "<group>"; };
 		CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
 		CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
 		CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
 		CFC058DF170B297200A20CF2 /* FileSysAttrChangeOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperationJob.h; sourceTree = "<group>"; };
-		CFC4341616E05395001B0512 /* JobView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobView.h; sourceTree = "<group>"; };
-		CFC4341716E05395001B0512 /* JobView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JobView.mm; sourceTree = "<group>"; };
-		CFC4341916E053E8001B0512 /* JobData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JobData.mm; sourceTree = "<group>"; };
-		CFC4341A16E053E8001B0512 /* JobData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobData.h; sourceTree = "<group>"; };
-		CFC4341E16E05560001B0512 /* JobController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobController.h; sourceTree = "<group>"; };
-		CFC4341F16E05560001B0512 /* JobController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JobController.mm; sourceTree = "<group>"; };
 		CFC4342216E0E09B001B0512 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		CFC4342316E0E1E2001B0512 /* CreateDirectorySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectorySheetController.h; sourceTree = "<group>"; };
 		CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectorySheetController.mm; sourceTree = "<group>"; };
@@ -180,8 +168,6 @@
 		CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		CFE1A4F216C632F700EFBA3C /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowController.mm; sourceTree = "<group>"; };
-		CFE2697116EEFEAD0048A393 /* FileOpMassCopy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileOpMassCopy.mm; sourceTree = "<group>"; };
-		CFE2697216EEFEAD0048A393 /* FileOpMassCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileOpMassCopy.h; sourceTree = "<group>"; };
 		CFE2697416EF0E3E0048A393 /* MassCopySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassCopySheetController.h; sourceTree = "<group>"; };
 		CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassCopySheetController.mm; sourceTree = "<group>"; };
 		CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetController.xib; sourceTree = "<group>"; };
@@ -220,8 +206,9 @@
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				B5AD9CDE17030DAA0099BC6D /* Dummies */,
 				CFC058DD170B27D500A20CF2 /* FileSysAttrChange */,
-				CFA58396170EA35E00E508CF /* FileDeletionOperation */,
+				CFAC50CD1714016800A3E5C5 /* FileCopyOperation */,
 				CF9DF215171320980008CBAE /* CreateDirectoryOperation */,
+				CFA58396170EA35E00E508CF /* FileDeletionOperation */,
 				B528011A16FCF361004E260D /* OperationStats.mm */,
 				B528011B16FCF361004E260D /* OperationStats.h */,
 				B528011E16FCF361004E260D /* OperationJob.mm */,
@@ -348,6 +335,17 @@
 			name = FileDeletionOperation;
 			sourceTree = "<group>";
 		};
+		CFAC50CD1714016800A3E5C5 /* FileCopyOperation */ = {
+			isa = PBXGroup;
+			children = (
+				CFAC50CE1714018C00A3E5C5 /* FileCopyOperation.h */,
+				CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */,
+				CFAC50D21714027F00A3E5C5 /* FileCopyOperationJob.h */,
+				CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */,
+			);
+			name = FileCopyOperation;
+			sourceTree = "<group>";
+		};
 		CFC058DD170B27D500A20CF2 /* FileSysAttrChange */ = {
 			isa = PBXGroup;
 			children = (
@@ -357,29 +355,6 @@
 				CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */,
 			);
 			name = FileSysAttrChange;
-			sourceTree = "<group>";
-		};
-		CFC4341D16E05409001B0512 /* Job */ = {
-			isa = PBXGroup;
-			children = (
-				CFC4341716E05395001B0512 /* JobView.mm */,
-				CFC4341616E05395001B0512 /* JobView.h */,
-				CFC4341916E053E8001B0512 /* JobData.mm */,
-				CFC4341A16E053E8001B0512 /* JobData.h */,
-				CFC4341E16E05560001B0512 /* JobController.h */,
-				CFC4341F16E05560001B0512 /* JobController.mm */,
-			);
-			name = Job;
-			sourceTree = "<group>";
-		};
-		CFC4342116E05587001B0512 /* CopyAsSheet */ = {
-			isa = PBXGroup;
-			children = (
-				CF3C88D816D92B22006346CD /* CopyAsSheetController.h */,
-				CF3C88D916D92B22006346CD /* CopyAsSheetController.mm */,
-				CF3C88DA16D92B22006346CD /* CopyAsSheetController.xib */,
-			);
-			name = CopyAsSheet;
 			sourceTree = "<group>";
 		};
 		CFC4342816E0E1EB001B0512 /* CreateDirectorySheet */ = {
@@ -447,14 +422,8 @@
 				CFC4342816E0E1EB001B0512 /* CreateDirectorySheet */,
 				CFF6053416F4573000AB3287 /* FileAlreadyExistSheetController */,
 				CFE2697916EF0E490048A393 /* MassCopySheetController */,
-				CFC4342116E05587001B0512 /* CopyAsSheet */,
-				CFC4341D16E05409001B0512 /* Job */,
 				CF536C0D16C92EA200F37203 /* Panel */,
 				CF8B09CA16ECEE9C0013B6A8 /* MainWindow */,
-				CF73C59916DCDBA500F3D44F /* FileOp.mm */,
-				CF73C59A16DCDBA500F3D44F /* FileOp.h */,
-				CFE2697116EEFEAD0048A393 /* FileOpMassCopy.mm */,
-				CFE2697216EEFEAD0048A393 /* FileOpMassCopy.h */,
 				CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */,
 				CFE2697B16F01BAA0048A393 /* FlexChainedStringsChunk.h */,
 				CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */,
@@ -559,7 +528,6 @@
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
-				CF3C88DC16D92B22006346CD /* CopyAsSheetController.xib in Resources */,
 				CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */,
 				CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */,
 				CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */,
@@ -588,17 +556,11 @@
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
-				CF3C88DB16D92B22006346CD /* CopyAsSheetController.mm in Sources */,
-				CF73C59B16DCDBA500F3D44F /* FileOp.mm in Sources */,
 				CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */,
-				CFC4341816E05395001B0512 /* JobView.mm in Sources */,
-				CFC4341B16E053E8001B0512 /* JobData.mm in Sources */,
-				CFC4342016E05560001B0512 /* JobController.mm in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
 				CFC4342B16E727FC001B0512 /* KQueueDirUpdate.mm in Sources */,
 				CF8B09C716EB59680013B6A8 /* wcwidth.c in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.m in Sources */,
-				CFE2697316EEFEAD0048A393 /* FileOpMassCopy.mm in Sources */,
 				CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* FlexChainedStringsChunk.cpp in Sources */,
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */,
@@ -627,6 +589,8 @@
 				B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */,
 				CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */,
 				CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */,
+				CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */,
+				CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

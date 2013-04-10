@@ -9,7 +9,7 @@
 #pragma once
 
 #import "OperationJob.h"
-#include "CreateDirectoryOperation.h"
+#import "CreateDirectoryOperation.h"
 
 class CreateDirectoryOperationJob : public OperationJob
 {

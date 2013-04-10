@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 #include "PanelView.h"
-#include "JobView.h"
 
 @class MainWindowController;
 

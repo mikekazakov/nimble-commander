@@ -9,8 +9,6 @@
 #import <Cocoa/Cocoa.h>
 #include "PanelView.h"
 #include "PanelData.h"
-#include "CopyAsSheetController.h"
-#include "JobView.h"
 #include "MainWndGoToButton.h"
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate>
@@ -23,7 +21,6 @@ enum ActiveState
 };
 
 // Window NIB outlets
-@property (strong) IBOutlet JobView *JobView;
 @property (strong) IBOutlet MainWndGoToButton *LeftPanelGoToButton;
 @property (strong) IBOutlet MainWndGoToButton *RightPanelGoToButton;
 @property (weak) IBOutlet NSView *OpSummaryBox;
@@ -51,6 +48,7 @@ enum ActiveState
 - (IBAction)OnDetailedVolumeInformation:(id)sender;
 - (IBAction)OnDeleteCommand:(id)sender;
 - (IBAction)OnCreateDirectoryCommand:(id)sender;
+- (IBAction)OnFileCopyCommand:(id)sender;
 
 // this method will be called by App in all MainWindowControllers with same params
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;

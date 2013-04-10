@@ -1,3 +1,4 @@
+
 //
 //  MainWindowController.m
 //  Directories
@@ -6,28 +7,24 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "MainWindowController.h"
-#include "PanelController.h"
-#include "AppDelegate.h"
-
-#include "CopyAsSheetController.h"
-#include "CreateDirectorySheetController.h"
-#include "MassCopySheetController.h"
-#include "DetailedVolumeInformationSheetController.h"
-#include "FileSysEntryAttrSheetController.h"
-#include "FlexChainedStringsChunk.h"
-#include "JobData.h"
-#include "FileOp.h"
-#include "FileOpMassCopy.h"
+#import "MainWindowController.h"
+#import "PanelController.h"
+#import "AppDelegate.h"
+#import "CreateDirectorySheetController.h"
+#import "MassCopySheetController.h"
+#import "DetailedVolumeInformationSheetController.h"
+#import "FileSysEntryAttrSheetController.h"
+#import "FlexChainedStringsChunk.h"
 #import "OperationsController.h"
 #import "OperationsSummaryViewController.h"
-#include "FileSysAttrChangeOperation.h"
-#include "FileDeletionOperation.h"
+#import "FileSysAttrChangeOperation.h"
+#import "FileDeletionOperation.h"
 #import "CreateDirectoryOperation.h"
-#include "MessageBox.h"
-#include "KQueueDirUpdate.h"
-#include "FSEventsDirUpdate.h"
-#include <pwd.h>
+#import "FileCopyOperation.h"
+#import "MessageBox.h"
+#import "KQueueDirUpdate.h"
+#import "FSEventsDirUpdate.h"
+#import <pwd.h>
 
 // TODO: remove
 #import "TimedDummyOperation.h"
@@ -59,8 +56,7 @@
         NSLayoutConstraint *right_top;
         NSLayoutConstraint *right_right;
     } m_PanelConstraints;
-    
-    JobData *m_JobData;                         // creates and owns
+
     NSTimer *m_JobsUpdateTimer;
     
     OperationsController *m_OperationsController;
@@ -91,8 +87,6 @@
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     
     [m_OpSummaryController AddViewTo:self.OpSummaryBox];
-    
-    m_JobData = new JobData;
 
     struct passwd *pw = getpwuid(getuid());
     assert(pw);
@@ -116,8 +110,6 @@
     
     m_ActiveState = StateLeftPanel;
     [m_LeftPanelView Activate];
-
-    [[self JobView] SetJobData:m_JobData];
     
     [[self window] makeFirstResponder:self];
     [[self window] setDelegate:self];
@@ -256,12 +248,6 @@
     [m_RightPanelView ModifierFlagsChanged:flags];
 }
 
-- (void)UpdateByJobsTimer:(NSTimer*)theTimer
-{
-    if(m_JobData) m_JobData->PurgeDoneJobs();
-    [[self JobView] UpdateByTimer];
-}
-
 - (BOOL)acceptsFirstResponder
 {
     return YES;
@@ -330,74 +316,6 @@
     }
 }
 
-- (void) HandleCopyAs // shift+F5
-{
-    assert([self IsPanelActive]);
-    PanelView *curview = [self ActivePanelView];
-    PanelData *curdata = [self ActivePanelData];
-    
-    int curpos = [curview GetCursorPosition];
-    int rawpos = curdata->SortPosToRawPos(curpos);
-    const DirectoryEntryInformation& entry = curdata->EntryAtRawPosition(rawpos);
-    if(entry.isdotdot())
-        return; // do no react on attempts to copy a parent dir
-    if(!entry.isreg())
-        return; // we can't copy dirs or other stuff for now
-    NSString *orig_name = (__bridge_transfer NSString*) FileNameFromDirectoryEntryInformation(entry);
-    
-     CopyAsSheetController *ca = [[CopyAsSheetController alloc] init];
-    
-    [ca ShowSheet:[self window] initialname:orig_name handler:^(int _ret)
-     {
-         if(_ret == DialogResult::OK)
-         {
-             NSString *res = [[ca TextField] stringValue];
-             char src[__DARWIN_MAXPATHLEN];
-             curdata->ComposeFullPathForEntry(rawpos, src);
-             FileCopy *fc = new FileCopy;
-             fc->InitOpData(src, [res UTF8String], self);
-             fc->Run();
-             m_JobData->AddJob(fc);
-         }
-     }];
-
-}
-
-- (void) HandleCopyCommand // F5
-{
-    assert([self IsPanelActive]);
-    const PanelData *source, *destination;
-    if(m_ActiveState == StateLeftPanel)
-    {
-        source = m_LeftPanelData;
-        destination = m_RightPanelData;
-    }
-    else
-    {
-        source = m_RightPanelData;
-        destination = m_LeftPanelData;
-    }
-    
-    // TODO: implement a case for copying without selected items in source panel
-    // we assume that there's selection for now
-    
-    char dirpath[__DARWIN_MAXPATHLEN];
-    destination->GetDirectoryPathWithTrailingSlash(dirpath);
-    NSString *nsdirpath = [NSString stringWithUTF8String:dirpath];
-    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:nsdirpath handler:^(int _ret)
-     {
-         if(_ret == DialogResult::Copy)
-         {
-             NSString *copyto = [[mc TextField] stringValue];
-             FileOpMassCopy *masscopy = new FileOpMassCopy;
-             masscopy->InitOpDataWithPanel(*source, [copyto UTF8String], self);
-             masscopy->Run();
-             m_JobData->AddJob(masscopy);
-         }
-     }];
-}
-
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
     [m_LeftPanelController FireDirectoryChanged:_dir ticket:_ticket];
@@ -455,15 +373,6 @@
             break;
         case NSTabCharacter: // TAB key
             [self HandleTabButton];
-            break;
-        case NSF5FunctionKey:
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSShiftKeyMask|NSFunctionKeyMask))
-                    [self HandleCopyAs];
-                else // TODO: need to check of absence of any key modifiers here
-                    [self HandleCopyCommand];
-            }
             break;
     };
     
@@ -630,33 +539,33 @@
             files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
     }
     
-    if(files)
-    {
-        MessageBox *mb = [MessageBox new];
-        [mb setAlertStyle:NSCriticalAlertStyle];
-        [mb setMessageText:@"Are you sure want to delete it?"];
-        [mb addButtonWithTitle:@"Delete"];
-        [mb addButtonWithTitle:@"Cancel"];
-        [mb ShowSheetWithHandler: [self window] handler:^(int ret){
-            if(ret == NSAlertFirstButtonReturn)
-            {
-                // kill it with fire!
-                //                FileDeletionOperationType type = FileDeletionOperationType::Delete;
-                FileDeletionOperationType type = FileDeletionOperationType::MoveToTrash;
-                //                FileDeletionOperationType type = FileDeletionOperationType::SecureDelete;
-                char root_path[MAXPATHLEN];
-                [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+    if(!files)
+        return;
+    
+    MessageBox *mb = [MessageBox new];
+    [mb setAlertStyle:NSCriticalAlertStyle];
+    [mb setMessageText:@"Are you sure want to delete it?"];
+    [mb addButtonWithTitle:@"Delete"];
+    [mb addButtonWithTitle:@"Cancel"];
+    [mb ShowSheetWithHandler: [self window] handler:^(int ret){
+        if(ret == NSAlertFirstButtonReturn)
+        {
+            // kill it with fire!
+            //                FileDeletionOperationType type = FileDeletionOperationType::Delete;
+            FileDeletionOperationType type = FileDeletionOperationType::MoveToTrash;
+            //                FileDeletionOperationType type = FileDeletionOperationType::SecureDelete;
+            char root_path[MAXPATHLEN];
+            [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
                 
-                [m_OperationsController AddOperation:[[FileDeletionOperation alloc] initWithFiles:files
-                                                                                             type:type
-                                                                                         rootpath:root_path]];
-            }
-            else
-            {
-                FlexChainedStringsChunk::FreeWithDescendants(&files);
-            }
-        }];
-    }
+            [m_OperationsController AddOperation:[[FileDeletionOperation alloc] initWithFiles:files
+                                                                                         type:type
+                                                                                     rootpath:root_path]];
+        }
+        else
+        {
+            FlexChainedStringsChunk::FreeWithDescendants(&files);
+        }
+    }];
 }
 
 - (IBAction)OnCreateDirectoryCommand:(id)sender{
@@ -669,13 +578,68 @@
              NSString *name = [[cd TextField] stringValue];
              
              PanelData *curdata = [self ActivePanelData];
-             char pdir[__DARWIN_MAXPATHLEN];
+             char pdir[MAXPATHLEN];
              curdata->GetDirectoryPath(pdir);
              
              [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[name UTF8String]
                                                                                         rootpath:pdir
                                                    ]];
              
+         }
+     }];
+}
+
+- (IBAction)OnFileCopyCommand:(id)sender{
+    assert([self IsPanelActive]);
+    const PanelData *source, *destination;
+    if(m_ActiveState == StateLeftPanel)
+    {
+        source = m_LeftPanelData;
+        destination = m_RightPanelData;
+    }
+    else
+    {
+        source = m_RightPanelData;
+        destination = m_LeftPanelData;
+    }
+    
+    __block FlexChainedStringsChunk *files = 0;
+    if(source->GetSelectedItemsCount() > 0 )
+    {
+        files = source->StringsFromSelectedEntries();
+    }
+    else
+    {
+        int curpos = [[self ActivePanelView] GetCursorPosition];
+        int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
+        auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
+        if(!item.isdotdot()) // do not try to copy a parent directory
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+    }
+    
+    if(!files)
+        return;
+
+    char dest_path[MAXPATHLEN];
+    destination->GetDirectoryPathWithTrailingSlash(dest_path);
+    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
+    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
+    [mc ShowSheet:[self window] initpath:nsdirpath handler:^(int _ret)
+     {
+         if(_ret == DialogResult::Copy)
+         {
+             NSString *copyto = [[mc TextField] stringValue];
+             
+             char root_path[MAXPATHLEN];
+             source->GetDirectoryPathWithTrailingSlash(root_path);
+             
+             [m_OperationsController AddOperation:
+                [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[copyto UTF8String]]];
+         }
+         else
+         {
+             FlexChainedStringsChunk::FreeWithDescendants(&files);
+         
          }
      }];
 }

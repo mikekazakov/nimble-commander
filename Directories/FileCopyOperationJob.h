@@ -25,6 +25,7 @@ public:
                              FileCopyOperation *_op
                              );
 
+    bool IsSingleFileCopy() const;
 private:
     enum CopyMode
     {
@@ -42,7 +43,7 @@ private:
     void ProcessDirectory(const char *_path);
     void ProcessFile(const char *_path);    
     
-    FileCopyOperation *m_Operation;
+    __weak FileCopyOperation *m_Operation;
     FlexChainedStringsChunk *m_InitialItems;
     FlexChainedStringsChunk *m_ScannedItems, *m_ScannedItemsLast;
     const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;    
@@ -61,6 +62,7 @@ private:
     bool m_SkipAll;
     bool m_OverwriteAll;
     bool m_AppendAll;
+    bool m_IsSingleFileCopy;
 };
 
 

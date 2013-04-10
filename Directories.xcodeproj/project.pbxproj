@@ -203,25 +203,13 @@
 		B528011916FCF347004E260D /* Operation */ = {
 			isa = PBXGroup;
 			children = (
+				CFAC50D41715565E00A3E5C5 /* Core */,
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				B5AD9CDE17030DAA0099BC6D /* Dummies */,
 				CFC058DD170B27D500A20CF2 /* FileSysAttrChange */,
 				CFAC50CD1714016800A3E5C5 /* FileCopyOperation */,
 				CF9DF215171320980008CBAE /* CreateDirectoryOperation */,
 				CFA58396170EA35E00E508CF /* FileDeletionOperation */,
-				B528011A16FCF361004E260D /* OperationStats.mm */,
-				B528011B16FCF361004E260D /* OperationStats.h */,
-				B528011E16FCF361004E260D /* OperationJob.mm */,
-				B528011F16FCF361004E260D /* OperationJob.h */,
-				B528012016FCF361004E260D /* Operation.mm */,
-				B528012116FCF361004E260D /* Operation.h */,
-				B528011C16FCF361004E260D /* OperationsController.mm */,
-				B528011D16FCF361004E260D /* OperationsController.h */,
-				B51014D217078B2A0023FF24 /* OperationDialogController.h */,
-				B51014D317078B2B0023FF24 /* OperationDialogController.mm */,
-				B5F00AC91711FCC200176F79 /* OperationDialogAlert.h */,
-				B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */,
-				B5F00ACF1712012C00176F79 /* OperationDialogProtocol.h */,
 			);
 			name = Operation;
 			sourceTree = "<group>";
@@ -266,29 +254,10 @@
 				CFC5123816C5287B00D247EE /* PanelView.mm */,
 				CF3C88D516D73A23006346CD /* PanelController.h */,
 				CF3C88D616D73A23006346CD /* PanelController.mm */,
+				CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */,
+				CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */,
 			);
 			name = Panel;
-			sourceTree = "<group>";
-		};
-		CF76B31F170149690066A49F /* FileSysEntryAttrSheetController */ = {
-			isa = PBXGroup;
-			children = (
-				CF76B31A170148FF0066A49F /* FileSysEntryAttrSheetController.h */,
-				CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */,
-				CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */,
-			);
-			name = FileSysEntryAttrSheetController;
-			sourceTree = "<group>";
-		};
-		CF7784BF16EAFA3E00A07466 /* UpdateEvt */ = {
-			isa = PBXGroup;
-			children = (
-				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
-				CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */,
-				CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */,
-				CFC4342A16E727FC001B0512 /* KQueueDirUpdate.h */,
-			);
-			name = UpdateEvt;
 			sourceTree = "<group>";
 		};
 		CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */ = {
@@ -316,6 +285,9 @@
 		CF9DF215171320980008CBAE /* CreateDirectoryOperation */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4342316E0E1E2001B0512 /* CreateDirectorySheetController.h */,
+				CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */,
+				CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */,
 				CF9DF212171320910008CBAE /* CreateDirectoryOperation.h */,
 				CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */,
 				CF9DF217171320D40008CBAE /* CreateDirectoryOperationJob.h */,
@@ -338,6 +310,12 @@
 		CFAC50CD1714016800A3E5C5 /* FileCopyOperation */ = {
 			isa = PBXGroup;
 			children = (
+				CFF6052F16F4572700AB3287 /* FileAlreadyExistSheetController.h */,
+				CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */,
+				CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */,
+				CFE2697416EF0E3E0048A393 /* MassCopySheetController.h */,
+				CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */,
+				CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */,
 				CFAC50CE1714018C00A3E5C5 /* FileCopyOperation.h */,
 				CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */,
 				CFAC50D21714027F00A3E5C5 /* FileCopyOperationJob.h */,
@@ -346,25 +324,61 @@
 			name = FileCopyOperation;
 			sourceTree = "<group>";
 		};
+		CFAC50D41715565E00A3E5C5 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				B528011A16FCF361004E260D /* OperationStats.mm */,
+				B528011B16FCF361004E260D /* OperationStats.h */,
+				B528011E16FCF361004E260D /* OperationJob.mm */,
+				B528011F16FCF361004E260D /* OperationJob.h */,
+				B528012016FCF361004E260D /* Operation.mm */,
+				B528012116FCF361004E260D /* Operation.h */,
+				B528011C16FCF361004E260D /* OperationsController.mm */,
+				B528011D16FCF361004E260D /* OperationsController.h */,
+				B51014D217078B2A0023FF24 /* OperationDialogController.h */,
+				B51014D317078B2B0023FF24 /* OperationDialogController.mm */,
+				B5F00AC91711FCC200176F79 /* OperationDialogAlert.h */,
+				B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */,
+				B5F00ACF1712012C00176F79 /* OperationDialogProtocol.h */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		CFAC50D5171557E100A3E5C5 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */,
+				CFE2697B16F01BAA0048A393 /* FlexChainedStringsChunk.h */,
+				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
+				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
+				CF02F1D516F38805000AF870 /* Encodings.cpp */,
+				CF02F1D616F38805000AF870 /* Encodings.h */,
+				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
+				CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */,
+				CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */,
+				CFC4342A16E727FC001B0512 /* KQueueDirUpdate.h */,
+				CFC5123216C5164300D247EE /* DirRead.h */,
+				CFC5123116C5164300D247EE /* DirRead.cpp */,
+				CF8B09C516EB59680013B6A8 /* wcwidth.h */,
+				CF8B09C616EB59680013B6A8 /* wcwidth.c */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
 		CFC058DD170B27D500A20CF2 /* FileSysAttrChange */ = {
 			isa = PBXGroup;
 			children = (
+				CF76B31A170148FF0066A49F /* FileSysEntryAttrSheetController.h */,
+				CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */,
+				CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */,
+				CF76B30417000C090066A49F /* filesysattr.mm */,
+				CF76B30517000C090066A49F /* filesysattr.h */,
 				CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */,
 				CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */,
 				CFC058DF170B297200A20CF2 /* FileSysAttrChangeOperationJob.h */,
 				CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */,
 			);
 			name = FileSysAttrChange;
-			sourceTree = "<group>";
-		};
-		CFC4342816E0E1EB001B0512 /* CreateDirectorySheet */ = {
-			isa = PBXGroup;
-			children = (
-				CFC4342316E0E1E2001B0512 /* CreateDirectorySheetController.h */,
-				CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */,
-				CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */,
-			);
-			name = CreateDirectorySheet;
 			sourceTree = "<group>";
 		};
 		CFC5120816C4BD3D00D247EE = {
@@ -408,30 +422,12 @@
 		CFC5121A16C4BD3D00D247EE /* Directories */ = {
 			isa = PBXGroup;
 			children = (
-				B528011916FCF347004E260D /* Operation */,
-				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
-				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
-				CF76B30417000C090066A49F /* filesysattr.mm */,
-				CF76B30517000C090066A49F /* filesysattr.h */,
-				CF76B31F170149690066A49F /* FileSysEntryAttrSheetController */,
-				CF02F1D516F38805000AF870 /* Encodings.cpp */,
-				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CFC4342216E0E09B001B0512 /* Common.h */,
+				B528011916FCF347004E260D /* Operation */,
+				CFAC50D5171557E100A3E5C5 /* Core */,
 				CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */,
-				CF7784BF16EAFA3E00A07466 /* UpdateEvt */,
-				CFC4342816E0E1EB001B0512 /* CreateDirectorySheet */,
-				CFF6053416F4573000AB3287 /* FileAlreadyExistSheetController */,
-				CFE2697916EF0E490048A393 /* MassCopySheetController */,
 				CF536C0D16C92EA200F37203 /* Panel */,
 				CF8B09CA16ECEE9C0013B6A8 /* MainWindow */,
-				CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */,
-				CFE2697B16F01BAA0048A393 /* FlexChainedStringsChunk.h */,
-				CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */,
-				CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */,
-				CF8B09C516EB59680013B6A8 /* wcwidth.h */,
-				CF8B09C616EB59680013B6A8 /* wcwidth.c */,
-				CFC5123216C5164300D247EE /* DirRead.h */,
-				CFC5123116C5164300D247EE /* DirRead.cpp */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
 				CFC5122716C4BD3D00D247EE /* AppDelegate.mm */,
 				CF73C59C16DE0D2900F3D44F /* MessageBox.h */,
@@ -452,26 +448,6 @@
 				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		CFE2697916EF0E490048A393 /* MassCopySheetController */ = {
-			isa = PBXGroup;
-			children = (
-				CFE2697416EF0E3E0048A393 /* MassCopySheetController.h */,
-				CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */,
-				CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */,
-			);
-			name = MassCopySheetController;
-			sourceTree = "<group>";
-		};
-		CFF6053416F4573000AB3287 /* FileAlreadyExistSheetController */ = {
-			isa = PBXGroup;
-			children = (
-				CFF6052F16F4572700AB3287 /* FileAlreadyExistSheetController.h */,
-				CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */,
-				CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */,
-			);
-			name = FileAlreadyExistSheetController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

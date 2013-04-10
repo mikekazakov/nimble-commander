@@ -37,7 +37,8 @@ FileCopyOperationJob::FileCopyOperationJob():
     m_SkipAll(false),
     m_OverwriteAll(false),
     m_AppendAll(false),
-    m_TotalCopied(0)
+    m_TotalCopied(0),
+    m_IsSingleFileCopy(true)
 {
     // in xattr operations we'll use our big Buf1 and Buf2 - they should be quite enough
     // in OS X 10.4-10.6 maximum size of xattr value was 4Kb
@@ -62,7 +63,7 @@ FileCopyOperationJob::~FileCopyOperationJob()
 void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing ownage to Job
                          const char *_root,               // dir in where files are located
                          const char *_dest,                // where to copy
-                         FileCopyOperation *_op
+                        FileCopyOperation *_op
                          )
 {
     m_Operation = _op;
@@ -75,10 +76,12 @@ void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing owna
 void FileCopyOperationJob::Do()
 {
     ScanDestination();
-    // TODO: check if need to stop
+    if(GetState() == StateStopped) return;
+    if(CheckPauseOrStop()) { SetStopped(); return; }
 
     ScanItems();
-    // TODO: check if need to stop
+    if(GetState() == StateStopped) return;
+    if(CheckPauseOrStop()) { SetStopped(); return; }
 
     // we don't need any more - so free memory as soon as possible
     FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
@@ -89,11 +92,17 @@ void FileCopyOperationJob::Do()
     m_WriteQueue = dispatch_queue_create(0, 0);
     m_IOGroup = dispatch_group_create();
 
-
     ProcessItems();
-    // TODO: check if need to stop    
+    if(GetState() == StateStopped) return;
+    if(CheckPauseOrStop()) { SetStopped(); return; }
     
     SetCompleted();
+    m_Operation = nil;
+}
+
+bool FileCopyOperationJob::IsSingleFileCopy() const
+{
+    return m_IsSingleFileCopy;    
 }
 
 void FileCopyOperationJob::ScanDestination()
@@ -167,19 +176,20 @@ void FileCopyOperationJob::ScanDestination()
                 if(stat(destpath, &stat_buffer) == -1)
                 {
                     // absent part - need to create it
-                domkdir:            if(mkdir(destpath, 0777) == -1)
-                {
-                    // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    assert(0);
-/*                    switch (DoMessageBoxRetryCancel_CantCreateDir(destpath, [m_Wnd window], errno))
+domkdir:            if(mkdir(destpath, 0777) == -1)
                     {
-                        case DialogResult::Retry: goto domkdir;
-                        case DialogResult::Cancel: m_Cancel = true; return false;
-                    }*/
-                }
+                        int result = [[m_Operation OnDestCantCreateDir:errno ForDir:destpath] WaitForResult];
+                        if (result == FileCopyOperationDR::Retry)
+                            goto domkdir;
+                        if (result == OperationDialogResult::Stop)
+                        {
+                            SetStopped();
+                            return;
+                        }
+                    }
                 }
                 *leftmost = '/';
-                
+
                 leftmost = strchr(leftmost+1, '/');
             } while(leftmost != 0);
         }
@@ -191,11 +201,16 @@ void FileCopyOperationJob::ScanItems()
     m_ScannedItems = FlexChainedStringsChunk::Allocate();
     m_ScannedItemsLast = m_ScannedItems;
 
+    if(m_InitialItems->amount > 1)
+        m_IsSingleFileCopy = false;
+    
     // iterate in original filenames
     for(const auto&i: *m_InitialItems)
     {
         ScanItem(i.str(), i.str(), 0);
-        // TODO: check if we need to stop;        
+
+        if(GetState() == StateStopped) return;
+        if(CheckPauseOrStop()) { SetStopped(); return; }
     }
 }
 
@@ -208,13 +223,13 @@ void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_p
     char fullpath[MAXPATHLEN];
     strcpy(fullpath, m_SourceDirectory);
     strcat(fullpath, _full_path);
-    
+
     struct stat stat_buffer;
     if(stat(fullpath, &stat_buffer) == 0)
     {
         bool isfile = (stat_buffer.st_mode&S_IFMT) == S_IFREG;
         bool isdir  = (stat_buffer.st_mode&S_IFMT) == S_IFDIR;
-        
+
         if(isfile)
         {
             m_ScannedItemsLast = m_ScannedItemsLast->AddString(
@@ -226,6 +241,7 @@ void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_p
         }
         else if(isdir)
         {
+            m_IsSingleFileCopy = false;
             char dirpath[MAXPATHLEN];
             sprintf(dirpath, "%s/", _short_path);
             m_ScannedItemsLast = m_ScannedItemsLast->AddString(
@@ -273,8 +289,8 @@ void FileCopyOperationJob::ProcessItems()
         
         ProcessItem(m_CurrentlyProcessingItem);
 
-        // TODO!!!!
-        // check if we need to stop
+        if(GetState() == StateStopped) return;
+        if(CheckPauseOrStop()) { SetStopped(); return; }
     }
 }
 
@@ -343,16 +359,17 @@ void FileCopyOperationJob::ProcessDirectory(const char *_path)
         fullpath[ slashpos[ absentpos[i] ] ] = 0;
 domkdir:if(mkdir(fullpath, 0777))
         {
-            assert(0);
-            // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-/*            if(m_SkipAll) return;
-            switch (DoMessageBoxRetrySkipSkipAllCancel_CantCreateDir(fullpath, [m_Wnd window], errno))
+            if(m_SkipAll) return;
+            int result = [[m_Operation OnCopyCantCreateDir:errno ForDir:fullpath] WaitForResult];
+            if(result == FileCopyOperationDR::Retry)
+                goto domkdir;
+            if(result == FileCopyOperationDR::Skip) return;
+            if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; return;}
+            if(result == OperationDialogResult::Stop)
             {
-                case DialogResult::Retry: goto domkdir;
-                case DialogResult::Skip:  return;
-                case DialogResult::SkipAll: m_SkipAll = true; return;
-                case DialogResult::Cancel: m_Cancel = true; return;
-            }*/
+                SetStopped();
+                return;
+            }
         }
         fullpath[ slashpos[ absentpos[i] ] ] = '/';
     }
@@ -390,34 +407,28 @@ void FileCopyOperationJob::ProcessFile(const char *_path)
     {
         strcpy(destinationpath, m_Destination);
     }
-    
+
 opensource:
     if((sourcefd = open(sourcepath, O_RDONLY|O_SHLOCK)) == -1)
     {  // failed to open source file
-        assert(0);
-/*        if(m_SkipAll) goto cleanup;
-        switch(DoMessageBoxRetrySkipSkipallCancel_CannotAccessSourceFile(sourcepath, [m_Wnd window], errno))
-        {
-            case DialogResult::Retry:                       goto opensource;
-            case DialogResult::Skip:                        goto cleanup;
-            case DialogResult::SkipAll: m_SkipAll = true;   goto cleanup;
-            case DialogResult::Cancel:  m_Cancel  = true;   goto cleanup;
-        }*/
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:sourcepath] WaitForResult];
+        if(result == FileCopyOperationDR::Retry) goto opensource;
+        if(result == FileCopyOperationDR::Skip) goto cleanup;
+        if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
     fcntl(sourcefd, F_NOCACHE, 1); // do not waste OS file cache with one-way data
     
 statsource: // get information about source file
     if(fstat(sourcefd, &src_stat_buffer) == -1)
     {   // failed to stat source
-        assert(0);
-/*        if(m_SkipAll) goto cleanup;
-        switch(DoMessageBoxRetrySkipSkipallCancel_CannotAccessSourceFile(sourcepath, [m_Wnd window], errno))
-        {
-            case DialogResult::Retry:                       goto statsource;
-            case DialogResult::Skip:                        goto cleanup;
-            case DialogResult::SkipAll: m_SkipAll = true;   goto cleanup;
-            case DialogResult::Cancel:  m_Cancel  = true;   goto cleanup;
-        }*/
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:sourcepath] WaitForResult];
+        if(result == FileCopyOperationDR::Retry) goto statsource;
+        if(result == FileCopyOperationDR::Skip) goto cleanup;
+        if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
     
     // stat destination
@@ -462,17 +473,14 @@ opendest: // open file descriptor for destination
     
     if(destinationfd == -1)
     {   // failed to open destination file
-        assert(0);
-/*        if(m_SkipAll) goto cleanup;
-        switch(DoMessageBoxRetrySkipSkipallCancel_CannotOpenDestinationFile(destinationpath, [m_Wnd window], errno))
-        {
-            case DialogResult::Retry:                       goto opendest;
-            case DialogResult::Skip:                        goto cleanup;
-            case DialogResult::SkipAll: m_SkipAll = true;   goto cleanup;
-            case DialogResult::Cancel:  m_Cancel  = true;   goto cleanup;
-        }*/
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantOpenDestFile:errno ForFile:destinationpath] WaitForResult];
+        if(result == FileCopyOperationDR::Retry) goto opendest;
+        if(result == FileCopyOperationDR::Skip) goto cleanup;
+        if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
-    
+
     // preallocate space for data since we dont want to trash our disk
     if(src_stat_buffer.st_size > MIN_PREALLOC_SIZE)
     {
@@ -488,29 +496,23 @@ opendest: // open file descriptor for destination
 dotruncate: // set right size for destination file
     if(ftruncate(destinationfd, totaldestsize) == -1)
     {   // failed to set dest file size
-        assert(0);
-/*        if(m_SkipAll) goto cleanup;
-        switch(DoMessageBoxRetrySkipSkipallCancel_WriteError(destinationpath, [m_Wnd window], errno))
-        {
-            case DialogResult::Retry:                       goto dotruncate;
-            case DialogResult::Skip:                        goto cleanup;
-            case DialogResult::SkipAll: m_SkipAll = true;   goto cleanup;
-            case DialogResult::Cancel:  m_Cancel  = true;   goto cleanup;
-        }*/
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyWriteError:errno ForFile:destinationpath] WaitForResult];
+        if(result == FileCopyOperationDR::Retry) goto dotruncate;
+        if(result == FileCopyOperationDR::Skip) goto cleanup;
+        if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
     
 dolseek: // find right position in destination file
     if(lseek(destinationfd, startwriteoff, SEEK_SET) == -1)
     {   // failed seek in a file. lolwhat?
-        assert(0);
-/*        if(m_SkipAll) goto cleanup;
-        switch(DoMessageBoxRetrySkipSkipallCancel_WriteError(destinationpath, [m_Wnd window], errno))
-        {
-            case DialogResult::Retry:                       goto dolseek;
-            case DialogResult::Skip:                        goto cleanup;
-            case DialogResult::SkipAll: m_SkipAll = true;   goto cleanup;
-            case DialogResult::Cancel:  m_Cancel  = true;   goto cleanup;
-        }*/
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyWriteError:errno ForFile:destinationpath] WaitForResult];
+        if(result == FileCopyOperationDR::Retry) goto dolseek;
+        if(result == FileCopyOperationDR::Skip) goto cleanup;
+        if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
     
     while(true)
@@ -523,15 +525,12 @@ dolseek: // find right position in destination file
                 io_nread = read(sourcefd, readbuf, BUFFER_SIZE);
                 if(io_nread == -1)
                 {
-                    assert(0);
-/*                    if(m_SkipAll) {io_docancel = true; return;}
-                    switch(DoMessageBoxRetrySkipSkipallCancel_ReadError(sourcepathp, [m_Wnd window], errno))
-                    {
-                        case DialogResult::Retry:   goto doread;
-                        case DialogResult::Skip:    io_docancel = true; return;
-                        case DialogResult::SkipAll: io_docancel = true; m_SkipAll = true; return;
-                        case DialogResult::Cancel:  io_docancel = true; m_Cancel = true; return;
-                    }*/
+                    if(m_SkipAll) {io_docancel = true; return;}
+                    int result = [[m_Operation OnCopyReadError:errno ForFile:sourcepathp] WaitForResult];
+                    if(result == FileCopyOperationDR::Retry) goto doread;
+                    if(result == FileCopyOperationDR::Skip) {io_docancel = true; return;}
+                    if(result == FileCopyOperationDR::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
+                    if(result == OperationDialogResult::Stop) { io_docancel = true; SetStopped(); return;}
                 }
                 io_totalread += io_nread;
             }
@@ -545,15 +544,12 @@ dolseek: // find right position in destination file
                 ssize_t nwrite = write(destinationfd, writebuf + alreadywrote, io_leftwrite);
                 if(nwrite == -1)
                 {
-                    assert(0);
-/*                    if(m_SkipAll) {io_docancel = true; return;}
-                    switch(DoMessageBoxRetrySkipSkipallCancel_WriteError(destinationpathp, [m_Wnd window], errno))
-                    {
-                        case DialogResult::Retry:   goto dowrite;
-                        case DialogResult::Skip:    io_docancel = true; return;
-                        case DialogResult::SkipAll: io_docancel = true; m_SkipAll = true; return;
-                        case DialogResult::Cancel:  io_docancel = true; m_Cancel = true; return;
-                    }*/
+                    if(m_SkipAll) {io_docancel = true; return;}
+                    int result = [[m_Operation OnCopyWriteError:errno ForFile:destinationpathp] WaitForResult];
+                    if(result == FileCopyOperationDR::Retry) goto dowrite;
+                    if(result == FileCopyOperationDR::Skip) {io_docancel = true; return;}
+                    if(result == FileCopyOperationDR::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
+                    if(result == OperationDialogResult::Stop) { io_docancel = true; SetStopped(); return;}
                 }
                 alreadywrote += nwrite;
                 io_leftwrite -= nwrite;
@@ -563,7 +559,7 @@ dolseek: // find right position in destination file
         });
         
         dispatch_group_wait(m_IOGroup, DISPATCH_TIME_FOREVER);
-        if(io_docancel) break;
+        if(io_docancel) goto cleanup;
         if(io_totalwrote == src_stat_buffer.st_size) break;
         
         io_leftwrite = io_nread;

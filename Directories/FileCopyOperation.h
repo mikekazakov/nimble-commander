@@ -8,7 +8,16 @@
 
 #import "Operation.h"
 #import "FlexChainedStringsChunk.h"
+#import "OperationDialogAlert.h"
 
+struct FileCopyOperationDR
+{
+    enum{
+        Retry = OperationDialogResult::Custom,
+        Skip,
+        SkipAll
+    };
+};
 
 @interface FileCopyOperation : Operation
 
@@ -16,5 +25,11 @@
                root:(const char*)_root
                dest:(const char*)_dest;
 
+- (OperationDialogAlert *)OnDestCantCreateDir:(int)_error ForDir:(const char *)_path;
+- (OperationDialogAlert *)OnCopyCantCreateDir:(int)_error ForDir:(const char *)_path;
+- (OperationDialogAlert *)OnCopyCantAccessSrcFile:(int)_error ForFile:(const char *)_path;
+- (OperationDialogAlert *)OnCopyCantOpenDestFile:(int)_error ForFile:(const char *)_path;
+- (OperationDialogAlert *)OnCopyReadError:(int)_error ForFile:(const char *)_path;
+- (OperationDialogAlert *)OnCopyWriteError:(int)_error ForFile:(const char *)_path;
 
 @end

@@ -21,7 +21,8 @@
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_Job.Init(_path, _rootpath, self);        
+        m_Job.Init(_path, _rootpath, self);
+        self.Caption = [NSString stringWithFormat:@"Creating directory '%s'", _path];
     }
     return self;
 }
@@ -36,7 +37,7 @@
     [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %s",
                                strerror(_error), _path]];
 
-    [alert AddButtonWithTitle:@"Retry" andResult:CreateDirectoryOperationRetry];
+    [alert AddButtonWithTitle:@"Retry" andResult:CreateDirectoryOperationDR::Retry];
     [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
     [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
     

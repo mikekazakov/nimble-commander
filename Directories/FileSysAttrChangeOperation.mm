@@ -22,23 +22,26 @@
     if (self)
     {
         m_Job.Init(_command, self);
-    
+        
+        // TODO: make unique caption based on arguments.
+        self.Caption = @"Altering files attributes";
     }
     return self;
 }
 
-- (NSString *)GetCaption
-{
-    unsigned items_total, item_no;
-    FileSysAttrChangeOperationJob::State state = m_Job.StateDetail(item_no, items_total);
-    switch(state)
-    {
-        case FileSysAttrChangeOperationJob::StateScanning: return @"Scanning...";
-        case FileSysAttrChangeOperationJob::StateSetting:
-            return [NSString stringWithFormat:@"Processing file %d of %d.", item_no, items_total];
-        default: return @"";
-    }
-}
+// TODO: code will be used for detailed status
+//- (NSString *)GetCaption
+//{
+//    unsigned items_total, item_no;
+//    FileSysAttrChangeOperationJob::State state = m_Job.StateDetail(item_no, items_total);
+//    switch(state)
+//    {
+//        case FileSysAttrChangeOperationJob::StateScanning: return @"Scanning...";
+//        case FileSysAttrChangeOperationJob::StateSetting:
+//            return [NSString stringWithFormat:@"Processing file %d of %d.", item_no, items_total];
+//        default: return @"";
+//    }
+//}
 
 - (OperationDialogAlert *)DialogOnChmodError:(int)_error
                                    ForFile:(const char *)_path

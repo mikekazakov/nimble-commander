@@ -15,8 +15,8 @@ class OperationJob;
 
 @interface Operation : NSObject
 
-// Value from 0 to 100.
-@property (nonatomic) int Progress;
+// Value from 0 to 1.
+@property (nonatomic) float Progress;
 // Caption of the operation.
 @property (nonatomic) NSString *Caption;
 // The paused state of the operation.

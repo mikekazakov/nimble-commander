@@ -13,6 +13,8 @@
 #include "DirRead.h"
 #include "PanelData.h"
 #include "MainWindowController.h"
+#import "OperationProgressValueTransformer.h"
+
 #include <vector>
 
 @implementation AppDelegate
@@ -23,6 +25,9 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
+    [NSValueTransformer setValueTransformer:[[OperationProgressValueTransformer alloc] init]
+                                    forName:@"OperationProgressValueTransformer"];
+    
     [self NewWindow:nil];
 }
 

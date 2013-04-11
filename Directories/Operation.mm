@@ -44,7 +44,7 @@ const int MaxDialogs = 2;
 
 - (void)Update
 {
-    int progress = 100*m_Job->GetProgress();
+    float progress = m_Job->GetProgress();
     if (_Progress != progress)
         self.Progress = progress;
 }

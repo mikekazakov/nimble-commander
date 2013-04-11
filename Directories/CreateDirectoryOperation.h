@@ -9,18 +9,22 @@
 #import "Operation.h"
 #import "OperationDialogAlert.h"
 
-@interface CreateDirectoryOperation : Operation
-
+// CreateDirectoryOperation custom dialog results.
+namespace CreateDirectoryOperationDR
+{
 enum
 {
-    CreateDirectoryOperationRetry = OperationDialogResult::Custom
+    Retry = OperationDialogResult::Custom
 };
+}
 
+
+@interface CreateDirectoryOperation : Operation
 
 - (id)initWithPath:(const char*)_path rootpath:(const char*)_rootpath;
 
 - (OperationDialogAlert *)DialogOnCrDirError:(int)_error
-                                   ForDir:(const char *)_path;
+                                      ForDir:(const char *)_path;
 
 
 

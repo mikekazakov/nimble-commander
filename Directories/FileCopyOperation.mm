@@ -22,6 +22,9 @@
     if (self)
     {
         m_Job.Init(_files, _root, _dest, self);
+        
+        // TODO: make unique caption based on arguments
+        self.Caption = @"Copying files";
     }
     return self;
 }

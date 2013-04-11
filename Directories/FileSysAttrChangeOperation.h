@@ -25,8 +25,8 @@ enum
 
 @interface FileSysAttrChangeOperation : Operation
 
-- (id)initWithCommand:(FileSysAttrAlterCommand*)_command; // passing with ownership, operation will free it on finish
-- (NSString *)GetCaption;
+// passing with ownership, operation will free it on finish
+- (id)initWithCommand:(FileSysAttrAlterCommand*)_command;
 
 - (OperationDialogAlert *)DialogOnChmodError:(int)_error
                                   ForFile:(const char *)_path

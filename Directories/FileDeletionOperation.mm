@@ -23,20 +23,27 @@
     if (self)
     {
         m_Job.Init(_files, _type, _path);
+        
+        // TODO: make unique name based on arguments
+        self.Caption = @"Deleting files";
     }
     return self;
 }
 
-- (NSString *)GetCaption
+- (void)Update
 {
-    unsigned items_total, item_no;
-    FileDeletionOperationJob::State state = m_Job.StateDetail(item_no, items_total);
-    switch(state)
+    float progress = m_Job.GetProgress();
+    if (self.Progress != progress)
     {
-        case FileDeletionOperationJob::StateScanning: return @"Scanning...";
-        case FileDeletionOperationJob::StateDeleting:
-            return [NSString stringWithFormat:@"Deleting item %d of %d.", item_no, items_total];
-        default: return @"";
+        self.Progress = progress;
+        
+// TODO: code will be used for status info
+//        unsigned items_total, item_no;
+//        FileDeletionOperationJob::State state = m_Job.StateDetail(item_no, items_total);
+//        if (state == FileDeletionOperationJob::StateDeleting)
+//        {
+//            self.Caption = [NSString stringWithFormat:@"Deleting item %d of %d.", item_no, items_total];
+//        }
     }
 }
 

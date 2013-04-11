@@ -521,7 +521,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="267630713">
 							<int key="NSCellFlags">67108928</int>
-							<int key="NSCellFlags2">138549248</int>
+							<int key="NSCellFlags2">138549760</int>
 							<string key="NSContents">Copying files: /Volumes/C to /dev/null</string>
 							<reference key="NSSupport" ref="26"/>
 							<string key="NSCellIdentifier">_NS:1535</string>
@@ -706,10 +706,14 @@
 							<string key="NSLabel">value: representedObject.Progress</string>
 							<string key="NSBinding">value</string>
 							<string key="NSKeyPath">representedObject.Progress</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">OperationProgressValueTransformer</string>
+							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1815</int>
+					<int key="connectionID">1931</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -2325,7 +2329,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1930</int>
+			<int key="maxID">1931</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -41,7 +41,7 @@ private:
     
     FileSysAttrAlterCommand *m_Command;
     FlexChainedStringsChunk *m_Files, *m_FilesLast;
-    FileSysAttrChangeOperation *m_Operation;
+    __weak FileSysAttrChangeOperation *m_Operation;
     unsigned m_ItemsCount;
     unsigned m_CurrentItemNumber;
     State m_State;

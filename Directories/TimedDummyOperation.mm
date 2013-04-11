@@ -21,8 +21,15 @@
     if (self)
     {
         m_Job.Init(self, _seconds);
+        self.Caption = [NSString stringWithFormat:@"Operation for %i second(s) (%p)",
+                        _seconds, self];
     }
     return self;
+}
+
+- (void)Update
+{
+    [super Update];
 }
 
 - (TimedDummyOperationTestDialog *)AskUser:(int)_cur_time;

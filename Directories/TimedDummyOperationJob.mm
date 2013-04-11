@@ -19,7 +19,7 @@ TimedDummyOperationJob::TimedDummyOperationJob()
     
 }
 
-void TimedDummyOperationJob::Init(TimedDummyOperation *_op, int _seconds)
+void TimedDummyOperationJob::Init(__weak TimedDummyOperation *_op, int _seconds)
 {
     m_Operation = _op;
     m_CompleteTime = _seconds*1000;
@@ -31,13 +31,13 @@ void TimedDummyOperationJob::Do()
     
     for(;;)
     {
-        if (CheckPauseOrStop(100))
+        if (CheckPauseOrStop())
         {
             SetStopped();
             return;
         }
-        
-        if (rand()%100 == 0)
+    
+        if (rand() % 50 == 0)
         {
             if (false)
             {

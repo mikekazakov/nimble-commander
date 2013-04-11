@@ -19,7 +19,15 @@ const int MaxDialogs = 2;
 {
     OperationJob *m_Job;
     id<OperationDialogProtocol> m_Dialogs[MaxDialogs];
-    int m_DialogsCount;
+}
+
+- (void)setIsPaused:(BOOL)IsPaused
+{
+    _IsPaused = IsPaused;
+    if (IsPaused)
+        m_Job->Pause();
+    else
+        m_Job->Resume();
 }
 
 - (id)initWithJob:(OperationJob *)_job
@@ -28,20 +36,17 @@ const int MaxDialogs = 2;
     if (self)
     {
         m_Job = _job;
-        m_DialogsCount = 0;
+        _DialogsCount = 0;
         for (int i = 0; i < MaxDialogs; ++i) m_Dialogs[i] = nil;
     }
     return self;
 }
 
-- (float)GetProgress
+- (void)Update
 {
-    return m_Job->GetProgress();
-}
-
-- (NSString *)GetCaption
-{
-    return [NSString stringWithFormat:@"Dummy caption %p", self];
+    int progress = 100*m_Job->GetProgress();
+    if (_Progress != progress)
+        self.Progress = progress;
 }
 
 - (void)Start
@@ -52,36 +57,28 @@ const int MaxDialogs = 2;
 
 - (void)Pause
 {
-    m_Job->Pause();
+    self.IsPaused = YES;
 }
 
 - (void)Resume
 {
-    m_Job->Resume();
+    self.IsPaused = NO;
 }
 
 - (void)Stop
 {
     m_Job->RequestStop();
     
-    @synchronized(self)
+    while (_DialogsCount)
     {
-        for (int i = 0; i < m_DialogsCount; ++i)
-        {
-            if (m_Dialogs[i].Result == OperationDialogResult::None)
-                [m_Dialogs[i] CloseDialogWithResult:OperationDialogResult::Stop];
-        }
+        if (m_Dialogs[0].Result == OperationDialogResult::None)
+            [m_Dialogs[0] CloseDialogWithResult:OperationDialogResult::Stop];
     }
 }
 
 - (BOOL)IsStarted
 {
     return m_Job->GetState() != OperationJob::StateReady;
-}
-
-- (BOOL)IsPaused
-{
-    return m_Job->IsPaused();
 }
 
 - (BOOL)IsFinished
@@ -101,57 +98,46 @@ const int MaxDialogs = 2;
 
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog
 {
-    @synchronized(self)
-    {
+    dispatch_async(dispatch_get_main_queue(), ^(){
         // Enqueue dialog.
         [_dialog OnDialogEnqueued:self];
-        m_Dialogs[m_DialogsCount++] = _dialog;
+        m_Dialogs[_DialogsCount] = _dialog;
+        ++self.DialogsCount;
         
         // If operation is in process of stoppping, close the dialog.
         if (m_Job->IsStopRequested())
             [_dialog CloseDialogWithResult:OperationDialogResult::Stop];
-    }
+    });
 }
 
-- (int)GetDialogsCount
+- (void)ShowDialog;
 {
-    return m_DialogsCount;
-}
-
-- (void)ShowDialogForWindow:(NSWindow *)_parent
-{
-    @synchronized(self)
-    {
-        if (m_DialogsCount)
-            [m_Dialogs[0] ShowDialogForWindow:_parent];
-    }
+    if (_DialogsCount)
+        [m_Dialogs[0] ShowDialogForWindow:[NSApp mainWindow]];
 }
 
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog
 {
-    @synchronized(self)
+    // Remove dialog from the queue and shift other dialogs to the left.
+    // Can't use memmove due to ARC, shift by hand.
+    bool swap = false;
+    for (int i = 0; i < _DialogsCount; ++i)
     {
-        // Remove dialog from the queue and shift other dialogs to the left.
-        // Can't use memmove due to ARC, shift by hand.
-        bool swap = false;
-        for (int i = 0; i < m_DialogsCount; ++i)
+        if (swap)
         {
-            if (swap)
-            {
-                id <OperationDialogProtocol> tmp = m_Dialogs[i];
-                m_Dialogs[i] = m_Dialogs[i - 1];
-                m_Dialogs[i - 1] = tmp;
-            }
-            else if (m_Dialogs[i] == _dialog)
-            {
-                assert(!swap);
-                swap = true;
-            }
+            id <OperationDialogProtocol> tmp = m_Dialogs[i];
+            m_Dialogs[i] = m_Dialogs[i - 1];
+            m_Dialogs[i - 1] = tmp;
         }
-        
-        assert(swap);
-        --m_DialogsCount;
+        else if (m_Dialogs[i] == _dialog)
+        {
+            assert(!swap);
+            swap = true;
+        }
     }
+    
+    assert(swap);
+    --self.DialogsCount;
     
     if (_dialog.Result == OperationDialogResult::Stop) [self Stop];
 }

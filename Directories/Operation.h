@@ -15,10 +15,21 @@ class OperationJob;
 
 @interface Operation : NSObject
 
+// Value from 0 to 100.
+@property (nonatomic) int Progress;
+// Caption of the operation.
+@property (nonatomic) NSString *Caption;
+// The paused state of the operation.
+@property (nonatomic) BOOL IsPaused;
+// Number of pending dialogs.
+@property (nonatomic) int DialogsCount;
+
+
 - (id)initWithJob:(OperationJob *)_job;
 
-- (float)GetProgress;
-- (NSString *)GetCaption;
+// Constantly invoked by OperationsController.
+// Operations should update their Progress and Caption properties in this method.
+- (void)Update;
 
 - (void)Start;
 - (void)Pause;
@@ -26,7 +37,6 @@ class OperationJob;
 - (void)Stop;
 
 - (BOOL)IsStarted;
-- (BOOL)IsPaused;
 // Returns true if the operation finished execution.
 - (BOOL)IsFinished;
 // Returns true if the operation finished successfully (it completed all required actions).
@@ -38,8 +48,7 @@ class OperationJob;
 // Should be called from job's inner thread.
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog;
 
-- (int)GetDialogsCount;
-- (void)ShowDialogForWindow:(NSWindow *)_parent;
+- (void)ShowDialog;
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog;
 
 @end

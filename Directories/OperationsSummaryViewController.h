@@ -21,9 +21,6 @@
 @property (strong) IBOutlet NSArrayController *OperationsArrayController;
 @property (weak) IBOutlet NSBox *Box;
 - (IBAction)ShowOpListButtonAction:(NSButton *)sender;
-- (IBAction)OperationPauseButtonAction:(NSButton *)sender;
-- (IBAction)OperationStopButtonAction:(NSButton *)sender;
-- (IBAction)OperationDialogButtonAction:(NSButton *)sender;
 
 
 @property (readonly) OperationsController *OperationsController;

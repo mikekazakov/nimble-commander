@@ -38,7 +38,8 @@
 
 - (void)Update
 {
-    // Updating operations:
+    // Updating operations and OperationsWithDialogsCount property.
+    int ops_with_dialogs = 0;
     int i = 0;
     while (i < m_Operations.count)
     {
@@ -54,18 +55,28 @@
             continue;
         }
         
+        [op Update];
+        
+        if (op.DialogsCount != 0) ++ops_with_dialogs;
+        
         ++i;
     }
+    
+    // Update property if needed.
+    if (ops_with_dialogs != _OperationsWithDialogsCount)
+        self.OperationsWithDialogsCount = ops_with_dialogs;
 }
 
 - (void)insertObject:(Operation *)_object inOperationsAtIndex:(NSUInteger)_index
 {
     [m_Operations insertObject:_object atIndex:_index];
+    ++self.OperationsCount;
 }
 
 - (void)removeObjectFromOperationsAtIndex:(NSUInteger)_index
 {
     [m_Operations removeObjectAtIndex:_index];
+    --self.OperationsCount;
 }
 
 - (id)init
@@ -75,7 +86,7 @@
     {
         m_Operations = [NSMutableArray array];
         
-        m_UpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.2
+        m_UpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.033
                                                          target:self
                                                        selector:@selector(Update)
                                                        userInfo:nil
@@ -99,11 +110,6 @@
 {
     if (_index >= m_Operations.count) return nil;
     return m_Operations[_index];
-}
-
-- (NSUInteger)GetOperationsCount
-{
-    return m_Operations.count;
 }
 
 @end

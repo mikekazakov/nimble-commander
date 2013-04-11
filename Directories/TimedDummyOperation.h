@@ -14,6 +14,8 @@
 
 - (id)initWithTime:(int)_seconds;
 
+- (void)Update;
+
 - (TimedDummyOperationTestDialog *)AskUser:(int)_cur_time;
 - (OperationDialogAlert *)AskUserAlert;
 

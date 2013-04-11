@@ -56,8 +56,6 @@
         NSLayoutConstraint *right_top;
         NSLayoutConstraint *right_right;
     } m_PanelConstraints;
-
-    NSTimer *m_JobsUpdateTimer;
     
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
@@ -113,12 +111,6 @@
     
     [[self window] makeFirstResponder:self];
     [[self window] setDelegate:self];
-    
-    m_JobsUpdateTimer = [NSTimer scheduledTimerWithTimeInterval: 0.05
-                                                         target: self
-                                                       selector:@selector(UpdateByJobsTimer:)
-                                                       userInfo: nil
-                                                        repeats: YES];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(DidBecomeKeyWindow)

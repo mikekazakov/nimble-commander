@@ -15,7 +15,6 @@
 @interface OperationsSummaryViewController ()
 
 - (void)InitView;
-- (void)Update;
 
 - (void)ExpandList;
 - (void)ShrinkList;
@@ -26,7 +25,6 @@
 @implementation OperationsSummaryViewController
 {
     OperationsController *m_OperationsController;
-    NSTimer* m_UpdateTimer;
     
     // Original frame of the operations list.
     NSRect m_ListFrame;
@@ -44,59 +42,6 @@
     
     m_ListFrame = self.ScrollView.frame;
     m_ListSuperview = self.ScrollView.superview;
-    
-    // Make collections list corners rounded.
-    [self.ScrollView setWantsLayer:YES];
-    [self.ScrollView.layer setCornerRadius:4.0f];
-    [self.ScrollView.contentView setWantsLayer:YES];
-    [self.ScrollView.contentView.layer setCornerRadius:4.0f];
-}
-
-// Invoked by timer.
-- (void)Update
-{
-    // Update operations count button.
-    NSUInteger count = [m_OperationsController GetOperationsCount];
-//    self.OperationsCountLabel.stringValue = [@(count) stringValue];
-    self.OperationsCountLabel.intValue = count;
-    
-    
-    // If there is no operations, show "no operations label".
-    // Otherwise, hide it.
-    [self.NoOperationsLabel setHidden:(count != 0)];
-    
-    // Update diaogs count
-    NSUInteger dialogs_count = 0;
-    for (NSUInteger i = 0; i < count; ++i)
-    {
-        if ([[m_OperationsController GetOperation:i] GetDialogsCount] != 0)
-            ++dialogs_count;
-    }
-//    self.DialogsCountLabel.stringValue = [@(dialogs_count) stringValue];
-    self.DialogsCountLabel.intValue = dialogs_count;
-    
-    // Shrink list if it is expanded and there is none or only one operation left.
-    if (count <= 1 && m_Expanded)
-        [self ShrinkList];
-    
-    // Update operations' views in list.
-    NSArray *objects = self.OperationsArrayController.arrangedObjects;
-    for (NSUInteger i = 0; i < objects.count; ++i)
-    {
-        NSCollectionViewItem *item = [self.CollectionView itemAtIndex:i];
-        
-        assert(item);
-        assert([item.view isKindOfClass:GenericOperationView.class]);
-        
-        Operation *op = item.representedObject;
-        GenericOperationView *view = (GenericOperationView *)item.view;
-        
-        // Update controls in view.
-        view.Caption.stringValue = [op GetCaption];
-        view.Progress.doubleValue = [op GetProgress]*100;
-        [view.DialogButton setHidden:![op GetDialogsCount]];
-        view.PauseButton.state = ([op IsPaused] ? NSOnState : NSOffState);
-    }
 }
 
 - (void)ExpandList
@@ -115,7 +60,7 @@
     
     // Calculate height of the expanded list.
     NSUInteger item_height = self.CollectionView.itemPrototype.view.frame.size.height;
-    NSUInteger count = [self.OperationsController GetOperationsCount];
+    NSUInteger count = self.OperationsController.OperationsCount;
     NSUInteger window_height_in_items = self.view.window.frame.size.height / item_height;
     NSUInteger height_in_items = max_height_in_items;
     if (height_in_items > count) height_in_items = count;
@@ -173,37 +118,9 @@
     else
     {
         // Expand list only if there is more than 1 operation.
-        if ([m_OperationsController GetOperationsCount] > 1)
+        if (m_OperationsController.OperationsCount > 1)
             [self ExpandList];
     }
-}
-
-- (void)OperationPauseButtonAction:(NSButton *)sender
-{
-    NSCell *cell = sender.cell;
-    NSCollectionViewItem *item = cell.representedObject;
-    Operation *op = item.representedObject;
-    
-    if ([op IsPaused]) [op Resume];
-    else [op Pause];
-}
-
-- (void)OperationStopButtonAction:(NSButton *)sender
-{
-    NSCell *cell = sender.cell;
-    NSCollectionViewItem *item = cell.representedObject;
-    Operation *op = item.representedObject;
-    
-    [op Stop];
-}
-
-- (void)OperationDialogButtonAction:(NSButton *)sender
-{
-    NSCell *cell = sender.cell;
-    NSCollectionViewItem *item = cell.representedObject;
-    Operation *op = item.representedObject;
-    
-    [op ShowDialogForWindow:[NSApp mainWindow]];
 }
 
 - (id)initWthController:(OperationsController *)_controller
@@ -218,14 +135,6 @@
         [self InitView];
         
         [self ShrinkList];
-        
-        [self Update];
-        
-        m_UpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.033
-                                                         target:self
-                                                       selector:@selector(Update)
-                                                       userInfo:nil
-                                                        repeats:YES];
     }
     
     return self;

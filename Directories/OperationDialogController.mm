@@ -16,7 +16,7 @@
 
 @implementation OperationDialogController
 {
-    Operation *m_Operation;
+    __weak Operation *m_Operation;
 }
 @synthesize Result = m_Result;
 
@@ -57,7 +57,7 @@
 - (int)WaitForResult
 {
     while (self.Result == OperationDialogResult::None) {
-        usleep(33*1000);
+        usleep(100*1000);
     }
     
     return self.Result;

@@ -15,7 +15,7 @@ const int MaxButtonsCount = 5;
 @implementation OperationDialogAlert
 {
     NSAlert *m_Alert;
-    Operation *m_Operation;
+    __weak Operation *m_Operation;
     
     int m_ButtonsResults[MaxButtonsCount];
     int m_ButtonsCount;
@@ -73,7 +73,7 @@ const int MaxButtonsCount = 5;
 {
     while (self.Result == OperationDialogResult::None)
     {
-        usleep(33*1000);
+        usleep(100*1000);
     }
     
     return self.Result;

@@ -18,7 +18,7 @@ class TimedDummyOperationJob : public OperationJob
 public:
     TimedDummyOperationJob();
     
-    void Init(TimedDummyOperation *_op, int _seconds);
+    void Init(__weak TimedDummyOperation *_op, int _seconds);
 
 protected:
     virtual void Do();
@@ -26,7 +26,7 @@ protected:
 private:
     int m_CompleteTime;
     
-    TimedDummyOperation *m_Operation;
+    __weak TimedDummyOperation *m_Operation;
     
 };
 

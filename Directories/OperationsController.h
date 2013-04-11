@@ -12,10 +12,12 @@
 
 @interface OperationsController : NSObject
 
-@property (readonly) NSArray *Operations;
+// Number of operations with at least one pending dialog.
+@property (nonatomic) int OperationsWithDialogsCount;
+@property (nonatomic) int OperationsCount;
+@property (readonly, nonatomic) NSArray *Operations;
 
 - (void)AddOperation:(Operation *)_op;
 - (Operation *)GetOperation:(NSUInteger)_index;
-- (NSUInteger)GetOperationsCount;
 
 @end

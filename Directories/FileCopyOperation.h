@@ -22,11 +22,19 @@ struct FileCopyOperationDR
     };
 };
 
+struct FileCopyOperationOptions
+{
+    bool docopy; // it it false then operation will do renaming/moving
+    
+    FileCopyOperationOptions():docopy(true){};
+};
+
 @interface FileCopyOperation : Operation
 
 - (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
                root:(const char*)_root
-               dest:(const char*)_dest;
+               dest:(const char*)_dest
+            options:(FileCopyOperationOptions*)_opts;
 
 - (OperationDialogAlert *)OnDestCantCreateDir:(int)_error ForDir:(const char *)_path;
 - (OperationDialogAlert *)OnCopyCantCreateDir:(int)_error ForDir:(const char *)_path;

@@ -17,11 +17,12 @@
 - (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
                root:(const char*)_root
                dest:(const char*)_dest
+            options:(FileCopyOperationOptions*)_opts
 {
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_Job.Init(_files, _root, _dest, self);
+        m_Job.Init(_files, _root, _dest, _opts, self);
         
         // TODO: make unique caption based on arguments
         self.Caption = @"Copying files";

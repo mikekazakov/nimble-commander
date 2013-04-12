@@ -38,7 +38,8 @@ FileCopyOperationJob::FileCopyOperationJob():
     m_OverwriteAll(false),
     m_AppendAll(false),
     m_TotalCopied(0),
-    m_IsSingleFileCopy(true)
+    m_IsSingleFileCopy(true),
+    m_SameVolume(false)
 {
     // in xattr operations we'll use our big Buf1 and Buf2 - they should be quite enough
     // in OS X 10.4-10.6 maximum size of xattr value was 4Kb
@@ -63,34 +64,52 @@ FileCopyOperationJob::~FileCopyOperationJob()
 void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing ownage to Job
                          const char *_root,               // dir in where files are located
                          const char *_dest,                // where to copy
-                        FileCopyOperation *_op
+                         FileCopyOperationOptions* _opts,
+                         FileCopyOperation *_op
                          )
 {
     m_Operation = _op;
     m_InitialItems = _files;
+    m_IsCopying = _opts->docopy;
     strcpy(m_Destination, _dest);
     strcpy(m_SourceDirectory, _root);
 }
 
-
 void FileCopyOperationJob::Do()
 {
+    // this will analyze what user wants from us
     ScanDestination();
     if(GetState() == StateStopped) return;
     if(CheckPauseOrStop()) { SetStopped(); return; }
 
-    ScanItems();
-    if(GetState() == StateStopped) return;
-    if(CheckPauseOrStop()) { SetStopped(); return; }
+    
+    if(m_WorkMode == CopyToFile || m_WorkMode == CopyToFolder || m_WorkMode == MoveToFile || m_WorkMode == MoveToFolder )
+    {
+        ScanItems();
+        if(GetState() == StateStopped) return;
+        if(CheckPauseOrStop()) { SetStopped(); return; }
+    }
+    else
+    {
+        assert(m_WorkMode == RenameToFile || m_WorkMode == RenameToFolder);
+        // renaming is trivial, don't scan source it deeply - we need just a top level
+        m_ScannedItems = m_InitialItems;
+        m_InitialItems = 0;
+    }
 
-    // we don't need any more - so free memory as soon as possible
-    FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
+    // we don't need it any more - so free memory as soon as possible
+    if(m_InitialItems)
+        FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
 
-    m_Buffer1 = malloc(BUFFER_SIZE);
-    m_Buffer2 = malloc(BUFFER_SIZE);
-    m_ReadQueue = dispatch_queue_create(0, 0);
-    m_WriteQueue = dispatch_queue_create(0, 0);
-    m_IOGroup = dispatch_group_create();
+    if(m_WorkMode == CopyToFile || m_WorkMode == CopyToFolder || m_WorkMode == MoveToFile || m_WorkMode == MoveToFolder  )
+    {
+        // allocate buffers and queues only when we'll need them
+        m_Buffer1 = malloc(BUFFER_SIZE);
+        m_Buffer2 = malloc(BUFFER_SIZE);
+        m_ReadQueue = dispatch_queue_create(0, 0);
+        m_WriteQueue = dispatch_queue_create(0, 0);
+        m_IOGroup = dispatch_group_create();
+    }
 
     ProcessItems();
     if(GetState() == StateStopped) return;
@@ -110,39 +129,46 @@ void FileCopyOperationJob::ScanDestination()
     struct stat stat_buffer;
     if(stat(m_Destination, &stat_buffer) == 0)
     {
+        assert(m_IsCopying); // implement renaming later
+            
         bool isfile = (stat_buffer.st_mode&S_IFMT) == S_IFREG;
         bool isdir  = (stat_buffer.st_mode&S_IFMT) == S_IFDIR;
         
         if(isfile)
-            m_CopyMode = CopyToFile;
+            m_WorkMode = CopyToFile;
         else if(isdir)
         {
-            m_CopyMode = CopyToFolder;
+            m_WorkMode = CopyToFolder;
             if(m_Destination[strlen(m_Destination)-1] != '/')
                 strcat(m_Destination, "/"); // add slash at the end
         }
         else
-            assert(0); //TODO: implement handling of this weird cases
+            assert(0); //TODO: implement handling of this weird cases (like copying a device)
     }
     else
     { // ok, it's not a valid entry, now we have to analyze what user wants from us
         if(strchr(m_Destination, '/') == 0)
-        {   // there's no directories mentions in destination path, let's treat destination as an regular absent file
+        {
+            // there's no directories mentions in destination path, let's treat destination as an regular absent file
             // let's think that this destination file should be located in source directory
             char destpath[MAXPATHLEN];
             strcpy(destpath, m_SourceDirectory);
             strcat(destpath, m_Destination);
             strcpy(m_Destination, destpath);
             
-            m_CopyMode = CopyToFile;
+            m_SameVolume = true;
+            if(m_IsCopying) m_WorkMode = CopyToFile;
+            else            m_WorkMode = RenameToFile;
         }
         else
         {
+            assert(m_IsCopying); // implement renaming later
+            
             // TODO: implement me later: ask user about folder/files choice if need
             // he may want to copy file to /users/abra/newdir/FILE.TXT, which is a file in his mind
             
             // just for now - let's think that it's a directory anyway
-            m_CopyMode = CopyToFolder;
+            m_WorkMode = CopyToFolder;
             
             if(m_Destination[0] != '/')
             {
@@ -162,38 +188,42 @@ void FileCopyOperationJob::ScanDestination()
             }
             
             // now we need to check every directory here and create them they are not exist
+            BuildDestinationDirectory(m_Destination);
+            if(GetState() == StateStopped) return;
+            if(CheckPauseOrStop()) { SetStopped(); return; }
             
-            // TODO: not very efficient implementation, it does many redundant stat calls
-            // this algorithm iterates from left to right, but it's better to iterate right-left and then left-right
-            // but this work is doing only once per MassCopyOp, so user may not even notice this issue
-            
-            char destpath[MAXPATHLEN];
-            strcpy(destpath, m_Destination);
-            char* leftmost = strchr(destpath+1, '/');
-            do
-            {
-                *leftmost = 0;
-                if(stat(destpath, &stat_buffer) == -1)
-                {
-                    // absent part - need to create it
-domkdir:            if(mkdir(destpath, 0777) == -1)
-                    {
-                        int result = [[m_Operation OnDestCantCreateDir:errno ForDir:destpath] WaitForResult];
-                        if (result == FileCopyOperationDR::Retry)
-                            goto domkdir;
-                        if (result == OperationDialogResult::Stop)
-                        {
-                            SetStopped();
-                            return;
-                        }
-                    }
-                }
-                *leftmost = '/';
-
-                leftmost = strchr(leftmost+1, '/');
-            } while(leftmost != 0);
         }
     }
+}
+
+void FileCopyOperationJob::BuildDestinationDirectory(const char* _path)
+{
+    // TODO: not very efficient implementation, it does many redundant stat calls
+    // this algorithm iterates from left to right, but it's better to iterate right-left and then left-right
+    // but this work is doing only once per MassCopyOp, so user may not even notice this issue
+    
+    struct stat stat_buffer;
+    char destpath[MAXPATHLEN];
+    strcpy(destpath, _path);
+    char* leftmost = strchr(destpath+1, '/');
+    assert(leftmost != 0);
+    do
+    {
+        *leftmost = 0;
+        if(stat(destpath, &stat_buffer) == -1)
+        {
+            // absent part - need to create it
+domkdir:    if(mkdir(destpath, 0777) == -1)
+            {
+                int result = [[m_Operation OnDestCantCreateDir:errno ForDir:destpath] WaitForResult];
+                if (result == FileCopyOperationDR::Retry) goto domkdir;
+                if (result == OperationDialogResult::Stop) { SetStopped(); return; }
+            }
+        }
+        *leftmost = '/';
+        
+        leftmost = strchr(leftmost+1, '/');
+    } while(leftmost != 0);
 }
 
 void FileCopyOperationJob::ScanItems()
@@ -297,22 +327,55 @@ void FileCopyOperationJob::ProcessItems()
 void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_node)
 {
     assert(_node->len != 0);
-    bool src_isdir = _node->str()[_node->len-1] == '/'; // found if item is a directory
-    
-    if(src_isdir && m_CopyMode == CopyToFile)
-        return; // check if item is a directory and we're copying to a file - then just skip it, it's meaningless
     
     // compose file name - reverse lookup
     char itemname[MAXPATHLEN];
     _node->str_with_pref(itemname);
     
-    if(src_isdir)
-        ProcessDirectory(itemname);
-    else
-        ProcessFile(itemname);
+    if(m_WorkMode == CopyToFolder || m_WorkMode == CopyToFile)
+    {
+        bool src_isdir = _node->str()[_node->len-1] == '/'; // found if item is a directory
+        if(src_isdir && m_WorkMode == CopyToFile)
+            return; // check if item is a directory and we're copying to a file - then just skip it, it's meaningless
+    
+        if(src_isdir)   ProcessDirectoryCopying(itemname);
+        else            ProcessFileCopying(itemname);
+    }
+    else if(m_WorkMode == RenameToFile)
+    {
+        ProcessRenameToFile(itemname);
+    }
+    else assert(0); // implement me later
 }
 
-void FileCopyOperationJob::ProcessDirectory(const char *_path)
+void FileCopyOperationJob::ProcessRenameToFile(const char *_path)
+{
+    // m_Destination is full target path - we need to rename current file to it
+    // assuming that we're working on same valume
+    char sourcepath[MAXPATHLEN];
+    struct stat stat_buffer;    
+    
+     // sanity checks
+    assert(m_Destination[strlen(m_Destination)-1] != '/');
+    assert(_path[0] != 0);
+    assert(_path[0] != '/');
+    
+    // compose real src name
+    strcpy(sourcepath, m_SourceDirectory);
+    strcat(sourcepath, _path);
+    
+    int ret = lstat(m_Destination, &stat_buffer);
+    if(ret != -1)
+    {
+        // TODO: target file already exist. ask user about what to do
+        assert(0);
+    }
+    
+    ret = rename(sourcepath, m_Destination);
+    // TODO: handle result
+}
+
+void FileCopyOperationJob::ProcessDirectoryCopying(const char *_path)
 {
     // TODO: directory attributes, time, permissions and xattrs
     assert(m_Destination[strlen(m_Destination)-1] == '/');
@@ -375,29 +438,18 @@ domkdir:if(mkdir(fullpath, 0777))
     }
 }
 
-void FileCopyOperationJob::ProcessFile(const char *_path)
-{
-    // TODO: need to ask about destination volume info to exclude meaningless operations for attrs which are not supported    
-    
-    struct stat src_stat_buffer, dst_stat_buffer;
-    char sourcepath[__DARWIN_MAXPATHLEN], destinationpath[__DARWIN_MAXPATHLEN],
-    *sourcepathp=&sourcepath[0], *destinationpathp=&destinationpath[0],
-    *readbuf = (char*)m_Buffer1, *writebuf = (char*)m_Buffer2;
-    int dstopenflags=0, sourcefd=-1, destinationfd=-1;
-    unsigned long startwriteoff = 0, totaldestsize = 0;
-    bool adjust_dst_time = true, copy_xattrs = true, erase_xattrs = false, remember_choice = false;
-    mode_t oldumask;
-    __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
-    __block bool io_docancel = false;
-    
+void FileCopyOperationJob::ProcessFileCopying(const char *_path)
+{    
+    char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
+
     assert(_path[strlen(_path)-1] != '/'); // sanity check
-    
+
     // compose real src name
     strcpy(sourcepath, m_SourceDirectory);
     strcat(sourcepath, _path);
     
     // compose dest name
-    if(m_CopyMode == CopyToFolder)
+    if(m_WorkMode == CopyToFolder)
     {
         assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
         strcpy(destinationpath, m_Destination);
@@ -410,11 +462,29 @@ void FileCopyOperationJob::ProcessFile(const char *_path)
     
     if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy file into itself
 
+    CopyFileTo(sourcepath, destinationpath);
+}
+
+bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
+{
+    assert(m_WorkMode != RenameToFile && m_WorkMode != RenameToFolder); // sanity check
+    
+    // TODO: need to ask about destination volume info to exclude meaningless operations for attrs which are not supported
+    // TODO: need to adjust buffer sizes and writing calls to preffered volume's I/O size
+    struct stat src_stat_buffer, dst_stat_buffer;
+    char *readbuf = (char*)m_Buffer1, *writebuf = (char*)m_Buffer2;
+    int dstopenflags=0, sourcefd=-1, destinationfd=-1;
+    unsigned long startwriteoff = 0, totaldestsize = 0;
+    bool adjust_dst_time = true, copy_xattrs = true, erase_xattrs = false, remember_choice = false, was_successful = false;
+    mode_t oldumask;
+    __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
+    __block bool io_docancel = false;
+    
 opensource:
-    if((sourcefd = open(sourcepath, O_RDONLY|O_SHLOCK)) == -1)
+    if((sourcefd = open(_src, O_RDONLY|O_SHLOCK)) == -1)
     {  // failed to open source file
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:sourcepath] WaitForResult];
+        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:_src] WaitForResult];
         if(result == FileCopyOperationDR::Retry) goto opensource;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -426,28 +496,28 @@ statsource: // get information about source file
     if(fstat(sourcefd, &src_stat_buffer) == -1)
     {   // failed to stat source
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:sourcepath] WaitForResult];
+        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:_src] WaitForResult];
         if(result == FileCopyOperationDR::Retry) goto statsource;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
         if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
-
+    
     // stat destination
     totaldestsize = src_stat_buffer.st_size;
-    if(stat(destinationpath, &dst_stat_buffer) != -1)
+    if(stat(_dest, &dst_stat_buffer) != -1)
     { // file already exist. what should we do now?
         int result;
         if(m_SkipAll) goto cleanup;
         if(m_OverwriteAll) goto decoverwrite;
         if(m_AppendAll) goto decappend;
-  
-        result = [[m_Operation OnFileExist:destinationpath
-                                  newsize:src_stat_buffer.st_size
-                                  newtime:src_stat_buffer.st_mtimespec.tv_sec
-                                  exisize:dst_stat_buffer.st_size
-                                  exitime:dst_stat_buffer.st_mtimespec.tv_sec
-                                 remember:&remember_choice] WaitForResult];
+        
+        result = [[m_Operation OnFileExist:_dest
+                                   newsize:src_stat_buffer.st_size
+                                   newtime:src_stat_buffer.st_mtimespec.tv_sec
+                                   exisize:dst_stat_buffer.st_size
+                                   exitime:dst_stat_buffer.st_mtimespec.tv_sec
+                                  remember:&remember_choice] WaitForResult];
         if(result == FileCopyOperationDR::Overwrite){ if(remember_choice) m_OverwriteAll = true;  goto decoverwrite; }
         if(result == FileCopyOperationDR::Append)   { if(remember_choice) m_AppendAll = true;     goto decappend;    }
         if(result == FileCopyOperationDR::Skip)     { if(remember_choice) m_SkipAll = true;       goto cleanup;      }
@@ -474,19 +544,19 @@ statsource: // get information about source file
     
 opendest: // open file descriptor for destination
     oldumask = umask(0); // we want to copy src permissions
-    destinationfd = open(destinationpath, dstopenflags, src_stat_buffer.st_mode);
+    destinationfd = open(_dest, dstopenflags, src_stat_buffer.st_mode);
     umask(oldumask);
     
     if(destinationfd == -1)
     {   // failed to open destination file
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantOpenDestFile:errno ForFile:destinationpath] WaitForResult];
+        int result = [[m_Operation OnCopyCantOpenDestFile:errno ForFile:_dest] WaitForResult];
         if(result == FileCopyOperationDR::Retry) goto opendest;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
         if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
-
+    
     // preallocate space for data since we dont want to trash our disk
     if(src_stat_buffer.st_size > MIN_PREALLOC_SIZE)
     {
@@ -503,26 +573,29 @@ dotruncate: // set right size for destination file
     if(ftruncate(destinationfd, totaldestsize) == -1)
     {   // failed to set dest file size
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyWriteError:errno ForFile:destinationpath] WaitForResult];
+        int result = [[m_Operation OnCopyWriteError:errno ForFile:_dest] WaitForResult];
         if(result == FileCopyOperationDR::Retry) goto dotruncate;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
         if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
-
+    
 dolseek: // find right position in destination file
     if(lseek(destinationfd, startwriteoff, SEEK_SET) == -1)
     {   // failed seek in a file. lolwhat?
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyWriteError:errno ForFile:destinationpath] WaitForResult];
+        int result = [[m_Operation OnCopyWriteError:errno ForFile:_dest] WaitForResult];
         if(result == FileCopyOperationDR::Retry) goto dolseek;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
         if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
     }
-
+    
     while(true)
     {
+        if(GetState() == StateStopped) goto cleanup;
+        if(CheckPauseOrStop()) { SetStopped(); goto cleanup; }
+        
         __block ssize_t io_nread = 0;
         dispatch_group_async(m_IOGroup, m_ReadQueue, ^{
         doread:
@@ -532,7 +605,7 @@ dolseek: // find right position in destination file
                 if(io_nread == -1)
                 {
                     if(m_SkipAll) {io_docancel = true; return;}
-                    int result = [[m_Operation OnCopyReadError:errno ForFile:sourcepathp] WaitForResult];
+                    int result = [[m_Operation OnCopyReadError:errno ForFile:_dest] WaitForResult];
                     if(result == FileCopyOperationDR::Retry) goto doread;
                     if(result == FileCopyOperationDR::Skip) {io_docancel = true; return;}
                     if(result == FileCopyOperationDR::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
@@ -541,7 +614,7 @@ dolseek: // find right position in destination file
                 io_totalread += io_nread;
             }
         });
-
+        
         dispatch_group_async(m_IOGroup, m_WriteQueue, ^{
             unsigned long alreadywrote = 0;
             while(io_leftwrite > 0)
@@ -551,7 +624,7 @@ dolseek: // find right position in destination file
                 if(nwrite == -1)
                 {
                     if(m_SkipAll) {io_docancel = true; return;}
-                    int result = [[m_Operation OnCopyWriteError:errno ForFile:destinationpathp] WaitForResult];
+                    int result = [[m_Operation OnCopyWriteError:errno ForFile:_dest] WaitForResult];
                     if(result == FileCopyOperationDR::Retry) goto dowrite;
                     if(result == FileCopyOperationDR::Skip) {io_docancel = true; return;}
                     if(result == FileCopyOperationDR::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
@@ -576,6 +649,8 @@ dolseek: // find right position in destination file
         //        uint64_t currenttime = mach_absolute_time();
         //        SetBytesPerSecond( double(totalwrote) / (double((currenttime - starttime)/1000000ul) / 1000.) );
     }
+    
+    // TODO: do we need to determine if various attributes setting was successful?
     
     // erase destination's xattrs
     if(erase_xattrs)
@@ -613,26 +688,28 @@ dolseek: // find right position in destination file
     
     // adjust destination time as source
     if(adjust_dst_time)
-    {        
+    {
         struct attrlist attrs;
         memset(&attrs, 0, sizeof(attrs));
         attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-
+        
         attrs.commonattr = ATTR_CMN_MODTIME;
         fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_mtimespec, sizeof(struct timespec), 0);
-
+        
         attrs.commonattr = ATTR_CMN_CRTIME;
         fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_birthtimespec, sizeof(struct timespec), 0);
-                
+        
         attrs.commonattr = ATTR_CMN_ACCTIME;
         fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_atimespec, sizeof(struct timespec), 0);
-
+        
         attrs.commonattr = ATTR_CMN_CHGTIME;
         fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_ctimespec, sizeof(struct timespec), 0);
     }
     
+    was_successful = true;
+
 cleanup:
     if(sourcefd != -1) close(sourcefd);
     if(destinationfd != -1) close(destinationfd);
+    return was_successful;
 }
-

@@ -15,7 +15,9 @@ typedef void (^MassCopySheetCompletionHandler)(int result);
 @property (strong) IBOutlet NSTextField *TextField;
 - (IBAction)OnCopy:(id)sender;
 - (IBAction)OnCancel:(id)sender;
+@property (strong) IBOutlet NSTextField *DescriptionText;
 
-- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path handler:(MassCopySheetCompletionHandler)_handler;
+- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying handler:(MassCopySheetCompletionHandler)_handler;
+// if _iscopying is false than dialog will think that user attempt to rename/move files
 
 @end

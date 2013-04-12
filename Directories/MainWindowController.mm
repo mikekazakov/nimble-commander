@@ -616,7 +616,7 @@
     destination->GetDirectoryPathWithTrailingSlash(dest_path);
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:nsdirpath handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:true handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -625,8 +625,10 @@
              char root_path[MAXPATHLEN];
              source->GetDirectoryPathWithTrailingSlash(root_path);
              
+             FileCopyOperationOptions opts;
+             
              [m_OperationsController AddOperation:
-                [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[copyto UTF8String]]];
+              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[copyto UTF8String] options:&opts]];
          }
          else
          {
@@ -647,7 +649,7 @@
         return;
     
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] iscopying:true handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -655,13 +657,72 @@
              
              char root_path[MAXPATHLEN];
              [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+             FileCopyOperationOptions opts;
              
              [m_OperationsController AddOperation:
               [[FileCopyOperation alloc] initWithFiles:FlexChainedStringsChunk::AllocateWithSingleString(item.namec())
                                                   root:root_path
-                                                  dest:[copyto UTF8String]]];
+                                                  dest:[copyto UTF8String]
+                                               options:&opts]];
          }
      }];
+}
+
+- (IBAction)OnFileRenameMoveCommand:(id)sender{
+    assert([self IsPanelActive]);
+    const PanelData *source, *destination;
+    if(m_ActiveState == StateLeftPanel)
+    {
+        source = m_LeftPanelData;
+        destination = m_RightPanelData;
+    }
+    else
+    {
+        source = m_RightPanelData;
+        destination = m_LeftPanelData;
+    }
+    
+    __block FlexChainedStringsChunk *files = 0;
+    if(source->GetSelectedItemsCount() > 0 )
+    {
+        files = source->StringsFromSelectedEntries();
+    }
+    else
+    {
+        int curpos = [[self ActivePanelView] GetCursorPosition];
+        int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
+        auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
+        if(!item.isdotdot()) // do not try to rename a parent directory
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+    }
+    
+    if(!files)
+        return;        
+    
+    char dest_path[MAXPATHLEN];
+    destination->GetDirectoryPathWithTrailingSlash(dest_path);
+    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
+    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
+    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:false handler:^(int _ret)
+     {
+         if(_ret == DialogResult::Copy)
+         {
+             NSString *copyto = [[mc TextField] stringValue];
+             
+             char root_path[MAXPATHLEN];
+             source->GetDirectoryPathWithTrailingSlash(root_path);
+             
+             FileCopyOperationOptions opts;
+             opts.docopy = false;
+             
+             [m_OperationsController AddOperation:
+              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[copyto UTF8String] options:&opts]];
+         }
+         else
+         {
+             FlexChainedStringsChunk::FreeWithDescendants(&files);           
+         }
+     }];    
 }
 
 @end

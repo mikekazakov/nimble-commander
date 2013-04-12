@@ -14,8 +14,8 @@
 {
     MassCopySheetCompletionHandler m_Handler;
     NSString *m_InitialPath;
+    bool m_IsCopying;
 }
-
 
 - (id)init {
     self = [super initWithWindowNibName:@"MassCopySheetController"];
@@ -29,6 +29,17 @@
     [[self TextField] setStringValue:m_InitialPath];
     [[self TextField] becomeFirstResponder];
     [[self window] setDefaultButtonCell:[[self CopyButton] cell]];
+    
+    if(m_IsCopying)
+    {
+        [self.DescriptionText setStringValue:@"Copy items to:"];
+        [self.CopyButton setTitle:@"Copy"];
+    }
+    else
+    {
+        [self.DescriptionText setStringValue:@"Rename/move items to:"];
+        [self.CopyButton setTitle:@"Rename"];
+    }
 }
 
 - (IBAction)OnCopy:(id)sender
@@ -41,10 +52,11 @@
     [NSApp endSheet:[self window] returnCode:DialogResult::Cancel];    
 }
 
-- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path handler:(MassCopySheetCompletionHandler)_handler
+- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying handler:(MassCopySheetCompletionHandler)_handler
 {
     m_Handler = _handler;
     m_InitialPath = _path;
+    m_IsCopying = _iscopying;
 
     [NSApp beginSheet: [self window]
        modalForWindow: _window

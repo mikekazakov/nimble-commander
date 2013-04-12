@@ -16,8 +16,11 @@
 
 - (void)InitView;
 
-- (void)ExpandList;
-- (void)ShrinkList;
+- (void)ShowList;
+- (void)HideList;
+
+- (void)observeValueForKeyPath:(NSString *)_keypath ofObject:(id)_object
+                        change:(NSDictionary *)_change context:(void *)_context;
 
 @end
 
@@ -31,32 +34,33 @@
     // Original superview of the operation list.
     NSView *m_ListSuperview;
     
-    BOOL m_Expanded;
+    BOOL m_ListVisible;
 }
 @synthesize OperationsController = m_OperationsController;
 
-- (void)InitView
+- (void)dealloc
 {
-    self.OperationsCountLabel.stringValue = @"0";
-    self.DialogsCountLabel.stringValue = @"0";
-    
+    [m_OperationsController removeObserver:self forKeyPath:@"OperationsCount"];
+}
+
+- (void)InitView
+{    
     m_ListFrame = self.ScrollView.frame;
     m_ListSuperview = self.ScrollView.superview;
 }
 
-- (void)ExpandList
+- (void)ShowList
 {
+    assert(!m_ListVisible);
+    
     const NSUInteger max_height_in_items = 5;
     
-    // Make list show oll operations.
-    [self.OperationsArrayController setFilterPredicate:nil];
-    
     // Set opaque background.
-    NSArray *colors = [NSArray arrayWithObjects:
-                       [NSColor colorWithDeviceRed:0.9 green:0.9 blue:0.9 alpha:1.0],
-                       [NSColor colorWithDeviceRed:0.86 green:0.86 blue:0.86 alpha:1.0],
-                       nil];
-    [self.CollectionView setBackgroundColors:colors];
+//    NSArray *colors = [NSArray arrayWithObjects:
+//                       [NSColor colorWithDeviceRed:0.9 green:0.9 blue:0.9 alpha:1.0],
+//                       [NSColor colorWithDeviceRed:0.86 green:0.86 blue:0.86 alpha:1.0],
+//                       nil];
+//    [self.CollectionView setBackgroundColors:colors];
     
     // Calculate height of the expanded list.
     NSUInteger item_height = self.CollectionView.itemPrototype.view.frame.size.height;
@@ -66,60 +70,60 @@
     if (height_in_items > count) height_in_items = count;
     if (height_in_items > window_height_in_items) height_in_items = window_height_in_items;
     
-    CGFloat width = self.ScrollView.frame.size.width;
+    CGFloat width = self.view.frame.size.width;
     CGFloat height = height_in_items * item_height;
     
-    // Move list to window.
-    if (self.ScrollView.superview != self.view.window.contentView)
-    {
-        CGPoint origin = [self.ScrollView convertPoint:NSMakePoint(0, 0)
-                                                toView:self.view.window.contentView];
-        origin.y -= height;
-        [self.ScrollView removeFromSuperviewWithoutNeedingDisplay];
-        [self.view.window.contentView addSubview:self.ScrollView];
-        [self.ScrollView setFrameOrigin:origin];
-    }
+    CGPoint origin = [self.view convertPoint:NSMakePoint(45, 0)
+                                      toView:self.view.window.contentView];
+    origin.y -= height - self.view.frame.size.height;
+    [self.view.window.contentView addSubview:self.ScrollView];
+    [self.ScrollView setFrameOrigin:origin];
     
     // Apply new height.
     [self.ScrollView setFrameSize:NSMakeSize(width, height)];
     
-    m_Expanded = true;
+    m_ListVisible = YES;
 }
 
-- (void)ShrinkList
+- (void)HideList
 {
-    // Make list show only the first operation.
-    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(Operation *_obj, NSDictionary *)
+    assert(m_ListVisible);
+    
+    [_ScrollView removeFromSuperview];
+    m_ListVisible = NO;
+}
+
+- (void)observeValueForKeyPath:(NSString *)_keypath ofObject:(id)_object
+                        change:(NSDictionary *)_change context:(void *)_context
+{
+    if (_object == m_OperationsController && [_keypath isEqualToString:@"OperationsCount"])
     {
-        return [self.OperationsController.Operations indexOfObject:_obj] == 0;
-    }];
-    
-    [self.OperationsArrayController setFilterPredicate:predicate];
-    
-    // Set transparent background.
-    NSArray *colors = [NSArray arrayWithObjects:[NSColor clearColor], nil];
-    [self.CollectionView setBackgroundColors:colors];
-    
-    // Move list inside the summary view.
-    if (self.ScrollView.superview != m_ListSuperview)
-    {
-        [self.ScrollView removeFromSuperviewWithoutNeedingDisplay];
-        [m_ListSuperview addSubview:self.ScrollView];
-        self.ScrollView.frame = m_ListFrame;
+        // Count of operations is chaged. Update current operation.
+        if (m_OperationsController.Operations.count == 0)
+            self.CurrentOperation = nil;
+        else
+        {
+            Operation *first_op = m_OperationsController.Operations[0];
+            if (self.CurrentOperation != first_op)
+                self.CurrentOperation = first_op;
+        }
+        
+        return;
     }
     
-    m_Expanded = false;
+    [super observeValueForKeyPath:_keypath ofObject:_object
+                           change:_change context:_context];
 }
 
 - (IBAction)ShowOpListButtonAction:(NSButton *)sender
 {
-    if (m_Expanded)
-        [self ShrinkList];
+    if (m_ListVisible)
+        [self HideList];
     else
     {
         // Expand list only if there is more than 1 operation.
         if (m_OperationsController.OperationsCount > 1)
-            [self ExpandList];
+            [self ShowList];
     }
 }
 
@@ -129,12 +133,14 @@
     if (self)
     {
         m_OperationsController = _controller;
-        m_Expanded = NO;
+        m_ListVisible = NO;
+        [m_OperationsController addObserver:self
+                                 forKeyPath:@"OperationsCount"
+                                    options:NSKeyValueObservingOptionNew
+                                    context:nil];
         
         [self loadView];
         [self InitView];
-        
-        [self ShrinkList];
     }
     
     return self;

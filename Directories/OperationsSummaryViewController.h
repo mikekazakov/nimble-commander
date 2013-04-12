@@ -9,21 +9,20 @@
 #import <Cocoa/Cocoa.h>
 
 @class OperationsController;
+@class Operation;
 
 @interface OperationsSummaryViewController : NSViewController
 
 // Outlets and actions.
-@property (weak) IBOutlet NSTextField *OperationsCountLabel;
-@property (weak) IBOutlet NSTextField *DialogsCountLabel;
-@property (weak) IBOutlet NSTextField *NoOperationsLabel;
-@property (weak) IBOutlet NSCollectionView *CollectionView;
 @property (strong) IBOutlet NSScrollView *ScrollView;
+@property (weak) IBOutlet NSCollectionView *CollectionView;
 @property (strong) IBOutlet NSArrayController *OperationsArrayController;
-@property (weak) IBOutlet NSBox *Box;
 - (IBAction)ShowOpListButtonAction:(NSButton *)sender;
 
 
 @property (readonly) OperationsController *OperationsController;
+// Operation that is displayed in the summary view.
+@property Operation *CurrentOperation;
 
 - (id)initWthController:(OperationsController *)_controller;
 - (void)AddViewTo:(NSView *)_parent;

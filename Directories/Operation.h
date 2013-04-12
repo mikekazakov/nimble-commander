@@ -19,6 +19,8 @@ class OperationJob;
 @property (nonatomic) float Progress;
 // Caption of the operation.
 @property (nonatomic) NSString *Caption;
+// String with the short information about operation.
+@property (nonatomic) NSString *ShortInfo;
 // The paused state of the operation.
 @property (nonatomic) BOOL IsPaused;
 // Number of pending dialogs.

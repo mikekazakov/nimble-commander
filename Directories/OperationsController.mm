@@ -71,12 +71,28 @@
 {
     [m_Operations insertObject:_object atIndex:_index];
     ++self.OperationsCount;
+    
+    if (!m_UpdateTimer)
+    {
+        m_UpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.033
+                                                         target:self
+                                                       selector:@selector(Update)
+                                                       userInfo:nil
+                                                        repeats:YES];
+    }
 }
 
 - (void)removeObjectFromOperationsAtIndex:(NSUInteger)_index
 {
     [m_Operations removeObjectAtIndex:_index];
     --self.OperationsCount;
+    
+    if (_OperationsCount == 0)
+    {
+        self.OperationsWithDialogsCount = 0;
+        [m_UpdateTimer invalidate];
+        m_UpdateTimer = nil;
+    }
 }
 
 - (id)init
@@ -85,12 +101,6 @@
     if (self)
     {
         m_Operations = [NSMutableArray array];
-        
-        m_UpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.033
-                                                         target:self
-                                                       selector:@selector(Update)
-                                                       userInfo:nil
-                                                        repeats:YES];
     }
     return self;
 }

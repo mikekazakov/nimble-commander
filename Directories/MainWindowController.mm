@@ -133,7 +133,7 @@
 
 - (void)CreatePanelConstraints
 {
-    const int topgap = 60;
+    const int topgap = 45;
     [[[self window] contentView] removeConstraint:m_PanelConstraints.left_left];
     [[[self window] contentView] removeConstraint:m_PanelConstraints.left_top];
     [[[self window] contentView] removeConstraint:m_PanelConstraints.left_right];

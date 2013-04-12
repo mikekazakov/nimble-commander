@@ -51,6 +51,7 @@ enum ActiveState
 - (IBAction)OnFileCopyCommand:(id)sender;
 - (IBAction)OnFileCopyAsCommand:(id)sender;
 - (IBAction)OnFileRenameMoveCommand:(id)sender;
+- (IBAction)OnFileRenameMoveAsCommand:(id)sender;
 
 // this method will be called by App in all MainWindowControllers with same params
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;

@@ -566,17 +566,14 @@
     [cd ShowSheet:[self window] handler:^(int _ret)
      {
          if(_ret == DialogResult::Create)
-         {
-             NSString *name = [[cd TextField] stringValue];
-             
+         {             
              PanelData *curdata = [self ActivePanelData];
              char pdir[MAXPATHLEN];
              curdata->GetDirectoryPath(pdir);
              
-             [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[name UTF8String]
+             [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] UTF8String]
                                                                                         rootpath:pdir
                                                    ]];
-             
          }
      }];
 }
@@ -620,15 +617,13 @@
      {
          if(_ret == DialogResult::Copy)
          {
-             NSString *copyto = [[mc TextField] stringValue];
-             
              char root_path[MAXPATHLEN];
              source->GetDirectoryPathWithTrailingSlash(root_path);
              
              FileCopyOperationOptions opts;
              
              [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[copyto UTF8String] options:&opts]];
+              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] UTF8String] options:&opts]];
          }
          else
          {
@@ -648,13 +643,12 @@
     if(item.isdotdot())
         return;
     
+    // TODO: what will happen if PanelData which contains _item will reload it before the following block will execute?    
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
     [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] iscopying:true handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
-             NSString *copyto = [[mc TextField] stringValue];
-             
              char root_path[MAXPATHLEN];
              [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
              FileCopyOperationOptions opts;
@@ -662,7 +656,7 @@
              [m_OperationsController AddOperation:
               [[FileCopyOperation alloc] initWithFiles:FlexChainedStringsChunk::AllocateWithSingleString(item.namec())
                                                   root:root_path
-                                                  dest:[copyto UTF8String]
+                                                  dest:[[mc.TextField stringValue] UTF8String]
                                                options:&opts]];
          }
      }];
@@ -702,13 +696,12 @@
     char dest_path[MAXPATHLEN];
     destination->GetDirectoryPathWithTrailingSlash(dest_path);
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
+    // TODO: what will happen if PanelData which contains _item will reload it before the following block will execute?    
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
     [mc ShowSheet:[self window] initpath:nsdirpath iscopying:false handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
-         {
-             NSString *copyto = [[mc TextField] stringValue];
-             
+         {             
              char root_path[MAXPATHLEN];
              source->GetDirectoryPathWithTrailingSlash(root_path);
              
@@ -716,13 +709,44 @@
              opts.docopy = false;
              
              [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[copyto UTF8String] options:&opts]];
+              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] UTF8String] options:&opts]];
          }
          else
          {
              FlexChainedStringsChunk::FreeWithDescendants(&files);           
          }
      }];    
+}
+
+- (IBAction)OnFileRenameMoveAsCommand:(id)sender {
+    
+    // process only current cursor item
+    assert([self IsPanelActive]);
+    
+    int curpos = [[self ActivePanelView] GetCursorPosition];
+    int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
+    auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
+    if(item.isdotdot())
+        return;
+    
+    // TODO: what will happen if PanelData which contains _item will reload it before the following block will execute?
+    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] iscopying:false handler:^(int _ret)
+     {
+         if(_ret == DialogResult::Copy)
+         {
+             char root_path[MAXPATHLEN];
+             [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+             FileCopyOperationOptions opts;
+             opts.docopy = false;
+             
+             [m_OperationsController AddOperation:
+              [[FileCopyOperation alloc] initWithFiles:FlexChainedStringsChunk::AllocateWithSingleString(item.namec())
+                                                  root:root_path
+                                                  dest:[[mc.TextField stringValue] UTF8String]
+                                               options:&opts]];
+         }
+     }];
 }
 
 @end

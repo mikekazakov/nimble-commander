@@ -42,6 +42,9 @@ private:
         // [!] in this case we may need to remove destination first. but it's better to do nothing and to display an error
         
         RenameToFolder,
+        // our destination is a folder name
+        // we need to compose file name as destination folder name plus original relative file name
+        
         MoveToFile,
         MoveToFolder
     };
@@ -55,6 +58,7 @@ private:
     void ProcessDirectoryCopying(const char *_path);
     void ProcessFileCopying(const char *_path);
     void ProcessRenameToFile(const char *_path); // _path is relative filename of source item
+    void ProcessRenameToFolder(const char *_path); // _path is relative filename of source item
     
     void BuildDestinationDirectory(const char* _path);
     

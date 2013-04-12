@@ -172,3 +172,4 @@ int FetchVolumeAttributesInformation(const char *_path,
 
 
 int FetchFileSystemRootFromPath(const char *_path, char *_root);
+// return 0 on sucess, or errno value on error

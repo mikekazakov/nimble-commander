@@ -6,24 +6,64 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "FileCopyOperationJob.h"
-#include <algorithm>
-#include <sys/types.h>
-#include <sys/dirent.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <sys/time.h>
-#include <sys/xattr.h>
-#include <sys/attr.h>
-#include <sys/vnode.h>
-#include <sys/param.h>
-#include <sys/mount.h>
-#include <unistd.h>
-#include <stdlib.h>
+#import "FileCopyOperationJob.h"
+#import "filesysinfo.h"
+#import <algorithm>
+#import <sys/types.h>
+#import <sys/dirent.h>
+#import <sys/stat.h>
+#import <dirent.h>
+#import <sys/time.h>
+#import <sys/xattr.h>
+#import <sys/attr.h>
+#import <sys/vnode.h>
+#import <sys/param.h>
+#import <sys/mount.h>
+#import <unistd.h>
+#import <stdlib.h>
 
 #define BUFFER_SIZE (512*1024) // 512kb
 #define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
 
+// assumes that _fn1 is a valid file/dir name, or will return false immediately
+// if _fn2 is not a valid path name will look at _fallback_second.
+//  if _fallback_second is true this routine will go upper to the root until the valid path is reached
+//  otherwise it will return false
+// when two valid paths is achieved it calls FetchFileSystemRootFromPath and compares two roots
+// TODO: how do we need to treat symlinks in this procedure?
+static bool CheckSameVolume(const char *_fn1, const char*_fn2, bool &_same, bool _fallback_second = true)
+{
+    // accept only full paths
+    assert(_fn1[0]=='/');
+    assert(_fn2[0]=='/');
+    
+    struct stat st;
+    if(stat(_fn1, &st) == -1)
+        return false;
+ 
+    char fn2[MAXPATHLEN];
+    strcpy(fn2, _fn2);
+
+    while(stat(fn2, &st) == -1)
+    {
+        if(!_fallback_second)
+            return false;
+
+        char *s = strrchr(fn2, '/');
+        assert(s != fn2);   // that is an absolutely weird case if can't access "/" path.
+                            // in this situation it's better to stop working at all
+
+        *s = 0;
+    }
+
+    char root1[MAXPATHLEN], root2[MAXPATHLEN];
+    if(FetchFileSystemRootFromPath(_fn1, root1) != 0) return false;
+    if(FetchFileSystemRootFromPath(fn2, root2) != 0) return false;
+
+    _same = strcmp(root1, root2) == 0;
+
+    return true;
+}
 
 FileCopyOperationJob::FileCopyOperationJob():
     m_Operation(0),
@@ -129,28 +169,48 @@ void FileCopyOperationJob::ScanDestination()
     struct stat stat_buffer;
     if(stat(m_Destination, &stat_buffer) == 0)
     {
-        assert(m_IsCopying); // implement renaming later
-            
+        CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);        
         bool isfile = (stat_buffer.st_mode&S_IFMT) == S_IFREG;
         bool isdir  = (stat_buffer.st_mode&S_IFMT) == S_IFDIR;
         
         if(isfile)
-            m_WorkMode = CopyToFile;
-        else if(isdir)
         {
-            m_WorkMode = CopyToFolder;
+            if(m_IsCopying)
+            {
+                m_WorkMode = CopyToFile;
+            }
+            else
+            {
+                if(m_SameVolume) m_WorkMode = RenameToFile;
+                else             m_WorkMode = MoveToFile;
+            }
+        }
+        else if(isdir)
+        {   
             if(m_Destination[strlen(m_Destination)-1] != '/')
                 strcat(m_Destination, "/"); // add slash at the end
+
+            if(m_IsCopying)
+            {
+                m_WorkMode = CopyToFolder;
+            }
+            else
+            {
+                if(m_SameVolume) m_WorkMode = RenameToFolder;
+                else             m_WorkMode = MoveToFolder;
+            }
         }
         else
-            assert(0); //TODO: implement handling of this weird cases (like copying a device)
+            assert(0); //TODO: implement handling of this weird cases (like copying to a device)
     }
     else
     { // ok, it's not a valid entry, now we have to analyze what user wants from us
+        // and try to combine the right m_Destination
         if(strchr(m_Destination, '/') == 0)
         {
             // there's no directories mentions in destination path, let's treat destination as an regular absent file
             // let's think that this destination file should be located in source directory
+            // TODO: add CheckSameVolume
             char destpath[MAXPATHLEN];
             strcpy(destpath, m_SourceDirectory);
             strcat(destpath, m_Destination);
@@ -162,14 +222,11 @@ void FileCopyOperationJob::ScanDestination()
         }
         else
         {
-            assert(m_IsCopying); // implement renaming later
-            
+            // user want to copy/rename/move file(s) to some directory, like "Abra/Carabra" or "/bin/abra"
             // TODO: implement me later: ask user about folder/files choice if need
             // he may want to copy file to /users/abra/newdir/FILE.TXT, which is a file in his mind
-            
             // just for now - let's think that it's a directory anyway
-            m_WorkMode = CopyToFolder;
-            
+
             if(m_Destination[0] != '/')
             {
                 // relative to source directory
@@ -179,12 +236,35 @@ void FileCopyOperationJob::ScanDestination()
                 if( destpath[strlen(destpath)-1] != '/' )
                     strcat(destpath, "/");
                 strcpy(m_Destination, destpath);
+
+                // check if the volume is the same
+                // TODO: there can be some CRAZY situations when user wants to do someting with directory that
+                // contains a mounting point with another filesystem. but for now let's think that is not valid.
+                // for the future - algo should have a flag about nested filesystems and process them carefully later
+                CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);
             }
             else
             {
+                m_WorkMode = CopyToFolder;
+                
                 // absolute path
                 if( m_Destination[strlen(m_Destination)-1] != '/' )
                     strcat(m_Destination, "/");
+                
+                // TODO: look up
+                CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);
+            }
+
+            if(m_IsCopying)
+            {
+                m_WorkMode = CopyToFolder;
+            }
+            else
+            {
+                if(m_SameVolume)
+                    m_WorkMode = RenameToFolder;
+                else
+                    m_WorkMode = MoveToFolder;
             }
             
             // now we need to check every directory here and create them they are not exist
@@ -342,9 +422,10 @@ void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_nod
         else            ProcessFileCopying(itemname);
     }
     else if(m_WorkMode == RenameToFile)
-    {
         ProcessRenameToFile(itemname);
-    }
+    else if(m_WorkMode == RenameToFolder)
+        ProcessRenameToFolder(itemname);
+    
     else assert(0); // implement me later
 }
 
@@ -373,6 +454,36 @@ void FileCopyOperationJob::ProcessRenameToFile(const char *_path)
     
     ret = rename(sourcepath, m_Destination);
     // TODO: handle result
+    assert(ret == 0);
+}
+
+void FileCopyOperationJob::ProcessRenameToFolder(const char *_path)
+{
+    // m_Destination is a directory path - we need to appen _path to it
+    char sourcepath[MAXPATHLEN], destpath[MAXPATHLEN];
+    struct stat stat_buffer;
+
+    assert(_path[0] != 0);
+    assert(_path[0] != '/');
+        
+    // compose real src name
+    strcpy(sourcepath, m_SourceDirectory);
+    strcat(sourcepath, _path);
+    
+    strcpy(destpath, m_Destination);
+    if(destpath[strlen(destpath)-1] != '/' ) strcat(destpath, "/");
+    strcat(destpath, _path);
+    
+    int ret = lstat(destpath, &stat_buffer);
+    if(ret != -1)
+    {
+        // TODO: target file already exist. ask user about what to do
+        assert(0);
+    }
+
+    ret = rename(sourcepath, destpath);
+    // TODO: handle result
+    assert(ret == 0);
 }
 
 void FileCopyOperationJob::ProcessDirectoryCopying(const char *_path)

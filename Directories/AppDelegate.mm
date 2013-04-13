@@ -28,7 +28,8 @@
     [NSValueTransformer setValueTransformer:[[OperationProgressValueTransformer alloc] init]
                                     forName:@"OperationProgressValueTransformer"];
     
-    [self NewWindow:nil];
+    if(m_MainWindows.empty())
+        [self AllocateNewMainWindow]; // if there's no restored windows - we'll create a freshly new one
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
@@ -42,11 +43,34 @@
         [i FireDirectoryChanged:_dir ticket:_ticket];
 }
 
-- (IBAction)NewWindow:(id)sender
+- (MainWindowController*)AllocateNewMainWindow
 {
     MainWindowController *mwc = [[MainWindowController alloc] init];
+    mwc.window.restorable = YES;
+    mwc.window.restorationClass = self.class;
+    mwc.window.identifier = @"mainwindow";
+    
     [mwc showWindow:self];
     m_MainWindows.push_back(mwc);
+    return mwc;
+}
+
+- (IBAction)NewWindow:(id)sender
+{
+    [self AllocateNewMainWindow];
+}
+
++ (void)restoreWindowWithIdentifier:(NSString *)identifier
+                              state:(NSCoder *)state
+                  completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
+{
+    NSWindow *window = nil;
+    if ([identifier isEqualToString:@"mainwindow"])
+    {
+        AppDelegate *app = [NSApp delegate];
+        window = [[app AllocateNewMainWindow] window];
+    }
+    completionHandler(window, nil);
 }
 
 - (void) RemoveMainWindow:(MainWindowController*) _wnd

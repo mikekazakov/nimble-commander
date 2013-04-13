@@ -92,7 +92,7 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
     dispatch_group_t statg = dispatch_group_create();
     // TODO: consider using dispatch_get_global_queue() if it works well.
     // we can save some cpu cycles on queue creation and destruction
-    dispatch_queue_t statq = dispatch_queue_create(0, DISPATCH_QUEUE_CONCURRENT);
+    dispatch_queue_t statq = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 
     auto i = _target->begin(), e = _target->end();
     for(;i<e;++i)

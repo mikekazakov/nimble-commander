@@ -11,7 +11,7 @@
 
 @class MainWindowController;
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowRestoration>
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long) _ticket;
 

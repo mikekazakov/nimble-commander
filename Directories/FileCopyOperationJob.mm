@@ -270,8 +270,7 @@ void FileCopyOperationJob::ScanDestination()
             // now we need to check every directory here and create them they are not exist
             BuildDestinationDirectory(m_Destination);
             if(GetState() == StateStopped) return;
-            if(CheckPauseOrStop()) { SetStopped(); return; }
-            
+            if(CheckPauseOrStop()) { SetStopped(); return; }   
         }
     }
 }
@@ -402,6 +401,11 @@ void FileCopyOperationJob::ProcessItems()
         if(GetState() == StateStopped) return;
         if(CheckPauseOrStop()) { SetStopped(); return; }
     }
+
+    if(!m_FilesToDelete.empty())
+        ProcessFilesRemoval();
+    if(!m_DirsToDelete.empty())
+        ProcessFoldersRemoval();
 }
 
 void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_node)
@@ -411,13 +415,14 @@ void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_nod
     // compose file name - reverse lookup
     char itemname[MAXPATHLEN];
     _node->str_with_pref(itemname);
+    bool src_isdir = _node->str()[_node->len-1] == '/'; // found if item is a directory    
     
     if(m_WorkMode == CopyToFolder || m_WorkMode == CopyToFile)
     {
-        bool src_isdir = _node->str()[_node->len-1] == '/'; // found if item is a directory
         if(src_isdir && m_WorkMode == CopyToFile)
             return; // check if item is a directory and we're copying to a file - then just skip it, it's meaningless
-    
+            // TODO: the line above is a bug - directory can be copied to regular file name - just make another dir copy
+        
         if(src_isdir)   ProcessDirectoryCopying(itemname);
         else            ProcessFileCopying(itemname);
     }
@@ -425,8 +430,82 @@ void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_nod
         ProcessRenameToFile(itemname);
     else if(m_WorkMode == RenameToFolder)
         ProcessRenameToFolder(itemname);
-    
+    else if(m_WorkMode == MoveToFolder)
+        ProcessMoveToFolder(itemname, src_isdir);
     else assert(0); // implement me later
+}
+
+void FileCopyOperationJob::ProcessFilesRemoval()
+{
+    for(auto i: m_FilesToDelete)
+    {
+        assert(i->str()[i->len-1] != '/'); // sanity check
+        
+        char itemname[MAXPATHLEN], path[MAXPATHLEN];
+        i->str_with_pref(itemname);
+        strcpy(path, m_SourceDirectory);
+        strcat(path, itemname);
+        unlink(path);
+    }
+}
+
+void FileCopyOperationJob::ProcessFoldersRemoval()
+{
+    for(auto i = m_DirsToDelete.rbegin(); i != m_DirsToDelete.rend(); ++i)
+    {
+        const auto item = *i;
+        assert(item->str()[item->len-1] == '/'); // sanity check
+        
+        char itemname[MAXPATHLEN], path[MAXPATHLEN];
+        item->str_with_pref(itemname);
+        strcpy(path, m_SourceDirectory);
+        strcat(path, itemname);
+        rmdir(path);
+    }
+}
+
+void FileCopyOperationJob::ProcessMoveToFolder(const char *_path, bool _is_dir)
+{
+    // m_Destination is a directory path
+    char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
+    
+    if(!_is_dir)
+    {
+        assert(_path[strlen(_path)-1] != '/'); // sanity check
+        // compose real src name
+        strcpy(sourcepath, m_SourceDirectory);
+        strcat(sourcepath, _path);
+    
+        // compose dest name
+        assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
+        strcpy(destinationpath, m_Destination);
+        strcat(destinationpath, _path);
+        assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen
+    
+        if( CopyFileTo(sourcepath, destinationpath) )
+        {
+            // put files in deletion list only if copying was successful
+            m_FilesToDelete.push_back(m_CurrentlyProcessingItem);
+        }
+    }
+    else
+    {
+        assert(_path[strlen(_path)-1] == '/'); // sanity check
+        // compose real src name
+        strcpy(sourcepath, m_SourceDirectory);
+        strcat(sourcepath, _path);
+        
+        // compose dest name
+        assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
+        strcpy(destinationpath, m_Destination);
+        strcat(destinationpath, _path);
+        assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen
+        
+        if(CopyDirectoryTo(sourcepath, destinationpath))
+        {
+            m_DirsToDelete.push_back(m_CurrentlyProcessingItem);
+        }
+    }
 }
 
 void FileCopyOperationJob::ProcessRenameToFile(const char *_path)
@@ -489,24 +568,42 @@ void FileCopyOperationJob::ProcessRenameToFolder(const char *_path)
 void FileCopyOperationJob::ProcessDirectoryCopying(const char *_path)
 {
     // TODO: directory attributes, time, permissions and xattrs
+    // need to lookup original directory for that
     assert(m_Destination[strlen(m_Destination)-1] == '/');
     assert(_path[strlen(_path)-1] == '/');
+    
+    
+    char src[MAXPATHLEN], dest[MAXPATHLEN];
+    strcpy(dest, m_Destination);
+    strcat(dest, _path);
+
+    strcpy(src, m_SourceDirectory);
+    strcat(src, _path);
+
+    CopyDirectoryTo(src, dest);
+}
+
+bool FileCopyOperationJob::CopyDirectoryTo(const char *_src, const char *_dest)
+{
+    // TODO: directory attributes, time, permissions and xattrs
+    // need to lookup original directory for that
+    // TODO: consider total rewriting this routine since [CHECK ME] now there can be only one absent directory
+    // (under normal conditions) and all this traversal is meaningless
     
     const int maxdepth = FlexChainedStringsChunk::maxdepth; // 128 directories depth max
     struct stat stat_buffer;
     short slashpos[maxdepth];
     short absentpos[maxdepth];
-    int ndirs = 0, nabsent = 0, pathlen = (int)strlen(_path);
+    int ndirs = 0, nabsent = 0, pathlen = (int)strlen(_dest);
+    bool opres = false;
     
     char fullpath[MAXPATHLEN];
-    char destlen = strlen(m_Destination);
-    strcpy(fullpath, m_Destination);
-    strcat(fullpath, _path);
+    strcpy(fullpath, _dest);
     
     for(int i = pathlen-1; i > 0; --i )
-        if(_path[i] == '/')
+        if(fullpath[i] == '/')
         {
-            slashpos[ndirs++] = i + destlen;
+            slashpos[ndirs++] = i;
             assert(ndirs < maxdepth);
         }
     
@@ -527,26 +624,29 @@ void FileCopyOperationJob::ProcessDirectoryCopying(const char *_path)
         }
     }
     
+    assert(nabsent == 1); // just to prove the thesis above
+    
     // mkdir absent directories
     for(int i = nabsent-1; i >= 0; --i)
     {
         fullpath[ slashpos[ absentpos[i] ] ] = 0;
-domkdir:if(mkdir(fullpath, 0777))
+domkdir:
+        if(mkdir(fullpath, 0777))
         {
-            if(m_SkipAll) return;
+            if(m_SkipAll) goto end;
             int result = [[m_Operation OnCopyCantCreateDir:errno ForDir:fullpath] WaitForResult];
-            if(result == FileCopyOperationDR::Retry)
-                goto domkdir;
-            if(result == FileCopyOperationDR::Skip) return;
-            if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; return;}
-            if(result == OperationDialogResult::Stop)
-            {
-                SetStopped();
-                return;
-            }
+            if(result == FileCopyOperationDR::Retry) goto domkdir;
+            if(result == FileCopyOperationDR::Skip) goto end;
+            if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto end;}
+            if(result == OperationDialogResult::Stop)  {SetStopped(); goto end; }
         }
         fullpath[ slashpos[ absentpos[i] ] ] = '/';
     }
+    
+    opres = true;
+    
+end:
+    return opres;
 }
 
 void FileCopyOperationJob::ProcessFileCopying(const char *_path)

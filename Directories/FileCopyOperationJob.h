@@ -11,7 +11,7 @@
 #import "OperationJob.h"
 #import "FileCopyOperation.h"
 #import "FlexChainedStringsChunk.h"
-
+#import <vector>
 
 class FileCopyOperationJob : public OperationJob
 {
@@ -47,6 +47,12 @@ private:
         
         MoveToFile,
         MoveToFolder
+        
+        // when moving files we actualy do two things:
+        // 1) copying source to destination - copy every item into receiver
+        //      while copying - compose a list of entries that later has to be deleted
+        // 2) remove every item from that list, do it only if item was copied without errors (in list of such files)
+        //     removing is done in two steps - first we delete every file and then delete every directory
     };
 
     virtual void Do();
@@ -55,21 +61,29 @@ private:
     void ScanItem(const char *_full_path, const char *_short_path, const FlexChainedStringsChunk::node *_prefix);
     void ProcessItems();
     void ProcessItem(const FlexChainedStringsChunk::node *_node);
+    
+    // _path is relative filename of source item
     void ProcessDirectoryCopying(const char *_path);
     void ProcessFileCopying(const char *_path);
-    void ProcessRenameToFile(const char *_path); // _path is relative filename of source item
-    void ProcessRenameToFolder(const char *_path); // _path is relative filename of source item
+    void ProcessRenameToFile(const char *_path);
+    void ProcessRenameToFolder(const char *_path);
+    void ProcessMoveToFolder(const char *_path, bool _is_dir);
     
+    void ProcessFilesRemoval();
+    void ProcessFoldersRemoval();
     void BuildDestinationDirectory(const char* _path);
     
     // does copying. _src and _dest should be a full paths
     // return true if copying was successful
     bool CopyFileTo(const char *_src, const char *_dest);
+    bool CopyDirectoryTo(const char *_src, const char *_dest);
     
     __weak FileCopyOperation *m_Operation;
     FlexChainedStringsChunk *m_InitialItems;
     FlexChainedStringsChunk *m_ScannedItems, *m_ScannedItemsLast;
-    const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;    
+    std::vector<const FlexChainedStringsChunk::node *> m_FilesToDelete; // used for move work mode
+    std::vector<const FlexChainedStringsChunk::node *> m_DirsToDelete; // used for move work mode
+    const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;
     char m_SourceDirectory[MAXPATHLEN];
     char m_Destination[MAXPATHLEN];
     unsigned m_SourceNumberOfFiles;

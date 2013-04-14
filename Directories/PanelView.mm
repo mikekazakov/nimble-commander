@@ -340,6 +340,11 @@ struct CursorSelectionState
     return YES;
 }
 
+- (BOOL)isOpaque
+{
+    return YES;
+}
+
 - (void) Activate
 {
     if(m_IsActive == false)

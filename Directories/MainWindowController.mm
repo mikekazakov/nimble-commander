@@ -334,19 +334,31 @@
             break;
         case NSLeftArrowFunctionKey:
             if([self IsPanelActive])
-                [[self ActivePanelView] HandlePrevColumn];
+            {
+                if(modif & NSCommandKeyMask) [[self ActivePanelView] HandleFirstFile];
+                else                         [[self ActivePanelView] HandlePrevColumn];
+            }
             break;
         case NSRightArrowFunctionKey:
             if([self IsPanelActive])
-                [[self ActivePanelView] HandleNextColumn];
+            {
+                if(modif & NSCommandKeyMask) [[self ActivePanelView] HandleLastFile];
+                else                         [[self ActivePanelView] HandleNextColumn];
+            }
             break;
         case NSUpArrowFunctionKey:
             if([self IsPanelActive])
-                [[self ActivePanelView] HandlePrevFile];
+            {
+                if(modif & NSCommandKeyMask) [[self ActivePanelView] HandlePrevPage];
+                else                         [[self ActivePanelView] HandlePrevFile];
+            }
             break;
         case NSDownArrowFunctionKey:
             if([self IsPanelActive])
-                [[self ActivePanelView] HandleNextFile];
+            {
+                if(modif & NSCommandKeyMask) [[self ActivePanelView] HandleNextPage];
+                else                         [[self ActivePanelView] HandleNextFile];
+            }
             break;
         case NSPageDownFunctionKey:
             if([self IsPanelActive])

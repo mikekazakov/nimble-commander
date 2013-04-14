@@ -124,7 +124,7 @@
 {
     if (m_ListVisible)
         [self HideList];
-    else
+    else if (m_OperationsController.OperationsCount > 0)
     {
         [self ShowList];
     }

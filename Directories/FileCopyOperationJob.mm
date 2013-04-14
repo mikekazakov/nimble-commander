@@ -79,7 +79,8 @@ FileCopyOperationJob::FileCopyOperationJob():
     m_AppendAll(false),
     m_TotalCopied(0),
     m_IsSingleFileCopy(true),
-    m_SameVolume(false)
+    m_SameVolume(false),
+    m_IsSingleEntryCopy(false)
 {
     // in xattr operations we'll use our big Buf1 and Buf2 - they should be quite enough
     // in OS X 10.4-10.6 maximum size of xattr value was 4Kb
@@ -117,6 +118,8 @@ void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing owna
 
 void FileCopyOperationJob::Do()
 {
+    m_IsSingleEntryCopy = m_InitialItems->CountStringsWithDescendants() == 1;
+    
     // this will analyze what user wants from us
     ScanDestination();
     if(GetState() == StateStopped) return;
@@ -419,10 +422,6 @@ void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_nod
     
     if(m_WorkMode == CopyToFolder || m_WorkMode == CopyToFile)
     {
-        if(src_isdir && m_WorkMode == CopyToFile)
-            return; // check if item is a directory and we're copying to a file - then just skip it, it's meaningless
-            // TODO: the line above is a bug - directory can be copied to regular file name - just make another dir copy
-        
         if(src_isdir)   ProcessDirectoryCopying(itemname);
         else            ProcessFileCopying(itemname);
     }
@@ -567,85 +566,138 @@ void FileCopyOperationJob::ProcessRenameToFolder(const char *_path)
 
 void FileCopyOperationJob::ProcessDirectoryCopying(const char *_path)
 {
-    // TODO: directory attributes, time, permissions and xattrs
-    // need to lookup original directory for that
-    assert(m_Destination[strlen(m_Destination)-1] == '/');
-    assert(_path[strlen(_path)-1] == '/');
+    if(m_WorkMode == CopyToFolder)
+    {
+        assert(m_Destination[strlen(m_Destination)-1] == '/');
+        assert(_path[strlen(_path)-1] == '/');
     
-    
-    char src[MAXPATHLEN], dest[MAXPATHLEN];
-    strcpy(dest, m_Destination);
-    strcat(dest, _path);
+        char src[MAXPATHLEN], dest[MAXPATHLEN];
+        strcpy(dest, m_Destination);
+        strcat(dest, _path);
 
-    strcpy(src, m_SourceDirectory);
-    strcat(src, _path);
+        strcpy(src, m_SourceDirectory);
+        strcat(src, _path);
 
-    CopyDirectoryTo(src, dest);
+        CopyDirectoryTo(src, dest);
+    }
+    else if(m_WorkMode == CopyToFile)
+    {
+        assert(m_Destination[strlen(m_Destination)-1] != '/');
+        assert(_path[strlen(_path)-1] == '/');
+
+        char src[MAXPATHLEN], dest[MAXPATHLEN];
+
+        strcpy(dest, m_Destination);
+        // here we need to find if user wanted just to copy a single top-level directory
+        // if so - don't touch destination name. otherwise - add an original path there
+        if(m_IsSingleEntryCopy)
+        {
+            // for top level we need to just leave path without changes - skip top level's entry name
+            // for nested entries we need to cut first part of a path
+            if(*(strchr(_path, '/')+1) != 0)
+                strcat(dest, strchr(_path, '/'));
+        }
+        else
+        {
+            strcat(dest, "/");
+            strcat(dest, _path);
+        }
+        
+        strcpy(src, m_SourceDirectory);
+        strcat(src, _path);
+        
+        CopyDirectoryTo(src, dest);
+    }
+    else assert(0);
 }
 
 bool FileCopyOperationJob::CopyDirectoryTo(const char *_src, const char *_dest)
 {
-    // TODO: directory attributes, time, permissions and xattrs
-    // need to lookup original directory for that
-    // TODO: consider total rewriting this routine since [CHECK ME] now there can be only one absent directory
-    // (under normal conditions) and all this traversal is meaningless
-    
-    const int maxdepth = FlexChainedStringsChunk::maxdepth; // 128 directories depth max
-    struct stat stat_buffer;
-    short slashpos[maxdepth];
-    short absentpos[maxdepth];
-    int ndirs = 0, nabsent = 0, pathlen = (int)strlen(_dest);
+    // TODO: need to handle errors on attributes somehow. but I don't know how.
+    struct stat src_stat, dst_stat;
     bool opres = false;
-    
-    char fullpath[MAXPATHLEN];
-    strcpy(fullpath, _dest);
-    
-    for(int i = pathlen-1; i > 0; --i )
-        if(fullpath[i] == '/')
-        {
-            slashpos[ndirs++] = i;
-            assert(ndirs < maxdepth);
-        }
-    
-    // find absent directories in full path
-    for(int i = 0; i < ndirs; ++i)
+    int src_fd = -1, dst_fd = -1;
+    char *xnames;
+    ssize_t xnamesizes;
+
+    // check if target already exist
+    if( lstat(_dest, &dst_stat) != -1 )
     {
-        fullpath[ slashpos[i] ] = 0;
-        int ret = stat(fullpath, &stat_buffer);
-        fullpath[ slashpos[i] ] = '/';
-        if( ret == -1)
+        // target exists; check that it's a directory
+
+        if( (dst_stat.st_mode & S_IFMT) != S_IFDIR )
         {
-            // TODO: error handling. this can be permission stuff, not absence (?)
-            absentpos[nabsent++] = i;
-        }
-        else
-        {
-            break; // no need to look up any more
+            // TODO: ask user what to do
+            goto end;
         }
     }
-    
-    assert(nabsent == 1); // just to prove the thesis above
-    
-    // mkdir absent directories
-    for(int i = nabsent-1; i >= 0; --i)
+    else
     {
-        fullpath[ slashpos[ absentpos[i] ] ] = 0;
 domkdir:
-        if(mkdir(fullpath, 0777))
+        if(mkdir(_dest, 0777))
         {
             if(m_SkipAll) goto end;
-            int result = [[m_Operation OnCopyCantCreateDir:errno ForDir:fullpath] WaitForResult];
+            int result = [[m_Operation OnCopyCantCreateDir:errno ForDir:_dest] WaitForResult];
             if(result == FileCopyOperationDR::Retry) goto domkdir;
             if(result == FileCopyOperationDR::Skip) goto end;
             if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto end;}
             if(result == OperationDialogResult::Stop)  {SetStopped(); goto end; }
         }
-        fullpath[ slashpos[ absentpos[i] ] ] = '/';
+    }
+
+    // do attributes stuff
+    if((src_fd = open(_src, O_RDONLY)) == -1) goto end;
+    if((dst_fd = open(_dest, O_RDONLY)) == -1) goto end;
+    if(fstat(src_fd, &src_stat) != 0) goto end;
+    
+    // change unix mode
+    fchmod(dst_fd, src_stat.st_mode);
+
+    // change ownage
+    fchown(dst_fd, src_stat.st_uid, src_stat.st_gid);
+
+    // change flags
+    fchflags(dst_fd, src_stat.st_flags);
+    
+    // copy xattrs
+    assert(m_Buffer1 != 0);
+    xnames = (char*) m_Buffer1;
+    xnamesizes = flistxattr(src_fd, xnames, BUFFER_SIZE, 0);
+    if(xnamesizes > 0)
+    { // iterate and copy
+        char *s = xnames, *e = xnames + xnamesizes;
+        while(s < e)
+        {
+            ssize_t xattrsize = fgetxattr(src_fd, s, m_Buffer2, BUFFER_SIZE, 0, 0);
+            if(xattrsize >= 0) // xattr can be zero-length, just a tag itself
+                fsetxattr(dst_fd, s, m_Buffer2, xattrsize, 0, 0);
+            s += strlen(s)+1;
+        }
     }
     
+    // adjust destination times
+    {
+        struct attrlist attrs;
+        memset(&attrs, 0, sizeof(attrs));
+        attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+        
+        attrs.commonattr = ATTR_CMN_MODTIME;
+        fsetattrlist(dst_fd, &attrs, &src_stat.st_mtimespec, sizeof(struct timespec), 0);
+        
+        attrs.commonattr = ATTR_CMN_CRTIME;
+        fsetattrlist(dst_fd, &attrs, &src_stat.st_birthtimespec, sizeof(struct timespec), 0);
+        
+        attrs.commonattr = ATTR_CMN_ACCTIME;
+        fsetattrlist(dst_fd, &attrs, &src_stat.st_atimespec, sizeof(struct timespec), 0);
+        
+        attrs.commonattr = ATTR_CMN_CHGTIME;
+        fsetattrlist(dst_fd, &attrs, &src_stat.st_ctimespec, sizeof(struct timespec), 0);
+    }
+
     opres = true;
-    
 end:
+    if(src_fd != -1) close(src_fd);
+    if(dst_fd != -1) close(dst_fd);
     return opres;
 }
 
@@ -669,6 +721,15 @@ void FileCopyOperationJob::ProcessFileCopying(const char *_path)
     else
     {
         strcpy(destinationpath, m_Destination);
+        // here we need to find if user wanted just to copy a single top-level directory
+        // if so - don't touch destination name. otherwise - add an original path there
+        if(m_IsSingleEntryCopy)
+        {
+            // for top level we need to just leave path without changes - skip top level's entry name
+            // for nested entries we need to cut first part of a path
+            if(strchr(_path, '/') != 0)
+                strcat(destinationpath, strchr(_path, '/'));
+        }
     }
     
     if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy file into itself
@@ -896,6 +957,12 @@ dolseek: // find right position in destination file
             }
         }
     }
+    
+    // change ownage
+    fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+    
+    // change flags
+    fchflags(destinationfd, src_stat_buffer.st_flags);
     
     // adjust destination time as source
     if(adjust_dst_time)

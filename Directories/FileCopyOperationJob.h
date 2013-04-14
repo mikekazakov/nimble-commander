@@ -102,6 +102,7 @@ private:
     bool m_IsSingleFileCopy;
     
     bool m_IsCopying; // true means that user wants to perform copy operation, false mean rename/move
+    bool m_IsSingleEntryCopy;
     bool m_SameVolume; // true means that source and destination are located at the same file system
 };
 

@@ -33,8 +33,8 @@
     NSString *label;
     if (m_Files->amount == 1)
     {
-        label = [NSString stringWithFormat:@"Do you wish to delete %s?",
-                 m_Files->strings[0].str()];
+        label = [NSString stringWithFormat:@"Do you wish to delete %@?",
+                 [NSString stringWithUTF8String:m_Files->strings[0].str()]];
     }
     else
     {

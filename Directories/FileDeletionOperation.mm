@@ -58,8 +58,8 @@
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Directory access error"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nDirectory: %s",
-                               strerror(_error), _path]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nDirectory: %@",
+                               strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
     if (!m_SingleItem)
@@ -81,8 +81,8 @@
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Can't get file status"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %s",
-                               strerror(_error), _path]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
+                               strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
     if (!m_SingleItem)
@@ -104,8 +104,8 @@
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Can't delete file"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %s",
-                               strerror(_error), _path]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
+                               strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
     if (!m_SingleItem)
@@ -127,8 +127,8 @@
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Can't delete directory"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %s",
-                               strerror(_error), _path]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
+                               strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
     if (!m_SingleItem)
@@ -150,8 +150,8 @@
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Delete error"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Can't move %s to trash.\nError: %s",
-                               _path, strerror(_error)]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Can't move %@ to trash.\nError: %s",
+                               [NSString stringWithUTF8String:_path], strerror(_error)]];
     
     [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
     [alert AddButtonWithTitle:@"Delete"
@@ -176,8 +176,8 @@
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Secure delete error"];
     [alert SetInformativeText:[NSString
-                               stringWithFormat:@"Can't access or modify file %s./nError: %s",
-                               _path, strerror(_error)]];
+                               stringWithFormat:@"Can't access or modify file %@./nError: %s",
+                               [NSString stringWithUTF8String:_path], strerror(_error)]];
     
     [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
     if (!m_SingleItem)

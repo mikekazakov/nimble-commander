@@ -69,7 +69,6 @@ void FileSysAttrChangeOperationJob::Do()
     
     m_State = StateSetting;
 
-    if(GetState() == StateStopped) return;
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
     char entryfilename[MAXPATHLEN], *entryfilename_var;
@@ -78,12 +77,10 @@ void FileSysAttrChangeOperationJob::Do()
     
     for(auto &i: *m_Files)
     {
-        if(CheckPauseOrStop()) { SetStopped(); return; }
-        
         i.str_with_pref(entryfilename_var);
 
         DoFile(entryfilename);
-        if(GetState() == StateStopped) return;
+        if(CheckPauseOrStop()) { SetStopped(); return; }
         
         SetProgress(float(m_CurrentItemNumber) / float(m_ItemsCount));
         m_CurrentItemNumber++;
@@ -120,6 +117,7 @@ void FileSysAttrChangeOperationJob::ScanDirs()
                 m_FilesLast = m_FilesLast->AddString(tmp, 0); // optimize it to exclude strlen using
                 const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->back();
                 ScanDir(fn, dirnode);
+                if (CheckPauseOrStop()) return;
             }
         }
     }
@@ -127,8 +125,7 @@ void FileSysAttrChangeOperationJob::ScanDirs()
 
 void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const FlexChainedStringsChunk::node *_prefix)
 {
-    if(GetState() == StateStopped) return;    
-    if(CheckPauseOrStop()) { SetStopped(); return; }
+    if(CheckPauseOrStop()) return;
     
     char fn[MAXPATHLEN];
 retry_opendir:
@@ -142,7 +139,7 @@ retry_opendir:
                           WaitForResult];
             if (result == OperationDialogResult::Stop)
             {
-                SetStopped();
+                RequestStop();
                 return;
             }
             if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
@@ -173,7 +170,7 @@ retry_stat:
                                   WaitForResult];
                     if (result == OperationDialogResult::Stop)
                     {
-                        SetStopped();
+                        RequestStop();
                         break;
                     }
                     if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
@@ -223,7 +220,7 @@ retry_stat:
                           WaitForResult];
             if (result == OperationDialogResult::Stop)
             {
-                SetStopped();
+                RequestStop();
                 return;
             }
             if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
@@ -264,7 +261,7 @@ retry_chmod:
             
             if (result == OperationDialogResult::Stop)
             {
-                SetStopped();
+                RequestStop();
                 return;
             }
             if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
@@ -301,7 +298,7 @@ retry_chflags:
             
             if (result == OperationDialogResult::Stop)
             {
-                SetStopped();
+                RequestStop();
                 return;
             }
             if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
@@ -329,7 +326,7 @@ retry_chown:
             
             if (result == OperationDialogResult::Stop)
             {
-                SetStopped();
+                RequestStop();
                 return;
             }
             if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
@@ -346,7 +343,7 @@ retry_chown:
     if (res != 0 && !m_SkipAllErrors) { \
         int result = [[m_Operation DialogOnFileTimeError:errno \
                         ForFile:_full_path WithAttr:attrs.commonattr Time:time] WaitForResult]; \
-        if (result == OperationDialogResult::Stop) { SetStopped(); return; } \
+        if (result == OperationDialogResult::Stop) { RequestStop(); return; } \
         else if (result == FileSysAttrChangeOperationDialogResult::SkipAll) m_SkipAllErrors = true; \
         else if (result == FileSysAttrChangeOperationDialogResult::Retry) goto label; \
     }

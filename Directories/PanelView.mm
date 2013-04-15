@@ -964,8 +964,12 @@ struct CursorSelectionState
 - (void) SetCursorPosition:(int)_pos
 {
     assert(_pos >= 0 && _pos < m_Data->DirectoryEntries().size());
-    m_CursorPosition = _pos;
-    [self EnsureCursorIsVisible];
+    if(m_CursorPosition != _pos)
+    {
+        m_CursorPosition = _pos;
+        [self EnsureCursorIsVisible];
+        [self setNeedsDisplay:true];        
+    }
 }
 
 - (int) GetCursorPosition

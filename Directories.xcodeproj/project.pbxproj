@@ -56,7 +56,7 @@
 		CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
 		CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CFC5123316C5164300D247EE /* DirRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123116C5164300D247EE /* DirRead.cpp */; };
-		CFC5123616C5284800D247EE /* PanelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123416C5284800D247EE /* PanelData.cpp */; };
+		CFC5123616C5284800D247EE /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123416C5284800D247EE /* PanelData.mm */; };
 		CFC5123916C5287B00D247EE /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
@@ -161,7 +161,7 @@
 		CFC5122A16C4BD3D00D247EE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CFC5123116C5164300D247EE /* DirRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirRead.cpp; sourceTree = "<group>"; };
 		CFC5123216C5164300D247EE /* DirRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirRead.h; sourceTree = "<group>"; };
-		CFC5123416C5284800D247EE /* PanelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PanelData.cpp; sourceTree = "<group>"; };
+		CFC5123416C5284800D247EE /* PanelData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelData.mm; sourceTree = "<group>"; };
 		CFC5123516C5284800D247EE /* PanelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelData.h; sourceTree = "<group>"; };
 		CFC5123716C5287B00D247EE /* PanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelView.h; sourceTree = "<group>"; };
 		CFC5123816C5287B00D247EE /* PanelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelView.mm; sourceTree = "<group>"; };
@@ -254,7 +254,7 @@
 				CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */,
 				CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */,
 				CFC5123516C5284800D247EE /* PanelData.h */,
-				CFC5123416C5284800D247EE /* PanelData.cpp */,
+				CFC5123416C5284800D247EE /* PanelData.mm */,
 				CFC5123716C5287B00D247EE /* PanelView.h */,
 				CFC5123816C5287B00D247EE /* PanelView.mm */,
 				CF3C88D516D73A23006346CD /* PanelController.h */,
@@ -352,6 +352,7 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4342216E0E09B001B0512 /* Common.h */,
 				CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */,
 				CFE2697B16F01BAA0048A393 /* FlexChainedStringsChunk.h */,
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
@@ -427,7 +428,6 @@
 		CFC5121A16C4BD3D00D247EE /* Directories */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4342216E0E09B001B0512 /* Common.h */,
 				B528011916FCF347004E260D /* Operation */,
 				CFAC50D5171557E100A3E5C5 /* Core */,
 				CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */,
@@ -532,7 +532,7 @@
 				CFC5122116C4BD3D00D247EE /* main.m in Sources */,
 				CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */,
 				CFC5123316C5164300D247EE /* DirRead.cpp in Sources */,
-				CFC5123616C5284800D247EE /* PanelData.cpp in Sources */,
+				CFC5123616C5284800D247EE /* PanelData.mm in Sources */,
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,

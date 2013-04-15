@@ -30,6 +30,7 @@ struct PanelSortMode
     
     Mode sort;
     bool sepdir;    // separate directories from files, like win-like
+    
     PanelSortMode(){}
     PanelSortMode(Mode _mode, bool _sepdir):sort(_mode),sepdir(_sepdir){}
 };
@@ -58,14 +59,15 @@ public:
     
     void ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPATHLEN]);
     
-    int FindEntryIndex(const char *_filename);
+    int FindEntryIndex(const char *_filename) const;
         // TODO: improve this by using a name-sorted list
         // performs a bruteforce case-sensivitive search
         // return -1 if didn't found
         // returning value is in raw land, that is DirectoryEntries[N], not sorted ones
     
-    int FindSortedEntryIndex(unsigned _desired_value);
+    int FindSortedEntryIndex(unsigned _desired_value) const;
         // return -1 if didn't found
+        // _desired_value - raw item index
     
     void GetDirectoryPath(char _buf[__DARWIN_MAXPATHLEN]) const;
         // return current directory in long variant starting from /
@@ -78,7 +80,12 @@ public:
     // sorting
     void SetCustomSortMode(PanelSortMode _mode);
     PanelSortMode GetCustomSortMode() const;
-
+    
+    // fast search support
+    // _desired_offset is a offset from first suitable element.
+    // if _desired_offset causes going out of fitting ranges - the nearest valid element will be returned
+    // return raw index number if any
+    bool FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset, unsigned *_ind_out, unsigned *_range);
     
     // files statistics - notes below
     void UpdateStatictics();
@@ -89,11 +96,9 @@ public:
     unsigned GetSelectedItemsDirectoriesCount() const;
     unsigned long GetSelectedItemsSizeBytes() const;
     
-    
     // manupulation with user flags for directory entries
     void CustomFlagsSelect(int _at_pos, bool _is_selected);
-    
-    
+
 private:
     void DestroyCurrentData();
     PanelData(const PanelData&);
@@ -102,12 +107,14 @@ private:
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
     static void DoSort(const DirEntryInfoT* _from, DirSortIndT *_to, PanelSortMode _mode);
     
-    
     char                                    m_DirectoryPath[__DARWIN_MAXPATHLEN]; // path without trailing slash
     DirEntryInfoT                           *m_Entries;
-    DirSortIndT                             *m_EntriesByRawName;
-    DirSortIndT                             *m_EntriesByCustomSort;
+    DirSortIndT                             *m_EntriesByRawName;   // sorted with raw strcmp comparison
+    DirSortIndT                             *m_EntriesByHumanName; // sorted with human-reasonable literal sort
+    DirSortIndT                             *m_EntriesByCustomSort; // custom defined sort
     PanelSortMode                           m_CustomSortMode;
+    dispatch_group_t                        m_SortExecGroup;
+    dispatch_queue_t                        m_SortExecQueue;
     
     // statistics
     unsigned long                           m_TotalBytesInDirectory; // assuming regular files ONLY!

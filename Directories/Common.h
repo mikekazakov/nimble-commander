@@ -7,6 +7,8 @@
 //
 #pragma once
 
+#include <mach/mach_time.h>
+
 struct DialogResult
 {
     enum
@@ -27,3 +29,20 @@ struct DialogResult
 };
 
 bool GetRealPath(const char *_path_in, char *_path_out);
+
+
+struct MachTimeBenchmark
+{
+    uint64_t last;
+    inline MachTimeBenchmark() : last(mach_absolute_time()) {};
+    inline void Reset()
+    {
+        uint64_t now = mach_absolute_time();
+        NSLog(@"%llu\n", (now - last) / 1000000 );
+        last = now;
+    }
+};
+
+
+
+

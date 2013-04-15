@@ -7,17 +7,21 @@
 //
 
 #import "PanelController.h"
-#include "FSEventsDirUpdate.h"
+#import "FSEventsDirUpdate.h"
+#import <mach/mach_time.h>
 
-@interface PanelController ()
 
-@end
+static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 @implementation PanelController
 {
     PanelData *m_Data;
     PanelView *m_View;
     unsigned long m_UpdatesObservationTicket;
+    
+    NSString *m_FastSearchString;
+    uint64_t m_FastSearchLastType;
+    unsigned m_FastSearchOffset;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -26,8 +30,10 @@
     if (self) {
         // Initialization code here.
         m_UpdatesObservationTicket = 0;
+        m_FastSearchLastType = 0;
+        m_FastSearchOffset = 0;
     }
-    
+
     return self;
 }
 
@@ -72,7 +78,6 @@
             {
                 [m_View DirectoryChanged:0 Type:GoIntoSubDir];
             }
-//            FSEventsDirUpdate::Inst()->RemoveWatchPath(oldpathname_full);
             FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
             m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(newpath);
         }
@@ -203,6 +208,105 @@
     }
     
     [m_View setNeedsDisplay:true];
+}
+
+- (void)HandleFastSearch: (NSString*) _key
+{
+    uint64_t currenttime = mach_absolute_time();
+    if(_key != nil)
+    {
+        if(m_FastSearchLastType + g_FastSeachDelayTresh < currenttime || m_FastSearchString == nil)
+        {
+            m_FastSearchString = _key; // flush
+            m_FastSearchOffset = 0;
+        }
+        else
+            m_FastSearchString = [m_FastSearchString stringByAppendingString:_key]; // append
+    }
+    m_FastSearchLastType = currenttime;
+    
+    if(m_FastSearchString == nil)
+        return;
+    
+    unsigned ind, range;
+    if(m_Data->FindSuitableEntry( (__bridge CFStringRef) m_FastSearchString, m_FastSearchOffset, &ind, &range))
+    {
+        if(m_FastSearchOffset > range)
+            m_FastSearchOffset = range;
+            
+        int pos = m_Data->FindSortedEntryIndex(ind);
+        if(pos >= 0)
+            [m_View SetCursorPosition:pos];
+    }
+}
+
+- (void)keyDown:(NSEvent *)event
+{
+    NSString*  const character = [event charactersIgnoringModifiers];
+
+    NSUInteger const modif       = [event modifierFlags];
+    
+#define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
+
+    if(ISMODIFIER(NSAlternateKeyMask))
+        [self HandleFastSearch:character];
+    
+    if ( [character length] != 1 ) return;
+    unichar const unicode        = [character characterAtIndex:0];
+//    unsigned short const keycode = [event keyCode];
+
+    switch (unicode)
+    {
+        case NSHomeFunctionKey: [m_View HandleFirstFile]; break;
+        case NSEndFunctionKey:  [m_View HandleLastFile]; break;
+        case NSPageDownFunctionKey:      [m_View HandleNextPage]; break;
+        case NSPageUpFunctionKey:        [m_View HandlePrevPage]; break;            
+        case NSLeftArrowFunctionKey:
+            if(modif & NSCommandKeyMask) [m_View HandleFirstFile];
+            else if(modif &  NSAlternateKeyMask); // now nothing wilh alt+left now
+            else                         [m_View HandlePrevColumn];
+            break;
+        case NSRightArrowFunctionKey:
+            if(modif & NSCommandKeyMask) [m_View HandleLastFile];
+            else if(modif &  NSAlternateKeyMask); // now nothing wilh alt+right now   
+            else                         [m_View HandleNextColumn];
+            break;
+        case NSUpArrowFunctionKey:
+            if(modif & NSCommandKeyMask) [m_View HandlePrevPage];
+            else if(modif & NSAlternateKeyMask)
+            {
+                if(m_FastSearchOffset > 0)
+                    m_FastSearchOffset--;
+                [self HandleFastSearch:nil];
+            }
+            else                         [m_View HandlePrevFile];
+            break;
+        case NSDownArrowFunctionKey:
+            if(modif & NSCommandKeyMask) [m_View HandleNextPage];
+            else if(modif &  NSAlternateKeyMask)
+                {
+                    m_FastSearchOffset++;
+                    [self HandleFastSearch:nil];
+                }
+            else                         [m_View HandleNextFile];
+            break;
+        case NSCarriageReturnCharacter: // RETURN key
+            if(ISMODIFIER(NSShiftKeyMask)) [self HandleShiftReturnButton];
+            else                           [self HandleReturnButton];
+            break;
+    }
+}
+
+- (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
+{
+    [m_View ModifierFlagsChanged:_flags];
+    
+    if(m_FastSearchString != nil && (_flags & NSAlternateKeyMask) == 0)
+    {
+        // user was fast searching something, need to flush that string
+        m_FastSearchString = nil;
+        m_FastSearchOffset = 0;
+    }
 }
 
 @end

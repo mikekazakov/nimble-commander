@@ -236,8 +236,8 @@
 {
     // update key modifiers state for views    
     unsigned long flags = [NSEvent modifierFlags];
-    [m_LeftPanelView ModifierFlagsChanged:flags];
-    [m_RightPanelView ModifierFlagsChanged:flags];
+    [m_LeftPanelController ModifierFlagsChanged:flags];
+    [m_RightPanelController ModifierFlagsChanged:flags];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -322,59 +322,12 @@
     unsigned short const keycode = [event keyCode];
     NSUInteger const modif       = [event modifierFlags];
 #define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
+
+    if([self IsPanelActive])
+        [[self ActivePanelController] keyDown:event]; 
+    
     switch (unicode)
     {
-        case NSHomeFunctionKey:
-            if([self IsPanelActive])
-                [[self ActivePanelView] HandleFirstFile];
-            break;
-        case NSEndFunctionKey:
-            if([self IsPanelActive])
-                [[self ActivePanelView] HandleLastFile];
-            break;
-        case NSLeftArrowFunctionKey:
-            if([self IsPanelActive])
-            {
-                if(modif & NSCommandKeyMask) [[self ActivePanelView] HandleFirstFile];
-                else                         [[self ActivePanelView] HandlePrevColumn];
-            }
-            break;
-        case NSRightArrowFunctionKey:
-            if([self IsPanelActive])
-            {
-                if(modif & NSCommandKeyMask) [[self ActivePanelView] HandleLastFile];
-                else                         [[self ActivePanelView] HandleNextColumn];
-            }
-            break;
-        case NSUpArrowFunctionKey:
-            if([self IsPanelActive])
-            {
-                if(modif & NSCommandKeyMask) [[self ActivePanelView] HandlePrevPage];
-                else                         [[self ActivePanelView] HandlePrevFile];
-            }
-            break;
-        case NSDownArrowFunctionKey:
-            if([self IsPanelActive])
-            {
-                if(modif & NSCommandKeyMask) [[self ActivePanelView] HandleNextPage];
-                else                         [[self ActivePanelView] HandleNextFile];
-            }
-            break;
-        case NSPageDownFunctionKey:
-            if([self IsPanelActive])
-                [[self ActivePanelView] HandleNextPage];
-            break;
-        case NSPageUpFunctionKey:
-            if([self IsPanelActive])
-                [[self ActivePanelView] HandlePrevPage];
-            break;
-        case NSCarriageReturnCharacter: // RETURN key
-            if([self IsPanelActive])
-            {
-                if(ISMODIFIER(NSShiftKeyMask)) [[self ActivePanelController] HandleShiftReturnButton];
-                else                           [[self ActivePanelController] HandleReturnButton];
-            }
-            break;
         case NSTabCharacter: // TAB key
             [self HandleTabButton];
             break;
@@ -400,8 +353,8 @@
     if([self IsPanelActive])
     {
         unsigned long flags = [theEvent modifierFlags];
-        [m_LeftPanelView ModifierFlagsChanged:flags];
-        [m_RightPanelView ModifierFlagsChanged:flags];
+        [m_LeftPanelController ModifierFlagsChanged:flags];
+        [m_RightPanelController ModifierFlagsChanged:flags];
     }
 }
 

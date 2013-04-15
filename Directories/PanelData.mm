@@ -1,16 +1,18 @@
 #include "PanelData.h"
 
-#include <algorithm>
-#include <string.h>
-#include <assert.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include "Common.h"
-#include "FlexChainedStringsChunk.h"
+#import <algorithm>
+#import <string.h>
+#import <assert.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import <mach/mach_time.h>
+#import "Common.h"
+#import "FlexChainedStringsChunk.h"
 
 PanelData::PanelData()
 {
     m_Entries = new DirEntryInfoT;
     m_EntriesByRawName = new DirSortIndT;
+    m_EntriesByHumanName = new DirSortIndT;
     m_EntriesByCustomSort = new DirSortIndT;
     m_TotalBytesInDirectory = 0;
     m_TotalFilesInDirectory = 0;
@@ -20,12 +22,16 @@ PanelData::PanelData()
     m_SelectedItemsDirectoriesCount = 0;
     m_CustomSortMode.sepdir = true;
     m_CustomSortMode.sort = m_CustomSortMode.SortByName;
+    m_SortExecGroup = dispatch_group_create();
+    m_SortExecQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 }
 
 PanelData::~PanelData()
 {
-    
-    
+    DestroyCurrentData();
+    delete m_EntriesByRawName;
+    delete m_EntriesByHumanName;
+    delete m_EntriesByCustomSort;
 }
 
 void PanelData::DestroyCurrentData()
@@ -52,11 +58,16 @@ bool PanelData::GoToDirectory(const char *_path)
         strcpy(m_DirectoryPath, _path);
         if( m_DirectoryPath[strlen(m_DirectoryPath)-1] == '/' )
             m_DirectoryPath[strlen(m_DirectoryPath)-1] = 0;
-        
-        // now sort our new data
-        DoSort(m_Entries, m_EntriesByRawName, PanelSortMode(PanelSortMode::SortByRawCName, false));
-        DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode);
 
+        // now sort our new data
+        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+            DoSort(m_Entries, m_EntriesByRawName, PanelSortMode(PanelSortMode::SortByRawCName, false)); });
+        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+            DoSort(m_Entries, m_EntriesByHumanName, PanelSortMode(PanelSortMode::SortByName, false)); });
+        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+            DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
+        dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
+        
         // update stats
         UpdateStatictics();
         
@@ -114,11 +125,15 @@ check:      int dst = (*dirbyrawcname)[dst_i];
         m_EntriesByRawName = dirbyrawcname;
 
         // now sort our new data
-        DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode);
-        
+        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+            DoSort(m_Entries, m_EntriesByHumanName, PanelSortMode(PanelSortMode::SortByName, false)); });
+        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+            DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
+        dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
+
         // update stats
         UpdateStatictics();
-        
+
         return true;
     }
     else
@@ -167,7 +182,7 @@ void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPAT
     }
 }
 
-int PanelData::FindEntryIndex(const char *_filename)
+int PanelData::FindEntryIndex(const char *_filename) const
 {
     // bruteforce appoach for now
     int n = 0;
@@ -177,7 +192,7 @@ int PanelData::FindEntryIndex(const char *_filename)
     return -1;
 }
 
-int PanelData::FindSortedEntryIndex(unsigned _desired_value)
+int PanelData::FindSortedEntryIndex(unsigned _desired_value) const
 {
     // bruteforce appoach for now
     int n = 0;
@@ -453,5 +468,83 @@ FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries() const
     return chunk;
 }
 
+bool PanelData::FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset, unsigned *_out, unsigned *_range)
+{
+    if(m_EntriesByHumanName->empty())
+        return false;
+    
+    int preflen = (int)CFStringGetLength(_prefix);
+    assert(preflen > 0);
+
+    // performing binary search on m_EntriesByHumanName
+    int imin = 0, imax = (int)m_EntriesByHumanName->size();
+    while(imax >= imin)
+    {
+        int imid = (imin + imax) / 2;
+        
+        unsigned indx = (*m_EntriesByHumanName)[imid];
+        auto const &item = (*m_Entries)[indx];
+        
+        int itemlen = (int)CFStringGetLength(item.cf_name);
+        CFRange range = CFRangeMake(0, itemlen >= preflen ? preflen : itemlen );
+
+        CFComparisonResult res = CFStringCompareWithOptions(item.cf_name,
+                                                            _prefix,
+                                                            range,
+                                                            kCFCompareCaseInsensitive);
+        if(res == kCFCompareLessThan)
+        {
+            imin = imid + 1;
+        }
+        else if(res == kCFCompareGreaterThan)
+        {
+            imax = imid - 1;
+        }
+        else
+        {
+            if(itemlen < preflen)
+            {
+                imin = imid + 1;
+            }
+            else
+            {
+                // now find the first and last suitable element to be able to form a range of such elements
+                // TODO: here is an inefficient implementation, need to find the first and the last elements with range search
+                int start = imid, last = imid;
+                range = CFRangeMake(0, preflen);
+                while(start > 0)
+                {
+                    auto const &item = (*m_Entries)[(*m_EntriesByHumanName)[start - 1]];
+                    if(CFStringGetLength(item.cf_name) <  preflen)
+                        break;
+                    if(CFStringCompareWithOptions(item.cf_name, _prefix, range, kCFCompareCaseInsensitive) != kCFCompareEqualTo)
+                        break;
+                    start--;
+                }
+                
+                while(last < m_EntriesByHumanName->size() - 1)
+                {
+                    auto const &item = (*m_Entries)[(*m_EntriesByHumanName)[last + 1]];
+                    if(CFStringGetLength(item.cf_name) <  preflen)
+                        break;
+                    if(CFStringCompareWithOptions(item.cf_name, _prefix, range, kCFCompareCaseInsensitive) != kCFCompareEqualTo)
+                        break;
+                    last++;
+                }
+                
+                // our filterd result is in [start, last] range
+                int ind = start + _desired_offset;
+                if(ind > last) ind = last;
+                
+                *_out = (*m_EntriesByHumanName)[ind];
+                *_range = last - start;
+                
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
 
 

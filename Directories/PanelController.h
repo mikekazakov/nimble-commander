@@ -32,4 +32,7 @@
 
 - (bool) GoToDirectory:(const char*) _dir;
 
+- (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
+- (void)keyDown:(NSEvent *)event;
+
 @end

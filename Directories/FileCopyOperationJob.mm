@@ -122,14 +122,12 @@ void FileCopyOperationJob::Do()
     
     // this will analyze what user wants from us
     ScanDestination();
-    if(GetState() == StateStopped) return;
     if(CheckPauseOrStop()) { SetStopped(); return; }
 
     
     if(m_WorkMode == CopyToFile || m_WorkMode == CopyToFolder || m_WorkMode == MoveToFile || m_WorkMode == MoveToFolder )
     {
         ScanItems();
-        if(GetState() == StateStopped) return;
         if(CheckPauseOrStop()) { SetStopped(); return; }
     }
     else
@@ -155,7 +153,6 @@ void FileCopyOperationJob::Do()
     }
 
     ProcessItems();
-    if(GetState() == StateStopped) return;
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
     SetCompleted();
@@ -272,8 +269,7 @@ void FileCopyOperationJob::ScanDestination()
             
             // now we need to check every directory here and create them they are not exist
             BuildDestinationDirectory(m_Destination);
-            if(GetState() == StateStopped) return;
-            if(CheckPauseOrStop()) { SetStopped(); return; }   
+            if(CheckPauseOrStop()) return;
         }
     }
 }
@@ -299,7 +295,7 @@ domkdir:    if(mkdir(destpath, 0777) == -1)
             {
                 int result = [[m_Operation OnDestCantCreateDir:errno ForDir:destpath] WaitForResult];
                 if (result == FileCopyOperationDR::Retry) goto domkdir;
-                if (result == OperationDialogResult::Stop) { SetStopped(); return; }
+                if (result == OperationDialogResult::Stop) { RequestStop(); return; }
             }
         }
         *leftmost = '/';
@@ -321,8 +317,7 @@ void FileCopyOperationJob::ScanItems()
     {
         ScanItem(i.str(), i.str(), 0);
 
-        if(GetState() == StateStopped) return;
-        if(CheckPauseOrStop()) { SetStopped(); return; }
+        if(CheckPauseOrStop()) return;
     }
 }
 
@@ -401,8 +396,7 @@ void FileCopyOperationJob::ProcessItems()
         
         ProcessItem(m_CurrentlyProcessingItem);
 
-        if(GetState() == StateStopped) return;
-        if(CheckPauseOrStop()) { SetStopped(); return; }
+        if(CheckPauseOrStop()) return;
     }
 
     if(!m_FilesToDelete.empty())
@@ -641,7 +635,7 @@ domkdir:
             if(result == FileCopyOperationDR::Retry) goto domkdir;
             if(result == FileCopyOperationDR::Skip) goto end;
             if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto end;}
-            if(result == OperationDialogResult::Stop)  {SetStopped(); goto end; }
+            if(result == OperationDialogResult::Stop)  { RequestStop(); goto end; }
         }
     }
 
@@ -760,7 +754,7 @@ opensource:
         if(result == FileCopyOperationDR::Retry) goto opensource;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
-        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     fcntl(sourcefd, F_NOCACHE, 1); // do not waste OS file cache with one-way data
     
@@ -772,7 +766,7 @@ statsource: // get information about source file
         if(result == FileCopyOperationDR::Retry) goto statsource;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
-        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
     // stat destination
@@ -793,7 +787,7 @@ statsource: // get information about source file
         if(result == FileCopyOperationDR::Overwrite){ if(remember_choice) m_OverwriteAll = true;  goto decoverwrite; }
         if(result == FileCopyOperationDR::Append)   { if(remember_choice) m_AppendAll = true;     goto decappend;    }
         if(result == FileCopyOperationDR::Skip)     { if(remember_choice) m_SkipAll = true;       goto cleanup;      }
-        if(result == OperationDialogResult::Stop)   { SetStopped(); goto cleanup; }
+        if(result == OperationDialogResult::Stop)   { RequestStop(); goto cleanup; }
         
         // decisions about what to do with existing destination
     decoverwrite:
@@ -826,7 +820,7 @@ opendest: // open file descriptor for destination
         if(result == FileCopyOperationDR::Retry) goto opendest;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
-        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
     // preallocate space for data since we dont want to trash our disk
@@ -849,7 +843,7 @@ dotruncate: // set right size for destination file
         if(result == FileCopyOperationDR::Retry) goto dotruncate;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
-        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
 dolseek: // find right position in destination file
@@ -860,13 +854,12 @@ dolseek: // find right position in destination file
         if(result == FileCopyOperationDR::Retry) goto dolseek;
         if(result == FileCopyOperationDR::Skip) goto cleanup;
         if(result == FileCopyOperationDR::SkipAll) {m_SkipAll = true; goto cleanup;}
-        if(result == OperationDialogResult::Stop) { SetStopped(); goto cleanup; }
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
     while(true)
     {
-        if(GetState() == StateStopped) goto cleanup;
-        if(CheckPauseOrStop()) { SetStopped(); goto cleanup; }
+        if(CheckPauseOrStop()) goto cleanup;
         
         __block ssize_t io_nread = 0;
         dispatch_group_async(m_IOGroup, m_ReadQueue, ^{
@@ -881,7 +874,7 @@ dolseek: // find right position in destination file
                     if(result == FileCopyOperationDR::Retry) goto doread;
                     if(result == FileCopyOperationDR::Skip) {io_docancel = true; return;}
                     if(result == FileCopyOperationDR::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
-                    if(result == OperationDialogResult::Stop) { io_docancel = true; SetStopped(); return;}
+                    if(result == OperationDialogResult::Stop) { io_docancel = true; RequestStop(); return;}
                 }
                 io_totalread += io_nread;
             }
@@ -900,7 +893,7 @@ dolseek: // find right position in destination file
                     if(result == FileCopyOperationDR::Retry) goto dowrite;
                     if(result == FileCopyOperationDR::Skip) {io_docancel = true; return;}
                     if(result == FileCopyOperationDR::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
-                    if(result == OperationDialogResult::Stop) { io_docancel = true; SetStopped(); return;}
+                    if(result == OperationDialogResult::Stop) { io_docancel = true; RequestStop(); return;}
                 }
                 alreadywrote += nwrite;
                 io_leftwrite -= nwrite;

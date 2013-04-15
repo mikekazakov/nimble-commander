@@ -9,7 +9,9 @@
 #pragma once
 
 #import "OperationJob.h"
-#include "FileDeletionOperation.h"
+
+#import "FileDeletionOperation.h"
+
 
 class FileDeletionOperationJob : public OperationJob
 {
@@ -17,7 +19,8 @@ public:
     FileDeletionOperationJob();
     ~FileDeletionOperationJob();
 
-    void Init(FlexChainedStringsChunk *_files, FileDeletionOperationType _type, const char* _root);
+    void Init(FlexChainedStringsChunk *_files, FileDeletionOperationType _type, const char* _root,
+              FileDeletionOperation *_op);
     
     enum State
     {
@@ -47,4 +50,7 @@ protected:
     unsigned m_ItemsCount;
     unsigned m_CurrentItemNumber;
     State m_State;
+    bool m_SkipAll;
+    
+    __weak FileDeletionOperation *m_Operation;
 };

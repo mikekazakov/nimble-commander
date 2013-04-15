@@ -20,6 +20,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#import "OperationDialogAlert.h"
+
 static void Randomize(unsigned char *_data, unsigned _size)
 {
     for(unsigned i = 0; i < _size; ++i)
@@ -31,7 +33,8 @@ FileDeletionOperationJob::FileDeletionOperationJob():
     m_Type(FileDeletionOperationType::Invalid),
     m_ItemsCount(0),
     m_CurrentItemNumber(0),
-    m_State(StateInvalid)
+    m_State(StateInvalid),
+    m_SkipAll(false)
 {
     
 }
@@ -43,11 +46,13 @@ FileDeletionOperationJob::~FileDeletionOperationJob()
     FlexChainedStringsChunk::FreeWithDescendants(&m_ItemsToDelete);
 }
 
-void FileDeletionOperationJob::Init(FlexChainedStringsChunk *_files, FileDeletionOperationType _type, const char* _root)
+void FileDeletionOperationJob::Init(FlexChainedStringsChunk *_files, FileDeletionOperationType _type,
+                                    const char* _root, FileDeletionOperation *_op)
 {
     m_RequestedFiles = _files;
     m_Type = _type;
     strcpy(m_RootPath, _root);
+    m_Operation = _op;
 }
 
 FileDeletionOperationJob::State FileDeletionOperationJob::StateDetail(unsigned &_it_no, unsigned &_it_tot) const
@@ -62,7 +67,6 @@ void FileDeletionOperationJob::Do()
     m_State = StateScanning;
     DoScan();
 
-    if(GetState() == StateStopped) return;
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
     m_ItemsCount = m_ItemsToDelete->CountStringsWithDescendants();
@@ -87,6 +91,7 @@ void FileDeletionOperationJob::Do()
 
     m_State = StateInvalid;
     
+    if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();
 }
 
@@ -97,7 +102,7 @@ void FileDeletionOperationJob::DoScan()
     
     for(auto &i: *m_RequestedFiles)
     {
-        if (CheckPauseOrStop()) { SetStopped(); return; }
+        if (CheckPauseOrStop()) return;
         char fn[MAXPATHLEN];
         strcpy(fn, m_RootPath);
         strcat(fn, i.str()); // TODO: optimize me
@@ -142,6 +147,7 @@ void FileDeletionOperationJob::DoScanDir(const char *_full_path, const FlexChain
     strcat(fn, "/");
     fnvar = &fn[0] + strlen(fn);
     
+retry_opendir:
     DIR *dirp = opendir(_full_path);
     if( dirp != 0)
     {
@@ -155,6 +161,7 @@ void FileDeletionOperationJob::DoScanDir(const char *_full_path, const FlexChain
             // replace variable part with current item, so fn is RootPath/item_file_name now
             memcpy(fnvar, entp->d_name, entp->d_namlen+1);
             
+        retry_lstat:
             struct stat st;
             if(lstat(fn, &st) == 0)
             {
@@ -179,16 +186,27 @@ void FileDeletionOperationJob::DoScanDir(const char *_full_path, const FlexChain
                     m_ItemsToDeleteLast = m_ItemsToDeleteLast->AddString(tmp, entp->d_namlen+1, _prefix);
                 }
             }
-            else
+            else if (!m_SkipAll)
             {
-                // TODO: error handling
+                int result = [[m_Operation DialogOnStatError:errno ForPath:fn] WaitForResult];
+                if (result == OperationDialogResult::Retry)
+                    goto retry_lstat;
+                else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                else if (result == OperationDialogResult::Stop)
+                {
+                    RequestStop();
+                    break;
+                }
             }
         }
         closedir(dirp);
     }
-    else
+    else if (!m_SkipAll) // if (dirp != 0)
     {
-        //TODO: error handling.
+        int result = [[m_Operation DialogOnOpendirError:errno ForDir:_full_path] WaitForResult];
+        if (result == OperationDialogResult::Retry) goto retry_opendir;
+        else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+        else if (result == OperationDialogResult::Stop) RequestStop();
     }
 }
 
@@ -200,9 +218,7 @@ void FileDeletionOperationJob::DoFile(const char *_full_path, bool _is_dir)
     }
     else if(m_Type == FileDeletionOperationType::MoveToTrash)
     {
-        // current volume may not support trash bin, in this case the should (?) fallback to classic deleting
-        if(!DoMoveToTrash(_full_path, _is_dir))
-            DoDelete(_full_path, _is_dir);
+        DoMoveToTrash(_full_path, _is_dir);
     }
     else if(m_Type == FileDeletionOperationType::SecureDelete)
     {
@@ -216,18 +232,26 @@ bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
     // delete. just delete.
     if( !_is_dir )
     {
+    retry_unlink:
         ret = unlink(_full_path);
-        if( ret != 0 )
+        if( ret != 0 && !m_SkipAll )
         {
-            // TODO: error handling
+            int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path] WaitForResult];
+            if (result == OperationDialogResult::Retry) goto retry_unlink;
+            else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+            else if (result == OperationDialogResult::Stop) RequestStop();
         }
     }
     else
     {
+    retry_rmdir:
         ret = rmdir(_full_path);
-        if( ret != 0 )
+        if( ret != 0 && !m_SkipAll )
         {
-            // TODO: error handling
+            int result = [[m_Operation DialogOnRmdirError:errno ForPath:_full_path] WaitForResult];
+            if (result == OperationDialogResult::Retry) goto retry_rmdir;
+            else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+            else if (result == OperationDialogResult::Stop) RequestStop();
         }
     }
     return ret == 0;
@@ -244,9 +268,23 @@ bool FileDeletionOperationJob::DoMoveToTrash(const char *_full_path, bool _is_di
     NSURL *newpath;
     NSError *error;
     // Available in OS X v10.8 and later
+retry_delete:
     if(![[NSFileManager defaultManager] trashItemAtURL:path resultingItemURL:&newpath error:&error])
     {
-        // TODO: error handling
+        if (!m_SkipAll)
+        {
+            int result = [[m_Operation DialogOnTrashItemError:errno ForPath:_full_path]
+                          WaitForResult];
+            if (result == OperationDialogResult::Retry) goto retry_delete;
+            else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+            else if (result == OperationDialogResult::Stop) RequestStop();
+            else if (result == FileDeletionOperationDR::DeletePermanently)
+            {
+                // User can choose to delete item permanently.
+                return DoDelete(_full_path, _is_dir);
+            }
+        }
+        
         return false;
     }
 
@@ -260,6 +298,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
         // fill file content with random data
         unsigned char data[4096];
         const int passes=3;
+    retry_open:
         int fd = open(_full_path, O_WRONLY|O_EXLOCK|O_NOFOLLOW);
         if(fd != -1)
         {
@@ -272,6 +311,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
                 while(written < size)
                 {
                     Randomize(data, 4096);
+                retry_write:
                     ssize_t wn = write(fd, data, size - written > 4096 ? 4096 : size - written);
                     if(wn >= 0)
                     {
@@ -279,30 +319,66 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
                     }
                     else
                     {
-                        // TODO: error handling
+                        if (!m_SkipAll)
+                        {
+                            int result = [[m_Operation DialogOnUnlinkError:errno
+                                                                   ForPath:_full_path]
+                                          WaitForResult];
+                            if (result == OperationDialogResult::Retry) goto retry_write;
+                            else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                            else if (result == OperationDialogResult::Stop)
+                                RequestStop();
+                        }
+                        
+                        // Break on skip, continue or abort.
+                        break;
                     }
                 }
             }
             close(fd);
             
+        retry_unlink:
             // now delete it on file system level
-            if(unlink(_full_path) != 0 )
+            if(unlink(_full_path) != 0)
             {
-                // TODO: error handling
+                if (!m_SkipAll)
+                {
+                    int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path]
+                                  WaitForResult];
+                    if (result == OperationDialogResult::Retry) goto retry_unlink;
+                    else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                    else if (result == OperationDialogResult::Stop) RequestStop();
+                }
                 return false;
             }
         }
         else
         {
-            // TODO: error handling
+            if (!m_SkipAll)
+            {
+                int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path]
+                              WaitForResult];
+                if (result == OperationDialogResult::Retry) goto retry_open;
+                else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                else if (result == OperationDialogResult::Stop)
+                    RequestStop();
+            }
             return false;
         }
     }
     else
     {
+    retry_rmdir:
         if(rmdir(_full_path) != 0 )
         {
-            // TODO: error handling
+            if (!m_SkipAll)
+            {
+                int result = [[m_Operation DialogOnRmdirError:errno ForPath:_full_path]
+                              WaitForResult];
+                if (result == OperationDialogResult::Retry) goto retry_rmdir;
+                else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                else if (result == OperationDialogResult::Stop) RequestStop();
+            }
             return false;
         }
     }

@@ -9,6 +9,16 @@
 #import "Operation.h"
 #include "FlexChainedStringsChunk.h"
 
+@class OperationDialogAlert;
+
+namespace FileDeletionOperationDR
+{
+enum
+{
+    DeletePermanently = OperationDialogResult::Custom
+};
+}
+
 enum class FileDeletionOperationType
 {
     Invalid,
@@ -24,5 +34,12 @@ enum class FileDeletionOperationType
            rootpath:(const char*)_path;
 
 - (void)Update;
+
+- (OperationDialogAlert *)DialogOnOpendirError:(int)_error ForDir:(const char *)_path;
+- (OperationDialogAlert *)DialogOnStatError:(int)_error ForPath:(const char *)_path;
+- (OperationDialogAlert *)DialogOnUnlinkError:(int)_error ForPath:(const char *)_path;
+- (OperationDialogAlert *)DialogOnRmdirError:(int)_error ForPath:(const char *)_path;
+- (OperationDialogAlert *)DialogOnTrashItemError:(int)_error ForPath:(const char *)_path;
+- (OperationDialogAlert *)DialogOnSecureRewriteError:(int)_error ForPath:(const char *)_path;
 
 @end

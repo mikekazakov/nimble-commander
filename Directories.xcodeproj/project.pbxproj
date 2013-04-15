@@ -14,6 +14,8 @@
 		B528012516FCF361004E260D /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528012016FCF361004E260D /* Operation.mm */; };
 		B55DB19A1717397F00E3610E /* OperationProgressValueTransformer.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1991717397F00E3610E /* OperationProgressValueTransformer.mm */; };
 		B55DB19C171B0E9700E3610E /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B55DB19B171B0E9700E3610E /* question_icon.png */; };
+		B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */; };
+		B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
 		B5AD9CE31706D5350099BC6D /* TimedDummyOperationTestDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */; };
 		B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
 		B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
@@ -82,6 +84,9 @@
 		B55DB1981717397E00E3610E /* OperationProgressValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationProgressValueTransformer.h; sourceTree = "<group>"; };
 		B55DB1991717397F00E3610E /* OperationProgressValueTransformer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationProgressValueTransformer.mm; sourceTree = "<group>"; };
 		B55DB19B171B0E9700E3610E /* question_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = question_icon.png; sourceTree = "<group>"; };
+		B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionSheetController.h; sourceTree = "<group>"; };
+		B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionSheetController.mm; sourceTree = "<group>"; };
+		B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileDeletionSheetController.xib; sourceTree = "<group>"; };
 		B5AD9CE01706D5350099BC6D /* TimedDummyOperationTestDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationTestDialog.h; sourceTree = "<group>"; };
 		B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperationTestDialog.mm; sourceTree = "<group>"; };
 		B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TimedDummyOperationTestDialog.xib; sourceTree = "<group>"; };
@@ -308,6 +313,9 @@
 				CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */,
 				CFA5839B170EA40F00E508CF /* FileDeletionOperationJob.h */,
 				CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */,
+				B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */,
+				B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */,
+				B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */,
 			);
 			name = FileDeletionOperation;
 			sourceTree = "<group>";
@@ -519,6 +527,7 @@
 				CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */,
 				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
 				B55DB19C171B0E9700E3610E /* question_icon.png in Resources */,
+				B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -573,6 +582,7 @@
 				CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */,
 				CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */,
 				B55DB19A1717397F00E3610E /* OperationProgressValueTransformer.mm in Sources */,
+				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

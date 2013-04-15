@@ -24,7 +24,8 @@ struct DialogResult
         SkipAll,
         Rename,
         Retry,
-        Apply
+        Apply,
+        Delete
     };
 };
 

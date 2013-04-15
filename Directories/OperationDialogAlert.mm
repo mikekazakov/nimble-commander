@@ -10,7 +10,7 @@
 
 #import "Operation.h"
 
-const int MaxButtonsCount = 5;
+const int MaxButtonsCount = 6;
 
 @implementation OperationDialogAlert
 {

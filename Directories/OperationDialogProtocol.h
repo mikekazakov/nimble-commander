@@ -20,9 +20,15 @@ enum
     // Dialog is finished and the job must stop execution. Closing with this result invokes
     // [ParentOperation Close].
     // Any dialog can be closed with this result by the application.
-    Stop = 1,
+    Stop,
     // Dialog is finished and the job can continue execution.
-    Continue = 2,
+    Continue,
+    
+    Retry,
+    Skip,
+    SkipAll,
+    
+    
     // Add your own custom results starting from this constant.
     Custom = 100
 };

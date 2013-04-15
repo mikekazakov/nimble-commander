@@ -14,6 +14,7 @@
 #import "MassCopySheetController.h"
 #import "DetailedVolumeInformationSheetController.h"
 #import "FileSysEntryAttrSheetController.h"
+#import "FileDeletionSheetController.h"
 #import "FlexChainedStringsChunk.h"
 #import "OperationsController.h"
 #import "OperationsSummaryViewController.h"
@@ -499,24 +500,22 @@
     if(!files)
         return;
     
-    MessageBox *mb = [MessageBox new];
-    [mb setAlertStyle:NSCriticalAlertStyle];
-    [mb setMessageText:@"Are you sure want to delete it?"];
-    [mb addButtonWithTitle:@"Delete"];
-    [mb addButtonWithTitle:@"Cancel"];
-    [mb ShowSheetWithHandler: [self window] handler:^(int ret){
-        if(ret == NSAlertFirstButtonReturn)
+    
+    FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
+    [sheet ShowSheet:self.window Files:files Type:FileDeletionOperationType::MoveToTrash
+             Handler:^(int result){
+        if (result == DialogResult::Delete)
         {
-            // kill it with fire!
-            //                FileDeletionOperationType type = FileDeletionOperationType::Delete;
-            FileDeletionOperationType type = FileDeletionOperationType::MoveToTrash;
-            //                FileDeletionOperationType type = FileDeletionOperationType::SecureDelete;
+            FileDeletionOperationType type = [sheet GetType];
+            
             char root_path[MAXPATHLEN];
             [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
-                
-            [m_OperationsController AddOperation:[[FileDeletionOperation alloc] initWithFiles:files
-                                                                                         type:type
-                                                                                     rootpath:root_path]];
+
+            FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                         initWithFiles:files
+                                         type:type
+                                         rootpath:root_path];
+            [m_OperationsController AddOperation:op];
         }
         else
         {

@@ -740,8 +740,9 @@ bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
     struct stat src_stat_buffer, dst_stat_buffer;
     char *readbuf = (char*)m_Buffer1, *writebuf = (char*)m_Buffer2;
     int dstopenflags=0, sourcefd=-1, destinationfd=-1;
-    unsigned long startwriteoff = 0, totaldestsize = 0;
-    bool adjust_dst_time = true, copy_xattrs = true, erase_xattrs = false, remember_choice = false, was_successful = false;
+    unsigned long startwriteoff = 0, totaldestsize = 0, dest_sz_on_stop = 0;
+    bool adjust_dst_time = true, copy_xattrs = true, erase_xattrs = false, remember_choice = false,
+    was_successful = false, unlink_on_stop = false;
     mode_t oldumask;
     __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
     __block bool io_docancel = false;
@@ -793,19 +794,25 @@ statsource: // get information about source file
     decoverwrite:
         dstopenflags = O_WRONLY;
         erase_xattrs = true;
+        unlink_on_stop = true;
+        dest_sz_on_stop = 0;
         goto decend;
     decappend:
         dstopenflags = O_WRONLY;
         totaldestsize += dst_stat_buffer.st_size;
         startwriteoff = dst_stat_buffer.st_size;
+        dest_sz_on_stop = dst_stat_buffer.st_size;
         adjust_dst_time = false;
         copy_xattrs = false;
+        unlink_on_stop = false;
         goto decend;
     decend:;
     }
     else
     { // no dest file - just create it
         dstopenflags = O_WRONLY|O_CREAT;
+        unlink_on_stop = true;
+        dest_sz_on_stop = 0;
     }
     
 opendest: // open file descriptor for destination
@@ -981,6 +988,15 @@ dolseek: // find right position in destination file
 
 cleanup:
     if(sourcefd != -1) close(sourcefd);
+    if(!was_successful && destinationfd != -1)
+    {
+        // we need to revert what we've done
+        ftruncate(destinationfd, dest_sz_on_stop);
+        close(destinationfd);
+        destinationfd = -1;
+        if(unlink_on_stop)
+            unlink(_dest);
+    }
     if(destinationfd != -1) close(destinationfd);
     return was_successful;
 }

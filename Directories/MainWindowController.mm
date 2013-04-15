@@ -607,8 +607,8 @@
     auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
     if(item.isdotdot())
         return;
+    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
     
-    // TODO: what will happen if PanelData which contains _item will reload it before the following block will execute?    
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
     [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] iscopying:true handler:^(int _ret)
      {
@@ -619,10 +619,14 @@
              FileCopyOperationOptions opts;
              
              [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:FlexChainedStringsChunk::AllocateWithSingleString(item.namec())
+              [[FileCopyOperation alloc] initWithFiles:files
                                                   root:root_path
                                                   dest:[[mc.TextField stringValue] UTF8String]
                                                options:&opts]];
+         }
+         else
+         {
+             FlexChainedStringsChunk::FreeWithDescendants(&files);
          }
      }];
 }
@@ -661,7 +665,7 @@
     char dest_path[MAXPATHLEN];
     destination->GetDirectoryPathWithTrailingSlash(dest_path);
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
-    // TODO: what will happen if PanelData which contains _item will reload it before the following block will execute?    
+
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
     [mc ShowSheet:[self window] initpath:nsdirpath iscopying:false handler:^(int _ret)
      {
@@ -694,7 +698,8 @@
     if(item.isdotdot())
         return;
     
-    // TODO: what will happen if PanelData which contains _item will reload it before the following block will execute?
+    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+    
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
     [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] iscopying:false handler:^(int _ret)
      {
@@ -706,10 +711,14 @@
              opts.docopy = false;
              
              [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:FlexChainedStringsChunk::AllocateWithSingleString(item.namec())
+              [[FileCopyOperation alloc] initWithFiles:files
                                                   root:root_path
                                                   dest:[[mc.TextField stringValue] UTF8String]
                                                options:&opts]];
+         }
+         else
+         {
+             FlexChainedStringsChunk::FreeWithDescendants(&files);
          }
      }];
 }

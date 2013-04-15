@@ -263,15 +263,27 @@ struct SortPredLess
             case PanelSortMode::SortByNameRev:
                 return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) > 0;
             case PanelSortMode::SortByExt:
-                if(val1.hasextension() && val2.hasextension() ) return strcmp(val1.extensionc(), val2.extensionc()) < 0;
+                if(val1.hasextension() && val2.hasextension() )
+                {
+                    int r = strcmp(val1.extensionc(), val2.extensionc());
+                    if(r < 0) return true;
+                    if(r > 0) return false;
+                    return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) < 0;
+                }
                 if(val1.hasextension() && !val2.hasextension() ) return false;
                 if(!val1.hasextension() && val2.hasextension() ) return true;
-                return strcmp(val1.namec(), val2.namec()) < 0; // fallback case
+                return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) < 0; // fallback case
             case PanelSortMode::SortByExtRev:
-                if(val1.hasextension() && val2.hasextension() ) return strcmp(val1.extensionc(), val2.extensionc()) > 0;
+                if(val1.hasextension() && val2.hasextension() )
+                {
+                    int r = strcmp(val1.extensionc(), val2.extensionc());
+                    if(r < 0) return false;
+                    if(r > 0) return true;
+                    return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) > 0;
+                }
                 if(val1.hasextension() && !val2.hasextension() ) return true;
                 if(!val1.hasextension() && val2.hasextension() ) return false;
-                return strcmp(val1.namec(), val2.namec()) > 0; // fallback case
+                return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) > 0; // fallback case
             case PanelSortMode::SortByMTime:    return val1.mtime > val2.mtime;
             case PanelSortMode::SortByMTimeRev: return val1.mtime < val2.mtime;
             case PanelSortMode::SortByBTime:    return val1.btime > val2.btime;
@@ -477,7 +489,7 @@ bool PanelData::FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset,
     assert(preflen > 0);
 
     // performing binary search on m_EntriesByHumanName
-    int imin = 0, imax = (int)m_EntriesByHumanName->size();
+    int imin = 0, imax = (int)m_EntriesByHumanName->size()-1;
     while(imax >= imin)
     {
         int imid = (imin + imax) / 2;

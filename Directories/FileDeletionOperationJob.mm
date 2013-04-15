@@ -196,88 +196,116 @@ void FileDeletionOperationJob::DoFile(const char *_full_path, bool _is_dir)
 {
     if(m_Type == FileDeletionOperationType::Delete)
     {
-        // delete. just delete.
-        if( !_is_dir )
-        {
-            if(unlink(_full_path) != 0 )
-            {
-                // TODO: error handling
-            }
-        }
-        else
-        {
-            if(rmdir(_full_path) != 0 )
-            {
-                // TODO: error handling
-            }
-        }
+        DoDelete(_full_path, _is_dir);
     }
     else if(m_Type == FileDeletionOperationType::MoveToTrash)
     {
-        // This construction is VERY slow. Thanks, Apple!
-        NSString *str = [[NSString alloc ]initWithBytesNoCopy:(void*)_full_path
-                                               length:strlen(_full_path)
-                                             encoding:NSUTF8StringEncoding
-                                         freeWhenDone:NO];
-        NSURL *path = [NSURL fileURLWithPath:str isDirectory:_is_dir];
-        NSURL *newpath;
-        NSError *error;
-        // Available in OS X v10.8 and later        
-        if(![[NSFileManager defaultManager] trashItemAtURL:path resultingItemURL:&newpath error:&error])
-        {
-            // TODO: error handling
-            // current volume may not support trash bin, in this case the should (?) fallback to classic deleting
-        }
+        // current volume may not support trash bin, in this case the should (?) fallback to classic deleting
+        if(!DoMoveToTrash(_full_path, _is_dir))
+            DoDelete(_full_path, _is_dir);
     }
     else if(m_Type == FileDeletionOperationType::SecureDelete)
     {
-        if( !_is_dir )
+        DoSecureDelete(_full_path, _is_dir);
+    }
+}
+
+bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
+{
+    int ret = -1;
+    // delete. just delete.
+    if( !_is_dir )
+    {
+        ret = unlink(_full_path);
+        if( ret != 0 )
         {
-            // fill file content with random data
-            unsigned char data[4096];
-            const int passes=3;
-            int fd = open(_full_path, O_WRONLY|O_EXLOCK|O_NOFOLLOW);
-            if(fd != -1)
+            // TODO: error handling
+        }
+    }
+    else
+    {
+        ret = rmdir(_full_path);
+        if( ret != 0 )
+        {
+            // TODO: error handling
+        }
+    }
+    return ret == 0;
+}
+
+bool FileDeletionOperationJob::DoMoveToTrash(const char *_full_path, bool _is_dir)
+{
+    // This construction is VERY slow. Thanks, Apple!
+    NSString *str = [[NSString alloc ]initWithBytesNoCopy:(void*)_full_path
+                                                   length:strlen(_full_path)
+                                                 encoding:NSUTF8StringEncoding
+                                             freeWhenDone:NO];
+    NSURL *path = [NSURL fileURLWithPath:str isDirectory:_is_dir];
+    NSURL *newpath;
+    NSError *error;
+    // Available in OS X v10.8 and later
+    if(![[NSFileManager defaultManager] trashItemAtURL:path resultingItemURL:&newpath error:&error])
+    {
+        // TODO: error handling
+        return false;
+    }
+
+    return true;
+}
+
+bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_dir)
+{
+    if( !_is_dir )
+    {
+        // fill file content with random data
+        unsigned char data[4096];
+        const int passes=3;
+        int fd = open(_full_path, O_WRONLY|O_EXLOCK|O_NOFOLLOW);
+        if(fd != -1)
+        {
+            // TODO: error handlings!!!
+            off_t size = lseek(fd, 0, SEEK_END);
+            for(int pass=0; pass < passes; ++pass)
             {
-                // TODO: error handlings!!!
-                off_t size = lseek(fd, 0, SEEK_END);
-                for(int pass=0; pass < passes; ++pass)
+                lseek(fd, 0, SEEK_SET);
+                off_t written=0;
+                while(written < size)
                 {
-                    lseek(fd, 0, SEEK_SET);
-                    off_t written=0;
-                    while(written < size)
+                    Randomize(data, 4096);
+                    ssize_t wn = write(fd, data, size - written > 4096 ? 4096 : size - written);
+                    if(wn >= 0)
                     {
-                        Randomize(data, 4096);
-                        ssize_t wn = write(fd, data, size - written > 4096 ? 4096 : size - written);
-                        if(wn >= 0)
-                        {
-                            written += wn;
-                        }
-                        else
-                        {
-                            // TODO: error handling
-                        }
+                        written += wn;
+                    }
+                    else
+                    {
+                        // TODO: error handling
                     }
                 }
-                close(fd);
-
-                // now delete it on file system level
-                if(unlink(_full_path) != 0 )
-                {
-                    // TODO: error handling
-                }
             }
-            else
+            close(fd);
+            
+            // now delete it on file system level
+            if(unlink(_full_path) != 0 )
             {
                 // TODO: error handling
+                return false;
             }
         }
         else
         {
-            if(rmdir(_full_path) != 0 )
-            {
-                // TODO: error handling
-            }
+            // TODO: error handling
+            return false;
         }
     }
+    else
+    {
+        if(rmdir(_full_path) != 0 )
+        {
+            // TODO: error handling
+            return false;
+        }
+    }
+    return true;
 }
+

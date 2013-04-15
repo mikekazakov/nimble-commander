@@ -33,6 +33,9 @@ protected:
     void DoScan();
     void DoScanDir(const char *_full_path, const FlexChainedStringsChunk::node *_prefix);
     void DoFile(const char *_full_path, bool _is_dir);
+    bool DoDelete(const char *_full_path, bool _is_dir);
+    bool DoMoveToTrash(const char *_full_path, bool _is_dir);
+    bool DoSecureDelete(const char *_full_path, bool _is_dir);
     
     FlexChainedStringsChunk *m_RequestedFiles;
     FlexChainedStringsChunk *m_Directories; // this container will store directories structure in direct order

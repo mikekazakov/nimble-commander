@@ -21,6 +21,7 @@
 		B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
 		CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */; };
 		CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
+		CF055EB6171D9E8E00F7A6ED /* PanelSizeCalculator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF055EB4171D9E8E00F7A6ED /* PanelSizeCalculator.mm */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
@@ -97,6 +98,8 @@
 		CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSEventsDirUpdate.mm; sourceTree = "<group>"; };
 		CF02F1D516F38805000AF870 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encodings.cpp; sourceTree = "<group>"; };
 		CF02F1D616F38805000AF870 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encodings.h; sourceTree = "<group>"; };
+		CF055EB4171D9E8E00F7A6ED /* PanelSizeCalculator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelSizeCalculator.mm; sourceTree = "<group>"; };
+		CF055EB5171D9E8E00F7A6ED /* PanelSizeCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelSizeCalculator.h; sourceTree = "<group>"; };
 		CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
@@ -266,6 +269,8 @@
 				CF3C88D616D73A23006346CD /* PanelController.mm */,
 				CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */,
 				CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */,
+				CF055EB4171D9E8E00F7A6ED /* PanelSizeCalculator.mm */,
+				CF055EB5171D9E8E00F7A6ED /* PanelSizeCalculator.h */,
 			);
 			name = Panel;
 			sourceTree = "<group>";
@@ -583,6 +588,7 @@
 				CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */,
 				B55DB19A1717397F00E3610E /* OperationProgressValueTransformer.mm in Sources */,
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
+				CF055EB6171D9E8E00F7A6ED /* PanelSizeCalculator.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

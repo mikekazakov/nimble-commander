@@ -37,4 +37,8 @@
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void)keyDown:(NSEvent *)event;
 
+// directory size calculation support
+@property (nonatomic) bool isStopDirectorySizeCounting;
+- (void) DidCalculatedDirectorySizeForEntry:(const char*) _dir size:(unsigned long)_size;
+
 @end

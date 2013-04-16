@@ -116,6 +116,7 @@ public:
     // manupulation with user flags for directory entries
     void CustomFlagsSelect(int _at_pos, bool _is_selected);
 
+    bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:
     void DestroyCurrentData();
     PanelData(const PanelData&);

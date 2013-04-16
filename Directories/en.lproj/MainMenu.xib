@@ -848,20 +848,21 @@
 										</array>
 									</object>
 								</object>
-								<object class="NSMenuItem" id="359647219">
-									<reference key="NSMenu" ref="466310130"/>
-									<string key="NSTitle">Sync Panels</string>
-									<string key="NSKeyEquiv">u</string>
-									<int key="NSKeyEquivModMask">1572864</int>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="35465992"/>
-									<reference key="NSMixedImage" ref="502551668"/>
-								</object>
 								<object class="NSMenuItem" id="1003320049">
 									<reference key="NSMenu" ref="466310130"/>
 									<string key="NSTitle">Swap Panels</string>
 									<string key="NSKeyEquiv">u</string>
 									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
+								<object class="NSMenuItem" id="359647219">
+									<reference key="NSMenu" ref="466310130"/>
+									<bool key="NSIsAlternate">YES</bool>
+									<string key="NSTitle">Sync Panels</string>
+									<string key="NSKeyEquiv">u</string>
+									<int key="NSKeyEquivModMask">1572864</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
@@ -2315,8 +2316,8 @@
 							<reference ref="262776880"/>
 							<reference ref="414350096"/>
 							<reference ref="359647219"/>
-							<reference ref="1003320049"/>
 							<reference ref="110546170"/>
+							<reference ref="1003320049"/>
 							<reference ref="288676803"/>
 						</array>
 						<reference key="parent" ref="586577488"/>

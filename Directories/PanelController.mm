@@ -8,6 +8,8 @@
 
 #import "PanelController.h"
 #import "FSEventsDirUpdate.h"
+#import "PanelSizeCalculator.h"
+#import "Common.h"
 #import <mach/mach_time.h>
 
 
@@ -22,7 +24,13 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     NSString *m_FastSearchString;
     uint64_t m_FastSearchLastType;
     unsigned m_FastSearchOffset;
+    
+// directory size calculation support
+    bool     m_IsStopDirectorySizeCounting;
+    dispatch_queue_t m_DirectorySizeCountingQ;
 }
+
+@synthesize isStopDirectorySizeCounting = m_IsStopDirectorySizeCounting;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -32,6 +40,8 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_UpdatesObservationTicket = 0;
         m_FastSearchLastType = 0;
         m_FastSearchOffset = 0;
+        m_IsStopDirectorySizeCounting = false;
+        m_DirectorySizeCountingQ = dispatch_queue_create("com.example.paneldirsizecounting", 0);
     }
 
     return self;
@@ -54,6 +64,8 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     int raw_pos = m_Data->SortedDirectoryEntries()[sort_pos];
     if( m_Data->DirectoryEntries()[raw_pos].isdir() )
     {
+        m_IsStopDirectorySizeCounting = true;
+
         char newpath[__DARWIN_MAXPATHLEN];
         char oldpathname[__DARWIN_MAXPATHLEN];
         char oldpathname_full[__DARWIN_MAXPATHLEN];
@@ -186,9 +198,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (bool) GoToDirectory:(const char*) _dir
 {
+    m_IsStopDirectorySizeCounting = true;
+    
     char oldpathname_full[__DARWIN_MAXPATHLEN];
     m_Data->GetDirectoryPathWithTrailingSlash(oldpathname_full);
-    
     if(m_Data->GoToDirectory(_dir))
     {
         FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
@@ -315,7 +328,46 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             if(ISMODIFIER(NSShiftKeyMask)) [self HandleShiftReturnButton];
             else                           [self HandleReturnButton];
             break;
+        case NSF3FunctionKey: [self HandleFileView]; break;
     }
+}
+
+- (void) HandleFileView // F3
+{
+    // dummy for now. we need to analyze the selection and/or cursor position
+    
+    if(m_Data->GetSelectedItemsCount())
+    {
+        auto files = m_Data->StringsFromSelectedEntries();
+        [self StartDirectorySizeCountingFor:files];
+    }
+    else
+    {
+        int curpos = [m_View GetCursorPosition];
+        int rawpos = m_Data->SortPosToRawPos(curpos);
+        auto const &item = m_Data->EntryAtRawPosition(rawpos);
+        // do not try count parent directory size. TODO: need a special handling here, it count the entire directory
+
+        if(!item.isdotdot())
+        {
+            auto files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+            [self StartDirectorySizeCountingFor:files];
+        }
+    }
+}
+
+- (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files
+{
+    if(m_IsStopDirectorySizeCounting)
+        dispatch_async(m_DirectorySizeCountingQ, ^{ m_IsStopDirectorySizeCounting = false; } );
+    
+    char dir[MAXPATHLEN];
+    m_Data->GetDirectoryPathWithTrailingSlash(dir);
+    const char *str = strdup(dir);
+    
+    dispatch_async(m_DirectorySizeCountingQ, ^{
+        PanelDirectorySizeCalculate(_files, str, self);
+    });
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
@@ -327,6 +379,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         // user was fast searching something, need to flush that string
         m_FastSearchString = nil;
         m_FastSearchOffset = 0;
+    }
+}
+
+- (void) DidCalculatedDirectorySizeForEntry:(const char*) _dir size:(unsigned long)_size
+{
+    // TODO: lock panel data?
+    if(m_Data->SetCalculatedSizeForDirectory(_dir, _size))
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_View setNeedsDisplay:true];
+        });
     }
 }
 

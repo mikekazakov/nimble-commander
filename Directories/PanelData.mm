@@ -109,7 +109,13 @@ check:      int dst = (*dirbyrawcname)[dst_i];
             int cmp = strcmp((*m_Entries)[src].namec(), (*entries)[dst].namec());
             if( cmp == 0 )
             {
-                (*entries)[dst].cflags = (*m_Entries)[src].cflags;
+                auto &item_dst = (*entries)[dst];
+                const auto &item_src = (*m_Entries)[src];
+                
+                item_dst.cflags = item_src.cflags;
+                if(item_dst.size == DIRENTINFO_INVALIDSIZE)
+                    item_dst.size = item_src.size; // transfer sizes for folders - it can be calculated earlier
+                
                 ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
                 if(dst_i == dst_e) break;
             }
@@ -597,6 +603,33 @@ bool PanelData::FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset,
         }
     }
 
+    return false;
+}
+
+bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size)
+{
+    assert(_size != DIRENTINFO_INVALIDSIZE);
+    int n = FindEntryIndex(_entry);
+    if(n >= 0)
+    {
+        auto &i = (*m_Entries)[n];
+        if(i.isdir())
+        {
+            if(i.cf_isselected())
+            { // need to adjust our selected bytes statistic
+                if(i.size != DIRENTINFO_INVALIDSIZE)
+                {
+                    assert(i.size < m_SelectedItemsSizeBytes);
+                    m_SelectedItemsSizeBytes -= i.size;
+                }
+                m_SelectedItemsSizeBytes += _size;
+            }
+
+            i.size = _size;
+
+            return true;
+        }
+    }
     return false;
 }
 

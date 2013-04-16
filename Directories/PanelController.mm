@@ -69,10 +69,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             if(gotoparent)
             {
                 int newcursor_raw = m_Data->FindEntryIndex(oldpathname);
-                int newcursor = 0;
-                if(newcursor_raw >= 0) newcursor = m_Data->FindSortedEntryIndex(newcursor_raw);
+                int newcursor_sort = 0;
+                if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
+                if(newcursor_sort < 0) newcursor_sort = 0;
                     
-                [m_View DirectoryChanged:newcursor Type:GoIntoParentDir];
+                [m_View DirectoryChanged:newcursor_sort Type:GoIntoParentDir];
             }
             else
             {
@@ -93,63 +94,83 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     [[NSWorkspace sharedWorkspace] openFile:[NSString stringWithUTF8String:path]];
 }
 
+- (void) ChangeSortingModeTo:(PanelSortMode)_mode
+{
+    int curpos = [m_View GetCursorPosition];
+    int rawpos = m_Data->SortedDirectoryEntries()[curpos];
+    
+    m_Data->SetCustomSortMode(_mode);
+    int newcurpos = m_Data->FindSortedEntryIndex(rawpos);
+    if(newcurpos >= 0)
+    {
+        [m_View SetCursorPosition:newcurpos];
+    }
+    else
+    {
+        // there's no such element in this representation
+        if(curpos < m_Data->SortedDirectoryEntries().size())
+            [m_View SetCursorPosition:curpos];
+        else
+            [m_View SetCursorPosition:(int)m_Data->SortedDirectoryEntries().size()-1];
+    }
+    [m_View setNeedsDisplay:true];
+}
+
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev
 {
     PanelSortMode mode = m_Data->GetCustomSortMode(); // we don't want to change anything in sort params except the mode itself
     if(mode.sort != _direct)  mode.sort = _direct;
     else                      mode.sort = _rev;
-    
-    int curpos = [m_View GetCursorPosition];
-    int rawpos = m_Data->SortedDirectoryEntries()[curpos];
-    
-    m_Data->SetCustomSortMode(mode);
-    int newcurpos = m_Data->FindSortedEntryIndex(rawpos);
-    [m_View SetCursorPosition:newcurpos];
-    [m_View setNeedsDisplay:true];
+    [self ChangeSortingModeTo:mode];
 }
 
-- (void) ToggleSortingBySize
+- (void) ToggleViewHiddenFiles
 {
+    PanelSortMode mode = m_Data->GetCustomSortMode();
+    mode.show_hidden = !mode.show_hidden;
+    [self ChangeSortingModeTo:mode];    
+}
+
+- (void) ToggleSeparateFoldersFromFiles
+{
+    PanelSortMode mode = m_Data->GetCustomSortMode();
+    mode.sepdir = !mode.sepdir;
+    [self ChangeSortingModeTo:mode];
+}
+
+- (void) ToggleSortingBySize{
     [self MakeSortWith:PanelSortMode::SortBySize Rev:PanelSortMode::SortBySizeRev];
 }
 
-- (void) ToggleSortingByName
-{
+- (void) ToggleSortingByName{
     [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];
 }
 
-- (void) ToggleSortingByMTime
-{
+- (void) ToggleSortingByMTime{
     [self MakeSortWith:PanelSortMode::SortByMTime Rev:PanelSortMode::SortByMTimeRev];
 }
 
-- (void) ToggleSortingByBTime
-{
+- (void) ToggleSortingByBTime{
     [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];
 }
 
-- (void) ToggleSortingByExt
-{
+- (void) ToggleSortingByExt{
     [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];
 }
 
-- (void) ToggleShortViewMode
-{
+- (void) ToggleShortViewMode{
     [m_View ToggleViewType:PanelViewType::ViewShort];
 }
 
-- (void) ToggleMediumViewMode
-{
+- (void) ToggleMediumViewMode{
     [m_View ToggleViewType:PanelViewType::ViewMedium];
 }
 
-- (void) ToggleFullViewMode
-{
+- (void) ToggleFullViewMode{
     [m_View ToggleViewType:PanelViewType::ViewFull];
 }
 
-- (void) ToggleWideViewMode
-{
+- (void) ToggleWideViewMode{
     [m_View ToggleViewType:PanelViewType::ViewWide];
 }
 

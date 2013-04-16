@@ -403,6 +403,14 @@
     [[self ActivePanelController] ToggleSortingByBTime];
 }
 
+- (IBAction)ToggleViewHiddenFiles:(id)sender{
+    [[self ActivePanelController] ToggleViewHiddenFiles];    
+}
+
+- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
+    [[self ActivePanelController] ToggleSeparateFoldersFromFiles];
+}
+
 - (IBAction)LeftPanelGoto:(id)sender{
     [[self LeftPanelGoToButton] performClick:self];    
 }

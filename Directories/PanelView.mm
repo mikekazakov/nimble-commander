@@ -857,7 +857,7 @@ struct CursorSelectionState
 - (void) HandleNextFile
 {
     int origpos = m_CursorPosition;
-    if(m_CursorPosition + 1 < m_Data->DirectoryEntries().size() ) m_CursorPosition++;
+    if(m_CursorPosition + 1 < m_Data->SortedDirectoryEntries().size() ) m_CursorPosition++;
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included: origpos];
     
@@ -881,7 +881,7 @@ struct CursorSelectionState
 - (void) HandleNextPage
 {
     int origpos = m_CursorPosition;    
-    int total_files = (int)m_Data->DirectoryEntries().size();
+    int total_files = (int)m_Data->SortedDirectoryEntries().size();
     int max_files_shown = [self CalcMaxShownFilesForView:m_CurrentViewType];
     if(m_CursorPosition + max_files_shown < total_files) m_CursorPosition += max_files_shown;
     else                                                 m_CursorPosition = total_files - 1;
@@ -911,7 +911,7 @@ struct CursorSelectionState
 - (void) HandleNextColumn
 {
     int origpos = m_CursorPosition;    
-    int total_files = (int)m_Data->DirectoryEntries().size();    
+    int total_files = (int)m_Data->SortedDirectoryEntries().size();
     int files_per_column = [self CalcMaxShownFilesPerPanelForView:m_CurrentViewType];
     int max_files_shown = [self CalcMaxShownFilesForView:m_CurrentViewType];
     if(m_CursorPosition + files_per_column < total_files) m_CursorPosition += files_per_column;
@@ -939,7 +939,7 @@ struct CursorSelectionState
 - (void) HandleLastFile;
 {
     int origpos = m_CursorPosition;    
-    int total_files = (int)m_Data->DirectoryEntries().size();
+    int total_files = (int)m_Data->SortedDirectoryEntries().size();
     int max_files_shown = [self CalcMaxShownFilesForView:m_CurrentViewType];
     m_CursorPosition = total_files - 1;
     if(m_CursorSelectionType != CursorSelectionState::No)
@@ -963,7 +963,7 @@ struct CursorSelectionState
 
 - (void) SetCursorPosition:(int)_pos
 {
-    assert(_pos >= 0 && _pos < m_Data->DirectoryEntries().size());
+    assert(_pos >= 0 && _pos < m_Data->SortedDirectoryEntries().size());
     if(m_CursorPosition != _pos)
     {
         m_CursorPosition = _pos;
@@ -1050,8 +1050,8 @@ struct CursorSelectionState
 
 - (const DirectoryEntryInformation&) CurrentItem
 {
-    assert(m_CursorPosition < m_Data->DirectoryEntries().size());
-    assert(m_Data->DirectoryEntries().size() == m_Data->SortedDirectoryEntries().size());
+    assert(m_CursorPosition < m_Data->SortedDirectoryEntries().size());
+    assert(m_Data->DirectoryEntries().size() >= m_Data->SortedDirectoryEntries().size());
     return m_Data->DirectoryEntries()[ m_Data->SortedDirectoryEntries()[m_CursorPosition] ];
 }
 
@@ -1059,8 +1059,8 @@ struct CursorSelectionState
 {
     assert(m_CursorSelectionType != CursorSelectionState::No);
     // we never want to select a first (dotdot) entry
-    assert(_start >= 0 && _start < m_Data->DirectoryEntries().size());
-    assert(_end >= 0 && _end < m_Data->DirectoryEntries().size());
+    assert(_start >= 0 && _start < m_Data->SortedDirectoryEntries().size());
+    assert(_end >= 0 && _end < m_Data->SortedDirectoryEntries().size());
     if(_start > _end)
     {
         int t = _start;

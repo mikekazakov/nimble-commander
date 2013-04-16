@@ -22,6 +22,8 @@
 - (void) ToggleSortingByMTime; // user pressed ctrl+F5 by default
 - (void) ToggleSortingBySize; // user pressed ctrl+F6 by default
 - (void) ToggleSortingByBTime; // user pressed ctrl+F8 by default
+- (void) ToggleViewHiddenFiles;
+- (void) ToggleSeparateFoldersFromFiles;
 - (void) ToggleShortViewMode; // user pressed ctrl+1 by default
 - (void) ToggleMediumViewMode; // user pressed ctrl+2 by default
 - (void) ToggleFullViewMode; // user pressed ctrl+3 by default

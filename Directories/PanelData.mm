@@ -22,6 +22,7 @@ PanelData::PanelData()
     m_SelectedItemsDirectoriesCount = 0;
     m_CustomSortMode.sepdir = true;
     m_CustomSortMode.sort = m_CustomSortMode.SortByName;
+    m_CustomSortMode.show_hidden = false;
     m_SortExecGroup = dispatch_group_create();
     m_SortExecQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 }
@@ -63,11 +64,15 @@ bool PanelData::GoToDirectory(const char *_path)
         dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
             DoSort(m_Entries, m_EntriesByRawName, PanelSortMode(PanelSortMode::SortByRawCName, false)); });
         dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-            DoSort(m_Entries, m_EntriesByHumanName, PanelSortMode(PanelSortMode::SortByName, false)); });
+            PanelSortMode mode;
+            mode.sepdir = false;
+            mode.sort = PanelSortMode::SortByName;
+            mode.show_hidden = m_CustomSortMode.show_hidden;
+            DoSort(m_Entries, m_EntriesByHumanName, mode); });
         dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
             DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
         dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
-        
+
         // update stats
         UpdateStatictics();
         
@@ -126,7 +131,11 @@ check:      int dst = (*dirbyrawcname)[dst_i];
 
         // now sort our new data
         dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-            DoSort(m_Entries, m_EntriesByHumanName, PanelSortMode(PanelSortMode::SortByName, false)); });
+            PanelSortMode mode;
+            mode.sepdir = false;
+            mode.sort = PanelSortMode::SortByName;
+            mode.show_hidden = m_CustomSortMode.show_hidden;
+            DoSort(m_Entries, m_EntriesByHumanName, mode); });
         dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
             DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
         dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
@@ -318,9 +327,25 @@ void PanelData::DoSort(const PanelData::DirEntryInfoT* _from, PanelData::DirSort
 {
     _to->clear();
     _to->resize(_from->size());
-    
-    for(int i = 0; i < _from->size(); ++i)
-        (*_to)[i] = i;
+  
+    if(_mode.show_hidden)
+    {
+        size_t i = 0, e = _from->size();
+        for(; i < e; ++i)
+            (*_to)[i] = (unsigned)i;
+    }
+    else
+    {
+        size_t nsrc = 0, ndst = 0;
+        size_t ssrc = _from->size();
+        for(;nsrc<ssrc;++nsrc)
+            if( (*_from)[nsrc].ishidden() == false )
+            {
+                (*_to)[ndst] = (unsigned) nsrc;
+                ++ndst;
+            }
+        _to->resize(ndst); // now have only elements that are not hidden
+    }
     
     if(_mode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
@@ -337,11 +362,27 @@ void PanelData::DoSort(const PanelData::DirEntryInfoT* _from, PanelData::DirSort
 
 void PanelData::SetCustomSortMode(PanelSortMode _mode)
 {
-    // carefully check some other flags when they wll appear in PanelSortMode
-    if(m_CustomSortMode.sort != _mode.sort || m_CustomSortMode.sepdir != _mode.sepdir)
+    if(m_CustomSortMode != _mode)
     {
-        m_CustomSortMode = _mode;
-        DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode);
+        if(m_CustomSortMode.show_hidden == _mode.show_hidden)
+        {
+            m_CustomSortMode = _mode;
+            DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode);
+        }
+        else
+        {
+            m_CustomSortMode = _mode;
+            // need to update fast search indeces also, since there are structural changes
+            dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+                PanelSortMode mode;
+                mode.sepdir = false;
+                mode.sort = PanelSortMode::SortByName;
+                mode.show_hidden = m_CustomSortMode.show_hidden;
+                DoSort(m_Entries, m_EntriesByHumanName, mode); });
+            dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+                DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
+            dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
+        }
     }
 }
 

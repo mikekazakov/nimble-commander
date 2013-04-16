@@ -30,9 +30,26 @@ struct PanelSortMode
     
     Mode sort;
     bool sepdir;    // separate directories from files, like win-like
+    bool show_hidden;
     
-    PanelSortMode(){}
-    PanelSortMode(Mode _mode, bool _sepdir):sort(_mode),sepdir(_sepdir){}
+    inline PanelSortMode():
+        sort(SortByRawCName),
+        sepdir(false),
+        show_hidden(true)
+    {}
+    inline PanelSortMode(Mode _mode, bool _sepdir):
+        sort(_mode),
+        sepdir(_sepdir)
+    {}
+    
+    inline bool operator ==(const PanelSortMode& _r) const
+    {
+        return sort == _r.sort && sepdir == _r.sepdir && show_hidden == _r.show_hidden;
+    }
+    inline bool operator !=(const PanelSortMode& _r) const
+    {
+        return !(*this == _r);
+    }
 };
 
 

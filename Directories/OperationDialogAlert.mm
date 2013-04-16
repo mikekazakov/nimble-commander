@@ -96,6 +96,24 @@ const int MaxButtonsCount = 6;
     return self;
 }
 
+- (id)initRetrySkipSkipAllAbortHide:(BOOL)_enable_skip
+{
+    self = [self init];
+    if (self)
+    {
+        [self AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
+        if (_enable_skip)
+        {
+            [self AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Skip];
+            [self AddButtonWithTitle:@"Skip All" andResult:OperationDialogResult::SkipAll];
+
+        }
+        [self AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
+        [self AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    }
+    return self;
+}
+
 - (void)SetAlertStyle:(NSAlertStyle)_style
 {
     [m_Alert setAlertStyle:_style];

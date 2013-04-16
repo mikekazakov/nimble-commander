@@ -54,21 +54,13 @@
 
 - (OperationDialogAlert *)DialogOnOpendirError:(int)_error ForDir:(const char *)_path
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Directory access error"];
     [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nDirectory: %@",
                                strerror(_error), [NSString stringWithUTF8String:_path]]];
-    
-    [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-    if (!m_SingleItem)
-    {
-        [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Skip];
-        [alert AddButtonWithTitle:@"Skip All" andResult:OperationDialogResult::SkipAll];
-    }
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
     
     [self EnqueueDialog:alert];
     
@@ -77,21 +69,13 @@
 
 - (OperationDialogAlert *)DialogOnStatError:(int)_error ForPath:(const char *)_path
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Can't get file status"];
     [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
                                strerror(_error), [NSString stringWithUTF8String:_path]]];
-    
-    [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-    if (!m_SingleItem)
-    {
-        [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Skip];
-        [alert AddButtonWithTitle:@"Skip All" andResult:OperationDialogResult::SkipAll];
-    }
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
     
     [self EnqueueDialog:alert];
     
@@ -100,21 +84,13 @@
 
 - (OperationDialogAlert *)DialogOnUnlinkError:(int)_error ForPath:(const char *)_path
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Can't delete file"];
     [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
                                strerror(_error), [NSString stringWithUTF8String:_path]]];
-    
-    [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-    if (!m_SingleItem)
-    {
-        [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Skip];
-        [alert AddButtonWithTitle:@"Skip All" andResult:OperationDialogResult::SkipAll];
-    }
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
     
     [self EnqueueDialog:alert];
     
@@ -123,21 +99,13 @@
 
 - (OperationDialogAlert *)DialogOnRmdirError:(int)_error ForPath:(const char *)_path
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Can't delete directory"];
     [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
                                strerror(_error), [NSString stringWithUTF8String:_path]]];
-    
-    [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-    if (!m_SingleItem)
-    {
-        [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Skip];
-        [alert AddButtonWithTitle:@"Skip All" andResult:OperationDialogResult::SkipAll];
-    }
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
     
     [self EnqueueDialog:alert];
     
@@ -171,22 +139,14 @@
 
 - (OperationDialogAlert *)DialogOnSecureRewriteError:(int)_error ForPath:(const char *)_path
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Secure delete error"];
     [alert SetInformativeText:[NSString
                                stringWithFormat:@"Can't access or modify file %@./nError: %s",
                                [NSString stringWithUTF8String:_path], strerror(_error)]];
-    
-    [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-    if (!m_SingleItem)
-    {
-        [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Skip];
-        [alert AddButtonWithTitle:@"Skip All" andResult:OperationDialogResult::SkipAll];
-    }
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
     
     [self EnqueueDialog:alert];
     

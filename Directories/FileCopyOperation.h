@@ -11,16 +11,14 @@
 #import "OperationDialogAlert.h"
 #import "FileAlreadyExistSheetController.h"
 
-struct FileCopyOperationDR
+namespace FileCopyOperationDR
 {
-    enum{
-        Retry = OperationDialogResult::Custom,
-        Skip,
-        SkipAll,
-        Overwrite,
-        Append
-    };
+enum
+{
+    Overwrite = OperationDialogResult::Custom,
+    Append
 };
+}
 
 struct FileCopyOperationOptions
 {

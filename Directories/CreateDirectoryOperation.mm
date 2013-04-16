@@ -22,7 +22,8 @@
     if (self)
     {
         m_Job.Init(_path, _rootpath, self);
-        self.Caption = [NSString stringWithFormat:@"Creating directory '%s'", _path];
+        self.Caption = [NSString stringWithFormat:@"Creating directory '%@'",
+                        [NSString stringWithUTF8String:_path]];
     }
     return self;
 }
@@ -30,16 +31,13 @@
 - (OperationDialogAlert *)DialogOnCrDirError:(int)_error
                                       ForDir:(const char *)_path
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:NO];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Failed to create directory"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %s",
-                               strerror(_error), _path]];
-
-    [alert AddButtonWithTitle:@"Retry" andResult:CreateDirectoryOperationDR::Retry];
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
+                               strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     

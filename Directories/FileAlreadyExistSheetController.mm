@@ -146,7 +146,7 @@
 
 - (IBAction)OnSkip:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:FileCopyOperationDR::Skip];
+    [NSApp endSheet:[self window] returnCode:OperationDialogResult::Skip];
 }
 
 - (IBAction)OnAppend:(id)sender

@@ -15,6 +15,7 @@
 // Implements methods from OperationDialogProtocol.
 
 - (id)init;
+- (id)initRetrySkipSkipAllAbortHide:(BOOL)_enable_skip;
 
 - (void)SetAlertStyle:(NSAlertStyle)_style;
 - (void)SetIcon:(NSImage *)_icon;

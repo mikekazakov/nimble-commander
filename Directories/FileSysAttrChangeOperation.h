@@ -11,18 +11,6 @@
 
 struct FileSysAttrAlterCommand;
 
-// FileSysAttrOperation's custom dialog results:
-namespace FileSysAttrChangeOperationDialogResult
-{
-enum
-{
-    // Skip current and all the following errors.
-    SkipAll = OperationDialogResult::Custom,
-    // Retry the action.
-    Retry   = OperationDialogResult::Custom + 1,
-};
-}
-
 @interface FileSysAttrChangeOperation : Operation
 
 // passing with ownership, operation will free it on finish

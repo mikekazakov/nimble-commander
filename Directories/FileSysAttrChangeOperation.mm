@@ -47,22 +47,15 @@
                                    ForFile:(const char *)_path
                                   WithMode:(mode_t)_mode
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:YES];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Chmod Error"];
     char buff[12];
     strmode(_mode, buff);
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nFile: %s\nMode: %s",
-        strerror(_error), _path, buff]];
-    
-    [alert AddButtonWithTitle:@"Retry"
-                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
-    [alert AddButtonWithTitle:@"Skip All"
-                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
-    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nFile: %@\nMode: %s",
+                               strerror(_error), [NSString stringWithUTF8String:_path], buff]];
     
     [self EnqueueDialog:alert];
     
@@ -73,22 +66,15 @@
                                      ForFile:(const char*)_path
                                    WithFlags:(uint32_t)_flags
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:YES];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Chflags Error"];
     char *str = fflagstostr(_flags);
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nFile: %s\nFlags: %s",
-                               strerror(_error), _path, str]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nFile: %@\nFlags: %s",
+                               strerror(_error), [NSString stringWithUTF8String:_path], str]];
     free(str);
-
-    [alert AddButtonWithTitle:@"Retry"
-                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
-    [alert AddButtonWithTitle:@"Skip All"
-                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
-    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
     
     [self EnqueueDialog:alert];
     
@@ -97,21 +83,14 @@
 
 - (OperationDialogAlert *)DialogOnChownError:(int)_error ForFile:(const char *)_path Uid:(uid_t)_uid Gid:(gid_t)_gid
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:YES];
 
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Chown Error"];
     [alert SetInformativeText:
-        [NSString stringWithFormat:@"Can't change owner and/or group.\nError: %s\nFile: %s",
-         strerror(_error), _path]];
-    
-    [alert AddButtonWithTitle:@"Retry"
-                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
-    [alert AddButtonWithTitle:@"Skip All"
-                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
-    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+        [NSString stringWithFormat:@"Can't change owner and/or group.\nError: %s\nFile: %@",
+         strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     
@@ -120,7 +99,8 @@
 
 - (OperationDialogAlert *)DialogOnFileTimeError:(int)_error ForFile:(const char *)_path WithAttr:(u_int32_t)_attr Time:(timespec)_time
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:YES];
     
     const char *time_string = "(error)";
     switch (_attr) {
@@ -133,17 +113,8 @@
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Set file time error"];
     [alert SetInformativeText:
-     [NSString stringWithFormat:@"Can't set %s time\nError: %s\nFile: %s",
-      time_string, strerror(_error), _path]];
-    
-    
-    [alert AddButtonWithTitle:@"Retry"
-                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
-    [alert AddButtonWithTitle:@"Skip All"
-                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
-    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+     [NSString stringWithFormat:@"Can't set %s time\nError: %s\nFile: %@",
+      time_string, strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     
@@ -152,20 +123,13 @@
 
 - (OperationDialogAlert *)DialogOnOpendirError:(int)_error ForDir:(const char *)_path
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:YES];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Directory access error"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nDirectory: %s",
-                               strerror(_error), _path]];
-    
-    [alert AddButtonWithTitle:@"Retry"
-                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
-    [alert AddButtonWithTitle:@"Skip All"
-                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
-    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nDirectory: %@",
+                               strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     
@@ -174,20 +138,13 @@
 
 - (OperationDialogAlert *)DialogOnStatError:(int)_error ForPath:(const char *)_path
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:YES];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Can't get file status"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %s",
-                               strerror(_error), _path]];
-    
-    [alert AddButtonWithTitle:@"Retry"
-                    andResult:FileSysAttrChangeOperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Continue];
-    [alert AddButtonWithTitle:@"Skip All"
-                    andResult:FileSysAttrChangeOperationDialogResult::SkipAll];
-    [alert AddButtonWithTitle:@"Stop" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
+                               strerror(_error), [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     

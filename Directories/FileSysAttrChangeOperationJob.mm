@@ -142,9 +142,9 @@ retry_opendir:
                 RequestStop();
                 return;
             }
-            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+            if (result == OperationDialogResult::SkipAll)
                 m_SkipAllErrors = true;
-            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+            if (result == OperationDialogResult::Retry)
                 goto retry_opendir;
         }
     }
@@ -173,9 +173,9 @@ retry_stat:
                         RequestStop();
                         break;
                     }
-                    if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+                    if (result == OperationDialogResult::SkipAll)
                         m_SkipAllErrors = true;
-                    if (result == FileSysAttrChangeOperationDialogResult::Retry)
+                    if (result == OperationDialogResult::Retry)
                         goto retry_stat;
                 }
             }
@@ -223,9 +223,9 @@ retry_stat:
                 RequestStop();
                 return;
             }
-            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+            if (result == OperationDialogResult::SkipAll)
                 m_SkipAllErrors = true;
-            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+            if (result == OperationDialogResult::Retry)
                 goto retry_stat;
         }
     }
@@ -264,9 +264,9 @@ retry_chmod:
                 RequestStop();
                 return;
             }
-            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+            if (result == OperationDialogResult::SkipAll)
                 m_SkipAllErrors = true;
-            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+            if (result == OperationDialogResult::Retry)
                 goto retry_chmod;
         }
     }
@@ -301,9 +301,9 @@ retry_chflags:
                 RequestStop();
                 return;
             }
-            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+            if (result == OperationDialogResult::SkipAll)
                 m_SkipAllErrors = true;
-            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+            if (result == OperationDialogResult::Retry)
                 goto retry_chflags;
         }
     }
@@ -329,9 +329,9 @@ retry_chown:
                 RequestStop();
                 return;
             }
-            if (result == FileSysAttrChangeOperationDialogResult::SkipAll)
+            if (result == OperationDialogResult::SkipAll)
                 m_SkipAllErrors = true;
-            if (result == FileSysAttrChangeOperationDialogResult::Retry)
+            if (result == OperationDialogResult::Retry)
                 goto retry_chown;
         }
     }
@@ -344,8 +344,8 @@ retry_chown:
         int result = [[m_Operation DialogOnFileTimeError:errno \
                         ForFile:_full_path WithAttr:attrs.commonattr Time:time] WaitForResult]; \
         if (result == OperationDialogResult::Stop) { RequestStop(); return; } \
-        else if (result == FileSysAttrChangeOperationDialogResult::SkipAll) m_SkipAllErrors = true; \
-        else if (result == FileSysAttrChangeOperationDialogResult::Retry) goto label; \
+        else if (result == OperationDialogResult::SkipAll) m_SkipAllErrors = true; \
+        else if (result == OperationDialogResult::Retry) goto label; \
     }
     
     struct attrlist attrs;

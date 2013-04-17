@@ -21,7 +21,7 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
         
     DIR *dirp = opendir(_path);
     if(!dirp)
-        return -1;
+        return errno;
 
     dirent *entp;
 

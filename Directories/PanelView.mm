@@ -325,7 +325,7 @@ struct CursorSelectionState
     int             m_SymbHeight;
     int             m_FilesDisplayOffset; // number of a first file which appears on the panel view, on the top
     std::stack<int> m_DisplayOffsetStack;
-    int             m_CursorPosition;
+    int             m_CursorPosition; // -1 means no real cursor position
     PanelViewType   m_CurrentViewType;
     bool            m_IsActive;
     
@@ -372,7 +372,7 @@ struct CursorSelectionState
         m_FontCG = CTFontCopyGraphicsFont(m_FontCT, 0);
         m_FontCache = new FontCache(m_FontCT);
         m_FilesDisplayOffset = 0;
-        m_CursorPosition = 0;
+        m_CursorPosition = -1;
         m_CurrentViewType = PanelViewType::ViewMedium;
         m_IsActive = false;
         m_KeysModifiersFlags = 0;
@@ -488,13 +488,17 @@ struct CursorSelectionState
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw header and footer data
     {
-    const auto &current_entry = raw_entries[sorted_entries[m_CursorPosition]];
+    const DirectoryEntryInformation *current_entry = 0;
+    if(m_CursorPosition >= 0) current_entry = &raw_entries[sorted_entries[m_CursorPosition]];
     UniChar time_info[14], size_info[6], sort_mode[1];
     size_t buf_size = 0;
-    FormHumanReadableTimeRepresentation14(current_entry.mtime, time_info);
-    FormHumanReadableSizeReprentationForDirEnt6(&current_entry, size_info);
     FormHumanReadableSortModeReprentation1(m_Data->GetCustomSortMode().sort, sort_mode);
-    ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
+    if(current_entry)
+    {
+    FormHumanReadableTimeRepresentation14(current_entry->mtime, time_info);
+    FormHumanReadableSizeReprentationForDirEnt6(current_entry, size_info);
+    ComposeFooterFileNameForEntry(*current_entry, buff, buf_size);
+    }
     
     // draw sorting mode in left-upper corner
     oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, m_FontCache, g_HeaderInfoColor);
@@ -527,7 +531,7 @@ struct CursorSelectionState
     }
 
     // footer info        
-    if(m_SymbWidth > 2 + 14 + 6)
+    if(current_entry && m_SymbWidth > 2 + 14 + 6)
     {   // draw current entry time info, size info and maybe filename
         oms::DrawStringXY(time_info, 0, 14, m_SymbWidth - 15, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
         oms::DrawStringXY(size_info, 0, 6, m_SymbWidth - 15 - 7, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
@@ -539,7 +543,7 @@ struct CursorSelectionState
             oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, m_FontCache, g_RegFileColor);
         }
     }
-    else if(m_SymbWidth >= 2 + 6)
+    else if(current_entry && m_SymbWidth >= 2 + 6)
     {   // draw current entry size info and time info
         oms::DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
         int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
@@ -753,9 +757,11 @@ struct CursorSelectionState
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw footer data
+    if(m_CursorPosition >= 0 )
     {
         UniChar buff[256];
         size_t buf_size;
+            
         const auto &current_entry = raw_entries[sorted_entries[m_CursorPosition]];
         ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
         int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, m_SymbWidth-2);
@@ -811,7 +817,9 @@ struct CursorSelectionState
 - (void)drawRect:(NSRect)dirtyRect
 {
     if(!m_Data) return;
-    assert(m_CursorPosition < m_Data->SortedDirectoryEntries().size());
+    assert(m_CursorPosition < (int)m_Data->SortedDirectoryEntries().size());
+    assert(m_FilesDisplayOffset >= 0);
+    
     
     CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 
@@ -950,6 +958,8 @@ struct CursorSelectionState
 
 - (void) EnsureCursorIsVisible
 {
+    if(m_CursorPosition < 0) return;
+
     int max_files_shown = [self CalcMaxShownFilesForView:m_CurrentViewType];
     if(m_CursorPosition < m_FilesDisplayOffset)     // check if cursor is above
     {
@@ -977,15 +987,16 @@ struct CursorSelectionState
     return m_CursorPosition;
 }
 
-- (void) DirectoryChanged:(int) _new_curpos Type:(DirectoryChangeType)_type
+- (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor;
 {
-    if(_type == GoIntoSubDir)
+    if(_type == PanelViewDirectoryChangeType::GoIntoSubDir)
         [self PushDirectoryFilesOffset];
-    else if(_type == GoIntoParentDir)
+    else if(_type == PanelViewDirectoryChangeType::GoIntoParentDir)
         [self PopDirectoryFilesOffset];
-    else assert(0); // implement me later
-        
-    m_CursorPosition = _new_curpos;
+    else if(_type == PanelViewDirectoryChangeType::GoIntoOtherDir)
+        [self ResetDirectoryFilesOffset];
+
+    m_CursorPosition = _cursor;
     [self EnsureCursorIsVisible];
     [self setNeedsDisplay:true];
 }
@@ -1025,34 +1036,38 @@ struct CursorSelectionState
     {
         if(m_CursorSelectionType == CursorSelectionState::No)
         { // lets decide if we need to select or unselect files when user will use navigation arrows
-            const auto &item = [self CurrentItem];
-            if(!item.isdotdot())
-            { // regular case
-                if(item.cf_isselected()) m_CursorSelectionType = CursorSelectionState::Unselection;
-                else                     m_CursorSelectionType = CursorSelectionState::Selection;
-            }
-            else
-            { // need to look at a first file (next to dotdot) for current representation if any.
-                if(m_Data->SortedDirectoryEntries().size() > 1)
-                { // using [1] item
-                    const auto &item = m_Data->DirectoryEntries()[ m_Data->SortedDirectoryEntries()[1] ];
-                    if(item.cf_isselected()) m_CursorSelectionType = CursorSelectionState::Unselection;
+            const auto *item = [self CurrentItem];
+            if(item)
+            {
+                if(!item->isdotdot())
+                { // regular case
+                    if(item->cf_isselected()) m_CursorSelectionType = CursorSelectionState::Unselection;
                     else                     m_CursorSelectionType = CursorSelectionState::Selection;
                 }
                 else
-                { // singular case - selection doesn't matter - nothing to select
-                    m_CursorSelectionType = CursorSelectionState::Selection;
+                { // need to look at a first file (next to dotdot) for current representation if any.
+                    if(m_Data->SortedDirectoryEntries().size() > 1)
+                    { // using [1] item
+                        const auto &item = m_Data->DirectoryEntries()[ m_Data->SortedDirectoryEntries()[1] ];
+                        if(item.cf_isselected()) m_CursorSelectionType = CursorSelectionState::Unselection;
+                        else                     m_CursorSelectionType = CursorSelectionState::Selection;
+                    }
+                    else
+                    { // singular case - selection doesn't matter - nothing to select
+                        m_CursorSelectionType = CursorSelectionState::Selection;
+                    }
                 }
             }
         }
     }
 }
 
-- (const DirectoryEntryInformation&) CurrentItem
+- (const DirectoryEntryInformation*) CurrentItem
 {
-    assert(m_CursorPosition < m_Data->SortedDirectoryEntries().size());
+    if(m_CursorPosition < 0) return nullptr;
+    assert(m_CursorPosition < (int)m_Data->SortedDirectoryEntries().size());
     assert(m_Data->DirectoryEntries().size() >= m_Data->SortedDirectoryEntries().size());
-    return m_Data->DirectoryEntries()[ m_Data->SortedDirectoryEntries()[m_CursorPosition] ];
+    return &m_Data->DirectoryEntries()[ m_Data->SortedDirectoryEntries()[m_CursorPosition] ];
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end

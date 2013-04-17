@@ -5,6 +5,7 @@
 
 #include "DirRead.h"
 
+@class PanelController;
 struct FlexChainedStringsChunk;
 
 struct PanelSortMode
@@ -39,7 +40,8 @@ struct PanelSortMode
     {}
     inline PanelSortMode(Mode _mode, bool _sepdir):
         sort(_mode),
-        sepdir(_sepdir)
+        sepdir(_sepdir),
+        show_hidden(true)
     {}
     
     inline bool operator ==(const PanelSortMode& _r) const
@@ -51,21 +53,37 @@ struct PanelSortMode
         return !(*this == _r);
     }
 };
-
-
+    
 class PanelData
 {
 public:
     typedef std::deque<DirectoryEntryInformation> DirEntryInfoT;
     typedef std::vector<unsigned>                 DirSortIndT; // value in this array is an index for DirEntryInfoT
+  
+    struct DirectoryChangeContext // allocated with malloc, should be freed upon receiving
+    {
+        DirEntryInfoT *entries;
+        char path[MAXPATHLEN];
+    };
+    
     
     PanelData();
     ~PanelData();
     
     // these methods should be called by a controller, since some view's props have to be updated
     bool GoToDirectory(const char *_path);
+    void GoToDirectoryWithContext(DirectoryChangeContext *_context); // _context will be removed with free()
     bool ReloadDirectory();
     
+    // asynchronous directory changing and reloading support
+    // the following routies should run in background mode
+    // callback are fired from background thread
+    // controller's properties are watched from background thread
+    static void GoToFSDirectoryAsync(const char *_path, // _path is allocated with malloc, should be freed upon receiving
+                                     PanelController *_controller,
+                                     void (^_on_completion) (DirectoryChangeContext*),
+                                     void (^_on_fail) (const char*, int)
+                                     );
     
     const DirEntryInfoT&    DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
@@ -118,6 +136,8 @@ public:
 
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:
+    void GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path);
+    
     void DestroyCurrentData();
     PanelData(const PanelData&);
     void operator=(const PanelData&);
@@ -125,7 +145,7 @@ private:
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
     static void DoSort(const DirEntryInfoT* _from, DirSortIndT *_to, PanelSortMode _mode);
     
-    char                                    m_DirectoryPath[__DARWIN_MAXPATHLEN]; // path without trailing slash
+    char                                    m_DirectoryPath[__DARWIN_MAXPATHLEN]; // path with trailing slash
     DirEntryInfoT                           *m_Entries;
     DirSortIndT                             *m_EntriesByRawName;   // sorted with raw strcmp comparison
     DirSortIndT                             *m_EntriesByHumanName; // sorted with human-reasonable literal sort

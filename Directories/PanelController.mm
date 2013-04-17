@@ -25,9 +25,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     uint64_t m_FastSearchLastType;
     unsigned m_FastSearchOffset;
     
-// directory size calculation support
+    // background directory size calculation support
     bool     m_IsStopDirectorySizeCounting;
     dispatch_queue_t m_DirectorySizeCountingQ;
+    
+    // background directory changing (loading) support
+    dispatch_queue_t m_DirectoryChangingQ;
 }
 
 @synthesize isStopDirectorySizeCounting = m_IsStopDirectorySizeCounting;
@@ -42,6 +45,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_FastSearchOffset = 0;
         m_IsStopDirectorySizeCounting = false;
         m_DirectorySizeCountingQ = dispatch_queue_create("com.example.paneldirsizecounting", 0);
+        m_DirectoryChangingQ = dispatch_queue_create("com.example.paneldirchanging", 0);
     }
 
     return self;
@@ -58,72 +62,42 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     [self setView:_view]; // do we need it?
 }
 
-- (void) HandleReturnButton
-{
-    int sort_pos = [m_View GetCursorPosition];
-    int raw_pos = m_Data->SortedDirectoryEntries()[sort_pos];
-    if( m_Data->DirectoryEntries()[raw_pos].isdir() )
-    {
-        m_IsStopDirectorySizeCounting = true;
-
-        char newpath[__DARWIN_MAXPATHLEN];
-        char oldpathname[__DARWIN_MAXPATHLEN];
-        char oldpathname_full[__DARWIN_MAXPATHLEN];
-            
-        bool gotoparent = m_Data->DirectoryEntries()[raw_pos].isdotdot();
-            
-        m_Data->GetDirectoryPathShort(oldpathname);
-        m_Data->GetDirectoryPathWithTrailingSlash(oldpathname_full);
-        m_Data->ComposeFullPathForEntry(raw_pos, newpath);
-        
-        if(m_Data->GoToDirectory(newpath))
-        {
-            if(gotoparent)
-            {
-                int newcursor_raw = m_Data->FindEntryIndex(oldpathname);
-                int newcursor_sort = 0;
-                if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
-                if(newcursor_sort < 0) newcursor_sort = 0;
-                    
-                [m_View DirectoryChanged:newcursor_sort Type:GoIntoParentDir];
-            }
-            else
-            {
-                [m_View DirectoryChanged:0 Type:GoIntoSubDir];
-            }
-            FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
-            m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(newpath);
-        }
-    }
-}
-
 - (void) HandleShiftReturnButton
 {
     char path[__DARWIN_MAXPATHLEN];
     int pos = [m_View GetCursorPosition];
-    int rawpos = m_Data->SortedDirectoryEntries()[pos];
-    m_Data->ComposeFullPathForEntry(rawpos, path);
-    [[NSWorkspace sharedWorkspace] openFile:[NSString stringWithUTF8String:path]];
+    if(pos >= 0)
+    {
+        int rawpos = m_Data->SortedDirectoryEntries()[pos];
+        m_Data->ComposeFullPathForEntry(rawpos, path);
+        [[NSWorkspace sharedWorkspace] openFile:[NSString stringWithUTF8String:path]];
+    }
 }
 
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode
 {
     int curpos = [m_View GetCursorPosition];
-    int rawpos = m_Data->SortedDirectoryEntries()[curpos];
-    
-    m_Data->SetCustomSortMode(_mode);
-    int newcurpos = m_Data->FindSortedEntryIndex(rawpos);
-    if(newcurpos >= 0)
+    if(curpos >= 0)
     {
-        [m_View SetCursorPosition:newcurpos];
+        int rawpos = m_Data->SortedDirectoryEntries()[curpos];
+        m_Data->SetCustomSortMode(_mode);
+        int newcurpos = m_Data->FindSortedEntryIndex(rawpos);
+        if(newcurpos >= 0)
+        {
+            [m_View SetCursorPosition:newcurpos];
+        }
+        else
+        {
+            // there's no such element in this representation
+            if(curpos < m_Data->SortedDirectoryEntries().size())
+                [m_View SetCursorPosition:curpos];
+            else
+                [m_View SetCursorPosition:(int)m_Data->SortedDirectoryEntries().size()-1];
+        }
     }
     else
     {
-        // there's no such element in this representation
-        if(curpos < m_Data->SortedDirectoryEntries().size())
-            [m_View SetCursorPosition:curpos];
-        else
-            [m_View SetCursorPosition:(int)m_Data->SortedDirectoryEntries().size()-1];
+        m_Data->SetCustomSortMode(_mode);
     }
     [m_View setNeedsDisplay:true];
 }
@@ -198,22 +172,91 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (bool) GoToDirectory:(const char*) _dir
 {
-    m_IsStopDirectorySizeCounting = true;
+    assert(_dir && strlen(_dir));
+    char *path = strdup(_dir);
+
+    auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            m_IsStopDirectorySizeCounting = true;
+            FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
+            m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_context->path);
+            m_Data->GoToDirectoryWithContext(_context);
+            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+        });
+    };
     
-    char oldpathname_full[__DARWIN_MAXPATHLEN];
-    m_Data->GetDirectoryPathWithTrailingSlash(oldpathname_full);
-    if(m_Data->GoToDirectory(_dir))
-    {
-        FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
-        m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_dir);
-        [m_View SetCursorPosition:0];
-        [m_View setNeedsDisplay:true];
-        return true;
+    auto onfail = ^(const char* _path, int _error) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText: [NSString stringWithFormat:@"Failed to go into directory %@", [[NSString alloc] initWithUTF8String:_path]]];
+        [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
+        dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
+    };
+    
+    dispatch_async(m_DirectoryChangingQ, ^{
+        PanelData::GoToFSDirectoryAsync(path, self, onsucc, onfail);
+    });
+    return true;
+}
+
+- (void) HandleReturnButton
+{
+    // TODO: need to implement opening files with associations later
+
+    int sort_pos = [m_View GetCursorPosition];
+    if(sort_pos < 0)
+        return;
+    int raw_pos = m_Data->SortedDirectoryEntries()[sort_pos];
+    if( !m_Data->DirectoryEntries()[raw_pos].isdir() )
+        return;
+
+    char path[__DARWIN_MAXPATHLEN];    
+    m_Data->ComposeFullPathForEntry(raw_pos, path);    
+    char *blockpath = strdup(path);    
+
+    auto onfail = ^(const char* _path, int _error) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", [[NSString alloc] initWithUTF8String:_path]]];
+        [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
+        dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
+    };
+        
+    if( m_Data->DirectoryEntries()[raw_pos].isdotdot() )
+    { // go to parent directory
+        //a bit crazy, but it's easier than handling lifetime of objects manually - let ARC do it's job
+        char curdirname[__DARWIN_MAXPATHLEN];
+        m_Data->GetDirectoryPathShort(curdirname);
+        NSString *nscurdirname = [[NSString alloc] initWithUTF8String:curdirname];
+
+        auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                m_IsStopDirectorySizeCounting = true;
+                FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
+                m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_context->path);
+                m_Data->GoToDirectoryWithContext(_context);
+
+                int newcursor_raw = m_Data->FindEntryIndex( [nscurdirname UTF8String] ), newcursor_sort = 0;
+                if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
+                if(newcursor_sort < 0) newcursor_sort = 0;
+                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
+            });
+        };
+        
+        dispatch_async(m_DirectoryChangingQ, ^{ PanelData::GoToFSDirectoryAsync(blockpath, self, onsucc, onfail); });
     }
     else
-    {
-        // TODO: error handling?
-        return false;
+    { // go into regular sub-directory
+        auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                m_IsStopDirectorySizeCounting = true;
+                FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
+                m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_context->path);
+                m_Data->GoToDirectoryWithContext(_context);
+
+                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
+            });
+        };
+
+        dispatch_async(m_DirectoryChangingQ, ^{ PanelData::GoToFSDirectoryAsync(blockpath, self, onsucc, onfail); });
     }
 }
 

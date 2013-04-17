@@ -1,10 +1,9 @@
-#include "PanelData.h"
-
+#import "PanelData.h"
+#import "PanelController.h"
 #import <algorithm>
 #import <string.h>
 #import <assert.h>
 #import <CoreFoundation/CoreFoundation.h>
-#import <mach/mach_time.h>
 #import "Common.h"
 #import "FlexChainedStringsChunk.h"
 
@@ -47,35 +46,11 @@ void PanelData::DestroyCurrentData()
 
 bool PanelData::GoToDirectory(const char *_path)
 {
-    // TODO: this process should be asynchronous
-    
     auto *entries = new std::deque<DirectoryEntryInformation>;
     
     if(FetchDirectoryListing(_path, entries) == 0)
     {
-        DestroyCurrentData();
-        m_Entries = entries;
-
-        strcpy(m_DirectoryPath, _path);
-        if( m_DirectoryPath[strlen(m_DirectoryPath)-1] == '/' )
-            m_DirectoryPath[strlen(m_DirectoryPath)-1] = 0;
-
-        // now sort our new data
-        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-            DoSort(m_Entries, m_EntriesByRawName, PanelSortMode(PanelSortMode::SortByRawCName, false)); });
-        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-            PanelSortMode mode;
-            mode.sepdir = false;
-            mode.sort = PanelSortMode::SortByName;
-            mode.show_hidden = m_CustomSortMode.show_hidden;
-            DoSort(m_Entries, m_EntriesByHumanName, mode); });
-        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-            DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
-        dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
-
-        // update stats
-        UpdateStatictics();
-        
+        GoToDirectoryInternal(entries, _path);
         return true; // can fail sometimes
     }
     else
@@ -86,9 +61,41 @@ bool PanelData::GoToDirectory(const char *_path)
     }
 }
 
+void PanelData::GoToDirectoryWithContext(DirectoryChangeContext *_context)
+{
+    GoToDirectoryInternal(_context->entries, _context->path);
+    free(_context);
+}
+
+void PanelData::GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path)
+{
+    DestroyCurrentData();
+    m_Entries = _entries;
+    
+    strcpy(m_DirectoryPath, _path);
+    if( m_DirectoryPath[strlen(m_DirectoryPath)-1] != '/' )
+        strcat(m_DirectoryPath, "/");
+    
+    // now sort our new data
+    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+        DoSort(m_Entries, m_EntriesByRawName, PanelSortMode(PanelSortMode::SortByRawCName, false)); });
+    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+        PanelSortMode mode;
+        mode.sepdir = false;
+        mode.sort = PanelSortMode::SortByName;
+        mode.show_hidden = m_CustomSortMode.show_hidden;
+        DoSort(m_Entries, m_EntriesByHumanName, mode); });
+    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+        DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
+    dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
+    
+    // update stats
+    UpdateStatictics();
+}
+
 bool PanelData::ReloadDirectory()
 {
-    // TODO: this process should be asynchronous    
+    // TODO: this process should be asynchronous
     char path[__DARWIN_MAXPATHLEN];
     GetDirectoryPathWithTrailingSlash(path);
     
@@ -175,31 +182,23 @@ void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPAT
     if(strcmp(ent_name, ".."))
     {
         strcpy(_buf, m_DirectoryPath);
-        strcat(_buf, "/");
         strcat(_buf, ent_name);
     }
     else
     {
         // need to cut the last slash
         strcpy(_buf, m_DirectoryPath);
-        char *s = _buf + strlen(_buf);
-        while(*s != '/')
-        {
-            --s;
-            
-            if(s == _buf) // we're on root dir now
-            {
-                ++s;
-                break;
-            }
-        }
-        *s = 0;
+        if(_buf[strlen(_buf)-1] == '/') _buf[strlen(_buf)-1] = 0; // cut trailing slash
+        char *s = strrchr(_buf, '/');
+        if(s != _buf) *s = 0;
+        else *(s+1) = 0;
     }
 }
 
 int PanelData::FindEntryIndex(const char *_filename) const
 {
     // bruteforce appoach for now
+    // TODO: optimize
     int n = 0;
     for(auto i = m_Entries->begin(); i < m_Entries->end(); ++i, ++n)
         if(strcmp((*i).namec(), _filename) == 0)
@@ -210,6 +209,7 @@ int PanelData::FindEntryIndex(const char *_filename) const
 int PanelData::FindSortedEntryIndex(unsigned _desired_value) const
 {
     // bruteforce appoach for now
+    // TODO: optimize
     int n = 0;
     for(auto i = m_EntriesByCustomSort->begin(); i < m_EntriesByCustomSort->end(); ++i, ++n)
         if(*i == _desired_value)
@@ -220,38 +220,27 @@ int PanelData::FindSortedEntryIndex(unsigned _desired_value) const
 void PanelData::GetDirectoryPath(char _buf[__DARWIN_MAXPATHLEN]) const
 {
     strcpy(_buf, m_DirectoryPath);
+    if( char *s = strrchr(_buf, '/') ) *s = 0;
 }
 
 void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const
 {
-    // TODO: optimize
-    if(strlen(m_DirectoryPath) > 0)
-    {
-        strcpy(_buf, m_DirectoryPath);
-        strcat(_buf, "/");
-    }
-    else
-    {
-        _buf[0] = '/';
-        _buf[1] = 0;
-    }
+    strcpy(_buf, m_DirectoryPath);    
 }
 
 void PanelData::GetDirectoryPathShort(char _buf[__DARWIN_MAXPATHLEN]) const
 {
-    if(strcmp(m_DirectoryPath, "") == 0)
+    if(strlen(m_DirectoryPath) == 0)
     {
         _buf[0] = 0;
     }
     else
     {
-        const char *s = m_DirectoryPath + strlen(m_DirectoryPath);
-        while(*(s-1) != '/')
-        {
-            --s;
-            assert(s > m_DirectoryPath); // sanity check - this should never happen
-        }
-        strcpy(_buf, s);
+        char tmp[MAXPATHLEN];
+        strcpy(tmp, m_DirectoryPath);
+        if(char *s = strrchr(tmp, '/')) *s = 0; // cut trailing slash
+        if(char *s = strrchr(tmp, '/')) strcpy(_buf, s+1);
+        else                            strcpy(_buf, tmp);
     }
 }
 
@@ -333,6 +322,8 @@ void PanelData::DoSort(const PanelData::DirEntryInfoT* _from, PanelData::DirSort
 {
     _to->clear();
     _to->resize(_from->size());
+    if(_to->empty())
+        return;
   
     if(_mode.show_hidden)
     {
@@ -444,11 +435,13 @@ unsigned PanelData::GetTotalFilesInDirectory() const
 
 int PanelData::SortPosToRawPos(int _pos) const
 {
+    assert(_pos >= 0 && _pos < m_EntriesByCustomSort->size());
     return (*m_EntriesByCustomSort)[_pos];
 }
 
 const DirectoryEntryInformation& PanelData::EntryAtRawPosition(int _pos) const
 {
+    assert(_pos >= 0 && _pos < m_Entries->size());
     return (*m_Entries)[_pos];
 }
 
@@ -631,6 +624,33 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long 
         }
     }
     return false;
+}
+
+//void PanelData::GoToFSDirectoryAsync(const char *_path, PanelController *_controller)
+void PanelData::GoToFSDirectoryAsync(const char *_path,
+                                     PanelController *_controller,
+                                     void (^_on_completion) (DirectoryChangeContext*),
+                                     void (^_on_fail) (const char*, int)
+                                     )
+
+{
+    auto *entries = new std::deque<DirectoryEntryInformation>;
+    int ret = FetchDirectoryListing(_path, entries);
+    
+//    sleep(5);
+    
+    if(ret == 0)
+    {
+        DirectoryChangeContext *c = (DirectoryChangeContext*) malloc(sizeof(DirectoryChangeContext));
+        c->entries = entries;
+        strcpy(c->path, _path);
+        _on_completion(c);
+    }
+    else
+    {
+        _on_fail(_path, ret);
+    }
+    free( (void*) _path);
 }
 
 

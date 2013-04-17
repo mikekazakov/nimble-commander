@@ -77,6 +77,7 @@
 -(void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    // TODO: data, controllers and view deletion. leaks now
 }
 
 - (void)windowDidLoad
@@ -469,9 +470,13 @@
         PanelView *curview = [self ActivePanelView];
         PanelData *curdata = [self ActivePanelData];
         int curpos = [curview GetCursorPosition];
-        int rawpos = curdata->SortPosToRawPos(curpos);
-        if(!curdata->EntryAtRawPosition(rawpos).isdotdot())
-            [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
+        if(curpos >= 0)
+        {
+            int rawpos = curdata->SortPosToRawPos(curpos);
+            if(!curdata->EntryAtRawPosition(rawpos).isdotdot())
+                [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
+        }
+        
     }
 }
 
@@ -498,11 +503,9 @@
     }
     else
     {
-        int curpos = [[self ActivePanelView] GetCursorPosition];
-        int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
-        auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
-        if(!item.isdotdot()) // do not try to delete a parent directory
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+        auto const *item = [[self ActivePanelView] CurrentItem];
+        if(item && !item->isdotdot())
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
     }
     
     if(!files)
@@ -571,11 +574,9 @@
     }
     else
     {
-        int curpos = [[self ActivePanelView] GetCursorPosition];
-        int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
-        auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
-        if(!item.isdotdot()) // do not try to copy a parent directory
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+        auto const *item = [[self ActivePanelView] CurrentItem];
+        if(item && !item->isdotdot())
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
     }
     
     if(!files)
@@ -609,15 +610,16 @@
     // process only current cursor item
     assert([self IsPanelActive]);
     
-    int curpos = [[self ActivePanelView] GetCursorPosition];
-    int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
-    auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
-    if(item.isdotdot())
+    auto const *item = [[self ActivePanelView] CurrentItem];
+    if(!item)
         return;
-    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+    if(item->isdotdot())
+        return;
+
+    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
     
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] iscopying:true handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->namec()] iscopying:true handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -659,13 +661,11 @@
     }
     else
     {
-        int curpos = [[self ActivePanelView] GetCursorPosition];
-        int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
-        auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
-        if(!item.isdotdot()) // do not try to rename a parent directory
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+        auto const *item = [[self ActivePanelView] CurrentItem];
+        if(item && !item->isdotdot())
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
     }
-    
+
     if(!files)
         return;        
     
@@ -699,16 +699,16 @@
     // process only current cursor item
     assert([self IsPanelActive]);
     
-    int curpos = [[self ActivePanelView] GetCursorPosition];
-    int rawpos = [self ActivePanelData]->SortPosToRawPos(curpos);
-    auto const &item = [self ActivePanelData]->EntryAtRawPosition(rawpos);
-    if(item.isdotdot())
+    auto const *item = [[self ActivePanelView] CurrentItem];
+    if(!item)
+        return;
+    if(item->isdotdot())
         return;
     
-    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
     
     MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item.namec()] iscopying:false handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->namec()] iscopying:false handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {

@@ -19,18 +19,20 @@ enum class PanelViewType
     ViewWide
 };
 
-@interface PanelView : NSView
-
-enum DirectoryChangeType
+enum class PanelViewDirectoryChangeType
 {
     GoIntoSubDir,
     GoIntoParentDir,
     GoIntoOtherDir
 };
 
+@interface PanelView : NSView
+
+
 // directory traversing
 - (void) SetPanelData: (PanelData*) _data;
-- (void) DirectoryChanged:(int) _new_curpos Type:(DirectoryChangeType)_type;
+//- (void) DirectoryChanged:(int) _new_curpos Type:(PanelViewDirectoryChangeType)_type;
+- (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor;
 
 // TODO: consider moving the following code to PanelController class
 // user input handling          normal keys
@@ -55,6 +57,6 @@ enum DirectoryChangeType
 - (void) EnsureCursorIsVisible;
 - (int) GetCursorPosition;
 - (void) SetCursorPosition:(int)_pos; // will call EnsureCursorIsVisible implicitly
-- (const DirectoryEntryInformation&) CurrentItem; // return an item at current cursor position
+- (const DirectoryEntryInformation*) CurrentItem; // return an item at current cursor position if any
 
 @end

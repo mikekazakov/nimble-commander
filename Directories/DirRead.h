@@ -126,6 +126,7 @@ struct DirectoryEntryInformation // 128b long
 };
 
 int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformation> *_target);
+// return 0 upon success, error code otherwise
 
 // releasing a following CF values is a caller's responsibility
 CFStringRef FileNameFromDirectoryEntryInformation(const DirectoryEntryInformation& _dirent);

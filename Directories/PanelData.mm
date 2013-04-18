@@ -625,7 +625,7 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long 
             { // need to adjust our selected bytes statistic
                 if(i.size != DIRENTINFO_INVALIDSIZE)
                 {
-                    assert(i.size < m_SelectedItemsSizeBytes);
+                    assert(i.size <= m_SelectedItemsSizeBytes);
                     m_SelectedItemsSizeBytes -= i.size;
                 }
                 m_SelectedItemsSizeBytes += _size;

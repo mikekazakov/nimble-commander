@@ -10,7 +10,10 @@
 
 @class PanelController;
 
+typedef bool (^PanelDirectorySizeCalculate_CancelChecker)(void);
+
 void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs, // transfered ownership
                                  const char *_root_path,           // transfered ownership, allocated with malloc
-                                 PanelController *_panel);
+                                 PanelController *_panel,
+                                 PanelDirectorySizeCalculate_CancelChecker _checker);
 

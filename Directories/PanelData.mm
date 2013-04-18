@@ -48,7 +48,7 @@ bool PanelData::GoToDirectory(const char *_path)
 {
     auto *entries = new std::deque<DirectoryEntryInformation>;
     
-    if(FetchDirectoryListing(_path, entries) == 0)
+    if(FetchDirectoryListing(_path, entries, nil) == 0)
     {
         GoToDirectoryInternal(entries, _path);
         return true; // can fail sometimes
@@ -93,6 +93,13 @@ void PanelData::GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path
     UpdateStatictics();
 }
 
+void PanelData::ReloadDirectoryWithContext(DirectoryChangeContext *_context)
+{
+    assert(strcmp(_context->path, m_DirectoryPath) == 0);
+    ReloadDirectoryInternal(_context->entries);
+    free(_context);
+}
+
 bool PanelData::ReloadDirectory()
 {
     // TODO: this process should be asynchronous
@@ -100,62 +107,9 @@ bool PanelData::ReloadDirectory()
     GetDirectoryPathWithTrailingSlash(path);
     
     auto *entries = new std::deque<DirectoryEntryInformation>;
-    if(FetchDirectoryListing(path, entries) == 0)
+    if(FetchDirectoryListing(path, entries, nil) == 0)
     {
-        // sort new entries by raw c name for sync-swapping needs        
-        auto *dirbyrawcname = new DirSortIndT;
-        DoSort(entries, dirbyrawcname, PanelSortMode(PanelSortMode::SortByRawCName, false));
-        
-        // transfer custom data to new array using sorted indeces arrays
-        size_t dst_i = 0, dst_e = entries->size(),
-               src_i = 0, src_e = m_Entries->size();
-        for(;src_i < src_e; ++src_i)
-        {
-            int src = (*m_EntriesByRawName)[src_i];
-check:      int dst = (*dirbyrawcname)[dst_i];
-            int cmp = strcmp((*m_Entries)[src].namec(), (*entries)[dst].namec());
-            if( cmp == 0 )
-            {
-                auto &item_dst = (*entries)[dst];
-                const auto &item_src = (*m_Entries)[src];
-                
-                item_dst.cflags = item_src.cflags;
-                if(item_dst.size == DIRENTINFO_INVALIDSIZE)
-                    item_dst.size = item_src.size; // transfer sizes for folders - it can be calculated earlier
-                
-                ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
-                if(dst_i == dst_e) break;
-            }
-            else if( cmp > 0 )
-            {
-                dst_i++;
-                if(dst_i == dst_e) break;
-                goto check;
-            }
-        }
-        
-        // erase old data
-        DestroyCurrentData();
-        delete m_EntriesByRawName;
-        
-        // put a new data in a place
-        m_Entries = entries;
-        m_EntriesByRawName = dirbyrawcname;
-
-        // now sort our new data
-        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-            PanelSortMode mode;
-            mode.sepdir = false;
-            mode.sort = PanelSortMode::SortByName;
-            mode.show_hidden = m_CustomSortMode.show_hidden;
-            DoSort(m_Entries, m_EntriesByHumanName, mode); });
-        dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-            DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
-        dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
-
-        // update stats
-        UpdateStatictics();
-
+        ReloadDirectoryInternal(entries);
         return true;
     }
     else
@@ -163,6 +117,68 @@ check:      int dst = (*dirbyrawcname)[dst_i];
         delete entries;
         return false;
     }
+}
+
+void PanelData::ReloadDirectoryInternal(DirEntryInfoT *_entries)
+{
+    // sort new entries by raw c name for sync-swapping needs
+    auto *dirbyrawcname = new DirSortIndT;
+    PanelSortMode rawsortmode;
+    rawsortmode.sort = PanelSortMode::SortByRawCName;
+    rawsortmode.sepdir = false;
+    rawsortmode.show_hidden = true;
+    
+    DoSort(_entries, dirbyrawcname, rawsortmode);
+        
+    // transfer custom data to new array using sorted indeces arrays
+    size_t dst_i = 0, dst_e = _entries->size(),
+    src_i = 0, src_e = m_Entries->size();
+    for(;src_i < src_e; ++src_i)
+    {
+        int src = (*m_EntriesByRawName)[src_i];
+check:  int dst = (*dirbyrawcname)[dst_i];
+        int cmp = strcmp((*m_Entries)[src].namec(), (*_entries)[dst].namec());
+        if( cmp == 0 )
+        {
+            auto &item_dst = (*_entries)[dst];
+            const auto &item_src = (*m_Entries)[src];
+                
+            item_dst.cflags = item_src.cflags;
+            if(item_dst.size == DIRENTINFO_INVALIDSIZE)
+                item_dst.size = item_src.size; // transfer sizes for folders - it can be calculated earlier
+                
+            ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
+            if(dst_i == dst_e) break;
+        }
+        else if( cmp > 0 )
+        {
+            dst_i++;
+            if(dst_i == dst_e) break;
+            goto check;
+        }
+    }
+
+    // erase old data
+    DestroyCurrentData();
+    delete m_EntriesByRawName;
+        
+    // put a new data in a place
+    m_Entries = _entries;
+    m_EntriesByRawName = dirbyrawcname;
+        
+    // now sort our new data with custom sortings
+    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+        PanelSortMode mode;
+        mode.sepdir = false;
+        mode.sort = PanelSortMode::SortByName;
+        mode.show_hidden = m_CustomSortMode.show_hidden;
+        DoSort(m_Entries, m_EntriesByHumanName, mode); });
+    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+        DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
+    dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
+    
+    // update stats
+    UpdateStatictics();
 }
 
 const PanelData::DirEntryInfoT& PanelData::DirectoryEntries() const
@@ -510,13 +526,10 @@ FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries() const
     FlexChainedStringsChunk *chunk = FlexChainedStringsChunk::Allocate();
     FlexChainedStringsChunk *last = chunk;
 
-    size_t i = 0, e = (int)m_Entries->size();
-    for(;i!=e;++i)
-    {
-        const auto &item = (*m_Entries)[i];
-        if(item.cf_isselected())
-            last = last->AddString(item.namec(), item.namelen, 0);
-    }
+    for(auto const &i: *m_Entries)
+        if(i.cf_isselected())
+            last = last->AddString(i.namec(), i.namelen, 0);
+    
     return chunk;
 }
 
@@ -626,30 +639,48 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long 
     return false;
 }
 
-//void PanelData::GoToFSDirectoryAsync(const char *_path, PanelController *_controller)
-void PanelData::GoToFSDirectoryAsync(const char *_path,
-                                     PanelController *_controller,
+void PanelData::LoadFSDirectoryAsync(const char *_path,
                                      void (^_on_completion) (DirectoryChangeContext*),
-                                     void (^_on_fail) (const char*, int)
+                                     void (^_on_fail) (const char*, int),
+                                     FetchDirectoryListing_CancelChecker _checker
                                      )
 
-{
+{    
+    if(_checker())
+    {
+        free( (void*) _path);
+        return;
+    }
+
     auto *entries = new std::deque<DirectoryEntryInformation>;
-    int ret = FetchDirectoryListing(_path, entries);
+    int ret = FetchDirectoryListing(_path, entries, _checker);
     
 //    sleep(5);
-    
-    if(ret == 0)
+
+    if( !_checker() )
     {
-        DirectoryChangeContext *c = (DirectoryChangeContext*) malloc(sizeof(DirectoryChangeContext));
-        c->entries = entries;
-        strcpy(c->path, _path);
-        _on_completion(c);
+        if(ret == 0)
+        {
+            DirectoryChangeContext *c = (DirectoryChangeContext*) malloc(sizeof(DirectoryChangeContext));
+            c->entries = entries; // giving ownership
+            strcpy(c->path, _path);
+            _on_completion(c);
+        }
+        else
+        {
+            for(auto &i:*entries)
+                i.destroy();
+            delete entries;
+            _on_fail(_path, ret);
+        }
     }
     else
     {
-        _on_fail(_path, ret);
+        for(auto &i:*entries)
+            i.destroy();
+        delete entries;
     }
+
     free( (void*) _path);
 }
 

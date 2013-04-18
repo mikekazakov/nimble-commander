@@ -454,7 +454,6 @@ struct CursorSelectionState
         if(n >= max_files_to_show) break; // draw only visible
         const auto& current = raw_entries[*i];
         
-        memset(buff, 0, sizeof(buff));
         size_t buf_size = 0;
         
         InterpretUTF8BufferAsUniChar( current.name(), current.namelen, buff, &buf_size, 0xFFFD);

@@ -14,7 +14,9 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformation> *_target)
+int FetchDirectoryListing(const char* _path,
+                          std::deque<DirectoryEntryInformation> *_target,
+                          FetchDirectoryListing_CancelChecker _checker)
 {
     assert(sizeof(DirectoryEntryInformation) == 128);
     _target->clear();
@@ -23,6 +25,12 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
     if(!dirp)
         return errno;
 
+    if(_checker && _checker())
+    {
+        closedir(dirp);
+        return 0;
+    }
+    
     dirent *entp;
 
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
@@ -35,9 +43,15 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
 
     while((entp = _readdir_unlocked(dirp, 1)) != NULL)
     {
+        if(_checker && _checker())
+        {
+            closedir(dirp);
+            return 0;
+        }
+        
         if(entp->d_ino == 0) continue; // apple's documentation suggest to skip such files
-        if(entp->d_namlen == 1 && strcmp(entp->d_name, ".") == 0) continue; // do not process self entry
-        if(entp->d_namlen == 2 && strcmp(entp->d_name, "..") == 0) // special case for dot-dot directory
+        if(entp->d_namlen == 1 && entp->d_name[0] ==  '.') continue; // do not process self entry
+        if(entp->d_namlen == 2 && entp->d_name[0] ==  '.' && entp->d_name[1] ==  '.') // special case for dot-dot directory
         {
             need_to_add_dot_dot = false;
             
@@ -98,6 +112,7 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
         DirectoryEntryInformation *current = &(*i);
         
         dispatch_group_async(statg, statq, ^{
+            if(_checker && _checker()) return;
             char filename[__DARWIN_MAXPATHLEN];
             const char *entryname = current->namec();
             memcpy(filename, pathwithslashp, pathwithslash_len);
@@ -164,27 +179,4 @@ int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformatio
 
     return 0;
 }
-
-CFStringRef FileNameFromDirectoryEntryInformation(const DirectoryEntryInformation& _dirent)
-{
-    CFStringRef s = CFStringCreateWithBytes(0,
-                                                  (UInt8*)_dirent.name(),
-                                                  _dirent.namelen,
-                                                  kCFStringEncodingUTF8,
-                                                  false
-                                            );
-    return s;
-}
-
-CFStringRef FileNameNoCopyFromDirectoryEntryInformation(const DirectoryEntryInformation& _dirent)
-{
-    CFStringRef s = CFStringCreateWithBytesNoCopy(0,
-                                                  (UInt8*)_dirent.name(),
-                                                  _dirent.namelen,
-                                                  kCFStringEncodingUTF8,
-                                                  false,
-                                                  kCFAllocatorNull);
-    return s;
-}
-
 

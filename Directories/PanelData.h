@@ -71,18 +71,19 @@ public:
     ~PanelData();
     
     // these methods should be called by a controller, since some view's props have to be updated
-    bool GoToDirectory(const char *_path);
+    bool GoToDirectory(const char *_path); // sync version
     void GoToDirectoryWithContext(DirectoryChangeContext *_context); // _context will be removed with free()
-    bool ReloadDirectory();
+    bool ReloadDirectory(); // sync version
+    void ReloadDirectoryWithContext(DirectoryChangeContext *_context); // _context will be removed with free()
     
     // asynchronous directory changing and reloading support
     // the following routies should run in background mode
     // callback are fired from background thread
     // controller's properties are watched from background thread
-    static void GoToFSDirectoryAsync(const char *_path, // _path is allocated with malloc, should be freed upon receiving
-                                     PanelController *_controller,
+    static void LoadFSDirectoryAsync(const char *_path, // _path is allocated with malloc, should be freed upon receiving
                                      void (^_on_completion) (DirectoryChangeContext*),
-                                     void (^_on_fail) (const char*, int)
+                                     void (^_on_fail) (const char*, int),
+                                     FetchDirectoryListing_CancelChecker _checker // can not be nil, put {return false;} as dummy
                                      );
     
     const DirEntryInfoT&    DirectoryEntries() const;
@@ -136,7 +137,8 @@ public:
 
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:
-    void GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path);
+    void GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path); // passing ownership of _entries
+    void ReloadDirectoryInternal(DirEntryInfoT *_entries); // passing ownership of _entries
     
     void DestroyCurrentData();
     PanelData(const PanelData&);
@@ -146,6 +148,8 @@ private:
     static void DoSort(const DirEntryInfoT* _from, DirSortIndT *_to, PanelSortMode _mode);
     
     char                                    m_DirectoryPath[__DARWIN_MAXPATHLEN]; // path with trailing slash
+    // m_Entries container will change every time directory change/reloads,
+    // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
     DirEntryInfoT                           *m_Entries;
     DirSortIndT                             *m_EntriesByRawName;   // sorted with raw strcmp comparison
     DirSortIndT                             *m_EntriesByHumanName; // sorted with human-reasonable literal sort

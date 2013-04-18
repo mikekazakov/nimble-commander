@@ -30,10 +30,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     dispatch_queue_t m_DirectorySizeCountingQ;
     
     // background directory changing (loading) support
-    dispatch_queue_t m_DirectoryChangingQ;
+    bool     m_IsStopDirectoryLoading;
+    dispatch_queue_t m_DirectoryLoadingQ;
+    bool     m_IsStopDirectoryReLoading;
+    dispatch_queue_t m_DirectoryReLoadingQ;
 }
-
-@synthesize isStopDirectorySizeCounting = m_IsStopDirectorySizeCounting;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -44,8 +45,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_FastSearchLastType = 0;
         m_FastSearchOffset = 0;
         m_IsStopDirectorySizeCounting = false;
+        m_IsStopDirectoryLoading = false;
         m_DirectorySizeCountingQ = dispatch_queue_create("com.example.paneldirsizecounting", 0);
-        m_DirectoryChangingQ = dispatch_queue_create("com.example.paneldirchanging", 0);
+        m_DirectoryLoadingQ = dispatch_queue_create("com.example.paneldirloading", 0);
+        m_DirectoryReLoadingQ = dispatch_queue_create("com.example.paneldirreloading", 0);
     }
 
     return self;
@@ -170,16 +173,23 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
 }
 
+- (void) ResetUpdatesObservation:(const char *) _new_path
+{
+    FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
+    m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_new_path);
+}
+
 - (bool) GoToDirectory:(const char*) _dir
 {
     assert(_dir && strlen(_dir));
     char *path = strdup(_dir);
 
     auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+        m_IsStopDirectorySizeCounting = true;
+        m_IsStopDirectoryLoading = true;
+        m_IsStopDirectoryReLoading = true;        
         dispatch_async(dispatch_get_main_queue(), ^{
-            m_IsStopDirectorySizeCounting = true;
-            FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
-            m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_context->path);
+            [self ResetUpdatesObservation:_context->path];
             m_Data->GoToDirectoryWithContext(_context);
             [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
         });
@@ -192,8 +202,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
     };
     
-    dispatch_async(m_DirectoryChangingQ, ^{
-        PanelData::GoToFSDirectoryAsync(path, self, onsucc, onfail);
+    if(m_IsStopDirectoryLoading)
+        dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
+    dispatch_async(m_DirectoryLoadingQ, ^{
+        PanelData::LoadFSDirectoryAsync(path, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;} );
     });
     return true;
 }
@@ -219,7 +231,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
         dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
     };
-        
+    
+    if(m_IsStopDirectoryLoading)
+        dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
+    
     if( m_Data->DirectoryEntries()[raw_pos].isdotdot() )
     { // go to parent directory
         //a bit crazy, but it's easier than handling lifetime of objects manually - let ARC do it's job
@@ -228,10 +243,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         NSString *nscurdirname = [[NSString alloc] initWithUTF8String:curdirname];
 
         auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+            m_IsStopDirectorySizeCounting = true;
+            m_IsStopDirectoryLoading = true;
+            m_IsStopDirectoryReLoading = true;
             dispatch_async(dispatch_get_main_queue(), ^{
-                m_IsStopDirectorySizeCounting = true;
-                FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
-                m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_context->path);
+                [self ResetUpdatesObservation:_context->path];
                 m_Data->GoToDirectoryWithContext(_context);
 
                 int newcursor_raw = m_Data->FindEntryIndex( [nscurdirname UTF8String] ), newcursor_sort = 0;
@@ -241,50 +257,75 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             });
         };
         
-        dispatch_async(m_DirectoryChangingQ, ^{ PanelData::GoToFSDirectoryAsync(blockpath, self, onsucc, onfail); });
+        dispatch_async(m_DirectoryLoadingQ, ^{
+            PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
+        });
     }
     else
     { // go into regular sub-directory
         auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+            m_IsStopDirectorySizeCounting = true;
+            m_IsStopDirectoryLoading = true;
+            m_IsStopDirectoryReLoading = true;            
             dispatch_async(dispatch_get_main_queue(), ^{
-                m_IsStopDirectorySizeCounting = true;
-                FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
-                m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_context->path);
+                [self ResetUpdatesObservation:_context->path];
                 m_Data->GoToDirectoryWithContext(_context);
 
                 [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
             });
         };
 
-        dispatch_async(m_DirectoryChangingQ, ^{ PanelData::GoToFSDirectoryAsync(blockpath, self, onsucc, onfail); });
+        dispatch_async(m_DirectoryLoadingQ, ^{
+            PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
+        });
     }
 }
 
 - (void) RefreshDirectory
-{
-    char oldcursorname[__DARWIN_MAXPATHLEN];
+{    
+    char dirpath[MAXPATHLEN];
+    m_Data->GetDirectoryPathWithTrailingSlash(dirpath);
+    char *path = strdup(dirpath);
+    
     int oldcursorpos = [m_View GetCursorPosition];
-    strcpy(oldcursorname,
-           m_Data->DirectoryEntries()[m_Data->SortedDirectoryEntries()[oldcursorpos]].namec()
-           );
+    NSString *oldcursorname = (oldcursorpos >= 0 ? [[NSString alloc] initWithUTF8String:[m_View CurrentItem]->namec()] : nil);
     
-    m_Data->ReloadDirectory();
+    auto onfail = ^(const char* _path, int _error) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText: [NSString stringWithFormat:@"Failed to update directory directory %@", [[NSString alloc] initWithUTF8String:_path]]];
+        [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
+        dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
+    };
     
-    int newcursorrawpos = m_Data->FindEntryIndex(oldcursorname);
-    if( newcursorrawpos >= 0 )
-    {
-        int sortpos = m_Data->FindSortedEntryIndex(newcursorrawpos);
-        assert(sortpos >= 0);
-        [m_View SetCursorPosition:sortpos];
-    }
-    else
-    {
-        if( oldcursorpos >= m_Data->SortedDirectoryEntries().size() )
-            oldcursorpos = (int)m_Data->SortedDirectoryEntries().size() - 1; // assuming that any directory will have at leat ".."
-        [m_View SetCursorPosition:oldcursorpos];
-    }
-    
-    [m_View setNeedsDisplay:true];
+    auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+        m_IsStopDirectoryReLoading = true;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            m_Data->ReloadDirectoryWithContext(_context);
+            assert(!m_Data->DirectoryEntries().empty()); // algo logic doesn't support this case now
+
+            int newcursorrawpos = m_Data->FindEntryIndex([oldcursorname UTF8String]);
+            if( newcursorrawpos >= 0 )
+            {
+                int sortpos = m_Data->FindSortedEntryIndex(newcursorrawpos);
+                [m_View SetCursorPosition:sortpos >= 0 ? sortpos : 0];
+            }
+            else
+            {
+                if( oldcursorpos < m_Data->SortedDirectoryEntries().size() )
+                    [m_View SetCursorPosition:oldcursorpos];
+                else
+                    [m_View SetCursorPosition:int(m_Data->SortedDirectoryEntries().size() - 1)]; // assuming that any directory will have at leat ".."
+            }
+
+            [m_View setNeedsDisplay:true];
+        });  
+    };
+
+    if(m_IsStopDirectoryReLoading)
+        dispatch_async(m_DirectoryReLoadingQ, ^{ m_IsStopDirectoryReLoading = false; } );
+    dispatch_async(m_DirectoryReLoadingQ, ^{
+        PanelData::LoadFSDirectoryAsync(path, onsucc, onfail, ^bool(){return m_IsStopDirectoryReLoading;});
+    });
 }
 
 - (void)HandleFastSearch: (NSString*) _key
@@ -409,7 +450,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     const char *str = strdup(dir);
     
     dispatch_async(m_DirectorySizeCountingQ, ^{
-        PanelDirectorySizeCalculate(_files, str, self);
+        PanelDirectorySizeCalculate(_files, str, self, ^bool{return m_IsStopDirectorySizeCounting;});
     });
 }
 
@@ -428,6 +469,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 - (void) DidCalculatedDirectorySizeForEntry:(const char*) _dir size:(unsigned long)_size
 {
     // TODO: lock panel data?
+    // CHECK ME!!!!!!!!!!!!!!!!!!!!!!
+    // gues it's better to move the following line into main thread
+    // it may be a race condition with possible UB here. BAD!
     if(m_Data->SetCalculatedSizeForDirectory(_dir, _size))
     {
         dispatch_async(dispatch_get_main_queue(), ^{

@@ -26,9 +26,9 @@
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
 // return -1 on error
-static int64_t DirectorySizeCalculateRec(char *_path, size_t _path_len, bool *_iscancelling, PanelController *_panel)
+static int64_t DirectorySizeCalculateRec(char *_path, size_t _path_len, bool *_iscancelling, PanelDirectorySizeCalculate_CancelChecker _checker)
 {
-    if(_panel.isStopDirectorySizeCounting)
+    if(_checker())
     {
         *_iscancelling = true;
         return -1;
@@ -47,7 +47,7 @@ static int64_t DirectorySizeCalculateRec(char *_path, size_t _path_len, bool *_i
     
     while((entp = _readdir_unlocked(dirp, 1)) != NULL)
     {
-        if(_panel.isStopDirectorySizeCounting)
+        if(_checker())
         {
             *_iscancelling = true;
             goto cleanup;
@@ -60,7 +60,7 @@ static int64_t DirectorySizeCalculateRec(char *_path, size_t _path_len, bool *_i
         memcpy(var, entp->d_name, entp->d_namlen+1);
         if(entp->d_type == DT_DIR)
         {
-            int64_t ret = DirectorySizeCalculateRec(_path, _path_len + entp->d_namlen + 1, _iscancelling, _panel);
+            int64_t ret = DirectorySizeCalculateRec(_path, _path_len + entp->d_namlen + 1, _iscancelling, _checker);
             if(ret > 0 )
                 mysize += ret;
             if(*_iscancelling)
@@ -80,9 +80,12 @@ cleanup:
     return mysize;
 }
 
-void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs, const char *_root_path, PanelController *_panel)
+void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs,
+                                 const char *_root_path,
+                                 PanelController *_panel,
+                                 PanelDirectorySizeCalculate_CancelChecker _checker)
 {
-    if(_panel.isStopDirectorySizeCounting)
+    if(_checker())
         return;
 
     bool iscancelling = false;
@@ -94,9 +97,9 @@ void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs, const char *_r
     {
         memcpy(var, i.str(), i.len+1);
         
-        int64_t size = DirectorySizeCalculateRec(path, strlen(path), &iscancelling, _panel);
+        int64_t size = DirectorySizeCalculateRec(path, strlen(path), &iscancelling, _checker);
 
-        if(iscancelling || _panel.isStopDirectorySizeCounting) // check if we need to quit
+        if(iscancelling || _checker()) // check if we need to quit
             goto cleanup;
 
         if(size >= 0)

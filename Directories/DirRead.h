@@ -125,11 +125,19 @@ struct DirectoryEntryInformation // 128b long
     }
 };
 
-int FetchDirectoryListing(const char* _path, std::deque<DirectoryEntryInformation> *_target);
+
+typedef bool (^FetchDirectoryListing_CancelChecker)(void);
+// return true if algorithm need to stop, false if it's ok to go on
+
+int FetchDirectoryListing(const char* _path,
+                          std::deque<DirectoryEntryInformation> *_target,
+                          FetchDirectoryListing_CancelChecker _checker // _check can be nil
+                          );
 // return 0 upon success, error code otherwise
+// also return 0 upon cancelling, caller should check this condition
 
 // releasing a following CF values is a caller's responsibility
-CFStringRef FileNameFromDirectoryEntryInformation(const DirectoryEntryInformation& _dirent);
-CFStringRef FileNameNoCopyFromDirectoryEntryInformation(const DirectoryEntryInformation& _dirent);
+//CFStringRef FileNameFromDirectoryEntryInformation(const DirectoryEntryInformation& _dirent);
+//CFStringRef FileNameNoCopyFromDirectoryEntryInformation(const DirectoryEntryInformation& _dirent);
 
 

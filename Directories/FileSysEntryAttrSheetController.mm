@@ -148,6 +148,18 @@ struct OtherAttrs
 {
     [super windowDidLoad];
     
+    // Set title.
+    if (m_Files->amount == 1)
+    {
+        [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %@",
+                                    [NSString stringWithUTF8String:m_Files->strings[0].str()]]];
+    }
+    else
+    {
+        [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %i "
+                                    "selected items", m_Files->amount]];
+    }
+    
     [self PopulateControls];
 }
 

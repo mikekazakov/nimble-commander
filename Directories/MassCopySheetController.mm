@@ -28,7 +28,6 @@
  
     [[self TextField] setStringValue:m_InitialPath];
     [[self TextField] becomeFirstResponder];
-    [[self window] setDefaultButtonCell:[[self CopyButton] cell]];
     
     if(m_IsCopying)
     {

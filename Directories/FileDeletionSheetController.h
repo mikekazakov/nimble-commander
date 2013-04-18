@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "FileDeletionOperation.h"
+#import "ButtonWithOptions.h"
 
 struct FlexChainedStringsChunk;
 
@@ -17,10 +18,11 @@ typedef void (^FileDeletionSheetCompletionHandler)(int result);
 @interface FileDeletionSheetController : NSWindowController
 
 @property (weak) IBOutlet NSTextField *Label;
-@property (weak) IBOutlet NSButton *DeleteButton;
-@property (weak) IBOutlet NSPopUpButton *DeleteTypeButton;
+@property (weak) IBOutlet ButtonWithOptions *DeleteButton;
+@property (strong) IBOutlet NSMenu *DeleteButtonMenu;
 - (IBAction)OnDeleteAction:(id)sender;
 - (IBAction)OnCancelAction:(id)sender;
+- (IBAction)OnMenuItem:(NSMenuItem *)sender;
 
 - (id)init;
 

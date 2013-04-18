@@ -72,8 +72,6 @@
     [[self ExistingFileSize] setIntegerValue:m_ExiSize];
     [[self RememberCheck] setState:NSOffState];
     [[self RememberCheck] setHidden:m_Single];
-        
-    [[self window] setDefaultButtonCell:[[self OverwriteButton] cell]];
 }
 
 - (void)ShowDialogForWindow:(NSWindow *)_parent

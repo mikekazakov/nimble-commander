@@ -16,6 +16,7 @@
 		B55DB19C171B0E9700E3610E /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B55DB19B171B0E9700E3610E /* question_icon.png */; };
 		B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */; };
 		B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
+		B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
 		B5AD9CE31706D5350099BC6D /* TimedDummyOperationTestDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */; };
 		B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
 		B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
@@ -88,6 +89,8 @@
 		B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionSheetController.h; sourceTree = "<group>"; };
 		B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionSheetController.mm; sourceTree = "<group>"; };
 		B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileDeletionSheetController.xib; sourceTree = "<group>"; };
+		B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonWithOptions.h; sourceTree = "<group>"; };
+		B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ButtonWithOptions.m; sourceTree = "<group>"; };
 		B5AD9CE01706D5350099BC6D /* TimedDummyOperationTestDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationTestDialog.h; sourceTree = "<group>"; };
 		B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperationTestDialog.mm; sourceTree = "<group>"; };
 		B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TimedDummyOperationTestDialog.xib; sourceTree = "<group>"; };
@@ -223,6 +226,15 @@
 				CFA58396170EA35E00E508CF /* FileDeletionOperation */,
 			);
 			name = Operation;
+			sourceTree = "<group>";
+		};
+		B5A23000171E81AA00D9C1A6 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */,
+				B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */,
+			);
+			name = Controls;
 			sourceTree = "<group>";
 		};
 		B5AD9CDE17030DAA0099BC6D /* Dummies */ = {
@@ -441,6 +453,7 @@
 		CFC5121A16C4BD3D00D247EE /* Directories */ = {
 			isa = PBXGroup;
 			children = (
+				B5A23000171E81AA00D9C1A6 /* Controls */,
 				B528011916FCF347004E260D /* Operation */,
 				CFAC50D5171557E100A3E5C5 /* Core */,
 				CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */,
@@ -588,6 +601,7 @@
 				CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */,
 				B55DB19A1717397F00E3610E /* OperationProgressValueTransformer.mm in Sources */,
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
+				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
 				CF055EB6171D9E8E00F7A6ED /* PanelSizeCalculator.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

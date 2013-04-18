@@ -22,7 +22,6 @@
 {
     [super windowDidLoad];
     [[self TextField] becomeFirstResponder];
-    [[self window] setDefaultButtonCell:[[self CreateButton] cell]];
 }
 
 - (IBAction)OnCreate:(id)sender

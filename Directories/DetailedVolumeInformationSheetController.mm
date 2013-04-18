@@ -42,7 +42,6 @@ static NSString* Bool2ToString(const bool b[2])
     [super windowDidLoad];
 
     [self PopulateControls];
-    [[self window] setDefaultButtonCell:[[self OkButton] cell]];
     
     m_UpdateTimer = [NSTimer scheduledTimerWithTimeInterval: 1 // 1 sec update
                                                          target:self

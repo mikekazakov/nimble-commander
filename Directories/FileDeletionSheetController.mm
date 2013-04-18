@@ -21,14 +21,13 @@
 {
     FlexChainedStringsChunk *m_Files;
     FileDeletionSheetCompletionHandler m_Handler;
-    FileDeletionOperationType m_Type;
+    FileDeletionOperationType m_DefaultType;
+    FileDeletionOperationType m_ResultType;
 }
 
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    
-    [self.window setDefaultButtonCell:self.DeleteButton.cell];
     
     NSString *label;
     if (m_Files->amount == 1)
@@ -43,12 +42,21 @@
     }
     [self.Label setStringValue:label];
     
-    if (m_Type == FileDeletionOperationType::MoveToTrash)
-        [self.DeleteTypeButton selectItemAtIndex:0];
-    else if (m_Type == FileDeletionOperationType::Delete)
-        [self.DeleteTypeButton selectItemAtIndex:1];
-    else if (m_Type == FileDeletionOperationType::SecureDelete)
-        [self.DeleteTypeButton selectItemAtIndex:2];
+    int index;
+    if (m_DefaultType == FileDeletionOperationType::MoveToTrash)
+        index = 0;
+    else if (m_DefaultType == FileDeletionOperationType::Delete)
+        index = 1;
+    else if (m_DefaultType == FileDeletionOperationType::SecureDelete)
+        index = 2;
+    else
+        assert(0);
+    
+    NSMenuItem *item = self.DeleteButtonMenu.itemArray[index];
+    [self.DeleteButton setLabel:item.title forSegment:0];
+    [self.DeleteButtonMenu removeItemAtIndex:index];
+    
+    [self.DeleteButton MakeDefault];
 }
 
 - (void)didEndSheet:(NSWindow *)_sheet returnCode:(NSInteger)_code contextInfo:(void *)_context
@@ -61,12 +69,25 @@
 
 - (IBAction)OnDeleteAction:(id)sender
 {
+    m_ResultType = m_DefaultType;
     [NSApp endSheet:self.window returnCode:DialogResult::Delete];
 }
 
 - (void)OnCancelAction:(id)sender
 {
     [NSApp endSheet:self.window returnCode:DialogResult::Cancel];
+}
+
+- (IBAction)OnMenuItem:(NSMenuItem *)sender
+{
+    NSInteger tag = sender.tag;
+    if (tag == 0)
+        m_ResultType = FileDeletionOperationType::MoveToTrash;
+    else if (tag == 1)
+        m_ResultType = FileDeletionOperationType::Delete;
+    else if (tag == 2)
+        m_ResultType = FileDeletionOperationType::SecureDelete;
+    [NSApp endSheet:self.window returnCode:DialogResult::Delete];
 }
 
 - (id)init
@@ -88,7 +109,7 @@
     
     m_Files = _files;
     m_Handler = _handler;
-    m_Type = _type;
+    m_DefaultType = _type;
     
     [NSApp beginSheet: [self window]
        modalForWindow: _window
@@ -97,21 +118,9 @@
           contextInfo: nil];
 }
 
-- (void)SetType:(FileDeletionOperation *)_type
-{
-    
-}
-
 - (FileDeletionOperationType)GetType
 {
-    switch ([self.DeleteTypeButton indexOfSelectedItem])
-    {
-        case 0: return FileDeletionOperationType::MoveToTrash;
-        case 1: return FileDeletionOperationType::Delete;
-        case 2: return FileDeletionOperationType::SecureDelete;
-    }
-    
-    return FileDeletionOperationType::Invalid;
+    return m_ResultType;
 }
 
 @end

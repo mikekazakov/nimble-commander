@@ -25,6 +25,8 @@ enum ActiveState
 @property (strong) IBOutlet MainWndGoToButton *RightPanelGoToButton;
 @property (weak) IBOutlet NSView *OpSummaryBox;
 @property (weak) IBOutlet NSBox *SheetAnchorLine;
+@property (strong) IBOutlet NSProgressIndicator *LeftPanelSpinningIndicator;
+@property (strong) IBOutlet NSProgressIndicator *RightPanelSpinningIndicator;
 
 // Window NIB actions
 - (IBAction)LeftPanelGoToButtonAction:(id)sender;

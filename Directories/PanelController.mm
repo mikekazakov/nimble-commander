@@ -26,14 +26,21 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     unsigned m_FastSearchOffset;
     
     // background directory size calculation support
-    bool     m_IsStopDirectorySizeCounting;
+    bool     m_IsStopDirectorySizeCounting; // flags current any other those tasks in queue that they need to stop
+    bool     m_IsDirectorySizeCounting; // is background task currently working?
     dispatch_queue_t m_DirectorySizeCountingQ;
     
     // background directory changing (loading) support
-    bool     m_IsStopDirectoryLoading;
+    bool     m_IsStopDirectoryLoading; // flags current any other those tasks in queue that they need to stop
+    bool     m_IsDirectoryLoading; // is background task currently working?
     dispatch_queue_t m_DirectoryLoadingQ;
-    bool     m_IsStopDirectoryReLoading;
+    bool     m_IsStopDirectoryReLoading; // flags current any other those tasks in queue that they need to stop
+    bool     m_IsDirectoryReLoading; // is background task currently working?
     dispatch_queue_t m_DirectoryReLoadingQ;
+    
+    
+    bool                m_IsAnythingWorksInBackground;
+    NSProgressIndicator *m_SpinningIndicator;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -46,6 +53,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_FastSearchOffset = 0;
         m_IsStopDirectorySizeCounting = false;
         m_IsStopDirectoryLoading = false;
+        m_IsStopDirectoryReLoading = false;
+        m_IsDirectorySizeCounting = false;
+        m_IsAnythingWorksInBackground = false;
+        m_IsDirectoryLoading = false;
+        m_IsDirectoryReLoading = false;
         m_DirectorySizeCountingQ = dispatch_queue_create("com.example.paneldirsizecounting", 0);
         m_DirectoryLoadingQ = dispatch_queue_create("com.example.paneldirloading", 0);
         m_DirectoryReLoadingQ = dispatch_queue_create("com.example.paneldirreloading", 0);
@@ -205,7 +217,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     if(m_IsStopDirectoryLoading)
         dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
     dispatch_async(m_DirectoryLoadingQ, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
         PanelData::LoadFSDirectoryAsync(path, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;} );
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
     });
     return true;
 }
@@ -258,7 +272,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         };
         
         dispatch_async(m_DirectoryLoadingQ, ^{
+            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
             PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
+            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
         });
     }
     else
@@ -276,7 +292,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         };
 
         dispatch_async(m_DirectoryLoadingQ, ^{
+            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
             PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
+            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
         });
     }
 }
@@ -324,7 +342,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     if(m_IsStopDirectoryReLoading)
         dispatch_async(m_DirectoryReLoadingQ, ^{ m_IsStopDirectoryReLoading = false; } );
     dispatch_async(m_DirectoryReLoadingQ, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryReLoading:true];});
         PanelData::LoadFSDirectoryAsync(path, onsucc, onfail, ^bool(){return m_IsStopDirectoryReLoading;});
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryReLoading:false];});
     });
 }
 
@@ -371,7 +391,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
-//    unsigned short const keycode = [event keyCode];
+    unsigned short const keycode = [event keyCode];
 
     switch (unicode)
     {
@@ -414,6 +434,13 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             break;
         case NSF3FunctionKey: [self HandleFileView]; break;
     }
+    
+    switch (keycode)
+    {
+        case 53: // Esc button
+            [self CancelBackgroundOperations];
+            break;
+    }
 }
 
 - (void) HandleFileView // F3
@@ -427,14 +454,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
     else
     {
-        int curpos = [m_View GetCursorPosition];
-        int rawpos = m_Data->SortPosToRawPos(curpos);
-        auto const &item = m_Data->EntryAtRawPosition(rawpos);
+        auto const *item = [m_View CurrentItem];
+        
         // do not try count parent directory size. TODO: need a special handling here, it count the entire directory
-
-        if(!item.isdotdot())
+        if(item && !item->isdotdot())
         {
-            auto files = FlexChainedStringsChunk::AllocateWithSingleString(item.namec());
+            auto files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
             [self StartDirectorySizeCountingFor:files];
         }
     }
@@ -450,7 +475,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     const char *str = strdup(dir);
     
     dispatch_async(m_DirectorySizeCountingQ, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:true];});
         PanelDirectorySizeCalculate(_files, str, self, ^bool{return m_IsStopDirectorySizeCounting;});
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:false];});
     });
 }
 
@@ -478,6 +505,64 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             [m_View setNeedsDisplay:true];
         });
     }
+}
+
+- (void) AttachToIndicator:(NSProgressIndicator*)_ind
+{
+    m_SpinningIndicator = _ind;
+    m_IsAnythingWorksInBackground = false;
+    [m_SpinningIndicator stopAnimation:nil];    
+    [self UpdateSpinningIndicator];
+}
+
+- (void) NotifyDirectorySizeCounting:(bool) _is_running // true if task will start now, or false if it has just stopped
+{
+    m_IsDirectorySizeCounting = _is_running;
+    [self UpdateSpinningIndicator];
+}
+
+- (void) NotifyDirectoryLoading:(bool) _is_running // true if task will start now, or false if it has just stopped
+{
+    m_IsDirectoryLoading = _is_running;
+    [self UpdateSpinningIndicator];
+}
+
+- (void) NotifyDirectoryReLoading:(bool) _is_running // true if task will start now, or false if it has just stopped
+{
+    m_IsDirectoryReLoading = _is_running;
+    [self UpdateSpinningIndicator];
+}
+
+- (void) CancelBackgroundOperations
+{
+    m_IsStopDirectorySizeCounting = true;
+    m_IsStopDirectoryLoading = true;
+    m_IsStopDirectoryReLoading = true;
+}
+
+- (void) UpdateSpinningIndicator
+{
+    bool is_anything_working = m_IsDirectorySizeCounting || m_IsDirectoryLoading || m_IsDirectoryReLoading;
+    const auto visual_spinning_delay = 100ull; // in 100 ms of workload should be before user will get spinning indicator
+    
+    if(is_anything_working == m_IsAnythingWorksInBackground)
+        return; // nothing to update;
+        
+    if(is_anything_working)
+    {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, visual_spinning_delay * USEC_PER_SEC),
+                       dispatch_get_main_queue(),
+                       ^{
+                           if(m_IsAnythingWorksInBackground) // need to check if task was already done
+                               [m_SpinningIndicator startAnimation:nil];
+                       });
+    }
+    else
+    {
+        [m_SpinningIndicator stopAnimation:nil];
+    }
+    
+    m_IsAnythingWorksInBackground = is_anything_working;
 }
 
 @end

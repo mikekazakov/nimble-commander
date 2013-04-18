@@ -99,13 +99,15 @@
     [m_LeftPanelView SetPanelData:m_LeftPanelData];
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
-    [m_LeftPanelController GoToDirectory:pw->pw_dir];
+    [m_LeftPanelController AttachToIndicator:self.LeftPanelSpinningIndicator];
+    [m_LeftPanelController GoToDirectory:pw->pw_dir];    
 
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
     [m_RightPanelView SetPanelData:m_RightPanelData];
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
+    [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
     [m_RightPanelController GoToDirectory:"/"];
     
     m_ActiveState = StateLeftPanel;
@@ -442,7 +444,9 @@
     std::swap(m_LeftPanelController, m_RightPanelController);
     if(m_ActiveState == StateLeftPanel) m_ActiveState = StateRightPanel;
     else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
-    [self CreatePanelConstraints];    
+    [self CreatePanelConstraints];
+    [m_LeftPanelController AttachToIndicator:self.LeftPanelSpinningIndicator];
+    [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
 }
 
 - (IBAction)OnRefreshPanel:(id)sender{

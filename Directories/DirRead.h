@@ -64,7 +64,8 @@ struct DirectoryEntryInformation // 128b long
 
     inline void destroy()
     {
-        CFRelease(cf_name);
+        if(cf_name != 0)
+            CFRelease(cf_name);
         if(symlink != 0)
             free((void*)symlink);
         if(namelen > 13)

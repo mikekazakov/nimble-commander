@@ -14,6 +14,8 @@
 
 - (void) SetData:(PanelData*)_data;
 - (void) SetView:(PanelView*)_view;
+- (void) AttachToIndicator:(NSProgressIndicator*)_ind;
+
 - (void) HandleReturnButton;
 - (void) HandleShiftReturnButton;
 

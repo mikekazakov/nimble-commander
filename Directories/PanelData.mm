@@ -93,21 +93,20 @@ void PanelData::GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path
     UpdateStatictics();
 }
 
-void PanelData::ReloadDirectoryWithContext(DirectoryChangeContext *_context)
+void PanelData::ReloadDirectoryWithContext(DirectoryChangeContext *_context) // async variant
 {
     assert(strcmp(_context->path, m_DirectoryPath) == 0);
     ReloadDirectoryInternal(_context->entries);
     free(_context);
 }
 
-bool PanelData::ReloadDirectory()
+bool PanelData::ReloadDirectory() // sync variant
 {
-    // TODO: this process should be asynchronous
-    char path[__DARWIN_MAXPATHLEN];
-    GetDirectoryPathWithTrailingSlash(path);
+//    char path[__DARWIN_MAXPATHLEN];
+//    GetDirectoryPathWithTrailingSlash(path);
     
     auto *entries = new std::deque<DirectoryEntryInformation>;
-    if(FetchDirectoryListing(path, entries, nil) == 0)
+    if(FetchDirectoryListing(m_DirectoryPath, entries, nil) == 0)
     {
         ReloadDirectoryInternal(entries);
         return true;
@@ -213,23 +212,37 @@ void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPAT
 
 int PanelData::FindEntryIndex(const char *_filename) const
 {
-    // bruteforce appoach for now
-    // TODO: optimize
-    int n = 0;
-    for(auto i = m_Entries->begin(); i < m_Entries->end(); ++i, ++n)
-        if(strcmp((*i).namec(), _filename) == 0)
-            return n;
+    assert(m_EntriesByRawName->size() == m_Entries->size()); // consistency check
+    
+    // performing binary search on m_EntriesByRawName
+    int imin = 0, imax = (int)m_EntriesByRawName->size()-1;
+    while(imax >= imin)
+    {
+        int imid = (imin + imax) / 2;
+        
+        unsigned indx = (*m_EntriesByRawName)[imid];
+        assert(indx < m_Entries->size());
+        
+        int res = strcmp(_filename, (*m_Entries)[indx].namec());
+
+        if(res < 0)
+            imax = imid - 1;
+        else if(res > 0)
+            imin = imid + 1;
+        else
+            return indx;
+    }
+    
     return -1;
 }
 
 int PanelData::FindSortedEntryIndex(unsigned _desired_value) const
 {
-    // bruteforce appoach for now
-    // TODO: optimize
-    int n = 0;
-    for(auto i = m_EntriesByCustomSort->begin(); i < m_EntriesByCustomSort->end(); ++i, ++n)
-        if(*i == _desired_value)
-            return n;
+    size_t i = 0, e = m_EntriesByCustomSort->size();
+    const auto *v = m_EntriesByCustomSort->data();
+    for(;i<e;++i)
+        if(v[i] == _desired_value)
+            return (int)i;
     return -1;
 }
 

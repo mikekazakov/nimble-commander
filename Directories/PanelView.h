@@ -48,6 +48,7 @@ enum class PanelViewDirectoryChangeType
 
 // view type
 - (void) ToggleViewType:(PanelViewType)_type;
+- (PanelViewType) GetCurrentViewType;
 
 // focus handling
 - (void) Activate;

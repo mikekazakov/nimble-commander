@@ -16,6 +16,9 @@
 - (void) SetView:(PanelView*)_view;
 - (void) AttachToIndicator:(NSProgressIndicator*)_ind;
 
+- (void) LoadViewState:(NSDictionary *)_state;
+- (NSDictionary *) SaveViewState;
+
 - (void) HandleReturnButton;
 - (void) HandleShiftReturnButton;
 

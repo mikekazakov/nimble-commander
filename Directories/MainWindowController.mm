@@ -34,6 +34,9 @@
 
 @interface MainWindowController ()
 
+- (void)LoadPanelsSettings;
+- (void)SavePanelsSettings;
+
 @end
 
 @implementation MainWindowController
@@ -123,6 +126,8 @@
                                              selector:@selector(DidBecomeKeyWindow)
                                                  name:NSWindowDidBecomeKeyNotification
                                                object:[self window]];
+    
+    [self LoadPanelsSettings];
     
 //    [[self window] visualizeConstraints:[[[self window] contentView] constraints]];
 }
@@ -227,6 +232,20 @@
     m_PanelConstraints.right_left.constant = -rest;
 
     [[[self window] contentView] setNeedsLayout:true];
+}
+
+- (void)LoadPanelsSettings
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [m_LeftPanelController LoadViewState:[defaults dictionaryForKey:@"FirstPanel"]];
+    [m_RightPanelController LoadViewState:[defaults dictionaryForKey:@"SecondPanel"]];
+}
+
+- (void)SavePanelsSettings
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[m_LeftPanelController SaveViewState] forKey:@"FirstPanel"];
+    [defaults setObject:[m_RightPanelController SaveViewState] forKey:@"SecondPanel"];
 }
 
 - (void)windowDidResize:(NSNotification *)notification
@@ -384,46 +403,57 @@
 
 - (IBAction)ToggleShortViewMode:(id)sender {
     [[self ActivePanelController] ToggleShortViewMode];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleMediumViewMode:(id)sender {
     [[self ActivePanelController] ToggleMediumViewMode];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleFullViewMode:(id)sender{
     [[self ActivePanelController] ToggleFullViewMode];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleWideViewMode:(id)sender{
     [[self ActivePanelController] ToggleWideViewMode];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleSortByName:(id)sender{
     [[self ActivePanelController] ToggleSortingByName];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleSortByExt:(id)sender{
     [[self ActivePanelController] ToggleSortingByExt];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleSortByMTime:(id)sender{
     [[self ActivePanelController] ToggleSortingByMTime];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleSortBySize:(id)sender{
     [[self ActivePanelController] ToggleSortingBySize];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleSortByBTime:(id)sender{
     [[self ActivePanelController] ToggleSortingByBTime];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleViewHiddenFiles:(id)sender{
-    [[self ActivePanelController] ToggleViewHiddenFiles];    
+    [[self ActivePanelController] ToggleViewHiddenFiles];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
     [[self ActivePanelController] ToggleSeparateFoldersFromFiles];
+    [self SavePanelsSettings];
 }
 
 - (IBAction)LeftPanelGoto:(id)sender{
@@ -459,6 +489,8 @@
     [self CreatePanelConstraints];
     [m_LeftPanelController AttachToIndicator:self.LeftPanelSpinningIndicator];
     [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
+    
+    [self SavePanelsSettings];
 }
 
 - (IBAction)OnRefreshPanel:(id)sender{

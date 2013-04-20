@@ -6,5 +6,27 @@
 	<integer>0</integer>
 	<key>ShiftDeleteBehavior</key>
 	<integer>1</integer>
+	<key>FirstPanel</key>
+	<dict>
+		<key>SeparateDirectories</key>
+		<true/>
+		<key>ViewHiddenFiles</key>
+		<false/>
+		<key>SortMode</key>
+		<integer>1</integer>
+		<key>ViewMode</key>
+		<integer>1</integer>
+	</dict>
+	<key>SecondPanel</key>
+	<dict>
+		<key>SeparateDirectories</key>
+		<true/>
+		<key>ViewHiddenFiles</key>
+		<false/>
+		<key>SortMode</key>
+		<integer>1</integer>
+		<key>ViewMode</key>
+		<integer>1</integer>
+	</dict>
 </dict>
 </plist>

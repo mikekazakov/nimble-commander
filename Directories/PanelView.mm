@@ -1097,4 +1097,9 @@ struct CursorSelectionState
     [self setNeedsDisplay:true];
 }
 
+- (PanelViewType) GetCurrentViewType
+{
+    return m_CurrentViewType;
+}
+
 @end

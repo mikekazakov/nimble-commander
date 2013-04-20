@@ -22,6 +22,14 @@
     std::vector<MainWindowController *> m_MainWindows;
 }
 
++ (void)initialize
+{
+    NSString *defaults_file = [[NSBundle mainBundle]
+                               pathForResource:@"Defaults" ofType:@"plist"];
+    NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application

@@ -107,6 +107,8 @@ const int MaxDialogs = 2;
         // If operation is in process of stoppping, close the dialog.
         if (m_Job->IsStopRequested())
             [_dialog CloseDialogWithResult:OperationDialogResult::Stop];
+        else
+            NSBeep();
     });
 }
 

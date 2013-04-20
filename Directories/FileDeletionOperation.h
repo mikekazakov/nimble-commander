@@ -21,10 +21,10 @@ enum
 
 enum class FileDeletionOperationType
 {
-    Invalid,
     MoveToTrash,
     Delete,
-    SecureDelete
+    SecureDelete,
+    Invalid
 };
 
 @interface FileDeletionOperation : Operation

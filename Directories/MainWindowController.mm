@@ -25,6 +25,7 @@
 #import "MessageBox.h"
 #import "KQueueDirUpdate.h"
 #import "FSEventsDirUpdate.h"
+#import "PreferencesWindowController.h"
 #import <pwd.h>
 
 // TODO: remove
@@ -67,6 +68,8 @@
     
     if (self)
     {
+        [self setShouldCascadeWindows:NO];
+        
         m_OperationsController = [[OperationsController alloc] init];
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWthController:m_OperationsController];
     }
@@ -348,6 +351,15 @@
             }
             break;
         }
+        case 100: //f8
+        {
+            // TODO: refactor; need more high level key handler
+            if ((modif & NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask
+                || (modif & NSDeviceIndependentModifierFlagsMask) == (NSShiftKeyMask|NSFunctionKeyMask))
+            {
+                [self DeleteFiles:YES];
+            }
+        }
     }
 #undef ISMODIFIER
 }
@@ -497,7 +509,8 @@
     [sheet ShowSheet:[self window] destpath:src];
 }
 
-- (IBAction)OnDeleteCommand:(id)sender{
+- (void)DeleteFiles:(BOOL)_shift_behavior
+{
     assert([self IsPanelActive]);
     
     __block FlexChainedStringsChunk *files = 0;
@@ -515,28 +528,39 @@
     if(!files)
         return;
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
+                                         ? [defaults integerForKey:@"ShiftDeleteBehavior"]
+                                         : [defaults integerForKey:@"DeleteBehavior"]);
     
     FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-    [sheet ShowSheet:self.window Files:files Type:FileDeletionOperationType::MoveToTrash
+    [sheet ShowSheet:self.window Files:files Type:type
              Handler:^(int result){
-        if (result == DialogResult::Delete)
-        {
-            FileDeletionOperationType type = [sheet GetType];
-            
-            char root_path[MAXPATHLEN];
-            [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+                 if (result == DialogResult::Delete)
+                 {
+                     FileDeletionOperationType type = [sheet GetType];
+                     
+                     char root_path[MAXPATHLEN];
+                     [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+                     
+                     FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                                  initWithFiles:files
+                                                  type:type
+                                                  rootpath:root_path];
+                     [m_OperationsController AddOperation:op];
+                 }
+                 else
+                 {
+                     FlexChainedStringsChunk::FreeWithDescendants(&files);
+                 }
+             }];
 
-            FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                         initWithFiles:files
-                                         type:type
-                                         rootpath:root_path];
-            [m_OperationsController AddOperation:op];
-        }
-        else
-        {
-            FlexChainedStringsChunk::FreeWithDescendants(&files);
-        }
-    }];
+}
+
+- (IBAction)OnDeleteCommand:(id)sender
+{
+    [self DeleteFiles:NO];
 }
 
 - (IBAction)OnCreateDirectoryCommand:(id)sender{
@@ -732,6 +756,11 @@
              FlexChainedStringsChunk::FreeWithDescendants(&files);
          }
      }];
+}
+
+- (void)OnPreferencesCommand:(id)sender
+{
+    [PreferencesWindowController ShowWindow];
 }
 
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet

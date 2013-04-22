@@ -48,10 +48,13 @@ static bool CheckSameVolume(const char *_fn1, const char*_fn2, bool &_same, bool
     {
         if(!_fallback_second)
             return false;
+        
+        assert(fn2[1] != 0);   // that is an absolutely weird case if can't access "/" path.
+                               // in this situation it's better to stop working at all
 
         char *s = strrchr(fn2, '/');
-        assert(s != fn2);   // that is an absolutely weird case if can't access "/" path.
-                            // in this situation it's better to stop working at all
+        if(s == fn2)
+            s++; // non regular case for topmost entries
 
         *s = 0;
     }

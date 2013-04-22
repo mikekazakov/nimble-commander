@@ -14,6 +14,7 @@
 #include "PanelData.h"
 #include "MainWindowController.h"
 #import "OperationProgressValueTransformer.h"
+#import "OperationsController.h"
 
 #include <vector>
 
@@ -89,6 +90,38 @@
             m_MainWindows.erase(i);
             break;
         }
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+    BOOL has_running_ops = NO;
+    for (MainWindowController *wincont : m_MainWindows)
+    {
+        if (wincont.OperationsController.OperationsCount > 0)
+        {
+            has_running_ops = YES;
+            break;
+        }
+    }
+    
+    if (has_running_ops)
+    {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:@"Application has running operations. Do you want to stop all operations and quit?"];
+        [alert addButtonWithTitle:@"Stop And Quit"];
+        [alert addButtonWithTitle:@"Cancel"];
+        NSInteger result = [alert runModal];
+        
+        // If cancel is pressed.
+        if (result == NSAlertSecondButtonReturn) return NSTerminateCancel;
+        
+        for (MainWindowController *wincont : m_MainWindows)
+        {
+            [wincont.OperationsController Stop];
+        }
+    }
+    
+    return NSTerminateNow;
 }
 
 @end

@@ -17,6 +17,9 @@
 @property (nonatomic) int OperationsCount;
 @property (readonly, nonatomic) NSArray *Operations;
 
+// Stops all currently running operations and prevents addition of new operations.
+- (void)Stop;
+
 - (void)AddOperation:(Operation *)_op;
 - (Operation *)GetOperation:(NSUInteger)_index;
 

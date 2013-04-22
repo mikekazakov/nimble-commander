@@ -11,6 +11,8 @@
 #include "PanelData.h"
 #include "MainWndGoToButton.h"
 
+@class OperationsController;
+
 @interface MainWindowController : NSWindowController <NSWindowDelegate>
 
 enum ActiveState
@@ -19,6 +21,8 @@ enum ActiveState
     StateRightPanel
     // many more will be here
 };
+
+@property OperationsController *OperationsController;
 
 // Window NIB outlets
 @property (strong) IBOutlet MainWndGoToButton *LeftPanelGoToButton;

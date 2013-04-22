@@ -26,6 +26,7 @@
 {
     NSMutableArray *m_Operations;
     NSTimer* m_UpdateTimer;
+    BOOL m_Stop;
 }
 
 @synthesize Operations = m_Operations;
@@ -105,10 +106,44 @@
     return self;
 }
 
+- (void)Stop
+{
+    m_Stop = YES;
+    
+    for (Operation *op in m_Operations)
+        [op Stop];
+    
+    if (m_Operations.count == 0) return;
+    
+    for (;;)
+    {
+        int i = 0;
+        while (i < m_Operations.count)
+        {
+            Operation *op = m_Operations[i];
+            
+            if ([op IsFinished])
+            {
+                // Remove finished operation from the collection.
+                [self removeObjectFromOperationsAtIndex:i];
+                continue;
+            }
+            
+            ++i;
+        }
+
+        if (m_Operations.count == 0) break;
+        
+        usleep(10*1000);
+    }
+}
+
 - (void)AddOperation:(Operation *)_op
 {
     assert(_op);
     assert(![_op IsStarted]);
+    
+    if (m_Stop) return;
     
     [self insertObject:_op inOperationsAtIndex:m_Operations.count];
     

@@ -65,6 +65,7 @@
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
 }
+@synthesize OperationsController = m_OperationsController;
 
 - (id)init {
     self = [super initWithWindowNibName:@"MainWindowController"];
@@ -256,6 +257,26 @@
 - (void)windowWillClose:(NSNotification *)notification
 {
     [(AppDelegate*)[NSApp delegate] RemoveMainWindow:self];
+}
+
+- (BOOL)windowShouldClose:(id)sender
+{
+    if (m_OperationsController.OperationsCount == 0) return TRUE;
+
+    MessageBox *dialog = [[MessageBox alloc] init];
+    [dialog addButtonWithTitle:@"Stop And Close"];
+    [dialog addButtonWithTitle:@"Cancel"];
+    [dialog setMessageText:@"Window has running operations. Do you want to stop them and close the window?"];
+    [dialog ShowSheetWithHandler:self.window handler:^(int result) {
+        if (result == NSAlertFirstButtonReturn)
+        {
+            [m_OperationsController Stop];
+            [dialog.window orderOut:nil];
+            [self.window close];
+        }
+    }];
+    
+    return FALSE;
 }
 
 - (void)DidBecomeKeyWindow

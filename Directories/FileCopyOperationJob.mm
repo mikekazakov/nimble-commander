@@ -167,6 +167,7 @@ bool FileCopyOperationJob::IsSingleFileCopy() const
 void FileCopyOperationJob::ScanDestination()
 {
     struct stat stat_buffer;
+    char destpath[MAXPATHLEN];    
     if(stat(m_Destination, &stat_buffer) == 0)
     {
         CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);        
@@ -211,7 +212,6 @@ void FileCopyOperationJob::ScanDestination()
             // there's no directories mentions in destination path, let's treat destination as an regular absent file
             // let's think that this destination file should be located in source directory
             // TODO: add CheckSameVolume
-            char destpath[MAXPATHLEN];
             strcpy(destpath, m_SourceDirectory);
             strcat(destpath, m_Destination);
             strcpy(m_Destination, destpath);
@@ -221,55 +221,68 @@ void FileCopyOperationJob::ScanDestination()
             else            m_WorkMode = RenameToFile;
         }
         else
-        {
-            // user want to copy/rename/move file(s) to some directory, like "Abra/Carabra" or "/bin/abra"
-            // TODO: implement me later: ask user about folder/files choice if need
-            // he may want to copy file to /users/abra/newdir/FILE.TXT, which is a file in his mind
-            // just for now - let's think that it's a directory anyway
+        {            
+            if(m_Destination[strlen(m_Destination)-1] == '/' )
+            {
+                // user want to copy/rename/move file(s) to some directory, like "Abra/Carabra/" or "/bin/abra/"
+                if(m_Destination[0] != '/')
+                { // relative to source directory
+                    strcpy(destpath, m_SourceDirectory);
+                    strcat(destpath, m_Destination);
+                    strcpy(m_Destination, destpath);
 
-            if(m_Destination[0] != '/')
-            {
-                // relative to source directory
-                char destpath[MAXPATHLEN];
-                strcpy(destpath, m_SourceDirectory);
-                strcat(destpath, m_Destination);
-                if( destpath[strlen(destpath)-1] != '/' )
-                    strcat(destpath, "/");
-                strcpy(m_Destination, destpath);
-
-                // check if the volume is the same
-                // TODO: there can be some CRAZY situations when user wants to do someting with directory that
-                // contains a mounting point with another filesystem. but for now let's think that is not valid.
-                // for the future - algo should have a flag about nested filesystems and process them carefully later
-                CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);
-            }
-            else
-            {
-                m_WorkMode = CopyToFolder;
-                
-                // absolute path
-                if( m_Destination[strlen(m_Destination)-1] != '/' )
-                    strcat(m_Destination, "/");
-                
-                // TODO: look up
-                CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);
-            }
-
-            if(m_IsCopying)
-            {
-                m_WorkMode = CopyToFolder;
-            }
-            else
-            {
-                if(m_SameVolume)
-                    m_WorkMode = RenameToFolder;
+                    // check if the volume is the same
+                    // TODO: there can be some CRAZY situations when user wants to do someting with directory that
+                    // contains a mounting point with another filesystem. but for now let's think that is not valid.
+                    // for the future - algo should have a flag about nested filesystems and process them carefully later
+                    CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);
+                }
                 else
-                    m_WorkMode = MoveToFolder;
-            }
+                { // absolute path                
+                    CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);// TODO: look up
+                }
+
+                if(m_IsCopying)
+                {
+                    m_WorkMode = CopyToFolder;
+                }
+                else
+                {
+                    if(m_SameVolume)  m_WorkMode = RenameToFolder;
+                    else              m_WorkMode = MoveToFolder;
+                }
             
-            // now we need to check every directory here and create them they are not exist
-            BuildDestinationDirectory(m_Destination);
-            if(CheckPauseOrStop()) return;
+                // now we need to check every directory here and create them they are not exist
+                BuildDestinationDirectory(m_Destination);
+                if(CheckPauseOrStop()) return;
+            }
+            else
+            { // user want to copy/rename/move file(s) to some filename, like "Abra/Carabra" or "/bin/abra"
+                if(m_Destination[0] != '/')
+                { // relative to source directory
+                    strcpy(destpath, m_SourceDirectory);
+                    strcat(destpath, m_Destination);
+                    strcpy(m_Destination, destpath);
+                }
+                else
+                { // absolute path
+                }
+                CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);// TODO: look up
+
+                if(m_IsCopying)
+                {
+                    m_WorkMode = CopyToFile;
+                }
+                else
+                {
+                    if(m_SameVolume) m_WorkMode = RenameToFile;
+                    else             m_WorkMode = MoveToFile;
+                }
+                
+                // now we need to check every directory here and create them they are not exist
+                BuildDestinationDirectory(m_Destination);
+                if(CheckPauseOrStop()) return;
+            }
         }
     }
 }

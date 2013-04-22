@@ -438,7 +438,9 @@ void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_nod
         ProcessRenameToFolder(itemname);
     else if(m_WorkMode == MoveToFolder)
         ProcessMoveToFolder(itemname, src_isdir);
-    else assert(0); // implement me later
+    else if(m_WorkMode == MoveToFile)
+        ProcessMoveToFile(itemname, src_isdir);
+    else assert(0); // sanity guard
 }
 
 void FileCopyOperationJob::ProcessFilesRemoval()
@@ -451,7 +453,7 @@ void FileCopyOperationJob::ProcessFilesRemoval()
         i->str_with_pref(itemname);
         strcpy(path, m_SourceDirectory);
         strcat(path, itemname);
-        unlink(path);
+        unlink(path); // any error handling here?
     }
 }
 
@@ -466,7 +468,36 @@ void FileCopyOperationJob::ProcessFoldersRemoval()
         item->str_with_pref(itemname);
         strcpy(path, m_SourceDirectory);
         strcat(path, itemname);
-        rmdir(path);
+        rmdir(path); // any error handling here?
+    }
+}
+
+void FileCopyOperationJob::ProcessMoveToFile(const char *_path, bool _is_dir)
+{
+    // m_Destination is a file name
+    char sourcepath[MAXPATHLEN];
+    if(!_is_dir)
+    {
+        assert(_path[strlen(_path)-1] != '/'); // sanity check
+        // compose real src name
+        strcpy(sourcepath, m_SourceDirectory);
+        strcat(sourcepath, _path);
+        
+        // compose dest name        
+        if( CopyFileTo(sourcepath, m_Destination) )
+            m_FilesToDelete.push_back(m_CurrentlyProcessingItem);
+            // put files in deletion list only if copying was successful        
+    }
+    else
+    {
+        assert(_path[strlen(_path)-1] == '/'); // sanity check
+        // compose real src name
+        strcpy(sourcepath, m_SourceDirectory);
+        strcat(sourcepath, _path);
+
+        if(CopyDirectoryTo(sourcepath, m_Destination))
+            m_DirsToDelete.push_back(m_CurrentlyProcessingItem);
+            // put dirs in deletion list only if copying was successful
     }
 }
 

@@ -68,6 +68,7 @@ private:
     void ProcessRenameToFile(const char *_path);
     void ProcessRenameToFolder(const char *_path);
     void ProcessMoveToFolder(const char *_path, bool _is_dir);
+    void ProcessMoveToFile(const char *_path, bool _is_dir);
     
     void ProcessFilesRemoval();
     void ProcessFoldersRemoval();

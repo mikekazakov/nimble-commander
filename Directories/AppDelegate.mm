@@ -124,4 +124,10 @@
     return NSTerminateNow;
 }
 
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+    for(auto *i: m_MainWindows)
+        [i SavePanelPaths];
+}
+
 @end

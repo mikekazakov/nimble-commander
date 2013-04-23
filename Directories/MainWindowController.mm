@@ -27,9 +27,30 @@
 #import "FSEventsDirUpdate.h"
 #import "PreferencesWindowController.h"
 #import <pwd.h>
+#import <sys/types.h>
+#import <sys/dirent.h>
+#import <sys/stat.h>
+#import <dirent.h>
+#import <sys/time.h>
+#import <sys/xattr.h>
+#import <sys/attr.h>
+#import <sys/vnode.h>
+#import <sys/param.h>
+#import <sys/mount.h>
+#import <unistd.h>
+#import <stdlib.h>
 
 // TODO: remove
 #import "TimedDummyOperation.h"
+
+static bool CheckPath(const char *_path)
+{
+    DIR *dirp = opendir(_path);
+    if(dirp == 0)
+        return false;
+    closedir(dirp);
+    return true;
+}
 
 
 @interface MainWindowController ()
@@ -92,11 +113,10 @@
     [super windowDidLoad];
  
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
     
     [m_OpSummaryController AddViewTo:self.OpSummaryBox];
 
-    struct passwd *pw = getpwuid(getuid());
-    assert(pw);
 
     [self CreatePanels];
     [self CreatePanelConstraints];
@@ -107,15 +127,26 @@
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
     [m_LeftPanelController AttachToIndicator:self.LeftPanelSpinningIndicator];
-    [m_LeftPanelController GoToDirectory:pw->pw_dir];    
-
+    if( CheckPath([[defaults stringForKey:@"FirstPanelPath"] UTF8String]) )
+        [m_LeftPanelController GoToDirectory:[[defaults stringForKey:@"FirstPanelPath"] UTF8String]];
+    else
+    {
+        struct passwd *pw = getpwuid(getuid());
+        assert(pw);
+        assert(CheckPath(pw->pw_dir));
+        [m_LeftPanelController GoToDirectory:pw->pw_dir];
+    }
+    
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
     [m_RightPanelView SetPanelData:m_RightPanelData];
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
-    [m_RightPanelController GoToDirectory:"/"];
+    if( CheckPath([[defaults stringForKey:@"SecondPanelPath"] UTF8String]) )
+        [m_RightPanelController GoToDirectory:[[defaults stringForKey:@"SecondPanelPath"] UTF8String]];
+    else
+        [m_RightPanelController GoToDirectory:"/"];
     
     m_ActiveState = StateLeftPanel;
     [m_LeftPanelView Activate];
@@ -238,15 +269,15 @@
 - (void)LoadPanelsSettings
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [m_LeftPanelController LoadViewState:[defaults dictionaryForKey:@"FirstPanel"]];
-    [m_RightPanelController LoadViewState:[defaults dictionaryForKey:@"SecondPanel"]];
+    [m_LeftPanelController LoadViewState:[defaults dictionaryForKey:@"FirstPanelViewState"]];
+    [m_RightPanelController LoadViewState:[defaults dictionaryForKey:@"SecondPanelViewState"]];
 }
 
 - (void)SavePanelsSettings
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:[m_LeftPanelController SaveViewState] forKey:@"FirstPanel"];
-    [defaults setObject:[m_RightPanelController SaveViewState] forKey:@"SecondPanel"];
+    [defaults setObject:[m_LeftPanelController SaveViewState] forKey:@"FirstPanelViewState"];
+    [defaults setObject:[m_RightPanelController SaveViewState] forKey:@"SecondPanelViewState"];    
 }
 
 - (void)windowDidResize:(NSNotification *)notification
@@ -256,7 +287,20 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    [self SavePanelPaths];
     [(AppDelegate*)[NSApp delegate] RemoveMainWindow:self];
+}
+
+- (void)SavePanelPaths
+{
+    char path[MAXPATHLEN];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    m_LeftPanelData->GetDirectoryPathWithTrailingSlash(path);
+    [defaults setObject:[[NSString alloc] initWithUTF8String:path] forKey:@"FirstPanelPath"];
+    
+    m_RightPanelData->GetDirectoryPathWithTrailingSlash(path);
+    [defaults setObject:[[NSString alloc] initWithUTF8String:path] forKey:@"SecondPanelPath"];
 }
 
 - (BOOL)windowShouldClose:(id)sender

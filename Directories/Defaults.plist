@@ -6,7 +6,11 @@
 	<integer>0</integer>
 	<key>ShiftDeleteBehavior</key>
 	<integer>1</integer>
-	<key>FirstPanel</key>
+	<key>FirstPanelPath</key>
+	<string>/</string>
+	<key>SecondPanelPath</key>
+	<string>/</string>
+	<key>FirstPanelViewState</key>
 	<dict>
 		<key>SeparateDirectories</key>
 		<true/>
@@ -17,7 +21,7 @@
 		<key>ViewMode</key>
 		<integer>1</integer>
 	</dict>
-	<key>SecondPanel</key>
+	<key>SecondPanelViewState</key>
 	<dict>
 		<key>SeparateDirectories</key>
 		<true/>

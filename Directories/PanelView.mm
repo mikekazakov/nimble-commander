@@ -320,7 +320,6 @@ struct CursorSelectionState
 @implementation PanelView
 {
     PanelData       *m_Data;
-    FontCache       *m_FontCache;
     int             m_SymbWidth;
     int             m_SymbHeight;
     int             m_FilesDisplayOffset; // number of a first file which appears on the panel view, on the top
@@ -370,7 +369,7 @@ struct CursorSelectionState
         m_Data = 0;
         m_FontCT = CTFontCreateWithName( (CFStringRef) @"Menlo Regular", FONTSIZE, 0);
         m_FontCG = CTFontCopyGraphicsFont(m_FontCT, 0);
-        m_FontCache = new FontCache(m_FontCT);
+//        m_FontCache = new FontCache(m_FontCT);
         m_FilesDisplayOffset = 0;
         m_CursorPosition = -1;
         m_CurrentViewType = PanelViewType::ViewMedium;
@@ -443,6 +442,7 @@ struct CursorSelectionState
     int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
     int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
+    auto fontcache = FontCacheManager::Instance()->Get();
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
@@ -466,10 +466,10 @@ struct CursorSelectionState
         
         if((m_FilesDisplayOffset + n != m_CursorPosition) || !m_IsActive)
             oms::DrawStringXY(buff, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
-                X, Y, context, m_FontCache, GetDirectoryEntryTextColor(current, false));
+                X, Y, context, fontcache, GetDirectoryEntryTextColor(current, false));
         else // cursor
             oms::DrawStringWithBackgroundXY(buff, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
-                X, Y, context, m_FontCache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, g_FocFileBkColor);
+                X, Y, context, fontcache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, g_FocFileBkColor);
   
         if(m_CurrentViewType==PanelViewType::ViewWide)
         { // draw entry size on right side, only for this mode
@@ -477,9 +477,9 @@ struct CursorSelectionState
             FormHumanReadableSizeReprentationForDirEnt6(&current, size_info);
 
             if((m_FilesDisplayOffset + n != m_CursorPosition) || !m_IsActive)
-                oms::DrawStringXY(size_info, 0, 6, columns_width[0]+1, Y, context, m_FontCache, GetDirectoryEntryTextColor(current, false));
+                oms::DrawStringXY(size_info, 0, 6, columns_width[0]+1, Y, context, fontcache, GetDirectoryEntryTextColor(current, false));
             else // cursor
-                oms::DrawStringWithBackgroundXY(size_info, 0, 6, columns_width[0]+1, Y, context, m_FontCache, GetDirectoryEntryTextColor(current, true), 6, g_FocFileBkColor);
+                oms::DrawStringWithBackgroundXY(size_info, 0, 6, columns_width[0]+1, Y, context, fontcache, GetDirectoryEntryTextColor(current, true), 6, g_FocFileBkColor);
         }
     }
     }
@@ -500,7 +500,7 @@ struct CursorSelectionState
     }
     
     // draw sorting mode in left-upper corner
-    oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, m_FontCache, g_HeaderInfoColor);
+    oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, fontcache, g_HeaderInfoColor);
 
     if(m_SymbWidth > 14)
     {   // need to draw a path name
@@ -523,33 +523,33 @@ struct CursorSelectionState
         
         if(m_IsActive)
             oms::DrawStringWithBackgroundXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                        context, m_FontCache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
+                                        context, fontcache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
         else
             oms::DrawStringXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                        context, m_FontCache, g_RegFileColor);
+                                        context, fontcache, g_RegFileColor);
     }
 
     // footer info        
     if(current_entry && m_SymbWidth > 2 + 14 + 6)
     {   // draw current entry time info, size info and maybe filename
-        oms::DrawStringXY(time_info, 0, 14, m_SymbWidth - 15, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
-        oms::DrawStringXY(size_info, 0, 6, m_SymbWidth - 15 - 7, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
+        oms::DrawStringXY(time_info, 0, 14, m_SymbWidth - 15, m_SymbHeight - 2, context, fontcache, g_RegFileColor);
+        oms::DrawStringXY(size_info, 0, 6, m_SymbWidth - 15 - 7, m_SymbHeight - 2, context, fontcache, g_RegFileColor);
         
         int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
         if(symbs_for_name > 0)
         {
             int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, symbs_for_name);
-            oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, m_FontCache, g_RegFileColor);
+            oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, fontcache, g_RegFileColor);
         }
     }
     else if(current_entry && m_SymbWidth >= 2 + 6)
     {   // draw current entry size info and time info
-        oms::DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, context, m_FontCache, g_RegFileColor);
+        oms::DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, context, fontcache, g_RegFileColor);
         int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
         if(symbs_for_name > 0)
         {
             int symbs = oms::CalculateUniCharsAmountForSymbolsFromLeft(time_info, 14, symbs_for_name);
-            oms::DrawStringXY(time_info, 0, symbs, 8, m_SymbHeight-2, context, m_FontCache, g_RegFileColor);
+            oms::DrawStringXY(time_info, 0, symbs, 8, m_SymbHeight-2, context, fontcache, g_RegFileColor);
         }
     }
         
@@ -564,7 +564,7 @@ struct CursorSelectionState
         selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
         oms::DrawStringWithBackgroundXY(selectionbuftrim, 0, unichars,
                                  selected_bytes_start_pos, m_SymbHeight-3,
-                                 context, m_FontCache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
+                                 context, fontcache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
     }
 
     if(m_SymbWidth > 12)
@@ -578,7 +578,7 @@ struct CursorSelectionState
         bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
         oms::DrawStringXY(bytestrim, 0, unichars,
                                  bytes_in_dir_start_pos, m_SymbHeight-1,
-                                 context, m_FontCache, g_RegFileColor);
+                                 context, fontcache, g_RegFileColor);
     }
 
     }
@@ -626,7 +626,7 @@ struct CursorSelectionState
         if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)
             b.put(u'═', i, m_SymbHeight-1);
     }
-    oms::DrawUniCharsXY(b, context, m_FontCache);
+    oms::DrawUniCharsXY(b, context, fontcache);
 }
 
 - (void)DrawWithFullView:(CGContextRef) context
@@ -643,6 +643,7 @@ struct CursorSelectionState
     int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;    
     auto &raw_entries = m_Data->DirectoryEntries();
     auto &sorted_entries = m_Data->SortedDirectoryEntries();
+    auto fontcache = FontCacheManager::Instance()->Get();    
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
     {
@@ -665,24 +666,24 @@ struct CursorSelectionState
             {
                 auto &textcolor = GetDirectoryEntryTextColor(current, false);
                 oms::DrawStringXY(file_name, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(file_name, fn_size, columns_width[0] - 1),
-                                  1, n+1, context, m_FontCache, textcolor);
+                                  1, n+1, context, fontcache, textcolor);
                 
-                oms::DrawStringXY(size_info, 0, 6, 1 + column_fr_pos[0], n+1, context, m_FontCache, textcolor);
-                oms::DrawStringXY(date_info, 0, 8, 1 + column_fr_pos[1], n+1, context, m_FontCache, textcolor);
-                oms::DrawStringXY(time_info, 0, 5, 1 + column_fr_pos[2], n+1, context, m_FontCache, textcolor);
+                oms::DrawStringXY(size_info, 0, 6, 1 + column_fr_pos[0], n+1, context, fontcache, textcolor);
+                oms::DrawStringXY(date_info, 0, 8, 1 + column_fr_pos[1], n+1, context, fontcache, textcolor);
+                oms::DrawStringXY(time_info, 0, 5, 1 + column_fr_pos[2], n+1, context, fontcache, textcolor);
             }
             else // cursor
             {
                 auto &textcolor = GetDirectoryEntryTextColor(current, true);
                 auto &textbkcolor = g_FocFileBkColor;
                 oms::DrawStringWithBackgroundXY(file_name, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(file_name, fn_size, columns_width[0] - 1),
-                                                1, n+1, context, m_FontCache, textcolor, columns_width[0] - 1, textbkcolor);
+                                                1, n+1, context, fontcache, textcolor, columns_width[0] - 1, textbkcolor);
                 oms::DrawStringWithBackgroundXY(size_info, 0, 6, 1 + column_fr_pos[0], n+1,
-                                                context, m_FontCache, textcolor, 6, textbkcolor);
+                                                context, fontcache, textcolor, 6, textbkcolor);
                 oms::DrawStringWithBackgroundXY(date_info, 0, 8, 1 + column_fr_pos[1], n+1,
-                                                context, m_FontCache, textcolor, 8, textbkcolor);
+                                                context, fontcache, textcolor, 8, textbkcolor);
                 oms::DrawStringWithBackgroundXY(time_info, 0, 5, 1 + column_fr_pos[2], n+1,
-                                                context, m_FontCache, textcolor, 5, textbkcolor);                
+                                                context, fontcache, textcolor, 5, textbkcolor);                
             }
         }
     }
@@ -710,10 +711,10 @@ struct CursorSelectionState
         
         if(m_IsActive)
             oms::DrawStringWithBackgroundXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                            context, m_FontCache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
+                                            context, fontcache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
         else
             oms::DrawStringXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                              context, m_FontCache, g_RegFileColor);
+                              context, fontcache, g_RegFileColor);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -721,7 +722,7 @@ struct CursorSelectionState
     {
         UniChar sort_mode[1];
         FormHumanReadableSortModeReprentation1(m_Data->GetCustomSortMode().sort, sort_mode);
-        oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, m_FontCache, g_HeaderInfoColor);
+        oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, fontcache, g_HeaderInfoColor);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -735,7 +736,7 @@ struct CursorSelectionState
         symbs_for_bytes_in_dir = oms::CalculateSymbolsSpaceForString(bytestrim, unichars);
         bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
         bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
-        oms::DrawStringXY(bytestrim, 0, unichars, bytes_in_dir_start_pos, m_SymbHeight-1, context, m_FontCache, g_RegFileColor);
+        oms::DrawStringXY(bytestrim, 0, unichars, bytes_in_dir_start_pos, m_SymbHeight-1, context, fontcache, g_RegFileColor);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -751,7 +752,7 @@ struct CursorSelectionState
         selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
         oms::DrawStringWithBackgroundXY(selectionbuftrim, 0, unichars,
                                         selected_bytes_start_pos, m_SymbHeight-3,
-                                        context, m_FontCache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
+                                        context, fontcache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -764,7 +765,7 @@ struct CursorSelectionState
         const auto &current_entry = raw_entries[sorted_entries[m_CursorPosition]];
         ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
         int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, m_SymbWidth-2);
-        oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, m_FontCache, g_RegFileColor);
+        oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, fontcache, g_RegFileColor);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -810,7 +811,7 @@ struct CursorSelectionState
             b.put(u'═', i, m_SymbHeight-1);
     }
     
-    oms::DrawUniCharsXY(b, context, m_FontCache);
+    oms::DrawUniCharsXY(b, context, fontcache);
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -818,7 +819,6 @@ struct CursorSelectionState
     if(!m_Data) return;
     assert(m_CursorPosition < (int)m_Data->SortedDirectoryEntries().size());
     assert(m_FilesDisplayOffset >= 0);
-    
     
     CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 

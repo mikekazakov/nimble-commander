@@ -3,6 +3,8 @@
 #include <CoreText/CTFont.h>
 #include <CoreGraphics/CGFont.h>
 
+class FontCacheManager;
+
 class FontCache
 {
 public:
@@ -15,7 +17,6 @@ public:
         CGGlyph       glyph;
     }; // 4bytes total
 
-    FontCache(CTFontRef _basic_font);
     Pair           cache[65536];
     CTFontRef      ctbasefont;
     CGFontRef      cgbasefont;
@@ -25,10 +26,25 @@ public:
     
     Pair    Get(UniChar _c);
 private:
+    friend class FontCacheManager;
+    FontCache(CTFontRef _basic_font);
+    FontCache(const FontCache&); // forbid
+};
 
-//    static FontCache* Allocate(CTFontRef _font);
-//    static void       Delete(FontCache *);
-//    static
+class FontCacheManager
+{
+public:
+    static FontCacheManager* Instance();
+    
+    void CreateFontCache(CFStringRef _font_name); // should be called once by The Application class
+    FontCache* Get();
+    
+    // here will be functions to change font name etc. later.
+    
+private:
+    FontCacheManager();
+    FontCacheManager(const FontCacheManager&); // forbid
+    FontCache *m_FontCache;
 };
 
 extern unsigned char g_WCWidthTableFixedMin1[65536];

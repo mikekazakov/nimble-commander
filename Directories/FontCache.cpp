@@ -4,15 +4,31 @@
 #include <assert.h>
 #include <wchar.h>
 
-#include "wcwidth.h"
+static FontCacheManager *g_Inst = 0;
 
-/*static FontCache *g_Inst = 0;
-
-FontCache *FontCache::Inst()
+FontCacheManager* FontCacheManager::Instance()
 {
-    if(!g_Inst) g_Inst = new FontCache(); // never deleting object
+    if(!g_Inst) g_Inst = new FontCacheManager(); // never deleting object;
     return g_Inst;
-}*/
+}
+
+FontCacheManager::FontCacheManager():
+    m_FontCache(0)
+{
+}
+
+void FontCacheManager::CreateFontCache(CFStringRef _font_name)
+{
+    auto fontct = CTFontCreateWithName(_font_name, 10, 0);
+    assert(m_FontCache == 0);
+    m_FontCache = new FontCache(fontct);    
+}
+
+FontCache* FontCacheManager::Get()
+{
+    assert(m_FontCache != 0);
+    return m_FontCache;
+}
 
 FontCache::FontCache(CTFontRef _basic_font):
     ctbasefont(_basic_font)
@@ -25,28 +41,13 @@ FontCache::FontCache(CTFontRef _basic_font):
     cgbasefont = cgfallbacks[0];
     cache[0].searched = 1;
 }
-/*
-FontCache* FontCache::Allocate(CTFontRef _font)
-{
-    FontCache* f = (FontCache*) malloc(sizeof(FontCache));
-    memset(f, 0, sizeof(FontCache));
-    f->basefont = _font;
-    return f;
-}
-
-void FontCache::Delete(FontCache *_f)
-{
-    free(_f);
-}*/
 
 FontCache::Pair FontCache::Get(UniChar _c)
 {
-//    if(_c == 0) return FontCache::Pair();
-    
     if(cache[_c].searched)
         return cache[_c];
     
-    // unknown unichar - as system about it
+    // unknown unichar - ask system about it
     
     CGGlyph g;
     bool r = CTFontGetGlyphsForCharacters(ctbasefont, &_c, &g, 1);
@@ -62,25 +63,7 @@ FontCache::Pair FontCache::Get(UniChar _c)
         CFStringRef str = CFStringCreateWithCharacters(0, &_c, 1);
         CTFontRef   ctfont = CTFontCreateForString(ctbasefont, str, CFRangeMake(0, 1));
         CFRelease(str);
-
-//        int a = wcwidth(_c);
-//        int b = mk_wcwidth(_c);
-        
-        // OLOLO!
-/*        FILE *f = fopen("/users/migun/1.txt", "wt");
-        for(int n =0; n < 65536; ++n)
-        {
-            if(n > 0 && n % 128 == 0)
-                fprintf(f, "\n");
-            
-            int c = mk_wcwidth(n);
-            if(c<1) c = 1;
-            
-            fprintf(f, "%d,", c);
-        }
-        fclose(f);
-*/
-        
+     
         if(ctfont != 0)
         {
             r = CTFontGetGlyphsForCharacters(ctfont, &_c, &g, 1);

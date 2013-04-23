@@ -12,6 +12,7 @@
 
 #include "DirRead.h"
 #include "PanelData.h"
+#import "FontCache.h"
 #include "MainWindowController.h"
 #import "OperationProgressValueTransformer.h"
 #import "OperationsController.h"
@@ -29,6 +30,11 @@
                                pathForResource:@"Defaults" ofType:@"plist"];
     NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+}
+
+- (void)applicationWillFinishLaunching:(NSNotification *)aNotification
+{
+    FontCacheManager::Instance()->CreateFontCache((CFStringRef)@"Menlo Regular");    
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification

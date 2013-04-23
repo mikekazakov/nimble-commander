@@ -19,7 +19,7 @@ PanelData::PanelData()
     m_SelectedItemsCount = 0;
     m_SelectedItemsFilesCount = 0;
     m_SelectedItemsDirectoriesCount = 0;
-    m_CustomSortMode.sepdir = true;
+    m_CustomSortMode.sep_dirs = true;
     m_CustomSortMode.sort = m_CustomSortMode.SortByName;
     m_CustomSortMode.show_hidden = false;
     m_SortExecGroup = dispatch_group_create();
@@ -81,7 +81,7 @@ void PanelData::GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path
         DoSort(m_Entries, m_EntriesByRawName, PanelSortMode(PanelSortMode::SortByRawCName, false)); });
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
         PanelSortMode mode;
-        mode.sepdir = false;
+        mode.sep_dirs = false;
         mode.sort = PanelSortMode::SortByName;
         mode.show_hidden = m_CustomSortMode.show_hidden;
         DoSort(m_Entries, m_EntriesByHumanName, mode); });
@@ -124,7 +124,7 @@ void PanelData::ReloadDirectoryInternal(DirEntryInfoT *_entries)
     auto *dirbyrawcname = new DirSortIndT;
     PanelSortMode rawsortmode;
     rawsortmode.sort = PanelSortMode::SortByRawCName;
-    rawsortmode.sepdir = false;
+    rawsortmode.sep_dirs = false;
     rawsortmode.show_hidden = true;
     
     DoSort(_entries, dirbyrawcname, rawsortmode);
@@ -168,7 +168,7 @@ check:  int dst = (*dirbyrawcname)[dst_i];
     // now sort our new data with custom sortings
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
         PanelSortMode mode;
-        mode.sepdir = false;
+        mode.sep_dirs = false;
         mode.sort = PanelSortMode::SortByName;
         mode.show_hidden = m_CustomSortMode.show_hidden;
         DoSort(m_Entries, m_EntriesByHumanName, mode); });
@@ -283,7 +283,7 @@ struct SortPredLess
         const auto &val1 = (*ind_tar)[_1];
         const auto &val2 = (*ind_tar)[_2];
         
-        if(sort_mode.sepdir)
+        if(sort_mode.sep_dirs)
         {
             if(val1.isdir() && !val2.isdir()) return true;
             if(!val1.isdir() && val2.isdir()) return false;
@@ -401,7 +401,7 @@ void PanelData::SetCustomSortMode(PanelSortMode _mode)
             // need to update fast search indeces also, since there are structural changes
             dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
                 PanelSortMode mode;
-                mode.sepdir = false;
+                mode.sep_dirs = false;
                 mode.sort = PanelSortMode::SortByName;
                 mode.show_hidden = m_CustomSortMode.show_hidden;
                 DoSort(m_Entries, m_EntriesByHumanName, mode); });

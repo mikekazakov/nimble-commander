@@ -29,6 +29,24 @@ struct DialogResult
     };
 };
 
+struct MenuTags
+{
+    enum
+    {
+        PanelViewShortMode  = 1000,
+        PanelViewMediumMode = 1001,
+        PanelViewFullMode   = 1002,
+        PanelViewWideMode   = 1003,
+        PanelSortByName     = 1010,
+        PanelSortByExt      = 1011,
+        PanelSortByMTime    = 1012,
+        PanelSortBySize     = 1013,
+        PanelSortByBTime    = 1014,
+        PanelSortViewHidden = 1020,
+        PanelSortSepDirs    = 1021,
+    };
+};
+
 bool GetRealPath(const char *_path_in, char *_path_out);
 
 

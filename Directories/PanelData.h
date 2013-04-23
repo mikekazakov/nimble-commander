@@ -15,38 +15,52 @@ struct PanelSortMode
     
     enum Mode
     {
-        SortNoSort = 0,
-        SortByName,
-        SortByNameRev,
-        SortByExt,
-        SortByExtRev,
-        SortBySize,
-        SortBySizeRev,
-        SortByMTime,
-        SortByMTimeRev,
-        SortByBTime,
-        SortByBTimeRev,
-        SortByRawCName     // for internal usage, seems to be meaningless for human reading (sort by internal UTF8 representation)
+        SortNoSort      = 0x000,
+        SortByName      = 0x001,
+        SortByNameRev   = 0x002,
+        SortByExt       = SortByName    << 2,
+        SortByExtRev    = SortByNameRev << 2,
+        SortBySize      = SortByName    << 4,
+        SortBySizeRev   = SortByNameRev << 4,
+        SortByMTime     = SortByName    << 6,
+        SortByMTimeRev  = SortByNameRev << 6,
+        SortByBTime     = SortByName    << 8,
+        SortByBTimeRev  = SortByNameRev << 8,
+        // for internal usage, seems to be meaningless for human reading (sort by internal UTF8 representation)
+        SortByRawCName  = 0xF0000000,
+        SortByNameMask  = SortByName | SortByNameRev,
+        SortByExtMask   = SortByExt  | SortByExtRev,
+        SortBySizeMask  = SortBySize | SortBySizeRev,
+        SortByMTimeMask = SortByMTime| SortByMTimeRev,
+        SortByBTimeMask = SortByBTime| SortByBTimeRev
     };
     
     Mode sort;
-    bool sepdir;    // separate directories from files, like win-like
+    bool sep_dirs;    // separate directories from files, like win-like
     bool show_hidden;
     
     inline PanelSortMode():
         sort(SortByRawCName),
-        sepdir(false),
+        sep_dirs(false),
         show_hidden(true)
     {}
     inline PanelSortMode(Mode _mode, bool _sepdir):
         sort(_mode),
-        sepdir(_sepdir),
+        sep_dirs(_sepdir),
         show_hidden(true)
     {}
     
+    inline bool isdirect() const
+    {
+        return sort == SortByName || sort == SortByExt || sort == SortBySize || sort == SortByMTime || sort == SortByBTime;
+    }
+    inline bool isrevert() const
+    {
+        return sort == SortByNameRev || sort == SortByExtRev || sort == SortBySizeRev || sort == SortByMTimeRev || sort == SortByBTimeRev;        
+    }
     inline bool operator ==(const PanelSortMode& _r) const
     {
-        return sort == _r.sort && sepdir == _r.sepdir && show_hidden == _r.show_hidden;
+        return sort == _r.sort && sep_dirs == _r.sep_dirs && show_hidden == _r.show_hidden;
     }
     inline bool operator !=(const PanelSortMode& _r) const
     {

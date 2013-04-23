@@ -34,6 +34,9 @@
 - (void) ToggleFullViewMode; // user pressed ctrl+3 by default
 - (void) ToggleWideViewMode; // user pressed ctrl+4 by default
 
+- (PanelViewType) GetViewType;
+- (PanelSortMode) GetUserSortMode;
+
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;
 - (void) RefreshDirectory; // user pressed cmd+r by default
 

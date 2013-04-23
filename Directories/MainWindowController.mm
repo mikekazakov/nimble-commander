@@ -71,17 +71,8 @@ static bool CheckPath(const char *_path)
     PanelView *m_RightPanelView;                // creates and owns
     PanelData *m_RightPanelData;                // creates and owns
     PanelController *m_RightPanelController;    // creates and owns
-    struct
-    {
-        NSLayoutConstraint *left_left;
-        NSLayoutConstraint *left_bottom;
-        NSLayoutConstraint *left_top;
-        NSLayoutConstraint *left_right;
-        NSLayoutConstraint *right_left;
-        NSLayoutConstraint *right_bottom;
-        NSLayoutConstraint *right_top;
-        NSLayoutConstraint *right_right;
-    } m_PanelConstraints;
+
+    NSMutableArray *m_PanelConstraints;
     
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
@@ -95,6 +86,7 @@ static bool CheckPath(const char *_path)
     {
         [self setShouldCascadeWindows:NO];
         
+        m_PanelConstraints = [[NSMutableArray alloc] init];        
         m_OperationsController = [[OperationsController alloc] init];
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWthController:m_OperationsController];
     }
@@ -114,43 +106,46 @@ static bool CheckPath(const char *_path)
  
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
-    
+
     [m_OpSummaryController AddViewTo:self.OpSummaryBox];
 
 
+    // panel creation and preparation
     [self CreatePanels];
     [self CreatePanelConstraints];
-    
     m_LeftPanelData = new PanelData;
     m_LeftPanelController = [PanelController new];
     [m_LeftPanelView SetPanelData:m_LeftPanelData];
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
     [m_LeftPanelController AttachToIndicator:self.LeftPanelSpinningIndicator];
-    if( CheckPath([[defaults stringForKey:@"FirstPanelPath"] UTF8String]) )
-        [m_LeftPanelController GoToDirectory:[[defaults stringForKey:@"FirstPanelPath"] UTF8String]];
-    else
-    {
-        struct passwd *pw = getpwuid(getuid());
-        assert(pw);
-        assert(CheckPath(pw->pw_dir));
-        [m_LeftPanelController GoToDirectory:pw->pw_dir];
-    }
-    
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
     [m_RightPanelView SetPanelData:m_RightPanelData];
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
-    if( CheckPath([[defaults stringForKey:@"SecondPanelPath"] UTF8String]) )
-        [m_RightPanelController GoToDirectory:[[defaults stringForKey:@"SecondPanelPath"] UTF8String]];
+    [self LoadPanelsSettings];
+    
+    // now load data into panels
+    if( CheckPath([[defaults stringForKey:@"FirstPanelPath"] UTF8String]) )
+        [m_LeftPanelController GoToDirectorySync:[[defaults stringForKey:@"FirstPanelPath"] UTF8String]];
     else
-        [m_RightPanelController GoToDirectory:"/"];
+    {
+        struct passwd *pw = getpwuid(getuid());
+        assert(pw);
+        assert(CheckPath(pw->pw_dir));
+        [m_LeftPanelController GoToDirectorySync:pw->pw_dir];
+    }
+    
+    if( CheckPath([[defaults stringForKey:@"SecondPanelPath"] UTF8String]) )
+        [m_RightPanelController GoToDirectorySync:[[defaults stringForKey:@"SecondPanelPath"] UTF8String]];
+    else
+        [m_RightPanelController GoToDirectorySync:"/"];
     
     m_ActiveState = StateLeftPanel;
     [m_LeftPanelView Activate];
-    
+
     [[self window] makeFirstResponder:self];
     [[self window] setDelegate:self];
     
@@ -158,9 +153,7 @@ static bool CheckPath(const char *_path)
                                              selector:@selector(DidBecomeKeyWindow)
                                                  name:NSWindowDidBecomeKeyNotification
                                                object:[self window]];
-    
-    [self LoadPanelsSettings];
-    
+
 //    [[self window] visualizeConstraints:[[[self window] contentView] constraints]];
 }
 
@@ -176,82 +169,73 @@ static bool CheckPath(const char *_path)
 }
 
 - (void)CreatePanelConstraints
-{
+{    
     const int topgap = 45;
-    [[[self window] contentView] removeConstraint:m_PanelConstraints.left_left];
-    [[[self window] contentView] removeConstraint:m_PanelConstraints.left_top];
-    [[[self window] contentView] removeConstraint:m_PanelConstraints.left_right];
-    [[[self window] contentView] removeConstraint:m_PanelConstraints.left_bottom];
-    [[[self window] contentView] removeConstraint:m_PanelConstraints.right_left];
-    [[[self window] contentView] removeConstraint:m_PanelConstraints.right_top];
-    [[[self window] contentView] removeConstraint:m_PanelConstraints.right_right];
-    [[[self window] contentView] removeConstraint:m_PanelConstraints.right_bottom];
     
-    m_PanelConstraints.left_left = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
+    for(id constr in m_PanelConstraints)
+        [[[self window] contentView] removeConstraint:constr];
+    
+    [m_PanelConstraints removeAllObjects];
+    
+    [m_PanelConstraints addObject:[NSLayoutConstraint constraintWithItem:m_LeftPanelView
                                                                 attribute:NSLayoutAttributeLeft
                                                                 relatedBy:NSLayoutRelationEqual
                                                                    toItem:[[self window] contentView]
                                                                 attribute:NSLayoutAttributeLeft
                                                                multiplier:1
-                                                                 constant:0];
-    m_PanelConstraints.left_top = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
+                                                                 constant:0]]; // #0
+    [m_PanelConstraints addObject: [NSLayoutConstraint constraintWithItem:m_LeftPanelView
                                                                 attribute:NSLayoutAttributeTop
                                                                 relatedBy:NSLayoutRelationEqual
                                                                    toItem:[[self window] contentView]
                                                                 attribute:NSLayoutAttributeTop
                                                                multiplier:1
-                                                                 constant:topgap];
-    m_PanelConstraints.left_bottom = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
+                                                                 constant:topgap]]; // #1
+    [m_PanelConstraints addObject: [NSLayoutConstraint constraintWithItem:m_LeftPanelView
                                                                 attribute:NSLayoutAttributeBottom
                                                                 relatedBy:NSLayoutRelationEqual
                                                                    toItem:[[self window] contentView]
                                                                 attribute:NSLayoutAttributeBottom
                                                                multiplier:1
-                                                                 constant:0];
-    m_PanelConstraints.left_right = [NSLayoutConstraint constraintWithItem:m_LeftPanelView
+                                                                 constant:0]]; // #2
+    [m_PanelConstraints addObject: [NSLayoutConstraint constraintWithItem:m_LeftPanelView
                                                                attribute:NSLayoutAttributeRight
                                                                relatedBy:NSLayoutRelationEqual
                                                                   toItem:[[self window] contentView]
                                                                attribute:NSLayoutAttributeCenterX
                                                               multiplier:1
-                                                                constant:0];
-    m_PanelConstraints.right_left = [NSLayoutConstraint constraintWithItem:m_RightPanelView
+                                                                constant:0]]; // #3
+    [m_PanelConstraints addObject: [NSLayoutConstraint constraintWithItem:m_RightPanelView
                                                                 attribute:NSLayoutAttributeLeft
                                                                 relatedBy:NSLayoutRelationEqual
                                                                    toItem:[[self window] contentView]
                                                                 attribute:NSLayoutAttributeCenterX
                                                                multiplier:1
-                                                                 constant:0];
-    m_PanelConstraints.right_top = [NSLayoutConstraint constraintWithItem:m_RightPanelView
+                                                                 constant:0]]; // #4
+    [m_PanelConstraints addObject: [NSLayoutConstraint constraintWithItem:m_RightPanelView
                                                                attribute:NSLayoutAttributeTop
                                                                relatedBy:NSLayoutRelationEqual
                                                                   toItem:[[self window] contentView]
                                                                attribute:NSLayoutAttributeTop
                                                               multiplier:1
-                                                                constant:topgap];
-    m_PanelConstraints.right_bottom = [NSLayoutConstraint constraintWithItem:m_RightPanelView
+                                                                constant:topgap]]; // #5
+    [m_PanelConstraints addObject: [NSLayoutConstraint constraintWithItem:m_RightPanelView
                                                                   attribute:NSLayoutAttributeBottom
                                                                   relatedBy:NSLayoutRelationEqual
                                                                      toItem:[[self window] contentView]
                                                                   attribute:NSLayoutAttributeBottom
                                                                  multiplier:1
-                                                                   constant:0];
-    m_PanelConstraints.right_right = [NSLayoutConstraint constraintWithItem:m_RightPanelView
+                                                                   constant:0]]; // #6
+    [m_PanelConstraints addObject: [NSLayoutConstraint constraintWithItem:m_RightPanelView
                                                                  attribute:NSLayoutAttributeRight
                                                                  relatedBy:NSLayoutRelationEqual
                                                                     toItem:[[self window] contentView]
                                                                  attribute:NSLayoutAttributeRight
                                                                 multiplier:1
-                                                                  constant:0];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.left_left];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.left_top];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.left_right];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.left_bottom];    
-    [[[self window] contentView] addConstraint:m_PanelConstraints.right_left];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.right_top];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.right_right];
-    [[[self window] contentView] addConstraint:m_PanelConstraints.right_bottom];
-
+                                                                  constant:0]]; // #7
+    for(id constr in m_PanelConstraints)
+        [[[self window] contentView] addConstraint:(NSLayoutConstraint*)constr];
+    
     [self UpdatePanelConstraints:[[self window] frame].size];
 }
 
@@ -260,8 +244,8 @@ static bool CheckPath(const char *_path)
     float gran = 9.;
     float center_x = frameSize.width / 2.;
     float rest = fmod(center_x, gran);
-    m_PanelConstraints.left_right.constant = -rest+1;
-    m_PanelConstraints.right_left.constant = -rest;
+    ((NSLayoutConstraint*)[m_PanelConstraints objectAtIndex:3]).constant = -rest+1;
+    ((NSLayoutConstraint*)[m_PanelConstraints objectAtIndex:4]).constant = -rest;
 
     [[[self window] contentView] setNeedsLayout:true];
 }

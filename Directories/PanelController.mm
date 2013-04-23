@@ -216,7 +216,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_new_path);
 }
 
-- (bool) GoToDirectory:(const char*) _dir
+- (void) GoToDirectory:(const char*) _dir
 {
     assert(_dir && strlen(_dir));
     char *path = strdup(_dir);
@@ -246,6 +246,19 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         PanelData::LoadFSDirectoryAsync(path, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;} );
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
     });
+}
+
+- (bool) GoToDirectorySync:(const char*) _dir
+{
+    if(!m_Data->GoToDirectory(_dir))
+        return false;
+
+    // clean running operations if any
+    m_IsStopDirectorySizeCounting = true;
+    m_IsStopDirectoryLoading = true;
+    m_IsStopDirectoryReLoading = true;
+    [self ResetUpdatesObservation:_dir];
+    [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
     return true;
 }
 

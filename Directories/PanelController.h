@@ -37,7 +37,8 @@
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;
 - (void) RefreshDirectory; // user pressed cmd+r by default
 
-- (bool) GoToDirectory:(const char*) _dir;
+- (void) GoToDirectory:(const char*) _dir;
+- (bool) GoToDirectorySync:(const char*) _dir; // intended to use only in window initialization
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void)keyDown:(NSEvent *)event;

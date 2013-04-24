@@ -29,7 +29,6 @@ private:
         FSEventStreamRef stream;
         unsigned long ticket;
         int refcount;
-        bool running;
     };
     std::vector<WatchData*> m_Watches;
     unsigned long           m_LastTicket;
@@ -41,10 +40,4 @@ private:
                                           void *eventPaths,
                                           const FSEventStreamEventFlags eventFlags[],
                                           const FSEventStreamEventId eventIds[]);
-    void UpdateCallback(ConstFSEventStreamRef streamRef,
-                                   void *userData,
-                                   size_t numEvents,
-                                   void *eventPaths,
-                                   const FSEventStreamEventFlags eventFlags[],
-                                   const FSEventStreamEventId eventIds[]);
 };

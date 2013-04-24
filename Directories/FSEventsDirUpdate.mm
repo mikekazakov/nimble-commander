@@ -12,7 +12,11 @@
 #include "FSEventsDirUpdate.h"
 #include "AppDelegate.h"
 
+
+static const CFAbsoluteTime g_FSEventsLatency = 0.1;
 static FSEventsDirUpdate *g_Inst = 0;
+
+
 
 // ask FS about real file path - case sensitive etc
 // also we're getting rid of symlinks - it will be a real file
@@ -49,16 +53,6 @@ void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRe
                        const FSEventStreamEventFlags eventFlags[],
                        const FSEventStreamEventId eventIds[])
 {
-    Inst()->UpdateCallback(streamRef, userData, numEvents, eventPaths, eventFlags, eventIds);
-}
-
-void FSEventsDirUpdate::UpdateCallback(ConstFSEventStreamRef streamRef,
-                    void *userData,
-                    size_t numEvents,
-                    void *eventPaths,
-                    const FSEventStreamEventFlags eventFlags[],
-                    const FSEventStreamEventId eventIds[])
-{
     const WatchData *w = (const WatchData *) userData;
     
     for(size_t i=0; i < numEvents; i++)
@@ -66,9 +60,9 @@ void FSEventsDirUpdate::UpdateCallback(ConstFSEventStreamRef streamRef,
         // this checking should be blazing fast, since we can get A LOT of events here (from all sub-dirs)
         // and we need only events from current-level directory
         // TODO: check this performance
-
+        
         const char *path = ((const char**)eventPaths)[i];
-
+        
         if(w->path == path)
             [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:path ticket:w->ticket];
     }
@@ -82,24 +76,20 @@ unsigned long  FSEventsDirUpdate::AddWatchPath(const char *_path)
         return 0;
     
     // check if this path already presents in watched paths
-    for(auto i = m_Watches.begin(); i < m_Watches.end(); ++i)
-    {
-        if( (*i)->path == dirpath )
+    for(auto i: m_Watches)
+        if( i->path == dirpath )
         { // then just increase refcount and exit
-            (*i)->refcount++;
-            return (*i)->ticket;
+            i->refcount++;
+            return i->ticket;
         }
-    }
-    
+
     // create new watch stream
     WatchData *w = new WatchData;
     w->path = dirpath;
     w->ticket = m_LastTicket++;
     w->refcount = 1;
-    w->running = true;
     
     FSEventStreamContext context = {0, w, NULL, NULL, NULL};
-    NSTimeInterval latency = 0.2;
     CFStringRef path = CFStringCreateWithBytes(0, (const UInt8*)_path, strlen(_path), kCFStringEncodingUTF8, false);
 
     void *ar[1] = {(void*)path};
@@ -110,7 +100,7 @@ unsigned long  FSEventsDirUpdate::AddWatchPath(const char *_path)
                                  &context,
                                  pathsToWatch,
                                  kFSEventStreamEventIdSinceNow,
-                                 (CFAbsoluteTime) latency,
+                                 g_FSEventsLatency,
                                  0
                                  );
     CFRelease(pathsToWatch);
@@ -139,9 +129,8 @@ bool FSEventsDirUpdate::RemoveWatchPath(const char *_path)
             w->refcount--;
             if(w->refcount == 0)
             {
-                if(w->running)
-                    FSEventStreamStop(w->stream);
-                FSEventStreamScheduleWithRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+                FSEventStreamStop(w->stream);
+                FSEventStreamUnscheduleFromRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
                 FSEventStreamInvalidate(w->stream);
                 FSEventStreamRelease(w->stream);
                 delete w;
@@ -165,9 +154,8 @@ bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
             w->refcount--;
             if(w->refcount == 0)
             {
-                if(w->running)
-                    FSEventStreamStop(w->stream);
-                FSEventStreamScheduleWithRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+                FSEventStreamStop(w->stream);
+                FSEventStreamUnscheduleFromRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
                 FSEventStreamInvalidate(w->stream);
                 FSEventStreamRelease(w->stream);
                 delete w;

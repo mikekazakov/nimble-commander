@@ -20,4 +20,6 @@
 - (IBAction)NewWindow:(id)sender;
 - (void) RemoveMainWindow:(MainWindowController*) _wnd;
 
+- (IBAction)OnMenuSendFeedback:(id)sender;
+
 @end

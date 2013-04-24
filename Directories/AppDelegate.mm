@@ -136,4 +136,17 @@
         [i SavePanelPaths];
 }
 
+- (IBAction)OnMenuSendFeedback:(id)sender
+{
+    NSString *toAddress = @"feedback@filesmanager.info";
+    NSString *subject = [NSString stringWithFormat: @"Feedback on Files version %@ (%@)",
+                         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"],
+                         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
+    NSString *bodyText = @"Write your message here.";
+    NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
+    NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlstring]];
+}
+
 @end

@@ -348,6 +348,7 @@ void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_p
     strcat(fullpath, _full_path);
 
     struct stat stat_buffer;
+retry_stat:
     if(stat(fullpath, &stat_buffer) == 0)
     {
         bool isfile = (stat_buffer.st_mode&S_IFMT) == S_IFREG;
@@ -374,6 +375,7 @@ void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_p
             const FlexChainedStringsChunk::node *dirnode = &m_ScannedItemsLast->strings[m_ScannedItemsLast->amount-1];
             m_SourceNumberOfDirectories++;
             
+        retry_opendir:
             DIR *dirp = opendir(fullpath);
             if( dirp != 0)
             {
@@ -386,21 +388,40 @@ void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_p
                     sprintf(dirpath, "%s/%s", _full_path, entp->d_name);
                     
                     ScanItem(dirpath, entp->d_name, dirnode);
-                    
-                    // TODO: check if we need to stop;
+                    if (CheckPauseOrStop())
+                    {
+                        closedir(dirp);
+                        return;
+                    }
                 }
                 
                 closedir(dirp);
             }
-            else
+            else if (!m_SkipAll)
             {
-                //TODO: error handling
+                int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:fullpath]
+                              WaitForResult];
+                if (result == OperationDialogResult::Retry) goto retry_opendir;
+                else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                else if (result == OperationDialogResult::Stop)
+                {
+                    RequestStop();
+                    return;
+                }
             }
         }
     }
-    else
+    else if (!m_SkipAll)
     {
-        // TODO: error handling?
+        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:fullpath]
+                      WaitForResult];
+        if (result == OperationDialogResult::Retry) goto retry_stat;
+        else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+        else if (result == OperationDialogResult::Stop)
+        {
+            RequestStop();
+            return;
+        }
     }
 }
 
@@ -567,13 +588,30 @@ void FileCopyOperationJob::ProcessRenameToFile(const char *_path)
     int ret = lstat(m_Destination, &stat_buffer);
     if(ret != -1)
     {
-        // TODO: target file already exist. ask user about what to do
-        assert(0);
+        // Destination file already exists.
+        // Check if destination and source paths reference the same file. In this case,
+        // silently rename the file.
+        struct stat src_stat_buffer;
+        ret = lstat(sourcepath, &src_stat_buffer);
+        if (!(ret == 0 && stat_buffer.st_dev == src_stat_buffer.st_dev
+            && stat_buffer.st_ino == src_stat_buffer.st_ino))
+        {
+            // Ask what to do.
+            int result = [[m_Operation OnRenameDestinationExists:m_Destination Source:sourcepath]
+                          WaitForResult];
+            
+            if (result == OperationDialogResult::Stop) { RequestStop(); return; }
+        }
     }
     
+retry_rename:
     ret = rename(sourcepath, m_Destination);
-    // TODO: handle result
-    assert(ret == 0);
+    if (ret != 0)
+    {
+        int result = [[m_Operation OnCopyWriteError:errno ForFile:m_Destination] WaitForResult];
+        if (result == OperationDialogResult::Retry) goto retry_rename;
+        else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
+    }
 }
 
 void FileCopyOperationJob::ProcessRenameToFolder(const char *_path)
@@ -596,13 +634,30 @@ void FileCopyOperationJob::ProcessRenameToFolder(const char *_path)
     int ret = lstat(destpath, &stat_buffer);
     if(ret != -1)
     {
-        // TODO: target file already exist. ask user about what to do
-        assert(0);
+        // Destination file already exists.
+        // Check if destination and source paths reference the same file. In this case,
+        // silently rename the file.
+        struct stat src_stat_buffer;
+        ret = lstat(sourcepath, &src_stat_buffer);
+        if (!(ret == 0 && stat_buffer.st_dev == src_stat_buffer.st_dev
+              && stat_buffer.st_ino == src_stat_buffer.st_ino))
+        {
+            // Ask what to do.
+            int result = [[m_Operation OnRenameDestinationExists:destpath Source:sourcepath]
+                          WaitForResult];
+            
+            if (result == OperationDialogResult::Stop) { RequestStop(); return; }
+        }
     }
 
+retry_rename:
     ret = rename(sourcepath, destpath);
-    // TODO: handle result
-    assert(ret == 0);
+    if (ret != 0)
+    {
+        int result = [[m_Operation OnCopyWriteError:errno ForFile:m_Destination] WaitForResult];
+        if (result == OperationDialogResult::Retry) goto retry_rename;
+        else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
+    }
 }
 
 void FileCopyOperationJob::ProcessDirectoryCopying(const char *_path)

@@ -46,5 +46,7 @@ struct FileCopyOperationOptions
                                          exisize: (unsigned long)_exisize
                                          exitime: (time_t) _exitime
                                         remember: (bool*)  _remb;
+- (OperationDialogAlert *)OnRenameDestinationExists:(const char *)_dest
+                                             Source:(const char *)_src;
 
 @end

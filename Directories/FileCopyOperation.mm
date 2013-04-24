@@ -140,4 +140,23 @@
     return sheet;
 }
 
+- (OperationDialogAlert *)OnRenameDestinationExists:(const char *)_dest
+                                             Source:(const char *)_src
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    [alert AddButtonWithTitle:@"Rewrite" andResult:OperationDialogResult::Continue];
+    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
+    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Destination already exists. Do you want to rewrite it?"];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Destination: %@\nSource: %@",
+                               [NSString stringWithUTF8String:_dest],
+                               [NSString stringWithUTF8String:_src]]];
+    
+    [self EnqueueDialog:alert];
+    
+    return alert;
+}
+
 @end

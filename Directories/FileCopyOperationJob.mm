@@ -841,7 +841,7 @@ bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
     // TODO: need to adjust buffer sizes and writing calls to preffered volume's I/O size
     struct stat src_stat_buffer, dst_stat_buffer;
     char *readbuf = (char*)m_Buffer1, *writebuf = (char*)m_Buffer2;
-    int dstopenflags=0, sourcefd=-1, destinationfd=-1;
+    int dstopenflags=0, sourcefd=-1, destinationfd=-1, fcntlret;
     unsigned long startwriteoff = 0, totaldestsize = 0, dest_sz_on_stop = 0;
     bool adjust_dst_time = true, copy_xattrs = true, erase_xattrs = false, remember_choice = false,
     was_successful = false, unlink_on_stop = false;
@@ -850,7 +850,7 @@ bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
     __block bool io_docancel = false;
     
 opensource:
-    if((sourcefd = open(_src, O_RDONLY|O_SHLOCK)) == -1)
+    if((sourcefd = open(_src, O_RDONLY|O_SHLOCK|O_NONBLOCK)) == -1)
     {  // failed to open source file
         if(m_SkipAll) goto cleanup;
         int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:_src] WaitForResult];
@@ -860,6 +860,10 @@ opensource:
         if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     fcntl(sourcefd, F_NOCACHE, 1); // do not waste OS file cache with one-way data
+    fcntlret = fcntl(sourcefd, F_GETFL);
+    assert(fcntlret >= 0);
+    fcntlret = fcntl(sourcefd, F_SETFL, fcntlret & ~O_NONBLOCK);
+    assert(fcntlret >= 0); // TODO: consider displaying dialog on such errors istead of assertation
     
 statsource: // get information about source file
     if(fstat(sourcefd, &src_stat_buffer) == -1)

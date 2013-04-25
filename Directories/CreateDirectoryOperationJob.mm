@@ -105,6 +105,7 @@ domkdir2:
         }
     }
 
+    [m_Operation Finished];
     SetCompleted();
 }
 

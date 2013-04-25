@@ -238,6 +238,8 @@ int PanelData::FindEntryIndex(const char *_filename) const
 
 int PanelData::FindSortedEntryIndex(unsigned _desired_value) const
 {
+    // TODO: consider creating reverse (raw entry->sorted entry) map to speed up performance
+    // ( if the code below will every became a problem - we can change it from O(n) to O(1) )
     size_t i = 0, e = m_EntriesByCustomSort->size();
     const auto *v = m_EntriesByCustomSort->data();
     for(;i<e;++i)

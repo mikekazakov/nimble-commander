@@ -7,11 +7,13 @@
 //
 
 #import "CreateDirectoryOperation.h"
-#include "CreateDirectoryOperationJob.h"
+#import "CreateDirectoryOperationJob.h"
+#import "PanelController.h"
 
 @implementation CreateDirectoryOperation
 {
     CreateDirectoryOperationJob m_Job;
+    char m_OriginalPathRequest[MAXPATHLEN];
     
 
 }
@@ -21,6 +23,7 @@
     self = [super initWithJob:&m_Job];
     if (self)
     {
+        strcpy(m_OriginalPathRequest, _path);
         m_Job.Init(_path, _rootpath, self);
         self.Caption = [NSString stringWithFormat:@"Creating directory '%@'",
                         [NSString stringWithUTF8String:_path]];
@@ -44,6 +47,23 @@
     return alert;
 }
 
-
+- (void) Finished
+{
+    if(self.TargetPanel != nil)
+    {
+        if(strchr(m_OriginalPathRequest, '/') == 0)
+        {
+            // select new entry only if it was a short path
+            NSString *path = [[NSString alloc] initWithUTF8String:m_OriginalPathRequest];
+            PanelController *target = self.TargetPanel;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [target ScheduleDelayedSelectionChangeFor:path
+                                                timeoutms:500
+                                                 checknow:true];
+                });
+        }
+    }
+}
 
 @end

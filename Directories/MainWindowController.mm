@@ -657,7 +657,8 @@ static bool CheckPath(const char *_path)
              
              [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] UTF8String]
                                                                                         rootpath:pdir
-                                                   ]];
+                                                   ]
+                                        WithPanel:[self ActivePanelController]];
          }
      }];
 }

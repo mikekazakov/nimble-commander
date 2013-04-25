@@ -37,6 +37,7 @@ const int MaxDialogs = 2;
     {
         m_Job = _job;
         _DialogsCount = 0;
+        _TargetPanel = nil;
         for (int i = 0; i < MaxDialogs; ++i) m_Dialogs[i] = nil;
     }
     return self;

@@ -10,8 +10,10 @@
 
 #import "OperationDialogProtocol.h"
 
+
 class OperationJob;
 @class OperationDialogController;
+@class PanelController;
 
 @interface Operation : NSObject
 
@@ -25,7 +27,8 @@ class OperationJob;
 @property (nonatomic) BOOL IsPaused;
 // Number of pending dialogs.
 @property (nonatomic) int DialogsCount;
-
+// Panel that caused this operation, or panel that will be affected by this operation. Can be nil.
+@property (nonatomic) PanelController* TargetPanel;
 
 - (id)initWithJob:(OperationJob *)_job;
 

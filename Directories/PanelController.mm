@@ -38,9 +38,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     bool     m_IsDirectoryReLoading; // is background task currently working?
     dispatch_queue_t m_DirectoryReLoadingQ;
     
-    
+    // spinning indicator support
     bool                m_IsAnythingWorksInBackground;
     NSProgressIndicator *m_SpinningIndicator;
+    
+    // delayed entry selection support
+    struct
+    {
+        bool        isvalid;
+        char        filename[MAXPATHLEN];
+        uint64_t    request_end; // time after which request is meaningless and should be removed
+    } m_DelayedSelection;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -61,6 +69,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_DirectorySizeCountingQ = dispatch_queue_create("com.example.paneldirsizecounting", 0);
         m_DirectoryLoadingQ = dispatch_queue_create("com.example.paneldirloading", 0);
         m_DirectoryReLoadingQ = dispatch_queue_create("com.example.paneldirreloading", 0);
+        m_DelayedSelection.isvalid = false;
     }
 
     return self;
@@ -229,6 +238,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             [self ResetUpdatesObservation:_context->path];
             m_Data->GoToDirectoryWithContext(_context);
             [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+            [self ClearSelectionRequest];
         });
     };
     
@@ -306,6 +316,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                 if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
                 if(newcursor_sort < 0) newcursor_sort = 0;
                 [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
+                [self ClearSelectionRequest];
             });
         };
         
@@ -326,6 +337,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                 m_Data->GoToDirectoryWithContext(_context);
 
                 [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
+                [self ClearSelectionRequest];
             });
         };
 
@@ -373,6 +385,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                     [m_View SetCursorPosition:int(m_Data->SortedDirectoryEntries().size() - 1)]; // assuming that any directory will have at leat ".."
             }
 
+            [self CheckAgainstRequestedSelection];
             [m_View setNeedsDisplay:true];
         });  
     };
@@ -424,8 +437,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
 #define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
 
-    if(ISMODIFIER(NSAlternateKeyMask))
+    if(ISMODIFIER(NSAlternateKeyMask) || ISMODIFIER(NSAlternateKeyMask|NSAlphaShiftKeyMask))
         [self HandleFastSearch:character];
+    
+    [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
     
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
@@ -611,6 +626,54 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 - (PanelSortMode) GetUserSortMode
 {
     return m_Data->GetCustomSortMode();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// Delayed selection support
+
+- (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
+{
+    assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // to preserve against fancy threading stuff
+    // we assume that _item_name will not contain any forward slashes
+    
+    m_DelayedSelection.isvalid = true;
+    m_DelayedSelection.request_end = mach_absolute_time() + _time_out_in_ms*USEC_PER_SEC;
+    strcpy(m_DelayedSelection.filename, [_item_name UTF8String]);
+    
+    if(_check_now)
+        [self CheckAgainstRequestedSelection];
+}
+
+- (void) CheckAgainstRequestedSelection
+{
+    assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // to preserve against fancy threading stuff
+    if(!m_DelayedSelection.isvalid)
+        return;
+
+    uint64_t now = mach_absolute_time();
+    if(now > m_DelayedSelection.request_end)
+    {
+        m_DelayedSelection.isvalid = false;
+        return;
+    }
+    
+    // now try to find it
+    int entryindex = m_Data->FindEntryIndex(m_DelayedSelection.filename);
+    if( entryindex >= 0 )
+    {
+        // we found this entry. regardless of appearance of this entry in current directory presentation
+        // there's no reason to search for it again
+        m_DelayedSelection.isvalid = false;
+        
+        int sortpos = m_Data->FindSortedEntryIndex(entryindex);
+        if( sortpos >= 0 )
+            [m_View SetCursorPosition:sortpos];
+    }
+}
+
+- (void) ClearSelectionRequest
+{
+    m_DelayedSelection.isvalid = false;
 }
 
 @end

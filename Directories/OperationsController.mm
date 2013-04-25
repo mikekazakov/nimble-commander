@@ -151,6 +151,15 @@
         [_op Start];
 }
 
+- (void)AddOperation:(Operation *)_op WithPanel:(PanelController*)_panel
+{
+    if (m_Stop) return;
+
+    _op.TargetPanel = _panel;
+    
+    [self AddOperation:_op];
+}
+
 - (Operation *)GetOperation:(NSUInteger)_index
 {
     if (_index >= m_Operations.count) return nil;

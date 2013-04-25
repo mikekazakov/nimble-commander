@@ -21,6 +21,7 @@
 - (void)Stop;
 
 - (void)AddOperation:(Operation *)_op;
+- (void)AddOperation:(Operation *)_op WithPanel:(PanelController*)_panel;
 - (Operation *)GetOperation:(NSUInteger)_index;
 
 @end

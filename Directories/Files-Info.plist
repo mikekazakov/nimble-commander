@@ -30,5 +30,30 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSServices</key>
+	<array>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Files/Reveal in Files</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>IClicked</string>
+			<key>NSPortName</key>
+			<string>Files</string>
+			<key>NSRequiredContext</key>
+			<dict>
+				<key>NSTextContent</key>
+				<array>
+					<string>FilePath</string>
+				</array>
+			</dict>
+			<key>NSSendTypes</key>
+			<array>
+				<string>public.file-url</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

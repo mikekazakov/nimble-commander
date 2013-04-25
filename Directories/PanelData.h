@@ -148,6 +148,8 @@ public:
     
     // manupulation with user flags for directory entries
     void CustomFlagsSelect(int _at_pos, bool _is_selected);
+    void CustomFlagsSelectAll();
+    void CustomFlagsUnSelectAll();
 
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:

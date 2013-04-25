@@ -299,7 +299,7 @@ static bool CheckPath(const char *_path)
     NSString *path = [NSString stringWithUTF8String:path_raw];
     if (path.length > max_path_length) path = [NSString stringWithFormat:@"...%@",
                                     [path substringFromIndex:(path.length - max_path_length + 3)]];
-    self.window.title = [NSString stringWithFormat:@"Files Αλφα ver.  \u2015  %@", path];
+    self.window.title = [NSString stringWithFormat:@"Files αλφα ver.  \u2015  %@", path];
 }
 
 - (BOOL)windowShouldClose:(id)sender
@@ -903,6 +903,39 @@ static bool CheckPath(const char *_path)
     }
 
     return true; // will disable some items in the future
+}
+
+- (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path
+{
+    assert(dispatch_get_current_queue() == dispatch_get_main_queue());
+
+    PanelController *panel = [self ActivePanelController];
+    if([panel GoToDirectorySync:_path])
+    {   
+        if(_entries->amount > 0)
+            [panel ScheduleDelayedSelectionChangeForC:_entries->strings[0].str()
+                                           timeoutms:100
+                                             checknow:true];
+
+        if(_entries->amount > 1)
+        {
+            PanelData *data = [self ActivePanelData];
+            data->CustomFlagsUnSelectAll();
+            
+            for(auto &i: *_entries)
+            {
+                int idx = data->FindEntryIndex(i.str());
+                if(idx>=0)
+                {
+                    if(data->FindSortedEntryIndex(idx) >= 0) // check if requested element is currently visible or we can get nice artifacts
+                        data->CustomFlagsSelect(idx, true);
+                }
+            }
+            [[self ActivePanelView] setNeedsDisplay:true];
+        }
+    }
+
+    FlexChainedStringsChunk::FreeWithDescendants(&_entries);
 }
 
 @end

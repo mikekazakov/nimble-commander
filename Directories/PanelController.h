@@ -62,5 +62,6 @@
 // if on any checking it will be found that time for request has went out - it will be removed
 // 500ms is just ok for _time_out_in_ms
 - (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now;
+- (void) ScheduleDelayedSelectionChangeForC:(const char*)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now;
 
 @end

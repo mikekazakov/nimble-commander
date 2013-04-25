@@ -481,6 +481,7 @@ void PanelData::CustomFlagsSelect(int _at_pos, bool _is_selected)
 {
     assert(_at_pos >= 0 && _at_pos < m_Entries->size());
     auto &entry = (*m_Entries)[_at_pos];
+    assert(entry.isdotdot() == false); // assuming we can't select dotdot entry
     if(entry.cf_isselected() == _is_selected) // check if item is already selected
         return;
     if(_is_selected)
@@ -515,6 +516,20 @@ void PanelData::CustomFlagsSelect(int _at_pos, bool _is_selected)
         }
         entry.cf_unsetflag(DirectoryEntryCustomFlags::Selected);
     }
+}
+
+void PanelData::CustomFlagsSelectAll()
+{
+    size_t i = 1, e = m_Entries->size();
+    for(;i<e;++i)
+        CustomFlagsSelect((int)i, true);
+}
+
+void PanelData::CustomFlagsUnSelectAll()
+{
+    size_t i = 1, e = m_Entries->size();
+    for(;i<e;++i)
+        CustomFlagsSelect((int)i, false);
 }
 
 unsigned PanelData::GetSelectedItemsCount() const

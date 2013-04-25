@@ -69,4 +69,6 @@ enum ActiveState
 - (void)SavePanelPaths;
 - (void)UpdateTitle;
 
+- (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
+
 @end

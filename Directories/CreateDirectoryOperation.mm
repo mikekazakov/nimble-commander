@@ -9,12 +9,13 @@
 #import "CreateDirectoryOperation.h"
 #import "CreateDirectoryOperationJob.h"
 #import "PanelController.h"
+#import "Common.h"
 
 @implementation CreateDirectoryOperation
 {
     CreateDirectoryOperationJob m_Job;
     char m_OriginalPathRequest[MAXPATHLEN];
-    
+    uint64_t m_OperationStart;
 
 }
 
@@ -24,6 +25,7 @@
     if (self)
     {
         strcpy(m_OriginalPathRequest, _path);
+        m_OperationStart = mach_absolute_time();
         m_Job.Init(_path, _rootpath, self);
         self.Caption = [NSString stringWithFormat:@"Creating directory '%@'",
                         [NSString stringWithUTF8String:_path]];
@@ -49,7 +51,9 @@
 
 - (void) Finished
 {
-    if(self.TargetPanel != nil)
+    const uint64_t op_time_thresh = 500 * USEC_PER_SEC; // if operation was done in 500ms - we will ask panel to change cursor
+    
+    if(self.TargetPanel != nil && (mach_absolute_time() - m_OperationStart < op_time_thresh) )
     {
         if(strchr(m_OriginalPathRequest, '/') == 0)
         {

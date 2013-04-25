@@ -67,5 +67,6 @@ enum ActiveState
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;
 
 - (void)SavePanelPaths;
+- (void)UpdateTitle;
 
 @end

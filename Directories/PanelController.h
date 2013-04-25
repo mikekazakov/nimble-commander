@@ -10,11 +10,14 @@
 #include "PanelData.h"
 #include "PanelView.h"
 
+@class MainWindowController;
+
 @interface PanelController : NSViewController
 
 - (void) SetData:(PanelData*)_data;
 - (void) SetView:(PanelView*)_view;
 - (void) AttachToIndicator:(NSProgressIndicator*)_ind;
+- (void) SetWindowController:(MainWindowController *)_cntrl;
 
 - (void) LoadViewState:(NSDictionary *)_state;
 - (NSDictionary *) SaveViewState;

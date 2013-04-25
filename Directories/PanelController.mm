@@ -10,6 +10,7 @@
 #import "FSEventsDirUpdate.h"
 #import "PanelSizeCalculator.h"
 #import "Common.h"
+#import "MainWindowController.h"
 #import <mach/mach_time.h>
 
 
@@ -19,6 +20,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 {
     PanelData *m_Data;
     PanelView *m_View;
+    __weak MainWindowController *m_WindowController;
     unsigned long m_UpdatesObservationTicket;
     
     NSString *m_FastSearchString;
@@ -241,6 +243,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             m_Data->GoToDirectoryWithContext(_context);
             [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
             [self ClearSelectionRequest];
+            [m_WindowController UpdateTitle];
         });
     };
     
@@ -271,6 +274,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_IsStopDirectoryReLoading = true;
     [self ResetUpdatesObservation:_dir];
     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+    [m_WindowController UpdateTitle];
     return true;
 }
 
@@ -318,6 +322,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                     if(newcursor_sort < 0) newcursor_sort = 0;
                     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
                     [self ClearSelectionRequest];
+                    [m_WindowController UpdateTitle];
                 });
             };
             
@@ -339,6 +344,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                     
                     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
                     [self ClearSelectionRequest];
+                    [m_WindowController UpdateTitle];
                 });
             };
             
@@ -583,6 +589,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_IsAnythingWorksInBackground = false;
     [m_SpinningIndicator stopAnimation:nil];    
     [self UpdateSpinningIndicator];
+}
+
+- (void) SetWindowController:(MainWindowController *)_cntrl
+{
+    m_WindowController = _cntrl;
 }
 
 - (void) NotifyDirectorySizeCounting:(bool) _is_running // true if task will start now, or false if it has just stopped

@@ -251,7 +251,8 @@ int PanelData::FindSortedEntryIndex(unsigned _desired_value) const
 void PanelData::GetDirectoryPath(char _buf[__DARWIN_MAXPATHLEN]) const
 {
     strcpy(_buf, m_DirectoryPath);
-    if( char *s = strrchr(_buf, '/') ) *s = 0;
+    char *slash = strrchr(_buf, '/');
+    if (slash && slash != _buf) *slash = 0;
 }
 
 void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const

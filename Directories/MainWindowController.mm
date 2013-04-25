@@ -119,12 +119,14 @@ static bool CheckPath(const char *_path)
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
     [m_LeftPanelController AttachToIndicator:self.LeftPanelSpinningIndicator];
+    [m_LeftPanelController SetWindowController:self];
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
     [m_RightPanelView SetPanelData:m_RightPanelData];
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
+    [m_RightPanelController SetWindowController:self];
     [self LoadPanelsSettings];
     
     // now load data into panels
@@ -287,6 +289,19 @@ static bool CheckPath(const char *_path)
     [defaults setObject:[[NSString alloc] initWithUTF8String:path] forKey:@"SecondPanelPath"];
 }
 
+- (void)UpdateTitle
+{
+    PanelData *data = [self ActivePanelData];
+    
+    const int max_path_length = 50;
+    char path_raw[__DARWIN_MAXPATHLEN];
+    data->GetDirectoryPath(path_raw);
+    NSString *path = [NSString stringWithUTF8String:path_raw];
+    if (path.length > max_path_length) path = [NSString stringWithFormat:@"...%@",
+                                    [path substringFromIndex:(path.length - max_path_length + 3)]];
+    self.window.title = [NSString stringWithFormat:@"Files Αλφα ver.  \u2015  %@", path];
+}
+
 - (BOOL)windowShouldClose:(id)sender
 {
     if (m_OperationsController.OperationsCount == 0) return TRUE;
@@ -381,6 +396,8 @@ static bool CheckPath(const char *_path)
         [m_LeftPanelView Activate];
         [m_RightPanelView Disactivate];
     }
+    
+    [self UpdateTitle];
 }
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket

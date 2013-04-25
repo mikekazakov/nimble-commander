@@ -119,7 +119,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     {
         int rawpos = m_Data->SortedDirectoryEntries()[pos];
         m_Data->ComposeFullPathForEntry(rawpos, path);
-        [[NSWorkspace sharedWorkspace] openFile:[NSString stringWithUTF8String:path]];
+        BOOL success = [[NSWorkspace sharedWorkspace]
+                        openFile:[NSString stringWithUTF8String:path]];
+        if (!success) NSBeep();
     }
 }
 
@@ -274,78 +276,93 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) HandleReturnButton
 {
-    // TODO: need to implement opening files with associations later
-
     int sort_pos = [m_View GetCursorPosition];
     if(sort_pos < 0)
         return;
     int raw_pos = m_Data->SortedDirectoryEntries()[sort_pos];
-    if( !m_Data->DirectoryEntries()[raw_pos].isdir() )
-        return;
-
-    char path[__DARWIN_MAXPATHLEN];    
-    m_Data->ComposeFullPathForEntry(raw_pos, path);    
-    char *blockpath = strdup(path);    
-
-    auto onfail = ^(const char* _path, int _error) {
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", [[NSString alloc] initWithUTF8String:_path]]];
-        [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
-        dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
-    };
     
-    if(m_IsStopDirectoryLoading)
-        dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
-    
-    if( m_Data->DirectoryEntries()[raw_pos].isdotdot() )
-    { // go to parent directory
-        //a bit crazy, but it's easier than handling lifetime of objects manually - let ARC do it's job
-        char curdirname[__DARWIN_MAXPATHLEN];
-        m_Data->GetDirectoryPathShort(curdirname);
-        NSString *nscurdirname = [[NSString alloc] initWithUTF8String:curdirname];
-
-        auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
-            m_IsStopDirectorySizeCounting = true;
-            m_IsStopDirectoryLoading = true;
-            m_IsStopDirectoryReLoading = true;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self ResetUpdatesObservation:_context->path];
-                m_Data->GoToDirectoryWithContext(_context);
-
-                int newcursor_raw = m_Data->FindEntryIndex( [nscurdirname UTF8String] ), newcursor_sort = 0;
-                if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
-                if(newcursor_sort < 0) newcursor_sort = 0;
-                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
-                [self ClearSelectionRequest];
-            });
+    // Handle directories.
+    if (m_Data->DirectoryEntries()[raw_pos].isdir())
+    {
+        char path[__DARWIN_MAXPATHLEN];
+        m_Data->ComposeFullPathForEntry(raw_pos, path);
+        char *blockpath = strdup(path);
+        
+        auto onfail = ^(const char* _path, int _error) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", [[NSString alloc] initWithUTF8String:_path]]];
+            [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
+            dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
         };
         
-        dispatch_async(m_DirectoryLoadingQ, ^{
-            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
-            PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
-            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
-        });
-    }
-    else
-    { // go into regular sub-directory
-        auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
-            m_IsStopDirectorySizeCounting = true;
-            m_IsStopDirectoryLoading = true;
-            m_IsStopDirectoryReLoading = true;            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self ResetUpdatesObservation:_context->path];
-                m_Data->GoToDirectoryWithContext(_context);
-
-                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
-                [self ClearSelectionRequest];
+        if(m_IsStopDirectoryLoading)
+            dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
+        
+        if( m_Data->DirectoryEntries()[raw_pos].isdotdot() )
+        { // go to parent directory
+            //a bit crazy, but it's easier than handling lifetime of objects manually - let ARC do it's job
+            char curdirname[__DARWIN_MAXPATHLEN];
+            m_Data->GetDirectoryPathShort(curdirname);
+            NSString *nscurdirname = [[NSString alloc] initWithUTF8String:curdirname];
+            
+            auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+                m_IsStopDirectorySizeCounting = true;
+                m_IsStopDirectoryLoading = true;
+                m_IsStopDirectoryReLoading = true;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self ResetUpdatesObservation:_context->path];
+                    m_Data->GoToDirectoryWithContext(_context);
+                    
+                    int newcursor_raw = m_Data->FindEntryIndex( [nscurdirname UTF8String] ), newcursor_sort = 0;
+                    if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
+                    if(newcursor_sort < 0) newcursor_sort = 0;
+                    [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
+                    [self ClearSelectionRequest];
+                });
+            };
+            
+            dispatch_async(m_DirectoryLoadingQ, ^{
+                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
+                PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
+                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
             });
-        };
-
-        dispatch_async(m_DirectoryLoadingQ, ^{
-            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
-            PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
-            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
-        });
+        }
+        else
+        { // go into regular sub-directory
+            auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
+                m_IsStopDirectorySizeCounting = true;
+                m_IsStopDirectoryLoading = true;
+                m_IsStopDirectoryReLoading = true;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self ResetUpdatesObservation:_context->path];
+                    m_Data->GoToDirectoryWithContext(_context);
+                    
+                    [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
+                    [self ClearSelectionRequest];
+                });
+            };
+            
+            dispatch_async(m_DirectoryLoadingQ, ^{
+                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
+                PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
+                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
+            });
+        }
+        
+        return;
+    }
+    
+    // If previous code didn't handle current item,
+    // open item with the default associated application.
+    char path[__DARWIN_MAXPATHLEN];
+    int pos = [m_View GetCursorPosition];
+    if(pos >= 0)
+    {
+        int rawpos = m_Data->SortedDirectoryEntries()[pos];
+        m_Data->ComposeFullPathForEntry(rawpos, path);
+        BOOL success = [[NSWorkspace sharedWorkspace]
+                        openFile:[NSString stringWithUTF8String:path]];
+        if (!success) NSBeep();
     }
 }
 

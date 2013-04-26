@@ -46,6 +46,8 @@ enum class PanelViewDirectoryChangeType
 - (void) HandleLastFile;     // end (fn+right)
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
+- (void)UpdateQuickPreview;
+
 // view type
 - (void) ToggleViewType:(PanelViewType)_type;
 - (PanelViewType) GetCurrentViewType;

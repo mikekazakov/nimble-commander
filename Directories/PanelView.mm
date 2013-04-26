@@ -17,6 +17,9 @@
 
 #include "OrthodoxMonospace.h"
 
+#import "QuickPreview.h"
+
+
 #define FONTSIZE 15.0f
 #define FONTWIDTH 9
 #define FONTHEIGHT 20
@@ -850,6 +853,17 @@ struct CursorSelectionState
     [self setNeedsDisplay:true];
 }
 
+- (void)UpdateQuickPreview
+{
+    if ([QuickPreview IsVisible])
+    {
+        int rawpos = m_Data->SortedDirectoryEntries()[m_CursorPosition];
+        char path[__DARWIN_MAXPATHLEN];
+        m_Data->ComposeFullPathForEntry(rawpos, path);
+        [QuickPreview PreviewItem:[NSString stringWithUTF8String:path] sender:self];
+    }
+}
+
 - (void) HandlePrevFile
 {
     int origpos = m_CursorPosition;
@@ -859,6 +873,7 @@ struct CursorSelectionState
     
     [self EnsureCursorIsVisible];
     [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
 }
 
 - (void) HandleNextFile
@@ -870,6 +885,7 @@ struct CursorSelectionState
     
     [self EnsureCursorIsVisible];    
     [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
 }
 
 - (void) HandlePrevPage
@@ -883,6 +899,7 @@ struct CursorSelectionState
     if(m_FilesDisplayOffset > max_files_shown) m_FilesDisplayOffset -= max_files_shown;
     else                                       m_FilesDisplayOffset = 0;
     [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
 }
 
 - (void) HandleNextPage
@@ -897,6 +914,7 @@ struct CursorSelectionState
     if(m_FilesDisplayOffset + max_files_shown*2 < total_files) m_FilesDisplayOffset += max_files_shown;
     else if(total_files - max_files_shown > 0)                 m_FilesDisplayOffset = total_files - max_files_shown;
     [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
 }
 
 - (void) HandlePrevColumn
@@ -912,7 +930,8 @@ struct CursorSelectionState
         if(m_FilesDisplayOffset > files_per_column) m_FilesDisplayOffset -= files_per_column;
         else                                        m_FilesDisplayOffset = 0;
     }
-    [self setNeedsDisplay:true];    
+    [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
 }
 
 - (void) HandleNextColumn
@@ -930,7 +949,8 @@ struct CursorSelectionState
         if(m_FilesDisplayOffset + files_per_column + max_files_shown < total_files) m_FilesDisplayOffset += files_per_column;
         else if(total_files - max_files_shown > 0)                 m_FilesDisplayOffset = total_files - max_files_shown;
     }
-    [self setNeedsDisplay:true];    
+    [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
 }
 
 - (void) HandleFirstFile;
@@ -941,6 +961,7 @@ struct CursorSelectionState
         [self SelectUnselectInRange:origpos last_included: m_CursorPosition];    
     m_FilesDisplayOffset = 0;
     [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
 }
 
 - (void) HandleLastFile;
@@ -953,6 +974,7 @@ struct CursorSelectionState
         [self SelectUnselectInRange:origpos last_included: m_CursorPosition];    
     if(total_files > max_files_shown) m_FilesDisplayOffset = total_files - max_files_shown;
     [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
 }
 
 - (void) EnsureCursorIsVisible
@@ -977,7 +999,8 @@ struct CursorSelectionState
     {
         m_CursorPosition = _pos;
         [self EnsureCursorIsVisible];
-        [self setNeedsDisplay:true];        
+        [self setNeedsDisplay:true];
+        [self UpdateQuickPreview];
     }
 }
 

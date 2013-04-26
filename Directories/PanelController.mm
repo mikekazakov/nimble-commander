@@ -11,6 +11,7 @@
 #import "PanelSizeCalculator.h"
 #import "Common.h"
 #import "MainWindowController.h"
+#import "QuickPreview.h"
 #import <mach/mach_time.h>
 
 
@@ -523,6 +524,13 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 {
     // dummy for now. we need to analyze the selection and/or cursor position
     
+    // Close quick preview, if it is open.
+    if ([QuickPreview IsVisible])
+    {
+        [QuickPreview Hide];
+        return;
+    }
+    
     if(m_Data->GetSelectedItemsCount())
     {
         auto files = m_Data->StringsFromSelectedEntries();
@@ -531,12 +539,21 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     else
     {
         auto const *item = [m_View CurrentItem];
+        if (!item) return;
         
-        // do not try count parent directory size. TODO: need a special handling here, it count the entire directory
-        if(item && !item->isdotdot())
+        if (item->isdir())
         {
-            auto files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
-            [self StartDirectorySizeCountingFor:files];
+            // do not try count parent directory size. TODO: need a special handling here, it count the entire directory
+            if(item && !item->isdotdot())
+            {
+                auto files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
+                [self StartDirectorySizeCountingFor:files];
+            }
+        }
+        else
+        {
+            [QuickPreview Show];
+            [m_View UpdateQuickPreview];
         }
     }
 }

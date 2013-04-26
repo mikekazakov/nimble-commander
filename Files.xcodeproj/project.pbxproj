@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B50976A31729BA150080412E /* Quartz.framework */; };
+		B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
 		B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B51014D317078B2B0023FF24 /* OperationDialogController.mm */; };
 		B528012216FCF361004E260D /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011A16FCF361004E260D /* OperationStats.mm */; };
 		B528012316FCF361004E260D /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011C16FCF361004E260D /* OperationsController.mm */; };
@@ -75,6 +77,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B50976A31729BA150080412E /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		B50976A7172A3A0E0080412E /* QuickPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickPreview.h; sourceTree = "<group>"; };
+		B50976A8172A3A0E0080412E /* QuickPreview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickPreview.mm; sourceTree = "<group>"; };
 		B51014D217078B2A0023FF24 /* OperationDialogController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationDialogController.h; sourceTree = "<group>"; };
 		B51014D317078B2B0023FF24 /* OperationDialogController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationDialogController.mm; sourceTree = "<group>"; };
 		B528011A16FCF361004E260D /* OperationStats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationStats.mm; sourceTree = "<group>"; };
@@ -203,12 +208,22 @@
 			files = (
 				CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */,
 				CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */,
+				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B50976A6172A39EE0080412E /* QuickPreview */ = {
+			isa = PBXGroup;
+			children = (
+				B50976A7172A3A0E0080412E /* QuickPreview.h */,
+				B50976A8172A3A0E0080412E /* QuickPreview.mm */,
+			);
+			name = QuickPreview;
+			sourceTree = "<group>";
+		};
 		B51014CF170721340023FF24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -454,6 +469,7 @@
 		CFC5121616C4BD3D00D247EE /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B50976A31729BA150080412E /* Quartz.framework */,
 				CF76B3201701DEC70066A49F /* OpenDirectory.framework */,
 				CFC5121716C4BD3D00D247EE /* AppKit.framework */,
 				CFC5121816C4BD3D00D247EE /* CoreData.framework */,
@@ -465,6 +481,7 @@
 		CFC5121A16C4BD3D00D247EE /* Files */ = {
 			isa = PBXGroup;
 			children = (
+				B50976A6172A39EE0080412E /* QuickPreview */,
 				B5A23000171E81AA00D9C1A6 /* Controls */,
 				B528011916FCF347004E260D /* Operation */,
 				CFAC50D5171557E100A3E5C5 /* Core */,
@@ -637,6 +654,7 @@
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
 				CF055EB6171D9E8E00F7A6ED /* PanelSizeCalculator.mm in Sources */,
 				B52EB78F172277DB004ABC2E /* PreferencesWindowController.m in Sources */,
+				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

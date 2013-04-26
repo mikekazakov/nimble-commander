@@ -26,6 +26,7 @@
 #import "KQueueDirUpdate.h"
 #import "FSEventsDirUpdate.h"
 #import "PreferencesWindowController.h"
+#import "QuickPreview.h"
 #import <pwd.h>
 #import <sys/types.h>
 #import <sys/dirent.h>
@@ -42,6 +43,8 @@
 
 // TODO: remove
 #import "TimedDummyOperation.h"
+
+@class QLPreviewPanel;
 
 static bool CheckPath(const char *_path)
 {
@@ -328,6 +331,9 @@ static bool CheckPath(const char *_path)
     unsigned long flags = [NSEvent modifierFlags];
     [m_LeftPanelController ModifierFlagsChanged:flags];
     [m_RightPanelController ModifierFlagsChanged:flags];
+    
+    if ([QuickPreview IsVisible])
+        [[self ActivePanelView] UpdateQuickPreview];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -389,12 +395,14 @@ static bool CheckPath(const char *_path)
         m_ActiveState = StateRightPanel;
         [m_RightPanelView Activate];
         [m_LeftPanelView Disactivate];
+        [m_RightPanelView UpdateQuickPreview];
     }
     else
     {
         m_ActiveState = StateLeftPanel;
         [m_LeftPanelView Activate];
         [m_RightPanelView Disactivate];
+        [m_LeftPanelView UpdateQuickPreview];
     }
     
     [self UpdateTitle];
@@ -937,5 +945,21 @@ static bool CheckPath(const char *_path)
 
     FlexChainedStringsChunk::FreeWithDescendants(&_entries);
 }
+
+// Quick Look panel support
+- (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel;
+{
+    return YES;
+}
+
+- (void)beginPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    [QuickPreview UpdateData];
+}
+
+- (void)endPreviewPanelControl:(QLPreviewPanel *)panel
+{
+}
+
 
 @end

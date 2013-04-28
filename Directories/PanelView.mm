@@ -1105,11 +1105,20 @@ struct CursorSelectionState
     
     int cursor_pos = [self CalcCursorPositionByPointInView:local_point];
     if (cursor_pos == -1) return;
-        
+    
+    NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+    if ((modifier_flags & NSShiftKeyMask) == NSShiftKeyMask)
+    {
+        // Select range of items with shift+click.
+        [self SelectUnselectInRange:m_CursorPosition last_included:cursor_pos
+                             select:YES];
+    }
+    
     m_CursorPosition = cursor_pos;
     
-    if ((_event.modifierFlags & (NSDeviceIndependentModifierFlagsMask|NSCommandKeyMask)) ==NSCommandKeyMask)
+    if ((modifier_flags & NSCommandKeyMask) == NSCommandKeyMask)
     {
+        // Select or deselect a single item with cmd+click.
         const DirectoryEntryInformation *entry = [self CurrentItem];
         assert(entry);
         BOOL select = !entry->cf_isselected();

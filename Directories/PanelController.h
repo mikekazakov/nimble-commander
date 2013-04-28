@@ -22,6 +22,8 @@
 - (void) LoadViewState:(NSDictionary *)_state;
 - (NSDictionary *) SaveViewState;
 
+- (void) RequestActivation;
+
 - (void) HandleReturnButton;
 - (void) HandleShiftReturnButton;
 

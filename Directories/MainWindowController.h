@@ -64,6 +64,9 @@ enum ActiveState
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender;
 - (IBAction)OnPreferencesCommand:(id)sender;
 
+- (void)ActivatePanelByController:(PanelController *)controller;
+- (void)ActivatePanel:(ActiveState)_state;
+
 // this method will be called by App in all MainWindowControllers with same params
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;
 

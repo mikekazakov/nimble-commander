@@ -114,6 +114,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         nil];
 }
 
+- (void) RequestActivation
+{
+    [m_WindowController ActivatePanelByController:self];
+}
+
 - (void) HandleShiftReturnButton
 {
     char path[__DARWIN_MAXPATHLEN];

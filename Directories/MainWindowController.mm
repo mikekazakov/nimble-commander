@@ -119,6 +119,7 @@ static bool CheckPath(const char *_path)
     m_LeftPanelData = new PanelData;
     m_LeftPanelController = [PanelController new];
     [m_LeftPanelView SetPanelData:m_LeftPanelData];
+    [m_LeftPanelView SetPanelController:m_LeftPanelController];
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
     [m_LeftPanelController AttachToIndicator:self.LeftPanelSpinningIndicator];
@@ -126,6 +127,7 @@ static bool CheckPath(const char *_path)
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
     [m_RightPanelView SetPanelData:m_RightPanelData];
+    [m_RightPanelView SetPanelController:m_RightPanelController];
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
@@ -390,19 +392,40 @@ static bool CheckPath(const char *_path)
 
 - (void) HandleTabButton
 {
-    if(m_ActiveState == StateLeftPanel)
-    {
-        m_ActiveState = StateRightPanel;
-        [m_RightPanelView Activate];
-        [m_LeftPanelView Disactivate];
-        [m_RightPanelView UpdateQuickPreview];
-    }
+    [self ActivatePanel:(m_ActiveState == StateLeftPanel ? StateRightPanel : StateLeftPanel)];
+}
+
+- (void)ActivatePanelByController:(PanelController *)controller
+{
+    if (controller == m_LeftPanelController)
+        [self ActivatePanel:StateLeftPanel];
+    else if (controller == m_RightPanelController)
+        [self ActivatePanel:StateRightPanel];
     else
+        assert(0);
+}
+
+- (void)ActivatePanel:(ActiveState)_state
+{
+    if (_state == m_ActiveState) return;
+    
+    if (_state == StateLeftPanel)
     {
+        assert(m_ActiveState == StateRightPanel);
+        
         m_ActiveState = StateLeftPanel;
         [m_LeftPanelView Activate];
         [m_RightPanelView Disactivate];
         [m_LeftPanelView UpdateQuickPreview];
+    }
+    else
+    {
+        assert(m_ActiveState == StateLeftPanel);
+        
+        m_ActiveState = StateRightPanel;
+        [m_RightPanelView Activate];
+        [m_LeftPanelView Disactivate];
+        [m_RightPanelView UpdateQuickPreview];
     }
     
     [self UpdateTitle];

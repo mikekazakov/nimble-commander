@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #include "DirRead.h"
 
+@class PanelController;
 class PanelData;
 
 enum class PanelViewType
@@ -29,6 +30,7 @@ enum class PanelViewDirectoryChangeType
 @interface PanelView : NSView
 
 
+- (void) SetPanelController:(PanelController *)_controller;
 // directory traversing
 - (void) SetPanelData: (PanelData*) _data;
 //- (void) DirectoryChanged:(int) _new_curpos Type:(PanelViewDirectoryChangeType)_type;
@@ -46,7 +48,11 @@ enum class PanelViewDirectoryChangeType
 - (void) HandleLastFile;     // end (fn+right)
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
-- (void)UpdateQuickPreview;
+- (void) mouseDown:(NSEvent *)_event;
+- (void) mouseDragged:(NSEvent *)_event;
+- (void) mouseUp:(NSEvent *)_event;
+
+- (void) UpdateQuickPreview;
 
 // view type
 - (void) ToggleViewType:(PanelViewType)_type;
@@ -61,5 +67,9 @@ enum class PanelViewDirectoryChangeType
 - (int) GetCursorPosition;
 - (void) SetCursorPosition:(int)_pos; // will call EnsureCursorIsVisible implicitly
 - (const DirectoryEntryInformation*) CurrentItem; // return an item at current cursor position if any
+
+// Calculates cursor postion which corresponds to the point in view.
+// Returns -1 if point is out of files' view area.
+- (int) CalcCursorPositionByPointInView:(CGPoint)_point;
 
 @end

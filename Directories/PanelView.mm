@@ -18,6 +18,7 @@
 #include "OrthodoxMonospace.h"
 
 #import "QuickPreview.h"
+#import "PanelController.h"
 
 
 #define FONTSIZE 15.0f
@@ -304,6 +305,7 @@ static int ColumnsNumberForViewType(PanelViewType _type)
         case PanelViewType::ViewShort: return 3;
         case PanelViewType::ViewMedium: return 2;
         case PanelViewType::ViewWide: return 1;
+        case PanelViewType::ViewFull: return 1;
         default: assert(0);
     }
 }
@@ -322,6 +324,7 @@ struct CursorSelectionState
 
 @implementation PanelView
 {
+    PanelController *m_Controller;
     PanelData       *m_Data;
     int             m_SymbWidth;
     int             m_SymbHeight;
@@ -847,6 +850,11 @@ struct CursorSelectionState
     [self EnsureCursorIsVisible];
 }
 
+- (void) SetPanelController:(PanelController *)_controller
+{
+    m_Controller = _controller;
+}
+
 - (void) SetPanelData: (PanelData*) _data
 {
     m_Data = _data;
@@ -1087,6 +1095,59 @@ struct CursorSelectionState
     }
 }
 
+- (void) mouseDown:(NSEvent *)_event
+{
+    if (!m_IsActive)
+        [m_Controller RequestActivation];
+    
+    NSPoint event_location = [_event locationInWindow];
+    NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    
+    int cursor_pos = [self CalcCursorPositionByPointInView:local_point];
+    if (cursor_pos == -1) return;
+        
+    m_CursorPosition = cursor_pos;
+    
+    if ((_event.modifierFlags & (NSDeviceIndependentModifierFlagsMask|NSCommandKeyMask)) ==NSCommandKeyMask)
+    {
+        const DirectoryEntryInformation *entry = [self CurrentItem];
+        assert(entry);
+        BOOL select = !entry->cf_isselected();
+        [self SelectUnselectInRange:m_CursorPosition last_included:m_CursorPosition
+                             select:select];
+    }
+    
+    [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
+}
+
+- (void) mouseDragged:(NSEvent *)_event
+{
+    NSPoint event_location = [_event locationInWindow];
+    NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    
+    int cursor_pos = [self CalcCursorPositionByPointInView:local_point];
+    if (cursor_pos == -1) return;
+    
+    m_CursorPosition = cursor_pos;
+    [self setNeedsDisplay:true];
+    [self UpdateQuickPreview];
+}
+
+- (void) mouseUp:(NSEvent *)_event
+{
+    if ([_event clickCount] == 2)
+    {
+        // Handle double click.
+        NSPoint event_location = [_event locationInWindow];
+        NSPoint local_point = [self convertPoint:event_location fromView:nil];
+        
+        int cursor_pos = [self CalcCursorPositionByPointInView:local_point];
+        if (cursor_pos == -1 || cursor_pos != m_CursorPosition) return;
+        [m_Controller HandleReturnButton];
+    }
+}
+
 - (const DirectoryEntryInformation*) CurrentItem
 {
     if(m_CursorPosition < 0) return nullptr;
@@ -1095,9 +1156,62 @@ struct CursorSelectionState
     return &m_Data->DirectoryEntries()[ m_Data->SortedDirectoryEntries()[m_CursorPosition] ];
 }
 
-- (void) SelectUnselectInRange:(int)_start last_included:(int)_end
+- (int) CalcCursorPositionByPointInView:(CGPoint)_point
 {
-    assert(m_CursorSelectionType != CursorSelectionState::No);
+    // Developer defined constants.
+    const int columns_max = 3;
+    const int rows_start = 1;
+    
+    
+    const int columns = ColumnsNumberForViewType(m_CurrentViewType);
+    const int entries_in_column = [self CalcMaxShownFilesPerPanelForView:m_CurrentViewType];
+    
+    CGPoint point_in_chars = NSMakePoint(_point.x/FONTWIDTH, _point.y/FONTHEIGHT);
+
+    // Check if click is in files' view area, including horizontal bottom line.
+    if (point_in_chars.y < rows_start || point_in_chars.y > rows_start + entries_in_column)
+        return -1;
+    
+    // Calculate the number of visible files.
+    auto &sorted_entries = m_Data->SortedDirectoryEntries();
+    const int max_files_to_show = entries_in_column * columns;
+    int visible_files = (int)sorted_entries.size() - m_FilesDisplayOffset;
+    if (visible_files > max_files_to_show) visible_files = max_files_to_show;
+    
+    // Calculate width of each column.
+    const int column_width = (m_SymbWidth - 1) / columns;
+    int columns_rest = m_SymbWidth - 1 - column_width*columns;
+    int columns_width[columns_max] = {column_width, column_width, column_width};
+    // Add 1 to the last column's with to include the right vertical view edge in hit test check
+    // for that column.
+    ++columns_width[columns - 1];
+    if (columns == 3 && columns_rest)
+    {
+        columns_width[2]++;
+        columns_rest--;
+    }
+    if (columns_rest)
+    {
+        columns_width[1]++;
+        columns_rest--;
+    }
+    assert(columns_rest == 0);
+    
+    
+    // Calculate cursor pos.
+    int column = 0;
+    if (point_in_chars.x > columns_width[0] + columns_width[1]) column = 2;
+    else if (point_in_chars.x > columns_width[0]) column = 1;
+    int row = point_in_chars.y - rows_start;
+    if (row >= entries_in_column) row = entries_in_column - 1;
+    int file_number =  row + column*entries_in_column;
+    if (file_number >= visible_files) file_number = visible_files - 1;
+    
+    return m_FilesDisplayOffset + file_number;
+}
+
+- (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
+{
     // we never want to select a first (dotdot) entry
     assert(_start >= 0 && _start < m_Data->SortedDirectoryEntries().size());
     assert(_end >= 0 && _end < m_Data->SortedDirectoryEntries().size());
@@ -1110,10 +1224,16 @@ struct CursorSelectionState
     
     if(m_Data->DirectoryEntries()[m_Data->SortedDirectoryEntries()[_start]].isdotdot())
         ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
-
+    
     for(int i = _start; i <= _end; ++i)
-        m_Data->CustomFlagsSelect( m_Data->SortedDirectoryEntries()[i],
-                                  m_CursorSelectionType == CursorSelectionState::Selection);
+        m_Data->CustomFlagsSelect(m_Data->SortedDirectoryEntries()[i], _select);
+}
+
+- (void) SelectUnselectInRange:(int)_start last_included:(int)_end
+{
+    assert(m_CursorSelectionType != CursorSelectionState::No);
+    [self SelectUnselectInRange:_start last_included:_end
+                         select:m_CursorSelectionType == CursorSelectionState::Selection];
 }
 
 - (void) ToggleViewType:(PanelViewType)_type

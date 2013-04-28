@@ -500,7 +500,6 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             if(ISMODIFIER(NSShiftKeyMask)) [self HandleShiftReturnButton];
             else                           [self HandleReturnButton];
             break;
-        case NSF3FunctionKey: [self HandleFileView]; break;
     }
     
     switch (keycode)

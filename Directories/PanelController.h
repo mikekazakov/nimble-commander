@@ -25,6 +25,8 @@
 - (void) HandleReturnButton;
 - (void) HandleShiftReturnButton;
 
+
+- (void) HandleFileView; // F3
 - (void) ToggleSortingByName; // user pressed ctrl+F3 by default
 - (void) ToggleSortingByExt; // user pressed ctrl+F4 by default
 - (void) ToggleSortingByMTime; // user pressed ctrl+F5 by default

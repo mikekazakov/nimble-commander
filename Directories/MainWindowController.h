@@ -57,6 +57,7 @@ enum ActiveState
 - (IBAction)OnDetailedVolumeInformation:(id)sender;
 - (IBAction)OnDeleteCommand:(id)sender;
 - (IBAction)OnCreateDirectoryCommand:(id)sender;
+- (IBAction)OnFileViewCommand:(id)sender;
 - (IBAction)OnFileCopyCommand:(id)sender;
 - (IBAction)OnFileCopyAsCommand:(id)sender;
 - (IBAction)OnFileRenameMoveCommand:(id)sender;

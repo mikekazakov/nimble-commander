@@ -538,6 +538,10 @@ static bool CheckPath(const char *_path)
     [[self RightPanelGoToButton] performClick:self];
 }
 
+- (IBAction)OnFileViewCommand:(id)sender{
+    [[self ActivePanelController] HandleFileView];    
+}
+
 - (IBAction)OnSyncPanels:(id)sender{
     assert([self IsPanelActive]);
     char dirpath[__DARWIN_MAXPATHLEN];

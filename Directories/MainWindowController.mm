@@ -286,10 +286,10 @@ static bool CheckPath(const char *_path)
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     m_LeftPanelData->GetDirectoryPathWithTrailingSlash(path);
-    [defaults setObject:[[NSString alloc] initWithUTF8String:path] forKey:@"FirstPanelPath"];
+    [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"FirstPanelPath"];
     
     m_RightPanelData->GetDirectoryPathWithTrailingSlash(path);
-    [defaults setObject:[[NSString alloc] initWithUTF8String:path] forKey:@"SecondPanelPath"];
+    [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];
 }
 
 - (void)UpdateTitle

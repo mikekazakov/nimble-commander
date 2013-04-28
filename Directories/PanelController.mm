@@ -250,7 +250,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
     auto onfail = ^(const char* _path, int _error) {
         NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText: [NSString stringWithFormat:@"Failed to go into directory %@", [[NSString alloc] initWithUTF8String:_path]]];
+        [alert setMessageText: [NSString stringWithFormat:@"Failed to go into directory %@", [NSString stringWithUTF8String:_path]]];
         [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
         dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
     };
@@ -295,7 +295,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         
         auto onfail = ^(const char* _path, int _error) {
             NSAlert *alert = [[NSAlert alloc] init];
-            [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", [[NSString alloc] initWithUTF8String:_path]]];
+            [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", [NSString stringWithUTF8String:_path]]];
             [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
             dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
         };
@@ -308,7 +308,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             //a bit crazy, but it's easier than handling lifetime of objects manually - let ARC do it's job
             char curdirname[__DARWIN_MAXPATHLEN];
             m_Data->GetDirectoryPathShort(curdirname);
-            NSString *nscurdirname = [[NSString alloc] initWithUTF8String:curdirname];
+            NSString *nscurdirname = [NSString stringWithUTF8String:curdirname];
             
             auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
                 m_IsStopDirectorySizeCounting = true;
@@ -361,16 +361,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
     // If previous code didn't handle current item,
     // open item with the default associated application.
-    char path[__DARWIN_MAXPATHLEN];
-    int pos = [m_View GetCursorPosition];
-    if(pos >= 0)
-    {
-        int rawpos = m_Data->SortedDirectoryEntries()[pos];
-        m_Data->ComposeFullPathForEntry(rawpos, path);
-        BOOL success = [[NSWorkspace sharedWorkspace]
-                        openFile:[NSString stringWithUTF8String:path]];
-        if (!success) NSBeep();
-    }
+    [self HandleShiftReturnButton];
 }
 
 - (void) RefreshDirectory
@@ -380,11 +371,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     char *path = strdup(dirpath);
     
     int oldcursorpos = [m_View GetCursorPosition];
-    NSString *oldcursorname = (oldcursorpos >= 0 ? [[NSString alloc] initWithUTF8String:[m_View CurrentItem]->namec()] : nil);
+    NSString *oldcursorname = (oldcursorpos >= 0 ? [NSString stringWithUTF8String:[m_View CurrentItem]->namec()] : nil);
     
     auto onfail = ^(const char* _path, int _error) {
         NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText: [NSString stringWithFormat:@"Failed to update directory directory %@", [[NSString alloc] initWithUTF8String:_path]]];
+        [alert setMessageText: [NSString stringWithFormat:@"Failed to update directory directory %@", [NSString stringWithUTF8String:_path]]];
         [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
         dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
     };

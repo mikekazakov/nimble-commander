@@ -58,7 +58,7 @@
         if(strchr(m_OriginalPathRequest, '/') == 0)
         {
             // select new entry only if it was a short path
-            NSString *path = [[NSString alloc] initWithUTF8String:m_OriginalPathRequest];
+            NSString *path = [NSString stringWithUTF8String:m_OriginalPathRequest];
             PanelController *target = self.TargetPanel;
             
             dispatch_async(dispatch_get_main_queue(), ^{

@@ -860,7 +860,10 @@ struct CursorSelectionState
         int rawpos = m_Data->SortedDirectoryEntries()[m_CursorPosition];
         char path[__DARWIN_MAXPATHLEN];
         m_Data->ComposeFullPathForEntry(rawpos, path);
-        [QuickPreview PreviewItem:[NSString stringWithUTF8String:path] sender:self];
+        NSString *nspath = [NSString stringWithUTF8String:path];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [QuickPreview PreviewItem:nspath sender:self];
+        });
     }
 }
 

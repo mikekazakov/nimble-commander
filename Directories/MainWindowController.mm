@@ -170,11 +170,13 @@ static bool CheckPath(const char *_path)
 {
     m_LeftPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(0, 200, 100, 100)];
     [m_LeftPanelView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [[[self window] contentView] addSubview:m_LeftPanelView];
+    [[[self window] contentView] addSubview:m_LeftPanelView positioned:NSWindowBelow
+                                 relativeTo:nil];
 
     m_RightPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(100, 100, 100, 100)];
     [m_RightPanelView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [[[self window] contentView] addSubview:m_RightPanelView];    
+    [[[self window] contentView] addSubview:m_RightPanelView positioned:NSWindowBelow
+                                 relativeTo:nil];
 }
 
 - (void)CreatePanelConstraints
@@ -276,6 +278,7 @@ static bool CheckPath(const char *_path)
 - (void)windowDidResize:(NSNotification *)notification
 {
     [self UpdatePanelConstraints:[[self window] frame].size];
+    [m_OpSummaryController OnWindowResize];
     [self UpdateTitle];
 }
 
@@ -915,6 +918,16 @@ static bool CheckPath(const char *_path)
     field_rect.origin.y += 2;
     field_rect.size.height = 0;
     return field_rect;
+}
+
+- (void)windowWillBeginSheet:(NSNotification *)notification
+{
+    [m_OpSummaryController OnWindowBeginSheet];
+}
+
+- (void)windowDidEndSheet:(NSNotification *)notification
+{
+    [m_OpSummaryController OnWindowEndSheet];
 }
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item

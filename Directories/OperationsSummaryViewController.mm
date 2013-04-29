@@ -18,6 +18,7 @@
 
 - (void)ShowList;
 - (void)HideList;
+- (void)UpdateListPosition;
 
 - (void)observeValueForKeyPath:(NSString *)_keypath ofObject:(id)_object
                         change:(NSDictionary *)_change context:(void *)_context;
@@ -30,6 +31,7 @@
     OperationsController *m_OperationsController;
     
     BOOL m_ListVisible;
+    BOOL m_ListTemporarilyHidden;
 }
 @synthesize OperationsController = m_OperationsController;
 
@@ -56,7 +58,6 @@
 - (void)ShowList
 {    
     const NSUInteger max_height_in_items = 5;
-    const int x_delta = 47, y_delta = -3;
     
     // Calculate height of the expanded list.
     NSUInteger item_height = self.CollectionView.itemPrototype.view.frame.size.height;
@@ -69,14 +70,10 @@
     CGFloat width = _ScrollView.frame.size.width;
     CGFloat height = height_in_items * item_height + 2;
     
-    CGPoint origin = [self.view convertPoint:NSMakePoint(x_delta, y_delta)
-                                      toView:self.view.window.contentView];
-    origin.y -= height - self.view.frame.size.height;
-    //[self.view.window.contentView addSubview:self.ScrollView];
-    [self.ScrollView setFrameOrigin:origin];
-    
     // Apply new height.
     [self.ScrollView setFrameSize:NSMakeSize(width, height)];
+    
+    [self UpdateListPosition];
     
     [self.ScrollView setHidden:NO];
     m_ListVisible = YES;
@@ -86,6 +83,16 @@
 {    
     [_ScrollView setHidden:YES];
     m_ListVisible = NO;
+}
+
+- (void)UpdateListPosition
+{
+    const int x_delta = 47, y_delta = -3;
+    CGPoint origin = [self.view convertPoint:NSMakePoint(x_delta, y_delta)
+                                      toView:self.view.window.contentView];
+    origin.y -= self.ScrollView.frame.size.height - self.view.frame.size.height;
+    
+    [self.ScrollView setFrameOrigin:origin];
 }
 
 - (void)observeValueForKeyPath:(NSString *)_keypath ofObject:(id)_object
@@ -153,6 +160,28 @@
 {
     [_parent addSubview:self.view];
     [_parent.window.contentView addSubview:self.ScrollView];
+}
+
+- (void)OnWindowResize
+{
+    if (m_ListVisible) [self UpdateListPosition];
+}
+
+- (void)OnWindowBeginSheet
+{
+    if (m_ListVisible)
+    {
+        m_ListTemporarilyHidden = YES;
+        [self HideList];
+    }
+}
+
+- (void)OnWindowEndSheet
+{
+    if (!m_ListVisible && m_ListTemporarilyHidden)
+        [self ShowList];
+    
+    m_ListTemporarilyHidden = NO;
 }
 
 @end

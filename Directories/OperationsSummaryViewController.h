@@ -27,4 +27,8 @@
 - (id)initWthController:(OperationsController *)_controller;
 - (void)AddViewTo:(NSView *)_parent;
 
+- (void)OnWindowResize;
+- (void)OnWindowBeginSheet;
+- (void)OnWindowEndSheet;
+
 @end

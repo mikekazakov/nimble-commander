@@ -21,7 +21,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 @interface QuickPreviewData : NSObject <QLPreviewPanelDataSource>
-- (void)UpdateItem:(NSString *)_path;
+- (void)UpdateItem:(NSURL *)_path;
 @end
 
 @implementation QuickPreviewData
@@ -36,9 +36,12 @@
     return self;
 }
 
-- (void)UpdateItem:(NSString *)_path
+- (void)UpdateItem:(NSURL *)_path
 {
-    m_Item.previewItemURL = [NSURL fileURLWithPath:_path];
+    if ([_path isEqual:m_Item.previewItemURL]) return;
+    
+    m_Item = [[QuickPreviewItem alloc] init];
+    m_Item.previewItemURL = _path;
 }
 
 - (NSInteger)numberOfPreviewItemsInPreviewPanel:(QLPreviewPanel *)panel
@@ -84,8 +87,8 @@ static QuickPreviewData *m_Data;
     NSWindow *window = [_panel window];
     if (![window isKeyWindow]) return;
     
-    [m_Data UpdateItem:_path];
-    [[QLPreviewPanel sharedPreviewPanel] refreshCurrentPreviewItem];
+    [m_Data UpdateItem:[NSURL fileURLWithPath:_path]];
+    [[QLPreviewPanel sharedPreviewPanel] reloadData];
 }
 
 + (void)UpdateData

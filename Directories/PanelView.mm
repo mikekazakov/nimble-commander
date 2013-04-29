@@ -869,9 +869,7 @@ struct CursorSelectionState
         char path[__DARWIN_MAXPATHLEN];
         m_Data->ComposeFullPathForEntry(rawpos, path);
         NSString *nspath = [NSString stringWithUTF8String:path];
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [QuickPreview PreviewItem:nspath sender:self];
-        });
+        [QuickPreview PreviewItem:nspath sender:self];
     }
 }
 
@@ -1110,11 +1108,14 @@ struct CursorSelectionState
     if ((modifier_flags & NSShiftKeyMask) == NSShiftKeyMask)
     {
         // Select range of items with shift+click.
-        if(const DirectoryEntryInformation *entry = [self CurrentItem])
-        {
-            bool is_selected = entry->cf_isselected();
-            [self SelectUnselectInRange:m_CursorPosition last_included:cursor_pos select:!is_selected];
-        }
+        // If clicked item is selected, then deselect the range instead.
+        assert(cursor_pos < m_Data->SortedDirectoryEntries().size());
+        int raw_pos = m_Data->SortedDirectoryEntries()[cursor_pos];
+        assert(raw_pos < m_Data->DirectoryEntries().size());
+        const DirectoryEntryInformation &click_entry = m_Data->DirectoryEntries()[raw_pos];
+        
+        bool deselect = click_entry.cf_isselected();
+        [self SelectUnselectInRange:m_CursorPosition last_included:cursor_pos select:!deselect];
     }
     
     m_CursorPosition = cursor_pos;

@@ -1161,6 +1161,51 @@ struct CursorSelectionState
     }
 }
 
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    if (!m_IsActive) // will react only on active panels
+        return;
+    
+    int idy = int([theEvent deltaY]);
+    int idx = int([theEvent deltaX]/2.0); // less sensitive than vertical scrolling
+    int total_files = (int)m_Data->SortedDirectoryEntries().size();
+    int max_files_shown = [self CalcMaxShownFilesForView:m_CurrentViewType];
+    int per_col = [self CalcMaxShownFilesPerPanelForView:m_CurrentViewType];
+    int old_curpos = m_CursorPosition, old_offset = m_FilesDisplayOffset;
+    if(idy != 0)
+    {
+        if(idy > 0)
+        {
+            if(m_FilesDisplayOffset > 0)    m_FilesDisplayOffset--;
+            if(m_CursorPosition > 0)        m_CursorPosition--;
+        }
+        else
+        {
+            if(m_FilesDisplayOffset + max_files_shown < total_files)    m_FilesDisplayOffset++;
+            if(m_CursorPosition < total_files-1)                        m_CursorPosition++;
+        }
+    }
+    else if(idx != 0)
+    {
+        if(idx > 0)
+        {
+            if(m_FilesDisplayOffset > per_col)  m_FilesDisplayOffset -= per_col;
+            else if(m_FilesDisplayOffset > 0)   m_FilesDisplayOffset=0;
+            if(m_CursorPosition > per_col)      m_CursorPosition -= per_col;
+            else if(m_CursorPosition > 0)       m_CursorPosition=0;
+        }
+        else
+        {
+            if(m_FilesDisplayOffset + max_files_shown < total_files)    m_FilesDisplayOffset += per_col;
+            if(m_CursorPosition + per_col < total_files - 1)            m_CursorPosition += per_col;
+            else if(m_CursorPosition < total_files - 1)                 m_CursorPosition = total_files - 1;
+        }
+    }
+
+    if(old_curpos != m_CursorPosition || old_offset != m_FilesDisplayOffset)
+        [self setNeedsDisplay:true];
+}
+
 - (const DirectoryEntryInformation*) CurrentItem
 {
     if(m_CursorPosition < 0) return nullptr;

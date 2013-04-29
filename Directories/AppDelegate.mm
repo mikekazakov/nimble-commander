@@ -254,19 +254,29 @@
     }
     
     // find window to ask
-    NSArray *windows = [[NSApplication sharedApplication] orderedWindows];    
+    NSArray *windows = [[NSApplication sharedApplication] orderedWindows];
+    NSWindow *target_window = nil;
     for(NSWindow *wnd in windows)
-    {
         if(wnd != nil &&
            [wnd windowController] != nil &&
            [[wnd windowController] isKindOfClass:[MainWindowController class]])
         {
-            [wnd makeKeyAndOrderFront:self];
-            MainWindowController *contr = (MainWindowController*)[wnd windowController];
-            [contr RevealEntries:filenames inPath:common_path];
+            target_window = wnd;
             break;
         }
-    }    
+    
+    if(!target_window)
+    {
+        [self AllocateNewMainWindow];
+        target_window = [m_MainWindows.back() window];
+    }
+
+    if(target_window)
+    {
+        [target_window makeKeyAndOrderFront:self];
+        MainWindowController *contr = (MainWindowController*)[target_window windowController];
+        [contr RevealEntries:filenames inPath:common_path];
+    }
 }
 
 @end

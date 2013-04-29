@@ -1110,8 +1110,11 @@ struct CursorSelectionState
     if ((modifier_flags & NSShiftKeyMask) == NSShiftKeyMask)
     {
         // Select range of items with shift+click.
-        [self SelectUnselectInRange:m_CursorPosition last_included:cursor_pos
-                             select:YES];
+        if(const DirectoryEntryInformation *entry = [self CurrentItem])
+        {
+            bool is_selected = entry->cf_isselected();
+            [self SelectUnselectInRange:m_CursorPosition last_included:cursor_pos select:!is_selected];
+        }
     }
     
     m_CursorPosition = cursor_pos;

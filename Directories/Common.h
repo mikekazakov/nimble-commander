@@ -49,6 +49,13 @@ struct MenuTags
 
 bool GetRealPath(const char *_path_in, char *_path_out);
 
+typedef enum
+{
+    kTruncateAtStart,
+    kTruncateAtMiddle,
+    kTruncateAtEnd
+} ETruncationType;
+NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationType truncationType, NSDictionary *attributes);
 
 struct MachTimeBenchmark
 {

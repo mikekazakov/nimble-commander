@@ -6,34 +6,14 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <CoreFoundation/CoreFoundation.h>
-//#include <AppKit.framework/Headers/NSApplication.h>
+#import <CoreFoundation/CoreFoundation.h>
 #import <Cocoa/Cocoa.h>
-#include "FSEventsDirUpdate.h"
-#include "AppDelegate.h"
-
+#import "FSEventsDirUpdate.h"
+#import "AppDelegate.h"
+#import "Common.h"
 
 static const CFAbsoluteTime g_FSEventsLatency = 0.1;
 static FSEventsDirUpdate *g_Inst = 0;
-
-
-
-// ask FS about real file path - case sensitive etc
-// also we're getting rid of symlinks - it will be a real file
-// return path with trailing slash
-bool GetRealPath(const char *_path_in, char *_path_out)
-{
-    int tfd = open(_path_in, O_RDONLY);
-    if(tfd == -1)
-        return false;
-    int ret = fcntl(tfd, F_GETPATH, _path_out);
-    close(tfd);
-    if(ret == -1)
-        return false;
-    if( _path_out[strlen(_path_out)-1] != '/' )
-        strcat(_path_out, "/");
-    return true;
-}
 
 FSEventsDirUpdate::FSEventsDirUpdate():
     m_LastTicket(1) // no tickets #0, since it'is an error code 

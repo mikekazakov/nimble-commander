@@ -56,6 +56,8 @@ static bool CheckPath(const char *_path)
 }
 
 
+
+
 @interface MainWindowController ()
 
 - (void)LoadPanelsSettings;
@@ -273,7 +275,8 @@ static bool CheckPath(const char *_path)
 
 - (void)windowDidResize:(NSNotification *)notification
 {
-    [self UpdatePanelConstraints:[[self window] frame].size];    
+    [self UpdatePanelConstraints:[[self window] frame].size];
+    [self UpdateTitle];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -296,15 +299,23 @@ static bool CheckPath(const char *_path)
 
 - (void)UpdateTitle
 {
-    PanelData *data = [self ActivePanelData];
-    
-    const int max_path_length = 50;
     char path_raw[__DARWIN_MAXPATHLEN];
-    data->GetDirectoryPath(path_raw);
+    [self ActivePanelData]->GetDirectoryPath(path_raw);
     NSString *path = [NSString stringWithUTF8String:path_raw];
-    if (path.length > max_path_length) path = [NSString stringWithFormat:@"...%@",
-                                    [path substringFromIndex:(path.length - max_path_length + 3)]];
-    self.window.title = [NSString stringWithFormat:@"Files αλφα ver.  \u2015  %@", path];
+    
+    // find window geometry
+    NSWindow* window = [self window];
+    float leftEdge = NSMaxX([[window standardWindowButton:NSWindowZoomButton] frame]);
+    NSButton* fsbutton = [window standardWindowButton:NSWindowFullScreenButton];
+    float rightEdge = fsbutton ? [fsbutton frame].origin.x : NSMaxX([window frame]);
+    
+    // Leave 8 pixels of padding around the title.
+    const int kTitlePadding = 8;
+    float titleWidth = rightEdge - leftEdge - 2 * kTitlePadding;
+    
+    // Sending |titleBarFontOfSize| 0 returns default size
+    NSDictionary* attributes = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0] forKey:NSFontAttributeName];
+    self.window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
 }
 
 - (BOOL)windowShouldClose:(id)sender

@@ -46,9 +46,58 @@
     NSUpdateDynamicServices();
 }
 
+- (void)applicationDidBecomeActive:(NSNotification *)aNotification
+{
+    if(m_MainWindows.empty())
+    {
+        [self AllocateNewMainWindow];
+    }
+    else
+    {
+        // check that any window is visible, otherwise bring to front last window
+        bool anyvisible = false;
+        for(auto c: m_MainWindows)
+            if([[c window] isVisible])
+                anyvisible = true;
+        
+        if(!anyvisible)
+        {
+            NSArray *windows = [[NSApplication sharedApplication] orderedWindows];
+            [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
+        }     
+    }
+}
+
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
+{
+    if(flag)
+    {
+        // check that any window is visible, otherwise bring to front last window
+        bool anyvisible = false;
+        for(auto c: m_MainWindows)
+            if([[c window] isVisible])
+                anyvisible = true;
+        
+        if(!anyvisible)
+        {
+            NSArray *windows = [[NSApplication sharedApplication] orderedWindows];
+            [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
+        }
+        
+        return NO;
+    }
+    else
+    {
+        if(m_MainWindows.empty())
+            [self AllocateNewMainWindow];
+        return YES;
+    }
+
+}
+
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
-    return YES;
+    return NO;
 }
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long) _ticket

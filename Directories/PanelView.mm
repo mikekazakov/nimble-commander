@@ -324,7 +324,7 @@ struct CursorSelectionState
 
 @implementation PanelView
 {
-    PanelController *m_Controller;
+    __weak PanelController *m_Controller;
     PanelData       *m_Data;
     int             m_SymbWidth;
     int             m_SymbHeight;
@@ -338,6 +338,12 @@ struct CursorSelectionState
     CGFontRef       m_FontCG;
     unsigned long   m_KeysModifiersFlags;
     CursorSelectionState::Type m_CursorSelectionType;
+    
+    // Exists during mouse drag operations only.
+    NSTimer *m_DragScrollTimer;
+    // Possible values: -1, 0, 1.
+    int m_DragScrollDirection;
+    
 }
 
 - (BOOL)isFlipped
@@ -1134,21 +1140,70 @@ struct CursorSelectionState
     [self UpdateQuickPreview];
 }
 
+- (void) UpdateDragScroll
+{
+    assert(m_DragScrollDirection >= -1 && m_DragScrollDirection <= 1);
+    
+    if (m_DragScrollDirection == 0 || m_CursorPosition == -1) return;
+    
+    int new_pos = m_CursorPosition + m_DragScrollDirection;
+    
+    int max_pos = (int)m_Data->SortedDirectoryEntries().size();
+    if (new_pos < 0) new_pos = 0;
+    else if (new_pos >= max_pos) new_pos = max_pos - 1;
+    
+    [self SetCursorPosition:new_pos];
+}
+
 - (void) mouseDragged:(NSEvent *)_event
 {
     NSPoint event_location = [_event locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
-    int cursor_pos = [self CalcCursorPositionByPointInView:local_point];
-    if (cursor_pos == -1) return;
+    // Check if mouse cursor position is inside or outside of files columns.
+    const int files_y_start = FONTHEIGHT;
+    const int files_y_finish = files_y_start +
+        FONTHEIGHT*[self CalcMaxShownFilesPerPanelForView:m_CurrentViewType];
     
-    m_CursorPosition = cursor_pos;
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    
+    if (local_point.y >= files_y_start && local_point.y <= files_y_finish)
+    {
+        // Mouse cursor is inside files columns. Set cursor position.
+        int cursor_pos = [self CalcCursorPositionByPointInView:local_point];
+        if (cursor_pos == -1) return;
+        
+        m_CursorPosition = cursor_pos;
+        [self setNeedsDisplay:true];
+        [self UpdateQuickPreview];
+        
+        // Stop cursor scrolling.
+        m_DragScrollDirection = 0;
+        
+        return;
+    }
+    
+    // Mouse cursor is outside file columns. Initiate cursor scrolling.
+    m_DragScrollDirection = (local_point.y < files_y_start ? -1 : 1);
+    if (!m_DragScrollTimer)
+    {
+        m_DragScrollTimer = [NSTimer scheduledTimerWithTimeInterval:0.033
+                                                             target:self
+                                                           selector:@selector(UpdateDragScroll)
+                                                           userInfo:nil
+                                                            repeats:YES];
+    }
 }
 
 - (void) mouseUp:(NSEvent *)_event
 {
+    // Reset drag scroll (release timer).
+    if (m_DragScrollTimer)
+    {
+        [m_DragScrollTimer invalidate];
+        m_DragScrollTimer = nil;
+        m_DragScrollDirection = 0;
+    }
+    
     if ([_event clickCount] == 2)
     {
         // Handle double click.
@@ -1227,7 +1282,8 @@ struct CursorSelectionState
     CGPoint point_in_chars = NSMakePoint(_point.x/FONTWIDTH, _point.y/FONTHEIGHT);
 
     // Check if click is in files' view area, including horizontal bottom line.
-    if (point_in_chars.y < rows_start || point_in_chars.y > rows_start + entries_in_column)
+    if (point_in_chars.y < rows_start || point_in_chars.y > rows_start + entries_in_column
+        || point_in_chars.x < 0 || point_in_chars.x >= m_SymbWidth)
         return -1;
     
     // Calculate the number of visible files.

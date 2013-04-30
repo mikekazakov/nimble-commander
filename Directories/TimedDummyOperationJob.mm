@@ -23,10 +23,13 @@ void TimedDummyOperationJob::Init(__weak TimedDummyOperation *_op, int _seconds)
 {
     m_Operation = _op;
     m_CompleteTime = _seconds*1000;
+    m_Stats.SetMaxValue(m_CompleteTime);
 }
 
 void TimedDummyOperationJob::Do()
 {
+    m_Stats.StartTimeTracking();
+    
     int elapsed_time = 0;
     
     for(;;)
@@ -71,8 +74,8 @@ void TimedDummyOperationJob::Do()
         usleep(1000*delay);
 
         elapsed_time += delay;
-        
-        SetProgress((float)elapsed_time/m_CompleteTime);
+        if (elapsed_time > m_CompleteTime) elapsed_time = m_CompleteTime;
+        m_Stats.SetValue(elapsed_time);
         
         if (elapsed_time >= m_CompleteTime)
         {

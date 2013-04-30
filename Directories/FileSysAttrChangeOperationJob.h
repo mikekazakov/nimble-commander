@@ -20,16 +20,6 @@ public:
     FileSysAttrChangeOperationJob();
     ~FileSysAttrChangeOperationJob();
     void Init(FileSysAttrAlterCommand *_command, FileSysAttrChangeOperation *_operation);
-    
-    
-    enum State
-    {
-        StateInvalid,
-        StateScanning,
-        StateSetting
-    };
-    
-    State StateDetail(unsigned &_it_no, unsigned &_it_tot) const;
 
 protected:
     virtual void Do();
@@ -42,9 +32,6 @@ private:
     FileSysAttrAlterCommand *m_Command;
     FlexChainedStringsChunk *m_Files, *m_FilesLast;
     __weak FileSysAttrChangeOperation *m_Operation;
-    unsigned m_ItemsCount;
-    unsigned m_CurrentItemNumber;
-    State m_State;
     bool m_SkipAllErrors;
 };
 

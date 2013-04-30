@@ -7,8 +7,8 @@
 //
 
 #import "Operation.h"
-#import "TimedDummyOperationTestDialog.h"
 #import "OperationDialogAlert.h"
+#import "TimedDummyOperationTestDialog.h"
 
 @interface TimedDummyOperation : Operation
 

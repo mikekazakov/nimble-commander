@@ -10,7 +10,6 @@
 		B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B50976A31729BA150080412E /* Quartz.framework */; };
 		B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
 		B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B51014D317078B2B0023FF24 /* OperationDialogController.mm */; };
-		B528012216FCF361004E260D /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011A16FCF361004E260D /* OperationStats.mm */; };
 		B528012316FCF361004E260D /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011C16FCF361004E260D /* OperationsController.mm */; };
 		B528012416FCF361004E260D /* OperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011E16FCF361004E260D /* OperationJob.mm */; };
 		B528012516FCF361004E260D /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528012016FCF361004E260D /* Operation.mm */; };
@@ -21,6 +20,7 @@
 		B55DB19C171B0E9700E3610E /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B55DB19B171B0E9700E3610E /* question_icon.png */; };
 		B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */; };
 		B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
+		B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5606E6917301D6F00DDA33A /* OperationStats.mm */; };
 		B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
 		B5AD9CE31706D5350099BC6D /* TimedDummyOperationTestDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */; };
 		B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
@@ -37,8 +37,6 @@
 		CF76B313170146240066A49F /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
 		CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
 		CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
-		CF76B316170146240066A49F /* TestWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30C170146240066A49F /* TestWindow.xib */; };
-		CF76B317170146240066A49F /* TestWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30E170146240066A49F /* TestWindowController.mm */; };
 		CF76B318170146240066A49F /* TimedDummyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B310170146240066A49F /* TimedDummyOperation.mm */; };
 		CF76B319170146240066A49F /* TimedDummyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B312170146240066A49F /* TimedDummyOperationJob.mm */; };
 		CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */; };
@@ -85,8 +83,6 @@
 		B50976A8172A3A0E0080412E /* QuickPreview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickPreview.mm; sourceTree = "<group>"; };
 		B51014D217078B2A0023FF24 /* OperationDialogController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationDialogController.h; sourceTree = "<group>"; };
 		B51014D317078B2B0023FF24 /* OperationDialogController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationDialogController.mm; sourceTree = "<group>"; };
-		B528011A16FCF361004E260D /* OperationStats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationStats.mm; sourceTree = "<group>"; };
-		B528011B16FCF361004E260D /* OperationStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationStats.h; sourceTree = "<group>"; };
 		B528011C16FCF361004E260D /* OperationsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationsController.mm; sourceTree = "<group>"; };
 		B528011D16FCF361004E260D /* OperationsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationsController.h; sourceTree = "<group>"; };
 		B528011E16FCF361004E260D /* OperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationJob.mm; sourceTree = "<group>"; };
@@ -103,6 +99,8 @@
 		B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionSheetController.h; sourceTree = "<group>"; };
 		B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionSheetController.mm; sourceTree = "<group>"; };
 		B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileDeletionSheetController.xib; sourceTree = "<group>"; };
+		B5606E6917301D6F00DDA33A /* OperationStats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationStats.mm; sourceTree = "<group>"; };
+		B5606E6A17301D7000DDA33A /* OperationStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationStats.h; sourceTree = "<group>"; };
 		B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonWithOptions.h; sourceTree = "<group>"; };
 		B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ButtonWithOptions.m; sourceTree = "<group>"; };
 		B5AD9CE01706D5350099BC6D /* TimedDummyOperationTestDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationTestDialog.h; sourceTree = "<group>"; };
@@ -132,9 +130,6 @@
 		CF76B309170146240066A49F /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationsSummaryViewController.h; sourceTree = "<group>"; };
 		CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationsSummaryViewController.mm; sourceTree = "<group>"; };
 		CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OperationsSummaryViewController.xib; sourceTree = "<group>"; };
-		CF76B30C170146240066A49F /* TestWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestWindow.xib; sourceTree = "<group>"; };
-		CF76B30D170146240066A49F /* TestWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWindowController.h; sourceTree = "<group>"; };
-		CF76B30E170146240066A49F /* TestWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestWindowController.mm; sourceTree = "<group>"; };
 		CF76B30F170146240066A49F /* TimedDummyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperation.h; sourceTree = "<group>"; };
 		CF76B310170146240066A49F /* TimedDummyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperation.mm; sourceTree = "<group>"; };
 		CF76B311170146240066A49F /* TimedDummyOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationJob.h; sourceTree = "<group>"; };
@@ -394,8 +389,8 @@
 		CFAC50D41715565E00A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				B528011A16FCF361004E260D /* OperationStats.mm */,
-				B528011B16FCF361004E260D /* OperationStats.h */,
+				B5606E6917301D6F00DDA33A /* OperationStats.mm */,
+				B5606E6A17301D7000DDA33A /* OperationStats.h */,
 				B528011E16FCF361004E260D /* OperationJob.mm */,
 				B528011F16FCF361004E260D /* OperationJob.h */,
 				B528012016FCF361004E260D /* Operation.mm */,
@@ -583,7 +578,6 @@
 				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,
-				CF76B316170146240066A49F /* TestWindow.xib in Resources */,
 				CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */,
 				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
 				B55DB19C171B0E9700E3610E /* question_icon.png in Resources */,
@@ -637,14 +631,12 @@
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
-				B528012216FCF361004E260D /* OperationStats.mm in Sources */,
 				B528012316FCF361004E260D /* OperationsController.mm in Sources */,
 				B528012416FCF361004E260D /* OperationJob.mm in Sources */,
 				B528012516FCF361004E260D /* Operation.mm in Sources */,
 				CF76B30617000C090066A49F /* filesysattr.mm in Sources */,
 				CF76B313170146240066A49F /* GenericOperationView.mm in Sources */,
 				CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */,
-				CF76B317170146240066A49F /* TestWindowController.mm in Sources */,
 				CF76B318170146240066A49F /* TimedDummyOperation.mm in Sources */,
 				CF76B319170146240066A49F /* TimedDummyOperationJob.mm in Sources */,
 				CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */,
@@ -667,6 +659,7 @@
 				B52EB78F172277DB004ABC2E /* PreferencesWindowController.m in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
 				CFB060DD172E6AC4001F6949 /* Common.mm in Sources */,
+				B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

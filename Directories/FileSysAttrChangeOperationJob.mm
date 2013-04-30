@@ -23,9 +23,6 @@
 #import "FileSysAttrChangeOperation.h"
 
 FileSysAttrChangeOperationJob::FileSysAttrChangeOperationJob():
-    m_ItemsCount(0),
-    m_CurrentItemNumber(0),
-    m_State(StateInvalid),
     m_Operation(nil),
     m_SkipAllErrors(false)
 {
@@ -45,18 +42,10 @@ void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand *_command, File
     m_Operation = _operation;
 }
 
-FileSysAttrChangeOperationJob::State FileSysAttrChangeOperationJob::StateDetail(unsigned &_it_no, unsigned &_it_tot) const
-{
-    _it_no = m_CurrentItemNumber;
-    _it_tot = m_ItemsCount;
-    return m_State;
-}
-
 void FileSysAttrChangeOperationJob::Do()
 {
     if(m_Command->process_subdirs)
     {
-        m_State = StateScanning;
         ScanDirs();
     }
     else
@@ -64,16 +53,17 @@ void FileSysAttrChangeOperationJob::Do()
         // just use original files list
         m_Files = m_Command->files;
     }
-    m_ItemsCount = m_Files->CountStringsWithDescendants();
-    assert(m_ItemsCount != 0);
-    
-    m_State = StateSetting;
+    unsigned items_count = m_Files->CountStringsWithDescendants();
+    assert(items_count != 0);
 
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
     char entryfilename[MAXPATHLEN], *entryfilename_var;
     strcpy(entryfilename, m_Command->root_path);
     entryfilename_var = &entryfilename[0] + strlen(entryfilename);
+    
+    m_Stats.StartTimeTracking();
+    m_Stats.SetMaxValue(items_count);
     
     for(auto &i: *m_Files)
     {
@@ -82,12 +72,10 @@ void FileSysAttrChangeOperationJob::Do()
         DoFile(entryfilename);
         if(CheckPauseOrStop()) { SetStopped(); return; }
         
-        SetProgress(float(m_CurrentItemNumber) / float(m_ItemsCount));
-        m_CurrentItemNumber++;
+        m_Stats.AddValue(1);
     }
     
     SetCompleted();
-    m_State = StateInvalid;
 }
 
 void FileSysAttrChangeOperationJob::ScanDirs()

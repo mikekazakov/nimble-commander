@@ -132,13 +132,17 @@ void FileCopyOperationJob::Do()
     {
         ScanItems();
         if(CheckPauseOrStop()) { SetStopped(); return; }
+        
+        if (m_SourceTotalBytes) m_Stats.SetMaxValue(m_SourceTotalBytes);
     }
     else
     {
         assert(m_WorkMode == RenameToFile || m_WorkMode == RenameToFolder);
-        // renaming is trivial, don't scan source it deeply - we need just a top level
+        // renaming is trivial, don't scan source deeply - we need just a top level
         m_ScannedItems = m_InitialItems;
         m_InitialItems = 0;
+        
+        m_Stats.SetMaxValue(m_ScannedItems->amount);
     }
 
     // we don't need it any more - so free memory as soon as possible
@@ -427,6 +431,8 @@ retry_stat:
 
 void FileCopyOperationJob::ProcessItems()
 {
+    m_Stats.StartTimeTracking();
+    
     for(const auto&i: *m_ScannedItems)
     {
         m_CurrentlyProcessingItem = &i;
@@ -612,6 +618,8 @@ retry_rename:
         if (result == OperationDialogResult::Retry) goto retry_rename;
         else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
     }
+    
+    m_Stats.AddValue(1);
 }
 
 void FileCopyOperationJob::ProcessRenameToFolder(const char *_path)
@@ -658,6 +666,8 @@ retry_rename:
         if (result == OperationDialogResult::Retry) goto retry_rename;
         else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
     }
+    
+    m_Stats.AddValue(1);
 }
 
 void FileCopyOperationJob::ProcessDirectoryCopying(const char *_path)
@@ -1023,9 +1033,7 @@ dolseek: // find right position in destination file
         std::swap(readbuf, writebuf); // swap our work buffers - read buffer become write buffer and vice versa
         
         // update statistics
-        SetProgress(double(m_TotalCopied) / double(m_SourceTotalBytes));
-        //        uint64_t currenttime = mach_absolute_time();
-        //        SetBytesPerSecond( double(totalwrote) / (double((currenttime - starttime)/1000000ul) / 1000.) );
+        m_Stats.SetValue(m_TotalCopied);
     }
     
     // TODO: do we need to determine if various attributes setting was successful?

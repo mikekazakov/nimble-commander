@@ -51,7 +51,7 @@
 
 - (void)Update
 {
-    float progress = m_Job.GetProgress();
+    float progress = m_Job.GetStats().GetProgress();
     if (self.Progress != progress)
     {
         self.Progress = progress;

@@ -9,6 +9,8 @@
 #ifndef Directories_OperationJob_h
 #define Directories_OperationJob_h
 
+#import "OperationStats.h"
+
 class OperationJob
 {
 public:
@@ -30,15 +32,13 @@ public:
     void Resume();
     void RequestStop();
     
-    // Returns value in range from 0 to 1.
-    // TODO: remove, refactor, ....
-    float GetProgress() const;
-    
     bool IsFinished() const;
     bool IsPaused() const;
     bool IsStopRequested() const;
     
     State GetState() const;
+    
+    OperationStats& GetStats();
     
 protected:
     virtual void Do() = 0;
@@ -60,9 +60,7 @@ protected:
     // }
     bool CheckPauseOrStop(int _sleep_in_ms = 100);
     
-    // Sets the current progress of the job. Value must be in [0..1] range.
-    // TODO: remove, refactor, ...
-    void SetProgress(float _progress);
+    OperationStats m_Stats;
     
 private:
     // Current state of the job.
@@ -75,8 +73,6 @@ private:
     // Requests internal thread to stop execution.
     // Internal thread only reads this variable.
     volatile bool m_RequestStop;
-    
-    float m_Progress;
     
     // Disable copy constructor and operator.
     OperationJob(const OperationJob&);

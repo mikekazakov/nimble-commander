@@ -45,9 +45,14 @@ const int MaxDialogs = 2;
 
 - (void)Update
 {
-    float progress = m_Job->GetProgress();
+    OperationStats &stats = m_Job->GetStats();
+    float progress = stats.GetProgress();
     if (_Progress != progress)
         self.Progress = progress;
+    
+    int time = int(stats.GetTime()/1000000);
+    self.ShortInfo = [NSString stringWithFormat:@"time:%3i  %llu or %llu",
+                      time/1000, stats.GetValue(), stats.GetMaxValue()];
 }
 
 - (void)Start
@@ -99,6 +104,8 @@ const int MaxDialogs = 2;
 
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog
 {
+    m_Job->GetStats().PauseTimeTracking();
+    
     dispatch_async(dispatch_get_main_queue(), ^(){
         // Enqueue dialog.
         [_dialog OnDialogEnqueued:self];
@@ -141,6 +148,8 @@ const int MaxDialogs = 2;
     
     assert(swap);
     --self.DialogsCount;
+    
+    m_Job->GetStats().ResumeTimeTracking();
     
     if (_dialog.Result == OperationDialogResult::Stop) [self Stop];
 }

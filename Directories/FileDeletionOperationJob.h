@@ -22,15 +22,6 @@ public:
     void Init(FlexChainedStringsChunk *_files, FileDeletionOperationType _type, const char* _root,
               FileDeletionOperation *_op);
     
-    enum State
-    {
-        StateInvalid,
-        StateScanning,
-        StateDeleting
-    };
-    
-    State StateDetail(unsigned &_it_no, unsigned &_it_tot) const;
-    
 protected:
     virtual void Do();
     void DoScan();

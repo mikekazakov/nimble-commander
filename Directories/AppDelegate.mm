@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "TestWindowController.h"
 #import "FontCache.h"
 #import "MainWindowController.h"
 #import "OperationProgressValueTransformer.h"

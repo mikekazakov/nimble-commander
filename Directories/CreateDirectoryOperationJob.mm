@@ -54,7 +54,6 @@ void CreateDirectoryOperationJob::Do()
     short slashpos[maxdepth];
     short absentpos[maxdepth];
     int ndirs = 0, nabsent = 0, pathlen = (int)strlen(m_Name);
-    double tdone=0, ddone=0;
     
     for(int i = pathlen-1; i > 0; --i )
         if(m_Name[i] == '/')
@@ -69,7 +68,8 @@ void CreateDirectoryOperationJob::Do()
         m_Name[ slashpos[i] ] = '/';
     }
     
-    ddone = 1. / (nabsent+1);
+    m_Stats.StartTimeTracking();
+    m_Stats.SetMaxValue(nabsent + 1);
     
     // mkdir absent directories prior to ending dir
     for(int i = nabsent-1; i >= 0; --i)
@@ -88,8 +88,7 @@ void CreateDirectoryOperationJob::Do()
             }
         }
         m_Name[ slashpos[i] ] = '/';
-        tdone += ddone;
-        SetProgress(tdone);
+        m_Stats.AddValue(1);
     }
     
 domkdir2:

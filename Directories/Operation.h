@@ -49,7 +49,6 @@ class OperationJob;
 // Returns true if operation was stopped (it finished before it could complete all required actions).
 - (BOOL)IsStopped;
 
-
 // Should be called from job's inner thread.
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog;
 

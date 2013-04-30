@@ -29,9 +29,11 @@
 
 - (void)Update
 {
-    if (self.Progress != m_Job.GetProgress())
+    if (self.Progress != m_Job.GetStats().GetProgress())
+    {
         self.ShortInfo = [NSString stringWithFormat:@"Current progress - %i %%",
-                          int(m_Job.GetProgress()*100)];
+                          int(m_Job.GetStats().GetProgress()*100)];
+    }
     [super Update];
 }
 

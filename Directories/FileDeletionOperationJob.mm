@@ -32,8 +32,6 @@ FileDeletionOperationJob::FileDeletionOperationJob():
     m_RequestedFiles(0),
     m_Type(FileDeletionOperationType::Invalid),
     m_ItemsCount(0),
-    m_CurrentItemNumber(0),
-    m_State(StateInvalid),
     m_SkipAll(false)
 {
     
@@ -55,16 +53,8 @@ void FileDeletionOperationJob::Init(FlexChainedStringsChunk *_files, FileDeletio
     m_Operation = _op;
 }
 
-FileDeletionOperationJob::State FileDeletionOperationJob::StateDetail(unsigned &_it_no, unsigned &_it_tot) const
-{
-    _it_no = m_CurrentItemNumber;
-    _it_tot = m_ItemsCount;
-    return m_State;
-}
-
 void FileDeletionOperationJob::Do()
 {
-    m_State = StateScanning;
     DoScan();
 
     if(CheckPauseOrStop()) { SetStopped(); return; }
@@ -75,7 +65,8 @@ void FileDeletionOperationJob::Do()
     strcpy(entryfilename, m_RootPath);
     entryfilename_var = &entryfilename[0] + strlen(entryfilename);
     
-    m_State = StateDeleting;
+    m_Stats.StartTimeTracking();
+    m_Stats.SetMaxValue(m_ItemsCount);
     
     for(auto &i: *m_ItemsToDelete)
     {
@@ -85,11 +76,8 @@ void FileDeletionOperationJob::Do()
         
         DoFile(entryfilename, i.str()[i.len-1] == '/');
     
-        SetProgress(float(m_CurrentItemNumber) / float(m_ItemsCount));
-        m_CurrentItemNumber++;
+        m_Stats.AddValue(1);
     }
-
-    m_State = StateInvalid;
     
     if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();

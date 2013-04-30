@@ -16,6 +16,8 @@ struct FileSysAttrAlterCommand;
 // passing with ownership, operation will free it on finish
 - (id)initWithCommand:(FileSysAttrAlterCommand*)_command;
 
+- (void)Update;
+
 - (OperationDialogAlert *)DialogOnChmodError:(int)_error
                                   ForFile:(const char *)_path
                                  WithMode:(mode_t)_mode;

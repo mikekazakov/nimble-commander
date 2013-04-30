@@ -25,14 +25,18 @@ public:
     
     void SetCurrentItem(const char *_item);
     const char *GetCurrentItem() const;
+    // Return true if item was changed after the previous call to IsCurrentItemChanged.
+    // Clears changed status when called.
+    bool IsCurrentItemChanged();
     
     void StartTimeTracking();
-    // Pauses time traking. Keeps track of how many times it was invoked.
+    // Pauses the time tracking. Keeps track of how many times it was invoked.
     // To resume tracking, ResumeTimeTracking must be called the same number of times.
     void PauseTimeTracking();
     void ResumeTimeTracking();
 
-    uint64_t GetTime() const;
+    // Returns time in milliseconds.
+    int GetTime() const;
     
 private:
     volatile uint64_t m_StartTime;
@@ -41,11 +45,13 @@ private:
     volatile bool m_Started;
     volatile int m_Paused;
     
-    const char * volatile m_CurrentItem;
+    const char *m_CurrentItem;
+    volatile bool m_CurrentItemChanged;
     volatile uint64_t m_Value;
     volatile uint64_t m_MaxValue;
     
+    mutable pthread_mutex_t m_Mutex;
+    
     static mach_timebase_info_data_t m_TimeInfo;
     static bool m_TimeInfoInited;
-    mutable pthread_mutex_t m_Mutex;
 };

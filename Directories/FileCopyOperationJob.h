@@ -28,6 +28,16 @@ public:
                              );
 
     bool IsSingleFileCopy() const;
+    
+    enum StatValueType
+    {
+        StatValueUnknown,
+        StatValueBytes,
+        StatValueFiles
+    };
+    
+    StatValueType GetStatValueType() const;
+    
 private:
     enum WorkMode
     {

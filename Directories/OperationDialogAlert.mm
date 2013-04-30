@@ -73,7 +73,7 @@ const int MaxButtonsCount = 6;
 {
     while (self.Result == OperationDialogResult::None)
     {
-        usleep(100*1000);
+        usleep(20*1000);
     }
     
     return self.Result;

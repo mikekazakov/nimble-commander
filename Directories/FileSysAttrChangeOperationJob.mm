@@ -67,6 +67,8 @@ void FileSysAttrChangeOperationJob::Do()
     
     for(auto &i: *m_Files)
     {
+        m_Stats.SetCurrentItem(i.str());
+        
         i.str_with_pref(entryfilename_var);
 
         DoFile(entryfilename);
@@ -75,6 +77,7 @@ void FileSysAttrChangeOperationJob::Do()
         m_Stats.AddValue(1);
     }
     
+    m_Stats.SetCurrentItem(0);
     SetCompleted();
 }
 

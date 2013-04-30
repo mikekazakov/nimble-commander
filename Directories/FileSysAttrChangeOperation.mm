@@ -45,6 +45,26 @@
     return self;
 }
 
+- (void)Update
+{
+    OperationStats &stats = m_Job.GetStats();
+    float progress = stats.GetProgress();
+    if (self.Progress != progress)
+        self.Progress = progress;
+    
+    if (stats.IsCurrentItemChanged())
+    {
+        const char *item = stats.GetCurrentItem();
+        if (!item)
+            self.ShortInfo = @"";
+        else
+        {
+            self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
+                              [NSString stringWithUTF8String:item]];
+        }
+    }
+}
+
 // TODO: code will be used for detailed status
 //- (NSString *)GetCaption
 //{

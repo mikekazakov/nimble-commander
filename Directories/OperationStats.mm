@@ -19,7 +19,8 @@ OperationStats::OperationStats()
     m_Paused(0),
     m_CurrentItem(nullptr),
     m_Value(0),
-    m_MaxValue(1)
+    m_MaxValue(1),
+    m_CurrentItemChanged(false)
 {
     if (!m_TimeInfoInited)
     {
@@ -68,11 +69,19 @@ float OperationStats::GetProgress() const
 void OperationStats::SetCurrentItem(const char *_item)
 {
     m_CurrentItem = _item;
+    m_CurrentItemChanged = true;
 }
 
 const char *OperationStats::GetCurrentItem() const
 {
     return m_CurrentItem;
+}
+
+bool OperationStats::IsCurrentItemChanged()
+{
+    bool changed = m_CurrentItemChanged;
+    if (changed) m_CurrentItemChanged = false;
+    return changed;
 }
 
 void OperationStats::StartTimeTracking()
@@ -114,7 +123,7 @@ void OperationStats::ResumeTimeTracking()
     pthread_mutex_unlock(&m_Mutex);
 }
 
-uint64_t OperationStats::GetTime() const
+int OperationStats::GetTime() const
 {
     pthread_mutex_lock(&m_Mutex);
     
@@ -129,5 +138,5 @@ uint64_t OperationStats::GetTime() const
  
     pthread_mutex_unlock(&m_Mutex);
     
-    return time * m_TimeInfo.numer/m_TimeInfo.denom;
+    return int(time * m_TimeInfo.numer/m_TimeInfo.denom/1000000);
 }

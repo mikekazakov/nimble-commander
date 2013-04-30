@@ -34,6 +34,8 @@ struct FileCopyOperationOptions
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts;
 
+- (void)Update;
+
 - (OperationDialogAlert *)OnDestCantCreateDir:(int)_error ForDir:(const char *)_path;
 - (OperationDialogAlert *)OnCopyCantCreateDir:(int)_error ForDir:(const char *)_path;
 - (OperationDialogAlert *)OnCopyCantAccessSrcFile:(int)_error ForFile:(const char *)_path;

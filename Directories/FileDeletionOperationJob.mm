@@ -72,12 +72,16 @@ void FileDeletionOperationJob::Do()
     {
         if(CheckPauseOrStop()) { SetStopped(); return; }
         
+        m_Stats.SetCurrentItem(i.str());
+        
         i.str_with_pref(entryfilename_var);
         
         DoFile(entryfilename, i.str()[i.len-1] == '/');
     
         m_Stats.AddValue(1);
     }
+    
+    m_Stats.SetCurrentItem(0);
     
     if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();

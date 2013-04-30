@@ -171,6 +171,20 @@ bool FileCopyOperationJob::IsSingleFileCopy() const
     return m_IsSingleFileCopy;    
 }
 
+FileCopyOperationJob::StatValueType FileCopyOperationJob::GetStatValueType() const
+{
+    if(m_WorkMode == CopyToFile || m_WorkMode == CopyToFolder || m_WorkMode == MoveToFile || m_WorkMode == MoveToFolder)
+    {
+        return StatValueBytes;
+    }
+    else if (m_WorkMode == RenameToFile || m_WorkMode == RenameToFolder)
+    {
+        return StatValueFiles;
+    }
+        
+    return StatValueUnknown;
+}
+
 void FileCopyOperationJob::ScanDestination()
 {
     struct stat stat_buffer;
@@ -442,6 +456,8 @@ void FileCopyOperationJob::ProcessItems()
         if(CheckPauseOrStop()) return;
     }
 
+    m_Stats.SetCurrentItem(nullptr);
+    
     if(!m_FilesToDelete.empty())
         ProcessFilesRemoval();
     if(!m_DirsToDelete.empty())
@@ -577,6 +593,8 @@ void FileCopyOperationJob::ProcessMoveToFolder(const char *_path, bool _is_dir)
 
 void FileCopyOperationJob::ProcessRenameToFile(const char *_path)
 {
+    m_Stats.SetCurrentItem(_path);
+    
     // m_Destination is full target path - we need to rename current file to it
     // assuming that we're working on same valume
     char sourcepath[MAXPATHLEN];
@@ -624,6 +642,8 @@ retry_rename:
 
 void FileCopyOperationJob::ProcessRenameToFolder(const char *_path)
 {
+    m_Stats.SetCurrentItem(_path);
+    
     // m_Destination is a directory path - we need to appen _path to it
     char sourcepath[MAXPATHLEN], destpath[MAXPATHLEN];
     struct stat stat_buffer;
@@ -858,6 +878,8 @@ bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
     mode_t oldumask;
     __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
     __block bool io_docancel = false;
+    
+    m_Stats.SetCurrentItem(_src);
     
 opensource:
     if((sourcefd = open(_src, O_RDONLY|O_SHLOCK|O_NONBLOCK)) == -1)

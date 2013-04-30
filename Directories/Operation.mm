@@ -50,9 +50,11 @@ const int MaxDialogs = 2;
     if (_Progress != progress)
         self.Progress = progress;
     
-    int time = int(stats.GetTime()/1000000);
-    self.ShortInfo = [NSString stringWithFormat:@"time:%3i  %llu or %llu",
-                      time/1000, stats.GetValue(), stats.GetMaxValue()];
+
+    double time = stats.GetTime()/1000.0;
+    self.ShortInfo = [NSString stringWithFormat:@"time:%.0f, %llu of %llu (%.02f/s)",
+                      time, stats.GetValue(), stats.GetMaxValue(),
+                          stats.GetValue()/time];
 }
 
 - (void)Start

@@ -13,6 +13,7 @@
 @implementation FileCopyOperation
 {
     FileCopyOperationJob m_Job;
+    int m_LastInfoUpdateTime;
 }
 
 - (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
@@ -42,6 +43,55 @@
         }
     }
     return self;
+}
+
+- (void)Update
+{
+    OperationStats &stats = m_Job.GetStats();
+    float progress = stats.GetProgress();
+    if (self.Progress != progress)
+        self.Progress = progress;
+    
+    FileCopyOperationJob::StatValueType value_type = m_Job.GetStatValueType();
+    bool item_changed = stats.IsCurrentItemChanged();
+    if (value_type == FileCopyOperationJob::StatValueUnknown
+        || (!item_changed && (m_Job.IsPaused() || self.DialogsCount)))
+    {
+        return;
+    }
+    
+    int time = stats.GetTime();
+    if (time - m_LastInfoUpdateTime >= 1000 || item_changed)
+    {
+        if (value_type == FileCopyOperationJob::StatValueBytes)
+        {
+            double mbytes = stats.GetValue()/1000000.0;
+            double mbytes_total = stats.GetMaxValue()/1000000.0;
+            double mbytes_left = mbytes_total - mbytes;
+            double mbytes_per_sec = time ? mbytes/time*1000.0 : 0;
+            int eta_in_sec = time ? int(mbytes_left/mbytes_per_sec) : 0;
+            self.ShortInfo = [NSString stringWithFormat:
+                              @"%.1f MB of %.1f MB - %.1f MB/s - eta %i sec",
+                              mbytes, mbytes_total, mbytes_per_sec, eta_in_sec];
+        }
+        else if (value_type == FileCopyOperationJob::StatValueFiles)
+        {
+            const char *file = stats.GetCurrentItem();
+            if (!file)
+            {
+                self.ShortInfo = @"";
+            }
+            else
+            {
+                self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
+                                  [NSString stringWithUTF8String:file]];
+            }
+        
+        }
+        else assert(0); // sanity check
+        
+        m_LastInfoUpdateTime = time;
+    }
 }
 
 - (OperationDialogAlert *)OnDestCantCreateDir:(int)_error ForDir:(const char *)_path

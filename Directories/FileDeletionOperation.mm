@@ -51,18 +51,21 @@
 
 - (void)Update
 {
-    float progress = m_Job.GetStats().GetProgress();
+    OperationStats &stats = m_Job.GetStats();
+    float progress = stats.GetProgress();
     if (self.Progress != progress)
-    {
         self.Progress = progress;
-        
-// TODO: code will be used for status info
-//        unsigned items_total, item_no;
-//        FileDeletionOperationJob::State state = m_Job.StateDetail(item_no, items_total);
-//        if (state == FileDeletionOperationJob::StateDeleting)
-//        {
-//            self.Caption = [NSString stringWithFormat:@"Deleting item %d of %d.", item_no, items_total];
-//        }
+    
+    if (stats.IsCurrentItemChanged())
+    {
+        const char *item = stats.GetCurrentItem();
+        if (!item)
+            self.ShortInfo = @"";
+        else
+        {
+            self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
+                              [NSString stringWithUTF8String:item]];
+        }
     }
 }
 

@@ -8,6 +8,7 @@
 
 #import "FileCopyOperation.h"
 #import "FileCopyOperationJob.h"
+#import "Common.h"
 
 @implementation FileCopyOperation
 {
@@ -24,8 +25,21 @@
     {
         m_Job.Init(_files, _root, _dest, _opts, self);
         
-        // TODO: make unique caption based on arguments
-        self.Caption = @"Copying files";
+        // Set caption.
+        char buff[128] = {0};
+        GetDirectoryFromPath(_dest, buff, 128);
+        if (_files->amount == 1)
+        {
+            self.Caption = [NSString stringWithFormat:@"Copying \"%@\" to \"%@\"",
+                            [NSString stringWithUTF8String:_files->strings[0].str()],
+                            [NSString stringWithUTF8String:buff]];
+        }
+        else
+        {
+            self.Caption = [NSString stringWithFormat:@"Copying %i items to \"%@\"",
+                            _files->amount,
+                            [NSString stringWithUTF8String:buff]];
+        }
     }
     return self;
 }

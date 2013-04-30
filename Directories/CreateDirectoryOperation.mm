@@ -27,7 +27,7 @@
         strcpy(m_OriginalPathRequest, _path);
         m_OperationStart = mach_absolute_time();
         m_Job.Init(_path, _rootpath, self);
-        self.Caption = [NSString stringWithFormat:@"Creating directory '%@'",
+        self.Caption = [NSString stringWithFormat:@"Creating directory \"%@\"",
                         [NSString stringWithUTF8String:_path]];
     }
     return self;

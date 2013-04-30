@@ -49,6 +49,8 @@ struct MenuTags
 
 bool GetRealPath(const char *_path_in, char *_path_out);
 
+bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size);
+
 typedef enum
 {
     kTruncateAtStart,

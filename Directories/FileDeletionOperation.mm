@@ -9,6 +9,7 @@
 #import "FileDeletionOperation.h"
 #import "FileDeletionOperationJob.h"
 #import "OperationDialogAlert.h"
+#import "Common.h"
 
 @implementation FileDeletionOperation
 {
@@ -29,8 +30,21 @@
         
         m_Job.Init(_files, _type, _path, self);
         
-        // TODO: make unique name based on arguments
-        self.Caption = @"Deleting files";
+        // Set caption.
+        char buff[128] = {0};
+        GetDirectoryFromPath(_path, buff, 128);
+        if (_files->amount == 1)
+        {
+            self.Caption = [NSString stringWithFormat:@"Deleting \"%@\" from \"%@\"",
+                            [NSString stringWithUTF8String:_files->strings[0].str()],
+                            [NSString stringWithUTF8String:buff]];
+        }
+        else
+        {
+            self.Caption = [NSString stringWithFormat:@"Deleting %i items from \"%@\"",
+                            _files->amount,
+                            [NSString stringWithUTF8String:buff]];
+        }
     }
     return self;
 }   

@@ -8,6 +8,7 @@
 
 #import "FileSysAttrChangeOperation.h"
 #import "FileSysAttrChangeOperationJob.h"
+#import "Common.h"
 
 #import <sys/attr.h>
 
@@ -23,8 +24,23 @@
     {
         m_Job.Init(_command, self);
         
-        // TODO: make unique caption based on arguments.
-        self.Caption = @"Altering files attributes";
+        // Set caption.
+        if (_command->files->amount == 1)
+        {
+            self.Caption = [NSString stringWithFormat:@"Altering attributes of \"%@\"",
+                            [NSString stringWithUTF8String:_command->files->strings[0].str()]];
+        }
+        else
+        {
+            // Get directory name from path.
+            char buff[128] = {0};
+            GetDirectoryFromPath(_command->root_path, buff, 128);
+            
+            self.Caption = [NSString stringWithFormat:@"Altering attributes of %i items in \"%@\"",
+                            _command->files->amount,
+                            [NSString stringWithUTF8String:buff]];
+        }
+            
     }
     return self;
 }

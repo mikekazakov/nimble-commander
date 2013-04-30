@@ -30,7 +30,7 @@
 		CF055EB6171D9E8E00F7A6ED /* PanelSizeCalculator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF055EB4171D9E8E00F7A6ED /* PanelSizeCalculator.mm */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
-		CF279A38172F8093002D4B60 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF279A37172F8093002D4B60 /* pause_icon.png */; };
+		CF279A3A172F8CF2002D4B60 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF279A39172F8CF2002D4B60 /* pause_icon.png */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CF76B30617000C090066A49F /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
@@ -119,7 +119,7 @@
 		CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
-		CF279A37172F8093002D4B60 /* pause_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_icon.png; sourceTree = "<group>"; };
+		CF279A39172F8CF2002D4B60 /* pause_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_icon.png; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
 		CF73C59C16DE0D2900F3D44F /* MessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBox.h; sourceTree = "<group>"; };
@@ -231,7 +231,7 @@
 		B51014CF170721340023FF24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CF279A37172F8093002D4B60 /* pause_icon.png */,
+				CF279A39172F8CF2002D4B60 /* pause_icon.png */,
 				B55DB19B171B0E9700E3610E /* question_icon.png */,
 			);
 			name = Resources;
@@ -587,7 +587,7 @@
 				B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */,
 				B52EB790172277DB004ABC2E /* PreferencesWindowController.xib in Resources */,
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
-				CF279A38172F8093002D4B60 /* pause_icon.png in Resources */,
+				CF279A3A172F8CF2002D4B60 /* pause_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

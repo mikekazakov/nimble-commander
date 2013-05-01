@@ -421,7 +421,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void)HandleFastSearch: (NSString*) _key
 {
-    uint64_t currenttime = mach_absolute_time();
+    uint64_t currenttime = GetTimeInNanoseconds();
     if(_key != nil)
     {
         if(m_FastSearchLastType + g_FastSeachDelayTresh < currenttime || m_FastSearchString == nil)
@@ -685,7 +685,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     // we assume that _item_name will not contain any forward slashes
     
     m_DelayedSelection.isvalid = true;
-    m_DelayedSelection.request_end = mach_absolute_time() + _time_out_in_ms*USEC_PER_SEC;
+    m_DelayedSelection.request_end = GetTimeInNanoseconds() + _time_out_in_ms*USEC_PER_SEC;
     strcpy(m_DelayedSelection.filename, _item_name);
     
     if(_check_now)
@@ -698,7 +698,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     if(!m_DelayedSelection.isvalid)
         return;
 
-    uint64_t now = mach_absolute_time();
+    uint64_t now = GetTimeInNanoseconds();
     if(now > m_DelayedSelection.request_end)
     {
         m_DelayedSelection.isvalid = false;

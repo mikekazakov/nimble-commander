@@ -48,8 +48,10 @@ struct MenuTags
 };
 
 bool GetRealPath(const char *_path_in, char *_path_out);
-
 bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size);
+
+extern uint64_t (*GetTimeInNanoseconds)();
+void InitGetTimeInNanoseconds();
 
 typedef enum
 {
@@ -62,10 +64,10 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 struct MachTimeBenchmark
 {
     uint64_t last;
-    inline MachTimeBenchmark() : last(mach_absolute_time()) {};
+    inline MachTimeBenchmark() : last(GetTimeInNanoseconds()) {};
     inline void Reset()
     {
-        uint64_t now = mach_absolute_time();
+        uint64_t now = GetTimeInNanoseconds();
         NSLog(@"%llu\n", (now - last) / 1000000 );
         last = now;
     }

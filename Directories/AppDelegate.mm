@@ -11,8 +11,10 @@
 #import "MainWindowController.h"
 #import "OperationProgressValueTransformer.h"
 #import "OperationsController.h"
+#import "Common.h"
 #import <vector>
 #import "FlexChainedStringsChunk.h"
+
 
 @implementation AppDelegate
 {
@@ -21,6 +23,8 @@
 
 + (void)initialize
 {
+    InitGetTimeInNanoseconds();
+    
     NSString *defaults_file = [[NSBundle mainBundle]
                                pathForResource:@"Defaults" ofType:@"plist"];
     NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];

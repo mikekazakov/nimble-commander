@@ -1,5 +1,7 @@
 #import "Common.h"
+#import <mach/mach_time.h>
 
+uint64_t (*GetTimeInNanoseconds)() = nullptr;
 
 static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)
 {
@@ -144,4 +146,19 @@ bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size)
     _dir_out[len + 1] = 0;
     
     return true;
+}
+
+static mach_timebase_info_data_t info_data;
+uint64_t GetTimeInNanosecondsScale()
+{
+    return mach_absolute_time()*info_data.numer/info_data.denom;
+}
+
+void InitGetTimeInNanoseconds()
+{
+    mach_timebase_info(&info_data);
+    if (info_data.denom == 1 && info_data.numer == 1)
+        GetTimeInNanoseconds = &mach_absolute_time;
+    else
+        GetTimeInNanoseconds = &GetTimeInNanosecondsScale;
 }

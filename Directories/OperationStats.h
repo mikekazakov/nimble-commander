@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <mach/mach_time.h>
-
 class OperationStats
 {
 public:
@@ -51,7 +49,4 @@ private:
     volatile uint64_t m_MaxValue;
     
     mutable pthread_mutex_t m_Mutex;
-    
-    static mach_timebase_info_data_t m_TimeInfo;
-    static bool m_TimeInfoInited;
 };

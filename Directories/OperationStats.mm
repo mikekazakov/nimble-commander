@@ -7,10 +7,8 @@
 //
 
 #import "OperationStats.h"
+#import "Common.h"
 #import <pthread.h>
-
-mach_timebase_info_data_t OperationStats::m_TimeInfo;
-bool OperationStats::m_TimeInfoInited = false;
 
 OperationStats::OperationStats()
 :   m_StartTime(0),
@@ -22,12 +20,6 @@ OperationStats::OperationStats()
     m_MaxValue(1),
     m_CurrentItemChanged(false)
 {
-    if (!m_TimeInfoInited)
-    {
-        m_TimeInfoInited = true;
-        mach_timebase_info(&m_TimeInfo);
-    }
-    
     pthread_mutex_init(&m_Mutex, nullptr);
 }
 
@@ -90,7 +82,7 @@ void OperationStats::StartTimeTracking()
     
     assert(!m_Started);
     
-    m_StartTime = mach_absolute_time();
+    m_StartTime = GetTimeInNanoseconds();
     
     if (m_Paused) m_PauseTime = m_StartTime;
     
@@ -104,7 +96,7 @@ void OperationStats::PauseTimeTracking()
     pthread_mutex_lock(&m_Mutex);
     
     if (++m_Paused == 1)
-        m_PauseTime = mach_absolute_time();
+        m_PauseTime = GetTimeInNanoseconds();
 
     pthread_mutex_unlock(&m_Mutex);
 }
@@ -116,7 +108,7 @@ void OperationStats::ResumeTimeTracking()
     assert(m_Paused >= 1);
     if (--m_Paused == 0)
     {
-        uint64_t pause_duration = mach_absolute_time() - m_PauseTime;
+        uint64_t pause_duration = GetTimeInNanoseconds() - m_PauseTime;
         m_StartTime += pause_duration;
     }
     
@@ -134,9 +126,9 @@ int OperationStats::GetTime() const
     else if (m_Paused)
         time = m_PauseTime - m_StartTime;
     else
-        time = mach_absolute_time() - m_StartTime;
+        time = GetTimeInNanoseconds() - m_StartTime;
  
     pthread_mutex_unlock(&m_Mutex);
     
-    return int(time * m_TimeInfo.numer/m_TimeInfo.denom/1000000);
+    return int(time/1000000);
 }

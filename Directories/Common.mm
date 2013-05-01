@@ -157,7 +157,7 @@ uint64_t GetTimeInNanosecondsScale()
 void InitGetTimeInNanoseconds()
 {
     mach_timebase_info(&info_data);
-    if (info_data.denom == 1 && info_data.numer == 1)
+    if (info_data.denom == info_data.numer)
         GetTimeInNanoseconds = &mach_absolute_time;
     else
         GetTimeInNanoseconds = &GetTimeInNanosecondsScale;

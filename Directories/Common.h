@@ -7,8 +7,6 @@
 //
 #pragma once
 
-#include <mach/mach_time.h>
-
 struct DialogResult
 {
     enum
@@ -49,6 +47,10 @@ struct MenuTags
 
 bool GetRealPath(const char *_path_in, char *_path_out);
 bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size);
+
+// intended for debug and development purposes only
+void SyncMessageBoxUTF8(const char *_utf8_string);
+void SyncMessageBoxNS(NSString *_ns_string);
 
 extern uint64_t (*GetTimeInNanoseconds)();
 void InitGetTimeInNanoseconds();

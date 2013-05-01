@@ -6,26 +6,34 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "FileDeletionOperationJob.h"
-#include <sys/types.h>
-#include <sys/dirent.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <sys/time.h>
-#include <sys/xattr.h>
-#include <sys/attr.h>
-#include <sys/vnode.h>
-#include <sys/param.h>
-#include <sys/mount.h>
-#include <unistd.h>
-#include <stdlib.h>
-
+#import "FileDeletionOperationJob.h"
+#import <sys/types.h>
+#import <sys/dirent.h>
+#import <sys/stat.h>
+#import <dirent.h>
+#import <sys/time.h>
+#import <sys/xattr.h>
+#import <sys/attr.h>
+#import <sys/vnode.h>
+#import <sys/param.h>
+#import <sys/mount.h>
+#import <unistd.h>
+#import <stdlib.h>
 #import "OperationDialogAlert.h"
+#import "rdrand.h"
+#import "Common.h"
 
 static void Randomize(unsigned char *_data, unsigned _size)
 {
-    for(unsigned i = 0; i < _size; ++i)
-        _data[i] = rand()%256;
+    // try to use Intel's rdrand instruction directly, don't waste CPU time on manual rand calculation
+    // Ivy Bridge(2012) and later
+    int r = rdrand_get_bytes(_size, _data);
+    if( r != RDRAND_SUCCESS)
+    {
+        // fallback mode - call traditional sluggish rand()
+        for(unsigned i = 0; i < _size; ++i)
+            _data[i] = rand()%256;
+    }
 }
 
 FileDeletionOperationJob::FileDeletionOperationJob():
@@ -290,6 +298,28 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
         // fill file content with random data
         unsigned char data[4096];
         const int passes=3;
+
+        struct stat st;
+        if( lstat(_full_path, &st) == 0 && (st.st_mode & S_IFMT) == S_IFLNK)
+        {
+            // just unlink a symlink, do not try to fill it with trash -
+            // it produces fancy "Too many levels of symbolic links" error
+            unlink_symlink:
+            if(unlink(_full_path) != 0)
+            {
+                if (!m_SkipAll)
+                {
+                    int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path]
+                                  WaitForResult];
+                    if (result == OperationDialogResult::Retry) goto unlink_symlink;
+                    else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                    else if (result == OperationDialogResult::Stop) RequestStop();
+                }
+                return false;
+            }
+            return true;
+        }
+        
     retry_open:
         int fd = open(_full_path, O_WRONLY|O_EXLOCK|O_NOFOLLOW);
         if(fd != -1)

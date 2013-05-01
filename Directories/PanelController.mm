@@ -12,8 +12,6 @@
 #import "Common.h"
 #import "MainWindowController.h"
 #import "QuickPreview.h"
-#import <mach/mach_time.h>
-
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 

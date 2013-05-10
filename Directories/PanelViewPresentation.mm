@@ -1,0 +1,227 @@
+//
+//  PanelViewPresentation.cpp
+//  Files
+//
+//  Created by Pavel Dogurevich on 06.05.13.
+//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
+//
+
+#import "PanelViewPresentation.h"
+#import "PanelView.h"
+#import "PanelData.h"
+
+PanelViewPresentation::PanelViewPresentation()
+:   m_State(0)
+{
+}
+
+void PanelViewPresentation::SetState(PanelViewState *_state)
+{
+    m_State = _state;
+}
+
+
+void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type, int _cursor)
+{
+    if(_type == PanelViewDirectoryChangeType::GoIntoSubDir)
+    {
+        // Push current offset.
+        m_State->DisplayOffsetStack.push(m_State->ItemsDisplayOffset);
+    }
+    else if(_type == PanelViewDirectoryChangeType::GoIntoParentDir)
+    {
+        // Pop previous offset.
+        if(!m_State->DisplayOffsetStack.empty())
+        {
+            m_State->ItemsDisplayOffset = m_State->DisplayOffsetStack.top();
+            m_State->DisplayOffsetStack.pop();
+        }
+    }
+    else if(_type == PanelViewDirectoryChangeType::GoIntoOtherDir)
+    {
+        // Clear offset stack.
+        while(!m_State->DisplayOffsetStack.empty())
+            m_State->DisplayOffsetStack.pop();
+    }
+    
+    m_State->CursorPos = _cursor;
+    EnsureCursorIsVisible();
+}
+
+void PanelViewPresentation::SetCursorPos(int _pos)
+{
+    m_State->CursorPos = _pos;
+    EnsureCursorIsVisible();
+}
+
+void PanelViewPresentation::ScrollCursor(int _idx, int _idy)
+{
+    int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
+    int max_visible_items = GetMaxVisibleItems();
+    int per_col = GetMaxItemsPerColumn();
+
+    if (_idy != 0)
+    {
+        if(_idy > 0)
+        {
+            if(m_State->ItemsDisplayOffset > 0)
+                m_State->ItemsDisplayOffset--;
+            if(m_State->CursorPos > 0)
+                m_State->CursorPos--;
+        }
+        else
+        {
+            if(m_State->ItemsDisplayOffset + max_visible_items < total_items)
+                m_State->ItemsDisplayOffset++;
+            if(m_State->CursorPos < total_items-1)
+                m_State->CursorPos++;
+        }
+    }
+    
+    if (_idx != 0)
+    {
+        if(_idx > 0)
+        {
+            if(m_State->ItemsDisplayOffset > per_col)
+                m_State->ItemsDisplayOffset -= per_col;
+            else if(m_State->ItemsDisplayOffset > 0)
+                m_State->ItemsDisplayOffset = 0;
+            
+            if(m_State->CursorPos > per_col)
+                m_State->CursorPos -= per_col;
+            else if(m_State->CursorPos > 0)
+                m_State->CursorPos = 0;
+        }
+        else
+        {
+            if(m_State->ItemsDisplayOffset + max_visible_items < total_items)
+                m_State->ItemsDisplayOffset += per_col;
+            
+            if(m_State->CursorPos + per_col < total_items - 1)
+                m_State->CursorPos += per_col;
+            else if(m_State->CursorPos < total_items - 1)
+                m_State->CursorPos = total_items - 1;
+        }
+    }
+}
+
+void PanelViewPresentation::MoveCursorToNextItem()
+{
+    if(m_State->CursorPos + 1 < m_State->Data->SortedDirectoryEntries().size())
+        m_State->CursorPos++;
+    EnsureCursorIsVisible();
+}
+
+void PanelViewPresentation::MoveCursorToPrevItem()
+{
+    if(m_State->CursorPos > 0)
+        m_State->CursorPos--;
+    EnsureCursorIsVisible();
+}
+
+void PanelViewPresentation::MoveCursorToNextPage()
+{
+    int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
+    int max_visible_items = GetMaxVisibleItems();
+    
+    if(m_State->CursorPos + max_visible_items < total_items)
+        m_State->CursorPos += max_visible_items;
+    else
+        m_State->CursorPos = total_items - 1;
+    
+    if(m_State->ItemsDisplayOffset + max_visible_items*2 < total_items)
+        m_State->ItemsDisplayOffset += max_visible_items;
+    else if(total_items - max_visible_items > 0)
+        m_State->ItemsDisplayOffset = total_items - max_visible_items;
+}
+
+
+void PanelViewPresentation::MoveCursorToPrevPage()
+{
+    int max_visible_items = GetMaxVisibleItems();
+    if(m_State->CursorPos > max_visible_items)
+        m_State->CursorPos -=  max_visible_items;
+    else
+        m_State->CursorPos = 0;
+
+    if(m_State->ItemsDisplayOffset > max_visible_items)
+        m_State->ItemsDisplayOffset -= max_visible_items;
+    else
+        m_State->ItemsDisplayOffset = 0;
+}
+
+void PanelViewPresentation::MoveCursorToNextColumn()
+{
+    int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
+    int items_per_column = GetMaxItemsPerColumn();
+    int max_visible_items = GetMaxVisibleItems();
+    
+    if(m_State->CursorPos + items_per_column < total_items)
+        m_State->CursorPos += items_per_column;
+    else
+        m_State->CursorPos = total_items - 1;
+    
+    if(m_State->ItemsDisplayOffset + max_visible_items <= m_State->CursorPos)
+    {
+        if(m_State->ItemsDisplayOffset + items_per_column + max_visible_items < total_items)
+            m_State->ItemsDisplayOffset += items_per_column;
+        else if(total_items - max_visible_items > 0)
+            m_State->ItemsDisplayOffset = total_items - max_visible_items;
+    }
+}
+
+void PanelViewPresentation::MoveCursorToPrevColumn()
+{
+    int items_per_column = GetMaxItemsPerColumn();
+    if(m_State->CursorPos > items_per_column)
+        m_State->CursorPos -= items_per_column;
+    else
+        m_State->CursorPos = 0;
+
+    if(m_State->CursorPos < m_State->ItemsDisplayOffset)
+    {
+        if(m_State->ItemsDisplayOffset > items_per_column)
+            m_State->ItemsDisplayOffset -= items_per_column;
+        else
+            m_State->ItemsDisplayOffset = 0;
+    }
+}
+
+void PanelViewPresentation::MoveCursorToFirstItem()
+{
+    m_State->CursorPos = 0;
+    m_State->ItemsDisplayOffset = 0;
+}
+
+void PanelViewPresentation::MoveCursorToLastItem()
+{
+    int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
+    int max_visible_items = GetMaxVisibleItems();
+    m_State->CursorPos = total_items - 1;
+
+    if(total_items > max_visible_items)
+        m_State->ItemsDisplayOffset = total_items - max_visible_items;
+}
+
+void PanelViewPresentation::EnsureCursorIsVisible()
+{
+    if(m_State->CursorPos < 0) return;
+    
+    int max_visible_items = GetMaxVisibleItems();
+    
+    // Check if cursor is above
+    if(m_State->CursorPos < m_State->ItemsDisplayOffset)
+    {
+        m_State->ItemsDisplayOffset = m_State->CursorPos;
+    }
+    // check if cursor is below
+    else if(m_State->CursorPos >= m_State->ItemsDisplayOffset + max_visible_items)
+    {
+        m_State->ItemsDisplayOffset = m_State->CursorPos - max_visible_items + 1;
+    }
+}
+
+int PanelViewPresentation::GetMaxVisibleItems()
+{
+    return GetNumberOfItemColumns() * GetMaxItemsPerColumn();
+}

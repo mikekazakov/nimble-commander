@@ -6,37 +6,24 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 #pragma once
+
 #import <Cocoa/Cocoa.h>
-#include "DirRead.h"
+
+#import "DirRead.h"
+#import "PanelViewTypes.h"
 
 @class PanelController;
 class PanelData;
+class PanelViewPresentation;
 
-enum class PanelViewType
-{
-    ViewShort,
-    ViewMedium,
-    ViewFull,
-    ViewWide
-};
-
-enum class PanelViewDirectoryChangeType
-{
-    GoIntoSubDir,
-    GoIntoParentDir,
-    GoIntoOtherDir
-};
 
 @interface PanelView : NSView
 
-
 - (void) SetPanelController:(PanelController *)_controller;
-// directory traversing
-- (void) SetPanelData: (PanelData*) _data;
-//- (void) DirectoryChanged:(int) _new_curpos Type:(PanelViewDirectoryChangeType)_type;
+
+- (void) SetPanelData:(PanelData*)_data;
 - (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor;
 
-// TODO: consider moving the following code to PanelController class
 // user input handling          normal keys
 - (void) HandlePrevFile;     // up
 - (void) HandleNextFile;     // down
@@ -63,13 +50,8 @@ enum class PanelViewDirectoryChangeType
 - (void) Disactivate;
 
 // cursor handling
-- (void) EnsureCursorIsVisible;
 - (int) GetCursorPosition;
 - (void) SetCursorPosition:(int)_pos; // will call EnsureCursorIsVisible implicitly
 - (const DirectoryEntryInformation*) CurrentItem; // return an item at current cursor position if any
-
-// Calculates cursor postion which corresponds to the point in view.
-// Returns -1 if point is out of files' view area.
-- (int) CalcCursorPositionByPointInView:(CGPoint)_point;
 
 @end

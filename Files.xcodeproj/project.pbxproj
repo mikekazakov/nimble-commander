@@ -33,6 +33,10 @@
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF27B50E172F8EAF005C9B28 /* pause_icon.png */; };
+		CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
+		CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
+		CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
+		CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CF76B30617000C090066A49F /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
@@ -127,6 +131,15 @@
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
 		CF27B50E172F8EAF005C9B28 /* pause_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_icon.png; sourceTree = "<group>"; };
+		CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileWindow.cpp; sourceTree = "<group>"; };
+		CF396AED173FA8AF00A20C42 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileWindow.h; sourceTree = "<group>"; };
+		CF396AEF173FA8C600A20C42 /* BigFileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileView.h; sourceTree = "<group>"; };
+		CF396AF0173FA8C600A20C42 /* BigFileView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileView.mm; sourceTree = "<group>"; };
+		CF396AF1173FA8C600A20C42 /* BigFileViewHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewHex.h; sourceTree = "<group>"; };
+		CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewHex.mm; sourceTree = "<group>"; };
+		CF396AF3173FA8C600A20C42 /* BigFileViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewProtocol.h; sourceTree = "<group>"; };
+		CF396AF4173FA8C600A20C42 /* BigFileViewText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewText.h; sourceTree = "<group>"; };
+		CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewText.mm; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
 		CF73C59C16DE0D2900F3D44F /* MessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBox.h; sourceTree = "<group>"; };
@@ -322,6 +335,20 @@
 			name = SummaryView;
 			sourceTree = "<group>";
 		};
+		CF396AEB173FA89A00A20C42 /* BigFileView */ = {
+			isa = PBXGroup;
+			children = (
+				CF396AEF173FA8C600A20C42 /* BigFileView.h */,
+				CF396AF0173FA8C600A20C42 /* BigFileView.mm */,
+				CF396AF1173FA8C600A20C42 /* BigFileViewHex.h */,
+				CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */,
+				CF396AF3173FA8C600A20C42 /* BigFileViewProtocol.h */,
+				CF396AF4173FA8C600A20C42 /* BigFileViewText.h */,
+				CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */,
+			);
+			name = BigFileView;
+			sourceTree = "<group>";
+		};
 		CF536C0D16C92EA200F37203 /* Panel */ = {
 			isa = PBXGroup;
 			children = (
@@ -429,6 +456,8 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */,
+				CF396AED173FA8AF00A20C42 /* FileWindow.h */,
 				CFDE466F1730F97800B5EF50 /* rdrand.c */,
 				CFDE46701730F97800B5EF50 /* rdrand.h */,
 				CFC4342216E0E09B001B0512 /* Common.h */,
@@ -507,6 +536,7 @@
 		CFC5121A16C4BD3D00D247EE /* Files */ = {
 			isa = PBXGroup;
 			children = (
+				CF396AEB173FA89A00A20C42 /* BigFileView */,
 				B50976A6172A39EE0080412E /* QuickPreview */,
 				B5A23000171E81AA00D9C1A6 /* Controls */,
 				B528011916FCF347004E260D /* Operation */,
@@ -685,6 +715,10 @@
 				CFDE46711730F97800B5EF50 /* rdrand.c in Sources */,
 				B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
+				CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */,
+				CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */,
+				CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */,
+				CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

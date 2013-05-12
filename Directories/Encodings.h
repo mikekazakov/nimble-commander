@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stddef.h>
-
+#include <stdint.h>
 
 // unsigned short is just UniChar. not to let rubbish inter headers
 
@@ -47,3 +47,14 @@ void InterpretUTF8BufferAsUniChar(
                                                       );
     // this function will not visualize non-printed symbols (0-32) in funny DOS-style
     // it will set a null-terminator in the end
+
+void InterpretUTF8BufferAsIndexedUniChar(
+                                         const unsigned char* _input,
+                                         size_t _input_size,
+                                         unsigned short *_output_buf, // should be at least _input_size 16b words long
+                                         uint32_t       *_indexes_buf, // should be at least _input_size 32b words long
+                                         size_t *_output_sz, // size of an output in unichars
+                                         unsigned short _bad_symb // something like '?' or U+FFFD
+                                         );
+// this function will not visualize non-printed symbols (0-32) in funny DOS-style
+// it will set a null-terminator in the end

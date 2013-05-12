@@ -356,3 +356,147 @@ void InterpretUTF8BufferAsUniChar(
     *_output_sz = total;
     *_output_buf = 0;
 }
+
+
+void InterpretUTF8BufferAsIndexedUniChar(
+                                         const unsigned char* _input,
+                                         size_t _input_size,
+                                         unsigned short *_output_buf, // should be at least _input_size 16b words long
+                                         uint32_t       *_indexes_buf, // should be at least _input_size 32b words long
+                                         size_t *_output_sz, // size of an output
+                                         unsigned short _bad_symb // something like '?' or U+FFFD
+                                         )
+{
+    const unsigned char *end = _input + _input_size, *start = _input;
+    
+    size_t total = 0;
+    
+    while(_input < end)
+    {
+        unsigned char current = *_input;
+        
+        int sz = 0;
+        
+        // get symbol size in bytes
+        if((current & 0x80) == 0)           sz = 1; // single-byte
+        else if((current & 0xE0) == 0xC0)   sz = 2; // two-byte
+        else if((current & 0xF0) == 0xE0)   sz = 3; // three-byte
+        else if((current & 0xF8) == 0xF0)   sz = 4; // four-byte
+        else
+        {
+            // malformed!
+            
+            //skip current character and move further
+            *_output_buf = _bad_symb;
+            *_indexes_buf = (uint32_t)(_input - start);
+            ++_indexes_buf;
+            ++_input;
+            ++_output_buf;
+            ++total;
+            continue;
+        }
+        
+        if(sz == 1)
+        {
+            // just out current symbol
+            *_output_buf = current;
+            *_indexes_buf = (uint32_t)(_input - start);
+            ++_indexes_buf;
+            ++_input;
+            ++_output_buf;
+            ++total;
+            
+            continue;
+        }
+        
+        // try to extract a sequence
+        
+        for(int i = 1; i < sz; ++i)
+        {
+            // check for an unexpected end of buffer
+            if(_input + i == end)
+            {
+                // just fill output as bad
+                for(int z = 0; z < i; ++z)
+                {
+                    *_output_buf = _bad_symb;
+                    *_indexes_buf = (uint32_t)(_input - start);
+                    ++_indexes_buf;
+                    ++_input;
+                    ++_output_buf;
+                    ++total;
+                }
+                goto goon;
+            }
+            
+            current = *(_input+i);
+            
+            // check for malformed sequence
+            if( (current & 0xC0) != 0x80 )
+            {
+                // bad, bad sequence!
+                
+                //skip the heading character and move further
+                *_output_buf = _bad_symb;
+                *_indexes_buf = (uint32_t)(_input - start);
+                ++_indexes_buf;
+                ++_input;
+                ++_output_buf;
+                ++total;
+                goto goon;
+            }
+            
+        }
+        
+        // seems that sequence is ok
+        if(sz == 2)
+        {
+            unsigned short out;
+            unsigned char high = *_input;
+            unsigned char low = *(_input + 1);
+            out = (((unsigned short)(high & 0x1F)) << 6) | (low & 0x3F);
+            
+            *_output_buf = out;
+            *_indexes_buf = (uint32_t)(_input - start);
+            ++_indexes_buf;
+            ++_output_buf;
+            ++total;
+            _input += 2;
+            continue;
+        }
+        else if(sz == 3)
+        {
+            unsigned short out;
+            unsigned char _1 = *_input;
+            unsigned char _2 = *(_input + 1);
+            unsigned char _3 = *(_input + 2);
+            out = (((unsigned short)(_1 & 0xF)) << 12) | (((unsigned short)(_2 & 0x3F)) << 6) | ((unsigned short)(_3 & 0x3F));
+            *_output_buf = out;
+            *_indexes_buf = (uint32_t)(_input - start);
+            ++_indexes_buf;
+            ++_output_buf;
+            ++total;
+            _input += 3;
+            continue;
+        }
+        else
+        {
+            // toooooo long for current implementation
+            *_output_buf = _bad_symb; // symbols that didn't fit into 16bits
+            *_indexes_buf = (uint32_t)(_input - start);
+            ++_indexes_buf;
+            ++_output_buf;
+            ++total;
+            ++_input;
+            for(int i = 1; i < sz; ++i)
+            {
+                ++_input;
+            }
+            continue;
+        }
+    goon:;
+    }
+    
+    *_output_sz = total;
+    *_output_buf = 0;
+}

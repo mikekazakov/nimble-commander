@@ -5,7 +5,6 @@
 
 #include "DirRead.h"
 
-@class PanelController;
 struct FlexChainedStringsChunk;
 
 struct PanelSortMode
@@ -148,9 +147,9 @@ public:
     
     // manupulation with user flags for directory entries
     void CustomFlagsSelect(int _at_pos, bool _is_selected);
-    void CustomFlagsSelectAll();
-    void CustomFlagsUnSelectAll();
-
+    void CustomFlagsSelectAllSorted(bool _select);
+    void CustomFlagsSelectAll(bool _select);
+    
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:
     void GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path); // passing ownership of _entries

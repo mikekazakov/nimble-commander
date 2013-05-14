@@ -1,5 +1,4 @@
 #import "PanelData.h"
-#import "PanelController.h"
 #import <algorithm>
 #import <string.h>
 #import <assert.h>
@@ -411,6 +410,8 @@ void PanelData::SetCustomSortMode(PanelSortMode _mode)
             dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
                 DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
             dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
+            
+            UpdateStatictics(); // we need to update statistics since some selected enties may become invisible and hence should be deselected
         }
     }
 }
@@ -429,13 +430,18 @@ void PanelData::UpdateStatictics()
     unsigned totalselectedfiles = 0;
     unsigned totalselecteddirs = 0;
 
+    // calculate totals for directory
     for(const auto &i: *m_Entries)
-    {
         if(i.isreg())
         {
             totalbytes += i.size;
             totalfiles++;
         }
+    
+    // calculate totals for selected. look only for entries which is visible (sorted/filtered ones)
+    for(auto n: *m_EntriesByCustomSort)
+    {
+        const auto &i = (*m_Entries)[n];
         if(i.cf_isselected())
         {
             if(i.size != DIRENTINFO_INVALIDSIZE)
@@ -444,7 +450,6 @@ void PanelData::UpdateStatictics()
             if(i.isdir()) totalselecteddirs++;
             else           totalselectedfiles++;
         }
-
     }
     
     m_TotalBytesInDirectory = totalbytes;
@@ -518,18 +523,34 @@ void PanelData::CustomFlagsSelect(int _at_pos, bool _is_selected)
     }
 }
 
-void PanelData::CustomFlagsSelectAll()
+void PanelData::CustomFlagsSelectAll(bool _select)
 {
     size_t i = 1, e = m_Entries->size();
     for(;i<e;++i)
-        CustomFlagsSelect((int)i, true);
+        CustomFlagsSelect((int)i, _select);
 }
 
-void PanelData::CustomFlagsUnSelectAll()
+void PanelData::CustomFlagsSelectAllSorted(bool _select)
 {
-    size_t i = 1, e = m_Entries->size();
-    for(;i<e;++i)
-        CustomFlagsSelect((int)i, false);
+    auto sz = m_Entries->size();
+    if(_select)
+        for(auto i: *m_EntriesByCustomSort)
+        {
+            assert(i < sz);
+            auto &ent = (*m_Entries)[i];
+            if(!ent.isdotdot())
+                ent.cf_setflag(DirectoryEntryCustomFlags::Selected);
+        }
+    else
+        for(auto i: *m_EntriesByCustomSort)
+        {
+            assert(i < sz);
+            auto &ent = (*m_Entries)[i];
+            if(!ent.isdotdot())
+                ent.cf_unsetflag(DirectoryEntryCustomFlags::Selected);
+        }    
+
+    UpdateStatictics();
 }
 
 unsigned PanelData::GetSelectedItemsCount() const

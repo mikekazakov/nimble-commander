@@ -68,4 +68,6 @@
 - (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now;
 - (void) ScheduleDelayedSelectionChangeForC:(const char*)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now;
 
+- (void) SelectAllEntries: (bool) _select; // if false - then deselect all
+
 @end

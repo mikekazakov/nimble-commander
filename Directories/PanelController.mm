@@ -722,4 +722,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_DelayedSelection.isvalid = false;
 }
 
+- (void) SelectAllEntries:(bool) _select
+{
+    m_Data->CustomFlagsSelectAllSorted(_select);
+    [m_View setNeedsDisplay:true];
+}
+
 @end

@@ -1005,7 +1005,7 @@ static bool CheckPath(const char *_path)
         if(_entries->amount > 1)
         {
             PanelData *data = [self ActivePanelData];
-            data->CustomFlagsUnSelectAll();
+            data->CustomFlagsSelectAll(false);
             
             for(auto &i: *_entries)
             {
@@ -1038,5 +1038,17 @@ static bool CheckPath(const char *_path)
 {
 }
 
+// forwarding requests to panels
+- (void)selectAll:(id)sender
+{
+    if([self IsPanelActive])
+       [[self ActivePanelController] SelectAllEntries:true];
+}
+
+- (void)deselectAll:(id)sender
+{
+    if([self IsPanelActive])
+        [[self ActivePanelController] SelectAllEntries:false];
+}
 
 @end

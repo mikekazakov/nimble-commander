@@ -15,6 +15,7 @@
 		B528012516FCF361004E260D /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528012016FCF361004E260D /* Operation.mm */; };
 		B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */; };
 		B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */; };
+		B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
 		B52EB78F172277DB004ABC2E /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = B52EB78D172277DB004ABC2E /* PreferencesWindowController.m */; };
 		B52EB790172277DB004ABC2E /* PreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B52EB78E172277DB004ABC2E /* PreferencesWindowController.xib */; };
 		B52EB79317228B73004ABC2E /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = B52EB79217228B73004ABC2E /* Defaults.plist */; };
@@ -101,6 +102,8 @@
 		B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClassicPanelViewPresentation.mm; sourceTree = "<group>"; };
 		B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassicPanelViewPresentation.h; sourceTree = "<group>"; };
 		B52D9A82173D329F00EC7154 /* PanelViewTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanelViewTypes.h; sourceTree = "<group>"; };
+		B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentation.h; sourceTree = "<group>"; };
+		B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentation.mm; sourceTree = "<group>"; };
 		B52EB78C172277DB004ABC2E /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		B52EB78D172277DB004ABC2E /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
 		B52EB78E172277DB004ABC2E /* PreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowController.xib; sourceTree = "<group>"; };
@@ -280,6 +283,8 @@
 				B52D9A7C1736D7DE00EC7154 /* PanelViewPresentation.h */,
 				B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */,
 				B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */,
+				B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */,
+				B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */,
 				CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */,
 				CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */,
 				CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */,
@@ -715,6 +720,7 @@
 				CFDE46711730F97800B5EF50 /* rdrand.c in Sources */,
 				B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
+				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
 				CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */,
 				CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */,
 				CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */,

@@ -41,6 +41,9 @@
 #import <unistd.h>
 #import <stdlib.h>
 
+#import "ClassicPanelViewPresentation.h"
+#import "ModernPanelViewPresentation.h"
+
 // TODO: remove
 #import "TimedDummyOperation.h"
 
@@ -110,7 +113,10 @@ static bool CheckPath(const char *_path)
     [super windowDidLoad];
  
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    // TODO: remove
+    [self.window setContentResizeIncrements:NSMakeSize(6, 1)];
 
     [m_OpSummaryController AddViewTo:self.OpSummaryBox];
 
@@ -122,6 +128,7 @@ static bool CheckPath(const char *_path)
     m_LeftPanelController = [PanelController new];
     [m_LeftPanelView SetPanelData:m_LeftPanelData];
     [m_LeftPanelView SetPanelController:m_LeftPanelController];
+    [m_LeftPanelView SetPresentation:new ModernPanelViewPresentation];
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
     [m_LeftPanelController AttachToIndicator:self.LeftPanelSpinningIndicator];
@@ -130,6 +137,7 @@ static bool CheckPath(const char *_path)
     m_RightPanelController = [PanelController new];
     [m_RightPanelView SetPanelData:m_RightPanelData];
     [m_RightPanelView SetPanelController:m_RightPanelController];
+    [m_RightPanelView SetPresentation:new ModernPanelViewPresentation];
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
@@ -252,11 +260,12 @@ static bool CheckPath(const char *_path)
 
 - (void)UpdatePanelConstraints: (NSSize)frameSize
 {
-    float gran = 9.;
-    float center_x = frameSize.width / 2.;
-    float rest = fmod(center_x, gran);
-    ((NSLayoutConstraint*)[m_PanelConstraints objectAtIndex:3]).constant = -rest+1;
-    ((NSLayoutConstraint*)[m_PanelConstraints objectAtIndex:4]).constant = -rest;
+// TODO: restore
+//    float gran = 9.;
+//    float center_x = frameSize.width / 2.;
+//    float rest = fmod(center_x, gran);
+//    ((NSLayoutConstraint*)[m_PanelConstraints objectAtIndex:3]).constant = -rest+1;
+//    ((NSLayoutConstraint*)[m_PanelConstraints objectAtIndex:4]).constant = -rest;
 
     [[[self window] contentView] setNeedsLayout:true];
 }
@@ -467,6 +476,23 @@ static bool CheckPath(const char *_path)
     {
         case NSTabCharacter: // TAB key
             [self HandleTabButton];
+            break;
+        // TODO: remove
+        case ' ':
+            {
+                static bool modern = true;
+                modern = !modern;
+                if (modern)
+                {
+                    [m_LeftPanelView SetPresentation:new ModernPanelViewPresentation];
+                    [m_RightPanelView SetPresentation:new ModernPanelViewPresentation];
+                }
+                else
+                {
+                    [m_LeftPanelView SetPresentation:new ClassicPanelViewPresentation];
+                    [m_RightPanelView SetPresentation:new ClassicPanelViewPresentation];
+                }
+            }
             break;
     };
     

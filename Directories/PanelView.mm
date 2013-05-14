@@ -13,8 +13,6 @@
 #import "QuickPreview.h"
 #import "PanelController.h"
 
-#import "ClassicPanelViewPresentation.h"
-
 #define ISUNICODECOMBININGCHARACTER(a) (\
     ((a) >= 0x0300 && (a) <= 0x036F) || \
     ((a) >= 0x1DC0 && (a) <= 0x1DFF) || \
@@ -82,9 +80,6 @@ struct CursorSelectionState
 {
     self = [super initWithFrame:frame];
     if (self) {
-        m_Presentation = new ClassicPanelViewPresentation();
-        m_Presentation->SetState(&m_State);
-
         m_KeysModifiersFlags = 0;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -112,7 +107,8 @@ struct CursorSelectionState
 
 - (void)frameDidChange
 {
-    m_Presentation->OnFrameChanged([self frame]);
+    if (m_Presentation)
+        m_Presentation->OnFrameChanged([self frame]);
 }
 
 - (void) SetPanelController:(PanelController *)_controller
@@ -130,6 +126,18 @@ struct CursorSelectionState
 {
     m_Presentation->DirectoryChanged(_type, _cursor);
     [self setNeedsDisplay:true];
+}
+
+- (void) SetPresentation:(PanelViewPresentation *)_presentation
+{
+    if (m_Presentation) delete m_Presentation;
+    m_Presentation = _presentation;
+    if (m_Presentation)
+    {
+        m_Presentation->SetState(&m_State);
+        [self frameDidChange];
+        [self setNeedsDisplay:true];
+    }
 }
 
 - (void)UpdateQuickPreview

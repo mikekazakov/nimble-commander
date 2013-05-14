@@ -24,6 +24,9 @@ class PanelViewPresentation;
 - (void) SetPanelData:(PanelData*)_data;
 - (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor;
 
+// _presentation must be created using new. PanelView gains ownership of the _presentation.
+- (void) SetPresentation:(PanelViewPresentation *)_presentation;
+
 // user input handling          normal keys
 - (void) HandlePrevFile;     // up
 - (void) HandleNextFile;     // down

@@ -505,7 +505,8 @@ void ModernPanelViewPresentation::DrawShortView(CGContextRef _context)
             {
                 char buf[1024];
                 m_State->Data->GetDirectoryPathWithTrailingSlash(buf);
-                strcat(buf, item.namec());
+                if(!item.isdotdot())
+                    strcat(buf, item.namec());
                 NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile:[NSString stringWithUTF8String:buf]];
                 
                 NSImageRep *image_rep = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil hints:nil];

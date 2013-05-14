@@ -119,12 +119,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) HandleShiftReturnButton
 {
-    char path[__DARWIN_MAXPATHLEN];
+    char path[MAXPATHLEN];
     int pos = [m_View GetCursorPosition];
     if(pos >= 0)
     {
-        int rawpos = m_Data->SortedDirectoryEntries()[pos];
-        m_Data->ComposeFullPathForEntry(rawpos, path);
+        int rawpos = m_Data->SortPosToRawPos(pos);
+        const auto &ent = m_Data->EntryAtRawPosition(rawpos);
+
+        m_Data->GetDirectoryPathWithTrailingSlash(path);
+        if(!ent.isdotdot())
+            strcat(path, ent.namec());
+        
         BOOL success = [[NSWorkspace sharedWorkspace]
                         openFile:[NSString stringWithUTF8String:path]];
         if (!success) NSBeep();

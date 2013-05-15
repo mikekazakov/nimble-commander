@@ -478,29 +478,35 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
         UniChar time_info[14], size_info[6];
         size_t buf_size = 0;
         const DirectoryEntryInformation *current_entry = &entries[sorted_entries[m_State->CursorPos]];
+        
         FormHumanReadableTimeRepresentation14(current_entry->mtime, time_info);
         FormHumanReadableSizeReprentationForDirEnt6(current_entry, size_info);
-        ComposeFooterFileNameForEntry(*current_entry, buff, buf_size);
         
         NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
         const int delta = (header_height - m_LineHeight)/2;
         const int offset = 10;
-        
-        NSMutableParagraphStyle *footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
-        footer_text_pstyle.alignment = NSRightTextAlignment;
-        footer_text_pstyle.lineBreakMode = NSLineBreakByClipping;
-        
-        NSDictionary *footer_text_attr = @{NSFontAttributeName: m_Font,
-                                           NSParagraphStyleAttributeName:footer_text_pstyle,
-                                           NSShadowAttributeName: header_text_shadow};
-        
         int time_width = 110;
-        NSString *time_str = [NSString stringWithCharacters:time_info length:14];
-        [time_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - time_width, footer_y + delta, time_width, m_LineHeight) options:options attributes:footer_text_attr];
-        
         int size_width = 90;
-        NSString *size_str = [NSString stringWithCharacters:size_info length:6];
-        [size_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - time_width - size_width, footer_y + delta, size_width, m_LineHeight) options:options attributes:footer_text_attr];
+        
+        NSMutableParagraphStyle *footer_text_pstyle;
+        NSDictionary *footer_text_attr;
+        
+        if (m_State->ViewType != PanelViewType::ViewFull)
+        {
+            footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
+            footer_text_pstyle.alignment = NSRightTextAlignment;
+            footer_text_pstyle.lineBreakMode = NSLineBreakByClipping;
+            
+            footer_text_attr = @{NSFontAttributeName: m_Font,
+                                 NSParagraphStyleAttributeName:footer_text_pstyle,
+                                 NSShadowAttributeName: header_text_shadow};
+            
+            NSString *time_str = [NSString stringWithCharacters:time_info length:14];
+            [time_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - time_width, footer_y + delta, time_width, m_LineHeight) options:options attributes:footer_text_attr];
+            
+            NSString *size_str = [NSString stringWithCharacters:size_info length:6];
+            [size_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - time_width - size_width, footer_y + delta, size_width, m_LineHeight) options:options attributes:footer_text_attr];
+        }
         
         footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
         footer_text_pstyle.alignment = NSLeftTextAlignment;
@@ -510,8 +516,12 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
                              NSParagraphStyleAttributeName: footer_text_pstyle,
                              NSShadowAttributeName: header_text_shadow};
         
+        int name_width = m_ItemsArea.size.width - 2*offset;
+        if (m_State->ViewType != PanelViewType::ViewFull)
+            name_width -= time_width + size_width;
+        ComposeFooterFileNameForEntry(*current_entry, buff, buf_size);
         NSString *name_str = [NSString stringWithCharacters:buff length:buf_size];
-        [name_str drawWithRect:NSMakeRect(offset, footer_y + delta, m_ItemsArea.size.width - 2*offset - time_width - size_width, m_LineHeight) options:options attributes:footer_text_attr];
+        [name_str drawWithRect:NSMakeRect(offset, footer_y + delta, name_width, m_LineHeight) options:options attributes:footer_text_attr];
     }
     
     CGColorRelease(header_stroke_color);
@@ -545,6 +555,12 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
     const int icon_size = 16;
     const int start_y = m_ItemsArea.origin.y;
     const int columns_count = GetNumberOfItemColumns();
+    
+    // The widths of columns that are displayed for wide and full views.
+    const int size_column_width = 65;
+    const int date_column_width = 70;
+    const int time_column_width = 50;
+    
     for (int column = 0; column < columns_count; ++column)
     {
         // Draw column.
@@ -582,13 +598,17 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
             
             NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
             
+            NSDictionary *cur_item_text_attr = item_text_attr;
+            if (m_State->Active && item.cf_isselected())
+                cur_item_text_attr = active_selected_item_text_attr;
+            
             if (m_DrawIcons)
             {
                 rect.origin.x += icon_size + g_TextInsetsInLine[0];
                 rect.size.width -= icon_size + g_TextInsetsInLine[0];
             }
             
-        
+            // Draw selection background.
             if (item.cf_isselected())
             {
                 // Draw selected item.
@@ -598,23 +618,15 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
                     if (m_State->CursorPos == i && m_State->Active) offset = 2;
                     CGContextSetFillColorWithColor(_context, active_selected_item_back);
                     CGContextFillRect(_context, NSMakeRect(start_x + offset, start_y + count*m_LineHeight + offset, column_width - 2*offset, m_LineHeight - 2*offset + 1));
-                    
-                    [item_name drawWithRect:rect options:options attributes:active_selected_item_text_attr];
                 }
                 else
                 {
                     CGContextSetFillColorWithColor(_context, inactive_selected_item_back);
                     CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 2, m_LineHeight - 1));
-                
-                    [item_name drawWithRect:rect options:options attributes:item_text_attr];
                 }
             }
-            else
-            {
-                // Draw ordinary item (black on white).
-                [item_name drawWithRect:rect options:options attributes:item_text_attr];
-            }
             
+            // Draw cursor.
             if (m_State->CursorPos == i && m_State->Active)
             {
                 // Draw as cursor item (only if panel is active).
@@ -625,6 +637,77 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
                 CGContextStrokeRect(_context, NSMakeRect(start_x + 1.5, start_y + count*m_LineHeight + 1.5, column_width - 3, m_LineHeight - 2));
                 CGContextRestoreGState(_context);
             }
+            
+            // Draw stats columns for specific views.
+            int spec_col_x = m_ItemsArea.size.width;
+            if (m_State->ViewType == PanelViewType::ViewFull)
+            {
+                UniChar date_info[8], time_info[5];
+                FormHumanReadableDateRepresentation8(item.mtime, date_info);
+                FormHumanReadableTimeRepresentation5(item.mtime, time_info);
+                
+                NSRect time_rect = NSMakeRect(
+                                              spec_col_x - time_column_width + g_TextInsetsInLine[0],
+                                              rect.origin.y,
+                                              time_column_width - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
+                                              rect.size.height);
+                
+//                NSMutableParagraphStyle *pstyle = [[NSMutableParagraphStyle alloc] init];
+//                pstyle.alignment = NSLeftTextAlignment;
+//                pstyle.lineBreakMode = NSLineBreakByClipping;
+//                
+//                NSColor *color = m_State->Active && item.cf_isselected() ? [NSColor whiteColor] : [NSColor blackColor];
+//                NSDictionary *attr = @{NSFontAttributeName: m_Font,
+//                                       NSForegroundColorAttributeName: color,
+//                                       NSParagraphStyleAttributeName: pstyle};
+                
+                NSString *time_str = [NSString stringWithCharacters:time_info length:5];
+                [time_str drawWithRect:time_rect options:options attributes:cur_item_text_attr];
+                
+                rect.size.width -= time_column_width;
+                spec_col_x -= time_column_width;
+                
+                NSRect date_rect = NSMakeRect(
+                                              spec_col_x - date_column_width + g_TextInsetsInLine[0],
+                                              rect.origin.y,
+                                              date_column_width - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
+                                              rect.size.height);
+                NSString *date_str = [NSString stringWithCharacters:date_info length:8];
+                [date_str drawWithRect:date_rect options:options attributes:cur_item_text_attr];
+                
+                rect.size.width -= date_column_width;
+                spec_col_x -= date_column_width;
+            }
+            if(m_State->ViewType == PanelViewType::ViewWide
+               || m_State->ViewType == PanelViewType::ViewFull)
+            {
+                // draw the entry size on the right                
+                NSRect size_rect = NSMakeRect(
+                    spec_col_x - size_column_width + g_TextInsetsInLine[0],
+                    rect.origin.y,
+                    size_column_width - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
+                    rect.size.height);
+                
+                NSMutableParagraphStyle *pstyle = [[NSMutableParagraphStyle alloc] init];
+                pstyle.alignment = NSRightTextAlignment;
+                pstyle.lineBreakMode = NSLineBreakByClipping;
+                
+                NSColor *color = m_State->Active && item.cf_isselected()
+                                  ? [NSColor whiteColor] : [NSColor blackColor];
+                NSDictionary *attr = @{NSFontAttributeName: m_Font,
+                                       NSForegroundColorAttributeName: color,
+                                       NSParagraphStyleAttributeName: pstyle};
+                
+                UniChar size_info[6];
+                FormHumanReadableSizeReprentationForDirEnt6(&item, size_info);
+                NSString *size_str = [NSString stringWithCharacters:size_info length:6];
+                [size_str drawWithRect:size_rect options:options attributes:attr];
+                
+                rect.size.width -= size_column_width;
+            }
+            
+            // Draw item text.
+            [item_name drawWithRect:rect options:options attributes:cur_item_text_attr];
             
             if (m_DrawIcons)
             {
@@ -637,6 +720,37 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
                 NSImageRep *image_rep = [image bestRepresentationForRect:NSMakeRect(0, 0, icon_size, icon_size) context:nil hints:nil];
                 [image_rep drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0], start_y + count*m_LineHeight + m_LineHeight - icon_size - 1, icon_size, icon_size) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
             }
+        }
+    }
+    
+    // Draw column dividers for specific views.
+    if (m_State->ViewType == PanelViewType::ViewWide)
+    {
+        int x = m_ItemsArea.size.width - size_column_width;
+        NSPoint points[2] = {
+            NSMakePoint(x + 0.5, start_y),
+            NSMakePoint(x + 0.5, start_y + m_ItemsArea.size.height)
+        };
+        CGContextSetStrokeColorWithColor(_context, column_divider_color);
+        CGContextSetLineWidth(_context, 1);
+        CGContextStrokeLineSegments(_context, points, 2);
+    }
+    else if (m_State->ViewType == PanelViewType::ViewFull)
+    {
+        int x_pos[3];
+        x_pos[0] = m_ItemsArea.size.width - time_column_width;
+        x_pos[1] = x_pos[0] - date_column_width;
+        x_pos[2] = x_pos[1] - size_column_width;
+        for (int i = 0; i < 3; ++i)
+        {
+            int x = x_pos[i];
+            NSPoint points[2] = {
+                NSMakePoint(x + 0.5, start_y),
+                NSMakePoint(x + 0.5, start_y + m_ItemsArea.size.height)
+            };
+            CGContextSetStrokeColorWithColor(_context, column_divider_color);
+            CGContextSetLineWidth(_context, 1);
+            CGContextStrokeLineSegments(_context, points, 2);
         }
     }
     

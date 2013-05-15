@@ -34,19 +34,31 @@
 - (void)awakeFromNib
 {
     [self DoInit];
-
-    
 }
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        
+        [self DoInit];        
         // Initialization code here.
     }
     
     return self;
+}
+
+- (void) dealloc
+{
+    if(m_File)
+    {
+        if(m_File->FileOpened())
+            m_File->CloseFile();
+        delete m_File;
+    }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    CFRelease(m_ForegroundColor);
+    CFRelease(m_Font);
 }
 
 - (void) DoInit
@@ -67,6 +79,11 @@
 }
 
 - (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)isOpaque
 {
     return YES;
 }
@@ -127,7 +144,7 @@
     NSString*  const character = [event charactersIgnoringModifiers];
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
-//    unsigned short const keycode = [event keyCode];
+    unsigned short const keycode = [event keyCode];
 //    NSUInteger const modif       = [event modifierFlags];
 #define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
     switch (unicode)
@@ -148,7 +165,19 @@
     case NSPageUpFunctionKey:
             [m_ViewImpl OnPageUp];
             break;
+        
+    case NSF4FunctionKey:
+            [self NextViewType];
+            break;
     }
+    
+    switch (keycode)
+    {
+        case 53: // Esc button
+            [self DoClose];
+            break;
+    }
+    
     
 //    m_VerticalOffset
     
@@ -214,6 +243,21 @@
                        offsets:m_DecodeBufferIndx
                           size:m_DecodedBufferSize
                         parent:self];
+}
+
+- (void) NextViewType
+{
+    if( [m_ViewImpl isKindOfClass: [BigFileViewText class]])
+        [self ToggleHexView:nil];
+    else
+        [self ToggleTextView:nil];
+}
+
+- (void) DoClose
+{
+    [self removeFromSuperview];
+
+    m_ViewImpl = nil;
 }
 
 @end

@@ -64,6 +64,8 @@ enum ActiveState
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender;
 - (IBAction)OnPreferencesCommand:(id)sender;
 
+- (IBAction)OnFileBigFileViewCommand:(id)sender;
+
 - (void)ActivatePanelByController:(PanelController *)controller;
 - (void)ActivatePanel:(ActiveState)_state;
 

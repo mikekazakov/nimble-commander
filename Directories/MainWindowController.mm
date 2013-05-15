@@ -27,6 +27,7 @@
 #import "FSEventsDirUpdate.h"
 #import "PreferencesWindowController.h"
 #import "QuickPreview.h"
+#import "BigFileView.h"
 #import <pwd.h>
 #import <sys/types.h>
 #import <sys/dirent.h>
@@ -494,6 +495,11 @@ static bool CheckPath(const char *_path)
                 }
             }
             break;
+        case NSF3FunctionKey:
+            if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask|NSFunctionKeyMask) )
+                [self OnFileBigFileViewCommand:nil];
+            break;
+            
     };
     
     switch (keycode)
@@ -1049,6 +1055,33 @@ static bool CheckPath(const char *_path)
 {
     if([self IsPanelActive])
         [[self ActivePanelController] SelectAllEntries:false];
+}
+
+- (IBAction)OnFileBigFileViewCommand:(id)sender
+{
+    if([self IsPanelActive])
+    {
+        auto *i = [[self ActivePanelView] CurrentItem];
+        if(i)
+        {
+            char tmp[MAXPATHLEN];
+            [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(tmp);
+            strcat(tmp, i->namec());
+            
+            FileWindow *fw = new FileWindow;
+            if(fw->OpenFile(tmp) == 0)
+            {
+                BigFileView *bfv = [[BigFileView alloc] initWithFrame: [[[self window] contentView] frame]];
+                [bfv SetFile:fw];
+                [[[self window] contentView] addSubview:bfv];
+                [[self window] makeFirstResponder: bfv];
+            }
+            else
+            {
+                delete fw;
+            }
+        }
+    }
 }
 
 @end

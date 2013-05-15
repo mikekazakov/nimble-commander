@@ -78,6 +78,11 @@ struct TextLine
     return self;
 }
 
+- (void) dealloc
+{
+    [self ClearLayout];
+}
+
 - (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
 {
     m_WindowSize = _new_size;
@@ -293,7 +298,6 @@ struct TextLine
             [self MoveFileWindowTo:desired_window_offset
                         WithAnchor:anchor_glob_offset
                           AtLineNo:-1];
-//            [self setNeedsDisplay:true];
         }
         else
         {

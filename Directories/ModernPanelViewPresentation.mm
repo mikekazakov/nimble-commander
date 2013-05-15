@@ -207,7 +207,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation()
             inner_color[0], inner_color[1], inner_color[2], 1.0,
             outer_color[0], outer_color[1], outer_color[2], 1.0
         };
-        CGFloat locations[] = {0.0, 0.4, 0.6, 1.0};
+        CGFloat locations[] = {0.0, 0.45, 0.55, 1.0};
         m_ActiveHeaderGradient = CGGradientCreateWithColorComponents(color_space, components, locations, 4);
         CGColorSpaceRelease(color_space);
     }
@@ -233,8 +233,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation()
     {
         m_ActiveHeaderTextShadow = [[NSShadow alloc] init];
         m_ActiveHeaderTextShadow.shadowBlurRadius = 1;
-        
-        m_ActiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:0.8 green:0.9 blue:1 alpha:1];
+        m_ActiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:0.83 green:0.93 blue:1 alpha:1];
         m_ActiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);
     }
     
@@ -275,7 +274,7 @@ void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
     m_IsLeft = _frame.origin.x < 50;
 
     // Header and footer have the same height.
-    const int header_height = m_LineHeight + 4;
+    const int header_height = m_LineHeight + 1;
     
     m_ItemsArea.origin.x = 0;
     m_ItemsArea.origin.y = header_height;
@@ -541,6 +540,7 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
     CGColorRef inactive_selected_item_back = CGColorCreateGenericRGB(212/255.0, 212/255.0, 212/255.0, 1.0);
     CGColorRef active_cursor_item_back = CGColorCreateGenericRGB(130/255.0, 196/255.0, 240/255.0, 1.0);
     CGColorRef column_divider_color = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0);
+    CGColorRef cursor_frame_color = CGColorCreateGenericRGB(0, 0, 0, 1);
     
     const int icon_size = 16;
     const int start_y = m_ItemsArea.origin.y;
@@ -588,29 +588,16 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
                 rect.size.width -= icon_size + g_TextInsetsInLine[0];
             }
             
-            if (m_State->CursorPos == i && m_State->Active)
-            {
-                // Draw as cursor item (only if panel is active).
-                CGContextSetFillColorWithColor(_context, active_cursor_item_back);
-                CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 2, m_LineHeight - 1));
-                
-                if (item.cf_isselected())
-                {
-                    [item_name drawWithRect:rect options:options
-                                 attributes:active_selected_item_text_attr];
-                }
-                else
-                {
-                    [item_name drawWithRect:rect options:options attributes:item_text_attr];
-                }
-            }
-            else if (item.cf_isselected())
+        
+            if (item.cf_isselected())
             {
                 // Draw selected item.
                 if (m_State->Active)
                 {
+                    int offset = 1;
+                    if (m_State->CursorPos == i && m_State->Active) offset = 2;
                     CGContextSetFillColorWithColor(_context, active_selected_item_back);
-                    CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 2, m_LineHeight - 1));
+                    CGContextFillRect(_context, NSMakeRect(start_x + offset, start_y + count*m_LineHeight + offset, column_width - 2*offset, m_LineHeight - 2*offset + 1));
                     
                     [item_name drawWithRect:rect options:options attributes:active_selected_item_text_attr];
                 }
@@ -626,6 +613,17 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
             {
                 // Draw ordinary item (black on white).
                 [item_name drawWithRect:rect options:options attributes:item_text_attr];
+            }
+            
+            if (m_State->CursorPos == i && m_State->Active)
+            {
+                // Draw as cursor item (only if panel is active).
+                CGContextSaveGState(_context);
+                CGFloat dashes[2] = { 2, 4 };
+                CGContextSetLineDash(_context, 0, dashes, 2);
+                CGContextSetStrokeColorWithColor(_context, cursor_frame_color);
+                CGContextStrokeRect(_context, NSMakeRect(start_x + 1.5, start_y + count*m_LineHeight + 1.5, column_width - 3, m_LineHeight - 2));
+                CGContextRestoreGState(_context);
             }
             
             if (m_DrawIcons)

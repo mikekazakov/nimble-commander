@@ -12,6 +12,7 @@ class ModernPanelViewPresentation : public PanelViewPresentation
 {
 public:
     ModernPanelViewPresentation();
+    virtual ~ModernPanelViewPresentation();
     
     virtual void Draw(NSRect _dirty_rect);
     virtual void OnFrameChanged(NSRect _frame);
@@ -23,15 +24,22 @@ public:
     virtual int GetMaxItemsPerColumn();
     
 private:
-    void DrawShortView(CGContextRef _context);
+    void DrawView(CGContextRef _context);
     
     NSFont *m_Font;
-    NSFont *m_HeaderFont;
     int m_LineHeight;
-    int m_HeaderHeight;
+    
     // TODO: Temporary hack! 
     bool m_IsLeft;
     // TODO: remove
     bool m_DrawIcons;
-    CGSize m_Size;
+    
+    NSSize m_Size;
+    NSRect m_ItemsArea;
+    int m_ItemsPerColumn;
+    
+    CGGradientRef m_ActiveHeaderGradient;
+    NSShadow *m_ActiveHeaderTextShadow;
+    CGGradientRef m_InactiveHeaderGradient;
+    NSShadow *m_InactiveHeaderTextShadow;
 };

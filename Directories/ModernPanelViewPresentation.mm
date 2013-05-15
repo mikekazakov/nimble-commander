@@ -12,6 +12,35 @@
 #import "PanelData.h"
 #import "Encodings.h"
 
+static void FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, UniChar _out[128], size_t &_symbs)
+{
+    // TODO: localization support
+    char buf[128];
+    const char *postfix = _total_files > 1 ? "files" : "file";
+#define __1000_1(a) ( (a) % 1000lu )
+#define __1000_2(a) __1000_1( (a)/1000lu )
+#define __1000_3(a) __1000_1( (a)/1000000lu )
+#define __1000_4(a) __1000_1( (a)/1000000000lu )
+#define __1000_5(a) __1000_1( (a)/1000000000000lu )
+    if(_sz < 1000lu)
+        sprintf(buf, "Selected %lu bytes in %d %s", _sz, _total_files, postfix);
+    else if(_sz < 1000lu * 1000lu)
+        sprintf(buf, "Selected %lu %03lu bytes in %d %s", __1000_2(_sz), __1000_1(_sz), _total_files, postfix);
+    else if(_sz < 1000lu * 1000lu * 1000lu)
+        sprintf(buf, "Selected %lu %03lu %03lu bytes in %d %s", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix);
+    else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu)
+        sprintf(buf, "Selected %lu %03lu %03lu %03lu bytes in %d %s", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix);
+    else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu)
+        sprintf(buf, "Selected %lu %03lu %03lu %03lu %03lu bytes in %d %s", __1000_5(_sz), __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix);
+#undef __1000_1
+#undef __1000_2
+#undef __1000_3
+#undef __1000_4
+#undef __1000_5
+    
+    _symbs = strlen(buf);
+    for(int i = 0; i < _symbs; ++i) _out[i] = buf[i];
+}
 
 static void FormHumanReadableTimeRepresentation14(time_t _in, UniChar _out[14])
 {
@@ -152,8 +181,8 @@ static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dire
 // Item name display insets inside the item line.
 // Order: left, top, right, bottom.
 const int g_TextInsetsInLine[4] = {7, 0, 5, 1};
-
-const int g_DividerWidth = 2;
+// Width of the divider between views.
+const int g_DividerWidth = 3;
 
 ModernPanelViewPresentation::ModernPanelViewPresentation()
 :   m_DrawIcons(true)
@@ -161,11 +190,68 @@ ModernPanelViewPresentation::ModernPanelViewPresentation()
     m_Size.width = m_Size.height = 0;
     
     m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
-    m_HeaderFont = [NSFont fontWithName:@"Lucida Grande Bold" size:13];
     
     // Height of a single file line. Constant for now, needs to be calculated from the font.
     m_LineHeight = 18;
-    m_HeaderHeight = m_LineHeight + 4;
+    
+    
+    // Init active header and footer gradient.
+    {
+        CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
+        const CGFloat outer_color[3] = { 200/255.0, 230/255.0, 245/255.0 };
+        const CGFloat inner_color[3] = { 130/255.0, 196/255.0, 240/255.0 };
+        CGFloat components[] =
+        {
+            outer_color[0], outer_color[1], outer_color[2], 1.0,
+            inner_color[0], inner_color[1], inner_color[2], 1.0,
+            inner_color[0], inner_color[1], inner_color[2], 1.0,
+            outer_color[0], outer_color[1], outer_color[2], 1.0
+        };
+        CGFloat locations[] = {0.0, 0.4, 0.6, 1.0};
+        m_ActiveHeaderGradient = CGGradientCreateWithColorComponents(color_space, components, locations, 4);
+        CGColorSpaceRelease(color_space);
+    }
+    
+    // Init inactive header and footer gradient.
+    {
+        CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
+        const CGFloat upper_color[3] = { 220/255.0, 220/255.0, 220/255.0 };
+        const CGFloat bottom_color[3] = { 200/255.0, 200/255.0, 200/255.0 };
+        CGFloat components[] =
+        {
+            upper_color[0], upper_color[1], upper_color[2], 1.0,
+            upper_color[0], upper_color[1], upper_color[2], 1.0,
+            bottom_color[0], bottom_color[1], bottom_color[2], 1.0,
+            bottom_color[0], bottom_color[1], bottom_color[2], 1.0
+        };
+        CGFloat locations[] = {0.0, 0.45, 0.7, 1.0};
+        m_InactiveHeaderGradient = CGGradientCreateWithColorComponents(color_space, components, locations, 4);
+        CGColorSpaceRelease(color_space);
+    }
+    
+    // Active header and footer text shadow.
+    {
+        m_ActiveHeaderTextShadow = [[NSShadow alloc] init];
+        m_ActiveHeaderTextShadow.shadowBlurRadius = 1;
+        
+        m_ActiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:0.8 green:0.9 blue:1 alpha:1];
+        m_ActiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);
+    }
+    
+    // Inactive header and footer text shadow.
+    {
+        m_InactiveHeaderTextShadow = [[NSShadow alloc] init];
+        m_InactiveHeaderTextShadow.shadowBlurRadius = 1;
+
+        m_InactiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:0.9];
+        m_InactiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);
+    }
+}
+
+ModernPanelViewPresentation::~ModernPanelViewPresentation()
+{
+    CGGradientRelease(m_ActiveHeaderGradient);
+    CGGradientRelease(m_InactiveHeaderGradient);
 }
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
@@ -178,7 +264,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     CGContextSetRGBFillColor(context, 1, 1, 1, 1);
     CGContextFillRect(context, NSRectToCGRect(_dirty_rect));
     
-    DrawShortView(context);
+    DrawView(context);
 }
 
 void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
@@ -187,13 +273,24 @@ void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
     
     // TODO: Temporary hack!
     m_IsLeft = _frame.origin.x < 50;
+
+    // Header and footer have the same height.
+    const int header_height = m_LineHeight + 4;
+    
+    m_ItemsArea.origin.x = 0;
+    m_ItemsArea.origin.y = header_height;
+    m_ItemsArea.size.height = m_Size.height - 2*header_height;
+    m_ItemsArea.size.width = m_Size.width - g_DividerWidth;
+    if (!m_IsLeft) m_ItemsArea.origin.x += g_DividerWidth;
+    
+    m_ItemsPerColumn = int(m_ItemsArea.size.height/m_LineHeight);
     
     EnsureCursorIsVisible();
 }
 
 NSRect ModernPanelViewPresentation::GetItemColumnsRect()
 {
-    return NSMakeRect(0, m_HeaderHeight, m_Size.width, m_Size.height - 2*m_HeaderHeight);
+    return m_ItemsArea;
 }
 
 int ModernPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
@@ -213,7 +310,7 @@ int ModernPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
     if (visible_files > max_files_to_show) visible_files = max_files_to_show;
     
     // Calculate width of column.
-    const int column_width = m_Size.width / columns;
+    const int column_width = items_rect.size.width / columns;
     
     // Calculate cursor pos.
     int column = int(_point.x/column_width);
@@ -240,128 +337,143 @@ int ModernPanelViewPresentation::GetNumberOfItemColumns()
 
 int ModernPanelViewPresentation::GetMaxItemsPerColumn()
 {
-    return int((m_Size.height - 2*m_HeaderHeight)/m_LineHeight);
+    return m_ItemsPerColumn;
 }
 
-void ModernPanelViewPresentation::DrawShortView(CGContextRef _context)
+void ModernPanelViewPresentation::DrawView(CGContextRef _context)
 {
     auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
     auto &entries = m_State->Data->DirectoryEntries();
-    const int items_per_column = GetMaxItemsPerColumn();
-    const int max_items = (int)sorted_entries.size();
     
+    ///////////////////////////////////////////////////////////////////////////////
+    // Divider.
+    CGColorRef divider_stroke_color = CGColorCreateGenericRGB(101/255.0, 101/255.0, 101/255.0, 1.0);
+    CGColorRef divider_fill_color = CGColorCreateGenericRGB(174/255.0, 174/255.0, 174/255.0, 1.0);
     
-    NSShadow *header_shadow = [[NSShadow alloc] init];
-    header_shadow.shadowBlurRadius = 1;
-    if (!m_State->Active)
-        header_shadow.shadowColor = [NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:0.9];
-    else
-        header_shadow.shadowColor = [NSColor colorWithDeviceRed:0.8 green:0.9 blue:1 alpha:1];
-    header_shadow.shadowOffset = NSMakeSize(0, -1);
-    
-    NSMutableParagraphStyle *header_pstyle = [[NSMutableParagraphStyle alloc] init];
-    header_pstyle.alignment = NSCenterTextAlignment;
-    header_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
-    NSMutableParagraphStyle *footer_pstyle = [[NSMutableParagraphStyle alloc] init];
-    footer_pstyle.alignment = NSRightTextAlignment;
-    footer_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
-    NSMutableParagraphStyle *item_pstyle = [[NSMutableParagraphStyle alloc] init];
-    item_pstyle.alignment = NSLeftTextAlignment;
-    item_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
-    NSDictionary *header_attr = @{NSFontAttributeName: m_Font, NSParagraphStyleAttributeName: header_pstyle, NSShadowAttributeName: header_shadow};
-    NSDictionary *footer_attr = @{NSFontAttributeName: m_Font, NSParagraphStyleAttributeName:footer_pstyle, NSShadowAttributeName: header_shadow};
-    NSDictionary *footer_attr2 = @{NSFontAttributeName: m_Font, NSParagraphStyleAttributeName: item_pstyle, NSShadowAttributeName: header_shadow};
-    NSDictionary *attr = @{NSFontAttributeName: m_Font, NSParagraphStyleAttributeName: item_pstyle};
-    NSDictionary *active_selected_attr = @{NSFontAttributeName: m_Font,
-                                           NSForegroundColorAttributeName: [NSColor whiteColor],
-                                           NSParagraphStyleAttributeName: item_pstyle};
-    
-    const CGFloat frame_comp = 102/255.0;
-    
-    CGGradientRef grad;
-    if (!m_State->Active)
+    CGContextSetStrokeColorWithColor(_context, divider_stroke_color);
+    if (m_IsLeft)
     {
-        const CGFloat header_color_start = 220/255.0;
-        const CGFloat header_color_mid = 220/255.0;
-        const CGFloat header_color_mid2 = 200/255.0;
-        const CGFloat header_color_end = 200/255.0;
-        CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
-        CGFloat components[] = {
-            header_color_start, header_color_start, header_color_start, 1.0,
-            header_color_mid, header_color_mid, header_color_mid, 1.0,
-            header_color_mid2, header_color_mid2, header_color_mid2, 1.0,
-            header_color_end,header_color_end, header_color_end, 1.0};
-        CGFloat locations[] = {0.0, 0.4, 0.7, 1.0};
-        grad =
-        CGGradientCreateWithColorComponents(color_space, components, locations, 4);
-        CGColorSpaceRelease(color_space);
+        float x = m_ItemsArea.origin.x + m_ItemsArea.size.width;
+        NSPoint view_divider[2] = {
+            NSMakePoint(x + 0.5, 0), NSMakePoint(x + 0.5, m_Size.height)
+        };
+        CGContextStrokeLineSegments(_context, view_divider, 2);
+        
+        
+        CGContextSetFillColorWithColor(_context, divider_fill_color);
+        CGContextFillRect(_context, NSMakeRect(x + 1, 0, g_DividerWidth - 1, m_Size.height));
     }
     else
     {
-        CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
-        CGFloat components[] = {
-            200/255.0, 230/255.0, 245/255.0, 1.0,
-            130/255.0, 196/255.0, 240/255.0, 1.0,
-            130/255.0, 196/255.0, 240/255.0, 1.0,
-            200/255.0, 230/255.0, 245/255.0, 1.0 };
-        CGFloat locations[] = {0.0, 0.4, 0.6, 1.0};
-        grad =
-        CGGradientCreateWithColorComponents(color_space, components, locations, 4);
-        CGColorSpaceRelease(color_space);
+        NSPoint view_divider[2] = {
+            NSMakePoint(g_DividerWidth - 0.5, 0), NSMakePoint(g_DividerWidth - 0.5, m_Size.height)
+        };
+        CGContextStrokeLineSegments(_context, view_divider, 2);
+        
+        
+        CGContextSetFillColorWithColor(_context, divider_fill_color);
+        CGContextFillRect(_context, NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
     }
+    
+    CGColorRelease(divider_fill_color);
+    CGColorRelease(divider_stroke_color);
+    
+    // If current panel is on the right, then translate all rendering by the divider's width.
+    if (!m_IsLeft) CGContextTranslateCTM(_context, g_DividerWidth, 0);
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Header.
+    // Header and footer.
+    CGColorRef header_stroke_color = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
+    int header_height = m_ItemsArea.origin.y;
+    
+    NSShadow *header_text_shadow = m_ActiveHeaderTextShadow;
+    if (!m_State->Active) header_text_shadow = m_InactiveHeaderTextShadow;
+    
+    CGGradientRef header_gradient = m_ActiveHeaderGradient;
+    if (!m_State->Active) header_gradient = m_InactiveHeaderGradient;
     
     // Header gradient.
     CGContextSaveGState(_context);
-    NSRect header_rect = NSMakeRect(0, 0, m_Size.width, m_HeaderHeight - 1);
+    NSRect header_rect = NSMakeRect(0, 0, m_ItemsArea.size.width, header_height - 1);
     CGContextAddRect(_context, header_rect);
     CGContextClip(_context);
-    CGContextDrawLinearGradient(_context, grad, header_rect.origin,
+    CGContextDrawLinearGradient(_context, header_gradient, header_rect.origin,
                                 NSMakePoint(header_rect.origin.x, header_rect.origin.y + header_rect.size.height), 0);
     CGContextRestoreGState(_context);
     
     // Header line separator.
-    CGContextSetRGBStrokeColor(_context, frame_comp, frame_comp, frame_comp, 1.0);
+    CGContextSetStrokeColorWithColor(_context, header_stroke_color);
     NSPoint header_points[2] = {
-        NSMakePoint(0, m_HeaderHeight - 0.5), NSMakePoint(m_Size.width, m_HeaderHeight - 0.5)
+        NSMakePoint(0, header_height - 0.5), NSMakePoint(m_ItemsArea.size.width, header_height - 0.5)
     };
     CGContextStrokeLineSegments(_context, header_points, 2);
     
     // Panel path.
     char panelpath[__DARWIN_MAXPATHLEN] = {0};
     m_State->Data->GetDirectoryPathWithTrailingSlash(panelpath);
-    int delta = (m_HeaderHeight - m_LineHeight)/2;
-    NSRect rect = NSMakeRect(20, delta, m_Size.width - 40, m_LineHeight);
-    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
     NSString *header_string = [NSString stringWithUTF8String:panelpath];
-    [header_string drawWithRect:rect options:options attributes:header_attr];
+    
+    int delta = (header_height - m_LineHeight)/2;
+    NSRect rect = NSMakeRect(20, delta, m_ItemsArea.size.width - 40, m_LineHeight);
+    
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
+    
+    NSMutableParagraphStyle *header_text_pstyle = [[NSMutableParagraphStyle alloc] init];
+    header_text_pstyle.alignment = NSCenterTextAlignment;
+    header_text_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
+    
+    NSDictionary *header_text_attr =@{NSFontAttributeName: m_Font,
+                                      NSParagraphStyleAttributeName: header_text_pstyle,
+                                      NSShadowAttributeName: header_text_shadow};
+    
+    [header_string drawWithRect:rect options:options attributes:header_text_attr];
     
     
-    ///////////////////////////////////////////////////////////////////////////////
-    // Footer.
-    const int footer_y = m_Size.height - m_HeaderHeight;
+    // Footer
+    const int footer_y = m_ItemsArea.origin.y + m_ItemsArea.size.height;
     
     // Footer gradient.
     CGContextSaveGState(_context);
-    NSRect footer_rect = NSMakeRect(0, footer_y + 1, m_Size.width, m_HeaderHeight - 1);
+    NSRect footer_rect = NSMakeRect(0, footer_y + 1, m_ItemsArea.size.width, header_height - 1);
     CGContextAddRect(_context, footer_rect);
     CGContextClip(_context);
-    CGContextDrawLinearGradient(_context, grad, footer_rect.origin,
+    CGContextDrawLinearGradient(_context, header_gradient, footer_rect.origin,
                                 NSMakePoint(footer_rect.origin.x, footer_rect.origin.y + footer_rect.size.height), 0);
     CGContextRestoreGState(_context);
     
     // Footer line separator.
-    CGContextSetRGBStrokeColor(_context, frame_comp, frame_comp, frame_comp, 1.0);
+    CGContextSetStrokeColorWithColor(_context, header_stroke_color);
     NSPoint footer_points[2] = {
-        NSMakePoint(0, footer_y + 0.5), NSMakePoint(m_Size.width, footer_y + 0.5)
+        NSMakePoint(0, footer_y + 0.5), NSMakePoint(m_ItemsArea.size.width, footer_y + 0.5)
     };
     CGContextStrokeLineSegments(_context, footer_points, 2);
     
     // Footer string.
-    if(m_State->CursorPos >= 0)
+    // If any number of items are selected, then draw selection stats.
+    // Otherwise, draw stats of cursor item.
+    if(m_State->Data->GetSelectedItemsCount() != 0)
+    {
+        UniChar selectionbuf[512];
+        size_t sz;
+        FormHumanReadableBytesAndFiles(m_State->Data->GetSelectedItemsSizeBytes(), m_State->Data->GetSelectedItemsCount(), selectionbuf, sz);
+        
+        NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
+        const int delta = (header_height - m_LineHeight)/2;
+        const int offset = 10;
+        
+        NSMutableParagraphStyle *footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
+        footer_text_pstyle.alignment = NSCenterTextAlignment;
+        footer_text_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
+        
+        NSDictionary *footer_text_attr = @{NSFontAttributeName: m_Font,
+                             NSParagraphStyleAttributeName: footer_text_pstyle,
+                             NSShadowAttributeName: header_text_shadow};
+        
+        NSString *sel_str = [NSString stringWithCharacters:selectionbuf length:sz];
+        [sel_str drawWithRect:NSMakeRect(offset, footer_y + delta, m_ItemsArea.size.width - 2*offset, m_LineHeight) options:options attributes:footer_text_attr];
+    }
+    else if(m_State->CursorPos >= 0)
     {
         UniChar buff[256];
         UniChar time_info[14], size_info[6];
@@ -372,71 +484,87 @@ void ModernPanelViewPresentation::DrawShortView(CGContextRef _context)
         ComposeFooterFileNameForEntry(*current_entry, buff, buf_size);
         
         NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
-        int delta = (m_HeaderHeight - m_LineHeight)/2;
-        int offset = 10;
+        const int delta = (header_height - m_LineHeight)/2;
+        const int offset = 10;
+        
+        NSMutableParagraphStyle *footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
+        footer_text_pstyle.alignment = NSRightTextAlignment;
+        footer_text_pstyle.lineBreakMode = NSLineBreakByClipping;
+        
+        NSDictionary *footer_text_attr = @{NSFontAttributeName: m_Font,
+                                           NSParagraphStyleAttributeName:footer_text_pstyle,
+                                           NSShadowAttributeName: header_text_shadow};
         
         int time_width = 110;
         NSString *time_str = [NSString stringWithCharacters:time_info length:14];
-        [time_str drawWithRect:NSMakeRect(m_Size.width - offset - time_width, footer_y + delta, time_width, m_LineHeight) options:options attributes:footer_attr];
+        [time_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - time_width, footer_y + delta, time_width, m_LineHeight) options:options attributes:footer_text_attr];
         
         int size_width = 90;
         NSString *size_str = [NSString stringWithCharacters:size_info length:6];
-        [size_str drawWithRect:NSMakeRect(m_Size.width - offset - time_width - size_width, footer_y + delta, size_width, m_LineHeight) options:options attributes:footer_attr];
+        [size_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - time_width - size_width, footer_y + delta, size_width, m_LineHeight) options:options attributes:footer_text_attr];
         
+        footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
+        footer_text_pstyle.alignment = NSLeftTextAlignment;
+        footer_text_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
+        
+        footer_text_attr = @{NSFontAttributeName: m_Font,
+                             NSParagraphStyleAttributeName: footer_text_pstyle,
+                             NSShadowAttributeName: header_text_shadow};
         
         NSString *name_str = [NSString stringWithCharacters:buff length:buf_size];
-        [name_str drawWithRect:NSMakeRect(offset, footer_y + delta, m_Size.width - 2*offset - time_width - size_width, m_LineHeight) options:options attributes:footer_attr2];
+        [name_str drawWithRect:NSMakeRect(offset, footer_y + delta, m_ItemsArea.size.width - 2*offset - time_width - size_width, m_LineHeight) options:options attributes:footer_text_attr];
     }
     
+    CGColorRelease(header_stroke_color);
     
-    ///////////////////////////////////////////////////////////////////////////////
-    // Divider.
-    CGFloat comp[4] = {174/255.0, 174/255.0, 174/255.0, 1.0};
-    CGContextSetFillColor(_context, comp);
-    CGContextSetRGBStrokeColor(_context, frame_comp, frame_comp, frame_comp, 1.0);
     
-    if (m_IsLeft)
-    {
-        float x = m_Size.width - 0.5 - g_DividerWidth;
-        NSPoint view_divider[2] = {
-            NSMakePoint(x, 0.5), NSMakePoint(x, m_Size.height + 0.5)
-        };
-        CGContextStrokeLineSegments(_context, view_divider, 2);
-    
-        CGContextSetFillColor(_context, comp);
-        CGContextFillRect(_context, NSMakeRect(m_Size.width - g_DividerWidth, 0, g_DividerWidth, m_Size.height));
-    }
-    else
-    {
-        float x = 0.5 + g_DividerWidth;
-        NSPoint view_divider[2] = {
-            NSMakePoint(x, 0.5), NSMakePoint(x, m_Size.height + 0.5)
-        };
-        CGContextStrokeLineSegments(_context, view_divider, 2);
-        
-        CGContextSetFillColor(_context, comp);
-        CGContextFillRect(_context, NSMakeRect(0, 0, g_DividerWidth, m_Size.height));
-    }
-        
     ///////////////////////////////////////////////////////////////////////////////
     // Draw items in columns.
-    int start_y = m_HeaderHeight;
-    int column_width = m_Size.width/3;
-    for (int column = 0; column < 3; ++column)
+    const int items_per_column = GetMaxItemsPerColumn();
+    const int max_items = (int)sorted_entries.size();
+    
+    NSMutableParagraphStyle *item_text_pstyle = [[NSMutableParagraphStyle alloc] init];
+    item_text_pstyle.alignment = NSLeftTextAlignment;
+    item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
+    
+    NSDictionary *item_text_attr = @{NSFontAttributeName: m_Font,
+                           NSParagraphStyleAttributeName: item_text_pstyle};
+    
+    NSDictionary *active_selected_item_text_attr =
+   @{
+        NSFontAttributeName: m_Font,
+        NSForegroundColorAttributeName: [NSColor whiteColor],
+        NSParagraphStyleAttributeName: item_text_pstyle
+    };
+    
+    CGColorRef active_selected_item_back = CGColorCreateGenericRGB(43/255.0, 116/255.0, 211/255.0, 1.0);
+    CGColorRef inactive_selected_item_back = CGColorCreateGenericRGB(212/255.0, 212/255.0, 212/255.0, 1.0);
+    CGColorRef active_cursor_item_back = CGColorCreateGenericRGB(130/255.0, 196/255.0, 240/255.0, 1.0);
+    CGColorRef column_divider_color = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0);
+    
+    const int icon_size = 16;
+    const int start_y = m_ItemsArea.origin.y;
+    const int columns_count = GetNumberOfItemColumns();
+    for (int column = 0; column < columns_count; ++column)
     {
         // Draw column.
+        int column_width = int(m_ItemsArea.size.width - (columns_count - 1))/columns_count;
         // Calculate index of the first item in current column.
         int i = m_State->ItemsDisplayOffset + column*items_per_column;
         // X position of items.
-        int start_x = column*column_width;
+        int start_x = column*(column_width + 1);
         
-        if (column < 2)
+        if (column == columns_count - 1)
+            column_width += int(m_ItemsArea.size.width - (columns_count - 1))%columns_count;
+        
+        // Draw column divider.
+        if (column < columns_count - 1)
         {
             NSPoint points[2] = {
-                NSMakePoint(start_x - 0.5 + column_width, start_y),
-                NSMakePoint(start_x - 0.5 + column_width, m_Size.height - m_HeaderHeight)
+                NSMakePoint(start_x + 0.5 + column_width, start_y),
+                NSMakePoint(start_x + 0.5 + column_width, start_y + m_ItemsArea.size.height)
             };
-            CGContextSetRGBStrokeColor(_context, 224/255.0, 224/255.0, 224/255.0, 1.0);
+            CGContextSetStrokeColorWithColor(_context, column_divider_color);
             CGContextSetLineWidth(_context, 1);
             CGContextStrokeLineSegments(_context, points, 2);
         }
@@ -445,7 +573,7 @@ void ModernPanelViewPresentation::DrawShortView(CGContextRef _context)
         for (; count < items_per_column && i < max_items; ++count, ++i)
         {
             auto &item = entries[sorted_entries[i]];
-            NSString *item_name = [NSString stringWithUTF8String:item.namec()];
+            NSString *item_name = (__bridge NSString *)item.cf_name;
             
             NSRect rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
                                      start_y + count*m_LineHeight + g_TextInsetsInLine[1],
@@ -456,49 +584,48 @@ void ModernPanelViewPresentation::DrawShortView(CGContextRef _context)
             
             if (m_DrawIcons)
             {
-                
-                rect.origin.x += 16 + g_TextInsetsInLine[0];
-                rect.size.width -= 16 + g_TextInsetsInLine[0];
+                rect.origin.x += icon_size + g_TextInsetsInLine[0];
+                rect.size.width -= icon_size + g_TextInsetsInLine[0];
             }
             
             if (m_State->CursorPos == i && m_State->Active)
             {
                 // Draw as cursor item (only if panel is active).
-                // black on light blue or white on light blue, if the item is selected
-                //CGContextSetRGBFillColor(_context, 43/255.0, 180/255.0, 255/255.0, 1.0);
-                CGContextSetRGBFillColor(_context, 130/255.0, 196/255.0, 240/255.0, 1.0);
-                CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 3, m_LineHeight - 1));
+                CGContextSetFillColorWithColor(_context, active_cursor_item_back);
+                CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 2, m_LineHeight - 1));
                 
                 if (item.cf_isselected())
-                    [item_name drawWithRect:rect options:options attributes:active_selected_attr];
+                {
+                    [item_name drawWithRect:rect options:options
+                                 attributes:active_selected_item_text_attr];
+                }
                 else
-                    [item_name drawWithRect:rect options:options attributes:attr];
+                {
+                    [item_name drawWithRect:rect options:options attributes:item_text_attr];
+                }
             }
             else if (item.cf_isselected())
             {
                 // Draw selected item.
                 if (m_State->Active)
                 {
-                    // If panel is active, draw as white on dark blue.
-                    CGContextSetRGBFillColor(_context, 43/255.0, 116/255.0, 211/255.0, 1.0);
-                    CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 3, m_LineHeight - 1));
+                    CGContextSetFillColorWithColor(_context, active_selected_item_back);
+                    CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 2, m_LineHeight - 1));
                     
-                    [item_name drawWithRect:rect options:options attributes:active_selected_attr];
+                    [item_name drawWithRect:rect options:options attributes:active_selected_item_text_attr];
                 }
                 else
                 {
-                    // If panel is not active, draw as black on light grey.
-                    CGFloat sel_comp = 212/255.0;
-                    CGContextSetRGBFillColor(_context, sel_comp, sel_comp, sel_comp, 1.0);
-                    CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 3, m_LineHeight - 1));
+                    CGContextSetFillColorWithColor(_context, inactive_selected_item_back);
+                    CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 2, m_LineHeight - 1));
                 
-                    [item_name drawWithRect:rect options:options attributes:attr];
+                    [item_name drawWithRect:rect options:options attributes:item_text_attr];
                 }
             }
             else
             {
                 // Draw ordinary item (black on white).
-                [item_name drawWithRect:rect options:options attributes:attr];
+                [item_name drawWithRect:rect options:options attributes:item_text_attr];
             }
             
             if (m_DrawIcons)
@@ -509,11 +636,14 @@ void ModernPanelViewPresentation::DrawShortView(CGContextRef _context)
                     strcat(buf, item.namec());
                 NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile:[NSString stringWithUTF8String:buf]];
                 
-                NSImageRep *image_rep = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil hints:nil];
-                [image_rep drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0], start_y + count*m_LineHeight + m_LineHeight - 17, 16, 16) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
+                NSImageRep *image_rep = [image bestRepresentationForRect:NSMakeRect(0, 0, icon_size, icon_size) context:nil hints:nil];
+                [image_rep drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0], start_y + count*m_LineHeight + m_LineHeight - icon_size - 1, icon_size, icon_size) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
             }
         }
     }
     
-    CGGradientRelease(grad);
+    CGColorRelease(active_selected_item_back);
+    CGColorRelease(inactive_selected_item_back);
+    CGColorRelease(active_cursor_item_back);
+    CGColorRelease(column_divider_color);
 }

@@ -29,6 +29,51 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
     return lineHeight;
 }
 
+static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
+{
+    for(size_t i = 0; i < _n; ++i)
+    {
+        UniChar c = _s[i];
+        if(
+           c == 0x0001 || // SOH
+           c == 0x0002 || // SOH
+           c == 0x0003 || // STX
+           c == 0x0004 || // EOT
+           c == 0x0005 || // ENQ
+           c == 0x0006 || // ACK
+           c == 0x0007 || // BEL
+           c == 0x0008 || // BS
+           // c == 0x0009 || // HT
+           // c == 0x000A || // LF
+           c == 0x000B || // VT
+           c == 0x000C || // FF
+           // c == 0x000D || // CR
+           c == 0x000E || // SO
+           c == 0x000F || // SI
+           c == 0x0010 || // DLE
+           c == 0x0011 || // DC1
+           c == 0x0012 || // DC2
+           c == 0x0013 || // DC3
+           c == 0x0014 || // DC4
+           c == 0x0015 || // NAK
+           c == 0x0016 || // SYN
+           c == 0x0017 || // ETB
+           c == 0x0018 || // CAN
+           c == 0x0019 || // EM
+           c == 0x001A || // SUB
+           c == 0x001B || // ESC
+           c == 0x001C || // FS
+           c == 0x001D || // GS
+           c == 0x001E || // RS
+           c == 0x001F || // US
+           c == 0x007F    // DEL
+           )
+        {
+            _s[i] = ' ';
+        }
+    }
+}
+
 struct TextLine
 {
     uint32_t   unichar_no;
@@ -90,8 +135,12 @@ struct TextLine
     if(m_StringBuffer)
         CFRelease(m_StringBuffer);
     
+    UniChar *ss = (UniChar*) malloc(sizeof(UniChar) * m_WindowSize); // will leak; FIXME
+    memcpy(ss, m_Window, sizeof(UniChar) * m_WindowSize);
+    CleanUnicodeControlSymbols(ss, m_WindowSize);
+    
     m_StringBuffer = CFStringCreateWithBytesNoCopy(0,
-                                                   (UInt8*)m_Window,
+                                                   (UInt8*)/*m_Window*/ss,
                                                    m_WindowSize*sizeof(UniChar),
                                                    kCFStringEncodingUnicode,
                                                    false,
@@ -106,9 +155,9 @@ struct TextLine
     [self ClearLayout];
     
     double wrapping_width = 10000;
-//    if(m_DoWrapLines)
-//        wrapping_width = [self frame].size.width;
-    
+    if(/*m_DoWrapLines*/ true)
+        wrapping_width = [m_View frame].size.width;
+
     m_AttrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
     CFAttributedStringReplaceString(m_AttrString, CFRangeMake(0, 0), m_StringBuffer);
     CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
@@ -330,8 +379,7 @@ struct TextLine
         uint64_t window_size = [m_View RawWindowSize];
         if(window_pos > 0)
         {
-            size_t anchor_index = m_VerticalOffset + m_FrameLines - 1;
-            if(anchor_index >= m_Lines.size()) anchor_index = m_Lines.size() - 1;
+            size_t anchor_index = m_VerticalOffset;
             
             uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
             
@@ -375,7 +423,10 @@ struct TextLine
         if( pos == _byte_no)
         {
             found = true;
-            m_VerticalOffset = (unsigned)i - _line;
+            if((int)i - _line >= 0)
+                m_VerticalOffset = (int)i - _line;
+            else
+                m_VerticalOffset = 0; // edge case - we can't satisfy request, since whole file window is less than one page(?)
             break;
         }
         else
@@ -390,8 +441,14 @@ struct TextLine
     }
     
     if(!found) // choose closest line as a new anchor
-        m_VerticalOffset = (unsigned)closest_ind - _line;
+    {
+        if((int)closest_ind - _line >= 0)
+            m_VerticalOffset = (int)closest_ind - _line;
+        else
+            m_VerticalOffset = 0; // edge case - we can't satisfy request, since whole file window is less than one page(?)
+    }
     
+    assert(m_VerticalOffset < m_Lines.size());
     [m_View setNeedsDisplay:true];
 }
 

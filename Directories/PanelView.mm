@@ -124,7 +124,7 @@ struct CursorSelectionState
 
 - (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor
 {
-    m_Presentation->DirectoryChanged(_type, _cursor);
+    if (m_Presentation) m_Presentation->DirectoryChanged(_type, _cursor);
     [self setNeedsDisplay:true];
 }
 
@@ -325,6 +325,7 @@ struct CursorSelectionState
         const DirectoryEntryInformation &click_entry = m_State.Data->DirectoryEntries()[raw_pos];
         
         bool deselect = click_entry.cf_isselected();
+        if (m_State.CursorPos == -1) m_State.CursorPos = 0;
         [self SelectUnselectInRange:m_State.CursorPos last_included:cursor_pos select:!deselect];
     }
     
@@ -473,7 +474,7 @@ struct CursorSelectionState
 - (void) ToggleViewType:(PanelViewType)_type
 {
     m_State.ViewType = _type;
-    m_Presentation->EnsureCursorIsVisible();
+    if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
     [self setNeedsDisplay:true];
 }
 

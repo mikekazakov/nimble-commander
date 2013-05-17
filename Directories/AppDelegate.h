@@ -7,11 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include "PanelView.h"
+
+#import "ApplicationSkins.h"
 
 @class MainWindowController;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowRestoration>
+
+@property (nonatomic, readonly) ApplicationSkin Skin;
 
 + (void)initialize;
 

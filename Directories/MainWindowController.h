@@ -7,9 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include "PanelView.h"
-#include "PanelData.h"
-#include "MainWndGoToButton.h"
+#import "PanelView.h"
+#import "PanelData.h"
+#import "MainWndGoToButton.h"
+#import "ApplicationSkins.h"
 
 @class OperationsController;
 
@@ -74,6 +75,8 @@ enum ActiveState
 
 - (void)SavePanelPaths;
 - (void)UpdateTitle;
+
+- (void)ApplySkin:(ApplicationSkin)_skin;
 
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 

@@ -339,6 +339,10 @@ int ModernPanelViewPresentation::GetMaxItemsPerColumn()
     return m_ItemsPerColumn;
 }
 
+void ModernPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size)
+{
+}
+
 void ModernPanelViewPresentation::DrawView(CGContextRef _context)
 {
     auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
@@ -651,15 +655,6 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
                                               rect.origin.y,
                                               time_column_width - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
-                
-//                NSMutableParagraphStyle *pstyle = [[NSMutableParagraphStyle alloc] init];
-//                pstyle.alignment = NSLeftTextAlignment;
-//                pstyle.lineBreakMode = NSLineBreakByClipping;
-//                
-//                NSColor *color = m_State->Active && item.cf_isselected() ? [NSColor whiteColor] : [NSColor blackColor];
-//                NSDictionary *attr = @{NSFontAttributeName: m_Font,
-//                                       NSForegroundColorAttributeName: color,
-//                                       NSParagraphStyleAttributeName: pstyle};
                 
                 NSString *time_str = [NSString stringWithCharacters:time_info length:5];
                 [time_str drawWithRect:time_rect options:options attributes:cur_item_text_attr];

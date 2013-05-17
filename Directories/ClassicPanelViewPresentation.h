@@ -8,6 +8,8 @@
 
 #import "PanelViewPresentation.h"
 
+@class PanelView;
+
 class ClassicPanelViewPresentation : public PanelViewPresentation
 {
 public:
@@ -21,6 +23,8 @@ public:
     
     virtual int GetNumberOfItemColumns();
     virtual int GetMaxItemsPerColumn();
+    
+    static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
     
 private:
     void DrawWithShortMediumWideView(CGContextRef _context);

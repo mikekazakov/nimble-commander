@@ -118,6 +118,7 @@
 		B5606E6A17301D7000DDA33A /* OperationStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationStats.h; sourceTree = "<group>"; };
 		B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonWithOptions.h; sourceTree = "<group>"; };
 		B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ButtonWithOptions.m; sourceTree = "<group>"; };
+		B5A89D481746537C00EAB999 /* ApplicationSkins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationSkins.h; sourceTree = "<group>"; };
 		B5AD9CE01706D5350099BC6D /* TimedDummyOperationTestDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationTestDialog.h; sourceTree = "<group>"; };
 		B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperationTestDialog.mm; sourceTree = "<group>"; };
 		B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TimedDummyOperationTestDialog.xib; sourceTree = "<group>"; };
@@ -550,6 +551,7 @@
 				CF536C0D16C92EA200F37203 /* Panel */,
 				CF8B09CA16ECEE9C0013B6A8 /* MainWindow */,
 				B52EB78B172277C5004ABC2E /* Preferences */,
+				B5A89D481746537C00EAB999 /* ApplicationSkins.h */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
 				CFC5122716C4BD3D00D247EE /* AppDelegate.mm */,
 				CF73C59C16DE0D2900F3D44F /* MessageBox.h */,

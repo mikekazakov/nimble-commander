@@ -422,6 +422,22 @@ int ClassicPanelViewPresentation::GetMaxItemsPerColumn()
     return 1;
 }
 
+void ClassicPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size)
+{
+    float gran = 9.;
+    float center_x = _size.width / 2.;
+    float rest = fmod(center_x, gran);
+    
+    NSSize size = _left.frame.size;
+    size.width += -rest + 1;
+    [_left setFrameSize:size];
+    
+    NSRect frame = _right.frame;
+    frame.origin.x += -rest;
+    frame.size.width += rest;
+    [_right setFrame:frame];
+}
+
 void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef context)
 {
     // layout preparation

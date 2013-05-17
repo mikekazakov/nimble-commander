@@ -31,9 +31,21 @@
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
+- (void)dealloc
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObserver:self forKeyPath:@"Skin" context:NULL];
+}
+
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
-    FontCacheManager::Instance()->CreateFontCache((CFStringRef)@"Menlo Regular");    
+    FontCacheManager::Instance()->CreateFontCache((CFStringRef)@"Menlo Regular");
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults addObserver:self
+               forKeyPath:@"Skin"
+                  options:NSKeyValueObservingOptionNew
+                  context:NULL];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -112,6 +124,7 @@
 - (MainWindowController*)AllocateNewMainWindow
 {
     MainWindowController *mwc = [[MainWindowController alloc] init];
+    [mwc ApplySkin:self.Skin];
     mwc.window.restorable = YES;
     mwc.window.restorationClass = self.class;
     mwc.window.identifier = @"mainwindow";
@@ -164,7 +177,7 @@
     if (has_running_ops)
     {
         NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText:@"Application has running operations. Do you want to stop all operations and quit?"];
+        [alert setMessageText:@"The application has running operations. Do you want to stop all operations and quit?"];
         [alert addButtonWithTitle:@"Stop And Quit"];
         [alert addButtonWithTitle:@"Cancel"];
         NSInteger result = [alert runModal];
@@ -198,6 +211,32 @@
     NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlstring]];
+}
+
+- (ApplicationSkin)Skin
+{
+    ApplicationSkin skin = (ApplicationSkin)[[NSUserDefaults standardUserDefaults] integerForKey:@"Skin"];
+    assert(skin == ApplicationSkin::Modern || skin == ApplicationSkin::Classic);
+    return skin;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    // Check if defaults changed.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (object == defaults)
+    {
+        // Check if the skin value was modified.
+        if ([keyPath isEqualToString:@"Skin"])
+        {
+            ApplicationSkin skin = (ApplicationSkin)[defaults integerForKey:@"Skin"];
+            assert(skin == ApplicationSkin::Modern || skin == ApplicationSkin::Classic);
+            for (MainWindowController *wincont : m_MainWindows)
+            {
+                [wincont ApplySkin:skin];
+            }
+        }
+    }
 }
 
 - (void)IClicked:(NSPasteboard *)pboard userData:(NSString *)data error:(NSString **)error

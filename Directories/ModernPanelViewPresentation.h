@@ -8,6 +8,8 @@
 
 #import "PanelViewPresentation.h"
 
+@class PanelView;
+
 class ModernPanelViewPresentation : public PanelViewPresentation
 {
 public:
@@ -23,13 +25,14 @@ public:
     virtual int GetNumberOfItemColumns();
     virtual int GetMaxItemsPerColumn();
     
+    static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
+    
 private:
     void DrawView(CGContextRef _context);
     
     NSFont *m_Font;
     int m_LineHeight;
     
-    // TODO: Temporary hack! 
     bool m_IsLeft;
     // TODO: remove
     bool m_DrawIcons;

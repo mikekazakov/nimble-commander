@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <assert.h>
+#import "Common.h"
 
 static NSString *RealHomeDirectory()
 {
@@ -112,7 +113,7 @@ static NSString *RealHomeDirectory()
 
 - (void) UpdateUrls
 {
-    NSArray *keys = [NSArray arrayWithObjects:NSURLVolumeNameKey, NSURLPathKey, nil];
+    NSArray *keys = [NSArray arrayWithObjects:NSURLVolumeNameKey/*, NSURLPathKey*/, nil];
     m_Volumes = [[NSFileManager defaultManager]
                      mountedVolumeURLsIncludingResourceValuesForKeys:keys
                      options:NSVolumeEnumerationSkipHiddenVolumes];

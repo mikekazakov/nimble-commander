@@ -259,33 +259,67 @@ bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
 
 bool FileDeletionOperationJob::DoMoveToTrash(const char *_full_path, bool _is_dir)
 {
-    // This construction is VERY slow. Thanks, Apple!
-    NSString *str = [[NSString alloc ]initWithBytesNoCopy:(void*)_full_path
-                                                   length:strlen(_full_path)
-                                                 encoding:NSUTF8StringEncoding
-                                             freeWhenDone:NO];
-    NSURL *path = [NSURL fileURLWithPath:str isDirectory:_is_dir];
-    NSURL *newpath;
-    NSError *error;
-    // Available in OS X v10.8 and later
-retry_delete:
-    if(![[NSFileManager defaultManager] trashItemAtURL:path resultingItemURL:&newpath error:&error])
+    if( [[NSFileManager defaultManager] respondsToSelector: @selector(trashItemAtURL)]  )
     {
-        if (!m_SkipAll)
+        // We're on 10.8 or later
+        // This construction is VERY slow. Thanks, Apple!
+        NSString *str = [[NSString alloc ]initWithBytesNoCopy:(void*)_full_path
+                                                    length:strlen(_full_path)
+                                                    encoding:NSUTF8StringEncoding
+                                                freeWhenDone:NO];
+        NSURL *path = [NSURL fileURLWithPath:str isDirectory:_is_dir];
+        NSURL *newpath;
+        NSError *error;
+        // Available in OS X v10.8 and later
+    retry_delete:
+        if(![[NSFileManager defaultManager] trashItemAtURL:path resultingItemURL:&newpath error:&error])
         {
-            int result = [[m_Operation DialogOnTrashItemError:errno ForPath:_full_path]
-                          WaitForResult];
-            if (result == OperationDialogResult::Retry) goto retry_delete;
-            else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
-            else if (result == OperationDialogResult::Stop) RequestStop();
-            else if (result == FileDeletionOperationDR::DeletePermanently)
+            if (!m_SkipAll)
             {
-                // User can choose to delete item permanently.
-                return DoDelete(_full_path, _is_dir);
+                int result = [[m_Operation DialogOnTrashItemError:error ForPath:_full_path]
+                            WaitForResult];
+                if (result == OperationDialogResult::Retry) goto retry_delete;
+                else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                else if (result == OperationDialogResult::Stop) RequestStop();
+                else if (result == FileDeletionOperationDR::DeletePermanently)
+                {
+                    // User can choose to delete item permanently.
+                    return DoDelete(_full_path, _is_dir);
+                }
             }
+            return false;
         }
+    }
+    else
+    {
+        // We're on 10.7 or below
+        FSRef ref;
+        OSStatus status = FSPathMakeRefWithOptions((const UInt8 *)_full_path, kFSPathMakeRefDoNotFollowLeafSymlink, &ref, NULL);
+        assert(status == 0);
         
-        return false;
+    retry_delete_fs:
+        status = FSMoveObjectToTrashSync(&ref, NULL, kFSFileOperationDefaultOptions);
+        // do we need to free FSRef somehow???
+        if(status != 0)
+        {
+            if (!m_SkipAll)
+            {
+                int result = [[m_Operation DialogOnTrashItemError:[NSError errorWithDomain:NSOSStatusErrorDomain
+                                                                                      code:status
+                                                                                  userInfo:nil]
+                                                          ForPath:_full_path]
+                              WaitForResult];
+                if (result == OperationDialogResult::Retry) goto retry_delete_fs;
+                else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                else if (result == OperationDialogResult::Stop) RequestStop();
+                else if (result == FileDeletionOperationDR::DeletePermanently)
+                {
+                    // User can choose to delete item permanently.
+                    return DoDelete(_full_path, _is_dir);
+                }
+            }
+            return false;
+        }
     }
 
     return true;

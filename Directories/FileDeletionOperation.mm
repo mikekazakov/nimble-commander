@@ -129,14 +129,14 @@
     return alert;
 }
 
-- (OperationDialogAlert *)DialogOnTrashItemError:(int)_error ForPath:(const char *)_path
+- (OperationDialogAlert *)DialogOnTrashItemError:(NSError *)_error ForPath:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Delete error"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Can't move %@ to trash.\nError: %s",
-                               [NSString stringWithUTF8String:_path], strerror(_error)]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Can't move %@ to trash.\nError: %@",
+                               [NSString stringWithUTF8String:_path], [_error localizedDescription]]];
     
     [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
     [alert AddButtonWithTitle:@"Delete"

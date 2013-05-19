@@ -39,7 +39,7 @@ enum class FileDeletionOperationType
 - (OperationDialogAlert *)DialogOnStatError:(int)_error ForPath:(const char *)_path;
 - (OperationDialogAlert *)DialogOnUnlinkError:(int)_error ForPath:(const char *)_path;
 - (OperationDialogAlert *)DialogOnRmdirError:(int)_error ForPath:(const char *)_path;
-- (OperationDialogAlert *)DialogOnTrashItemError:(int)_error ForPath:(const char *)_path;
+- (OperationDialogAlert *)DialogOnTrashItemError:(NSError *)_error ForPath:(const char *)_path;
 - (OperationDialogAlert *)DialogOnSecureRewriteError:(int)_error ForPath:(const char *)_path;
 
 @end

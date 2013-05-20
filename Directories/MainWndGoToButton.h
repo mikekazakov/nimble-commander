@@ -11,5 +11,6 @@
 @interface MainWndGoToButton : NSPopUpButton
 
 - (NSString*) GetCurrentSelectionPath;
+- (void) SetCurrentPath: (const char*)_path;
 
 @end

@@ -74,7 +74,7 @@ enum ActiveState
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;
 
 - (void)SavePanelPaths;
-- (void)UpdateTitle;
+- (void)PanelPathChanged:(PanelController*)_panel;
 
 - (void)ApplySkin:(ApplicationSkin)_skin;
 

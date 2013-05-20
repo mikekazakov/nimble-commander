@@ -252,7 +252,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             m_Data->GoToDirectoryWithContext(_context);
             [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
             [self ClearSelectionRequest];
-            [m_WindowController UpdateTitle];
+            [m_WindowController PanelPathChanged:self];
         });
     };
     
@@ -283,7 +283,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_IsStopDirectoryReLoading = true;
     [self ResetUpdatesObservation:_dir];
     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
-    [m_WindowController UpdateTitle];
+    [m_WindowController PanelPathChanged:self];
     return true;
 }
 
@@ -331,7 +331,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                     if(newcursor_sort < 0) newcursor_sort = 0;
                     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
                     [self ClearSelectionRequest];
-                    [m_WindowController UpdateTitle];
+                    [m_WindowController PanelPathChanged:self];
                 });
             };
             
@@ -353,7 +353,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                     
                     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
                     [self ClearSelectionRequest];
-                    [m_WindowController UpdateTitle];
+                    [m_WindowController PanelPathChanged:self];
                 });
             };
             

@@ -20,11 +20,19 @@ static NSString *RealHomeDirectory()
     return [NSString stringWithUTF8String:pw->pw_dir];
 }
 
+static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
+{
+    NSString *path2 = [_url path];
+    
+    bool b = [_path1 hasPrefix:path2];
+    return b ? [path2 length] : 0;
+}
 
 @implementation MainWndGoToButton
 {
     NSMutableArray *m_UserDirs;
     NSArray *m_Volumes;
+    NSString *m_CurrentPath;
 }
 
 
@@ -144,6 +152,9 @@ static NSString *RealHomeDirectory()
     
     [self removeAllItems];
     [self addItemWithTitle:@"Go to"];
+    
+    size_t common_path_max = 0;
+    NSMenuItem *common_item = nil;
 
     for (NSURL *url in m_UserDirs)
     {
@@ -151,6 +162,16 @@ static NSString *RealHomeDirectory()
         NSString *name;
         [url getResourceValue:&name forKey:NSURLLocalizedNameKey error:&error];
         [self addItemWithTitle:name];
+        
+        if(m_CurrentPath != nil)
+        {
+            size_t n = CommonCharsInPath(url, m_CurrentPath);
+            if(n > common_path_max)
+            {
+                common_path_max = n;
+                common_item = [self itemWithTitle:name];
+            }
+        }        
     }
 
     [[self menu] addItem:[NSMenuItem separatorItem]];
@@ -159,16 +180,27 @@ static NSString *RealHomeDirectory()
     {
         NSError *error;
         NSString *volumeName;
-//        NSString *pathName;
         [url getResourceValue:&volumeName forKey:NSURLVolumeNameKey error:&error];
-//        pathName = [url path];
         [self addItemWithTitle:volumeName];
+        
+        if(m_CurrentPath != nil)
+        {
+            size_t n = CommonCharsInPath(url, m_CurrentPath);
+            if(n > common_path_max)
+            {
+                common_path_max = n;
+                common_item = [self itemWithTitle:volumeName];                
+            }
+        }
     }
     
-//    [self addItemWithTitle:@"Abra1!"];
-//    [self addItemWithTitle:@"Abra2!"];
-    
-//    [self selectItemAtIndex:1];
+    if(common_item != nil)
+        [common_item setState:NSOnState];
+}
+
+- (void) SetCurrentPath: (const char*)_path
+{
+    m_CurrentPath = [NSString stringWithUTF8String:_path];
 }
 
 @end

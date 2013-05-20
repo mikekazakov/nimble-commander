@@ -266,6 +266,27 @@ static bool CheckPath(const char *_path)
     self.window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
 }
 
+- (void)PanelPathChanged:(PanelController*)_panel
+{
+    if(_panel == [self ActivePanelController])
+    {
+        [self UpdateTitle];
+    }
+    
+    if(_panel == m_LeftPanelController)
+    {
+        char tmp[MAXPATHLEN];
+        m_LeftPanelData->GetDirectoryPathWithTrailingSlash(tmp);
+        [[self LeftPanelGoToButton] SetCurrentPath:tmp];
+    }
+    if(_panel == m_RightPanelController)
+    {
+        char tmp[MAXPATHLEN];
+        m_RightPanelData->GetDirectoryPathWithTrailingSlash(tmp);
+        [[self RightPanelGoToButton] SetCurrentPath:tmp];
+    }
+}
+
 - (void)ApplySkin:(ApplicationSkin)_skin
 {
     m_Skin = _skin;

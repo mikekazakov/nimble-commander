@@ -42,6 +42,7 @@ struct MenuTags
         PanelSortByBTime    = 1014,
         PanelSortViewHidden = 1020,
         PanelSortSepDirs    = 1021,
+        PanelSortCaseSensitive = 1022
     };
 };
 

@@ -35,18 +35,15 @@ struct PanelSortMode
     };
     
     Mode sort;
-    bool sep_dirs;    // separate directories from files, like win-like
-    bool show_hidden;
+    bool sep_dirs;      // separate directories from files, like win-like
+    bool show_hidden;   // shown hidden files (which are: begining with "." or having hidden flag)
+    bool case_sens;     // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
     
     inline PanelSortMode():
         sort(SortByRawCName),
         sep_dirs(false),
-        show_hidden(true)
-    {}
-    inline PanelSortMode(Mode _mode, bool _sepdir):
-        sort(_mode),
-        sep_dirs(_sepdir),
-        show_hidden(true)
+        show_hidden(true),
+        case_sens(false)
     {}
     
     inline bool isdirect() const
@@ -59,7 +56,7 @@ struct PanelSortMode
     }
     inline bool operator ==(const PanelSortMode& _r) const
     {
-        return sort == _r.sort && sep_dirs == _r.sep_dirs && show_hidden == _r.show_hidden;
+        return sort == _r.sort && sep_dirs == _r.sep_dirs && show_hidden == _r.show_hidden && case_sens == _r.case_sens;
     }
     inline bool operator !=(const PanelSortMode& _r) const
     {
@@ -146,9 +143,11 @@ public:
     unsigned long GetSelectedItemsSizeBytes() const;
     
     // manupulation with user flags for directory entries
-    void CustomFlagsSelect(int _at_pos, bool _is_selected);
+    void CustomFlagsSelect(size_t _at_raw_pos, bool _is_selected);
     void CustomFlagsSelectAllSorted(bool _select);
     void CustomFlagsSelectAll(bool _select);
+    
+    void CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id);
     
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:

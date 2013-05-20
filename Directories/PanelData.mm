@@ -77,12 +77,16 @@ void PanelData::GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path
     
     // now sort our new data
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-        DoSort(m_Entries, m_EntriesByRawName, PanelSortMode(PanelSortMode::SortByRawCName, false)); });
+        PanelSortMode sort;
+        sort.sort = PanelSortMode::SortByRawCName;
+        sort.sep_dirs = false;
+        DoSort(m_Entries, m_EntriesByRawName, sort); });
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
         PanelSortMode mode;
         mode.sep_dirs = false;
         mode.sort = PanelSortMode::SortByName;
         mode.show_hidden = m_CustomSortMode.show_hidden;
+        mode.case_sens = false;
         DoSort(m_Entries, m_EntriesByHumanName, mode); });
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
         DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
@@ -101,9 +105,6 @@ void PanelData::ReloadDirectoryWithContext(DirectoryChangeContext *_context) // 
 
 bool PanelData::ReloadDirectory() // sync variant
 {
-//    char path[__DARWIN_MAXPATHLEN];
-//    GetDirectoryPathWithTrailingSlash(path);
-    
     auto *entries = new std::deque<DirectoryEntryInformation>;
     if(FetchDirectoryListing(m_DirectoryPath, entries, nil) == 0)
     {
@@ -142,6 +143,7 @@ check:  int dst = (*dirbyrawcname)[dst_i];
             const auto &item_src = (*m_Entries)[src];
                 
             item_dst.cflags = item_src.cflags;
+            item_dst.cicon  = item_src.cicon;
             if(item_dst.size == DIRENTINFO_INVALIDSIZE)
                 item_dst.size = item_src.size; // transfer sizes for folders - it can be calculated earlier
                 
@@ -170,6 +172,7 @@ check:  int dst = (*dirbyrawcname)[dst_i];
         mode.sep_dirs = false;
         mode.sort = PanelSortMode::SortByName;
         mode.show_hidden = m_CustomSortMode.show_hidden;
+        mode.case_sens = false;
         DoSort(m_Entries, m_EntriesByHumanName, mode); });
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
         DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
@@ -284,6 +287,7 @@ struct SortPredLess
     {
         const auto &val1 = (*ind_tar)[_1];
         const auto &val2 = (*ind_tar)[_2];
+        const CFStringCompareFlags str_comp_flags = sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive;
         
         if(sort_mode.sep_dirs)
         {
@@ -294,31 +298,31 @@ struct SortPredLess
         switch(sort_mode.sort)
         {
             case PanelSortMode::SortByName:
-                return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) < 0;
+                return CFStringCompare(val1.cf_name, val2.cf_name, str_comp_flags) < 0;
             case PanelSortMode::SortByNameRev:
-                return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) > 0;
+                return CFStringCompare(val1.cf_name, val2.cf_name, str_comp_flags) > 0;
             case PanelSortMode::SortByExt:
                 if(val1.hasextension() && val2.hasextension() )
                 {
                     int r = strcmp(val1.extensionc(), val2.extensionc());
                     if(r < 0) return true;
                     if(r > 0) return false;
-                    return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) < 0;
+                    return CFStringCompare(val1.cf_name, val2.cf_name, str_comp_flags) < 0;
                 }
                 if(val1.hasextension() && !val2.hasextension() ) return false;
                 if(!val1.hasextension() && val2.hasextension() ) return true;
-                return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) < 0; // fallback case
+                return CFStringCompare(val1.cf_name, val2.cf_name, str_comp_flags) < 0; // fallback case
             case PanelSortMode::SortByExtRev:
                 if(val1.hasextension() && val2.hasextension() )
                 {
                     int r = strcmp(val1.extensionc(), val2.extensionc());
                     if(r < 0) return false;
                     if(r > 0) return true;
-                    return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) > 0;
+                    return CFStringCompare(val1.cf_name, val2.cf_name, str_comp_flags) > 0;
                 }
                 if(val1.hasextension() && !val2.hasextension() ) return true;
                 if(!val1.hasextension() && val2.hasextension() ) return false;
-                return CFStringCompare(val1.cf_name, val2.cf_name, kCFCompareCaseInsensitive) > 0; // fallback case
+                return CFStringCompare(val1.cf_name, val2.cf_name, str_comp_flags) > 0; // fallback case
             case PanelSortMode::SortByMTime:    return val1.mtime > val2.mtime;
             case PanelSortMode::SortByMTimeRev: return val1.mtime < val2.mtime;
             case PanelSortMode::SortByBTime:    return val1.btime > val2.btime;
@@ -406,6 +410,7 @@ void PanelData::SetCustomSortMode(PanelSortMode _mode)
                 mode.sep_dirs = false;
                 mode.sort = PanelSortMode::SortByName;
                 mode.show_hidden = m_CustomSortMode.show_hidden;
+                mode.case_sens = false;
                 DoSort(m_Entries, m_EntriesByHumanName, mode); });
             dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
                 DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
@@ -482,9 +487,9 @@ const DirectoryEntryInformation& PanelData::EntryAtRawPosition(int _pos) const
     return (*m_Entries)[_pos];
 }
 
-void PanelData::CustomFlagsSelect(int _at_pos, bool _is_selected)
+void PanelData::CustomFlagsSelect(size_t _at_pos, bool _is_selected)
 {
-    assert(_at_pos >= 0 && _at_pos < m_Entries->size());
+    assert(_at_pos < m_Entries->size());
     auto &entry = (*m_Entries)[_at_pos];
     assert(entry.isdotdot() == false); // assuming we can't select dotdot entry
     if(entry.cf_isselected() == _is_selected) // check if item is already selected
@@ -706,8 +711,6 @@ void PanelData::LoadFSDirectoryAsync(const char *_path,
 
     auto *entries = new std::deque<DirectoryEntryInformation>;
     int ret = FetchDirectoryListing(_path, entries, _checker);
-    
-//    sleep(5);
 
     if( !_checker() )
     {
@@ -736,4 +739,9 @@ void PanelData::LoadFSDirectoryAsync(const char *_path,
     free( (void*) _path);
 }
 
-
+void PanelData::CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id)
+{
+    assert(_at_raw_pos < m_Entries->size());
+    auto &entry = (*m_Entries)[_at_raw_pos];
+    entry.cicon = _icon_id;
+}

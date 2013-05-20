@@ -571,6 +571,11 @@ static bool CheckPath(const char *_path)
     [self SavePanelsSettings];
 }
 
+- (IBAction)ToggleCaseSensitiveComparison:(id)sender{
+    [[self ActivePanelController] ToggleCaseSensitiveComparison];
+    [self SavePanelsSettings];
+}
+
 - (IBAction)LeftPanelGoto:(id)sender{
     [[self LeftPanelGoToButton] performClick:self];    
 }
@@ -963,6 +968,7 @@ static bool CheckPath(const char *_path)
         case MenuTags::PanelSortByBTime: upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByBTimeMask); break;
         case MenuTags::PanelSortViewHidden: [item setState:[contr GetUserSortMode].show_hidden ? NSOnState : NSOffState]; break;
         case MenuTags::PanelSortSepDirs:    [item setState:[contr GetUserSortMode].sep_dirs    ? NSOnState : NSOffState]; break;
+        case MenuTags::PanelSortCaseSensitive:[item setState:[contr GetUserSortMode].case_sens ? NSOnState : NSOffState]; break;            
     }
 
     return true; // will disable some items in the future

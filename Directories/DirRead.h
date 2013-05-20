@@ -41,7 +41,7 @@ struct DirectoryEntryInformation // 128b long
     // #56
     time_t         btime;                   // time of file creation(birth). we're dropping st_birthtimespec.tv_nsec information
     // #64
-    unsigned int   cflags;                  // custom flags. volatile - can be changed. up to 32 flags
+    unsigned int   cflags;                  // custom flags. volatile - can be changed. up to 32 flags. saved upon directory reload.
     // #68
     mode_t         unix_mode;               // file type from stat
     // #72
@@ -57,9 +57,11 @@ struct DirectoryEntryInformation // 128b long
     // #100
     unsigned short extoffset;               // extension of a file if any. 0 if there's no extension, or position of a first char of an extention
     // #102
+    unsigned short cicon;                   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
+    // #104
     unsigned char  unix_type;               // file type from <sys/dirent.h> (from readdir)
-    // #103
-    unsigned char  ___padding[25];
+    // #105
+    unsigned char  ___padding[23];
     // #128
 
     inline void destroy()

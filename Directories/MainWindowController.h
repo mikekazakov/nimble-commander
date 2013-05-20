@@ -49,6 +49,7 @@ enum ActiveState
 - (IBAction)ToggleSortByBTime:(id)sender;
 - (IBAction)ToggleViewHiddenFiles:(id)sender;
 - (IBAction)ToggleSeparateFoldersFromFiles:(id)sender;
+- (IBAction)ToggleCaseSensitiveComparison:(id)sender;
 - (IBAction)LeftPanelGoto:(id)sender;
 - (IBAction)RightPanelGoto:(id)sender;
 - (IBAction)OnSyncPanels:(id)sender;

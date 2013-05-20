@@ -388,7 +388,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     char *path = strdup(dirpath);
     
     int oldcursorpos = [m_View GetCursorPosition];
-    NSString *oldcursorname = (oldcursorpos >= 0 ? [NSString stringWithUTF8String:[m_View CurrentItem]->namec()] : nil);
+    NSString *oldcursorname = (oldcursorpos >= 0 ? [NSString stringWithUTF8String:[m_View CurrentItem]->namec()] : @"");
     
     auto onfail = ^(const char* _path, int _error) {
         NSAlert *alert = [[NSAlert alloc] init];

@@ -74,6 +74,12 @@ struct MachTimeBenchmark
         NSLog(@"%llu\n", (now - last) / 1000000 );
         last = now;
     }
+    inline void Reset(const char *_msg)
+    {
+        uint64_t now = GetTimeInNanoseconds();
+        NSLog(@"%s %llu\n", _msg, (now - last) / 1000000 );
+        last = now;
+    }    
 };
 
 

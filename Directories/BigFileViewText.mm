@@ -9,7 +9,7 @@
 #import <vector>
 #import "BigFileViewText.h"
 #import "BigFileView.h"
-
+#import "Common.h"
 
 static CGFloat GetLineHeightForFont(CTFontRef iFont)
 {
@@ -78,7 +78,7 @@ struct TextLine
 {
     uint32_t   unichar_no;
     uint32_t   unichar_len;
-    uint32_t   byte_no;
+    uint32_t   byte_no;         // offset within file window of a current text line
     CTLineRef  line;
 };
 
@@ -135,9 +135,11 @@ struct TextLine
     if(m_StringBuffer)
         CFRelease(m_StringBuffer);
     
+    MachTimeBenchmark m;
     UniChar *ss = (UniChar*) malloc(sizeof(UniChar) * m_WindowSize); // will leak; FIXME
     memcpy(ss, m_Window, sizeof(UniChar) * m_WindowSize);
     CleanUnicodeControlSymbols(ss, m_WindowSize);
+    m.Reset("cleanin unicode stuff ");
     
     m_StringBuffer = CFStringCreateWithBytesNoCopy(0,
                                                    (UInt8*)/*m_Window*/ss,
@@ -164,7 +166,9 @@ struct TextLine
     CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTFontAttributeName, [m_View TextFont]);
     
     // Create a typesetter using the attributed string.
+    MachTimeBenchmark m;
     CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(m_AttrString);
+    m.Reset("CTTypesetterCreateWithAttributedString");
     
     CFIndex start = 0;
     do
@@ -410,7 +414,7 @@ struct TextLine
     [m_View RequestWindowMovementAt:_pos];
     
     // update data and layout stuff
-    [self BuildLayout];
+//    [self BuildLayout];   <<-- this will be called implicitly
     
     // now we need to find a line which is at last_top_line_glob_offset position
     bool found = false;
@@ -450,6 +454,38 @@ struct TextLine
     
     assert(m_VerticalOffset < m_Lines.size());
     [m_View setNeedsDisplay:true];
+}
+
+- (uint32_t) GetOffsetWithinWindow
+{
+    assert(m_VerticalOffset < m_Lines.size());
+    return m_Lines[m_VerticalOffset].byte_no;    
+}
+
+- (void) MoveOffsetWithinWindow: (uint32_t)_offset
+{
+    uint32_t min_dist = 1000000;
+    size_t closest = 0;
+    for(size_t i = 0; i < m_Lines.size(); ++i)
+    {
+        if(m_Lines[i].byte_no == _offset)
+        {
+            min_dist = 0;
+            closest = i;
+            break;
+        }
+        else
+        {
+            uint32_t dist = m_Lines[i].byte_no > _offset ? m_Lines[i].byte_no - _offset : _offset - m_Lines[i].byte_no;
+            if(dist < min_dist)
+            {
+                min_dist = dist;
+                closest = i;
+            }
+        }
+    }
+    
+    m_VerticalOffset = (unsigned)closest;
 }
 
 @end

@@ -20,6 +20,9 @@
     size: (size_t) _unichars_amount // unichars, not bytes (x2)
     parent: (BigFileView*) _view;
 
+// information
+- (uint32_t) GetOffsetWithinWindow; // offset of a first visible symbol (+/-)
+
 // event handling
 - (void) OnBufferDecoded: (size_t) _new_size; // unichars, not bytes (x2)
 - (void) OnUpArrow;
@@ -28,6 +31,8 @@
 //- (void) OnRightArrow;
 - (void) OnPageDown;
 - (void) OnPageUp;
+
+- (void) MoveOffsetWithinWindow: (uint32_t)_offset; // request to move visual offset to an approximate amount
 
 // drawing
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect;

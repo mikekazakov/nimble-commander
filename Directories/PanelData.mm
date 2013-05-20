@@ -215,6 +215,7 @@ void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPAT
 int PanelData::FindEntryIndex(const char *_filename) const
 {
     assert(m_EntriesByRawName->size() == m_Entries->size()); // consistency check
+    assert(_filename != 0);
     
     // performing binary search on m_EntriesByRawName
     int imin = 0, imax = (int)m_EntriesByRawName->size()-1;

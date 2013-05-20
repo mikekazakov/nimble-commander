@@ -36,7 +36,7 @@ struct TextLine
     uint32_t chars_num;  // amount of unicode characters in line
     uint32_t string_byte_start;
     uint32_t string_bytes_num;
-    uint32_t row_byte_start;
+    uint32_t row_byte_start;    // offset within file window corresponding to the current row start 
     uint32_t row_bytes_num;
     CFStringRef string;
     CFMutableAttributedStringRef attr_string;
@@ -126,9 +126,6 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 - (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
 {
     [self ClearLayout];
-    
-//    uint32_t row_byte_start;
-//    uint32_t row_bytes_num;
     
     // split our string into a chunks of 16 bytes somehow
     const uint64_t raw_window_pos = [m_View RawWindowPosition];
@@ -489,6 +486,38 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
             }
         }
     }
+}
+
+- (uint32_t) GetOffsetWithinWindow
+{
+    assert(m_RowsOffset < m_Lines.size());
+    return m_Lines[m_RowsOffset].row_byte_start;
+}
+
+- (void) MoveOffsetWithinWindow: (uint32_t)_offset
+{
+    uint32_t min_dist = 1000000;
+    size_t closest = 0;
+    for(size_t i = 0; i < m_Lines.size(); ++i)
+    {
+        if(m_Lines[i].row_byte_start == _offset)
+        {
+            min_dist = 0;
+            closest = i;
+            break;
+        }
+        else
+        {
+            uint32_t dist = m_Lines[i].row_byte_start > _offset ? m_Lines[i].row_byte_start - _offset : _offset - m_Lines[i].row_byte_start;
+            if(dist < min_dist)
+            {
+                min_dist = dist;
+                closest = i;
+            }
+        }
+    }
+    
+    m_RowsOffset = (unsigned)closest;
 }
 
 @end

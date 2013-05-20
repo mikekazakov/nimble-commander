@@ -20,7 +20,7 @@
     UniChar         *m_DecodeBuffer;
     // array indexing every m_DecodeBuffer unicode character into a byte offset within original file window
     uint32_t        *m_DecodeBufferIndx;
-    size_t          m_DecodedBufferSize;
+    size_t          m_DecodedBufferSize; // amount of unichars
 
     CTFontRef       m_Font;
     CGColorRef      m_ForegroundColor;
@@ -135,6 +135,16 @@
                                                      0xFFFD // something like '?' or U+FFFD
                                                      );
     m_DecodedBufferSize = size;
+
+/*    InterpretSingleByteBufferAsUniCharPreservingBufferSize((unsigned char*) m_File->Window(),
+                                                           m_File->WindowSize(),
+                                                           m_DecodeBuffer,
+                                                           ENCODING_OEM866);
+    m_DecodedBufferSize = m_File->WindowSize();
+    for(int i = 0; i < m_File->WindowSize(); ++i)
+        m_DecodeBufferIndx[i] = i;
+                                                        */
+    
     
     [m_ViewImpl OnBufferDecoded:m_DecodedBufferSize];
 }
@@ -247,14 +257,21 @@
 
 - (void) NextViewType
 {
+    uint32_t off = [m_ViewImpl GetOffsetWithinWindow];
+    
     if( [m_ViewImpl isKindOfClass: [BigFileViewText class]])
         [self ToggleHexView:nil];
     else
         [self ToggleTextView:nil];
+    
+    [m_ViewImpl MoveOffsetWithinWindow:off];
 }
 
 - (void) DoClose
 {
+    if([self window])
+        [[self window] makeFirstResponder:[[self window] windowController]];
+    
     [self removeFromSuperview];
 
     m_ViewImpl = nil;

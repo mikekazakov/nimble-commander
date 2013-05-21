@@ -835,6 +835,7 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
     CGColorRef active_cursor_item_back = CGColorCreateGenericRGB(130/255.0, 196/255.0, 240/255.0, 1.0);
     CGColorRef column_divider_color = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0);
     CGColorRef cursor_frame_color = CGColorCreateGenericRGB(0, 0, 0, 1);
+    CGColorRef item_back = CGColorCreateGenericRGB(240/255.0, 245/255.0, 250/255.0, 1);
     
     const int icon_size = 16;
     const int start_y = m_ItemsArea.origin.y;
@@ -893,7 +894,7 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
                 rect.size.width -= icon_size + g_TextInsetsInLine[0];
             }
             
-            // Draw selection background.
+            // Draw background.
             if (item.cf_isselected())
             {
                 // Draw selected item.
@@ -909,6 +910,12 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
                     CGContextSetFillColorWithColor(_context, inactive_selected_item_back);
                     CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 2, m_LineHeight - 1));
                 }
+            }
+            else if ((count + column) % 2 == 1)
+            {
+                CGContextSetFillColorWithColor(_context, item_back);
+                
+                CGContextFillRect(_context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1, column_width - 2, m_LineHeight - 1));
             }
             
             // Draw cursor.
@@ -1029,6 +1036,7 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
     CGColorRelease(inactive_selected_item_back);
     CGColorRelease(active_cursor_item_back);
     CGColorRelease(column_divider_color);
+    CGColorRelease(item_back);
     
     m_IconCache->FlushIfNeeded(curtime);
 }

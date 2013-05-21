@@ -33,7 +33,7 @@ struct CursorSelectionState
 
 @implementation PanelView
 {
-    __weak PanelController *m_Controller;
+    __unsafe_unretained PanelController *m_Controller;
 
     unsigned long   m_KeysModifiersFlags;
     

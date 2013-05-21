@@ -7,14 +7,15 @@
 //
 
 #import "BigFileView.h"
-#import <vector>
-#import <mach/mach_time.h>
 #import "BigFileViewText.h"
 #import "BigFileViewHex.h"
+#import "BigFileViewEncodingSelection.h"
 
 @implementation BigFileView
 {
     FileWindow     *m_File;
+    
+    int             m_Encoding;
     
     // a file's window decoded into Unicode
     UniChar         *m_DecodeBuffer;
@@ -63,6 +64,7 @@
 
 - (void) DoInit
 {
+    m_Encoding = ENCODING_UTF8;
     m_DoWrapLines = true;
     m_Font = CTFontCreateWithName(CFSTR("Menlo"), 12, NULL);
     
@@ -119,34 +121,38 @@
                        offsets:m_DecodeBufferIndx
                           size:m_DecodedBufferSize
                         parent:self];
-
-//    [self BuildLayout];
 }
 
 - (void) DecodeRawFileBuffer
 {
-    size_t size;
-    InterpretUTF8BufferAsIndexedUniChar(
+    if(m_Encoding == ENCODING_UTF8)
+    {
+        size_t size;
+        InterpretUTF8BufferAsIndexedUniChar(
                                                      (unsigned char*) m_File->Window(),
                                                      m_File->WindowSize(),
                                                      m_DecodeBuffer, // should be at least _input_size 16b words long,
                                                      m_DecodeBufferIndx,
                                                      &size,
                                                      0xFFFD // something like '?' or U+FFFD
-                                                     );
-    m_DecodedBufferSize = size;
-
-/*    InterpretSingleByteBufferAsUniCharPreservingBufferSize((unsigned char*) m_File->Window(),
-                                                           m_File->WindowSize(),
-                                                           m_DecodeBuffer,
-                                                           ENCODING_OEM866);
-    m_DecodedBufferSize = m_File->WindowSize();
-    for(int i = 0; i < m_File->WindowSize(); ++i)
-        m_DecodeBufferIndx[i] = i;
-                                                        */
+                                                    );
+        m_DecodedBufferSize = size;
+    }
+    else if(m_Encoding >= ENCODING_SINGLE_BYTES_FIRST__ && m_Encoding <= ENCODING_SINGLE_BYTES_LAST__)
+    {
+        InterpretSingleByteBufferAsUniCharPreservingBufferSize((unsigned char*) m_File->Window(),
+                                                               m_File->WindowSize(),
+                                                               m_DecodeBuffer,
+                                                               m_Encoding);
+        m_DecodedBufferSize = m_File->WindowSize();
+        for(int i = 0; i < m_File->WindowSize(); ++i)
+            m_DecodeBufferIndx[i] = i;
+    }
+    else
+        assert(0);
     
-    
-    [m_ViewImpl OnBufferDecoded:m_DecodedBufferSize];
+    if(m_ViewImpl)
+        [m_ViewImpl OnBufferDecoded:m_DecodedBufferSize];
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -179,6 +185,10 @@
     case NSF4FunctionKey:
             [self NextViewType];
             break;
+    case NSF8FunctionKey:
+            [self SetEncoding];
+            break;
+            
     }
     
     switch (keycode)
@@ -192,6 +202,24 @@
 //    m_VerticalOffset
     
 #undef ISMODIFIER
+}
+
+- (void) SetEncoding
+{
+    BigFileViewEncodingSelection *wnd = [BigFileViewEncodingSelection new];
+    
+    int ret = (int)[NSApp runModalForWindow: [wnd window]];
+    [NSApp endSheet: [wnd window]];
+    [[wnd window] orderOut: self];
+    
+    if(ret != ENCODING_INVALID)
+    {
+        if(ret != m_Encoding)
+        {
+            m_Encoding = ret;
+            [self DecodeRawFileBuffer];
+        }
+    }
 }
 
 - (void)frameDidChange

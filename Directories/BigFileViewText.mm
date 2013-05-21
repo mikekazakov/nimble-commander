@@ -29,12 +29,54 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
     return lineHeight;
 }
 
+static double GetMonospaceFontCharWidth(CTFontRef _font)
+{
+    CFStringRef string = CFSTR("A");
+    CFMutableAttributedStringRef attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
+    CFAttributedStringReplaceString(attrString, CFRangeMake(0, 0), string);
+    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, CFStringGetLength(string)), kCTFontAttributeName, _font);
+    CTLineRef line = CTLineCreateWithAttributedString(attrString);
+    double width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+    CFRelease(line);
+    CFRelease(attrString);
+    return width;
+}
+
+static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
+{
+    const auto len = CFStringGetLength(_string);
+    const auto *chars = CFStringGetCharactersPtr(_string);
+    assert(chars);
+    
+    double sum_space_width = 0.0;
+    unsigned spaces_len = 0;
+    
+    for(unsigned i = _start; i < len; ++i)
+    {
+        if( chars[i] == ' ' )
+        {
+            sum_space_width += _font_width;
+            spaces_len++;
+            if(sum_space_width >= _line_width)
+            {
+                return spaces_len;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+    return 0;
+}
+
 static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
 {
     for(size_t i = 0; i < _n; ++i)
     {
         UniChar c = _s[i];
         if(
+           c == 0x0000 || // NUL
            c == 0x0001 || // SOH
            c == 0x0002 || // SOH
            c == 0x0003 || // STX
@@ -96,6 +138,7 @@ struct TextLine
         
     // layout stuff
     CGFloat                      m_FontHeight;
+    CGFloat                      m_FontWidth;
     CFMutableAttributedStringRef m_AttrString;
     std::vector<TextLine>        m_Lines;
     unsigned                     m_VerticalOffset; // offset in lines number within text lines
@@ -114,6 +157,7 @@ struct TextLine
     m_WindowSize = _unichars_amount;
     
     m_FontHeight = GetLineHeightForFont([m_View TextFont]);
+    m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
     NSRect fr = [_view frame];
     m_FrameLines = fr.size.height / m_FontHeight;
     
@@ -173,10 +217,22 @@ struct TextLine
     CFIndex start = 0;
     do
     {
-        // this value will depend on "wrap words" flag
-        CFIndex count = CTTypesetterSuggestLineBreak(typesetter, start, wrapping_width);
-        if(count <= 0) break;
+        // 1st - manual hack for breaking lines by space characters
+//static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
+        CFIndex count;
         
+        unsigned spaces = ShouldBreakLineBySpaces(m_StringBuffer, (unsigned)start, m_FontWidth, wrapping_width);
+        if(spaces != 0)
+        {
+            count = spaces;
+        }
+        else
+        {
+            count = CTTypesetterSuggestLineBreak(typesetter, start, wrapping_width);
+            if(count <= 0)
+                break;
+        }
+
         // Use the returned character count (to the break) to create the line.
         CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(start, count));
         
@@ -431,6 +487,11 @@ struct TextLine
                 m_VerticalOffset = (int)i - _line;
             else
                 m_VerticalOffset = 0; // edge case - we can't satisfy request, since whole file window is less than one page(?)
+            if(m_VerticalOffset >= m_Lines.size())
+            {
+                m_VerticalOffset = (unsigned)m_Lines.size()-1; // TODO: write more intelligent adjustment
+            }
+            
             break;
         }
         else

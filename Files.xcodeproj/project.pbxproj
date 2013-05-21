@@ -73,6 +73,9 @@
 		CFC5123316C5164300D247EE /* DirRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123116C5164300D247EE /* DirRead.cpp */; };
 		CFC5123616C5284800D247EE /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123416C5284800D247EE /* PanelData.mm */; };
 		CFC5123916C5287B00D247EE /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
+		CFCA09DC174B171000AEC8C2 /* BigFileViewEncodingSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCA09DA174B170F00AEC8C2 /* BigFileViewEncodingSelection.mm */; };
+		CFCA09DD174B171000AEC8C2 /* BigFileViewEncodingSelection.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCA09DB174B171000AEC8C2 /* BigFileViewEncodingSelection.xib */; };
+		CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFCA09DE174BA93500AEC8C2 /* files.icns */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFDE466E172FE0F400B5EF50 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFDE466D172FE0F400B5EF50 /* icon.icns */; };
 		CFDE46711730F97800B5EF50 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE466F1730F97800B5EF50 /* rdrand.c */; };
@@ -210,6 +213,10 @@
 		CFC5123516C5284800D247EE /* PanelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelData.h; sourceTree = "<group>"; };
 		CFC5123716C5287B00D247EE /* PanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelView.h; sourceTree = "<group>"; };
 		CFC5123816C5287B00D247EE /* PanelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelView.mm; sourceTree = "<group>"; };
+		CFCA09D9174B170F00AEC8C2 /* BigFileViewEncodingSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewEncodingSelection.h; sourceTree = "<group>"; };
+		CFCA09DA174B170F00AEC8C2 /* BigFileViewEncodingSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewEncodingSelection.mm; sourceTree = "<group>"; };
+		CFCA09DB174B171000AEC8C2 /* BigFileViewEncodingSelection.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BigFileViewEncodingSelection.xib; sourceTree = "<group>"; };
+		CFCA09DE174BA93500AEC8C2 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = files.icns; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
 		CFDE466D172FE0F400B5EF50 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
@@ -255,6 +262,7 @@
 		B51014CF170721340023FF24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CFCA09DE174BA93500AEC8C2 /* files.icns */,
 				CFDE466D172FE0F400B5EF50 /* icon.icns */,
 				CF27B50E172F8EAF005C9B28 /* pause_icon.png */,
 				B55DB19B171B0E9700E3610E /* question_icon.png */,
@@ -351,6 +359,9 @@
 				CF396AF3173FA8C600A20C42 /* BigFileViewProtocol.h */,
 				CF396AF4173FA8C600A20C42 /* BigFileViewText.h */,
 				CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */,
+				CFCA09D9174B170F00AEC8C2 /* BigFileViewEncodingSelection.h */,
+				CFCA09DA174B170F00AEC8C2 /* BigFileViewEncodingSelection.mm */,
+				CFCA09DB174B171000AEC8C2 /* BigFileViewEncodingSelection.xib */,
 			);
 			name = BigFileView;
 			sourceTree = "<group>";
@@ -645,6 +656,8 @@
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
 				CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */,
 				CFDE466E172FE0F400B5EF50 /* icon.icns in Resources */,
+				CFCA09DD174B171000AEC8C2 /* BigFileViewEncodingSelection.xib in Resources */,
+				CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -727,6 +740,7 @@
 				CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */,
 				CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */,
 				CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */,
+				CFCA09DC174B171000AEC8C2 /* BigFileViewEncodingSelection.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,6 +28,9 @@ public:
     static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
     
 private:
+    class IconCache;
+    
+    virtual void OnDirectoryChanged();
     void DrawView(CGContextRef _context);
     
     NSFont *m_Font;
@@ -45,4 +48,6 @@ private:
     NSShadow *m_ActiveHeaderTextShadow;
     CGGradientRef m_InactiveHeaderGradient;
     NSShadow *m_InactiveHeaderTextShadow;
+    
+    IconCache *m_IconCache;
 };

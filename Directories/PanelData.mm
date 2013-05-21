@@ -746,3 +746,9 @@ void PanelData::CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id)
     auto &entry = (*m_Entries)[_at_raw_pos];
     entry.cicon = _icon_id;
 }
+
+void PanelData::CustomIconClearAll()
+{
+    for (auto &entry : *m_Entries)
+        entry.cicon = 0;
+}

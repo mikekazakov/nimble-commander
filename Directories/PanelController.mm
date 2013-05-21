@@ -19,7 +19,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 {
     PanelData *m_Data;
     PanelView *m_View;
-    __strong MainWindowController *m_WindowController;
+    __weak MainWindowController *m_WindowController;
     unsigned long m_UpdatesObservationTicket;
     
     NSString *m_FastSearchString;

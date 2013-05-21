@@ -31,8 +31,6 @@ public:
     
     void EnsureCursorIsVisible();
     
-    void OnDirectoryChanged();
-    
     virtual void Draw(NSRect _dirty_rect) = 0;
     virtual void OnFrameChanged(NSRect _frame) = 0;
     
@@ -48,4 +46,7 @@ public:
     
 protected:
     PanelViewState *m_State;
+    
+private:
+    virtual void OnDirectoryChanged() {}
 };

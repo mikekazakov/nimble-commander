@@ -46,6 +46,8 @@ void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type,
     
     m_State->CursorPos = _cursor;
     EnsureCursorIsVisible();
+    
+    OnDirectoryChanged();
 }
 
 void PanelViewPresentation::SetCursorPos(int _pos)

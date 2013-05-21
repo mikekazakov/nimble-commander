@@ -11,6 +11,10 @@
 
 #import "PanelData.h"
 #import "Encodings.h"
+#import "Common.h"
+
+#import <string>
+
 
 static void FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, UniChar _out[128], size_t &_symbs)
 {
@@ -177,6 +181,267 @@ static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dire
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+// class IconCache
+///////////////////////////////////////////////////////////////////////////////////////////////////
+class ModernPanelViewPresentation::IconCache
+{
+public:
+    IconCache()
+    :   m_ParentDir(nil),
+        m_LastFlushTime(0)
+    {
+        if (m_TypeIcons)
+        {
+            assert(m_TypeIconsRefCount > 0);
+            ++m_TypeIconsRefCount;
+        }
+        else
+        {
+            assert(m_TypeIconsRefCount == 0);
+            m_TypeIcons = new TypeIconsT;
+            m_TypeIconsRefCount = 1;
+            m_TypeIcons->reserve(32);
+            
+            // Load predefined directory icon.
+            assert(DirectoryIconIndex == 1);
+            m_TypeIcons->push_back(TypeIcon());
+            TypeIcon &dir_icon = m_TypeIcons->back();
+            NSImage *image = [NSImage imageNamed:NSImageNameFolder];
+            dir_icon.image = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil
+                                                        hints:nil];
+            
+            // Load predefined generic document file icon.
+            assert(GenericIconIndex == 2);
+            m_TypeIcons->push_back(TypeIcon());
+            TypeIcon &generic_icon = m_TypeIcons->back();
+            image = [[NSWorkspace sharedWorkspace]
+                     iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
+            generic_icon.image = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil
+                                                            hints:nil];
+        }
+        
+        m_UniqueIcons.reserve(8);
+    }
+    
+    ~IconCache()
+    {
+        assert(m_TypeIconsRefCount > 0);
+        if (--m_TypeIconsRefCount == 0)
+        {
+            delete m_TypeIcons;
+            m_TypeIcons = nullptr;
+        }
+    }
+    
+    inline NSImageRep *GetIcon(PanelData &_data, const DirectoryEntryInformation &_item, int _item_index, uint64_t _curtime)
+    {
+        uint32_t curtime_sec = uint32_t(_curtime/1000000000ul);
+        
+        // If item has no associated icon, then get it.
+        if (_item.cicon == 0)
+        {
+            bool is_unique = _item.isdir() && _item.hasextension() && strcasecmp(_item.extensionc(), "app") == 0;
+            if (is_unique)
+            {
+                // Create unique icon entry. Load it later (see further below).
+                assert(&_data.EntryAtRawPosition(_item_index) == &_item);
+                unsigned short index = UniqueIconIndexFlag | (unsigned short)(m_UniqueIcons.size() + 1);
+                _data.CustomIconSet(_item_index, index);
+                m_UniqueIcons.push_back(UniqueIcon());
+                UniqueIcon &back = m_UniqueIcons.back();
+                back.image = nil;
+                back.access_time = curtime_sec;
+                back.loading = false;
+            }
+            else if (_item.isdir())
+            {
+                // Item is a directory, but not an app bundle.
+                assert(&_data.EntryAtRawPosition(_item_index) == &_item);
+                _data.CustomIconSet(_item_index, DirectoryIconIndex);
+            }
+            else if (!_item.hasextension())
+            {
+                // Item is a file with no extension.
+                // Use generic icon.
+                assert(&_data.EntryAtRawPosition(_item_index) == &_item);
+                _data.CustomIconSet(_item_index, GenericIconIndex);
+            }
+            else
+            {
+                // Try to find existing icon entry for the item type.
+                unsigned short size = m_TypeIcons->size();
+                bool found = false;
+                const char *ext = _item.extensionc();
+                
+                for (unsigned short i = 0; i < size; ++i)
+                {
+                    if (strcasecmp((*m_TypeIcons)[i].extension.c_str(), ext) == 0)
+                    {
+                        // Found!
+                        assert(&_data.EntryAtRawPosition(_item_index) == &_item);
+                        _data.CustomIconSet(_item_index, i + 1);
+                        if ((*m_TypeIcons)[i].image) return (*m_TypeIcons)[i].image;
+                        
+                        // If image is nil, we need to reload it.
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if (!found)
+                {
+                    // No icon is found for the item. Create new icon entry and load it (look further below).
+                    assert(&_data.EntryAtRawPosition(_item_index) == &_item);
+                    unsigned short index = size + 1;
+                    assert(index < UniqueIconIndexFlag);
+                    _data.CustomIconSet(_item_index, index);
+                    m_TypeIcons->push_back(TypeIcon());
+                    TypeIcon &back = m_TypeIcons->back();
+                    back.extension = _item.extensionc();
+                    back.image = nil;
+                    back.loading = false;
+                    back.access_time = curtime_sec;
+                }
+            }
+        }
+        
+        // There is a valid index in item's cicon. Check if the icon is loaded and return it.
+        
+        // Branch for unique icons.
+        if (_item.cicon & UniqueIconIndexFlag)
+        {
+            unsigned short index = (_item.cicon ^ UniqueIconIndexFlag) - 1;
+            UniqueIcon &icon = m_UniqueIcons[index];
+            icon.access_time = curtime_sec;
+            
+            if (icon.image) return icon.image;
+           
+            // Load icon.
+            if (!icon.loading)
+            {
+                if (!m_ParentDir)
+                {
+                    char buff[1024] = {0};
+                    _data.GetDirectoryPathWithTrailingSlash(buff);
+                    m_ParentDir = [NSString stringWithUTF8String:buff];
+                }
+                NSString *path = [m_ParentDir stringByAppendingString:(__bridge NSString *)_item.cf_name];
+                NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile:path];
+                icon.image = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil hints:nil];
+            }
+            
+            return icon.image;
+        }
+        
+        // Branch for type icons.
+        unsigned short size = m_TypeIcons->size();
+        assert(_item.cicon <= size);
+        assert(_item.cicon > 0);
+        
+        TypeIcon &icon = (*m_TypeIcons)[_item.cicon - 1];
+        icon.access_time = curtime_sec;
+        
+        if (icon.image) return icon.image;
+        
+        // Load icon.
+        if (!icon.loading)
+        {
+            // Check that item's icon is not one of the predefined icons. They should be always
+            // in memory.
+            assert(_item.cicon != DirectoryIconIndex && _item.cicon != GenericIconIndex);
+            // Sanity check.
+            assert(strcasecmp(_item.extensionc(), icon.extension.c_str()) == 0);
+            
+        
+            NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[NSString stringWithUTF8String:_item.extensionc()]];
+            
+            icon.image = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil hints:nil];
+        }
+
+        return icon.image;
+    }
+    
+    void OnDirectoryChanged(uint64_t _curtime)
+    {
+        m_ParentDir = nil;
+        
+        FlushIfNeeded(_curtime, true);
+    }
+    
+    // If _delete_icons is true, flushing algorithm will force run, and instead of flushing icons
+    // the whole icon entries will be deleted.
+    void FlushIfNeeded(uint64_t _curtime, bool _delete_icons = false)
+    {
+        const uint32_t flush_delay_sec = 60;
+        
+        uint32_t curtime_sec = uint32_t(_curtime/1000000000ul);
+        if (!_delete_icons && curtime_sec - m_LastFlushTime > flush_delay_sec) return;
+        
+        m_LastFlushTime = curtime_sec;
+        
+        const uint32_t obsolete_time_sec = 60;
+        
+        // Flush or delete unique icons.
+        if (_delete_icons)
+            m_UniqueIcons.clear();
+        else
+        {
+            for (auto &icon : m_UniqueIcons)
+            {
+                if (curtime_sec - icon.access_time > obsolete_time_sec)
+                    icon.image = nil;
+            }
+        }
+        
+        // Flush type icons.
+        for (int i = PredefinedIndexesRange; i < m_TypeIcons->size(); ++i)
+        {
+            auto &icon = (*m_TypeIcons)[i];
+            if (curtime_sec - icon.access_time > obsolete_time_sec)
+                icon.image = nil;
+        }
+    }
+    
+private:
+    enum
+    {
+        DirectoryIconIndex = 1,
+        GenericIconIndex = 2,
+        PredefinedIndexesRange = 2,
+        
+        UniqueIconIndexFlag = 0x8000u
+    };
+    struct TypeIcon
+    {
+        std::string extension;
+        NSImageRep *image;
+        uint32_t access_time;
+        bool loading;
+    };
+    typedef std::vector<TypeIcon> TypeIconsT;
+    struct UniqueIcon
+    {
+        NSImageRep *image;
+        uint32_t access_time;
+        bool loading;
+    };
+    typedef std::vector<UniqueIcon> UniqueIconsT;
+    
+    UniqueIconsT m_UniqueIcons;
+    NSString *m_ParentDir;
+    uint32_t m_LastFlushTime;
+    
+    // Shared between instances. Only grows, does not shrink.
+    static TypeIconsT *m_TypeIcons;
+    static int m_TypeIconsRefCount;
+};
+
+ModernPanelViewPresentation::IconCache::TypeIconsT *ModernPanelViewPresentation::IconCache::m_TypeIcons = nullptr;
+int ModernPanelViewPresentation::IconCache::m_TypeIconsRefCount = 0;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// class ModernPanelViewPresentation
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Item name display insets inside the item line.
 // Order: left, top, right, bottom.
@@ -187,6 +452,8 @@ const int g_DividerWidth = 3;
 ModernPanelViewPresentation::ModernPanelViewPresentation()
 :   m_DrawIcons(true)
 {
+    m_IconCache = new IconCache;
+    
     m_Size.width = m_Size.height = 0;
     
     m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
@@ -251,6 +518,11 @@ ModernPanelViewPresentation::~ModernPanelViewPresentation()
 {
     CGGradientRelease(m_ActiveHeaderGradient);
     CGGradientRelease(m_InactiveHeaderGradient);
+    
+    assert(m_IconCache);
+    delete m_IconCache;
+    
+    m_State->Data->CustomIconClearAll();
 }
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
@@ -343,8 +615,16 @@ void ModernPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView 
 {
 }
 
+void ModernPanelViewPresentation::OnDirectoryChanged()
+{
+    uint64_t curtime = GetTimeInNanoseconds();
+    m_IconCache->OnDirectoryChanged(curtime);
+}
+
 void ModernPanelViewPresentation::DrawView(CGContextRef _context)
 {
+    uint64_t curtime = GetTimeInNanoseconds();
+    
     auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
     auto &entries = m_State->Data->DirectoryEntries();
     
@@ -592,7 +872,8 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
         int count = 0;
         for (; count < items_per_column && i < max_items; ++count, ++i)
         {
-            auto &item = entries[sorted_entries[i]];
+            auto raw_index = sorted_entries[i];
+            auto &item = entries[raw_index];
             NSString *item_name = (__bridge NSString *)item.cf_name;
             
             NSRect rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
@@ -706,13 +987,8 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
             
             if (m_DrawIcons)
             {
-                char buf[1024];
-                m_State->Data->GetDirectoryPathWithTrailingSlash(buf);
-                if(!item.isdotdot())
-                    strcat(buf, item.namec());
-                NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile:[NSString stringWithUTF8String:buf]];
-                
-                NSImageRep *image_rep = [image bestRepresentationForRect:NSMakeRect(0, 0, icon_size, icon_size) context:nil hints:nil];
+
+                NSImageRep *image_rep = m_IconCache->GetIcon(*m_State->Data,  item, raw_index, curtime);
                 [image_rep drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0], start_y + count*m_LineHeight + m_LineHeight - icon_size - 1, icon_size, icon_size) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
             }
         }
@@ -753,4 +1029,6 @@ void ModernPanelViewPresentation::DrawView(CGContextRef _context)
     CGColorRelease(inactive_selected_item_back);
     CGColorRelease(active_cursor_item_back);
     CGColorRelease(column_divider_color);
+    
+    m_IconCache->FlushIfNeeded(curtime);
 }

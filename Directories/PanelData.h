@@ -148,6 +148,7 @@ public:
     void CustomFlagsSelectAll(bool _select);
     
     void CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id);
+    void CustomIconClearAll();
     
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:

@@ -317,14 +317,3 @@ int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilities
     
     return 0;
 }
-
-int FetchFileSystemRootFromPath(const char *_path, char *_root)
-{
-    struct statfs info;
-    if(statfs(_path, &info) == 0)
-    {
-        strcpy(_root, info.f_mntonname);
-        return 0;
-    }
-    return errno;
-}

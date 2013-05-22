@@ -76,6 +76,7 @@
 		CFCA09DC174B171000AEC8C2 /* BigFileViewEncodingSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCA09DA174B170F00AEC8C2 /* BigFileViewEncodingSelection.mm */; };
 		CFCA09DD174B171000AEC8C2 /* BigFileViewEncodingSelection.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCA09DB174B171000AEC8C2 /* BigFileViewEncodingSelection.xib */; };
 		CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFCA09DE174BA93500AEC8C2 /* files.icns */; };
+		CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFDE466E172FE0F400B5EF50 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFDE466D172FE0F400B5EF50 /* icon.icns */; };
 		CFDE46711730F97800B5EF50 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE466F1730F97800B5EF50 /* rdrand.c */; };
@@ -217,6 +218,7 @@
 		CFCA09DA174B170F00AEC8C2 /* BigFileViewEncodingSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewEncodingSelection.mm; sourceTree = "<group>"; };
 		CFCA09DB174B171000AEC8C2 /* BigFileViewEncodingSelection.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BigFileViewEncodingSelection.xib; sourceTree = "<group>"; };
 		CFCA09DE174BA93500AEC8C2 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = files.icns; sourceTree = "<group>"; };
+		CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
 		CFDE466D172FE0F400B5EF50 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
@@ -241,6 +243,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */,
 				CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */,
 				CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */,
 				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
@@ -546,6 +549,7 @@
 				CFC5121716C4BD3D00D247EE /* AppKit.framework */,
 				CFC5121816C4BD3D00D247EE /* CoreData.framework */,
 				CFC5121916C4BD3D00D247EE /* Foundation.framework */,
+				CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";

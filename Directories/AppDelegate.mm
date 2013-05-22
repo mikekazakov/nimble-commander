@@ -14,6 +14,7 @@
 #import "Common.h"
 #import <vector>
 #import "FlexChainedStringsChunk.h"
+#import "FSEventsDirUpdate.h"
 
 
 @implementation AppDelegate
@@ -39,8 +40,10 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
+    // modules initialization
     FontCacheManager::Instance()->CreateFontCache((CFStringRef)@"Menlo Regular");
-    
+    FSEventsDirUpdate::RunDiskArbitration();
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults addObserver:self
                forKeyPath:@"Skin"

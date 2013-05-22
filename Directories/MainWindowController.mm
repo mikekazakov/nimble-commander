@@ -28,19 +28,6 @@
 #import "PreferencesWindowController.h"
 #import "QuickPreview.h"
 #import "BigFileView.h"
-#import <pwd.h>
-#import <sys/types.h>
-#import <sys/dirent.h>
-#import <sys/stat.h>
-#import <dirent.h>
-#import <sys/time.h>
-#import <sys/xattr.h>
-#import <sys/attr.h>
-#import <sys/vnode.h>
-#import <sys/param.h>
-#import <sys/mount.h>
-#import <unistd.h>
-#import <stdlib.h>
 
 #import "ClassicPanelViewPresentation.h"
 #import "ModernPanelViewPresentation.h"
@@ -49,18 +36,6 @@
 #import "TimedDummyOperation.h"
 
 @class QLPreviewPanel;
-
-static bool CheckPath(const char *_path)
-{
-    DIR *dirp = opendir(_path);
-    if(dirp == 0)
-        return false;
-    closedir(dirp);
-    return true;
-}
-
-
-
 
 @interface MainWindowController ()
 
@@ -146,17 +121,18 @@ static bool CheckPath(const char *_path)
     [self LoadPanelsSettings];
     
     // now load data into panels
-    if( CheckPath([[defaults stringForKey:@"FirstPanelPath"] UTF8String]) )
+    if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"FirstPanelPath"] UTF8String]) )
         [m_LeftPanelController GoToDirectorySync:[[defaults stringForKey:@"FirstPanelPath"] UTF8String]];
     else
     {
-        struct passwd *pw = getpwuid(getuid());
-        assert(pw);
-        assert(CheckPath(pw->pw_dir));
-        [m_LeftPanelController GoToDirectorySync:pw->pw_dir];
+        char path[MAXPATHLEN];
+        if(GetUserHomeDirectoryPath(path) && IsDirectoryAvailableForBrowsing(path)) // if saved dir is invalid - try home directory
+            [m_LeftPanelController GoToDirectorySync:path];
+        else // if home directory is invalid to - go to root
+            [m_LeftPanelController GoToDirectorySync:"/"];
     }
     
-    if( CheckPath([[defaults stringForKey:@"SecondPanelPath"] UTF8String]) )
+    if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"SecondPanelPath"] UTF8String]) )
         [m_RightPanelController GoToDirectorySync:[[defaults stringForKey:@"SecondPanelPath"] UTF8String]];
     else
         [m_RightPanelController GoToDirectorySync:"/"];

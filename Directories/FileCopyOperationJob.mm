@@ -21,6 +21,7 @@
 #import <sys/mount.h>
 #import <unistd.h>
 #import <stdlib.h>
+#import "Common.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
 #define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
@@ -60,8 +61,8 @@ static bool CheckSameVolume(const char *_fn1, const char*_fn2, bool &_same, bool
     }
 
     char root1[MAXPATHLEN], root2[MAXPATHLEN];
-    if(FetchFileSystemRootFromPath(_fn1, root1) != 0) return false;
-    if(FetchFileSystemRootFromPath(fn2, root2) != 0) return false;
+    if(GetFileSystemRootFromPath(_fn1, root1) != 0) return false;
+    if(GetFileSystemRootFromPath(fn2, root2) != 0) return false;
 
     _same = strcmp(root1, root2) == 0;
 

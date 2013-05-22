@@ -169,7 +169,3 @@ int FetchVolumeAttributesInformation(const char *_path,
                                      VolumeAttributesInformation *_a);
 // fetches only information available for current volume, choosing it whith _c
 // it fetches available info even it's not native for file system - when drivers layer emulates it
-
-
-int FetchFileSystemRootFromPath(const char *_path, char *_root);
-// return 0 on sucess, or errno value on error

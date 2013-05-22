@@ -7,6 +7,7 @@
 //
 
 #import <CoreFoundation/CoreFoundation.h>
+#import <DiskArbitration/DiskArbitration.h>
 #import <Cocoa/Cocoa.h>
 #import "FSEventsDirUpdate.h"
 #import "AppDelegate.h"
@@ -40,9 +41,8 @@ void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRe
         // this checking should be blazing fast, since we can get A LOT of events here (from all sub-dirs)
         // and we need only events from current-level directory
         // TODO: check this performance
-        
+    
         const char *path = ((const char**)eventPaths)[i];
-        
         if(w->path == path)
             [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:path ticket:w->ticket];
     }
@@ -68,6 +68,9 @@ unsigned long  FSEventsDirUpdate::AddWatchPath(const char *_path)
     w->path = dirpath;
     w->ticket = m_LastTicket++;
     w->refcount = 1;
+    char volume[MAXPATHLEN] = {0};
+    GetFileSystemRootFromPath(dirpath, volume);
+    w->volume_path = volume;
     
     FSEventStreamContext context = {0, w, NULL, NULL, NULL};
     CFStringRef path = CFStringCreateWithBytes(0, (const UInt8*)_path, strlen(_path), kCFStringEncodingUTF8, false);
@@ -145,4 +148,21 @@ bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
         }
     
     return false;
+}
+
+void FSEventsDirUpdate::DiskDisappeared(DADiskRef disk, void *context)
+{
+    // when some volume is removed from system we force every panel to reload it's data
+    // TODO: this is a brute approach, need to build a more intelligent volume monitoring machinery later
+    // it should monitor paths of removed volumes and fires notification only for appropriate watches
+    FSEventsDirUpdate *me = Inst();
+    for(auto i: me->m_Watches)
+        [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:i->path.c_str() ticket:i->ticket];
+}
+
+void FSEventsDirUpdate::RunDiskArbitration()
+{
+    DASessionRef session = DASessionCreate(kCFAllocatorDefault);
+    DARegisterDiskDisappearedCallback(session, NULL, FSEventsDirUpdate::DiskDisappeared, NULL);
+    DASessionScheduleWithRunLoop(session, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 }

@@ -1,5 +1,15 @@
-#import "Common.h"
 #import <mach/mach_time.h>
+#import <sys/types.h>
+#import <sys/dirent.h>
+#import <sys/stat.h>
+#import <sys/attr.h>
+#import <sys/vnode.h>
+#import <sys/param.h>
+#import <sys/mount.h>
+#import <unistd.h>
+#import <dirent.h>
+#import <pwd.h>
+#import "Common.h"
 
 uint64_t (*GetTimeInNanoseconds)() = nullptr;
 
@@ -179,4 +189,49 @@ void SyncMessageBoxNS(NSString *_ns_string)
         dispatch_sync(dispatch_get_main_queue(), ^{ [alert runModal]; } );
 }
 
+bool GetFirstAvailableDirectoryFromPath(char *_path)
+{
+    assert(_path);
+    assert(_path[0] == '/');
+    while( !IsDirectoryAvailableForBrowsing(_path) )
+    {
+        char *s = strrchr(_path, '/');
+        if(s == 0)
+            return false; // a very strange case
+        
+        if(s == _path && _path[1] != 0)
+            _path[1] = 0;
+        else
+            *s = 0;
+    }
+    return true;
+}
 
+bool IsDirectoryAvailableForBrowsing(const char *_path)
+{
+    DIR *dirp = opendir(_path);
+    if(dirp == 0)
+        return false;
+    closedir(dirp);
+    return true;
+}
+
+bool GetUserHomeDirectoryPath(char *_path)
+{
+    struct passwd *pw = getpwuid(getuid());
+    if(!pw)
+        return false;
+    strcpy(_path, pw->pw_dir);
+    return true;
+}
+
+int GetFileSystemRootFromPath(const char *_path, char *_root)
+{
+    struct statfs info;
+    if(statfs(_path, &info) == 0)
+    {
+        strcpy(_root, info.f_mntonname);
+        return 0;
+    }
+    return errno;
+}

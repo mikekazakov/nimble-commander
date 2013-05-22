@@ -7,6 +7,7 @@
 //
 
 #pragma once
+#import <DiskArbitration/DiskArbitration.h>
 #include <string>
 #include <vector>
 #include <sys/dirent.h>
@@ -22,10 +23,14 @@ public:
     bool RemoveWatchPath(const char *_path); // will call GetRealPath implicitly - it's not too fast.
     bool RemoveWatchPathWithTicket(unsigned long _ticket); // it's better to use this method
     
+    
+    static void RunDiskArbitration(); // should be called by NSApp once upon starting
+    
 private:
     struct WatchData
     {
-        std::string path; // should include trailing slash
+        std::string path;        // should include trailing slash
+        std::string volume_path; // root path of volume from this path. without trailing slash (except root)
         FSEventStreamRef stream;
         unsigned long ticket;
         int refcount;
@@ -34,6 +39,7 @@ private:
     unsigned long           m_LastTicket;
         
     FSEventsDirUpdate();
+    static void DiskDisappeared(DADiskRef disk, void *context);
     static void FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRef,
                                           void *userData,
                                           size_t numEvents,

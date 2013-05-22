@@ -265,10 +265,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         });
     };
     
-    auto onfail = ^(const char* _path, int _error) {
+    auto onfail = ^(NSString* _path, NSError *_error) {
         NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText: [NSString stringWithFormat:@"Failed to go into directory %@", [NSString stringWithUTF8String:_path]]];
-        [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
+        [alert setMessageText: [NSString stringWithFormat:@"Failed to go into directory %@", _path]];
+        [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
         dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
     };
     
@@ -310,10 +310,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_Data->ComposeFullPathForEntry(raw_pos, path);
         char *blockpath = strdup(path);
         
-        auto onfail = ^(const char* _path, int _error) {
+        auto onfail = ^(NSString* _path, NSError *_error) {
             NSAlert *alert = [[NSAlert alloc] init];
-            [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", [NSString stringWithUTF8String:_path]]];
-            [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
+            [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", _path]];
+            [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
             dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
         };
         
@@ -390,11 +390,14 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     int oldcursorpos = [m_View GetCursorPosition];
     NSString *oldcursorname = (oldcursorpos >= 0 ? [NSString stringWithUTF8String:[m_View CurrentItem]->namec()] : @"");
     
-    auto onfail = ^(const char* _path, int _error) {
+    auto onfail = ^(NSString* _path, NSError *_error) {
         NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText: [NSString stringWithFormat:@"Failed to update directory directory %@", [NSString stringWithUTF8String:_path]]];
-        [alert setInformativeText:[NSString stringWithFormat:@"Error: %s", strerror(_error)]];
-        dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
+        [alert setMessageText: [NSString stringWithFormat:@"Failed to update directory %@", _path]];
+        [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alert runModal]; // do we actually need this message box?
+            [self RecoverFromInvalidDirectory];
+        });
     };
     
     auto onsucc = ^(PanelData::DirectoryChangeContext* _context){
@@ -678,6 +681,14 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 - (PanelSortMode) GetUserSortMode
 {
     return m_Data->GetCustomSortMode();
+}
+
+- (void) RecoverFromInvalidDirectory
+{
+    char path[MAXPATHLEN];
+    m_Data->GetDirectoryPath(path);
+    if(GetFirstAvailableDirectoryFromPath(path))
+        [self GoToDirectory:path];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

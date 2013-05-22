@@ -46,8 +46,13 @@ struct MenuTags
     };
 };
 
+// fs directory handling stuff
 bool GetRealPath(const char *_path_in, char *_path_out);
 bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size);
+bool GetFirstAvailableDirectoryFromPath(char *_path);
+bool GetUserHomeDirectoryPath(char *_path);
+bool IsDirectoryAvailableForBrowsing(const char *_path);
+int  GetFileSystemRootFromPath(const char *_path, char *_root); // return 0 on sucess, or errno value on error
 
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);

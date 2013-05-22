@@ -274,7 +274,7 @@ static NSString* Bool2ToString(const bool b[2])
 
 - (void)ShowSheet: (NSWindow *)_window destpath: (const char*)_path
 {
-    if(FetchFileSystemRootFromPath(_path, m_Root) != 0)
+    if(GetFileSystemRootFromPath(_path, m_Root) != 0)
         return;
     if(FetchVolumeCapabilitiesInformation(m_Root, &m_Capabilities) != 0)
         return;

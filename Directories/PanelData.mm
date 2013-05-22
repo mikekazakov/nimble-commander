@@ -710,7 +710,7 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long 
 
 void PanelData::LoadFSDirectoryAsync(const char *_path,
                                      void (^_on_completion) (DirectoryChangeContext*),
-                                     void (^_on_fail) (const char*, int),
+                                     void (^_on_fail) (NSString* _path, NSError *_error),
                                      FetchDirectoryListing_CancelChecker _checker
                                      )
 
@@ -738,7 +738,9 @@ void PanelData::LoadFSDirectoryAsync(const char *_path,
             for(auto &i:*entries)
                 i.destroy();
             delete entries;
-            _on_fail(_path, ret);
+            _on_fail([NSString stringWithUTF8String:_path],
+                     [NSError errorWithDomain:NSPOSIXErrorDomain code:ret userInfo:nil]
+                     );
         }
     }
     else

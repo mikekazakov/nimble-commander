@@ -92,7 +92,7 @@ public:
     // controller's properties are watched from background thread
     static void LoadFSDirectoryAsync(const char *_path, // _path is allocated with malloc, should be freed upon receiving
                                      void (^_on_completion) (DirectoryChangeContext*),
-                                     void (^_on_fail) (const char*, int),
+                                     void (^_on_fail) (NSString* _path, NSError *_error),
                                      FetchDirectoryListing_CancelChecker _checker // can not be nil, put {return false;} as dummy
                                      );
     

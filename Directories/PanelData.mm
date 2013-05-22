@@ -217,8 +217,19 @@ int PanelData::FindEntryIndex(const char *_filename) const
     assert(m_EntriesByRawName->size() == m_Entries->size()); // consistency check
     assert(_filename != 0);
     
+    if(strcmp(_filename, "..") == 0)
+    {
+        // special case - need to process it separately since dot-dot entry don't obey sort direction
+        if(!m_Entries->empty() && (*m_Entries)[0].isdotdot())
+            return 0;
+        return -1;
+    }
+    
     // performing binary search on m_EntriesByRawName
     int imin = 0, imax = (int)m_EntriesByRawName->size()-1;
+    if(imin <= imax && (*m_Entries)[(*m_EntriesByRawName)[imin]].isdotdot() )
+        imin++; // exclude dot-dot entry from searching since it causes a nasty side-effect
+
     while(imax >= imin)
     {
         int imid = (imin + imax) / 2;

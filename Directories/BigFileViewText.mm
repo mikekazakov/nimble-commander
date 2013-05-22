@@ -67,7 +67,55 @@ static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, do
             break;
         }
     }
+    
+    if(_start + spaces_len == len)
+        return spaces_len;
+    
     return 0;
+}
+
+static unsigned ShouldCutTrailingSpaces(CFStringRef _string,
+                                        CTTypesetterRef _setter,
+                                        unsigned _start,
+                                        unsigned _count,
+                                        double _font_width,
+                                        double _line_width)
+{
+    // 1st - count trailing spaces
+    unsigned spaces_count = 0;
+    const auto *chars = CFStringGetCharactersPtr(_string);
+    assert(chars);
+    const auto len = CFStringGetLength(_string);    
+    
+    for(unsigned i = _start + _count - 1; i >= _start; --i)
+    {
+        if(chars[i] == ' ')
+            spaces_count++;
+        else
+            break;
+    }
+    
+    if(!spaces_count)
+        return 0;
+    
+    // 2nd - calc width of string without spaces
+    assert(spaces_count <= _count); // logic assert
+    if(spaces_count == _count)
+        return 0;
+    
+    CTLineRef line = CTTypesetterCreateLine(_setter, CFRangeMake(_start, _count - spaces_count));
+    double line_width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+    CFRelease(line);
+    assert(line_width < _line_width);
+    
+    // 3rd - calc residual space and amount of space characters to fill it
+    double d = _line_width-line_width;
+    unsigned n = unsigned(ceil(d / _font_width));
+/*    assert(n <= spaces_count);
+    unsigned extras = spaces_count - n;*/
+    unsigned extras = spaces_count > n ? spaces_count - n : 0;
+    
+    return extras;
 }
 
 static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
@@ -185,12 +233,20 @@ struct TextLine
     CleanUnicodeControlSymbols(ss, m_WindowSize);
     m.Reset("cleanin unicode stuff ");
     
-    m_StringBuffer = CFStringCreateWithBytesNoCopy(0,
-                                                   (UInt8*)/*m_Window*/ss,
+/*    m_StringBuffer = CFStringCreateWithBytesNoCopy(0,
+                                                   (UInt8*)ss, //m_Window
                                                    m_WindowSize*sizeof(UniChar),
                                                    kCFStringEncodingUnicode,
                                                    false,
-                                                   kCFAllocatorNull);
+                                                   kCFAllocatorNull);*/
+    
+    m_StringBuffer =  CFStringCreateWithCharactersNoCopy (
+                                                    0,
+                                                    ss,
+                                                    m_WindowSize,
+                                                    kCFAllocatorNull
+                                                    );
+    
     m_StringBufferSize = CFStringGetLength(m_StringBuffer);
 
     [self BuildLayout];
@@ -233,6 +289,18 @@ struct TextLine
                 break;
         }
 
+        
+        if(!spaces)
+        {
+            unsigned tail_spaces_cut =  ShouldCutTrailingSpaces(m_StringBuffer,
+                                                                typesetter,
+                                                                (unsigned)start,
+                                                                (unsigned)count,
+                                                                m_FontWidth,
+                                                                wrapping_width);
+            count -= tail_spaces_cut;
+        }
+        
         // Use the returned character count (to the break) to create the line.
         CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(start, count));
         

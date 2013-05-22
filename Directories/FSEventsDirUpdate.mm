@@ -40,11 +40,25 @@ void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRe
     {
         // this checking should be blazing fast, since we can get A LOT of events here (from all sub-dirs)
         // and we need only events from current-level directory
-        // TODO: check this performance
-    
         const char *path = ((const char**)eventPaths)[i];
+        
         if(w->path == path)
+        {
             [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:path ticket:w->ticket];
+        }
+        else
+        {
+            const FSEventStreamEventFlags flags = eventFlags[i];
+            // check if watched directory was removed - need to fire on this case too
+            if((flags == (kFSEventStreamEventFlagItemRenamed | kFSEventStreamEventFlagItemIsDir)) ||
+               (flags == (kFSEventStreamEventFlagItemRemoved | kFSEventStreamEventFlagItemIsDir)) )
+            {
+                size_t path_len = strlen(path);
+
+                if(path_len < w->path.length() && strncmp(w->path.c_str(), path, path_len) == 0)
+                    [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:w->path.c_str() ticket:w->ticket];
+            }
+        }
     }
 }
 

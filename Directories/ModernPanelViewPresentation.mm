@@ -193,7 +193,8 @@ public:
         m_Presentation(_presentation),
         m_IconsSize(0),
         m_LoadIconsRunning(false),
-        m_LoadIconShouldStop(nullptr)
+        m_LoadIconShouldStop(nullptr),
+        m_NeedsLoading(false)
     {
         pthread_mutex_init(&m_Lock, NULL);
         m_LoadIconsGroup = dispatch_group_create();
@@ -235,6 +236,17 @@ public:
         }
     }
     
+    void SetIconMode(int _mode)
+    {
+        assert(_mode >= 0 && _mode < IconModesCount);
+        m_IconMode = (IconMode)_mode;
+    }
+    
+    inline bool IsNeedsLoading()
+    {
+        return m_NeedsLoading;
+    }
+    
     inline NSImageRep *CreateIcon(const DirectoryEntryInformation &_item, int _item_index, PanelData *_data)
     {
         // If item has no associated icon, then create entry for the icon and schedule the loading
@@ -243,10 +255,11 @@ public:
         unsigned short index = (unsigned short)(m_UniqueIcons.size() + 1);
         _data->CustomIconSet(_item_index, index);
         
+        bool only_generic_icons = m_IconMode == IconMode::IconModeGeneric;
         UniqueIcon icon;
         if (_item.isdir())
             icon.image = m_GenericFolderIcon;
-        else if (!_item.hasextension())
+        else if (only_generic_icons || !_item.hasextension())
             icon.image = m_GenericFileIcon;
         else
         {
@@ -255,10 +268,21 @@ public:
             icon.image = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil hints:nil];
         }
         
-        icon.item_path = [(__bridge NSString *)_item.cf_name copy];
-        icon.try_create_thumbnail = (_item.size < 256*1024*1024); // size less than 256 MB.
+        if (only_generic_icons)
+        {
+            icon.item_path = nil;
+            icon.try_create_thumbnail = false;
+        }
+        else
+        {
+            icon.item_path = [(__bridge NSString *)_item.cf_name copy];
+            icon.try_create_thumbnail = (_item.size < 256*1024*1024); // size less than 256 MB.
+            m_NeedsLoading = true;
+        }
+        
         m_UniqueIcons.push_back(icon);
         ++m_IconsSize;
+        
         return icon.image;
     }
     
@@ -268,11 +292,15 @@ public:
         unsigned short index = _item.cicon - 1;
         assert(index < m_UniqueIcons.size());
         return m_UniqueIcons[index].image;
-        
     }
     
     void RunLoadThread(PanelData *_data)
     {
+        m_NeedsLoading = false;
+        
+        // Nothing to load if only generic icons are used.
+        if (m_IconMode == IconModeGeneric) return;
+        
         pthread_mutex_lock(&m_Lock);
 
         if (m_LoadIconsRunning)
@@ -297,6 +325,7 @@ public:
         }
         
         NSString *parent_dir = m_ParentDir;
+        bool load_thumbnails = (m_IconMode == IconModeFileIconsThumbnails);
         
         __block volatile bool *should_stop = new bool(false);
         m_LoadIconShouldStop = should_stop;
@@ -354,7 +383,7 @@ public:
                 item_path = [parent_dir stringByAppendingString:item_path];
                 
                 CGImageRef thumbnail = NULL;
-                if (try_create_thumbnail)
+                if (load_thumbnails && try_create_thumbnail)
                 {
                     CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:item_path];
                     
@@ -423,6 +452,14 @@ private:
         m_UniqueIcons.clear();
     }
     
+    enum IconMode
+    {
+        IconModeGeneric = 0,
+        IconModeFileIcons,
+        IconModeFileIconsThumbnails,
+        
+        IconModesCount
+    };
     struct UniqueIcon
     {
         NSImageRep *image;
@@ -433,13 +470,15 @@ private:
     
     UniqueIconsT m_UniqueIcons;
     volatile int m_IconsSize;
-    NSString *m_ParentDir;
+    IconMode m_IconMode;
     
+    NSString *m_ParentDir;
     ModernPanelViewPresentation *m_Presentation;
     
     dispatch_group_t m_LoadIconsGroup;
     volatile bool m_LoadIconsRunning;
     volatile bool *m_LoadIconShouldStop;
+    bool m_NeedsLoading;
     pthread_mutex_t m_Lock;
                                 
     static NSImageRep *m_GenericFileIcon;
@@ -465,6 +504,9 @@ ModernPanelViewPresentation::ModernPanelViewPresentation()
 :   m_FirstDraw(false)
 {
     m_IconCache = new IconCache(this);
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    int icon_mode = (int)[defaults integerForKey:@"ModernSkinIconMode"];
+    m_IconCache->SetIconMode(icon_mode);
     
     m_Size.width = m_Size.height = 0;
     
@@ -472,7 +514,6 @@ ModernPanelViewPresentation::ModernPanelViewPresentation()
     
     // Height of a single file line. Constant for now, needs to be calculated from the font.
     m_LineHeight = 18;
-    
     
     // Init active header and footer gradient.
     {
@@ -566,7 +607,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         }
     }
     
-    if (created_icons)
+    if (created_icons && m_IconCache->IsNeedsLoading())
     {
         m_IconCache->RunLoadThread(m_State->Data);
 
@@ -1081,6 +1122,17 @@ int ModernPanelViewPresentation::GetNumberOfItemColumns()
 int ModernPanelViewPresentation::GetMaxItemsPerColumn()
 {
     return m_ItemsPerColumn;
+}
+
+void ModernPanelViewPresentation::OnSkinSettingsChanged()
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    int icon_mode = (int)[defaults integerForKey:@"ModernSkinIconMode"];
+    m_IconCache->SetIconMode(icon_mode);
+    
+    m_State->Data->CustomIconClearAll();
+    
+    SetViewNeedsDisplay();
 }
 
 void ModernPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size)

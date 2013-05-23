@@ -78,6 +78,7 @@ enum ActiveState
 - (void)PanelPathChanged:(PanelController*)_panel;
 
 - (void)ApplySkin:(ApplicationSkin)_skin;
+- (void)OnSkinSettingsChanged;
 
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 

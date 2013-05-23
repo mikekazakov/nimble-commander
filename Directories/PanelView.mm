@@ -141,6 +141,11 @@ struct CursorSelectionState
     }
 }
 
+- (void) OnSkinSettingsChanged
+{
+    if (m_Presentation) m_Presentation->OnSkinSettingsChanged();
+}
+
 - (void)UpdateQuickPreview
 {
     if ([QuickPreview IsVisible])

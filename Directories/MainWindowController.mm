@@ -282,6 +282,12 @@
     [self UpdatePanelFrames];
 }
 
+- (void)OnSkinSettingsChanged
+{
+    [m_LeftPanelView OnSkinSettingsChanged];
+    [m_RightPanelView OnSkinSettingsChanged];
+}
+
 - (BOOL)windowShouldClose:(id)sender
 {
     if (m_OperationsController.OperationsCount == 0) return TRUE;

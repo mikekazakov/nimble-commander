@@ -26,6 +26,7 @@ class PanelViewPresentation;
 
 // _presentation must be created using new. PanelView gains ownership of the _presentation.
 - (void) SetPresentation:(PanelViewPresentation *)_presentation;
+- (void) OnSkinSettingsChanged;
 
 // user input handling          normal keys
 - (void) HandlePrevFile;     // up

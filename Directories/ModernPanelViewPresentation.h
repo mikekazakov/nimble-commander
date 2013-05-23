@@ -25,6 +25,8 @@ public:
     int GetNumberOfItemColumns() override;
     int GetMaxItemsPerColumn() override;
     
+    void OnSkinSettingsChanged() override;
+    
     static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
     
 private:

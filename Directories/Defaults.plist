@@ -32,6 +32,8 @@
 		<key>ViewMode</key>
 		<integer>1</integer>
 	</dict>
+	<key>ModernSkinIconMode</key>
+	<integer>1</integer>
 	<key>Skin</key>
 	<integer>1</integer>
 </dict>

@@ -118,6 +118,7 @@
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController AttachToIndicator:self.RightPanelSpinningIndicator];
     [m_RightPanelController SetWindowController:self];
+    [self ApplySkin: ((AppDelegate*)[NSApp delegate]).Skin];
     [self LoadPanelsSettings];
     
     // now load data into panels

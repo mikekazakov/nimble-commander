@@ -11,7 +11,8 @@
 #import "PanelData.h"
 
 PanelViewPresentation::PanelViewPresentation()
-:   m_State(0)
+:   m_State(0),
+    m_View(nil)
 {
 }
 
@@ -20,6 +21,10 @@ void PanelViewPresentation::SetState(PanelViewState *_state)
     m_State = _state;
 }
 
+void PanelViewPresentation::SetView(PanelView *_view)
+{
+    m_View = _view;
+}
 
 void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type, int _cursor)
 {
@@ -226,4 +231,9 @@ void PanelViewPresentation::EnsureCursorIsVisible()
 int PanelViewPresentation::GetMaxVisibleItems()
 {
     return GetNumberOfItemColumns() * GetMaxItemsPerColumn();
+}
+
+void PanelViewPresentation::SetViewNeedsDisplay()
+{
+    [m_View setNeedsDisplay:YES];
 }

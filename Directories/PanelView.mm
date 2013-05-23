@@ -135,6 +135,7 @@ struct CursorSelectionState
     if (m_Presentation)
     {
         m_Presentation->SetState(&m_State);
+        m_Presentation->SetView(self);
         [self frameDidChange];
         [self setNeedsDisplay:true];
     }

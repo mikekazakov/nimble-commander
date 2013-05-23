@@ -15,14 +15,14 @@ class ClassicPanelViewPresentation : public PanelViewPresentation
 public:
     ClassicPanelViewPresentation();
     
-    virtual void Draw(NSRect _dirty_rect);
-    virtual void OnFrameChanged(NSRect _frame);
+    void Draw(NSRect _dirty_rect) override;
+    void OnFrameChanged(NSRect _frame) override;
     
-    virtual NSRect GetItemColumnsRect();
-    virtual int GetItemIndexByPointInView(CGPoint _point);
+    NSRect GetItemColumnsRect() override;
+    int GetItemIndexByPointInView(CGPoint _point) override;
     
-    virtual int GetNumberOfItemColumns();
-    virtual int GetMaxItemsPerColumn();
+    int GetNumberOfItemColumns() override;
+    int GetMaxItemsPerColumn() override;
     
     static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
     

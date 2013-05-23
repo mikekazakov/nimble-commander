@@ -14,35 +14,33 @@ class ModernPanelViewPresentation : public PanelViewPresentation
 {
 public:
     ModernPanelViewPresentation();
-    virtual ~ModernPanelViewPresentation();
+    ~ModernPanelViewPresentation() override;
     
-    virtual void Draw(NSRect _dirty_rect);
-    virtual void OnFrameChanged(NSRect _frame);
+    void Draw(NSRect _dirty_rect) override;
+    void OnFrameChanged(NSRect _frame) override;
     
-    virtual NSRect GetItemColumnsRect();
-    virtual int GetItemIndexByPointInView(CGPoint _point);
+    NSRect GetItemColumnsRect() override;
+    int GetItemIndexByPointInView(CGPoint _point) override;
     
-    virtual int GetNumberOfItemColumns();
-    virtual int GetMaxItemsPerColumn();
+    int GetNumberOfItemColumns() override;
+    int GetMaxItemsPerColumn() override;
     
     static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
     
 private:
     class IconCache;
     
-    virtual void OnDirectoryChanged();
-    void DrawView(CGContextRef _context);
+    void OnDirectoryChanged() override;
     
     NSFont *m_Font;
     int m_LineHeight;
     
     bool m_IsLeft;
-    // TODO: remove
-    bool m_DrawIcons;
     
     NSSize m_Size;
     NSRect m_ItemsArea;
     int m_ItemsPerColumn;
+    bool m_FirstDraw;
     
     CGGradientRef m_ActiveHeaderGradient;
     NSShadow *m_ActiveHeaderTextShadow;

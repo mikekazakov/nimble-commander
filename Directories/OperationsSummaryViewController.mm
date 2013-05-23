@@ -50,7 +50,9 @@
     
     _ScrollView.layer.cornerRadius = 3;
     _ScrollView.layer.borderWidth = 1;
-    _ScrollView.layer.borderColor = CGColorCreateGenericRGB(0.5, 0.5, 0.5, 1);
+    CGColorRef c = CGColorCreateGenericRGB(0.5, 0.5, 0.5, 1);
+    _ScrollView.layer.borderColor = c;
+    CGColorRelease(c);
     
     [_ScrollView setHidden:YES];
 }

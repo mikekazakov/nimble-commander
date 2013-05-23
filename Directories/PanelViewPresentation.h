@@ -8,6 +8,8 @@
 
 #import "PanelViewTypes.h"
 
+@class PanelView;
+
 class PanelViewPresentation
 {
 public:    
@@ -15,6 +17,7 @@ public:
     virtual ~PanelViewPresentation() {}
     
     void SetState(PanelViewState *_state);
+    void SetView(PanelView *_view);
     
     void DirectoryChanged(PanelViewDirectoryChangeType _type, int _cursor);
     
@@ -45,8 +48,12 @@ public:
     int GetMaxVisibleItems();
     
 protected:
+    void SetViewNeedsDisplay();
+    
     PanelViewState *m_State;
     
 private:
     virtual void OnDirectoryChanged() {}
+    
+    __unsafe_unretained PanelView *m_View;
 };

@@ -435,21 +435,6 @@
         case NSTabCharacter: // TAB key
             [self HandleTabButton];
             break;
-        // TODO: remove
-        case ' ':
-            {
-                static bool modern = true;
-                modern = !modern;
-                if (modern)
-                {
-                    [self ApplySkin:ApplicationSkin::Modern];
-                }
-                else
-                {
-                    [self ApplySkin:ApplicationSkin::Classic];
-                }
-            }
-            break;
         case NSF3FunctionKey:
             if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask|NSFunctionKeyMask) )
                 [self OnFileBigFileViewCommand:nil];

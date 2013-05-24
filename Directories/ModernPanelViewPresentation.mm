@@ -312,10 +312,10 @@ public:
         // Start loading thread.
         
         // Find the first not loaded icon.
-        __block int count = 0;
-        UniqueIconsT::iterator start = m_UniqueIcons.begin();
-        for (auto end = m_UniqueIcons.end(); start != end; ++start, ++count)
-            if (start->item_path) break;
+        int start = 0;
+        for (auto i = m_UniqueIcons.begin(), end = m_UniqueIcons.end(); i != end; ++start, ++i)
+            if (i->item_path) break;
+        assert(m_UniqueIcons[start].item_path);
         
         if (!m_ParentDir)
         {
@@ -335,7 +335,7 @@ public:
         dispatch_block_t block =
         ^{
             uint64_t last_draw_time = GetTimeInNanoseconds();
-            UniqueIconsT::iterator i = start;
+            int i = start;
             
             UniqueIcon *icon = nullptr;
             NSString *item_path;
@@ -361,8 +361,8 @@ public:
                 }
                 
                 // Check if icons are exhausted.
-                assert(count <= m_IconsSize);
-                if (count == m_IconsSize)
+                assert(i <= m_IconsSize);
+                if (i == m_IconsSize)
                 {
                     dispatch_async(dispatch_get_main_queue(),
                                    ^{ m_Presentation->SetViewNeedsDisplay(); });
@@ -371,8 +371,7 @@ public:
                     break;
                 }
                 
-                ++count;
-                icon = &*i++;
+                icon = &m_UniqueIcons[i++];
                 assert(icon->item_path);
                 item_path = icon->item_path;
                 try_create_thumbnail = icon->try_create_thumbnail;

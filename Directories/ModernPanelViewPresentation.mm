@@ -275,7 +275,7 @@ public:
         }
         else
         {
-            icon.item_path = [(__bridge NSString *)_item.cf_name copy];
+            icon.item_path = (_item.isdotdot() ? @"." : [(__bridge NSString *)_item.cf_name copy]);
             icon.try_create_thumbnail = (_item.size < 256*1024*1024); // size less than 256 MB.
             m_NeedsLoading = true;
         }

@@ -207,7 +207,7 @@
 - (void) SetEncoding
 {
     BigFileViewEncodingSelection *wnd = [BigFileViewEncodingSelection new];
-    
+    [wnd SetCurrentEncoding:m_Encoding];
     int ret = (int)[NSApp runModalForWindow: [wnd window]];
     [NSApp endSheet: [wnd window]];
     [[wnd window] orderOut: self];

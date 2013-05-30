@@ -5,13 +5,14 @@
 
 // unsigned short is just UniChar. not to let rubbish inter headers
 
-#define ENCODING_INVALID    0x00000000
-#define ENCODING_OEM866     0x00000001
-#define ENCODING_WIN1251    0x00000002
-#define ENCODING_UTF8       0x00010000
+#define ENCODING_INVALID                0x00000000
+#define ENCODING_OEM866                 0x00000001
+#define ENCODING_WIN1251                0x00000002
+#define ENCODING_MACOS_ROMAN_WESTERN    0x00000003
+#define ENCODING_UTF8                   0x00010000
 
 #define ENCODING_SINGLE_BYTES_FIRST__ ENCODING_OEM866
-#define ENCODING_SINGLE_BYTES_LAST__ ENCODING_WIN1251
+#define ENCODING_SINGLE_BYTES_LAST__ ENCODING_MACOS_ROMAN_WESTERN
 
 
 unsigned short SingleByteIntoUniCharUsingCodepage(

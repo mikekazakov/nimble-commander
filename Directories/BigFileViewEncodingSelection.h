@@ -10,5 +10,5 @@
 
 @interface BigFileViewEncodingSelection : NSWindowController
 @property (strong) IBOutlet NSArrayController *Encodings;
-
+- (void) SetCurrentEncoding:(int)_encoding;
 @end

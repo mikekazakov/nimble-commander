@@ -11,6 +11,8 @@
 #import "BigFileView.h"
 #import "Common.h"
 
+static const size_t g_FixupWindowSize = 128*1024;
+
 static CGFloat GetLineHeightForFont(CTFontRef iFont)
 {
     CGFloat lineHeight = 0.0;
@@ -180,6 +182,8 @@ struct TextLine
     const uint32_t *m_Indeces;
     size_t          m_WindowSize;
 
+    UniChar        *m_FixupWindow;
+    
     // data stuff
     CFStringRef     m_StringBuffer;
     size_t          m_StringBufferSize; // should be equal to m_DecodedBufferSize
@@ -209,6 +213,8 @@ struct TextLine
     NSRect fr = [_view frame];
     m_FrameLines = fr.size.height / m_FontHeight;
     
+    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * g_FixupWindowSize);
+    
     [self OnBufferDecoded:m_WindowSize];
     
     [m_View setNeedsDisplay:true];
@@ -218,35 +224,23 @@ struct TextLine
 - (void) dealloc
 {
     [self ClearLayout];
+    if(m_StringBuffer)
+        CFRelease(m_StringBuffer);    
+    free(m_FixupWindow);
 }
 
 - (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
 {
+    assert(_new_size <= g_FixupWindowSize);
     m_WindowSize = _new_size;
     
     if(m_StringBuffer)
         CFRelease(m_StringBuffer);
     
-    MachTimeBenchmark m;
-    UniChar *ss = (UniChar*) malloc(sizeof(UniChar) * m_WindowSize); // will leak; FIXME
-    memcpy(ss, m_Window, sizeof(UniChar) * m_WindowSize);
-    CleanUnicodeControlSymbols(ss, m_WindowSize);
-    m.Reset("cleanin unicode stuff ");
-    
-/*    m_StringBuffer = CFStringCreateWithBytesNoCopy(0,
-                                                   (UInt8*)ss, //m_Window
-                                                   m_WindowSize*sizeof(UniChar),
-                                                   kCFStringEncodingUnicode,
-                                                   false,
-                                                   kCFAllocatorNull);*/
-    
-    m_StringBuffer =  CFStringCreateWithCharactersNoCopy (
-                                                    0,
-                                                    ss,
-                                                    m_WindowSize,
-                                                    kCFAllocatorNull
-                                                    );
-    
+    memcpy(m_FixupWindow, m_Window, sizeof(UniChar) * m_WindowSize);
+    CleanUnicodeControlSymbols(m_FixupWindow, m_WindowSize);
+
+    m_StringBuffer = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow, m_WindowSize, kCFAllocatorNull);
     m_StringBufferSize = CFStringGetLength(m_StringBuffer);
 
     [self BuildLayout];
@@ -287,11 +281,7 @@ struct TextLine
             count = CTTypesetterSuggestLineBreak(typesetter, start, wrapping_width);
             if(count <= 0)
                 break;
-        }
-
-        
-        if(!spaces)
-        {
+            
             unsigned tail_spaces_cut =  ShouldCutTrailingSpaces(m_StringBuffer,
                                                                 typesetter,
                                                                 (unsigned)start,

@@ -10,6 +10,8 @@
 #import "BigFileViewText.h"
 #import "BigFileViewHex.h"
 #import "BigFileViewEncodingSelection.h"
+#import "DataBlockAnalysis.h"
+#import "Common.h"
 
 @implementation BigFileView
 {
@@ -102,7 +104,10 @@
 }
 
 - (void) SetFile:(FileWindow*) _file
-{    
+{
+    StaticDataBlockAnalysis stat;
+    DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
+    
     m_File = _file;
     if(m_DecodeBuffer != 0)
         free(m_DecodeBuffer);
@@ -112,11 +117,14 @@
     m_DecodeBuffer = (UniChar*) malloc(sizeof(UniChar) * m_File->WindowSize());
     m_DecodeBufferIndx = (uint32_t*) malloc(sizeof(uint32_t) * m_File->WindowSize());
     
+    if(stat.can_be_utf8) m_Encoding = ENCODING_UTF8;
+    else                 m_Encoding = ENCODING_MACOS_ROMAN_WESTERN;
     
-    [self DecodeRawFileBuffer];
+    [self DecodeRawFileBuffer];    
     
-//    m_ViewImpl = [BigFileViewText alloc];
-    m_ViewImpl = [BigFileViewHex alloc];
+    if(stat.is_binary)  m_ViewImpl = [BigFileViewHex alloc];
+    else                m_ViewImpl = [BigFileViewText alloc];
+    
     [m_ViewImpl InitWithWindow:m_DecodeBuffer
                        offsets:m_DecodeBufferIndx
                           size:m_DecodedBufferSize

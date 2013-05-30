@@ -127,6 +127,8 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 {
     [self ClearLayout];
     
+    m_WindowSize = _new_size;
+    
     // split our string into a chunks of 16 bytes somehow
     const uint64_t raw_window_pos = [m_View RawWindowPosition];
     const uint64_t raw_window_size = [m_View RawWindowSize];
@@ -150,7 +152,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
         
         for(uint32_t i = charind + 1; i < m_WindowSize; ++i)
         {
-            if(m_Indeces[i] - current.string_byte_start /*+ current.string_byte_start % g_BytesPerHexLine*/ >= bytes_for_current_string)
+            if(m_Indeces[i] - current.string_byte_start >= bytes_for_current_string)
                 break;
             
             current.chars_num++;
@@ -190,6 +192,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
         else
         {
             UniChar tmp[256];
+            assert(current.chars_num < 256);
             memcpy(tmp, m_Window + current.char_start, current.chars_num*sizeof(UniChar));
             for(uint32_t i = 0; i < current.chars_num; ++i)
             {

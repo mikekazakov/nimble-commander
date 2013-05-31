@@ -60,6 +60,14 @@ static const unsigned char g_4Bits_To_Char[16] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
 
+static bool HasUnicharsBelow0x20(const UniChar* _s, size_t _n)
+{
+    for(size_t i = 0; i < _n; ++i)
+        if(_s[i] < 0x0020)
+            return true;
+    return false;
+}
+
 static CGFloat GetLineHeightForFont(CTFontRef iFont)
 {
     CGFloat lineHeight = 0.0;
@@ -169,43 +177,22 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
         
         if(current.row_byte_start + bytes_for_current_row < raw_window_size) current.row_bytes_num = bytes_for_current_row;
         else current.row_bytes_num = (uint32_t)raw_window_size - current.row_byte_start;
-                    
-        // check if there's a manual line-breaking codes in this text block. if yes - need to build a temp string with replacements
-        bool need_fixup = false;
-        for(uint32_t i = current.char_start; i < current.char_start + current.chars_num; ++i)
-            if(m_Window[i] == 0x0D || m_Window[i] == 0x0A || m_Window[i] == 0x09) // for DOS-style too
-            {
-                need_fixup = true;
-                break;
-            }
 
-        // built current CF string
-        if(!need_fixup)
+        // build current CF string, fix control symbols if nessesary
+        if(!HasUnicharsBelow0x20(m_Window + current.char_start, current.chars_num))
         {
-            current.string = CFStringCreateWithBytesNoCopy(0,
-                                                       (UInt8*) (m_Window + current.char_start),
-                                                       current.chars_num*sizeof(UniChar),
-                                                       kCFStringEncodingUnicode,
-                                                       false,
-                                                       kCFAllocatorNull);
+            current.string = CFStringCreateWithCharactersNoCopy(0, m_Window + current.char_start, current.chars_num, kCFAllocatorNull);
         }
         else
         {
-            UniChar tmp[256];
-            assert(current.chars_num < 256);
-            memcpy(tmp, m_Window + current.char_start, current.chars_num*sizeof(UniChar));
+            UniChar fixbuf[64];
+            assert(current.chars_num < 64);
+            memcpy(fixbuf, m_Window + current.char_start, current.chars_num*sizeof(UniChar));
             for(uint32_t i = 0; i < current.chars_num; ++i)
-            {
-                if(tmp[i] == 0x0A) tmp[i] = 0x25D9;
-                if(tmp[i] == 0x0D) tmp[i] = 0x266A;
-                if(tmp[i] == 0x09) tmp[i] = 0x25CB;
-            }
+                if(fixbuf[i] < 0x0020)
+                    fixbuf[i] += 0x2400; // use unicode control symbols visualization
 
-            current.string = CFStringCreateWithBytes(0,
-                                                           (UInt8*) tmp,
-                                                           current.chars_num*sizeof(UniChar),
-                                                           kCFStringEncodingUnicode,
-                                                           false);
+            current.string = CFStringCreateWithCharacters(0, fixbuf, current.chars_num);
         }
         
         // built attribute string for current line
@@ -320,7 +307,19 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
         textPosition.y -= m_FontHeight;
         if(textPosition.y < 0 - m_FontHeight)
             break;
-    }    
+    }
+    
+    
+    // update scroller also
+    double pos;
+    if( [m_View FullSize] > g_BytesPerHexLine * m_FrameLines)
+        pos = (double([m_View RawWindowPosition]) + double(m_RowsOffset*g_BytesPerHexLine) ) /
+            double([m_View FullSize] - g_BytesPerHexLine * m_FrameLines);
+    else
+        pos = 0;
+        
+    double prop = ( double(g_BytesPerHexLine) * double(m_FrameLines) ) / double([m_View FullSize]);
+    [m_View UpdateVerticalScroll:pos prop:prop];
 }
 
 - (void) OnUpArrow
@@ -475,8 +474,11 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 
             assert(anchor_row_offset >= [m_View RawWindowPosition]);
             uint64_t anchor_new_offset = anchor_row_offset - [m_View RawWindowPosition];
-            assert(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines);
-            m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) - m_FrameLines;
+//            assert(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines);
+            if(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines)
+                m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) - m_FrameLines;
+            else
+                m_RowsOffset = 0;
             assert(m_RowsOffset < m_Lines.size());
             [m_View setNeedsDisplay:true];
         }
@@ -521,6 +523,64 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
     }
     
     m_RowsOffset = (unsigned)closest;
+}
+
+- (void) HandleVerticalScroll: (double) _pos
+{
+    if([m_View FullSize] < g_BytesPerHexLine * m_FrameLines)
+        return;
+    
+    uint64_t bytepos = uint64_t( _pos * double([m_View FullSize] - g_BytesPerHexLine * m_FrameLines) );
+        
+    uint64_t window_pos = [m_View RawWindowPosition];
+    uint64_t window_size = [m_View RawWindowSize];
+    uint64_t file_size = [m_View FullSize];
+        
+    if(bytepos > window_pos + g_BytesPerHexLine &&
+        bytepos + m_FrameLines * g_BytesPerHexLine < window_pos + window_size)
+    { // we can just move our offset in window
+        
+        m_RowsOffset = unsigned ( (bytepos - window_pos) / g_BytesPerHexLine );
+        [m_View setNeedsDisplay:true];
+    }
+    else
+    {
+        if(window_pos > 0 || window_pos + window_size < file_size)
+        {
+            // we need to move file window
+            uint64_t desired_wnd_pos = 0;
+            if(bytepos > window_size / 2)
+                desired_wnd_pos = bytepos - window_size/2;
+            else
+                desired_wnd_pos = 0;
+        
+            if(desired_wnd_pos + window_size > file_size)
+                desired_wnd_pos = file_size - window_size;
+        
+            [m_View RequestWindowMovementAt:desired_wnd_pos];
+        
+            assert(desired_wnd_pos <= bytepos);
+            uint32_t byte_offset = uint32_t(bytepos - desired_wnd_pos);
+            m_RowsOffset = byte_offset / g_BytesPerHexLine;
+            [m_View setNeedsDisplay:true];
+        }
+        else
+        {
+            unsigned des_row_offset = unsigned ( (bytepos - window_pos) / g_BytesPerHexLine );
+            if(des_row_offset + m_FrameLines > m_Lines.size())
+            {
+                if(des_row_offset > m_FrameLines)
+                    des_row_offset -= m_FrameLines;
+                else
+                    des_row_offset = 0;
+            }
+            m_RowsOffset = des_row_offset;
+            [m_View setNeedsDisplay:true];            
+        }
+    }
+        
+    
+    
 }
 
 @end

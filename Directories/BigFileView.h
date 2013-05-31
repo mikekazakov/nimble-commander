@@ -21,6 +21,7 @@
 - (uint64_t)    RawWindowPosition;
 - (uint64_t)    FullSize;
 - (void) RequestWindowMovementAt: (uint64_t) _pos;
+- (void) UpdateVerticalScroll: (double) _pos prop:(double)prop;
 
 // appearance section
 - (CTFontRef)   TextFont;

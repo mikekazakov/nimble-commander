@@ -32,6 +32,8 @@
     bool                         m_DoWrapLines;
     
     __strong id<BigFileViewProtocol>      m_ViewImpl;
+    
+    NSScroller      *m_VerticalScroller;
 }
 
 - (void)awakeFromNib
@@ -79,6 +81,19 @@
                                              selector:@selector(frameDidChange)
                                                  name:NSViewFrameDidChangeNotification
                                                object:self];
+    
+    NSRect rect = [self frame];
+    rect.origin.x = rect.size.width - [NSScroller scrollerWidth];
+    rect.size.width = [NSScroller scrollerWidth];
+    m_VerticalScroller = [[NSScroller alloc] initWithFrame:rect];
+    [m_VerticalScroller setEnabled:YES];
+    [m_VerticalScroller setTarget:self];
+    [m_VerticalScroller setAction:@selector(VerticalScroll:)];
+    [self addSubview:m_VerticalScroller];
+
+    
+    
+    
     [self frameDidChange];
 }
 
@@ -311,6 +326,50 @@
     [self removeFromSuperview];
 
     m_ViewImpl = nil;
+}
+
+- (void) UpdateVerticalScroll: (double) _pos prop:(double)prop
+{
+    [m_VerticalScroller setKnobProportion:prop];
+    [m_VerticalScroller setDoubleValue:_pos];
+}
+
+- (void)VerticalScroll:(id)sender
+{
+
+    switch ([m_VerticalScroller hitPart])
+    {
+        case NSScrollerIncrementLine:
+            [m_ViewImpl OnDownArrow];
+            break;
+        case NSScrollerIncrementPage:
+            // Include code here for the case where CTRL + down arrow is pressed, or the space the scroll knob moves in is pressed
+            [m_ViewImpl OnPageDown];
+            break;
+        case NSScrollerDecrementLine:
+            // Include code here for the case where the up arrow is pressed
+            [m_ViewImpl OnUpArrow];            
+            break;
+        case NSScrollerDecrementPage:
+            // Include code here for the case where CTRL + up arrow is pressed, or the space the scroll knob moves in is pressed
+            [m_ViewImpl OnPageUp];
+            break;
+        case NSScrollerKnob:
+            // This case is when the knob itself is pressed
+                [m_ViewImpl HandleVerticalScroll:[m_VerticalScroller doubleValue]];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    int idy = int([theEvent deltaY]); // TODO: temporary implementation
+    if(idy < 0)
+        [m_ViewImpl OnDownArrow];
+    else if(idy > 0)
+        [m_ViewImpl OnUpArrow];
 }
 
 @end

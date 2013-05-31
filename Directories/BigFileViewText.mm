@@ -346,6 +346,14 @@ struct TextLine
          if(textPosition.y < 0 - m_FontHeight)
              break;
      }
+
+    if(first_string < m_Lines.size())
+    {
+        uint64_t byte_pos = m_Lines[first_string].byte_no + [m_View RawWindowPosition];
+        [m_View UpdateVerticalScroll:double(byte_pos) / double([m_View FullSize])
+                                prop:0];
+    }
+
 }
 
 - (void) OnUpArrow
@@ -605,6 +613,11 @@ struct TextLine
     }
     
     m_VerticalOffset = (unsigned)closest;
+}
+
+- (void) HandleVerticalScroll: (double) _pos
+{
+    // TODO: implement
 }
 
 @end

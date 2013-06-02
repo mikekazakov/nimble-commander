@@ -529,13 +529,13 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 {
     if([m_View FullSize] < g_BytesPerHexLine * m_FrameLines)
         return;
-    
-    uint64_t bytepos = uint64_t( _pos * double([m_View FullSize] - g_BytesPerHexLine * m_FrameLines) );
-        
+
     uint64_t window_pos = [m_View RawWindowPosition];
     uint64_t window_size = [m_View RawWindowSize];
     uint64_t file_size = [m_View FullSize];
-        
+
+    uint64_t bytepos = uint64_t( _pos * double(file_size - g_BytesPerHexLine * m_FrameLines) );
+    
     if(bytepos > window_pos + g_BytesPerHexLine &&
         bytepos + m_FrameLines * g_BytesPerHexLine < window_pos + window_size)
     { // we can just move our offset in window

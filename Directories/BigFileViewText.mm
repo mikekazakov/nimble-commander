@@ -168,10 +168,11 @@ static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
 
 struct TextLine
 {
-    uint32_t   unichar_no;
-    uint32_t   unichar_len;
-    uint32_t   byte_no;         // offset within file window of a current text line
-    CTLineRef  line;
+    uint32_t    unichar_no;
+    uint32_t    unichar_len;
+    uint32_t    byte_no;         // offset within file window of a current text line
+    uint32_t    bytes_len;
+    CTLineRef   line;
 };
 
 @implementation BigFileViewText
@@ -299,6 +300,7 @@ struct TextLine
         l.unichar_no = (uint32_t)start;
         l.unichar_len = (uint32_t)count;
         l.byte_no = m_Indeces[start];
+        l.bytes_len = m_Indeces[start + count - 1] - l.byte_no;
         m_Lines.push_back(l);
         
         start += count;
@@ -329,19 +331,23 @@ struct TextLine
      
      NSRect v = [m_View visibleRect];
      
-     if(!m_StringBuffer) return;
+    if(!m_StringBuffer) return;
      
-     CGPoint textPosition;
-     textPosition.x = 0;
-     textPosition.y = v.size.height - m_FontHeight;
+    CGPoint textPosition;
+    textPosition.x = 0;
+    textPosition.y = v.size.height - m_FontHeight;
      
-     size_t first_string = m_VerticalOffset;
+    size_t first_string = m_VerticalOffset;
+    uint32_t last_drawn_byte_pos = 0;
+    
      for(size_t i = first_string; i < m_Lines.size(); ++i)
      {
          CTLineRef line = m_Lines[i].line;
          CGContextSetTextPosition(_context, textPosition.x, textPosition.y);
          CTLineDraw(line, _context);
-     
+
+         last_drawn_byte_pos = m_Lines[i].byte_no + m_Lines[i].bytes_len;
+         
          textPosition.y -= m_FontHeight;
          if(textPosition.y < 0 - m_FontHeight)
              break;
@@ -350,8 +356,10 @@ struct TextLine
     if(first_string < m_Lines.size())
     {
         uint64_t byte_pos = m_Lines[first_string].byte_no + [m_View RawWindowPosition];
-        [m_View UpdateVerticalScroll:double(byte_pos) / double([m_View FullSize])
-                                prop:0];
+        uint64_t byte_scroll_size = [m_View FullSize] - (last_drawn_byte_pos - m_Lines[first_string].byte_no);
+        double prop = double(last_drawn_byte_pos - m_Lines[first_string].byte_no) / double([m_View FullSize]);
+        [m_View UpdateVerticalScroll:double(byte_pos) / double(byte_scroll_size)
+                                prop:prop];
     }
 
 }
@@ -617,7 +625,56 @@ struct TextLine
 
 - (void) HandleVerticalScroll: (double) _pos
 {
-    // TODO: implement
+    // TODO: this is a very first implementation, contains many issues
+
+    uint64_t window_pos = [m_View RawWindowPosition];
+    uint64_t window_size = [m_View RawWindowSize];
+    uint64_t file_size = [m_View FullSize];
+
+    uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
+    
+    if(bytepos >= window_pos && bytepos < window_pos + window_size)
+    {
+        uint32_t offset_in_wnd = uint32_t(bytepos - window_pos);
+        
+        uint32_t min_dist = 1000000;
+        size_t closest = 0;
+        for(size_t i = 0; i < m_Lines.size(); ++i)
+        {
+            if(m_Lines[i].byte_no == offset_in_wnd)
+            {
+                min_dist = 0;
+                closest = i;
+                break;
+            }
+            else
+            {
+                uint32_t dist = m_Lines[i].byte_no > offset_in_wnd ?
+                    m_Lines[i].byte_no - offset_in_wnd :
+                    offset_in_wnd - m_Lines[i].byte_no;
+                if(dist < min_dist)
+                {
+                    min_dist = dist;
+                    closest = i;
+                }
+            }
+        }
+
+        m_VerticalOffset = (unsigned)closest;
+        [m_View setNeedsDisplay:true];
+        return;
+    }
+    
+    uint64_t desired_wnd_pos = 0;
+    if(bytepos > window_size / 2)
+        desired_wnd_pos = bytepos - window_size / 2;
+    else
+        desired_wnd_pos = 0;
+
+    if(desired_wnd_pos + window_size >= file_size)
+        desired_wnd_pos = file_size - window_size;
+
+    [self MoveFileWindowTo:desired_wnd_pos WithAnchor:bytepos AtLineNo:0];
 }
 
 @end

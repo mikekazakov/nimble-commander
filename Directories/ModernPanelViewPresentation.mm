@@ -881,11 +881,16 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         }
         
         int count = 0;
-        for (; count < items_per_column && i < max_items; ++count, ++i)
+        for (; count < items_per_column; ++count, ++i)
         {
-            auto raw_index = sorted_entries[i];
-            auto &item = entries[raw_index];
-            NSString *item_name = (__bridge NSString *)item.cf_name;
+            const DirectoryEntryInformation *item = nullptr;
+            auto raw_index = 0;
+            
+            if (i < max_items)
+            {
+                raw_index = sorted_entries[i];
+                item = &entries[raw_index];
+            }
             
             NSRect rect = NSMakeRect(start_x + icon_size + 2*g_TextInsetsInLine[0],
                                      start_y + count*m_LineHeight + g_TextInsetsInLine[1],
@@ -895,11 +900,11 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
             
             NSDictionary *cur_item_text_attr = item_text_attr;
-            if (m_State->Active && item.cf_isselected())
+            if (m_State->Active && item && item->cf_isselected())
                 cur_item_text_attr = active_selected_item_text_attr;
             
             // Draw background.
-            if (item.cf_isselected())
+            if (item && item->cf_isselected())
             {
                 // Draw selected item.
                 if (m_State->Active)
@@ -920,13 +925,17 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                                           column_width - 2, m_LineHeight - 1));
                 }
             }
-            else if ((count + column) % 2 == 1)
+            else if (count % 2 == 1)
             {
                 CGContextSetFillColorWithColor(context, item_back);
                 
                 CGContextFillRect(context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1,
                                                       column_width - 2, m_LineHeight - 1));
             }
+            
+            if (!item) continue;
+            
+            NSString *item_name = (__bridge NSString *)item->cf_name;
             
             // Draw cursor.
             if (m_State->CursorPos == i && m_State->Active)
@@ -947,8 +956,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             if (m_State->ViewType == PanelViewType::ViewFull)
             {
                 UniChar date_info[8], time_info[5];
-                FormHumanReadableDateRepresentation8(item.mtime, date_info);
-                FormHumanReadableTimeRepresentation5(item.mtime, time_info);
+                FormHumanReadableDateRepresentation8(item->mtime, date_info);
+                FormHumanReadableTimeRepresentation5(item->mtime, time_info);
                 
                 NSRect time_rect = NSMakeRect(spec_col_x - time_column_width + g_TextInsetsInLine[0],
                                               rect.origin.y,
@@ -984,14 +993,14 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 pstyle.alignment = NSRightTextAlignment;
                 pstyle.lineBreakMode = NSLineBreakByClipping;
                 
-                NSColor *color = m_State->Active && item.cf_isselected()
+                NSColor *color = m_State->Active && item->cf_isselected()
                 ? [NSColor whiteColor] : [NSColor blackColor];
                 NSDictionary *attr = @{NSFontAttributeName: m_Font,
                                        NSForegroundColorAttributeName: color,
                                        NSParagraphStyleAttributeName: pstyle};
                 
                 UniChar size_info[6];
-                FormHumanReadableSizeReprentationForDirEnt6(&item, size_info);
+                FormHumanReadableSizeReprentationForDirEnt6(item, size_info);
                 NSString *size_str = [NSString stringWithCharacters:size_info length:6];
                 [size_str drawWithRect:size_rect options:options attributes:attr];
                 
@@ -1003,7 +1012,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             
 
             // Draw icon
-            NSImageRep *image_rep = m_IconCache->GetIcon(item);
+            NSImageRep *image_rep = m_IconCache->GetIcon(*item);
             NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
                                      start_y + count*m_LineHeight + m_LineHeight - icon_size - 1,
                                      icon_size, icon_size);

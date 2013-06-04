@@ -54,12 +54,12 @@
 
 - (void) dealloc
 {
-    if(m_File)
+/*    if(m_File)
     {
         if(m_File->FileOpened())
             m_File->CloseFile();
         delete m_File;
-    }
+    }*/
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     CFRelease(m_ForegroundColor);
@@ -82,17 +82,16 @@
                                                  name:NSViewFrameDidChangeNotification
                                                object:self];
     
-    NSRect rect = [self frame];
-    rect.origin.x = rect.size.width - [NSScroller scrollerWidth];
-    rect.size.width = [NSScroller scrollerWidth];
-    m_VerticalScroller = [[NSScroller alloc] initWithFrame:rect];
+    m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     [m_VerticalScroller setEnabled:YES];
     [m_VerticalScroller setTarget:self];
     [m_VerticalScroller setAction:@selector(VerticalScroll:)];
+    [m_VerticalScroller setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:m_VerticalScroller];
 
-    
-    
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_VerticalScroller(15)]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_VerticalScroller]-(==0)-|" options:0 metrics:nil views:views]];
     
     [self frameDidChange];
 }
@@ -211,16 +210,17 @@
     case NSF8FunctionKey:
             [self SetEncoding];
             break;
-            
+    default:
+        [super keyDown:event];            
     }
-    
+/*
     switch (keycode)
     {
         case 53: // Esc button
             [self DoClose];
             break;
     }
-    
+  */  
     
 //    m_VerticalOffset
     
@@ -247,6 +247,7 @@
 
 - (void)frameDidChange
 {
+//    int a = 10;
 //    NSRect fr = [self frame];
 //    m_FrameLines = fr.size.height / GetLineHeightForFont(m_Font);
 }
@@ -371,5 +372,12 @@
     else if(idy > 0)
         [m_ViewImpl OnUpArrow];
 }
-
+/*
+- (void)cancelOperation:(id)sender
+{
+    int a = 10;
+    
+    
+}
+*/
 @end

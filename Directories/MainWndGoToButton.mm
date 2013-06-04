@@ -39,7 +39,8 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
+    if (self) {        
+        [self awakeFromNib];
     }
     
     return self;
@@ -57,8 +58,9 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
      selector:@selector(WillPopUp:)
      name:@"NSPopUpButtonWillPopUpNotification"
      object:nil];
-    
+
     [self setPullsDown:true];
+    [self setRefusesFirstResponder:true];
     [self setTitle:@"Go to"];
     
     // grab user dir only in init, since they won't change

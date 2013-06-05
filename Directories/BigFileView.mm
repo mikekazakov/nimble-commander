@@ -149,16 +149,36 @@
 {
     if(m_Encoding == ENCODING_UTF8)
     {
-        size_t size;
         InterpretUTF8BufferAsIndexedUniChar(
                                                      (unsigned char*) m_File->Window(),
                                                      m_File->WindowSize(),
                                                      m_DecodeBuffer, // should be at least _input_size 16b words long,
                                                      m_DecodeBufferIndx,
-                                                     &size,
+                                                     &m_DecodedBufferSize,
                                                      0xFFFD // something like '?' or U+FFFD
                                                     );
-        m_DecodedBufferSize = size;
+    }
+    else if(m_Encoding == ENCODING_UTF16LE)
+    {
+        bool odd = (m_File->WindowPos() & 1) == 1;
+        InterpretUTF16LEBufferAsUniChar((unsigned char*)m_File->Window() + (odd ? 1 : 0),
+                                        m_File->WindowSize() - (odd ? 1 : 0),
+                                        m_DecodeBuffer,
+                                        &m_DecodedBufferSize,
+                                        0xFFFD);
+        for(int i = 0; i < m_DecodedBufferSize; ++i)
+            m_DecodeBufferIndx[i] = i*2;
+    }
+    else if(m_Encoding == ENCODING_UTF16BE)
+    {
+        bool odd = (m_File->WindowPos() & 1) == 1;
+        InterpretUTF16BEBufferAsUniChar((unsigned char*)m_File->Window() + (odd ? 1 : 0),
+                                        m_File->WindowSize() - (odd ? 1 : 0),
+                                        m_DecodeBuffer,
+                                        &m_DecodedBufferSize,
+                                        0xFFFD);
+        for(int i = 0; i < m_DecodedBufferSize; ++i)
+            m_DecodeBufferIndx[i] = i*2;
     }
     else if(m_Encoding >= ENCODING_SINGLE_BYTES_FIRST__ && m_Encoding <= ENCODING_SINGLE_BYTES_LAST__)
     {

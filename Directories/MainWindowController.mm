@@ -107,14 +107,14 @@
     [PreferencesWindowController ShowWindow];
 }
 
-- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet
-       usingRect:(NSRect)rect
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
     // TODO: refactor me
-    NSRect field_rect = [self.SheetAnchorLine frame];
+/*    NSRect field_rect = [self.SheetAnchorLine frame];
     field_rect.origin.y += 2;
     field_rect.size.height = 0;
-    return field_rect;
+    return field_rect;*/
+    return rect;
 }
 
 - (void)windowWillBeginSheet:(NSNotification *)notification

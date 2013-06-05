@@ -80,6 +80,10 @@ static const unsigned short* g_SingleBytesTable[] = {
     g_CP_MACOSROMANWEST_To_UniChar    
 };
 
+#define Endian16_Swap(value) \
+    ((((uint16_t)((value) & 0x00FF)) << 8) | \
+    (((uint16_t)((value) & 0xFF00)) >> 8))
+
 void InterpretSingleByteBufferAsUniCharPreservingBufferSize(
                                                             const unsigned char* _input,
                                                             size_t _input_size,
@@ -510,4 +514,120 @@ void InterpretUTF8BufferAsIndexedUniChar(
     
     *_output_sz = total;
     *_output_buf = 0;
+}
+
+void InterpretUTF16LEBufferAsUniChar(
+                                     const unsigned char* _input,
+                                     size_t _input_size,
+                                     unsigned short *_output_buf, // should be at least _input_size/2 16b words long
+                                     size_t *_output_sz,          // size of an output
+                                     unsigned short _bad_symb     // something like '?' or U+FFFD
+                                     )
+{
+    uint16_t *cur = (uint16_t *) _input;
+    uint16_t *end   = cur + _input_size / sizeof(uint16_t);
+ 
+    unsigned total = 0;
+    
+    while(cur < end)
+    {
+        uint16_t val = *cur;
+        
+        if(val <= 0xD7FF || val >= 0xE000)
+        { // BMP - just use it
+            *_output_buf++ = *cur++;
+            total++;
+        }
+        else
+        { // need to check suggorate pair
+            if(val >= 0xD800 && val <= 0xDBFF)
+            { // leading surrogate
+                if(cur + 1 < end && *(cur+1) >= 0xDC00 && *(cur+1) <= 0xDFFF)
+                { // ok, normal surrogate
+                    *_output_buf++ = *cur++;
+                    *_output_buf++ = *cur++;
+                    total += 2;
+                }
+                else
+                { // corrupted surrogate
+                    *_output_buf++ = _bad_symb;
+                    ++cur;
+                    total++;
+                }
+            }
+            else
+            {
+                // trailing surrogate found - invalid situation
+                *_output_buf++ = _bad_symb;
+                ++cur;
+                total++;
+            }
+        }
+    }
+    
+    *_output_sz = total;
+}
+
+void InterpretUTF16BEBufferAsUniChar(
+                                     const unsigned char* _input,
+                                     size_t _input_size,
+                                     unsigned short *_output_buf, // should be at least _input_size/2 16b words long
+                                     size_t *_output_sz,          // size of an output
+                                     unsigned short _bad_symb     // something like '?' or U+FFFD
+                                     )
+{
+    uint16_t *cur = (uint16_t *) _input;
+    uint16_t *end = cur + _input_size / sizeof(uint16_t);
+    
+    unsigned total = 0;
+    
+    while(cur < end)
+    {
+        uint16_t val = Endian16_Swap(*cur);
+        
+        if(val <= 0xD7FF || val >= 0xE000)
+        { // BMP - just use it
+            *_output_buf++ = val;
+            cur++;
+            total++;
+        }
+        else
+        { // need to check suggorate pair
+            if(val >= 0xD800 && val <= 0xDBFF)
+            { // leading surrogate
+                if(cur + 1 < end)
+                {
+                    uint16_t next = Endian16_Swap(*(cur+1));
+                    if(next >= 0xDC00 && next <= 0xDFFF)
+                    { // ok, normal surrogate
+                        *_output_buf++ = val;
+                        *_output_buf++ = next;
+                        cur += 2;
+                        total += 2;
+                    }
+                    else
+                    { // corrupted surrogate
+                        *_output_buf++ = _bad_symb;
+                        ++cur;
+                        total++;
+                    }
+                }
+                else
+                { // torn surrogate
+                    *_output_buf++ = _bad_symb;
+                    ++cur;
+                    total++;
+                }
+            }
+            else
+            {
+                // trailing surrogate found - invalid situation
+                *_output_buf++ = _bad_symb;
+                ++cur;
+                total++;
+            }
+        }
+    }
+    
+    *_output_sz = total;
 }

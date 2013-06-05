@@ -343,8 +343,8 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
             uint64_t anchor_row_offset = (uint64_t)(m_Lines[m_RowsOffset].string_byte_start) + window_pos;
             
             uint64_t desired_window_offset = anchor_row_offset;
-            if( desired_window_offset > (window_size*8)/10 ) // TODO: need something more intelligent here
-                desired_window_offset -= (window_size*8)/10;
+            if( desired_window_offset > 3*window_size/4 ) // TODO: need something more intelligent here
+                desired_window_offset -= 3*window_size/4;
             else
                 desired_window_offset = 0;
             
@@ -386,8 +386,8 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
             uint64_t anchor_row_offset = (uint64_t)(m_Lines[m_RowsOffset].string_byte_start) + window_pos;
             
             uint64_t desired_window_offset = anchor_row_offset;
-            assert(desired_window_offset > (window_size*2)/10);
-            desired_window_offset -= (window_size*2)/10; // TODO: need something more intelligent here
+            assert(desired_window_offset > window_size/4);
+            desired_window_offset -= window_size/4; // TODO: need something more intelligent here
             
             if(desired_window_offset + window_size > file_size) // we'll reach a file's end
                 desired_window_offset = file_size - window_size;
@@ -424,8 +424,8 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
             uint64_t anchor_row_offset = (uint64_t)(m_Lines[m_RowsOffset + m_FrameLines].string_byte_start) + window_pos;
             
             uint64_t desired_window_offset = anchor_row_offset;
-            assert(desired_window_offset > (window_size*2)/10);
-            desired_window_offset -= (window_size*2)/10; // TODO: need something more intelligent here
+            assert(desired_window_offset > window_size/4);
+            desired_window_offset -= window_size/4; // TODO: need something more intelligent here
             
             if(desired_window_offset + window_size > file_size) // we'll reach a file's end
                 desired_window_offset = file_size - window_size;
@@ -466,8 +466,8 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
             uint64_t anchor_row_offset = (uint64_t)(m_Lines[m_RowsOffset].string_byte_start) + window_pos;            
             
             uint64_t desired_window_offset = anchor_row_offset;
-            if( desired_window_offset > (window_size*8)/10 ) // TODO: need something more intelligent here
-                desired_window_offset -= (window_size*8)/10;
+            if( desired_window_offset > 3*window_size/4 ) // TODO: need something more intelligent here
+                desired_window_offset -= 3*window_size/4;
             else
                 desired_window_offset = 0;
             

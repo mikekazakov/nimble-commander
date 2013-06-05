@@ -10,6 +10,8 @@
 #define ENCODING_WIN1251                0x00000002
 #define ENCODING_MACOS_ROMAN_WESTERN    0x00000003
 #define ENCODING_UTF8                   0x00010000
+#define ENCODING_UTF16LE                0x00010001
+#define ENCODING_UTF16BE                0x00010002
 
 #define ENCODING_SINGLE_BYTES_FIRST__ ENCODING_OEM866
 #define ENCODING_SINGLE_BYTES_LAST__ ENCODING_MACOS_ROMAN_WESTERN
@@ -59,3 +61,20 @@ void InterpretUTF8BufferAsIndexedUniChar(
                                          );
 // this function will not visualize non-printed symbols (0-32) in funny DOS-style
 // it will set a null-terminator in the end
+
+
+void InterpretUTF16LEBufferAsUniChar(
+                                  const unsigned char* _input,
+                                  size_t _input_size,
+                                  unsigned short *_output_buf, // should be at least _input_size/2 16b words long
+                                  size_t *_output_sz,          // size of an output
+                                  unsigned short _bad_symb     // something like '?' or U+FFFD
+                                  );
+
+void InterpretUTF16BEBufferAsUniChar(
+                                     const unsigned char* _input,
+                                     size_t _input_size,
+                                     unsigned short *_output_buf, // should be at least _input_size/2 16b words long
+                                     size_t *_output_sz,          // size of an output
+                                     unsigned short _bad_symb     // something like '?' or U+FFFD
+                                     );

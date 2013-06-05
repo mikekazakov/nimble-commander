@@ -168,6 +168,8 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     [m_Encodings addObject:EncodingToDict(ENCODING_OEM866, @"OEM 866 (DOS)")];
     [m_Encodings addObject:EncodingToDict(ENCODING_WIN1251, @"Windows 1251")];
     [m_Encodings addObject:EncodingToDict(ENCODING_UTF8, @"UTF-8")];
+    [m_Encodings addObject:EncodingToDict(ENCODING_UTF16LE, @"UTF-16 LE")];
+    [m_Encodings addObject:EncodingToDict(ENCODING_UTF16BE, @"UTF-16 BE")];
     
     for(NSMutableDictionary *d in m_Encodings)
         [m_EncodingSelect addItemWithTitle:[d objectForKey:@"name"]];

@@ -396,8 +396,8 @@ struct TextLine
             uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
             
             uint64_t desired_window_offset = anchor_glob_offset;
-            if( desired_window_offset > (window_size*8)/10 ) // TODO: need something more intelligent here
-                desired_window_offset -= (window_size*8)/10;
+            if( desired_window_offset > 3*window_size/4 )// TODO: need something more intelligent here
+                desired_window_offset -= 3*window_size/4;
             else
                 desired_window_offset = 0;
             
@@ -440,8 +440,8 @@ struct TextLine
             uint64_t anchor_glob_offset = m_Lines[m_VerticalOffset].byte_no + window_pos;
             
             uint64_t desired_window_offset = anchor_glob_offset;
-            assert(desired_window_offset > (window_size*2)/10);
-            desired_window_offset -= (window_size*2)/10; // TODO: need something more intelligent here
+            assert(desired_window_offset > window_size/4);
+            desired_window_offset -= window_size/4; // TODO: need something more intelligent here
             
             if(desired_window_offset + window_size > file_size) // we'll reach a file's end
                 desired_window_offset = file_size - window_size;
@@ -479,8 +479,8 @@ struct TextLine
             uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
             
             uint64_t desired_window_offset = anchor_glob_offset;
-            assert(desired_window_offset > (window_size*2)/10); // internal logic check
-            desired_window_offset -= (window_size*2)/10; // TODO: need something more intelligent here
+            assert(desired_window_offset > window_size/4); // internal logic check
+            desired_window_offset -= window_size/4; // TODO: need something more intelligent here
             
             if(desired_window_offset + window_size > file_size) // we'll reach a file's end
                 desired_window_offset = file_size - window_size;
@@ -525,8 +525,8 @@ struct TextLine
             uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
             
             uint64_t desired_window_offset = anchor_glob_offset;
-            if( desired_window_offset > (window_size*8)/10 ) // TODO: need something more intelligent here
-                desired_window_offset -= (window_size*8)/10;
+            if( desired_window_offset > 3*window_size/4 ) // TODO: need something more intelligent here
+                desired_window_offset -= 3*window_size/4;
             else
                 desired_window_offset = 0;
             

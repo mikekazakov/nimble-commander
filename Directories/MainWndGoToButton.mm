@@ -59,9 +59,10 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
      name:@"NSPopUpButtonWillPopUpNotification"
      object:nil];
 
+    [self setBezelStyle:NSTexturedRoundedBezelStyle];
     [self setPullsDown:true];
     [self setRefusesFirstResponder:true];
-    [self setTitle:@"Go to"];
+    [self addItemWithTitle:@"Go to"];
     
     // grab user dir only in init, since they won't change
     m_UserDirs = [NSMutableArray arrayWithCapacity:16];

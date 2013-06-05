@@ -197,6 +197,8 @@ struct TextLine
     unsigned                     m_VerticalOffset; // offset in lines number within text lines
 
     int                          m_FrameLines; // amount of lines in our frame size ( +1 to fit cutted line also)
+    
+    int                          m_FramePxWidth;
 }
 
 - (id) InitWithWindow:(const UniChar*) _unichar_window
@@ -208,14 +210,14 @@ struct TextLine
     m_Window = _unichar_window;
     m_Indeces = _unichar_indeces;
     m_WindowSize = _unichars_amount;
+    m_FramePxWidth = 0;
     
     m_FontHeight = GetLineHeightForFont([m_View TextFont]);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
-    NSRect fr = [_view frame];
-    m_FrameLines = fr.size.height / m_FontHeight;
-    
     m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * g_FixupWindowSize);
     
+    [self OnFrameChanged];
+
     [self OnBufferDecoded:m_WindowSize];
     
     [m_View setNeedsDisplay:true];
@@ -250,9 +252,12 @@ struct TextLine
 - (void) BuildLayout
 {
     [self ClearLayout];
-    
+    if(!m_StringBuffer)
+        return;
+
     double wrapping_width = 10000;
-    if(/*m_DoWrapLines*/ true)
+//    if(/*m_DoWrapLines*/ true)
+    if([m_View WordWrap])
         wrapping_width = [m_View frame].size.width;
 
     m_AttrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
@@ -261,9 +266,9 @@ struct TextLine
     CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTFontAttributeName, [m_View TextFont]);
     
     // Create a typesetter using the attributed string.
-    MachTimeBenchmark m;
+//    MachTimeBenchmark m;
     CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(m_AttrString);
-    m.Reset("CTTypesetterCreateWithAttributedString");
+//    m.Reset("CTTypesetterCreateWithAttributedString");
     
     CFIndex start = 0;
     do
@@ -307,6 +312,8 @@ struct TextLine
         
     } while(true);
     CFRelease(typesetter);
+    
+    [m_View setNeedsDisplay:true];
 }
 
 - (void) ClearLayout
@@ -675,6 +682,22 @@ struct TextLine
         desired_wnd_pos = file_size - window_size;
 
     [self MoveFileWindowTo:desired_wnd_pos WithAnchor:bytepos AtLineNo:0];
+}
+
+- (void) OnFrameChanged
+{
+    NSRect fr = [m_View frame];
+    m_FrameLines = fr.size.height / m_FontHeight;
+    if( m_FramePxWidth != (int)fr.size.width)
+    {
+        [self BuildLayout];
+        m_FramePxWidth = (int)fr.size.width;
+    }
+}
+
+- (void) OnWordWrappingChanged: (bool) _wrap_words
+{
+    [self BuildLayout];
 }
 
 @end

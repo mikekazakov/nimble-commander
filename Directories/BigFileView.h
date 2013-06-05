@@ -14,6 +14,7 @@
 @interface BigFileView : NSView
 
 - (void) SetFile:(FileWindow*) _file;
+- (void) DoClose;
 
 // data access section
 - (const void*) RawWindow;
@@ -27,7 +28,11 @@
 - (CTFontRef)   TextFont;
 - (CGColorRef)  TextForegroundColor;
 
+- (int)         Enconding;
+- (void)        SetEncoding:(int)_encoding;
 
+- (bool)        WordWrap;
+- (void)        SetWordWrap:(bool)_wrapping;
 
 
 - (IBAction)ToggleTextView:(id)sender;

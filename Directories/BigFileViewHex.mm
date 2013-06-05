@@ -258,7 +258,8 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
         charind += current.chars_num;
         byteind += current.row_bytes_num;
     }
-    
+ 
+    [m_View setNeedsDisplay:true];
 }
 
 - (void) ClearLayout
@@ -578,7 +579,10 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
             [m_View setNeedsDisplay:true];            
         }
     }
-        
+}
+
+- (void) OnFrameChanged
+{
     
     
 }

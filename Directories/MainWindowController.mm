@@ -157,7 +157,8 @@
     m_WindowState.pop_back();
     
     [[self window] setContentView:[m_WindowState.back() ContentView]];
-    [[self window] makeFirstResponder: [[self window] contentView]];    
+    [[self window] makeFirstResponder: [[self window] contentView]];
+    [m_WindowState.back() Assigned];    
 }
 
 - (void) PushNewWindowState:(MainWindowBigFileViewState *)_state

@@ -56,6 +56,8 @@ enum ActiveState
     NSProgressIndicator *m_LeftPanelSpinningIndicator;
     NSProgressIndicator *m_RightPanelSpinningIndicator;
     
+    NSBox               *m_SheetAnchorLine;
+    
 //    @property (strong) IBOutlet NSProgressIndicator *LeftPanelSpinningIndicator;
 //    @property (strong) IBOutlet NSProgressIndicator *RightPanelSpinningIndicator;
     
@@ -189,9 +191,16 @@ enum ActiveState
     [m_OpSummaryBox setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:m_OpSummaryBox];
     
+    m_SheetAnchorLine = [[NSBox alloc] initWithFrame:NSRect()];
+    [m_SheetAnchorLine setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_SheetAnchorLine setBoxType:NSBoxSeparator];
+    [self addSubview:m_SheetAnchorLine];
+    
     NSDictionary *views = NSDictionaryOfVariableBindings(m_LeftPanelGoToButton, m_RightPanelGoToButton, m_LeftPanelSpinningIndicator,
-            m_RightPanelSpinningIndicator, m_OpSummaryBox);
+            m_RightPanelSpinningIndicator, m_OpSummaryBox, m_SheetAnchorLine);
 
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SheetAnchorLine]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==44)-[m_SheetAnchorLine(<=1)]" options:0 metrics:nil views:views]];    
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[m_LeftPanelGoToButton(61)]-[m_LeftPanelSpinningIndicator(16)]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_LeftPanelGoToButton(22)]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_LeftPanelSpinningIndicator(16)]" options:0 metrics:nil views:views]];
@@ -238,6 +247,7 @@ enum ActiveState
 
 - (void) Assigned
 {
+    [self UpdateTitle];
 }
 
 - (void) Resigned

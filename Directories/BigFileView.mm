@@ -29,7 +29,7 @@
     CGColorRef      m_ForegroundColor;
         
     // layout
-    bool                         m_DoWrapLines;
+    bool            m_WrapWords;
     
     __strong id<BigFileViewProtocol>      m_ViewImpl;
     
@@ -69,7 +69,7 @@
 - (void) DoInit
 {
     m_Encoding = ENCODING_UTF8;
-    m_DoWrapLines = true;
+    m_WrapWords = true;
     m_Font = CTFontCreateWithName(CFSTR("Menlo"), 12, NULL);
     
     CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
@@ -237,19 +237,27 @@
     
     if(ret != ENCODING_INVALID)
     {
-        if(ret != m_Encoding)
-        {
-            m_Encoding = ret;
-            [self DecodeRawFileBuffer];
-        }
+        [self SetEncoding:ret];
+    }
+}
+
+- (int) Enconding
+{
+    return m_Encoding;
+}
+
+- (void) SetEncoding:(int)_encoding
+{
+    if(_encoding != m_Encoding)
+    {
+        m_Encoding = _encoding;
+        [self DecodeRawFileBuffer];
     }
 }
 
 - (void)frameDidChange
 {
-//    int a = 10;
-//    NSRect fr = [self frame];
-//    m_FrameLines = fr.size.height / GetLineHeightForFont(m_Font);
+    [m_ViewImpl OnFrameChanged];
 }
 
 - (CTFontRef) TextFont
@@ -321,8 +329,8 @@
 
 - (void) DoClose
 {
-    if([self window])
-        [[self window] makeFirstResponder:[[self window] windowController]];
+//    if([self window])
+//        [[self window] makeFirstResponder:[[self window] windowController]];
     
     [self removeFromSuperview];
 
@@ -372,12 +380,21 @@
     else if(idy > 0)
         [m_ViewImpl OnUpArrow];
 }
-/*
-- (void)cancelOperation:(id)sender
+
+- (bool)WordWrap
 {
-    int a = 10;
-    
-    
+    return m_WrapWords;
 }
-*/
+
+- (void)SetWordWrap:(bool)_wrapping
+{
+    if(m_WrapWords != _wrapping)
+    {
+        m_WrapWords = _wrapping;
+        if([m_ViewImpl respondsToSelector:@selector(OnWordWrappingChanged:)])
+            [m_ViewImpl OnWordWrappingChanged:m_WrapWords];
+    }
+}
+
+
 @end

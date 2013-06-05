@@ -31,11 +31,15 @@
 //- (void) OnRightArrow;
 - (void) OnPageDown;
 - (void) OnPageUp;
+- (void) OnFrameChanged;
 
 - (void) MoveOffsetWithinWindow: (uint32_t)_offset; // request to move visual offset to an approximate amount
 - (void) HandleVerticalScroll: (double) _pos; // move file window if needed
 
 // drawing
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect;
+
+@optional
+- (void) OnWordWrappingChanged: (bool) _wrap_words;
 
 @end

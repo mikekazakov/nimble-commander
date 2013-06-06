@@ -130,9 +130,11 @@
     
     m_DecodeBuffer = (UniChar*) malloc(sizeof(UniChar) * m_File->WindowSize());
     m_DecodeBufferIndx = (uint32_t*) malloc(sizeof(uint32_t) * m_File->WindowSize());
-    
-    if(stat.can_be_utf8) m_Encoding = ENCODING_UTF8;
-    else                 m_Encoding = ENCODING_MACOS_ROMAN_WESTERN;
+
+    if(stat.likely_utf16_le)        m_Encoding = ENCODING_UTF16LE;
+    else if(stat.likely_utf16_be)   m_Encoding = ENCODING_UTF16BE;
+    else if(stat.can_be_utf8)       m_Encoding = ENCODING_UTF8;
+    else                            m_Encoding = ENCODING_MACOS_ROMAN_WESTERN;
     
     [self DecodeRawFileBuffer];    
     

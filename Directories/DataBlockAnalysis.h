@@ -11,8 +11,10 @@ struct StaticDataBlockAnalysis
 {
     bool is_binary;
     bool can_be_utf8;
-
-    
+    bool can_be_utf16_le;
+    bool likely_utf16_le;
+    bool can_be_utf16_be;
+    bool likely_utf16_be;
     
 };
 

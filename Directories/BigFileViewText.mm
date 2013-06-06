@@ -256,7 +256,6 @@ struct TextLine
         return;
 
     double wrapping_width = 10000;
-//    if(/*m_DoWrapLines*/ true)
     if([m_View WordWrap])
         wrapping_width = [m_View frame].size.width;
 
@@ -271,7 +270,7 @@ struct TextLine
 //    m.Reset("CTTypesetterCreateWithAttributedString");
     
     CFIndex start = 0;
-    do
+    while(start < m_StringBufferSize)
     {
         // 1st - manual hack for breaking lines by space characters
 //static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
@@ -309,8 +308,7 @@ struct TextLine
         m_Lines.push_back(l);
         
         start += count;
-        
-    } while(true);
+    }
     CFRelease(typesetter);
     
     [m_View setNeedsDisplay:true];
@@ -600,8 +598,16 @@ struct TextLine
 
 - (uint32_t) GetOffsetWithinWindow
 {
-    assert(m_VerticalOffset < m_Lines.size());
-    return m_Lines[m_VerticalOffset].byte_no;    
+    if(!m_Lines.empty())
+    {
+        assert(m_VerticalOffset < m_Lines.size());
+        return m_Lines[m_VerticalOffset].byte_no;
+    }
+    else
+    {
+        assert(m_VerticalOffset == 0);
+        return 0;
+    }
 }
 
 - (void) MoveOffsetWithinWindow: (uint32_t)_offset

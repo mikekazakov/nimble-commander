@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <stdlib.h>
 #import "DataBlockAnalysis.h"
 
 #ifndef Endian16_Swap
@@ -196,7 +197,11 @@ int DoStaticDataBlockAnalysis(const void *_data,
                               )
 {    
     if(_bytes_amount < 4) // we need some reasonable data amount to do any prediction
+    {
+        memset(_output, 0, sizeof(*_output));
+        _output->is_binary = true; // the most harmless way is to treat tiny files as binary ones
         return -1;
+    }
     
     const unsigned char *bytes = (const unsigned char*) _data;
     

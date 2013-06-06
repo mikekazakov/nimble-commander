@@ -229,23 +229,9 @@
     case NSF4FunctionKey:
             [self NextViewType];
             break;
-    case NSF8FunctionKey:
-            [self SetEncoding];
-            break;
     default:
         [super keyDown:event];            
     }
-/*
-    switch (keycode)
-    {
-        case 53: // Esc button
-            [self DoClose];
-            break;
-    }
-  */  
-    
-//    m_VerticalOffset
-    
 #undef ISMODIFIER
 }
 
@@ -319,41 +305,16 @@
     [self DecodeRawFileBuffer];
 }
 
-- (IBAction)ToggleTextView:(id)sender
-{
-    m_ViewImpl = [BigFileViewText alloc];
-    [m_ViewImpl InitWithWindow:m_DecodeBuffer
-                       offsets:m_DecodeBufferIndx
-                          size:m_DecodedBufferSize
-                        parent:self];
-}
-
-- (IBAction)ToggleHexView:(id)sender
-{
-    m_ViewImpl = [BigFileViewHex alloc];
-    [m_ViewImpl InitWithWindow:m_DecodeBuffer
-                       offsets:m_DecodeBufferIndx
-                          size:m_DecodedBufferSize
-                        parent:self];
-}
-
 - (void) NextViewType
 {
-    uint32_t off = [m_ViewImpl GetOffsetWithinWindow];
-    
     if( [m_ViewImpl isKindOfClass: [BigFileViewText class]])
-        [self ToggleHexView:nil];
+        [self SetMode:BigFileViewModes::Hex];
     else
-        [self ToggleTextView:nil];
-    
-    [m_ViewImpl MoveOffsetWithinWindow:off];
+        [self SetMode:BigFileViewModes::Text];
 }
 
 - (void) DoClose
-{
-//    if([self window])
-//        [[self window] makeFirstResponder:[[self window] windowController]];
-    
+{    
     [self removeFromSuperview];
 
     m_ViewImpl = nil;
@@ -417,6 +378,44 @@
             [m_ViewImpl OnWordWrappingChanged:m_WrapWords];
     }
 }
+
+- (BigFileViewModes) Mode
+{
+    if( [m_ViewImpl isKindOfClass: [BigFileViewText class]])
+        return BigFileViewModes::Text;
+    else if( [m_ViewImpl isKindOfClass: [BigFileViewHex class]])
+        return BigFileViewModes::Hex;
+    else
+        assert(0);
+}
+
+- (void) SetMode: (BigFileViewModes) _mode
+{
+    if(_mode == [self Mode])
+        return;
+    
+    uint32_t off = [m_ViewImpl GetOffsetWithinWindow];    
+    
+    switch (_mode)
+    {
+        case BigFileViewModes::Text:
+            m_ViewImpl = [BigFileViewText alloc];
+            break;
+        case BigFileViewModes::Hex:
+            m_ViewImpl = [BigFileViewHex alloc];
+            break;
+        default:
+            assert(0);
+    }
+
+    [m_ViewImpl InitWithWindow:m_DecodeBuffer
+                       offsets:m_DecodeBufferIndx
+                          size:m_DecodedBufferSize
+                        parent:self];
+
+    [m_ViewImpl MoveOffsetWithinWindow:off];
+}
+
 
 
 @end

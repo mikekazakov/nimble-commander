@@ -28,7 +28,8 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     NSPopUpButton *m_EncodingSelect;
     NSMutableArray *m_Encodings;
     NSButton    *m_WordWrap;
-    
+    NSPopUpButton *m_ModeSelect;
+
     char        m_FilePath[MAXPATHLEN];
 }
 
@@ -116,7 +117,8 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
         
         // update UI
         [self SelectEncodingFromView];
-        [m_WordWrap setState:[m_View WordWrap] ? NSOnState : NSOffState];
+        [self SelectModeFromView];
+        [self UpdateWordWrap];
         
         return true;
     }
@@ -139,9 +141,19 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     [m_EncodingSelect setTarget:self];
     [m_EncodingSelect setAction:@selector(SelectedEncoding:)];
     [self addSubview:m_EncodingSelect];
-
+    
+    m_ModeSelect = [[NSPopUpButton alloc] initWithFrame:NSRect()];
+    [m_ModeSelect setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [(NSPopUpButtonCell*)[m_ModeSelect cell] setControlSize:NSSmallControlSize];
+    [m_ModeSelect setTarget:self];
+    [m_ModeSelect setAction:@selector(SelectMode:)];
+    [m_ModeSelect addItemWithTitle:@"Text"];
+    [m_ModeSelect addItemWithTitle:@"Hex"];    
+    [self addSubview:m_ModeSelect];
+    
     m_WordWrap = [[NSButton alloc] initWithFrame:NSRect()];
     [m_WordWrap setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[m_WordWrap cell] setControlSize:NSSmallControlSize];
     [m_WordWrap setButtonType:NSSwitchButton];
     [m_WordWrap setTitle:@"Word wrap"];
     [m_WordWrap setTarget:self];
@@ -153,10 +165,10 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     [line setBoxType:NSBoxSeparator];
     [self addSubview:line];
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_EncodingSelect, m_WordWrap, line);
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_EncodingSelect, m_WordWrap, m_ModeSelect, line);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[line]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[m_EncodingSelect]-[m_WordWrap]" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[m_EncodingSelect]-[m_ModeSelect]-[m_WordWrap]" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_EncodingSelect(18)]-[line(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
     
     [self FillEncodingSelection];
@@ -196,9 +208,34 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
         }
 }
 
+- (void) UpdateWordWrap
+{
+    [m_WordWrap setState:[m_View WordWrap] ? NSOnState : NSOffState];
+    [m_WordWrap setEnabled:[m_View Mode] == BigFileViewModes::Text];
+}
+
 - (void) WordWrapChanged:(id)sender
 {
     [m_View SetWordWrap: [m_WordWrap state]==NSOnState];
+}
+
+- (void) SelectModeFromView
+{
+    if([m_View Mode] == BigFileViewModes::Text)
+        [m_ModeSelect selectItemAtIndex:0];
+    else if([m_View Mode] == BigFileViewModes::Hex)
+        [m_ModeSelect selectItemAtIndex:1];
+    else
+        assert(0);
+}
+
+- (void) SelectMode:(id)sender
+{
+    if([m_ModeSelect indexOfSelectedItem] == 0)
+        [m_View SetMode:BigFileViewModes::Text];
+    else if([m_ModeSelect indexOfSelectedItem] == 1)
+        [m_View SetMode:BigFileViewModes::Hex];
+    [self UpdateWordWrap];
 }
 
 @end

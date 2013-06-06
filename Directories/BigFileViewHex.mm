@@ -325,6 +325,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 
 - (void) OnUpArrow
 {
+    if(m_Lines.empty()) return;    
     assert(m_RowsOffset < m_Lines.size());
     if(m_RowsOffset > 1)
     {
@@ -369,6 +370,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 
 - (void) OnDownArrow
 {
+    if(m_Lines.empty()) return;
     assert(m_RowsOffset < m_Lines.size());
     if(m_RowsOffset + m_FrameLines < m_Lines.size())
     {
@@ -405,6 +407,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 
 - (void) OnPageDown
 {
+    if(m_Lines.empty()) return;    
     assert(m_RowsOffset < m_Lines.size());
     
     if(m_RowsOffset + m_FrameLines * 2 < m_Lines.size())
@@ -451,6 +454,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 
 - (void) OnPageUp
 {
+    if(m_Lines.empty()) return;    
     assert(m_RowsOffset < m_Lines.size());
     if(m_RowsOffset > m_FrameLines + 1)
     {

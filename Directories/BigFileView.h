@@ -10,6 +10,11 @@
 #include "FileWindow.h"
 #include "Encodings.h"
 
+enum class BigFileViewModes
+{
+    Text,
+    Hex
+};
 
 @interface BigFileView : NSView
 
@@ -34,8 +39,7 @@
 - (bool)        WordWrap;
 - (void)        SetWordWrap:(bool)_wrapping;
 
-
-- (IBAction)ToggleTextView:(id)sender;
-- (IBAction)ToggleHexView:(id)sender;
+- (BigFileViewModes) Mode;
+- (void)        SetMode: (BigFileViewModes) _mode;
 
 @end

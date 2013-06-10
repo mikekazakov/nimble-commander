@@ -414,12 +414,7 @@ enum ActiveState
     {
         case NSTabCharacter: // TAB key
             [self HandleTabButton];
-            break;
-        case NSF3FunctionKey:
-            if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask|NSFunctionKeyMask) )
-                [self OnFileBigFileViewCommand:nil];
-            break;
-            
+            break;            
     };
     
     switch (keycode)
@@ -995,7 +990,7 @@ enum ActiveState
     return false;
 }
 
-- (IBAction)OnFileBigFileViewCommand:(id)sender
+- (IBAction)OnFileInternalBigViewCommand:(id)sender
 {
     if([self IsPanelActive])
     {

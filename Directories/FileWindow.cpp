@@ -1,4 +1,7 @@
 #include "FileWindow.h"
+#include <sys/types.h>
+#include <sys/dirent.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -47,6 +50,13 @@ int FileWindow::OpenFile(const char *_path)
     
     if(access(_path, R_OK) == -1)
         return ERROR_FILENOACCESS;
+    
+    struct stat stat_buffer;
+    if(stat(_path, &stat_buffer) != 0)
+        return ERROR_FILENOACCESS;
+
+    if((stat_buffer.st_mode & S_IFMT) == S_IFDIR )
+        return ERROR_FILENOACCESS; // we can't read directory entries with regular I/O
     
     int newfd = open(_path, O_RDONLY);
     if(newfd == -1)

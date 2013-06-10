@@ -55,16 +55,13 @@
 
 - (void) dealloc
 {
-/*    if(m_File)
-    {
-        if(m_File->FileOpened())
-            m_File->CloseFile();
-        delete m_File;
-    }*/
-
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     CFRelease(m_ForegroundColor);
     CFRelease(m_Font);
+    if(m_DecodeBuffer != 0)
+        free(m_DecodeBuffer);
+    if(m_DecodeBufferIndx != 0)
+        free(m_DecodeBufferIndx);
 }
 
 - (void) DoInit
@@ -227,9 +224,6 @@
             [m_ViewImpl OnPageUp];
             break;
         
-    case NSF4FunctionKey:
-            [self NextViewType];
-            break;
     default:
         [super keyDown:event];            
     }
@@ -304,14 +298,6 @@
     m_File->MoveWindow(_pos);
     
     [self DecodeRawFileBuffer];
-}
-
-- (void) NextViewType
-{
-    if( [m_ViewImpl isKindOfClass: [BigFileViewText class]])
-        [self SetMode:BigFileViewModes::Hex];
-    else
-        [self SetMode:BigFileViewModes::Text];
 }
 
 - (void) DoClose

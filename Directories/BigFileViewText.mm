@@ -192,6 +192,7 @@ struct TextLine
     // layout stuff
     CGFloat                      m_FontHeight;
     CGFloat                      m_FontWidth;
+    CGFloat                      m_LeftInset;
     CFMutableAttributedStringRef m_AttrString;
     std::vector<TextLine>        m_Lines;
     unsigned                     m_VerticalOffset; // offset in lines number within text lines
@@ -211,6 +212,7 @@ struct TextLine
     m_Indeces = _unichar_indeces;
     m_WindowSize = _unichars_amount;
     m_FramePxWidth = 0;
+    m_LeftInset = 5;
     
     m_FontHeight = GetLineHeightForFont([m_View TextFont]);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
@@ -257,7 +259,7 @@ struct TextLine
 
     double wrapping_width = 10000;
     if([m_View WordWrap])
-        wrapping_width = [m_View frame].size.width;
+        wrapping_width = [m_View frame].size.width - [NSScroller scrollerWidth] - m_LeftInset;
 
     m_AttrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
     CFAttributedStringReplaceString(m_AttrString, CFRangeMake(0, 0), m_StringBuffer);
@@ -339,7 +341,7 @@ struct TextLine
     if(!m_StringBuffer) return;
      
     CGPoint textPosition;
-    textPosition.x = 0;
+    textPosition.x = m_LeftInset;
     textPosition.y = v.size.height - m_FontHeight;
      
     size_t first_string = m_VerticalOffset;
@@ -438,8 +440,9 @@ struct TextLine
             uint64_t anchor_glob_offset = m_Lines[m_VerticalOffset].byte_no + window_pos;
             
             uint64_t desired_window_offset = anchor_glob_offset;
-            assert(desired_window_offset > window_size/4);
-            desired_window_offset -= window_size/4; // TODO: need something more intelligent here
+//            assert(desired_window_offset > window_size/4);
+            if(desired_window_offset >= window_size/4)
+                desired_window_offset -= window_size/4; // TODO: need something more intelligent here
             
             if(desired_window_offset + window_size > file_size) // we'll reach a file's end
                 desired_window_offset = file_size - window_size;
@@ -673,9 +676,12 @@ struct TextLine
             }
         }
 
-        m_VerticalOffset = (unsigned)closest;
-        [m_View setNeedsDisplay:true];
-        return;
+        if((unsigned)closest + m_FrameLines < m_Lines.size())
+        { // check that we will fill whole screen after scrolling
+            m_VerticalOffset = (unsigned)closest;
+            [m_View setNeedsDisplay:true];
+            return;
+        }
     }
     
     uint64_t desired_wnd_pos = 0;
@@ -704,6 +710,13 @@ struct TextLine
 - (void) OnWordWrappingChanged: (bool) _wrap_words
 {
     [self BuildLayout];
+    if(m_VerticalOffset >= m_Lines.size())
+    {
+        if(m_Lines.size() >= m_FrameLines)
+            m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
+        else
+            m_VerticalOffset = 0;
+    }
 }
 
 @end

@@ -300,10 +300,10 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
         
         auto &c = m_Lines[i];
         
-        [(__bridge NSAttributedString*) c.row.attr_string drawWithRect:NSMakeRect(0, textPosition.y, 0, 0) options:0 ];
+        [(__bridge NSAttributedString*) c.row.attr_string drawWithRect:NSMakeRect(5, textPosition.y, 0, 0) options:0 ];
         [(__bridge NSAttributedString*) c.hex[0].attr_string drawWithRect:NSMakeRect(100, textPosition.y, 0, 0) options:0 ];
-        [(__bridge NSAttributedString*) c.hex[1].attr_string drawWithRect:NSMakeRect(300, textPosition.y, 0, 0) options:0 ];
-        [(__bridge NSAttributedString*) c.attr_string drawWithRect:NSMakeRect(500, textPosition.y, 0, 0) options:0 ];
+        [(__bridge NSAttributedString*) c.hex[1].attr_string drawWithRect:NSMakeRect(290, textPosition.y, 0, 0) options:0 ];
+        [(__bridge NSAttributedString*) c.attr_string drawWithRect:NSMakeRect(480, textPosition.y, 0, 0) options:0 ];
         
         textPosition.y -= m_FontHeight;
         if(textPosition.y < 0 - m_FontHeight)

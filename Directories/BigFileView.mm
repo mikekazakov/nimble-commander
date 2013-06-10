@@ -32,6 +32,7 @@
     bool            m_WrapWords;
     
     __strong id<BigFileViewProtocol>      m_ViewImpl;
+    __strong id<BigFileViewDelegateProtocol> m_Delegate;
     
     NSScroller      *m_VerticalScroller;
 }
@@ -324,6 +325,8 @@
 {
     [m_VerticalScroller setKnobProportion:prop];
     [m_VerticalScroller setDoubleValue:_pos];
+
+    [m_Delegate BigFileViewScrolled];
 }
 
 - (void)VerticalScroll:(id)sender
@@ -416,6 +419,14 @@
     [m_ViewImpl MoveOffsetWithinWindow:off];
 }
 
+- (void) SetDelegate:(id<BigFileViewDelegateProtocol>) _delegate
+{
+    m_Delegate = _delegate;
+}
 
+- (double) VerticalScrollPosition
+{
+    return  [m_VerticalScroller doubleValue];
+}
 
 @end

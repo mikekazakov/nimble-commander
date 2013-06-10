@@ -8,8 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MainWindowStateProtocol.h"
+#import "BigFileView.h"
 
-@interface MainWindowBigFileViewState : NSView<MainWindowStateProtocol>
+@interface MainWindowBigFileViewState : NSView<MainWindowStateProtocol, BigFileViewDelegateProtocol>
 
 - (bool) OpenFile: (const char*) _fn;
 

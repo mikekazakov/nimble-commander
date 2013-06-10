@@ -16,9 +16,15 @@ enum class BigFileViewModes
     Hex
 };
 
+@protocol BigFileViewDelegateProtocol <NSObject>
+@optional
+- (void) BigFileViewScrolled;
+@end
+
 @interface BigFileView : NSView
 
 - (void) SetFile:(FileWindow*) _file;
+- (void) SetDelegate:(id<BigFileViewDelegateProtocol>) _delegate;
 - (void) DoClose;
 
 // data access section
@@ -41,5 +47,7 @@ enum class BigFileViewModes
 
 - (BigFileViewModes) Mode;
 - (void)        SetMode: (BigFileViewModes) _mode;
+
+- (double)      VerticalScrollPosition;
 
 @end

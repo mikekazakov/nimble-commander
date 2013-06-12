@@ -332,10 +332,17 @@ struct TextLine
 
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
 {
-    CGContextSetRGBFillColor(_context, 1,1,1,1);
+    CGContextSetRGBFillColor(_context,
+                             [m_View BackgroundFillColor].r,
+                             [m_View BackgroundFillColor].g,
+                             [m_View BackgroundFillColor].b,
+                             [m_View BackgroundFillColor].a);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
-     
+    CGContextSetTextDrawingMode(_context, kCGTextFill);
+    CGContextSetShouldSmoothFonts(_context, false);
+    CGContextSetShouldAntialias(_context, true);
+    
      NSRect v = [m_View visibleRect];
      
     if(!m_StringBuffer) return;

@@ -15,18 +15,6 @@ static const unsigned g_BytesPerHexLine = 16;
 static const unsigned g_HexColumns = 2;
 static const unsigned g_RowOffsetSymbs = 10;
 
-struct MachTimeBenchmark
-{
-    uint64_t last;
-    inline MachTimeBenchmark() : last(mach_absolute_time()) {};
-    inline void Reset()
-    {
-        uint64_t now = mach_absolute_time();
-        NSLog(@"%llu\n", (now - last) / 1000000 );
-        last = now;
-    }
-};
-
 namespace
 {
 
@@ -38,20 +26,10 @@ struct TextLine
     uint32_t string_bytes_num;
     uint32_t row_byte_start;    // offset within file window corresponding to the current row start 
     uint32_t row_bytes_num;
-    CFStringRef string;
-    CFMutableAttributedStringRef attr_string;
-    
-    struct
-    {
-        CFStringRef string;
-        CFMutableAttributedStringRef attr_string;
-    } hex[g_HexColumns];
-    
-    struct
-    {
-        CFStringRef string;
-        CFMutableAttributedStringRef attr_string;
-    } row;
+
+    CFStringRef text;
+    CFStringRef hex[g_HexColumns];
+    CFStringRef row;
 };
     
 }
@@ -86,6 +64,18 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
     return lineHeight;
 }
 
+static double GetMonospaceFontCharWidth(CTFontRef _font)
+{
+    CFStringRef string = CFSTR("A");
+    CFMutableAttributedStringRef attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
+    CFAttributedStringReplaceString(attrString, CFRangeMake(0, 0), string);
+    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, CFStringGetLength(string)), kCTFontAttributeName, _font);
+    CTLineRef line = CTLineCreateWithAttributedString(attrString);
+    double width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+    CFRelease(line);
+    CFRelease(attrString);
+    return width;
+}
 
 @implementation BigFileViewHex
 {
@@ -98,10 +88,9 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
     unsigned              m_RowsOffset;
     int                   m_FrameLines; // amount of lines in our frame size ( +1 to fit cutted line also)    
     CGFloat               m_FontHeight;
+    CGFloat               m_FontWidth;    
     std::vector<TextLine> m_Lines;
 }
-
-
 
 - (id) InitWithWindow:(const UniChar*) _unichar_window
               offsets:(const uint32_t*) _unichar_indeces
@@ -114,11 +103,10 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
     m_WindowSize = _unichars_amount;
         
     m_FontHeight = GetLineHeightForFont([m_View TextFont]);
+    m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
     m_FrameLines = [_view frame].size.height / m_FontHeight;
-    
-//    MachTimeBenchmark m;
+
     [self OnBufferDecoded:m_WindowSize];
-//    m.Reset();
     
     m_RowsOffset = 0;
     
@@ -143,6 +131,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
     uint32_t charind = 0; // for string breaking
     uint32_t charextrabytes = 0; // for string breaking, to handle large (more than 1 byte) characters
     uint32_t byteind = 0; // for hex rows
+    
     while(true)
     {
         if(charind >= m_WindowSize)
@@ -181,7 +170,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
         // build current CF string, fix control symbols if nessesary
         if(!HasUnicharsBelow0x20(m_Window + current.char_start, current.chars_num))
         {
-            current.string = CFStringCreateWithCharactersNoCopy(0, m_Window + current.char_start, current.chars_num, kCFAllocatorNull);
+            current.text = CFStringCreateWithCharactersNoCopy(0, m_Window + current.char_start, current.chars_num, kCFAllocatorNull);
         }
         else
         {
@@ -192,15 +181,9 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
                 if(fixbuf[i] < 0x0020)
                     fixbuf[i] += 0x2400; // use unicode control symbols visualization
 
-            current.string = CFStringCreateWithCharacters(0, fixbuf, current.chars_num);
+            current.text = CFStringCreateWithCharacters(0, fixbuf, current.chars_num);
         }
-        
-        // built attribute string for current line
-        current.attr_string = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-        CFAttributedStringReplaceString(current.attr_string, CFRangeMake(0, 0), current.string);
-        CFAttributedStringSetAttribute(current.attr_string, CFRangeMake(0, current.chars_num), kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
-        CFAttributedStringSetAttribute(current.attr_string, CFRangeMake(0, current.chars_num), kCTFontAttributeName, [m_View TextFont]);
-        
+
         // build hex codes
         for(int i = 0; i < g_HexColumns; ++i)
         {
@@ -222,16 +205,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
                 tmp[(j - bytes_num*i)* 3 + 2] = ' ';
             }
             
-            current.hex[i].string = CFStringCreateWithBytes(0,
-                                                            (UInt8*) tmp,
-                                                            bytes_num*3*sizeof(UniChar),
-                                                            kCFStringEncodingUnicode,
-                                                            false);
-            
-            current.hex[i].attr_string = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-            CFAttributedStringReplaceString(current.hex[i].attr_string, CFRangeMake(0, 0), current.hex[i].string);
-            CFAttributedStringSetAttribute(current.hex[i].attr_string, CFRangeMake(0, bytes_num*3), kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
-            CFAttributedStringSetAttribute(current.hex[i].attr_string, CFRangeMake(0, bytes_num*3), kCTFontAttributeName, [m_View TextFont]);            
+            current.hex[i] = CFStringCreateWithCharacters(0, tmp, bytes_num*3);
         }
         
         // build line number code
@@ -246,11 +220,7 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
                 row_offset >>= 4;
             }
             
-            current.row.string = CFStringCreateWithBytes(0, (UInt8*)tmp, g_RowOffsetSymbs*sizeof(UniChar), kCFStringEncodingUnicode, false);
-            current.row.attr_string = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-            CFAttributedStringReplaceString(current.row.attr_string, CFRangeMake(0, 0), current.row.string);
-            CFAttributedStringSetAttribute(current.row.attr_string, CFRangeMake(0, g_RowOffsetSymbs), kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
-            CFAttributedStringSetAttribute(current.row.attr_string, CFRangeMake(0, g_RowOffsetSymbs), kCTFontAttributeName, [m_View TextFont]);
+            current.row = CFStringCreateWithCharacters(0, tmp, g_RowOffsetSymbs);
         }
         
         m_Lines.push_back(current);
@@ -266,50 +236,57 @@ static CGFloat GetLineHeightForFont(CTFontRef iFont)
 {
     for(auto &i: m_Lines)
     {
-        if(i.string != nil) CFRelease(i.string);
-        if(i.attr_string != nil) CFRelease(i.attr_string);
-
-        if(i.row.string != nil) CFRelease(i.row.string);
-        if(i.row.attr_string != nil) CFRelease(i.row.attr_string);
+        if(i.text != nil) CFRelease(i.text);
+        if(i.row != nil) CFRelease(i.row);
 
         for(auto &j: i.hex)
-        {
-            if(j.string != nil) CFRelease(j.string);
-            if(j.attr_string != nil) CFRelease(j.attr_string);
-        }
+            if(j != nil) CFRelease(j);
     }
     m_Lines.clear();
 }
 
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
 {
-    CGContextSetRGBFillColor(_context, 1,1,1,1);
+    CGContextSetRGBFillColor(_context,
+                             [m_View BackgroundFillColor].r,
+                             [m_View BackgroundFillColor].g,
+                             [m_View BackgroundFillColor].b,
+                             [m_View BackgroundFillColor].a);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
-    
-    
+    CGContextSetTextDrawingMode(_context, kCGTextFill);
+    CGContextSetShouldSmoothFonts(_context, false);
+    CGContextSetShouldAntialias(_context, true);
+        
     NSRect v = [m_View visibleRect];
     
-    CGPoint textPosition;
-    textPosition.x = 0;
-    textPosition.y = v.size.height - m_FontHeight;
+    CGPoint text_pos;
+    text_pos.x = 5;
+    text_pos.y = v.size.height - m_FontHeight;
     
-    size_t first_string = m_RowsOffset;
-    for(size_t i = first_string; i < m_Lines.size(); ++i)
+    NSDictionary *text_attr =@{NSFontAttributeName:(__bridge NSFont*)[m_View TextFont],
+                               NSForegroundColorAttributeName:[NSColor colorWithCGColor:[m_View TextForegroundColor]]};
+    
+    for(size_t i = m_RowsOffset; i < m_Lines.size(); ++i)
     {
-        
         auto &c = m_Lines[i];
         
-        [(__bridge NSAttributedString*) c.row.attr_string drawWithRect:NSMakeRect(5, textPosition.y, 0, 0) options:0 ];
-        [(__bridge NSAttributedString*) c.hex[0].attr_string drawWithRect:NSMakeRect(100, textPosition.y, 0, 0) options:0 ];
-        [(__bridge NSAttributedString*) c.hex[1].attr_string drawWithRect:NSMakeRect(290, textPosition.y, 0, 0) options:0 ];
-        [(__bridge NSAttributedString*) c.attr_string drawWithRect:NSMakeRect(480, textPosition.y, 0, 0) options:0 ];
+        CGPoint pos = text_pos;
+        [(__bridge NSString*)c.row drawAtPoint:pos withAttributes:text_attr];
+
+        pos.x += m_FontWidth * (g_RowOffsetSymbs + 2);
+        [(__bridge NSString*)c.hex[0] drawAtPoint:pos withAttributes:text_attr];
+
+        pos.x += m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
+        [(__bridge NSString*)c.hex[1] drawAtPoint:pos withAttributes:text_attr];
+
+        pos.x += m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
+        [(__bridge NSString*)c.text drawAtPoint:pos withAttributes:text_attr];
         
-        textPosition.y -= m_FontHeight;
-        if(textPosition.y < 0 - m_FontHeight)
+        text_pos.y -= m_FontHeight;
+        if(text_pos.y < 0 - m_FontHeight)
             break;
     }
-    
     
     // update scroller also
     double pos;

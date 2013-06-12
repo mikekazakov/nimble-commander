@@ -7,8 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include "FileWindow.h"
-#include "Encodings.h"
+#import "FileWindow.h"
+#import "Encodings.h"
+#import "OrthodoxMonospace.h"
 
 enum class BigFileViewModes
 {
@@ -38,6 +39,7 @@ enum class BigFileViewModes
 // appearance section
 - (CTFontRef)   TextFont;
 - (CGColorRef)  TextForegroundColor;
+- (DoubleColor) BackgroundFillColor;
 
 - (int)         Enconding;
 - (void)        SetEncoding:(int)_encoding;

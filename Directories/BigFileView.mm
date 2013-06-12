@@ -12,6 +12,7 @@
 #import "BigFileViewEncodingSelection.h"
 #import "DataBlockAnalysis.h"
 #import "Common.h"
+#import "AppDelegate.h"
 
 @implementation BigFileView
 {
@@ -27,6 +28,7 @@
 
     CTFontRef       m_Font;
     CGColorRef      m_ForegroundColor;
+    DoubleColor     m_BackgroundFillColor;
         
     // layout
     bool            m_WrapWords;
@@ -68,13 +70,12 @@
 {
     m_Encoding = ENCODING_UTF8;
     m_WrapWords = true;
-    m_Font = CTFontCreateWithName(CFSTR("Menlo"), 12, NULL);
-    
-    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-    CGFloat components[] = { 0.0, 0.0, 0.0, 1.0 };
-    m_ForegroundColor = CGColorCreate(rgbColorSpace, components);
-    CGColorSpaceRelease(rgbColorSpace);
-    
+
+    if( [(AppDelegate*)[NSApp delegate] Skin] == ApplicationSkin::Modern)
+        [self InitAppearanceForModernPresentation];
+    else
+        [self InitAppearanceForClassicPresentation];
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(frameDidChange)
                                                  name:NSViewFrameDidChangeNotification
@@ -92,6 +93,30 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_VerticalScroller]-(==0)-|" options:0 metrics:nil views:views]];
     
     [self frameDidChange];
+}
+
+- (void) InitAppearanceForModernPresentation
+{
+    m_Font = CTFontCreateWithName(CFSTR("Menlo"), 12, NULL);
+    
+    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    CGFloat components[] = { 0.0, 0.0, 0.0, 1.0 };
+    m_ForegroundColor = CGColorCreate(rgbColorSpace, components);
+    CGColorSpaceRelease(rgbColorSpace);
+    
+    m_BackgroundFillColor = DoubleColor(1., 1., 1., 1.);
+}
+
+- (void) InitAppearanceForClassicPresentation
+{
+    m_Font = CTFontCreateWithName(CFSTR("Menlo"), 14, NULL);
+    
+    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    CGFloat components[] = { 0.0, 1.0, 1.0, 1.0 };
+    m_ForegroundColor = CGColorCreate(rgbColorSpace, components);
+    CGColorSpaceRelease(rgbColorSpace);
+    
+    m_BackgroundFillColor = DoubleColor(0., 0., 0.5, 1.);    
 }
 
 - (BOOL)acceptsFirstResponder
@@ -271,6 +296,11 @@
 - (CGColorRef) TextForegroundColor
 {
     return m_ForegroundColor;
+}
+
+- (DoubleColor) BackgroundFillColor
+{
+    return m_BackgroundFillColor;
 }
 
 - (const void*) RawWindow

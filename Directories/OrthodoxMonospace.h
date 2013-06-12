@@ -17,6 +17,8 @@ struct DoubleColor
     double r,g,b,a;
     DoubleColor(double _r, double _g, double _b, double _a):
     r(_r), g(_g), b(_b), a(_a) {}
+    DoubleColor():
+    r(0.), g(0.), b(0.), a(1.) {}
 };
 
 namespace oms

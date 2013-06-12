@@ -223,13 +223,11 @@ enum ActiveState
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SheetAnchorLine]-(==0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==44)-[m_SheetAnchorLine(<=1)]" options:0 metrics:nil views:views]];    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[m_LeftPanelGoToButton(61)]-[m_LeftPanelSpinningIndicator(16)]" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_LeftPanelGoToButton(22)]" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_LeftPanelSpinningIndicator(16)]" options:0 metrics:nil views:views]];
-    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_RightPanelSpinningIndicator(16)]-[m_RightPanelGoToButton(61)]-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_RightPanelGoToButton(22)]" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_RightPanelSpinningIndicator(16)]" options:0 metrics:nil views:views]];    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(10)-[m_LeftPanelGoToButton(61)]-[m_LeftPanelSpinningIndicator(16)]" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(10)-[m_LeftPanelGoToButton(22)]" options:0 metrics:nil views:views]];
+
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_RightPanelSpinningIndicator(16)]-[m_RightPanelGoToButton(61)]-(10)-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(10)-[m_RightPanelGoToButton(22)]" options:0 metrics:nil views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(1)-[m_OpSummaryBox(40)]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_OpSummaryBox(350)]" options:0 metrics:nil views:views]];    

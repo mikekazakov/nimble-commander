@@ -77,9 +77,14 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     return self;
 }
 
+- (void) dealloc
+{
+}
+
 - (void) SetData:(PanelData*)_data
 {
     m_Data = _data;
+    [self CancelBackgroundOperations];
 }
 
 - (void) SetView:(PanelView*)_view

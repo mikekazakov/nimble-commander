@@ -190,7 +190,7 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
             const unsigned bytes_num = g_BytesPerHexLine / g_HexColumns;
             const unsigned char *bytes = (const unsigned char *)[m_View RawWindow] + current.row_byte_start;
             
-            UniChar tmp[256];
+            UniChar tmp[64];
             for(int j = 0; j < bytes_num*3; ++j)
                 tmp[j] = ' ';
             

@@ -57,10 +57,7 @@ enum ActiveState
     NSProgressIndicator *m_RightPanelSpinningIndicator;
     
     NSBox               *m_SheetAnchorLine;
-    
-//    @property (strong) IBOutlet NSProgressIndicator *LeftPanelSpinningIndicator;
-//    @property (strong) IBOutlet NSProgressIndicator *RightPanelSpinningIndicator;
-    
+        
     NSView               *m_OpSummaryBox;
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
@@ -83,6 +80,21 @@ enum ActiveState
     return YES;
 }
 
+- (void) dealloc
+{
+    [m_LeftPanelView SetPanelData:0];
+    [m_LeftPanelView SetPanelController:0];
+    [m_LeftPanelController SetData:0];
+    [m_LeftPanelController SetView:0];
+    delete m_LeftPanelData;
+    
+    [m_RightPanelView SetPanelData:0];
+    [m_RightPanelView SetPanelController:0];
+    [m_RightPanelController SetData:0];
+    [m_RightPanelController SetView:0];
+    delete m_RightPanelData;
+}
+
 - (void) Init
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -93,10 +105,8 @@ enum ActiveState
     [self CreateControls];
     [m_OpSummaryController AddViewTo:m_OpSummaryBox];
     
-    
     // panel creation and preparation
     [self CreatePanels];
-    [self UpdatePanelFrames];
     m_LeftPanelData = new PanelData;
     m_LeftPanelController = [PanelController new];
     [m_LeftPanelView SetPanelData:m_LeftPanelData];
@@ -104,7 +114,7 @@ enum ActiveState
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
     [m_LeftPanelController AttachToIndicator:m_LeftPanelSpinningIndicator];
-//    [m_LeftPanelController SetWindowController:self];
+
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
     [m_RightPanelView SetPanelData:m_RightPanelData];
@@ -112,8 +122,20 @@ enum ActiveState
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController AttachToIndicator:m_RightPanelSpinningIndicator];
-//    [m_RightPanelController SetWindowController:self];
-    [self ApplySkin: ((AppDelegate*)[NSApp delegate]).Skin];
+
+    m_Skin = ((AppDelegate*)[NSApp delegate]).Skin;
+    if (m_Skin == ApplicationSkin::Modern)
+    {
+        [m_LeftPanelView SetPresentation:new ModernPanelViewPresentation];
+        [m_RightPanelView SetPresentation:new ModernPanelViewPresentation];
+    }
+    else if (m_Skin == ApplicationSkin::Classic)
+    {
+        [m_LeftPanelView SetPresentation:new ClassicPanelViewPresentation];
+        [m_RightPanelView SetPresentation:new ClassicPanelViewPresentation];
+    }
+    [self UpdatePanelFrames];
+    
     [self LoadPanelsSettings];
     
     // now load data into panels
@@ -272,6 +294,9 @@ enum ActiveState
 
 - (void)ApplySkin:(ApplicationSkin)_skin
 {
+    if(m_Skin == _skin)
+        return;
+
     m_Skin = _skin;
     
     if (_skin == ApplicationSkin::Modern)

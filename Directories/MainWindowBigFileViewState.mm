@@ -70,8 +70,8 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 
 - (void) Resigned
 {
-    
-    
+    [m_View SetDelegate:nil];
+    [m_View DoClose];    
 }
 
 - (void) UpdateTitle

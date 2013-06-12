@@ -40,6 +40,7 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     // TODO: data, controllers and view deletion. leaks now
+    assert(m_WindowState.empty());
 }
 
 - (void)windowDidLoad
@@ -67,7 +68,14 @@
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(WindowWillClose)])
             [i WindowWillClose];
-        
+
+    [[self window] setContentView:nil];
+    while(!m_WindowState.empty())
+    {
+        [m_WindowState.back() Resigned];
+        m_WindowState.pop_back();
+    }
+    
     [(AppDelegate*)[NSApp delegate] RemoveMainWindow:self];
 }
 

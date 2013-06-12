@@ -573,8 +573,9 @@ ModernPanelViewPresentation::~ModernPanelViewPresentation()
     
     assert(m_IconCache);
     delete m_IconCache;
-    
-    m_State->Data->CustomIconClearAll();
+
+    if(m_State->Data != 0)
+        m_State->Data->CustomIconClearAll();
 }
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)

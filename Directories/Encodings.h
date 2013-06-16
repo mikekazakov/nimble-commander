@@ -186,3 +186,16 @@ void InterpretUTF16BEBufferAsUniChar(
                                      size_t *_output_sz,          // size of an output
                                      unsigned short _bad_symb     // something like '?' or U+FFFD
                                      );
+
+namespace encodings
+{
+    int BytesForCodeUnit(int _encoding);
+    void InterpretAsUnichar(
+                            int _encoding,
+                            const unsigned char* _input,
+                            size_t _input_size,          // in bytes
+                            unsigned short *_output_buf, // should be at least _input_size unichars long
+                            uint32_t       *_indexes_buf, // should be at least _input_size 32b words long, can be NULL
+                            size_t *_output_sz           // size of an _output_buf
+                            );
+}

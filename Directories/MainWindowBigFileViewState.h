@@ -14,5 +14,4 @@
 
 - (bool) OpenFile: (const char*) _fn;
 
-
 @end

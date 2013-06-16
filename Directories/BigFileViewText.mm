@@ -585,6 +585,9 @@ struct TextLine
         }
         else
         {
+            if(pos > _byte_no)
+                break; // ?
+            
             uint64_t d = pos < _byte_no ? _byte_no - pos : pos - _byte_no;
             if(d < closest_dist)
             {
@@ -646,19 +649,15 @@ struct TextLine
     m_VerticalOffset = (unsigned)closest;
 }
 
-- (void) HandleVerticalScroll: (double) _pos
+- (void) ScrollToByteOffset: (uint64_t)_offset
 {
-    // TODO: this is a very first implementation, contains many issues
-
     uint64_t window_pos = [m_View RawWindowPosition];
     uint64_t window_size = [m_View RawWindowSize];
     uint64_t file_size = [m_View FullSize];
-
-    uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
     
-    if(bytepos >= window_pos && bytepos < window_pos + window_size)
+    if(_offset >= window_pos && _offset < window_pos + window_size)
     {
-        uint32_t offset_in_wnd = uint32_t(bytepos - window_pos);
+        uint32_t offset_in_wnd = uint32_t(_offset - window_pos);
         
         uint32_t min_dist = 1000000;
         size_t closest = 0;
@@ -672,9 +671,12 @@ struct TextLine
             }
             else
             {
+                if(m_Lines[i].byte_no > offset_in_wnd)
+                    break; // ?
+                
                 uint32_t dist = m_Lines[i].byte_no > offset_in_wnd ?
-                    m_Lines[i].byte_no - offset_in_wnd :
-                    offset_in_wnd - m_Lines[i].byte_no;
+                m_Lines[i].byte_no - offset_in_wnd :
+                offset_in_wnd - m_Lines[i].byte_no;
                 if(dist < min_dist)
                 {
                     min_dist = dist;
@@ -682,7 +684,7 @@ struct TextLine
                 }
             }
         }
-
+        
         if((unsigned)closest + m_FrameLines < m_Lines.size())
         { // check that we will fill whole screen after scrolling
             m_VerticalOffset = (unsigned)closest;
@@ -692,15 +694,23 @@ struct TextLine
     }
     
     uint64_t desired_wnd_pos = 0;
-    if(bytepos > window_size / 2)
-        desired_wnd_pos = bytepos - window_size / 2;
+    if(_offset > window_size / 2)
+        desired_wnd_pos = _offset - window_size / 2;
     else
         desired_wnd_pos = 0;
-
+    
     if(desired_wnd_pos + window_size >= file_size)
         desired_wnd_pos = file_size - window_size;
+    
+    [self MoveFileWindowTo:desired_wnd_pos WithAnchor:_offset AtLineNo:0];
+}
 
-    [self MoveFileWindowTo:desired_wnd_pos WithAnchor:bytepos AtLineNo:0];
+- (void) HandleVerticalScroll: (double) _pos
+{
+    // TODO: this is a very first implementation, contains many issues
+    uint64_t file_size = [m_View FullSize];
+    uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
+    [self ScrollToByteOffset: bytepos];
 }
 
 - (void) OnFrameChanged

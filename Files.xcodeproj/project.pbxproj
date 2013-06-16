@@ -33,6 +33,8 @@
 		CF055EB6171D9E8E00F7A6ED /* PanelSizeCalculator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF055EB4171D9E8E00F7A6ED /* PanelSizeCalculator.mm */; };
 		CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */; };
 		CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */; };
+		CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
+		CF07DE41176985EF00757DE1 /* EncodingsAdditions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF27B50E172F8EAF005C9B28 /* pause_icon.png */; };
@@ -142,6 +144,9 @@
 		CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowFilePanelState.mm; sourceTree = "<group>"; };
 		CF07DE3A175D997A00757DE1 /* MainWindowBigFileViewState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowBigFileViewState.h; sourceTree = "<group>"; };
 		CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowBigFileViewState.mm; sourceTree = "<group>"; };
+		CF07DE3D1769754400757DE1 /* SearchInFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchInFile.mm; sourceTree = "<group>"; };
+		CF07DE3E1769754400757DE1 /* SearchInFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInFile.h; sourceTree = "<group>"; };
+		CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodingsAdditions.cpp; sourceTree = "<group>"; };
 		CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
@@ -498,6 +503,7 @@
 				CFE2697B16F01BAA0048A393 /* FlexChainedStringsChunk.h */,
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
 				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
+				CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */,
 				CF02F1D516F38805000AF870 /* Encodings.cpp */,
 				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
@@ -508,6 +514,8 @@
 				CFC5123116C5164300D247EE /* DirRead.cpp */,
 				CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */,
 				CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */,
+				CF07DE3D1769754400757DE1 /* SearchInFile.mm */,
+				CF07DE3E1769754400757DE1 /* SearchInFile.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -761,6 +769,8 @@
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
 				CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */,
+				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
+				CF07DE41176985EF00757DE1 /* EncodingsAdditions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

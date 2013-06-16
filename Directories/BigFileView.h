@@ -52,4 +52,8 @@ enum class BigFileViewModes
 
 - (double)      VerticalScrollPosition;
 
+// TODO: refactor me!
+- (void)        ShowSearchResultAt: (uint64_t)_pos len:(uint64_t)_len;
+
+
 @end

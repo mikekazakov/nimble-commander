@@ -104,7 +104,7 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
         
     m_FontHeight = GetLineHeightForFont([m_View TextFont]);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
-    m_FrameLines = [_view frame].size.height / m_FontHeight;
+    m_FrameLines = floor([_view frame].size.height / m_FontHeight);
 
     [self OnBufferDecoded:m_WindowSize];
     
@@ -274,7 +274,7 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
         CGPoint pos = text_pos;
         [(__bridge NSString*)c.row drawAtPoint:pos withAttributes:text_attr];
 
-        pos.x += m_FontWidth * (g_RowOffsetSymbs + 2);
+        pos.x += m_FontWidth * (g_RowOffsetSymbs + 3);
         [(__bridge NSString*)c.hex[0] drawAtPoint:pos withAttributes:text_attr];
 
         pos.x += m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
@@ -477,6 +477,8 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
 
 - (uint32_t) GetOffsetWithinWindow
 {
+    if(m_Lines.empty())
+        return 0;
     assert(m_RowsOffset < m_Lines.size());
     return m_Lines[m_RowsOffset].row_byte_start;
 }
@@ -512,17 +514,27 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
     if([m_View FullSize] < g_BytesPerHexLine * m_FrameLines)
         return;
 
+    uint64_t file_size = [m_View FullSize];
+    uint64_t bytepos = uint64_t( _pos * double(file_size - g_BytesPerHexLine * m_FrameLines) );
+    [self ScrollToByteOffset:bytepos];
+}
+
+- (void) OnFrameChanged
+{
+    m_FrameLines = floor([m_View frame].size.height / m_FontHeight);    
+}
+
+- (void) ScrollToByteOffset: (uint64_t)_offset
+{
     uint64_t window_pos = [m_View RawWindowPosition];
     uint64_t window_size = [m_View RawWindowSize];
     uint64_t file_size = [m_View FullSize];
-
-    uint64_t bytepos = uint64_t( _pos * double(file_size - g_BytesPerHexLine * m_FrameLines) );
     
-    if(bytepos > window_pos + g_BytesPerHexLine &&
-        bytepos + m_FrameLines * g_BytesPerHexLine < window_pos + window_size)
+    if(_offset > window_pos + g_BytesPerHexLine &&
+       _offset + m_FrameLines * g_BytesPerHexLine < window_pos + window_size)
     { // we can just move our offset in window
         
-        m_RowsOffset = unsigned ( (bytepos - window_pos) / g_BytesPerHexLine );
+        m_RowsOffset = unsigned ( (_offset - window_pos) / g_BytesPerHexLine );
         [m_View setNeedsDisplay:true];
     }
     else
@@ -531,24 +543,24 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
         {
             // we need to move file window
             uint64_t desired_wnd_pos = 0;
-            if(bytepos > window_size / 2)
-                desired_wnd_pos = bytepos - window_size/2;
+            if(_offset > window_size / 2)
+                desired_wnd_pos = _offset - window_size/2;
             else
                 desired_wnd_pos = 0;
-        
+            
             if(desired_wnd_pos + window_size > file_size)
                 desired_wnd_pos = file_size - window_size;
-        
+            
             [m_View RequestWindowMovementAt:desired_wnd_pos];
-        
-            assert(desired_wnd_pos <= bytepos);
-            uint32_t byte_offset = uint32_t(bytepos - desired_wnd_pos);
+            
+            assert(desired_wnd_pos <= _offset);
+            uint32_t byte_offset = uint32_t(_offset - desired_wnd_pos);
             m_RowsOffset = byte_offset / g_BytesPerHexLine;
             [m_View setNeedsDisplay:true];
         }
         else
         {
-            unsigned des_row_offset = unsigned ( (bytepos - window_pos) / g_BytesPerHexLine );
+            unsigned des_row_offset = unsigned ( (_offset - window_pos) / g_BytesPerHexLine );
             if(des_row_offset + m_FrameLines > m_Lines.size())
             {
                 if(des_row_offset > m_FrameLines)
@@ -557,15 +569,9 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
                     des_row_offset = 0;
             }
             m_RowsOffset = des_row_offset;
-            [m_View setNeedsDisplay:true];            
+            [m_View setNeedsDisplay:true];
         }
     }
-}
-
-- (void) OnFrameChanged
-{
-    
-    
 }
 
 @end

@@ -11,6 +11,7 @@
 #import "FileWindow.h"
 #import "MainWindowController.h"
 #import "Common.h"
+#import "SearchInFile.h"
 
 static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 {
@@ -24,6 +25,9 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 @implementation MainWindowBigFileViewState
 {
     FileWindow  *m_FileWindow;
+    FileWindow  *m_SearchFileWindow;
+    SearchInFile *m_SearchInFile;
+    
     BigFileView *m_View;
     NSPopUpButton *m_EncodingSelect;
     NSMutableArray *m_Encodings;
@@ -31,6 +35,7 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     NSPopUpButton *m_ModeSelect;
     NSTextField *m_FileSize;
     NSTextField *m_ScrollPosition;
+    NSSearchField *m_SearchField;
 
     char        m_FilePath[MAXPATHLEN];
 }
@@ -48,12 +53,23 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 
 - (void) dealloc
 {
+    if(m_SearchInFile != 0)
+    {
+        delete m_SearchInFile;
+    }    
     if(m_FileWindow != 0)
     {
         if(m_FileWindow->FileOpened())
             m_FileWindow->CloseFile();
         delete m_FileWindow;
         m_FileWindow = 0;
+    }
+    if(m_SearchFileWindow != 0)
+    {
+        if(m_SearchFileWindow->FileOpened())
+            m_SearchFileWindow->CloseFile();
+        delete m_SearchFileWindow;
+        m_SearchFileWindow = 0;
     }
 }
 
@@ -115,6 +131,10 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
         }
         
         m_FileWindow = fw;
+        m_SearchFileWindow = new FileWindow;
+        m_SearchFileWindow->OpenFile(_fn);        
+        m_SearchInFile = new SearchInFile(m_SearchFileWindow);
+        
         strcpy(m_FilePath, _fn);
         [m_View SetFile:m_FileWindow];
         
@@ -174,18 +194,27 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     [m_ScrollPosition setDrawsBackground:false];
     [self addSubview:m_ScrollPosition];
     
+    m_SearchField = [[NSSearchField alloc]initWithFrame:NSRect()];
+    [m_SearchField setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_SearchField setTarget:self];
+    [m_SearchField setAction:@selector(UpdateSearchFilter:)];
+    [[m_SearchField cell] setSendsWholeSearchString:true];
+    
+    [self addSubview:m_SearchField];
     
     NSBox *line = [[NSBox alloc] initWithFrame:NSRect()];
     [line setTranslatesAutoresizingMaskIntoConstraints:NO];
     [line setBoxType:NSBoxSeparator];
     [self addSubview:line];
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_EncodingSelect, m_WordWrap, m_ModeSelect, m_ScrollPosition, line);
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_EncodingSelect, m_WordWrap, m_ModeSelect, m_ScrollPosition, m_SearchField, line);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[line]-(==0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
                           @"|-[m_EncodingSelect]-[m_ModeSelect]-[m_WordWrap]-[m_ScrollPosition]"
                                                                  options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchField(200)]-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_SearchField]" options:0 metrics:nil views:views]];    
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_EncodingSelect(18)]-[line(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
     
     [self FillEncodingSelection];
@@ -279,6 +308,22 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
                    m_FileWindow->FileSize(),
                    [m_View VerticalScrollPosition]*100.];
     [m_ScrollPosition setStringValue:s];
+}
+
+- (void)UpdateSearchFilter:sender
+{
+    NSString *str = [m_SearchField stringValue];
+
+    m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), [m_View Enconding], 0);
+    
+    uint64_t offset, len;
+    if(m_SearchInFile->Search(&offset, &len))
+    {
+        [m_View ShowSearchResultAt: offset len:len];
+        
+        
+    }
+    
 }
 
 @end

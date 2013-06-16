@@ -172,51 +172,14 @@
 
 - (void) DecodeRawFileBuffer
 {
-    if(m_Encoding == ENCODING_UTF8)
-    {
-        InterpretUTF8BufferAsIndexedUniChar(
-                                                     (unsigned char*) m_File->Window(),
-                                                     m_File->WindowSize(),
-                                                     m_DecodeBuffer, // should be at least _input_size 16b words long,
-                                                     m_DecodeBufferIndx,
-                                                     &m_DecodedBufferSize,
-                                                     0xFFFD // something like '?' or U+FFFD
-                                                    );
-    }
-    else if(m_Encoding == ENCODING_UTF16LE)
-    {
-        bool odd = (m_File->WindowPos() & 1) == 1;
-        InterpretUTF16LEBufferAsUniChar((unsigned char*)m_File->Window() + (odd ? 1 : 0),
-                                        m_File->WindowSize() - (odd ? 1 : 0),
-                                        m_DecodeBuffer,
-                                        &m_DecodedBufferSize,
-                                        0xFFFD);
-        for(int i = 0; i < m_DecodedBufferSize; ++i)
-            m_DecodeBufferIndx[i] = i*2;
-    }
-    else if(m_Encoding == ENCODING_UTF16BE)
-    {
-        bool odd = (m_File->WindowPos() & 1) == 1;
-        InterpretUTF16BEBufferAsUniChar((unsigned char*)m_File->Window() + (odd ? 1 : 0),
-                                        m_File->WindowSize() - (odd ? 1 : 0),
-                                        m_DecodeBuffer,
-                                        &m_DecodedBufferSize,
-                                        0xFFFD);
-        for(int i = 0; i < m_DecodedBufferSize; ++i)
-            m_DecodeBufferIndx[i] = i*2;
-    }
-    else if(m_Encoding >= ENCODING_SINGLE_BYTES_FIRST__ && m_Encoding <= ENCODING_SINGLE_BYTES_LAST__)
-    {
-        InterpretSingleByteBufferAsUniCharPreservingBufferSize((unsigned char*) m_File->Window(),
-                                                               m_File->WindowSize(),
-                                                               m_DecodeBuffer,
-                                                               m_Encoding);
-        m_DecodedBufferSize = m_File->WindowSize();
-        for(int i = 0; i < m_File->WindowSize(); ++i)
-            m_DecodeBufferIndx[i] = i;
-    }
-    else
-        assert(0);
+    bool odd = (m_Encoding == ENCODING_UTF16LE || m_Encoding == ENCODING_UTF16BE) &&
+                ((m_File->WindowPos() & 1) == 1);
+    encodings::InterpretAsUnichar(m_Encoding,
+                                  (unsigned char*)m_File->Window() + (odd ? 1 : 0),
+                                  m_File->WindowSize() - (odd ? 1 : 0),
+                                  m_DecodeBuffer,
+                                  m_DecodeBufferIndx,
+                                  &m_DecodedBufferSize);
     
     if(m_ViewImpl)
         [m_ViewImpl OnBufferDecoded:m_DecodedBufferSize];
@@ -443,6 +406,11 @@
 - (double) VerticalScrollPosition
 {
     return  [m_VerticalScroller doubleValue];
+}
+
+- (void) ShowSearchResultAt: (uint64_t)_pos len:(uint64_t)_len
+{
+    [m_ViewImpl ScrollToByteOffset:_pos];
 }
 
 @end

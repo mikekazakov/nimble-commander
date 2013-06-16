@@ -140,6 +140,27 @@ int FileWindow::ReadFileWindow()
     return ERROR_OK;
 }
 
+int FileWindow::ReadFileWindowPart(size_t _offset, size_t _len)
+{
+    assert(_offset + _len <= m_WindowSize);
+    if(_len == 0)
+        return ERROR_OK;
+    
+    size_t r = pread(m_FD, (unsigned char*)m_Window + _offset, _len, m_WindowPos + _offset);
+    if(r == -1)
+    {
+        assert(0); // TODO: handle this situation later
+        exit(0);
+    }
+    if(r != _len)
+    {
+        assert(0); // TODO: handle this situation later
+        exit(0);
+    }
+    
+    return ERROR_OK;
+}
+
 size_t FileWindow::FileSize() const
 {
     assert(FileOpened());
@@ -164,26 +185,55 @@ size_t FileWindow::WindowPos() const
     return m_WindowPos;
 }
 
-int FileWindow::MoveWindow(size_t offset)
+int FileWindow::MoveWindow(size_t _offset)
 {
     // TODO: need more intelligent reading - in case of overlapping window movements we don't need to read a whole block
     
     assert(FileOpened());
     
-    if(offset == m_WindowPos) return ERROR_OK;
+    if(_offset == m_WindowPos)
+        return ERROR_OK;
     
-    if(offset + m_WindowSize > m_FileSize)
+    if(_offset + m_WindowSize > m_FileSize)
     {
         // invalid call. just kill ourselves
         assert(0);
         exit(0);
     }
-    m_WindowPos = offset;
-    return ReadFileWindow();
+    
+    // check for overlapping window movements
+   if( (_offset >= m_WindowPos && _offset <= m_WindowPos + m_WindowSize) ||
+        (_offset + m_WindowSize >= m_WindowPos && _offset <= m_WindowPos)
+       )
+    {
+        // read only unknown data
+        if(_offset >= m_WindowPos && _offset <= m_WindowPos + m_WindowSize)
+        {
+            memmove(m_Window,
+                    (const unsigned char*)m_Window + _offset - m_WindowPos,
+                    m_WindowSize - (_offset - m_WindowPos)
+                    );
+            size_t off = m_WindowSize - (_offset - m_WindowPos);
+            size_t len = _offset - m_WindowPos;
+            m_WindowPos = _offset;
+            return ReadFileWindowPart(off, len);
+        }
+        else
+        {
+            memmove( (unsigned char*)m_Window + m_WindowSize - (_offset + m_WindowSize - m_WindowPos),
+                    m_Window,
+                    _offset + m_WindowSize - m_WindowPos
+                    );
+            size_t off = 0;
+            size_t len = m_WindowPos - _offset;
+            m_WindowPos = _offset;
+            return ReadFileWindowPart(off, len);
+        }
+    }
+    else
+    {
+        // no overlapping - just move and read all window
+        m_WindowPos = _offset;
+        return ReadFileWindow();
+    }
 }
-
-
-
-
-
-

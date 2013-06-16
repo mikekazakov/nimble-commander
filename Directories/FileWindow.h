@@ -30,12 +30,13 @@ public:
     size_t WindowSize() const; // WindowSize can't be larger than FileSize
     size_t WindowPos() const;
     
-    int MoveWindow(size_t offset);
+    int MoveWindow(size_t _offset);
         // move window position in file and immediately reload it's content
         // will move only in valid boundaries. in case of invalid boundaries it will assert and then exit(0)
     
 private:
     int ReadFileWindow();
+    int ReadFileWindowPart(size_t _offset, size_t _len);
     
     FileWindow(const FileWindow&); //never copy
     

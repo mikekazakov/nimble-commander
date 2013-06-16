@@ -7,26 +7,33 @@
 //
 
 #import <vector>
+#import <algorithm>
 #import "BigFileViewText.h"
 #import "BigFileView.h"
 #import "Common.h"
 
 static const size_t g_FixupWindowSize = 128*1024;
 
-static CGFloat GetLineHeightForFont(CTFontRef iFont)
+static CGFloat GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent=0, CGFloat *_descent=0, CGFloat *_leading=0)
 {
     CGFloat lineHeight = 0.0;
     
     assert(iFont != NULL);
     
     // Get the ascent from the font, already scaled for the font's size
-    lineHeight += CTFontGetAscent(iFont);
+    CGFloat ascent = CTFontGetAscent(iFont);
+    lineHeight += ascent;
+    if(_ascent) *_ascent = ascent;
     
     // Get the descent from the font, already scaled for the font's size
-    lineHeight += CTFontGetDescent(iFont);
+    CGFloat descent = CTFontGetDescent(iFont);
+    lineHeight += descent;
+    if(_descent) *_descent = descent;
     
     // Get the leading from the font, already scaled for the font's size
-    lineHeight += CTFontGetLeading(iFont);
+    CGFloat leading = CTFontGetLeading(iFont);
+    lineHeight += leading;
+    if(_leading) *_leading = leading;
     
     return lineHeight;
 }
@@ -168,7 +175,7 @@ static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
 
 struct TextLine
 {
-    uint32_t    unichar_no;
+    uint32_t    unichar_no;      // index of a first unichar whitin a window
     uint32_t    unichar_len;
     uint32_t    byte_no;         // offset within file window of a current text line
     uint32_t    bytes_len;
@@ -187,10 +194,13 @@ struct TextLine
     
     // data stuff
     CFStringRef     m_StringBuffer;
-    size_t          m_StringBufferSize; // should be equal to m_DecodedBufferSize
+    size_t          m_StringBufferSize; // should be equal to m_WindowSize
         
     // layout stuff
     CGFloat                      m_FontHeight;
+    CGFloat                      m_FontAscent;
+    CGFloat                      m_FontDescent;
+    CGFloat                      m_FontLeading;
     CGFloat                      m_FontWidth;
     CGFloat                      m_LeftInset;
     CFMutableAttributedStringRef m_AttrString;
@@ -214,7 +224,7 @@ struct TextLine
     m_FramePxWidth = 0;
     m_LeftInset = 5;
     
-    m_FontHeight = GetLineHeightForFont([m_View TextFont]);
+    m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
     m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * g_FixupWindowSize);
     
@@ -265,6 +275,9 @@ struct TextLine
     CFAttributedStringReplaceString(m_AttrString, CFRangeMake(0, 0), m_StringBuffer);
     CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
     CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTFontAttributeName, [m_View TextFont]);
+
+    
+//    CGColorCreateGenericRGB
     
     // Create a typesetter using the attributed string.
 //    MachTimeBenchmark m;
@@ -332,16 +345,13 @@ struct TextLine
 
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
 {
-    CGContextSetRGBFillColor(_context,
-                             [m_View BackgroundFillColor].r,
-                             [m_View BackgroundFillColor].g,
-                             [m_View BackgroundFillColor].b,
-                             [m_View BackgroundFillColor].a);
+    [m_View BackgroundFillColor].Set(_context);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
     CGContextSetTextDrawingMode(_context, kCGTextFill);
     CGContextSetShouldSmoothFonts(_context, false);
     CGContextSetShouldAntialias(_context, true);
+
     
      NSRect v = [m_View visibleRect];
      
@@ -349,14 +359,46 @@ struct TextLine
      
     CGPoint textPosition;
     textPosition.x = m_LeftInset;
-    textPosition.y = v.size.height - m_FontHeight;
-     
+    textPosition.y = v.size.height - m_FontHeight + m_FontDescent;
+    
     size_t first_string = m_VerticalOffset;
     uint32_t last_drawn_byte_pos = 0;
+    
+    CFRange selection = [m_View SelectionWithinWindow];
     
      for(size_t i = first_string; i < m_Lines.size(); ++i)
      {
          CTLineRef line = m_Lines[i].line;
+         
+         if(selection.location >= 0) // draw a selection background here
+         {
+             CGFloat x1 = 0, x2  = -1;
+             if(m_Lines[i].unichar_no <= selection.location &&
+                m_Lines[i].unichar_no + m_Lines[i].unichar_len >= selection.location)
+             {
+                 x1 = CTLineGetOffsetForStringIndex(line, selection.location, 0);
+                 x2 = CTLineGetOffsetForStringIndex(line,
+                                                    (selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len) ?
+                                                    selection.location + selection.length : m_Lines[i].unichar_no + m_Lines[i].unichar_len,
+                                                        0);
+             }
+             else if(selection.location + selection.length > m_Lines[i].unichar_no &&
+                     selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len )
+                 x2 = CTLineGetOffsetForStringIndex(line, selection.location + selection.length, 0);
+             else if(selection.location < m_Lines[i].unichar_no &&
+                     selection.location + selection.length > m_Lines[i].unichar_no + m_Lines[i].unichar_len)
+                 x2 = CTLineGetOffsetForStringIndex(line, m_Lines[i].unichar_no + m_Lines[i].unichar_len, 0);
+
+             if(x2 > x1)
+             {
+                 CGContextSaveGState(_context);
+                 CGContextSetShouldAntialias(_context, false);
+                 [m_View SelectionBkFillColor].Set(_context);
+                 CGContextFillRect(_context, CGRectMake(textPosition.x + x1, textPosition.y - m_FontDescent, x2 - x1, m_FontHeight));
+                 CGContextRestoreGState(_context);
+             }
+         }
+         
          CGContextSetTextPosition(_context, textPosition.x, textPosition.y);
          CTLineDraw(line, _context);
 

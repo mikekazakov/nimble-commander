@@ -10,6 +10,7 @@
 #import <mach/mach_time.h>
 #import "BigFileViewHex.h"
 #import "BigFileView.h"
+#import "Common.h"
 
 static const unsigned g_BytesPerHexLine = 16;
 static const unsigned g_HexColumns = 2;
@@ -179,7 +180,10 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
             memcpy(fixbuf, m_Window + current.char_start, current.chars_num*sizeof(UniChar));
             for(uint32_t i = 0; i < current.chars_num; ++i)
                 if(fixbuf[i] < 0x0020)
-                    fixbuf[i] += 0x2400; // use unicode control symbols visualization
+                    // TODO: there should be an option what to use - dummy symbol or 0x2400+ symbols representation
+                    // 0x2400+ is probably better, but is tooo slow to render
+                    fixbuf[i] = '.';
+//                    fixbuf[i] += 0x2400; // use unicode control symbols visualization
 
             current.text = CFStringCreateWithCharacters(0, fixbuf, current.chars_num);
         }
@@ -228,7 +232,7 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
         charind += current.chars_num;
         byteind += current.row_bytes_num;
     }
- 
+     
     [m_View setNeedsDisplay:true];
 }
 

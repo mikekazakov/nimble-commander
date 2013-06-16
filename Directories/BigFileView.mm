@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <algorithm>
 #import "BigFileView.h"
 #import "BigFileViewText.h"
 #import "BigFileViewHex.h"
@@ -28,6 +29,7 @@
 
     CTFontRef       m_Font;
     CGColorRef      m_ForegroundColor;
+    DoubleColor     m_SelectionBkFillColor;
     DoubleColor     m_BackgroundFillColor;
         
     // layout
@@ -37,6 +39,10 @@
     __strong id<BigFileViewDelegateProtocol> m_Delegate;
     
     NSScroller      *m_VerticalScroller;
+    
+    CFRange         m_SelectionInFile;  // in bytes, raw position within whole file
+    CFRange         m_SelectionInWindow; // in UniChars, whitin current window position,
+                                         // updated when windows moves regarding current selection in bytes
 }
 
 - (void)awakeFromNib
@@ -70,6 +76,8 @@
 {
     m_Encoding = ENCODING_UTF8;
     m_WrapWords = true;
+    m_SelectionInFile = CFRangeMake(-1, 0);
+    m_SelectionInWindow = CFRangeMake(-1, 0);
 
     if( [(AppDelegate*)[NSApp delegate] Skin] == ApplicationSkin::Modern)
         [self InitAppearanceForModernPresentation];
@@ -98,24 +106,15 @@
 - (void) InitAppearanceForModernPresentation
 {
     m_Font = CTFontCreateWithName(CFSTR("Menlo"), 12, NULL);
-    
-    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-    CGFloat components[] = { 0.0, 0.0, 0.0, 1.0 };
-    m_ForegroundColor = CGColorCreate(rgbColorSpace, components);
-    CGColorSpaceRelease(rgbColorSpace);
-    
+    m_ForegroundColor = CGColorCreateGenericRGB(0.0, 0.0, 0.0, 1.0);
+    m_SelectionBkFillColor = DoubleColor(180./255., 214./255., 252./255., 1.);
     m_BackgroundFillColor = DoubleColor(1., 1., 1., 1.);
 }
 
 - (void) InitAppearanceForClassicPresentation
 {
     m_Font = CTFontCreateWithName(CFSTR("Menlo"), 14, NULL);
-    
-    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-    CGFloat components[] = { 0.0, 1.0, 1.0, 1.0 };
-    m_ForegroundColor = CGColorCreate(rgbColorSpace, components);
-    CGColorSpaceRelease(rgbColorSpace);
-    
+    m_ForegroundColor = CGColorCreateGenericRGB(0.0, 1.0, 1.0, 1.0);
     m_BackgroundFillColor = DoubleColor(0., 0., 0.5, 1.);    
 }
 
@@ -172,14 +171,16 @@
 
 - (void) DecodeRawFileBuffer
 {
-    bool odd = (m_Encoding == ENCODING_UTF16LE || m_Encoding == ENCODING_UTF16BE) &&
-                ((m_File->WindowPos() & 1) == 1);
+    assert(encodings::BytesForCodeUnit(m_Encoding) <= 2); // TODO: support for UTF-32 in the future
+    bool odd = (encodings::BytesForCodeUnit(m_Encoding) == 2) && ((m_File->WindowPos() & 1) == 1);    
     encodings::InterpretAsUnichar(m_Encoding,
                                   (unsigned char*)m_File->Window() + (odd ? 1 : 0),
                                   m_File->WindowSize() - (odd ? 1 : 0),
                                   m_DecodeBuffer,
                                   m_DecodeBufferIndx,
                                   &m_DecodedBufferSize);
+    
+    [self UpdateSelectionRange];
     
     if(m_ViewImpl)
         [m_ViewImpl OnBufferDecoded:m_DecodedBufferSize];
@@ -192,30 +193,30 @@
     unichar const unicode        = [character characterAtIndex:0];
     unsigned short const keycode = [event keyCode];
 //    NSUInteger const modif       = [event modifierFlags];
+
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    
 #define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
     switch (unicode)
     {
-    
-    case NSUpArrowFunctionKey:
+        case NSUpArrowFunctionKey:
             [m_ViewImpl OnUpArrow];
             break;
-            
-    case NSDownArrowFunctionKey:
+        case NSDownArrowFunctionKey:
             [m_ViewImpl OnDownArrow];
             break;
-            
-    case NSPageDownFunctionKey:
+        case NSPageDownFunctionKey:
             [m_ViewImpl OnPageDown];
             break;
-
-    case NSPageUpFunctionKey:
+        case NSPageUpFunctionKey:
             [m_ViewImpl OnPageUp];
             break;
-        
-    default:
-        [super keyDown:event];            
+        default:
+            [super keyDown:event];
     }
 #undef ISMODIFIER
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void) SetEncoding
@@ -251,18 +252,19 @@
     [m_ViewImpl OnFrameChanged];
 }
 
-- (CTFontRef) TextFont
-{
+- (CTFontRef) TextFont{
     return m_Font;
 }
 
-- (CGColorRef) TextForegroundColor
-{
+- (CGColorRef) TextForegroundColor{
     return m_ForegroundColor;
 }
 
-- (DoubleColor) BackgroundFillColor
-{
+- (DoubleColor) SelectionBkFillColor{
+    return m_SelectionBkFillColor;
+}
+
+- (DoubleColor) BackgroundFillColor{
     return m_BackgroundFillColor;
 }
 
@@ -310,7 +312,7 @@
 
 - (void)VerticalScroll:(id)sender
 {
-
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];
     switch ([m_VerticalScroller hitPart])
     {
         case NSScrollerIncrementLine:
@@ -335,15 +337,20 @@
         default:
             break;
     }
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];    
     int idy = int([theEvent deltaY]); // TODO: temporary implementation
     if(idy < 0)
         [m_ViewImpl OnDownArrow];
     else if(idy > 0)
         [m_ViewImpl OnUpArrow];
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [m_Delegate BigFileViewScrolledByUser];    
 }
 
 - (bool)WordWrap
@@ -408,9 +415,75 @@
     return  [m_VerticalScroller doubleValue];
 }
 
-- (void) ShowSearchResultAt: (uint64_t)_pos len:(uint64_t)_len
+
+- (void) SetSelectionInFile: (CFRange) _selection
 {
-    [m_ViewImpl ScrollToByteOffset:_pos];
+    if(_selection.location < 0)
+    {
+        m_SelectionInFile = CFRangeMake(-1, 0);
+        m_SelectionInWindow = CFRangeMake(-1, 0);
+    }
+    else
+    {
+        assert(_selection.location + _selection.length < m_File->FileSize());
+        m_SelectionInFile = _selection;
+        [m_ViewImpl ScrollToByteOffset:_selection.location];
+        [self UpdateSelectionRange];
+    }
+    [self setNeedsDisplay:true];
+}
+
+- (uint64_t) VerticalPositionInBytes
+{
+    return uint64_t([m_ViewImpl GetOffsetWithinWindow]) + m_File->WindowPos();
+}
+
+- (void) UpdateSelectionRange
+{
+    if(m_SelectionInFile.location < 0 || m_SelectionInFile.length < 1)
+    {
+        m_SelectionInWindow = CFRangeMake(-1, 0);
+        return;
+    }
+    
+    uint64_t window_pos = m_File->WindowPos();
+    uint64_t window_size = m_File->WindowSize();
+    
+    uint64_t start = m_SelectionInFile.location;
+    uint64_t end   = start + m_SelectionInFile.length;
+    
+    if(end > window_pos + window_size)
+        end = window_pos + window_size;
+    if(start < window_pos)
+        start = window_pos;
+    
+    if(start >= end)
+    {
+        m_SelectionInWindow = CFRangeMake(-1, 0);
+        return;
+    }
+    
+    const uint32_t *offset = std::lower_bound(m_DecodeBufferIndx,
+                                              m_DecodeBufferIndx+m_DecodedBufferSize,
+                                              start - window_pos);
+    assert(offset < m_DecodeBufferIndx+m_DecodedBufferSize);
+    
+    const uint32_t *tail = std::lower_bound(m_DecodeBufferIndx,
+                                            m_DecodeBufferIndx+m_DecodedBufferSize,
+                                            end - window_pos);
+    assert(tail < m_DecodeBufferIndx+m_DecodedBufferSize);
+    
+    int startindex = int(offset - m_DecodeBufferIndx);
+    int endindex   = int(tail - m_DecodeBufferIndx);
+    assert(startindex >= 0 && startindex < m_DecodedBufferSize);
+    assert(endindex >= 0 && endindex < m_DecodedBufferSize);
+    
+    m_SelectionInWindow = CFRangeMake(startindex, endindex - startindex);
+}
+
+- (CFRange) SelectionWithinWindow
+{
+    return m_SelectionInWindow;
 }
 
 @end

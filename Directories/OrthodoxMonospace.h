@@ -19,6 +19,9 @@ struct DoubleColor
     r(_r), g(_g), b(_b), a(_a) {}
     DoubleColor():
     r(0.), g(0.), b(0.), a(1.) {}
+    void Set(CGContextRef _context){
+        CGContextSetRGBFillColor(_context, r, g, b, a);
+    };
 };
 
 namespace oms

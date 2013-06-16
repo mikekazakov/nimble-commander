@@ -198,6 +198,7 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     [m_SearchField setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_SearchField setTarget:self];
     [m_SearchField setAction:@selector(UpdateSearchFilter:)];
+    [[m_SearchField cell] setPlaceholderString:@"Search in file"];
     [[m_SearchField cell] setSendsWholeSearchString:true];
     
     [self addSubview:m_SearchField];
@@ -247,9 +248,6 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     for(NSMutableDictionary *d in m_Encodings)
         [m_EncodingSelect addItemWithTitle:[d objectForKey:@"name"]];
 }
-
-
-
 
 - (void) SelectEncodingFromView
 {
@@ -310,20 +308,30 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     [m_ScrollPosition setStringValue:s];
 }
 
+- (void) BigFileViewScrolledByUser
+{
+    m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);     
+}
+
 - (void)UpdateSearchFilter:sender
 {
     NSString *str = [m_SearchField stringValue];
+    if([str length] == 0)
+    {
+        [m_View SetSelectionInFile:CFRangeMake(-1, 0)];
+        return;
+    }
 
     m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), [m_View Enconding], 0);
     
     uint64_t offset, len;
     if(m_SearchInFile->Search(&offset, &len))
-    {
-        [m_View ShowSearchResultAt: offset len:len];
-        
-        
-    }
-    
+        [m_View SetSelectionInFile:CFRangeMake(offset, len)];    
+}
+
+- (void)performFindPanelAction:(id)sender
+{
+    [self.window makeFirstResponder:m_SearchField];
 }
 
 @end

@@ -98,11 +98,12 @@ bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
         assert(m_Position >= m_File->WindowPos() &&
                m_Position < m_File->WindowPos() + m_File->WindowSize()); // sanity check
         
-        // TODO: string source alignment (for UTF-16)        
         // get UniChars from this window using given encoding
+        assert(encodings::BytesForCodeUnit(m_TextSearchEncoding) <= 2); // TODO: support for UTF-32 in the future
+        bool isodd = (encodings::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File->WindowPos() & 1) == 1);
         encodings::InterpretAsUnichar(m_TextSearchEncoding,
-                                      (const unsigned char*) m_File->Window() + left_window_gap,
-                                      m_File->WindowSize() - left_window_gap,
+                                      (const unsigned char*) m_File->Window() + left_window_gap  + (isodd ? 1 : 0),
+                                      m_File->WindowSize() - left_window_gap  - (isodd ? 1 : 0),
                                       m_DecodedBuffer,
                                       m_DecodedBufferIndx,
                                       &m_DecodedBufferSize);

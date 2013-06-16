@@ -19,7 +19,9 @@ enum class BigFileViewModes
 
 @protocol BigFileViewDelegateProtocol <NSObject>
 @optional
-- (void) BigFileViewScrolled;
+- (void) BigFileViewScrolled;       // signal any movements of scroll bar - regardless of reason
+                                    // should be used for UI updates only
+- (void) BigFileViewScrolledByUser; // signal that position was changed with request of user
 @end
 
 @interface BigFileView : NSView
@@ -39,6 +41,7 @@ enum class BigFileViewModes
 // appearance section
 - (CTFontRef)   TextFont;
 - (CGColorRef)  TextForegroundColor;
+- (DoubleColor) SelectionBkFillColor;
 - (DoubleColor) BackgroundFillColor;
 
 - (int)         Enconding;
@@ -51,9 +54,10 @@ enum class BigFileViewModes
 - (void)        SetMode: (BigFileViewModes) _mode;
 
 - (double)      VerticalScrollPosition;
+- (uint64_t)    VerticalPositionInBytes; // whithin all file, now in a window
 
-// TODO: refactor me!
-- (void)        ShowSearchResultAt: (uint64_t)_pos len:(uint64_t)_len;
+- (void)        SetSelectionInFile: (CFRange) _selection;   // raw bytes
+- (CFRange)     SelectionWithinWindow;                      // unichars within a decoded window
 
 
 @end

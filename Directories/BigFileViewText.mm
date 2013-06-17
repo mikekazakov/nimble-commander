@@ -132,6 +132,9 @@ static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
     for(size_t i = 0; i < _n; ++i)
     {
         UniChar c = _s[i];
+        if(c >= 0x0080)
+            continue;
+        
         if(
            c == 0x0000 || // NUL
            c == 0x0001 || // SOH
@@ -170,6 +173,9 @@ static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
         {
             _s[i] = ' ';
         }
+        
+        if(c == 0x000D && i + 1< _n && _s[i+1] == 0x000A)
+            _s[i] = ' '; // fix windows-like CR+LF newline to native LF
     }
 }
 

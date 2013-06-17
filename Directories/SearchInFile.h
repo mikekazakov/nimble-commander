@@ -25,6 +25,7 @@ public:
     
     // passing ownage of _string to SearchInFile
     void ToggleTextSearch(CFStringRef _string, int _encoding, int _options);
+    CFStringRef TextSearchString(); // may be NULL. do not alter it.
     
     bool Search(uint64_t *_offset, uint64_t *_bytes_len); // TODO: add stopping handler as a block
     
@@ -47,7 +48,6 @@ private:
 
     // text search related stuff
     CFStringRef m_RequestedTextSearch;
-    CFStringRef m_WorkingTextSearch; // may differ from m_RequestedTextSearch in case of case-insensitive search
     int         m_TextSearchEncoding;
     
     UniChar    *m_DecodedBuffer;

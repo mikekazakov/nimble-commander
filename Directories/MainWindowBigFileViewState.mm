@@ -319,9 +319,14 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     if([str length] == 0)
     {
         [m_View SetSelectionInFile:CFRangeMake(-1, 0)];
+        m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);             
         return;
     }
-
+    
+    if( m_SearchInFile->TextSearchString() == NULL ||
+       [str compare:(__bridge NSString*) m_SearchInFile->TextSearchString()] != NSOrderedSame )
+        m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);
+    
     m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), [m_View Enconding], 0);
     
     uint64_t offset, len;

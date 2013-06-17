@@ -17,7 +17,6 @@ SearchInFile::SearchInFile(FileWindow* _file):
     m_Position(0),
     m_WorkMode(WorkMode::NotSet),
     m_RequestedTextSearch(0),
-    m_WorkingTextSearch(0),
     m_DecodedBufferString(0),
     m_TextSearchEncoding(ENCODING_INVALID)
 {
@@ -31,8 +30,6 @@ SearchInFile::~SearchInFile()
 {
     if(m_RequestedTextSearch != 0)
         CFRelease(m_RequestedTextSearch);
-    if(m_WorkingTextSearch != 0)
-        CFRelease(m_WorkingTextSearch);
     if(m_DecodedBufferString != 0)
         CFRelease(m_DecodedBufferString);    
     if(m_DecodedBuffer != 0)
@@ -56,10 +53,7 @@ void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding, int _opt
 {
     if(m_RequestedTextSearch != 0)
         CFRelease(m_RequestedTextSearch);
-    if(m_WorkingTextSearch != 0)
-        CFRelease(m_WorkingTextSearch);
     m_RequestedTextSearch = _string;
-    m_WorkingTextSearch = CFStringCreateCopy(0, m_RequestedTextSearch); // include lower-case variant later
     m_TextSearchEncoding = _encoding;
     
     m_WorkMode = WorkMode::Text;
@@ -78,7 +72,7 @@ bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
     if(m_Position >= m_File->FileSize())
         return false; // when finished searching
     
-    if(CFStringGetLength(m_WorkingTextSearch) <= 0)
+    if(CFStringGetLength(m_RequestedTextSearch) <= 0)
         return false;
 
     while(true)
@@ -117,7 +111,7 @@ bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
 
         CFRange result = CFStringFind (
                               m_DecodedBufferString,
-                              m_WorkingTextSearch,
+                              m_RequestedTextSearch,
                               /*kCFCompareCaseInsensitive*/ 0 // TODO: search flags here
                               );
         if(result.location == kCFNotFound)
@@ -127,8 +121,8 @@ bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
             { // can move on
                 // left some space in the tail to exclude situations when searched text is cut between the windows
                 assert(left_window_gap == 0);
-                assert(CFStringGetLength(m_WorkingTextSearch) * g_MaximumCodeUnit < m_File->WindowSize());
-                m_Position = m_Position + m_File->WindowSize() - CFStringGetLength(m_WorkingTextSearch) * g_MaximumCodeUnit;
+                assert(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit < m_File->WindowSize());
+                m_Position = m_Position + m_File->WindowSize() - CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
             }
             else
             { // this is the end (c)
@@ -150,4 +144,9 @@ bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
     }
     
     return false;
+}
+
+CFStringRef SearchInFile::TextSearchString()
+{
+    return m_RequestedTextSearch;
 }

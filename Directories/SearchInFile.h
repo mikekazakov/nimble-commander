@@ -22,12 +22,21 @@ public:
     ~SearchInFile();
     
     void MoveCurrentPosition(uint64_t _pos);
+
+    void SetSearchOptions(int _options);
+    int SearchOptions();
     
     // passing ownage of _string to SearchInFile
-    void ToggleTextSearch(CFStringRef _string, int _encoding, int _options);
-    CFStringRef TextSearchString(); // may be NULL. do not alter it.
+    void ToggleTextSearch(CFStringRef _string, int _encoding);
+    CFStringRef TextSearchString(); // may be NULL. don't alter it. don't release it
+    int TextSearchEncoding(); // may be ENCODING_INVALID
     
     bool Search(uint64_t *_offset, uint64_t *_bytes_len); // TODO: add stopping handler as a block
+    
+    enum
+    {
+        OptionCaseSensitive = 1 << 0 // default search option is case _insensitive_
+    };
     
 private:
     SearchInFile(const SearchInFile&); // forbid
@@ -46,6 +55,8 @@ private:
     uint64_t    m_Position; // position where next search attempt should start
                             // in bytes, should be inside file window
 
+    int         m_SearchOptions;    
+    
     // text search related stuff
     CFStringRef m_RequestedTextSearch;
     int         m_TextSearchEncoding;

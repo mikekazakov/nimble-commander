@@ -18,7 +18,8 @@ SearchInFile::SearchInFile(FileWindow* _file):
     m_WorkMode(WorkMode::NotSet),
     m_RequestedTextSearch(0),
     m_DecodedBufferString(0),
-    m_TextSearchEncoding(ENCODING_INVALID)
+    m_TextSearchEncoding(ENCODING_INVALID),
+    m_SearchOptions(0)
 {
     assert(m_File->FileOpened());
     m_Position = _file->WindowPos();
@@ -49,7 +50,7 @@ void SearchInFile::MoveCurrentPosition(uint64_t _pos)
         m_File->MoveWindow(m_Position);
 }
 
-void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding, int _options)
+void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
 {
     if(m_RequestedTextSearch != 0)
         CFRelease(m_RequestedTextSearch);
@@ -110,10 +111,11 @@ bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
         m_DecodedBufferString = CFStringCreateWithCharactersNoCopy(0, m_DecodedBuffer, m_DecodedBufferSize, kCFAllocatorNull);
 
         CFRange result = CFStringFind (
-                              m_DecodedBufferString,
-                              m_RequestedTextSearch,
-                              /*kCFCompareCaseInsensitive*/ 0 // TODO: search flags here
-                              );
+                                       m_DecodedBufferString,
+                                       m_RequestedTextSearch,
+                                       (m_SearchOptions & OptionCaseSensitive) ? 0 : kCFCompareCaseInsensitive
+                                       );
+
         if(result.location == kCFNotFound)
         {
             // lets proceed further
@@ -149,4 +151,19 @@ bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
 CFStringRef SearchInFile::TextSearchString()
 {
     return m_RequestedTextSearch;
+}
+
+int SearchInFile::TextSearchEncoding()
+{
+    return m_TextSearchEncoding;
+}
+
+void SearchInFile::SetSearchOptions(int _options)
+{
+    m_SearchOptions = _options;
+}
+
+int SearchInFile::SearchOptions()
+{
+    return m_SearchOptions;
 }

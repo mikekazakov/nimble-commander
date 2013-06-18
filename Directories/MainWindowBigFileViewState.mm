@@ -266,6 +266,7 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
         if([[d objectForKey:@"name"] isEqualToString:[[m_EncodingSelect selectedItem] title]])
         {
             [m_View SetEncoding:[(NSNumber*)[d objectForKey:@"code"] intValue]];
+            [self UpdateSearchFilter:self];
             break;
         }
 }
@@ -319,16 +320,18 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     if([str length] == 0)
     {
         [m_View SetSelectionInFile:CFRangeMake(-1, 0)];
-        m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);             
         return;
     }
     
     if( m_SearchInFile->TextSearchString() == NULL ||
-       [str compare:(__bridge NSString*) m_SearchInFile->TextSearchString()] != NSOrderedSame )
+       [str compare:(__bridge NSString*) m_SearchInFile->TextSearchString()] != NSOrderedSame ||
+       m_SearchInFile->TextSearchEncoding() != [m_View Enconding] )
+    {
+        [m_View SetSelectionInFile:CFRangeMake(-1, 0)];        
         m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);
-    
-    m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), [m_View Enconding], 0);
-    
+        m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), [m_View Enconding]);
+    }
+
     uint64_t offset, len;
     if(m_SearchInFile->Search(&offset, &len))
         [m_View SetSelectionInFile:CFRangeMake(offset, len)];    

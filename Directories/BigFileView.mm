@@ -418,6 +418,10 @@
 
 - (void) SetSelectionInFile: (CFRange) _selection
 {
+    if(_selection.location == m_SelectionInFile.location &&
+       _selection.length   == m_SelectionInFile.length)
+        return;
+    
     if(_selection.location < 0)
     {
         m_SelectionInFile = CFRangeMake(-1, 0);
@@ -438,6 +442,9 @@
     return uint64_t([m_ViewImpl GetOffsetWithinWindow]) + m_File->WindowPos();
 }
 
+// searching for selected UniChars in file window if there's any overlapping of
+// selected bytes in file on current window position
+// this method should be called on any file window movement
 - (void) UpdateSelectionRange
 {
     if(m_SelectionInFile.location < 0 || m_SelectionInFile.length < 1)

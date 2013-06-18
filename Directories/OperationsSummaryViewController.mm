@@ -91,7 +91,7 @@
 {
     const int x_delta = 47, y_delta = -3;
     CGPoint origin = [self.view convertPoint:NSMakePoint(x_delta, y_delta)
-                                      toView:self.view.window.contentView];
+                                      toView:self.view.superview.superview];
     origin.y -= self.ScrollView.frame.size.height - self.view.frame.size.height;
     
     [self.ScrollView setFrameOrigin:origin];
@@ -161,7 +161,7 @@
 - (void)AddViewTo:(NSView *)_parent
 {
     [_parent addSubview:self.view];
-    [_parent.window.contentView addSubview:self.ScrollView];
+    [_parent.superview addSubview:self.ScrollView];
 }
 
 - (void)OnWindowResize

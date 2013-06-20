@@ -19,7 +19,8 @@ SearchInFile::SearchInFile(FileWindow* _file):
     m_RequestedTextSearch(0),
     m_DecodedBufferString(0),
     m_TextSearchEncoding(ENCODING_INVALID),
-    m_SearchOptions(0)
+    m_SearchOptions(0),
+    m_Queue(dispatch_queue_create("search in file", 0))
 {
     assert(m_File->FileOpened());
     m_Position = _file->WindowPos();
@@ -37,11 +38,12 @@ SearchInFile::~SearchInFile()
         free(m_DecodedBuffer);
     if(m_DecodedBufferIndx != 0)
         free(m_DecodedBufferIndx);
+    dispatch_release(m_Queue);
 }
 
 void SearchInFile::MoveCurrentPosition(uint64_t _pos)
 {
-    assert(_pos < m_File->FileSize());
+    assert( (m_File->FileSize() > 0 && _pos < m_File->FileSize()) || _pos == 0 );
     m_Position = _pos;
 
     if(m_File->WindowSize() + m_Position > m_File->FileSize())
@@ -60,27 +62,33 @@ void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
     m_WorkMode = WorkMode::Text;
 }
 
-bool SearchInFile::Search(uint64_t *_offset, uint64_t *_bytes_len)
+SearchInFile::Result SearchInFile::Search(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
 {
     if(m_WorkMode == WorkMode::Text)
-        return SearchText(_offset, _bytes_len);
+        return SearchText(_offset, _bytes_len, _checker);
     
-    return false;
+    return Result::NotFound;
 }
 
-bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
+SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
 {
+    if(m_File->FileSize() == 0)
+        return Result::NotFound; // for singular case
+    
     if(m_Position >= m_File->FileSize())
-        return false; // when finished searching
+        return Result::EndOfFile; // when finished searching
     
     if(CFStringGetLength(m_RequestedTextSearch) <= 0)
-        return false;
+        return Result::Invalid;
 
     while(true)
     {
         if(m_Position >= m_File->FileSize())
             break; // when finished searching
 
+        if(_checker && _checker())
+            return Result::Canceled;
+        
         // move our load window inside a file
         size_t window_pos = m_Position;
         size_t left_window_gap = 0;
@@ -141,11 +149,11 @@ bool SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len)
                            m_File->WindowSize() - left_window_gap )
                             - m_DecodedBufferIndx[result.location];
             m_Position = m_Position + m_DecodedBufferIndx[result.location+result.length];
-            return true;
+            return Result::Found;
         }
     }
     
-    return false;
+    return Result::NotFound;
 }
 
 CFStringRef SearchInFile::TextSearchString()
@@ -166,4 +174,9 @@ void SearchInFile::SetSearchOptions(int _options)
 int SearchInFile::SearchOptions()
 {
     return m_SearchOptions;
+}
+
+dispatch_queue_t SearchInFile::Queue()
+{
+    return m_Queue;
 }

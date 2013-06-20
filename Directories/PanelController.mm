@@ -79,6 +79,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) dealloc
 {
+    if(m_DirectorySizeCountingQ)
+        dispatch_release(m_DirectorySizeCountingQ);
+    if(m_DirectoryLoadingQ)
+        dispatch_release(m_DirectoryLoadingQ);
+    if(m_DirectoryReLoadingQ)
+        dispatch_release(m_DirectoryReLoadingQ);
 }
 
 - (void) SetData:(PanelData*)_data
@@ -577,15 +583,13 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 }
 
 - (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files
-{
-    if(m_IsStopDirectorySizeCounting)
-        dispatch_async(m_DirectorySizeCountingQ, ^{ m_IsStopDirectorySizeCounting = false; } );
-    
+{    
     char dir[MAXPATHLEN];
     m_Data->GetDirectoryPathWithTrailingSlash(dir);
     const char *str = strdup(dir);
     
     dispatch_async(m_DirectorySizeCountingQ, ^{
+        m_IsStopDirectorySizeCounting = false;
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:true];});
         PanelDirectorySizeCalculate(_files, str, self, ^bool{return m_IsStopDirectorySizeCounting;});
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:false];});

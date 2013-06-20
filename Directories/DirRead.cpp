@@ -173,6 +173,7 @@ int FetchDirectoryListing(const char* _path,
     }
 
     dispatch_group_wait(statg, DISPATCH_TIME_FOREVER);
+    dispatch_release(statg);
 
     if(_target->size() == 0)
         return -1; // something was very wrong

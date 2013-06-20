@@ -31,6 +31,7 @@ PanelData::~PanelData()
     delete m_EntriesByRawName;
     delete m_EntriesByHumanName;
     delete m_EntriesByCustomSort;
+    dispatch_release(m_SortExecGroup);
 }
 
 void PanelData::DestroyCurrentData()

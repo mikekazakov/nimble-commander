@@ -35,7 +35,12 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     NSPopUpButton *m_ModeSelect;
     NSTextField *m_FileSize;
     NSTextField *m_ScrollPosition;
+
     NSSearchField *m_SearchField;
+    NSProgressIndicator *m_SearchIndicator;
+    NSTextField   *m_SearchResult;
+    bool           m_IsStopSearching;
+    bool           m_IsSearchRunning;
 
     char        m_FilePath[MAXPATHLEN];
 }
@@ -45,6 +50,8 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     self = [super initWithFrame:frameRect];
     if(self)
     {
+        m_IsStopSearching = false;
+        m_IsSearchRunning = false;
         m_Encodings = [NSMutableArray new];
         [self CreateControls];
     }
@@ -87,7 +94,8 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 - (void) Resigned
 {
     [m_View SetDelegate:nil];
-    [m_View DoClose];    
+    [m_View DoClose];
+    m_IsStopSearching = true;
 }
 
 - (void) UpdateTitle
@@ -112,8 +120,6 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 
 - (void)cancelOperation:(id)sender
 {
-    [m_View SetDelegate:nil];
-    [m_View DoClose];
     [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
 }
 
@@ -200,22 +206,40 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     [m_SearchField setAction:@selector(UpdateSearchFilter:)];
     [[m_SearchField cell] setPlaceholderString:@"Search in file"];
     [[m_SearchField cell] setSendsWholeSearchString:true];
-    
     [self addSubview:m_SearchField];
     
+    m_SearchIndicator = [[NSProgressIndicator alloc] initWithFrame:NSRect()];
+    [m_SearchIndicator setIndeterminate:YES];
+    [m_SearchIndicator setStyle:NSProgressIndicatorSpinningStyle];
+    [m_SearchIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_SearchIndicator setControlSize:NSSmallControlSize];
+    [m_SearchIndicator setDisplayedWhenStopped:NO];
+    [self addSubview:m_SearchIndicator];
+    
+    m_SearchResult = [[NSTextField alloc] initWithFrame:NSRect()];
+    [m_SearchResult setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_SearchResult setEditable:false];
+    [m_SearchResult setBordered:false];
+    [m_SearchResult setDrawsBackground:false];
+    [m_SearchResult setStringValue:@""];
+    [self addSubview:m_SearchResult];
+        
     NSBox *line = [[NSBox alloc] initWithFrame:NSRect()];
     [line setTranslatesAutoresizingMaskIntoConstraints:NO];
     [line setBoxType:NSBoxSeparator];
     [self addSubview:line];
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_EncodingSelect, m_WordWrap, m_ModeSelect, m_ScrollPosition, m_SearchField, line);
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_EncodingSelect, m_WordWrap, m_ModeSelect, m_ScrollPosition, m_SearchField, m_SearchIndicator, m_SearchResult, line);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[line]-(==0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
                           @"|-[m_EncodingSelect]-[m_ModeSelect]-[m_WordWrap]-[m_ScrollPosition]"
                                                                  options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchField(200)]-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_SearchField]" options:0 metrics:nil views:views]];    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchIndicator]-[m_SearchField(200)]-|"
+                                                                 options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchResult]-[m_SearchField]"
+                                                                 options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_SearchField]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_EncodingSelect(18)]-[line(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
     
     [self FillEncodingSelection];
@@ -319,6 +343,8 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     NSString *str = [m_SearchField stringValue];
     if([str length] == 0)
     {
+        m_IsStopSearching = true; // we should stop current search if any
+        [m_SearchResult setStringValue:@""];
         [m_View SetSelectionInFile:CFRangeMake(-1, 0)];
         return;
     }
@@ -326,15 +352,55 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     if( m_SearchInFile->TextSearchString() == NULL ||
        [str compare:(__bridge NSString*) m_SearchInFile->TextSearchString()] != NSOrderedSame ||
        m_SearchInFile->TextSearchEncoding() != [m_View Enconding] )
-    {
-        [m_View SetSelectionInFile:CFRangeMake(-1, 0)];        
-        m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);
-        m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), [m_View Enconding]);
+    { // user did some changes in search request
+        [m_SearchResult setStringValue:@""];
+        [m_View SetSelectionInFile:CFRangeMake(-1, 0)]; // remove current selection
+        
+        uint64_t offset = [m_View VerticalPositionInBytes];
+        int encoding = [m_View Enconding];
+        
+        m_IsStopSearching = true; // we should stop current search if any
+        dispatch_async(m_SearchInFile->Queue(), ^{
+            m_IsStopSearching = false;
+            m_SearchInFile->MoveCurrentPosition(offset);
+            m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), encoding);
+        });
     }
+    else
+    { // request is the same
+        if(m_IsSearchRunning)
+            return; // we're already performing this request now, nothing to do
+    }
+    
+    dispatch_async(m_SearchInFile->Queue(), ^{
+        m_IsStopSearching = false;
+        uint64_t offset, len;
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifySearching:true];});
+        auto result = m_SearchInFile->Search(&offset, &len, ^{return m_IsStopSearching;});
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifySearching:false];});
+        
+        if(result == SearchInFile::Result::Found)
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [m_View SetSelectionInFile:CFRangeMake(offset, len)]; });
+        else if(result == SearchInFile::Result::NotFound)            
+            [m_SearchResult setStringValue:@"Not found"];
+    });
+}
 
-    uint64_t offset, len;
-    if(m_SearchInFile->Search(&offset, &len))
-        [m_View SetSelectionInFile:CFRangeMake(offset, len)];    
+- (void)NotifySearching: (bool) _is_running
+{
+    if(m_IsSearchRunning == _is_running)
+        return;
+    m_IsSearchRunning = _is_running;
+    const auto visual_spinning_delay = 100ull; // should be 100 ms of workload before user will get spinning indicator
+    
+    if(m_IsSearchRunning)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, visual_spinning_delay * USEC_PER_SEC), dispatch_get_main_queue(), ^{
+                           if(m_IsSearchRunning) // need to check if task was already done
+                               [m_SearchIndicator startAnimation:self];
+                       });
+    else
+        [m_SearchIndicator stopAnimation:self];
 }
 
 - (void)performFindPanelAction:(id)sender

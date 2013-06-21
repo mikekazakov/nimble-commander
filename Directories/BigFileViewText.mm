@@ -660,7 +660,6 @@ struct TextLine
     {
         if(m_Lines[i].byte_no == _offset)
         {
-            min_dist = 0;
             closest = i;
             break;
         }
@@ -694,7 +693,6 @@ struct TextLine
         {
             if(m_Lines[i].byte_no == offset_in_wnd)
             {
-                min_dist = 0;
                 closest = i;
                 break;
             }

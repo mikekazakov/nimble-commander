@@ -194,26 +194,22 @@ static const unsigned char g_4Bits_To_Char[16] = {
     // once we have our layout built - it's time to produce our strings and CTLines, creation of which can be VERY long
     dispatch_group_t group = dispatch_group_create();
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    auto color = [m_View TextForegroundColor];
-    auto font = [m_View TextFont];
+    CFMutableDictionaryRef attributes = CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFDictionarySetValue(attributes, kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
+    CFDictionarySetValue(attributes, kCTFontAttributeName, [m_View TextFont]);    
     for(auto &i: m_Lines)
-    {
         dispatch_group_async(group, queue, ^{
             // build current CF string
             i.text = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow + i.char_start, i.chars_num, kCFAllocatorNull);
 
             // attributed string and corresponding CTLine
-            CFMutableAttributedStringRef attr_str = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-            CFAttributedStringReplaceString(attr_str, CFRangeMake(0, 0), i.text);
-            CFAttributedStringSetAttribute(attr_str, CFRangeMake(0, i.chars_num), kCTForegroundColorAttributeName, color);
-            CFAttributedStringSetAttribute(attr_str, CFRangeMake(0, i.chars_num), kCTFontAttributeName, font);
-            CTLineRef ctline = CTLineCreateWithAttributedString( attr_str );
+            CFAttributedStringRef attr_str = CFAttributedStringCreate(0, i.text, attributes);
+            i.text_ctline = CTLineCreateWithAttributedString( attr_str );
             CFRelease(attr_str);
-            i.text_ctline = ctline;
         });
-    }
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
     dispatch_release(group);
+    CFRelease(attributes);
     
     [m_View setNeedsDisplay:true];
 }
@@ -513,7 +509,6 @@ static const unsigned char g_4Bits_To_Char[16] = {
     {
         if(m_Lines[i].row_byte_start == _offset)
         {
-            min_dist = 0;
             closest = i;
             break;
         }

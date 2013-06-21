@@ -11,6 +11,7 @@
 #import "BigFileViewHex.h"
 #import "BigFileView.h"
 #import "Common.h"
+#import "FontExtras.h"
 
 static const unsigned g_BytesPerHexLine = 16;
 static const unsigned g_HexColumns = 2;
@@ -29,6 +30,7 @@ struct TextLine
     uint32_t row_bytes_num;
 
     CFStringRef text;
+    CTLineRef   text_ctline;
     CFStringRef hex[g_HexColumns];
     CFStringRef row;
 };
@@ -39,45 +41,6 @@ static const unsigned char g_4Bits_To_Char[16] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
 
-static bool HasUnicharsBelow0x20(const UniChar* _s, size_t _n)
-{
-    for(size_t i = 0; i < _n; ++i)
-        if(_s[i] < 0x0020)
-            return true;
-    return false;
-}
-
-static CGFloat GetLineHeightForFont(CTFontRef iFont)
-{
-    CGFloat lineHeight = 0.0;
-    
-    assert(iFont != NULL);
-    
-    // Get the ascent from the font, already scaled for the font's size
-    lineHeight += CTFontGetAscent(iFont);
-    
-    // Get the descent from the font, already scaled for the font's size
-    lineHeight += CTFontGetDescent(iFont);
-    
-    // Get the leading from the font, already scaled for the font's size
-    lineHeight += CTFontGetLeading(iFont);
-    
-    return lineHeight;
-}
-
-static double GetMonospaceFontCharWidth(CTFontRef _font)
-{
-    CFStringRef string = CFSTR("A");
-    CFMutableAttributedStringRef attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-    CFAttributedStringReplaceString(attrString, CFRangeMake(0, 0), string);
-    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, CFStringGetLength(string)), kCTFontAttributeName, _font);
-    CTLineRef line = CTLineCreateWithAttributedString(attrString);
-    double width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-    CFRelease(line);
-    CFRelease(attrString);
-    return width;
-}
-
 @implementation BigFileViewHex
 {
     // basic stuff
@@ -85,11 +48,15 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
     const UniChar  *m_Window;
     const uint32_t *m_Indeces;
     size_t          m_WindowSize;
+    UniChar        *m_FixupWindow;
     
     unsigned              m_RowsOffset;
     int                   m_FrameLines; // amount of lines in our frame size ( +1 to fit cutted line also)    
     CGFloat               m_FontHeight;
-    CGFloat               m_FontWidth;    
+    CGFloat               m_FontWidth;
+    CGFloat                      m_FontAscent;
+    CGFloat                      m_FontDescent;
+    CGFloat                      m_FontLeading;    
     std::vector<TextLine> m_Lines;
 }
 
@@ -103,10 +70,11 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
     m_Indeces = _unichar_indeces;
     m_WindowSize = _unichars_amount;
         
-    m_FontHeight = GetLineHeightForFont([m_View TextFont]);
+    m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
     m_FrameLines = floor([_view frame].size.height / m_FontHeight);
-
+    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * [m_View RawWindowSize]);
+    
     [self OnBufferDecoded:m_WindowSize];
     
     m_RowsOffset = 0;
@@ -118,6 +86,7 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
 - (void) dealloc
 {
     [self ClearLayout];
+    free(m_FixupWindow);    
 }
 
 - (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
@@ -125,6 +94,15 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
     [self ClearLayout];
     
     m_WindowSize = _new_size;
+    
+    // fix our decoded window - clear control characters
+    for(size_t i = 0; i < m_WindowSize; ++i)
+    {
+        UniChar c = m_Window[i];
+        if(c < 0x0020 || c == NSParagraphSeparatorCharacter || c == NSLineSeparatorCharacter)
+            c = '.';
+        m_FixupWindow[i] = c;
+    }
     
     // split our string into a chunks of 16 bytes somehow
     const uint64_t raw_window_pos = [m_View RawWindowPosition];
@@ -137,7 +115,7 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
     {
         if(charind >= m_WindowSize)
             break;
-            
+        
         TextLine current;
         current.char_start = charind;
         current.string_byte_start = m_Indeces[current.char_start];
@@ -167,27 +145,7 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
         
         if(current.row_byte_start + bytes_for_current_row < raw_window_size) current.row_bytes_num = bytes_for_current_row;
         else current.row_bytes_num = (uint32_t)raw_window_size - current.row_byte_start;
-
-        // build current CF string, fix control symbols if nessesary
-        if(!HasUnicharsBelow0x20(m_Window + current.char_start, current.chars_num))
-        {
-            current.text = CFStringCreateWithCharactersNoCopy(0, m_Window + current.char_start, current.chars_num, kCFAllocatorNull);
-        }
-        else
-        {
-            UniChar fixbuf[64];
-            assert(current.chars_num < 64);
-            memcpy(fixbuf, m_Window + current.char_start, current.chars_num*sizeof(UniChar));
-            for(uint32_t i = 0; i < current.chars_num; ++i)
-                if(fixbuf[i] < 0x0020)
-                    // TODO: there should be an option what to use - dummy symbol or 0x2400+ symbols representation
-                    // 0x2400+ is probably better, but is tooo slow to render
-                    fixbuf[i] = '.';
-//                    fixbuf[i] += 0x2400; // use unicode control symbols visualization
-
-            current.text = CFStringCreateWithCharacters(0, fixbuf, current.chars_num);
-        }
-
+        
         // build hex codes
         for(int i = 0; i < g_HexColumns; ++i)
         {
@@ -232,7 +190,31 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
         charind += current.chars_num;
         byteind += current.row_bytes_num;
     }
-     
+    
+    // once we have our layout built - it's time to produce our strings and CTLines, creation of which can be VERY long
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    auto color = [m_View TextForegroundColor];
+    auto font = [m_View TextFont];
+    for(auto &i: m_Lines)
+    {
+        dispatch_group_async(group, queue, ^{
+            // build current CF string
+            i.text = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow + i.char_start, i.chars_num, kCFAllocatorNull);
+
+            // attributed string and corresponding CTLine
+            CFMutableAttributedStringRef attr_str = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
+            CFAttributedStringReplaceString(attr_str, CFRangeMake(0, 0), i.text);
+            CFAttributedStringSetAttribute(attr_str, CFRangeMake(0, i.chars_num), kCTForegroundColorAttributeName, color);
+            CFAttributedStringSetAttribute(attr_str, CFRangeMake(0, i.chars_num), kCTFontAttributeName, font);
+            CTLineRef ctline = CTLineCreateWithAttributedString( attr_str );
+            CFRelease(attr_str);
+            i.text_ctline = ctline;
+        });
+    }
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    dispatch_release(group);
+    
     [m_View setNeedsDisplay:true];
 }
 
@@ -240,6 +222,7 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
 {
     for(auto &i: m_Lines)
     {
+        if(i.text_ctline != nil) CFRelease(i.text_ctline);
         if(i.text != nil) CFRelease(i.text);
         if(i.row != nil) CFRelease(i.row);
 
@@ -263,7 +246,8 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
     CGContextSetShouldAntialias(_context, true);
         
     NSRect v = [m_View visibleRect];
-    
+    CFRange selection = [m_View SelectionWithinWindow];
+
     CGPoint text_pos;
     text_pos.x = 5;
     text_pos.y = v.size.height - m_FontHeight;
@@ -285,7 +269,41 @@ static double GetMonospaceFontCharWidth(CTFontRef _font)
         [(__bridge NSString*)c.hex[1] drawAtPoint:pos withAttributes:text_attr];
 
         pos.x += m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
-        [(__bridge NSString*)c.text drawAtPoint:pos withAttributes:text_attr];
+        
+        if(selection.location >= 0) // draw selection under text
+        {
+            CGFloat x1 = 0, x2  = -1;
+            if(selection.location <= c.char_start &&
+               selection.location + selection.length >= c.char_start + c.chars_num) // selected entire string
+                x2 = CTLineGetOffsetForStringIndex(c.text_ctline, c.chars_num, 0);
+            else if(selection.location >= c.char_start &&
+                    selection.location < c.char_start + c.chars_num ) // selection inside or right trim
+            {
+                x1 = CTLineGetOffsetForStringIndex(c.text_ctline, selection.location - c.char_start, 0);
+                x2 = CTLineGetOffsetForStringIndex(c.text_ctline,
+                                                   (selection.location + selection.length > c.char_start + c.chars_num) ?
+                                                   c.chars_num : selection.location + selection.length - c.char_start, 0);
+            }
+            else if(selection.location + selection.length >= c.char_start &&
+                    selection.location + selection.length < c.char_start + c.chars_num) // left trim
+                x2 = CTLineGetOffsetForStringIndex(c.text_ctline,
+                                                   selection.location + selection.length - c.char_start,
+                                                   0);
+            
+            if(x2 > x1)
+            {
+                CGContextSaveGState(_context);
+                CGContextSetShouldAntialias(_context, false);
+                [m_View SelectionBkFillColor].Set(_context);
+                CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y - m_FontDescent, x2 - x1, m_FontHeight));
+                CGContextRestoreGState(_context);
+            }
+        }
+             
+        // draw text itself (drawing with preparedt CTLine should be faster than with raw CFString)
+        CGContextSetTextPosition(_context, pos.x, pos.y + m_FontDescent);
+        CTLineDraw(c.text_ctline, _context);
+//        [(__bridge NSString*)c.text drawAtPoint:pos withAttributes:text_attr];
         
         text_pos.y -= m_FontHeight;
         if(text_pos.y < 0 - m_FontHeight)

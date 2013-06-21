@@ -11,45 +11,7 @@
 #import "BigFileViewText.h"
 #import "BigFileView.h"
 #import "Common.h"
-
-static const size_t g_FixupWindowSize = 128*1024;
-
-static CGFloat GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent=0, CGFloat *_descent=0, CGFloat *_leading=0)
-{
-    CGFloat lineHeight = 0.0;
-    
-    assert(iFont != NULL);
-    
-    // Get the ascent from the font, already scaled for the font's size
-    CGFloat ascent = CTFontGetAscent(iFont);
-    lineHeight += ascent;
-    if(_ascent) *_ascent = ascent;
-    
-    // Get the descent from the font, already scaled for the font's size
-    CGFloat descent = CTFontGetDescent(iFont);
-    lineHeight += descent;
-    if(_descent) *_descent = descent;
-    
-    // Get the leading from the font, already scaled for the font's size
-    CGFloat leading = CTFontGetLeading(iFont);
-    lineHeight += leading;
-    if(_leading) *_leading = leading;
-    
-    return lineHeight;
-}
-
-static double GetMonospaceFontCharWidth(CTFontRef _font)
-{
-    CFStringRef string = CFSTR("A");
-    CFMutableAttributedStringRef attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-    CFAttributedStringReplaceString(attrString, CFRangeMake(0, 0), string);
-    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, CFStringGetLength(string)), kCTFontAttributeName, _font);
-    CTLineRef line = CTLineCreateWithAttributedString(attrString);
-    double width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-    CFRelease(line);
-    CFRelease(attrString);
-    return width;
-}
+#import "FontExtras.h"
 
 static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
 {
@@ -115,7 +77,9 @@ static unsigned ShouldCutTrailingSpaces(CFStringRef _string,
     CTLineRef line = CTTypesetterCreateLine(_setter, CFRangeMake(_start, _count - spaces_count));
     double line_width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
     CFRelease(line);
-    assert(line_width < _line_width);
+    if(line_width > _line_width)
+        return 0; // guard from singular cases
+//    assert(line_width < _line_width);
     
     // 3rd - calc residual space and amount of space characters to fill it
     double d = _line_width-line_width;
@@ -232,7 +196,7 @@ struct TextLine
     
     m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
-    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * g_FixupWindowSize);
+    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * [m_View RawWindowSize]);
     
     [self OnFrameChanged];
 
@@ -252,7 +216,7 @@ struct TextLine
 
 - (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
 {
-    assert(_new_size <= g_FixupWindowSize);
+//    assert(_new_size <= g_FixupWindowSize);
     m_WindowSize = _new_size;
     
     if(m_StringBuffer)
@@ -272,7 +236,7 @@ struct TextLine
     [self ClearLayout];
     if(!m_StringBuffer)
         return;
-
+    
     double wrapping_width = 10000;
     if([m_View WordWrap])
         wrapping_width = [m_View frame].size.width - [NSScroller scrollerWidth] - m_LeftInset;
@@ -325,7 +289,7 @@ struct TextLine
         start += count;
     }
     CFRelease(typesetter);
-    
+
     [m_View setNeedsDisplay:true];
 }
 

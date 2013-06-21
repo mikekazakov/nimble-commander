@@ -519,6 +519,10 @@
     return m_SelectionInWindow;
 }
 
+- (CFRange) SelectionWithinFile {
+    return m_SelectionInFile;
+}
+
 - (int) ColumnOffset {
     return m_ColumnOffset;
 }
@@ -549,6 +553,16 @@
         [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
         [pasteBoard setString:str forType:NSStringPboardType];
     }
+}
+
+- (void)selectAll:(id)sender
+{
+    [self SetSelectionInFile: CFRangeMake(0, m_File->FileSize())];
+}
+
+- (void)deselectAll:(id)sender
+{
+    [self SetSelectionInFile: CFRangeMake(-1, 0)];
 }
 
 @end

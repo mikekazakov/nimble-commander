@@ -50,6 +50,9 @@ enum class BigFileViewModes
 - (bool)        WordWrap;
 - (void)        SetWordWrap:(bool)_wrapping;
 
+- (int)         ColumnOffset;
+- (void)        SetColumnOffset:(int)_offset;
+
 - (BigFileViewModes) Mode;
 - (void)        SetMode: (BigFileViewModes) _mode;
 
@@ -57,6 +60,7 @@ enum class BigFileViewModes
 - (uint64_t)    VerticalPositionInBytes; // whithin all file, now in a window
 
 - (void)        SetSelectionInFile: (CFRange) _selection;   // raw bytes
+- (void)        ScrollToSelection;
 - (CFRange)     SelectionWithinWindow;                      // unichars within a decoded window
 
 

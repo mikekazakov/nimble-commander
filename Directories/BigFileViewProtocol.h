@@ -27,8 +27,6 @@
 - (void) OnBufferDecoded: (size_t) _new_size; // unichars, not bytes (x2)
 - (void) OnUpArrow;
 - (void) OnDownArrow;
-//- (void) OnLeftArrow;
-//- (void) OnRightArrow;
 - (void) OnPageDown;
 - (void) OnPageUp;
 - (void) OnFrameChanged;
@@ -45,6 +43,10 @@
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect;
 
 @optional
-- (void) OnWordWrappingChanged: (bool) _wrap_words;
+- (void) OnLeftArrow;
+- (void) OnRightArrow;
+- (void) OnMouseDown:(NSEvent *)_event;
+- (void) OnWordWrappingChanged;
+
 
 @end

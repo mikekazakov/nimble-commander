@@ -39,6 +39,7 @@
     __strong id<BigFileViewDelegateProtocol> m_Delegate;
     
     NSScroller      *m_VerticalScroller;
+    int             m_ColumnOffset;
     
     CFRange         m_SelectionInFile;  // in bytes, raw position within whole file
     CFRange         m_SelectionInWindow; // in UniChars, whitin current window position,
@@ -54,7 +55,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self DoInit];        
+        [self DoInit];
         // Initialization code here.
     }
     
@@ -76,6 +77,7 @@
 {
     m_Encoding = ENCODING_UTF8;
     m_WrapWords = true;
+    m_ColumnOffset = 0;
     m_SelectionInFile = CFRangeMake(-1, 0);
     m_SelectionInWindow = CFRangeMake(-1, 0);
 
@@ -211,6 +213,14 @@
         case NSPageUpFunctionKey:
             [m_ViewImpl OnPageUp];
             break;
+        case NSLeftArrowFunctionKey:
+            if([m_ViewImpl respondsToSelector:@selector(OnLeftArrow)])
+                [m_ViewImpl OnLeftArrow];
+            break;
+        case NSRightArrowFunctionKey:
+            if([m_ViewImpl respondsToSelector:@selector(OnRightArrow)])
+                [m_ViewImpl OnRightArrow];
+            break;
         default:
             [super keyDown:event];
     }
@@ -345,12 +355,20 @@
 {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];    
     int idy = int([theEvent deltaY]); // TODO: temporary implementation
-    if(idy < 0)
-        [m_ViewImpl OnDownArrow];
-    else if(idy > 0)
-        [m_ViewImpl OnUpArrow];
+    if(idy < 0) [m_ViewImpl OnDownArrow];
+    else if(idy > 0) [m_ViewImpl OnUpArrow];
+    
+    int idx = int([theEvent deltaX]);
+    if(idx < 0)
+        if([m_ViewImpl respondsToSelector:@selector(OnRightArrow)])
+            [m_ViewImpl OnRightArrow];
+    
+    if(idx > 0)
+        if([m_ViewImpl respondsToSelector:@selector(OnLeftArrow)])
+            [m_ViewImpl OnLeftArrow];
+    
     if(was_vert_pos != [self VerticalPositionInBytes])
-        [m_Delegate BigFileViewScrolledByUser];    
+        [m_Delegate BigFileViewScrolledByUser];
 }
 
 - (bool)WordWrap
@@ -363,8 +381,9 @@
     if(m_WrapWords != _wrapping)
     {
         m_WrapWords = _wrapping;
-        if([m_ViewImpl respondsToSelector:@selector(OnWordWrappingChanged:)])
-            [m_ViewImpl OnWordWrappingChanged:m_WrapWords];
+        [self SetColumnOffset:0];
+        if([m_ViewImpl respondsToSelector:@selector(OnWordWrappingChanged)])
+            [m_ViewImpl OnWordWrappingChanged];
     }
 }
 
@@ -429,12 +448,20 @@
     }
     else
     {
-        assert(_selection.location + _selection.length < m_File->FileSize());
+        assert(_selection.location + _selection.length <= m_File->FileSize());
         m_SelectionInFile = _selection;
-        [m_ViewImpl ScrollToByteOffset:_selection.location];
         [self UpdateSelectionRange];
     }
     [self setNeedsDisplay:true];
+}
+
+- (void) ScrollToSelection
+{
+    if(m_SelectionInFile.location >= 0)
+    {
+        [m_ViewImpl ScrollToByteOffset:m_SelectionInFile.location];
+        [self UpdateSelectionRange];
+    }
 }
 
 - (uint64_t) VerticalPositionInBytes
@@ -478,19 +505,50 @@
     const uint32_t *tail = std::lower_bound(m_DecodeBufferIndx,
                                             m_DecodeBufferIndx+m_DecodedBufferSize,
                                             end - window_pos);
-    assert(tail < m_DecodeBufferIndx+m_DecodedBufferSize);
+    assert(tail <= m_DecodeBufferIndx+m_DecodedBufferSize);
     
     int startindex = int(offset - m_DecodeBufferIndx);
     int endindex   = int(tail - m_DecodeBufferIndx);
     assert(startindex >= 0 && startindex < m_DecodedBufferSize);
-    assert(endindex >= 0 && endindex < m_DecodedBufferSize);
+    assert(endindex >= 0 && endindex <= m_DecodedBufferSize);
     
     m_SelectionInWindow = CFRangeMake(startindex, endindex - startindex);
 }
 
-- (CFRange) SelectionWithinWindow
-{
+- (CFRange) SelectionWithinWindow {
     return m_SelectionInWindow;
+}
+
+- (int) ColumnOffset {
+    return m_ColumnOffset;
+}
+
+- (void) SetColumnOffset:(int)_offset
+{
+    if(m_ColumnOffset != _offset)
+    {
+        m_ColumnOffset = _offset;
+        [self setNeedsDisplay:true];
+    }
+}
+
+- (void) mouseDown:(NSEvent *)_event
+{
+    if([m_ViewImpl respondsToSelector:@selector(OnMouseDown:)])
+        [m_ViewImpl OnMouseDown:_event];
+}
+
+ - (void)copy:(id)sender
+{
+    if(m_SelectionInWindow.location >= 0 && m_SelectionInWindow.length > 0)
+    {
+        NSString *str = [[NSString alloc] initWithCharactersNoCopy:m_DecodeBuffer + m_SelectionInWindow.location
+                                                            length:m_SelectionInWindow.length
+                                                      freeWhenDone:false];
+        NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+        [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+        [pasteBoard setString:str forType:NSStringPboardType];
+    }
 }
 
 @end

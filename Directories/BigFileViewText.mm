@@ -96,7 +96,7 @@ static unsigned ShouldCutTrailingSpaces(CFStringRef _string,
     assert(chars);
     const auto len = CFStringGetLength(_string);    
     
-    for(unsigned i = _start + _count - 1; i >= _start; --i)
+    for(int i = _start + _count - 1; i >= _start; --i)
     {
         if(chars[i] == ' ')
             spaces_count++;
@@ -283,20 +283,14 @@ struct TextLine
     CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTFontAttributeName, [m_View TextFont]);
 
     
-//    CGColorCreateGenericRGB
-    
     // Create a typesetter using the attributed string.
-//    MachTimeBenchmark m;
     CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(m_AttrString);
-//    m.Reset("CTTypesetterCreateWithAttributedString");
     
     CFIndex start = 0;
     while(start < m_StringBufferSize)
     {
         // 1st - manual hack for breaking lines by space characters
-//static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
-        CFIndex count;
-        
+        CFIndex count = 0;
         unsigned spaces = ShouldBreakLineBySpaces(m_StringBuffer, (unsigned)start, m_FontWidth, wrapping_width);
         if(spaces != 0)
         {
@@ -349,6 +343,34 @@ struct TextLine
     m_Lines.clear();
 }
 
+- (CGPoint) TextAnchor
+{
+     NSRect v = [m_View visibleRect];
+    CGPoint textPosition;
+    textPosition.x = m_LeftInset - [m_View ColumnOffset] * m_FontWidth;
+    textPosition.y = v.size.height - m_FontHeight + m_FontDescent;
+    return textPosition;
+}
+
+- (int) CharIndexFromPoint: (CGPoint) _point
+{
+    CGPoint left_upper = [self TextAnchor];
+    
+    int y_off = ceil((left_upper.y - _point.y) / m_FontHeight);
+    int line_no = y_off + m_VerticalOffset;
+    if(line_no < 0)
+        return -1;
+    if(line_no >= m_Lines.size())
+        return (int)m_StringBufferSize + 1;
+    
+    int ind = (int)CTLineGetStringIndexForPosition(m_Lines[line_no].line, CGPointMake(_point.x - left_upper.x, 0));
+    
+    if(ind != kCFNotFound)
+        return ind;
+    
+    return -1;
+}
+
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
 {
     [m_View BackgroundFillColor].Set(_context);
@@ -357,15 +379,10 @@ struct TextLine
     CGContextSetTextDrawingMode(_context, kCGTextFill);
     CGContextSetShouldSmoothFonts(_context, false);
     CGContextSetShouldAntialias(_context, true);
-
     
-     NSRect v = [m_View visibleRect];
-     
     if(!m_StringBuffer) return;
      
-    CGPoint textPosition;
-    textPosition.x = m_LeftInset;
-    textPosition.y = v.size.height - m_FontHeight + m_FontDescent;
+    CGPoint textPosition = [self TextAnchor];
     
     size_t first_string = m_VerticalOffset;
     uint32_t last_drawn_byte_pos = 0;
@@ -445,7 +462,7 @@ struct TextLine
         uint64_t window_size = [m_View RawWindowSize];
         if(window_pos > 0)
         {
-            size_t anchor_index = m_VerticalOffset + m_FrameLines - 1;
+            size_t anchor_index = m_VerticalOffset + 1;
             if(anchor_index >= m_Lines.size()) anchor_index = m_Lines.size() - 1;
             
             uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
@@ -458,7 +475,7 @@ struct TextLine
             
             [self MoveFileWindowTo:desired_window_offset
                         WithAnchor:anchor_glob_offset
-                          AtLineNo:int(anchor_index+1)];
+                          AtLineNo:1];
         }
         else
         {
@@ -772,7 +789,7 @@ struct TextLine
     }
 }
 
-- (void) OnWordWrappingChanged: (bool) _wrap_words
+- (void) OnWordWrappingChanged
 {
     [self BuildLayout];
     if(m_VerticalOffset >= m_Lines.size())
@@ -781,6 +798,50 @@ struct TextLine
             m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
         else
             m_VerticalOffset = 0;
+    }
+}
+
+- (void) OnLeftArrow
+{
+    if(![m_View WordWrap] && [m_View ColumnOffset] > 0)
+        [m_View SetColumnOffset:[m_View ColumnOffset]-1];
+}
+
+- (void) OnRightArrow
+{
+    if(![m_View WordWrap])
+        [m_View SetColumnOffset:[m_View ColumnOffset]+1];
+}
+
+- (void) OnMouseDown:(NSEvent *)event
+{
+    NSPoint first_down = [m_View convertPoint:[event locationInWindow] fromView:nil];
+    int first_ind = [self CharIndexFromPoint:first_down];
+    if(first_ind > (int)m_StringBufferSize) first_ind = (int)m_StringBufferSize;
+    if(first_ind < 0) first_ind = 0;
+    
+    while ([event type]!=NSLeftMouseUp)
+    {
+        NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
+
+        int curr_ind = [self CharIndexFromPoint:loc];
+        if(curr_ind > (int)m_StringBufferSize) curr_ind = (int)m_StringBufferSize;
+        if(curr_ind < 0) curr_ind = 0;
+
+        if(first_ind != curr_ind)
+        {
+            int sel_start = first_ind > curr_ind ? curr_ind : first_ind;
+            int sel_end   = first_ind < curr_ind ? curr_ind : first_ind;
+            int sel_start_byte = sel_start < m_StringBufferSize ? m_Indeces[sel_start] : (int)[m_View RawWindowSize];
+            int sel_end_byte = sel_end < m_StringBufferSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
+            assert(sel_end_byte >= sel_start_byte);
+
+            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
+        }
+        else
+            [m_View SetSelectionInFile:CFRangeMake(-1,0)];            
+        
+        event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
     }
 }
 

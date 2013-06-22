@@ -62,7 +62,8 @@ enum class BigFileViewModes
 - (void)        SetSelectionInFile: (CFRange) _selection;   // raw bytes
 - (void)        ScrollToSelection;
 - (CFRange)     SelectionWithinFile;                        // raw bytes selection
-- (CFRange)     SelectionWithinWindow;                      // unichars within a decoded window
+- (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window
+- (CFRange)     SelectionWithinWindowUnichars;              // unichars within a decoded window
 
 
 @end

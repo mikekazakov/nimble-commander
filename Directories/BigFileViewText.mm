@@ -290,7 +290,11 @@ struct TextLine
     }
     CFRelease(typesetter);
 
+    if(m_VerticalOffset >= m_Lines.size())
+        m_VerticalOffset = !m_Lines.empty() ? (unsigned)m_Lines.size()-1 : 0;
+    
     [m_View setNeedsDisplay:true];
+
 }
 
 - (void) ClearLayout
@@ -351,7 +355,7 @@ struct TextLine
     size_t first_string = m_VerticalOffset;
     uint32_t last_drawn_byte_pos = 0;
     
-    CFRange selection = [m_View SelectionWithinWindow];
+    CFRange selection = [m_View SelectionWithinWindowUnichars];
     
      for(size_t i = first_string; i < m_Lines.size(); ++i)
      {

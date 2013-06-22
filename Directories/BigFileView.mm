@@ -42,8 +42,10 @@
     int             m_ColumnOffset;
     
     CFRange         m_SelectionInFile;  // in bytes, raw position within whole file
-    CFRange         m_SelectionInWindow; // in UniChars, whitin current window position,
-                                         // updated when windows moves regarding current selection in bytes
+    CFRange         m_SelectionInWindow;         // in bytes, whithin current window positio
+                                                 // updated when windows moves, regarding current selection in bytes
+    CFRange         m_SelectionInWindowUnichars; // in UniChars, whithin current window position,
+                                                 // updated when windows moves, regarding current selection in bytes
 }
 
 - (void)awakeFromNib
@@ -80,6 +82,7 @@
     m_ColumnOffset = 0;
     m_SelectionInFile = CFRangeMake(-1, 0);
     m_SelectionInWindow = CFRangeMake(-1, 0);
+    m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
 
     if( [(AppDelegate*)[NSApp delegate] Skin] == ApplicationSkin::Modern)
         [self InitAppearanceForModernPresentation];
@@ -445,6 +448,7 @@
     {
         m_SelectionInFile = CFRangeMake(-1, 0);
         m_SelectionInWindow = CFRangeMake(-1, 0);
+        m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
     }
     else
     {
@@ -476,7 +480,8 @@
 {
     if(m_SelectionInFile.location < 0 || m_SelectionInFile.length < 1)
     {
-        m_SelectionInWindow = CFRangeMake(-1, 0);
+        m_SelectionInWindow = CFRangeMake(-1, 0);        
+        m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
         return;
     }
     
@@ -493,7 +498,8 @@
     
     if(start >= end)
     {
-        m_SelectionInWindow = CFRangeMake(-1, 0);
+        m_SelectionInWindow = CFRangeMake(-1, 0);        
+        m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
         return;
     }
     
@@ -512,7 +518,12 @@
     assert(startindex >= 0 && startindex < m_DecodedBufferSize);
     assert(endindex >= 0 && endindex <= m_DecodedBufferSize);
     
-    m_SelectionInWindow = CFRangeMake(startindex, endindex - startindex);
+    m_SelectionInWindow = CFRangeMake(start - window_pos, end - start);
+    m_SelectionInWindowUnichars = CFRangeMake(startindex, endindex - startindex);
+}
+
+- (CFRange) SelectionWithinWindowUnichars {
+    return m_SelectionInWindowUnichars;
 }
 
 - (CFRange) SelectionWithinWindow {
@@ -546,8 +557,8 @@
 {
     if(m_SelectionInWindow.location >= 0 && m_SelectionInWindow.length > 0)
     {
-        NSString *str = [[NSString alloc] initWithCharactersNoCopy:m_DecodeBuffer + m_SelectionInWindow.location
-                                                            length:m_SelectionInWindow.length
+        NSString *str = [[NSString alloc] initWithCharactersNoCopy:m_DecodeBuffer + m_SelectionInWindowUnichars.location
+                                                            length:m_SelectionInWindowUnichars.length
                                                       freeWhenDone:false];
         NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
         [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];

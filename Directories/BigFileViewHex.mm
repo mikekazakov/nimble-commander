@@ -17,14 +17,50 @@ static const unsigned g_BytesPerHexLine = 16;
 static const unsigned g_HexColumns = 2;
 static const unsigned g_RowOffsetSymbs = 10;
 
+static int Hex_CharPosFromByteNo(int _byte)
+{
+    const int byte_per_col = g_BytesPerHexLine / g_HexColumns;
+    assert(_byte <= g_BytesPerHexLine);
+    
+    if(_byte == g_BytesPerHexLine) // special case
+        return (byte_per_col * 3 + 2) * g_HexColumns - 3;
+    
+    int col_num = _byte / byte_per_col;
+    int byte_in_col = _byte % byte_per_col;
+    
+    int char_in_col = byte_in_col * 3;
+    
+    return char_in_col + (byte_per_col * 3 + 2) * col_num;
+}
+
+static int Hex_ByteFromCharPos(int _char)
+{
+    const int byte_per_col = g_BytesPerHexLine / g_HexColumns;
+    if(_char < 0) return -1;
+    if(_char >= (byte_per_col * 3 + 2) * g_HexColumns) return g_BytesPerHexLine;
+    
+    int col_num = _char / (byte_per_col * 3 + 2);
+    int char_in_col = _char % (byte_per_col * 3 + 2);
+    int byte_in_col = char_in_col / 3;
+    
+    return byte_in_col + col_num * byte_per_col;
+}
+
+enum class HitPart
+{
+    RowOffset,
+    DataDump,
+    Text
+};
+
 namespace
 {
 
 struct TextLine
 {
-    uint32_t char_start; // unicode character index in window
-    uint32_t chars_num;  // amount of unicode characters in line
-    uint32_t string_byte_start;
+    uint32_t char_start;        // unicode character index in window
+    uint32_t chars_num;         // amount of unicode characters in line
+    uint32_t string_byte_start; // byte information about string
     uint32_t string_bytes_num;
     uint32_t row_byte_start;    // offset within file window corresponding to the current row start 
     uint32_t row_bytes_num;
@@ -56,7 +92,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
     CGFloat               m_FontWidth;
     CGFloat                      m_FontAscent;
     CGFloat                      m_FontDescent;
-    CGFloat                      m_FontLeading;    
+    CGFloat                      m_FontLeading;
+    CGFloat                      m_LeftInset;    
     std::vector<TextLine> m_Lines;
 }
 
@@ -74,6 +111,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
     m_FrameLines = floor([_view frame].size.height / m_FontHeight);
     m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * [m_View RawWindowSize]);
+    m_LeftInset = 5;
     
     [self OnBufferDecoded:m_WindowSize];
     
@@ -167,7 +205,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
                 tmp[(j - bytes_num*i)* 3 + 2] = ' ';
             }
             
-            current.hex[i] = CFStringCreateWithCharacters(0, tmp, bytes_num*3);
+            current.hex[i] = CFStringCreateWithCharacters(0, tmp, bytes_num*3 - 1);
         }
         
         // build line number code
@@ -228,25 +266,84 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_Lines.clear();
 }
 
+- (CGPoint) TextAnchor
+{
+    NSRect v = [m_View visibleRect];
+    CGPoint textPosition;
+    textPosition.x = m_LeftInset;
+    textPosition.y = v.size.height - m_FontHeight;
+    return textPosition;
+}
+
+- (HitPart) PartHitTest: (CGPoint) _p
+{
+    CGPoint text_pos = [self TextAnchor];
+    if(_p.x < text_pos.x + m_FontWidth * (g_RowOffsetSymbs + 3))
+        return HitPart::RowOffset;
+    
+    if(_p.x < text_pos.x + m_FontWidth * (g_RowOffsetSymbs + 3) +
+       m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2) * 2)
+        return HitPart::DataDump;
+    
+    return HitPart::Text;
+}
+
+// should be called when Part is DataDump
+- (int) ByteIndexFromHitTest: (CGPoint) _p
+{
+    CGPoint left_upper = [self TextAnchor];
+    
+    int y_off = ceil((left_upper.y - _p.y) / m_FontHeight);
+    int row_no = y_off + m_RowsOffset;
+    if(row_no < 0)
+        return -1;
+    if(row_no >= m_Lines.size())
+        return (int)[m_View RawWindowSize] + 1;
+
+    int x_off = _p.x - (left_upper.x + m_FontWidth * (g_RowOffsetSymbs + 3));
+    int char_ind = ceil(x_off / m_FontWidth);
+    int byte_pos = Hex_ByteFromCharPos(char_ind);
+    if(byte_pos < 0) byte_pos = 0;
+    return m_Lines[row_no].row_byte_start + byte_pos;
+}
+
+// shold be called when Part is Text
+- (int) CharIndexFromHitTest: (CGPoint) _p
+{
+    CGPoint left_upper = [self TextAnchor];
+    
+    int y_off = ceil((left_upper.y - _p.y) / m_FontHeight);
+    int row_no = y_off + m_RowsOffset;
+    if(row_no < 0)
+        return -1;
+    if(row_no >= m_Lines.size())
+        return (int)[m_View RawWindowSize] + 1;
+    
+    int x_off = _p.x - (left_upper.x +
+                        m_FontWidth * (g_RowOffsetSymbs + 3) +
+                        m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2) * 2);
+    
+    int ind = (int)CTLineGetStringIndexForPosition(m_Lines[row_no].text_ctline, CGPointMake(x_off, 0));
+    
+    if(ind != kCFNotFound)
+        return m_Lines[row_no].char_start + ind;
+    
+    return m_Lines[row_no].char_start   ;    
+}
+
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
 {
-    CGContextSetRGBFillColor(_context,
-                             [m_View BackgroundFillColor].r,
-                             [m_View BackgroundFillColor].g,
-                             [m_View BackgroundFillColor].b,
-                             [m_View BackgroundFillColor].a);
+    [m_View BackgroundFillColor].Set(_context);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
     CGContextSetTextDrawingMode(_context, kCGTextFill);
     CGContextSetShouldSmoothFonts(_context, false);
     CGContextSetShouldAntialias(_context, true);
-        
-    NSRect v = [m_View visibleRect];
-    CFRange selection = [m_View SelectionWithinWindow];
+    
+    CFRange selection = [m_View SelectionWithinWindowUnichars];
+    CFRange bselection = [m_View SelectionWithinWindow];
 
-    CGPoint text_pos;
-    text_pos.x = 5;
-    text_pos.y = v.size.height - m_FontHeight;
+    CGPoint text_pos = [self TextAnchor];
     
     NSDictionary *text_attr =@{NSFontAttributeName:(__bridge NSFont*)[m_View TextFont],
                                NSForegroundColorAttributeName:[NSColor colorWithCGColor:[m_View TextForegroundColor]]};
@@ -256,17 +353,37 @@ static const unsigned char g_4Bits_To_Char[16] = {
         auto &c = m_Lines[i];
         
         CGPoint pos = text_pos;
+        
+        // draw row number
         [(__bridge NSString*)c.row drawAtPoint:pos withAttributes:text_attr];
+        pos.x += m_FontWidth * (g_RowOffsetSymbs + 3);        
 
-        pos.x += m_FontWidth * (g_RowOffsetSymbs + 3);
+        if(bselection.location >= 0 && bselection.length > 0) // draw selection under hex codes
+        {
+            int start = (int)bselection.location, end = start + (int)bselection.length;
+            if(start < c.row_byte_start) start = c.row_byte_start;
+            if(end > c.row_byte_start + c.row_bytes_num) end = c.row_byte_start + c.row_bytes_num;
+            if(start < end)
+            {
+                CGFloat x1 = Hex_CharPosFromByteNo(start - c.row_byte_start) * m_FontWidth;
+                CGFloat x2 = Hex_CharPosFromByteNo(end - c.row_byte_start) * m_FontWidth;
+
+                CGContextSaveGState(_context);
+                CGContextSetShouldAntialias(_context, false);
+                [m_View SelectionBkFillColor].Set(_context);
+                CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y, x2 - x1, m_FontHeight));
+                CGContextRestoreGState(_context);
+            }
+        }
+        
+        // draw hex codes
         [(__bridge NSString*)c.hex[0] drawAtPoint:pos withAttributes:text_attr];
-
         pos.x += m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
-        [(__bridge NSString*)c.hex[1] drawAtPoint:pos withAttributes:text_attr];
 
+        [(__bridge NSString*)c.hex[1] drawAtPoint:pos withAttributes:text_attr];
         pos.x += m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
         
-        if(selection.location >= 0) // draw selection under text
+        if(selection.location >= 0 && selection.length > 0) // draw selection under text
         {
             CGFloat x1 = 0, x2  = -1;
             if(selection.location <= c.char_start &&
@@ -285,19 +402,19 @@ static const unsigned char g_4Bits_To_Char[16] = {
                 x2 = CTLineGetOffsetForStringIndex(c.text_ctline,
                                                    selection.location + selection.length - c.char_start,
                                                    0);
-            
+
             if(x2 > x1)
             {
                 CGContextSaveGState(_context);
                 CGContextSetShouldAntialias(_context, false);
                 [m_View SelectionBkFillColor].Set(_context);
-                CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y - m_FontDescent, x2 - x1, m_FontHeight));
+                CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y, x2 - x1, m_FontHeight));
                 CGContextRestoreGState(_context);
             }
         }
              
-        // draw text itself (drawing with preparedt CTLine should be faster than with raw CFString)
-        CGContextSetTextPosition(_context, pos.x, pos.y + m_FontDescent);
+        // draw text itself (drawing with prepared CTLine should be faster than with raw CFString)
+        CGContextSetTextPosition(_context, pos.x, pos.y + ceil(m_FontDescent));
         CTLineDraw(c.text_ctline, _context);
 //        [(__bridge NSString*)c.text drawAtPoint:pos withAttributes:text_attr];
         
@@ -591,4 +708,69 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
 }
 
+- (void) OnMouseDown:(NSEvent *)event
+{
+    NSPoint first_down = [m_View convertPoint:[event locationInWindow] fromView:nil];
+    HitPart hit_part = [self PartHitTest:first_down];
+    
+    if(hit_part == HitPart::DataDump)
+    {
+        int first_byte = [self ByteIndexFromHitTest:first_down];
+        uint64_t window_size = [m_View RawWindowSize];
+        if(first_byte < 0) first_byte = 0;
+        if(first_byte > window_size) first_byte = (int)window_size;
+        
+        while ([event type]!=NSLeftMouseUp)
+        {
+            NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
+            int curr_byte = [self ByteIndexFromHitTest:loc];
+            if(curr_byte < 0) curr_byte = 0;
+            if(curr_byte > window_size) curr_byte = (int)window_size;
+            
+            if(first_byte != curr_byte)
+            {
+                int sel_start = first_byte < curr_byte ? first_byte : curr_byte;
+                int sel_end   = first_byte > curr_byte ? first_byte : curr_byte;
+                [m_View SetSelectionInFile:CFRangeMake(sel_start + [m_View RawWindowPosition], sel_end - sel_start)];
+            }
+            else
+                [m_View SetSelectionInFile:CFRangeMake(-1,0)];
+            
+            event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+        }
+    }
+    else if(hit_part == HitPart::Text)
+    {
+        int first_char = [self CharIndexFromHitTest:first_down];
+        if(first_char < 0) first_char = 0;
+        if(first_char > m_WindowSize) first_char = (int)m_WindowSize;
+        
+        while ([event type]!=NSLeftMouseUp)
+        {
+            NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
+            int curr_char = [self CharIndexFromHitTest:loc];
+            if(curr_char < 0) curr_char = 0;
+            if(curr_char > m_WindowSize) curr_char = (int)m_WindowSize;
+
+            if(first_char != curr_char)
+            {
+                int sel_start = first_char < curr_char ? first_char : curr_char;
+                int sel_end   = first_char > curr_char ? first_char : curr_char;
+                int sel_start_byte = sel_start < m_WindowSize ? m_Indeces[sel_start] : (int)[m_View RawWindowSize];
+                int sel_end_byte = sel_end < m_WindowSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
+                assert(sel_end_byte >= sel_start_byte);
+                [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
+            }
+            else
+                [m_View SetSelectionInFile:CFRangeMake(-1,0)];
+        
+            event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+        }
+    }
+}
+
 @end
+
+
+
+

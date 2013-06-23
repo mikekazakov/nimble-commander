@@ -203,14 +203,8 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-//    for(auto *i: m_MainWindows)
-//        [i SavePanelPaths];
-//    for(auto *i: m_MainWindows)
-//        [[i window] close];
-//    while(!m_MainWindows.empty())
-//          [[m_MainWindows.front() window] close];
-//        [[m_MainWindows.front() window] windowWillClose:nil];
-    // TODO!
+    for(auto *i: m_MainWindows) // if there are any windows alive
+        [i OnApplicationWillTerminate];
 }
 
 - (IBAction)OnMenuSendFeedback:(id)sender

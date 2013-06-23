@@ -1072,4 +1072,18 @@ enum ActiveState
     [m_OpSummaryController OnWindowEndSheet];
 }
 
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
+{
+    // TODO: refactor me (?)
+    NSRect field_rect = [m_SheetAnchorLine frame];
+    field_rect.origin.y += 2;
+    field_rect.size.height = 0;
+    return field_rect;
+}
+
+- (void)OnApplicationWillTerminate
+{
+    [self SavePanelPaths];
+}
+
 @end

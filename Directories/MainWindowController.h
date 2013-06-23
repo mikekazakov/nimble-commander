@@ -31,6 +31,7 @@
 
 - (void)ApplySkin:(ApplicationSkin)_skin;
 - (void)OnSkinSettingsChanged;
+- (void)OnApplicationWillTerminate;
 
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 

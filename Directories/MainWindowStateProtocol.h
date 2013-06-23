@@ -26,6 +26,7 @@
 - (void)FireDirectoryChanged:(const char*) _dir ticket:(unsigned long)_ticket;
 - (void)SkinSettingsChanged;
 - (void)ApplySkin:(ApplicationSkin)_skin;
-
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect;
+- (void)OnApplicationWillTerminate;
 
 @end

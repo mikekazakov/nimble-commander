@@ -101,6 +101,7 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 - (void) UpdateTitle
 {
     NSString *path = [NSString stringWithUTF8String:m_FilePath];
+    NSString *title = [NSString stringWithFormat:@"File View: %@", path];
     
     // find window geometry
     NSWindow* window = [self window];
@@ -114,8 +115,7 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     
     // Sending |titleBarFontOfSize| 0 returns default size
     NSDictionary* attributes = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0] forKey:NSFontAttributeName];
-    window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
-    
+    window.title = StringByTruncatingToWidth(title, titleWidth, kTruncateAtStart, attributes);    
 }
 
 - (void)cancelOperation:(id)sender

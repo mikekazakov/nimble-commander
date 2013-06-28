@@ -13,6 +13,14 @@
 #import "Common.h"
 #import "FontExtras.h"
 
+
+static inline int CropIndex(int _val, int _max_possible)
+{
+    if(_val < 0) return 0;
+    if(_val > _max_possible) return _max_possible;
+    return _val;
+}
+
 static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
 {
     const auto len = CFStringGetLength(_string);
@@ -331,12 +339,16 @@ struct TextLine
     if(line_no >= m_Lines.size())
         return (int)m_StringBufferSize + 1;
     
-    int ind = (int)CTLineGetStringIndexForPosition(m_Lines[line_no].line, CGPointMake(_point.x - left_upper.x, 0));
+    const auto &line = m_Lines[line_no];
+
+    int ind = (int)CTLineGetStringIndexForPosition(line.line, CGPointMake(_point.x - left_upper.x, 0));
+    if(ind == kCFNotFound)
+        return -1;
+
+    if(ind >= line.unichar_no + line.unichar_len) // TODO: check if this is right
+        ind = line.unichar_no + line.unichar_len - 1;
     
-    if(ind != kCFNotFound)
-        return ind;
-    
-    return -1;
+    return ind;
 }
 
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
@@ -781,31 +793,89 @@ struct TextLine
 
 - (void) OnMouseDown:(NSEvent *)event
 {
+    if([event clickCount]>1)
+        [self HandleSelectionWithDoubleClick:event];
+    else
+        [self HandleSelectionWithMouseDragging:event];
+}
+
+- (void) HandleSelectionWithDoubleClick: (NSEvent*) event
+{
+    NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
+    int uc_index = CropIndex([self CharIndexFromPoint:pt], (int)m_StringBufferSize);
+
+    __block int sel_start = 0, sel_end = 0;
+    
+    // this is not ideal implementation since here we search in whole buffer
+    // it has O(n) from hit-test position, which it not good
+    // consider background dividing of buffer in chunks regardless of UI events
+    NSString *string = (__bridge NSString *) m_StringBuffer;    
+    [string enumerateSubstringsInRange:NSMakeRange(0, m_StringBufferSize)
+                               options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired
+                            usingBlock:^(NSString *word,
+                                         NSRange wordRange,
+                                         NSRange enclosingRange,
+                                         BOOL *stop){
+                                if(NSLocationInRange(uc_index, wordRange))
+                                {
+                                    sel_start = (int)wordRange.location;
+                                    sel_end   = (int)wordRange.location + (int)wordRange.length;
+                                    *stop = YES;
+                                }
+                                else if(wordRange.location > uc_index)
+                                    *stop = YES;
+                            }];
+    
+    if(sel_start == sel_end) // select single character
+    {
+        sel_start = uc_index;
+        sel_end   = uc_index + 1;        
+    }
+    
+    int sel_start_byte = m_Indeces[sel_start];
+    int sel_end_byte = sel_end < m_StringBufferSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
+    [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
+}
+
+- (void) HandleSelectionWithMouseDragging: (NSEvent*) event
+{
+    bool modifying_existing_selection = ([event modifierFlags] & NSShiftKeyMask) ? true : false;
+    
     NSPoint first_down = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int first_ind = [self CharIndexFromPoint:first_down];
-    if(first_ind > (int)m_StringBufferSize) first_ind = (int)m_StringBufferSize;
-    if(first_ind < 0) first_ind = 0;
+    int first_ind = CropIndex([self CharIndexFromPoint:first_down], (int)m_StringBufferSize);
+    
+    CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
     
     while ([event type]!=NSLeftMouseUp)
     {
-        NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-
-        int curr_ind = [self CharIndexFromPoint:loc];
-        if(curr_ind > (int)m_StringBufferSize) curr_ind = (int)m_StringBufferSize;
-        if(curr_ind < 0) curr_ind = 0;
-
-        if(first_ind != curr_ind)
+        NSPoint curr_loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
+        int curr_ind = CropIndex([self CharIndexFromPoint:curr_loc], (int)m_StringBufferSize);
+        
+        int base_ind = first_ind;
+        if(modifying_existing_selection && orig_sel.length > 0)
         {
-            int sel_start = first_ind > curr_ind ? curr_ind : first_ind;
-            int sel_end   = first_ind < curr_ind ? curr_ind : first_ind;
-            int sel_start_byte = sel_start < m_StringBufferSize ? m_Indeces[sel_start] : (int)[m_View RawWindowSize];
+            if(first_ind > orig_sel.location && first_ind <= orig_sel.location + orig_sel.length)
+                base_ind =
+                first_ind - orig_sel.location > orig_sel.location + orig_sel.length - first_ind ?
+                (int)orig_sel.location : (int)orig_sel.location + (int)orig_sel.length;
+            else if(first_ind < orig_sel.location + orig_sel.length && curr_ind < orig_sel.location + orig_sel.length)
+                base_ind = (int)orig_sel.location + (int)orig_sel.length;
+            else if(first_ind > orig_sel.location && curr_ind > orig_sel.location)
+                base_ind = (int)orig_sel.location;
+        }
+        
+        if(base_ind != curr_ind)
+        {
+            int sel_start = base_ind > curr_ind ? curr_ind : base_ind;
+            int sel_end   = base_ind < curr_ind ? curr_ind : base_ind;
+            int sel_start_byte = m_Indeces[sel_start];
             int sel_end_byte = sel_end < m_StringBufferSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
             assert(sel_end_byte >= sel_start_byte);
-
+            
             [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
         }
         else
-            [m_View SetSelectionInFile:CFRangeMake(-1,0)];            
+            [m_View SetSelectionInFile:CFRangeMake(-1,0)];
         
         event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
     }

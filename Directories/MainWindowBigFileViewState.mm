@@ -381,11 +381,14 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
         
         if(result == SearchInFile::Result::Found)
             dispatch_async(dispatch_get_main_queue(), ^{
+                [m_SearchResult setStringValue:@""];
                 [m_View SetSelectionInFile:CFRangeMake(offset, len)];
                 [m_View ScrollToSelection];
             });
-        else if(result == SearchInFile::Result::NotFound)            
-            [m_SearchResult setStringValue:@"Not found"];
+        else if(result == SearchInFile::Result::NotFound)
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [m_SearchResult setStringValue:@"Not found"];
+            });
     });
 }
 

@@ -323,8 +323,8 @@ struct TextLine
 {
      NSRect v = [m_View visibleRect];
     CGPoint textPosition;
-    textPosition.x = m_LeftInset - [m_View ColumnOffset] * m_FontWidth;
-    textPosition.y = v.size.height - m_FontHeight + m_FontDescent;
+    textPosition.x = ceil((m_LeftInset - [m_View ColumnOffset] * m_FontWidth));
+    textPosition.y = floor(v.size.height - m_FontHeight + m_FontDescent);
     return textPosition;
 }
 
@@ -361,8 +361,9 @@ struct TextLine
     CGContextSetShouldAntialias(_context, true);
     
     if(!m_StringBuffer) return;
-     
+    
     CGPoint textPosition = [self TextAnchor];
+    CGFloat view_width = [m_View visibleRect].size.width;
     
     size_t first_string = m_VerticalOffset;
     uint32_t last_drawn_byte_pos = 0;
@@ -375,29 +376,36 @@ struct TextLine
          
          if(selection.location >= 0) // draw a selection background here
          {
-             CGFloat x1 = 0, x2  = -1;
+             CGFloat x1 = 0, x2 = -1;
              if(m_Lines[i].unichar_no <= selection.location &&
                 m_Lines[i].unichar_no + m_Lines[i].unichar_len >= selection.location)
              {
-                 x1 = CTLineGetOffsetForStringIndex(line, selection.location, 0);
-                 x2 = CTLineGetOffsetForStringIndex(line,
+                 x1 = textPosition.x + CTLineGetOffsetForStringIndex(line, selection.location, 0);
+                 x2 = ((selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len) ?
+                 textPosition.x + CTLineGetOffsetForStringIndex(line,
                                                     (selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len) ?
                                                     selection.location + selection.length : m_Lines[i].unichar_no + m_Lines[i].unichar_len,
-                                                        0);
+                                               0) : view_width);
              }
              else if(selection.location + selection.length > m_Lines[i].unichar_no &&
                      selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len )
-                 x2 = CTLineGetOffsetForStringIndex(line, selection.location + selection.length, 0);
+             {
+                 x1 = textPosition.x;
+                 x2 = textPosition.x + CTLineGetOffsetForStringIndex(line, selection.location + selection.length, 0);
+             }
              else if(selection.location < m_Lines[i].unichar_no &&
                      selection.location + selection.length > m_Lines[i].unichar_no + m_Lines[i].unichar_len)
-                 x2 = CTLineGetOffsetForStringIndex(line, m_Lines[i].unichar_no + m_Lines[i].unichar_len, 0);
+             {
+                 x1 = textPosition.x;
+                 x2 = view_width;
+             }
 
              if(x2 > x1)
              {
                  CGContextSaveGState(_context);
                  CGContextSetShouldAntialias(_context, false);
                  [m_View SelectionBkFillColor].Set(_context);
-                 CGContextFillRect(_context, CGRectMake(textPosition.x + x1, textPosition.y - m_FontDescent, x2 - x1, m_FontHeight));
+                 CGContextFillRect(_context, CGRectMake(x1, textPosition.y - m_FontDescent, x2 - x1, m_FontHeight));
                  CGContextRestoreGState(_context);
              }
          }
@@ -420,7 +428,6 @@ struct TextLine
         [m_View UpdateVerticalScroll:double(byte_pos) / double(byte_scroll_size)
                                 prop:prop];
     }
-
 }
 
 - (void) OnUpArrow

@@ -17,6 +17,14 @@ static const unsigned g_BytesPerHexLine = 16;
 static const unsigned g_HexColumns = 2;
 static const unsigned g_RowOffsetSymbs = 10;
 
+
+static inline int CropIndex(int _val, int _max_possible)
+{
+    if(_val < 0) return 0;
+    if(_val > _max_possible) return _max_possible;
+    return _val;
+}
+
 static int Hex_CharPosFromByteNo(int _byte)
 {
     const int byte_per_col = g_BytesPerHexLine / g_HexColumns;
@@ -137,7 +145,10 @@ static const unsigned char g_4Bits_To_Char[16] = {
     for(size_t i = 0; i < m_WindowSize; ++i)
     {
         UniChar c = m_Window[i];
-        if(c < 0x0020 || c == NSParagraphSeparatorCharacter || c == NSLineSeparatorCharacter)
+        if(c < 0x0020 ||
+           c == 0x007F ||
+           c == NSParagraphSeparatorCharacter ||
+           c == NSLineSeparatorCharacter )
             c = '.';
         m_FixupWindow[i] = c;
     }
@@ -270,8 +281,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
 {
     NSRect v = [m_View visibleRect];
     CGPoint textPosition;
-    textPosition.x = m_LeftInset;
-    textPosition.y = v.size.height - m_FontHeight;
+    textPosition.x = ceil(m_LeftInset);
+    textPosition.y = floor(v.size.height - m_FontHeight);
     return textPosition;
 }
 
@@ -710,27 +721,42 @@ static const unsigned char g_4Bits_To_Char[16] = {
 
 - (void) OnMouseDown:(NSEvent *)event
 {
+    [self HandleSelectionWithMouseDragging:event];
+}
+
+- (void) HandleSelectionWithMouseDragging: (NSEvent*) event
+{
+    bool modifying_existing_selection = ([event modifierFlags] & NSShiftKeyMask) ? true : false;
     NSPoint first_down = [m_View convertPoint:[event locationInWindow] fromView:nil];
     HitPart hit_part = [self PartHitTest:first_down];
     
     if(hit_part == HitPart::DataDump)
     {
-        int first_byte = [self ByteIndexFromHitTest:first_down];
+        CFRange orig_sel = [m_View SelectionWithinWindow];        
         uint64_t window_size = [m_View RawWindowSize];
-        if(first_byte < 0) first_byte = 0;
-        if(first_byte > window_size) first_byte = (int)window_size;
+        int first_byte = CropIndex([self ByteIndexFromHitTest:first_down], (int)window_size);
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_byte = [self ByteIndexFromHitTest:loc];
-            if(curr_byte < 0) curr_byte = 0;
-            if(curr_byte > window_size) curr_byte = (int)window_size;
-            
-            if(first_byte != curr_byte)
+            int curr_byte = CropIndex([self ByteIndexFromHitTest:loc], (int)window_size);
+
+            int base_byte = first_byte;
+            if(modifying_existing_selection && orig_sel.length > 0)
             {
-                int sel_start = first_byte < curr_byte ? first_byte : curr_byte;
-                int sel_end   = first_byte > curr_byte ? first_byte : curr_byte;
+                if(first_byte > orig_sel.location && first_byte <= orig_sel.location + orig_sel.length)
+                    base_byte = first_byte - orig_sel.location > orig_sel.location + orig_sel.length - first_byte ?
+                    (int)orig_sel.location : (int)orig_sel.location + (int)orig_sel.length;
+                else if(first_byte < orig_sel.location + orig_sel.length && curr_byte < orig_sel.location + orig_sel.length)
+                    base_byte = (int)orig_sel.location + (int)orig_sel.length;
+                else if(first_byte > orig_sel.location && curr_byte > orig_sel.location)
+                    base_byte = (int) orig_sel.location;
+            }
+            
+            if(base_byte != curr_byte)
+            {
+                int sel_start = base_byte < curr_byte ? base_byte : curr_byte;
+                int sel_end   = base_byte > curr_byte ? base_byte : curr_byte;
                 [m_View SetSelectionInFile:CFRangeMake(sel_start + [m_View RawWindowPosition], sel_end - sel_start)];
             }
             else
@@ -741,21 +767,30 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
     else if(hit_part == HitPart::Text)
     {
-        int first_char = [self CharIndexFromHitTest:first_down];
-        if(first_char < 0) first_char = 0;
-        if(first_char > m_WindowSize) first_char = (int)m_WindowSize;
+        CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
+        int first_char = CropIndex([self CharIndexFromHitTest:first_down], (int)m_WindowSize);        
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_char = [self CharIndexFromHitTest:loc];
-            if(curr_char < 0) curr_char = 0;
-            if(curr_char > m_WindowSize) curr_char = (int)m_WindowSize;
-
-            if(first_char != curr_char)
+            int curr_char = CropIndex([self CharIndexFromHitTest:loc], (int)m_WindowSize);
+            
+            int base_char = first_char;
+            if(modifying_existing_selection && orig_sel.length > 0)
             {
-                int sel_start = first_char < curr_char ? first_char : curr_char;
-                int sel_end   = first_char > curr_char ? first_char : curr_char;
+                if(first_char > orig_sel.location && first_char <= orig_sel.location + orig_sel.length)
+                    base_char = first_char - orig_sel.location > orig_sel.location + orig_sel.length - first_char ?
+                    (int)orig_sel.location : (int)orig_sel.location + (int)orig_sel.length;
+                else if(first_char < orig_sel.location + orig_sel.length && curr_char < orig_sel.location + orig_sel.length)
+                    base_char = (int)orig_sel.location + (int)orig_sel.length;
+                else if(first_char > orig_sel.location && curr_char > orig_sel.location)
+                    base_char = (int) orig_sel.location;
+            }            
+            
+            if(base_char != curr_char)
+            {
+                int sel_start = base_char < curr_char ? base_char : curr_char;
+                int sel_end   = base_char > curr_char ? base_char : curr_char;
                 int sel_start_byte = sel_start < m_WindowSize ? m_Indeces[sel_start] : (int)[m_View RawWindowSize];
                 int sel_end_byte = sel_end < m_WindowSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
                 assert(sel_end_byte >= sel_start_byte);
@@ -763,7 +798,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
             }
             else
                 [m_View SetSelectionInFile:CFRangeMake(-1,0)];
-        
+            
             event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
         }
     }

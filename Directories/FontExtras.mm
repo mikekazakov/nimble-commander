@@ -10,25 +10,37 @@
 
 double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent, CGFloat *_leading)
 {
-    CGFloat lineHeight = 0.0;
+    CGFloat lineHeight = 0.0, ascenderDelta = 0.0;
     
     assert(iFont != NULL);
     
     // Get the ascent from the font, already scaled for the font's size
     CGFloat ascent = CTFontGetAscent(iFont);
-    lineHeight += ascent;
     if(_ascent) *_ascent = ascent;
     
     // Get the descent from the font, already scaled for the font's size
     CGFloat descent = CTFontGetDescent(iFont);
-    lineHeight += descent;
-    if(_descent) *_descent = descent;
+    if(_descent) *_descent = floor(descent + 0.5);
     
     // Get the leading from the font, already scaled for the font's size
     CGFloat leading = CTFontGetLeading(iFont);
-    lineHeight += leading;
     if(_leading) *_leading = leading;
     
+    // calculation taken from here: http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
+        
+    if (leading < 0)
+        leading = 0;
+    
+    leading = floor (leading + 0.5);
+    lineHeight = floor (ascent + 0.5) + floor (descent + 0.5) + leading;
+    
+    if (leading > 0)
+        ascenderDelta = 0;
+    else
+        ascenderDelta = floor (0.2 * lineHeight + 0.5);
+    
+//    defaultLineHeight = lineHeight + ascenderDelta;
+//    return lineHeight + ascenderDelta;
     return lineHeight;
 }
 

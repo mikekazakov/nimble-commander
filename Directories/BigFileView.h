@@ -12,9 +12,9 @@
 #import "OrthodoxMonospace.h"
 
 enum class BigFileViewModes
-{
-    Text,
-    Hex
+{ // changing this values may cause stored history corruption
+    Text = 0,
+    Hex  = 1
 };
 
 @protocol BigFileViewDelegateProtocol <NSObject>
@@ -30,6 +30,7 @@ enum class BigFileViewModes
 - (void) SetDelegate:(id<BigFileViewDelegateProtocol>) _delegate;
 - (void) DoClose;
 
+// Backend section
 // data access section
 - (const void*) RawWindow;
 - (uint64_t)    RawWindowSize;
@@ -44,6 +45,8 @@ enum class BigFileViewModes
 - (DoubleColor) SelectionBkFillColor;
 - (DoubleColor) BackgroundFillColor;
 
+
+// Frontend section
 - (int)         Enconding;
 - (void)        SetEncoding:(int)_encoding;
 
@@ -58,6 +61,7 @@ enum class BigFileViewModes
 
 - (double)      VerticalScrollPosition;
 - (uint64_t)    VerticalPositionInBytes; // whithin all file, now in a window
+- (void)        SetVerticalPositionInBytes:(uint64_t) _pos;
 
 - (void)        SetSelectionInFile: (CFRange) _selection;   // raw bytes
 - (void)        ScrollToSelection;

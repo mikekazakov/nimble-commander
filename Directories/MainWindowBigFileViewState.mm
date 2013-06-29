@@ -12,6 +12,7 @@
 #import "MainWindowController.h"
 #import "Common.h"
 #import "SearchInFile.h"
+#import "BigFileViewHistory.h"
 
 static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 {
@@ -49,7 +50,7 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 {
     self = [super initWithFrame:frameRect];
     if(self)
-    {
+    {        
         m_IsStopSearching = false;
         m_IsSearchRunning = false;
         m_Encodings = [NSMutableArray new];
@@ -93,6 +94,8 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 
 - (void) Resigned
 {
+    [self SaveFileState];
+    
     [m_View SetDelegate:nil];
     [m_View DoClose];
     m_IsStopSearching = true;
@@ -143,6 +146,17 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
         
         strcpy(m_FilePath, _fn);
         [m_View SetFile:m_FileWindow];
+        
+        // try to load a saved info if any
+        if(BigFileViewHistoryEntry *info =
+           [[BigFileViewHistory sharedHistory] FindEntryByPath:[NSString stringWithUTF8String:m_FilePath]])
+        {
+            // suboptimal approach since it requires redundant data processing
+            [m_View SetMode:info->view_mode];
+            [m_View SetEncoding:info->encoding];
+            [m_View SetWordWrap:info->wrapping];
+            [m_View SetVerticalPositionInBytes:info->position];            
+        }
         
         // update UI
         [self SelectEncodingFromView];
@@ -411,6 +425,24 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 - (void)performFindPanelAction:(id)sender
 {
     [self.window makeFirstResponder:m_SearchField];
+}
+
+- (void)OnApplicationWillTerminate
+{
+    [self SaveFileState];
+}
+
+- (void) SaveFileState
+{
+    // do our state persistance stuff
+    BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
+    info->path = [NSString stringWithUTF8String:m_FilePath];
+    info->position = [m_View VerticalPositionInBytes];
+    info->last_viewed = [NSDate date];
+    info->wrapping = [m_View WordWrap];
+    info->view_mode = [m_View Mode];
+    info->encoding = [m_View Enconding];
+    [[BigFileViewHistory sharedHistory] InsertEntry:info];
 }
 
 @end

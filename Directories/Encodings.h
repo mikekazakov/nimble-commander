@@ -189,6 +189,8 @@ void InterpretUTF16BEBufferAsUniChar(
 
 namespace encodings
 {
+    const char *NameFromEncoding(int _encoding);
+    int EncodingFromName(const char* _name);
     int BytesForCodeUnit(int _encoding);
     void InterpretAsUnichar(
                             int _encoding,

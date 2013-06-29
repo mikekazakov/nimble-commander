@@ -253,7 +253,7 @@
 
 - (void) SetEncoding:(int)_encoding
 {
-    if(_encoding != m_Encoding)
+    if(_encoding != m_Encoding && _encoding != ENCODING_INVALID)
     {
         m_Encoding = _encoding;
         [self DecodeRawFileBuffer];
@@ -471,6 +471,11 @@
 - (uint64_t) VerticalPositionInBytes
 {
     return uint64_t([m_ViewImpl GetOffsetWithinWindow]) + m_File->WindowPos();
+}
+
+- (void) SetVerticalPositionInBytes:(uint64_t) _pos
+{
+    [m_ViewImpl ScrollToByteOffset:_pos];    
 }
 
 // searching for selected UniChars in file window if there's any overlapping of

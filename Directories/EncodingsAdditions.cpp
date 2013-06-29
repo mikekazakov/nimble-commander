@@ -6,12 +6,58 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "Encodings.h"
 #import <assert.h>
 #import <stdio.h>
+#import <string.h>
+#import "Encodings.h"
+
+static struct
+{
+    const char *name;
+    int         encoding;
+} g_Names [] = {
+    {"ENCODING_INVALID", ENCODING_INVALID},
+    {"ENCODING_OEM866", ENCODING_OEM866},
+    {"ENCODING_WIN1251", ENCODING_WIN1251},
+    {"ENCODING_MACOS_ROMAN_WESTERN", ENCODING_MACOS_ROMAN_WESTERN},
+    {"ENCODING_ISO_8859_1", ENCODING_ISO_8859_1},
+    {"ENCODING_ISO_8859_2", ENCODING_ISO_8859_2},
+    {"ENCODING_ISO_8859_3", ENCODING_ISO_8859_3},
+    {"ENCODING_ISO_8859_4", ENCODING_ISO_8859_4},
+    {"ENCODING_ISO_8859_5", ENCODING_ISO_8859_5},
+    {"ENCODING_ISO_8859_6", ENCODING_ISO_8859_6},
+    {"ENCODING_ISO_8859_7", ENCODING_ISO_8859_7},
+    {"ENCODING_ISO_8859_8", ENCODING_ISO_8859_8},
+    {"ENCODING_ISO_8859_9", ENCODING_ISO_8859_9},
+    {"ENCODING_ISO_8859_10", ENCODING_ISO_8859_10},
+    {"ENCODING_ISO_8859_11", ENCODING_ISO_8859_11},
+    {"ENCODING_ISO_8859_13", ENCODING_ISO_8859_13},
+    {"ENCODING_ISO_8859_14", ENCODING_ISO_8859_14},
+    {"ENCODING_ISO_8859_15", ENCODING_ISO_8859_15},
+    {"ENCODING_ISO_8859_16", ENCODING_ISO_8859_16},
+    {"ENCODING_UTF8", ENCODING_UTF8},
+    {"ENCODING_UTF16LE", ENCODING_UTF16LE},
+    {"ENCODING_UTF16BE", ENCODING_UTF16BE}
+};
 
 namespace encodings
 {
+    
+const char *NameFromEncoding(int _encoding)
+{
+    for(auto i: g_Names)
+        if(i.encoding == _encoding)
+            return i.name;
+    return "ENCODING_INVALID";
+}
+
+int EncodingFromName(const char* _name)
+{
+    for(auto i: g_Names)
+        if(strcmp(i.name, _name) == 0)
+            return i.encoding;
+    return ENCODING_INVALID;
+}
     
 int BytesForCodeUnit(int _encoding)
 {

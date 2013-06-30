@@ -28,6 +28,10 @@
 #import "MessageBox.h"
 #import "QuickPreview.h"
 #import "MainWindowController.h"
+#import "FileLinkNewSymlinkSheetController.h"
+#import "FileLinkAlterSymlinkSheetController.h"
+#import "FileLinkNewHardlinkSheetController.h"
+#import "FileLinkOperation.h"
 
 enum ActiveState
 {
@@ -1084,6 +1088,132 @@ enum ActiveState
 - (void)OnApplicationWillTerminate
 {
     [self SavePanelPaths];
+}
+
+- (IBAction)OnCreateSymbolicLinkCommand:(id)sender
+{
+    assert([self IsPanelActive]);
+    
+    char source_path[MAXPATHLEN];
+    char link_path[MAXPATHLEN];
+    auto const *item = [[self ActivePanelView] CurrentItem];
+    if(!item)
+        return;
+    
+    [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(source_path);
+    if(!item->isdotdot())
+        strcat(source_path, item->namec());
+    
+    if(m_ActiveState == StateLeftPanel)
+        m_RightPanelData->GetDirectoryPathWithTrailingSlash(link_path);
+    else
+        m_LeftPanelData->GetDirectoryPathWithTrailingSlash(link_path);
+    
+    if(!item->isdotdot())
+        strcat(link_path, item->namec());
+    else
+    {
+        char tmp[256];
+        [self ActivePanelData]->GetDirectoryPathShort(tmp);
+        strcat(link_path, tmp);
+    }
+
+    FileLinkNewSymlinkSheetController *sheet = [FileLinkNewSymlinkSheetController new];
+    [sheet ShowSheet:[self window]
+          sourcepath:[NSString stringWithUTF8String:source_path]
+            linkpath:[NSString stringWithUTF8String:link_path]
+             handler:^(int result){
+                 if(result == DialogResult::Create && [[sheet.LinkPath stringValue] length] > 0)
+                     [m_OperationsController AddOperation:
+                      [[FileLinkOperation alloc] initWithNewSymbolinkLink:[[sheet.SourcePath stringValue] UTF8String]
+                                                                 linkname:[[sheet.LinkPath stringValue] UTF8String]
+                       ]
+                      ];
+             }];
+}
+
+- (IBAction)OnEditSymbolicLinkCommand:(id)sender
+{
+    assert([self IsPanelActive]);
+    
+    char link_path[MAXPATHLEN];
+    auto const *item = [[self ActivePanelView] CurrentItem];
+    if(!item)
+        return;
+    if(item->isdotdot())
+        return;
+    if(item->symlink == 0)
+    {
+        NSAlert *alert = [NSAlert new];
+        [alert setMessageText: @"Failed to edit"];
+        [alert setInformativeText:
+         [NSString stringWithFormat:@"\'%@\' is not a symbolic link.", (__bridge NSString*)item->cf_name]];
+        [alert runModal];
+        return;
+    }
+    
+    [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(link_path);
+    strcat(link_path, item->namec());
+    NSString *linkpath = [NSString stringWithUTF8String:link_path];
+    
+    FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
+    [sheet ShowSheet:[self window]
+          sourcepath:[NSString stringWithUTF8String:item->symlink]
+            linkname:[NSString stringWithUTF8String:item->namec()]
+             handler:^(int _result){
+                 if(_result == DialogResult::OK)
+                 {
+                     [m_OperationsController AddOperation:
+                      [[FileLinkOperation alloc] initWithAlteringOfSymbolicLink:[[sheet.SourcePath stringValue] UTF8String]
+                                                                      linkname:[linkpath UTF8String]]
+                      ];
+                 }
+             }];
+}
+
+- (IBAction)OnCreateHardLinkCommand:(id)sender
+{
+    assert([self IsPanelActive]);
+    
+    auto const *item = [[self ActivePanelView] CurrentItem];
+    if(!item)
+        return;
+    if(item->isdotdot())
+        return;
+    if(item->isdir())
+    {
+        NSAlert *alert = [NSAlert new];
+        [alert setMessageText: @"Can't create a hardlink"];
+        [alert setInformativeText: @"Hardlinks to directories are not supported."];
+        [alert runModal];
+        return;
+    }
+    
+    char dir_path[MAXPATHLEN], src_path[MAXPATHLEN];
+    [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(dir_path);
+    strcpy(src_path, dir_path);
+    strcat(src_path, item->namec());
+    NSString *srcpath = [NSString stringWithUTF8String:src_path];
+    NSString *dirpath = [NSString stringWithUTF8String:dir_path];
+    
+    FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
+    [sheet ShowSheet:[self window]
+          sourcename:[NSString stringWithUTF8String:item->namec()]
+             handler:^(int _result){
+                 if(_result == DialogResult::Create)
+                 {
+                     NSString *name = [sheet.LinkName stringValue];
+                     if([name length] == 0) return;
+                     
+                     if([name UTF8String][0] != '/')
+                         name = [NSString stringWithFormat:@"%@%@", dirpath, name];
+                     
+                    [m_OperationsController AddOperation:
+                        [[FileLinkOperation alloc] initWithNewHardLink:[srcpath UTF8String]
+                                                              linkname:[name UTF8String]]
+                        ];
+                 }                 
+             }];
 }
 
 @end

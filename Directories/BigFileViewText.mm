@@ -378,7 +378,7 @@ struct TextLine
          {
              CGFloat x1 = 0, x2 = -1;
              if(m_Lines[i].unichar_no <= selection.location &&
-                m_Lines[i].unichar_no + m_Lines[i].unichar_len >= selection.location)
+                m_Lines[i].unichar_no + m_Lines[i].unichar_len > selection.location)
              {
                  x1 = textPosition.x + CTLineGetOffsetForStringIndex(line, selection.location, 0);
                  x2 = ((selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len) ?
@@ -800,10 +800,29 @@ struct TextLine
 
 - (void) OnMouseDown:(NSEvent *)event
 {
-    if([event clickCount]>1)
+    if([event clickCount] > 2)
+        [self HandleSelectionWithTripleClick:event];
+    else if ([event clickCount] == 2)
         [self HandleSelectionWithDoubleClick:event];
     else
         [self HandleSelectionWithMouseDragging:event];
+}
+
+- (void) HandleSelectionWithTripleClick: (NSEvent*) event
+{
+    NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
+    int uc_index = CropIndex([self CharIndexFromPoint:pt], (int)m_StringBufferSize);
+
+    for(const auto &i: m_Lines)
+        if(i.unichar_no <= uc_index && i.unichar_no + i.unichar_len > uc_index)
+        {
+            int sel_start = i.unichar_no;
+            int sel_end = i.unichar_no + i.unichar_len;
+            int sel_start_byte = m_Indeces[sel_start];
+            int sel_end_byte = sel_end < m_StringBufferSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
+            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
+            break;
+        }
 }
 
 - (void) HandleSelectionWithDoubleClick: (NSEvent*) event

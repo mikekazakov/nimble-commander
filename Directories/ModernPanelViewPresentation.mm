@@ -612,7 +612,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         m_IconCache->RunLoadThread(m_State->Data);
 
         // On the first draw of a directory: do not draw anything, wait for some icons to load to avoid annoying flickering of the icons.
-        if (m_FirstDraw)
+/*        if (m_FirstDraw)
         {
             m_FirstDraw = false;
             
@@ -623,7 +623,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             });
             
             return;
-        }
+        }*/
     }
     
     ///////////////////////////////////////////////////////////////////////////////

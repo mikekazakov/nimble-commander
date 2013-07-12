@@ -9,6 +9,7 @@
 #import <unistd.h>
 #import <dirent.h>
 #import <pwd.h>
+#import <DiskArbitration/DiskArbitration.h>
 #import "Common.h"
 
 uint64_t (*GetTimeInNanoseconds)() = nullptr;
@@ -234,4 +235,62 @@ int GetFileSystemRootFromPath(const char *_path, char *_root)
         return 0;
     }
     return errno;
+}
+
+void EjectVolumeContainingPath(const char *_path)
+{
+    char root[MAXPATHLEN];
+    
+    if(GetFileSystemRootFromPath(_path, root) == 0)
+    {
+        DASessionRef session = DASessionCreate(kCFAllocatorDefault);
+        
+        CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8 *)root, strlen(_path), true);
+        if(url)
+        {
+            DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
+            if(disk)
+            {
+                DADiskUnmount(disk, kDADiskUnmountOptionDefault, NULL, NULL);
+                CFRelease(disk);
+            }
+            CFRelease(url);
+        }
+        CFRelease(session);
+    }
+}
+
+bool IsVolumeContainingPathEjectable(const char *_path)
+{
+    char root[MAXPATHLEN];
+    if(GetFileSystemRootFromPath(_path, root) == 0)
+    {
+        bool ejectable = false;
+        CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)root, strlen(root), false);
+                
+        CFBooleanRef isremovable;
+        if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0))
+        {
+            if(CFBooleanGetValue(isremovable))
+                ejectable = true;
+            CFRelease(isremovable);
+        }
+        
+        if(!ejectable)
+        {
+            CFBooleanRef islocal;
+            if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0))
+            {
+                if(!CFBooleanGetValue(islocal))
+                    ejectable = true;
+                CFRelease(islocal);
+            }
+        }
+        
+        CFRelease(cfurl);
+        
+        return ejectable;
+    }
+
+    return false;
 }

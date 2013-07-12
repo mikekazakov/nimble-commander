@@ -348,7 +348,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
     CGContextSetTextDrawingMode(_context, kCGTextFill);
-    CGContextSetShouldSmoothFonts(_context, false);
+    CGContextSetShouldSmoothFonts(_context, true);
     CGContextSetShouldAntialias(_context, true);
     
     CFRange selection = [m_View SelectionWithinWindowUnichars];

@@ -158,6 +158,10 @@ struct VolumeAttributesInformation
     char      fs_type_name[MFSNAMELEN]; // this field is retrieved from statfs, not from getattrlist
     uid_t     fs_owner;                 // this field is retrieved from statfs, not from getattrlist
     char      fs_type_verb[256];        // from CFURL framework
+    bool      is_sw_ejectable;
+    bool      is_sw_removable;
+    bool      is_local;
+
 };
 
 // all functions below return 0 on successful completion or errno on error

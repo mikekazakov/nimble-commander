@@ -357,7 +357,7 @@ struct TextLine
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
     CGContextSetTextDrawingMode(_context, kCGTextFill);
-    CGContextSetShouldSmoothFonts(_context, false);
+    CGContextSetShouldSmoothFonts(_context, true);
     CGContextSetShouldAntialias(_context, true);
     
     if(!m_StringBuffer) return;

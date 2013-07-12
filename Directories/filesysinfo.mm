@@ -308,10 +308,33 @@ int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilities
     // TODO: how some unknown reasons kCFURLVolume"Localized"FormatDescriptionKey now returns
     // "Mac OS Extended (Journaled)" instead of "Mac OS Extended (журнальный)"
     // need to investigate why
-        
     CFStringGetCString(fsverbname, _a->fs_type_verb, sizeof(_a->fs_type_verb), kCFStringEncodingUTF8);
 //    CFRelease(error);
     CFRelease(fsverbname);
+        
+    CFBooleanRef isejectable;
+    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, 0))
+    {
+        _a->is_sw_ejectable = CFBooleanGetValue(isejectable);
+        CFRelease(isejectable);
+    }
+        
+    CFBooleanRef isremovable;
+    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0))
+    {
+        _a->is_sw_removable = CFBooleanGetValue(isremovable);
+        CFRelease(isremovable);
+    }
+
+    CFBooleanRef islocal;
+    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0))
+    {
+        _a->is_local = CFBooleanGetValue(islocal);
+        CFRelease(islocal);
+    }
+        
+            
+        
     CFRelease(cfurl);
     }
     

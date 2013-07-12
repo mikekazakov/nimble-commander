@@ -16,7 +16,7 @@
 
 - (void) SetData:(PanelData*)_data;
 - (void) SetView:(PanelView*)_view;
-- (void) AttachToIndicator:(NSProgressIndicator*)_ind;
+- (void) AttachToControls:(NSProgressIndicator*)_indicator eject:(NSButton*)_eject;
 - (void) SetWindowController:(MainWindowController *)_cntrl;
 
 - (void) LoadViewState:(NSDictionary *)_state;

@@ -323,6 +323,7 @@ static NSString* Bool2ToString(const bool b[2])
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
     [[self window] orderOut:self];
+    [m_UpdateTimer invalidate];    
     self.ME = nil; // let ARC do it's duty
 }
 @end

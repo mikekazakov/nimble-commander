@@ -13,6 +13,7 @@
 #import "MainWindowController.h"
 #import "QuickPreview.h"
 #import "MainWindowFilePanelState.h"
+#import "filesysinfo.h"
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
@@ -43,6 +44,8 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     // spinning indicator support
     bool                m_IsAnythingWorksInBackground;
     NSProgressIndicator *m_SpinningIndicator;
+    
+    NSButton            *m_EjectButton;
     
     // delayed entry selection support
     struct
@@ -271,11 +274,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_IsStopDirectoryLoading = true;
         m_IsStopDirectoryReLoading = true;        
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self ResetUpdatesObservation:_context->path];
             m_Data->GoToDirectoryWithContext(_context);
             [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
-            [self ClearSelectionRequest];
-            [self SignalParentOfPathChanged];
+            [self OnPathChanged];
         });
     };
     
@@ -304,9 +305,8 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_IsStopDirectorySizeCounting = true;
     m_IsStopDirectoryLoading = true;
     m_IsStopDirectoryReLoading = true;
-    [self ResetUpdatesObservation:_dir];
     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
-    [self SignalParentOfPathChanged];
+    [self OnPathChanged];
     return true;
 }
 
@@ -346,15 +346,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                 m_IsStopDirectoryLoading = true;
                 m_IsStopDirectoryReLoading = true;
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self ResetUpdatesObservation:_context->path];
                     m_Data->GoToDirectoryWithContext(_context);
-                    
                     int newcursor_raw = m_Data->FindEntryIndex( [nscurdirname UTF8String] ), newcursor_sort = 0;
                     if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
                     if(newcursor_sort < 0) newcursor_sort = 0;
                     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
-                    [self ClearSelectionRequest];
-                    [self SignalParentOfPathChanged];
+                    [self OnPathChanged];
                 });
             };
             
@@ -371,12 +368,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                 m_IsStopDirectoryLoading = true;
                 m_IsStopDirectoryReLoading = true;
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self ResetUpdatesObservation:_context->path];
                     m_Data->GoToDirectoryWithContext(_context);
-                    
                     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
-                    [self ClearSelectionRequest];
-                    [self SignalParentOfPathChanged];
+                    [self OnPathChanged];
                 });
             };
             
@@ -405,11 +399,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     NSString *oldcursorname = (oldcursorpos >= 0 ? [NSString stringWithUTF8String:[m_View CurrentItem]->namec()] : @"");
     
     auto onfail = ^(NSString* _path, NSError *_error) {
-        NSAlert *alert = [[NSAlert alloc] init];
+/*        NSAlert *alert = [[NSAlert alloc] init];
         [alert setMessageText: [NSString stringWithFormat:@"Failed to update directory %@", _path]];
-        [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
+        [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];*/
         dispatch_async(dispatch_get_main_queue(), ^{
-            [alert runModal]; // do we actually need this message box?
+//            [alert runModal]; // do we actually need this message box?
             [self RecoverFromInvalidDirectory];
         });
     };
@@ -622,12 +616,18 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
 }
 
-- (void) AttachToIndicator:(NSProgressIndicator*)_ind
+- (void) AttachToControls:(NSProgressIndicator*)_indicator eject:(NSButton*)_eject;
 {
-    m_SpinningIndicator = _ind;
+    m_SpinningIndicator = _indicator;
+    m_EjectButton = _eject;
+    
     m_IsAnythingWorksInBackground = false;
-    [m_SpinningIndicator stopAnimation:nil];    
+    [m_SpinningIndicator stopAnimation:nil];
     [self UpdateSpinningIndicator];
+    [self UpdateEjectButton];
+    
+    [m_EjectButton setTarget:self];
+    [m_EjectButton setAction:@selector(OnEjectButton:)];
 }
 
 - (void) SetWindowController:(MainWindowController *)_cntrl
@@ -683,6 +683,16 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
     
     m_IsAnythingWorksInBackground = is_anything_working;
+}
+
+- (void) UpdateEjectButton
+{
+    char path[MAXPATHLEN];
+    m_Data->GetDirectoryPath(path);
+    bool should_be_hidden = !IsVolumeContainingPathEjectable(path);
+    
+    if([m_EjectButton isHidden] != should_be_hidden)
+        [m_EjectButton setHidden:should_be_hidden];
 }
 
 - (PanelViewType) GetViewType
@@ -765,11 +775,28 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     [m_View setNeedsDisplay:true];
 }
 
+- (void) OnPathChanged
+{
+    char path[MAXPATHLEN];
+    m_Data->GetDirectoryPathWithTrailingSlash(path);
+    [self ResetUpdatesObservation:path];
+    [self ClearSelectionRequest];   
+    [self SignalParentOfPathChanged];
+    [self UpdateEjectButton];
+}
+
 - (void) SignalParentOfPathChanged
 {
     NSView *parent = [m_View superview];
     assert([parent isKindOfClass: [MainWindowFilePanelState class]]);
     [(MainWindowFilePanelState*)parent PanelPathChanged:self];
+}
+
+- (void)OnEjectButton:(id)sender
+{
+    char path[MAXPATHLEN];
+    m_Data->GetDirectoryPath(path);
+    EjectVolumeContainingPath(path);
 }
 
 @end

@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D78</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -47,6 +47,8 @@
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
+				<string key="NSWindowContentMaxSize">{529, 202}</string>
+				<string key="NSWindowContentMinSize">{529, 202}</string>
 				<object class="NSView" key="NSWindowView" id="1006">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -149,7 +151,7 @@
 								<int key="NSButtonFlags">-2038284288</int>
 								<int key="NSButtonFlags2">129</int>
 								<string key="NSAlternateContents"/>
-								<string type="base64-UTF8" key="NSKeyEquivalent">Gw</string>
+								<string key="NSKeyEquivalent"/>
 								<int key="NSPeriodicDelay">200</int>
 								<int key="NSPeriodicInterval">25</int>
 							</object>
@@ -395,10 +397,12 @@
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="638594357"/>
 							<string key="NSReuseIdentifierKey">_NS:1535</string>
+							<string key="NSHuggingPriority">{1, 750}</string>
+							<string key="NSAntiCompressionPriority">{1, 750}</string>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="963311057">
-								<int key="NSCellFlags">68157504</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags">67108928</int>
+								<int key="NSCellFlags2">272635456</int>
 								<string key="NSContents">Target filename</string>
 								<reference key="NSSupport" ref="977517844"/>
 								<string key="NSCellIdentifier">_NS:1535</string>
@@ -407,6 +411,7 @@
 								<reference key="NSTextColor" ref="434374328"/>
 							</object>
 							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+							<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
 						</object>
 						<object class="NSTextField" id="447913415">
 							<reference key="NSNextResponder" ref="1006"/>
@@ -464,8 +469,9 @@
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="447913415"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
-				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
+				<string key="NSScreenRect">{{0, 0}, {1280, 800}}</string>
+				<string key="NSMinSize">{529, 224}</string>
+				<string key="NSMaxSize">{529, 224}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
 		</array>

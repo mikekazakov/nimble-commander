@@ -32,6 +32,7 @@
 #import "FileLinkAlterSymlinkSheetController.h"
 #import "FileLinkNewHardlinkSheetController.h"
 #import "FileLinkOperation.h"
+#import "StackOfDisappearingWidgets.h"
 
 enum ActiveState
 {
@@ -59,6 +60,11 @@ enum ActiveState
 
     NSProgressIndicator *m_LeftPanelSpinningIndicator;
     NSProgressIndicator *m_RightPanelSpinningIndicator;
+    NSButton            *m_LeftPanelEjectButton;
+    NSButton            *m_RightPanelEjectButton;
+
+    StackOfDisappearingWidgets *m_LeftStack;
+    StackOfDisappearingWidgets *m_RightStack;
     
     NSBox               *m_SheetAnchorLine;
         
@@ -110,22 +116,21 @@ enum ActiveState
     [m_OpSummaryController AddViewTo:m_OpSummaryBox];
     
     // panel creation and preparation
-    [self CreatePanels];
     m_LeftPanelData = new PanelData;
     m_LeftPanelController = [PanelController new];
     [m_LeftPanelView SetPanelData:m_LeftPanelData];
     [m_LeftPanelView SetPanelController:m_LeftPanelController];
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
-    [m_LeftPanelController AttachToIndicator:m_LeftPanelSpinningIndicator];
-
+    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton];
+    
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
     [m_RightPanelView SetPanelData:m_RightPanelData];
     [m_RightPanelView SetPanelController:m_RightPanelController];
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
-    [m_RightPanelController AttachToIndicator:m_RightPanelSpinningIndicator];
+    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton];
 
     m_Skin = ((AppDelegate*)[NSApp delegate]).Skin;
     if (m_Skin == ApplicationSkin::Modern)
@@ -174,17 +179,14 @@ enum ActiveState
     
 }
 
-- (void)CreatePanels
+- (void) CreateControls
 {
     m_LeftPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     [self addSubview:m_LeftPanelView positioned:NSWindowBelow relativeTo:nil];
     
     m_RightPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(100, 100, 100, 100)];
     [self  addSubview:m_RightPanelView positioned:NSWindowBelow relativeTo:nil];
-}
-
-- (void) CreateControls
-{
+    
     m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     [m_LeftPanelGoToButton setTarget:self];
     [m_LeftPanelGoToButton setAction:@selector(LeftPanelGoToButtonAction:)];
@@ -197,7 +199,7 @@ enum ActiveState
     [m_RightPanelGoToButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:m_RightPanelGoToButton];
 
-    m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
     [m_LeftPanelSpinningIndicator setIndeterminate:YES];
     [m_LeftPanelSpinningIndicator setStyle:NSProgressIndicatorSpinningStyle];
     [m_LeftPanelSpinningIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -205,14 +207,33 @@ enum ActiveState
     [m_LeftPanelSpinningIndicator setDisplayedWhenStopped:NO];
     [self addSubview:m_LeftPanelSpinningIndicator];
 
-    m_RightPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    m_RightPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
     [m_RightPanelSpinningIndicator setIndeterminate:YES];
     [m_RightPanelSpinningIndicator setStyle:NSProgressIndicatorSpinningStyle];
     [m_RightPanelSpinningIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_RightPanelSpinningIndicator setControlSize:NSSmallControlSize];
     [m_RightPanelSpinningIndicator setDisplayedWhenStopped:NO];
     [self addSubview:m_RightPanelSpinningIndicator];
-        
+    
+    m_LeftPanelEjectButton = [[NSButton alloc] initWithFrame:NSRect()];
+    [m_LeftPanelEjectButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_LeftPanelEjectButton setImagePosition:NSImageOnly];
+    [m_LeftPanelEjectButton setImage:[NSImage imageNamed:NSImageNamePathTemplate]];
+    [m_LeftPanelEjectButton setShowsBorderOnlyWhileMouseInside:YES];
+    [m_LeftPanelEjectButton setBezelStyle:NSRecessedBezelStyle];
+    [self addSubview:m_LeftPanelEjectButton];
+
+    m_RightPanelEjectButton = [[NSButton alloc] initWithFrame:NSRect()];
+    [m_RightPanelEjectButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_RightPanelEjectButton setImagePosition:NSImageOnly];
+    [m_RightPanelEjectButton setImage:[NSImage imageNamed:NSImageNamePathTemplate]];
+    [m_RightPanelEjectButton setShowsBorderOnlyWhileMouseInside:YES];
+    [m_RightPanelEjectButton setBezelStyle:NSRecessedBezelStyle];
+    [self addSubview:m_RightPanelEjectButton];
+    
+//    - (void)addObserver:(NSObject *)anObserver forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
+//    [m_RightPanelEjectButton addObserver:self forKeyPath:@"hidden" options:0 context:0];
+    
     m_OpSummaryBox = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 350, 40)];
     [m_OpSummaryBox setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:m_OpSummaryBox];
@@ -222,15 +243,13 @@ enum ActiveState
     [m_SheetAnchorLine setBoxType:NSBoxSeparator];
     [self addSubview:m_SheetAnchorLine];
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_LeftPanelGoToButton, m_RightPanelGoToButton, m_LeftPanelSpinningIndicator,
-            m_RightPanelSpinningIndicator, m_OpSummaryBox, m_SheetAnchorLine);
-
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_LeftPanelGoToButton, m_RightPanelGoToButton, m_OpSummaryBox, m_SheetAnchorLine);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SheetAnchorLine]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==44)-[m_SheetAnchorLine(<=1)]" options:0 metrics:nil views:views]];    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(10)-[m_LeftPanelGoToButton(61)]-[m_LeftPanelSpinningIndicator(16)]" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==44)-[m_SheetAnchorLine(<=1)]" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(10)-[m_LeftPanelGoToButton(61)]" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(10)-[m_LeftPanelGoToButton(22)]" options:0 metrics:nil views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_RightPanelSpinningIndicator(16)]-[m_RightPanelGoToButton(61)]-(10)-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_RightPanelGoToButton(61)]-(10)-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(10)-[m_RightPanelGoToButton(22)]" options:0 metrics:nil views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(1)-[m_OpSummaryBox(40)]" options:0 metrics:nil views:views]];
@@ -241,6 +260,20 @@ enum ActiveState
                                                          toItem:m_OpSummaryBox.superview
                                                       attribute:NSLayoutAttributeCenterX
                                                      multiplier:1.f constant:0.f]];
+    
+    m_LeftStack = [[StackOfDisappearingWidgets alloc] initWithOrientation:StackOfDisappearingWidgetsOrientation::LeftToRight
+                                                               AnchorView:m_LeftPanelGoToButton
+                                                                SuperView:self];
+    [m_LeftStack AddWidget:m_LeftPanelEjectButton];
+    [m_LeftStack AddWidget:m_LeftPanelSpinningIndicator];
+    [m_LeftStack Done];
+    
+    m_RightStack = [[StackOfDisappearingWidgets alloc] initWithOrientation:StackOfDisappearingWidgetsOrientation::RightToLeft
+                                                               AnchorView:m_RightPanelGoToButton
+                                                                SuperView:self];
+    [m_RightStack AddWidget:m_RightPanelEjectButton];
+    [m_RightStack AddWidget:m_RightPanelSpinningIndicator];
+    [m_RightStack Done];
 }
 
 - (void)UpdatePanelFrames
@@ -570,8 +603,8 @@ enum ActiveState
     else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
     [self UpdatePanelFrames];
     
-    [m_LeftPanelController AttachToIndicator:m_LeftPanelSpinningIndicator];
-    [m_RightPanelController AttachToIndicator:m_RightPanelSpinningIndicator];
+    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton];
+    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton];
     
     [self SavePanelsSettings];
 }

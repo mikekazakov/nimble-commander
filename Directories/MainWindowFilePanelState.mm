@@ -309,6 +309,9 @@ enum ActiveState
 
 - (void) Resigned
 {
+    // to cut reference cycle
+    m_LeftStack = nil;
+    m_RightStack = nil;
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{

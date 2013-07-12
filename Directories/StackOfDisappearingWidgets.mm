@@ -40,6 +40,7 @@ static const double g_Gap = 8.0;
     }
     return self;
 }
+
 - (void) dealloc
 {
     for(NSView *v: m_Widgets)

@@ -21,7 +21,9 @@ static const double g_Gap = 8.0;
     NSView                                *m_AnchorView;
     NSView                                *m_SuperView;
     bool                                  m_AllObjectsAdded;
-    std::deque<NSView*>                   m_Deque;
+    std::deque<NSView*>                   m_Visible;
+    std::deque<NSView*>                   m_Hidden;
+    dispatch_queue_t                      m_WorkQueue;
 }
 
 - (id)initWithOrientation:(StackOfDisappearingWidgetsOrientation) _orientation AnchorView:(NSView*) _view SuperView:(NSView*)_sview
@@ -34,6 +36,7 @@ static const double g_Gap = 8.0;
         m_SuperView = _sview;
         m_AllObjectsAdded = false;
         m_Constraints = [NSMutableArray new];
+        m_WorkQueue = dispatch_queue_create("info.filesmanager.StackOfDisappearingWidgets", 0);
     }
     return self;
 }
@@ -41,6 +44,7 @@ static const double g_Gap = 8.0;
 {
     for(NSView *v: m_Widgets)
         [v removeObserver:self forKeyPath:@"hidden"];
+    dispatch_release(m_WorkQueue);
 }
 
 - (void) AddWidget:(NSView*)_widget
@@ -61,27 +65,27 @@ static const double g_Gap = 8.0;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    [self BuildLayout];
+    dispatch_async(m_WorkQueue, ^{
+        [self BuildLayout];
+    });
 }
 
 - (void) BuildLayout
 {
-    assert(m_AllObjectsAdded);    
-    int last_visible = 0;
+    assert(m_AllObjectsAdded);
     for(NSView *v: m_Widgets)
         if([v isHidden])
-            m_Deque.push_back(v);
+            m_Hidden.push_back(v);
         else
-            m_Deque.insert(m_Deque.begin() + last_visible++, v);
-    
-    [m_SuperView removeConstraints:m_Constraints];
-    [m_Constraints removeAllObjects];
+            m_Visible.push_back(v);
+        
+    NSMutableArray *to_add = [NSMutableArray arrayWithCapacity:m_Widgets.size()*2];
     
     NSView *last = m_AnchorView;
-    for(NSView *v: m_Deque)
+    for(NSView *v: m_Visible)
     {
         if(m_Orientation == StackOfDisappearingWidgetsOrientation::LeftToRight)
-            [m_Constraints addObject:[NSLayoutConstraint constraintWithItem:v
+            [to_add addObject:[NSLayoutConstraint constraintWithItem:v
                                                                   attribute:NSLayoutAttributeLeft
                                                                   relatedBy:NSLayoutRelationEqual
                                                                      toItem:last
@@ -89,7 +93,7 @@ static const double g_Gap = 8.0;
                                                                  multiplier:1
                                                                    constant:g_Gap]];
         else if(m_Orientation == StackOfDisappearingWidgetsOrientation::RightToLeft)
-             [m_Constraints addObject:[NSLayoutConstraint constraintWithItem:v
+             [to_add addObject:[NSLayoutConstraint constraintWithItem:v
                                                                    attribute:NSLayoutAttributeRight
                                                                    relatedBy:NSLayoutRelationEqual
                                                                       toItem:last
@@ -97,20 +101,74 @@ static const double g_Gap = 8.0;
                                                                   multiplier:1
                                                                     constant:-g_Gap]];
         
-        [m_Constraints addObject:[NSLayoutConstraint constraintWithItem:v
+        [to_add addObject:[NSLayoutConstraint constraintWithItem:v
                                                               attribute:NSLayoutAttributeCenterY
                                                               relatedBy:NSLayoutRelationEqual
                                                                  toItem:m_AnchorView
                                                               attribute:NSLayoutAttributeCenterY
                                                              multiplier:1
                                                                constant:0]];
-        
+
         last = v;
     }
     
-    [m_SuperView addConstraints:m_Constraints];
+    for(NSView *v: m_Hidden)
+    {
+        [to_add addObject:[NSLayoutConstraint constraintWithItem:v
+                                                              attribute:NSLayoutAttributeLeft
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:m_SuperView
+                                                              attribute:NSLayoutAttributeLeft
+                                                             multiplier:1
+                                                               constant:-10000]];
+        [to_add addObject:[NSLayoutConstraint constraintWithItem:v
+                                                              attribute:NSLayoutAttributeTop
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:m_SuperView
+                                                              attribute:NSLayoutAttributeBottom
+                                                             multiplier:1
+                                                               constant:-10000]];
+    }
     
-    m_Deque.clear();    
+    NSMutableArray *to_remove = [NSMutableArray new];
+    [to_remove addObjectsFromArray:m_Constraints];
+    
+    for(int i = 0; i < [to_add count]; ++i)
+    {
+        NSLayoutConstraint *c_new = [to_add objectAtIndex:i];
+        for(NSLayoutConstraint *c_old: to_remove)
+            if(c_new.firstItem == c_old.firstItem &&
+               c_new.firstAttribute == c_old.firstAttribute &&
+               c_new.secondItem == c_old.secondItem &&
+               c_new.secondAttribute == c_old.secondAttribute &&
+               c_new.constant == c_old.constant
+                )
+            {
+                [to_remove removeObject:c_old];
+                [to_add removeObject:c_new];
+                --i;
+                break;
+            }
+    }
+    
+    for(NSLayoutConstraint *c: to_remove)
+        [m_Constraints removeObject: c];
+    for(NSLayoutConstraint *c: to_add)
+        [m_Constraints addObject: c];
+    
+    if(dispatch_get_current_queue() != dispatch_get_main_queue())
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [m_SuperView removeConstraints:to_remove];
+            [m_SuperView addConstraints:to_add];
+        });
+    else
+    {
+        [m_SuperView removeConstraints:to_remove];
+        [m_SuperView addConstraints:to_add];
+    }
+    
+    m_Visible.clear();
+    m_Hidden.clear();
 }
 
 @end

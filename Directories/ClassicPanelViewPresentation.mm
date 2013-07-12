@@ -127,7 +127,7 @@ static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInfo
     {
         if( _dirent->size != DIRENTINFO_INVALIDSIZE)
         {
-            FormHumanReadableSizeRepresentation6(_dirent->size, _out); // this code will be used some day when F3 will be implemented
+            FormHumanReadableSizeRepresentation6(_dirent->size, _out);
         }
         else
         {

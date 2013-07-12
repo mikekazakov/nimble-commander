@@ -551,8 +551,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
     if(m_Data->GetSelectedItemsCount())
     {
+        char dir[MAXPATHLEN];
+        m_Data->GetDirectoryPathWithTrailingSlash(dir);
         auto files = m_Data->StringsFromSelectedEntries();
-        [self StartDirectorySizeCountingFor:files];
+        [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:false];
     }
     else
     {
@@ -562,10 +564,22 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         if (item->isdir())
         {
             // do not try count parent directory size. TODO: need a special handling here, it count the entire directory
-            if(item && !item->isdotdot())
+            if(!item->isdotdot())
             {
+                char dir[MAXPATHLEN];
+                m_Data->GetDirectoryPathWithTrailingSlash(dir);
                 auto files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
-                [self StartDirectorySizeCountingFor:files];
+                [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:false];
+            }
+            else
+            {
+                char dir[MAXPATHLEN], name[MAXPATHLEN];
+                m_Data->GetDirectoryPath(dir);
+                char *s = strrchr(dir, '/');
+                if(s) *s = 0;
+                m_Data->GetDirectoryPathShort(name);                
+                auto files = FlexChainedStringsChunk::AllocateWithSingleString(name);
+                [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:true];
             }
         }
         else
@@ -576,16 +590,28 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
 }
 
-- (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files
+- (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files InDir:(const char*)_dir IsDotDot:(bool)_isdotdot
 {    
-    char dir[MAXPATHLEN];
-    m_Data->GetDirectoryPathWithTrailingSlash(dir);
-    const char *str = strdup(dir);
+    const char *str = strdup(_dir);
     
     dispatch_async(m_DirectorySizeCountingQ, ^{
         m_IsStopDirectorySizeCounting = false;
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:true];});
-        PanelDirectorySizeCalculate(_files, str, self, ^bool{return m_IsStopDirectorySizeCounting;});
+        PanelDirectorySizeCalculate(_files, str, _isdotdot,
+                                    ^bool {
+                                        return m_IsStopDirectorySizeCounting;
+                                    },
+                                    ^(const char* _dir, unsigned long _size){
+                                        // TODO: lock panel data?
+                                        // CHECK ME!!!!!!!!!!!!!!!!!!!!!!
+                                        // gues it's better to move the following line into main thread
+                                        // it may be a race condition with possible UB here. BAD!
+                                        if(m_Data->SetCalculatedSizeForDirectory(_dir, _size)){
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                [m_View setNeedsDisplay:true];
+                                            });
+                                        }
+                                    });
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:false];});
     });
 }
@@ -599,20 +625,6 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         // user was fast searching something, need to flush that string
         m_FastSearchString = nil;
         m_FastSearchOffset = 0;
-    }
-}
-
-- (void) DidCalculatedDirectorySizeForEntry:(const char*) _dir size:(unsigned long)_size
-{
-    // TODO: lock panel data?
-    // CHECK ME!!!!!!!!!!!!!!!!!!!!!!
-    // gues it's better to move the following line into main thread
-    // it may be a race condition with possible UB here. BAD!
-    if(m_Data->SetCalculatedSizeForDirectory(_dir, _size))
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_View setNeedsDisplay:true];
-        });
     }
 }
 
@@ -674,12 +686,19 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                        dispatch_get_main_queue(),
                        ^{
                            if(m_IsAnythingWorksInBackground) // need to check if task was already done
+                           {
                                [m_SpinningIndicator startAnimation:nil];
+                               if([m_SpinningIndicator isHidden])
+                                   [m_SpinningIndicator setHidden:false];
+                           }
                        });
     }
     else
     {
         [m_SpinningIndicator stopAnimation:nil];
+        if(![m_SpinningIndicator isHidden])
+            [m_SpinningIndicator setHidden:true];
+        
     }
     
     m_IsAnythingWorksInBackground = is_anything_working;
@@ -794,9 +813,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void)OnEjectButton:(id)sender
 {
-    char path[MAXPATHLEN];
-    m_Data->GetDirectoryPath(path);
-    EjectVolumeContainingPath(path);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        char path[MAXPATHLEN];
+        m_Data->GetDirectoryPath(path); // not thread-safe, potentialy may cause problems, but not likely
+        EjectVolumeContainingPath(path);
+    });
 }
 
 @end

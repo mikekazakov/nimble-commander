@@ -7,7 +7,6 @@
 //
 
 #import "PanelSizeCalculator.h"
-#import "PanelController.h"
 #import <sys/types.h>
 #import <sys/dirent.h>
 #import <sys/stat.h>
@@ -82,8 +81,9 @@ cleanup:
 
 void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs,
                                  const char *_root_path,
-                                 PanelController *_panel,
-                                 PanelDirectorySizeCalculate_CancelChecker _checker)
+                                 bool _is_dotdot,
+                                 PanelDirectorySizeCalculate_CancelChecker _checker,
+                                 PanelDirectorySizeCalculate_CompletionHandler _handler)
 {
     if(_checker())
         return;
@@ -91,6 +91,7 @@ void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs,
     bool iscancelling = false;
     char path[MAXPATHLEN];
     strcpy(path, _root_path);
+    if(path[strlen(path)-1] != '/') strcat(path, "/");
     char *var = path + strlen(path);
     
     for(const auto &i: *_dirs)
@@ -103,7 +104,7 @@ void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs,
             goto cleanup;
 
         if(size >= 0)
-            [_panel DidCalculatedDirectorySizeForEntry:i.str() size:size];
+            _handler(_is_dotdot?"..":i.str(), size);
     }
     
 cleanup:

@@ -8,12 +8,11 @@
 
 #import "FlexChainedStringsChunk.h"
 
-@class PanelController;
-
 typedef bool (^PanelDirectorySizeCalculate_CancelChecker)(void);
+typedef void (^PanelDirectorySizeCalculate_CompletionHandler)(const char*_dir, unsigned long _size);
 
 void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs, // transfered ownership
                                  const char *_root_path,           // transfered ownership, allocated with malloc
-                                 PanelController *_panel,
-                                 PanelDirectorySizeCalculate_CancelChecker _checker);
-
+                                 bool _is_dotdot,
+                                 PanelDirectorySizeCalculate_CancelChecker _checker,
+                                 PanelDirectorySizeCalculate_CompletionHandler _handler);

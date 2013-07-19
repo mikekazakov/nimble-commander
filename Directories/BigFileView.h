@@ -44,7 +44,8 @@ enum class BigFileViewModes
 - (CGColorRef)  TextForegroundColor;
 - (DoubleColor) SelectionBkFillColor;
 - (DoubleColor) BackgroundFillColor;
-
+- (bool)        ShouldAntialias;
+- (bool)        ShouldSmoothFonts;
 
 // Frontend section
 - (int)         Enconding;

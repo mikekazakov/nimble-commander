@@ -294,3 +294,20 @@ bool IsVolumeContainingPathEjectable(const char *_path)
 
     return false;
 }
+
+@implementation NSObject (MassObserving)
+
+
+- (void)addObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys options:(NSKeyValueObservingOptions)options context:(void *)context
+{
+    for(NSString *s: keys)
+        [self addObserver:observer forKeyPath:s options:options context:context];
+}
+
+- (void)removeObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys
+{
+    for(NSString *s: keys)
+        [self removeObserver:observer forKeyPath:s];
+}
+
+@end

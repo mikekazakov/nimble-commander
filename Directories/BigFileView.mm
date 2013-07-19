@@ -14,6 +14,27 @@
 #import "DataBlockAnalysis.h"
 #import "Common.h"
 #import "AppDelegate.h"
+#import "NSUserDefaults+myColorSupport.h"
+
+CGColorRef CGColorFromNSColor(NSColor *_c)
+{
+    const NSInteger numberOfComponents = [_c numberOfComponents];
+    CGFloat components[numberOfComponents];
+    CGColorSpaceRef colorSpace = [[_c colorSpace] CGColorSpace];
+    
+    [_c getComponents:(CGFloat *)&components];
+    
+    return CGColorCreate(colorSpace, components);
+}
+
+static NSArray *MyDefaultsKeys()
+{
+    return [NSArray arrayWithObjects:@"BigFileViewModernShouldSmoothFonts", @"BigFileViewModernShouldAntialias",
+ @"BigFileViewModernBackgroundColor", @"BigFileViewModernSelectionColor", @"BigFileViewModernTextColor",
+ @"BigFileViewModernFont", @"BigFileViewClassicShouldSmoothFonts", @"BigFileViewClassicShouldAntialias",
+ @"BigFileViewClassicBackgroundColor", @"BigFileViewClassicSelectionColor", @"BigFileViewClassicTextColor",
+ @"BigFileViewClassicFont", nil];
+}
 
 @implementation BigFileView
 {
@@ -31,6 +52,8 @@
     CGColorRef      m_ForegroundColor;
     DoubleColor     m_SelectionBkFillColor;
     DoubleColor     m_BackgroundFillColor;
+    bool            m_ShouldAntialias;
+    bool            m_ShouldSmoothFonts;
         
     // layout
     bool            m_WrapWords;
@@ -67,6 +90,7 @@
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPaths:MyDefaultsKeys()];
     CFRelease(m_ForegroundColor);
     CFRelease(m_Font);
     if(m_DecodeBuffer != 0)
@@ -106,21 +130,79 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_VerticalScroller]-(==0)-|" options:0 metrics:nil views:views]];
     
     [self frameDidChange];
+    
+    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPaths:MyDefaultsKeys() options:0 context:0];
 }
 
 - (void) InitAppearanceForModernPresentation
 {
-    m_Font = CTFontCreateWithName(CFSTR("Menlo"), 12, NULL);
-    m_ForegroundColor = CGColorCreateGenericRGB(0.0, 0.0, 0.0, 1.0);
-    m_SelectionBkFillColor = DoubleColor(180./255., 214./255., 252./255., 1.);
-    m_BackgroundFillColor = DoubleColor(1., 1., 1., 1.);
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
+    m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewModernFont"]);
+    m_ForegroundColor = CGColorFromNSColor([defaults colorForKey:@"BigFileViewModernTextColor"]);
+    m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernSelectionColor"]);
+    m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernBackgroundColor"]);
+    m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewModernShouldSmoothFonts"];
+    m_ShouldAntialias = [defaults boolForKey:@"BigFileViewModernShouldAntialias"];
 }
 
 - (void) InitAppearanceForClassicPresentation
 {
-    m_Font = CTFontCreateWithName(CFSTR("Menlo"), 14, NULL);
-    m_ForegroundColor = CGColorCreateGenericRGB(0.0, 1.0, 1.0, 1.0);
-    m_BackgroundFillColor = DoubleColor(0., 0., 0.5, 1.);    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewClassicFont"]);
+    m_ForegroundColor = CGColorFromNSColor([defaults colorForKey:@"BigFileViewClassicTextColor"]);
+    m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicSelectionColor"]);
+    m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicBackgroundColor"]);
+    m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewClassicShouldSmoothFonts"];
+    m_ShouldAntialias = [defaults boolForKey:@"BigFileViewClassicShouldAntialias"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
+    auto skin = [(AppDelegate*)[NSApp delegate] Skin];
+
+    if(skin == ApplicationSkin::Modern) {
+        if([keyPath isEqualToString:@"BigFileViewModernBackgroundColor"])
+            m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernBackgroundColor"]);
+        else if([keyPath isEqualToString:@"BigFileViewModernShouldSmoothFonts"])
+            m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewModernShouldSmoothFonts"];
+        else if([keyPath isEqualToString:@"BigFileViewModernShouldAntialias"])
+            m_ShouldAntialias = [defaults boolForKey:@"BigFileViewModernShouldAntialias"];
+        else if([keyPath isEqualToString:@"BigFileViewModernSelectionColor"])
+            m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernSelectionColor"]);
+        else if([keyPath isEqualToString:@"BigFileViewModernTextColor"]) {
+            CFRelease(m_ForegroundColor);
+            m_ForegroundColor = CGColorFromNSColor([defaults colorForKey:@"BigFileViewModernTextColor"]);
+            [m_ViewImpl OnFontSettingsChanged];
+        }
+        else if([keyPath isEqualToString:@"BigFileViewModernFont"]) {
+            CFRelease(m_Font);
+            m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewModernFont"]);
+            [m_ViewImpl OnFontSettingsChanged];
+        }
+    }
+    else if(skin == ApplicationSkin::Classic) {
+        if([keyPath isEqualToString:@"BigFileViewClassicBackgroundColor"])
+            m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicBackgroundColor"]);
+        else if([keyPath isEqualToString:@"BigFileViewClassicShouldSmoothFonts"])
+            m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewClassicShouldSmoothFonts"];
+        else if([keyPath isEqualToString:@"BigFileViewClassicShouldAntialias"])
+            m_ShouldAntialias = [defaults boolForKey:@"BigFileViewClassicShouldAntialias"];
+        else if([keyPath isEqualToString:@"BigFileViewClassicSelectionColor"])
+            m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicSelectionColor"]);
+        else if([keyPath isEqualToString:@"BigFileViewClassicTextColor"]) {
+            CFRelease(m_ForegroundColor);
+            m_ForegroundColor = CGColorFromNSColor([defaults colorForKey:@"BigFileViewClassicTextColor"]);
+            [m_ViewImpl OnFontSettingsChanged];
+        }
+        else if([keyPath isEqualToString:@"BigFileViewClassicFont"]) {
+            CFRelease(m_Font);
+            m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewClassicFont"]);
+            [m_ViewImpl OnFontSettingsChanged];
+        }
+    }
+    
+    [self setNeedsDisplay:true];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -279,6 +361,14 @@
 
 - (DoubleColor) BackgroundFillColor{
     return m_BackgroundFillColor;
+}
+
+- (bool) ShouldAntialias {
+    return m_ShouldAntialias;
+}
+
+- (bool) ShouldSmoothFonts {
+    return m_ShouldSmoothFonts;
 }
 
 - (const void*) RawWindow

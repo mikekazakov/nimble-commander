@@ -24,7 +24,6 @@
 
 
 - (OperationsController*) OperationsController;
-- (IBAction)OnPreferencesCommand:(id)sender;
 
 // this method will be called by App in all MainWindowControllers with same params
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;

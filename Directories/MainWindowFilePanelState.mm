@@ -215,10 +215,13 @@ enum ActiveState
     [m_RightPanelSpinningIndicator setDisplayedWhenStopped:NO];
     [self addSubview:m_RightPanelSpinningIndicator];
     
+    NSImage *eject_icon = [NSImage imageNamed:@"eject_icon.png"];
+    [eject_icon setTemplate:true];
+    
     m_LeftPanelEjectButton = [[NSButton alloc] initWithFrame:NSRect()];
     [m_LeftPanelEjectButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_LeftPanelEjectButton setImagePosition:NSImageOnly];
-    [m_LeftPanelEjectButton setImage:[NSImage imageNamed:NSImageNamePathTemplate]];
+    [m_LeftPanelEjectButton setImage:eject_icon];
     [m_LeftPanelEjectButton setShowsBorderOnlyWhileMouseInside:YES];
     [m_LeftPanelEjectButton setBezelStyle:NSRecessedBezelStyle];
     [self addSubview:m_LeftPanelEjectButton];
@@ -226,13 +229,10 @@ enum ActiveState
     m_RightPanelEjectButton = [[NSButton alloc] initWithFrame:NSRect()];
     [m_RightPanelEjectButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_RightPanelEjectButton setImagePosition:NSImageOnly];
-    [m_RightPanelEjectButton setImage:[NSImage imageNamed:NSImageNamePathTemplate]];
+    [m_RightPanelEjectButton setImage:eject_icon];
     [m_RightPanelEjectButton setShowsBorderOnlyWhileMouseInside:YES];
     [m_RightPanelEjectButton setBezelStyle:NSRecessedBezelStyle];
     [self addSubview:m_RightPanelEjectButton];
-    
-//    - (void)addObserver:(NSObject *)anObserver forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
-//    [m_RightPanelEjectButton addObserver:self forKeyPath:@"hidden" options:0 context:0];
     
     m_OpSummaryBox = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 350, 40)];
     [m_OpSummaryBox setTranslatesAutoresizingMaskIntoConstraints:NO];

@@ -201,10 +201,8 @@ struct TextLine
     m_WindowSize = _unichars_amount;
     m_FramePxWidth = 0;
     m_LeftInset = 5;
-    
-    m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
-    m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
     m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * [m_View RawWindowSize]);
+    [self GrabFontGeometry];
     
     [self OnFrameChanged];
 
@@ -220,6 +218,12 @@ struct TextLine
     if(m_StringBuffer)
         CFRelease(m_StringBuffer);    
     free(m_FixupWindow);
+}
+
+- (void) GrabFontGeometry
+{
+    m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
+    m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
 }
 
 - (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
@@ -302,7 +306,6 @@ struct TextLine
         m_VerticalOffset = !m_Lines.empty() ? (unsigned)m_Lines.size()-1 : 0;
     
     [m_View setNeedsDisplay:true];
-
 }
 
 - (void) ClearLayout
@@ -357,8 +360,8 @@ struct TextLine
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
     CGContextSetTextDrawingMode(_context, kCGTextFill);
-    CGContextSetShouldSmoothFonts(_context, true);
-    CGContextSetShouldAntialias(_context, true);
+    CGContextSetShouldSmoothFonts(_context, [m_View ShouldSmoothFonts]);
+    CGContextSetShouldAntialias(_context, [m_View ShouldAntialias]);
     
     if(!m_StringBuffer) return;
     
@@ -784,6 +787,13 @@ struct TextLine
         else
             m_VerticalOffset = 0;
     }
+}
+
+- (void) OnFontSettingsChanged
+{
+    [self GrabFontGeometry];
+    [self OnFrameChanged];
+    [self BuildLayout];
 }
 
 - (void) OnLeftArrow

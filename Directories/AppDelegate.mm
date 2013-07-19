@@ -6,28 +6,31 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <vector>
 #import "AppDelegate.h"
 #import "FontCache.h"
 #import "MainWindowController.h"
 #import "OperationProgressValueTransformer.h"
 #import "OperationsController.h"
 #import "Common.h"
-#import <vector>
 #import "FlexChainedStringsChunk.h"
 #import "FSEventsDirUpdate.h"
-
+#import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
+#import "PreferencesWindowGeneralTab.h"
+#import "PreferencesWindowPanelsTab.h"
+#import "PreferencesWindowViewerTab.h"
 
 @implementation AppDelegate
 {
     std::vector<MainWindowController *> m_MainWindows;
+    RHPreferencesWindowController *m_PreferencesController;    
 }
 
 + (void)initialize
 {
     InitGetTimeInNanoseconds();
     
-    NSString *defaults_file = [[NSBundle mainBundle]
-                               pathForResource:@"Defaults" ofType:@"plist"];
+    NSString *defaults_file = [[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"];
     NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
@@ -205,6 +208,8 @@
 {
     for(auto *i: m_MainWindows) // if there are any windows alive
         [i OnApplicationWillTerminate];
+
+    m_PreferencesController = nil;
 }
 
 - (IBAction)OnMenuSendFeedback:(id)sender
@@ -334,6 +339,22 @@
         MainWindowController *contr = (MainWindowController*)[target_window windowController];
         [contr RevealEntries:filenames inPath:common_path];
     }
+}
+
+- (void)OnPreferencesCommand:(id)sender
+{
+    if(!m_PreferencesController)
+    {
+        PreferencesWindowGeneralTab *general = [[PreferencesWindowGeneralTab alloc] init];
+        PreferencesWindowPanelsTab *panels = [[PreferencesWindowPanelsTab alloc] init];
+        PreferencesWindowViewerTab *viewer = [[PreferencesWindowViewerTab alloc] init];
+        NSArray *controllers = [NSArray arrayWithObjects:general, panels, viewer, nil];
+        
+        m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
+                                                                                        andTitle:@"Preferences"];
+    }
+    
+    [m_PreferencesController showWindow:self];
 }
 
 @end

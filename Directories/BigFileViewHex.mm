@@ -114,13 +114,11 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_Window = _unichar_window;
     m_Indeces = _unichar_indeces;
     m_WindowSize = _unichars_amount;
-        
-    m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
-    m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
     m_FrameLines = floor([_view frame].size.height / m_FontHeight);
     m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * [m_View RawWindowSize]);
     m_LeftInset = 5;
     
+    [self GrabFontGeometry];
     [self OnBufferDecoded:m_WindowSize];
     
     m_RowsOffset = 0;
@@ -133,6 +131,12 @@ static const unsigned char g_4Bits_To_Char[16] = {
 {
     [self ClearLayout];
     free(m_FixupWindow);    
+}
+
+- (void) GrabFontGeometry
+{
+    m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
+    m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
 }
 
 - (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
@@ -263,6 +267,12 @@ static const unsigned char g_4Bits_To_Char[16] = {
     [m_View setNeedsDisplay:true];
 }
 
+- (void) OnFontSettingsChanged
+{
+    [self GrabFontGeometry];
+    [self OnBufferDecoded:m_WindowSize];    
+}
+
 - (void) ClearLayout
 {
     for(auto &i: m_Lines)
@@ -356,7 +366,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
 
     CGPoint text_pos = [self TextAnchor];
     
-    NSDictionary *text_attr =@{NSFontAttributeName:(__bridge NSFont*)[m_View TextFont],
+    NSDictionary *text_attr =@{NSFontAttributeName:(NSFont*)[m_View TextFont],
                                NSForegroundColorAttributeName:[NSColor colorWithCGColor:[m_View TextForegroundColor]]};
     
     for(size_t i = m_RowsOffset; i < m_Lines.size(); ++i)
@@ -423,11 +433,11 @@ static const unsigned char g_4Bits_To_Char[16] = {
                 CGContextRestoreGState(_context);
             }
         }
-             
+        
         // draw text itself (drawing with prepared CTLine should be faster than with raw CFString)
+        CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
         CGContextSetTextPosition(_context, pos.x, pos.y + ceil(m_FontDescent));
         CTLineDraw(c.text_ctline, _context);
-//        [(__bridge NSString*)c.text drawAtPoint:pos withAttributes:text_attr];
         
         text_pos.y -= m_FontHeight;
         if(text_pos.y < 0 - m_FontHeight)

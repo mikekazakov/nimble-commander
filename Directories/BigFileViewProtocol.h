@@ -30,6 +30,7 @@
 - (void) OnPageDown;
 - (void) OnPageUp;
 - (void) OnFrameChanged;
+- (void) OnFontSettingsChanged; // may need to rebuild layout here
 
 - (void) MoveOffsetWithinWindow: (uint32_t)_offset; // request to move visual offset to an approximate amount
                                                     // now moving window itself

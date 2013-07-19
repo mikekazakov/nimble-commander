@@ -16,7 +16,6 @@
 #import "MainWindowBigFileViewState.h"
 #import "MainWindowFilePanelState.h"
 
-
 @class QLPreviewPanel;
 
 @implementation MainWindowController
@@ -109,10 +108,6 @@
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(FireDirectoryChanged:ticket:)])
             [i FireDirectoryChanged:_dir ticket:_ticket];
-}
-
-- (void)OnPreferencesCommand:(id)sender {
-    [PreferencesWindowController ShowWindow];
 }
 
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect

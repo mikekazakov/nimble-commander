@@ -19,6 +19,11 @@ struct DoubleColor
     r(_r), g(_g), b(_b), a(_a) {}
     DoubleColor():
     r(0.), g(0.), b(0.), a(1.) {}
+    DoubleColor(NSColor *_c):
+        r(0.), g(0.), b(0.), a(1.)
+    {
+        [[_c colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]] getRed:&r green:&g blue:&b alpha:&a];
+    }
     void Set(CGContextRef _context){
         CGContextSetRGBFillColor(_context, r, g, b, a);
     };

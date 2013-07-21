@@ -39,6 +39,11 @@ bool FileWindow::FileOpened() const
 
 int FileWindow::OpenFile(const char *_path)
 {
+    return OpenFile(_path, DefaultWindowSize);
+}
+
+int FileWindow::OpenFile(const char *_path, int _window_size)
+{
     if(FileOpened())
     {
         assert(0); // using Open on already opened file means saniy breach, which should not be
@@ -54,7 +59,7 @@ int FileWindow::OpenFile(const char *_path)
     struct stat stat_buffer;
     if(stat(_path, &stat_buffer) != 0)
         return ERROR_FILENOACCESS;
-
+    
     if((stat_buffer.st_mode & S_IFMT) == S_IFDIR )
         return ERROR_FILENOACCESS; // we can't read directory entries with regular I/O
     
@@ -77,10 +82,10 @@ int FileWindow::OpenFile(const char *_path)
     m_FileSize = epos;
     
     
-    if(m_FileSize < DefaultWindowSize)
+    if(m_FileSize < _window_size)
         m_WindowSize = m_FileSize;
     else
-        m_WindowSize = DefaultWindowSize;
+        m_WindowSize = _window_size;
     
     m_Window = malloc(m_WindowSize);
     m_WindowPos = 0;

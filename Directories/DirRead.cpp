@@ -101,79 +101,66 @@ int FetchDirectoryListing(const char* _path,
         _target->insert(_target->begin(), current); // this can be looong on biiiiiig directories
     }
 
-    // stat files, find extenstions any any and create CFString name representations in several threads
-    
-    dispatch_group_t statg = dispatch_group_create();
-    dispatch_queue_t statq = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-
-    auto i = _target->begin(), e = _target->end();
-    for(;i<e;++i)
-    {
-        DirectoryEntryInformation *current = &(*i);
-        
-        dispatch_group_async(statg, statq, ^{
-            if(_checker && _checker()) return;
-            char filename[__DARWIN_MAXPATHLEN];
-            const char *entryname = current->namec();
-            memcpy(filename, pathwithslashp, pathwithslash_len);
-            memcpy(filename + pathwithslash_len, entryname, current->namelen+1);
+    // stat files, find extenstions any any and create CFString name representations in several threads    
+    dispatch_apply(_target->size(), dispatch_get_global_queue(0, 0), ^(size_t n) {
+        DirectoryEntryInformation *current = &(*_target)[n];
+        if(_checker && _checker()) return;
+        char filename[__DARWIN_MAXPATHLEN];
+        const char *entryname = current->namec();
+        memcpy(filename, pathwithslashp, pathwithslash_len);
+        memcpy(filename + pathwithslash_len, entryname, current->namelen+1);
             
-            // stat the file
-            struct stat stat_buffer;
-            if(stat(filename, &stat_buffer) == 0)
+        // stat the file
+        struct stat stat_buffer;
+        if(stat(filename, &stat_buffer) == 0)
+        {
+            current->atime = stat_buffer.st_atimespec.tv_sec;
+            current->mtime = stat_buffer.st_mtimespec.tv_sec;
+            current->ctime = stat_buffer.st_ctimespec.tv_sec;
+            current->btime = stat_buffer.st_birthtimespec.tv_sec;
+            current->unix_mode  = stat_buffer.st_mode;
+            current->unix_flags = stat_buffer.st_flags;
+            current->unix_uid   = stat_buffer.st_uid;
+            current->unix_gid   = stat_buffer.st_gid;
+            if( (stat_buffer.st_mode & S_IFMT) != S_IFDIR )
+                current->size  = stat_buffer.st_size;
+            else
+                current->size = DIRENTINFO_INVALIDSIZE;
+            // add other stat info here. there's a lot more
+        }
+
+        // parse extension if any
+        for(int i = current->namelen - 1; i >= 0; --i)
+            if(entryname[i] == '.')
             {
-                current->atime = stat_buffer.st_atimespec.tv_sec;
-                current->mtime = stat_buffer.st_mtimespec.tv_sec;
-                current->ctime = stat_buffer.st_ctimespec.tv_sec;
-                current->btime = stat_buffer.st_birthtimespec.tv_sec;
-                current->unix_mode  = stat_buffer.st_mode;
-                current->unix_flags = stat_buffer.st_flags;
-                current->unix_uid   = stat_buffer.st_uid;
-                current->unix_gid   = stat_buffer.st_gid;
-                if( (stat_buffer.st_mode & S_IFMT) != S_IFDIR )
-                    current->size  = stat_buffer.st_size;
-                else
-                    current->size = DIRENTINFO_INVALIDSIZE;
-
-                // add other stat info here. there's a lot more
+                if(i == current->namelen - 1 || i == 0)
+                    break; // degenerate case, lets think that there's no extension at all
+                current->extoffset = i+1; // CHECK THIS! may be some bugs with UTF
+                break;
             }
+        
+        // create CFString name representation
+        current->cf_name = CFStringCreateWithBytesNoCopy(0,
+                                                        (UInt8*)entryname,
+                                                        current->namelen,
+                                                        kCFStringEncodingUTF8,
+                                                        false,
+                                                        kCFAllocatorNull);
 
-            // parse extension if any
-            for(int i = current->namelen - 1; i >= 0; --i)
-                if(entryname[i] == '.')
-                {
-                    if(i == current->namelen - 1 || i == 0)
-                        break; // degenerate case, lets think that there's no extension at all
-                    current->extoffset = i+1; // CHECK THIS! may be some bugs with UTF
-                    break;
-                }
-
-            // create CFString name representation
-            current->cf_name = CFStringCreateWithBytesNoCopy(0,
-                                                            (UInt8*)entryname,
-                                                            current->namelen,
-                                                            kCFStringEncodingUTF8,
-                                                            false,
-                                                            kCFAllocatorNull);
-
-            // if we're dealing with a symlink - read it's content to know the real file path
-            if( current->unix_type == DT_LNK )
+        // if we're dealing with a symlink - read it's content to know the real file path
+        if( current->unix_type == DT_LNK )
+        {
+            char linkpath[__DARWIN_MAXPATHLEN];
+            ssize_t sz = readlink(filename, linkpath, __DARWIN_MAXPATHLEN);
+            if(sz != -1)
             {
-                char linkpath[__DARWIN_MAXPATHLEN];
-                ssize_t sz = readlink(filename, linkpath, __DARWIN_MAXPATHLEN);
-                if(sz != -1)
-                {
-                    linkpath[sz] = 0;
-                    char *s = (char*)malloc(sz+1);
-                    memcpy(s, linkpath, sz+1);
-                    current->symlink = s;
-                }
+                linkpath[sz] = 0;
+                char *s = (char*)malloc(sz+1);
+                memcpy(s, linkpath, sz+1);
+                current->symlink = s;
             }
-        });
-    }
-
-    dispatch_group_wait(statg, DISPATCH_TIME_FOREVER);
-    dispatch_release(statg);
+        }
+    });
 
     if(_target->size() == 0)
         return -1; // something was very wrong

@@ -73,7 +73,6 @@ struct TextLine
     uint32_t row_byte_start;    // offset within file window corresponding to the current row start 
     uint32_t row_bytes_num;
 
-    CFStringRef text;
     CTLineRef   text_ctline;
     CFStringRef hex[g_HexColumns];
     CFStringRef row;
@@ -161,10 +160,11 @@ static const unsigned char g_4Bits_To_Char[16] = {
     // split our string into a chunks of 16 bytes somehow
     const uint64_t raw_window_pos = [m_View RawWindowPosition];
     const uint64_t raw_window_size = [m_View RawWindowSize];
+    const unsigned char *raw_window = (const unsigned char *)[m_View RawWindow];
     uint32_t charind = 0; // for string breaking
     uint32_t charextrabytes = 0; // for string breaking, to handle large (more than 1 byte) characters
     uint32_t byteind = 0; // for hex rows
-    
+
     while(true)
     {
         if(charind >= m_WindowSize)
@@ -200,45 +200,6 @@ static const unsigned char g_4Bits_To_Char[16] = {
         if(current.row_byte_start + bytes_for_current_row < raw_window_size) current.row_bytes_num = bytes_for_current_row;
         else current.row_bytes_num = (uint32_t)raw_window_size - current.row_byte_start;
         
-        // build hex codes
-        for(int i = 0; i < g_HexColumns; ++i)
-        {
-            const unsigned bytes_num = g_BytesPerHexLine / g_HexColumns;
-            const unsigned char *bytes = (const unsigned char *)[m_View RawWindow] + current.row_byte_start;
-            
-            UniChar tmp[64];
-            for(int j = 0; j < bytes_num*3; ++j)
-                tmp[j] = ' ';
-            
-            for(int j = bytes_num*i; j < current.row_bytes_num; ++j)
-            {
-                unsigned char c = bytes[j];
-                unsigned char lower_4bits = g_4Bits_To_Char[ c & 0x0F      ];
-                unsigned char upper_4bits = g_4Bits_To_Char[(c & 0xF0) >> 4];
-                
-                tmp[(j - bytes_num*i)* 3]     = upper_4bits;
-                tmp[(j - bytes_num*i)* 3 + 1] = lower_4bits;
-                tmp[(j - bytes_num*i)* 3 + 2] = ' ';
-            }
-            
-            current.hex[i] = CFStringCreateWithCharacters(0, tmp, bytes_num*3 - 1);
-        }
-        
-        // build line number code
-        {
-            uint64_t row_offset = current.string_byte_start + [m_View RawWindowPosition];
-            row_offset -= row_offset % g_BytesPerHexLine;
-            UniChar tmp[g_RowOffsetSymbs];
-            for(int i = g_RowOffsetSymbs - 1; i >= 0; --i)
-            {
-                tmp[i] = g_4Bits_To_Char[row_offset & 0xF];
-                row_offset &= 0xFFFFFFFFFFFFFFF0;
-                row_offset >>= 4;
-            }
-            
-            current.row = CFStringCreateWithCharacters(0, tmp, g_RowOffsetSymbs);
-        }
-        
         m_Lines.push_back(current);
         
         charind += current.chars_num;
@@ -246,23 +207,63 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
     
     // once we have our layout built - it's time to produce our strings and CTLines, creation of which can be VERY long
-    dispatch_group_t group = dispatch_group_create();
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     CFMutableDictionaryRef attributes = CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     CFDictionarySetValue(attributes, kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
-    CFDictionarySetValue(attributes, kCTFontAttributeName, [m_View TextFont]);    
-    for(auto &i: m_Lines)
-        dispatch_group_async(group, queue, ^{
-            // build current CF string
-            i.text = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow + i.char_start, i.chars_num, kCFAllocatorNull);
+    CFDictionarySetValue(attributes, kCTFontAttributeName, [m_View TextFont]);
+    
+    CFStringRef big_string = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow, m_WindowSize, kCFAllocatorNull);
+    CFAttributedStringRef big_attr_str = CFAttributedStringCreate(0, big_string, attributes);
+    CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(big_attr_str);
+    
+    dispatch_apply(m_Lines.size(), dispatch_get_global_queue(0, 0), ^(size_t n) {
+            auto &i = m_Lines[n];
+        
+            // build hex codes
+            for(int col = 0; col < g_HexColumns; ++col)
+            {
+                const unsigned bytes_num = g_BytesPerHexLine / g_HexColumns;
+                const unsigned char *bytes = raw_window + i.row_byte_start;
+            
+                UniChar tmp[64];
+                for(int j = 0; j < bytes_num*3; ++j)
+                    tmp[j] = ' ';
+            
+                for(int j = bytes_num*col; j < i.row_bytes_num; ++j)
+                {
+                    unsigned char c = bytes[j];
+                    unsigned char lower_4bits = g_4Bits_To_Char[ c & 0x0F      ];
+                    unsigned char upper_4bits = g_4Bits_To_Char[(c & 0xF0) >> 4];
+                
+                    tmp[(j - bytes_num*col)* 3]     = upper_4bits;
+                    tmp[(j - bytes_num*col)* 3 + 1] = lower_4bits;
+                    tmp[(j - bytes_num*col)* 3 + 2] = ' ';
+                }
+            
+                i.hex[col] = CFStringCreateWithCharacters(0, tmp, bytes_num*3 - 1);
+            }
+        
+            // build line number code
+            {
+                uint64_t row_offset = i.string_byte_start + raw_window_pos;
+                row_offset -= row_offset % g_BytesPerHexLine;
+                UniChar tmp[g_RowOffsetSymbs];
+                for(int i = g_RowOffsetSymbs - 1; i >= 0; --i)
+                {
+                    tmp[i] = g_4Bits_To_Char[row_offset & 0xF];
+                    row_offset &= 0xFFFFFFFFFFFFFFF0;
+                    row_offset >>= 4;
+                }
+            
+                i.row = CFStringCreateWithCharacters(0, tmp, g_RowOffsetSymbs);
+            }
+        
+            // build CTLine
+            i.text_ctline = CTTypesetterCreateLine(typesetter, CFRangeMake(i.char_start, i.chars_num));
 
-            // attributed string and corresponding CTLine
-            CFAttributedStringRef attr_str = CFAttributedStringCreate(0, i.text, attributes);
-            i.text_ctline = CTLineCreateWithAttributedString( attr_str );
-            CFRelease(attr_str);
         });
-    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-    dispatch_release(group);
+    CFRelease(typesetter);
+    CFRelease(big_attr_str);
+    CFRelease(big_string);
     CFRelease(attributes);
     
     [m_View setNeedsDisplay:true];
@@ -279,7 +280,6 @@ static const unsigned char g_4Bits_To_Char[16] = {
     for(auto &i: m_Lines)
     {
         if(i.text_ctline != nil) CFRelease(i.text_ctline);
-        if(i.text != nil) CFRelease(i.text);
         if(i.row != nil) CFRelease(i.row);
 
         for(auto &j: i.hex)
@@ -348,9 +348,9 @@ static const unsigned char g_4Bits_To_Char[16] = {
     int ind = (int)CTLineGetStringIndexForPosition(m_Lines[row_no].text_ctline, CGPointMake(x_off, 0));
     
     if(ind != kCFNotFound)
-        return m_Lines[row_no].char_start + ind;
+        return ind;
     
-    return m_Lines[row_no].char_start   ;    
+    return m_Lines[row_no].char_start;    
 }
 
 - (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
@@ -410,19 +410,19 @@ static const unsigned char g_4Bits_To_Char[16] = {
             CGFloat x1 = 0, x2  = -1;
             if(selection.location <= c.char_start &&
                selection.location + selection.length >= c.char_start + c.chars_num) // selected entire string
-                x2 = CTLineGetOffsetForStringIndex(c.text_ctline, c.chars_num, 0);
+                x2 = CTLineGetOffsetForStringIndex(c.text_ctline, c.char_start + c.chars_num, 0);
             else if(selection.location >= c.char_start &&
                     selection.location < c.char_start + c.chars_num ) // selection inside or right trim
             {
-                x1 = CTLineGetOffsetForStringIndex(c.text_ctline, selection.location - c.char_start, 0);
+                x1 = CTLineGetOffsetForStringIndex(c.text_ctline, selection.location, 0);
                 x2 = CTLineGetOffsetForStringIndex(c.text_ctline,
                                                    (selection.location + selection.length > c.char_start + c.chars_num) ?
-                                                   c.chars_num : selection.location + selection.length - c.char_start, 0);
+                                                   c.char_start + c.chars_num : selection.location + selection.length, 0);
             }
             else if(selection.location + selection.length >= c.char_start &&
                     selection.location + selection.length < c.char_start + c.chars_num) // left trim
                 x2 = CTLineGetOffsetForStringIndex(c.text_ctline,
-                                                   selection.location + selection.length - c.char_start,
+                                                   selection.location + selection.length,
                                                    0);
 
             if(x2 > x1)

@@ -74,5 +74,7 @@
 	<true/>
 	<key>BigFileViewDoSaveFileSelection</key>
 	<true/>
+	<key>BigFileViewFileWindowPow2X</key>
+	<integer>0</integer>
 </dict>
 </plist>

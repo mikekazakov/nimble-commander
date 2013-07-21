@@ -287,11 +287,8 @@ struct TextLine
             count -= tail_spaces_cut;
         }
         
-        // Use the returned character count (to the break) to create the line.
-        CTLineRef line = CTTypesetterCreateLine(typesetter, CFRangeMake(start, count));
-        
+        // Use the returned character count (to the break) to create the line.                
         TextLine l;
-        l.line = line;
         l.unichar_no = (uint32_t)start;
         l.unichar_len = (uint32_t)count;
         l.byte_no = m_Indeces[start];
@@ -300,8 +297,14 @@ struct TextLine
         
         start += count;
     }
-    CFRelease(typesetter);
 
+    // build our CTLines in multiple threads since it can be time-consuming
+    dispatch_apply(m_Lines.size(), dispatch_get_global_queue(0, 0), ^(size_t n) {
+        m_Lines[n].line = CTTypesetterCreateLine(typesetter, CFRangeMake(m_Lines[n].unichar_no, m_Lines[n].unichar_len));        
+    });
+    
+    CFRelease(typesetter);
+    
     if(m_VerticalOffset >= m_Lines.size())
         m_VerticalOffset = !m_Lines.empty() ? (unsigned)m_Lines.size()-1 : 0;
     

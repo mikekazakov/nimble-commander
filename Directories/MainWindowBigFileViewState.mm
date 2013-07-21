@@ -118,7 +118,12 @@
 - (bool) OpenFile: (const char*) _fn
 {    
     FileWindow *fw = new FileWindow;
-    if(fw->OpenFile(_fn) == 0)
+    int file_window_size = FileWindow::DefaultWindowSize;
+    int file_window_pow2x = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"BigFileViewFileWindowPow2X"];
+    if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
+        file_window_size *= 1 << file_window_pow2x;
+
+    if(fw->OpenFile(_fn, file_window_size) == 0)
     {
         if(m_FileWindow != 0)
         {

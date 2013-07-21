@@ -20,8 +20,8 @@ public:
     FileWindow();
     ~FileWindow();
     
-    
     int OpenFile(const char *_path); // will include VFS later
+    int OpenFile(const char *_path, int _window_size);
     int CloseFile();
     
     bool   FileOpened() const;

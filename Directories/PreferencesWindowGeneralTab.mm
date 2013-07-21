@@ -35,4 +35,17 @@
     return @"General";
 }
 
+- (IBAction)ResetToDefaults:(id)sender
+{
+    NSAlert *alert = [NSAlert alertWithMessageText:@"Are you sure want to return to defaults?"
+                                      defaultButton:@"Ok"
+                                    alternateButton:@"Cancel"
+                                        otherButton:nil
+                          informativeTextWithFormat:@"This will erase all your custom settings."];
+    if([alert runModal] == NSAlertDefaultReturn)
+    {
+        NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+    }
+}
 @end

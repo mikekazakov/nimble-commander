@@ -15,5 +15,6 @@
 - (IBAction) OnSetClassicFont:(id)sender;
 @property (strong) IBOutlet NSPopUpButton *DefaultEncoding;
 - (IBAction)DefaultEncodingChanged:(id)sender;
+- (IBAction)ClearHistory:(id)sender;
 
 @end

@@ -10,7 +10,6 @@
 #import "BigFileView.h"
 #import "BigFileViewText.h"
 #import "BigFileViewHex.h"
-#import "BigFileViewEncodingSelection.h"
 #import "DataBlockAnalysis.h"
 #import "Common.h"
 #import "AppDelegate.h"
@@ -249,6 +248,8 @@ static NSArray *MyDefaultsKeys()
 
 - (void) SetKnownFile:(FileWindow*) _file encoding:(int)_encoding mode:(BigFileViewModes)_mode
 {
+    assert(_encoding != ENCODING_INVALID);
+    
     m_File = _file;
     if(m_DecodeBuffer != 0)
         free(m_DecodeBuffer);
@@ -284,57 +285,51 @@ static NSArray *MyDefaultsKeys()
 
 - (void)keyDown:(NSEvent *)event
 {
-    NSString*  const character = [event charactersIgnoringModifiers];
-    if ( [character length] != 1 ) return;
-    unichar const unicode        = [character characterAtIndex:0];
-    unsigned short const keycode = [event keyCode];
-//    NSUInteger const modif       = [event modifierFlags];
-
+    if([[event charactersIgnoringModifiers] length] != 1) return;
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
-    
-#define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
-    switch (unicode)
-    {
-        case NSUpArrowFunctionKey:
-            [m_ViewImpl OnUpArrow];
-            break;
-        case NSDownArrowFunctionKey:
-            [m_ViewImpl OnDownArrow];
-            break;
-        case NSPageDownFunctionKey:
-            [m_ViewImpl OnPageDown];
-            break;
-        case NSPageUpFunctionKey:
-            [m_ViewImpl OnPageUp];
-            break;
-        case NSLeftArrowFunctionKey:
-            if([m_ViewImpl respondsToSelector:@selector(OnLeftArrow)])
-                [m_ViewImpl OnLeftArrow];
-            break;
-        case NSRightArrowFunctionKey:
-            if([m_ViewImpl respondsToSelector:@selector(OnRightArrow)])
-                [m_ViewImpl OnRightArrow];
-            break;
-        default:
-            [super keyDown:event];
+    switch ([[event charactersIgnoringModifiers] characterAtIndex:0]) {
+        case NSHomeFunctionKey: [m_ViewImpl HandleVerticalScroll:0.0]; break;
+        case NSEndFunctionKey:  [m_ViewImpl HandleVerticalScroll:1.0]; break;
+        default: [super keyDown:event]; return;
     }
-#undef ISMODIFIER
     if(was_vert_pos != [self VerticalPositionInBytes])
         [m_Delegate BigFileViewScrolledByUser];
 }
 
-- (void) SetEncoding
-{
-    BigFileViewEncodingSelection *wnd = [BigFileViewEncodingSelection new];
-    [wnd SetCurrentEncoding:m_Encoding];
-    int ret = (int)[NSApp runModalForWindow: [wnd window]];
-    [NSApp endSheet: [wnd window]];
-    [[wnd window] orderOut: self];
-    
-    if(ret != ENCODING_INVALID)
-    {
-        [self SetEncoding:ret];
-    }
+- (void)moveUp:(id)sender{
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    [m_ViewImpl OnUpArrow];
+    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+}
+
+- (void)moveDown:(id)sender {
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    [m_ViewImpl OnDownArrow];
+    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+}
+
+- (void)moveLeft:(id)sender {
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    if([m_ViewImpl respondsToSelector:@selector(OnLeftArrow)]) [m_ViewImpl OnLeftArrow];
+    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+}
+
+- (void)moveRight:(id)sender {
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    if([m_ViewImpl respondsToSelector:@selector(OnRightArrow)]) [m_ViewImpl OnRightArrow];
+    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+}
+
+- (void)pageDown:(id)sender {
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];    
+    [m_ViewImpl OnPageDown];
+    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+}
+
+- (void) pageUp:(id)sender {
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    [m_ViewImpl OnPageUp];
+    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
 }
 
 - (int) Enconding

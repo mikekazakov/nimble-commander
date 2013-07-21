@@ -10,6 +10,7 @@
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 
 @interface PreferencesWindowGeneralTab : NSViewController <RHPreferencesViewControllerProtocol>
+- (IBAction)ResetToDefaults:(id)sender;
 
 
 

@@ -40,4 +40,6 @@ struct BigFileViewHistoryOptions
 + (BigFileViewHistoryOptions) HistoryOptions;
 + (bool) HistoryEnabled;
 
++ (bool) DeleteHistory;
+
 @end

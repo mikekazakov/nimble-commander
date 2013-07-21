@@ -54,9 +54,6 @@
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void)keyDown:(NSEvent *)event;
 
-// background directory size calculation support
-- (void) DidCalculatedDirectorySizeForEntry:(const char*) _dir size:(unsigned long)_size;
-
 // delayed entry selection change
 // panel controller will memorize such request
 // if _check_now flag is on then controller will look for requested element and if it was found - select it

@@ -64,7 +64,7 @@ static unsigned ShouldCutTrailingSpaces(CFStringRef _string,
     unsigned spaces_count = 0;
     const auto *chars = CFStringGetCharactersPtr(_string);
     assert(chars);
-    const auto len = CFStringGetLength(_string);    
+//    const auto len = CFStringGetLength(_string);
     
     for(int i = _start + _count - 1; i >= _start; --i)
     {
@@ -764,6 +764,9 @@ struct TextLine
     uint64_t file_size = [m_View FullSize];
     uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
     [self ScrollToByteOffset: bytepos];
+    
+    if(m_Lines.size() - m_VerticalOffset < m_FrameLines )
+        m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
 }
 
 - (void) OnFrameChanged

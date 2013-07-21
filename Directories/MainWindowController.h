@@ -14,14 +14,8 @@
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate>
 
-// Window NIB outlets
-@property (weak) IBOutlet NSBox *SheetAnchorLine;
-
-
 // Window state manipulations
 - (void) ResignAsWindowState:(id)_state;
-
-
 
 - (OperationsController*) OperationsController;
 

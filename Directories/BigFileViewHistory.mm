@@ -108,7 +108,7 @@ static BigFileViewHistory *g_SharedInstance = nil;
     m_History = [NSKeyedUnarchiver unarchiveObjectWithFile:[BigFileViewHistory StorageFileName]];
         
     if(!m_History)
-        m_History = [[NSMutableArray alloc] init]; // failed to load it - ok, just create a new one
+        m_History = [NSMutableArray new]; // failed to load it - ok, just create a new one
         
     m_Queue = dispatch_queue_create("info.filesmanager.Files.BigFileViewHistory.queue", NULL);
 
@@ -117,6 +117,11 @@ static BigFileViewHistory *g_SharedInstance = nil;
                                                  name:NSApplicationWillTerminateNotification
                                                object:[NSApplication sharedApplication]];
     return self;
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void) Flush
@@ -177,6 +182,18 @@ static BigFileViewHistory *g_SharedInstance = nil;
 {
     BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
     return options.encoding || options.mode || options.position || options.wrapping || options.selection;
+}
+
++ (bool) DeleteHistory
+{
+    if(g_SharedInstance != nil)
+        dispatch_async(g_SharedInstance->m_Queue, ^{
+            g_SharedInstance->m_History = [NSMutableArray new];
+        });
+    
+    NSString *path = [BigFileViewHistory StorageFileName];
+    bool result = [[NSFileManager defaultManager] removeItemAtPath:path error:nil];;
+    return result;
 }
 
 @end

@@ -9,6 +9,7 @@
 #import "PreferencesWindowViewerTab.h"
 #import "NSUserDefaults+myColorSupport.h"
 #import "Encodings.h"
+#import "BigFileViewHistory.h"
 
 @implementation PreferencesWindowViewerTab
 {
@@ -105,6 +106,17 @@
             [[NSUserDefaults standardUserDefaults] setObject:encoding_name forKey:@"BigFileViewDefaultEncoding"];
             break;
         }    
+}
+
+- (IBAction)ClearHistory:(id)sender
+{
+    NSAlert *alert = [NSAlert alertWithMessageText:@"Are you sure want to clear saved file states?"
+                                     defaultButton:@"Ok"
+                                   alternateButton:@"Cancel"
+                                       otherButton:nil
+                         informativeTextWithFormat:@"This will erase stored positions, encodings, selections etc."];
+    if([alert runModal] == NSAlertDefaultReturn)
+        [BigFileViewHistory DeleteHistory];
 }
 
 @end

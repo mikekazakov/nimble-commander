@@ -2,6 +2,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <vector>
+#import <CoreFoundation/CoreFoundation.h>
 
 // unsigned short is just UniChar. not to let rubbish inter headers
 
@@ -191,6 +193,9 @@ namespace encodings
 {
     const char *NameFromEncoding(int _encoding);
     int EncodingFromName(const char* _name);
+    
+    const std::vector< std::pair<int, CFStringRef> >& LiteralEncodingsList();
+    
     int BytesForCodeUnit(int _encoding);
     void InterpretAsUnichar(
                             int _encoding,

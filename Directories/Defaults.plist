@@ -60,5 +60,19 @@
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAINHEwA/g2wPAD8Bhg==</data>
 	<key>BigFileViewClassicBackgroundColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAACDBkoAPwGG</data>
+	<key>BigFileViewDefaultEncoding</key>
+	<string>ENCODING_MACOS_ROMAN_WESTERN</string>
+	<key>BigFileViewEncodingAutoDetect</key>
+	<true/>
+	<key>BigFileViewDoSaveFileEncoding</key>
+	<true/>
+	<key>BigFileViewDoSaveFileMode</key>
+	<true/>
+	<key>BigFileViewDoSaveFilePosition</key>
+	<true/>
+	<key>BigFileViewDoSaveFileWrapping</key>
+	<true/>
+	<key>BigFileViewDoSaveFileSelection</key>
+	<true/>
 </dict>
 </plist>

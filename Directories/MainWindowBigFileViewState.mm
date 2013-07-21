@@ -14,15 +14,6 @@
 #import "SearchInFile.h"
 #import "BigFileViewHistory.h"
 
-static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
-{
-    return [NSMutableDictionary dictionaryWithObjectsAndKeys:
-            _name, @"name",
-            [NSNumber numberWithInt:_encoding], @"code",
-            nil
-            ];
-}
-
 @implementation MainWindowBigFileViewState
 {
     FileWindow  *m_FileWindow;
@@ -31,7 +22,6 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     
     BigFileView *m_View;
     NSPopUpButton *m_EncodingSelect;
-    NSMutableArray *m_Encodings;
     NSButton    *m_WordWrap;
     NSPopUpButton *m_ModeSelect;
     NSTextField *m_FileSize;
@@ -53,7 +43,6 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     {        
         m_IsStopSearching = false;
         m_IsSearchRunning = false;
-        m_Encodings = [NSMutableArray new];
         [self CreateControls];
     }
     return self;
@@ -145,18 +134,26 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
         m_SearchInFile = new SearchInFile(m_SearchFileWindow);
         
         strcpy(m_FilePath, _fn);
-        [m_View SetFile:m_FileWindow];
         
         // try to load a saved info if any
         if(BigFileViewHistoryEntry *info =
            [[BigFileViewHistory sharedHistory] FindEntryByPath:[NSString stringWithUTF8String:m_FilePath]])
         {
-            // suboptimal approach since it requires redundant data processing
-            [m_View SetMode:info->view_mode];
-            [m_View SetEncoding:info->encoding];
-            [m_View SetWordWrap:info->wrapping];
-            [m_View SetVerticalPositionInBytes:info->position];            
+            BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
+            if(options.encoding && options.mode)
+                [m_View SetKnownFile:m_FileWindow encoding:info->encoding mode:info->view_mode];
+            else {
+                [m_View SetFile:m_FileWindow];
+                if(options.encoding) [m_View SetEncoding:info->encoding];
+                if(options.mode) [m_View SetMode:info->view_mode];
+            }
+            // a bit suboptimal no - may re-layout after first one
+            if(options.wrapping) [m_View SetWordWrap:info->wrapping];
+            if(options.position) [m_View SetVerticalPositionInBytes:info->position];
+            if(options.selection)[m_View SetSelectionInFile:info->selection];
         }
+        else
+            [m_View SetFile:m_FileWindow];
         
         // update UI
         [self SelectEncodingFromView];
@@ -256,54 +253,28 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_SearchField]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_EncodingSelect(18)]-[line(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
     
-    [self FillEncodingSelection];
-}
+    for(const auto &i: encodings::LiteralEncodingsList())
+        [m_EncodingSelect addItemWithTitle: (__bridge NSString*)i.second];
 
-- (void) FillEncodingSelection
-{
-    [m_Encodings addObject:EncodingToDict(ENCODING_MACOS_ROMAN_WESTERN, @"Western (Mac OS Roman)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_OEM866, @"OEM 866 (DOS)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_WIN1251, @"Windows 1251")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_UTF8, @"UTF-8")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_UTF16LE, @"UTF-16 LE")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_UTF16BE, @"UTF-16 BE")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_1, @"Western (ISO Latin 1)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_2, @"Central European (ISO Latin 2)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_3, @"Western (ISO Latin 3)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_4, @"Central European (ISO Latin 4)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_5, @"Cyrillic (ISO 8859-5)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_6, @"Arabic (ISO 8859-6)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_7, @"Greek (ISO 8859-7)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_8, @"Hebrew (ISO 8859-8)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_9, @"Turkish (ISO Latin 5)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_10, @"Nordic (ISO Latin 6)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_11, @"Thai (ISO 8859-11)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_13, @"Baltic (ISO Latin 7)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_14, @"Celtic (ISO Latin 8)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_15, @"Western (ISO Latin 9)")];
-    [m_Encodings addObject:EncodingToDict(ENCODING_ISO_8859_16, @"Romanian (ISO Latin 10)")];
-    
-    for(NSMutableDictionary *d in m_Encodings)
-        [m_EncodingSelect addItemWithTitle:[d objectForKey:@"name"]];
 }
 
 - (void) SelectEncodingFromView
 {
     int current_encoding = [m_View Enconding];
-    for(NSMutableDictionary *d in m_Encodings)
-        if([(NSNumber*)[d objectForKey:@"code"] intValue] == current_encoding)
+    for(const auto &i: encodings::LiteralEncodingsList())
+        if(i.first == current_encoding)
         {
-            [m_EncodingSelect selectItemWithTitle:[d objectForKey:@"name"]];
+            [m_EncodingSelect selectItemWithTitle:(__bridge NSString*)i.second];
             break;
         }
 }
 
 - (void) SelectedEncoding:(id)sender
 {
-    for(NSMutableDictionary *d in m_Encodings)
-        if([[d objectForKey:@"name"] isEqualToString:[[m_EncodingSelect selectedItem] title]])
+    for(const auto &i: encodings::LiteralEncodingsList())
+        if([(__bridge NSString*)i.second isEqualToString:[[m_EncodingSelect selectedItem] title]])
         {
-            [m_View SetEncoding:[(NSNumber*)[d objectForKey:@"code"] intValue]];
+            [m_View SetEncoding:i.first];
             [self UpdateSearchFilter:self];
             break;
         }
@@ -434,14 +405,18 @@ static NSMutableDictionary *EncodingToDict(int _encoding, NSString *_name)
 
 - (void) SaveFileState
 {
+    if(![BigFileViewHistory HistoryEnabled])
+        return;
+    
     // do our state persistance stuff
     BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
     info->path = [NSString stringWithUTF8String:m_FilePath];
+    info->last_viewed = [NSDate date];    
     info->position = [m_View VerticalPositionInBytes];
-    info->last_viewed = [NSDate date];
     info->wrapping = [m_View WordWrap];
     info->view_mode = [m_View Mode];
     info->encoding = [m_View Enconding];
+    info->selection = [m_View SelectionInFile];
     [[BigFileViewHistory sharedHistory] InsertEntry:info];
 }
 

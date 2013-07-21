@@ -8,6 +8,7 @@
 
 #import "PreferencesWindowViewerTab.h"
 #import "NSUserDefaults+myColorSupport.h"
+#import "Encodings.h"
 
 @implementation PreferencesWindowViewerTab
 {
@@ -18,11 +19,29 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
-    if (self) {
-        // Initialization code here.
+    if (self) {        
     }
     
     return self;
+}
+
+- (void)loadView
+{
+    [super loadView];
+    
+    for(const auto i: encodings::LiteralEncodingsList())
+        [self.DefaultEncoding addItemWithTitle: (__bridge NSString*)i.second];
+    int default_encoding = encodings::EncodingFromName(
+                                               [[[NSUserDefaults standardUserDefaults] stringForKey:@"BigFileViewDefaultEncoding"] UTF8String]);
+    if(default_encoding == ENCODING_INVALID)
+        default_encoding = ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
+
+    for(const auto &i: encodings::LiteralEncodingsList())
+        if(i.first == default_encoding)
+        {
+            [self.DefaultEncoding selectItemWithTitle:(__bridge NSString*)i.second];
+            break;
+        }
 }
 
 -(NSString*)identifier{
@@ -32,7 +51,7 @@
     return [NSImage imageNamed:NSImageNameFollowLinkFreestandingTemplate];
 }
 -(NSString*)toolbarItemLabel{
-    return @"Viewer";
+    return @"Internal Viewer";
 }
 
 - (IBAction) OnSetModernFont:(id)sender
@@ -75,6 +94,17 @@
     [defaults setFont:m_ClassicFont forKey:@"BigFileViewClassicFont"];
 }
 
-- (void)changeAttributes:(id)sender {}
+- (void)changeAttributes:(id)sender {} // wtf, is this necessary?
+
+- (IBAction)DefaultEncodingChanged:(id)sender
+{
+    for(const auto &i: encodings::LiteralEncodingsList())
+        if([(__bridge NSString*)i.second isEqualToString:[[self.DefaultEncoding selectedItem] title]])
+        {
+            NSString *encoding_name = [NSString stringWithUTF8String:encodings::NameFromEncoding(i.first)];
+            [[NSUserDefaults standardUserDefaults] setObject:encoding_name forKey:@"BigFileViewDefaultEncoding"];
+            break;
+        }    
+}
 
 @end

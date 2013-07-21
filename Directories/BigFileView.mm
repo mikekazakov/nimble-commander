@@ -228,9 +228,27 @@ static NSArray *MyDefaultsKeys()
 
 - (void) SetFile:(FileWindow*) _file
 {
+    int encoding = encodings::EncodingFromName(
+        [[[NSUserDefaults standardUserDefaults] stringForKey:@"BigFileViewDefaultEncoding"] UTF8String]);
+    if(encoding == ENCODING_INVALID)
+        encoding = ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
+
     StaticDataBlockAnalysis stat;
     DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewEncodingAutoDetect"])
+    {
+        if(stat.likely_utf16_le)        encoding = ENCODING_UTF16LE;
+        else if(stat.likely_utf16_be)   encoding = ENCODING_UTF16BE;
+        else if(stat.can_be_utf8)       encoding = ENCODING_UTF8;
+    }
     
+    BigFileViewModes mode = stat.is_binary ? BigFileViewModes::Hex : BigFileViewModes::Text;
+    
+    [self SetKnownFile:_file encoding:encoding mode:mode];
+}
+
+- (void) SetKnownFile:(FileWindow*) _file encoding:(int)_encoding mode:(BigFileViewModes)_mode
+{
     m_File = _file;
     if(m_DecodeBuffer != 0)
         free(m_DecodeBuffer);
@@ -240,20 +258,11 @@ static NSArray *MyDefaultsKeys()
     m_DecodeBuffer = (UniChar*) malloc(sizeof(UniChar) * m_File->WindowSize());
     m_DecodeBufferIndx = (uint32_t*) malloc(sizeof(uint32_t) * m_File->WindowSize());
 
-    if(stat.likely_utf16_le)        m_Encoding = ENCODING_UTF16LE;
-    else if(stat.likely_utf16_be)   m_Encoding = ENCODING_UTF16BE;
-    else if(stat.can_be_utf8)       m_Encoding = ENCODING_UTF8;
-    else                            m_Encoding = ENCODING_MACOS_ROMAN_WESTERN;
-    
+    m_Encoding = _encoding;
     [self DecodeRawFileBuffer];    
     
-    if(stat.is_binary)  m_ViewImpl = [BigFileViewHex alloc];
-    else                m_ViewImpl = [BigFileViewText alloc];
-    
-    [m_ViewImpl InitWithWindow:m_DecodeBuffer
-                       offsets:m_DecodeBufferIndx
-                          size:m_DecodedBufferSize
-                        parent:self];
+    m_ViewImpl = _mode == BigFileViewModes::Hex ? [BigFileViewHex alloc] : [BigFileViewText alloc];    
+    [m_ViewImpl InitWithWindow:m_DecodeBuffer offsets:m_DecodeBufferIndx size:m_DecodedBufferSize parent:self];
 }
 
 - (void) DecodeRawFileBuffer
@@ -625,7 +634,7 @@ static NSArray *MyDefaultsKeys()
     return m_SelectionInWindow;
 }
 
-- (CFRange) SelectionWithinFile {
+- (CFRange) SelectionInFile {
     return m_SelectionInFile;
 }
 

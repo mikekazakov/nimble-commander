@@ -56,6 +56,7 @@
 		CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */; };
 		CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
+		CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB54179B959300FE639F /* EncodingsList.mm */; };
 		CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF27B50E172F8EAF005C9B28 /* pause_icon.png */; };
 		CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
 		CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
@@ -203,6 +204,7 @@
 		CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileLinkNewHardlinkSheetController.xib; sourceTree = "<group>"; };
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
+		CF1FBB54179B959300FE639F /* EncodingsList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EncodingsList.mm; sourceTree = "<group>"; };
 		CF27B50E172F8EAF005C9B28 /* pause_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_icon.png; sourceTree = "<group>"; };
 		CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileWindow.cpp; sourceTree = "<group>"; };
 		CF396AED173FA8AF00A20C42 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileWindow.h; sourceTree = "<group>"; };
@@ -609,6 +611,7 @@
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
 				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
 				CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */,
+				CF1FBB54179B959300FE639F /* EncodingsList.mm */,
 				CF02F1D516F38805000AF870 /* Encodings.cpp */,
 				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
@@ -914,6 +917,7 @@
 				CF039EB017911FFA00DC85D6 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */,
+				CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

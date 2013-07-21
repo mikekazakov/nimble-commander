@@ -27,6 +27,7 @@ enum class BigFileViewModes
 @interface BigFileView : NSView
 
 - (void) SetFile:(FileWindow*) _file;
+- (void) SetKnownFile:(FileWindow*) _file encoding:(int)_encoding mode:(BigFileViewModes)_mode;
 - (void) SetDelegate:(id<BigFileViewDelegateProtocol>) _delegate;
 - (void) DoClose;
 
@@ -64,9 +65,10 @@ enum class BigFileViewModes
 - (uint64_t)    VerticalPositionInBytes; // whithin all file, now in a window
 - (void)        SetVerticalPositionInBytes:(uint64_t) _pos;
 
-- (void)        SetSelectionInFile: (CFRange) _selection;   // raw bytes
+// raw bytes in whole file
+- (CFRange)     SelectionInFile;
+- (void)        SetSelectionInFile: (CFRange) _selection;
 - (void)        ScrollToSelection;
-- (CFRange)     SelectionWithinFile;                        // raw bytes selection
 - (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window
 - (CFRange)     SelectionWithinWindowUnichars;              // unichars within a decoded window
 

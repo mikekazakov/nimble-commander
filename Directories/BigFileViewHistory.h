@@ -17,8 +17,18 @@
     bool    wrapping;
     BigFileViewModes view_mode;
     int encoding;
+    CFRange selection;
 }
 @end
+
+struct BigFileViewHistoryOptions
+{
+    bool encoding;
+    bool mode;
+    bool position;
+    bool wrapping;
+    bool selection;
+};
 
 @interface BigFileViewHistory : NSObject
 
@@ -26,5 +36,8 @@
 + (BigFileViewHistory*) sharedHistory;
 - (BigFileViewHistoryEntry*) FindEntryByPath: (NSString *)_path;
 - (void) InsertEntry: (BigFileViewHistoryEntry*) _entry; // will overwrite existing entry with same path
+
++ (BigFileViewHistoryOptions) HistoryOptions;
++ (bool) HistoryEnabled;
 
 @end

@@ -17,6 +17,8 @@ static NSString *g_LastViewedArchiveKey = @"lastviewed";
 static NSString *g_WrappingArchiveKey = @"wrapping";
 static NSString *g_ViewModeArchiveKey = @"viewmode";
 static NSString *g_EncodingArchiveKey = @"encoding";
+static NSString *g_SelPosArchiveKey = @"sel_position";
+static NSString *g_SelLenArchiveKey = @"sel_length";
 static BigFileViewHistory *g_SharedInstance = nil;
 
 @implementation BigFileViewHistoryEntry
@@ -59,6 +61,14 @@ static BigFileViewHistory *g_SharedInstance = nil;
                                                    );
         else
             encoding = ENCODING_INVALID;
+        
+        if([decoder containsValueForKey:g_SelPosArchiveKey] &&
+           [decoder containsValueForKey:g_SelLenArchiveKey] )
+            selection = CFRangeMake([decoder decodeInt64ForKey:g_SelPosArchiveKey],
+                                    [decoder decodeInt64ForKey:g_SelLenArchiveKey]);
+        else
+            selection = CFRangeMake(-1, 0);
+            
     }
     return self;
 }
@@ -69,7 +79,9 @@ static BigFileViewHistory *g_SharedInstance = nil;
     [encoder encodeObject:last_viewed forKey:g_LastViewedArchiveKey];
     [encoder encodeBool:wrapping forKey:g_WrappingArchiveKey];
     [encoder encodeInt:static_cast<int>(view_mode) forKey:g_ViewModeArchiveKey];
-    [encoder encodeObject:[NSString stringWithUTF8String:encodings::NameFromEncoding(encoding)] forKey:g_EncodingArchiveKey];    
+    [encoder encodeObject:[NSString stringWithUTF8String:encodings::NameFromEncoding(encoding)] forKey:g_EncodingArchiveKey];
+    [encoder encodeInt64:selection.location forKey:g_SelPosArchiveKey];
+    [encoder encodeInt64:selection.length forKey:g_SelLenArchiveKey];
 }
 
 @end
@@ -148,6 +160,23 @@ static BigFileViewHistory *g_SharedInstance = nil;
             }
         [m_History insertObject:_entry atIndex:0]; 
     });
+}
+
++ (BigFileViewHistoryOptions) HistoryOptions
+{
+    BigFileViewHistoryOptions options;
+    options.encoding = [[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewDoSaveFileEncoding"];
+    options.mode = [[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewDoSaveFileMode"];
+    options.position = [[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewDoSaveFilePosition"];
+    options.wrapping = [[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewDoSaveFileWrapping"];
+    options.selection = [[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewDoSaveFileSelection"];
+    return options;
+}
+
++ (bool) HistoryEnabled
+{
+    BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
+    return options.encoding || options.mode || options.position || options.wrapping || options.selection;
 }
 
 @end

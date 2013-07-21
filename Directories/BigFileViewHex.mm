@@ -114,7 +114,6 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_Window = _unichar_window;
     m_Indeces = _unichar_indeces;
     m_WindowSize = _unichars_amount;
-    m_FrameLines = floor([_view frame].size.height / m_FontHeight);
     m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * [m_View RawWindowSize]);
     m_LeftInset = 5;
     
@@ -124,6 +123,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_RowsOffset = 0;
     
     [m_View setNeedsDisplay:true];
+    assert(m_FrameLines >= 0);    
     return self;
 }
 
@@ -137,6 +137,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
 {
     m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
+    m_FrameLines = floor([m_View frame].size.height / m_FontHeight);    
 }
 
 - (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)

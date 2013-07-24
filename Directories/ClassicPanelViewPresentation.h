@@ -30,6 +30,8 @@ private:
     void DrawWithShortMediumWideView(CGContextRef _context);
     void DrawWithFullView(CGContextRef _context);
     
+    
+    
     int m_SymbWidth;
     int m_SymbHeight;
     CTFontRef       m_FontCT;

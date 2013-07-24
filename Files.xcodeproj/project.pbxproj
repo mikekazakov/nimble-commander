@@ -57,6 +57,7 @@
 		CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB54179B959300FE639F /* EncodingsList.mm */; };
+		CF1FBB58179D237E00FE639F /* ModernPanelViewPresentationIconCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB56179D237E00FE639F /* ModernPanelViewPresentationIconCache.mm */; };
 		CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF27B50E172F8EAF005C9B28 /* pause_icon.png */; };
 		CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
 		CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
@@ -89,7 +90,6 @@
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
 		CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */; };
 		CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */; };
-		CFC4342B16E727FC001B0512 /* KQueueDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */; };
 		CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121416C4BD3D00D247EE /* Cocoa.framework */; };
 		CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFC5122116C4BD3D00D247EE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122016C4BD3D00D247EE /* main.m */; };
@@ -203,6 +203,8 @@
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
 		CF1FBB54179B959300FE639F /* EncodingsList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EncodingsList.mm; sourceTree = "<group>"; };
+		CF1FBB56179D237E00FE639F /* ModernPanelViewPresentationIconCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationIconCache.mm; sourceTree = "<group>"; };
+		CF1FBB57179D237E00FE639F /* ModernPanelViewPresentationIconCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationIconCache.h; sourceTree = "<group>"; };
 		CF27B50E172F8EAF005C9B28 /* pause_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_icon.png; sourceTree = "<group>"; };
 		CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileWindow.cpp; sourceTree = "<group>"; };
 		CF396AED173FA8AF00A20C42 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileWindow.h; sourceTree = "<group>"; };
@@ -262,8 +264,6 @@
 		CFC4342316E0E1E2001B0512 /* CreateDirectorySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectorySheetController.h; sourceTree = "<group>"; };
 		CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectorySheetController.mm; sourceTree = "<group>"; };
 		CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CreateDirectorySheetController.xib; sourceTree = "<group>"; };
-		CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KQueueDirUpdate.mm; sourceTree = "<group>"; };
-		CFC4342A16E727FC001B0512 /* KQueueDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KQueueDirUpdate.h; sourceTree = "<group>"; };
 		CFC5121116C4BD3D00D247EE /* Files.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Files.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFC5121416C4BD3D00D247EE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFC5121716C4BD3D00D247EE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -367,6 +367,8 @@
 				B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */,
 				B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */,
 				B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */,
+				CF1FBB56179D237E00FE639F /* ModernPanelViewPresentationIconCache.mm */,
+				CF1FBB57179D237E00FE639F /* ModernPanelViewPresentationIconCache.h */,
 				CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */,
 				CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */,
 				CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */,
@@ -608,8 +610,6 @@
 				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
 				CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */,
-				CFC4342916E727FC001B0512 /* KQueueDirUpdate.mm */,
-				CFC4342A16E727FC001B0512 /* KQueueDirUpdate.h */,
 				CFC5123216C5164300D247EE /* DirRead.h */,
 				CFC5123116C5164300D247EE /* DirRead.cpp */,
 				CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */,
@@ -842,7 +842,6 @@
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
-				CFC4342B16E727FC001B0512 /* KQueueDirUpdate.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
 				CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* FlexChainedStringsChunk.cpp in Sources */,
@@ -908,6 +907,7 @@
 				CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */,
 				CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */,
+				CF1FBB58179D237E00FE639F /* ModernPanelViewPresentationIconCache.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

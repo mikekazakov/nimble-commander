@@ -8,12 +8,13 @@
 
 
 #import "ModernPanelViewPresentation.h"
-
+#import "ModernPanelViewPresentationIconCache.h"
 #import "PanelData.h"
 #import "Encodings.h"
 #import "Common.h"
+#import "NSUserDefaults+myColorSupport.h"
+#import "FontExtras.h"
 
-#import <Quartz/Quartz.h>
 #import <deque>
 #import <pthread.h>
 
@@ -48,46 +49,46 @@ static void FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, 
     for(int i = 0; i < _symbs; ++i) _out[i] = buf[i];
 }
 
-static void FormHumanReadableTimeRepresentation14(time_t _in, UniChar _out[14])
+static NSString* FormHumanReadableDateTime(time_t _in)
 {
-    struct tm tt;
-    localtime_r(&_in, &tt);
+    static NSDateFormatter *date_formatter = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        date_formatter = [NSDateFormatter new];
+        [date_formatter setLocale:[NSLocale currentLocale]];
+        [date_formatter setDateStyle:NSDateFormatterMediumStyle];	// short date
+        [date_formatter setTimeStyle:NSDateFormatterShortStyle];       // no time
+    });
     
-    char buf[32];
-    sprintf(buf, "%2.2d.%2.2d.%2.2d %2.2d:%2.2d",
-            tt.tm_mday,
-            tt.tm_mon + 1,
-            tt.tm_year % 100,
-            tt.tm_hour,
-            tt.tm_min
-            );
-    
-    for(int i = 0; i < 14; ++i) _out[i] = buf[i];
+    return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-static void FormHumanReadableDateRepresentation8(time_t _in, UniChar _out[8])
+static NSString* FormHumanReadableShortDate(time_t _in)
 {
-    struct tm tt;
-    localtime_r(&_in, &tt);
+    static NSDateFormatter *date_formatter = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        date_formatter = [NSDateFormatter new];
+        [date_formatter setLocale:[NSLocale currentLocale]];
+        [date_formatter setDateStyle:NSDateFormatterShortStyle];	// short date
+        [date_formatter setTimeStyle:NSDateFormatterNoStyle];       // no time
+    });
     
-    char buf[32];
-    sprintf(buf, "%2.2d.%2.2d.%2.2d",
-            tt.tm_mday,
-            tt.tm_mon + 1,
-            tt.tm_year % 100
-            );
-    for(int i = 0; i < 8; ++i) _out[i] = buf[i];
+    return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-static void FormHumanReadableTimeRepresentation5(time_t _in, UniChar _out[5])
+static NSString* FormHumanReadableShortTime(time_t _in)
 {
-    struct tm tt;
-    localtime_r(&_in, &tt);
+    static NSDateFormatter *date_formatter = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        date_formatter = [NSDateFormatter new];
+        [date_formatter setLocale:[NSLocale currentLocale]];
+        [date_formatter setDateStyle:NSDateFormatterNoStyle];       // no date
+        [date_formatter setTimeStyle:NSDateFormatterShortStyle];    // short time
+    });
     
-    char buf[32];
-    sprintf(buf, "%2.2d:%2.2d", tt.tm_hour, tt.tm_min);
-    
-    for(int i = 0; i < 5; ++i) _out[i] = buf[i];
+    return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
 // _out will be _not_ null-terminated, just a raw buffer
@@ -181,338 +182,26 @@ static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dire
     }
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// class IconCache
-///////////////////////////////////////////////////////////////////////////////////////////////////
-class ModernPanelViewPresentation::IconCache
-{
-public:
-    IconCache(ModernPanelViewPresentation *_presentation)
-    :   m_ParentDir(nil),
-        m_Presentation(_presentation),
-        m_IconsSize(0),
-        m_LoadIconsRunning(false),
-        m_LoadIconShouldStop(nullptr),
-        m_NeedsLoading(false)
-    {
-        pthread_mutex_init(&m_Lock, NULL);
-        m_LoadIconsGroup = dispatch_group_create();
-        
-        if (m_RefCount > 0)
-            ++m_RefCount;
-        else
-        {
-            assert(m_RefCount == 0);
-            m_RefCount = 1;
-            
-            // Load predefined directory icon.
-            NSImage *image = [NSImage imageNamed:NSImageNameFolder];
-            m_GenericFolderIcon = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil
-                                                            hints:nil];
-            
-            // Load predefined generic document file icon.
-            image = [[NSWorkspace sharedWorkspace]
-                     iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-            m_GenericFileIcon = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil
-                                                           hints:nil];
-        }
-    }
-    
-    ~IconCache()
-    {
-        ClearIcons();
-        
-        dispatch_group_wait(m_LoadIconsGroup, 5*USEC_PER_SEC);
-        
-        pthread_mutex_destroy(&m_Lock);
-        
-        dispatch_release(m_LoadIconsGroup);
-        assert(m_RefCount > 0);
-        if (--m_RefCount == 0)
-        {
-            m_GenericFileIcon = nil;
-            m_GenericFolderIcon = nil;
-        }
-    }
-    
-    void SetIconMode(int _mode)
-    {
-        assert(_mode >= 0 && _mode < IconModesCount);
-        m_IconMode = (IconMode)_mode;
-    }
-    
-    inline bool IsNeedsLoading()
-    {
-        return m_NeedsLoading;
-    }
-    
-    inline NSImageRep *CreateIcon(const DirectoryEntryInformation &_item, int _item_index, PanelData *_data)
-    {
-        // If item has no associated icon, then create entry for the icon and schedule the loading
-        // process.
-        assert(&_data->EntryAtRawPosition(_item_index) == &_item);
-        unsigned short index = (unsigned short)(m_UniqueIcons.size() + 1);
-        _data->CustomIconSet(_item_index, index);
-        
-        bool only_generic_icons = m_IconMode == IconMode::IconModeGeneric;
-        UniqueIcon icon;
-        if (_item.isdir())
-            icon.image = m_GenericFolderIcon;
-        else if (only_generic_icons || !_item.hasextension())
-            icon.image = m_GenericFileIcon;
-        else
-        {
-            NSString *ext = [NSString stringWithUTF8String:_item.extensionc()];
-            NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:ext];
-            icon.image = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil hints:nil];
-        }
-        
-        if (only_generic_icons)
-        {
-            icon.item_path = nil;
-            icon.try_create_thumbnail = false;
-        }
-        else
-        {
-            icon.item_path = (_item.isdotdot() ? @"." : [(__bridge NSString *)_item.cf_name copy]);
-            icon.try_create_thumbnail = (_item.size < 256*1024*1024); // size less than 256 MB.
-            m_NeedsLoading = true;
-        }
-        
-        m_UniqueIcons.push_back(icon);
-        ++m_IconsSize;
-        
-        return icon.image;
-    }
-    
-    inline NSImageRep *GetIcon(const DirectoryEntryInformation &_item)
-    {
-        assert(_item.cicon);
-        unsigned short index = _item.cicon - 1;
-        assert(index < m_UniqueIcons.size());
-        return m_UniqueIcons[index].image;
-    }
-    
-    void RunLoadThread(PanelData *_data)
-    {
-        m_NeedsLoading = false;
-        
-        // Nothing to load if only generic icons are used.
-        if (m_IconMode == IconModeGeneric) return;
-        
-        pthread_mutex_lock(&m_Lock);
-
-        if (m_LoadIconsRunning)
-        {
-            pthread_mutex_unlock(&m_Lock);
-            return;
-        }
-        
-        // Start loading thread.
-        
-        // Find the first not loaded icon.
-        int start = 0;
-        for (auto i = m_UniqueIcons.begin(), end = m_UniqueIcons.end(); i != end; ++start, ++i)
-            if (i->item_path) break;
-        assert(m_UniqueIcons[start].item_path);
-        
-        if (!m_ParentDir)
-        {
-            char buff[1024] = {0};
-            _data->GetDirectoryPathWithTrailingSlash(buff);
-            m_ParentDir = [NSString stringWithUTF8String:buff];
-        }
-        
-        NSString *parent_dir = m_ParentDir;
-        bool load_thumbnails = (m_IconMode == IconModeFileIconsThumbnails);
-        
-        __block volatile bool *should_stop = new bool(false);
-        m_LoadIconShouldStop = should_stop;
-        m_LoadIconsRunning = true;
-        
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-        dispatch_block_t block =
-        ^{
-            uint64_t last_draw_time = GetTimeInNanoseconds();
-            int i = start;
-            
-            UniqueIcon *icon = nullptr;
-            NSString *item_path;
-            bool try_create_thumbnail;
-            NSImage *image;
-            
-            for (;;)
-            {
-                // While lock is aqcuired, check that block needs to stop and get the next icon.
-                pthread_mutex_lock(&m_Lock);
-                
-                if (*should_stop)
-                {
-                    pthread_mutex_unlock(&m_Lock);
-                    break;
-                }
-                
-                if (icon)
-                {
-                    // Apply the image we acquired during last iteration.
-                    icon->image = [image bestRepresentationForRect:NSMakeRect(0, 0, 16, 16) context:nil hints:nil];
-                    icon->item_path = nil;
-                }
-                
-                // Check if icons are exhausted.
-                assert(i <= m_IconsSize);
-                if (i == m_IconsSize)
-                {
-                    dispatch_async(dispatch_get_main_queue(),
-                                   ^{ m_Presentation->SetViewNeedsDisplay(); });
-                    m_LoadIconsRunning = false;
-                    pthread_mutex_unlock(&m_Lock);
-                    break;
-                }
-                
-                icon = &m_UniqueIcons[i++];
-                assert(icon->item_path);
-                item_path = icon->item_path;
-                try_create_thumbnail = icon->try_create_thumbnail;
-                
-                pthread_mutex_unlock(&m_Lock);
-                
-                
-                item_path = [parent_dir stringByAppendingString:item_path];
-                
-                CGImageRef thumbnail = NULL;
-                if (load_thumbnails && try_create_thumbnail)
-                {
-                    CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:item_path];
-                    
-                    void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-                    void *values[] = {(void*)kCFBooleanTrue};
-                    CFDictionaryRef dict = CFDictionaryCreate(CFAllocatorGetDefault(),
-                                                              (const void**)keys,
-                                                              (const void**)values,
-                                                              1, NULL, NULL);
-                    thumbnail = QLThumbnailImageCreate(CFAllocatorGetDefault(), url,
-                                                       NSMakeSize(16, 16), dict);
-                    CFRelease(dict);
-                }
-                
-                if (thumbnail != NULL)
-                {
-                    image = [[NSImage alloc] initWithCGImage:thumbnail size:NSMakeSize(16, 16)];
-                    CGImageRelease(thumbnail);
-                }
-                else
-                {
-                    image = [[NSWorkspace sharedWorkspace] iconForFile:item_path];
-                }
-                
-                if (*should_stop) break;
-                
-                uint64_t curtime = GetTimeInNanoseconds();
-                if (curtime - last_draw_time > 500*NSEC_PER_MSEC)
-                {
-                    dispatch_async(dispatch_get_main_queue(),
-                                   ^{ m_Presentation->SetViewNeedsDisplay(); });
-                    last_draw_time = curtime;
-                }
-            }
-            
-            delete should_stop;
-        };
-        
-        dispatch_group_async(m_LoadIconsGroup, queue, block);
-
-        pthread_mutex_unlock(&m_Lock);
-    }
-
-    void OnDirectoryChanged(PanelData *_data)
-    {
-        ClearIcons();
-        
-        m_ParentDir = nil;
-    }
-    
-private:
-    void ClearIcons()
-    {
-        if (m_LoadIconsRunning)
-        {
-            pthread_mutex_lock(&m_Lock);
-            if (m_LoadIconsRunning)
-            {
-                *m_LoadIconShouldStop = true;
-                m_LoadIconsRunning = false;
-            }
-            pthread_mutex_unlock(&m_Lock);
-        }
-
-        m_IconsSize = 0;
-        m_UniqueIcons.clear();
-    }
-    
-    enum IconMode
-    {
-        IconModeGeneric = 0,
-        IconModeFileIcons,
-        IconModeFileIconsThumbnails,
-        
-        IconModesCount
-    };
-    struct UniqueIcon
-    {
-        NSImageRep *image;
-        NSString *item_path;
-        bool try_create_thumbnail;
-    };
-    typedef std::deque<UniqueIcon> UniqueIconsT;
-    
-    UniqueIconsT m_UniqueIcons;
-    volatile int m_IconsSize;
-    IconMode m_IconMode;
-    
-    NSString *m_ParentDir;
-    ModernPanelViewPresentation *m_Presentation;
-    
-    dispatch_group_t m_LoadIconsGroup;
-    volatile bool m_LoadIconsRunning;
-    volatile bool *m_LoadIconShouldStop;
-    bool m_NeedsLoading;
-    pthread_mutex_t m_Lock;
-                                
-    static NSImageRep *m_GenericFileIcon;
-    static NSImageRep *m_GenericFolderIcon;
-    static int m_RefCount;
-};
-
-int ModernPanelViewPresentation::IconCache::m_RefCount = 0;
-NSImageRep *ModernPanelViewPresentation::IconCache::m_GenericFileIcon = nil;
-NSImageRep *ModernPanelViewPresentation::IconCache::m_GenericFolderIcon = nil;
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // class ModernPanelViewPresentation
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Item name display insets inside the item line.
 // Order: left, top, right, bottom.
-const int g_TextInsetsInLine[4] = {7, 0, 5, 1};
+const int g_TextInsetsInLine[4] = {7, 0, 5, 1}; // TODO: remove this black magic
 // Width of the divider between views.
 const int g_DividerWidth = 3;
 
 ModernPanelViewPresentation::ModernPanelViewPresentation()
-:   m_FirstDraw(false)
 {
-    m_IconCache = new IconCache(this);
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    int icon_mode = (int)[defaults integerForKey:@"ModernSkinIconMode"];
-    m_IconCache->SetIconMode(icon_mode);
-    
     m_Size.width = m_Size.height = 0;
+ 
+    BuildGeometry();
+    BuildAppearance();
     
-    m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
-    
-    // Height of a single file line. Constant for now, needs to be calculated from the font.
-    m_LineHeight = 18;
+    // build icon cache regarding current font size (icon size equals font height)
+    m_IconCache = new ModernPanelViewPresentationIconCache(this, m_FontHeight);
+    m_IconCache->SetIconMode((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"ModernSkinIconMode"]);
     
     // Init active header and footer gradient.
     {
@@ -547,23 +236,6 @@ ModernPanelViewPresentation::ModernPanelViewPresentation()
         m_InactiveHeaderGradient = CGGradientCreateWithColorComponents(color_space, components, locations, 4);
         CGColorSpaceRelease(color_space);
     }
-    
-    // Active header and footer text shadow.
-    {
-        m_ActiveHeaderTextShadow = [[NSShadow alloc] init];
-        m_ActiveHeaderTextShadow.shadowBlurRadius = 1;
-        m_ActiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:0.83 green:0.93 blue:1 alpha:1];
-        m_ActiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);
-    }
-    
-    // Inactive header and footer text shadow.
-    {
-        m_InactiveHeaderTextShadow = [[NSShadow alloc] init];
-        m_InactiveHeaderTextShadow.shadowBlurRadius = 1;
-
-        m_InactiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:0.9];
-        m_InactiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);
-    }
 }
 
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
@@ -576,6 +248,88 @@ ModernPanelViewPresentation::~ModernPanelViewPresentation()
 
     if(m_State->Data != 0)
         m_State->Data->CustomIconClearAll();
+}
+
+void ModernPanelViewPresentation::BuildGeometry()
+{    
+    // build font geometry according current settings
+    m_Font = [[NSUserDefaults standardUserDefaults] fontForKey:@"FilePanelsModernFont"];
+    if(!m_Font) m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
+    
+    // Height of a single file line calculated from the font.
+    m_FontHeight = int(GetLineHeightForFont((__bridge CTFontRef)m_Font));
+    m_LineHeight = m_FontHeight + 2; // was 18 before (16 + 2)
+    
+    NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];
+    
+    m_SizeColumWidth = (int)ceil([@"999999" sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    
+    // 9 days after 1970
+    m_DateColumnWidth = (int)ceil([FormHumanReadableShortDate(777600) sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    m_TimeColumnWidth = (int)ceil([FormHumanReadableShortTime(777600) sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    NSString *max_footer_datetime = [NSString stringWithFormat:@"%@A", FormHumanReadableDateTime(777600)];
+    m_DateTimeFooterWidth = (int)ceil([max_footer_datetime sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+}
+
+void ModernPanelViewPresentation::BuildAppearance()
+{
+    // Active header and footer text shadow.
+    m_ActiveHeaderTextShadow = [NSShadow new];
+    m_ActiveHeaderTextShadow.shadowBlurRadius = 1;
+    m_ActiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:0.83 green:0.93 blue:1 alpha:1];
+    m_ActiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);
+    
+    // Inactive header and footer text shadow.
+    m_InactiveHeaderTextShadow = [[NSShadow alloc] init];
+    m_InactiveHeaderTextShadow.shadowBlurRadius = 1;
+    m_InactiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:0.9];
+    m_InactiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);    
+    
+    NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new];
+    item_text_pstyle.alignment = NSLeftTextAlignment;
+    item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
+    
+    m_ActiveSelectedItemTextAttr =
+    @{
+      NSFontAttributeName: m_Font,
+      NSForegroundColorAttributeName: [NSColor whiteColor], // TODO: color selection
+      NSParagraphStyleAttributeName: item_text_pstyle
+      };
+    
+    m_ItemTextAttr =
+    @{
+      NSFontAttributeName: m_Font,
+      NSForegroundColorAttributeName: [NSColor blackColor], // TODO: color selection
+      NSParagraphStyleAttributeName: item_text_pstyle
+      };
+    
+    NSMutableParagraphStyle *size_col_text_pstyle = [NSMutableParagraphStyle new];
+    size_col_text_pstyle.alignment = NSRightTextAlignment;
+    size_col_text_pstyle.lineBreakMode = NSLineBreakByClipping;
+    
+    m_ActiveSelectedSizeColumnTextAttr =
+    @{NSFontAttributeName: m_Font,
+      NSForegroundColorAttributeName: [NSColor whiteColor],
+      NSParagraphStyleAttributeName: size_col_text_pstyle
+      };
+
+    m_SizeColumnTextAttr =
+    @{NSFontAttributeName: m_Font,
+      NSForegroundColorAttributeName: [NSColor blackColor],
+      NSParagraphStyleAttributeName: size_col_text_pstyle
+      };
+    
+    NSMutableParagraphStyle *sel_items_footer_pstyle = [NSMutableParagraphStyle new];
+    sel_items_footer_pstyle.alignment = NSCenterTextAlignment;
+    sel_items_footer_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
+    
+    m_SelectedItemsFooterTextAttr = @{NSFontAttributeName: m_Font,
+                                       NSParagraphStyleAttributeName: sel_items_footer_pstyle,
+                                       NSShadowAttributeName: m_InactiveHeaderTextShadow};
+    
+    m_ActiveSelectedItemsFooterTextAttr = @{NSFontAttributeName: m_Font,
+                                      NSParagraphStyleAttributeName: sel_items_footer_pstyle,
+                                      NSShadowAttributeName: m_ActiveHeaderTextShadow};
 }
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
@@ -608,23 +362,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     }
     
     if (created_icons && m_IconCache->IsNeedsLoading())
-    {
         m_IconCache->RunLoadThread(m_State->Data);
-
-        // On the first draw of a directory: do not draw anything, wait for some icons to load to avoid annoying flickering of the icons.
-/*        if (m_FirstDraw)
-        {
-            m_FirstDraw = false;
-            
-            // Schedule redraw.
-            dispatch_time_t pop_time = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(50*NSEC_PER_MSEC));
-            dispatch_after(pop_time, dispatch_get_main_queue(), ^(void){
-                SetViewNeedsDisplay();
-            });
-            
-            return;
-        }*/
-    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // Clear view background.
@@ -634,8 +372,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     ///////////////////////////////////////////////////////////////////////////////
     // Divider.
-    CGColorRef divider_stroke_color = CGColorCreateGenericRGB(101/255.0, 101/255.0, 101/255.0, 1.0);
-    CGColorRef divider_fill_color = CGColorCreateGenericRGB(174/255.0, 174/255.0, 174/255.0, 1.0);
+    static CGColorRef divider_stroke_color = CGColorCreateGenericRGB(101/255.0, 101/255.0, 101/255.0, 1.0);
+    static CGColorRef divider_fill_color = CGColorCreateGenericRGB(174/255.0, 174/255.0, 174/255.0, 1.0);
     
     CGContextSetStrokeColorWithColor(context, divider_stroke_color);
     if (m_IsLeft)
@@ -661,10 +399,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         CGContextSetFillColorWithColor(context, divider_fill_color);
         CGContextFillRect(context, NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
     }
-    
-    CGColorRelease(divider_fill_color);
-    CGColorRelease(divider_stroke_color);
-    
+
     // If current panel is on the right, then translate all rendering by the divider's width.
     if (!m_IsLeft) CGContextTranslateCTM(context, g_DividerWidth, 0);
     
@@ -707,16 +442,18 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
     
-    NSMutableParagraphStyle *header_text_pstyle = [[NSMutableParagraphStyle alloc] init];
-    header_text_pstyle.alignment = NSCenterTextAlignment;
-    header_text_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
+    static const NSMutableParagraphStyle *header_text_pstyle = ^{
+        NSMutableParagraphStyle *p = [[NSMutableParagraphStyle alloc] init];
+        p.alignment = NSCenterTextAlignment;
+        p.lineBreakMode = NSLineBreakByTruncatingHead;
+        return p;
+    }();
     
     NSDictionary *header_text_attr =@{NSFontAttributeName: m_Font,
                                       NSParagraphStyleAttributeName: header_text_pstyle,
                                       NSShadowAttributeName: header_text_shadow};
     
     [header_string drawWithRect:rect options:options attributes:header_text_attr];
-    
     
     // Footer
     const int footer_y = m_ItemsArea.origin.y + m_ItemsArea.size.height;
@@ -748,68 +485,62 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         FormHumanReadableBytesAndFiles(m_State->Data->GetSelectedItemsSizeBytes(),
                                        m_State->Data->GetSelectedItemsCount(), selectionbuf, sz);
         
-        NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
         const int delta = (header_height - m_LineHeight)/2;
         const int offset = 10;
-        
-        NSMutableParagraphStyle *footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
-        footer_text_pstyle.alignment = NSCenterTextAlignment;
-        footer_text_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
-        
-        NSDictionary *footer_text_attr = @{NSFontAttributeName: m_Font,
-                                           NSParagraphStyleAttributeName: footer_text_pstyle,
-                                           NSShadowAttributeName: header_text_shadow};
         
         NSString *sel_str = [NSString stringWithCharacters:selectionbuf length:sz];
         [sel_str drawWithRect:NSMakeRect(offset, footer_y + delta,
                                          m_ItemsArea.size.width - 2*offset, m_LineHeight)
-                      options:options attributes:footer_text_attr];
+                      options:NSStringDrawingUsesLineFragmentOrigin
+                   attributes:m_State->Active?m_ActiveSelectedItemsFooterTextAttr:m_SelectedItemsFooterTextAttr];
     }
     else if(m_State->CursorPos >= 0)
     {
         UniChar buff[256];
-        UniChar time_info[14], size_info[6];
         size_t buf_size = 0;
         const DirectoryEntryInformation *current_entry = &entries[sorted_entries[m_State->CursorPos]];
-        
-        FormHumanReadableTimeRepresentation14(current_entry->mtime, time_info);
-        FormHumanReadableSizeReprentationForDirEnt6(current_entry, size_info);
-        
-        NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
+
         const int delta = (header_height - m_LineHeight)/2;
         const int offset = 10;
-        int time_width = 110;
-        int size_width = 90;
-        
-        NSMutableParagraphStyle *footer_text_pstyle;
+
         NSDictionary *footer_text_attr;
         
         if (m_State->ViewType != PanelViewType::ViewFull)
         {
-            footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
-            footer_text_pstyle.alignment = NSRightTextAlignment;
-            footer_text_pstyle.lineBreakMode = NSLineBreakByClipping;
+            static const NSMutableParagraphStyle *pstyle = ^{
+                NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
+                p.alignment = NSRightTextAlignment;
+                p.lineBreakMode = NSLineBreakByClipping;
+                return p;
+            } ();
             
             footer_text_attr = @{NSFontAttributeName: m_Font,
-                                 NSParagraphStyleAttributeName:footer_text_pstyle,
+                                 NSParagraphStyleAttributeName:pstyle,
                                  NSShadowAttributeName: header_text_shadow};
             
-            NSString *time_str = [NSString stringWithCharacters:time_info length:14];
-            [time_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - time_width,
+            NSString *time_str = FormHumanReadableDateTime(current_entry->mtime);
+            [time_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - m_DateTimeFooterWidth,
                                               footer_y + delta,
-                                              time_width, m_LineHeight)
-                           options:options attributes:footer_text_attr];
+                                              m_DateTimeFooterWidth, m_LineHeight)
+                           options:NSStringDrawingUsesLineFragmentOrigin
+                        attributes:footer_text_attr];
             
-            NSString *size_str = [NSString stringWithCharacters:size_info length:6];
-            [size_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - time_width - size_width,
+            UniChar size_info[6];
+            FormHumanReadableSizeReprentationForDirEnt6(current_entry, size_info);
+            NSString *size_str = [[NSString alloc] initWithCharactersNoCopy:size_info length:6 freeWhenDone:false];
+            [size_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - m_DateTimeFooterWidth - m_SizeColumWidth,
                                               footer_y + delta,
-                                              size_width, m_LineHeight)
-                           options:options attributes:footer_text_attr];
+                                              m_SizeColumWidth, m_LineHeight)
+                           options:NSStringDrawingUsesLineFragmentOrigin
+                        attributes:footer_text_attr];
         }
         
-        footer_text_pstyle = [[NSMutableParagraphStyle alloc] init];
-        footer_text_pstyle.alignment = NSLeftTextAlignment;
-        footer_text_pstyle.lineBreakMode = NSLineBreakByTruncatingHead;
+        static const NSMutableParagraphStyle *footer_text_pstyle = (NSMutableParagraphStyle *)^{
+            NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
+            p.alignment = NSLeftTextAlignment;
+            p.lineBreakMode = NSLineBreakByTruncatingHead;
+            return p;
+        } ();
         
         footer_text_attr = @{NSFontAttributeName: m_Font,
                              NSParagraphStyleAttributeName: footer_text_pstyle,
@@ -817,7 +548,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         
         int name_width = m_ItemsArea.size.width - 2*offset;
         if (m_State->ViewType != PanelViewType::ViewFull)
-            name_width -= time_width + size_width;
+            name_width -= m_DateTimeFooterWidth + m_SizeColumWidth;
         ComposeFooterFileNameForEntry(*current_entry, buff, buf_size);
         NSString *name_str = [NSString stringWithCharacters:buff length:buf_size];
         [name_str drawWithRect:NSMakeRect(offset, footer_y + delta, name_width, m_LineHeight) options:options attributes:footer_text_attr];
@@ -827,21 +558,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Draw items in columns.
-    NSMutableParagraphStyle *item_text_pstyle = [[NSMutableParagraphStyle alloc] init];
-    item_text_pstyle.alignment = NSLeftTextAlignment;
-    item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
-    
-    NSDictionary *item_text_attr = @{NSFontAttributeName: m_Font,
-                                     NSParagraphStyleAttributeName: item_text_pstyle};
-    
-    NSDictionary *active_selected_item_text_attr =
-    @{
-      NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: [NSColor whiteColor],
-      NSParagraphStyleAttributeName: item_text_pstyle
-      };
-    
+    // Draw items in columns.    
     CGColorRef active_selected_item_back = CGColorCreateGenericRGB(43/255.0, 116/255.0, 211/255.0, 1.0);
     CGColorRef inactive_selected_item_back = CGColorCreateGenericRGB(212/255.0, 212/255.0, 212/255.0, 1.0);
     CGColorRef active_cursor_item_back = CGColorCreateGenericRGB(130/255.0, 196/255.0, 240/255.0, 1.0);
@@ -849,14 +566,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     CGColorRef cursor_frame_color = CGColorCreateGenericRGB(0, 0, 0, 1);
     CGColorRef item_back = CGColorCreateGenericRGB(240/255.0, 245/255.0, 250/255.0, 1);
     
-    const int icon_size = 16;
+    const int icon_size = m_FontHeight;
     const int start_y = m_ItemsArea.origin.y;
-    
-    // The widths of columns that are displayed for wide and full views.
-    const int size_column_width = 65;
-    const int date_column_width = 70;
-    const int time_column_width = 50;
-    
+        
     for (int column = 0; column < columns_count; ++column)
     {
         // Draw column.
@@ -900,9 +612,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             
             NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
             
-            NSDictionary *cur_item_text_attr = item_text_attr;
+            NSDictionary *cur_item_text_attr = m_ItemTextAttr;
             if (m_State->Active && item && item->cf_isselected())
-                cur_item_text_attr = active_selected_item_text_attr;
+                cur_item_text_attr = m_ActiveSelectedItemTextAttr;
             
             // Draw background.
             if (item && item->cf_isselected())
@@ -929,14 +641,11 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             else if (count % 2 == 1)
             {
                 CGContextSetFillColorWithColor(context, item_back);
-                
                 CGContextFillRect(context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1,
                                                       column_width - 2, m_LineHeight - 1));
             }
             
             if (!item) continue;
-            
-            NSString *item_name = (__bridge NSString *)item->cf_name;
             
             // Draw cursor.
             if (m_State->CursorPos == i && m_State->Active)
@@ -956,61 +665,48 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             int spec_col_x = m_ItemsArea.size.width;
             if (m_State->ViewType == PanelViewType::ViewFull)
             {
-                UniChar date_info[8], time_info[5];
-                FormHumanReadableDateRepresentation8(item->mtime, date_info);
-                FormHumanReadableTimeRepresentation5(item->mtime, time_info);
-                
-                NSRect time_rect = NSMakeRect(spec_col_x - time_column_width + g_TextInsetsInLine[0],
+                NSRect time_rect = NSMakeRect(spec_col_x - m_TimeColumnWidth + g_TextInsetsInLine[0],
                                               rect.origin.y,
-                                              time_column_width - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
+                                              m_TimeColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 
-                NSString *time_str = [NSString stringWithCharacters:time_info length:5];
+                NSString *time_str = FormHumanReadableShortTime(item->mtime);
                 [time_str drawWithRect:time_rect options:options attributes:cur_item_text_attr];
                 
-                rect.size.width -= time_column_width;
-                spec_col_x -= time_column_width;
+                rect.size.width -= m_TimeColumnWidth;
+                spec_col_x -= m_TimeColumnWidth;
                 
-                NSRect date_rect = NSMakeRect(spec_col_x - date_column_width + g_TextInsetsInLine[0],
+                NSRect date_rect = NSMakeRect(spec_col_x - m_DateColumnWidth + g_TextInsetsInLine[0],
                                               rect.origin.y,
-                                              date_column_width - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
+                                              m_DateColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
-                NSString *date_str = [NSString stringWithCharacters:date_info length:8];
+                NSString *date_str = FormHumanReadableShortDate(item->mtime);
                 [date_str drawWithRect:date_rect options:options attributes:cur_item_text_attr];
                 
-                rect.size.width -= date_column_width;
-                spec_col_x -= date_column_width;
+                rect.size.width -= m_DateColumnWidth;
+                spec_col_x -= m_DateColumnWidth;
             }
             if(m_State->ViewType == PanelViewType::ViewWide
                || m_State->ViewType == PanelViewType::ViewFull)
             {
                 // draw the entry size on the right
-                NSRect size_rect = NSMakeRect(spec_col_x - size_column_width + g_TextInsetsInLine[0],
+                NSRect size_rect = NSMakeRect(spec_col_x - m_SizeColumWidth + g_TextInsetsInLine[0],
                                               rect.origin.y,
-                                              size_column_width - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
+                                              m_SizeColumWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
-                
-                NSMutableParagraphStyle *pstyle = [[NSMutableParagraphStyle alloc] init];
-                pstyle.alignment = NSRightTextAlignment;
-                pstyle.lineBreakMode = NSLineBreakByClipping;
-                
-                NSColor *color = m_State->Active && item->cf_isselected()
-                ? [NSColor whiteColor] : [NSColor blackColor];
-                NSDictionary *attr = @{NSFontAttributeName: m_Font,
-                                       NSForegroundColorAttributeName: color,
-                                       NSParagraphStyleAttributeName: pstyle};
-                
+
                 UniChar size_info[6];
                 FormHumanReadableSizeReprentationForDirEnt6(item, size_info);
-                NSString *size_str = [NSString stringWithCharacters:size_info length:6];
-                [size_str drawWithRect:size_rect options:options attributes:attr];
+                NSString *size_str = [[NSString alloc] initWithCharactersNoCopy:size_info length:6 freeWhenDone:false];
+                [size_str drawWithRect:size_rect
+                               options:options
+                            attributes:m_State->Active && item->cf_isselected() ? m_ActiveSelectedSizeColumnTextAttr : m_SizeColumnTextAttr];
                 
-                rect.size.width -= size_column_width;
+                rect.size.width -= m_SizeColumWidth;
             }
             
             // Draw item text.
-            [item_name drawWithRect:rect options:options attributes:cur_item_text_attr];
-            
+            [(__bridge NSString *)item->cf_name drawWithRect:rect options:options attributes:cur_item_text_attr];
 
             // Draw icon
             NSImageRep *image_rep = m_IconCache->GetIcon(*item);
@@ -1025,7 +721,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     // Draw column dividers for specific views.
     if (m_State->ViewType == PanelViewType::ViewWide)
     {
-        int x = m_ItemsArea.size.width - size_column_width;
+        int x = m_ItemsArea.size.width - m_SizeColumWidth;
         NSPoint points[2] = {
             NSMakePoint(x + 0.5, start_y),
             NSMakePoint(x + 0.5, start_y + m_ItemsArea.size.height)
@@ -1037,9 +733,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     else if (m_State->ViewType == PanelViewType::ViewFull)
     {
         int x_pos[3];
-        x_pos[0] = m_ItemsArea.size.width - time_column_width;
-        x_pos[1] = x_pos[0] - date_column_width;
-        x_pos[2] = x_pos[1] - size_column_width;
+        x_pos[0] = m_ItemsArea.size.width - m_TimeColumnWidth;
+        x_pos[1] = x_pos[0] - m_DateColumnWidth;
+        x_pos[2] = x_pos[1] - m_SizeColumWidth;
         for (int i = 0; i < 3; ++i)
         {
             int x = x_pos[i];
@@ -1151,5 +847,4 @@ void ModernPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView 
 void ModernPanelViewPresentation::OnDirectoryChanged()
 {
     m_IconCache->OnDirectoryChanged(m_State->Data);
-    m_FirstDraw = true;
 }

@@ -39,7 +39,6 @@
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults removeObserver:self forKeyPath:@"Skin" context:NULL];
-    [defaults removeObserver:self forKeyPath:@"ModernSkinIconMode" context:NULL];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
@@ -51,10 +50,6 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults addObserver:self
                forKeyPath:@"Skin"
-                  options:NSKeyValueObservingOptionNew
-                  context:NULL];
-    [defaults addObserver:self
-               forKeyPath:@"ModernSkinIconMode"
                   options:NSKeyValueObservingOptionNew
                   context:NULL];
 }
@@ -246,14 +241,6 @@
             for (MainWindowController *wincont : m_MainWindows)
             {
                 [wincont ApplySkin:skin];
-            }
-        }
-        else if (self.Skin == ApplicationSkin::Modern &&
-                 [keyPath isEqualToString:@"ModernSkinIconMode"])
-        {
-            for (MainWindowController *wincont : m_MainWindows)
-            {
-                [wincont OnSkinSettingsChanged];
             }
         }
     }

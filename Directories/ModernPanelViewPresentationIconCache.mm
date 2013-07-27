@@ -257,7 +257,6 @@ void ModernPanelViewPresentationIconCache::ClearIcons()
 void ModernPanelViewPresentationIconCache::SetIconSize(int _size)
 {
     if((int)m_IconSize.size.width == _size) return;
-    m_IconSize = NSMakeRect(0, 0, _size, _size);    
-    ClearIcons();
+    m_IconSize = NSMakeRect(0, 0, _size, _size);
     BuildGenericIcons();
 }

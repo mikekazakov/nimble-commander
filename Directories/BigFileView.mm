@@ -15,17 +15,6 @@
 #import "AppDelegate.h"
 #import "NSUserDefaults+myColorSupport.h"
 
-CGColorRef CGColorFromNSColor(NSColor *_c)
-{
-    const NSInteger numberOfComponents = [_c numberOfComponents];
-    CGFloat components[numberOfComponents];
-    CGColorSpaceRef colorSpace = [[_c colorSpace] CGColorSpace];
-    
-    [_c getComponents:(CGFloat *)&components];
-    
-    return CGColorCreate(colorSpace, components);
-}
-
 static NSArray *MyDefaultsKeys()
 {
     return [NSArray arrayWithObjects:@"BigFileViewModernShouldSmoothFonts", @"BigFileViewModernShouldAntialias",
@@ -137,7 +126,7 @@ static NSArray *MyDefaultsKeys()
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
     m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewModernFont"]);
-    m_ForegroundColor = CGColorFromNSColor([defaults colorForKey:@"BigFileViewModernTextColor"]);
+    m_ForegroundColor = [[defaults colorForKey:@"BigFileViewModernTextColor"] SafeCGColorRef];
     m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernSelectionColor"]);
     m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernBackgroundColor"]);
     m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewModernShouldSmoothFonts"];
@@ -148,7 +137,7 @@ static NSArray *MyDefaultsKeys()
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewClassicFont"]);
-    m_ForegroundColor = CGColorFromNSColor([defaults colorForKey:@"BigFileViewClassicTextColor"]);
+    m_ForegroundColor = [[defaults colorForKey:@"BigFileViewClassicTextColor"] SafeCGColorRef];
     m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicSelectionColor"]);
     m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicBackgroundColor"]);
     m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewClassicShouldSmoothFonts"];
@@ -171,7 +160,7 @@ static NSArray *MyDefaultsKeys()
             m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernSelectionColor"]);
         else if([keyPath isEqualToString:@"BigFileViewModernTextColor"]) {
             CFRelease(m_ForegroundColor);
-            m_ForegroundColor = CGColorFromNSColor([defaults colorForKey:@"BigFileViewModernTextColor"]);
+            m_ForegroundColor = [[defaults colorForKey:@"BigFileViewModernTextColor"] SafeCGColorRef];
             [m_ViewImpl OnFontSettingsChanged];
         }
         else if([keyPath isEqualToString:@"BigFileViewModernFont"]) {
@@ -191,7 +180,7 @@ static NSArray *MyDefaultsKeys()
             m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicSelectionColor"]);
         else if([keyPath isEqualToString:@"BigFileViewClassicTextColor"]) {
             CFRelease(m_ForegroundColor);
-            m_ForegroundColor = CGColorFromNSColor([defaults colorForKey:@"BigFileViewClassicTextColor"]);
+            m_ForegroundColor = [[defaults colorForKey:@"BigFileViewClassicTextColor"] SafeCGColorRef];
             [m_ViewImpl OnFontSettingsChanged];
         }
         else if([keyPath isEqualToString:@"BigFileViewClassicFont"]) {

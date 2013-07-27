@@ -9,6 +9,7 @@
 #import "PanelViewPresentation.h"
 
 @class PanelView;
+@class ObjcToCppObservingBridge;
 class ModernPanelViewPresentationIconCache;
 
 class ModernPanelViewPresentation : public PanelViewPresentation
@@ -26,12 +27,13 @@ public:
     int GetNumberOfItemColumns() override;
     int GetMaxItemsPerColumn() override;
     
-    void OnSkinSettingsChanged() override;
-    
     static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
     
 private:
     friend class ModernPanelViewPresentationIconCache;
+    static void OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
+    static void OnAppearanceChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
+    void CalculateLayoutFromFrame();
     
     void OnDirectoryChanged() override;
     void BuildGeometry();
@@ -58,10 +60,23 @@ private:
     NSDictionary *m_ActiveSelectedItemsFooterTextAttr;
     NSDictionary *m_SelectedItemsFooterTextAttr;    
     
+    NSColor     *m_RegularItemTextColor;
+    NSColor     *m_ActiveSelectedItemTextColor;
+    
+    CGColorRef  m_BackgroundColor;
+    CGColorRef  m_RegularOddBackgroundColor;
+    CGColorRef  m_ActiveSelectedItemBackgroundColor;
+    CGColorRef  m_InactiveSelectedItemBackgroundColor;
+    CGColorRef  m_CursorFrameColor;
+    CGColorRef  m_ColumnDividerColor;
+    
     CGGradientRef m_ActiveHeaderGradient;
     NSShadow *m_ActiveHeaderTextShadow;
     CGGradientRef m_InactiveHeaderGradient;
     NSShadow *m_InactiveHeaderTextShadow;
+
+    ObjcToCppObservingBridge *m_GeometryObserver;
+    ObjcToCppObservingBridge *m_AppearanceObserver;
     
     ModernPanelViewPresentationIconCache *m_IconCache;
 };

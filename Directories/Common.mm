@@ -296,8 +296,6 @@ bool IsVolumeContainingPathEjectable(const char *_path)
 }
 
 @implementation NSObject (MassObserving)
-
-
 - (void)addObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys options:(NSKeyValueObservingOptions)options context:(void *)context
 {
     for(NSString *s: keys)
@@ -309,5 +307,17 @@ bool IsVolumeContainingPathEjectable(const char *_path)
     for(NSString *s: keys)
         [self removeObserver:observer forKeyPath:s];
 }
+@end
 
+@implementation NSColor (MyAdditions)
+- (CGColorRef) SafeCGColorRef
+{
+    const NSInteger numberOfComponents = [self numberOfComponents];
+    CGFloat components[numberOfComponents];
+    CGColorSpaceRef colorSpace = [[self colorSpace] CGColorSpace];
+        
+    [self getComponents:(CGFloat *)&components];
+        
+    return CGColorCreate(colorSpace, components);
+}
 @end

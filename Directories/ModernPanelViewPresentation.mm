@@ -14,6 +14,7 @@
 #import "Common.h"
 #import "NSUserDefaults+myColorSupport.h"
 #import "FontExtras.h"
+#import "ObjcToCppObservingBridge.h"
 
 #import <deque>
 #import <pthread.h>
@@ -192,17 +193,20 @@ const int g_TextInsetsInLine[4] = {7, 0, 5, 1}; // TODO: remove this black magic
 // Width of the divider between views.
 const int g_DividerWidth = 3;
 
-ModernPanelViewPresentation::ModernPanelViewPresentation()
+ModernPanelViewPresentation::ModernPanelViewPresentation():
+    m_IconCache(0),
+    m_BackgroundColor(0),
+    m_RegularOddBackgroundColor(0),
+    m_ActiveSelectedItemBackgroundColor(0),
+    m_InactiveSelectedItemBackgroundColor(0),
+    m_CursorFrameColor(0),
+    m_ColumnDividerColor(0)
 {
     m_Size.width = m_Size.height = 0;
  
     BuildGeometry();
     BuildAppearance();
-    
-    // build icon cache regarding current font size (icon size equals font height)
-    m_IconCache = new ModernPanelViewPresentationIconCache(this, m_FontHeight);
-    m_IconCache->SetIconMode((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"ModernSkinIconMode"]);
-    
+        
     // Init active header and footer gradient.
     {
         CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
@@ -236,12 +240,34 @@ ModernPanelViewPresentation::ModernPanelViewPresentation()
         m_InactiveHeaderGradient = CGGradientCreateWithColorComponents(color_space, components, locations, 4);
         CGColorSpaceRelease(color_space);
     }
+
+    m_GeometryObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnGeometryChanged object:this];
+    [m_GeometryObserver observeChangesInObject:[NSUserDefaults standardUserDefaults] forKeyPath:@"FilePanelsModernFont" options:0 context:0];
+    
+    m_AppearanceObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnAppearanceChanged object:this];
+    [m_AppearanceObserver observeChangesInObject:[NSUserDefaults standardUserDefaults]
+                                     forKeyPaths:[NSArray arrayWithObjects:@"FilePanelsModernRegularTextColor",
+                                                  @"FilePanelsModernActiveSelectedTextColor",
+                                                  @"FilePanelsModernBackgroundColor",
+                                                  @"FilePanelsModernAlternativeBackgroundColor",
+                                                  @"FilePanelsModernActiveSelectedBackgroundColor",
+                                                  @"FilePanelsModernInactiveSelectedBackgroundColor",
+                                                  @"FilePanelsModernCursorFrameColor",
+                                                  @"FilePanelsModernIconsMode", nil]
+                                         options:0
+                                         context:0];
 }
 
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
 {
     CGGradientRelease(m_ActiveHeaderGradient);
     CGGradientRelease(m_InactiveHeaderGradient);
+    CGColorRelease(m_BackgroundColor);
+    CGColorRelease(m_RegularOddBackgroundColor);
+    CGColorRelease(m_ActiveSelectedItemBackgroundColor);
+    CGColorRelease(m_InactiveSelectedItemBackgroundColor);
+    CGColorRelease(m_CursorFrameColor);
+    CGColorRelease(m_ColumnDividerColor);
     
     assert(m_IconCache);
     delete m_IconCache;
@@ -260,6 +286,12 @@ void ModernPanelViewPresentation::BuildGeometry()
     m_FontHeight = int(GetLineHeightForFont((__bridge CTFontRef)m_Font));
     m_LineHeight = m_FontHeight + 2; // was 18 before (16 + 2)
     
+    // build icon cache regarding current font size (icon size equals font height)
+    if(!m_IconCache)
+        m_IconCache = new ModernPanelViewPresentationIconCache(this, m_FontHeight);
+    else
+        m_IconCache->SetIconSize(m_FontHeight);
+
     NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];
     
     m_SizeColumWidth = (int)ceil([@"999999" sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
@@ -273,6 +305,32 @@ void ModernPanelViewPresentation::BuildGeometry()
 
 void ModernPanelViewPresentation::BuildAppearance()
 {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    // Icon mode
+    m_IconCache->SetIconMode((int)[defaults integerForKey:@"FilePanelsModernIconsMode"]);
+    
+    // Colors
+    m_RegularItemTextColor = [defaults colorForKey:@"FilePanelsModernRegularTextColor"];
+    m_ActiveSelectedItemTextColor = [defaults colorForKey:@"FilePanelsModernActiveSelectedTextColor"];
+
+    if(m_BackgroundColor) CGColorRelease(m_BackgroundColor);
+    m_BackgroundColor = [[defaults colorForKey:@"FilePanelsModernBackgroundColor"] SafeCGColorRef];
+
+    if(m_RegularOddBackgroundColor) CGColorRelease(m_RegularOddBackgroundColor);
+    m_RegularOddBackgroundColor = [[defaults colorForKey:@"FilePanelsModernAlternativeBackgroundColor"] SafeCGColorRef];
+    
+    if(m_ActiveSelectedItemBackgroundColor) CGColorRelease(m_ActiveSelectedItemBackgroundColor);
+    m_ActiveSelectedItemBackgroundColor = [[defaults colorForKey:@"FilePanelsModernActiveSelectedBackgroundColor"] SafeCGColorRef];
+    
+    if(m_InactiveSelectedItemBackgroundColor) CGColorRelease(m_InactiveSelectedItemBackgroundColor);
+    m_InactiveSelectedItemBackgroundColor = [[defaults colorForKey:@"FilePanelsModernInactiveSelectedBackgroundColor"] SafeCGColorRef];
+    
+    if(m_CursorFrameColor) CGColorRelease(m_CursorFrameColor);
+    m_CursorFrameColor = [[defaults colorForKey:@"FilePanelsModernCursorFrameColor"] SafeCGColorRef];
+    
+    m_ColumnDividerColor = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0); // hard-coded for now
+
     // Active header and footer text shadow.
     m_ActiveHeaderTextShadow = [NSShadow new];
     m_ActiveHeaderTextShadow.shadowBlurRadius = 1;
@@ -280,7 +338,7 @@ void ModernPanelViewPresentation::BuildAppearance()
     m_ActiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);
     
     // Inactive header and footer text shadow.
-    m_InactiveHeaderTextShadow = [[NSShadow alloc] init];
+    m_InactiveHeaderTextShadow = [NSShadow new];
     m_InactiveHeaderTextShadow.shadowBlurRadius = 1;
     m_InactiveHeaderTextShadow.shadowColor = [NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:0.9];
     m_InactiveHeaderTextShadow.shadowOffset = NSMakeSize(0, -1);    
@@ -292,14 +350,14 @@ void ModernPanelViewPresentation::BuildAppearance()
     m_ActiveSelectedItemTextAttr =
     @{
       NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: [NSColor whiteColor], // TODO: color selection
+      NSForegroundColorAttributeName: m_ActiveSelectedItemTextColor,
       NSParagraphStyleAttributeName: item_text_pstyle
       };
     
     m_ItemTextAttr =
     @{
       NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: [NSColor blackColor], // TODO: color selection
+      NSForegroundColorAttributeName: m_RegularItemTextColor,
       NSParagraphStyleAttributeName: item_text_pstyle
       };
     
@@ -309,13 +367,13 @@ void ModernPanelViewPresentation::BuildAppearance()
     
     m_ActiveSelectedSizeColumnTextAttr =
     @{NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: [NSColor whiteColor],
+      NSForegroundColorAttributeName: m_ActiveSelectedItemTextColor,
       NSParagraphStyleAttributeName: size_col_text_pstyle
       };
 
     m_SizeColumnTextAttr =
     @{NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: [NSColor blackColor],
+      NSForegroundColorAttributeName: m_RegularItemTextColor,
       NSParagraphStyleAttributeName: size_col_text_pstyle
       };
     
@@ -332,6 +390,25 @@ void ModernPanelViewPresentation::BuildAppearance()
                                       NSShadowAttributeName: m_ActiveHeaderTextShadow};
 }
 
+void ModernPanelViewPresentation::OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context)
+{
+    ModernPanelViewPresentation *_this = (ModernPanelViewPresentation *)_obj;
+    _this->BuildGeometry();
+    _this->CalculateLayoutFromFrame();
+    _this->m_State->Data->CustomIconClearAll();    
+    _this->BuildAppearance();
+    _this->SetViewNeedsDisplay();
+}
+
+void ModernPanelViewPresentation::OnAppearanceChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context)
+{
+    ModernPanelViewPresentation *_this = (ModernPanelViewPresentation *)_obj;
+    _this->BuildAppearance();
+    if([_key_path isEqualToString:@"FilePanelsModernIconsMode"])
+        _this->m_State->Data->CustomIconClearAll();
+    _this->SetViewNeedsDisplay();
+}
+
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 {
     if (!m_State || !m_State->Data) return;
@@ -343,7 +420,6 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     const int items_per_column = GetMaxItemsPerColumn();
     const int max_items = (int)sorted_entries.size();
     const int columns_count = GetNumberOfItemColumns();
-    
     
     ///////////////////////////////////////////////////////////////////////////////
     // Prepare icons for
@@ -367,7 +443,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     ///////////////////////////////////////////////////////////////////////////////
     // Clear view background.
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextSetRGBFillColor(context, 1, 1, 1, 1);
+    CGContextSetFillColorWithColor(context, m_BackgroundColor);
     CGContextFillRect(context, NSRectToCGRect(_dirty_rect));
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -379,23 +455,15 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     if (m_IsLeft)
     {
         float x = m_ItemsArea.origin.x + m_ItemsArea.size.width;
-        NSPoint view_divider[2] = {
-            NSMakePoint(x + 0.5, 0), NSMakePoint(x + 0.5, m_Size.height)
-        };
+        NSPoint view_divider[2] = { {x + 0.5, 0}, {x + 0.5, m_Size.height} };
         CGContextStrokeLineSegments(context, view_divider, 2);
-        
-        
         CGContextSetFillColorWithColor(context, divider_fill_color);
         CGContextFillRect(context, NSMakeRect(x + 1, 0, g_DividerWidth - 1, m_Size.height));
     }
     else
     {
-        NSPoint view_divider[2] = {
-            NSMakePoint(g_DividerWidth - 0.5, 0), NSMakePoint(g_DividerWidth - 0.5, m_Size.height)
-        };
+        NSPoint view_divider[2] = { {g_DividerWidth - 0.5, 0}, {g_DividerWidth - 0.5, m_Size.height} };
         CGContextStrokeLineSegments(context, view_divider, 2);
-        
-        
         CGContextSetFillColorWithColor(context, divider_fill_color);
         CGContextFillRect(context, NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
     }
@@ -403,17 +471,13 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     // If current panel is on the right, then translate all rendering by the divider's width.
     if (!m_IsLeft) CGContextTranslateCTM(context, g_DividerWidth, 0);
     
-    
     ///////////////////////////////////////////////////////////////////////////////
     // Header and footer.
-    CGColorRef header_stroke_color = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
+    static CGColorRef header_stroke_color = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
     int header_height = m_ItemsArea.origin.y;
     
-    NSShadow *header_text_shadow = m_ActiveHeaderTextShadow;
-    if (!m_State->Active) header_text_shadow = m_InactiveHeaderTextShadow;
-    
-    CGGradientRef header_gradient = m_ActiveHeaderGradient;
-    if (!m_State->Active) header_gradient = m_InactiveHeaderGradient;
+    NSShadow *header_text_shadow = m_State->Active ? m_ActiveHeaderTextShadow : m_InactiveHeaderTextShadow;
+    CGGradientRef header_gradient = m_State->Active ? m_ActiveHeaderGradient : m_InactiveHeaderGradient;
     
     // Header gradient.
     CGContextSaveGState(context);
@@ -427,9 +491,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     // Header line separator.
     CGContextSetStrokeColorWithColor(context, header_stroke_color);
-    NSPoint header_points[2] = {
-        NSMakePoint(0, header_height - 0.5), NSMakePoint(m_ItemsArea.size.width, header_height - 0.5)
-    };
+    NSPoint header_points[2] = { {0, header_height - 0.5}, {m_ItemsArea.size.width, header_height - 0.5} };
     CGContextStrokeLineSegments(context, header_points, 2);
     
     // Panel path.
@@ -470,9 +532,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     // Footer line separator.
     CGContextSetStrokeColorWithColor(context, header_stroke_color);
-    NSPoint footer_points[2] = {
-        NSMakePoint(0, footer_y + 0.5), NSMakePoint(m_ItemsArea.size.width, footer_y + 0.5)
-    };
+    NSPoint footer_points[2] = { {0, footer_y + 0.5}, {m_ItemsArea.size.width, footer_y + 0.5} };
     CGContextStrokeLineSegments(context, footer_points, 2);
     
     // Footer string.
@@ -554,18 +614,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         [name_str drawWithRect:NSMakeRect(offset, footer_y + delta, name_width, m_LineHeight) options:options attributes:footer_text_attr];
     }
     
-    CGColorRelease(header_stroke_color);
-    
-    
     ///////////////////////////////////////////////////////////////////////////////
-    // Draw items in columns.    
-    CGColorRef active_selected_item_back = CGColorCreateGenericRGB(43/255.0, 116/255.0, 211/255.0, 1.0);
-    CGColorRef inactive_selected_item_back = CGColorCreateGenericRGB(212/255.0, 212/255.0, 212/255.0, 1.0);
-    CGColorRef active_cursor_item_back = CGColorCreateGenericRGB(130/255.0, 196/255.0, 240/255.0, 1.0);
-    CGColorRef column_divider_color = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0);
-    CGColorRef cursor_frame_color = CGColorCreateGenericRGB(0, 0, 0, 1);
-    CGColorRef item_back = CGColorCreateGenericRGB(240/255.0, 245/255.0, 250/255.0, 1);
-    
+    // Draw items in columns.        
     const int icon_size = m_FontHeight;
     const int start_y = m_ItemsArea.origin.y;
         
@@ -588,7 +638,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 NSMakePoint(start_x + 0.5 + column_width, start_y),
                 NSMakePoint(start_x + 0.5 + column_width, start_y + m_ItemsArea.size.height)
             };
-            CGContextSetStrokeColorWithColor(context, column_divider_color);
+            CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor);
             CGContextSetLineWidth(context, 1);
             CGContextStrokeLineSegments(context, points, 2);
         }
@@ -612,19 +662,14 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             
             NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
             
-            NSDictionary *cur_item_text_attr = m_ItemTextAttr;
-            if (m_State->Active && item && item->cf_isselected())
-                cur_item_text_attr = m_ActiveSelectedItemTextAttr;
-            
             // Draw background.
             if (item && item->cf_isselected())
             {
                 // Draw selected item.
                 if (m_State->Active)
                 {
-                    int offset = 1;
-                    if (m_State->CursorPos == i && m_State->Active) offset = 2;
-                    CGContextSetFillColorWithColor(context, active_selected_item_back);
+                    int offset = (m_State->CursorPos == i) ? 2 : 1;
+                    CGContextSetFillColorWithColor(context, m_ActiveSelectedItemBackgroundColor);
                     CGContextFillRect(context, NSMakeRect(start_x + offset,
                                                           start_y + count*m_LineHeight + offset,
                                                           column_width - 2*offset,
@@ -632,7 +677,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 }
                 else
                 {
-                    CGContextSetFillColorWithColor(context, inactive_selected_item_back);
+                    CGContextSetFillColorWithColor(context, m_InactiveSelectedItemBackgroundColor);
                     CGContextFillRect(context, NSMakeRect(start_x + 1,
                                                           start_y + count*m_LineHeight + 1,
                                                           column_width - 2, m_LineHeight - 1));
@@ -640,7 +685,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             }
             else if (count % 2 == 1)
             {
-                CGContextSetFillColorWithColor(context, item_back);
+                CGContextSetFillColorWithColor(context, m_RegularOddBackgroundColor);
                 CGContextFillRect(context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1,
                                                       column_width - 2, m_LineHeight - 1));
             }
@@ -654,7 +699,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 CGContextSaveGState(context);
                 CGFloat dashes[2] = { 2, 4 };
                 CGContextSetLineDash(context, 0, dashes, 2);
-                CGContextSetStrokeColorWithColor(context, cursor_frame_color);
+                CGContextSetStrokeColorWithColor(context, m_CursorFrameColor);
                 CGContextStrokeRect(context, NSMakeRect(start_x + 1.5,
                                                         start_y + count*m_LineHeight + 1.5,
                                                         column_width - 3, m_LineHeight - 2));
@@ -662,6 +707,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             }
             
             // Draw stats columns for specific views.
+            NSDictionary *item_text_attr = (m_State->Active && item->cf_isselected()) ? m_ActiveSelectedItemTextAttr : m_ItemTextAttr;            
             int spec_col_x = m_ItemsArea.size.width;
             if (m_State->ViewType == PanelViewType::ViewFull)
             {
@@ -671,7 +717,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               rect.size.height);
                 
                 NSString *time_str = FormHumanReadableShortTime(item->mtime);
-                [time_str drawWithRect:time_rect options:options attributes:cur_item_text_attr];
+                [time_str drawWithRect:time_rect options:options attributes:item_text_attr];
                 
                 rect.size.width -= m_TimeColumnWidth;
                 spec_col_x -= m_TimeColumnWidth;
@@ -681,7 +727,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_DateColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 NSString *date_str = FormHumanReadableShortDate(item->mtime);
-                [date_str drawWithRect:date_rect options:options attributes:cur_item_text_attr];
+                [date_str drawWithRect:date_rect options:options attributes:item_text_attr];
                 
                 rect.size.width -= m_DateColumnWidth;
                 spec_col_x -= m_DateColumnWidth;
@@ -706,7 +752,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             }
             
             // Draw item text.
-            [(__bridge NSString *)item->cf_name drawWithRect:rect options:options attributes:cur_item_text_attr];
+            [(__bridge NSString *)item->cf_name drawWithRect:rect options:options attributes:item_text_attr];
 
             // Draw icon
             NSImageRep *image_rep = m_IconCache->GetIcon(*item);
@@ -726,7 +772,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             NSMakePoint(x + 0.5, start_y),
             NSMakePoint(x + 0.5, start_y + m_ItemsArea.size.height)
         };
-        CGContextSetStrokeColorWithColor(context, column_divider_color);
+        CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor);
         CGContextSetLineWidth(context, 1);
         CGContextStrokeLineSegments(context, points, 2);
     }
@@ -743,26 +789,22 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 NSMakePoint(x + 0.5, start_y),
                 NSMakePoint(x + 0.5, start_y + m_ItemsArea.size.height)
             };
-            CGContextSetStrokeColorWithColor(context, column_divider_color);
+            CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor);
             CGContextSetLineWidth(context, 1);
             CGContextStrokeLineSegments(context, points, 2);
         }
     }
-    
-    CGColorRelease(active_selected_item_back);
-    CGColorRelease(inactive_selected_item_back);
-    CGColorRelease(active_cursor_item_back);
-    CGColorRelease(column_divider_color);
-    CGColorRelease(cursor_frame_color);
-    CGColorRelease(item_back);
 }
 
 void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
 {
     m_Size = _frame.size;
-    
     m_IsLeft = _frame.origin.x < 50;
+    CalculateLayoutFromFrame();
+}
 
+void ModernPanelViewPresentation::CalculateLayoutFromFrame()
+{
     // Header and footer have the same height.
     const int header_height = m_LineHeight + 1;
     
@@ -827,17 +869,6 @@ int ModernPanelViewPresentation::GetNumberOfItemColumns()
 int ModernPanelViewPresentation::GetMaxItemsPerColumn()
 {
     return m_ItemsPerColumn;
-}
-
-void ModernPanelViewPresentation::OnSkinSettingsChanged()
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    int icon_mode = (int)[defaults integerForKey:@"ModernSkinIconMode"];
-    m_IconCache->SetIconMode(icon_mode);
-    
-    m_State->Data->CustomIconClearAll();
-    
-    SetViewNeedsDisplay();
 }
 
 void ModernPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size)

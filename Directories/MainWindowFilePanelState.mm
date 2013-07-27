@@ -1002,12 +1002,6 @@ enum ActiveState
         [[self ActivePanelView] UpdateQuickPreview];
 }
 
-- (void)SkinSettingsChanged
-{
-    [m_LeftPanelView OnSkinSettingsChanged];
-    [m_RightPanelView OnSkinSettingsChanged];
-}
-
 - (void)WindowDidResize
 {
     [self UpdatePanelFrames];

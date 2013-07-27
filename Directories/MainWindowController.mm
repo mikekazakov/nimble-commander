@@ -84,12 +84,6 @@
             [i ApplySkin:_skin];
 }
 
-- (void)OnSkinSettingsChanged {
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(SkinSettingsChanged)])
-            [i SkinSettingsChanged];
-}
-
 - (BOOL)windowShouldClose:(id)sender {
     for(auto i = m_WindowState.rbegin(), e = m_WindowState.rend(); i != e; ++i)
         if([*i respondsToSelector:@selector(WindowShouldClose:)])

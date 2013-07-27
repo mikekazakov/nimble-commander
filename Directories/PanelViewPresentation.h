@@ -47,8 +47,6 @@ public:
     virtual int GetMaxItemsPerColumn() = 0;
     int GetMaxVisibleItems();
     
-    virtual void OnSkinSettingsChanged() {}
-    
 protected:
     void SetViewNeedsDisplay();
     

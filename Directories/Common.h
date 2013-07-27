@@ -95,4 +95,6 @@ struct MachTimeBenchmark
 @end
 
 
-
+@interface NSColor (MyAdditions)
+- (CGColorRef) SafeCGColorRef;
+@end

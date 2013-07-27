@@ -86,6 +86,7 @@
 		CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */; };
 		CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
+		CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
 		CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */; };
@@ -256,6 +257,8 @@
 		CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJob.mm; sourceTree = "<group>"; };
 		CFAC50D21714027F00A3E5C5 /* FileCopyOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJob.h; sourceTree = "<group>"; };
 		CFB060DC172E6AC4001F6949 /* Common.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Common.mm; sourceTree = "<group>"; };
+		CFB190D717A3B1FA005B8B15 /* ObjcToCppObservingBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcToCppObservingBridge.h; sourceTree = "<group>"; };
+		CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
 		CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
 		CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
 		CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
@@ -616,6 +619,8 @@
 				CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */,
 				CF07DE3D1769754400757DE1 /* SearchInFile.mm */,
 				CF07DE3E1769754400757DE1 /* SearchInFile.h */,
+				CFB190D717A3B1FA005B8B15 /* ObjcToCppObservingBridge.h */,
+				CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -908,6 +913,7 @@
 				CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */,
 				CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */,
 				CF1FBB58179D237E00FE639F /* ModernPanelViewPresentationIconCache.mm in Sources */,
+				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

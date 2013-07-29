@@ -66,8 +66,9 @@ int FileWindow::OpenFile(const char *_path, int _window_size)
     int newfd = open(_path, O_RDONLY);
     if(newfd == -1)
     {
-        assert(0); // TODO: handle this situation later
-        exit(0);
+//        assert(0); // TODO: handle this situation later
+//        exit(0);
+        return ERROR_FILENOACCESS;
     }
     
     m_FD = newfd;

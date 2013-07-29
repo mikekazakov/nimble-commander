@@ -69,11 +69,14 @@
             [i WindowWillClose];
 
     [[self window] setContentView:nil];
+    [[self window] makeFirstResponder:nil];
+    
     while(!m_WindowState.empty())
     {
         [m_WindowState.back() Resigned];
         m_WindowState.pop_back();
     }
+    m_BaseWindowState = nil;
     
     [(AppDelegate*)[NSApp delegate] RemoveMainWindow:self];
 }

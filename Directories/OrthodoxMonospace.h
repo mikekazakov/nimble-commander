@@ -10,7 +10,8 @@
 
 #import <Cocoa/Cocoa.h>
 #include <assert.h>
-#include "FontCache.h"
+
+class FontCache;
 
 struct DoubleColor
 {
@@ -24,7 +25,7 @@ struct DoubleColor
     {
         [[_c colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]] getRed:&r green:&g blue:&b alpha:&a];
     }
-    void Set(CGContextRef _context){
+    void Set(CGContextRef _context) const {
         CGContextSetRGBFillColor(_context, r, g, b, a);
     };
 };
@@ -53,8 +54,8 @@ struct unichars_draw_batch
     
 // graphic configuration
 void SetFillColor(CGContextRef _cont, const DoubleColor &_color);
-void SetParamsForUserReadableText(CGContextRef _context, CGFontRef _cgfont, CTFontRef _ctfont);
-void SetParamsForUserASCIIArt(CGContextRef _context, CGFontRef _cgfont, CTFontRef _ctfont);
+void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache);
+void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache);
     
 // drawing routines
 void DrawSingleUniChar(UniChar _s, double _x, double _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);

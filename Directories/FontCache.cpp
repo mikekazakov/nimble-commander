@@ -3,65 +3,96 @@
 #include <memory.h>
 #include <assert.h>
 #include <wchar.h>
+#include <math.h>
+#include <list>
+#include "FontExtras.h"
 
-static FontCacheManager *g_Inst = 0;
+static std::list<FontCache*> g_Caches;
 
-FontCacheManager* FontCacheManager::Instance()
+FontCache *FontCache::FontCacheFromFont(CTFontRef _basic_font)
 {
-    if(!g_Inst) g_Inst = new FontCacheManager(); // never deleting object;
-    return g_Inst;
-}
+    CFStringRef full_name = CTFontCopyFullName(_basic_font);
+    double font_size = CTFontGetSize(_basic_font);
+    for(auto &i:g_Caches)
+        if(!CFStringCompare(i->m_FontName, full_name, 0) && fabs(i->m_FontSize-font_size) < 0.1)
+        {
+            // just return already created font cache
+            CFRelease(full_name);
+            i->m_RefCount++;
+            return i;
+        }
 
-FontCacheManager::FontCacheManager():
-    m_FontCache(0)
-{
-}
-
-void FontCacheManager::CreateFontCache(CFStringRef _font_name)
-{
-    auto fontct = CTFontCreateWithName(_font_name, 10, 0);
-    assert(m_FontCache == 0);
-    m_FontCache = new FontCache(fontct);    
-}
-
-FontCache* FontCacheManager::Get()
-{
-    assert(m_FontCache != 0);
-    return m_FontCache;
+    g_Caches.push_back(new FontCache(_basic_font));
+    return g_Caches.back();
 }
 
 FontCache::FontCache(CTFontRef _basic_font):
-    ctbasefont(_basic_font)
+    m_RefCount(1)
 {
-    memset(&cache, 0, sizeof(cache));
-    memset(&ctfallbacks, 0, sizeof(ctfallbacks));
-    memset(&cgfallbacks, 0, sizeof(cgfallbacks));
+    memset(&m_Cache, 0, sizeof(m_Cache));
+    memset(&m_CTFonts, 0, sizeof(m_CTFonts));
+    memset(&m_CGFonts, 0, sizeof(m_CGFonts));
     
-    cgfallbacks[0] = CTFontCopyGraphicsFont(_basic_font, 0);
-    cgbasefont = cgfallbacks[0];
-    cache[0].searched = 1;
+    m_FontHeight = GetLineHeightForFont(_basic_font, &m_FontAscent, &m_FontDescent, &m_FontLeading);
+    m_FontWidth  = GetMonospaceFontCharWidth(_basic_font);
+    m_FontName = CTFontCopyFullName(_basic_font);
+    m_FontSize = CTFontGetSize(_basic_font);
+    
+    CFRetain(_basic_font);    
+    m_CTFonts[0] = _basic_font;
+    m_CGFonts[0] = CTFontCopyGraphicsFont(_basic_font, 0);
+    m_Cache[0].searched = 1;
+}
+
+FontCache::~FontCache()
+{
+    CFRelease(m_FontName);
+    
+    for(auto i:m_CTFonts)
+        if(i!=0)
+            CFRelease(i);
+    for(auto i:m_CGFonts)
+        if(i!=0)
+            CGFontRelease(i);            
+}
+
+void FontCache::ReleaseCache(FontCache *_cache)
+{
+    assert(_cache->m_RefCount > 0);
+    --_cache->m_RefCount;
+    if(_cache->m_RefCount == 0)
+    {
+        auto i = g_Caches.begin(), e = g_Caches.end();
+        for(;i!=e;++i)
+            if(*i == _cache)
+            {
+                g_Caches.erase(i);
+                delete _cache;
+                return;
+            }
+    }
 }
 
 FontCache::Pair FontCache::Get(UniChar _c)
 {
-    if(cache[_c].searched)
-        return cache[_c];
+    if(m_Cache[_c].searched)
+        return m_Cache[_c];
     
     // unknown unichar - ask system about it
     
     CGGlyph g;
-    bool r = CTFontGetGlyphsForCharacters(ctbasefont, &_c, &g, 1);
+    bool r = CTFontGetGlyphsForCharacters(m_CTFonts[0], &_c, &g, 1);
     if(r)
     {
-        cache[_c].searched = 1;
-        cache[_c].glyph = g;
-        return cache[_c];
+        m_Cache[_c].searched = 1;
+        m_Cache[_c].glyph = g;
+        return m_Cache[_c];
     }
     else
     {
         // need to look up for fallback font
-        CFStringRef str = CFStringCreateWithCharacters(0, &_c, 1);
-        CTFontRef   ctfont = CTFontCreateForString(ctbasefont, str, CFRangeMake(0, 1));
+        CFStringRef str = CFStringCreateWithCharactersNoCopy(0, &_c, 1, kCFAllocatorNull);
+        CTFontRef   ctfont = CTFontCreateForString(m_CTFonts[0], str, CFRangeMake(0, 1));
         CFRelease(str);
      
         if(ctfont != 0)
@@ -72,27 +103,27 @@ FontCache::Pair FontCache::Get(UniChar _c)
                 // check if this font is new one, or we already have this one in dictiorany
                 for(int i = 1; i < 256; ++i)
                 {
-                    if( ctfallbacks[i] != 0 )
+                    if( m_CTFonts[i] != 0 )
                     {
-                        if( CFEqual(ctfallbacks[i], ctfont) )
+                        if( CFEqual(m_CTFonts[i], ctfont) )
                         { // this is just the exactly one we need
                             CFRelease(ctfont);
-                            cache[_c].font = i;
-                            cache[_c].searched = 1;
-                            cache[_c].glyph = g;
-                            return cache[_c];
+                            m_Cache[_c].font = i;
+                            m_Cache[_c].searched = 1;
+                            m_Cache[_c].glyph = g;
+                            return m_Cache[_c];
                         }
                     }
                     else
                     {
                         // a new one
-                        ctfallbacks[i] = ctfont;
-                        cgfallbacks[i] = CTFontCopyGraphicsFont(ctfont, 0);
+                        m_CTFonts[i] = ctfont;
+                        m_CGFonts[i] = CTFontCopyGraphicsFont(ctfont, 0);
                         
-                        cache[_c].font = i;
-                        cache[_c].searched = 1;
-                        cache[_c].glyph = g;
-                        return cache[_c];
+                        m_Cache[_c].font = i;
+                        m_Cache[_c].searched = 1;
+                        m_Cache[_c].glyph = g;
+                        return m_Cache[_c];
                     }
                 }
                 assert(0); // assume this will never overflow - we should never came here
@@ -101,14 +132,14 @@ FontCache::Pair FontCache::Get(UniChar _c)
             else
             { // something is very-very bad in the system - let this unichar be a null
                 CFRelease(ctfont);
-                cache[_c].searched = 1;
-                return cache[_c];
+                m_Cache[_c].searched = 1;
+                return m_Cache[_c];
             }
         }
         else
         { // no luck
-            cache[_c].searched = 1;
-            return cache[_c];
+            m_Cache[_c].searched = 1;
+            return m_Cache[_c];
         }
     }
     

@@ -44,7 +44,6 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     // modules initialization
-    FontCacheManager::Instance()->CreateFontCache((CFStringRef)@"Menlo Regular");
     FSEventsDirUpdate::RunDiskArbitration();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

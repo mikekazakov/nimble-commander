@@ -7,13 +7,18 @@
 //
 
 #import "PanelViewPresentation.h"
+#import "OrthodoxMonospace.h"
 
+class FontCache;
 @class PanelView;
+struct DirectoryEntryInformation;
+@class ObjcToCppObservingBridge;
 
 class ClassicPanelViewPresentation : public PanelViewPresentation
 {
 public:
     ClassicPanelViewPresentation();
+    ~ClassicPanelViewPresentation();
     
     void Draw(NSRect _dirty_rect) override;
     void OnFrameChanged(NSRect _frame) override;
@@ -27,13 +32,25 @@ public:
     static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
     
 private:
+    void BuildGeometry();
+    void BuildAppearance();
+    static void OnAppearanceChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
+    static void OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
     void DrawWithShortMediumWideView(CGContextRef _context);
     void DrawWithFullView(CGContextRef _context);
+    const DoubleColor& GetDirectoryEntryTextColor(const DirectoryEntryInformation &_dirent, bool _is_focused);
     
-    
-    
-    int m_SymbWidth;
-    int m_SymbHeight;
-    CTFontRef       m_FontCT;
-    CGFontRef       m_FontCG;
+    NSSize          m_FrameSize;
+    int             m_SymbWidth;
+    int             m_SymbHeight;
+    FontCache      *m_FontCache;
+    DoubleColor     m_BackgroundColor;
+    DoubleColor     m_CursorBackgroundColor;
+    DoubleColor     m_RegularFileColor[2];
+    DoubleColor     m_DirectoryColor[2];
+    DoubleColor     m_HiddenColor[2];
+    DoubleColor     m_SelectedColor[2];
+    DoubleColor     m_OtherColor[2];
+    ObjcToCppObservingBridge *m_GeometryObserver;
+    ObjcToCppObservingBridge *m_AppearanceObserver;    
 };

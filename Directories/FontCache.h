@@ -3,8 +3,6 @@
 #include <CoreText/CTFont.h>
 #include <CoreGraphics/CGFont.h>
 
-class FontCacheManager;
-
 class FontCache
 {
 public:
@@ -17,34 +15,40 @@ public:
         CGGlyph       glyph;
     }; // 4bytes total
 
-    Pair           cache[65536];
-    CTFontRef      ctbasefont;
-    CGFontRef      cgbasefont;
-    CTFontRef      ctfallbacks[256]; // will anybody need more than 256 fallback fonts?
-                                     // fallbacks start from [1]. [0] is basefont
-    CGFontRef      cgfallbacks[256]; // -""-. owned by FontCache
+    inline CTFontRef BaseCTFont() const {return m_CTFonts[0];}
+    inline CGFontRef BaseCGFont() const {return m_CGFonts[0];}
+    inline CGFontRef *CGFonts() const {return (CGFontRef *)m_CGFonts;}
+    inline CTFontRef *CTFonts() const {return (CTFontRef *)m_CTFonts;}
+    inline double Size()    const {return m_FontSize;}
+    inline double Height()  const {return m_FontHeight;}
+    inline double Width()   const {return m_FontWidth;}
+    inline double Ascent()  const {return m_FontAscent;}
+    inline double Descent() const {return m_FontDescent;}
+    inline double Leading() const {return m_FontLeading;}
     
     Pair    Get(UniChar _c);
+    
+    static FontCache *FontCacheFromFont(CTFontRef _basic_font);
+    static void ReleaseCache(FontCache *_cache);
 private:
-    friend class FontCacheManager;
+    CTFontRef   m_CTFonts[256]; // will anybody need more than 256 fallback fonts?
+                                // fallbacks start from [1]. [0] is basefont
+    CGFontRef   m_CGFonts[256]; // -""-. owned by FontCache
+    
+    Pair        m_Cache[65536];
+    
+    int         m_RefCount;
+    CFStringRef m_FontName;
+    double      m_FontSize;
+    double      m_FontHeight;
+    double      m_FontWidth;
+    double      m_FontAscent;
+    double      m_FontDescent;
+    double      m_FontLeading;
+    
     FontCache(CTFontRef _basic_font);
     FontCache(const FontCache&); // forbid
-};
-
-class FontCacheManager
-{
-public:
-    static FontCacheManager* Instance();
-    
-    void CreateFontCache(CFStringRef _font_name); // should be called once by The Application class
-    FontCache* Get();
-    
-    // here will be functions to change font name etc. later.
-    
-private:
-    FontCacheManager();
-    FontCacheManager(const FontCacheManager&); // forbid
-    FontCache *m_FontCache;
+    ~FontCache();
 };
 
 extern unsigned char g_WCWidthTableFixedMin1[65536];

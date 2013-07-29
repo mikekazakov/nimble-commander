@@ -12,5 +12,6 @@
 
 @interface PreferencesWindowPanelsTab : NSViewController <RHPreferencesViewControllerProtocol>
 - (IBAction)OnSetModernFont:(id)sender;
+- (IBAction)OnSetClassicFont:(id)sender;
 
 @end

@@ -12,27 +12,14 @@
 #import "Encodings.h"
 #import "PanelView.h"
 #import "PanelData.h"
+#import "FontExtras.h"
+#import "FontCache.h"
+#import "NSUserDefaults+myColorSupport.h"
+#import "ObjcToCppObservingBridge.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions and constants.
 /////////////////////////////////////////////////////////////////////////////////////////
-#define FONTSIZE 15.0f
-#define FONTWIDTH 9
-#define FONTHEIGHT 20
-
-static const DoubleColor g_RegFileColor(0, 1, 1, 1);
-static const DoubleColor g_DirFileColor(1, 1, 1, 1);
-static const DoubleColor g_HidFileColor(0, 0.5, 0.5, 1);
-static const DoubleColor g_UnkFileColor(1, 0, 0, 1);
-
-static const DoubleColor g_FocRegFileColor(0, 0, 0, 1);
-static const DoubleColor g_FocHidFileColor(0.5, 0.5, 0.5, 1);
-static const DoubleColor g_FocDirFileColor(1, 1, 1, 1);
-
-static const DoubleColor g_SelFileColor(1, 1, 0, 1);
-
-static const DoubleColor g_FocFileBkColor(0, 0.5, 0.5, 1);
-static const DoubleColor g_HeaderInfoColor(1, 1, 0, 1);
 
 // _out will be _not_ null-terminated, just a raw buffer
 static void FormHumanReadableTimeRepresentation14(time_t _in, UniChar _out[14])
@@ -242,29 +229,6 @@ static void FormHumanReadableBytesAndFiles128(unsigned long _sz, int _total_file
     for(int i = 0; i < _symbs; ++i) _out[i] = buf[i];
 }
 
-static const DoubleColor& GetDirectoryEntryTextColor(const DirectoryEntryInformation &_dirent, bool _is_focused)
-{
-    // TODO: consider using special coloring for symlink to distinguish them
-    
-    if(_dirent.cf_isselected())
-        return g_SelFileColor;
-    
-    if(_is_focused)
-    {   // focused case
-        if(_dirent.ishidden()) return g_FocHidFileColor;
-        else if(_dirent.isreg() || _dirent.isdotdot()) return g_FocRegFileColor;
-        else if(_dirent.isdir()) return g_FocDirFileColor;
-    }
-    else
-    {   // regular case
-        if(_dirent.ishidden()) return g_HidFileColor;
-        else if(_dirent.isreg() ||  _dirent.isdotdot()) return g_RegFileColor;
-        else if(_dirent.isdir()) return g_DirFileColor;
-    }
-    
-    return g_UnkFileColor;
-}
-
 static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dirent, UniChar _buff[256], size_t &_sz)
 {   // output is a direct filename or symlink path in ->filename form
     if(!_dirent.issymlink())
@@ -294,10 +258,94 @@ static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dire
 
 ClassicPanelViewPresentation::ClassicPanelViewPresentation()
 :   m_SymbWidth(0),
-    m_SymbHeight(0)
+    m_SymbHeight(0),
+    m_FontCache(0)
 {
-    m_FontCT = CTFontCreateWithName( (CFStringRef) @"Menlo Regular", FONTSIZE, 0);
-    m_FontCG = CTFontCopyGraphicsFont(m_FontCT, 0);
+    BuildGeometry();
+    BuildAppearance();
+
+    m_GeometryObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnGeometryChanged object:this];
+    [m_GeometryObserver observeChangesInObject:[NSUserDefaults standardUserDefaults]
+                                     forKeyPath:@"FilePanelsClassicFont"
+                                         options:0
+                                         context:0];
+    
+    m_AppearanceObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnAppearanceChanged object:this];
+    [m_AppearanceObserver observeChangesInObject:[NSUserDefaults standardUserDefaults]
+                                     forKeyPaths:[NSArray arrayWithObjects:@"FilePanelsClassicBackgroundColor",
+                                                  @"FilePanelsClassicCursorBackgroundColor",
+                                                  @"FilePanelsClassicRegularFileColor",
+                                                  @"FilePanelsClassicFocusedRegularFileColor",
+                                                  @"FilePanelsClassicDirectoryColor",
+                                                  @"FilePanelsClassicFocusedDirectoryColor",
+                                                  @"FilePanelsClassicHiddenColor",
+                                                  @"FilePanelsClassicFocusedHiddenColor",
+                                                  @"FilePanelsClassicSelectedColor",
+                                                  @"FilePanelsClassicFocusedSelectedColor",
+                                                  @"FilePanelsClassicOtherColor",
+                                                  @"FilePanelsClassicFocusedOtherColor", nil]
+                                         options:0
+                                         context:0];
+}
+
+ClassicPanelViewPresentation::~ClassicPanelViewPresentation()
+{
+    FontCache::ReleaseCache(m_FontCache);
+}
+
+void ClassicPanelViewPresentation::BuildGeometry()
+{
+    CTFontRef font = (CTFontRef)CFBridgingRetain([[NSUserDefaults standardUserDefaults] fontForKey:@"FilePanelsClassicFont"]);
+    if(!font) font = CTFontCreateWithName( (CFStringRef) @"Menlo Regular", 15, 0);
+    
+    if(m_FontCache) FontCache::ReleaseCache(m_FontCache);
+    m_FontCache = FontCache::FontCacheFromFont(font);
+    CFRelease(font);
+    
+}
+
+void ClassicPanelViewPresentation::BuildAppearance()
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    m_BackgroundColor       = DoubleColor([defaults colorForKey:@"FilePanelsClassicBackgroundColor"]);
+    m_CursorBackgroundColor = DoubleColor([defaults colorForKey:@"FilePanelsClassicCursorBackgroundColor"]);
+    m_RegularFileColor[0]   = DoubleColor([defaults colorForKey:@"FilePanelsClassicRegularFileColor"]);
+    m_RegularFileColor[1]   = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedRegularFileColor"]);
+    m_DirectoryColor[0]     = DoubleColor([defaults colorForKey:@"FilePanelsClassicDirectoryColor"]);
+    m_DirectoryColor[1]     = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedDirectoryColor"]);
+    m_HiddenColor[0]        = DoubleColor([defaults colorForKey:@"FilePanelsClassicHiddenColor"]);
+    m_HiddenColor[1]        = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedHiddenColor"]);
+    m_SelectedColor[0]      = DoubleColor([defaults colorForKey:@"FilePanelsClassicSelectedColor"]);
+    m_SelectedColor[1]      = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedSelectedColor"]);
+    m_OtherColor[0]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicOtherColor"]);
+    m_OtherColor[1]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedOtherColor"]);
+}
+
+void ClassicPanelViewPresentation::OnAppearanceChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context)
+{
+    ClassicPanelViewPresentation *_this = (ClassicPanelViewPresentation *)_obj;
+    _this->BuildAppearance();
+    _this->SetViewNeedsDisplay();
+}
+
+void ClassicPanelViewPresentation::OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context)
+{
+    ClassicPanelViewPresentation *_this = (ClassicPanelViewPresentation *)_obj;
+    _this->BuildGeometry();
+    _this->m_SymbHeight = _this->m_FrameSize.height / _this->m_FontCache->Height();
+    _this->m_SymbWidth = _this->m_FrameSize.width / _this->m_FontCache->Width();
+    _this->EnsureCursorIsVisible();
+    _this->SetViewNeedsDisplay();
+}
+
+const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const DirectoryEntryInformation &_dirent, bool _is_focused)
+{    
+    if(_dirent.cf_isselected()) return m_SelectedColor[_is_focused ? 1 : 0];
+    if(_dirent.ishidden()) return m_HiddenColor[_is_focused ? 1 : 0];
+    if(_dirent.isreg() || _dirent.isdotdot()) return m_RegularFileColor[_is_focused ? 1 : 0];
+    if(_dirent.isdir()) return m_DirectoryColor[_is_focused ? 1 : 0];    
+    return m_OtherColor[_is_focused ? 1 : 0];
 }
 
 void ClassicPanelViewPresentation::Draw(NSRect _dirty_rect)
@@ -309,7 +357,8 @@ void ClassicPanelViewPresentation::Draw(NSRect _dirty_rect)
     CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
     
     // clear background
-    CGContextSetRGBFillColor(context, 0.0,0.0,0.5,1);
+    m_BackgroundColor.Set(context);
+    
     CGContextFillRect(context, NSRectToCGRect(_dirty_rect));
     
     PanelViewType type = m_State->ViewType;
@@ -327,16 +376,16 @@ void ClassicPanelViewPresentation::Draw(NSRect _dirty_rect)
 
 void ClassicPanelViewPresentation::OnFrameChanged(NSRect _frame)
 {
-    m_SymbHeight = (_frame.size.height ) / FONTHEIGHT;
-    m_SymbWidth = _frame.size.width / FONTWIDTH;
-    
+    m_FrameSize = _frame.size;
+    m_SymbHeight = m_FrameSize.height / m_FontCache->Height();
+    m_SymbWidth = m_FrameSize.width / m_FontCache->Width();
     EnsureCursorIsVisible();
 }
 
 NSRect ClassicPanelViewPresentation::GetItemColumnsRect()
 {
-    return NSMakeRect(0, FONTHEIGHT,
-                      FONTWIDTH*m_SymbWidth, FONTHEIGHT*GetMaxItemsPerColumn());
+    return NSMakeRect(0, m_FontCache->Height(),
+                      m_FontCache->Width()*m_SymbWidth, m_FontCache->Height()*GetMaxItemsPerColumn());
 }
 
 int ClassicPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
@@ -349,7 +398,7 @@ int ClassicPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
     const int columns = GetNumberOfItemColumns();
     const int entries_in_column = GetMaxItemsPerColumn();
     
-    CGPoint point_in_chars = NSMakePoint(_point.x/FONTWIDTH, _point.y/FONTHEIGHT);
+    CGPoint point_in_chars = NSMakePoint(_point.x/m_FontCache->Width(), _point.y/m_FontCache->Height());
     
     // Check if click is in files' view area, including horizontal bottom line.
     if (point_in_chars.y < rows_start || point_in_chars.y > rows_start + entries_in_column
@@ -458,13 +507,14 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
     int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
     int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
-    auto fontcache = FontCacheManager::Instance()->Get();
+//    auto fontcache = FontCacheManager::Instance()->Get();
+    auto fontcache = m_FontCache;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
     {
         int n=0,X,Y;
-        oms::SetParamsForUserReadableText(context, m_FontCG, m_FontCT);
+        oms::SetParamsForUserReadableText(context, m_FontCache);
         for(auto i = sorted_entries.begin() + m_State->ItemsDisplayOffset; i < sorted_entries.end(); ++i, ++n)
         {
             if(n >= max_files_to_show) break; // draw only visible
@@ -485,7 +535,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
                                   X, Y, context, fontcache, GetDirectoryEntryTextColor(current, false));
             else // cursor
                 oms::DrawStringWithBackgroundXY(buff, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
-                                                X, Y, context, fontcache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, g_FocFileBkColor);
+                                                X, Y, context, fontcache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, m_CursorBackgroundColor);
             
             if(m_State->ViewType==PanelViewType::ViewWide)
             { // draw entry size on right side, only for this mode
@@ -495,7 +545,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
                 if((m_State->ItemsDisplayOffset + n != m_State->CursorPos) || !m_State->Active)
                     oms::DrawStringXY(size_info, 0, 6, columns_width[0]+1, Y, context, fontcache, GetDirectoryEntryTextColor(current, false));
                 else // cursor
-                    oms::DrawStringWithBackgroundXY(size_info, 0, 6, columns_width[0]+1, Y, context, fontcache, GetDirectoryEntryTextColor(current, true), 6, g_FocFileBkColor);
+                    oms::DrawStringWithBackgroundXY(size_info, 0, 6, columns_width[0]+1, Y, context, fontcache, GetDirectoryEntryTextColor(current, true), 6, m_CursorBackgroundColor);
             }
         }
     }
@@ -516,7 +566,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         }
         
         // draw sorting mode in left-upper corner
-        oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, fontcache, g_HeaderInfoColor);
+        oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, fontcache, m_SelectedColor[0]);
         
         if(m_SymbWidth > 14)
         {   // need to draw a path name
@@ -539,33 +589,33 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
             
             if(m_State->Active)
                 oms::DrawStringWithBackgroundXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                                context, fontcache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
+                                                context, fontcache, m_RegularFileColor[1], symbs_for_path_name, m_CursorBackgroundColor);
             else
                 oms::DrawStringXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                  context, fontcache, g_RegFileColor);
+                                  context, fontcache, m_RegularFileColor[0]);
         }
         
         // footer info
         if(current_entry && m_SymbWidth > 2 + 14 + 6)
         {   // draw current entry time info, size info and maybe filename
-            oms::DrawStringXY(time_info, 0, 14, m_SymbWidth - 15, m_SymbHeight - 2, context, fontcache, g_RegFileColor);
-            oms::DrawStringXY(size_info, 0, 6, m_SymbWidth - 15 - 7, m_SymbHeight - 2, context, fontcache, g_RegFileColor);
+            oms::DrawStringXY(time_info, 0, 14, m_SymbWidth - 15, m_SymbHeight - 2, context, fontcache, m_RegularFileColor[0]);
+            oms::DrawStringXY(size_info, 0, 6, m_SymbWidth - 15 - 7, m_SymbHeight - 2, context, fontcache, m_RegularFileColor[0]);
             
             int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
             if(symbs_for_name > 0)
             {
                 int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, symbs_for_name);
-                oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, fontcache, g_RegFileColor);
+                oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, fontcache, m_RegularFileColor[0]);
             }
         }
         else if(current_entry && m_SymbWidth >= 2 + 6)
         {   // draw current entry size info and time info
-            oms::DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, context, fontcache, g_RegFileColor);
+            oms::DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, context, fontcache, m_RegularFileColor[0]);
             int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
             if(symbs_for_name > 0)
             {
                 int symbs = oms::CalculateUniCharsAmountForSymbolsFromLeft(time_info, 14, symbs_for_name);
-                oms::DrawStringXY(time_info, 0, symbs, 8, m_SymbHeight-2, context, fontcache, g_RegFileColor);
+                oms::DrawStringXY(time_info, 0, symbs, 8, m_SymbHeight-2, context, fontcache, m_RegularFileColor[0]);
             }
         }
         
@@ -580,7 +630,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
             selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
             oms::DrawStringWithBackgroundXY(selectionbuftrim, 0, unichars,
                                             selected_bytes_start_pos, m_SymbHeight-3,
-                                            context, fontcache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
+                                            context, fontcache, m_SelectedColor[0], symbs_for_selected_bytes, m_CursorBackgroundColor);
         }
         
         if(m_SymbWidth > 12)
@@ -594,15 +644,15 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
             bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
             oms::DrawStringXY(bytestrim, 0, unichars,
                               bytes_in_dir_start_pos, m_SymbHeight-1,
-                              context, fontcache, g_RegFileColor);
+                              context, fontcache, m_RegularFileColor[0]);
         }
         
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw frames
-    oms::SetParamsForUserASCIIArt(context, m_FontCG, m_FontCT);
-    oms::SetFillColor(context, g_RegFileColor);
+    oms::SetParamsForUserASCIIArt(context, m_FontCache);
+    oms::SetFillColor(context, m_RegularFileColor[0]);
     oms::unichars_draw_batch b;
     
     for(int i = 1; i < m_SymbHeight - 1; ++i)
@@ -659,14 +709,14 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     auto &raw_entries = m_State->Data->DirectoryEntries();
     auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
-    auto fontcache = FontCacheManager::Instance()->Get();
+    auto fontcache = m_FontCache;
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
     {
         UniChar file_name[256], size_info[6], date_info[8], time_info[5];;
         size_t fn_size = 0;
         int n=0;
-        oms::SetParamsForUserReadableText(context, m_FontCG, m_FontCT);
+        oms::SetParamsForUserReadableText(context, m_FontCache);
         for(auto i = sorted_entries.begin() + m_State->ItemsDisplayOffset; i < sorted_entries.end(); ++i, ++n)
         {
             if(n >= entries_to_show) break; // draw only visible
@@ -691,7 +741,7 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
             else // cursor
             {
                 auto &textcolor = GetDirectoryEntryTextColor(current, true);
-                auto &textbkcolor = g_FocFileBkColor;
+                auto &textbkcolor = m_CursorBackgroundColor;
                 oms::DrawStringWithBackgroundXY(file_name, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(file_name, fn_size, columns_width[0] - 1),
                                                 1, n+1, context, fontcache, textcolor, columns_width[0] - 1, textbkcolor);
                 oms::DrawStringWithBackgroundXY(size_info, 0, 6, 1 + column_fr_pos[0], n+1,
@@ -727,10 +777,10 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
         
         if(m_State->Active)
             oms::DrawStringWithBackgroundXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                            context, fontcache, g_FocRegFileColor, symbs_for_path_name, g_FocFileBkColor);
+                                            context, fontcache, m_RegularFileColor[1], symbs_for_path_name, m_CursorBackgroundColor);
         else
             oms::DrawStringXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                              context, fontcache, g_RegFileColor);
+                              context, fontcache, m_RegularFileColor[0]);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -738,7 +788,7 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     {
         UniChar sort_mode[1];
         FormHumanReadableSortModeReprentation1(m_State->Data->GetCustomSortMode().sort, sort_mode);
-        oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, fontcache, g_HeaderInfoColor);
+        oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, fontcache, m_SelectedColor[0]);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -752,7 +802,7 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
         symbs_for_bytes_in_dir = oms::CalculateSymbolsSpaceForString(bytestrim, unichars);
         bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
         bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
-        oms::DrawStringXY(bytestrim, 0, unichars, bytes_in_dir_start_pos, m_SymbHeight-1, context, fontcache, g_RegFileColor);
+        oms::DrawStringXY(bytestrim, 0, unichars, bytes_in_dir_start_pos, m_SymbHeight-1, context, fontcache, m_RegularFileColor[0]);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -768,7 +818,7 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
         selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
         oms::DrawStringWithBackgroundXY(selectionbuftrim, 0, unichars,
                                         selected_bytes_start_pos, m_SymbHeight-3,
-                                        context, fontcache, g_HeaderInfoColor, symbs_for_selected_bytes, g_FocFileBkColor);
+                                        context, fontcache, m_SelectedColor[0], symbs_for_selected_bytes, m_CursorBackgroundColor);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -781,13 +831,13 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
         const auto &current_entry = raw_entries[sorted_entries[m_State->CursorPos]];
         ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
         int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, m_SymbWidth-2);
-        oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, fontcache, g_RegFileColor);
+        oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, fontcache, m_RegularFileColor[0]);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw frames
-    oms::SetParamsForUserASCIIArt(context, m_FontCG, m_FontCT);
-    oms::SetFillColor(context, g_RegFileColor);
+    oms::SetParamsForUserASCIIArt(context, m_FontCache);
+    oms::SetFillColor(context, m_RegularFileColor[0]);
     oms::unichars_draw_batch b;
     
     b.put(u'╔', 0, 0);

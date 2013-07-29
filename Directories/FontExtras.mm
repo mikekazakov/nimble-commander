@@ -54,5 +54,5 @@ double GetMonospaceFontCharWidth(CTFontRef _font)
     double width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
     CFRelease(line);
     CFRelease(attrString);
-    return width;
+    return floor(width+0.5);
 }

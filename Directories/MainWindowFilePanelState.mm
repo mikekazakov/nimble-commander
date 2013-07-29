@@ -103,6 +103,8 @@ enum ActiveState
     [m_RightPanelController SetData:0];
     [m_RightPanelController SetView:0];
     delete m_RightPanelData;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void) Init

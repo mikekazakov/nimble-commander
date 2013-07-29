@@ -11,6 +11,7 @@
 
 @implementation PreferencesWindowPanelsTab
 {
+    NSFont *m_ClassicFont;
     NSFont *m_ModernFont;
 }
 
@@ -54,4 +55,23 @@
     [defaults setFont:m_ModernFont forKey:@"FilePanelsModernFont"];
 }
 
+- (IBAction)OnSetClassicFont:(id)sender
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    m_ClassicFont = [defaults fontForKey:@"FilePanelsClassicFont"];
+    if(!m_ClassicFont) m_ClassicFont = [NSFont fontWithName:@"Menlo Regular" size:15];
+
+    NSFontManager * fontManager = [NSFontManager sharedFontManager];
+    [fontManager setTarget:self];
+    [fontManager setAction:@selector(ChangeClassicFont:)];
+    [fontManager setSelectedFont:m_ClassicFont isMultiple:NO];
+    [fontManager orderFrontFontPanel:self];
+}
+
+- (void)ChangeClassicFont:(id)sender
+{
+    m_ClassicFont = [sender convertFont:m_ClassicFont];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setFont:m_ClassicFont forKey:@"FilePanelsClassicFont"];
+}
 @end

@@ -67,5 +67,5 @@
 - (void) ScheduleDelayedSelectionChangeForC:(const char*)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now;
 
 - (void) SelectAllEntries: (bool) _select; // if false - then deselect all
-
+- (void) SelectEntriesByMask:(NSString*) _mask select:(bool) _select; // if false - then deselect elements by mask
 @end

@@ -33,6 +33,7 @@
 #import "FileLinkNewHardlinkSheetController.h"
 #import "FileLinkOperation.h"
 #import "StackOfDisappearingWidgets.h"
+#import "SelectionWithMaskSheetController.h"
 
 enum ActiveState
 {
@@ -1245,6 +1246,31 @@ enum ActiveState
                                                               linkname:[name UTF8String]]
                         ];
                  }                 
+             }];
+}
+
+- (IBAction)OnSelectByMask:(id)sender
+{
+    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
+    [sheet ShowSheet:[self window]
+             handler:^(int result) {
+                 if(result == DialogResult::OK) {
+                     NSString *mask = [sheet Mask];
+                     [[self ActivePanelController] SelectEntriesByMask:mask select:true];
+                 }
+             }];
+}
+
+- (IBAction)OnDeselectByMask:(id)sender
+{
+    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
+    [sheet SetIsDeselect:true];
+    [sheet ShowSheet:[self window]
+             handler:^(int result) {
+                 if(result == DialogResult::OK) {
+                     NSString *mask = [sheet Mask];
+                     [[self ActivePanelController] SelectEntriesByMask:mask select:false];
+                 }
              }];
 }
 

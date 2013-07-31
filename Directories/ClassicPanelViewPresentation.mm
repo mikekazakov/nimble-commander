@@ -507,7 +507,6 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
     int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
     int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
-//    auto fontcache = FontCacheManager::Instance()->Get();
     auto fontcache = m_FontCache;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////

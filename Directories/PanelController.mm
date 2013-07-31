@@ -14,6 +14,7 @@
 #import "QuickPreview.h"
 #import "MainWindowFilePanelState.h"
 #import "filesysinfo.h"
+#import "FileMask.h"
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
@@ -444,6 +445,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void)HandleFastSearch: (NSString*) _key
 {
+    _key = [_key decomposedStringWithCanonicalMapping];
     uint64_t currenttime = GetTimeInNanoseconds();
     if(_key != nil)
     {
@@ -818,6 +820,28 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_Data->GetDirectoryPath(path); // not thread-safe, potentialy may cause problems, but not likely
         EjectVolumeContainingPath(path);
     });
+}
+
+- (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
+{
+    const int stripe_size = 100;
+    
+    FileMask mask(_mask), *maskp = &mask;
+    auto &entries = m_Data->DirectoryEntries();
+    auto &sorted_entries = m_Data->SortedDirectoryEntries();
+
+    dispatch_apply(sorted_entries.size() / stripe_size + 1, dispatch_get_global_queue(0, 0), ^(size_t n){
+        size_t max = sorted_entries.size();
+        for(size_t i = n*stripe_size; i < (n+1)*stripe_size && i < max; ++i) {
+            const auto &entry = entries[i];
+            if(entry.isdotdot() || entry.isdir())
+                continue;
+            if(maskp->MatchName((__bridge NSString*)entry.cf_name))
+                m_Data->CustomFlagsSelect(i, _select);
+        }
+    });
+    
+    [m_View setNeedsDisplay:true];
 }
 
 @end

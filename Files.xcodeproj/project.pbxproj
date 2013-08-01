@@ -513,6 +513,8 @@
 				CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */,
 				CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */,
 				CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */,
+				CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */,
+				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */,
 			);
 			name = Panel;
 			sourceTree = "<group>";
@@ -533,8 +535,6 @@
 				CFE1A4F216C632F700EFBA3C /* MainWindowController.h */,
 				CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */,
 				CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */,
-				CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */,
-				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */,
 				CF07DE36175D971E00757DE1 /* MainWindowStateProtocol.h */,
 			);
 			name = MainWindow;

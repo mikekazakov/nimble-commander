@@ -829,12 +829,15 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     FileMask mask(_mask), *maskp = &mask;
     auto &entries = m_Data->DirectoryEntries();
     auto &sorted_entries = m_Data->SortedDirectoryEntries();
+    bool ignore_dirs = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask"];
 
     dispatch_apply(sorted_entries.size() / stripe_size + 1, dispatch_get_global_queue(0, 0), ^(size_t n){
         size_t max = sorted_entries.size();
         for(size_t i = n*stripe_size; i < (n+1)*stripe_size && i < max; ++i) {
             const auto &entry = entries[i];
-            if(entry.isdotdot() || entry.isdir())
+            if(ignore_dirs && entry.isdir())
+                continue;
+            if(entry.isdotdot())
                 continue;
             if(maskp->MatchName((__bridge NSString*)entry.cf_name))
                 m_Data->CustomFlagsSelect(i, _select);

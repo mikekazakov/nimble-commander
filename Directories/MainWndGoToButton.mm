@@ -156,6 +156,8 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
     [self removeAllItems];
     [self addItemWithTitle:@"Go to"];
     
+    static const double icon_size = [NSFont systemFontSize];
+
     size_t common_path_max = 0;
     NSMenuItem *common_item = nil;
 
@@ -165,6 +167,14 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
         NSString *name;
         [url getResourceValue:&name forKey:NSURLLocalizedNameKey error:&error];
         [self addItemWithTitle:name];
+        
+        NSImage *img;
+        [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error];
+        if(img != nil)
+        {
+            [img setSize:NSMakeSize(icon_size, icon_size)];
+            [[self lastItem] setImage:img];
+        }
         
         if(m_CurrentPath != nil)
         {
@@ -185,6 +195,14 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
         NSString *volumeName;
         [url getResourceValue:&volumeName forKey:NSURLVolumeNameKey error:&error];
         [self addItemWithTitle:volumeName];
+        
+        NSImage *img;
+        [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error];
+        if(img != nil)
+        {
+            [img setSize:NSMakeSize(icon_size, icon_size)];
+            [[self lastItem] setImage:img];
+        }
         
         if(m_CurrentPath != nil)
         {

@@ -10,7 +10,7 @@
 
 double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent, CGFloat *_leading)
 {
-    CGFloat lineHeight = 0.0, ascenderDelta = 0.0;
+    CGFloat lineHeight = 0.0/*, ascenderDelta = 0.0*/;
     
     assert(iFont != NULL);
     
@@ -34,10 +34,10 @@ double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent
     leading = floor (leading + 0.5);
     lineHeight = floor (ascent + 0.5) + floor (descent + 0.5) + leading;
     
-    if (leading > 0)
+/*    if (leading > 0)
         ascenderDelta = 0;
     else
-        ascenderDelta = floor (0.2 * lineHeight + 0.5);
+        ascenderDelta = floor (0.2 * lineHeight + 0.5);*/
     
 //    defaultLineHeight = lineHeight + ascenderDelta;
 //    return lineHeight + ascenderDelta;

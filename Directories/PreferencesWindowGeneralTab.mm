@@ -42,6 +42,7 @@
                                     alternateButton:@"Cancel"
                                         otherButton:nil
                           informativeTextWithFormat:@"This will erase all your custom settings."];
+    [[[alert buttons] objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertDefaultReturn)
     {
         NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];

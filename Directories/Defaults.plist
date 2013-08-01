@@ -74,6 +74,8 @@
 	<true/>
 	<key>BigFileViewFileWindowPow2X</key>
 	<integer>0</integer>
+	<key>FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask</key>
+	<true/>
 	<key>FilePanelsModernFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABoAAAD//kwAdQBjAGkAZABhAEcAcgBhAG4AZABlAAAAhAFmDYQBYwCYAZgAmACG</data>
 	<key>FilePanelsModernRegularTextColor</key>

@@ -35,7 +35,7 @@ namespace oms
 
 struct unichars_draw_batch
 {
-    enum {max = 1024};
+    enum {max = 1024*8};
     struct{
         UniChar c;
         short x;

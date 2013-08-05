@@ -10,7 +10,6 @@
 #import <vector>
 #import "MainWindowController.h"
 #import "AppDelegate.h"
-#import "PreferencesWindowController.h"
 #import "QuickPreview.h"
 #import "BigFileView.h"
 #import "MainWindowBigFileViewState.h"

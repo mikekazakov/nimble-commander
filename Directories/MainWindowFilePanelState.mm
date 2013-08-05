@@ -469,42 +469,12 @@ enum ActiveState
     NSString*  const character = [event charactersIgnoringModifiers];
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
-    unsigned short const keycode = [event keyCode];
-    NSUInteger const modif       = [event modifierFlags];
-#define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
     
     if([self IsPanelActive])
         [[self ActivePanelController] keyDown:event];
     
-    switch (unicode)
-    {
-        case NSTabCharacter: // TAB key
-            [self HandleTabButton];
-            break;            
-    };
-    
-    switch (keycode)
-    {
-/*        case 17: // t button on keyboard
-        {
-            if(ISMODIFIER(NSCommandKeyMask|NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask))
-            {
-                [m_OperationsController AddOperation:
-                 [[TimedDummyOperation alloc] initWithTime:(1 + rand()%10)]];
-            }
-            break;
-        }*/
-        case 100: //f8
-        {
-            // TODO: refactor; need more high level key handler
-            if ((modif & NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask
-                || (modif & NSDeviceIndependentModifierFlagsMask) == (NSShiftKeyMask|NSFunctionKeyMask))
-            {
-                [self DeleteFiles:YES];
-            }
-        }
-    }
-#undef ISMODIFIER
+    if(unicode == NSTabCharacter) // TAB key
+        [self HandleTabButton];
 }
 
 - (void)LoadPanelsSettings
@@ -747,8 +717,8 @@ enum ActiveState
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
-                                                                 ? [defaults integerForKey:@"ShiftDeleteBehavior"]
-                                                                 : [defaults integerForKey:@"DeleteBehavior"]);
+                                                                 ? [defaults integerForKey:@"FilePanelsShiftDeleteBehavior"]
+                                                                 : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
     
     FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
     [sheet ShowSheet:self.window Files:files Type:type
@@ -777,6 +747,11 @@ enum ActiveState
 - (IBAction)OnDeleteCommand:(id)sender
 {
     [self DeleteFiles:NO];
+}
+
+- (IBAction)OnAlternativeDeleteCommand:(id)sender
+{
+    [self DeleteFiles:YES];
 }
 
 - (IBAction)OnCreateDirectoryCommand:(id)sender{

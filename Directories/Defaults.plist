@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>DeleteBehavior</key>
-	<integer>0</integer>
-	<key>ShiftDeleteBehavior</key>
-	<integer>1</integer>
 	<key>FirstPanelPath</key>
 	<string>/</string>
 	<key>SecondPanelPath</key>
@@ -52,6 +48,10 @@
 	<true/>
 	<key>BigFileViewFileWindowPow2X</key>
 	<integer>0</integer>
+	<key>FilePanelsDeleteBehavior</key>
+	<integer>0</integer>
+	<key>FilePanelsShiftDeleteBehavior</key>
+	<integer>1</integer>
 	<key>FilePanelsLeftPanelViewState</key>
 	<dict>
 		<key>NumericSort</key>

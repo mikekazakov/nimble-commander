@@ -16,8 +16,6 @@
 		B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */; };
 		B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */; };
 		B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
-		B52EB78F172277DB004ABC2E /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = B52EB78D172277DB004ABC2E /* PreferencesWindowController.m */; };
-		B52EB790172277DB004ABC2E /* PreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B52EB78E172277DB004ABC2E /* PreferencesWindowController.xib */; };
 		B52EB79317228B73004ABC2E /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = B52EB79217228B73004ABC2E /* Defaults.plist */; };
 		B55DB19A1717397F00E3610E /* OperationProgressValueTransformer.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1991717397F00E3610E /* OperationProgressValueTransformer.mm */; };
 		B55DB19C171B0E9700E3610E /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B55DB19B171B0E9700E3610E /* question_icon.png */; };
@@ -137,9 +135,6 @@
 		B52D9A82173D329F00EC7154 /* PanelViewTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanelViewTypes.h; sourceTree = "<group>"; };
 		B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentation.h; sourceTree = "<group>"; };
 		B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentation.mm; sourceTree = "<group>"; };
-		B52EB78C172277DB004ABC2E /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
-		B52EB78D172277DB004ABC2E /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
-		B52EB78E172277DB004ABC2E /* PreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowController.xib; sourceTree = "<group>"; };
 		B52EB79217228B73004ABC2E /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		B55DB1981717397E00E3610E /* OperationProgressValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationProgressValueTransformer.h; sourceTree = "<group>"; };
 		B55DB1991717397F00E3610E /* OperationProgressValueTransformer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationProgressValueTransformer.mm; sourceTree = "<group>"; };
@@ -391,9 +386,6 @@
 		B52EB78B172277C5004ABC2E /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				B52EB78C172277DB004ABC2E /* PreferencesWindowController.h */,
-				B52EB78D172277DB004ABC2E /* PreferencesWindowController.m */,
-				B52EB78E172277DB004ABC2E /* PreferencesWindowController.xib */,
 				CF039EA81791166000DC85D6 /* PreferencesWindowGeneralTab.h */,
 				CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */,
 				CF039EAA1791166000DC85D6 /* PreferencesWindowGeneralTab.xib */,
@@ -812,7 +804,6 @@
 				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
 				B55DB19C171B0E9700E3610E /* question_icon.png in Resources */,
 				B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */,
-				B52EB790172277DB004ABC2E /* PreferencesWindowController.xib in Resources */,
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
 				CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */,
 				CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */,
@@ -894,7 +885,6 @@
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
 				CF055EB6171D9E8E00F7A6ED /* PanelSizeCalculator.mm in Sources */,
-				B52EB78F172277DB004ABC2E /* PreferencesWindowController.m in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
 				CFB060DD172E6AC4001F6949 /* Common.mm in Sources */,
 				B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */,

@@ -38,12 +38,14 @@ struct PanelSortMode
     bool sep_dirs;      // separate directories from files, like win-like
     bool show_hidden;   // shown hidden files (which are: begining with "." or having hidden flag)
     bool case_sens;     // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
+    bool numeric_sort;  // try to treat filenames as numbers and use them as compare basis
     
     inline PanelSortMode():
         sort(SortByRawCName),
         sep_dirs(false),
         show_hidden(true),
-        case_sens(false)
+        case_sens(false),
+        numeric_sort(false)
     {}
     
     inline bool isdirect() const
@@ -56,7 +58,7 @@ struct PanelSortMode
     }
     inline bool operator ==(const PanelSortMode& _r) const
     {
-        return sort == _r.sort && sep_dirs == _r.sep_dirs && show_hidden == _r.show_hidden && case_sens == _r.case_sens;
+        return sort == _r.sort && sep_dirs == _r.sep_dirs && show_hidden == _r.show_hidden && case_sens == _r.case_sens && numeric_sort == _r.numeric_sort;
     }
     inline bool operator !=(const PanelSortMode& _r) const
     {

@@ -88,6 +88,7 @@ void PanelData::GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path
         mode.sort = PanelSortMode::SortByName;
         mode.show_hidden = m_CustomSortMode.show_hidden;
         mode.case_sens = false;
+        mode.numeric_sort = false;
         DoSort(m_Entries, m_EntriesByHumanName, mode); });
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
         DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
@@ -127,6 +128,7 @@ void PanelData::ReloadDirectoryInternal(DirEntryInfoT *_entries)
     rawsortmode.sort = PanelSortMode::SortByRawCName;
     rawsortmode.sep_dirs = false;
     rawsortmode.show_hidden = true;
+    rawsortmode.numeric_sort = false;
     
     DoSort(_entries, dirbyrawcname, rawsortmode);
         
@@ -174,6 +176,7 @@ check:  int dst = (*dirbyrawcname)[dst_i];
         mode.sort = PanelSortMode::SortByName;
         mode.show_hidden = m_CustomSortMode.show_hidden;
         mode.case_sens = false;
+        mode.numeric_sort = false;
         DoSort(m_Entries, m_EntriesByHumanName, mode); });
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
         DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
@@ -293,14 +296,24 @@ void PanelData::GetDirectoryPathShort(char _buf[__DARWIN_MAXPATHLEN]) const
 
 struct SortPredLess
 {
+private:
     const PanelData::DirEntryInfoT* ind_tar;
     PanelSortMode                   sort_mode;
+    CFStringCompareFlags            str_comp_flags;
+public:
+    SortPredLess(const PanelData::DirEntryInfoT* _items, PanelSortMode sort_mode):
+        ind_tar(_items),
+        sort_mode(sort_mode)
+    {
+        str_comp_flags = (sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
+            (sort_mode.numeric_sort ? kCFCompareNumerically : 0);
+        
+    }
     
   	bool operator()(unsigned _1, unsigned _2)
     {
         const auto &val1 = (*ind_tar)[_1];
         const auto &val2 = (*ind_tar)[_2];
-        const CFStringCompareFlags str_comp_flags = sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive;
         
         if(sort_mode.sep_dirs)
         {
@@ -341,20 +354,20 @@ struct SortPredLess
             case PanelSortMode::SortByBTime:    return val1.btime > val2.btime;
             case PanelSortMode::SortByBTimeRev: return val1.btime < val2.btime;
             case PanelSortMode::SortBySize:
-                if(val1.size != DIRENTINFO_INVALIDSIZE && val2.size != DIRENTINFO_INVALIDSIZE) return val1.size > val2.size;
+                if(val1.size != DIRENTINFO_INVALIDSIZE && val2.size != DIRENTINFO_INVALIDSIZE)
+                    if(val1.size != val2.size) return val1.size > val2.size;
                 if(val1.size != DIRENTINFO_INVALIDSIZE && val2.size == DIRENTINFO_INVALIDSIZE) return false;
                 if(val1.size == DIRENTINFO_INVALIDSIZE && val2.size != DIRENTINFO_INVALIDSIZE) return true;
-                return strcmp(val1.namec(), val2.namec()) < 0;  // fallback case
+                return CFStringCompare(val1.cf_name, val2.cf_name, str_comp_flags) < 0; // fallback case
             case PanelSortMode::SortBySizeRev:
-                if(val1.size != DIRENTINFO_INVALIDSIZE && val2.size != DIRENTINFO_INVALIDSIZE) return val1.size < val2.size;
+                if(val1.size != DIRENTINFO_INVALIDSIZE && val2.size != DIRENTINFO_INVALIDSIZE)
+                    if(val1.size != val2.size) return val1.size < val2.size;
                 if(val1.size != DIRENTINFO_INVALIDSIZE && val2.size == DIRENTINFO_INVALIDSIZE) return true;
                 if(val1.size == DIRENTINFO_INVALIDSIZE && val2.size != DIRENTINFO_INVALIDSIZE) return false;
-                return strcmp(val1.namec(), val2.namec()) > 0;  // fallback case
-                
+                return CFStringCompare(val1.cf_name, val2.cf_name, str_comp_flags) > 0; // fallback case
             case PanelSortMode::SortByRawCName:
                 return strcmp(val1.namec(), val2.namec()) < 0;
                 break;
-
             case PanelSortMode::SortNoSort:
                 assert(0); // meaningless sort call
                 break;
@@ -395,10 +408,7 @@ void PanelData::DoSort(const PanelData::DirEntryInfoT* _from, PanelData::DirSort
     if(_mode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
  
-    SortPredLess pred;
-    pred.ind_tar = _from;
-    pred.sort_mode = _mode;
-
+    SortPredLess pred(_from, _mode);
     DirSortIndT::iterator start=_to->begin(), end=_to->end();
     if( (*_from)[0].isdotdot() ) start++; // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
     

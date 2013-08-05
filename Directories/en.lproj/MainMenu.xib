@@ -1150,6 +1150,15 @@
 												<reference key="NSMixedImage" ref="502551668"/>
 												<int key="NSTag">1022</int>
 											</object>
+											<object class="NSMenuItem" id="128723406">
+												<reference key="NSMenu" ref="715534685"/>
+												<string key="NSTitle">Numeric Comparison</string>
+												<string key="NSKeyEquiv"/>
+												<int key="NSMnemonicLoc">2147483647</int>
+												<reference key="NSOnImage" ref="35465992"/>
+												<reference key="NSMixedImage" ref="502551668"/>
+												<int key="NSTag">1023</int>
+											</object>
 										</array>
 									</object>
 								</object>
@@ -1918,6 +1927,14 @@
 						<reference key="destination" ref="262184299"/>
 					</object>
 					<int key="connectionID">922</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ToggleNumericComparison:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="128723406"/>
+					</object>
+					<int key="connectionID">925</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -2702,6 +2719,7 @@
 							<reference ref="425359214"/>
 							<reference ref="424634154"/>
 							<reference ref="680061449"/>
+							<reference ref="128723406"/>
 						</array>
 						<reference key="parent" ref="110546170"/>
 					</object>
@@ -2867,6 +2885,11 @@
 						<reference key="object" ref="262184299"/>
 						<reference key="parent" ref="456788684"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">923</int>
+						<reference key="object" ref="128723406"/>
+						<reference key="parent" ref="715534685"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -3013,14 +3036,40 @@
 				<string key="918.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="92.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="920.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="923.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">922</int>
+			<int key="maxID">925</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">AppDelegate</string>
+					<string key="superclassName">NSObject</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="NewWindow:">id</string>
+						<string key="OnMenuSendFeedback:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="NewWindow:">
+							<string key="name">NewWindow:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="OnMenuSendFeedback:">
+							<string key="name">OnMenuSendFeedback:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/AppDelegate.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

@@ -10,28 +10,6 @@
 	<string>/</string>
 	<key>SecondPanelPath</key>
 	<string>/</string>
-	<key>FirstPanelViewState</key>
-	<dict>
-		<key>SeparateDirectories</key>
-		<true/>
-		<key>ViewHiddenFiles</key>
-		<false/>
-		<key>SortMode</key>
-		<integer>1</integer>
-		<key>ViewMode</key>
-		<integer>1</integer>
-	</dict>
-	<key>SecondPanelViewState</key>
-	<dict>
-		<key>SeparateDirectories</key>
-		<true/>
-		<key>ViewHiddenFiles</key>
-		<false/>
-		<key>SortMode</key>
-		<integer>1</integer>
-		<key>ViewMode</key>
-		<integer>1</integer>
-	</dict>
 	<key>Skin</key>
 	<integer>1</integer>
 	<key>BigFileViewModernShouldAntialias</key>
@@ -74,6 +52,36 @@
 	<true/>
 	<key>BigFileViewFileWindowPow2X</key>
 	<integer>0</integer>
+	<key>FilePanelsLeftPanelViewState</key>
+	<dict>
+		<key>NumericSort</key>
+		<false/>
+		<key>CaseSensitiveComparison</key>
+		<false/>
+		<key>SeparateDirectories</key>
+		<true/>
+		<key>ViewHiddenFiles</key>
+		<false/>
+		<key>SortMode</key>
+		<integer>1</integer>
+		<key>ViewMode</key>
+		<integer>1</integer>
+	</dict>
+	<key>FilePanelsRightPanelViewState</key>
+	<dict>
+		<key>NumericSort</key>
+		<false/>
+		<key>CaseSensitiveComparison</key>
+		<false/>
+		<key>SeparateDirectories</key>
+		<true/>
+		<key>ViewHiddenFiles</key>
+		<false/>
+		<key>SortMode</key>
+		<integer>1</integer>
+		<key>ViewMode</key>
+		<integer>1</integer>
+	</dict>
 	<key>FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask</key>
 	<true/>
 	<key>FilePanelsModernFont</key>

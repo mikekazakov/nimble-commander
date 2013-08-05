@@ -110,6 +110,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     mode.sep_dirs = [[_state valueForKey:@"SeparateDirectories"] boolValue];
     mode.show_hidden = [[_state valueForKey:@"ViewHiddenFiles"] boolValue];
     mode.case_sens = [[_state valueForKey:@"CaseSensitiveComparison"] boolValue];
+    mode.numeric_sort = [[_state valueForKey:@"NumericSort"] boolValue];
     mode.sort = (PanelSortMode::Mode)[[_state valueForKey:@"SortMode"] integerValue];
     [self ChangeSortingModeTo:mode];
                                       
@@ -125,6 +126,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
         [NSNumber numberWithBool:(mode.show_hidden != false)], @"ViewHiddenFiles",
         [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
+        [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
         [NSNumber numberWithInt:(int)[m_View GetCurrentViewType]], @"ViewMode",
         [NSNumber numberWithInt:(int)mode.sort], @"SortMode",
         nil];
@@ -210,6 +212,13 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 {
     PanelSortMode mode = m_Data->GetCustomSortMode();
     mode.case_sens = !mode.case_sens;
+    [self ChangeSortingModeTo:mode];
+}
+
+- (void) ToggleNumericComparison
+{
+    PanelSortMode mode = m_Data->GetCustomSortMode();
+    mode.numeric_sort = !mode.numeric_sort;
     [self ChangeSortingModeTo:mode];
 }
 

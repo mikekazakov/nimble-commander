@@ -510,15 +510,15 @@ enum ActiveState
 - (void)LoadPanelsSettings
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [m_LeftPanelController LoadViewState:[defaults dictionaryForKey:@"FirstPanelViewState"]];
-    [m_RightPanelController LoadViewState:[defaults dictionaryForKey:@"SecondPanelViewState"]];
+    [m_LeftPanelController LoadViewState:[defaults dictionaryForKey:@"FilePanelsLeftPanelViewState"]];
+    [m_RightPanelController LoadViewState:[defaults dictionaryForKey:@"FilePanelsRightPanelViewState"]];
 }
 
 - (void)SavePanelsSettings
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:[m_LeftPanelController SaveViewState] forKey:@"FirstPanelViewState"];
-    [defaults setObject:[m_RightPanelController SaveViewState] forKey:@"SecondPanelViewState"];
+    [defaults setObject:[m_LeftPanelController SaveViewState] forKey:@"FilePanelsLeftPanelViewState"];
+    [defaults setObject:[m_RightPanelController SaveViewState] forKey:@"FilePanelsRightPanelViewState"];
 }
 
 - (IBAction)ToggleShortViewMode:(id)sender {
@@ -578,6 +578,11 @@ enum ActiveState
 
 - (IBAction)ToggleCaseSensitiveComparison:(id)sender{
     [[self ActivePanelController] ToggleCaseSensitiveComparison];
+    [self SavePanelsSettings];
+}
+
+- (IBAction)ToggleNumericComparison:(id)sender{
+    [[self ActivePanelController] ToggleNumericComparison];
     [self SavePanelsSettings];
 }
 
@@ -714,6 +719,7 @@ enum ActiveState
         case MenuTags::PanelSortViewHidden: [item setState:[contr GetUserSortMode].show_hidden ? NSOnState : NSOffState]; break;
         case MenuTags::PanelSortSepDirs:    [item setState:[contr GetUserSortMode].sep_dirs    ? NSOnState : NSOffState]; break;
         case MenuTags::PanelSortCaseSensitive:[item setState:[contr GetUserSortMode].case_sens ? NSOnState : NSOffState]; break;
+        case MenuTags::PanelSortNumeric:    [item setState:[contr GetUserSortMode].numeric_sort ? NSOnState : NSOffState]; break;
     }
     
     return true; // will disable some items in the future

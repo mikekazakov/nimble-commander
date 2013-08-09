@@ -15,11 +15,7 @@
 void FlexChainedStringsChunk::node::str_with_pref(char *_buf) const
 {
     const FlexChainedStringsChunk::node *nodes[maxdepth], *n = this;
-    int bufsz = 0;
-    int nodes_n = 0;
-    
-    _buf[bufsz] = 0;
-    
+    int bufsz = 0, nodes_n = 0;
     do
     {
         nodes[nodes_n++] = n;
@@ -28,9 +24,10 @@ void FlexChainedStringsChunk::node::str_with_pref(char *_buf) const
     
     for(int i = nodes_n-1; i >= 0; --i)
     {
-        memcpy(_buf + bufsz, nodes[i]->str(), nodes[i]->len+1);
+        memcpy(_buf + bufsz, nodes[i]->str(), nodes[i]->len);
         bufsz += nodes[i]->len;
     }
+    _buf[bufsz] = 0;
 }
 
 FlexChainedStringsChunk* FlexChainedStringsChunk::Allocate()

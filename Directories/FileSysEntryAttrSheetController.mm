@@ -22,16 +22,16 @@
 struct user_info
 {
     uid_t pw_uid;
-    const char *pw_name;
-    const char *pw_gecos;
+    NSString *pw_name;
+    NSString *pw_gecos;
     inline bool operator<(const user_info &_r) const { return (signed)pw_uid < (signed)_r.pw_uid; }
 };
 
 struct group_info
 {
     gid_t gr_gid;
-    const char *gr_name;
-    const char *gr_gecos;
+    NSString *gr_name;
+    NSString *gr_gecos;
     inline bool operator<(const group_info &_r) const { return (signed)gr_gid < (signed)_r.gr_gid; }
 };
         
@@ -130,16 +130,6 @@ struct OtherAttrs
 
 -(void) dealloc
 {
-    for(const auto &i: m_SystemUsers)
-    {
-        free((void*)i.pw_name);
-        free((void*)i.pw_gecos);
-    }
-    for(const auto &i: m_SystemGroups)
-    {
-        free((void*)i.gr_name);
-        free((void*)i.gr_gecos);
-    }
     if(m_Files)
         FlexChainedStringsChunk::FreeWithDescendants(&m_Files);
 }
@@ -149,15 +139,15 @@ struct OtherAttrs
     [super windowDidLoad];
     
     // Set title.
-    if (m_Files->amount == 1)
+    if (m_Files->Amount() == 1)
     {
         [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %@",
-                                    [NSString stringWithUTF8String:m_Files->strings[0].str()]]];
+                                    [NSString stringWithUTF8String:(*m_Files)[0].str()]]];
     }
     else
     {
         [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %i "
-                                    "selected items", m_Files->amount]];
+                                    "selected items", m_Files->CountStringsWithDescendants()]];
     }
     
     [self PopulateControls];
@@ -207,11 +197,7 @@ struct OtherAttrs
     [[self UsersPopUpButton] removeAllItems];
     for(const auto &i: m_SystemUsers)
     {
-        NSString *ent = [NSString stringWithFormat:@"%@ (%d) - %@",
-                         [NSString stringWithUTF8String:i.pw_name],
-                         i.pw_uid,
-                         [NSString stringWithUTF8String:i.pw_gecos]
-                        ];
+        NSString *ent = [NSString stringWithFormat:@"%@ (%d) - %@", i.pw_name, i.pw_uid, i.pw_gecos];
         [[self UsersPopUpButton] addItemWithTitle:ent];
         [[[self UsersPopUpButton] lastItem] setImage:img_user];
         
@@ -241,11 +227,7 @@ struct OtherAttrs
     [[self GroupsPopUpButton] removeAllItems];
     for(const auto &i: m_SystemGroups)
     {
-        NSString *ent = [NSString stringWithFormat:@"%@ (%d) - %@",
-                         [NSString stringWithUTF8String:i.gr_name],
-                         i.gr_gid,
-                         [NSString stringWithUTF8String:i.gr_gecos]
-                         ];
+        NSString *ent = [NSString stringWithFormat:@"%@ (%d) - %@", i.gr_name, i.gr_gid, i.gr_gecos];
         [[self GroupsPopUpButton] addItemWithTitle:ent];
         [[[self GroupsPopUpButton] lastItem] setImage:img_group];
         if(m_ProcessSubfolders)
@@ -292,6 +274,7 @@ struct OtherAttrs
 {    
     {
         ODNode *root = [ODNode nodeWithSession:[ODSession defaultSession] name:@"/Local/Default" error:nil];
+        assert(root);
         ODQuery *q = [ODQuery queryWithNode:root
                              forRecordTypes:kODRecordTypeUsers
                                   attribute:nil
@@ -300,17 +283,18 @@ struct OtherAttrs
                            returnAttributes:nil
                              maximumResults:0
                                       error:nil];
+        assert(q);
         for (ODRecord *r in [q resultsAllowingPartial:NO error:nil])
         {
-            NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
-            assert([gecos count] > 0);
             NSArray *uid = [r valuesForAttribute:kODAttributeTypeUniqueID error:nil];
-            assert([uid count] > 0);
+            if([uid count] == 0) continue; // invalid response, can't handle it
+            
+            NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
 
             user_info curr;
             curr.pw_uid = (uid_t) [[uid objectAtIndex:0] integerValue];
-            curr.pw_name = strdup([[r recordName] UTF8String]);
-            curr.pw_gecos = strdup([(NSString*)[gecos objectAtIndex:0] UTF8String]);
+            curr.pw_name = [r recordName];
+            curr.pw_gecos = ([gecos count] > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
             m_SystemUsers.push_back(curr);
         }
     }
@@ -318,6 +302,7 @@ struct OtherAttrs
     
     {
         ODNode *root = [ODNode nodeWithSession:[ODSession defaultSession] name:@"/Local/Default" error:nil];
+        assert(root);
         ODQuery *q = [ODQuery queryWithNode:root
                              forRecordTypes:kODRecordTypeGroups
                                   attribute:nil
@@ -326,16 +311,18 @@ struct OtherAttrs
                            returnAttributes:nil
                              maximumResults:0
                                       error:nil];
+        assert(q);        
         for (ODRecord *r in [q resultsAllowingPartial:NO error:nil])
         {
-            NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
-            assert([gecos count] > 0);
             NSArray *gid = [r valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
-            assert([gid count] > 0);
+            if([gid count] == 0) continue; //invalid response
+            
+            NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+
             group_info curr;
             curr.gr_gid = (gid_t) [[gid objectAtIndex:0] integerValue];
-            curr.gr_name = strdup( [[r recordName] UTF8String] );
-            curr.gr_gecos = strdup( [(NSString*)[gecos objectAtIndex:0] UTF8String] );
+            curr.gr_name = [r recordName];
+            curr.gr_gecos = ([gecos count] > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
             m_SystemGroups.push_back(curr);
         }
     }

@@ -7,12 +7,13 @@
 //
 
 #import "MassCopySheetController.h"
-
-#include "Common.h"
+#import "Common.h"
+#import "FileCopyOperation.h"
 
 @implementation MassCopySheetController
 {
     MassCopySheetCompletionHandler m_Handler;
+    FlexChainedStringsChunk *m_Items;
     NSString *m_InitialPath;
     bool m_IsCopying;
 }
@@ -29,16 +30,28 @@
     [[self TextField] setStringValue:m_InitialPath];
     [[self TextField] becomeFirstResponder];
     
+    int amount = m_Items->CountStringsWithDescendants();
+    assert(amount > 0);
     if(m_IsCopying)
     {
-        [self.DescriptionText setStringValue:@"Copy items to:"];
+        if(amount > 1)
+            [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Copy %i items to:", amount]];
+        else
+            [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Copy %@ to:",
+                                                  [NSString stringWithUTF8String:(*m_Items)[0].str()]]];
         [self.CopyButton setTitle:@"Copy"];
     }
     else
     {
-        [self.DescriptionText setStringValue:@"Rename/move items to:"];
+        if(amount > 1)
+            [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Rename/move %i items to:", amount]];
+        else
+            [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Rename/move %@ to:",
+                                                  [NSString stringWithUTF8String:(*m_Items)[0].str()]]];
         [self.CopyButton setTitle:@"Rename"];
     }
+    
+    [self OnDisclosureTriangle:self];
 }
 
 - (IBAction)OnCopy:(id)sender
@@ -51,11 +64,56 @@
     [NSApp endSheet:[self window] returnCode:DialogResult::Cancel];    
 }
 
-- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying handler:(MassCopySheetCompletionHandler)_handler
+- (IBAction)OnDisclosureTriangle:(id)sender
+{
+    NSSize new_size;
+    if([self.DisclosureTriangle state] == NSOnState)
+    {
+        new_size = NSMakeSize(370, 270);
+        [self.DisclosureLabel setStringValue:@"Hide advanced settings"];
+    }
+    else
+    {
+        new_size = NSMakeSize(370, 140);
+        [self.DisclosureLabel setStringValue:@"Show advanced settings"];
+        [self.DisclosureGroup setHidden:true];
+    }
+    
+    NSWindow *window = [self window];
+    NSRect frame = [window contentRectForFrameRect:[window frame]];
+    NSRect newFrame = [window frameRectForContentRect:
+                       NSMakeRect(frame.origin.x, NSMaxY(frame) - new_size.height,
+                                  frame.size.width, new_size.height)];
+
+    if(sender != self)
+    {
+        double hDifference = fabs(new_size.height - ((NSView*)[window contentView]).bounds.size.height);
+        double duration = MAX(0.0005 * hDifference, 0.10); // we always want a slight animation
+
+        [NSAnimationContext beginGrouping];
+        [[NSAnimationContext currentContext] setDuration:duration];
+        [[window animator] setFrame:newFrame display:YES];
+        [NSAnimationContext endGrouping];
+        if([self.DisclosureTriangle state] == NSOnState)
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(),
+                           ^{
+                               [self.DisclosureGroup setHidden:false];
+                           });
+    }
+    else
+    {
+        [window setFrame:newFrame display:YES];
+    }
+    [window setMinSize:NSMakeSize(370, newFrame.size.height-10)];
+    [window setMaxSize:NSMakeSize(800, newFrame.size.height+10)];
+}
+
+- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(FlexChainedStringsChunk*)_items handler:(MassCopySheetCompletionHandler)_handler
 {
     m_Handler = _handler;
     m_InitialPath = _path;
     m_IsCopying = _iscopying;
+    m_Items = _items;
 
     [NSApp beginSheet: [self window]
        modalForWindow: _window
@@ -70,6 +128,15 @@
     
     if(m_Handler)
         m_Handler((int)returnCode);
+}
+
+- (void)FillOptions:(FileCopyOperationOptions*) _opts
+{
+    _opts->preserve_symlinks    = [self.PreserveSymlinksCheckbox    state] == NSOnState;
+    _opts->copy_xattrs          = [self.CopyXattrsCheckbox          state] == NSOnState;
+    _opts->copy_file_times      = [self.CopyFileTimesCheckbox       state] == NSOnState;
+    _opts->copy_unix_flags      = [self.CopyUNIXFlagsCheckbox       state] == NSOnState;
+    _opts->copy_unix_owners     = [self.CopyUnixOwnersCheckbox      state] == NSOnState;
 }
 
 @end

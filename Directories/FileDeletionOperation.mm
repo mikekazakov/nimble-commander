@@ -26,23 +26,23 @@
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_SingleItem = _files->amount == 1;
+        m_SingleItem = _files->Amount() == 1;
         
         m_Job.Init(_files, _type, _path, self);
         
         // Set caption.
         char buff[128] = {0};
         GetDirectoryFromPath(_path, buff, 128);
-        if (_files->amount == 1)
+        if (_files->Amount() == 1)
         {
             self.Caption = [NSString stringWithFormat:@"Deleting \"%@\" from \"%@\"",
-                            [NSString stringWithUTF8String:_files->strings[0].str()],
+                            [NSString stringWithUTF8String:(*_files)[0].str()],
                             [NSString stringWithUTF8String:buff]];
         }
         else
         {
             self.Caption = [NSString stringWithFormat:@"Deleting %i items from \"%@\"",
-                            _files->amount,
+                            _files->CountStringsWithDescendants(),
                             [NSString stringWithUTF8String:buff]];
         }
     }

@@ -23,8 +23,20 @@ enum
 struct FileCopyOperationOptions
 {
     bool docopy; // it it false then operation will do renaming/moving
+    bool preserve_symlinks;
+    bool copy_xattrs;
+    bool copy_file_times;
+    bool copy_unix_flags;
+    bool copy_unix_owners;
     
-    FileCopyOperationOptions():docopy(true){};
+    FileCopyOperationOptions():
+        docopy(true),
+        preserve_symlinks(true),
+        copy_xattrs(true),
+        copy_file_times(true),
+        copy_unix_flags(true),
+        copy_unix_owners(true)
+    {};
 };
 
 @interface FileCopyOperation : Operation

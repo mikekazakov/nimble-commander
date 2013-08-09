@@ -805,8 +805,8 @@ enum ActiveState
     char dest_path[MAXPATHLEN];
     destination->GetDirectoryPathWithTrailingSlash(dest_path);
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
-    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:true handler:^(int _ret)
+    MassCopySheetController *mc = [MassCopySheetController new];
+    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:true items:files handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -814,6 +814,8 @@ enum ActiveState
              source->GetDirectoryPathWithTrailingSlash(root_path);
              
              FileCopyOperationOptions opts;
+             opts.docopy = true;
+             [mc FillOptions:&opts];
              
              [m_OperationsController AddOperation:
               [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] UTF8String] options:&opts]];
@@ -838,14 +840,16 @@ enum ActiveState
     
     __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
     
-    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->namec()] iscopying:true handler:^(int _ret)
+    MassCopySheetController *mc = [MassCopySheetController new];
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->namec()] iscopying:true items:files handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
              char root_path[MAXPATHLEN];
              [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
              FileCopyOperationOptions opts;
+             opts.docopy = true;
+             [mc FillOptions:&opts];
              
              [m_OperationsController AddOperation:
               [[FileCopyOperation alloc] initWithFiles:files
@@ -893,8 +897,8 @@ enum ActiveState
     destination->GetDirectoryPathWithTrailingSlash(dest_path);
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
     
-    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:false handler:^(int _ret)
+    MassCopySheetController *mc = [MassCopySheetController new];
+    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:false items:files handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -903,6 +907,7 @@ enum ActiveState
              
              FileCopyOperationOptions opts;
              opts.docopy = false;
+             [mc FillOptions:&opts];
              
              [m_OperationsController AddOperation:
               [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] UTF8String] options:&opts]];
@@ -927,8 +932,8 @@ enum ActiveState
     
     __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
     
-    MassCopySheetController *mc = [[MassCopySheetController alloc] init];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->namec()] iscopying:false handler:^(int _ret)
+    MassCopySheetController *mc = [MassCopySheetController new];
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->namec()] iscopying:false items:files handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -936,6 +941,7 @@ enum ActiveState
              [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
              FileCopyOperationOptions opts;
              opts.docopy = false;
+             [mc FillOptions:&opts];
              
              [m_OperationsController AddOperation:
               [[FileCopyOperation alloc] initWithFiles:files
@@ -1054,12 +1060,12 @@ enum ActiveState
     PanelController *panel = [self ActivePanelController];
     if([panel GoToDirectorySync:_path])
     {
-        if(_entries->amount > 0)
-            [panel ScheduleDelayedSelectionChangeForC:_entries->strings[0].str()
+        if(_entries->Amount() > 0)
+            [panel ScheduleDelayedSelectionChangeForC:(*_entries)[0].str()
                                             timeoutms:100
                                              checknow:true];
         
-        if(_entries->amount > 1)
+        if(_entries->Amount() > 1)
         {
             PanelData *data = [self ActivePanelData];
             data->CustomFlagsSelectAll(false);

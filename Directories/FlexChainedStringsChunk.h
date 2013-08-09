@@ -33,7 +33,10 @@ struct FlexChainedStringsChunk
         }
         
         void str_with_pref(char *_buf) const;
-    } strings[strings_per_chunk];
+    };
+
+private:
+    node strings[strings_per_chunk];
     // 24 * strings_per_chunk bytes. assume it's 24*42 = 1008 bytes
     
     // #1008  bytes offset
@@ -45,7 +48,8 @@ struct FlexChainedStringsChunk
     // #1016 bytes offset
     FlexChainedStringsChunk *next;
     // next is valid pointer when .amount == strings_per_chunk, otherwise it should be null
-    
+
+public:
     
     // allocate and free. nuff said.
     static FlexChainedStringsChunk* Allocate();
@@ -58,9 +62,17 @@ struct FlexChainedStringsChunk
     FlexChainedStringsChunk* AddString(const char *_str, int _len, const node *_prefix);
     FlexChainedStringsChunk* AddString(const char *_str, const node *_prefix);
     
+    // return amount of strings in current chunk
+    inline unsigned Amount() const {return amount; }
+    
+    // return total amount of string in with chunk plus within all linked after it
     unsigned CountStringsWithDescendants() const;
     
-    
+    inline const node& operator[](unsigned _n) const
+    {
+        assert(_n < amount);
+        return strings[_n];
+    }
     
     struct iterator
     {
@@ -76,19 +88,18 @@ struct FlexChainedStringsChunk
                 current = current->next;
             }
         }
-        inline bool operator==(const iterator& _right)
+        inline bool operator==(const iterator& _right) const
         {
             if(_right.current == (FlexChainedStringsChunk *)0xDEADBEEFDEADBEEF)
             { // caller asked us if we're finished
                 assert(index <= current->amount);
                 return index == current->amount;
-
             }
             else
                 return current == _right.current && index == _right.index;
         }
         
-        inline bool operator!=(const iterator& _right)
+        inline bool operator!=(const iterator& _right) const
         {
             if(_right.current == (FlexChainedStringsChunk *)0xDEADBEEFDEADBEEF)
             { // caller asked us if we're finished

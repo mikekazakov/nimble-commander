@@ -82,16 +82,19 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
         // Set caption.
         char buff[128] = {0};
         bool use_buff = GetDirectoryFromPath(_dest, buff, 128);
-        if (_files->amount == 1)
+        int items_amount = _files->CountStringsWithDescendants();
+        
+        // TODO: copy/rename title difference
+        if (items_amount == 1)
         {
             self.Caption = [NSString stringWithFormat:@"Copying \"%@\" to \"%@\"",
-                            [NSString stringWithUTF8String:_files->strings[0].str()],
+                            [NSString stringWithUTF8String:(*_files)[0].str()],
                             [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
         }
         else
         {
             self.Caption = [NSString stringWithFormat:@"Copying %i items to \"%@\"",
-                            _files->amount,
+                            items_amount,
                             [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
         }
     }

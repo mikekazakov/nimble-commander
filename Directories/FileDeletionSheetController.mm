@@ -30,15 +30,15 @@
     [super windowDidLoad];
     
     NSString *label;
-    if (m_Files->amount == 1)
+    if (m_Files->Amount() == 1)
     {
         label = [NSString stringWithFormat:@"Do you wish to delete %@?",
-                 [NSString stringWithUTF8String:m_Files->strings[0].str()]];
+                 [NSString stringWithUTF8String:(*m_Files)[0].str()]];
     }
     else
     {
         label = [NSString stringWithFormat:@"Do you wish to delete %i items?",
-                 m_Files->amount];
+                 m_Files->CountStringsWithDescendants()];
     }
     [self.Label setStringValue:label];
     
@@ -104,7 +104,7 @@
              Type:(FileDeletionOperationType)_type
           Handler:(FileDeletionSheetCompletionHandler)_handler
 {
-    assert(_files->amount > 0);
+    assert(_files->Amount() > 0);
     assert(_handler);
     
     m_Files = _files;

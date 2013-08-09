@@ -69,6 +69,25 @@ static bool CheckSameVolume(const char *_fn1, const char*_fn2, bool &_same, bool
     return true;
 }
 
+static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
+{
+    struct attrlist attrs;
+    memset(&attrs, 0, sizeof(attrs));
+    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+    
+    attrs.commonattr = ATTR_CMN_MODTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_mtimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CRTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_birthtimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_ACCTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_atimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CHGTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_ctimespec, sizeof(struct timespec), 0);
+}
+
 FileCopyOperationJob::FileCopyOperationJob():
     m_Operation(0),
     m_InitialItems(0),
@@ -121,7 +140,7 @@ void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing owna
 {
     m_Operation = _op;
     m_InitialItems = _files;
-    m_IsCopying = _opts->docopy;
+    m_Options = *_opts;
     strcpy(m_Destination, _dest);
     strcpy(m_SourceDirectory, _root);
 }
@@ -135,7 +154,7 @@ void FileCopyOperationJob::Do()
     if(CheckPauseOrStop()) { SetStopped(); return; }
 
     
-    if(m_WorkMode == CopyToFile || m_WorkMode == CopyToFolder || m_WorkMode == MoveToFile || m_WorkMode == MoveToFolder )
+    if(m_WorkMode == CopyToFixedPath || m_WorkMode == CopyToPathPreffix || m_WorkMode == MoveToFixedPath || m_WorkMode == MoveToPathPreffix )
     {
         ScanItems();
         if(CheckPauseOrStop()) { SetStopped(); return; }
@@ -144,19 +163,19 @@ void FileCopyOperationJob::Do()
     }
     else
     {
-        assert(m_WorkMode == RenameToFile || m_WorkMode == RenameToFolder);
+        assert(m_WorkMode == RenameToFixedPath || m_WorkMode == RenameToPathPreffix);
         // renaming is trivial, don't scan source deeply - we need just a top level
         m_ScannedItems = m_InitialItems;
         m_InitialItems = 0;
         
-        m_Stats.SetMaxValue(m_ScannedItems->amount);
+        m_Stats.SetMaxValue(m_ScannedItems->CountStringsWithDescendants());
     }
 
     // we don't need it any more - so free memory as soon as possible
     if(m_InitialItems)
         FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
 
-    if(m_WorkMode == CopyToFile || m_WorkMode == CopyToFolder || m_WorkMode == MoveToFile || m_WorkMode == MoveToFolder  )
+    if(m_WorkMode == CopyToFixedPath || m_WorkMode == CopyToPathPreffix || m_WorkMode == MoveToFixedPath || m_WorkMode == MoveToPathPreffix  )
     {
         // allocate buffers and queues only when we'll need them
         m_Buffer1 = malloc(BUFFER_SIZE);
@@ -180,11 +199,11 @@ bool FileCopyOperationJob::IsSingleFileCopy() const
 
 FileCopyOperationJob::StatValueType FileCopyOperationJob::GetStatValueType() const
 {
-    if(m_WorkMode == CopyToFile || m_WorkMode == CopyToFolder || m_WorkMode == MoveToFile || m_WorkMode == MoveToFolder)
+    if(m_WorkMode == CopyToFixedPath || m_WorkMode == CopyToPathPreffix || m_WorkMode == MoveToFixedPath || m_WorkMode == MoveToPathPreffix)
     {
         return StatValueBytes;
     }
-    else if (m_WorkMode == RenameToFile || m_WorkMode == RenameToFolder)
+    else if (m_WorkMode == RenameToFixedPath || m_WorkMode == RenameToPathPreffix)
     {
         return StatValueFiles;
     }
@@ -204,14 +223,14 @@ void FileCopyOperationJob::ScanDestination()
         
         if(isfile)
         {
-            if(m_IsCopying)
+            if(m_Options.docopy)
             {
-                m_WorkMode = CopyToFile;
+                m_WorkMode = CopyToFixedPath;
             }
             else
             {
-                if(m_SameVolume) m_WorkMode = RenameToFile;
-                else             m_WorkMode = MoveToFile;
+                if(m_SameVolume) m_WorkMode = RenameToFixedPath;
+                else             m_WorkMode = MoveToFixedPath;
             }
         }
         else if(isdir)
@@ -219,14 +238,14 @@ void FileCopyOperationJob::ScanDestination()
             if(m_Destination[strlen(m_Destination)-1] != '/')
                 strcat(m_Destination, "/"); // add slash at the end
 
-            if(m_IsCopying)
+            if(m_Options.docopy)
             {
-                m_WorkMode = CopyToFolder;
+                m_WorkMode = CopyToPathPreffix;
             }
             else
             {
-                if(m_SameVolume) m_WorkMode = RenameToFolder;
-                else             m_WorkMode = MoveToFolder;
+                if(m_SameVolume) m_WorkMode = RenameToPathPreffix;
+                else             m_WorkMode = MoveToPathPreffix;
             }
         }
         else
@@ -245,8 +264,8 @@ void FileCopyOperationJob::ScanDestination()
             strcpy(m_Destination, destpath);
             
             m_SameVolume = true;
-            if(m_IsCopying) m_WorkMode = CopyToFile;
-            else            m_WorkMode = RenameToFile;
+            if(m_Options.docopy) m_WorkMode = CopyToFixedPath;
+            else            m_WorkMode = RenameToFixedPath;
         }
         else
         {            
@@ -270,14 +289,14 @@ void FileCopyOperationJob::ScanDestination()
                     CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);// TODO: look up
                 }
 
-                if(m_IsCopying)
+                if(m_Options.docopy)
                 {
-                    m_WorkMode = CopyToFolder;
+                    m_WorkMode = CopyToPathPreffix;
                 }
                 else
                 {
-                    if(m_SameVolume)  m_WorkMode = RenameToFolder;
-                    else              m_WorkMode = MoveToFolder;
+                    if(m_SameVolume)  m_WorkMode = RenameToPathPreffix;
+                    else              m_WorkMode = MoveToPathPreffix;
                 }
             
                 // now we need to check every directory here and create them they are not exist
@@ -297,14 +316,14 @@ void FileCopyOperationJob::ScanDestination()
                 }
                 CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);// TODO: look up
 
-                if(m_IsCopying)
+                if(m_Options.docopy)
                 {
-                    m_WorkMode = CopyToFile;
+                    m_WorkMode = CopyToFixedPath;
                 }
                 else
                 {
-                    if(m_SameVolume) m_WorkMode = RenameToFile;
-                    else             m_WorkMode = MoveToFile;
+                    if(m_SameVolume) m_WorkMode = RenameToFixedPath;
+                    else             m_WorkMode = MoveToFixedPath;
                 }
                 
                 // now we need to check every directory here and create them they are not exist
@@ -350,7 +369,7 @@ void FileCopyOperationJob::ScanItems()
     m_ScannedItems = FlexChainedStringsChunk::Allocate();
     m_ScannedItemsLast = m_ScannedItems;
 
-    if(m_InitialItems->amount > 1)
+    if(m_InitialItems->Amount() > 1)
         m_IsSingleFileCopy = false;
     
     // iterate in original filenames
@@ -374,13 +393,18 @@ void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_p
 
     struct stat stat_buffer;
 retry_stat:
-    if(stat(fullpath, &stat_buffer) == 0)
+    int stat_ret = m_Options.preserve_symlinks ?
+        lstat(fullpath, &stat_buffer):
+         stat(fullpath, &stat_buffer);
+    if(stat_ret == 0)
     {
-        bool isfile = (stat_buffer.st_mode&S_IFMT) == S_IFREG;
-        bool isdir  = (stat_buffer.st_mode&S_IFMT) == S_IFDIR;
+        bool issymlink  = (stat_buffer.st_mode&S_IFMT) == S_IFLNK;
+        bool isreg      = (stat_buffer.st_mode&S_IFMT) == S_IFREG;
+        bool isdir      = (stat_buffer.st_mode&S_IFMT) == S_IFDIR;
 
-        if(isfile)
+        if(isreg || issymlink)
         {
+            m_ItemFlags.push_back(issymlink ? (uint8_t)ItemFlags::is_symlink : (uint8_t)ItemFlags::no_flags);
             m_ScannedItemsLast = m_ScannedItemsLast->AddString(
                                                                _short_path,
                                                                _prefix
@@ -393,11 +417,12 @@ retry_stat:
             m_IsSingleFileCopy = false;
             char dirpath[MAXPATHLEN];
             sprintf(dirpath, "%s/", _short_path);
+            m_ItemFlags.push_back((uint8_t)ItemFlags::is_dir);
             m_ScannedItemsLast = m_ScannedItemsLast->AddString(
                                                                dirpath,
                                                                _prefix
                                                                ); // TODO: make this insertion with strlen since we already know it
-            const FlexChainedStringsChunk::node *dirnode = &m_ScannedItemsLast->strings[m_ScannedItemsLast->amount-1];
+            const FlexChainedStringsChunk::node *dirnode = &((*m_ScannedItemsLast)[m_ScannedItemsLast->Amount()-1]);
             m_SourceNumberOfDirectories++;
             
         retry_opendir:
@@ -454,11 +479,12 @@ void FileCopyOperationJob::ProcessItems()
 {
     m_Stats.StartTimeTracking();
     
+    int n = 0;
     for(const auto&i: *m_ScannedItems)
     {
         m_CurrentlyProcessingItem = &i;
         
-        ProcessItem(m_CurrentlyProcessingItem);
+        ProcessItem(m_CurrentlyProcessingItem, n++);
 
         if(CheckPauseOrStop()) return;
     }
@@ -471,28 +497,19 @@ void FileCopyOperationJob::ProcessItems()
         ProcessFoldersRemoval();
 }
 
-void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_node)
+void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_node, int _number)
 {
     assert(_node->len != 0);
     
     // compose file name - reverse lookup
     char itemname[MAXPATHLEN];
     _node->str_with_pref(itemname);
-    bool src_isdir = _node->str()[_node->len-1] == '/'; // found if item is a directory    
-    
-    if(m_WorkMode == CopyToFolder || m_WorkMode == CopyToFile)
-    {
-        if(src_isdir)   ProcessDirectoryCopying(itemname);
-        else            ProcessFileCopying(itemname);
-    }
-    else if(m_WorkMode == RenameToFile)
-        ProcessRenameToFile(itemname);
-    else if(m_WorkMode == RenameToFolder)
-        ProcessRenameToFolder(itemname);
-    else if(m_WorkMode == MoveToFolder)
-        ProcessMoveToFolder(itemname, src_isdir);
-    else if(m_WorkMode == MoveToFile)
-        ProcessMoveToFile(itemname, src_isdir);
+    if(m_WorkMode == CopyToFixedPath)           ProcessCopyToFixedPath(itemname, _number);
+    else if(m_WorkMode == CopyToPathPreffix)    ProcessCopyToPathPreffix(itemname, _number);
+    else if(m_WorkMode == RenameToFixedPath)    ProcessRenameToFixedPath(itemname, _number);
+    else if(m_WorkMode == RenameToPathPreffix)  ProcessRenameToPathPreffix(itemname, _number);
+    else if(m_WorkMode == MoveToPathPreffix)    ProcessMoveToPathPreffix(itemname, _number);
+    else if(m_WorkMode == MoveToFixedPath)      ProcessMoveToFixedPath(itemname, _number);
     else assert(0); // sanity guard
 }
 
@@ -525,19 +542,120 @@ void FileCopyOperationJob::ProcessFoldersRemoval()
     }
 }
 
-void FileCopyOperationJob::ProcessMoveToFile(const char *_path, bool _is_dir)
+void FileCopyOperationJob::ProcessCopyToPathPreffix(const char *_path, int _number)
+{
+    char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];    
+    if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir)
+    {
+        assert(m_Destination[strlen(m_Destination)-1] == '/');
+        assert(_path[strlen(_path)-1] == '/');
+        
+        strcpy(destinationpath, m_Destination);
+        strcat(destinationpath, _path);
+        
+        strcpy(sourcepath, m_SourceDirectory);
+        strcat(sourcepath, _path);
+        
+        if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy directory into itself        
+        CopyDirectoryTo(sourcepath, destinationpath);
+    }
+    else
+    {
+        assert(_path[strlen(_path)-1] != '/'); // sanity check
+        
+        // compose real src name
+        strcpy(sourcepath, m_SourceDirectory);
+        strcat(sourcepath, _path);
+        
+        // compose dest name
+        assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
+        strcpy(destinationpath, m_Destination);
+        strcat(destinationpath, _path);
+        
+        if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy file into itself
+        
+        if(m_Options.preserve_symlinks && (m_ItemFlags[_number] & (uint8_t)ItemFlags::is_symlink))
+            CreateSymlinkTo(sourcepath, destinationpath);
+        else
+            CopyFileTo(sourcepath, destinationpath);
+    }
+}
+
+void FileCopyOperationJob::ProcessCopyToFixedPath(const char *_path, int _number)
+{
+    char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
+    if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir)
+    {
+        assert(m_Destination[strlen(m_Destination)-1] != '/');
+        assert(_path[strlen(_path)-1] == '/');
+        
+        strcpy(destinationpath, m_Destination);
+        // here we need to find if user wanted just to copy a single top-level directory
+        // if so - don't touch destination name. otherwise - add an original path there
+        if(m_IsSingleEntryCopy)
+        {
+            // for top level we need to just leave path without changes - skip top level's entry name
+            // for nested entries we need to cut first part of a path
+            if(*(strchr(_path, '/')+1) != 0)
+                strcat(destinationpath, strchr(_path, '/'));
+        }
+        else
+        {
+            strcat(destinationpath, "/");
+            strcat(destinationpath, _path);
+        }
+        
+        strcpy(sourcepath, m_SourceDirectory);
+        strcat(sourcepath, _path);
+        
+        CopyDirectoryTo(sourcepath, destinationpath);
+    }
+    else
+    {   
+        assert(_path[strlen(_path)-1] != '/'); // sanity check
+        
+        // compose real src name
+        strcpy(sourcepath, m_SourceDirectory);
+        strcat(sourcepath, _path);
+        
+        // compose dest name
+        strcpy(destinationpath, m_Destination);
+        // here we need to find if user wanted just to copy a single top-level directory
+        // if so - don't touch destination name. otherwise - add an original path there
+        if(m_IsSingleEntryCopy)
+        {
+            // for top level we need to just leave path without changes - skip top level's entry name
+            // for nested entries we need to cut first part of a path
+            if(strchr(_path, '/') != 0)
+                strcat(destinationpath, strchr(_path, '/'));
+        }
+        
+        if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy file into itself
+        
+        if(m_Options.preserve_symlinks && (m_ItemFlags[_number] & (uint8_t)ItemFlags::is_symlink))
+            CreateSymlinkTo(sourcepath, destinationpath);
+        else
+            CopyFileTo(sourcepath, destinationpath);
+    }
+}
+
+void FileCopyOperationJob::ProcessMoveToFixedPath(const char *_path, int _number)
 {
     // m_Destination is a file name
     char sourcepath[MAXPATHLEN];
-    if(!_is_dir)
+    if(!(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir))
     {
         assert(_path[strlen(_path)-1] != '/'); // sanity check
         // compose real src name
         strcpy(sourcepath, m_SourceDirectory);
         strcat(sourcepath, _path);
         
-        // compose dest name        
-        if( CopyFileTo(sourcepath, m_Destination) )
+        
+        bool result = (m_Options.preserve_symlinks && (m_ItemFlags[_number] & (uint8_t)ItemFlags::is_symlink)) ?
+            CreateSymlinkTo(sourcepath, m_Destination):
+            CopyFileTo(sourcepath, m_Destination);
+        
+        if( result )
             m_FilesToDelete.push_back(m_CurrentlyProcessingItem);
             // put files in deletion list only if copying was successful        
     }
@@ -554,12 +672,12 @@ void FileCopyOperationJob::ProcessMoveToFile(const char *_path, bool _is_dir)
     }
 }
 
-void FileCopyOperationJob::ProcessMoveToFolder(const char *_path, bool _is_dir)
+void FileCopyOperationJob::ProcessMoveToPathPreffix(const char *_path, int _number)
 {
     // m_Destination is a directory path
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
     
-    if(!_is_dir)
+    if(!(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir))
     {
         assert(_path[strlen(_path)-1] != '/'); // sanity check
         // compose real src name
@@ -572,11 +690,13 @@ void FileCopyOperationJob::ProcessMoveToFolder(const char *_path, bool _is_dir)
         strcat(destinationpath, _path);
         assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen
     
-        if( CopyFileTo(sourcepath, destinationpath) )
-        {
-            // put files in deletion list only if copying was successful
+        bool result = (m_Options.preserve_symlinks && (m_ItemFlags[_number] & (uint8_t)ItemFlags::is_symlink)) ?
+            CreateSymlinkTo(sourcepath, destinationpath):
+            CopyFileTo(sourcepath, destinationpath);
+
+        // put files in deletion list only if copying was successful
+        if( result )
             m_FilesToDelete.push_back(m_CurrentlyProcessingItem);
-        }
     }
     else
     {
@@ -592,20 +712,18 @@ void FileCopyOperationJob::ProcessMoveToFolder(const char *_path, bool _is_dir)
         assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen
         
         if(CopyDirectoryTo(sourcepath, destinationpath))
-        {
             m_DirsToDelete.push_back(m_CurrentlyProcessingItem);
-        }
     }
 }
 
-void FileCopyOperationJob::ProcessRenameToFile(const char *_path)
+void FileCopyOperationJob::ProcessRenameToFixedPath(const char *_path, int _number)
 {
     m_Stats.SetCurrentItem(_path);
     
     // m_Destination is full target path - we need to rename current file to it
     // assuming that we're working on same valume
     char sourcepath[MAXPATHLEN];
-    struct stat stat_buffer;    
+    struct stat stat_buffer;
     
      // sanity checks
     assert(m_Destination[strlen(m_Destination)-1] != '/');
@@ -647,7 +765,7 @@ retry_rename:
     m_Stats.AddValue(1);
 }
 
-void FileCopyOperationJob::ProcessRenameToFolder(const char *_path)
+void FileCopyOperationJob::ProcessRenameToPathPreffix(const char *_path, int _number)
 {
     m_Stats.SetCurrentItem(_path);
     
@@ -697,51 +815,80 @@ retry_rename:
     m_Stats.AddValue(1);
 }
 
-void FileCopyOperationJob::ProcessDirectoryCopying(const char *_path)
+bool FileCopyOperationJob::CreateSymlinkTo(const char *_source_symlink, const char* _tagret_symlink)
 {
-    if(m_WorkMode == CopyToFolder)
-    {
-        assert(m_Destination[strlen(m_Destination)-1] == '/');
-        assert(_path[strlen(_path)-1] == '/');
+    char linkpath[MAXPATHLEN];
+    int result;
+    ssize_t sz;
+    bool was_succesful = false;
+doreadlink:
+    sz = readlink(_source_symlink, linkpath, MAXPATHLEN);    
+    if(sz == -1)
+    {   // failed to read original symlink
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:_source_symlink] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto doreadlink;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    }
     
-        char src[MAXPATHLEN], dest[MAXPATHLEN];
-        strcpy(dest, m_Destination);
-        strcat(dest, _path);
-
-        strcpy(src, m_SourceDirectory);
-        strcat(src, _path);
-
-        CopyDirectoryTo(src, dest);
+    linkpath[sz] = 0;
+    
+dosymlink:
+    result = symlink(linkpath, _tagret_symlink);
+    if(result != 0)
+    {   // failed to create a symlink
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantOpenDestFile:errno ForFile:_tagret_symlink] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto dosymlink;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
-    else if(m_WorkMode == CopyToFile)
-    {
-        assert(m_Destination[strlen(m_Destination)-1] != '/');
-        assert(_path[strlen(_path)-1] == '/');
+    
+    was_succesful = true;
 
-        char src[MAXPATHLEN], dest[MAXPATHLEN];
+cleanup:
+    
+    return was_succesful;
+}
 
-        strcpy(dest, m_Destination);
-        // here we need to find if user wanted just to copy a single top-level directory
-        // if so - don't touch destination name. otherwise - add an original path there
-        if(m_IsSingleEntryCopy)
+void FileCopyOperationJob::EraseXattrs(int _fd_in)
+{
+    assert(m_Buffer1);
+    char *xnames = (char*) m_Buffer1;
+    ssize_t xnamesizes = flistxattr(_fd_in, xnames, BUFFER_SIZE, 0);
+    if(xnamesizes > 0)
+    { // iterate and remove
+        char *s = xnames, *e = xnames + xnamesizes;
+        while(s < e)
         {
-            // for top level we need to just leave path without changes - skip top level's entry name
-            // for nested entries we need to cut first part of a path
-            if(*(strchr(_path, '/')+1) != 0)
-                strcat(dest, strchr(_path, '/'));
+            fremovexattr(_fd_in, s, 0);
+            s += strlen(s)+1;
         }
-        else
-        {
-            strcat(dest, "/");
-            strcat(dest, _path);
-        }
-        
-        strcpy(src, m_SourceDirectory);
-        strcat(src, _path);
-        
-        CopyDirectoryTo(src, dest);
     }
-    else assert(0);
+}
+
+void FileCopyOperationJob::CopyXattrs(int _fd_from, int _fd_to)
+{
+    char *xnames;
+    ssize_t xnamesizes;
+
+    assert(m_Buffer1 != 0);
+    xnames = (char*) m_Buffer1;
+    xnamesizes = flistxattr(_fd_from, xnames, BUFFER_SIZE, 0);
+    if(xnamesizes > 0)
+    { // iterate and copy
+        char *s = xnames, *e = xnames + xnamesizes;
+        while(s < e)
+        {
+            ssize_t xattrsize = fgetxattr(_fd_from, s, m_Buffer2, BUFFER_SIZE, 0, 0);
+            if(xattrsize >= 0) // xattr can be zero-length, just a tag itself
+                fsetxattr(_fd_to, s, m_Buffer2, xattrsize, 0, 0);
+            s += strlen(s)+1;
+        }
+    }
 }
 
 bool FileCopyOperationJob::CopyDirectoryTo(const char *_src, const char *_dest)
@@ -750,8 +897,6 @@ bool FileCopyOperationJob::CopyDirectoryTo(const char *_src, const char *_dest)
     struct stat src_stat, dst_stat;
     bool opres = false;
     int src_fd = -1, dst_fd = -1;
-    char *xnames;
-    ssize_t xnamesizes;
 
     // check if target already exist
     if( lstat(_dest, &dst_stat) != -1 )
@@ -783,49 +928,24 @@ domkdir:
     if((dst_fd = open(_dest, O_RDONLY)) == -1) goto end;
     if(fstat(src_fd, &src_stat) != 0) goto end;
     
-    // change unix mode
-    fchmod(dst_fd, src_stat.st_mode);
 
-    // change ownage
-    fchown(dst_fd, src_stat.st_uid, src_stat.st_gid);
-
-    // change flags
-    fchflags(dst_fd, src_stat.st_flags);
-    
-    // copy xattrs
-    assert(m_Buffer1 != 0);
-    xnames = (char*) m_Buffer1;
-    xnamesizes = flistxattr(src_fd, xnames, BUFFER_SIZE, 0);
-    if(xnamesizes > 0)
-    { // iterate and copy
-        char *s = xnames, *e = xnames + xnamesizes;
-        while(s < e)
-        {
-            ssize_t xattrsize = fgetxattr(src_fd, s, m_Buffer2, BUFFER_SIZE, 0, 0);
-            if(xattrsize >= 0) // xattr can be zero-length, just a tag itself
-                fsetxattr(dst_fd, s, m_Buffer2, xattrsize, 0, 0);
-            s += strlen(s)+1;
-        }
-    }
-    
-    // adjust destination times
+    if(m_Options.copy_unix_flags)
     {
-        struct attrlist attrs;
-        memset(&attrs, 0, sizeof(attrs));
-        attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+        // change unix mode
+        fchmod(dst_fd, src_stat.st_mode);
         
-        attrs.commonattr = ATTR_CMN_MODTIME;
-        fsetattrlist(dst_fd, &attrs, &src_stat.st_mtimespec, sizeof(struct timespec), 0);
-        
-        attrs.commonattr = ATTR_CMN_CRTIME;
-        fsetattrlist(dst_fd, &attrs, &src_stat.st_birthtimespec, sizeof(struct timespec), 0);
-        
-        attrs.commonattr = ATTR_CMN_ACCTIME;
-        fsetattrlist(dst_fd, &attrs, &src_stat.st_atimespec, sizeof(struct timespec), 0);
-        
-        attrs.commonattr = ATTR_CMN_CHGTIME;
-        fsetattrlist(dst_fd, &attrs, &src_stat.st_ctimespec, sizeof(struct timespec), 0);
+        // change flags
+        fchflags(dst_fd, src_stat.st_flags);
     }
+
+    if(m_Options.copy_unix_owners) // change ownage
+        fchown(dst_fd, src_stat.st_uid, src_stat.st_gid);
+
+    if(m_Options.copy_xattrs) // copy xattrs
+        CopyXattrs(src_fd, dst_fd);
+    
+    if(m_Options.copy_file_times) // adjust destination times
+        AdjustFileTimes(dst_fd, &src_stat);
 
     opres = true;
 end:
@@ -834,45 +954,9 @@ end:
     return opres;
 }
 
-void FileCopyOperationJob::ProcessFileCopying(const char *_path)
-{    
-    char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
-
-    assert(_path[strlen(_path)-1] != '/'); // sanity check
-
-    // compose real src name
-    strcpy(sourcepath, m_SourceDirectory);
-    strcat(sourcepath, _path);
-    
-    // compose dest name
-    if(m_WorkMode == CopyToFolder)
-    {
-        assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
-        strcpy(destinationpath, m_Destination);
-        strcat(destinationpath, _path);
-    }
-    else
-    {
-        strcpy(destinationpath, m_Destination);
-        // here we need to find if user wanted just to copy a single top-level directory
-        // if so - don't touch destination name. otherwise - add an original path there
-        if(m_IsSingleEntryCopy)
-        {
-            // for top level we need to just leave path without changes - skip top level's entry name
-            // for nested entries we need to cut first part of a path
-            if(strchr(_path, '/') != 0)
-                strcat(destinationpath, strchr(_path, '/'));
-        }
-    }
-    
-    if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy file into itself
-
-    CopyFileTo(sourcepath, destinationpath);
-}
-
 bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
 {
-    assert(m_WorkMode != RenameToFile && m_WorkMode != RenameToFolder); // sanity check
+    assert(m_WorkMode != RenameToFixedPath && m_WorkMode != RenameToPathPreffix); // sanity check
     
     // TODO: need to ask about destination volume info to exclude meaningless operations for attrs which are not supported
     // TODO: need to adjust buffer sizes and writing calls to preffered volume's I/O size
@@ -961,8 +1045,11 @@ statsource: // get information about source file
     }
     
 opendest: // open file descriptor for destination
-    oldumask = umask(0); // we want to copy src permissions
-    destinationfd = open(_dest, dstopenflags, src_stat_buffer.st_mode);
+    oldumask = umask(0);
+    if(m_Options.copy_unix_flags) // we want to copy src permissions
+        destinationfd = open(_dest, dstopenflags, src_stat_buffer.st_mode);
+    else // open file with default permissions
+        destinationfd = open(_dest, dstopenflags, S_IRUSR | S_IWUSR | S_IRGRP);
     umask(oldumask);
     
     if(destinationfd == -1)
@@ -1068,64 +1155,24 @@ dolseek: // find right position in destination file
     // TODO: do we need to determine if various attributes setting was successful?
     
     // erase destination's xattrs
-    if(erase_xattrs)
-    {
-        char *xnames = (char*) m_Buffer1;
-        ssize_t xnamesizes = flistxattr(destinationfd, xnames, BUFFER_SIZE, 0);
-        if(xnamesizes > 0)
-        { // iterate and remove
-            char *s = xnames, *e = xnames + xnamesizes;
-            while(s < e)
-            {
-                fremovexattr(destinationfd, s, 0);
-                s += strlen(s)+1;
-            }
-        }
-    }
+    if(m_Options.copy_xattrs && erase_xattrs)
+        EraseXattrs(destinationfd);
     
     // copy xattrs from src to dest
-    if(copy_xattrs)
-    {
-        char *xnames = (char*) m_Buffer1;
-        ssize_t xnamesizes = flistxattr(sourcefd, xnames, BUFFER_SIZE, 0);
-        if(xnamesizes > 0)
-        { // iterate and copy
-            char *s = xnames, *e = xnames + xnamesizes;
-            while(s < e)
-            {
-                ssize_t xattrsize = fgetxattr(sourcefd, s, m_Buffer2, BUFFER_SIZE, 0, 0);
-                if(xattrsize >= 0) // xattr can be zero-length, just a tag itself
-                    fsetxattr(destinationfd, s, m_Buffer2, xattrsize, 0, 0);
-                s += strlen(s)+1;
-            }
-        }
-    }
+    if(m_Options.copy_xattrs && copy_xattrs)
+        CopyXattrs(sourcefd, destinationfd);
     
     // change ownage
-    fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+    if(m_Options.copy_unix_owners)
+        fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
     
     // change flags
-    fchflags(destinationfd, src_stat_buffer.st_flags);
+    if(m_Options.copy_unix_flags)
+        fchflags(destinationfd, src_stat_buffer.st_flags);
     
     // adjust destination time as source
-    if(adjust_dst_time)
-    {
-        struct attrlist attrs;
-        memset(&attrs, 0, sizeof(attrs));
-        attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-        
-        attrs.commonattr = ATTR_CMN_MODTIME;
-        fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_mtimespec, sizeof(struct timespec), 0);
-        
-        attrs.commonattr = ATTR_CMN_CRTIME;
-        fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_birthtimespec, sizeof(struct timespec), 0);
-        
-        attrs.commonattr = ATTR_CMN_ACCTIME;
-        fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_atimespec, sizeof(struct timespec), 0);
-        
-        attrs.commonattr = ATTR_CMN_CHGTIME;
-        fsetattrlist(destinationfd, &attrs, &src_stat_buffer.st_ctimespec, sizeof(struct timespec), 0);
-    }
+    if(m_Options.copy_file_times && adjust_dst_time)
+        AdjustFileTimes(destinationfd, &src_stat_buffer);
     
     was_successful = true;
 

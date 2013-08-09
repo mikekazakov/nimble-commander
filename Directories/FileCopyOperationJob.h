@@ -39,24 +39,31 @@ public:
     StatValueType GetStatValueType() const;
     
 private:
+    enum class ItemFlags
+    {
+        no_flags    = 0,
+        is_dir      = 1 << 0,
+        is_symlink  = 1 << 1
+    };
+    
     enum WorkMode
     {
         Unknown = 0,
-        CopyToFolder,
+        CopyToPathPreffix,
         
-        CopyToFile,
+        CopyToFixedPath,
         
-        RenameToFile,
+        RenameToFixedPath,
         // our destination is a regular filename.
         // renaming multiple files to one filename will result in overwriting destination file - need to ask user about this action
         // [!] in this case we may need to remove destination first. but it's better to do nothing and to display an error
         
-        RenameToFolder,
+        RenameToPathPreffix,
         // our destination is a folder name
         // we need to compose file name as destination folder name plus original relative file name
         
-        MoveToFile,
-        MoveToFolder
+        MoveToFixedPath,
+        MoveToPathPreffix
         
         // when moving files we actualy do two things:
         // 1) copying source to destination - copy every item into receiver
@@ -70,15 +77,15 @@ private:
     void ScanItems();
     void ScanItem(const char *_full_path, const char *_short_path, const FlexChainedStringsChunk::node *_prefix);
     void ProcessItems();
-    void ProcessItem(const FlexChainedStringsChunk::node *_node);
+    void ProcessItem(const FlexChainedStringsChunk::node *_node, int _number);
     
     // _path is relative filename of source item
-    void ProcessDirectoryCopying(const char *_path);
-    void ProcessFileCopying(const char *_path);
-    void ProcessRenameToFile(const char *_path);
-    void ProcessRenameToFolder(const char *_path);
-    void ProcessMoveToFolder(const char *_path, bool _is_dir);
-    void ProcessMoveToFile(const char *_path, bool _is_dir);
+    void ProcessCopyToPathPreffix(const char *_path, int _number);
+    void ProcessCopyToFixedPath(const char *_path, int _number);
+    void ProcessRenameToFixedPath(const char *_path, int _number);
+    void ProcessRenameToPathPreffix(const char *_path, int _number);
+    void ProcessMoveToPathPreffix(const char *_path, int _number);
+    void ProcessMoveToFixedPath(const char *_path, int _number);
     
     void ProcessFilesRemoval();
     void ProcessFoldersRemoval();
@@ -88,10 +95,15 @@ private:
     // return true if copying was successful
     bool CopyFileTo(const char *_src, const char *_dest);
     bool CopyDirectoryTo(const char *_src, const char *_dest);
+    bool CreateSymlinkTo(const char *_source_symlink, const char* _tagret_symlink);
+    
+    void EraseXattrs(int _fd_in);
+    void CopyXattrs(int _fd_from, int _fd_to);
     
     __weak FileCopyOperation *m_Operation;
     FlexChainedStringsChunk *m_InitialItems;
     FlexChainedStringsChunk *m_ScannedItems, *m_ScannedItemsLast;
+    std::vector<uint8_t> m_ItemFlags;
     std::vector<const FlexChainedStringsChunk::node *> m_FilesToDelete; // used for move work mode
     std::vector<const FlexChainedStringsChunk::node *> m_DirsToDelete; // used for move work mode
     const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;
@@ -112,7 +124,7 @@ private:
     bool m_AppendAll;
     bool m_IsSingleFileCopy;
     
-    bool m_IsCopying; // true means that user wants to perform copy operation, false mean rename/move
+    FileCopyOperationOptions m_Options;
     bool m_IsSingleEntryCopy;
     bool m_SameVolume; // true means that source and destination are located at the same file system
 };

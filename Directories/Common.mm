@@ -268,27 +268,39 @@ bool IsVolumeContainingPathEjectable(const char *_path)
         bool ejectable = false;
         CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)root, strlen(root), false);
                 
-        CFBooleanRef isremovable;
-        if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0))
+        CFBooleanRef isremovable_volume = 0;
+        if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable_volume, 0) && isremovable_volume)
         {
-            if(CFBooleanGetValue(isremovable))
+            if(CFBooleanGetValue(isremovable_volume))
                 ejectable = true;
-            CFRelease(isremovable);
+            CFRelease(isremovable_volume);
         }
         
-        if(!ejectable)
+        CFBooleanRef isejactable_volume = 0;
+        if(!ejectable && CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejactable_volume, 0) && isejactable_volume)
         {
-            CFBooleanRef islocal;
-            if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0))
-            {
-                if(!CFBooleanGetValue(islocal))
-                    ejectable = true;
-                CFRelease(islocal);
-            }
+            if(CFBooleanGetValue(isejactable_volume))
+                ejectable = true;
+            CFRelease(isejactable_volume);
+        }
+        
+        CFBooleanRef isinternal_volume = 0;
+        if(!ejectable && CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal_volume, 0) && isinternal_volume)
+        {
+            if(CFBooleanGetValue(isinternal_volume) == false)
+                ejectable = true;
+            CFRelease(isinternal_volume);
+        }
+        
+        CFBooleanRef islocal;
+        if(!ejectable && CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0))
+        {
+            if(!CFBooleanGetValue(islocal))
+                ejectable = true;
+            CFRelease(islocal);
         }
         
         CFRelease(cfurl);
-        
         return ejectable;
     }
 

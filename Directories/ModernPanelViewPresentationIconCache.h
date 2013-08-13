@@ -42,6 +42,7 @@ private:
         NSImageRep *image;
         NSString *item_path;
         bool try_create_thumbnail;
+        bool built_using_thumbnail;
     };
     typedef std::deque<UniqueIcon> UniqueIconsT;
     

@@ -94,6 +94,8 @@ NSImageRep *ModernPanelViewPresentationIconCache::CreateIcon(const DirectoryEntr
         icon.try_create_thumbnail = (_item.size < 256*1024*1024); // size less than 256 MB.
         m_NeedsLoading = true;
     }
+    
+    icon.built_using_thumbnail = false;
         
     m_UniqueIcons.push_back(icon);
     ++m_IconsAmount;
@@ -148,6 +150,10 @@ void ModernPanelViewPresentationIconCache::RunLoadThread(PanelData *_data)
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     dispatch_block_t block =
     ^{
+        // for debug only, to see some fancy and strange things happen
+        auto pthis = this;
+        auto current_size = m_UniqueIcons.size();
+        
         uint64_t last_draw_time = GetTimeInNanoseconds();
         int i = start;
             
@@ -170,6 +176,7 @@ void ModernPanelViewPresentationIconCache::RunLoadThread(PanelData *_data)
             if (icon)
             {
                 // Apply the image we acquired during last iteration.
+                icon->built_using_thumbnail = true;
                 icon->image = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
                 icon->item_path = nil;
             }
@@ -183,9 +190,10 @@ void ModernPanelViewPresentationIconCache::RunLoadThread(PanelData *_data)
                 pthread_mutex_unlock(&m_Lock);
                 break;
             }
-                
+            
+            assert(i < m_UniqueIcons.size());
             icon = &m_UniqueIcons[i++];
-            assert(icon->item_path);
+            assert(icon->item_path); // this bitchy assert appeared sometimes. hope that setting m_LoadIconsRunning to false below fixed it
             item_path = icon->item_path;
             try_create_thumbnail = icon->try_create_thumbnail;
 
@@ -215,8 +223,12 @@ void ModernPanelViewPresentationIconCache::RunLoadThread(PanelData *_data)
                 image = [[NSWorkspace sharedWorkspace] iconForFile:item_path];
             }
 
-            if (m_LoadIconShouldStop) break;
-                
+            if (m_LoadIconShouldStop)
+            {
+                m_LoadIconsRunning = false;                
+                break;
+            }
+            
             uint64_t curtime = GetTimeInNanoseconds();
             if (curtime - last_draw_time > 500*NSEC_PER_MSEC)
             {
@@ -245,7 +257,7 @@ void ModernPanelViewPresentationIconCache::ClearIcons()
         if (m_LoadIconsRunning)
         {
             m_LoadIconShouldStop = true;
-            m_LoadIconsRunning = false;
+//            m_LoadIconsRunning = false;
         }
         pthread_mutex_unlock(&m_Lock);
     }

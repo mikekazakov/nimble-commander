@@ -335,4 +335,11 @@ bool IsVolumeContainingPathEjectable(const char *_path)
         
     return CGColorCreate(colorSpace, components);
 }
+
++ (NSColor *)colorWithCGColorSafe:(CGColorRef)CGColor
+{
+    if (CGColor == NULL) return nil;
+    return [NSColor colorWithCIColor:[CIColor colorWithCGColor:CGColor]];
+}
+
 @end

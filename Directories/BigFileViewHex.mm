@@ -368,7 +368,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     CGPoint text_pos = [self TextAnchor];
     
     NSDictionary *text_attr =@{NSFontAttributeName:(NSFont*)[m_View TextFont],
-                               NSForegroundColorAttributeName:[NSColor colorWithCGColor:[m_View TextForegroundColor]]};
+                               NSForegroundColorAttributeName:[NSColor colorWithCGColorSafe:[m_View TextForegroundColor]]};
     
     for(size_t i = m_RowsOffset; i < m_Lines.size(); ++i)
     {

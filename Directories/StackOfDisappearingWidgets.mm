@@ -6,9 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <assert.h>
-#include <vector>
-#include <deque>
+#import <assert.h>
+#import <vector>
 #import "StackOfDisappearingWidgets.h"
 
 static const double g_Gap = 8.0;
@@ -21,8 +20,6 @@ static const double g_Gap = 8.0;
     NSView                                *m_AnchorView;
     NSView                                *m_SuperView;
     bool                                  m_AllObjectsAdded;
-    std::deque<NSView*>                   m_Visible;
-    std::deque<NSView*>                   m_Hidden;
     dispatch_queue_t                      m_WorkQueue;
 }
 
@@ -74,16 +71,19 @@ static const double g_Gap = 8.0;
 - (void) BuildLayout
 {
     assert(m_AllObjectsAdded);
+    std::vector<__weak NSView*> visible;
+    std::vector<__weak NSView*> hidden;
+    
     for(NSView *v: m_Widgets)
         if([v isHidden])
-            m_Hidden.push_back(v);
+            hidden.push_back(v);
         else
-            m_Visible.push_back(v);
-        
+            visible.push_back(v);
+    
     NSMutableArray *to_add = [NSMutableArray arrayWithCapacity:m_Widgets.size()*2];
     
     NSView *last = m_AnchorView;
-    for(NSView *v: m_Visible)
+    for(NSView *v: visible)
     {
         if(m_Orientation == StackOfDisappearingWidgetsOrientation::LeftToRight)
             [to_add addObject:[NSLayoutConstraint constraintWithItem:v
@@ -113,7 +113,7 @@ static const double g_Gap = 8.0;
         last = v;
     }
     
-    for(NSView *v: m_Hidden)
+    for(NSView *v: hidden)
     {
         [to_add addObject:[NSLayoutConstraint constraintWithItem:v
                                                               attribute:NSLayoutAttributeLeft
@@ -166,10 +166,7 @@ static const double g_Gap = 8.0;
     {
         [m_SuperView removeConstraints:to_remove];
         [m_SuperView addConstraints:to_add];
-    }
-    
-    m_Visible.clear();
-    m_Hidden.clear();
+    }    
 }
 
 @end

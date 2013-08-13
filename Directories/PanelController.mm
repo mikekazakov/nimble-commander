@@ -15,6 +15,7 @@
 #import "MainWindowFilePanelState.h"
 #import "filesysinfo.h"
 #import "FileMask.h"
+#import "PanelFastSearchPopupViewController.h"
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
@@ -25,9 +26,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     __unsafe_unretained MainWindowController *m_WindowController;
     unsigned long m_UpdatesObservationTicket;
     
+    // Fast searching section
     NSString *m_FastSearchString;
     uint64_t m_FastSearchLastType;
     unsigned m_FastSearchOffset;
+    PanelFastSearchPopupViewController *m_FastSearchPopupView;
     
     // background directory size calculation support
     bool     m_IsStopDirectorySizeCounting; // flags current any other those tasks in queue that they need to stop
@@ -470,9 +473,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
     if(m_FastSearchString == nil)
         return;
-    
+
     unsigned ind, range;
-    if(m_Data->FindSuitableEntry( (__bridge CFStringRef) m_FastSearchString, m_FastSearchOffset, &ind, &range))
+    bool found_any = m_Data->FindSuitableEntry( (__bridge CFStringRef) m_FastSearchString, m_FastSearchOffset, &ind, &range);
+    if(found_any)
     {
         if(m_FastSearchOffset > range)
             m_FastSearchOffset = range;
@@ -481,6 +485,42 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         if(pos >= 0)
             [m_View SetCursorPosition:pos];
     }
+
+    if(!m_FastSearchPopupView)
+    {
+        m_FastSearchPopupView = [PanelFastSearchPopupViewController new];
+        [m_FastSearchPopupView SetHandlers:^{[self HandleFastSearchPrevious];}
+                                      Next:^{[self HandleFastSearchNext];}];
+        [m_FastSearchPopupView PopUpWithView:m_View];
+    }
+
+    [m_FastSearchPopupView UpdateWithString:m_FastSearchString Matches:(found_any?range+1:0)];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_FastSeachDelayTresh+1000), dispatch_get_main_queue(),
+                   ^{
+                       if(m_FastSearchPopupView != nil)
+                       {
+                           uint64_t currenttime = GetTimeInNanoseconds();
+                           if(m_FastSearchLastType + g_FastSeachDelayTresh <= currenttime)
+                           {
+                               [m_FastSearchPopupView PopOut];
+                               m_FastSearchPopupView = nil;
+                           }
+                       }
+                   });
+}
+
+- (void)HandleFastSearchPrevious
+{
+    if(m_FastSearchOffset > 0)
+        m_FastSearchOffset--;
+    [self HandleFastSearch:nil];
+}
+
+- (void)HandleFastSearchNext
+{
+    m_FastSearchOffset++;
+    [self HandleFastSearch:nil];
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -518,21 +558,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             break;
         case NSUpArrowFunctionKey:
             if(modif & NSCommandKeyMask) [m_View HandlePrevPage];
-            else if(modif & NSAlternateKeyMask)
-            {
-                if(m_FastSearchOffset > 0)
-                    m_FastSearchOffset--;
-                [self HandleFastSearch:nil];
-            }
+            else if(modif & NSAlternateKeyMask) [self HandleFastSearchPrevious];
             else                         [m_View HandlePrevFile];
             break;
         case NSDownArrowFunctionKey:
             if(modif & NSCommandKeyMask) [m_View HandleNextPage];
-            else if(modif &  NSAlternateKeyMask)
-                {
-                    m_FastSearchOffset++;
-                    [self HandleFastSearch:nil];
-                }
+            else if(modif &  NSAlternateKeyMask) [self HandleFastSearchNext];
             else                         [m_View HandleNextFile];
             break;
         case NSCarriageReturnCharacter: // RETURN key
@@ -636,6 +667,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         // user was fast searching something, need to flush that string
         m_FastSearchString = nil;
         m_FastSearchOffset = 0;
+        if(m_FastSearchPopupView != nil)
+        {
+            [m_FastSearchPopupView PopOut];
+            m_FastSearchPopupView = nil;
+        }
     }
 }
 

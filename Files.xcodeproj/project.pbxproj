@@ -88,6 +88,9 @@
 		CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
+		CFBE65AB17B607BE00451AE7 /* PanelFastSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */; };
+		CFBE65AC17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */; };
+		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
 		CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */; };
@@ -262,6 +265,10 @@
 		CFB060DC172E6AC4001F6949 /* Common.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Common.mm; sourceTree = "<group>"; };
 		CFB190D717A3B1FA005B8B15 /* ObjcToCppObservingBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcToCppObservingBridge.h; sourceTree = "<group>"; };
 		CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
+		CFBE65A817B607BD00451AE7 /* PanelFastSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelFastSearchPopupViewController.h; sourceTree = "<group>"; };
+		CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelFastSearchPopupViewController.mm; sourceTree = "<group>"; };
+		CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PanelFastSearchPopupViewController.xib; sourceTree = "<group>"; };
+		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
 		CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
 		CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
@@ -318,6 +325,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */,
 				CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */,
 				CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */,
 				CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */,
@@ -505,6 +513,9 @@
 				CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */,
 				CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */,
 				CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */,
+				CFBE65A817B607BD00451AE7 /* PanelFastSearchPopupViewController.h */,
+				CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */,
+				CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */,
 				CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */,
 				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */,
 			);
@@ -677,6 +688,7 @@
 		CFC5121616C4BD3D00D247EE /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */,
 				B50976A31729BA150080412E /* Quartz.framework */,
 				CF76B3201701DEC70066A49F /* OpenDirectory.framework */,
 				CFC5121716C4BD3D00D247EE /* AppKit.framework */,
@@ -816,6 +828,7 @@
 				CF039EB61791204600DC85D6 /* PreferencesWindowViewerTab.xib in Resources */,
 				CF039EBF1795AE9F00DC85D6 /* eject_icon.png in Resources */,
 				CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */,
+				CFBE65AC17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -920,6 +933,7 @@
 				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
 				CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */,
 				CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */,
+				CFBE65AB17B607BE00451AE7 /* PanelFastSearchPopupViewController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

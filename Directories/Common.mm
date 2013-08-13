@@ -265,6 +265,9 @@ bool IsVolumeContainingPathEjectable(const char *_path)
     char root[MAXPATHLEN];
     if(GetFileSystemRootFromPath(_path, root) == 0)
     {
+        if(strcmp(root, "/net") == 0 || strcmp(root, "/dev") == 0 || strcmp(root, "/home") == 0)
+            return false;
+        
         bool ejectable = false;
         CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)root, strlen(root), false);
                 

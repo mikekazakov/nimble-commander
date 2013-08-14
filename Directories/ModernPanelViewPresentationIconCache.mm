@@ -8,9 +8,25 @@
 
 #import <pthread.h>
 #import <Quartz/Quartz.h>
+#import <sys/stat.h>
+#import <sys/types.h>
+#import <sys/dirent.h>
 #import "ModernPanelViewPresentationIconCache.h"
 #import "PanelData.h"
 #import "Common.h"
+
+// we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
+// and can hang in some cases with that ones
+static bool CheckFileIsOK(NSString *_filename)
+{
+    struct stat st;
+    if( stat([_filename fileSystemRepresentation], &st) != 0 )
+        return false;
+    
+    return ((st.st_mode & S_IFMT) == S_IFDIR ||
+            (st.st_mode & S_IFMT) == S_IFREG  ) &&
+            st.st_size > 0;
+}
 
 ModernPanelViewPresentationIconCache::ModernPanelViewPresentationIconCache(ModernPanelViewPresentation *_presentation, int _icon_size):
     m_ParentDir(nil),
@@ -201,14 +217,14 @@ void ModernPanelViewPresentationIconCache::RunLoadThread(PanelData *_data)
             item_path = [parent_dir stringByAppendingString:item_path];
             
             CGImageRef thumbnail = NULL;
-            if (load_thumbnails && try_create_thumbnail)
+            if (load_thumbnails && try_create_thumbnail && CheckFileIsOK(item_path))
             {
-                CFURLRef url = (__bridge CFURLRef)[NSURL fileURLWithPath:item_path];
+                CFURLRef url = CFURLCreateWithFileSystemPath( 0, (CFStringRef) item_path, kCFURLPOSIXPathStyle, false);                
                 void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
                 void *values[] = {(void*)kCFBooleanTrue};
-                CFDictionaryRef dict = CFDictionaryCreate(CFAllocatorGetDefault(), (const void**)keys, (const void**)values, 1, 0, 0);
+                static CFDictionaryRef dict = CFDictionaryCreate(CFAllocatorGetDefault(), (const void**)keys, (const void**)values, 1, 0, 0);
                 thumbnail = QLThumbnailImageCreate(CFAllocatorGetDefault(), url, m_IconSize.size, dict);
-                CFRelease(dict);
+                CFRelease(url);
             }
             
             pthread_mutex_unlock(&m_Lock);

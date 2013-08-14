@@ -264,7 +264,7 @@
             NSString *unixpath = [url path];
             
             char path[MAXPATHLEN];
-            strcpy(path, [unixpath UTF8String]);
+            strcpy(path, [unixpath fileSystemRepresentation]);
             
             // get directory path
             char *lastslash = strrchr(path, '/');

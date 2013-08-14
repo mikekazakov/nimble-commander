@@ -151,8 +151,8 @@ enum ActiveState
     [self LoadPanelsSettings];
     
     // now load data into panels
-    if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"FirstPanelPath"] UTF8String]) )
-        [m_LeftPanelController GoToDirectorySync:[[defaults stringForKey:@"FirstPanelPath"] UTF8String]];
+    if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]) )
+        [m_LeftPanelController GoToDirectorySync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]];
     else
     {
         char path[MAXPATHLEN];
@@ -162,8 +162,8 @@ enum ActiveState
             [m_LeftPanelController GoToDirectorySync:"/"];
     }
     
-    if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"SecondPanelPath"] UTF8String]) )
-        [m_RightPanelController GoToDirectorySync:[[defaults stringForKey:@"SecondPanelPath"] UTF8String]];
+    if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]) )
+        [m_RightPanelController GoToDirectorySync:[[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]];
     else
         [m_RightPanelController GoToDirectorySync:"/"];
     
@@ -318,11 +318,11 @@ enum ActiveState
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{
-    [m_LeftPanelController GoToDirectory:[[m_LeftPanelGoToButton GetCurrentSelectionPath] UTF8String]];
+    [m_LeftPanelController GoToDirectory:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
-    [m_RightPanelController GoToDirectory:[[m_RightPanelGoToButton GetCurrentSelectionPath] UTF8String]];
+    [m_RightPanelController GoToDirectory:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
 }
 
 - (IBAction)LeftPanelGoto:(id)sender{
@@ -765,7 +765,7 @@ enum ActiveState
              char pdir[MAXPATHLEN];
              curdata->GetDirectoryPath(pdir);
              
-             [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] UTF8String]
+             [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] fileSystemRepresentation]
                                                                                         rootpath:pdir
                                                    ]
                                         WithPanel:[self ActivePanelController]];
@@ -818,7 +818,7 @@ enum ActiveState
              [mc FillOptions:&opts];
              
              [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] UTF8String] options:&opts]];
+              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] fileSystemRepresentation] options:&opts]];
          }
          else
          {
@@ -854,7 +854,7 @@ enum ActiveState
              [m_OperationsController AddOperation:
               [[FileCopyOperation alloc] initWithFiles:files
                                                   root:root_path
-                                                  dest:[[mc.TextField stringValue] UTF8String]
+                                                  dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                options:&opts]];
          }
          else
@@ -910,7 +910,7 @@ enum ActiveState
              [mc FillOptions:&opts];
              
              [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] UTF8String] options:&opts]];
+              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] fileSystemRepresentation] options:&opts]];
          }
          else
          {
@@ -946,7 +946,7 @@ enum ActiveState
              [m_OperationsController AddOperation:
               [[FileCopyOperation alloc] initWithFiles:files
                                                   root:root_path
-                                                  dest:[[mc.TextField stringValue] UTF8String]
+                                                  dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                options:&opts]];
          }
          else
@@ -1145,8 +1145,8 @@ enum ActiveState
              handler:^(int result){
                  if(result == DialogResult::Create && [[sheet.LinkPath stringValue] length] > 0)
                      [m_OperationsController AddOperation:
-                      [[FileLinkOperation alloc] initWithNewSymbolinkLink:[[sheet.SourcePath stringValue] UTF8String]
-                                                                 linkname:[[sheet.LinkPath stringValue] UTF8String]
+                      [[FileLinkOperation alloc] initWithNewSymbolinkLink:[[sheet.SourcePath stringValue] fileSystemRepresentation]
+                                                                 linkname:[[sheet.LinkPath stringValue] fileSystemRepresentation]
                        ]
                       ];
              }];
@@ -1184,8 +1184,8 @@ enum ActiveState
                  if(_result == DialogResult::OK)
                  {
                      [m_OperationsController AddOperation:
-                      [[FileLinkOperation alloc] initWithAlteringOfSymbolicLink:[[sheet.SourcePath stringValue] UTF8String]
-                                                                      linkname:[linkpath UTF8String]]
+                      [[FileLinkOperation alloc] initWithAlteringOfSymbolicLink:[[sheet.SourcePath stringValue] fileSystemRepresentation]
+                                                                      linkname:[linkpath fileSystemRepresentation]]
                       ];
                  }
              }];
@@ -1225,12 +1225,12 @@ enum ActiveState
                      NSString *name = [sheet.LinkName stringValue];
                      if([name length] == 0) return;
                      
-                     if([name UTF8String][0] != '/')
+                     if([name fileSystemRepresentation][0] != '/')
                          name = [NSString stringWithFormat:@"%@%@", dirpath, name];
                      
                     [m_OperationsController AddOperation:
-                        [[FileLinkOperation alloc] initWithNewHardLink:[srcpath UTF8String]
-                                                              linkname:[name UTF8String]]
+                        [[FileLinkOperation alloc] initWithNewHardLink:[srcpath fileSystemRepresentation]
+                                                              linkname:[name fileSystemRepresentation]]
                         ];
                  }                 
              }];

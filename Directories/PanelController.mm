@@ -427,7 +427,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             m_Data->ReloadDirectoryWithContext(_context);
             assert(!m_Data->DirectoryEntries().empty()); // algo logic doesn't support this case now
 
-            int newcursorrawpos = m_Data->FindEntryIndex([oldcursorname UTF8String]);
+            int newcursorrawpos = m_Data->FindEntryIndex([oldcursorname fileSystemRepresentation]);
             if( newcursorrawpos >= 0 )
             {
                 int sortpos = m_Data->FindSortedEntryIndex(newcursorrawpos);
@@ -784,7 +784,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
 {
-    [self ScheduleDelayedSelectionChangeForC:[_item_name UTF8String]
+    [self ScheduleDelayedSelectionChangeForC:[_item_name fileSystemRepresentation]
                                    timeoutms:_time_out_in_ms
                                     checknow:_check_now];
 }

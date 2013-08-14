@@ -151,8 +151,8 @@ void ModernPanelViewPresentationIconCache::RunLoadThread(PanelData *_data)
     dispatch_block_t block =
     ^{
         // for debug only, to see some fancy and strange things happen
-        auto pthis = this;
-        auto current_size = m_UniqueIcons.size();
+        auto pthis = this; (void)pthis;
+        auto current_size = m_UniqueIcons.size(); (void)current_size;
         
         uint64_t last_draw_time = GetTimeInNanoseconds();
         int i = start;

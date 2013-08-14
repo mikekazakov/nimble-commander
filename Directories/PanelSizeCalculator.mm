@@ -24,20 +24,24 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-// return -1 on error
-static int64_t DirectorySizeCalculateRec(char *_path, size_t _path_len, bool *_iscancelling, PanelDirectorySizeCalculate_CancelChecker _checker)
+// return false on error or cancellation
+static bool DirectorySizeCalculateRec(char *_path,
+                                         size_t _path_len,
+                                         bool *_iscancelling,
+                                         PanelDirectorySizeCalculate_CancelChecker _checker,
+                                         dispatch_queue_t _stat_queue,
+                                         int64_t *_size_stock)
 {
     if(_checker())
     {
         *_iscancelling = true;
-        return -1;
+        return false;
     }
 
     DIR *dirp = opendir(_path);
     if( dirp == 0 )
-        return -1;
+        return false;
 
-    int64_t mysize = 0;
     dirent *entp;
 
     _path[_path_len] = '/';
@@ -59,24 +63,37 @@ static int64_t DirectorySizeCalculateRec(char *_path, size_t _path_len, bool *_i
         memcpy(var, entp->d_name, entp->d_namlen+1);
         if(entp->d_type == DT_DIR)
         {
-            int64_t ret = DirectorySizeCalculateRec(_path, _path_len + entp->d_namlen + 1, _iscancelling, _checker);
-            if(ret > 0 )
-                mysize += ret;
+            DirectorySizeCalculateRec(_path,
+                                      _path_len + entp->d_namlen + 1,
+                                      _iscancelling,
+                                      _checker,
+                                      _stat_queue,
+                                      _size_stock);
             if(*_iscancelling)
                 goto cleanup;
         }
         else if(entp->d_type == DT_REG || entp->d_type == DT_LNK)
         {
-            struct stat st;
-            if(lstat(_path, &st) == 0)
-                mysize += st.st_size;
+            char *full_path = (char*) malloc(_path_len + entp->d_namlen + 2);
+            memcpy(full_path, _path, _path_len + entp->d_namlen + 2);
+            
+            dispatch_async(_stat_queue, ^{
+                if(*_iscancelling) return;
+
+                struct stat st;
+                
+                if(lstat(full_path, &st) == 0)
+                    *_size_stock += st.st_size;
+
+                free(full_path);
+            });
         }
     }
     
 cleanup:
     closedir(dirp);
-    _path[_path_len] = 0;    
-    return mysize;
+    _path[_path_len] = 0;
+    return true;
 }
 
 void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs,
@@ -94,20 +111,31 @@ void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs,
     if(path[strlen(path)-1] != '/') strcat(path, "/");
     char *var = path + strlen(path);
     
+    dispatch_queue_t stat_queue = dispatch_queue_create("info.filesmanager.Files.PanelDirectorySizeCalculate", 0);
+    
     for(const auto &i: *_dirs)
     {
         memcpy(var, i.str(), i.len+1);
         
-        int64_t size = DirectorySizeCalculateRec(path, strlen(path), &iscancelling, _checker);
-
+        int64_t total_size = 0;
+        
+        bool result = DirectorySizeCalculateRec(path,
+                                                strlen(path),
+                                                &iscancelling,
+                                                _checker,
+                                                stat_queue,
+                                                &total_size);
+        dispatch_sync(stat_queue, ^{});
+        
         if(iscancelling || _checker()) // check if we need to quit
             goto cleanup;
 
-        if(size >= 0)
-            _handler(_is_dotdot?"..":i.str(), size);
+        if(result)
+            _handler(_is_dotdot?"..":i.str(), total_size);
     }
     
 cleanup:
+    dispatch_release(stat_queue);
     FlexChainedStringsChunk::FreeWithDescendants(&_dirs);
     free((void*)_root_path);
 }

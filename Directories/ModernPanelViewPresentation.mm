@@ -298,7 +298,18 @@ void ModernPanelViewPresentation::BuildGeometry()
     
     // 9 days after 1970
     m_DateColumnWidth = (int)ceil([FormHumanReadableShortDate(777600) sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
-    m_TimeColumnWidth = (int)ceil([FormHumanReadableShortTime(777600) sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    
+    // to exclude possible issues with timezones, showing/not showing preffix zeroes and 12/24 stuff...
+    // ... we do the following: take every in 24 hours and get the largest width
+    m_TimeColumnWidth = 0;
+    for(int i = 0; i < 24; ++i)
+    {
+        int tw = (int)ceil([FormHumanReadableShortTime(777600 + i * 60 * 60) sizeWithAttributes:attributes].width)
+            + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+        if(tw > m_TimeColumnWidth)
+            m_TimeColumnWidth = tw;
+    }
+    
     NSString *max_footer_datetime = [NSString stringWithFormat:@"%@A", FormHumanReadableDateTime(777600)];
     m_DateTimeFooterWidth = (int)ceil([max_footer_datetime sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
 }
@@ -372,6 +383,18 @@ void ModernPanelViewPresentation::BuildAppearance()
       };
 
     m_SizeColumnTextAttr =
+    @{NSFontAttributeName: m_Font,
+      NSForegroundColorAttributeName: m_RegularItemTextColor,
+      NSParagraphStyleAttributeName: size_col_text_pstyle
+      };
+    
+    m_ActiveSelectedTimeColumnTextAttr =
+    @{NSFontAttributeName: m_Font,
+      NSForegroundColorAttributeName: m_ActiveSelectedItemTextColor,
+      NSParagraphStyleAttributeName: size_col_text_pstyle
+      };
+    
+    m_TimeColumnTextAttr =
     @{NSFontAttributeName: m_Font,
       NSForegroundColorAttributeName: m_RegularItemTextColor,
       NSParagraphStyleAttributeName: size_col_text_pstyle
@@ -717,7 +740,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               rect.size.height);
                 
                 NSString *time_str = FormHumanReadableShortTime(item->mtime);
-                [time_str drawWithRect:time_rect options:options attributes:item_text_attr];
+                [time_str drawWithRect:time_rect
+                               options:options
+                            attributes:m_State->Active && item->cf_isselected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr];
                 
                 rect.size.width -= m_TimeColumnWidth;
                 spec_col_x -= m_TimeColumnWidth;
@@ -727,8 +752,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_DateColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 NSString *date_str = FormHumanReadableShortDate(item->mtime);
-                [date_str drawWithRect:date_rect options:options attributes:item_text_attr];
-                
+                [date_str drawWithRect:date_rect
+                               options:options
+                            attributes:m_State->Active && item->cf_isselected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr];
+
                 rect.size.width -= m_DateColumnWidth;
                 spec_col_x -= m_DateColumnWidth;
             }

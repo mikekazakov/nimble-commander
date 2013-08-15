@@ -57,6 +57,9 @@ private:
     NSDictionary *m_ItemTextAttr;
     NSDictionary *m_ActiveSelectedSizeColumnTextAttr;
     NSDictionary *m_SizeColumnTextAttr;
+    NSDictionary *m_ActiveSelectedTimeColumnTextAttr;
+    NSDictionary *m_TimeColumnTextAttr;
+    
     NSDictionary *m_ActiveSelectedItemsFooterTextAttr;
     NSDictionary *m_SelectedItemsFooterTextAttr;    
     

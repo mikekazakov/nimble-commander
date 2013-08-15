@@ -49,7 +49,7 @@
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:NSImageNameFollowLinkFreestandingTemplate];
+    return [NSImage imageNamed:@"pref_viewer_icon"];
 }
 -(NSString*)toolbarItemLabel{
     return @"Internal Viewer";

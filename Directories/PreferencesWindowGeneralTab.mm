@@ -29,7 +29,7 @@
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:NSImageNamePreferencesGeneral];
+    return [NSImage imageNamed:@"pref_general_icon"];
 }
 -(NSString*)toolbarItemLabel{
     return @"General";

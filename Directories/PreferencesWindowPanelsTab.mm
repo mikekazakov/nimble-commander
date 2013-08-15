@@ -29,8 +29,7 @@
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-//    return [NSImage imageNamed:NSImageNameGoRightTemplate];
-    return [NSImage imageNamed:@"panels_icon.png"];
+    return [NSImage imageNamed:@"pref_panels_icon.png"];
 }
 -(NSString*)toolbarItemLabel{
     return @"Panels";

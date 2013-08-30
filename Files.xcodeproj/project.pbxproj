@@ -233,7 +233,6 @@
 		CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
 		CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
 		CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
-		CFC5123316C5164300D247EE /* DirRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123116C5164300D247EE /* DirRead.cpp */; };
 		CFC5123616C5284800D247EE /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123416C5284800D247EE /* PanelData.mm */; };
 		CFC5123916C5287B00D247EE /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
 		CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFCA09DE174BA93500AEC8C2 /* files.icns */; };
@@ -603,8 +602,6 @@
 		CFC5122616C4BD3D00D247EE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CFC5122716C4BD3D00D247EE /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		CFC5122A16C4BD3D00D247EE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		CFC5123116C5164300D247EE /* DirRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirRead.cpp; sourceTree = "<group>"; };
-		CFC5123216C5164300D247EE /* DirRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirRead.h; sourceTree = "<group>"; };
 		CFC5123416C5284800D247EE /* PanelData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelData.mm; sourceTree = "<group>"; };
 		CFC5123516C5284800D247EE /* PanelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelData.h; sourceTree = "<group>"; };
 		CFC5123716C5287B00D247EE /* PanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelView.h; sourceTree = "<group>"; };
@@ -1135,8 +1132,6 @@
 				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
 				CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */,
-				CFC5123216C5164300D247EE /* DirRead.h */,
-				CFC5123116C5164300D247EE /* DirRead.cpp */,
 				CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */,
 				CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */,
 				CF07DE3D1769754400757DE1 /* SearchInFile.mm */,
@@ -1405,7 +1400,6 @@
 				CFC5122116C4BD3D00D247EE /* main.m in Sources */,
 				CF9D0EC917CC961100CB8146 /* archive_write_open_memory.c in Sources */,
 				CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */,
-				CFC5123316C5164300D247EE /* DirRead.cpp in Sources */,
 				CF9D0E9517CC961100CB8146 /* archive_read_support_filter_bzip2.c in Sources */,
 				CF9D0B5A17CC5C4900CB8146 /* infback.c in Sources */,
 				CFC5123616C5284800D247EE /* PanelData.mm in Sources */,

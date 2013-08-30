@@ -88,7 +88,7 @@ void PanelData::ReLoad(std::shared_ptr<VFSListing> _listing)
             item_dst.SetCFlags(item_src.CFlags());
             item_dst.SetCIcon(item_src.CIcon());
             
-            if(item_dst.Size() == DIRENTINFO_INVALIDSIZE)
+            if(item_dst.Size() == VFSListingItem::InvalidSize)
                 item_dst.SetSize(item_src.Size()); // transfer sizes for folders - it can be calculated earlier
             
             ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
@@ -314,16 +314,16 @@ public:
             case PanelSortMode::SortByBTime:    return val1.BTime() > val2.BTime();
             case PanelSortMode::SortByBTimeRev: return val1.BTime() < val2.BTime();
             case PanelSortMode::SortBySize:
-                if(val1.Size() != DIRENTINFO_INVALIDSIZE && val2.Size() != DIRENTINFO_INVALIDSIZE)
+                if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize)
                     if(val1.Size() != val2.Size()) return val1.Size() > val2.Size();
-                if(val1.Size() != DIRENTINFO_INVALIDSIZE && val2.Size() == DIRENTINFO_INVALIDSIZE) return false;
-                if(val1.Size() == DIRENTINFO_INVALIDSIZE && val2.Size() != DIRENTINFO_INVALIDSIZE) return true;
+                if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() == VFSListingItem::InvalidSize) return false;
+                if(val1.Size() == VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize) return true;
                 return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) < 0; // fallback case
             case PanelSortMode::SortBySizeRev:
-                if(val1.Size() != DIRENTINFO_INVALIDSIZE && val2.Size() != DIRENTINFO_INVALIDSIZE)
+                if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize)
                     if(val1.Size() != val2.Size()) return val1.Size() < val2.Size();
-                if(val1.Size() != DIRENTINFO_INVALIDSIZE && val2.Size() == DIRENTINFO_INVALIDSIZE) return true;
-                if(val1.Size() == DIRENTINFO_INVALIDSIZE && val2.Size() != DIRENTINFO_INVALIDSIZE) return false;
+                if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() == VFSListingItem::InvalidSize) return true;
+                if(val1.Size() == VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize) return false;
                 return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) > 0; // fallback case
             case PanelSortMode::SortByRawCName:
                 return strcmp(val1.Name(), val2.Name()) < 0;
@@ -443,7 +443,7 @@ void PanelData::UpdateStatictics()
         const auto &i = (*m_Listing)[n];
         if(i.CFIsSelected())
         {
-            if(i.Size() != DIRENTINFO_INVALIDSIZE)
+            if(i.Size() != VFSListingItem::InvalidSize)
                 totalselectedbytes += i.Size();
             totalselected++;
             if(i.IsDir())  totalselecteddirs++;
@@ -493,7 +493,7 @@ void PanelData::CustomFlagsSelect(size_t _at_pos, bool _is_selected)
         return;
     if(_is_selected)
     {
-        if(entry.Size() != DIRENTINFO_INVALIDSIZE)
+        if(entry.Size() != VFSListingItem::InvalidSize)
             m_SelectedItemsSizeBytes += entry.Size();
         m_SelectedItemsCount++;
 
@@ -504,7 +504,7 @@ void PanelData::CustomFlagsSelect(size_t _at_pos, bool _is_selected)
     }
     else
     {
-        if(entry.Size() != DIRENTINFO_INVALIDSIZE)
+        if(entry.Size() != VFSListingItem::InvalidSize)
         {
             assert(m_SelectedItemsSizeBytes >= entry.Size()); // sanity check
             m_SelectedItemsSizeBytes -= entry.Size();
@@ -670,7 +670,7 @@ bool PanelData::FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset,
 
 bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size)
 {
-    assert(_size != DIRENTINFO_INVALIDSIZE);
+    assert(_size != VFSListingItem::InvalidSize);
     int n = FindEntryIndex(_entry);
     if(n >= 0)
     {
@@ -679,7 +679,7 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long 
         {
             if(i.CFIsSelected())
             { // need to adjust our selected bytes statistic
-                if(i.Size() != DIRENTINFO_INVALIDSIZE)
+                if(i.Size() != VFSListingItem::InvalidSize)
                 {
                     assert(i.Size() <= m_SelectedItemsSizeBytes);
                     m_SelectedItemsSizeBytes -= i.Size();

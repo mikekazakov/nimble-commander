@@ -9,6 +9,7 @@
 #include "filesysattr.h"
 #include "PanelData.h"
 #include <sys/types.h>
+#include <sys/stat.h>
 
 void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, fsfstate _st[fsf_totalcount])
 {

@@ -9,7 +9,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "DirRead.h"
 #import "PanelViewTypes.h"
 #import "VFS.h"
 

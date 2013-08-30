@@ -4,7 +4,6 @@
 
 
 #import "VFS.h"
-#include "DirRead.h"
 
 struct FlexChainedStringsChunk;
 
@@ -70,7 +69,7 @@ struct PanelSortMode
 class PanelData
 {
 public:
-    typedef std::deque<DirectoryEntryInformation> DirEntryInfoT;
+//    typedef std::deque<DirectoryEntryInformation> DirEntryInfoT;
     typedef std::vector<unsigned>                 DirSortIndT; // value in this array is an index for DirEntryInfoT
     
     PanelData();
@@ -139,9 +138,7 @@ public:
     void CustomIconClearAll();
     
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
-private:
-    void ReloadDirectoryInternal(DirEntryInfoT *_entries); // passing ownership of _entries
-    
+private:    
     PanelData(const PanelData&) = delete;
     void operator=(const PanelData&) = delete;
     

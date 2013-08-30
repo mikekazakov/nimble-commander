@@ -9,7 +9,6 @@
 #pragma once
 
 #import "ModernPanelViewPresentation.h"
-#import "DirRead.h"
 #import "VFS.h"
 
 class ModernPanelViewPresentationIconCache

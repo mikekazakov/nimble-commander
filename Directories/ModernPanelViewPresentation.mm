@@ -140,7 +140,7 @@ static void FormHumanReadableSizeReprentationForDirEnt6(const VFSListingItem &_d
 {
     if( _dirent.IsDir() )
     {
-        if( _dirent.Size() != DIRENTINFO_INVALIDSIZE)
+        if( _dirent.Size() != VFSListingItem::InvalidSize)
         {
             FormHumanReadableSizeRepresentation6(_dirent.Size(), _out); // this code will be used some day when F3 will be implemented
         }

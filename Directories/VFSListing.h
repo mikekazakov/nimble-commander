@@ -93,6 +93,7 @@ public:
     // common part
     inline unsigned int     CFlags()    const { return cflags; }
     inline unsigned short   CIcon()     const { return cicon; }
+    inline void             SetCFlags(unsigned int _flags)  { cflags = _flags; }
     inline void             SetCFlag(unsigned int _flag)    { cflags = cflags | _flag; }
     inline void             UnsetCFlag(unsigned int _flag)  { cflags = cflags & ~_flag; }
     inline void             SetCIcon(unsigned short _icon)  { cicon = _icon; }

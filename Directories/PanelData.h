@@ -72,42 +72,23 @@ class PanelData
 public:
     typedef std::deque<DirectoryEntryInformation> DirEntryInfoT;
     typedef std::vector<unsigned>                 DirSortIndT; // value in this array is an index for DirEntryInfoT
-  
-    struct DirectoryChangeContext // allocated with malloc, should be freed upon receiving
-    {
-//        DirEntryInfoT *entries;
-//        char path[MAXPATHLEN];
-    };
-    
     
     PanelData();
     ~PanelData();
     
     // these methods should be called by a controller, since some view's props have to be updated
-    bool GoToDirectory(const char *_path); // sync version
-    void GoToDirectoryWithContext(DirectoryChangeContext *_context); // _context will be removed with free()
-    
-    int GoToSync(const char *_path, std::shared_ptr<VFSHost> _host);
-    
-    bool ReloadDirectory(); // sync version
-    void ReloadDirectoryWithContext(DirectoryChangeContext *_context); // _context will be removed with free()
-    
-    // asynchronous directory changing and reloading support
-    // the following routies should run in background mode
-    // callback are fired from background thread
-    // controller's properties are watched from background thread
-    static void LoadFSDirectoryAsync(const char *_path, // _path is allocated with malloc, should be freed upon receiving
-                                     void (^_on_completion) (DirectoryChangeContext*),
-                                     void (^_on_fail) (NSString* _path, NSError *_error),
-                                     FetchDirectoryListing_CancelChecker _checker // can not be nil, put {return false;} as dummy
-                                     );
+    // PanelData is solely sync class - it does not give a fuck about concurrency,
+    // any parallelism should be done by callers (i.e. controller)
+    // just like Metallica:
+    void Load(std::shared_ptr<VFSListing> _listing);
+    void ReLoad(std::shared_ptr<VFSListing> _listing);
+
     
     const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
     FlexChainedStringsChunk* StringsFromSelectedEntries() const;
     
     int SortPosToRawPos(int _pos) const; // does SortedDirectoryEntries()[_pos]
-//    const DirectoryEntryInformation& EntryAtRawPosition(int _pos) const; // does DirectoryEntries()[_pos]
     const VFSListingItem& EntryAtRawPosition(int _pos) const;
     
     void ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPATHLEN]);
@@ -159,24 +140,18 @@ public:
     
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:
-    void GoToDirectoryInternal(std::shared_ptr<VFSListing> _listing);
     void ReloadDirectoryInternal(DirEntryInfoT *_entries); // passing ownership of _entries
     
-    void DestroyCurrentData();
-    PanelData(const PanelData&);
-    void operator=(const PanelData&);
+    PanelData(const PanelData&) = delete;
+    void operator=(const PanelData&) = delete;
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
-//    static void DoSort(const DirEntryInfoT* _from, DirSortIndT *_to, PanelSortMode _mode);
     static void DoSort(const std::shared_ptr<VFSListing> _from, DirSortIndT *_to, PanelSortMode _mode);
     
-//    char                                    m_DirectoryPath[__DARWIN_MAXPATHLEN]; // path with trailing slash
-    // m_Entries container will change every time directory change/reloads,
+    // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-
     std::shared_ptr<VFSListing>             m_Listing;
-    
-//    DirEntryInfoT                           *m_Entries;
+
     DirSortIndT                             *m_EntriesByRawName;   // sorted with raw strcmp comparison
     DirSortIndT                             *m_EntriesByHumanName; // sorted with human-reasonable literal sort
     DirSortIndT                             *m_EntriesByCustomSort; // custom defined sort

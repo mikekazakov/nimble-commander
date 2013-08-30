@@ -28,70 +28,15 @@ PanelData::PanelData()
 
 PanelData::~PanelData()
 {
-    DestroyCurrentData();
     delete m_EntriesByRawName;
     delete m_EntriesByHumanName;
     delete m_EntriesByCustomSort;
     dispatch_release(m_SortExecGroup);
 }
 
-void PanelData::DestroyCurrentData()
+void PanelData::Load(std::shared_ptr<VFSListing> _listing)
 {
-/*    if(m_Entries == 0)
-        return;
-    for(auto i = m_Entries->begin(); i < m_Entries->end(); ++i)
-        (*i).destroy();
-    delete m_Entries;
-    m_Entries = 0;*/
-}
-
-int PanelData::GoToSync(const char *_path, std::shared_ptr<VFSHost> _host)
-{
-    std::shared_ptr<VFSListing> listing;
-    
-    int ret = _host->FetchDirectoryListing(_path, &listing, 0);
-    if(ret < 0)
-        return ret;
-    
-//    m_Listing = listing;
-    GoToDirectoryInternal(listing);
-    
-    return VFSError::Ok;
-}
-
-bool PanelData::GoToDirectory(const char *_path)
-{
-    return false;
-/*    auto *entries = new std::deque<DirectoryEntryInformation>;
-    
-    if(FetchDirectoryListing(_path, entries, nil) == 0)
-    {
-        GoToDirectoryInternal(entries, _path);
-        return true; // can fail sometimes
-    }
-    else
-    {
-        // error handling?
-        delete entries;
-        return false;
-    }*/
-}
-
-void PanelData::GoToDirectoryWithContext(DirectoryChangeContext *_context)
-{
-//    GoToDirectoryInternal(_context->entries, _context->path);
-//    free(_context);
-}
-
-void PanelData::GoToDirectoryInternal(std::shared_ptr<VFSListing> _listing)
-{
-    DestroyCurrentData();
-//    m_Entries = _entries;
     m_Listing = _listing;
-    
-//    strcpy(m_DirectoryPath, _path);
-//    if( m_DirectoryPath[strlen(m_DirectoryPath)-1] != '/' )
-//        strcat(m_DirectoryPath, "/");
     
     // now sort our new data
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
@@ -115,60 +60,37 @@ void PanelData::GoToDirectoryInternal(std::shared_ptr<VFSListing> _listing)
     UpdateStatictics();
 }
 
-void PanelData::ReloadDirectoryWithContext(DirectoryChangeContext *_context) // async variant
-{
-/*    assert(strcmp(_context->path, m_DirectoryPath) == 0);
-    ReloadDirectoryInternal(_context->entries);
-    free(_context);*/
-}
-
-bool PanelData::ReloadDirectory() // sync variant
-{
-    return false;
-/*    auto *entries = new std::deque<DirectoryEntryInformation>;
-    if(FetchDirectoryListing(m_DirectoryPath, entries, nil) == 0)
-    {
-        ReloadDirectoryInternal(entries);
-        return true;
-    }
-    else
-    {
-        delete entries;
-        return false;
-    }*/
-}
-
-void PanelData::ReloadDirectoryInternal(DirEntryInfoT *_entries)
+void PanelData::ReLoad(std::shared_ptr<VFSListing> _listing)
 {
     // sort new entries by raw c name for sync-swapping needs
-
-/*    auto *dirbyrawcname = new DirSortIndT;
+    auto *dirbyrawcname = new DirSortIndT;
     PanelSortMode rawsortmode;
     rawsortmode.sort = PanelSortMode::SortByRawCName;
     rawsortmode.sep_dirs = false;
     rawsortmode.show_hidden = true;
     rawsortmode.numeric_sort = false;
     
-    DoSort(_entries, dirbyrawcname, rawsortmode);
-        
+    DoSort(_listing, dirbyrawcname, rawsortmode);
+    
     // transfer custom data to new array using sorted indeces arrays
-    size_t dst_i = 0, dst_e = _entries->size(),
-    src_i = 0, src_e = m_Entries->size();
+    size_t dst_i = 0, dst_e = _listing->Count(),
+    src_i = 0, src_e = m_Listing->Count();
     for(;src_i < src_e; ++src_i)
     {
         int src = (*m_EntriesByRawName)[src_i];
-check:  int dst = (*dirbyrawcname)[dst_i];
-        int cmp = strcmp((*m_Entries)[src].namec(), (*_entries)[dst].namec());
+    check:  int dst = (*dirbyrawcname)[dst_i];
+        int cmp = strcmp((*m_Listing)[src].Name(), (*_listing)[dst].Name());
         if( cmp == 0 )
         {
-            auto &item_dst = (*_entries)[dst];
-            const auto &item_src = (*m_Entries)[src];
-                
-            item_dst.cflags = item_src.cflags;
-            item_dst.cicon  = item_src.cicon;
-            if(item_dst.size == DIRENTINFO_INVALIDSIZE)
-                item_dst.size = item_src.size; // transfer sizes for folders - it can be calculated earlier
-                
+            auto &item_dst = (*_listing)[dst];
+            const auto &item_src = (*m_Listing)[src];
+            
+            item_dst.SetCFlags(item_src.CFlags());
+            item_dst.SetCIcon(item_src.CIcon());
+            
+            if(item_dst.Size() == DIRENTINFO_INVALIDSIZE)
+                item_dst.SetSize(item_src.Size()); // transfer sizes for folders - it can be calculated earlier
+            
             ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
             if(dst_i == dst_e) break;
         }
@@ -179,15 +101,14 @@ check:  int dst = (*dirbyrawcname)[dst_i];
             goto check;
         }
     }
-
+    
     // erase old data
-    DestroyCurrentData();
     delete m_EntriesByRawName;
-        
+    
     // put a new data in a place
-    m_Entries = _entries;
+    m_Listing = _listing;
     m_EntriesByRawName = dirbyrawcname;
-        
+    
     // now sort our new data with custom sortings
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
         PanelSortMode mode;
@@ -196,13 +117,13 @@ check:  int dst = (*dirbyrawcname)[dst_i];
         mode.show_hidden = m_CustomSortMode.show_hidden;
         mode.case_sens = false;
         mode.numeric_sort = false;
-        DoSort(m_Entries, m_EntriesByHumanName, mode); });
+        DoSort(m_Listing, m_EntriesByHumanName, mode); });
     dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
-        DoSort(m_Entries, m_EntriesByCustomSort, m_CustomSortMode); });
+        DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
     dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
     
     // update stats
-    UpdateStatictics();*/
+    UpdateStatictics();
 }
 
 const VFSListing& PanelData::DirectoryEntries() const
@@ -238,7 +159,6 @@ void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPAT
 
 int PanelData::FindEntryIndex(const char *_filename) const
 {
-//    assert(m_EntriesByRawName->size() == m_Entries->size()); // consistency check
     assert(m_EntriesByRawName->size() == m_Listing->Count()); // consistency check
     assert(_filename != 0);
     
@@ -294,8 +214,10 @@ void PanelData::GetDirectoryPath(char _buf[__DARWIN_MAXPATHLEN]) const
         return;
     }
     strcpy(_buf, m_Listing->RelativePath());
-    char *slash = strrchr(_buf, '/');
-    if (slash && slash != _buf) *slash = 0;
+    if(_buf[strlen(_buf)-1] == '/' && strlen(_buf) > 1)
+        _buf[strlen(_buf)-1] = 0; // TODO: optimize me later
+//    char *slash = strrchr(_buf, '/');
+//    if (slash && slash != _buf) *slash = 0;
 }
 
 void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const
@@ -305,6 +227,8 @@ void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]
         return;
     }
     strcpy(_buf, m_Listing->RelativePath());
+    if(_buf[strlen(_buf)-1]!='/') strcat(_buf, "/"); // TODO: optimize me later
+    
 }
 
 void PanelData::GetDirectoryPathShort(char _buf[__DARWIN_MAXPATHLEN]) const
@@ -320,8 +244,10 @@ void PanelData::GetDirectoryPathShort(char _buf[__DARWIN_MAXPATHLEN]) const
     }
     else
     {
+        // TODO: optimize me later
         char tmp[MAXPATHLEN];
-        strcpy(tmp, m_Listing->RelativePath());
+//        strcpy(tmp, m_Listing->RelativePath());
+        GetDirectoryPathWithTrailingSlash(tmp);
         if(char *s = strrchr(tmp, '/')) *s = 0; // cut trailing slash
         if(char *s = strrchr(tmp, '/')) strcpy(_buf, s+1);
         else                            strcpy(_buf, tmp);
@@ -767,51 +693,6 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long 
         }
     }
     return false;
-}
-
-void PanelData::LoadFSDirectoryAsync(const char *_path,
-                                     void (^_on_completion) (DirectoryChangeContext*),
-                                     void (^_on_fail) (NSString* _path, NSError *_error),
-                                     FetchDirectoryListing_CancelChecker _checker
-                                     )
-
-{    
-/*    if(_checker())
-    {
-        free( (void*) _path);
-        return;
-    }
-
-    auto *entries = new std::deque<DirectoryEntryInformation>;
-    int ret = FetchDirectoryListing(_path, entries, _checker);
-
-    if( !_checker() )
-    {
-        if(ret == 0)
-        {
-            DirectoryChangeContext *c = (DirectoryChangeContext*) malloc(sizeof(DirectoryChangeContext));
-            c->entries = entries; // giving ownership
-            strcpy(c->path, _path);
-            _on_completion(c);
-        }
-        else
-        {
-            for(auto &i:*entries)
-                i.destroy();
-            delete entries;
-            _on_fail([NSString stringWithUTF8String:_path],
-                     [NSError errorWithDomain:NSPOSIXErrorDomain code:ret userInfo:nil]
-                     );
-        }
-    }
-    else
-    {
-        for(auto &i:*entries)
-            i.destroy();
-        delete entries;
-    }
-
-    free( (void*) _path);*/
 }
 
 void PanelData::CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id)

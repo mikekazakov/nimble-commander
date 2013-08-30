@@ -628,7 +628,7 @@ enum ActiveState
         if(curpos >= 0)
         {
             int rawpos = curdata->SortPosToRawPos(curpos);
-            if(!curdata->EntryAtRawPosition(rawpos).isdotdot())
+            if(!curdata->EntryAtRawPosition(rawpos).IsDotDot())
                 [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
         }
     }
@@ -707,8 +707,8 @@ enum ActiveState
     else
     {
         auto const *item = [[self ActivePanelView] CurrentItem];
-        if(item && !item->isdotdot())
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
+        if(item && !item->IsDotDot())
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
     }
     
     if(!files)
@@ -795,8 +795,8 @@ enum ActiveState
     else
     {
         auto const *item = [[self ActivePanelView] CurrentItem];
-        if(item && !item->isdotdot())
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
+        if(item && !item->IsDotDot())
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
     }
     
     if(!files)
@@ -835,13 +835,13 @@ enum ActiveState
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
         return;
-    if(item->isdotdot())
+    if(item->IsDotDot())
         return;
     
-    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
+    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->namec()] iscopying:true items:files handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:files handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -886,8 +886,8 @@ enum ActiveState
     else
     {
         auto const *item = [[self ActivePanelView] CurrentItem];
-        if(item && !item->isdotdot())
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
+        if(item && !item->IsDotDot())
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
     }
     
     if(!files)
@@ -927,13 +927,13 @@ enum ActiveState
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
         return;
-    if(item->isdotdot())
+    if(item->IsDotDot())
         return;
     
-    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
+    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->namec()] iscopying:false items:files handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:files handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -1046,7 +1046,7 @@ enum ActiveState
         {
             char tmp[MAXPATHLEN];
             [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(tmp);
-            strcat(tmp, i->namec());
+            strcat(tmp, i->Name());
             [(MainWindowController*)[[self window] delegate] RequestBigFileView:tmp];
         }
     }
@@ -1121,16 +1121,16 @@ enum ActiveState
         return;
     
     [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(source_path);
-    if(!item->isdotdot())
-        strcat(source_path, item->namec());
+    if(!item->IsDotDot())
+        strcat(source_path, item->Name());
     
     if(m_ActiveState == StateLeftPanel)
         m_RightPanelData->GetDirectoryPathWithTrailingSlash(link_path);
     else
         m_LeftPanelData->GetDirectoryPathWithTrailingSlash(link_path);
     
-    if(!item->isdotdot())
-        strcat(link_path, item->namec());
+    if(!item->IsDotDot())
+        strcat(link_path, item->Name());
     else
     {
         char tmp[256];
@@ -1160,26 +1160,26 @@ enum ActiveState
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
         return;
-    if(item->isdotdot())
+    if(item->IsDotDot())
         return;
-    if(item->symlink == 0)
+    if(item->IsSymlink())
     {
         NSAlert *alert = [NSAlert new];
         [alert setMessageText: @"Failed to edit"];
         [alert setInformativeText:
-         [NSString stringWithFormat:@"\'%@\' is not a symbolic link.", (__bridge NSString*)item->cf_name]];
+         [NSString stringWithFormat:@"\'%@\' is not a symbolic link.", (__bridge NSString*)item->CFName()]];
         [alert runModal];
         return;
     }
     
     [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(link_path);
-    strcat(link_path, item->namec());
+    strcat(link_path, item->Name());
     NSString *linkpath = [NSString stringWithUTF8String:link_path];
     
     FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
     [sheet ShowSheet:[self window]
-          sourcepath:[NSString stringWithUTF8String:item->symlink]
-            linkname:[NSString stringWithUTF8String:item->namec()]
+          sourcepath:[NSString stringWithUTF8String:item->Symlink()]
+            linkname:[NSString stringWithUTF8String:item->Name()]
              handler:^(int _result){
                  if(_result == DialogResult::OK)
                  {
@@ -1198,9 +1198,9 @@ enum ActiveState
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
         return;
-    if(item->isdotdot())
+    if(item->IsDotDot())
         return;
-    if(item->isdir())
+    if(item->IsDir())
     {
         NSAlert *alert = [NSAlert new];
         [alert setMessageText: @"Can't create a hardlink"];
@@ -1212,13 +1212,13 @@ enum ActiveState
     char dir_path[MAXPATHLEN], src_path[MAXPATHLEN];
     [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(dir_path);
     strcpy(src_path, dir_path);
-    strcat(src_path, item->namec());
+    strcat(src_path, item->Name());
     NSString *srcpath = [NSString stringWithUTF8String:src_path];
     NSString *dirpath = [NSString stringWithUTF8String:dir_path];
     
     FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
     [sheet ShowSheet:[self window]
-          sourcename:[NSString stringWithUTF8String:item->namec()]
+          sourcename:[NSString stringWithUTF8String:item->Name()]
              handler:^(int _result){
                  if(_result == DialogResult::Create)
                  {

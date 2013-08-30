@@ -2,11 +2,12 @@
 
 #include <stddef.h>
 
+#include "VFSFile.h"
 
 // TODO: remove this trash
-#define ERROR_OK            0
-#define ERROR_FILENOTEXIST  1
-#define ERROR_FILENOACCESS  2
+//#define ERROR_OK            0
+//#define ERROR_FILENOTEXIST  1
+//#define ERROR_FILENOACCESS  2
 
 
 class FileWindow
@@ -20,8 +21,12 @@ public:
     FileWindow();
     ~FileWindow();
     
-    int OpenFile(const char *_path); // will include VFS later
-    int OpenFile(const char *_path, int _window_size);
+//    int OpenFile(const char *_path); // will include VFS later
+//    int OpenFile(const char *_path, int _window_size);
+    // return VFS error codes
+    int OpenFile(std::shared_ptr<VFSFile> _file); // will include VFS later
+    int OpenFile(std::shared_ptr<VFSFile> _file, int _window_size);
+
     int CloseFile();
     
     bool   FileOpened() const;
@@ -38,11 +43,13 @@ private:
     int ReadFileWindow();
     int ReadFileWindowPart(size_t _offset, size_t _len);
     
-    FileWindow(const FileWindow&); //never copy
+    FileWindow(const FileWindow&) = delete;
+    void operator=(const FileWindow&_r) = delete;
     
-    int m_FD; // will be some more complex after VFS design
-    size_t m_FileSize;
-    
+//    int m_FD; // will be some more complex after VFS design
+  //  size_t m_FileSize;
+    std::shared_ptr<VFSFile> m_File;
+    bool m_ShouldClose;
     void *m_Window;
     size_t m_WindowSize;
     size_t m_WindowPos;

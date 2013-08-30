@@ -40,6 +40,11 @@ ssize_t VFSFile::Read(void *_buf, size_t _size)
     return VFSError::NotSupported;
 }
 
+ssize_t VFSFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+{
+    return VFSError::NotSupported;
+}
+
 bool VFSFile::IsOpened() const
 {
     return false;

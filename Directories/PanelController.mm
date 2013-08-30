@@ -17,12 +17,16 @@
 #import "FileMask.h"
 #import "PanelFastSearchPopupViewController.h"
 
+#import "VFS.h"
+
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 @implementation PanelController
 {
     PanelData *m_Data;
     PanelView *m_View;
+    std::vector<std::shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
+    
     __unsafe_unretained MainWindowController *m_WindowController;
     unsigned long m_UpdatesObservationTicket;
     
@@ -79,6 +83,8 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_DirectoryLoadingQ = dispatch_queue_create("com.example.paneldirloading", 0);
         m_DirectoryReLoadingQ = dispatch_queue_create("com.example.paneldirreloading", 0);
         m_DelayedSelection.isvalid = false;
+        
+        m_HostsStack.push_back( VFSNativeHost::SharedHost() );
     }
 
     return self;
@@ -144,7 +150,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) HandleShiftReturnButton
 {
-    char path[MAXPATHLEN];
+/*    char path[MAXPATHLEN];
     int pos = [m_View GetCursorPosition];
     if(pos >= 0)
     {
@@ -158,7 +164,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         BOOL success = [[NSWorkspace sharedWorkspace]
                         openFile:[NSString stringWithUTF8String:path]];
         if (!success) NSBeep();
-    }
+    }*/
 }
 
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode
@@ -279,6 +285,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) GoToDirectory:(const char*) _dir
 {
+    [self GoToDirectorySync:_dir];
+    return;
+    
     assert(_dir && strlen(_dir));
     char *path = strdup(_dir);
 
@@ -311,7 +320,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (bool) GoToDirectorySync:(const char*) _dir
 {
-    if(!m_Data->GoToDirectory(_dir))
+//    if(!m_Data->GoToDirectory(_dir))
+//        return false;
+    if([self GoToRelativeToHostSync:_dir] < 0)
         return false;
 
     // clean running operations if any
@@ -323,15 +334,70 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     return true;
 }
 
+- (void) GoToRelativeToHostAsync:(const char*) _path
+{
+    // we need to ask our current host - is _path a dir?
+    // if yes - try to get into it
+    // if no - find if some file can act as c junction point on _path
+    assert(!m_HostsStack.empty());
+    bool isdir = m_HostsStack.back()->IsDirectory(_path, 0, 0);
+    if(isdir)
+    {
+        
+        
+    }
+    else
+    {
+        // junction stuff here
+        
+        
+    }
+}
+
+- (int) GoToRelativeToHostSync:(const char*) _path
+{
+    // we need to ask our current host - is _path a dir?
+    // if yes - try to get into it
+    // if no - find if some file can act as c junction point on _path
+    assert(!m_HostsStack.empty());
+    bool isdir = m_HostsStack.back()->IsDirectory(_path, 0, 0);
+    if(isdir)
+    {
+        return m_Data->GoToSync(_path, m_HostsStack.back());
+        
+    }
+    else
+    {
+        // junction stuff here
+        assert(0);
+        return 0;
+        
+    }
+}
+
 - (void) HandleReturnButton
 {
     int sort_pos = [m_View GetCursorPosition];
     if(sort_pos < 0)
         return;
     int raw_pos = m_Data->SortedDirectoryEntries()[sort_pos];
+    // Handle directories.
+    if (m_Data->DirectoryEntries()[raw_pos].IsDir())
+    {
+        char path[__DARWIN_MAXPATHLEN];
+        m_Data->ComposeFullPathForEntry(raw_pos, path);
+        
+        m_Data->GoToSync(path, m_HostsStack.back());
+     
+        m_IsStopDirectorySizeCounting = true;
+        m_IsStopDirectoryLoading = true;
+        m_IsStopDirectoryReLoading = true;
+        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+        [self OnPathChanged];
+    }
     
     // Handle directories.
-    if (m_Data->DirectoryEntries()[raw_pos].isdir())
+/*    if (m_Data->DirectoryEntries()[raw_pos].isdir())
     {
         char path[__DARWIN_MAXPATHLEN];
         m_Data->ComposeFullPathForEntry(raw_pos, path);
@@ -399,17 +465,19 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
     // If previous code didn't handle current item,
     // open item with the default associated application.
-    [self HandleShiftReturnButton];
+    [self HandleShiftReturnButton];*/
 }
 
 - (void) RefreshDirectory
-{    
+{
+    return;
+    
     char dirpath[MAXPATHLEN];
     m_Data->GetDirectoryPathWithTrailingSlash(dirpath);
     char *path = strdup(dirpath);
     
     int oldcursorpos = [m_View GetCursorPosition];
-    NSString *oldcursorname = (oldcursorpos >= 0 ? [NSString stringWithUTF8String:[m_View CurrentItem]->namec()] : @"");
+    NSString *oldcursorname = (oldcursorpos >= 0 ? [NSString stringWithUTF8String:[m_View CurrentItem]->Name()] : @"");
     
     auto onfail = ^(NSString* _path, NSError *_error) {
 /*        NSAlert *alert = [[NSAlert alloc] init];
@@ -425,7 +493,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         m_IsStopDirectoryReLoading = true;
         dispatch_async(dispatch_get_main_queue(), ^{
             m_Data->ReloadDirectoryWithContext(_context);
-            assert(!m_Data->DirectoryEntries().empty()); // algo logic doesn't support this case now
+            assert(m_Data->DirectoryEntries().Count() > 0); // algo logic doesn't support this case now
 
             int newcursorrawpos = m_Data->FindEntryIndex([oldcursorname fileSystemRepresentation]);
             if( newcursorrawpos >= 0 )
@@ -603,14 +671,14 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         auto const *item = [m_View CurrentItem];
         if (!item) return;
         
-        if (item->isdir())
+        if (item->IsDir())
         {
             // do not try count parent directory size. TODO: need a special handling here, it count the entire directory
-            if(!item->isdotdot())
+            if(!item->IsDotDot())
             {
                 char dir[MAXPATHLEN];
                 m_Data->GetDirectoryPathWithTrailingSlash(dir);
-                auto files = FlexChainedStringsChunk::AllocateWithSingleString(item->namec());
+                auto files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
                 [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:false];
             }
             else
@@ -880,11 +948,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         size_t max = sorted_entries.size();
         for(size_t i = n*stripe_size; i < (n+1)*stripe_size && i < max; ++i) {
             const auto &entry = entries[i];
-            if(ignore_dirs && entry.isdir())
+            if(ignore_dirs && entry.IsDir())
                 continue;
-            if(entry.isdotdot())
+            if(entry.IsDotDot())
                 continue;
-            if(maskp->MatchName((__bridge NSString*)entry.cf_name))
+            if(maskp->MatchName((__bridge NSString*)entry.CFName()))
                 m_Data->CustomFlagsSelect(i, _select);
         }
     });

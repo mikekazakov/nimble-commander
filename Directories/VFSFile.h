@@ -11,6 +11,8 @@
 #import <string>
 #import <memory>
 
+#import "VFSError.h"
+
 class VFSHost;
 
 class VFSFile : public std::enable_shared_from_this<VFSFile>
@@ -50,7 +52,11 @@ public:
 
     virtual ReadParadigm GetReadParadigm() const;
     virtual ssize_t Read(void *_buf, size_t _size);
-
+    
+    // ReadAt is available only on Random level
+    // will not move any file pointers
+    // read up to _size bytes, may return less
+    virtual ssize_t ReadAt(off_t _pos, void *_buf, size_t _size);
     
     // Seek() is available if Read paradigm is Seek or above
     enum {

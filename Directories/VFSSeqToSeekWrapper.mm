@@ -80,7 +80,7 @@ int VFSSeqToSeekROWrapperFile::Close()
 
 VFSFile::ReadParadigm VFSSeqToSeekROWrapperFile::GetReadParadigm() const
 {
-    return VFSFile::ReadParadigm::Seek; // Random later
+    return VFSFile::ReadParadigm::Random;
 }
 
 ssize_t VFSSeqToSeekROWrapperFile::Pos() const
@@ -130,6 +130,20 @@ ssize_t VFSSeqToSeekROWrapperFile::Read(void *_buf, size_t _size)
     assert(m_Pos <= m_Size);
 
     return to_read;
+}
+
+ssize_t VFSSeqToSeekROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+{
+    if(!IsOpened())
+        return VFSError::InvalidCall;
+
+    // we can only deal with cache buffer now, need another branch later
+    if(_pos < 0 || _pos > m_Size)
+        return VFSError::InvalidCall;
+    
+    ssize_t toread = MIN(m_Size - _pos, _size);
+    memcpy(_buf, &m_DataBuf[_pos], toread);
+    return toread;
 }
 
 off_t VFSSeqToSeekROWrapperFile::Seek(off_t _off, int _basis)

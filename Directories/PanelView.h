@@ -11,6 +11,7 @@
 
 #import "DirRead.h"
 #import "PanelViewTypes.h"
+#import "VFS.h"
 
 @class PanelController;
 class PanelData;
@@ -55,6 +56,6 @@ class PanelViewPresentation;
 // cursor handling
 - (int) GetCursorPosition;
 - (void) SetCursorPosition:(int)_pos; // will call EnsureCursorIsVisible implicitly
-- (const DirectoryEntryInformation*) CurrentItem; // return an item at current cursor position if any
+- (const VFSListingItem*) CurrentItem; // return an item at current cursor position if any
 
 @end

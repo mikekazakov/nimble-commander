@@ -47,9 +47,24 @@ int VFSNativeHost::CreateFile(const char* _path,
 std::shared_ptr<VFSNativeHost> VFSNativeHost::SharedHost()
 {
     static dispatch_once_t once;
-    static VFSNativeHost *host;
+//    static VFSNativeHost *host;
+    static std::shared_ptr<VFSNativeHost> host;
     dispatch_once(&once, ^{
-        host = std::make_shared<VFSNativeHost>().get();
+//        host = std::make_shared<VFSNativeHost>().get();
+        host = std::make_shared<VFSNativeHost>();
     });
-    return host->SharedPtr();
+    return host;
 }
+
+bool VFSNativeHost::IsDirectory(const char *_path, int _flags, bool (^_cancel_checker)())
+{
+    assert(_path[0] == '/'); // here in VFS we work only with absolute paths
+    struct stat st;
+    int ret = (_flags & F_NoFollow) == 0 ? stat(_path, &st) : lstat(_path, &st);
+
+    if(ret < 0)
+        return false;
+
+    return (st.st_mode & S_IFMT) == S_IFDIR;
+}
+

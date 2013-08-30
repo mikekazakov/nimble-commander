@@ -14,6 +14,11 @@
 #import "SearchInFile.h"
 #import "BigFileViewHistory.h"
 
+#import "VFSFile.h"
+#import "VFSNativeHost.h"
+#import "VFSArchiveHost.h"
+#import "VFSSeqToSeekWrapper.h"
+
 @implementation MainWindowBigFileViewState
 {
     FileWindow  *m_FileWindow;
@@ -123,7 +128,21 @@
     if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
         file_window_size *= 1 << file_window_pow2x;
 
-    if(fw->OpenFile(_fn, file_window_size) == 0)
+    
+    
+    std::shared_ptr<VFSFile> vfsfile;
+    VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile, 0);
+/*    auto vfs_ar = std::make_shared<VFSArchiveHost>("/Users/Migun/Downloads/Files.app.zip", VFSNativeHost::SharedHost());
+    vfs_ar->Open();
+    std::shared_ptr<VFSFile> vfsfile;
+    vfs_ar->CreateFile("/Files.app/Contents/Resources/Defaults.plist", &vfsfile, nil);
+    std::shared_ptr<VFSSeqToSeekROWrapperFile> vfsfilewr =
+        std::make_shared<VFSSeqToSeekROWrapperFile>(vfsfile);*/
+    
+//    VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile, 0);
+//    if(fw->OpenFile(_fn, file_window_size) == 0)
+//    if(fw->OpenFile(vfsfilewr, file_window_size) == 0)
+    if(fw->OpenFile(vfsfile, file_window_size) == 0)
     {
         if(m_FileWindow != 0)
         {
@@ -135,7 +154,12 @@
         
         m_FileWindow = fw;
         m_SearchFileWindow = new FileWindow;
-        m_SearchFileWindow->OpenFile(_fn);        
+//        std::shared_ptr<VFSFile> vfsfile2;
+//        VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile2, 0);
+//        m_SearchFileWindow->OpenFile(_fn);
+//        m_SearchFileWindow->OpenFile(vfsfile2);
+//        m_SearchFileWindow->OpenFile(vfsfilewr);
+        m_SearchFileWindow->OpenFile(vfsfile);
         m_SearchInFile = new SearchInFile(m_SearchFileWindow);
         
         strcpy(m_FilePath, _fn);

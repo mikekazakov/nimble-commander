@@ -8,6 +8,7 @@
 
 #import "PanelViewPresentation.h"
 #import "OrthodoxMonospace.h"
+#import "VFS.h"
 
 class FontCache;
 @class PanelView;
@@ -38,7 +39,7 @@ private:
     static void OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
     void DrawWithShortMediumWideView(CGContextRef _context);
     void DrawWithFullView(CGContextRef _context);
-    const DoubleColor& GetDirectoryEntryTextColor(const DirectoryEntryInformation &_dirent, bool _is_focused);
+    const DoubleColor& GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused);
     
     NSSize          m_FrameSize;
     int             m_SymbWidth;

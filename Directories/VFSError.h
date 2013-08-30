@@ -17,6 +17,7 @@ struct VFSError
         InvalidCall     = -3,
         NotFound        = -4,
         UnexpectedEOF   = -5,
+        GenericError    = -6
     };
     
     static int FromErrno(int _errno)

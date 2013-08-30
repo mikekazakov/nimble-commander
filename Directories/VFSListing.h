@@ -53,8 +53,18 @@ struct VFSListingAttributes
 class VFSListingItem
 { // this stuff has no virtual destructor and should be freed by derived classes only
 public:
-    // overridable part
+    struct Flags {
+        enum {
+            Selected = 1 << 1
+            
+            
+        };
+    };
+    
+    
+    // overridable part - getters
     virtual const char     *Name()      const { return ""; }
+    virtual size_t          NameLen()   const { return 0; }
     virtual CFStringRef     CFName()    const { return (CFStringRef)@""; }
     virtual uint64_t        Size()      const { return 0; }
     virtual uint64_t        Inode()     const { return 0; }
@@ -77,12 +87,17 @@ public:
     virtual unsigned short  ExtensionOffset() const { return 0; }
     virtual const char*     Extension() const { return false; }
     
+    // overridable part - setters
+    virtual void            SetSize(uint64_t _size) {};
+
     // common part
     inline unsigned int     CFlags()    const { return cflags; }
     inline unsigned short   CIcon()     const { return cicon; }
     inline void             SetCFlag(unsigned int _flag)    { cflags = cflags | _flag; }
     inline void             UnsetCFlag(unsigned int _flag)  { cflags = cflags & ~_flag; }
     inline void             SetCIcon(unsigned short _icon)  { cicon = _icon; }
+    
+    inline bool             CFIsSelected() const { return (cflags & Flags::Selected) != 0; }
     
     enum {
     InvalidSize = (0xFFFFFFFFFFFFFFFFu)
@@ -101,8 +116,11 @@ public:
     VFSListing(const char* _relative_path, std::shared_ptr<VFSHost> _host);
     virtual ~VFSListing();
     
-    virtual VFSListingItem& At(int _position);
-    virtual const VFSListingItem& At(int _position) const;
+    virtual VFSListingItem& At(size_t _position);
+    virtual const VFSListingItem& At(size_t _position) const;
+    inline VFSListingItem& operator[](size_t _position) { return At(_position); } // consider something unsafe here
+    inline const VFSListingItem& operator[](size_t _position) const { return At(_position); }
+    
     virtual int Count() const;
     virtual long Attributes() const; // bitfield with VFSListingAttributes values
 
@@ -110,6 +128,42 @@ public:
     inline std::shared_ptr<const VFSListing> SharedPtr() const { return shared_from_this(); }
     const char *RelativePath() const;
     std::shared_ptr<VFSHost> Host() const;
+    
+    
+    
+    
+    
+    
+    struct iterator
+    {
+        VFSListing *listing;
+        unsigned index;
+        inline void operator++() { index++; }
+        inline bool operator==(const iterator& _right) const {
+            return listing == _right.listing && index == _right.index; }
+        inline bool operator!=(const iterator& _right) const {
+            return listing != _right.listing || index != _right.index; }
+        inline VFSListingItem& operator*() { return listing->At(index);}
+    };
+    struct const_iterator
+    {
+        const VFSListing *listing;
+        unsigned index;
+        inline void operator++() { index++; }
+        inline bool operator==(const const_iterator& _right) const {
+            return listing == _right.listing && index == _right.index;
+        }
+        inline bool operator!=(const const_iterator& _right) const {
+            return listing != _right.listing || index != _right.index;
+        }
+        inline const VFSListingItem& operator*() const { return listing->At(index); }
+    };
+    inline const_iterator begin() const { return {this, 0}; }
+    inline const_iterator end()   const { return {this, (unsigned)Count()}; }
+    inline iterator begin() { return {this, 0}; }
+    inline iterator end()   { return {this, (unsigned)Count()}; }
+    
+    
 private:
     std::string m_RelativePath;
     std::shared_ptr<VFSHost> m_Host;

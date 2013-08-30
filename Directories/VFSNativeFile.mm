@@ -76,6 +76,16 @@ ssize_t VFSNativeFile::Read(void *_buf, size_t _size)
     return VFSError::FromErrno(errno);
 }
 
+ssize_t VFSNativeFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+{
+    if(m_FD < 0)
+        return VFSError::InvalidCall;
+    ssize_t ret = pread(m_FD, _buf, _size, _pos);
+    if(ret < 0)
+        return VFSError::FromErrno(errno);
+    return ret;
+}
+
 off_t VFSNativeFile::Seek(off_t _off, int _basis)
 {
     if(m_FD < 0)

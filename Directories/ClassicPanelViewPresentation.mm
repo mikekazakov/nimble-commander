@@ -108,20 +108,20 @@ static void FormHumanReadableSizeRepresentation6(unsigned long _sz, UniChar _out
     for(int i = 0; i < 6; ++i) _out[i] = buf[i];
 }
 
-static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInformation *_dirent, UniChar _out[6])
+static void FormHumanReadableSizeReprentationForDirEnt6(const VFSListingItem &_dirent, UniChar _out[6])
 {
-    if( _dirent->isdir() )
+    if( _dirent.IsDir() )
     {
-        if( _dirent->size != DIRENTINFO_INVALIDSIZE)
+        if( _dirent.Size() != DIRENTINFO_INVALIDSIZE)
         {
-            FormHumanReadableSizeRepresentation6(_dirent->size, _out);
+            FormHumanReadableSizeRepresentation6(_dirent.Size(), _out);
         }
         else
         {
             char buf[32];
             memset(buf, 0, sizeof(buf));
             
-            if( !_dirent->isdotdot()) strcpy(buf, "Folder");
+            if( !_dirent.IsDotDot()) strcpy(buf, "Folder");
             else                      strcpy(buf, "    Up");
             
             for(int i = 0; i < 6; ++i) _out[i] = buf[i];
@@ -129,7 +129,7 @@ static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInfo
     }
     else
     {
-        FormHumanReadableSizeRepresentation6(_dirent->size, _out);
+        FormHumanReadableSizeRepresentation6(_dirent.Size(), _out);
     }
 }
 
@@ -229,19 +229,19 @@ static void FormHumanReadableBytesAndFiles128(unsigned long _sz, int _total_file
     for(int i = 0; i < _symbs; ++i) _out[i] = buf[i];
 }
 
-static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dirent, UniChar _buff[256], size_t &_sz)
+static void ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, UniChar _buff[256], size_t &_sz)
 {   // output is a direct filename or symlink path in ->filename form
-    if(!_dirent.issymlink())
+    if(!_dirent.IsSymlink())
     {
-        InterpretUTF8BufferAsUniChar( _dirent.name(), _dirent.namelen, _buff, &_sz, 0xFFFD);
+        InterpretUTF8BufferAsUniChar( (unsigned char*) _dirent.Name(), _dirent.NameLen(), _buff, &_sz, 0xFFFD);
     }
     else
     {
-        if(_dirent.symlink != 0)
+        if(_dirent.Symlink() != 0)
         {
             _buff[0]='-';
             _buff[1]='>';
-            InterpretUTF8BufferAsUniChar( (unsigned char*)_dirent.symlink, strlen(_dirent.symlink), _buff+2, &_sz, 0xFFFD);
+            InterpretUTF8BufferAsUniChar( (unsigned char*)_dirent.Symlink(), strlen(_dirent.Symlink()), _buff+2, &_sz, 0xFFFD);
             _sz += 2;
         }
         else
@@ -339,12 +339,12 @@ void ClassicPanelViewPresentation::OnGeometryChanged(void *_obj, NSString *_key_
     _this->SetViewNeedsDisplay();
 }
 
-const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const DirectoryEntryInformation &_dirent, bool _is_focused)
+const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
 {    
-    if(_dirent.cf_isselected()) return m_SelectedColor[_is_focused ? 1 : 0];
-    if(_dirent.ishidden()) return m_HiddenColor[_is_focused ? 1 : 0];
-    if(_dirent.isreg() || _dirent.isdotdot()) return m_RegularFileColor[_is_focused ? 1 : 0];
-    if(_dirent.isdir()) return m_DirectoryColor[_is_focused ? 1 : 0];    
+    if(_dirent.CFIsSelected()) return m_SelectedColor[_is_focused ? 1 : 0];
+    if(_dirent.IsHidden()) return m_HiddenColor[_is_focused ? 1 : 0];
+    if(_dirent.IsReg() || _dirent.IsDotDot()) return m_RegularFileColor[_is_focused ? 1 : 0];
+    if(_dirent.IsDir()) return m_DirectoryColor[_is_focused ? 1 : 0];
     return m_OtherColor[_is_focused ? 1 : 0];
 }
 
@@ -521,7 +521,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
             
             size_t buf_size = 0;
             
-            InterpretUTF8BufferAsUniChar( current.name(), current.namelen, buff, &buf_size, 0xFFFD);
+            InterpretUTF8BufferAsUniChar( (const unsigned char*)current.Name(), current.NameLen(), buff, &buf_size, 0xFFFD);
             
             int CN = n / entries_in_column;
             if(CN == 0) X = 1;
@@ -539,7 +539,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
             if(m_State->ViewType==PanelViewType::ViewWide)
             { // draw entry size on right side, only for this mode
                 UniChar size_info[6];
-                FormHumanReadableSizeReprentationForDirEnt6(&current, size_info);
+                FormHumanReadableSizeReprentationForDirEnt6(current, size_info);
                 
                 if((m_State->ItemsDisplayOffset + n != m_State->CursorPos) || !m_State->Active)
                     oms::DrawStringXY(size_info, 0, 6, columns_width[0]+1, Y, context, fontcache, GetDirectoryEntryTextColor(current, false));
@@ -552,15 +552,15 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw header and footer data
     {
-        const DirectoryEntryInformation *current_entry = 0;
+        const VFSListingItem *current_entry = 0;
         if(m_State->CursorPos >= 0) current_entry = &raw_entries[sorted_entries[m_State->CursorPos]];
         UniChar time_info[14], size_info[6], sort_mode[1];
         size_t buf_size = 0;
         FormHumanReadableSortModeReprentation1(m_State->Data->GetCustomSortMode().sort, sort_mode);
         if(current_entry)
         {
-            FormHumanReadableTimeRepresentation14(current_entry->mtime, time_info);
-            FormHumanReadableSizeReprentationForDirEnt6(current_entry, size_info);
+            FormHumanReadableTimeRepresentation14(current_entry->MTime(), time_info);
+            FormHumanReadableSizeReprentationForDirEnt6(*current_entry, size_info);
             ComposeFooterFileNameForEntry(*current_entry, buff, buf_size);
         }
         
@@ -722,10 +722,10 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
             const auto& current = raw_entries[*i];
             
             // TODO: need to render extention apart from other filename. (need ?)
-            InterpretUTF8BufferAsUniChar( current.name(), current.namelen, file_name, &fn_size, 0xFFFD);
-            FormHumanReadableSizeReprentationForDirEnt6(&current, size_info);
-            FormHumanReadableDateRepresentation8(current.mtime, date_info);
-            FormHumanReadableTimeRepresentation5(current.mtime, time_info);
+            InterpretUTF8BufferAsUniChar( (const unsigned char*)current.Name(), current.NameLen(), file_name, &fn_size, 0xFFFD);
+            FormHumanReadableSizeReprentationForDirEnt6(current, size_info);
+            FormHumanReadableDateRepresentation8(current.MTime(), date_info);
+            FormHumanReadableTimeRepresentation5(current.MTime(), time_info);
             
             if((m_State->ItemsDisplayOffset + n != m_State->CursorPos) || !m_State->Active)
             {

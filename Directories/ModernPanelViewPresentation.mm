@@ -136,20 +136,20 @@ static void FormHumanReadableSizeRepresentation6(unsigned long _sz, UniChar _out
     for(int i = 0; i < 6; ++i) _out[i] = buf[i];
 }
 
-static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInformation *_dirent, UniChar _out[6])
+static void FormHumanReadableSizeReprentationForDirEnt6(const VFSListingItem &_dirent, UniChar _out[6])
 {
-    if( _dirent->isdir() )
+    if( _dirent.IsDir() )
     {
-        if( _dirent->size != DIRENTINFO_INVALIDSIZE)
+        if( _dirent.Size() != DIRENTINFO_INVALIDSIZE)
         {
-            FormHumanReadableSizeRepresentation6(_dirent->size, _out); // this code will be used some day when F3 will be implemented
+            FormHumanReadableSizeRepresentation6(_dirent.Size(), _out); // this code will be used some day when F3 will be implemented
         }
         else
         {
             char buf[32];
             memset(buf, 0, sizeof(buf));
             
-            if( !_dirent->isdotdot()) strcpy(buf, "Folder");
+            if( !_dirent.IsDotDot())  strcpy(buf, "Folder");
             else                      strcpy(buf, "    Up");
             
             for(int i = 0; i < 6; ++i) _out[i] = buf[i];
@@ -157,23 +157,23 @@ static void FormHumanReadableSizeReprentationForDirEnt6(const DirectoryEntryInfo
     }
     else
     {
-        FormHumanReadableSizeRepresentation6(_dirent->size, _out);
+        FormHumanReadableSizeRepresentation6(_dirent.Size(), _out);
     }
 }
 
-static void ComposeFooterFileNameForEntry(const DirectoryEntryInformation &_dirent, UniChar _buff[256], size_t &_sz)
+static void ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, UniChar _buff[256], size_t &_sz)
 {   // output is a direct filename or symlink path in ->filename form
-    if(!_dirent.issymlink())
+    if(!_dirent.IsSymlink())
     {
-        InterpretUTF8BufferAsUniChar( _dirent.name(), _dirent.namelen, _buff, &_sz, 0xFFFD);
+        InterpretUTF8BufferAsUniChar( (const unsigned char*)_dirent.Name(), _dirent.NameLen(), _buff, &_sz, 0xFFFD);
     }
     else
     {
-        if(_dirent.symlink != 0)
+        if(_dirent.Symlink() != 0)
         {
             _buff[0]='-';
             _buff[1]='>';
-            InterpretUTF8BufferAsUniChar( (unsigned char*)_dirent.symlink, strlen(_dirent.symlink), _buff+2, &_sz, 0xFFFD);
+            InterpretUTF8BufferAsUniChar( (unsigned char*)_dirent.Symlink(), strlen(_dirent.Symlink()), _buff+2, &_sz, 0xFFFD);
             _sz += 2;
         }
         else
@@ -452,11 +452,11 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     for(; count < total_count && i < max_items; ++count, ++i)
     {
         int raw_index = sorted_entries[i];
-        const DirectoryEntryInformation &entry = entries[raw_index];
-        if (entry.cicon == 0)
+        const auto &entry = entries[raw_index];
+        if (entry.CIcon() == 0)
         {
             created_icons = true;
-            m_IconCache->CreateIcon(entry, raw_index, m_State->Data);
+            m_IconCache->CreateIcon(raw_index, m_State->Data);
         }
     }
     
@@ -581,7 +581,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     {
         UniChar buff[256];
         size_t buf_size = 0;
-        const DirectoryEntryInformation *current_entry = &entries[sorted_entries[m_State->CursorPos]];
+        const auto &current_entry = entries[sorted_entries[m_State->CursorPos]];
 
         const int delta = (header_height - m_LineHeight)/2;
         const int offset = 10;
@@ -601,7 +601,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                  NSParagraphStyleAttributeName:pstyle,
                                  NSShadowAttributeName: header_text_shadow};
             
-            NSString *time_str = FormHumanReadableDateTime(current_entry->mtime);
+            NSString *time_str = FormHumanReadableDateTime(current_entry.MTime());
             [time_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - m_DateTimeFooterWidth,
                                               footer_y + delta,
                                               m_DateTimeFooterWidth, m_LineHeight)
@@ -632,7 +632,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         int name_width = m_ItemsArea.size.width - 2*offset;
         if (m_State->ViewType != PanelViewType::ViewFull)
             name_width -= m_DateTimeFooterWidth + m_SizeColumWidth;
-        ComposeFooterFileNameForEntry(*current_entry, buff, buf_size);
+        ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
         NSString *name_str = [NSString stringWithCharacters:buff length:buf_size];
         [name_str drawWithRect:NSMakeRect(offset, footer_y + delta, name_width, m_LineHeight) options:options attributes:footer_text_attr];
     }
@@ -669,7 +669,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         int count = 0;
         for (; count < items_per_column; ++count, ++i)
         {
-            const DirectoryEntryInformation *item = nullptr;
+            const VFSListingItem *item = nullptr;
             auto raw_index = 0;
             
             if (i < max_items)
@@ -686,7 +686,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
             
             // Draw background.
-            if (item && item->cf_isselected())
+            if (item && item->CFIsSelected())
             {
                 // Draw selected item.
                 if (m_State->Active)
@@ -730,7 +730,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             }
             
             // Draw stats columns for specific views.
-            NSDictionary *item_text_attr = (m_State->Active && item->cf_isselected()) ? m_ActiveSelectedItemTextAttr : m_ItemTextAttr;            
+            NSDictionary *item_text_attr = (m_State->Active && item->CFIsSelected()) ? m_ActiveSelectedItemTextAttr : m_ItemTextAttr;
             int spec_col_x = m_ItemsArea.size.width;
             if (m_State->ViewType == PanelViewType::ViewFull)
             {
@@ -739,10 +739,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_TimeColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 
-                NSString *time_str = FormHumanReadableShortTime(item->mtime);
+                NSString *time_str = FormHumanReadableShortTime(item->MTime());
                 [time_str drawWithRect:time_rect
                                options:options
-                            attributes:m_State->Active && item->cf_isselected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr];
+                            attributes:m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr];
                 
                 rect.size.width -= m_TimeColumnWidth;
                 spec_col_x -= m_TimeColumnWidth;
@@ -751,10 +751,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               rect.origin.y,
                                               m_DateColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
-                NSString *date_str = FormHumanReadableShortDate(item->mtime);
+                NSString *date_str = FormHumanReadableShortDate(item->MTime());
                 [date_str drawWithRect:date_rect
                                options:options
-                            attributes:m_State->Active && item->cf_isselected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr];
+                            attributes:m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr];
 
                 rect.size.width -= m_DateColumnWidth;
                 spec_col_x -= m_DateColumnWidth;
@@ -769,17 +769,17 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               rect.size.height);
 
                 UniChar size_info[6];
-                FormHumanReadableSizeReprentationForDirEnt6(item, size_info);
+                FormHumanReadableSizeReprentationForDirEnt6(*item, size_info);
                 NSString *size_str = [[NSString alloc] initWithCharactersNoCopy:size_info length:6 freeWhenDone:false];
                 [size_str drawWithRect:size_rect
                                options:options
-                            attributes:m_State->Active && item->cf_isselected() ? m_ActiveSelectedSizeColumnTextAttr : m_SizeColumnTextAttr];
+                            attributes:m_State->Active && item->CFIsSelected() ? m_ActiveSelectedSizeColumnTextAttr : m_SizeColumnTextAttr];
                 
                 rect.size.width -= m_SizeColumWidth;
             }
             
             // Draw item text.
-            [(__bridge NSString *)item->cf_name drawWithRect:rect options:options attributes:item_text_attr];
+            [(__bridge NSString *)item->CFName() drawWithRect:rect options:options attributes:item_text_attr];
 
             // Draw icon
             NSImageRep *image_rep = m_IconCache->GetIcon(*item);

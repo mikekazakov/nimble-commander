@@ -23,11 +23,20 @@ public:
             std::shared_ptr<VFSHost> _parent);
     virtual ~VFSHost();
     
+    enum {
+        F_NoFollow = 1
+        
+    };
+    
     virtual bool IsWriteable() const;
     // TODO: IsWriteableAtPath
     
     const char *JunctionPath() const;
     std::shared_ptr<VFSHost> Parent() const;
+    
+    virtual bool IsDirectory(const char *_path,
+                             int _flags,
+                             bool (^_cancel_checker)());
     
     virtual int FetchDirectoryListing(const char *_path,
                                       std::shared_ptr<VFSListing> *_target,

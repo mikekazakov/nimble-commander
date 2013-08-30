@@ -9,10 +9,11 @@
 #include <assert.h>
 #include <memory.h>
 
-FileWindow::FileWindow()
+FileWindow::FileWindow():
+    m_ShouldClose(false)
 {
-    m_FD = -1;
-    m_FileSize = -1;
+//    m_FD = -1;
+//    m_FileSize = -1;
     m_Window = 0;
     m_WindowPos = -1;
     m_WindowSize = -1;
@@ -28,25 +29,31 @@ bool FileWindow::FileOpened() const
     if(m_Window == 0)
     {
         // sanity check
-        assert(m_FD == -1);
+//        assert(m_FD == -1);
         assert(m_WindowPos == -1);
         assert(m_WindowSize == -1);
-        assert(m_FileSize == -1);
+//        assert(m_FileSize == -1);
         return false;
     }
     return true;
 }
 
-int FileWindow::OpenFile(const char *_path)
+//int OpenFile(std::shared_ptr<VFSFile> _file); // will include VFS later
+//int OpenFile(std::shared_ptr<VFSFile> _file, int _window_size);
+
+
+//int FileWindow::OpenFile(const char *_path)
+int FileWindow::OpenFile(std::shared_ptr<VFSFile> _file)
 {
-    return OpenFile(_path, DefaultWindowSize);
+    return OpenFile(_file, DefaultWindowSize);
 }
 
-int FileWindow::OpenFile(const char *_path, int _window_size)
+int FileWindow::OpenFile(std::shared_ptr<VFSFile> _file, int _window_size)
+//int FileWindow::OpenFile(const char *_path, int _window_size)
 {
-    if(FileOpened())
+/*    if(FileOpened())
     {
-        assert(0); // using Open on already opened file means saniy breach, which should not be
+        assert(0); // using Open on already opened file means sanity breach, which should not be
         exit(0);
     }
     
@@ -80,11 +87,23 @@ int FileWindow::OpenFile(const char *_path, int _window_size)
         exit(0);
     }
     
-    m_FileSize = epos;
+    m_FileSize = epos;*/
     
+    if(_file->GetReadParadigm() < VFSFile::ReadParadigm::Random)
+        return VFSError::InvalidCall;
     
-    if(m_FileSize < _window_size)
-        m_WindowSize = m_FileSize;
+    m_File = _file;
+    if(!m_File->IsOpened())
+    {
+        int res = m_File->Open(VFSFile::OF_Read);
+        if( res < 0)
+            return res;
+        m_ShouldClose = true;
+    }
+        
+    
+    if(m_File->Size() < _window_size)
+        m_WindowSize = m_File->Size();
     else
         m_WindowSize = _window_size;
     
@@ -92,67 +111,60 @@ int FileWindow::OpenFile(const char *_path, int _window_size)
     m_WindowPos = 0;
     
     int ret = ReadFileWindow();
-    if(ret != ERROR_OK)
+    if(ret < 0)
     {
-        assert(0); // TODO: handle this situation later
-        exit(0);
+//        assert(0); // TODO: handle this situation later
+//        exit(0);
+        return ret;
     }
     
-    return ERROR_OK;
+    return VFSError::Ok;
 }
 
 int FileWindow::CloseFile()
 {
-    if(!FileOpened())
+    if(FileOpened())
     {
-        assert(0); // closing a not-opened file means sanity breach, which should not be
-        exit(0);
+        if(m_ShouldClose)
+            m_File->Close();
+        m_File.reset();
+        free(m_Window);
+        m_Window = 0;
+        m_WindowPos = -1;
+        m_WindowSize = -1;
+        m_ShouldClose = false;
     }
     
-    int ret = close(m_FD);
+/*    int ret = close(m_FD);
     if(ret == -1)
     {
         assert(0); // TODO: handle this situation later
         exit(0);
-    }
+    }*/
     
-    free(m_Window);
-    m_FD = -1;
-    m_Window = 0;
-    m_FileSize = -1;
-    m_WindowPos = -1;
-    m_WindowSize = -1;
+//    free(m_Window);
+//    m_FD = -1;
+//    m_Window = 0;
+//    m_FileSize = -1;
+//    m_WindowPos = -1;
+//    m_WindowSize = -1;
     
-    return ERROR_OK;
+    return VFSError::Ok;
 }
 
 int FileWindow::ReadFileWindow()
 {
-    if(m_WindowSize > 0) // no meaning in reading 0-bytes window
-    {
-        size_t r = pread(m_FD, m_Window, m_WindowSize, m_WindowPos);
-        if(r == -1)
-        {
-            assert(0); // TODO: handle this situation later
-            exit(0);
-        }
-        if(r != m_WindowSize)
-        {
-            assert(0); // TODO: handle this situation later
-            exit(0);
-        }
-    }
-    
-    return ERROR_OK;
+    return ReadFileWindowPart(0, m_WindowSize);
 }
 
 int FileWindow::ReadFileWindowPart(size_t _offset, size_t _len)
 {
-    assert(_offset + _len <= m_WindowSize);
     if(_len == 0)
-        return ERROR_OK;
+        return VFSError::Ok;
+    if(_offset + _len > m_WindowSize)
+        return VFSError::InvalidCall;
     
-    size_t r = pread(m_FD, (unsigned char*)m_Window + _offset, _len, m_WindowPos + _offset);
+/*    size_t r = pread(m_FD, (unsigned char*)m_Window + _offset, _len, m_WindowPos + _offset);
     if(r == -1)
     {
         assert(0); // TODO: handle this situation later
@@ -162,15 +174,35 @@ int FileWindow::ReadFileWindowPart(size_t _offset, size_t _len)
     {
         assert(0); // TODO: handle this situation later
         exit(0);
+    }*/
+    
+/*    off_t seekret = m_File->Seek(m_WindowPos + _offset, VFSFile::Seek_Set);
+    if(seekret < 0)
+        return (int)seekret;
+    
+    ssize_t readret = m_File->Read((unsigned char*)m_Window + _offset, _len);
+    if(readret < 0)
+        return (int)readret;*/
+    
+    ssize_t readret = m_File->ReadAt(m_WindowPos + _offset, (unsigned char*)m_Window + _offset, _len);
+    if(readret < 0)
+        return (int)readret;
+    
+    if(readret != _len)
+    {
+        assert(0);
+        // need to write a cycle here to read a full size
+        return VFSError::GenericError;
     }
     
-    return ERROR_OK;
+    return VFSError::Ok;
 }
 
 size_t FileWindow::FileSize() const
 {
     assert(FileOpened());
-    return m_FileSize;
+//    return m_FileSize;
+    return m_File->Size();
 }
 
 void *FileWindow::Window() const
@@ -198,9 +230,9 @@ int FileWindow::MoveWindow(size_t _offset)
     assert(FileOpened());
     
     if(_offset == m_WindowPos)
-        return ERROR_OK;
+        return VFSError::Ok;
     
-    if(_offset + m_WindowSize > m_FileSize)
+    if(_offset + m_WindowSize > m_File->Size())
     {
         // invalid call. just kill ourselves
         assert(0);

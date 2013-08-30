@@ -29,14 +29,14 @@ std::shared_ptr<VFSHost> VFSListing::Host() const
     return m_Host;
 }
 
-VFSListingItem& VFSListing::At(int _position)
+VFSListingItem& VFSListing::At(size_t _position)
 {
     assert(0);
     static VFSListingItem i;
     return i;
 }
 
-const VFSListingItem& VFSListing::At(int _position) const
+const VFSListingItem& VFSListing::At(size_t _position) const
 {
     assert(0);
     static VFSListingItem i;

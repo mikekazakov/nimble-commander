@@ -10,6 +10,7 @@
 
 #import "ModernPanelViewPresentation.h"
 #import "DirRead.h"
+#import "VFS.h"
 
 class ModernPanelViewPresentationIconCache
 {
@@ -18,8 +19,8 @@ public:
     ~ModernPanelViewPresentationIconCache();
     void SetIconMode(int _mode);
     bool IsNeedsLoading();
-    NSImageRep *CreateIcon(const DirectoryEntryInformation &_item, int _item_index, PanelData *_data);
-    NSImageRep *GetIcon(const DirectoryEntryInformation &_item);
+    NSImageRep *CreateIcon(int _item_index, PanelData *_data);
+    NSImageRep *GetIcon(const VFSListingItem &_item);
     void RunLoadThread(PanelData *_data);
     void OnDirectoryChanged(PanelData *_data);
     

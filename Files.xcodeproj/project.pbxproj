@@ -351,6 +351,7 @@
 		CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewText.mm; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
+		CF435FFB17CF1C5C004BA507 /* VFS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFS.h; sourceTree = "<group>"; };
 		CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask.mm; sourceTree = "<group>"; };
 		CF4C5A5C17A7B48E00B1B061 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMask.h; sourceTree = "<group>"; };
 		CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionWithMaskSheetController.h; sourceTree = "<group>"; };
@@ -1161,6 +1162,7 @@
 				CF9D060317CB2DC900CB8146 /* VFSFile.mm */,
 				CF9D060417CB2DC900CB8146 /* VFSFile.h */,
 				CFB8F23317CAF4EC004574FE /* VFSError.h */,
+				CF435FFB17CF1C5C004BA507 /* VFS.h */,
 			);
 			name = VFS;
 			sourceTree = "<group>";
@@ -1318,7 +1320,7 @@
 		CFC5120916C4BD3D00D247EE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 			};
 			buildConfigurationList = CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "Files" */;
@@ -1643,6 +1645,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1668,6 +1671,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -1675,6 +1679,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1693,13 +1698,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
 		CFC5122F16C4BD3D00D247EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Directories/Files-Prefix.pch";
@@ -1714,7 +1719,6 @@
 		CFC5123016C4BD3D00D247EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Directories/Files-Prefix.pch";

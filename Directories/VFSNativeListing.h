@@ -72,6 +72,7 @@ struct VFSNativeListingItem : VFSListingItem
         return *(const char**)(&namebuf[0]);
     }
     virtual CFStringRef     CFName()    const override { return cf_name; }
+    virtual size_t          NameLen()   const override { return namelen; }
     virtual uint64_t        Size()      const override { return size; }
     virtual uint64_t        Inode()     const override { return inode; }
     virtual time_t          ATime()     const override { return atime; }
@@ -92,6 +93,9 @@ struct VFSNativeListingItem : VFSListingItem
     virtual bool            HasExtension()      const override { return extoffset != 0; }
     virtual unsigned short  ExtensionOffset()   const override { return extoffset; }
     virtual const char*     Extension()         const override { return Name() + extoffset; }
+    
+    
+    virtual void            SetSize(uint64_t _size) override { size = _size; };
 };
 
 class VFSNativeListing : public VFSListing
@@ -104,8 +108,8 @@ public:
     int LoadListingData(bool (^_cancel_checker)());
     void EraseListing();
     
-    virtual VFSListingItem& At(int _position) override;
-    virtual const VFSListingItem& At(int _position) const override;
+    virtual VFSListingItem& At(size_t _position) override;
+    virtual const VFSListingItem& At(size_t _position) const override;
     virtual int Count() const override;
 
     

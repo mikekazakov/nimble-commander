@@ -126,7 +126,7 @@ int VFSArchiveHost::ReadArchiveListing()
         path[0] = '/';
         strcpy(path + 1, archive_entry_pathname(entry));
         
-        printf("%s\n", path);
+//        printf("%s\n", path);
         
         int path_len = (int)strlen(path);
         bool isdir = path[path_len-1] == '/';

@@ -198,15 +198,15 @@ void VFSNativeListing::EraseListing()
     m_Items.clear();    
 }
 
-VFSListingItem& VFSNativeListing::At(int _position)
+VFSListingItem& VFSNativeListing::At(size_t _position)
 {
-    assert(_position >= 0 && _position < m_Items.size());
+    assert(_position < m_Items.size());
     return m_Items[_position];
 }
 
-const VFSListingItem& VFSNativeListing::At(int _position) const
+const VFSListingItem& VFSNativeListing::At(size_t _position) const
 {
-    assert(_position >= 0 && _position < m_Items.size());
+    assert(_position < m_Items.size());
     return m_Items[_position];
 }
 

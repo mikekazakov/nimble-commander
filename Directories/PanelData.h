@@ -3,6 +3,7 @@
 #include <vector>
 
 
+#import "VFS.h"
 #include "DirRead.h"
 
 struct FlexChainedStringsChunk;
@@ -74,8 +75,8 @@ public:
   
     struct DirectoryChangeContext // allocated with malloc, should be freed upon receiving
     {
-        DirEntryInfoT *entries;
-        char path[MAXPATHLEN];
+//        DirEntryInfoT *entries;
+//        char path[MAXPATHLEN];
     };
     
     
@@ -85,6 +86,9 @@ public:
     // these methods should be called by a controller, since some view's props have to be updated
     bool GoToDirectory(const char *_path); // sync version
     void GoToDirectoryWithContext(DirectoryChangeContext *_context); // _context will be removed with free()
+    
+    int GoToSync(const char *_path, std::shared_ptr<VFSHost> _host);
+    
     bool ReloadDirectory(); // sync version
     void ReloadDirectoryWithContext(DirectoryChangeContext *_context); // _context will be removed with free()
     
@@ -98,12 +102,13 @@ public:
                                      FetchDirectoryListing_CancelChecker _checker // can not be nil, put {return false;} as dummy
                                      );
     
-    const DirEntryInfoT&    DirectoryEntries() const;
+    const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
     FlexChainedStringsChunk* StringsFromSelectedEntries() const;
     
     int SortPosToRawPos(int _pos) const; // does SortedDirectoryEntries()[_pos]
-    const DirectoryEntryInformation& EntryAtRawPosition(int _pos) const; // does DirectoryEntries()[_pos]
+//    const DirectoryEntryInformation& EntryAtRawPosition(int _pos) const; // does DirectoryEntries()[_pos]
+    const VFSListingItem& EntryAtRawPosition(int _pos) const;
     
     void ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPATHLEN]);
     
@@ -154,7 +159,7 @@ public:
     
     bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
 private:
-    void GoToDirectoryInternal(DirEntryInfoT *_entries, const char *_path); // passing ownership of _entries
+    void GoToDirectoryInternal(std::shared_ptr<VFSListing> _listing);
     void ReloadDirectoryInternal(DirEntryInfoT *_entries); // passing ownership of _entries
     
     void DestroyCurrentData();
@@ -162,12 +167,16 @@ private:
     void operator=(const PanelData&);
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
-    static void DoSort(const DirEntryInfoT* _from, DirSortIndT *_to, PanelSortMode _mode);
+//    static void DoSort(const DirEntryInfoT* _from, DirSortIndT *_to, PanelSortMode _mode);
+    static void DoSort(const std::shared_ptr<VFSListing> _from, DirSortIndT *_to, PanelSortMode _mode);
     
-    char                                    m_DirectoryPath[__DARWIN_MAXPATHLEN]; // path with trailing slash
+//    char                                    m_DirectoryPath[__DARWIN_MAXPATHLEN]; // path with trailing slash
     // m_Entries container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-    DirEntryInfoT                           *m_Entries;
+
+    std::shared_ptr<VFSListing>             m_Listing;
+    
+//    DirEntryInfoT                           *m_Entries;
     DirSortIndT                             *m_EntriesByRawName;   // sorted with raw strcmp comparison
     DirSortIndT                             *m_EntriesByHumanName; // sorted with human-reasonable literal sort
     DirSortIndT                             *m_EntriesByCustomSort; // custom defined sort

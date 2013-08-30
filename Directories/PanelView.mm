@@ -281,9 +281,9 @@ struct CursorSelectionState
             const auto *item = [self CurrentItem];
             if(item)
             {
-                if(!item->isdotdot())
+                if(!item->IsDotDot())
                 { // regular case
-                    if(item->cf_isselected()) m_CursorSelectionType = CursorSelectionState::Unselection;
+                    if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionState::Unselection;
                     else                     m_CursorSelectionType = CursorSelectionState::Selection;
                 }
                 else
@@ -291,7 +291,7 @@ struct CursorSelectionState
                     if(m_State.Data->SortedDirectoryEntries().size() > 1)
                     { // using [1] item
                         const auto &item = m_State.Data->DirectoryEntries()[ m_State.Data->SortedDirectoryEntries()[1] ];
-                        if(item.cf_isselected()) m_CursorSelectionType = CursorSelectionState::Unselection;
+                        if(item.CFIsSelected()) m_CursorSelectionType = CursorSelectionState::Unselection;
                         else                     m_CursorSelectionType = CursorSelectionState::Selection;
                     }
                     else
@@ -322,10 +322,10 @@ struct CursorSelectionState
         // If clicked item is selected, then deselect the range instead.
         assert(cursor_pos < m_State.Data->SortedDirectoryEntries().size());
         int raw_pos = m_State.Data->SortedDirectoryEntries()[cursor_pos];
-        assert(raw_pos < m_State.Data->DirectoryEntries().size());
-        const DirectoryEntryInformation &click_entry = m_State.Data->DirectoryEntries()[raw_pos];
+        assert(raw_pos < m_State.Data->DirectoryEntries().Count());
+        const auto &click_entry = m_State.Data->DirectoryEntries()[raw_pos];
         
-        bool deselect = click_entry.cf_isselected();
+        bool deselect = click_entry.CFIsSelected();
         if (m_State.CursorPos == -1) m_State.CursorPos = 0;
         [self SelectUnselectInRange:m_State.CursorPos last_included:cursor_pos select:!deselect];
     }
@@ -335,9 +335,9 @@ struct CursorSelectionState
     if ((modifier_flags & NSCommandKeyMask) == NSCommandKeyMask)
     {
         // Select or deselect a single item with cmd+click.
-        const DirectoryEntryInformation *entry = [self CurrentItem];
+        const auto *entry = [self CurrentItem];
         assert(entry);
-        BOOL select = !entry->cf_isselected();
+        bool select = !entry->CFIsSelected();
         [self SelectUnselectInRange:m_State.CursorPos last_included:m_State.CursorPos
                              select:select];
     }
@@ -437,11 +437,11 @@ struct CursorSelectionState
         [self setNeedsDisplay:true];
 }
 
-- (const DirectoryEntryInformation*) CurrentItem
+- (const VFSListingItem*) CurrentItem
 {
     if(m_State.CursorPos < 0) return nullptr;
     assert(m_State.CursorPos < (int)m_State.Data->SortedDirectoryEntries().size());
-    assert(m_State.Data->DirectoryEntries().size() >= m_State.Data->SortedDirectoryEntries().size());
+    assert(m_State.Data->DirectoryEntries().Count() >= m_State.Data->SortedDirectoryEntries().size());
     return &m_State.Data->DirectoryEntries()[ m_State.Data->SortedDirectoryEntries()[m_State.CursorPos] ];
 }
 
@@ -458,7 +458,7 @@ struct CursorSelectionState
         _end = t;
     }
     
-    if(m_State.Data->DirectoryEntries()[m_State.Data->SortedDirectoryEntries()[_start]].isdotdot())
+    if(m_State.Data->DirectoryEntries()[m_State.Data->SortedDirectoryEntries()[_start]].IsDotDot())
         ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
     
     for(int i = _start; i <= _end; ++i)

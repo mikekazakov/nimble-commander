@@ -50,3 +50,10 @@ int VFSHost::CreateFile(const char* _path,
 {
     return VFSError::NotSupported;
 }
+
+bool VFSHost::IsDirectory(const char *_path,
+                          int _flags,
+                          bool (^_cancel_checker)())
+{
+    return false;
+}

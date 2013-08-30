@@ -78,23 +78,24 @@ bool ModernPanelViewPresentationIconCache::IsNeedsLoading()
     return m_NeedsLoading;
 }
 
-NSImageRep *ModernPanelViewPresentationIconCache::CreateIcon(const DirectoryEntryInformation &_item, int _item_index, PanelData *_data)
+NSImageRep *ModernPanelViewPresentationIconCache::CreateIcon(int _item_index, PanelData *_data)
 {
     // If item has no associated icon, then create entry for the icon and schedule the loading process.
-    assert(_item.cicon == 0);
-    assert(&_data->EntryAtRawPosition(_item_index) == &_item);
+    auto &item = _data->EntryAtRawPosition(_item_index);
+//    assert(_item.cicon == 0);
+//    assert(&_data->EntryAtRawPosition(_item_index) == &_item);
     unsigned short index = (unsigned short)(m_UniqueIcons.size() + 1);
     _data->CustomIconSet(_item_index, index);
         
     bool only_generic_icons = m_IconMode == IconMode::IconModeGeneric;
     UniqueIcon icon;
-    if (_item.isdir())
+    if (item.IsDir())
         icon.image = m_GenericFolderIcon;
-    else if (only_generic_icons || !_item.hasextension())
+    else if (only_generic_icons || !item.HasExtension())
         icon.image = m_GenericFileIcon;
     else
     {
-        NSString *ext = [NSString stringWithUTF8String:_item.extensionc()];
+        NSString *ext = [NSString stringWithUTF8String:item.Extension()];
         NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:ext];
         icon.image = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
     }
@@ -106,8 +107,8 @@ NSImageRep *ModernPanelViewPresentationIconCache::CreateIcon(const DirectoryEntr
     }
     else
     {
-        icon.item_path = (_item.isdotdot() ? @"." : [(__bridge NSString *)_item.cf_name copy]);
-        icon.try_create_thumbnail = (_item.size < 256*1024*1024); // size less than 256 MB.
+        icon.item_path = (item.IsDotDot() ? @"." : [(__bridge NSString *)item.CFName() copy]);
+        icon.try_create_thumbnail = (item.Size() < 256*1024*1024); // size less than 256 MB.
         m_NeedsLoading = true;
     }
     
@@ -119,10 +120,10 @@ NSImageRep *ModernPanelViewPresentationIconCache::CreateIcon(const DirectoryEntr
     return icon.image;
 }
 
-NSImageRep *ModernPanelViewPresentationIconCache::GetIcon(const DirectoryEntryInformation &_item)
+NSImageRep *ModernPanelViewPresentationIconCache::GetIcon(const VFSListingItem &_item)
 {
-    assert(_item.cicon);
-    unsigned short index = _item.cicon - 1;
+    assert(_item.CIcon());
+    unsigned short index = _item.CIcon() - 1;
     assert(index < m_UniqueIcons.size());
     return m_UniqueIcons[index].image;
 }

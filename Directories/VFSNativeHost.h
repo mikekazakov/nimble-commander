@@ -15,6 +15,10 @@ class VFSNativeHost : public VFSHost
 public:
     VFSNativeHost();
     
+    virtual bool IsDirectory(const char *_path,
+                             int _flags,
+                             bool (^_cancel_checker)()) override;
+    
     virtual int FetchDirectoryListing(const char *_path,
                                       std::shared_ptr<VFSListing> *_target,
                                       bool (^_cancel_checker)()) override;

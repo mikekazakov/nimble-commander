@@ -8,7 +8,6 @@
 
 #import "PanelController.h"
 #import "FSEventsDirUpdate.h"
-#import "PanelSizeCalculator.h"
 #import "Common.h"
 #import "MainWindowController.h"
 #import "QuickPreview.h"
@@ -790,10 +789,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         return;
     }
     
+    char dir[MAXPATHLEN];
+    m_Data->GetDirectoryPathWithTrailingSlash(dir);
+    
     if(m_Data->GetSelectedItemsCount())
     {
-        char dir[MAXPATHLEN];
-        m_Data->GetDirectoryPathWithTrailingSlash(dir);
         auto files = m_Data->StringsFromSelectedEntries();
         [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:false];
     }
@@ -801,27 +801,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     {
         auto const *item = [m_View CurrentItem];
         if (!item) return;
-        
         if (item->IsDir())
         {
-            // do not try count parent directory size. TODO: need a special handling here, it count the entire directory
-            if(!item->IsDotDot())
-            {
-                char dir[MAXPATHLEN];
-                m_Data->GetDirectoryPathWithTrailingSlash(dir);
-                auto files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
-                [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:false];
-            }
-            else
-            {
-                char dir[MAXPATHLEN], name[MAXPATHLEN];
-                m_Data->GetDirectoryPath(dir);
-                char *s = strrchr(dir, '/');
-                if(s) *s = 0;
-                m_Data->GetDirectoryPathShort(name);                
-                auto files = FlexChainedStringsChunk::AllocateWithSingleString(name);
-                [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:true];
-            }
+            bool dotdot = item->IsDotDot();
+            [self StartDirectorySizeCountingFor:dotdot ? 0 :FlexChainedStringsChunk::AllocateWithSingleString(item->Name())
+                                          InDir:dir
+                                       IsDotDot:dotdot];
         }
         else
         {
@@ -833,26 +818,26 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files InDir:(const char*)_dir IsDotDot:(bool)_isdotdot
 {    
-    const char *str = strdup(_dir);
-    
+    std::string str(_dir);
     dispatch_async(m_DirectorySizeCountingQ, ^{
         m_IsStopDirectorySizeCounting = false;
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:true];});
-        PanelDirectorySizeCalculate(_files, str, _isdotdot,
-                                    ^bool {
-                                        return m_IsStopDirectorySizeCounting;
-                                    },
-                                    ^(const char* _dir, unsigned long _size){
-                                        // TODO: lock panel data?
-                                        // CHECK ME!!!!!!!!!!!!!!!!!!!!!!
-                                        // gues it's better to move the following line into main thread
-                                        // it may be a race condition with possible UB here. BAD!
-                                        if(m_Data->SetCalculatedSizeForDirectory(_dir, _size)){
-                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                                [m_View setNeedsDisplay:true];
-                                            });
-                                        }
-                                    });
+        // TODO: lock panel data?
+        // guess it's better to move the following line into main thread
+        // it may be a race condition with possible UB here. BAD!
+        auto complet = ^(const char* _dir, uint64_t _size){
+            if(m_Data->SetCalculatedSizeForDirectory(_dir, _size)){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [m_View setNeedsDisplay:true];
+                });
+            }
+        };
+
+        if(!_isdotdot)
+            m_HostsStack.back()->CalculateDirectoriesSizes(_files, str, ^bool { return m_IsStopDirectorySizeCounting; }, complet);
+        else
+            m_HostsStack.back()->CalculateDirectoryDotDotSize(str, ^bool { return m_IsStopDirectorySizeCounting; }, complet);
+        
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:false];});
     });
 }

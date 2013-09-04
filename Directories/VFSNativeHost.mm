@@ -6,9 +6,27 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+
+#import <sys/types.h>
+#import <sys/dirent.h>
+#import <sys/stat.h>
+#import <dirent.h>
+#import <sys/time.h>
+#import <sys/xattr.h>
+#import <sys/attr.h>
+#import <sys/vnode.h>
+#import <sys/param.h>
+#import <sys/mount.h>
+#import <unistd.h>
+#import <stdlib.h>
+
 #import "VFSNativeHost.h"
 #import "VFSNativeListing.h"
 #import "VFSNativeFile.h"
+
+// hack to access function from libc implementation directly.
+// this func does readdir but without mutex locking
+struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
 VFSNativeHost::VFSNativeHost():
     VFSHost("", 0)
@@ -68,3 +86,148 @@ bool VFSNativeHost::IsDirectory(const char *_path, int _flags, bool (^_cancel_ch
     return (st.st_mode & S_IFMT) == S_IFDIR;
 }
 
+
+// return false on error or cancellation
+static int CalculateDirectoriesSizesHelper(char *_path,
+                                      size_t _path_len,
+                                      bool *_iscancelling,
+                                      bool (^_checker)(),
+                                      dispatch_queue_t _stat_queue,
+                                      int64_t *_size_stock)
+{
+    if(_checker && _checker())
+    {
+        *_iscancelling = true;
+        return VFSError::Cancelled;
+    }
+    
+    DIR *dirp = opendir(_path);
+    if( dirp == 0 )
+        return VFSError::FromErrno(errno);
+    
+    dirent *entp;
+    
+    _path[_path_len] = '/';
+    _path[_path_len+1] = 0;
+    char *var = _path + _path_len + 1;
+    
+    while((entp = _readdir_unlocked(dirp, 1)) != NULL)
+    {
+        if(_checker && _checker())
+        {
+            *_iscancelling = true;
+            goto cleanup;
+        }
+        
+        if(entp->d_ino == 0) continue; // apple's documentation suggest to skip such files
+        if(entp->d_namlen == 1 && entp->d_name[0] == '.') continue; // do not process self entry
+        if(entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.') continue; // do not process parent entry
+        
+        memcpy(var, entp->d_name, entp->d_namlen+1);
+        if(entp->d_type == DT_DIR)
+        {
+            CalculateDirectoriesSizesHelper(_path,
+                                      _path_len + entp->d_namlen + 1,
+                                      _iscancelling,
+                                      _checker,
+                                      _stat_queue,
+                                      _size_stock);
+            if(*_iscancelling)
+                goto cleanup;
+        }
+        else if(entp->d_type == DT_REG || entp->d_type == DT_LNK)
+        {
+            char *full_path = (char*) malloc(_path_len + entp->d_namlen + 2);
+            memcpy(full_path, _path, _path_len + entp->d_namlen + 2);
+            
+            dispatch_async(_stat_queue, ^{
+                if(*_iscancelling) return;
+                
+                struct stat st;
+                
+                if(lstat(full_path, &st) == 0)
+                    *_size_stock += st.st_size;
+                
+                free(full_path);
+            });
+        }
+    }
+    
+cleanup:
+    closedir(dirp);
+    _path[_path_len] = 0;
+    return VFSError::Ok;
+}
+
+
+int VFSNativeHost::CalculateDirectoriesSizes(
+                                      FlexChainedStringsChunk *_dirs, // transfered ownership
+                                      const std::string &_root_path, // relative to current host path
+                                      bool (^_cancel_checker)(),
+                                      void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
+                                      )
+{
+    if(_cancel_checker && _cancel_checker())
+        return VFSError::Cancelled;
+    
+    bool iscancelling = false;
+    char path[MAXPATHLEN];
+    strcpy(path, _root_path.c_str());
+    if(path[_root_path.length()-1] != '/') strcat(path, "/");
+    char *var = path + strlen(path);
+    
+    dispatch_queue_t stat_queue = dispatch_queue_create("info.filesmanager.Files.VFSNativeHost.CalculateDirectoriesSizes", 0);
+    
+    int error = VFSError::Ok;
+    
+    for(const auto &i: *_dirs)
+    {
+        memcpy(var, i.str(), i.len+1);
+        
+        int64_t total_size = 0;
+        
+        int result = CalculateDirectoriesSizesHelper(path,
+                                                strlen(path),
+                                                &iscancelling,
+                                                _cancel_checker,
+                                                stat_queue,
+                                                &total_size);
+        dispatch_sync(stat_queue, ^{});
+        
+        if(iscancelling || (_cancel_checker && _cancel_checker())) // check if we need to quit
+            goto cleanup;
+        
+        if(result >= 0)
+            _completion_handler(i.str(), total_size);
+        else
+            error = result;
+    }
+    
+cleanup:
+    dispatch_release(stat_queue);
+    FlexChainedStringsChunk::FreeWithDescendants(&_dirs);
+    return error;
+}
+
+int VFSNativeHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upon completion
+                                         const std::string &_root_path, // relative to current host path
+                                         bool (^_cancel)(),
+                                         void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
+                                         )
+{
+    if(_cancel && _cancel())
+        return VFSError::Cancelled;
+    
+    bool iscancelling = false;
+    char path[MAXPATHLEN];
+    strcpy(path, _root_path.c_str());
+    dispatch_queue_t queue = dispatch_queue_create("info.filesmanager.Files.VFSNativeHost.CalculateDirectoryDotDotSize", 0);
+    int64_t size = 0;
+    int result = CalculateDirectoriesSizesHelper(path, strlen(path), &iscancelling, _cancel, queue, &size);
+    dispatch_sync(queue, ^{});
+    if(iscancelling || (_cancel && _cancel())) goto cleanup; // check if we need to quit
+    if(result >= 0) _completion_handler("..", size);
+cleanup:
+    dispatch_release(queue);
+    return result;
+}

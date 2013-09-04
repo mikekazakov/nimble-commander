@@ -53,6 +53,7 @@
 		CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888317801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib */; };
 		CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */; };
 		CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
+		CF1648B117D57BDA00D0B17E /* VFSArchiveListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB54179B959300FE639F /* EncodingsList.mm */; };
 		CF1FBB58179D237E00FE639F /* ModernPanelViewPresentationIconCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB56179D237E00FE639F /* ModernPanelViewPresentationIconCache.mm */; };
@@ -66,6 +67,7 @@
 		CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */; };
 		CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
+		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF6C5AD117BC70DE0007B648 /* pref_viewer_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */; };
 		CF6C5AD317BC71500007B648 /* pref_general_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF6C5AD217BC71500007B648 /* pref_general_icon.png */; };
 		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
@@ -333,6 +335,8 @@
 		CF12888617803712002816C2 /* FileLinkNewHardlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkNewHardlinkSheetController.h; sourceTree = "<group>"; };
 		CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkNewHardlinkSheetController.mm; sourceTree = "<group>"; };
 		CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileLinkNewHardlinkSheetController.xib; sourceTree = "<group>"; };
+		CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveListing.mm; sourceTree = "<group>"; };
+		CF1648B017D57BDA00D0B17E /* VFSArchiveListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveListing.h; sourceTree = "<group>"; };
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
 		CF1FBB54179B959300FE639F /* EncodingsList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EncodingsList.mm; sourceTree = "<group>"; };
@@ -358,6 +362,9 @@
 		CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SelectionWithMaskSheetController.xib; sourceTree = "<group>"; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
+		CF561B1117D62626009D37A4 /* liblzma.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblzma.dylib; path = usr/lib/liblzma.dylib; sourceTree = SDKROOT; };
+		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
+		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Directories/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_viewer_icon.png; sourceTree = "<group>"; };
 		CF6C5AD217BC71500007B648 /* pref_general_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_general_icon.png; sourceTree = "<group>"; };
 		CF73C59C16DE0D2900F3D44F /* MessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBox.h; sourceTree = "<group>"; };
@@ -635,6 +642,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */,
 				CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */,
 				CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */,
 				CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */,
@@ -896,6 +904,8 @@
 				CF9D0B6317CC5FB800CB8146 /* VFSArchiveHost.h */,
 				CF9D0B6517CC910100CB8146 /* VFSArchiveInternal.mm */,
 				CF9D0B6617CC910100CB8146 /* VFSArchiveInternal.h */,
+				CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */,
+				CF1648B017D57BDA00D0B17E /* VFSArchiveListing.h */,
 				CF9D0EDD17CCC51C00CB8146 /* VFSArchiveFile.mm */,
 				CF9D0EDE17CCC51C00CB8146 /* VFSArchiveFile.h */,
 			);
@@ -1213,6 +1223,9 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF561B1517D6290F009D37A4 /* liblzma.a */,
+				CF561B1317D627B3009D37A4 /* liblzma.a */,
+				CF561B1117D62626009D37A4 /* liblzma.dylib */,
 				CFC5121416C4BD3D00D247EE /* Cocoa.framework */,
 				CFC5121616C4BD3D00D247EE /* Other Frameworks */,
 			);
@@ -1428,6 +1441,7 @@
 				CF9D0EAD17CC961100CB8146 /* archive_read_support_format_xar.c in Sources */,
 				CF9D0B5317CC5C4900CB8146 /* compress.c in Sources */,
 				CF9D0EAA17CC961100CB8146 /* archive_read_support_format_rar.c in Sources */,
+				CF1648B117D57BDA00D0B17E /* VFSArchiveListing.mm in Sources */,
 				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
 				CF9D0E8317CC961100CB8146 /* archive_options.c in Sources */,
 				CF9D0ED917CC961100CB8146 /* archive_write_set_options.c in Sources */,
@@ -1662,9 +1676,12 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = directories/3rd_party/built/include/;
+				LIBRARY_SEARCH_PATHS = directories/3rd_party/built/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
@@ -1690,8 +1707,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = directories/3rd_party/built/include/;
+				LIBRARY_SEARCH_PATHS = directories/3rd_party/built/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = x86_64;
 			};
 			name = Release;
@@ -1703,6 +1723,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Directories/Files-Prefix.pch";
 				INFOPLIST_FILE = "Directories/Files-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/migun/Documents/FarProject/Directories/trunk/Directories/3rd_party/built/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = Files;
 				VALID_ARCHS = x86_64;
@@ -1717,6 +1741,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Directories/Files-Prefix.pch";
 				INFOPLIST_FILE = "Directories/Files-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/migun/Documents/FarProject/Directories/trunk/Directories/3rd_party/built/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = Files;
 				VALID_ARCHS = x86_64;

@@ -208,8 +208,8 @@ void ModernPanelViewPresentationIconCache::RunLoadThread(PanelData *_data)
                 break;
             }
             
-            assert(i < m_UniqueIcons.size());
-            icon = &m_UniqueIcons[i++];
+            assert(i < this->m_UniqueIcons.size());
+            icon = &this->m_UniqueIcons[i++];
             assert(icon->item_path); // this bitchy assert appeared sometimes. hope that setting m_LoadIconsRunning to false below fixed it
             item_path = icon->item_path;
             try_create_thumbnail = icon->try_create_thumbnail;

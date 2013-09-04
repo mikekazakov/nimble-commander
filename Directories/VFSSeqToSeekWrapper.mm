@@ -12,11 +12,15 @@
 VFSSeqToSeekROWrapperFile::VFSSeqToSeekROWrapperFile(std::shared_ptr<VFSFile> _file_to_wrap):
     VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),
     m_SeqFile(_file_to_wrap),
-    m_Ready(false)
+    m_Ready(false),
+    m_FD(-1),
+    m_DataBuf(0)
 {
-    
-    
-    
+}
+
+VFSSeqToSeekROWrapperFile::~VFSSeqToSeekROWrapperFile()
+{
+    Close();
 }
 
 int VFSSeqToSeekROWrapperFile::Open(int _flags)
@@ -43,7 +47,10 @@ int VFSSeqToSeekROWrapperFile::Open(int _flags)
         // we just read a whole file into a memory buffer
         m_Pos = 0;
         m_Size = m_SeqFile->Size();
-        m_DataBuf.resize(m_Size);
+        if(m_DataBuf != 0)
+            free(m_DataBuf);
+        m_DataBuf = (uint8_t*)malloc(m_Size);
+//        m_DataBuf.resize(m_Size);
         
         uint8_t *d = &m_DataBuf[0];
         uint8_t *e = d + m_Size;
@@ -58,13 +65,60 @@ int VFSSeqToSeekROWrapperFile::Open(int _flags)
             return VFSError::UnexpectedEOF;
         
         m_SeqFile.reset();
-        
         m_Ready = true; // here we ready to go
     }
     else
     {
         // we need to write it into a temp dir and delete it upon finish
-        assert(0);
+        NSString *temp_dir = NSTemporaryDirectory();
+        assert(temp_dir);
+        char pattern_buf[MAXPATHLEN];
+        sprintf(pattern_buf, "%sinfo.filesmanager.vfs.XXXXXX", [temp_dir fileSystemRepresentation]);
+        
+        int fd = mkstemp(pattern_buf);
+        
+        if(fd < 0)
+            return VFSError::FromErrno(errno);
+
+        m_FD = fd;
+
+        m_Size = m_SeqFile->Size();
+        
+        size_t bufsz = 256*1024;
+
+        char buf[bufsz];
+        uint64_t left_read = m_Size;
+        ssize_t res_read;
+        ssize_t total_wrote = 0 ;
+        
+        while ( (res_read = m_SeqFile->Read(buf, MIN(bufsz, left_read))) > 0 )
+        {
+            ssize_t res_write;
+            while(res_read > 0)
+            {
+                res_write = write(m_FD, buf, res_read);
+                if(res_write >= 0)
+                {
+                    res_read -= res_write;
+                    total_wrote += res_write;
+                }
+                else
+                    return VFSError::FromErrno(errno);
+            }
+        }
+        
+        if(res_read < 0)
+            return (int)res_read;
+        
+        if(res_read == 0 && total_wrote != m_Size)
+            return VFSError::UnexpectedEOF;
+        
+        lseek(m_FD, 0, SEEK_SET);
+
+        unlink(pattern_buf); // preemtive unlink - OS will remove inode upon last descriptor closing
+        
+        m_SeqFile.reset();
+        m_Ready = true; // here we ready to go
     }
     
     return VFSError::Ok;
@@ -73,7 +127,17 @@ int VFSSeqToSeekROWrapperFile::Open(int _flags)
 int VFSSeqToSeekROWrapperFile::Close()
 {
     m_SeqFile.reset();
-    m_DataBuf.clear();
+    if(m_DataBuf)
+    {
+        free(m_DataBuf);
+        m_DataBuf = 0;
+    }
+    if(m_FD >= 0)
+    {
+        close(m_FD);
+        
+        
+    }
     m_Ready = false;
     return VFSError::Ok;
 }
@@ -124,12 +188,28 @@ ssize_t VFSSeqToSeekROWrapperFile::Read(void *_buf, size_t _size)
     if(m_Pos == m_Size)
         return 0;
     
-    size_t to_read = MIN(m_Size - m_Pos, _size);
-    memcpy(_buf, &m_DataBuf[m_Pos], to_read);
-    m_Pos += to_read;
-    assert(m_Pos <= m_Size);
+    if(m_DataBuf != 0)
+    {
+        size_t to_read = MIN(m_Size - m_Pos, _size);
+        memcpy(_buf, &m_DataBuf[m_Pos], to_read);
+        m_Pos += to_read;
+        assert(m_Pos <= m_Size); // just a sanity check
 
-    return to_read;
+        return to_read;
+    }
+    else if(m_FD >= 0)
+    {
+        size_t to_read = MIN(m_Size - m_Pos, _size);
+        ssize_t res = read(m_FD, _buf, to_read);
+        
+        if(res < 0)
+            return VFSError::FromErrno(errno);
+        
+        m_Pos += res;
+        return res;
+    }
+    assert(0);
+    return VFSError::GenericError;
 }
 
 ssize_t VFSSeqToSeekROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
@@ -141,9 +221,23 @@ ssize_t VFSSeqToSeekROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
     if(_pos < 0 || _pos > m_Size)
         return VFSError::InvalidCall;
     
-    ssize_t toread = MIN(m_Size - _pos, _size);
-    memcpy(_buf, &m_DataBuf[_pos], toread);
-    return toread;
+    if(m_DataBuf != 0)
+    {
+        ssize_t toread = MIN(m_Size - _pos, _size);
+        memcpy(_buf, &m_DataBuf[_pos], toread);
+        return toread;
+    }
+    else if(m_FD >= 0)
+    {
+//ssize_t pread(int fildes, void *buf, size_t nbyte, off_t offset);
+        ssize_t toread = MIN(m_Size - _pos, _size);
+        ssize_t res = pread(m_FD, _buf, toread, _pos);
+        if(res >= 0)
+            return res;
+        else
+            return VFSError::FromErrno(errno);
+    }
+    assert(0);
 }
 
 off_t VFSSeqToSeekROWrapperFile::Seek(off_t _off, int _basis)
@@ -167,6 +261,9 @@ off_t VFSSeqToSeekROWrapperFile::Seek(off_t _off, int _basis)
     if(req_pos > m_Size)
         req_pos = m_Size;
     m_Pos = req_pos;
+    
+    if(m_FD >= 0)
+        lseek(m_FD, m_Pos, SEEK_SET); // any error-handling here?
     
     return m_Pos;
 }

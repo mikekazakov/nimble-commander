@@ -159,6 +159,8 @@
 #define	HAVE_ZLIB_H 1
 #define	TIME_WITH_SYS_TIME 1
 
+
+#define HAVE_LZMA_H 1
 /* FreeBSD 4 and earlier lack intmax_t/uintmax_t */
 //#if __FreeBSD__ < 5
 //#define	intmax_t int64_t

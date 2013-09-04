@@ -152,20 +152,20 @@ enum ActiveState
     
     // now load data into panels
     if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]) )
-        [m_LeftPanelController GoToDirectorySync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]];
+        [m_LeftPanelController GoToRelativeToHostSync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]];
     else
     {
         char path[MAXPATHLEN];
         if(GetUserHomeDirectoryPath(path) && IsDirectoryAvailableForBrowsing(path)) // if saved dir is invalid - try home directory
-            [m_LeftPanelController GoToDirectorySync:path];
+            [m_LeftPanelController GoToRelativeToHostSync:path];
         else // if home directory is invalid to - go to root
-            [m_LeftPanelController GoToDirectorySync:"/"];
+            [m_LeftPanelController GoToRelativeToHostSync:"/"];
     }
     
     if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]) )
-        [m_RightPanelController GoToDirectorySync:[[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]];
+        [m_RightPanelController GoToRelativeToHostSync:[[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]];
     else
-        [m_RightPanelController GoToDirectorySync:"/"];
+        [m_RightPanelController GoToRelativeToHostSync:"/"];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(frameDidChange)
@@ -318,11 +318,13 @@ enum ActiveState
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{
-    [m_LeftPanelController GoToDirectory:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
+    // TODO: some GoToGlobal should be here
+    [m_LeftPanelController GoToRelativeToHostAsync:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
-    [m_RightPanelController GoToDirectory:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
+    // TODO: some GoToGlobal should be here
+    [m_RightPanelController GoToRelativeToHostAsync:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
 }
 
 - (IBAction)LeftPanelGoto:(id)sender{
@@ -448,7 +450,12 @@ enum ActiveState
     char path_raw[__DARWIN_MAXPATHLEN];
     [self ActivePanelData]->GetDirectoryPath(path_raw);
     NSString *path = [NSString stringWithUTF8String:path_raw];
-         
+    if(path == nil)
+    {
+        [self window].title = @"...";
+        return;
+    }
+    
     // find window geometry
     NSWindow* window = [self window];
     float leftEdge = NSMaxX([[window standardWindowButton:NSWindowZoomButton] frame]);
@@ -566,12 +573,12 @@ enum ActiveState
     if(m_ActiveState == StateLeftPanel)
     {
         m_LeftPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
-        [m_RightPanelController GoToDirectory:dirpath];
+        [m_RightPanelController GoToRelativeToHostAsync:dirpath];
     }
     else
     {
         m_RightPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
-        [m_LeftPanelController GoToDirectory:dirpath];
+        [m_LeftPanelController GoToRelativeToHostAsync:dirpath];
     }
 }
 
@@ -1047,7 +1054,8 @@ enum ActiveState
             char tmp[MAXPATHLEN];
             [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(tmp);
             strcat(tmp, i->Name());
-            [(MainWindowController*)[[self window] delegate] RequestBigFileView:tmp];
+            [(MainWindowController*)[[self window] delegate] RequestBigFileView:tmp
+             with_fs:[self ActivePanelData]->DirectoryEntries().Host()];
         }
     }
 }
@@ -1058,7 +1066,7 @@ enum ActiveState
     assert(dispatch_get_current_queue() == dispatch_get_main_queue());
     
     PanelController *panel = [self ActivePanelController];
-    if([panel GoToDirectorySync:_path])
+    if([panel GoToRelativeToHostSync:_path])
     {
         if(_entries->Amount() > 0)
             [panel ScheduleDelayedSelectionChangeForC:(*_entries)[0].str()

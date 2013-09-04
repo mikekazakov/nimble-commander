@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "FlexChainedStringsChunk.h"
 #import "ApplicationSkins.h"
+#import "VFS.h"
 
 @class OperationsController;
 
@@ -27,6 +28,6 @@
 
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 
-- (void)RequestBigFileView: (const char*) _filepath;
+- (void)RequestBigFileView: (const char*)_filepath with_fs:(std::shared_ptr<VFSHost>) _host;
 
 @end

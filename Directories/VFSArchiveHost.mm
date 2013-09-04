@@ -14,7 +14,7 @@
 #import "3rd_party/libarchive/archive_entry.h"
 #import "VFSArchiveInternal.h"
 #import "VFSArchiveFile.h"
-
+#import "VFSArchiveListing.h"
 
 VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
                                std::shared_ptr<VFSHost> _parent):
@@ -75,7 +75,10 @@ int VFSArchiveHost::Open()
         return res;
     
     if(m_ArFile->GetReadParadigm() < VFSFile::ReadParadigm::Seek)
+    {
+        m_ArFile.reset();
         return VFSError::InvalidCall;
+    }
     
     res = m_ArFile->Open(VFSFile::OF_Read);
     if(res < 0)
@@ -99,7 +102,7 @@ int VFSArchiveHost::Open()
         m_Arc = 0;
         m_Mediator.reset();
         m_ArFile.reset();
-        return -1;
+        return -1; // TODO: right error code
     }
     
     res = ReadArchiveListing();
@@ -119,7 +122,8 @@ int VFSArchiveHost::ReadArchiveListing()
 
     VFSArchiveDir *parent_dir = root;
     struct archive_entry *entry;
-    while (archive_read_next_header(m_Arc, &entry) == ARCHIVE_OK)
+    int ret;
+    while ((ret = archive_read_next_header(m_Arc, &entry)) == ARCHIVE_OK)
     {
         const struct stat *stat = archive_entry_stat(entry);
         char path[1024];
@@ -129,14 +133,17 @@ int VFSArchiveHost::ReadArchiveListing()
 //        printf("%s\n", path);
         
         int path_len = (int)strlen(path);
-        bool isdir = path[path_len-1] == '/';
+        
+//        bool isdir = path[path_len-1] == '/';
+        bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
+        
 //        archive_read_data
         char short_name[256];
         char parent_path[1024];
         {
             char tmp[1024];
             strcpy(tmp, path);
-            if(isdir)
+            if(tmp[path_len-1] == '/') // cut trailing slash if any
                 tmp[path_len-1] = 0;
             char *last_slash = strrchr(tmp, '/');
             strcpy(short_name, last_slash+1);
@@ -145,45 +152,46 @@ int VFSArchiveHost::ReadArchiveListing()
         }
         
         if(parent_dir->full_path != parent_path)
-            parent_dir = FindOrBuildDir(parent_path); // TODO: optimize me - cache last dir at least
-        parent_dir->entries.push_back(VFSArchiveDirEntry());
-        auto &entry = parent_dir->entries.back();
-        entry.name = short_name;
-        entry.st = *stat;
+            parent_dir = FindOrBuildDir(parent_path);
+        
+        VFSArchiveDirEntry *entry = 0;
+        if(isdir) // check if it wasn't added before via FindOrBuildDir
+            for(auto &it: parent_dir->entries)
+                if( (it.st.st_mode & S_IFMT) == S_IFDIR && it.name == short_name) {
+                    entry = &it;
+                    break;
+                }
+        
+        if(entry == 0) {
+            parent_dir->entries.push_back(VFSArchiveDirEntry());
+            entry = &parent_dir->entries.back();
+            entry->name = short_name;
+        }
+
+        entry->st = *stat;
         
         if(isdir)
         {
             // it's a directory
-            char tmp[1024];
-            strcpy(tmp, path);
-            tmp[path_len-1] = 0;
-            VFSArchiveDir *dir = new VFSArchiveDir;
-            dir->full_path = path;
-            dir->name_in_parent = strrchr(tmp, '/')+1;
-
-            m_PathToDir.insert(std::make_pair(path, dir));
-        }
-        
-        
-/*        if(strcmp(path, "/Files.app/Contents/Info.plist") == 0)
-        {
-            char buf[1024];
-            for (;;) {
-                ssize_t size = archive_read_data(m_Arc, buf, 1024);
-                if (size < 0) {
-                    // ERROR
-                    break;
-                }
-                if (size == 0)
-                    break;
-                
-                write(1, buf, size);
+            if(m_PathToDir.find(path) == m_PathToDir.end())
+            { // check if it wasn't added before via FindOrBuildDir
+                char tmp[1024];
+                strcpy(tmp, path);
+                tmp[path_len-1] = 0;
+                VFSArchiveDir *dir = new VFSArchiveDir;
+                dir->full_path = path; // full_path is with trailing slash
+                dir->name_in_parent = strrchr(tmp, '/')+1;
+                m_PathToDir.insert(std::make_pair(path, dir));
             }
-        }*/
+        }
     }
+    
+    if(ret == ARCHIVE_EOF)
+        return VFSError::Ok;
 
-
-    return VFSError::Ok;
+    printf("%s\n", archive_error_string(m_Arc));
+    
+    return VFSError::GenericError;
 }
 
 VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
@@ -202,6 +210,8 @@ VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
     
     auto parent_dir = FindOrBuildDir(parent_path);
 
+//    printf("FindOrBuildDir: adding new dir %s\n", _path_with_tr_sl);
+    
     InsertDummyDirInto(parent_dir, entry_name);
     VFSArchiveDir *entry = new VFSArchiveDir;
     entry->full_path = _path_with_tr_sl;
@@ -237,5 +247,30 @@ int VFSArchiveHost::CreateFile(const char* _path,
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     *_target = file;
+    return VFSError::Ok;
+}
+
+int VFSArchiveHost::FetchDirectoryListing(const char *_path,
+                                  std::shared_ptr<VFSListing> *_target,
+                                  bool (^_cancel_checker)())
+{
+    char path[1024];
+    strcpy(path, _path);
+    if(path[strlen(path)-1] != '/')
+        strcat(path, "/");
+    
+    
+    auto i = m_PathToDir.find(path);
+    if(i == m_PathToDir.end())
+        return VFSError::NotFound;
+
+    std::shared_ptr<VFSArchiveListing> listing = std::make_shared<VFSArchiveListing>
+        (i->second, path, SharedPtr());
+    
+    if(_cancel_checker && _cancel_checker())
+        return VFSError::Cancelled;
+    
+    *_target = listing;
+    
     return VFSError::Ok;
 }

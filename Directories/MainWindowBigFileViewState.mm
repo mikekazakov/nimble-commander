@@ -120,7 +120,7 @@
     [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
 }
 
-- (bool) OpenFile: (const char*) _fn
+- (bool) OpenFile: (const char*) _fn with_fs:(std::shared_ptr<VFSHost>) _host
 {    
     FileWindow *fw = new FileWindow;
     int file_window_size = FileWindow::DefaultWindowSize;
@@ -131,7 +131,8 @@
     
     
     std::shared_ptr<VFSFile> vfsfile;
-    VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile, 0);
+//    VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile, 0);
+    _host->CreateFile(_fn, &vfsfile, 0);
 /*    auto vfs_ar = std::make_shared<VFSArchiveHost>("/Users/Migun/Downloads/Files.app.zip", VFSNativeHost::SharedHost());
     vfs_ar->Open();
     std::shared_ptr<VFSFile> vfsfile;
@@ -142,8 +143,20 @@
 //    VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile, 0);
 //    if(fw->OpenFile(_fn, file_window_size) == 0)
 //    if(fw->OpenFile(vfsfilewr, file_window_size) == 0)
+//    if(vfsfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
+    if(vfsfile->Open(VFSFile::OF_Read) < 0)
+        return false;
+    if(vfsfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
+    {
+        vfsfile = std::make_shared<VFSSeqToSeekROWrapperFile>(vfsfile);
+        vfsfile->Open(VFSFile::OF_Read);
+    }
+    
+    
     if(fw->OpenFile(vfsfile, file_window_size) == 0)
     {
+        
+        
         if(m_FileWindow != 0)
         {
             if(m_FileWindow->FileOpened())

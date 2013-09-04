@@ -25,6 +25,8 @@ struct VFSArchiveMediator
     
     void setup(struct archive *a)
     {
+        assert(file.get() != 0);
+        assert(file->GetReadParadigm() >= VFSFile::ReadParadigm::Seek);
         archive_read_set_callback_data(a, this);
         archive_read_set_read_callback(a, myread);
         archive_read_set_seek_callback(a, myseek);

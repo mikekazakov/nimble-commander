@@ -126,6 +126,7 @@ ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
     if(size < 0)
     {
         // TODO: libarchive error - convert it into our errors
+        printf("%s\n", archive_error_string(m_Arc));
         return -1;
     }
     

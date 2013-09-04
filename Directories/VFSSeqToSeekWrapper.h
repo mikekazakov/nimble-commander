@@ -16,12 +16,14 @@ class VFSSeqToSeekROWrapperFile : public VFSFile
 {
 public:
     VFSSeqToSeekROWrapperFile(std::shared_ptr<VFSFile> _file_to_wrap);
+    ~VFSSeqToSeekROWrapperFile();
     
     virtual int Open(int _flags) override;
     virtual int Close() override;
     
     enum {
         MaxCachedInMem = 16*1024*1024
+//        MaxCachedInMem = 1*1024*1024
     
     };
     
@@ -35,9 +37,10 @@ public:
     virtual ReadParadigm GetReadParadigm() const override;
     
 private:
+    int                      m_FD;
     ssize_t                  m_Pos;
     ssize_t                  m_Size;
     std::shared_ptr<VFSFile> m_SeqFile;
-    std::vector<uint8_t>     m_DataBuf; // used only when filesize <= MaxCachedInMem
+    uint8_t                 *m_DataBuf; // used only when filesize <= MaxCachedInMem
     bool                     m_Ready;
 };

@@ -29,6 +29,10 @@ public:
                            std::shared_ptr<VFSFile> *_target,
                            bool (^_cancel_checker)()) override;
     
+    virtual int FetchDirectoryListing(const char *_path,
+                                      std::shared_ptr<VFSListing> *_target,
+                                      bool (^_cancel_checker)()) override;
+    
     std::shared_ptr<VFSFile> ArFile() const;
     
     struct archive* Archive();

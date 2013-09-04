@@ -172,10 +172,10 @@
     return m_BaseWindowState.OperationsController;
 }
 
-- (void) RequestBigFileView:(const char*) _filepath
+- (void) RequestBigFileView:(const char*) _filepath with_fs:(std::shared_ptr<VFSHost>) _host
 {
     MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:[[[self window] contentView] frame]];
-    if([state OpenFile:_filepath])
+    if([state OpenFile:_filepath with_fs:_host])
         [self PushNewWindowState:state];
 }
 

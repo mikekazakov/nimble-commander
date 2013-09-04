@@ -151,7 +151,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) HandleShiftReturnButton
 {
-/*    char path[MAXPATHLEN];
+    char path[MAXPATHLEN];
     int pos = [m_View GetCursorPosition];
     if(pos >= 0)
     {
@@ -159,13 +159,13 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         const auto &ent = m_Data->EntryAtRawPosition(rawpos);
 
         m_Data->GetDirectoryPathWithTrailingSlash(path);
-        if(!ent.isdotdot())
-            strcat(path, ent.namec());
+        if(!ent.IsDotDot())
+            strcat(path, ent.Name());
         
         BOOL success = [[NSWorkspace sharedWorkspace]
                         openFile:[NSString stringWithUTF8String:path]];
         if (!success) NSBeep();
-    }*/
+    }
 }
 
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode
@@ -284,9 +284,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_new_path);
 }
 
-- (void) GoToDirectory:(const char*) _dir
-{
-    [self GoToDirectorySync:_dir];
+//- (void) GoToDirectory:(const char*) _dir
+//{
+//    [self GoToRelativeToHostSync:_dir];
 /*    return;
     
     assert(_dir && strlen(_dir));
@@ -317,9 +317,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         PanelData::LoadFSDirectoryAsync(path, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;} );
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
     });*/
-}
+//GoToDirectory}
 
-- (bool) GoToDirectorySync:(const char*) _dir
+/*- (bool) GoToDirectorySync:(const char*) _dir
 {
 //    if(!m_Data->GoToDirectory(_dir))
 //        return false;
@@ -333,7 +333,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
     [self OnPathChanged];
     return true;
-}
+}*/
 
 /*- (void) GoToRelativeToHostAsync:(const char*) _path
 {
@@ -394,6 +394,45 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
 }*/
 
+- (void) GoToRelativeToHostAsync:(const char*) _path
+{
+    std::string path = std::string(_path);
+    
+    if(m_IsStopDirectoryLoading)
+        dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
+    dispatch_async(m_DirectoryLoadingQ, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
+        
+        std::shared_ptr<VFSListing> listing;
+        
+        int ret = m_HostsStack.back()->FetchDirectoryListing(path.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
+        if(ret >= 0)
+        {
+            m_IsStopDirectorySizeCounting = true;
+            m_IsStopDirectoryLoading = true;
+            m_IsStopDirectoryReLoading = true;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                m_Data->Load(listing);
+                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+                [self OnPathChanged];
+            });
+        }
+        else
+        {
+            // error processing here
+            /*                auto onfail = ^(NSString* _path, NSError *_error) {
+             NSAlert *alert = [[NSAlert alloc] init];
+             [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", _path]];
+             [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
+             dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
+             };*/
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
+    });
+    
+}
+
 - (int) GoToRelativeToHostSync:(const char*) _path
 {
     // we need to ask our current host - is _path a dir?
@@ -411,6 +450,14 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             return ret;
         
         m_Data->Load(listing);
+        
+        // clean running operations if any
+        m_IsStopDirectorySizeCounting = true;
+        m_IsStopDirectoryLoading = true;
+        m_IsStopDirectoryReLoading = true;
+        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+        [self OnPathChanged];
+        
         return VFSError::Ok;
     }
     else
@@ -431,69 +478,122 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     // Handle directories.
     if (m_Data->DirectoryEntries()[raw_pos].IsDir())
     {
-        char pathbuf[__DARWIN_MAXPATHLEN];
-        m_Data->ComposeFullPathForEntry(raw_pos, pathbuf);
-//        __block std::shared_ptr<std::string> path = std::make_shared<std::string>(pathbuf);
-        std::string path = std::string(pathbuf);
+        if(!m_Data->DirectoryEntries()[raw_pos].IsDotDot() ||
+           strcmp(m_Data->DirectoryEntries().RelativePath(), "/"))
+        {
+            char pathbuf[__DARWIN_MAXPATHLEN];
+            m_Data->ComposeFullPathForEntry(raw_pos, pathbuf);
+            std::string path = std::string(pathbuf);
         
-//        __block std::shared_ptr<std::string> curdirname = std::make_shared<std::string>("");
-        std::string curdirname("");
-        if( m_Data->DirectoryEntries()[raw_pos].IsDotDot())
-        { // go to parent directory
-            char curdirnamebuf[__DARWIN_MAXPATHLEN];
-            m_Data->GetDirectoryPathShort(curdirnamebuf);
-            curdirname = curdirnamebuf;
+            std::string curdirname("");
+            if( m_Data->DirectoryEntries()[raw_pos].IsDotDot())
+            { // go to parent directory
+                char curdirnamebuf[__DARWIN_MAXPATHLEN];
+                m_Data->GetDirectoryPathShort(curdirnamebuf);
+                curdirname = curdirnamebuf;
+            }
+        
+            if(m_IsStopDirectoryLoading)
+                dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
+            dispatch_async(m_DirectoryLoadingQ, ^{
+                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
+            
+                std::shared_ptr<VFSListing> listing;
+                int ret = m_HostsStack.back()->FetchDirectoryListing(path.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
+                if(ret >= 0)
+                {
+                    m_IsStopDirectorySizeCounting = true;
+                    m_IsStopDirectoryLoading = true;
+                    m_IsStopDirectoryReLoading = true;
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        m_Data->Load(listing);
+
+                        if(curdirname.empty()) { // go into some sub-dir
+                            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
+                        }
+                        else { // go into dot-dot dir
+                            int newcursor_raw = m_Data->FindEntryIndex(curdirname.c_str()), newcursor_sort = 0;
+                            if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
+                            if(newcursor_sort < 0) newcursor_sort = 0;
+                            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
+                        }
+                        [self OnPathChanged];
+                    });
+                }
+                else
+                {
+                    // error processing here
+/*                  auto onfail = ^(NSString* _path, NSError *_error) {
+                        NSAlert *alert = [[NSAlert alloc] init];
+                        [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", _path]];
+                        [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
+                        dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
+                    };*/
+                }
+            //            PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
+                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
+            });
+            return;
         }
-
-        
-        if(m_IsStopDirectoryLoading)
-            dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
-        dispatch_async(m_DirectoryLoadingQ, ^{
-            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
+        else
+        { // dot-dot entry on some root dir - therefore it's some VFS like archive
+            char junct[1024];
+            strcpy(junct, m_HostsStack.back()->JunctionPath());
+            assert(strlen(junct) > 0);
+            if( junct[strlen(junct)-1] == '/' ) junct[strlen(junct)-1] = 0;
+            char junct_entry[1024];
+            char directory_path[1024];
+            strcpy(junct_entry, strrchr(junct, '/')+1);
+//            if(strrchr(junct, '/') != junct)
+                *(strrchr(junct, '/')+1) = 0;
+            strcpy(directory_path, junct);
             
-            std::shared_ptr<VFSListing> listing;
-            
-            int ret = m_HostsStack.back()->FetchDirectoryListing(path.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
-            if(ret >= 0)
-            {
-                m_IsStopDirectorySizeCounting = true;
-                m_IsStopDirectoryLoading = true;
-                m_IsStopDirectoryReLoading = true;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    m_Data->Load(listing);
+            std::string dir(directory_path), entry(junct_entry);
 
-                    if(curdirname.empty())
-                    { // go into some sub-dir
-                        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
-                    }
-                    else
-                    { // go into dot-dot dir
-                        int newcursor_raw = m_Data->FindEntryIndex(curdirname.c_str()), newcursor_sort = 0;
+            m_HostsStack.pop_back();
+            
+            if(m_IsStopDirectoryLoading)
+                dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
+            dispatch_async(m_DirectoryLoadingQ, ^{
+                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
+                
+                std::shared_ptr<VFSListing> listing;
+                int ret = m_HostsStack.back()->FetchDirectoryListing(dir.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
+                if(ret >= 0)
+                {
+                    m_IsStopDirectorySizeCounting = true;
+                    m_IsStopDirectoryLoading = true;
+                    m_IsStopDirectoryReLoading = true;
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        m_Data->Load(listing);
+                        int newcursor_raw = m_Data->FindEntryIndex(entry.c_str()), newcursor_sort = 0;
                         if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
                         if(newcursor_sort < 0) newcursor_sort = 0;
                         [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
-                    }
-                    [self OnPathChanged];
-                });
-            }
-            else
-            {
-                // error processing here
-/*                auto onfail = ^(NSString* _path, NSError *_error) {
-                    NSAlert *alert = [[NSAlert alloc] init];
-                    [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", _path]];
-                    [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
-                    dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
-                };*/
-                
-            }
+                        [self OnPathChanged];
+                    });
+                }
+                else
+                {
+                    // error processing here
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
+            });
             
-            //            PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
-            
-            dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
-        
-        });
-        return;
+            return;
+        }
+    }
+    else
+    { // VFS stuff here
+        char pathbuf[__DARWIN_MAXPATHLEN];
+        m_Data->ComposeFullPathForEntry(raw_pos, pathbuf);
+        std::shared_ptr<VFSArchiveHost> arhost = std::make_shared<VFSArchiveHost>(pathbuf, m_HostsStack.back());
+        if(arhost->Open() >= 0)
+        {
+            m_HostsStack.push_back(arhost);
+            [self GoToRelativeToHostAsync:"/"];
+            return;
+        }
     }
     
     // If previous code didn't handle current item,
@@ -875,7 +975,8 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     char path[MAXPATHLEN];
     m_Data->GetDirectoryPath(path);
     if(GetFirstAvailableDirectoryFromPath(path))
-        [self GoToDirectory:path];
+//        [self GoToDirectory:path];
+        [self GoToRelativeToHostAsync:path];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

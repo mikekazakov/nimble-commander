@@ -9,9 +9,10 @@
 #import <Cocoa/Cocoa.h>
 #import "MainWindowStateProtocol.h"
 #import "BigFileView.h"
+#import "VFS.h"
 
 @interface MainWindowBigFileViewState : NSView<MainWindowStateProtocol, BigFileViewDelegateProtocol>
 
-- (bool) OpenFile: (const char*) _fn;
+- (bool) OpenFile: (const char*) _fn with_fs:(std::shared_ptr<VFSHost>) _host;
 
 @end

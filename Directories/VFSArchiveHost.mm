@@ -274,3 +274,82 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
     
     return VFSError::Ok;
 }
+
+int VFSArchiveHost::CalculateDirectoriesSizes(
+                                      FlexChainedStringsChunk *_dirs, // transfered ownership
+                                      const std::string &_root_path, // relative to current host path
+                                      bool (^_cancel_checker)(),
+                                      void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
+                                      )
+{
+    int error = VFSError::Ok;
+    
+    // can be sub-optimal (exhaustive search), consider hierarchical traversing
+    for(const auto &i: *_dirs)
+    {
+        char directory_path[1024];
+        strcpy(directory_path, _root_path.c_str());
+        if(directory_path[strlen(directory_path)-1] != '/' ) strcat(directory_path, "/");
+        strcat(directory_path, i.str());
+        if(directory_path[strlen(directory_path)-1] != '/' ) strcat(directory_path, "/"); // need this?
+        size_t directory_path_sz = strlen(directory_path);
+        
+        
+        uint64_t total_size = 0;
+        
+        for(const auto &ar_dir: m_PathToDir)
+        {
+            if(_cancel_checker && _cancel_checker())
+            {
+                error = VFSError::Cancelled;
+                goto cleanup;
+            }
+            
+            if(ar_dir.first.length() >= directory_path_sz &&
+               strncmp(directory_path, ar_dir.first.c_str(), directory_path_sz) == 0)
+                for(const auto &dir_ent: ar_dir.second->entries)
+                    if((dir_ent.st.st_mode & S_IFMT) == S_IFREG )
+                        total_size += dir_ent.st.st_size;
+        }
+        _completion_handler(i.str(), total_size);
+    }
+cleanup:
+    FlexChainedStringsChunk::FreeWithDescendants(&_dirs);
+    return error;
+}
+
+int VFSArchiveHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upon completion
+                                         const std::string &_root_path, // relative to current host path
+                                         bool (^_cancel_checker)(),
+                                         void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
+                                         )
+{
+    int error = VFSError::Ok;
+    
+    // can be sub-optimal (exhaustive search), consider hierarchical traversing
+    char directory_path[1024];
+    strcpy(directory_path, _root_path.c_str());
+    if(directory_path[strlen(directory_path)-1] != '/' ) strcat(directory_path, "/");
+    size_t directory_path_sz = strlen(directory_path);
+    
+    uint64_t total_size = 0;
+        
+    for(const auto &ar_dir: m_PathToDir)
+    {
+        if(_cancel_checker && _cancel_checker())
+        {
+            error = VFSError::Cancelled;
+            goto cleanup;
+        }
+            
+        if(ar_dir.first.length() >= directory_path_sz &&
+            strncmp(directory_path, ar_dir.first.c_str(), directory_path_sz) == 0)
+            for(const auto &dir_ent: ar_dir.second->entries)
+                if((dir_ent.st.st_mode & S_IFMT) == S_IFREG )
+                    total_size += dir_ent.st.st_size;
+    }
+        
+    _completion_handler("..", total_size);
+cleanup:
+    return error;
+}

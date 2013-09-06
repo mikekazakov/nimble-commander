@@ -33,6 +33,11 @@ VFSNativeHost::VFSNativeHost():
 {
 }
 
+const char *VFSNativeHost::FSTag() const
+{
+    return "native";
+}
+
 int VFSNativeHost::FetchDirectoryListing(const char *_path,
                                   std::shared_ptr<VFSListing> *_target,
                                   bool (^_cancel_checker)())

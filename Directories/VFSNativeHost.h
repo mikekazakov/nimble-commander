@@ -15,6 +15,8 @@ class VFSNativeHost : public VFSHost
 public:
     VFSNativeHost();
     
+    virtual const char *FSTag() const override;
+    
     virtual bool IsDirectory(const char *_path,
                              int _flags,
                              bool (^_cancel_checker)()) override;

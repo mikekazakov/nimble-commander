@@ -17,7 +17,16 @@
 #import "VFSFile.h"
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"
-#import "VFSSeqToSeekWrapper.h"
+#import "VFSSeqToRandomWrapper.h"
+
+static int FileWindowSize()
+{
+    int file_window_size = FileWindow::DefaultWindowSize;
+    int file_window_pow2x = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"BigFileViewFileWindowPow2X"];
+    if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
+        file_window_size *= 1 << file_window_pow2x;
+    return file_window_size;
+}
 
 @implementation MainWindowBigFileViewState
 {
@@ -39,6 +48,7 @@
     bool           m_IsSearchRunning;
 
     char        m_FilePath[MAXPATHLEN];
+    char        m_GlobalFilePath[MAXPATHLEN*8];
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -97,7 +107,8 @@
 
 - (void) UpdateTitle
 {
-    NSString *path = [NSString stringWithUTF8String:m_FilePath];
+    NSString *path = [NSString stringWithUTF8String:m_GlobalFilePath];
+    if(path == nil) path = @"...";
     NSString *title = [NSString stringWithFormat:@"File View: %@", path];
     
     // find window geometry
@@ -121,42 +132,23 @@
 }
 
 - (bool) OpenFile: (const char*) _fn with_fs:(std::shared_ptr<VFSHost>) _host
-{    
-    FileWindow *fw = new FileWindow;
-    int file_window_size = FileWindow::DefaultWindowSize;
-    int file_window_pow2x = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"BigFileViewFileWindowPow2X"];
-    if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
-        file_window_size *= 1 << file_window_pow2x;
+{
+    std::shared_ptr<VFSFile> vfsfile;
+    if(_host->CreateFile(_fn, &vfsfile, 0) < 0)
+        return false;
 
-    
-    
-    std::shared_ptr<VFSFile> vfsfile;
-//    VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile, 0);
-    _host->CreateFile(_fn, &vfsfile, 0);
-/*    auto vfs_ar = std::make_shared<VFSArchiveHost>("/Users/Migun/Downloads/Files.app.zip", VFSNativeHost::SharedHost());
-    vfs_ar->Open();
-    std::shared_ptr<VFSFile> vfsfile;
-    vfs_ar->CreateFile("/Files.app/Contents/Resources/Defaults.plist", &vfsfile, nil);
-    std::shared_ptr<VFSSeqToSeekROWrapperFile> vfsfilewr =
-        std::make_shared<VFSSeqToSeekROWrapperFile>(vfsfile);*/
-    
-//    VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile, 0);
-//    if(fw->OpenFile(_fn, file_window_size) == 0)
-//    if(fw->OpenFile(vfsfilewr, file_window_size) == 0)
-//    if(vfsfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
     if(vfsfile->Open(VFSFile::OF_Read) < 0)
         return false;
     if(vfsfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
     {
-        vfsfile = std::make_shared<VFSSeqToSeekROWrapperFile>(vfsfile);
+        vfsfile = std::make_shared<VFSSeqToRandomROWrapperFile>(vfsfile);
         vfsfile->Open(VFSFile::OF_Read);
     }
     
+    FileWindow *fw = new FileWindow;
     
-    if(fw->OpenFile(vfsfile, file_window_size) == 0)
+    if(fw->OpenFile(vfsfile, FileWindowSize()) == 0)
     {
-        
-        
         if(m_FileWindow != 0)
         {
             if(m_FileWindow->FileOpened())
@@ -167,19 +159,15 @@
         
         m_FileWindow = fw;
         m_SearchFileWindow = new FileWindow;
-//        std::shared_ptr<VFSFile> vfsfile2;
-//        VFSNativeHost::SharedHost()->CreateFile(_fn, &vfsfile2, 0);
-//        m_SearchFileWindow->OpenFile(_fn);
-//        m_SearchFileWindow->OpenFile(vfsfile2);
-//        m_SearchFileWindow->OpenFile(vfsfilewr);
         m_SearchFileWindow->OpenFile(vfsfile);
         m_SearchInFile = new SearchInFile(m_SearchFileWindow);
         
         strcpy(m_FilePath, _fn);
+        vfsfile->ComposeFullHostsPath(m_GlobalFilePath);
         
         // try to load a saved info if any
         if(BigFileViewHistoryEntry *info =
-           [[BigFileViewHistory sharedHistory] FindEntryByPath:[NSString stringWithUTF8String:m_FilePath]])
+           [[BigFileViewHistory sharedHistory] FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath]])
         {
             BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
             if(options.encoding && options.mode)
@@ -452,7 +440,7 @@
     
     // do our state persistance stuff
     BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
-    info->path = [NSString stringWithUTF8String:m_FilePath];
+    info->path = [NSString stringWithUTF8String:m_GlobalFilePath];
     info->last_viewed = [NSDate date];    
     info->position = [m_View VerticalPositionInBytes];
     info->wrapping = [m_View WordWrap];

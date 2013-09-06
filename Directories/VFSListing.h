@@ -117,16 +117,24 @@ public:
     VFSListing(const char* _relative_path, std::shared_ptr<VFSHost> _host);
     virtual ~VFSListing();
     
+    // generic virtual access - overloaded by descendants
     virtual VFSListingItem& At(size_t _position);
     virtual const VFSListingItem& At(size_t _position) const;
+    virtual int Count() const;
     inline VFSListingItem& operator[](size_t _position) { return At(_position); } // consider something unsafe here
     inline const VFSListingItem& operator[](size_t _position) const { return At(_position); }
     
-    virtual int Count() const;
-    virtual long Attributes() const; // bitfield with VFSListingAttributes values
+    // bitfield with VFSListingAttributes values - shows capabilities of current VFS listing
+    virtual long Attributes() const;
 
+    
+    
+    
+    // common stuff
     inline std::shared_ptr<VFSListing> SharedPtr() { return shared_from_this(); }
     inline std::shared_ptr<const VFSListing> SharedPtr() const { return shared_from_this(); }
+    void ComposeFullPathForEntry(size_t _entry_position, char *_buf) const;
+    
     const char *RelativePath() const;
     std::shared_ptr<VFSHost> Host() const;
     
@@ -134,7 +142,7 @@ public:
     
     
     
-    
+    // iteration whitin listing
     struct iterator
     {
         VFSListing *listing;

@@ -66,6 +66,11 @@ VFSArchiveHost::~VFSArchiveHost()
         delete i.second;
 }
 
+const char *VFSArchiveHost::FSTag() const
+{
+    return "archive";
+}
+
 int VFSArchiveHost::Open()
 {
     assert(m_Arc == 0);

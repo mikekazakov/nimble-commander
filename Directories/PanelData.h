@@ -110,6 +110,8 @@ public:
         // return name of a current directory in a parent directory
         // returns a zero string for a root dir
     
+    void GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*8]) const;
+    
     // sorting
     void SetCustomSortMode(PanelSortMode _mode);
     PanelSortMode GetCustomSortMode() const;

@@ -569,11 +569,11 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         
         if(m_SymbWidth > 14)
         {   // need to draw a path name
-            char panelpath[__DARWIN_MAXPATHLEN];
+            char panelpath[MAXPATHLEN*8];
             UniChar panelpathuni[__DARWIN_MAXPATHLEN];
             UniChar panelpathtrim[256]; // may crash here on weird cases
             size_t panelpathsz;
-            m_State->Data->GetDirectoryPathWithTrailingSlash(panelpath);
+            m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);
             InterpretUTF8BufferAsUniChar( (unsigned char*)panelpath, strlen(panelpath), panelpathuni, &panelpathsz, 0xFFFD);
             int chars_for_path_name = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(panelpathuni, panelpathsz, m_SymbWidth - 7, panelpathtrim);
             
@@ -757,11 +757,11 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     // draw directory path
     if(m_SymbWidth > 14)
     {   // need to draw a path name
-        char panelpath[__DARWIN_MAXPATHLEN];
+        char panelpath[MAXPATHLEN*8];
         UniChar panelpathuni[__DARWIN_MAXPATHLEN];
         UniChar panelpathtrim[256]; // may crash here on weird cases
         size_t panelpathsz;
-        m_State->Data->GetDirectoryPathWithTrailingSlash(panelpath);
+        m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);
         InterpretUTF8BufferAsUniChar( (unsigned char*)panelpath, strlen(panelpath), panelpathuni, &panelpathsz, 0xFFFD);
         int chars_for_path_name = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(panelpathuni, panelpathsz, m_SymbWidth - 7, panelpathtrim);
         

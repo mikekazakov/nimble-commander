@@ -20,6 +20,11 @@ VFSHost::~VFSHost()
 {
 }
 
+const char *VFSHost::FSTag() const
+{
+    return "";
+}
+
 std::shared_ptr<VFSHost> VFSHost::Parent() const
 {
     return m_Parent;    

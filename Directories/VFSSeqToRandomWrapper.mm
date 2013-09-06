@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFSSeqToSeekWrapper.h"
+#import "VFSSeqToRandomWrapper.h"
 #import "VFSError.h"
 
-VFSSeqToSeekROWrapperFile::VFSSeqToSeekROWrapperFile(std::shared_ptr<VFSFile> _file_to_wrap):
+VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(std::shared_ptr<VFSFile> _file_to_wrap):
     VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),
     m_SeqFile(_file_to_wrap),
     m_Ready(false),
@@ -18,12 +18,12 @@ VFSSeqToSeekROWrapperFile::VFSSeqToSeekROWrapperFile(std::shared_ptr<VFSFile> _f
 {
 }
 
-VFSSeqToSeekROWrapperFile::~VFSSeqToSeekROWrapperFile()
+VFSSeqToRandomROWrapperFile::~VFSSeqToRandomROWrapperFile()
 {
     Close();
 }
 
-int VFSSeqToSeekROWrapperFile::Open(int _flags)
+int VFSSeqToRandomROWrapperFile::Open(int _flags)
 {
     if(m_SeqFile.get() == 0)
         return VFSError::InvalidCall;
@@ -50,7 +50,6 @@ int VFSSeqToSeekROWrapperFile::Open(int _flags)
         if(m_DataBuf != 0)
             free(m_DataBuf);
         m_DataBuf = (uint8_t*)malloc(m_Size);
-//        m_DataBuf.resize(m_Size);
         
         uint8_t *d = &m_DataBuf[0];
         uint8_t *e = d + m_Size;
@@ -124,7 +123,7 @@ int VFSSeqToSeekROWrapperFile::Open(int _flags)
     return VFSError::Ok;
 }
 
-int VFSSeqToSeekROWrapperFile::Close()
+int VFSSeqToRandomROWrapperFile::Close()
 {
     m_SeqFile.reset();
     if(m_DataBuf)
@@ -135,45 +134,44 @@ int VFSSeqToSeekROWrapperFile::Close()
     if(m_FD >= 0)
     {
         close(m_FD);
-        
-        
+        m_FD = -1;
     }
     m_Ready = false;
     return VFSError::Ok;
 }
 
-VFSFile::ReadParadigm VFSSeqToSeekROWrapperFile::GetReadParadigm() const
+VFSFile::ReadParadigm VFSSeqToRandomROWrapperFile::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Random;
 }
 
-ssize_t VFSSeqToSeekROWrapperFile::Pos() const
+ssize_t VFSSeqToRandomROWrapperFile::Pos() const
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
     return m_Pos;
 }
 
-ssize_t VFSSeqToSeekROWrapperFile::Size() const
+ssize_t VFSSeqToRandomROWrapperFile::Size() const
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
     return m_Size;
 }
 
-bool VFSSeqToSeekROWrapperFile::Eof() const
+bool VFSSeqToRandomROWrapperFile::Eof() const
 {
     if(!IsOpened())
         return true;
     return m_Pos == m_Size;
 }
 
-bool VFSSeqToSeekROWrapperFile::IsOpened() const
+bool VFSSeqToRandomROWrapperFile::IsOpened() const
 {
     return m_Ready;
 }
 
-ssize_t VFSSeqToSeekROWrapperFile::Read(void *_buf, size_t _size)
+ssize_t VFSSeqToRandomROWrapperFile::Read(void *_buf, size_t _size)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
@@ -212,7 +210,7 @@ ssize_t VFSSeqToSeekROWrapperFile::Read(void *_buf, size_t _size)
     return VFSError::GenericError;
 }
 
-ssize_t VFSSeqToSeekROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
@@ -240,7 +238,7 @@ ssize_t VFSSeqToSeekROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size)
     assert(0);
 }
 
-off_t VFSSeqToSeekROWrapperFile::Seek(off_t _off, int _basis)
+off_t VFSSeqToRandomROWrapperFile::Seek(off_t _off, int _basis)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;

@@ -32,6 +32,7 @@ public:
     virtual bool IsWriteable() const;
     // TODO: IsWriteableAtPath
     
+    virtual const char *FSTag() const;
     const char *JunctionPath() const;
     std::shared_ptr<VFSHost> Parent() const;
     
@@ -72,7 +73,7 @@ public:
     
     
     
-    
+
     inline std::shared_ptr<VFSHost> SharedPtr() { return shared_from_this(); }
     inline std::shared_ptr<const VFSHost> SharedPtr() const { return shared_from_this(); }
 private:

@@ -8,14 +8,13 @@
 
 
 #import "ModernPanelViewPresentation.h"
-#import "ModernPanelViewPresentationIconCache.h"
 #import "PanelData.h"
 #import "Encodings.h"
 #import "Common.h"
 #import "NSUserDefaults+myColorSupport.h"
 #import "FontExtras.h"
 #import "ObjcToCppObservingBridge.h"
-
+#import "IconsGenerator.h"
 #import <deque>
 #import <pthread.h>
 
@@ -194,7 +193,7 @@ const int g_TextInsetsInLine[4] = {7, 0, 5, 1}; // TODO: remove this black magic
 const int g_DividerWidth = 3;
 
 ModernPanelViewPresentation::ModernPanelViewPresentation():
-    m_IconCache(0),
+    m_IconCache(std::make_shared<IconsGenerator>()),
     m_BackgroundColor(0),
     m_RegularOddBackgroundColor(0),
     m_ActiveSelectedItemBackgroundColor(0),
@@ -203,7 +202,8 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     m_ColumnDividerColor(0)
 {
     m_Size.width = m_Size.height = 0;
- 
+
+    m_IconCache->SetUpdateCallback(^{ SetViewNeedsDisplay(); });
     BuildGeometry();
     BuildAppearance();
         
@@ -260,6 +260,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
 
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
 {
+    m_IconCache->SetUpdateCallback(0);
     CGGradientRelease(m_ActiveHeaderGradient);
     CGGradientRelease(m_InactiveHeaderGradient);
     CGColorRelease(m_BackgroundColor);
@@ -269,8 +270,8 @@ ModernPanelViewPresentation::~ModernPanelViewPresentation()
     CGColorRelease(m_CursorFrameColor);
     CGColorRelease(m_ColumnDividerColor);
     
-    assert(m_IconCache);
-    delete m_IconCache;
+//    assert(m_IconCache);
+//    delete m_IconCache;
 
     if(m_State->Data != 0)
         m_State->Data->CustomIconClearAll();
@@ -287,10 +288,11 @@ void ModernPanelViewPresentation::BuildGeometry()
     m_LineHeight = m_FontHeight + 2; // was 18 before (16 + 2)
     
     // build icon cache regarding current font size (icon size equals font height)
-    if(!m_IconCache)
-        m_IconCache = new ModernPanelViewPresentationIconCache(this, m_FontHeight);
-    else
-        m_IconCache->SetIconSize(m_FontHeight);
+//    if(!m_IconCache)
+//        m_IconCache = new ModernPanelViewPresentationIconCache(this, m_FontHeight);
+//    else
+//
+    m_IconCache->SetIconSize(m_FontHeight);
 
     NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];
     
@@ -446,7 +448,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     ///////////////////////////////////////////////////////////////////////////////
     // Prepare icons for
-    bool created_icons = false;
+/*    bool created_icons = false;
     int count = 0, total_count = items_per_column*columns_count;
     int i = m_State->ItemsDisplayOffset;
     for(; count < total_count && i < max_items; ++count, ++i)
@@ -461,7 +463,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     }
     
     if (created_icons && m_IconCache->IsNeedsLoading())
-        m_IconCache->RunLoadThread(m_State->Data);
+        m_IconCache->RunLoadThread(m_State->Data);*/
     
     ///////////////////////////////////////////////////////////////////////////////
     // Clear view background.
@@ -518,9 +520,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     CGContextStrokeLineSegments(context, header_points, 2);
     
     // Panel path.
-    char panelpath[__DARWIN_MAXPATHLEN] = {0};
-    m_State->Data->GetDirectoryPathWithTrailingSlash(panelpath);
+    char panelpath[MAXPATHLEN*8] = {0};
+    m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);
     NSString *header_string = [NSString stringWithUTF8String:panelpath];
+    if(header_string == nil) header_string = @"...";
     
     int delta = (header_height - m_LineHeight)/2;
     NSRect rect = NSMakeRect(20, delta, m_ItemsArea.size.width - 40, m_LineHeight);
@@ -782,7 +785,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             [(__bridge NSString *)item->CFName() drawWithRect:rect options:options attributes:item_text_attr];
 
             // Draw icon
-            NSImageRep *image_rep = m_IconCache->GetIcon(*item);
+
+//            NSImageRep *image_rep = m_IconCache->GetIcon(*item);
+            NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
+            
             NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
                                      start_y + count*m_LineHeight + m_LineHeight - icon_size - 1,
                                      icon_size, icon_size);
@@ -904,5 +910,6 @@ void ModernPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView 
 
 void ModernPanelViewPresentation::OnDirectoryChanged()
 {
-    m_IconCache->OnDirectoryChanged(m_State->Data);
+    m_IconCache->Flush();
+//    m_IconCache->OnDirectoryChanged(m_State->Data);
 }

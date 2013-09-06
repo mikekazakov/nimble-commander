@@ -8,15 +8,14 @@
 
 #pragma once
 
-#import <vector>
 #import <stdint.h>
 #import "VFSFile.h"
 
-class VFSSeqToSeekROWrapperFile : public VFSFile
+class VFSSeqToRandomROWrapperFile : public VFSFile
 {
 public:
-    VFSSeqToSeekROWrapperFile(std::shared_ptr<VFSFile> _file_to_wrap);
-    ~VFSSeqToSeekROWrapperFile();
+    VFSSeqToRandomROWrapperFile(std::shared_ptr<VFSFile> _file_to_wrap);
+    ~VFSSeqToRandomROWrapperFile();
     
     virtual int Open(int _flags) override;
     virtual int Close() override;

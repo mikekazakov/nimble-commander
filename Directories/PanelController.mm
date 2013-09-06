@@ -957,6 +957,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) RecoverFromInvalidDirectory
 {
+    // TODO: recovering to upper host needed
     char path[MAXPATHLEN];
     m_Data->GetDirectoryPath(path);
     if(GetFirstAvailableDirectoryFromPath(path))

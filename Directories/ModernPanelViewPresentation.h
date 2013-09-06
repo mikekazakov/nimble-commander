@@ -6,11 +6,14 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <memory>
 #import "PanelViewPresentation.h"
+
 
 @class PanelView;
 @class ObjcToCppObservingBridge;
 class ModernPanelViewPresentationIconCache;
+class IconsGenerator;
 
 class ModernPanelViewPresentation : public PanelViewPresentation
 {
@@ -81,5 +84,7 @@ private:
     ObjcToCppObservingBridge *m_GeometryObserver;
     ObjcToCppObservingBridge *m_AppearanceObserver;
     
-    ModernPanelViewPresentationIconCache *m_IconCache;
+    std::shared_ptr<IconsGenerator> m_IconCache;
+//    ModernPanelViewPresentationIconCache *m_IconCache;
+    
 };

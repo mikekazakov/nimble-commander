@@ -23,6 +23,8 @@ public:
                    std::shared_ptr<VFSHost> _parent);
     ~VFSArchiveHost();
     
+    virtual const char *FSTag() const override;
+    
     int Open(); // flags will be added later
 
     virtual int CreateFile(const char* _path,

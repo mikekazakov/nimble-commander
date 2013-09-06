@@ -447,8 +447,11 @@ enum ActiveState
 
 - (void) UpdateTitle
 {
-    char path_raw[__DARWIN_MAXPATHLEN];
-    [self ActivePanelData]->GetDirectoryPath(path_raw);
+    char path_raw[MAXPATHLEN*8];
+    
+    [self ActivePanelData]->GetDirectoryFullHostsPathWithTrailingSlash(path_raw);
+//    [[self ActivePanelController] ComposeFullHostsPath:path_raw];
+    
     NSString *path = [NSString stringWithUTF8String:path_raw];
     if(path == nil)
     {

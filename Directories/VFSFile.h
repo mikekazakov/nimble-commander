@@ -80,6 +80,7 @@ public:
     // can return null pointer in some cases
     virtual std::shared_ptr<VFSFile> Clone() const;
 
+    void ComposeFullHostsPath(char *_buf) const; // relies solely on RelativePath() and Host()
     inline std::shared_ptr<VFSFile> SharedPtr() { return shared_from_this(); }
     inline std::shared_ptr<const VFSFile> SharedPtr() const { return shared_from_this(); }
     const char* RelativePath() const;

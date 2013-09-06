@@ -254,6 +254,31 @@ void PanelData::GetDirectoryPathShort(char _buf[__DARWIN_MAXPATHLEN]) const
     }
 }
 
+void PanelData::GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*8]) const
+{
+    if(m_Listing.get() == 0) {
+        strcpy(_buf, "");
+        return;
+    }
+    
+    VFSHost *hosts[32];
+    int hosts_n = 0;
+
+    VFSHost *cur = m_Listing->Host().get();
+    while(cur->Parent().get() != 0) // skip the root host
+    {
+        hosts[hosts_n++] = cur;
+        cur = cur->Parent().get();
+    }
+    
+    strcpy(_buf, "");
+    while(hosts_n > 0)
+        strcat(_buf, hosts[--hosts_n]->JunctionPath());
+    
+    strcat(_buf, m_Listing->RelativePath());
+    if(_buf[strlen(_buf)-1]!='/') strcat(_buf, "/"); // TODO: optimize me later
+}
+
 struct SortPredLess
 {
 private:

@@ -100,12 +100,6 @@
             [i DidBecomeKeyWindow];
 }
 
-- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket {
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(FireDirectoryChanged:ticket:)])
-            [i FireDirectoryChanged:_dir ticket:_ticket];
-}
-
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
     if([m_WindowState.back() respondsToSelector:@selector(window:willPositionSheet:usingRect:)])

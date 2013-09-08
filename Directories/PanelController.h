@@ -46,9 +46,7 @@
 - (PanelViewType) GetViewType;
 - (PanelSortMode) GetUserSortMode;
 
-- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;
 - (void) RefreshDirectory; // user pressed cmd+r by default
-
 
 // MAIN NAVIGATION METHODS ////////////////////////////////////////////
 - (void) GoToRelativeToHostAsync:(const char*) _path;

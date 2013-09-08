@@ -10,7 +10,6 @@
 #import <DiskArbitration/DiskArbitration.h>
 #import <Cocoa/Cocoa.h>
 #import "FSEventsDirUpdate.h"
-#import "AppDelegate.h"
 #import "Common.h"
 
 static const CFAbsoluteTime g_FSEventsLatency = 0.1;
@@ -44,7 +43,8 @@ void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRe
         
         if(w->path == path)
         {
-            [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:path ticket:w->ticket];
+            for(auto &h: w->handlers)
+                h.second();
         }
         else
         {
@@ -56,13 +56,14 @@ void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRe
                 size_t path_len = strlen(path);
 
                 if(path_len < w->path.length() && strncmp(w->path.c_str(), path, path_len) == 0)
-                    [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:w->path.c_str() ticket:w->ticket];
+                    for(auto &h: w->handlers)
+                        h.second();
             }
         }
     }
 }
 
-unsigned long  FSEventsDirUpdate::AddWatchPath(const char *_path)
+unsigned long FSEventsDirUpdate::AddWatchPath(const char *_path, void (^_handler)())
 {
     // convert _path into canonical path of OS
     char dirpath[__DARWIN_MAXPATHLEN];
@@ -73,15 +74,14 @@ unsigned long  FSEventsDirUpdate::AddWatchPath(const char *_path)
     for(auto i: m_Watches)
         if( i->path == dirpath )
         { // then just increase refcount and exit
-            i->refcount++;
-            return i->ticket;
+            i->handlers.push_back(std::make_pair(m_LastTicket++, _handler));
+            return i->handlers.back().first;
         }
 
     // create new watch stream
     WatchData *w = new WatchData;
     w->path = dirpath;
-    w->ticket = m_LastTicket++;
-    w->refcount = 1;
+    w->handlers.push_back(std::make_pair(m_LastTicket++, _handler));
     char volume[MAXPATHLEN] = {0};
     GetFileSystemRootFromPath(dirpath, volume);
     w->volume_path = volume;
@@ -110,33 +110,7 @@ unsigned long  FSEventsDirUpdate::AddWatchPath(const char *_path)
     
     m_Watches.push_back(w);
     
-    return w->ticket;
-}
-
-bool FSEventsDirUpdate::RemoveWatchPath(const char *_path)
-{
-    char dirpath[__DARWIN_MAXPATHLEN];
-    if(!GetRealPath(_path, dirpath))
-        return false;
-
-    for(auto i = m_Watches.begin(); i < m_Watches.end(); ++i)
-        if((*i)->path == dirpath)
-        {
-            WatchData *w = *i;
-            w->refcount--;
-            if(w->refcount == 0)
-            {
-                FSEventStreamStop(w->stream);
-                FSEventStreamUnscheduleFromRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-                FSEventStreamInvalidate(w->stream);
-                FSEventStreamRelease(w->stream);
-                delete w;
-                m_Watches.erase(i);
-            }
-            return true;
-        }
-
-    return false;
+    return w->handlers.back().first;
 }
 
 bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
@@ -145,21 +119,25 @@ bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
         return false;
     
     for(auto i = m_Watches.begin(); i < m_Watches.end(); ++i)
-        if((*i)->ticket == _ticket)
-        {
-            WatchData *w = *i;
-            w->refcount--;
-            if(w->refcount == 0)
+    {
+        WatchData *w = *i;
+        for(auto h = w->handlers.begin(); h < w->handlers.end(); ++h)
+            if((*h).first == _ticket)
             {
-                FSEventStreamStop(w->stream);
-                FSEventStreamUnscheduleFromRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-                FSEventStreamInvalidate(w->stream);
-                FSEventStreamRelease(w->stream);
-                delete w;
-                m_Watches.erase(i);
+                w->handlers.erase(h);
+                if(w->handlers.empty())
+                {
+                    FSEventStreamStop(w->stream);
+                    FSEventStreamUnscheduleFromRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+                    FSEventStreamInvalidate(w->stream);
+                    FSEventStreamRelease(w->stream);
+                    delete w;
+                    m_Watches.erase(i);
+                }
+                
+                return true;
             }
-            return true;
-        }
+    }
     
     return false;
 }
@@ -171,7 +149,8 @@ void FSEventsDirUpdate::DiskDisappeared(DADiskRef disk, void *context)
     // it should monitor paths of removed volumes and fires notification only for appropriate watches
     FSEventsDirUpdate *me = Inst();
     for(auto i: me->m_Watches)
-        [(AppDelegate*)[NSApp delegate] FireDirectoryChanged:i->path.c_str() ticket:i->ticket];
+        for(auto &h: (*i).handlers)
+            h.second();
 }
 
 void FSEventsDirUpdate::RunDiskArbitration()

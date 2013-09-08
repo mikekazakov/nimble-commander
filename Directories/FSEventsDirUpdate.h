@@ -17,12 +17,10 @@ class FSEventsDirUpdate
 public:
     static FSEventsDirUpdate *Inst();
  
-    unsigned long AddWatchPath(const char *_path);
+    unsigned long AddWatchPath(const char *_path, void (^_handler)());
     // zero returned value means error. any others - valid observation tickets
     
-    bool RemoveWatchPath(const char *_path); // will call GetRealPath implicitly - it's not too fast.
     bool RemoveWatchPathWithTicket(unsigned long _ticket); // it's better to use this method
-    
     
     static void RunDiskArbitration(); // should be called by NSApp once upon starting
     
@@ -32,8 +30,7 @@ private:
         std::string path;        // should include trailing slash
         std::string volume_path; // root path of volume from this path. without trailing slash (except root)
         FSEventStreamRef stream;
-        unsigned long ticket;
-        int refcount;
+        std::vector<std::pair<unsigned long, void (^)()> > handlers;
     };
     std::vector<WatchData*> m_Watches;
     unsigned long           m_LastTicket;

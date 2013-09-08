@@ -34,6 +34,8 @@ public:
                            std::shared_ptr<VFSFile> *_target,
                            bool (^_cancel_checker)()) override;
     
+    virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
+    virtual void StopDirChangeObserving(unsigned long _ticket) override;
     
     virtual int CalculateDirectoriesSizes(
                                         FlexChainedStringsChunk *_dirs, // transfered ownership

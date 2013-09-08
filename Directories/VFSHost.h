@@ -65,20 +65,11 @@ public:
                                           void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                           );
     
-    /*
-     typedef bool (^PanelDirectorySizeCalculate_CancelChecker)(void);
-     typedef void (^PanelDirectorySizeCalculate_CompletionHandler)(const char*_dir, unsigned long _size);
-     
-    void PanelDirectorySizeCalculate( FlexChainedStringsChunk *_dirs, // transfered ownership
-                                     const char *_root_path,           // transfered ownership, allocated with malloc
-                                     bool _is_dotdot,
-                                     PanelDirectorySizeCalculate_CancelChecker _checker,
-                                     PanelDirectorySizeCalculate_CompletionHandler _handler);*/
     
+    // return value 0 means error or unsupported for this VFS
+    virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());
+    virtual void StopDirChangeObserving(unsigned long _ticket);
     
-    
-    
-
     inline std::shared_ptr<VFSHost> SharedPtr() { return shared_from_this(); }
     inline std::shared_ptr<const VFSHost> SharedPtr() const { return shared_from_this(); }
 private:

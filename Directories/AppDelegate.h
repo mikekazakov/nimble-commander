@@ -18,8 +18,6 @@
 
 + (void)initialize;
 
-- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long) _ticket;
-
 - (IBAction)NewWindow:(id)sender;
 - (void) RemoveMainWindow:(MainWindowController*) _wnd;
 

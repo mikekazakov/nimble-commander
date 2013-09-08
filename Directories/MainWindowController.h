@@ -20,9 +20,6 @@
 
 - (OperationsController*) OperationsController;
 
-// this method will be called by App in all MainWindowControllers with same params
-- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket;
-
 - (void)ApplySkin:(ApplicationSkin)_skin;
 - (void)OnApplicationWillTerminate;
 

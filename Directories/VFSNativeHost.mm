@@ -23,6 +23,7 @@
 #import "VFSNativeHost.h"
 #import "VFSNativeListing.h"
 #import "VFSNativeFile.h"
+#import "FSEventsDirUpdate.h"
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
@@ -269,4 +270,14 @@ int VFSNativeHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_na
 cleanup:
     dispatch_release(queue);
     return result;
+}
+
+unsigned long VFSNativeHost::DirChangeObserve(const char *_path, void (^_handler)())
+{
+    return FSEventsDirUpdate::Inst()->AddWatchPath(_path, _handler);
+}
+
+void VFSNativeHost::StopDirChangeObserving(unsigned long _ticket)
+{
+    FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(_ticket);
 }

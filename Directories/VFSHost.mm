@@ -91,3 +91,12 @@ int VFSHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upo
 {
     return VFSError::NotSupported;
 }
+
+unsigned long VFSHost::DirChangeObserve(const char *_path, void (^_handler)())
+{
+    return 0;
+}
+
+void VFSHost::StopDirChangeObserving(unsigned long _ticket)
+{
+}

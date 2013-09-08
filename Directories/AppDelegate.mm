@@ -120,12 +120,6 @@
     return NO;
 }
 
-- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long) _ticket
-{
-    for(auto i: m_MainWindows)
-        [i FireDirectoryChanged:_dir ticket:_ticket];
-}
-
 - (MainWindowController*)AllocateNewMainWindow
 {
     MainWindowController *mwc = [[MainWindowController alloc] init];

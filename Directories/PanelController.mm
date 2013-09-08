@@ -28,7 +28,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     std::vector<std::shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
     
     __unsafe_unretained MainWindowController *m_WindowController;
-    unsigned long m_UpdatesObservationTicket;
+    
+    std::shared_ptr<VFSHost>    m_UpdatesObservationHost;
+    unsigned long               m_UpdatesObservationTicket;
     
     // Fast searching section
     NSString *m_FastSearchString;
@@ -250,20 +252,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 - (void) ToggleWideViewMode{
     [m_View ToggleViewType:PanelViewType::ViewWide];}
 
-- (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
-{
-    // check if this tickes is ours
-    if(_ticket == m_UpdatesObservationTicket) // integers comparison - just a blazing fast check
-    {
-        // update directory now!
-        [self RefreshDirectory];
-    }
-}
-
 - (void) ResetUpdatesObservation:(const char *) _new_path
 {
-    FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(m_UpdatesObservationTicket);
-    m_UpdatesObservationTicket = FSEventsDirUpdate::Inst()->AddWatchPath(_new_path);
+    if(m_UpdatesObservationHost.get() && m_UpdatesObservationTicket)
+    {
+        m_UpdatesObservationHost->StopDirChangeObserving(m_UpdatesObservationTicket);
+        m_UpdatesObservationHost.reset();
+    }
+
+    m_UpdatesObservationTicket = m_HostsStack.back()->DirChangeObserve(_new_path, ^{ [self RefreshDirectory]; } );
+    if(m_UpdatesObservationTicket)
+        m_UpdatesObservationHost = m_HostsStack.back();
 }
 
 //- (void) GoToDirectory:(const char*) _dir

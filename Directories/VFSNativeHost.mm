@@ -91,6 +91,40 @@ bool VFSNativeHost::IsDirectory(const char *_path, int _flags, bool (^_cancel_ch
     return (st.st_mode & S_IFMT) == S_IFDIR;
 }
 
+bool VFSNativeHost::FindLastValidItem(const char *_orig_path,
+                               char *_valid_path,
+                               int _flags,
+                               bool (^_cancel_checker)())
+{
+    // TODO: maybe it's better to go left-to-right than right-to-left
+    if(_orig_path[0] != '/') return false;
+    
+    
+    char tmp[MAXPATHLEN*8];
+    strcpy(tmp, _orig_path);
+    if(tmp[strlen(tmp)-1] == '/') tmp[strlen(tmp)-1] = 0; // cut trailing slash if any
+    
+    while(true)
+    {
+        if(_cancel_checker && _cancel_checker())
+            return false;
+        
+        struct stat st;
+        int ret = (_flags & F_NoFollow) == 0 ? stat(tmp, &st) : lstat(tmp, &st);
+        if(ret == 0)
+        {
+            strcpy(_valid_path, tmp);
+            return true;
+        }
+
+        char *sl = strrchr(tmp, '/');
+        assert(sl != 0);
+        if(sl == tmp) return false;
+        *sl = 0;
+    }
+    
+    return false;
+}
 
 // return false on error or cancellation
 static int CalculateDirectoriesSizesHelper(char *_path,

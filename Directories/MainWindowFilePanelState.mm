@@ -151,27 +151,27 @@ enum ActiveState
     [self LoadPanelsSettings];
     
     // now load data into panels
-    if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]) )
-        [m_LeftPanelController GoToRelativeToHostSync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]];
-    else
-    {
+    if([m_LeftPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]] < 0)
+    { // if saved dir is invalid - try home directory
         char path[MAXPATHLEN];
-        if(GetUserHomeDirectoryPath(path) && IsDirectoryAvailableForBrowsing(path)) // if saved dir is invalid - try home directory
-            [m_LeftPanelController GoToRelativeToHostSync:path];
-        else // if home directory is invalid to - go to root
-            [m_LeftPanelController GoToRelativeToHostSync:"/"];
+        if(!GetUserHomeDirectoryPath(path) || [m_LeftPanelController GoToGlobalHostsPathSync:path] < 0)
+        {
+            int ret = [m_LeftPanelController GoToRelativeToHostSync:"/"]; // if home directory is invalid too (lolwhat?) - go to root
+            assert(ret == VFSError::Ok);
+        }
     }
     
-    if( IsDirectoryAvailableForBrowsing([[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]) )
-        [m_RightPanelController GoToRelativeToHostSync:[[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]];
-    else
-        [m_RightPanelController GoToRelativeToHostSync:"/"];
+    if([m_RightPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]] < 0)
+    {
+        int ret = [m_RightPanelController GoToGlobalHostsPathSync:"/"];
+        assert(ret == VFSError::Ok);
+    }
+    
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(frameDidChange)
                                                  name:NSViewFrameDidChangeNotification
                                                object:self];
-    
     m_ActiveState = StateLeftPanel;
     [m_LeftPanelView Activate];
 }
@@ -1016,13 +1016,15 @@ enum ActiveState
 
 - (void)SavePanelPaths
 {
-    char path[MAXPATHLEN];
+    char path[MAXPATHLEN*8];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
      
-    m_LeftPanelData->GetDirectoryPathWithTrailingSlash(path);
+//    m_LeftPanelData->GetDirectoryPathWithTrailingSlash(path);
+    m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(path);
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"FirstPanelPath"];
      
-    m_RightPanelData->GetDirectoryPathWithTrailingSlash(path);
+//    m_RightPanelData->GetDirectoryPathWithTrailingSlash(path);
+    m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(path);
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];
 }
 

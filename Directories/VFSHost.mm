@@ -63,6 +63,14 @@ bool VFSHost::IsDirectory(const char *_path,
     return false;
 }
 
+bool VFSHost::FindLastValidItem(const char *_orig_path,
+                               char *_valid_path,
+                               int _flags,
+                               bool (^_cancel_checker)())
+{
+    return false;
+}
+
 int VFSHost::CalculateDirectoriesSizes(
                                     FlexChainedStringsChunk *_dirs, // transfered ownership
                                     const std::string &_root_path,

@@ -358,3 +358,16 @@ int VFSArchiveHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_n
 cleanup:
     return error;
 }
+
+bool VFSArchiveHost::IsDirectory(const char *_path,
+                                 int _flags,
+                                 bool (^_cancel_checker)())
+{
+    if(_path[0] != '/') return false;
+    char tmp[MAXPATHLEN];
+    strcpy(tmp, _path);
+    if(tmp[strlen(tmp)-1] != '/' ) strcat(tmp, "/"); // directories are stored with trailing slashes
+    
+    auto it = m_PathToDir.find(tmp);
+    return it != m_PathToDir.end();
+}

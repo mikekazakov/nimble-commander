@@ -27,6 +27,12 @@ public:
     
     int Open(); // flags will be added later
 
+    
+    
+    virtual bool IsDirectory(const char *_path,
+                             int _flags,
+                             bool (^_cancel_checker)()) override;
+    
     virtual int CreateFile(const char* _path,
                            std::shared_ptr<VFSFile> *_target,
                            bool (^_cancel_checker)()) override;

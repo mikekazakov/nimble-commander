@@ -8,7 +8,6 @@
 
 PanelData::PanelData()
 {
-//    m_Entries = new DirEntryInfoT;
     m_EntriesByRawName = new DirSortIndT;
     m_EntriesByHumanName = new DirSortIndT;
     m_EntriesByCustomSort = new DirSortIndT;
@@ -265,7 +264,7 @@ void PanelData::GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*
     int hosts_n = 0;
 
     VFSHost *cur = m_Listing->Host().get();
-    while(cur->Parent().get() != 0) // skip the root host
+    while(cur && cur->Parent().get() != 0) // skip the root host
     {
         hosts[hosts_n++] = cur;
         cur = cur->Parent().get();

@@ -232,40 +232,23 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 }
 
 - (void) ToggleSortingBySize{
-    [self MakeSortWith:PanelSortMode::SortBySize Rev:PanelSortMode::SortBySizeRev];
-}
-
+    [self MakeSortWith:PanelSortMode::SortBySize Rev:PanelSortMode::SortBySizeRev];}
 - (void) ToggleSortingByName{
-    [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];
-}
-
+    [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];}
 - (void) ToggleSortingByMTime{
-    [self MakeSortWith:PanelSortMode::SortByMTime Rev:PanelSortMode::SortByMTimeRev];
-}
-
+    [self MakeSortWith:PanelSortMode::SortByMTime Rev:PanelSortMode::SortByMTimeRev];}
 - (void) ToggleSortingByBTime{
-    [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];
-}
-
+    [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];}
 - (void) ToggleSortingByExt{
-    [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];
-}
-
+    [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];}
 - (void) ToggleShortViewMode{
-    [m_View ToggleViewType:PanelViewType::ViewShort];
-}
-
+    [m_View ToggleViewType:PanelViewType::ViewShort];}
 - (void) ToggleMediumViewMode{
-    [m_View ToggleViewType:PanelViewType::ViewMedium];
-}
-
+    [m_View ToggleViewType:PanelViewType::ViewMedium];}
 - (void) ToggleFullViewMode{
-    [m_View ToggleViewType:PanelViewType::ViewFull];
-}
-
+    [m_View ToggleViewType:PanelViewType::ViewFull];}
 - (void) ToggleWideViewMode{
-    [m_View ToggleViewType:PanelViewType::ViewWide];
-}
+    [m_View ToggleViewType:PanelViewType::ViewWide];}
 
 - (void) FireDirectoryChanged: (const char*) _dir ticket:(unsigned long)_ticket
 {
@@ -393,78 +376,258 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
 }*/
 
+- (void) FlushStopFlags
+{
+    m_IsStopDirectorySizeCounting = true;
+    m_IsStopDirectoryLoading = true;
+    m_IsStopDirectoryReLoading = true;
+}
+
 - (void) GoToRelativeToHostAsync:(const char*) _path
 {
-    std::string path = std::string(_path);
-    
-    if(m_IsStopDirectoryLoading)
-        dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
-    dispatch_async(m_DirectoryLoadingQ, ^{
-        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
-        
-        std::shared_ptr<VFSListing> listing;
-        
-        int ret = m_HostsStack.back()->FetchDirectoryListing(path.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
-        if(ret >= 0)
-        {
-            m_IsStopDirectorySizeCounting = true;
-            m_IsStopDirectoryLoading = true;
-            m_IsStopDirectoryReLoading = true;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                m_Data->Load(listing);
-                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
-                [self OnPathChanged];
-            });
-        }
-        else
-        {
-            // error processing here
-            /*                auto onfail = ^(NSString* _path, NSError *_error) {
-             NSAlert *alert = [[NSAlert alloc] init];
-             [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", _path]];
-             [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
-             dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
-             };*/
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
-    });
-    
+    [self GoToRelativeAsync:_path
+                  WithHosts:std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack)
+                SelectEntry:0];
 }
 
 - (int) GoToRelativeToHostSync:(const char*) _path
 {
-    // we need to ask our current host - is _path a dir?
-    // if yes - try to get into it
-    // if no - find if some file can act as c junction point on _path
-    assert(!m_HostsStack.empty());
-    bool isdir = m_HostsStack.back()->IsDirectory(_path, 0, 0);
-    if(isdir)
-    {
-//        return m_Data->GoToSync(_path, m_HostsStack.back());
+    return [self GoToRelativeSync:_path
+                        WithHosts:std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack)
+                      SelectEntry:0];
+}
+
+- (int) FindSortIndexForEntryOrZero:(const char*) _entry
+{
+    int sort = 0;
+    int raw = m_Data->FindEntryIndex(_entry);
+
+    if(raw >= 0)
+        sort = m_Data->FindSortedEntryIndex(raw);
+    if(sort < 0)
+        sort = 0;
+    
+    return sort;
+}
+
+- (int) GoToRelativeSync:(const char*) _path
+                WithHosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>)_hosts
+              SelectEntry:(const char*) _entry_name
+{
+    // 1st - try to use last host with this path
+    if(_hosts->back()->IsDirectory(_path, 0, 0))
+    { // easy - just go there
         std::shared_ptr<VFSListing> listing;
+        int ret = _hosts->back()->FetchDirectoryListing(_path, &listing, 0);
+        if(ret >= 0)
+        {
+            [self FlushStopFlags]; // clean running operations if any
+            m_HostsStack = *_hosts; // some overhead here, nevermind
+            m_Data->Load(listing);
+                    
+            if(!_entry_name || !strlen(_entry_name)) // go into some sub-dir
+                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir
+                               newcursor:0];
+            else // go into dot-dot dir
+                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
+                               newcursor:[self FindSortIndexForEntryOrZero:_entry_name]];
+            [self OnPathChanged];
+            return VFSError::Ok;
+        }
+        return ret;
+    }
+    else
+    { // there are 2 variants - path is going inside nested VFS host or is just invalid
+        // TODO: no hosted vfs now, need a big cycle here
+        char path_buf[MAXPATHLEN*8];
+        char valid_path[MAXPATHLEN*8];
+        strcpy(path_buf, _path);
+            
+        if(_hosts->back()->FindLastValidItem(path_buf, valid_path, 0, 0))
+        {
+            // currently we support only VFS which uses a file as a junction point
+            if(!_hosts->back()->IsDirectory(valid_path, 0, 0))
+            {
+                // TODO: support for different VFS
+                std::shared_ptr<VFSArchiveHost> arhost = std::make_shared<VFSArchiveHost>(valid_path, _hosts->back());
+                if(arhost->Open() >= 0)
+                {
+                    strcpy(path_buf, path_buf + strlen(valid_path));
+                    if(arhost->IsDirectory(path_buf, 0, 0))
+                    { // yeah, going here!
+                        std::shared_ptr<VFSListing> listing;
+                        int ret = arhost->FetchDirectoryListing(path_buf, &listing, 0);
+                        if(ret >= 0)
+                        {
+                            [self FlushStopFlags]; // clean running operations if any
+                            m_HostsStack = *_hosts; // some overhead here, nevermind
+                            m_HostsStack.push_back(arhost);
+                            m_Data->Load(listing);
+                            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+                            [self OnPathChanged];
+                            return VFSError::Ok;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return VFSError::GenericError;
+}
+
+- (void) GoToRelativeAsync:(const char*) _path
+                 WithHosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>)_hosts
+               SelectEntry:(const char*) _entry_name
+{
+    std::string path = std::string(_path);
+    
+    std::string entryname = std::string(_entry_name ? _entry_name : "");
+    
+    if(m_IsStopDirectoryLoading)
+        dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
+    
+    dispatch_async(m_DirectoryLoadingQ, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
         
-        int ret = m_HostsStack.back()->FetchDirectoryListing(_path, &listing, 0);
-        if(ret < 0)
-            return ret;
+        // 1st - try to use last host with this path
+        if(_hosts->back()->IsDirectory(path.c_str(), 0, 0))
+        { // easy - just go there
+            std::shared_ptr<VFSListing> listing;
+            int ret = _hosts->back()->FetchDirectoryListing(path.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
+            if(ret >= 0)
+            {
+                [self FlushStopFlags]; // clean running operations if any
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    m_HostsStack = *_hosts; // some overhead here, nevermind
+                    m_Data->Load(listing);
+                    
+                    if(entryname.empty()) // go into some sub-dir
+                        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir
+                                       newcursor:0];
+                    else // go into dot-dot dir
+                        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
+                                       newcursor:[self FindSortIndexForEntryOrZero:entryname.c_str()]];
+                    [self OnPathChanged];
+                });
+            }
+            else
+            {
+                // TODO: error processing
+                // error processing here
+/*                auto onfail = ^(NSString* _path, NSError *_error) {
+                    NSAlert *alert = [[NSAlert alloc] init];
+                    [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", _path]];
+                    [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
+                    dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
+                };*/
+            }
+        }
+        else
+        { // there are 2 variants - path is going inside nested VFS host or is just invalid
+            // TODO: no hosted vfs now, need a big cycle here
+            char path_buf[MAXPATHLEN*8];
+            char valid_path[MAXPATHLEN*8];
+            strcpy(path_buf, path.c_str());
+            
+            if(_hosts->back()->FindLastValidItem(path_buf, valid_path, 0, 0))
+            {
+                // currently we support only VFS which uses a file as a junction point
+                if(!_hosts->back()->IsDirectory(valid_path, 0, 0))
+                {
+                    // TODO: support for different VFS
+                    std::shared_ptr<VFSArchiveHost> arhost = std::make_shared<VFSArchiveHost>(valid_path, _hosts->back());
+                    if(arhost->Open() >= 0)
+                    {
+                        strcpy(path_buf, path_buf + strlen(valid_path));
+                        if(arhost->IsDirectory(path_buf, 0, 0))
+                        { // yeah, going here!
+                            std::shared_ptr<VFSListing> listing;
+                            int ret = arhost->FetchDirectoryListing(path_buf, &listing, ^{return m_IsStopDirectoryLoading;});
+                            if(ret >= 0)
+                            {
+                                [self FlushStopFlags]; // clean running operations if any
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    m_HostsStack = *_hosts; // some overhead here, nevermind
+                                    m_HostsStack.push_back(arhost);
+                                    m_Data->Load(listing);
+                                    [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+                                    [self OnPathChanged];
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
         
-        m_Data->Load(listing);
+        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
+    });
+}
+
+- (bool) GetCommonHostsStackForPath:(const char*) _path rest:(char*) _rest hosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>&) _hosts
+{
+    // no blocking ops here, can call from main thread
+    // TODO later: here we assume that top-level host should began with '', but networks vfs will operate with other format
+    if(m_HostsStack.empty()) return false;
+    assert( strcmp(m_HostsStack[0]->JunctionPath(), "") == 0 );
+    
+    std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> hosts = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>();
+
+    int hn = 0;
+    char rest[MAXPATHLEN*8];
+    strcpy(rest, _path);
+    hosts->push_back(m_HostsStack[hn++]);
+    
+    while(true)
+    {
+        if(hn == m_HostsStack.size()) break;
         
-        // clean running operations if any
-        m_IsStopDirectorySizeCounting = true;
-        m_IsStopDirectoryLoading = true;
-        m_IsStopDirectoryReLoading = true;
-        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
-        [self OnPathChanged];
+        char junction[MAXPATHLEN];
+        strcpy(junction, m_HostsStack[hn]->JunctionPath());
         
-        return VFSError::Ok;
+        if(strncmp(rest, junction, strlen(junction)) == 0)
+        {
+            hosts->push_back(m_HostsStack[hn++]);
+            strcpy(rest, rest + strlen(junction));
+        }
+    }
+    
+    strcpy(_rest, rest);
+    _hosts = hosts;
+    
+    return true;
+}
+
+- (void) GoToGlobalHostsPathAsync:(const char*) _path
+{
+    char rest[MAXPATHLEN*8];
+    std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> stack;
+    if([self GetCommonHostsStackForPath:_path rest:rest hosts:stack])
+    {
+        [self GoToRelativeAsync:rest WithHosts:stack SelectEntry:0];
     }
     else
     {
-        // junction stuff here
-        assert(0);
-        return 0;
-        
+        stack = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>();
+        stack->push_back(VFSNativeHost::SharedHost());
+        [self GoToRelativeAsync:_path WithHosts:stack SelectEntry:0];
+    }
+}
+
+- (int) GoToGlobalHostsPathSync:(const char*) _path
+{
+    char rest[MAXPATHLEN*8];
+    std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> stack;
+    if([self GetCommonHostsStackForPath:_path rest:rest hosts:stack])
+    {
+        return [self GoToRelativeSync:rest WithHosts:stack SelectEntry:0];
+    }
+    else
+    {
+        stack = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>();
+        stack->push_back(VFSNativeHost::SharedHost());
+        return [self GoToRelativeSync:_path WithHosts:stack SelectEntry:0];
     }
 }
 
@@ -482,7 +645,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         {
             char pathbuf[__DARWIN_MAXPATHLEN];
             m_Data->ComposeFullPathForEntry(raw_pos, pathbuf);
-            std::string path = std::string(pathbuf);
+//            std::string path = std::string(pathbuf);
         
             std::string curdirname("");
             if( m_Data->DirectoryEntries()[raw_pos].IsDotDot())
@@ -491,47 +654,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                 m_Data->GetDirectoryPathShort(curdirnamebuf);
                 curdirname = curdirnamebuf;
             }
-        
-            if(m_IsStopDirectoryLoading)
-                dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
-            dispatch_async(m_DirectoryLoadingQ, ^{
-                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
             
-                std::shared_ptr<VFSListing> listing;
-                int ret = m_HostsStack.back()->FetchDirectoryListing(path.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
-                if(ret >= 0)
-                {
-                    m_IsStopDirectorySizeCounting = true;
-                    m_IsStopDirectoryLoading = true;
-                    m_IsStopDirectoryReLoading = true;
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        m_Data->Load(listing);
-
-                        if(curdirname.empty()) { // go into some sub-dir
-                            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir newcursor:0];
-                        }
-                        else { // go into dot-dot dir
-                            int newcursor_raw = m_Data->FindEntryIndex(curdirname.c_str()), newcursor_sort = 0;
-                            if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
-                            if(newcursor_sort < 0) newcursor_sort = 0;
-                            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
-                        }
-                        [self OnPathChanged];
-                    });
-                }
-                else
-                {
-                    // error processing here
-/*                  auto onfail = ^(NSString* _path, NSError *_error) {
-                        NSAlert *alert = [[NSAlert alloc] init];
-                        [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", _path]];
-                        [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
-                        dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
-                    };*/
-                }
-            //            PanelData::LoadFSDirectoryAsync(blockpath, onsucc, onfail, ^bool(){return m_IsStopDirectoryLoading;});
-                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
-            });
+            [self GoToRelativeAsync:pathbuf
+                          WithHosts:std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack)
+                        SelectEntry:curdirname.c_str()
+             ];
             return;
         }
         else
@@ -547,37 +674,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                 *(strrchr(junct, '/')+1) = 0;
             strcpy(directory_path, junct);
             
-            std::string dir(directory_path), entry(junct_entry);
-
-            m_HostsStack.pop_back();
+            auto hosts = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack);
+            hosts->pop_back();
             
-            if(m_IsStopDirectoryLoading)
-                dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
-            dispatch_async(m_DirectoryLoadingQ, ^{
-                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
-                
-                std::shared_ptr<VFSListing> listing;
-                int ret = m_HostsStack.back()->FetchDirectoryListing(dir.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
-                if(ret >= 0)
-                {
-                    m_IsStopDirectorySizeCounting = true;
-                    m_IsStopDirectoryLoading = true;
-                    m_IsStopDirectoryReLoading = true;
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        m_Data->Load(listing);
-                        int newcursor_raw = m_Data->FindEntryIndex(entry.c_str()), newcursor_sort = 0;
-                        if(newcursor_raw >= 0) newcursor_sort = m_Data->FindSortedEntryIndex(newcursor_raw);
-                        if(newcursor_sort < 0) newcursor_sort = 0;
-                        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir newcursor:newcursor_sort];
-                        [self OnPathChanged];
-                    });
-                }
-                else
-                {
-                    // error processing here
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
-            });
+            [self GoToRelativeAsync:directory_path WithHosts:hosts SelectEntry:junct_entry];
             
             return;
         }
@@ -966,7 +1066,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// Delayed selection support
+// Delayed cursors movement support
 
 - (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
 {
@@ -1020,6 +1120,8 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 {
     m_DelayedSelection.isvalid = false;
 }
+
+
 
 - (void) SelectAllEntries:(bool) _select
 {

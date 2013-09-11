@@ -43,6 +43,7 @@
 		CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */; };
 		CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
 		CF07DE41176985EF00757DE1 /* EncodingsAdditions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */; };
+		CF09827117DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
 		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
@@ -318,6 +319,8 @@
 		CF07DE3D1769754400757DE1 /* SearchInFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchInFile.mm; sourceTree = "<group>"; };
 		CF07DE3E1769754400757DE1 /* SearchInFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInFile.h; sourceTree = "<group>"; };
 		CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodingsAdditions.cpp; sourceTree = "<group>"; };
+		CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJobFromGeneric.mm; sourceTree = "<group>"; };
+		CF09827017DEDC3700F0871C /* FileCopyOperationJobFromGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJobFromGeneric.h; sourceTree = "<group>"; };
 		CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
 		CF128876177FF9D3002816C2 /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkOperation.h; sourceTree = "<group>"; };
 		CF128877177FF9D3002816C2 /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperation.mm; sourceTree = "<group>"; };
@@ -1103,6 +1106,8 @@
 				CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */,
 				CFAC50D21714027F00A3E5C5 /* FileCopyOperationJob.h */,
 				CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */,
+				CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */,
+				CF09827017DEDC3700F0871C /* FileCopyOperationJobFromGeneric.h */,
 			);
 			name = FileCopyOperation;
 			sourceTree = "<group>";
@@ -1551,6 +1556,7 @@
 				CF9D0E7517CC961100CB8146 /* archive_acl.c in Sources */,
 				CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */,
 				CF9D0B5F17CC5C4900CB8146 /* uncompr.c in Sources */,
+				CF09827117DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */,
 				CF9D0B5717CC5C4900CB8146 /* gzlib.c in Sources */,
 				CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */,

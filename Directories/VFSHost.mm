@@ -100,3 +100,13 @@ unsigned long VFSHost::DirChangeObserve(const char *_path, void (^_handler)())
 void VFSHost::StopDirChangeObserving(unsigned long _ticket)
 {
 }
+
+int VFSHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}
+
+int VFSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(dirent &_dirent))
+{
+    return VFSError::NotSupported;
+}

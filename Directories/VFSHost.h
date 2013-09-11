@@ -25,7 +25,7 @@ public:
     virtual ~VFSHost();
     
     enum {
-        F_NoFollow = 1
+        F_NoFollow = 1 // do not follow symlinks when resolving item name
         
     };
     
@@ -33,6 +33,8 @@ public:
     // TODO: IsWriteableAtPath
     
     virtual const char *FSTag() const;
+    inline bool IsNativeFS() const { return strcmp(FSTag(), "native") == 0; }
+    
     const char *JunctionPath() const;
     std::shared_ptr<VFSHost> Parent() const;
     
@@ -49,6 +51,13 @@ public:
                                       std::shared_ptr<VFSListing> *_target,
                                       bool (^_cancel_checker)());
     
+    // IterateDirectoryListing will skip "." and ".." entries if they are present
+    // do not rely on it to build a directory listing, it's for contents iteration
+    virtual int IterateDirectoryListing(
+                                    const char *_path,
+                                    bool (^_handler)(struct dirent &_dirent) // return true for allowing iteration, false to stop it
+                                    );
+    
     virtual int CreateFile(const char* _path,
                            std::shared_ptr<VFSFile> *_target,
                            bool (^_cancel_checker)());
@@ -57,14 +66,16 @@ public:
                                         FlexChainedStringsChunk *_dirs, // transfered ownership
                                         const std::string &_root_path, // relative to current host path
                                         bool (^_cancel_checker)(),
-                                        void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
-                                        );
+                                        void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size));
     virtual int CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upon completion
                                           const std::string &_root_path, // relative to current host path
                                           bool (^_cancel_checker)(),
-                                          void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
-                                          );
+                                          void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size));
     
+    virtual int Stat(const char *_path,
+                     struct stat &_st,
+                     int _flags,
+                     bool (^_cancel_checker)());
     
     // return value 0 means error or unsupported for this VFS
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());

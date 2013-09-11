@@ -20,7 +20,6 @@ VFSArchiveFile::VFSArchiveFile(const char* _relative_path, std::shared_ptr<VFSAr
 
 VFSArchiveFile::~VFSArchiveFile()
 {
-    Close();
 }
 
 int VFSArchiveFile::Open(int _open_flags)

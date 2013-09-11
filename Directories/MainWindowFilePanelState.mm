@@ -34,6 +34,7 @@
 #import "FileLinkOperation.h"
 #import "StackOfDisappearingWidgets.h"
 #import "SelectionWithMaskSheetController.h"
+#import "VFS.h"
 
 enum ActiveState
 {
@@ -448,9 +449,7 @@ enum ActiveState
 - (void) UpdateTitle
 {
     char path_raw[MAXPATHLEN*8];
-    
     [self ActivePanelData]->GetDirectoryFullHostsPathWithTrailingSlash(path_raw);
-//    [[self ActivePanelController] ComposeFullHostsPath:path_raw];
     
     NSString *path = [NSString stringWithUTF8String:path_raw];
     if(path == nil)
@@ -827,8 +826,20 @@ enum ActiveState
              opts.docopy = true;
              [mc FillOptions:&opts];
              
-             [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] fileSystemRepresentation] options:&opts]];
+             
+             if(source->Host().IsNativeFS() && destination->Host().IsNativeFS())
+                 [m_OperationsController AddOperation:
+                  [[FileCopyOperation alloc] initWithFiles:files
+                                                      root:root_path
+                                                      dest:[[mc.TextField stringValue] fileSystemRepresentation]
+                                                   options:&opts]];
+             else if(destination->Host().IsNativeFS())
+                 [m_OperationsController AddOperation:
+                  [[FileCopyOperation alloc] initWithFiles:files
+                                                      root:root_path
+                                                   rootvfs:((VFSHost&)source->Host()).SharedPtr() // const-hack
+                                                      dest:[[mc.TextField stringValue] fileSystemRepresentation]
+                                                   options:&opts]];
          }
          else
          {

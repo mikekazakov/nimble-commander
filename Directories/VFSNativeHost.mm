@@ -23,7 +23,9 @@
 #import "VFSNativeHost.h"
 #import "VFSNativeListing.h"
 #import "VFSNativeFile.h"
+#import "VFSError.h"
 #import "FSEventsDirUpdate.h"
+
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
@@ -280,4 +282,38 @@ unsigned long VFSNativeHost::DirChangeObserve(const char *_path, void (^_handler
 void VFSNativeHost::StopDirChangeObserving(unsigned long _ticket)
 {
     FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(_ticket);
+}
+
+int VFSNativeHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
+{
+    memset(&_st, 0, sizeof(_st));
+    
+    int ret = (_flags & F_NoFollow) ? lstat(_path, &_st) : stat(_path, &_st);
+    
+    if(ret == 0)
+        return VFSError::Ok;
+    
+    return VFSError::FromErrno(errno);
+}
+
+int VFSNativeHost::IterateDirectoryListing(const char *_path, bool (^_handler)(struct dirent &_dirent))
+{
+    DIR *dirp = opendir(_path);
+    if(dirp == 0)
+        return VFSError::FromErrno(errno);
+        
+    dirent *entp;
+    while((entp = readdir(dirp)) != NULL)
+    {
+        if((entp->d_namlen == 1 && entp->d_name[0] == '.') ||
+           (entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.'))
+            continue;
+            
+        if(!_handler(*entp))
+            break;
+    }
+    
+    closedir(dirp);
+    
+    return VFSError::Ok;
 }

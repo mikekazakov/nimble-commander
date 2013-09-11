@@ -33,6 +33,8 @@ public:
                              int _flags,
                              bool (^_cancel_checker)()) override;
     
+    virtual int Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)()) override;    
+    
     virtual int CreateFile(const char* _path,
                            std::shared_ptr<VFSFile> *_target,
                            bool (^_cancel_checker)()) override;
@@ -40,6 +42,8 @@ public:
     virtual int FetchDirectoryListing(const char *_path,
                                       std::shared_ptr<VFSListing> *_target,
                                       bool (^_cancel_checker)()) override;
+    
+    virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(dirent &_dirent)) override;
     
     virtual int CalculateDirectoriesSizes(
                                           FlexChainedStringsChunk *_dirs, // transfered ownership

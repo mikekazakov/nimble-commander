@@ -6,12 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFSArchiveHost.h"
 #import <assert.h>
-
-
+#import <sys/dirent.h>
 #import "3rd_party/libarchive/archive.h"
 #import "3rd_party/libarchive/archive_entry.h"
+#import "VFSArchiveHost.h"
 #import "VFSArchiveInternal.h"
 #import "VFSArchiveFile.h"
 #import "VFSArchiveListing.h"
@@ -21,41 +20,6 @@ VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
     VFSHost(_junction_path, _parent),
     m_Arc(0)
 {
-/*    int res = Parent()->CreateFile(_junction_path, &m_ArFile, nil);
-    assert(res == VFSError::Ok);
-    res = m_ArFile->Open(VFSFile::OF_Read);
-    assert(res == VFSError::Ok);
-
-    m_Mediator = std::make_shared<VFSArchiveMediator>();
-    m_Mediator->file = m_ArFile;
-    
-    
-    struct archive *a;
-    struct archive_entry *entry;
-    a = archive_read_new();
-    archive_read_support_compression_all(a);
-    archive_read_support_format_all(a);
-    
-    archive_read_set_callback_data(a, m_Mediator.get());
-    archive_read_set_read_callback(a, VFSArchiveMediator::myread);
-    archive_read_set_seek_callback(a, VFSArchiveMediator::myseek);
-    archive_read_open1(a);
-    
-//    __LA_DECL int archive_read_set_seek_callback(struct archive *,
-//                                                 archive_seek_callback *);
-    
-    
-    while (archive_read_next_header(a, &entry) == ARCHIVE_OK)
-    {
-        const char *path = archive_entry_pathname(entry);
-        const struct stat *stat = archive_entry_stat(entry);
-        
-        long sz = archive_entry_size(entry);
-        
-        printf("%s, size %ld\n", path, sz);
-    }
-    archive_read_free(a);*/
-//    free(mydata);
 }
 
 VFSArchiveHost::~VFSArchiveHost()
@@ -370,4 +334,86 @@ bool VFSArchiveHost::IsDirectory(const char *_path,
     
     auto it = m_PathToDir.find(tmp);
     return it != m_PathToDir.end();
+}
+
+int VFSArchiveHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
+{
+    // currenty do not support symlinks in archives, so ignore NoFollow flag
+    assert(_path != 0);
+    if(_path[0] != '/') return VFSError::NotFound;
+    
+    // 1st - try to find _path directly (assume it's directory)
+    char buf[1024], short_name[256];
+    strcpy(buf, _path);
+    
+    char *last_sl = strrchr(buf, '/');
+    
+    if(last_sl == buf && strlen(buf) == 1)
+    {
+        // we have no info about root dir - dummy here
+        memset(&_st, 0, sizeof(_st));
+        return VFSError::Ok;
+    }
+    if(last_sl == buf + strlen(buf) - 1)
+    {
+        *last_sl = 0; // cut trailing slash
+        last_sl = strrchr(buf, '/');
+        assert(last_sl != 0); //sanity check
+    }
+    
+    strcpy(short_name, last_sl + 1);
+    *(last_sl + 1) = 0;
+    // now:
+    // buf - directory with trailing slash
+    // short_name - entry name within that directory
+    
+    assert(strcmp(short_name, "..")); // no ".." resolving in VFS (currently?)
+    
+    auto i = m_PathToDir.find(buf);
+    if(i == m_PathToDir.end())
+        return VFSError::NotFound;
+    
+    // ok, found dir, now let's find item
+    for(const auto &it: i->second->entries)
+        if(it.name == short_name)
+        {
+            _st = it.st;
+            return VFSError::Ok;
+        }
+    
+    return VFSError::NotFound;
+}
+
+int VFSArchiveHost::IterateDirectoryListing(const char *_path, bool (^_handler)(dirent &_dirent))
+{
+    assert(_path != 0);
+    if(_path[0] != '/')
+        return VFSError::NotFound;
+
+    char buf[1024];
+    strcpy(buf, _path);
+    if(buf[strlen(buf)-1] != '/')
+        strcat(buf, "/"); // we store directories with trailing slash
+    
+    auto i = m_PathToDir.find(buf);
+    if(i == m_PathToDir.end())
+        return VFSError::NotFound;
+    
+    struct dirent dir;
+    dir.d_ino = 0; // not supported currently
+    
+    for(const auto &it: i->second->entries)
+        {
+            memcpy(dir.d_name, it.name.c_str(), it.name.length()+1);
+            dir.d_namlen = it.name.length();
+            
+            if(S_ISDIR(it.st.st_mode)) dir.d_type = DT_DIR;
+            else if(S_ISREG(it.st.st_mode)) dir.d_type = DT_REG;
+            else dir.d_type = DT_UNKNOWN; // symlinks and other stuff are not supported currently
+
+            if(!_handler(dir))
+                break;
+        }
+    
+    return VFSError::Ok;
 }

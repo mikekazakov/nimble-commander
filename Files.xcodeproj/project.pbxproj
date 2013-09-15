@@ -69,6 +69,7 @@
 		CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
+		CF6617EF17E48B5100593225 /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6617EE17E48B5100593225 /* VFSError.mm */; };
 		CF6C5AD117BC70DE0007B648 /* pref_viewer_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */; };
 		CF6C5AD317BC71500007B648 /* pref_general_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF6C5AD217BC71500007B648 /* pref_general_icon.png */; };
 		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
@@ -367,6 +368,7 @@
 		CF561B1117D62626009D37A4 /* liblzma.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblzma.dylib; path = usr/lib/liblzma.dylib; sourceTree = SDKROOT; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Directories/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
+		CF6617EE17E48B5100593225 /* VFSError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSError.mm; sourceTree = "<group>"; };
 		CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_viewer_icon.png; sourceTree = "<group>"; };
 		CF6C5AD217BC71500007B648 /* pref_general_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_general_icon.png; sourceTree = "<group>"; };
 		CF73C59C16DE0D2900F3D44F /* MessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBox.h; sourceTree = "<group>"; };
@@ -1175,6 +1177,7 @@
 				CFB8F23017CA4175004574FE /* VFSListing.h */,
 				CF9D060317CB2DC900CB8146 /* VFSFile.mm */,
 				CF9D060417CB2DC900CB8146 /* VFSFile.h */,
+				CF6617EE17E48B5100593225 /* VFSError.mm */,
 				CFB8F23317CAF4EC004574FE /* VFSError.h */,
 				CF435FFB17CF1C5C004BA507 /* VFS.h */,
 			);
@@ -1497,6 +1500,7 @@
 				CF9D0B5D17CC5C4900CB8146 /* inftrees.c in Sources */,
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
+				CF6617EF17E48B5100593225 /* VFSError.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
 				CF9D0ECF17CC961100CB8146 /* archive_write_set_format_gnutar.c in Sources */,
 				B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */,

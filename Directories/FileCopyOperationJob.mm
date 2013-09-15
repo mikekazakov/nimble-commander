@@ -103,7 +103,10 @@ FileCopyOperationJob::FileCopyOperationJob():
     m_TotalCopied(0),
     m_IsSingleFileCopy(true),
     m_SameVolume(false),
-    m_IsSingleEntryCopy(false)
+    m_IsSingleEntryCopy(false),
+    m_ReadQueue(0),
+    m_WriteQueue(0),
+    m_IOGroup(0)
 {
     // in xattr operations we'll use our big Buf1 and Buf2 - they should be quite enough
     // in OS X 10.4-10.6 maximum size of xattr value was 4Kb
@@ -116,14 +119,20 @@ FileCopyOperationJob::~FileCopyOperationJob()
     if(m_Buffer1) { free(m_Buffer1); m_Buffer1 = 0; }
     if(m_Buffer2) { free(m_Buffer2); m_Buffer2 = 0; }
     if(m_ReadQueue)
+    {
         dispatch_release(m_ReadQueue);
-    m_ReadQueue = 0;
+        m_ReadQueue = 0;
+    }
     if(m_WriteQueue)
+    {
         dispatch_release(m_WriteQueue);
-    m_WriteQueue = 0;
+        m_WriteQueue = 0;
+    }
     if(m_IOGroup)
+    {
         dispatch_release(m_IOGroup);
-    m_IOGroup = 0;
+        m_IOGroup = 0;
+    }
     if(m_ScannedItems)
     {
         FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);

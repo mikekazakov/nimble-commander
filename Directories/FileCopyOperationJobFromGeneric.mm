@@ -58,6 +58,8 @@ void FileCopyOperationJobFromGeneric::Do()
     ScanItems();
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
+    m_Stats.SetMaxValue(m_SourceTotalBytes);
+    
     m_Buffer1 = malloc(BUFFER_SIZE);
     m_Buffer2 = malloc(BUFFER_SIZE);    
     m_ReadQueue = dispatch_queue_create("file copy read", 0);
@@ -146,6 +148,8 @@ retry_stat:
 
 void FileCopyOperationJobFromGeneric::ProcessItems()
 {
+    m_Stats.StartTimeTracking();
+    
     int n = 0;
     for(const auto&i: *m_ScannedItems)
     {
@@ -155,6 +159,8 @@ void FileCopyOperationJobFromGeneric::ProcessItems()
         
         if(CheckPauseOrStop()) return;
     }
+    
+    m_Stats.SetCurrentItem(nullptr);
 }
 
 void FileCopyOperationJobFromGeneric::ProcessItem(const FlexChainedStringsChunk::node *_node, int _number)
@@ -280,7 +286,7 @@ bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_
         std::swap(readbuf, writebuf); // swap our work buffers - read buffer become write buffer and vice versa
         
         // update statistics
-//        m_Stats.SetValue(m_TotalCopied);
+        m_Stats.SetValue(m_TotalCopied);
     }
     
     

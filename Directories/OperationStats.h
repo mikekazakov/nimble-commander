@@ -10,6 +10,7 @@ class OperationStats
 {
 public:
     OperationStats();
+    ~OperationStats();
     
     void SetMaxValue(uint64_t _max_value);
     uint64_t GetMaxValue() const;
@@ -49,4 +50,7 @@ private:
     volatile uint64_t m_MaxValue;
     
     mutable pthread_mutex_t m_Mutex;
+    
+    OperationStats(const OperationStats&) = delete;
+    void operator=(const OperationStats&) = delete;
 };

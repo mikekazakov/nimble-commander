@@ -15,6 +15,8 @@
 
 struct VFSArchiveMediator;
 struct VFSArchiveDir;
+struct VFSArchiveDirEntry;
+struct VFSArchiveSeekCache;
 
 class VFSArchiveHost : public VFSHost
 {
@@ -57,6 +59,13 @@ public:
                                              void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                              ) override;
     
+    // Caching section - to reduce seeking overhead
+    // current only one seek cache permitted, likely allow multiple in the future
+    unsigned long ItemUID(const char* _filename); // return zero on not found
+    // TODO: concurrency guards
+    unsigned long SeekCachePosition(); // return zero on absence of cache
+    void CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc); // destruct call - will override currently stored one
+    std::shared_ptr<VFSArchiveSeekCache> SeekCache(); // destructive call - host will no longer hold seek cache
     
     
     std::shared_ptr<VFSFile> ArFile() const;
@@ -68,11 +77,13 @@ public:
 private:
     int ReadArchiveListing();
     VFSArchiveDir* FindOrBuildDir(const char* _path_with_tr_sl);
+    const VFSArchiveDirEntry *FindEntry(const char* _path);
     
     void InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir_name);
     
     std::shared_ptr<VFSFile>                m_ArFile;
     std::shared_ptr<VFSArchiveMediator>     m_Mediator;
+    std::shared_ptr<VFSArchiveSeekCache>    m_SeekCache;
     struct archive                         *m_Arc;
     std::map<std::string, VFSArchiveDir*>   m_PathToDir;
     

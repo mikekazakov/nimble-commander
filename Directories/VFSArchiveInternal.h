@@ -18,25 +18,27 @@
 struct VFSArchiveMediator
 {
     std::shared_ptr<VFSFile> file;
-    char buf[65536];
+    enum {bufsz = 65536 * 4};
+    char buf[bufsz];
     
     static ssize_t myread(struct archive *a, void *client_data, const void **buff);
     static off_t myseek(struct archive *a, void *client_data, off_t offset, int whence);
     
-    void setup(struct archive *a)
-    {
-        assert(file.get() != 0);
-        assert(file->GetReadParadigm() >= VFSFile::ReadParadigm::Seek);
-        archive_read_set_callback_data(a, this);
-        archive_read_set_read_callback(a, myread);
-        archive_read_set_seek_callback(a, myseek);
-    }
+    void setup(struct archive *a);
+};
+
+struct VFSArchiveSeekCache
+{
+    struct archive *arc;
+    unsigned long uid; // uid of a last read item. if client want to use such cache, their's uid should be bigger than uid
+    std::shared_ptr<VFSArchiveMediator> mediator; // includes a valid opened VFSFile;
 };
 
 struct VFSArchiveDirEntry
 {
     std::string name; // optimize
     struct stat st;
+    unsigned long aruid; // unique number inside archive in same order as appearance in archive
 };
 
 struct VFSArchiveDir

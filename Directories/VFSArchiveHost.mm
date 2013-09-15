@@ -83,7 +83,7 @@ int VFSArchiveHost::Open()
 int VFSArchiveHost::ReadArchiveListing()
 {
     assert(m_Arc != 0);
-    
+    unsigned long aruid = 1;
     VFSArchiveDir *root = new VFSArchiveDir;
     root->full_path = "/";
     root->name_in_parent  = "";
@@ -98,15 +98,11 @@ int VFSArchiveHost::ReadArchiveListing()
         char path[1024];
         path[0] = '/';
         strcpy(path + 1, archive_entry_pathname(entry));
-        
-//        printf("%s\n", path);
-        
+
         int path_len = (int)strlen(path);
         
-//        bool isdir = path[path_len-1] == '/';
         bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
         
-//        archive_read_data
         char short_name[256];
         char parent_path[1024];
         {
@@ -137,6 +133,7 @@ int VFSArchiveHost::ReadArchiveListing()
             entry->name = short_name;
         }
 
+        entry->aruid = aruid++;
         entry->st = *stat;
         
         if(isdir)
@@ -342,45 +339,19 @@ int VFSArchiveHost::Stat(const char *_path, struct stat &_st, int _flags, bool (
     assert(_path != 0);
     if(_path[0] != '/') return VFSError::NotFound;
     
-    // 1st - try to find _path directly (assume it's directory)
-    char buf[1024], short_name[256];
-    strcpy(buf, _path);
-    
-    char *last_sl = strrchr(buf, '/');
-    
-    if(last_sl == buf && strlen(buf) == 1)
+    if(strlen(_path) == 1)
     {
         // we have no info about root dir - dummy here
         memset(&_st, 0, sizeof(_st));
         return VFSError::Ok;
     }
-    if(last_sl == buf + strlen(buf) - 1)
+    
+    auto it = FindEntry(_path);
+    if(it)
     {
-        *last_sl = 0; // cut trailing slash
-        last_sl = strrchr(buf, '/');
-        assert(last_sl != 0); //sanity check
+        _st = it->st;
+        return VFSError::Ok;
     }
-    
-    strcpy(short_name, last_sl + 1);
-    *(last_sl + 1) = 0;
-    // now:
-    // buf - directory with trailing slash
-    // short_name - entry name within that directory
-    
-    assert(strcmp(short_name, "..")); // no ".." resolving in VFS (currently?)
-    
-    auto i = m_PathToDir.find(buf);
-    if(i == m_PathToDir.end())
-        return VFSError::NotFound;
-    
-    // ok, found dir, now let's find item
-    for(const auto &it: i->second->entries)
-        if(it.name == short_name)
-        {
-            _st = it.st;
-            return VFSError::Ok;
-        }
-    
     return VFSError::NotFound;
 }
 
@@ -416,4 +387,76 @@ int VFSArchiveHost::IterateDirectoryListing(const char *_path, bool (^_handler)(
         }
     
     return VFSError::Ok;
+}
+
+unsigned long VFSArchiveHost::ItemUID(const char* _filename)
+{
+    auto it = FindEntry(_filename);
+    if(it)
+        return it->aruid;
+    return 0;
+}
+
+const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
+{
+    assert(_path != 0);
+    if(_path[0] != '/') return 0;
+    
+    // 1st - try to find _path directly (assume it's directory)
+    char buf[1024], short_name[256];
+    strcpy(buf, _path);
+    
+    char *last_sl = strrchr(buf, '/');
+    
+    if(last_sl == buf && strlen(buf) == 1)
+        return 0; // we have no info about root dir
+    if(last_sl == buf + strlen(buf) - 1)
+    {
+        *last_sl = 0; // cut trailing slash
+        last_sl = strrchr(buf, '/');
+        assert(last_sl != 0); //sanity check
+    }
+    
+    strcpy(short_name, last_sl + 1);
+    *(last_sl + 1) = 0;
+    // now:
+    // buf - directory with trailing slash
+    // short_name - entry name within that directory
+    
+    assert(strcmp(short_name, "..")); // no ".." resolving in VFS (currently?)
+    
+    auto i = m_PathToDir.find(buf);
+    if(i == m_PathToDir.end())
+        return 0;
+    
+    // ok, found dir, now let's find item
+    for(const auto &it: i->second->entries)
+        if(it.name == short_name)
+            return &it;
+    
+    return 0;
+}
+
+void VFSArchiveHost::CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc)
+{
+    if(m_SeekCache.get())
+    {
+        // flush current one
+        archive_read_free(m_SeekCache->arc);
+    }
+    
+    m_SeekCache = _sc;
+}
+
+unsigned long VFSArchiveHost::SeekCachePosition()
+{
+    return m_SeekCache.get() ? m_SeekCache->uid : 0;
+}
+
+std::shared_ptr<VFSArchiveSeekCache> VFSArchiveHost::SeekCache()
+{
+    assert(m_SeekCache.get());
+    auto t = m_SeekCache;
+    m_SeekCache.reset();
+    return t;
 }

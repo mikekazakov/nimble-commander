@@ -23,6 +23,11 @@ OperationStats::OperationStats()
     pthread_mutex_init(&m_Mutex, nullptr);
 }
 
+OperationStats::~OperationStats()
+{
+    pthread_mutex_destroy(&m_Mutex);
+}
+
 void OperationStats::SetMaxValue(uint64_t _max_value)
 {
     assert(_max_value);

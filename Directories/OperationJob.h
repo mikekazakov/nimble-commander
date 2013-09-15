@@ -75,8 +75,8 @@ private:
     volatile bool m_RequestStop;
     
     // Disable copy constructor and operator.
-    OperationJob(const OperationJob&);
-    const OperationJob& operator=(const OperationJob&);
+    OperationJob(const OperationJob&) = delete;
+    const OperationJob& operator=(const OperationJob&) = delete;
 };
 
 #endif

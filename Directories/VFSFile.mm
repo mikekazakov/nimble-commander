@@ -18,7 +18,6 @@ VFSFile::VFSFile(const char* _relative_path, std::shared_ptr<VFSHost> _host):
 
 VFSFile::~VFSFile()
 {
-    Close();
 }
 
 const char* VFSFile::RelativePath() const
@@ -61,6 +60,7 @@ std::shared_ptr<VFSFile> VFSFile::Clone() const { return 0; }
 
 void VFSFile::ComposeFullHostsPath(char *_buf) const
 {
+    // this can be more complex for network vfs - maybe make this function virtual in the future
     // can be optimized
     if(m_RelativePath.empty() && !m_Host.get())
     {
@@ -81,6 +81,7 @@ void VFSFile::ComposeFullHostsPath(char *_buf) const
     strcpy(_buf, "");
     while(hosts_n > 0)
         strcat(_buf, hosts[--hosts_n]->JunctionPath());
-    if(_buf[strlen(_buf)-1]!='/') strcat(_buf, "/");
+//    if(_buf[strlen(_buf)-1]!='/') strcat(_buf, "/");
+    assert(m_RelativePath.c_str()[0] == '/');
     strcat(_buf, m_RelativePath.c_str());
 }

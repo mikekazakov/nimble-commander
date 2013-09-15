@@ -127,8 +127,14 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
 
 - (void)Update
 {
-    if(!m_NativeToNativeJob.get()) return;
-    
+    if(m_NativeToNativeJob.get())
+        [self UpdateNativeToNative];
+    if(m_GenericToNativeJob.get())
+        [self UpdateGenericToNative];
+}
+
+- (void)UpdateNativeToNative
+{
     OperationStats &stats = m_NativeToNativeJob->GetStats();
     float progress = stats.GetProgress();
     if (self.Progress != progress)
@@ -181,9 +187,51 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                 self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
                                   [NSString stringWithUTF8String:file]];
             }
-        
+            
         }
         else assert(0); // sanity check
+        
+        m_LastInfoUpdateTime = time;
+    }
+}
+
+- (void)UpdateGenericToNative
+{
+    OperationStats &stats = m_GenericToNativeJob->GetStats();
+    float progress = stats.GetProgress();
+    if (self.Progress != progress)
+        self.Progress = progress;
+    
+    if (m_GenericToNativeJob->IsPaused() || self.DialogsCount)
+    {
+        return;
+    }
+    
+    int time = stats.GetTime();
+    if (time - m_LastInfoUpdateTime >= 1000)
+    {
+        uint64_t copy_speed = 0;
+        if (time) copy_speed = stats.GetValue()*1000/time;
+        uint64_t eta_value = 0;
+        if (copy_speed) eta_value = (stats.GetMaxValue() - stats.GetValue())/copy_speed;
+            
+        char copied[18] = {0}, total[18] = {0}, speed[18] = {0}, eta[18] = {0};
+        FormHumanReadableSizeRepresentation(stats.GetValue(), copied);
+        FormHumanReadableSizeRepresentation(stats.GetMaxValue(), total);
+        FormHumanReadableSizeRepresentation(copy_speed, speed);
+        if (copy_speed)
+            FormHumanReadableTimeRepresentation(eta_value, eta);
+            
+        if (copy_speed)
+        {
+            self.ShortInfo = [NSString stringWithFormat:@"%s of %s - %s/s - %s",
+                                copied, total, speed, eta];
+        }
+        else
+        {
+            self.ShortInfo = [NSString stringWithFormat:@"%s of %s - %s/s",
+                                copied, total, speed];
+        }
         
         m_LastInfoUpdateTime = time;
     }

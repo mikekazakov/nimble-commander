@@ -273,15 +273,16 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     return alert;
 }
 
-- (OperationDialogAlert *)OnCopyCantAccessSrcFile:(int)_error ForFile:(const char *)_path
+- (OperationDialogAlert *)OnCopyCantAccessSrcFile:(NSError*)_error ForFile:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Failed to access file"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
-                               strerror(_error), [NSString stringWithUTF8String:_path]]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
+                               [_error localizedDescription],
+                               [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     
@@ -303,30 +304,32 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     return alert;
 }
 
-- (OperationDialogAlert *)OnCopyReadError:(int)_error ForFile:(const char *)_path
+- (OperationDialogAlert *)OnCopyReadError:(NSError*)_error ForFile:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Read error"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
-                               strerror(_error), [NSString stringWithUTF8String:_path]]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
+                               [_error localizedDescription],
+                               [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     
     return alert;
 }
 
-- (OperationDialogAlert *)OnCopyWriteError:(int)_error ForFile:(const char *)_path
+- (OperationDialogAlert *)OnCopyWriteError:(NSError*)_error ForFile:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Write error"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
-                               strerror(_error), [NSString stringWithUTF8String:_path]]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
+                               [_error localizedDescription],
+                               [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     

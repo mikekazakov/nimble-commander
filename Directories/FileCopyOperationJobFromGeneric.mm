@@ -8,9 +8,11 @@
 
 #import <sys/dirent.h>
 #import <sys/stat.h>
-#include "FileCopyOperationJobFromGeneric.h"
+#import "FileCopyOperationJobFromGeneric.h"
+#import "Common.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
+#define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
 
 FileCopyOperationJobFromGeneric::FileCopyOperationJobFromGeneric()
 {
@@ -22,12 +24,22 @@ FileCopyOperationJobFromGeneric::FileCopyOperationJobFromGeneric()
     m_OverwriteAll = false;
     m_AppendAll = false;
     m_CurrentlyProcessingItem = 0;
+    m_Buffer1 = 0;
+    m_Buffer2 = 0;
 }
 
 FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
 {
-    
-    
+    if(m_Buffer1)
+    {
+        free(m_Buffer1);
+        m_Buffer1 = 0;
+    }
+    if(m_Buffer2)
+    {
+        free(m_Buffer2);
+        m_Buffer2 = 0;
+    }
 }
 
 void FileCopyOperationJobFromGeneric::Init(FlexChainedStringsChunk *_src_files, // passing ownage to Job
@@ -183,18 +195,12 @@ void FileCopyOperationJobFromGeneric::ProcessItem(const FlexChainedStringsChunk:
     if(m_ItemFlags[_number] & (int)ItemFlags::is_dir)
     {
         assert(itemname[strlen(itemname)-1] == '/');
-            
-        
-
         CopyDirectoryTo(sourcepath, destinationpath);
     }
     else
     {
         CopyFileTo(sourcepath, destinationpath);
     }
-    
-    
-    
 }
 
 bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const char *_dest)
@@ -206,35 +212,153 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
 
 bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_dest)
 {
-    int ret, oldumask, destinationfd = -1;
+    int ret, oldumask, destinationfd = -1, dstopenflags=0;
     std::shared_ptr<VFSFile> src_file;
-    __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
+    struct stat src_stat_buffer, dst_stat_buffer;
+    bool remember_choice = false, was_successful = false, unlink_on_stop = false;
+    unsigned long dest_sz_on_stop = 0, startwriteoff = 0;
+    int64_t preallocate_delta = 0;
+    __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0, totaldestsize=0;
     __block bool io_docancel = false;
     char *readbuf = (char*)m_Buffer1, *writebuf = (char*)m_Buffer2;
+
+statsource:
+    ret = m_SrcHost->Stat(_src, src_stat_buffer, 0, 0);
+    if(ret < 0)
+    { // failed to stat source file
+        if(m_SkipAll) goto statsource;
+        int result = [[m_Operation OnCopyCantAccessSrcFile:VFSError::ToNSError(ret) ForFile:_src] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto createsource;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    }
     
+createsource:
     ret = m_SrcHost->CreateFile(_src, &src_file, 0);
     if(ret < 0)
-    {
-        // TODO: error handling here
-        return false;
+    { // failed to create source file
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantAccessSrcFile:VFSError::ToNSError(ret) ForFile:_src] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto createsource;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
+opensource:
     ret = src_file->Open(VFSFile::OF_Read || VFSFile::OF_ShLock);
     if(ret < 0)
-    {
-        // TODO: error handling here
-        goto cleanup;
+    { // failed to open source file
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantAccessSrcFile:VFSError::ToNSError(ret) ForFile:_src] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto opensource;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
-    oldumask = umask(0);
-    destinationfd = open(_dest, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP); // open file with default permissions
-    umask(oldumask);
-
-    if(destinationfd < 0)
-    {
-        // TODO: error handling here
-        goto cleanup;
+    totaldestsize = src_stat_buffer.st_size;
+    if(stat(_dest, &dst_stat_buffer) != -1) { // file already exist. what should we do now?
+        int result;
+        if(m_SkipAll) goto cleanup;
+        if(m_OverwriteAll) goto decoverwrite;
+        if(m_AppendAll) goto decappend;
+        
+        result = [[m_Operation OnFileExist:_dest
+                                   newsize:src_stat_buffer.st_size
+                                   newtime:src_stat_buffer.st_mtimespec.tv_sec
+                                   exisize:dst_stat_buffer.st_size
+                                   exitime:dst_stat_buffer.st_mtimespec.tv_sec
+                                  remember:&remember_choice] WaitForResult];
+        if(result == FileCopyOperationDR::Overwrite){ if(remember_choice) m_OverwriteAll = true;  goto decoverwrite; }
+        if(result == FileCopyOperationDR::Append)   { if(remember_choice) m_AppendAll = true;     goto decappend;    }
+        if(result == OperationDialogResult::Skip)     { if(remember_choice) m_SkipAll = true;       goto cleanup;      }
+        if(result == OperationDialogResult::Stop)   { RequestStop(); goto cleanup; }
+        
+        // decisions about what to do with existing destination
+    decoverwrite:
+        dstopenflags = O_WRONLY;
+//        erase_xattrs = true;
+        unlink_on_stop = true;
+        dest_sz_on_stop = 0;
+        preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size;
+        goto decend;
+    decappend:
+        dstopenflags = O_WRONLY;
+        totaldestsize += dst_stat_buffer.st_size;
+        startwriteoff = dst_stat_buffer.st_size;
+        dest_sz_on_stop = dst_stat_buffer.st_size;
+//        adjust_dst_time = false;
+//        copy_xattrs = false;
+        unlink_on_stop = false;
+        preallocate_delta = src_stat_buffer.st_size;
+        goto decend;
+    decend:;
     }
+    else { // no dest file - just create it
+        dstopenflags = O_WRONLY|O_CREAT;
+        unlink_on_stop = true;
+        dest_sz_on_stop = 0;
+        preallocate_delta = src_stat_buffer.st_size;
+    }
+    
+opendest: // open file descriptor for destination
+    oldumask = umask(0);
+    if(m_Options.copy_unix_flags) // we want to copy src permissions
+        destinationfd = open(_dest, dstopenflags, src_stat_buffer.st_mode);
+    else // open file with default permissions
+        destinationfd = open(_dest, dstopenflags, S_IRUSR | S_IWUSR | S_IRGRP);
+    umask(oldumask);
+    // TODO: non-blocking opening? current implementation may cause problems
+
+    if(destinationfd == -1)
+    {   // failed to open destination file
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantOpenDestFile:errno ForFile:_dest] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto opendest;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    }
+    
+    // turn off caching for destination file
+    fcntl(destinationfd, F_NOCACHE, 1);
+    
+    // preallocate space for data since we dont want to trash our disk
+    if(preallocate_delta > MIN_PREALLOC_SIZE)
+    {
+        fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, preallocate_delta};
+        if(fcntl(destinationfd, F_PREALLOCATE, &preallocstore) == -1)
+        {
+            preallocstore.fst_flags = F_ALLOCATEALL;
+            fcntl(destinationfd, F_PREALLOCATE, &preallocstore);
+        }
+    }
+    
+dotruncate: // set right size for destination file
+    if(ftruncate(destinationfd, totaldestsize) == -1)
+    {   // failed to set dest file size
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto dotruncate;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    }
+    
+dolseek: // find right position in destination file
+    if(startwriteoff > 0 && lseek(destinationfd, startwriteoff, SEEK_SET) == -1)
+    {   // failed seek in a file. lolwhat?
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto dolseek;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    }
+    
+    
     
     while(true)
     {
@@ -248,9 +372,12 @@ bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_
                 io_nread = src_file->Read(readbuf, BUFFER_SIZE);
                 if(io_nread < 0)
                 {
-                    // TODO: error handling here
-                    io_docancel = true;
-                    return;
+                    if(m_SkipAll) {io_docancel = true; return;}
+                    int result = [[m_Operation OnCopyReadError:VFSError::ToNSError((int)io_nread) ForFile:_dest] WaitForResult];
+                    if(result == OperationDialogResult::Retry) goto doread;
+                    if(result == OperationDialogResult::Skip) {io_docancel = true; return;}
+                    if(result == OperationDialogResult::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
+                    if(result == OperationDialogResult::Stop) { io_docancel = true; RequestStop(); return;}
                 }
                 io_totalread += io_nread;
             }
@@ -265,7 +392,7 @@ bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_
                 if(nwrite == -1)
                 {
                     if(m_SkipAll) {io_docancel = true; return;}
-                    int result = [[m_Operation OnCopyWriteError:errno ForFile:_dest] WaitForResult];
+                    int result = [[m_Operation OnCopyWriteError:[NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil] ForFile:_dest] WaitForResult];
                     if(result == OperationDialogResult::Retry) goto dowrite;
                     if(result == OperationDialogResult::Skip) {io_docancel = true; return;}
                     if(result == OperationDialogResult::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
@@ -289,10 +416,23 @@ bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_
         m_Stats.SetValue(m_TotalCopied);
     }
     
+    // other stuff here
+    
+    was_successful = true;
     
 cleanup:
+    src_file->Close();
+    if(!was_successful && destinationfd != -1)
+    {
+        // we need to revert what we've done
+        ftruncate(destinationfd, dest_sz_on_stop);
+        close(destinationfd);
+        destinationfd = -1;
+        if(unlink_on_stop)
+            unlink(_dest);
+    }
     if(destinationfd >= 0) close(destinationfd);
-    return true;
+    return was_successful;
 }
 
 

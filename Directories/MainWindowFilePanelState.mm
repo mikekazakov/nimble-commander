@@ -319,13 +319,11 @@ enum ActiveState
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{
-    // TODO: some GoToGlobal should be here
-    [m_LeftPanelController GoToRelativeToHostAsync:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
+    [m_LeftPanelController GoToGlobalHostsPathAsync:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
-    // TODO: some GoToGlobal should be here
-    [m_RightPanelController GoToRelativeToHostAsync:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
+    [m_RightPanelController GoToGlobalHostsPathAsync:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
 }
 
 - (IBAction)LeftPanelGoto:(id)sender{
@@ -574,13 +572,13 @@ enum ActiveState
     char dirpath[__DARWIN_MAXPATHLEN];
     if(m_ActiveState == StateLeftPanel)
     {
-        m_LeftPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
-        [m_RightPanelController GoToRelativeToHostAsync:dirpath];
+        m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
+        [m_RightPanelController GoToGlobalHostsPathAsync:dirpath];
     }
     else
     {
-        m_RightPanelData->GetDirectoryPathWithTrailingSlash(dirpath);
-        [m_LeftPanelController GoToRelativeToHostAsync:dirpath];
+        m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
+        [m_LeftPanelController GoToGlobalHostsPathAsync:dirpath];
     }
 }
 

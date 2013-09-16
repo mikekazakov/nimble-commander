@@ -100,3 +100,5 @@ struct MachTimeBenchmark
 - (CGColorRef) SafeCGColorRef;
 + (NSColor *)colorWithCGColorSafe:(CGColorRef)CGColor;
 @end
+
+inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }

@@ -1108,8 +1108,8 @@
 				CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */,
 				CFAC50D21714027F00A3E5C5 /* FileCopyOperationJob.h */,
 				CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */,
-				CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */,
 				CF09827017DEDC3700F0871C /* FileCopyOperationJobFromGeneric.h */,
+				CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */,
 			);
 			name = FileCopyOperation;
 			sourceTree = "<group>";

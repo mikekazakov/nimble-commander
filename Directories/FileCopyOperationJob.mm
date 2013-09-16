@@ -458,7 +458,7 @@ retry_stat:
             }
             else if (!m_SkipAll)
             {
-                int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:fullpath]
+                int result = [[m_Operation OnCopyCantAccessSrcFile:ErrnoToNSError() ForFile:fullpath]
                               WaitForResult];
                 if (result == OperationDialogResult::Retry) goto retry_opendir;
                 else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
@@ -472,7 +472,7 @@ retry_stat:
     }
     else if (!m_SkipAll)
     {
-        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:fullpath]
+        int result = [[m_Operation OnCopyCantAccessSrcFile:ErrnoToNSError() ForFile:fullpath]
                       WaitForResult];
         if (result == OperationDialogResult::Retry) goto retry_stat;
         else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
@@ -766,7 +766,7 @@ retry_rename:
     ret = rename(sourcepath, m_Destination);
     if (ret != 0)
     {
-        int result = [[m_Operation OnCopyWriteError:errno ForFile:m_Destination] WaitForResult];
+        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:m_Destination] WaitForResult];
         if (result == OperationDialogResult::Retry) goto retry_rename;
         else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
     }
@@ -816,7 +816,7 @@ retry_rename:
     ret = rename(sourcepath, destpath);
     if (ret != 0)
     {
-        int result = [[m_Operation OnCopyWriteError:errno ForFile:m_Destination] WaitForResult];
+        int result = [[m_Operation OnCopyWriteError:[NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil] ForFile:m_Destination] WaitForResult];
         if (result == OperationDialogResult::Retry) goto retry_rename;
         else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
     }
@@ -835,7 +835,7 @@ doreadlink:
     if(sz == -1)
     {   // failed to read original symlink
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:_source_symlink] WaitForResult];
+        int result = [[m_Operation OnCopyCantAccessSrcFile:ErrnoToNSError() ForFile:_source_symlink] WaitForResult];
         if(result == OperationDialogResult::Retry) goto doreadlink;
         if(result == OperationDialogResult::Skip) goto cleanup;
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -972,6 +972,7 @@ bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
     struct stat src_stat_buffer, dst_stat_buffer;
     char *readbuf = (char*)m_Buffer1, *writebuf = (char*)m_Buffer2;
     int dstopenflags=0, sourcefd=-1, destinationfd=-1, fcntlret;
+    int64_t preallocate_delta = 0;    
     unsigned long startwriteoff = 0, totaldestsize = 0, dest_sz_on_stop = 0;
     bool adjust_dst_time = true, copy_xattrs = true, erase_xattrs = false, remember_choice = false,
     was_successful = false, unlink_on_stop = false;
@@ -985,7 +986,7 @@ opensource:
     if((sourcefd = open(_src, O_RDONLY|O_SHLOCK|O_NONBLOCK)) == -1)
     {  // failed to open source file
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:_src] WaitForResult];
+        int result = [[m_Operation OnCopyCantAccessSrcFile:ErrnoToNSError() ForFile:_src] WaitForResult];
         if(result == OperationDialogResult::Retry) goto opensource;
         if(result == OperationDialogResult::Skip) goto cleanup;
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -1001,7 +1002,7 @@ statsource: // get information about source file
     if(fstat(sourcefd, &src_stat_buffer) == -1)
     {   // failed to stat source
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantAccessSrcFile:errno ForFile:_src] WaitForResult];
+        int result = [[m_Operation OnCopyCantAccessSrcFile:ErrnoToNSError() ForFile:_src] WaitForResult];
         if(result == OperationDialogResult::Retry) goto statsource;
         if(result == OperationDialogResult::Skip) goto cleanup;
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -1034,12 +1035,14 @@ statsource: // get information about source file
         erase_xattrs = true;
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
+        preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size;
         goto decend;
     decappend:
         dstopenflags = O_WRONLY;
         totaldestsize += dst_stat_buffer.st_size;
         startwriteoff = dst_stat_buffer.st_size;
         dest_sz_on_stop = dst_stat_buffer.st_size;
+        preallocate_delta = src_stat_buffer.st_size;        
         adjust_dst_time = false;
         copy_xattrs = false;
         unlink_on_stop = false;
@@ -1051,6 +1054,7 @@ statsource: // get information about source file
         dstopenflags = O_WRONLY|O_CREAT;
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
+        preallocate_delta = src_stat_buffer.st_size;        
     }
     
 opendest: // open file descriptor for destination
@@ -1071,23 +1075,23 @@ opendest: // open file descriptor for destination
         if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
+    fcntl(destinationfd, F_NOCACHE, 1); // caching is meaningless here?
     // preallocate space for data since we dont want to trash our disk
-    if(src_stat_buffer.st_size > MIN_PREALLOC_SIZE)
+    if(preallocate_delta > MIN_PREALLOC_SIZE)
     {
-        fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, src_stat_buffer.st_size};
+        fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, preallocate_delta};
         if(fcntl(destinationfd, F_PREALLOCATE, &preallocstore) == -1)
         {
             preallocstore.fst_flags = F_ALLOCATEALL;
             fcntl(destinationfd, F_PREALLOCATE, &preallocstore);
         }
     }
-    fcntl(destinationfd, F_NOCACHE, 1); // caching is meaningless here?
     
 dotruncate: // set right size for destination file
     if(ftruncate(destinationfd, totaldestsize) == -1)
     {   // failed to set dest file size
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyWriteError:errno ForFile:_dest] WaitForResult];
+        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
         if(result == OperationDialogResult::Retry) goto dotruncate;
         if(result == OperationDialogResult::Skip) goto cleanup;
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -1095,10 +1099,10 @@ dotruncate: // set right size for destination file
     }
     
 dolseek: // find right position in destination file
-    if(lseek(destinationfd, startwriteoff, SEEK_SET) == -1)
+    if(startwriteoff > 0 && lseek(destinationfd, startwriteoff, SEEK_SET) == -1)
     {   // failed seek in a file. lolwhat?
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyWriteError:errno ForFile:_dest] WaitForResult];
+        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
         if(result == OperationDialogResult::Retry) goto dolseek;
         if(result == OperationDialogResult::Skip) goto cleanup;
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -1118,7 +1122,7 @@ dolseek: // find right position in destination file
                 if(io_nread == -1)
                 {
                     if(m_SkipAll) {io_docancel = true; return;}
-                    int result = [[m_Operation OnCopyReadError:errno ForFile:_dest] WaitForResult];
+                    int result = [[m_Operation OnCopyReadError:ErrnoToNSError() ForFile:_dest] WaitForResult];
                     if(result == OperationDialogResult::Retry) goto doread;
                     if(result == OperationDialogResult::Skip) {io_docancel = true; return;}
                     if(result == OperationDialogResult::SkipAll) {io_docancel = true; m_SkipAll = true; return;}
@@ -1137,7 +1141,7 @@ dolseek: // find right position in destination file
                 if(nwrite == -1)
                 {
                     if(m_SkipAll) {io_docancel = true; return;}
-                    int result = [[m_Operation OnCopyWriteError:errno ForFile:_dest] WaitForResult];
+                    int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
                     if(result == OperationDialogResult::Retry) goto dowrite;
                     if(result == OperationDialogResult::Skip) {io_docancel = true; return;}
                     if(result == OperationDialogResult::SkipAll) {io_docancel = true; m_SkipAll = true; return;}

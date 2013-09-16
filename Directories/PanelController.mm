@@ -480,18 +480,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     strcpy(rest, _path);
     hosts->push_back(m_HostsStack[hn++]);
     
-    while(true)
-    {
+    while(true) {
         if(hn == m_HostsStack.size()) break;
         
         char junction[MAXPATHLEN];
         strcpy(junction, m_HostsStack[hn]->JunctionPath());
         
-        if(strncmp(rest, junction, strlen(junction)) == 0)
-        {
+        if(strncmp(rest, junction, strlen(junction)) == 0) {
             hosts->push_back(m_HostsStack[hn++]);
             strcpy(rest, rest + strlen(junction));
         }
+        else break;
     }
     
     strcpy(_rest, rest);

@@ -61,7 +61,7 @@ int VFSArchiveFile::Open(int _open_flags)
         if(res < 0)
         {
             Close();
-            return -1; // TODO right error codes
+            return VFSError::FromLibarchive(archive_errno(m_Arc));
         }
         bool found = false;
         struct archive_entry *entry;
@@ -187,8 +187,9 @@ ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
     if(size < 0)
     {
         // TODO: libarchive error - convert it into our errors
-        printf("%s\n", archive_error_string(m_Arc));
-        return -1;
+        printf("libarchive error: %s\n", archive_error_string(m_Arc));
+//        return -1;
+        return VFSError::FromLibarchive(archive_errno(m_Arc));
     }
     
     return size;

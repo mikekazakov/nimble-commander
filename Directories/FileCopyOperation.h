@@ -60,10 +60,10 @@ struct FileCopyOperationOptions
 
 - (OperationDialogAlert *)OnDestCantCreateDir:(int)_error ForDir:(const char *)_path;
 - (OperationDialogAlert *)OnCopyCantCreateDir:(int)_error ForDir:(const char *)_path;
-- (OperationDialogAlert *)OnCopyCantAccessSrcFile:(int)_error ForFile:(const char *)_path;
+- (OperationDialogAlert *)OnCopyCantAccessSrcFile:(NSError*)_error ForFile:(const char *)_path;
 - (OperationDialogAlert *)OnCopyCantOpenDestFile:(int)_error ForFile:(const char *)_path;
-- (OperationDialogAlert *)OnCopyReadError:(int)_error ForFile:(const char *)_path;
-- (OperationDialogAlert *)OnCopyWriteError:(int)_error ForFile:(const char *)_path;
+- (OperationDialogAlert *)OnCopyReadError:(NSError*)_error ForFile:(const char *)_path;
+- (OperationDialogAlert *)OnCopyWriteError:(NSError*)_error ForFile:(const char *)_path;
 - (FileAlreadyExistSheetController *)OnFileExist: (const char*)_path
                                          newsize: (unsigned long)_newsize
                                          newtime: (time_t) _newtime

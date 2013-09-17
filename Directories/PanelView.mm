@@ -12,12 +12,7 @@
 
 #import "QuickPreview.h"
 #import "PanelController.h"
-
-#define ISUNICODECOMBININGCHARACTER(a) (\
-    ((a) >= 0x0300 && (a) <= 0x036F) || \
-    ((a) >= 0x1DC0 && (a) <= 0x1DFF) || \
-    ((a) >= 0x20D0 && (a) <= 0x20FF) || \
-    ((a) >= 0xFE20 && (a) <= 0xFE2F) )
+#import "Common.h"
 
 struct CursorSelectionState
 {
@@ -101,7 +96,6 @@ struct CursorSelectionState
 - (void)drawRect:(NSRect)dirtyRect
 {
     if (!m_State.Data || !m_Presentation) return;
-    
     m_Presentation->Draw(dirtyRect);
 }
 

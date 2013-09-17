@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFSNativeListing.h"
-#import "VFSNativeHost.h"
 #import <sys/types.h>
 #import <sys/dirent.h>
 #import <sys/stat.h>
@@ -19,6 +17,10 @@
 #import <stdlib.h>
 #import <assert.h>
 
+#import "VFSNativeListing.h"
+#import "VFSNativeHost.h"
+#import "Common.h"
+
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
@@ -26,6 +28,7 @@ struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked)
 VFSNativeListing::VFSNativeListing(const char *_path, std::shared_ptr<VFSNativeHost> _host):
     VFSListing(_path, _host)
 {
+    assert(sizeof(VFSNativeListingItem) == 128);
 }
 
 VFSNativeListing::~VFSNativeListing()
@@ -35,10 +38,6 @@ VFSNativeListing::~VFSNativeListing()
 
 int VFSNativeListing::LoadListingData(bool (^_checker)())
 {
-//    int aa = sizeof(VFSListingItem);
-//    int a = sizeof(VFSNativeListingItem);
-//    assert(sizeof(VFSNativeListingItem) == 128);
-//    _target->clear();
     EraseListing();
     
     DIR *dirp = opendir(RelativePath());
@@ -60,7 +59,7 @@ int VFSNativeListing::LoadListingData(bool (^_checker)())
     strcpy(pathwithslash, RelativePath());
     if(pathwithslash[strlen(pathwithslash)-1] != '/' ) strcat(pathwithslash, "/");
     size_t pathwithslash_len = strlen(pathwithslash);
-    
+
     while((entp = _readdir_unlocked(dirp, 1)) != NULL)
     {
         if(_checker && _checker())
@@ -86,7 +85,7 @@ int VFSNativeListing::LoadListingData(bool (^_checker)())
                 entp->d_type = DT_DIR; // a very-very strange bugfix
         }
         
-        m_Items.push_back(VFSNativeListingItem() = {}); // check me twise - does it really zeroing all members?
+        m_Items.push_back(VFSNativeListingItem() = {}); // check me twice - does it really zeroing all members?
         
         VFSNativeListingItem &current = m_Items.back();
 //        memset(&current, 0, sizeof(VFSNativeListingItem));

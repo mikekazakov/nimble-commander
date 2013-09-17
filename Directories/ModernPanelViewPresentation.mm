@@ -203,7 +203,11 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
 {
     m_Size.width = m_Size.height = 0;
 
-    m_IconCache->SetUpdateCallback(^{ SetViewNeedsDisplay(); });
+    m_IconCache->SetUpdateCallback(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            SetViewNeedsDisplay();
+        });
+    });
     BuildGeometry();
     BuildAppearance();
         

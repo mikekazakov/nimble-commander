@@ -7,27 +7,49 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "Directories/FSEventsDirUpdate.mm"
-         timestampString = "390966313.687693"
+         filePath = "Directories/filesysinfo.mm"
+         timestampString = "394879608.414881"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "172"
-         endingLineNumber = "172"
-         landmarkName = "FSEventsDirUpdate::DiskDisappeared(DADiskRef disk, void *context)"
-         landmarkType = "5">
+         startingLineNumber = "338"
+         endingLineNumber = "338"
+         landmarkName = "FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilitiesInformation *_c, VolumeAttributesInformation *_a)"
+         landmarkType = "7">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Directories/EncodingsAdditions.cpp"
+         timestampString = "396089963.883449"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "59"
+         endingLineNumber = "59"
+         landmarkName = "EncodingFromName(const char* _name)"
+         landmarkType = "7">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "Directories/MainWindowFilePanelState.mm"
-         timestampString = "392709910.540609"
+         filePath = "Directories/BigFileViewHex.mm"
+         timestampString = "396151933.301119"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "973"
-         endingLineNumber = "973"
-         landmarkName = "-WindowDidResize"
+         startingLineNumber = "282"
+         endingLineNumber = "282"
+         landmarkName = "-ClearLayout"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
+   <ExceptionBreakpoints>
+      <ExceptionBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         scope = "0"
+         stopOnStyle = "0">
+      </ExceptionBreakpoint>
+   </ExceptionBreakpoints>
 </Bucket>

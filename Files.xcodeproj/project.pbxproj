@@ -26,6 +26,8 @@
 		B5AD9CE31706D5350099BC6D /* TimedDummyOperationTestDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */; };
 		B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
 		B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
+		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
+		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */; };
 		CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
 		CF039E97179041CE00DC85D6 /* StackOfDisappearingWidgets.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039E96179041CE00DC85D6 /* StackOfDisappearingWidgets.mm */; };
@@ -88,21 +90,6 @@
 		CF9B9BCF17BA7C68002A863A /* pref_panels_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF9B9BCE17BA7C68002A863A /* pref_panels_icon.png */; };
 		CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060317CB2DC900CB8146 /* VFSFile.mm */; };
 		CF9D060817CB3B0400CB8146 /* VFSNativeFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060617CB3B0400CB8146 /* VFSNativeFile.mm */; };
-		CF9D0B5217CC5C4900CB8146 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B3817CC5C4900CB8146 /* adler32.c */; };
-		CF9D0B5317CC5C4900CB8146 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B3917CC5C4900CB8146 /* compress.c */; };
-		CF9D0B5417CC5C4900CB8146 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B3A17CC5C4900CB8146 /* crc32.c */; };
-		CF9D0B5517CC5C4900CB8146 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B3C17CC5C4900CB8146 /* deflate.c */; };
-		CF9D0B5617CC5C4900CB8146 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B3E17CC5C4900CB8146 /* gzclose.c */; };
-		CF9D0B5717CC5C4900CB8146 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4017CC5C4900CB8146 /* gzlib.c */; };
-		CF9D0B5817CC5C4900CB8146 /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4117CC5C4900CB8146 /* gzread.c */; };
-		CF9D0B5917CC5C4900CB8146 /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4217CC5C4900CB8146 /* gzwrite.c */; };
-		CF9D0B5A17CC5C4900CB8146 /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4317CC5C4900CB8146 /* infback.c */; };
-		CF9D0B5B17CC5C4900CB8146 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4417CC5C4900CB8146 /* inffast.c */; };
-		CF9D0B5C17CC5C4900CB8146 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4717CC5C4900CB8146 /* inflate.c */; };
-		CF9D0B5D17CC5C4900CB8146 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4917CC5C4900CB8146 /* inftrees.c */; };
-		CF9D0B5E17CC5C4900CB8146 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4B17CC5C4900CB8146 /* trees.c */; };
-		CF9D0B5F17CC5C4900CB8146 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B4D17CC5C4900CB8146 /* uncompr.c */; };
-		CF9D0B6017CC5C4900CB8146 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B5017CC5C4900CB8146 /* zutil.c */; };
 		CF9D0B6417CC5FB800CB8146 /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B6217CC5FB800CB8146 /* VFSArchiveHost.mm */; };
 		CF9D0B6717CC910100CB8146 /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B6517CC910100CB8146 /* VFSArchiveInternal.mm */; };
 		CF9D0E7517CC961100CB8146 /* archive_acl.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF417CC961100CB8146 /* archive_acl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -290,6 +277,8 @@
 		B5F00AC91711FCC200176F79 /* OperationDialogAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationDialogAlert.h; sourceTree = "<group>"; };
 		B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationDialogAlert.mm; sourceTree = "<group>"; };
 		B5F00ACF1712012C00176F79 /* OperationDialogProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OperationDialogProtocol.h; sourceTree = "<group>"; };
+		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Directories/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
+		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Directories/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSEventsDirUpdate.h; sourceTree = "<group>"; };
 		CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSEventsDirUpdate.mm; sourceTree = "<group>"; };
 		CF02F1D516F38805000AF870 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encodings.cpp; sourceTree = "<group>"; };
@@ -398,32 +387,6 @@
 		CF9D060417CB2DC900CB8146 /* VFSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSFile.h; sourceTree = "<group>"; };
 		CF9D060617CB3B0400CB8146 /* VFSNativeFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNativeFile.mm; sourceTree = "<group>"; };
 		CF9D060717CB3B0400CB8146 /* VFSNativeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNativeFile.h; sourceTree = "<group>"; };
-		CF9D0B3817CC5C4900CB8146 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = 3rd_party/zlib/adler32.c; sourceTree = "<group>"; };
-		CF9D0B3917CC5C4900CB8146 /* compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compress.c; path = 3rd_party/zlib/compress.c; sourceTree = "<group>"; };
-		CF9D0B3A17CC5C4900CB8146 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crc32.c; path = 3rd_party/zlib/crc32.c; sourceTree = "<group>"; };
-		CF9D0B3B17CC5C4900CB8146 /* crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crc32.h; path = 3rd_party/zlib/crc32.h; sourceTree = "<group>"; };
-		CF9D0B3C17CC5C4900CB8146 /* deflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = deflate.c; path = 3rd_party/zlib/deflate.c; sourceTree = "<group>"; };
-		CF9D0B3D17CC5C4900CB8146 /* deflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = deflate.h; path = 3rd_party/zlib/deflate.h; sourceTree = "<group>"; };
-		CF9D0B3E17CC5C4900CB8146 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzclose.c; path = 3rd_party/zlib/gzclose.c; sourceTree = "<group>"; };
-		CF9D0B3F17CC5C4900CB8146 /* gzguts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gzguts.h; path = 3rd_party/zlib/gzguts.h; sourceTree = "<group>"; };
-		CF9D0B4017CC5C4900CB8146 /* gzlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzlib.c; path = 3rd_party/zlib/gzlib.c; sourceTree = "<group>"; };
-		CF9D0B4117CC5C4900CB8146 /* gzread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzread.c; path = 3rd_party/zlib/gzread.c; sourceTree = "<group>"; };
-		CF9D0B4217CC5C4900CB8146 /* gzwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzwrite.c; path = 3rd_party/zlib/gzwrite.c; sourceTree = "<group>"; };
-		CF9D0B4317CC5C4900CB8146 /* infback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = infback.c; path = 3rd_party/zlib/infback.c; sourceTree = "<group>"; };
-		CF9D0B4417CC5C4900CB8146 /* inffast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inffast.c; path = 3rd_party/zlib/inffast.c; sourceTree = "<group>"; };
-		CF9D0B4517CC5C4900CB8146 /* inffast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inffast.h; path = 3rd_party/zlib/inffast.h; sourceTree = "<group>"; };
-		CF9D0B4617CC5C4900CB8146 /* inffixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inffixed.h; path = 3rd_party/zlib/inffixed.h; sourceTree = "<group>"; };
-		CF9D0B4717CC5C4900CB8146 /* inflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inflate.c; path = 3rd_party/zlib/inflate.c; sourceTree = "<group>"; };
-		CF9D0B4817CC5C4900CB8146 /* inflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inflate.h; path = 3rd_party/zlib/inflate.h; sourceTree = "<group>"; };
-		CF9D0B4917CC5C4900CB8146 /* inftrees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inftrees.c; path = 3rd_party/zlib/inftrees.c; sourceTree = "<group>"; };
-		CF9D0B4A17CC5C4900CB8146 /* inftrees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inftrees.h; path = 3rd_party/zlib/inftrees.h; sourceTree = "<group>"; };
-		CF9D0B4B17CC5C4900CB8146 /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = trees.c; path = 3rd_party/zlib/trees.c; sourceTree = "<group>"; };
-		CF9D0B4C17CC5C4900CB8146 /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trees.h; path = 3rd_party/zlib/trees.h; sourceTree = "<group>"; };
-		CF9D0B4D17CC5C4900CB8146 /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = uncompr.c; path = 3rd_party/zlib/uncompr.c; sourceTree = "<group>"; };
-		CF9D0B4E17CC5C4900CB8146 /* zconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zconf.h; path = 3rd_party/zlib/zconf.h; sourceTree = "<group>"; };
-		CF9D0B4F17CC5C4900CB8146 /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = 3rd_party/zlib/zlib.h; sourceTree = "<group>"; };
-		CF9D0B5017CC5C4900CB8146 /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zutil.c; path = 3rd_party/zlib/zutil.c; sourceTree = "<group>"; };
-		CF9D0B5117CC5C4900CB8146 /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zutil.h; path = 3rd_party/zlib/zutil.h; sourceTree = "<group>"; };
 		CF9D0B6217CC5FB800CB8146 /* VFSArchiveHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveHost.mm; sourceTree = "<group>"; };
 		CF9D0B6317CC5FB800CB8146 /* VFSArchiveHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveHost.h; sourceTree = "<group>"; };
 		CF9D0B6517CC910100CB8146 /* VFSArchiveInternal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveInternal.mm; sourceTree = "<group>"; };
@@ -644,6 +607,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
+				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
 				CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */,
 				CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */,
 				CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */,
@@ -871,39 +836,6 @@
 				CF07DE36175D971E00757DE1 /* MainWindowStateProtocol.h */,
 			);
 			name = MainWindow;
-			sourceTree = "<group>";
-		};
-		CF9D0B3717CC5C3D00CB8146 /* zlib */ = {
-			isa = PBXGroup;
-			children = (
-				CF9D0B3817CC5C4900CB8146 /* adler32.c */,
-				CF9D0B3917CC5C4900CB8146 /* compress.c */,
-				CF9D0B3A17CC5C4900CB8146 /* crc32.c */,
-				CF9D0B3B17CC5C4900CB8146 /* crc32.h */,
-				CF9D0B3C17CC5C4900CB8146 /* deflate.c */,
-				CF9D0B3D17CC5C4900CB8146 /* deflate.h */,
-				CF9D0B3E17CC5C4900CB8146 /* gzclose.c */,
-				CF9D0B3F17CC5C4900CB8146 /* gzguts.h */,
-				CF9D0B4017CC5C4900CB8146 /* gzlib.c */,
-				CF9D0B4117CC5C4900CB8146 /* gzread.c */,
-				CF9D0B4217CC5C4900CB8146 /* gzwrite.c */,
-				CF9D0B4317CC5C4900CB8146 /* infback.c */,
-				CF9D0B4417CC5C4900CB8146 /* inffast.c */,
-				CF9D0B4517CC5C4900CB8146 /* inffast.h */,
-				CF9D0B4617CC5C4900CB8146 /* inffixed.h */,
-				CF9D0B4717CC5C4900CB8146 /* inflate.c */,
-				CF9D0B4817CC5C4900CB8146 /* inflate.h */,
-				CF9D0B4917CC5C4900CB8146 /* inftrees.c */,
-				CF9D0B4A17CC5C4900CB8146 /* inftrees.h */,
-				CF9D0B4B17CC5C4900CB8146 /* trees.c */,
-				CF9D0B4C17CC5C4900CB8146 /* trees.h */,
-				CF9D0B4D17CC5C4900CB8146 /* uncompr.c */,
-				CF9D0B4E17CC5C4900CB8146 /* zconf.h */,
-				CF9D0B4F17CC5C4900CB8146 /* zlib.h */,
-				CF9D0B5017CC5C4900CB8146 /* zutil.c */,
-				CF9D0B5117CC5C4900CB8146 /* zutil.h */,
-			);
-			name = zlib;
 			sourceTree = "<group>";
 		};
 		CF9D0B6117CC5F9D00CB8146 /* Archive */ = {
@@ -1235,6 +1167,8 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF029BFC17E87C2700415033 /* libz.a */,
+				CF029BFA17E878A400415033 /* libbz2.a */,
 				CF561B1517D6290F009D37A4 /* liblzma.a */,
 				CF561B1317D627B3009D37A4 /* liblzma.a */,
 				CF561B1117D62626009D37A4 /* liblzma.dylib */,
@@ -1301,7 +1235,6 @@
 			children = (
 				CF29313117D9914700648A90 /* rdrand */,
 				CF9D0CEE17CC957700CB8146 /* archivelib */,
-				CF9D0B3717CC5C3D00CB8146 /* zlib */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
 				CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */,
 				CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */,
@@ -1425,7 +1358,6 @@
 				CF9D0EC917CC961100CB8146 /* archive_write_open_memory.c in Sources */,
 				CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */,
 				CF9D0E9517CC961100CB8146 /* archive_read_support_filter_bzip2.c in Sources */,
-				CF9D0B5A17CC5C4900CB8146 /* infback.c in Sources */,
 				CFC5123616C5284800D247EE /* PanelData.mm in Sources */,
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
 				CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */,
@@ -1433,7 +1365,6 @@
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
-				CF9D0B5C17CC5C4900CB8146 /* inflate.c in Sources */,
 				CF9D0E9117CC961100CB8146 /* archive_read_open_memory.c in Sources */,
 				CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */,
 				CF9D0E9E17CC961100CB8146 /* archive_read_support_filter_uu.c in Sources */,
@@ -1450,7 +1381,6 @@
 				CF9D0EB117CC961100CB8146 /* archive_string.c in Sources */,
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */,
 				CF9D0EAD17CC961100CB8146 /* archive_read_support_format_xar.c in Sources */,
-				CF9D0B5317CC5C4900CB8146 /* compress.c in Sources */,
 				CF9D0EAA17CC961100CB8146 /* archive_read_support_format_rar.c in Sources */,
 				CF1648B117D57BDA00D0B17E /* VFSArchiveListing.mm in Sources */,
 				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
@@ -1489,7 +1419,6 @@
 				CF9D0EAB17CC961100CB8146 /* archive_read_support_format_raw.c in Sources */,
 				B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */,
 				CF9D0ED617CC961100CB8146 /* archive_write_set_format_xar.c in Sources */,
-				CF9D0B5917CC5C4900CB8146 /* gzwrite.c in Sources */,
 				CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */,
 				CF9D0EA217CC961100CB8146 /* archive_read_support_format_ar.c in Sources */,
 				CF9D0E8B17CC961100CB8146 /* archive_read_disk_set_standard_lookup.c in Sources */,
@@ -1497,7 +1426,6 @@
 				CF9D0EC117CC961100CB8146 /* archive_write_add_filter.c in Sources */,
 				CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF9D0EB017CC961100CB8146 /* archive_string_sprintf.c in Sources */,
-				CF9D0B5D17CC5C4900CB8146 /* inftrees.c in Sources */,
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
 				CF6617EF17E48B5100593225 /* VFSError.mm in Sources */,
@@ -1522,13 +1450,11 @@
 				CF9D0E7D17CC961100CB8146 /* archive_entry_stat.c in Sources */,
 				CF9D0E8E17CC961100CB8146 /* archive_read_open_fd.c in Sources */,
 				CF9D0EC517CC961100CB8146 /* archive_write_disk_windows.c in Sources */,
-				CF9D0B5517CC5C4900CB8146 /* deflate.c in Sources */,
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
 				CF9D0E7E17CC961100CB8146 /* archive_entry_strmode.c in Sources */,
 				CF9D0EA617CC961100CB8146 /* archive_read_support_format_empty.c in Sources */,
 				CF9D0E7617CC961100CB8146 /* archive_check_magic.c in Sources */,
 				CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */,
-				CF9D0B5217CC5C4900CB8146 /* adler32.c in Sources */,
 				CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */,
 				CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */,
 				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,
@@ -1538,7 +1464,6 @@
 				CF9D0ED417CC961100CB8146 /* archive_write_set_format_ustar.c in Sources */,
 				CF9D0E8517CC961100CB8146 /* archive_ppmd7.c in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
-				CF9D0B5417CC5C4900CB8146 /* crc32.c in Sources */,
 				CF9D0ED517CC961100CB8146 /* archive_write_set_format_v7tar.c in Sources */,
 				CF9D0E8717CC961100CB8146 /* archive_read_append_filter.c in Sources */,
 				CF9D0ED817CC961100CB8146 /* archive_write_set_format.c in Sources */,
@@ -1549,20 +1474,15 @@
 				CF9D0ECB17CC961100CB8146 /* archive_write_set_format_ar.c in Sources */,
 				CF9D0E8617CC961100CB8146 /* archive_rb.c in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
-				CF9D0B6017CC5C4900CB8146 /* zutil.c in Sources */,
-				CF9D0B5B17CC5C4900CB8146 /* inffast.c in Sources */,
 				CF9D0E9F17CC961100CB8146 /* archive_read_support_filter_xz.c in Sources */,
 				CF9D0ECE17CC961100CB8146 /* archive_write_set_format_cpio.c in Sources */,
 				CF9D0EC217CC961100CB8146 /* archive_write_disk_acl.c in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
-				CF9D0B5817CC5C4900CB8146 /* gzread.c in Sources */,
 				CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */,
 				CF9D0E7517CC961100CB8146 /* archive_acl.c in Sources */,
 				CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */,
-				CF9D0B5F17CC5C4900CB8146 /* uncompr.c in Sources */,
 				CF09827117DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */,
-				CF9D0B5717CC5C4900CB8146 /* gzlib.c in Sources */,
 				CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */,
 				CF9D0EA317CC961100CB8146 /* archive_read_support_format_by_code.c in Sources */,
 				CF9D0EC617CC961100CB8146 /* archive_write_open_fd.c in Sources */,
@@ -1580,7 +1500,6 @@
 				CF9D0EAF17CC961100CB8146 /* archive_read.c in Sources */,
 				CF9D0E7C17CC961100CB8146 /* archive_entry_sparse.c in Sources */,
 				CF9D0ED317CC961100CB8146 /* archive_write_set_format_shar.c in Sources */,
-				CF9D0B5E17CC5C4900CB8146 /* trees.c in Sources */,
 				CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */,
@@ -1620,7 +1539,6 @@
 				CF9D0E7817CC961100CB8146 /* archive_crypto.c in Sources */,
 				CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */,
 				CF9D0E9417CC961100CB8146 /* archive_read_support_filter_all.c in Sources */,
-				CF9D0B5617CC5C4900CB8146 /* gzclose.c in Sources */,
 				CF9D0EC317CC961100CB8146 /* archive_write_disk_posix.c in Sources */,
 				CF9D0E8F17CC961100CB8146 /* archive_read_open_file.c in Sources */,
 				CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */,

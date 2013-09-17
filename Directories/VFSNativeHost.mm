@@ -25,7 +25,7 @@
 #import "VFSNativeFile.h"
 #import "VFSError.h"
 #import "FSEventsDirUpdate.h"
-
+#import "Common.h"
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
@@ -73,10 +73,8 @@ int VFSNativeHost::CreateFile(const char* _path,
 std::shared_ptr<VFSNativeHost> VFSNativeHost::SharedHost()
 {
     static dispatch_once_t once;
-//    static VFSNativeHost *host;
     static std::shared_ptr<VFSNativeHost> host;
     dispatch_once(&once, ^{
-//        host = std::make_shared<VFSNativeHost>().get();
         host = std::make_shared<VFSNativeHost>();
     });
     return host;

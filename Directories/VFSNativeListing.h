@@ -54,8 +54,9 @@ struct VFSNativeListingItem : VFSListingItem
     // #96
     unsigned char  unix_type;               // file type from <sys/dirent.h> (from readdir)
     // #97
-//    unsigned char  ___padding[15];
-    // #112
+
+    
+    unsigned char  ___padding[8];
     
     inline void Destroy()
     {

@@ -9,6 +9,7 @@
 #pragma once
 
 #import <map>
+#import <list>
 #import "VFSHost.h"
 #import "VFSFile.h"
 
@@ -59,13 +60,17 @@ public:
                                              void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                              ) override;
     
-    // Caching section - to reduce seeking overhead
-    // current only one seek cache permitted, likely allow multiple in the future
-    unsigned long ItemUID(const char* _filename); // return zero on not found
-    // TODO: concurrency guards
-    unsigned long SeekCachePosition(); // return zero on absence of cache
-    void CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc); // destruct call - will override currently stored one
-    std::shared_ptr<VFSArchiveSeekCache> SeekCache(); // destructive call - host will no longer hold seek cache
+    // Caching section - to reduce seeking overhead:
+    
+    // return zero on not found
+    unsigned long ItemUID(const char* _filename);
+
+    // destruct call - will override currently stored one
+    void CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc);
+    
+    // destructive call - host will no longer hold returned seek cache
+    // if there're no caches, that can satisfy this call - zero ptr is returned
+    std::shared_ptr<VFSArchiveSeekCache> SeekCache(unsigned long _requested_item);
     
     
     std::shared_ptr<VFSFile> ArFile() const;
@@ -83,8 +88,11 @@ private:
     
     std::shared_ptr<VFSFile>                m_ArFile;
     std::shared_ptr<VFSArchiveMediator>     m_Mediator;
-    std::shared_ptr<VFSArchiveSeekCache>    m_SeekCache;
     struct archive                         *m_Arc;
     std::map<std::string, VFSArchiveDir*>   m_PathToDir;
+    unsigned long                           m_LastItemUID;
     
+    std::list<std::shared_ptr<VFSArchiveSeekCache>> m_SeekCaches;
+    
+    dispatch_queue_t                        m_SeekCacheControl;
 };

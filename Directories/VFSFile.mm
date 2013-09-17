@@ -85,3 +85,31 @@ void VFSFile::ComposeFullHostsPath(char *_buf) const
     assert(m_RelativePath.c_str()[0] == '/');
     strcat(_buf, m_RelativePath.c_str());
 }
+
+NSData *VFSFile::ReadFile()
+{
+    if(!IsOpened())
+        return 0;
+    
+    if(GetReadParadigm() < ReadParadigm::Seek && Pos() != 0)
+        return 0;
+    
+    uint64_t sz = Size();
+    char *buf = (char*)malloc(sz);
+    if(!buf)
+        return 0;
+    char *buftmp = buf;
+    uint64_t szleft = sz;
+    while(szleft) {
+        ssize_t r = Read(buftmp, szleft);
+        if(r < 0)
+        {
+            free(buf);
+            return 0;
+        }
+        szleft -= r;
+        buftmp += r;
+    }
+    
+    return [NSData dataWithBytesNoCopy:buf length:sz]; // NSData will deallocate buf
+}

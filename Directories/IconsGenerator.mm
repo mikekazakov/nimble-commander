@@ -13,6 +13,8 @@
 #import "IconsGenerator.h"
 #import "Common.h"
 
+static const NSString *g_TempDir = NSTemporaryDirectory();
+
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones
 static bool CheckFileIsOK(const char* _s)
@@ -26,9 +28,155 @@ static bool CheckFileIsOK(const char* _s)
             st.st_size > 0;
 }
 
+static NSImageRep *ProduceThumbnailForVFS(const char *_path,
+                                   const char *_ext,
+                                   std::shared_ptr<VFSHost> _host,
+                                   CGSize _sz)
+{
+    NSImageRep *result = 0;
+    std::shared_ptr<VFSFile> vfs_file;
+    if(_host->CreateFile(_path, &vfs_file, 0) < 0)
+        return 0;
+        
+    if(vfs_file->Open(VFSFile::OF_Read) < 0)
+        return 0;
+    
+    static NSString *temp_dir = NSTemporaryDirectory();
+    assert(temp_dir);
+    char pattern_buf[MAXPATHLEN];
+    sprintf(pattern_buf, "%sinfo.filesmanager.ico.XXXXXX", [temp_dir fileSystemRepresentation]);
+    
+    int fd = mkstemp(pattern_buf);
+    if(fd < 0)
+        return 0;
+    
+    const size_t bufsz = 256*1024;
+    char buf[bufsz];
+    ssize_t res_read;
+    while( (res_read = vfs_file->Read(buf, bufsz)) > 0 )
+    {
+        ssize_t res_write;
+        while(res_read > 0)
+        {
+            res_write = write(fd, buf, res_read);
+            if(res_write >= 0)
+                res_read -= res_write;
+            else
+                goto cleanup;
+        }
+    }
+        
+    vfs_file->Close();
+    vfs_file.reset();
+    close(fd);
+    fd = -1;
+
+    char filename_ext[MAXPATHLEN];
+    strcpy(filename_ext, pattern_buf);
+    strcat(filename_ext, ".");
+    strcat(filename_ext, _ext);
+
+    if(rename(pattern_buf, filename_ext) == 0)
+    {
+        NSString *item_path = [NSString stringWithUTF8String:filename_ext];
+        CFURLRef url = CFURLCreateWithFileSystemPath( 0, (CFStringRef) item_path, kCFURLPOSIXPathStyle, false);
+        void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
+        void *values[] = {(void*)kCFBooleanTrue};
+        static CFDictionaryRef dict = CFDictionaryCreate(CFAllocatorGetDefault(), (const void**)keys, (const void**)values, 1, 0, 0);
+        CGImageRef thumbnail = QLThumbnailImageCreate(CFAllocatorGetDefault(), url, _sz, dict);
+        CFRelease(url);
+                    
+        if(thumbnail != nil)
+        {
+            result = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
+            CGImageRelease(thumbnail);
+        }
+        unlink(filename_ext);
+    }
+    else
+    {
+        unlink(pattern_buf);
+    }
+                
+cleanup:
+    if(fd >= 0)
+    {
+        close(fd);
+        unlink(pattern_buf);
+    }
+
+    return result;
+}
+
+static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, std::shared_ptr<VFSHost> _host)
+{
+    std::shared_ptr<VFSFile> vfs_file;
+    if(_host->CreateFile(_path, &vfs_file, 0) < 0)
+        return 0;
+    if(vfs_file->Open(VFSFile::OF_Read) < 0)
+        return 0;
+    NSData *data = vfs_file->ReadFile();
+    vfs_file.reset();
+    if(data == 0)
+        return 0;
+    
+    id obj = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:0 error:0];
+    if(![obj isKindOfClass:[NSDictionary class]])
+        return 0;
+    return obj;
+}
+
+static NSImage *ReadImageFromVFSFile(const char *_path, std::shared_ptr<VFSHost> _host)
+{
+    std::shared_ptr<VFSFile> vfs_file;
+    if(_host->CreateFile(_path, &vfs_file, 0) < 0)
+        return 0;
+    if(vfs_file->Open(VFSFile::OF_Read) < 0)
+        return 0;
+    NSData *data = vfs_file->ReadFile();
+    vfs_file.reset();
+    if(data == 0)
+        return 0;
+    
+    return [[NSImage alloc] initWithData:data];
+}
+
+static NSImageRep *ProduceBundleThumbnailForVFS(const char *_path,
+                                      const char *_ext,
+                                      std::shared_ptr<VFSHost> _host,
+                                      NSRect _rc)
+{
+    char tmp[MAXPATHLEN];
+    strcpy(tmp, _path);
+    if(tmp[strlen(tmp)-1] != '/') strcat(tmp, "/");
+    strcat(tmp, "Contents/Info.plist");
+    
+    NSDictionary *plist = ReadDictionaryFromVFSFile(tmp, _host);
+    if(!plist)
+        return 0;
+    
+    id icon_id = [plist objectForKey:@"CFBundleIconFile"];
+    if(![icon_id isKindOfClass:[NSString class]])
+        return 0;
+    NSString *icon_str = icon_id;
+    
+    strcpy(tmp, _path);
+    if(tmp[strlen(tmp)-1] != '/') strcat(tmp, "/");
+    strcat(tmp, "Contents/Resources/");
+    strcat(tmp, [icon_str fileSystemRepresentation]);
+
+    NSImage *image = ReadImageFromVFSFile(tmp, _host);
+    if(!image)
+        return 0;
+    
+    return [image bestRepresentationForRect:_rc context:nil hints:nil];
+}
+
 IconsGenerator::IconsGenerator()
 {
-    m_WorkQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator", 0);
+//    m_WorkQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.work_queue", DISPATCH_QUEUE_SERIAL);
+    m_ControlQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
+    m_WorkGroup = dispatch_group_create();
     m_IconSize = NSMakeRect(0, 0, 16, 16);
     m_LastIconID = 0;
     m_StopWorkQueue = false;
@@ -40,9 +188,11 @@ IconsGenerator::IconsGenerator()
 IconsGenerator::~IconsGenerator()
 {
     m_StopWorkQueue++;
-    dispatch_sync(m_WorkQueue, ^{});
-    if(m_WorkQueue != 0)
-        dispatch_release(m_WorkQueue);
+    dispatch_group_wait(m_WorkGroup, DISPATCH_TIME_FOREVER);
+    if(m_ControlQueue != 0)
+        dispatch_release(m_ControlQueue);
+    if(m_WorkGroup != 0)
+        dispatch_release(m_WorkGroup);
 }
 
 void IconsGenerator::BuildGenericIcons()
@@ -105,7 +255,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     entry.SetCIcon(meta_no+1);
     
     auto sh_this = shared_from_this();
-    dispatch_async(m_WorkQueue, ^{
+    dispatch_group_async(m_WorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         Runner(meta, sh_this);
     });
     
@@ -146,7 +296,6 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
             
             if(thumbnail != NULL)
             {
-                // can we do CGImageRef -> NSImageRep directry?
                 _meta->thumbnail = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
                 CGImageRelease(thumbnail);
                 if(m_UpdateCallback)
@@ -169,12 +318,20 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
     }
     else
     {
-        // pure VFS - things are getting funnier here
-        // generate icons based on extension for now.
-        // pull files into temp dir and set QL on that stuf later
+        // special case for for bundles
+        if(m_IconsMode == IconModeFileIconsThumbnails &&
+           _meta->extension == "app")
+        {
+            _meta->thumbnail = ProduceBundleThumbnailForVFS(_meta->relative_path.c_str(),
+                                                            _meta->extension.c_str(),
+                                                            _meta->host,
+                                                            m_IconSize);
+            if(_meta->thumbnail && m_UpdateCallback)
+               m_UpdateCallback();
+        }
         
-        // extract file into temp dir and use QL on it
-        if(false &&
+        if(/*false &&*/
+           _meta->thumbnail == 0 &&
            m_IconsMode == IconModeFileIconsThumbnails &&
            (_meta->unix_mode & S_IFMT) != S_IFDIR &&
            _meta->file_size > 0 &&
@@ -182,93 +339,15 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
            !_meta->extension.empty()
            )
         {
-//            MachTimeBenchmark timeb;
-            std::shared_ptr<VFSFile> vfs_file;
-            if( _meta->host->CreateFile(_meta->relative_path.c_str(), &vfs_file, 0) >= 0)
-            {
-                if(vfs_file->Open(VFSFile::OF_Read) >= 0)
-                {
-//                    timeb.Reset("opened vfs file");
-                    NSString *temp_dir = NSTemporaryDirectory();
-                    assert(temp_dir);
-                    char pattern_buf[MAXPATHLEN];
-                    sprintf(pattern_buf, "%sinfo.filesmanager.ico.XXXXXX", [temp_dir fileSystemRepresentation]);
-//                    sprintf(pattern_buf, "/users/migun/TMPTMPTMPxxxxx");
-                    
-//                    int fd = open(pattern_buf, O_RDWR | O_TRUNC | O_CREAT);
-                    int fd = mkstemp(pattern_buf);
-                    if(fd >= 0)
-                    {
-//                        timeb.Reset("opened tmp file");
-                        const size_t bufsz = 256*1024;
-                        char buf[bufsz];
-                        ssize_t res_read;
-                        while( (res_read = vfs_file->Read(buf, bufsz)) > 0 )
-                        {
-                            ssize_t res_write;
-                            while(res_read > 0)
-                            {
-                                res_write = write(fd, buf, res_read);
-                                if(res_write >= 0)
-                                    res_read -= res_write;
-                                else
-                                    goto vfs_to_native_fail;
-                            }
-                        }
-//                        timeb.Reset("written tmp file");
-                        
-                        vfs_file->Close();
-                        close(fd); fd = -1;
-//                        timeb.Reset("closed files");
-                        
-                        char filename_ext[MAXPATHLEN];
-                        strcpy(filename_ext, pattern_buf);
-                        strcat(filename_ext, ".");
-                        strcat(filename_ext, _meta->extension.c_str());
-                        
-                        if(rename(pattern_buf, filename_ext) == 0)
-                        {
-//                            timeb.Reset("renamed tmp file");
-                            
-                            NSString *item_path = [NSString stringWithUTF8String:filename_ext];
-                            CFURLRef url = CFURLCreateWithFileSystemPath( 0, (CFStringRef) item_path, kCFURLPOSIXPathStyle, false);
-                            void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-                            void *values[] = {(void*)kCFBooleanTrue};
-                            static CFDictionaryRef dict = CFDictionaryCreate(CFAllocatorGetDefault(), (const void**)keys, (const void**)values, 1, 0, 0);
-                            CGImageRef thumbnail = QLThumbnailImageCreate(CFAllocatorGetDefault(), url, m_IconSize.size, dict);
-                            CFRelease(url);
-                            
-//                            timeb.Reset("build thumbnail");
-                        
-                            if(thumbnail != nil)
-                            {
-                                _meta->thumbnail = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
-                                CGImageRelease(thumbnail);
-                            }
-                            unlink(filename_ext);
-                        }
-                        else
-                        {
-                            unlink(pattern_buf);
-                        }
-                        
-vfs_to_native_fail:
-                        if(fd >= 0)
-                        {
-                            close(fd);
-                            unlink(pattern_buf);
-                        }
-                    }
-                }
-            }
+            _meta->thumbnail = ProduceThumbnailForVFS(_meta->relative_path.c_str(),
+                                                      _meta->extension.c_str(),
+                                                      _meta->host,
+                                                      m_IconSize.size);
+            if(_meta->thumbnail && m_UpdateCallback)
+                m_UpdateCallback();
         }
         
-        
-        
-        
-        
-        
-        if(!_meta->extension.empty())
+        if(!_meta->thumbnail && !_meta->extension.empty())
         {
             NSString *ext = [NSString stringWithUTF8String:_meta->extension.c_str()];
             NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:ext];
@@ -280,7 +359,6 @@ vfs_to_native_fail:
                     m_UpdateCallback();
             }
         }
-        
     }
     
     // clear unnecessary meta data
@@ -293,7 +371,8 @@ void IconsGenerator::StopWorkQueue()
 {
     m_StopWorkQueue++;
     auto sh_this = shared_from_this();
-    dispatch_async(m_WorkQueue, ^{
+    dispatch_async(m_ControlQueue, ^{
+        dispatch_group_wait(m_WorkGroup, DISPATCH_TIME_FOREVER);
         sh_this->m_StopWorkQueue--; // possible race condition
     });
 }

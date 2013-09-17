@@ -58,14 +58,15 @@ private:
         
     };
     
-//    std::shared_ptr<Meta> m_Icons[MAX_ICONS];
-    
     std::map<unsigned short, std::shared_ptr<Meta>> m_Icons;
     unsigned int m_LastIconID;
     NSRect m_IconSize;    
     NSImageRep *m_GenericFileIcon;
     NSImageRep *m_GenericFolderIcon;
-    dispatch_queue_t m_WorkQueue;
+
+    dispatch_group_t m_WorkGroup;    // working queue is concurrent
+    dispatch_queue_t m_ControlQueue; // linear queue
+
     int              m_StopWorkQueue;
     int              m_IconsMode;
     void             (^m_UpdateCallback)();

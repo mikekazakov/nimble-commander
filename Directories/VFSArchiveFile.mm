@@ -37,9 +37,11 @@ int VFSArchiveFile::Open(int _open_flags)
         return VFSError::NotFound;
     m_UID = myuid;
     
-    unsigned long scuid = host->SeekCachePosition();
+//    unsigned long scuid = host->SeekCachePosition();
+    auto sc = host->SeekCache(myuid);
     
-    if(scuid == 0 || scuid >= myuid)
+//    if(scuid == 0 || scuid >= myuid)
+    if(!sc.get())
     {
         m_ArFile = std::dynamic_pointer_cast<VFSArchiveHost>(Host())->ArFile()->Clone();
         int res;
@@ -89,7 +91,7 @@ int VFSArchiveFile::Open(int _open_flags)
     }
     else
     {
-        auto sc = host->SeekCache();
+//        auto sc = host->SeekCache();
         
         bool found = false;
         struct archive_entry *entry;
@@ -182,6 +184,8 @@ ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
 {
     if(m_Arc < 0) return VFSError::InvalidCall;
     if(Eof())     return 0;
+    
+    assert(_buf != 0);
 
     ssize_t size = archive_read_data(m_Arc, _buf, _size);
     if(size < 0)

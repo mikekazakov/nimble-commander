@@ -6,13 +6,34 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <sys/attr.h>
 #import <sys/dirent.h>
 #import <sys/stat.h>
+#import <sys/xattr.h>
 #import "FileCopyOperationJobFromGeneric.h"
 #import "Common.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
 #define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
+
+static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
+{
+    struct attrlist attrs;
+    memset(&attrs, 0, sizeof(attrs));
+    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+    
+    attrs.commonattr = ATTR_CMN_MODTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_mtimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CRTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_birthtimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_ACCTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_atimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CHGTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_ctimespec, sizeof(struct timespec), 0);
+}
 
 FileCopyOperationJobFromGeneric::FileCopyOperationJobFromGeneric()
 {
@@ -26,6 +47,9 @@ FileCopyOperationJobFromGeneric::FileCopyOperationJobFromGeneric()
     m_CurrentlyProcessingItem = 0;
     m_Buffer1 = 0;
     m_Buffer2 = 0;
+    m_ReadQueue = 0;
+    m_WriteQueue = 0;
+    m_IOGroup = 0;
 }
 
 FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
@@ -40,6 +64,24 @@ FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
         free(m_Buffer2);
         m_Buffer2 = 0;
     }
+    if(m_ReadQueue)
+    {
+        dispatch_release(m_ReadQueue);
+        m_ReadQueue = 0;
+    }
+    if(m_WriteQueue)
+    {
+        dispatch_release(m_WriteQueue);
+        m_WriteQueue = 0;
+    }
+    if(m_IOGroup)
+    {
+        dispatch_release(m_IOGroup);
+        m_IOGroup = 0;
+    }
+    
+    if(m_ScannedItems)
+        FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);
 }
 
 void FileCopyOperationJobFromGeneric::Init(FlexChainedStringsChunk *_src_files, // passing ownage to Job
@@ -74,8 +116,8 @@ void FileCopyOperationJobFromGeneric::Do()
     
     m_Buffer1 = malloc(BUFFER_SIZE);
     m_Buffer2 = malloc(BUFFER_SIZE);    
-    m_ReadQueue = dispatch_queue_create("file copy read", 0);
-    m_WriteQueue = dispatch_queue_create("file copy write", 0);
+    m_ReadQueue = dispatch_queue_create("info.filesmanager.files.FileCopyOperationJobFromGeneric.read", 0);
+    m_WriteQueue = dispatch_queue_create("info.filesmanager.files.FileCopyOperationJobFromGeneric.write", 0);
     m_IOGroup = dispatch_group_create();
 
     
@@ -105,6 +147,8 @@ void FileCopyOperationJobFromGeneric::ScanItems()
         if(CheckPauseOrStop()) return;
     }
     
+    if(m_InitialItems)
+        FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
 }
 
 void FileCopyOperationJobFromGeneric::ScanItem(const char *_full_path, const char *_short_path, const FlexChainedStringsChunk::node *_prefix)
@@ -210,12 +254,28 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     return true;
 }
 
+void FileCopyOperationJobFromGeneric::EraseXattrs(int _fd_in)
+{
+    assert(m_Buffer1);
+    char *xnames = (char*) m_Buffer1;
+    ssize_t xnamesizes = flistxattr(_fd_in, xnames, BUFFER_SIZE, 0);
+    if(xnamesizes > 0)
+    { // iterate and remove
+        char *s = xnames, *e = xnames + xnamesizes;
+        while(s < e)
+        {
+            fremovexattr(_fd_in, s, 0);
+            s += strlen(s)+1;
+        }
+    }
+}
+
 bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_dest)
 {
     int ret, oldumask, destinationfd = -1, dstopenflags=0;
     std::shared_ptr<VFSFile> src_file;
     struct stat src_stat_buffer, dst_stat_buffer;
-    bool remember_choice = false, was_successful = false, unlink_on_stop = false;
+    bool remember_choice = false, was_successful = false, unlink_on_stop = false, adjust_dst_time = true, erase_xattrs = false;
     unsigned long dest_sz_on_stop = 0, startwriteoff = 0;
     int64_t preallocate_delta = 0;
     __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0, totaldestsize=0;
@@ -279,7 +339,7 @@ opensource:
         // decisions about what to do with existing destination
     decoverwrite:
         dstopenflags = O_WRONLY;
-//        erase_xattrs = true;
+        erase_xattrs = true;
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
         preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size;
@@ -289,7 +349,7 @@ opensource:
         totaldestsize += dst_stat_buffer.st_size;
         startwriteoff = dst_stat_buffer.st_size;
         dest_sz_on_stop = dst_stat_buffer.st_size;
-//        adjust_dst_time = false;
+        adjust_dst_time = false;
 //        copy_xattrs = false;
         unlink_on_stop = false;
         preallocate_delta = src_stat_buffer.st_size;
@@ -416,7 +476,23 @@ dolseek: // find right position in destination file
         m_Stats.SetValue(m_TotalCopied);
     }
     
-    // other stuff here
+    // erase destination's xattrs
+    if(m_Options.copy_xattrs && erase_xattrs)
+        EraseXattrs(destinationfd);
+    
+    // no xattrs copying now
+    
+    // change ownage
+    if(m_Options.copy_unix_owners)
+        fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+    
+    // change flags
+    if(m_Options.copy_unix_flags)
+        fchflags(destinationfd, src_stat_buffer.st_flags);
+    
+    // adjust destination time as source
+    if(m_Options.copy_file_times && adjust_dst_time)
+        AdjustFileTimes(destinationfd, &src_stat_buffer);
     
     was_successful = true;
     

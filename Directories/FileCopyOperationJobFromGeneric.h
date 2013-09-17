@@ -37,7 +37,7 @@ private:
     void ProcessItem(const FlexChainedStringsChunk::node *_node, int _number);
     bool CopyFileTo(const char *_src, const char *_dest);
     bool CopyDirectoryTo(const char *_src, const char *_dest);
-    
+    void EraseXattrs(int _fd_in);
     
     enum class ItemFlags
     {

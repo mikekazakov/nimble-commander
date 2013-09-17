@@ -195,6 +195,8 @@ static int FileWindowSize()
     }
     else
     {
+        if(fw->FileOpened())
+            fw->CloseFile();
         delete fw;
         return false;
     }

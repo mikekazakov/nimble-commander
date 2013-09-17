@@ -315,6 +315,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                 WithHosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>)_hosts
               SelectEntry:(const char*) _entry_name
 {
+    if(m_IsDirectoryLoading)
+        m_IsStopDirectoryLoading = true;
+
     // 1st - try to use last host with this path
     if(_hosts->back()->IsDirectory(_path, 0, 0))
     { // easy - just go there
@@ -384,6 +387,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     std::string path = std::string(_path);
     
     std::string entryname = std::string(_entry_name ? _entry_name : "");
+    
+    if(m_IsDirectoryLoading)
+        m_IsStopDirectoryLoading = true;
     
     if(m_IsStopDirectoryLoading)
         dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );

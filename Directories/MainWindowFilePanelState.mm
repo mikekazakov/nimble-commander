@@ -614,6 +614,9 @@ enum ActiveState
 
 - (IBAction)OnFileAttributes:(id)sender{
     assert([self IsPanelActive]);
+    if(![self ActivePanelData]->Host().IsNativeFS())
+        return; // currently support file info only on native fs
+    
     FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
     FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
         if(result == DialogResult::Apply)
@@ -645,6 +648,9 @@ enum ActiveState
     assert([self IsPanelActive]);
     PanelView *curview = [self ActivePanelView];
     PanelData *curdata = [self ActivePanelData];
+    if(!curdata->Host().IsNativeFS())
+        return; // currently support volume info only on native fs
+    
     int curpos = [curview GetCursorPosition];
     int rawpos = curdata->SortPosToRawPos(curpos);
     char src[__DARWIN_MAXPATHLEN];
@@ -705,6 +711,8 @@ enum ActiveState
 - (void)DeleteFiles:(BOOL)_shift_behavior
 {
     assert([self IsPanelActive]);
+    if(![self ActivePanelData]->Host().IsNativeFS())
+        return; // currently support files deletion only on native fs
     
     __block FlexChainedStringsChunk *files = 0;
     if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
@@ -763,12 +771,16 @@ enum ActiveState
 
 - (IBAction)OnCreateDirectoryCommand:(id)sender{
     assert([self IsPanelActive]);
+    PanelData *curdata = [self ActivePanelData];
+    if(!curdata->Host().IsNativeFS())
+        return; // currently support directory creation only on native fs
+    
     CreateDirectorySheetController *cd = [[CreateDirectorySheetController alloc] init];
     [cd ShowSheet:[self window] handler:^(int _ret)
      {
          if(_ret == DialogResult::Create)
          {
-             PanelData *curdata = [self ActivePanelData];
+
              char pdir[MAXPATHLEN];
              curdata->GetDirectoryPath(pdir);
              
@@ -831,7 +843,10 @@ enum ActiveState
                                                       root:root_path
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                    options:&opts]];
-             else if(destination->Host().IsNativeFS())
+             else if(destination->Host().IsNativeFS() &&
+                     strlen([[mc.TextField stringValue] fileSystemRepresentation]) > 0 &&
+                     [[mc.TextField stringValue] fileSystemRepresentation][0] == '/'
+                     )
                  [m_OperationsController AddOperation:
                   [[FileCopyOperation alloc] initWithFiles:files
                                                       root:root_path
@@ -850,6 +865,8 @@ enum ActiveState
 - (IBAction)OnFileCopyAsCommand:(id)sender{
     // process only current cursor item
     assert([self IsPanelActive]);
+    if(![self ActivePanelData]->Host().IsNativeFS())
+        return; // currently support copy as only on native fs (an easy way to prohibit it)
     
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
@@ -897,6 +914,9 @@ enum ActiveState
         destination = m_LeftPanelData;
     }
     
+    if(!source->Host().IsNativeFS())
+        return; // currently support rename only on native fs
+    
     __block FlexChainedStringsChunk *files = 0;
     if(source->GetSelectedItemsCount() > 0 )
     {
@@ -942,6 +962,9 @@ enum ActiveState
     
     // process only current cursor item
     assert([self IsPanelActive]);
+    
+    if(![self ActivePanelData]->Host().IsNativeFS())
+        return; // currently support rename as only on native fs
     
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
@@ -1068,13 +1091,12 @@ enum ActiveState
     }
 }
 
-
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path
 {
     assert(dispatch_get_current_queue() == dispatch_get_main_queue());
     
     PanelController *panel = [self ActivePanelController];
-    if([panel GoToRelativeToHostSync:_path])
+    if([panel GoToGlobalHostsPathSync:_path])
     {
         if(_entries->Amount() > 0)
             [panel ScheduleDelayedSelectionChangeForC:(*_entries)[0].str()
@@ -1130,6 +1152,9 @@ enum ActiveState
 {
     assert([self IsPanelActive]);
     
+    if(!m_RightPanelData->Host().IsNativeFS() || m_LeftPanelData->Host().IsNativeFS())
+        return; // currently support links only on native fs
+    
     char source_path[MAXPATHLEN];
     char link_path[MAXPATHLEN];
     auto const *item = [[self ActivePanelView] CurrentItem];
@@ -1171,6 +1196,8 @@ enum ActiveState
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
     assert([self IsPanelActive]);
+    if(![self ActivePanelData]->Host().IsNativeFS())
+        return; // currently support links only on native fs
     
     char link_path[MAXPATHLEN];
     auto const *item = [[self ActivePanelView] CurrentItem];
@@ -1210,6 +1237,8 @@ enum ActiveState
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
     assert([self IsPanelActive]);
+    if(!m_RightPanelData->Host().IsNativeFS() || m_LeftPanelData->Host().IsNativeFS())
+        return; // currently support links only on native fs
     
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
@@ -1258,8 +1287,7 @@ enum ActiveState
     [sheet ShowSheet:[self window]
              handler:^(int result) {
                  if(result == DialogResult::OK) {
-                     NSString *mask = [sheet Mask];
-                     [[self ActivePanelController] SelectEntriesByMask:mask select:true];
+                     [[self ActivePanelController] SelectEntriesByMask:[sheet Mask] select:true];
                  }
              }];
 }
@@ -1271,8 +1299,7 @@ enum ActiveState
     [sheet ShowSheet:[self window]
              handler:^(int result) {
                  if(result == DialogResult::OK) {
-                     NSString *mask = [sheet Mask];
-                     [[self ActivePanelController] SelectEntriesByMask:mask select:false];
+                     [[self ActivePanelController] SelectEntriesByMask:[sheet Mask] select:false];
                  }
              }];
 }

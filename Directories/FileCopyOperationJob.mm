@@ -134,10 +134,7 @@ FileCopyOperationJob::~FileCopyOperationJob()
         m_IOGroup = 0;
     }
     if(m_ScannedItems)
-    {
         FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);
-        m_ScannedItems = 0;
-    }
 }
 
 void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing ownage to Job
@@ -189,8 +186,8 @@ void FileCopyOperationJob::Do()
         // allocate buffers and queues only when we'll need them
         m_Buffer1 = malloc(BUFFER_SIZE);
         m_Buffer2 = malloc(BUFFER_SIZE);
-        m_ReadQueue = dispatch_queue_create("file copy read", 0);
-        m_WriteQueue = dispatch_queue_create("file copy write", 0);
+        m_ReadQueue = dispatch_queue_create("info.filesmanager.files.FileCopyOperationJob.read", 0);
+        m_WriteQueue = dispatch_queue_create("info.filesmanager.files.FileCopyOperationJob.write", 0);
         m_IOGroup = dispatch_group_create();
     }
 

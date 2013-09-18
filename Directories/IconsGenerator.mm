@@ -41,10 +41,8 @@ static NSImageRep *ProduceThumbnailForVFS(const char *_path,
     if(vfs_file->Open(VFSFile::OF_Read) < 0)
         return 0;
     
-    static NSString *temp_dir = NSTemporaryDirectory();
-    assert(temp_dir);
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%sinfo.filesmanager.ico.XXXXXX", [temp_dir fileSystemRepresentation]);
+    sprintf(pattern_buf, "%sinfo.filesmanager.ico.XXXXXX", [g_TempDir fileSystemRepresentation]);
     
     int fd = mkstemp(pattern_buf);
     if(fd < 0)

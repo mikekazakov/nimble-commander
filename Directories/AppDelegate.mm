@@ -19,6 +19,7 @@
 #import "PreferencesWindowGeneralTab.h"
 #import "PreferencesWindowPanelsTab.h"
 #import "PreferencesWindowViewerTab.h"
+#import "QuickPreview.h"
 
 @implementation AppDelegate
 {
@@ -45,6 +46,7 @@
 {
     // modules initialization
     FSEventsDirUpdate::RunDiskArbitration();
+    [QuickPreview StartBackgroundTempPurging];
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults addObserver:self

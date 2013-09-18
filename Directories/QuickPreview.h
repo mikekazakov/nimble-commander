@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "VFS.h"
 
 @class PanelView;
 
@@ -15,7 +16,8 @@
 + (void)Show;
 + (void)Hide;
 + (BOOL)IsVisible;
-+ (void)PreviewItem:(NSString *)_path sender:(PanelView *)_panel;
++ (void)PreviewItem:(const char *)_path vfs:(std::shared_ptr<VFSHost>)_host sender:(PanelView *)_panel;
 + (void)UpdateData;
 
++ (void)StartBackgroundTempPurging;
 @end

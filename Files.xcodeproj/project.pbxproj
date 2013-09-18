@@ -793,6 +793,7 @@
 		CF536C0D16C92EA200F37203 /* Panel */ = {
 			isa = PBXGroup;
 			children = (
+				B50976A6172A39EE0080412E /* QuickPreview */,
 				B52D9A81173D324600EC7154 /* Presentation */,
 				CFC5123416C5284800D247EE /* PanelData.mm */,
 				CFC5123516C5284800D247EE /* PanelData.h */,
@@ -1197,7 +1198,6 @@
 			children = (
 				CFB8F22B17CA3C65004574FE /* VFS */,
 				CF396AEB173FA89A00A20C42 /* BigFileView */,
-				B50976A6172A39EE0080412E /* QuickPreview */,
 				B5A23000171E81AA00D9C1A6 /* Controls */,
 				B528011916FCF347004E260D /* Operation */,
 				CFAC50D5171557E100A3E5C5 /* Core */,

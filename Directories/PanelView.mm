@@ -13,6 +13,7 @@
 #import "QuickPreview.h"
 #import "PanelController.h"
 #import "Common.h"
+#import "VFS.h"
 
 struct CursorSelectionState
 {
@@ -142,8 +143,9 @@ struct CursorSelectionState
         int rawpos = m_State.Data->SortedDirectoryEntries()[m_State.CursorPos];
         char path[__DARWIN_MAXPATHLEN];
         m_State.Data->ComposeFullPathForEntry(rawpos, path);
-        NSString *nspath = [NSString stringWithUTF8String:path];
-        [QuickPreview PreviewItem:nspath sender:self];
+        [QuickPreview PreviewItem:path
+                              vfs:m_State.Data->Host()
+                           sender:self];
     }
 }
 
@@ -253,7 +255,9 @@ struct CursorSelectionState
     m_Presentation->SetCursorPos(_pos);
 
     [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    
+    if(m_State.Active)
+        [self UpdateQuickPreview];
 }
 
 - (int) GetCursorPosition

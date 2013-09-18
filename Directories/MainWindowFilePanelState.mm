@@ -614,7 +614,7 @@ enum ActiveState
 
 - (IBAction)OnFileAttributes:(id)sender{
     assert([self IsPanelActive]);
-    if(![self ActivePanelData]->Host().IsNativeFS())
+    if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support file info only on native fs
     
     FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
@@ -648,7 +648,7 @@ enum ActiveState
     assert([self IsPanelActive]);
     PanelView *curview = [self ActivePanelView];
     PanelData *curdata = [self ActivePanelData];
-    if(!curdata->Host().IsNativeFS())
+    if(!curdata->Host()->IsNativeFS())
         return; // currently support volume info only on native fs
     
     int curpos = [curview GetCursorPosition];
@@ -711,7 +711,7 @@ enum ActiveState
 - (void)DeleteFiles:(BOOL)_shift_behavior
 {
     assert([self IsPanelActive]);
-    if(![self ActivePanelData]->Host().IsNativeFS())
+    if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support files deletion only on native fs
     
     __block FlexChainedStringsChunk *files = 0;
@@ -772,7 +772,7 @@ enum ActiveState
 - (IBAction)OnCreateDirectoryCommand:(id)sender{
     assert([self IsPanelActive]);
     PanelData *curdata = [self ActivePanelData];
-    if(!curdata->Host().IsNativeFS())
+    if(!curdata->Host()->IsNativeFS())
         return; // currently support directory creation only on native fs
     
     CreateDirectorySheetController *cd = [[CreateDirectorySheetController alloc] init];
@@ -837,20 +837,20 @@ enum ActiveState
              [mc FillOptions:&opts];
              
              
-             if(source->Host().IsNativeFS() && destination->Host().IsNativeFS())
+             if(source->Host()->IsNativeFS() && destination->Host()->IsNativeFS())
                  [m_OperationsController AddOperation:
                   [[FileCopyOperation alloc] initWithFiles:files
                                                       root:root_path
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                    options:&opts]];
-             else if(destination->Host().IsNativeFS() &&
+             else if(destination->Host()->IsNativeFS() &&
                      strlen([[mc.TextField stringValue] fileSystemRepresentation]) > 0 &&
                      [[mc.TextField stringValue] fileSystemRepresentation][0] == '/'
                      )
                  [m_OperationsController AddOperation:
                   [[FileCopyOperation alloc] initWithFiles:files
                                                       root:root_path
-                                                   rootvfs:((VFSHost&)source->Host()).SharedPtr() // const-hack
+                                                   rootvfs:source->Host()
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                    options:&opts]];
          }
@@ -865,7 +865,7 @@ enum ActiveState
 - (IBAction)OnFileCopyAsCommand:(id)sender{
     // process only current cursor item
     assert([self IsPanelActive]);
-    if(![self ActivePanelData]->Host().IsNativeFS())
+    if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support copy as only on native fs (an easy way to prohibit it)
     
     auto const *item = [[self ActivePanelView] CurrentItem];
@@ -914,7 +914,7 @@ enum ActiveState
         destination = m_LeftPanelData;
     }
     
-    if(!source->Host().IsNativeFS())
+    if(!source->Host()->IsNativeFS())
         return; // currently support rename only on native fs
     
     __block FlexChainedStringsChunk *files = 0;
@@ -963,7 +963,7 @@ enum ActiveState
     // process only current cursor item
     assert([self IsPanelActive]);
     
-    if(![self ActivePanelData]->Host().IsNativeFS())
+    if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support rename as only on native fs
     
     auto const *item = [[self ActivePanelView] CurrentItem];
@@ -1152,7 +1152,7 @@ enum ActiveState
 {
     assert([self IsPanelActive]);
     
-    if(!m_RightPanelData->Host().IsNativeFS() || m_LeftPanelData->Host().IsNativeFS())
+    if(!m_RightPanelData->Host()->IsNativeFS() || m_LeftPanelData->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
     char source_path[MAXPATHLEN];
@@ -1196,7 +1196,7 @@ enum ActiveState
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
     assert([self IsPanelActive]);
-    if(![self ActivePanelData]->Host().IsNativeFS())
+    if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
     char link_path[MAXPATHLEN];
@@ -1237,7 +1237,7 @@ enum ActiveState
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
     assert([self IsPanelActive]);
-    if(!m_RightPanelData->Host().IsNativeFS() || m_LeftPanelData->Host().IsNativeFS())
+    if(!m_RightPanelData->Host()->IsNativeFS() || m_LeftPanelData->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
     auto const *item = [[self ActivePanelView] CurrentItem];

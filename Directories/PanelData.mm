@@ -125,10 +125,9 @@ void PanelData::ReLoad(std::shared_ptr<VFSListing> _listing)
     UpdateStatictics();
 }
 
-const VFSHost& PanelData::Host() const
+std::shared_ptr<VFSHost> PanelData::Host() const
 {
-    return *m_Listing->Host().get();
-    
+    return m_Listing->Host();
 }
 
 const VFSListing& PanelData::DirectoryEntries() const

@@ -82,7 +82,7 @@ public:
     void Load(std::shared_ptr<VFSListing> _listing);
     void ReLoad(std::shared_ptr<VFSListing> _listing);
 
-    const VFSHost&          Host() const;
+    std::shared_ptr<VFSHost> Host() const;
     const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
     FlexChainedStringsChunk* StringsFromSelectedEntries() const;

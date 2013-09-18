@@ -159,6 +159,26 @@ bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size)
     return true;
 }
 
+bool GetExtensionFromPath(const char* _path, char *_buf)
+{
+    const char* last_sl  = strrchr(_path, '/');
+    const char* last_dot = strrchr(_path, '.');
+    if(!last_sl || !last_dot) return false;
+    if(last_dot == last_sl+1) return false;
+    if(last_dot == _path + strlen(_path) - 1) return false;
+    strcpy(_buf, last_dot+1);
+    return true;
+}
+
+bool GetFilenameFromPath(const char* _path, char *_buf)
+{
+    const char* last_sl  = strrchr(_path, '/');
+    if(!last_sl) return false;
+    if(last_sl == _path + strlen(_path) - 1) return false;
+    strcpy(_buf, last_sl+1);
+    return true;
+}
+
 static mach_timebase_info_data_t info_data;
 uint64_t GetTimeInNanosecondsScale()
 {

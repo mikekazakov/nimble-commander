@@ -41,6 +41,7 @@
 		CF039EB61791204600DC85D6 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EB41791204600DC85D6 /* PreferencesWindowViewerTab.xib */; };
 		CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB8179142A900DC85D6 /* NSUserDefaults+myColorSupport.m */; };
 		CF039EBF1795AE9F00DC85D6 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF039EBE1795AE9F00DC85D6 /* eject_icon.png */; };
+		CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0519DB17E9C98A00590C74 /* PanelAux.mm */; };
 		CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */; };
 		CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */; };
 		CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
@@ -301,6 +302,8 @@
 		CF039EB71791429300DC85D6 /* NSUserDefaults+myColorSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSUserDefaults+myColorSupport.h"; sourceTree = "<group>"; };
 		CF039EB8179142A900DC85D6 /* NSUserDefaults+myColorSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+myColorSupport.m"; sourceTree = "<group>"; };
 		CF039EBE1795AE9F00DC85D6 /* eject_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = eject_icon.png; sourceTree = "<group>"; };
+		CF0519DA17E9C98A00590C74 /* PanelAux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelAux.h; sourceTree = "<group>"; };
+		CF0519DB17E9C98A00590C74 /* PanelAux.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelAux.mm; sourceTree = "<group>"; };
 		CF07DE36175D971E00757DE1 /* MainWindowStateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainWindowStateProtocol.h; sourceTree = "<group>"; };
 		CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowFilePanelState.h; sourceTree = "<group>"; };
 		CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowFilePanelState.mm; sourceTree = "<group>"; };
@@ -802,6 +805,8 @@
 				CFC5123716C5287B00D247EE /* PanelView.h */,
 				CF3C88D616D73A23006346CD /* PanelController.mm */,
 				CF3C88D516D73A23006346CD /* PanelController.h */,
+				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
+				CF0519DA17E9C98A00590C74 /* PanelAux.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
 				CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */,
 				CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */,
@@ -1459,6 +1464,7 @@
 				CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */,
 				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,
 				CF9D0EA017CC961100CB8146 /* archive_read_support_format_7zip.c in Sources */,
+				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
 				CF9D0EA517CC961100CB8146 /* archive_read_support_format_cpio.c in Sources */,
 				CF9D0E8917CC961100CB8146 /* archive_read_disk_entry_from_file.c in Sources */,
 				CF9D0ED417CC961100CB8146 /* archive_write_set_format_ustar.c in Sources */,

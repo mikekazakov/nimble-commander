@@ -94,6 +94,9 @@ NSData *VFSFile::ReadFile()
     if(GetReadParadigm() < ReadParadigm::Seek && Pos() != 0)
         return 0;
     
+    if(Pos() != 0 && Seek(Seek_Set, 0) < 0)
+        return 0; // can't rewind file        
+    
     uint64_t sz = Size();
     char *buf = (char*)malloc(sz);
     if(!buf)

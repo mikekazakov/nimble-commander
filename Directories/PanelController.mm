@@ -15,8 +15,7 @@
 #import "filesysinfo.h"
 #import "FileMask.h"
 #import "PanelFastSearchPopupViewController.h"
-
-#import "VFS.h"
+#import "PanelAux.h"
 #import <string>
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
@@ -175,9 +174,14 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         if(!ent.IsDotDot())
             strcat(path, ent.Name());
         
-        BOOL success = [[NSWorkspace sharedWorkspace]
-                        openFile:[NSString stringWithUTF8String:path]];
-        if (!success) NSBeep();
+        if(m_Data->Host()->IsNativeFS())
+        {
+            bool success = [[NSWorkspace sharedWorkspace]
+                            openFile:[NSString stringWithUTF8String:path]];
+            if (!success) NSBeep();
+        }
+        else
+            PanelVFSFileWorkspaceOpener::Open(path, m_Data->Host()); // going async here
     }
 }
 
@@ -780,6 +784,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     {
         case 53: // Esc button
             [self CancelBackgroundOperations];
+            [QuickPreview Hide];
             break;
     }
 }

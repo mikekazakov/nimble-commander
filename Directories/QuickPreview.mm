@@ -14,29 +14,10 @@
 
 #import "QuickPreview.h"
 #import "PanelView.h"
+#import "Common.h"
 
 static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
 static const char *g_QLPref = "info.filesmanager.vfs_ql.";
-
-static bool ExtensionFromPath(const char* _path, char *_buf)
-{
-    const char* last_sl  = strrchr(_path, '/');
-    const char* last_dot = strrchr(_path, '.');
-    if(!last_sl || !last_dot) return false;
-    if(last_dot == last_sl+1) return false;
-    if(last_dot == _path + strlen(_path) - 1) return false;
-    strcpy(_buf, last_dot+1);
-    return true;
-}
-
-static bool FilenameFromPath(const char* _path, char *_buf)
-{
-    const char* last_sl  = strrchr(_path, '/');
-    if(!last_sl) return false;
-    if(last_sl == _path + strlen(_path) - 1) return false;
-    strcpy(_buf, last_sl+1);
-    return true;
-}
 
 static void DoTempQlPurge()
 {
@@ -147,7 +128,8 @@ static QuickPreviewData *m_Data;
 
 + (void)Hide
 {
-    [[QLPreviewPanel sharedPreviewPanel] orderOut:nil];
+    if([QuickPreview IsVisible])
+        [[QLPreviewPanel sharedPreviewPanel] orderOut:nil];
 }
 
 + (BOOL)IsVisible
@@ -179,7 +161,7 @@ static QuickPreviewData *m_Data;
                 return;
             
             char fname[MAXPATHLEN];
-            if(!FilenameFromPath(path.c_str(), fname))
+            if(!GetFilenameFromPath(path.c_str(), fname))
                 return;
             
             std::shared_ptr<VFSFile> vfs_file;

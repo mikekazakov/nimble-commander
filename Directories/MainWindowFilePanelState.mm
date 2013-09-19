@@ -1152,7 +1152,7 @@ enum ActiveState
 {
     assert([self IsPanelActive]);
     
-    if(!m_RightPanelData->Host()->IsNativeFS() || m_LeftPanelData->Host()->IsNativeFS())
+    if(!m_RightPanelData->Host()->IsNativeFS() || !m_LeftPanelData->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
     char source_path[MAXPATHLEN];
@@ -1237,7 +1237,7 @@ enum ActiveState
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
     assert([self IsPanelActive]);
-    if(!m_RightPanelData->Host()->IsNativeFS() || m_LeftPanelData->Host()->IsNativeFS())
+    if(!m_RightPanelData->Host()->IsNativeFS() || !m_LeftPanelData->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
     auto const *item = [[self ActivePanelView] CurrentItem];

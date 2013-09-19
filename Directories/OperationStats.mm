@@ -30,7 +30,7 @@ OperationStats::~OperationStats()
 
 void OperationStats::SetMaxValue(uint64_t _max_value)
 {
-    assert(_max_value);
+//    assert(_max_value);
     assert(m_Value <= _max_value);
     
     m_MaxValue = _max_value;

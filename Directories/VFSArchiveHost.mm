@@ -104,6 +104,8 @@ int VFSArchiveHost::ReadArchiveListing()
         char path[1024];
         path[0] = '/';
         strcpy(path + 1, archive_entry_pathname(entry));
+        
+        if(strcmp(path, "/.") == 0) continue; // skip "." entry for ISO for example
 
         int path_len = (int)strlen(path);
         
@@ -145,6 +147,7 @@ int VFSArchiveHost::ReadArchiveListing()
         if(isdir)
         {
             // it's a directory
+            if(path[strlen(path)-1] != '/') strcat(path, "/");
             if(m_PathToDir.find(path) == m_PathToDir.end())
             { // check if it wasn't added before via FindOrBuildDir
                 char tmp[1024];

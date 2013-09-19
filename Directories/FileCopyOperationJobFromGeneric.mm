@@ -192,13 +192,29 @@ retry_stat:
             });
             if(iter_ret != VFSError::Ok)
             {
-                // TODO: error handling
+                    int result = [[m_Operation OnCopyCantAccessSrcFile:VFSError::ToNSError(stat_ret) ForFile:fullpath]
+                              WaitForResult];
+                if (result == OperationDialogResult::Retry) goto retry_opendir;
+                else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+                else if (result == OperationDialogResult::Stop)
+                {
+                    RequestStop();
+                    return;
+                }
             }
         }
     }
     else if (!m_SkipAll)
     {
-        // TODO: error handling
+        int result = [[m_Operation OnCopyCantAccessSrcFile:VFSError::ToNSError(stat_ret) ForFile:fullpath]
+                      WaitForResult];
+        if (result == OperationDialogResult::Retry) goto retry_stat;
+        else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+        else if (result == OperationDialogResult::Stop)
+        {
+            RequestStop();
+            return;
+        }
     }
 }
 
@@ -251,6 +267,17 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
 {
     // TODO: existance checking, attributes, error handling and other stuff
     mkdir(_dest, 0777);
+    
+    struct stat src_stat_buffer;
+    if(m_SrcHost->Stat(_src, src_stat_buffer, 0, 0) < 0)
+        return false;
+    
+    // change unix mode
+    chmod(_dest, src_stat_buffer.st_mode);
+    
+    // change flags
+    chflags(_dest, src_stat_buffer.st_flags);
+    
     return true;
 }
 

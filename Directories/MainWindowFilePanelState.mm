@@ -319,11 +319,11 @@ enum ActiveState
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{
-    [m_LeftPanelController GoToGlobalHostsPathAsync:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
+    [m_LeftPanelController GoToGlobalHostsPathAsync:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation] select_entry:0];
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
-    [m_RightPanelController GoToGlobalHostsPathAsync:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation]];
+    [m_RightPanelController GoToGlobalHostsPathAsync:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation] select_entry:0];
 }
 
 - (IBAction)LeftPanelGoto:(id)sender{
@@ -573,12 +573,12 @@ enum ActiveState
     if(m_ActiveState == StateLeftPanel)
     {
         m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
-        [m_RightPanelController GoToGlobalHostsPathAsync:dirpath];
+        [m_RightPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
     }
     else
     {
         m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
-        [m_LeftPanelController GoToGlobalHostsPathAsync:dirpath];
+        [m_LeftPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
     }
 }
 
@@ -1302,6 +1302,12 @@ enum ActiveState
                      [[self ActivePanelController] SelectEntriesByMask:[sheet Mask] select:false];
                  }
              }];
+}
+
+- (IBAction)OnGoToUpperDirectory:(id)sender
+{
+    assert([self IsPanelActive]);
+    [[self ActivePanelController] GoToUpperDirectoryAsync];    
 }
 
 @end

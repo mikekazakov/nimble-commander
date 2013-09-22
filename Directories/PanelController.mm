@@ -288,11 +288,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_IsStopDirectoryReLoading = true;
 }
 
-- (void) GoToRelativeToHostAsync:(const char*) _path
+- (void) GoToRelativeToHostAsync:(const char*) _path select_entry:(const char*) _entry
 {
     [self GoToRelativeAsync:_path
                   WithHosts:std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack)
-                SelectEntry:0];
+                SelectEntry:_entry];
 }
 
 - (int) GoToRelativeToHostSync:(const char*) _path
@@ -509,19 +509,19 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     return true;
 }
 
-- (void) GoToGlobalHostsPathAsync:(const char*) _path
+- (void) GoToGlobalHostsPathAsync:(const char*) _path select_entry:(const char*) _entry
 {
     char rest[MAXPATHLEN*8];
     std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> stack;
     if([self GetCommonHostsStackForPath:_path rest:rest hosts:stack])
     {
-        [self GoToRelativeAsync:rest WithHosts:stack SelectEntry:0];
+        [self GoToRelativeAsync:rest WithHosts:stack SelectEntry:_entry];
     }
     else
     {
         stack = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>();
         stack->push_back(VFSNativeHost::SharedHost());
-        [self GoToRelativeAsync:_path WithHosts:stack SelectEntry:0];
+        [self GoToRelativeAsync:_path WithHosts:stack SelectEntry:_entry];
     }
 }
 
@@ -539,6 +539,27 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         stack->push_back(VFSNativeHost::SharedHost());
         return [self GoToRelativeSync:_path WithHosts:stack SelectEntry:0];
     }
+}
+
+- (void) GoToUpperDirectoryAsync
+{
+    // TODO: need some changes when VFS will became multi-root (network connections, FS like PS list etc)
+    char path[MAXPATHLEN*8], entry[MAXPATHLEN], last_path_entry[MAXPATHLEN];
+    m_Data->GetDirectoryFullHostsPathWithTrailingSlash(path);
+    m_Data->GetDirectoryPathShort(entry);
+    
+    char *s = strrchr(path, '/');
+    if(!s) return;
+    *s = 0;
+    s = strrchr(path, '/');
+    if(!s) return;
+    strcpy(last_path_entry, s+1);
+    *(s+1) = 0;
+    if(strlen(entry) > 0) // normal condition
+        [self GoToGlobalHostsPathAsync:path select_entry:entry];
+    else // data has no info about how it's dir is named. seems that it's a VFS,
+         // and currently junction file should be selected - it is a last part of a full path
+        [self GoToGlobalHostsPathAsync:path select_entry:last_path_entry];
 }
 
 - (void) HandleReturnButton
@@ -600,7 +621,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         if(arhost->Open() >= 0)
         {
             m_HostsStack.push_back(arhost);
-            [self GoToRelativeToHostAsync:"/"];
+            [self GoToRelativeToHostAsync:"/" select_entry:0];
             return;
         }
     }
@@ -973,7 +994,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_Data->GetDirectoryPath(path);
     if(GetFirstAvailableDirectoryFromPath(path))
 //        [self GoToDirectory:path];
-        [self GoToRelativeToHostAsync:path];
+        [self GoToRelativeToHostAsync:path select_entry:0];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

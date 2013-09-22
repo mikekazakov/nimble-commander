@@ -229,6 +229,7 @@
 		CFC5123916C5287B00D247EE /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
 		CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFCA09DE174BA93500AEC8C2 /* files.icns */; };
 		CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */; };
+		CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
 		CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
@@ -357,7 +358,6 @@
 		CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SelectionWithMaskSheetController.xib; sourceTree = "<group>"; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
-		CF561B1117D62626009D37A4 /* liblzma.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblzma.dylib; path = usr/lib/liblzma.dylib; sourceTree = SDKROOT; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Directories/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF6617EE17E48B5100593225 /* VFSError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSError.mm; sourceTree = "<group>"; };
@@ -585,6 +585,8 @@
 		CFC5123816C5287B00D247EE /* PanelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelView.mm; sourceTree = "<group>"; };
 		CFCA09DE174BA93500AEC8C2 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = files.icns; sourceTree = "<group>"; };
 		CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		CFD712D417EED43800DA15EF /* PanelController+DataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DataAccess.h"; sourceTree = "<group>"; };
+		CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DataAccess.mm"; sourceTree = "<group>"; };
 		CFDA110D177E83F8009E29F7 /* BigFileViewHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewHistory.h; sourceTree = "<group>"; };
 		CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewHistory.mm; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
@@ -805,6 +807,8 @@
 				CFC5123716C5287B00D247EE /* PanelView.h */,
 				CF3C88D616D73A23006346CD /* PanelController.mm */,
 				CF3C88D516D73A23006346CD /* PanelController.h */,
+				CFD712D417EED43800DA15EF /* PanelController+DataAccess.h */,
+				CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */,
 				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
 				CF0519DA17E9C98A00590C74 /* PanelAux.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
@@ -1177,7 +1181,6 @@
 				CF029BFA17E878A400415033 /* libbz2.a */,
 				CF561B1517D6290F009D37A4 /* liblzma.a */,
 				CF561B1317D627B3009D37A4 /* liblzma.a */,
-				CF561B1117D62626009D37A4 /* liblzma.dylib */,
 				CFC5121416C4BD3D00D247EE /* Cocoa.framework */,
 				CFC5121616C4BD3D00D247EE /* Other Frameworks */,
 			);
@@ -1527,6 +1530,7 @@
 				CF9D0E8817CC961100CB8146 /* archive_read_data_into_fd.c in Sources */,
 				CF29313417D9915600648A90 /* rdrand.c in Sources */,
 				CF039EB017911FFA00DC85D6 /* PreferencesWindowPanelsTab.mm in Sources */,
+				CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */,
 				CF9D0EA817CC961100CB8146 /* archive_read_support_format_lha.c in Sources */,
 				CF9D0EB317CC961100CB8146 /* archive_virtual.c in Sources */,
 				CF9D0E9617CC961100CB8146 /* archive_read_support_filter_compress.c in Sources */,

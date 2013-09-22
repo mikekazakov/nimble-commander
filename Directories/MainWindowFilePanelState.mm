@@ -8,6 +8,7 @@
 
 #import "MainWindowFilePanelState.h"
 #import "PanelController.h"
+#import "PanelController+DataAccess.h"
 #import "Common.h"
 #import "ApplicationSkins.h"
 #import "AppDelegate.h"
@@ -1044,12 +1045,10 @@ enum ActiveState
 {
     char path[MAXPATHLEN*8];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-     
-//    m_LeftPanelData->GetDirectoryPathWithTrailingSlash(path);
+    
     m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(path);
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"FirstPanelPath"];
      
-//    m_RightPanelData->GetDirectoryPathWithTrailingSlash(path);
     m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(path);
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];
 }
@@ -1309,5 +1308,28 @@ enum ActiveState
     assert([self IsPanelActive]);
     [[self ActivePanelController] GoToUpperDirectoryAsync];    
 }
+
+- (IBAction)OnCopyCurrentFileName:(id)sender
+{
+    char buf[MAXPATHLEN];
+    if([[self ActivePanelController] GetCurrentFocusedEntryFilename:buf])
+    {
+        NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+        [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+        [pasteBoard setString:[NSString stringWithUTF8String:buf] forType:NSStringPboardType];
+    }
+}
+
+- (IBAction)OnCopyCurrentFilePath:(id)sender
+{
+    char buf[MAXPATHLEN];
+    if([[self ActivePanelController] GetCurrentFocusedEntryFilePathRelativeToHost:buf])
+    {
+        NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+        [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+        [pasteBoard setString:[NSString stringWithUTF8String:buf] forType:NSStringPboardType];
+    }
+}
+
 
 @end

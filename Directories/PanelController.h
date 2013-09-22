@@ -9,10 +9,55 @@
 #import <Cocoa/Cocoa.h>
 #include "PanelData.h"
 #include "PanelView.h"
+#import "PanelFastSearchPopupViewController.h"
 
 @class MainWindowController;
 
 @interface PanelController : NSViewController
+{
+    PanelData *m_Data;
+    PanelView *m_View;
+    std::vector<std::shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
+    
+    __unsafe_unretained MainWindowController *m_WindowController;
+    
+    std::shared_ptr<VFSHost>    m_UpdatesObservationHost;
+    unsigned long               m_UpdatesObservationTicket;
+    
+    // Fast searching section
+    NSString *m_FastSearchString;
+    uint64_t m_FastSearchLastType;
+    unsigned m_FastSearchOffset;
+    PanelFastSearchPopupViewController *m_FastSearchPopupView;
+    
+    // background directory size calculation support
+    bool     m_IsStopDirectorySizeCounting; // flags current any other those tasks in queue that they need to stop
+    bool     m_IsDirectorySizeCounting; // is background task currently working?
+    dispatch_queue_t m_DirectorySizeCountingQ;
+    
+    // background directory changing (loading) support
+    bool     m_IsStopDirectoryLoading; // flags current any other those tasks in queue that they need to stop
+    bool     m_IsDirectoryLoading; // is background task currently working?
+    dispatch_queue_t m_DirectoryLoadingQ;
+    bool     m_IsStopDirectoryReLoading; // flags current any other those tasks in queue that they need to stop
+    bool     m_IsDirectoryReLoading; // is background task currently working?
+    dispatch_queue_t m_DirectoryReLoadingQ;
+    
+    // spinning indicator support
+    bool                m_IsAnythingWorksInBackground;
+    NSProgressIndicator *m_SpinningIndicator;
+    
+    NSButton            *m_EjectButton;
+    
+    // delayed entry selection support
+    struct
+    {
+        bool        isvalid;
+        char        filename[MAXPATHLEN];
+        uint64_t    request_end; // time after which request is meaningless and should be removed
+    } m_DelayedSelection;
+}
+
 
 - (void) SetData:(PanelData*)_data;
 - (void) SetView:(PanelView*)_view;
@@ -55,7 +100,6 @@
 - (int)  GoToGlobalHostsPathSync:(const char*) _path;
 - (void) GoToUpperDirectoryAsync;
 ///////////////////////////////////////////////////////////////////////
-
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void)keyDown:(NSEvent *)event;

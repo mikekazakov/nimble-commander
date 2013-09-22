@@ -370,6 +370,17 @@ CA
                                     <action selector="OnGoToUpperDirectory:" target="-1" id="bhZ-NI-ZD2"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Copy File Name" keyEquivalent="C" id="wUh-lo-NqX">
+                                <connections>
+                                    <action selector="OnCopyCurrentFileName:" target="-1" id="jPx-9u-Ybz"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Copy File Path" keyEquivalent="c" id="KxB-Cc-TKQ">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="OnCopyCurrentFilePath:" target="-1" id="cyu-Ac-y7x"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Select With Mask..." keyEquivalent="=" id="916">
                                 <connections>
                                     <action selector="OnSelectByMask:" target="-1" id="919"/>

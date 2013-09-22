@@ -49,13 +49,14 @@ struct MenuTags
 
 // fs directory handling stuff
 bool GetRealPath(const char *_path_in, char *_path_out);
-bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size);
+bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size); // get last directory from path
 bool GetFirstAvailableDirectoryFromPath(char *_path);
 bool GetUserHomeDirectoryPath(char *_path);
 bool IsDirectoryAvailableForBrowsing(const char *_path);
 int  GetFileSystemRootFromPath(const char *_path, char *_root); // return 0 on sucess, or errno value on error
 bool GetExtensionFromPath(const char* _path, char *_buf);
 bool GetFilenameFromPath(const char* _path, char *_buf);
+bool GetDirectoryContainingItemFromPath(const char* _path, char *_buf);
 void EjectVolumeContainingPath(const char *_path); // a very simple function with no error feedback
 bool IsVolumeContainingPathEjectable(const char *_path); // will return false on any errors
 

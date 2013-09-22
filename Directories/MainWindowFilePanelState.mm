@@ -1331,5 +1331,98 @@ enum ActiveState
     }
 }
 
+- (IBAction)paste:(id)sender
+{
+    NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
+
+    // check what's inside pasteboard
+    NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSFilenamesPboardType]];
+    if(!best_type)
+        return;
+
+    // check if we're on native fs now (all others vfs are r/o now)
+    if(![self ActivePanelData]->Host()->IsNativeFS())
+        return;
+    
+    // input should be an array of filepaths
+    NSArray* ns_filenames = [paste_board propertyListForType:NSFilenamesPboardType];
+    if(!ns_filenames)
+        return;
+    
+    std::map<std::string, std::vector<std::string>> filenames; // root directory to containing filename maps
+    for(NSString *ns_filename in ns_filenames)
+    {
+        // filenames are without trailing slashes for dirs here
+        char dir[MAXPATHLEN], fn[MAXPATHLEN];
+        if(!GetDirectoryContainingItemFromPath([ns_filename fileSystemRepresentation], dir))
+            continue;
+        if(!GetFilenameFromPath([ns_filename fileSystemRepresentation], fn))
+           continue;
+        filenames[dir].push_back(fn);
+    }
+    
+    if(filenames.empty()) // invalid pasteboard?
+        return;
+    
+    char destination[MAXPATHLEN];
+    [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(destination);
+    
+    for(auto i: filenames)
+    {
+        FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate();
+        for(auto j: i.second)
+            files->AddString(j.c_str(), (int)j.length(), 0);
+        
+        FileCopyOperationOptions opts;
+        opts.docopy = true;
+        
+        [m_OperationsController AddOperation:
+             [[FileCopyOperation alloc] initWithFiles:files
+                                                 root:i.first.c_str()
+                                                 dest:destination
+                                              options:&opts]];
+    }
+}
+
+- (IBAction)copy:(id)sender
+{
+    // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
+    if(![self ActivePanelData]->Host()->IsNativeFS())
+        return;
+    
+    NSMutableArray *filenames = [NSMutableArray new];
+    
+    char dir_path[MAXPATHLEN], tmp[MAXPATHLEN];
+    PanelData *pd = [self ActivePanelData];
+    pd->GetDirectoryPathWithTrailingSlash(dir_path);
+    if(pd->GetSelectedItemsCount() > 0)
+    {
+        for(auto &i: pd->DirectoryEntries())
+            if(i.CFIsSelected())
+            {
+                strcpy(tmp, dir_path);
+                strcat(tmp, i.Name());
+                [filenames addObject:[NSString stringWithUTF8String:tmp]];
+            }
+    }
+    else
+    {
+        auto const *item = [[self ActivePanelView] CurrentItem];
+        if(item && !item->IsDotDot())
+        {
+            strcpy(tmp, dir_path);
+            strcat(tmp, item->Name());
+            [filenames addObject:[NSString stringWithUTF8String:tmp]];
+        }
+    }
+    
+    if([filenames count] == 0)
+        return;
+    
+    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+    [pasteBoard clearContents];
+    [pasteBoard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+    [pasteBoard setPropertyList:filenames forType:NSFilenamesPboardType];
+}
 
 @end

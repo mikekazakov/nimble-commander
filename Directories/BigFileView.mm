@@ -649,6 +649,7 @@ static NSArray *MyDefaultsKeys()
                                                             length:m_SelectionInWindowUnichars.length
                                                       freeWhenDone:false];
         NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+        [pasteBoard clearContents];
         [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
         [pasteBoard setString:str forType:NSStringPboardType];
     }

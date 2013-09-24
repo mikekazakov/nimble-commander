@@ -79,6 +79,8 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags)
         if(fd < 0)
             return VFSError::FromErrno(errno);
 
+        unlink(pattern_buf); // preemtive unlink - OS will remove inode upon last descriptor closing        
+        
         m_FD = fd;
 
         m_Size = m_SeqFile->Size();
@@ -113,8 +115,6 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags)
             return VFSError::UnexpectedEOF;
         
         lseek(m_FD, 0, SEEK_SET);
-
-        unlink(pattern_buf); // preemtive unlink - OS will remove inode upon last descriptor closing
         
         m_SeqFile.reset();
         m_Ready = true; // here we ready to go

@@ -28,6 +28,20 @@ static bool CheckFileIsOK(const char* _s)
             st.st_size > 0;
 }
 
+static bool IsImageRepEqual(NSBitmapImageRep *_img1, NSBitmapImageRep *_img2)
+{
+    // compares only NSBitmapImageRep images
+    if([_img1 bitmapFormat] != [_img2 bitmapFormat]) return false;
+    if([_img1 bitsPerPixel] != [_img2 bitsPerPixel]) return false;
+    if([_img1 bytesPerPlane] != [_img2 bytesPerPlane]) return false;
+    if([_img1 bytesPerRow] != [_img2 bytesPerRow]) return false;
+    if([_img1 isPlanar] != [_img2 isPlanar]) return false;
+    if([_img1 numberOfPlanes] != [_img2 numberOfPlanes]) return false;
+    if([_img1 samplesPerPixel] != [_img2 samplesPerPixel]) return false;
+    
+    return memcmp([_img1 bitmapData], [_img2 bitmapData], [_img1 bytesPerPlane]) == 0;
+}
+
 static NSImageRep *ProduceThumbnailForVFS(const char *_path,
                                    const char *_ext,
                                    std::shared_ptr<VFSHost> _host,
@@ -174,6 +188,7 @@ IconsGenerator::IconsGenerator()
 {
 //    m_WorkQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.work_queue", DISPATCH_QUEUE_SERIAL);
     m_ControlQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
+    m_IconsCacheQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);
     m_WorkGroup = dispatch_group_create();
     m_IconSize = NSMakeRect(0, 0, 16, 16);
     m_LastIconID = 0;
@@ -191,6 +206,8 @@ IconsGenerator::~IconsGenerator()
         dispatch_release(m_ControlQueue);
     if(m_WorkGroup != 0)
         dispatch_release(m_WorkGroup);
+    if(m_IconsCacheQueue != 0)
+        dispatch_release(m_IconsCacheQueue);
 }
 
 void IconsGenerator::BuildGenericIcons()
@@ -198,12 +215,16 @@ void IconsGenerator::BuildGenericIcons()
     // Load predefined directory icon.
     NSImage *image = [NSImage imageNamed:NSImageNameFolder];
     assert(image);
+    m_GenericFolderIconImage = image;
     m_GenericFolderIcon = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+    m_GenericFolderIconBitmap = [NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]];
     
     // Load predefined generic document file icon.
     image = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-    assert(image);    
+    assert(image);
+    m_GenericFileIconImage = image;
     m_GenericFileIcon = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+    m_GenericFileIconBitmap = [NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]];
 }
 
 NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
@@ -249,6 +270,13 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     meta->relative_path = buf;
     meta->generic = entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
     meta->extension = entry.HasExtension() ? entry.Extension() : "";
+    if(m_IconsMode >= IconModeFileIcons && !meta->extension.empty())
+    {
+        __block std::map<std::string, NSImageRep*>::const_iterator it;
+        dispatch_sync(m_IconsCacheQueue, ^{ it = m_IconsCache.find(meta->extension); });
+        if(it != m_IconsCache.end())
+            meta->filetype = it->second;
+    }
     
     entry.SetCIcon(meta_no+1);
     
@@ -257,7 +285,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         Runner(meta, sh_this);
     });
     
-    return meta->generic;
+    return meta->filetype ? meta->filetype : meta->generic;
 }
 
 void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGenerator> _guard)
@@ -266,7 +294,7 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
         return;
     
     assert(_meta->thumbnail == nil);
-    assert(_meta->filetype  == nil);
+//    assert(_meta->filetype  == nil); // generic may be already set using icons cache
     assert(_meta->generic   != nil);
     
     if( strcmp(_meta->host->FSTag(), "native") == 0 )
@@ -345,16 +373,43 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
                 m_UpdateCallback();
         }
         
-        if(!_meta->thumbnail && !_meta->extension.empty())
+        if(!_meta->thumbnail && !_meta->filetype && !_meta->extension.empty())
         {
             NSString *ext = [NSString stringWithUTF8String:_meta->extension.c_str()];
-            NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:ext];
-            if(image != nil)
+            
+            // check if have some information in cache
+            
+            __block std::map<std::string, NSImageRep*>::const_iterator it;
+            
+            dispatch_sync(m_IconsCacheQueue, ^{ it = m_IconsCache.find(_meta->extension); });
+            
+            if( it != m_IconsCache.end() )
             {
-                _meta->filetype = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
-
-                if(m_UpdateCallback)
+                // ok, just use it. NB! this map can contain zero pointer for the cases when icon is dummy
+                _meta->filetype = it->second;
+                if(_meta->filetype != 0 && m_UpdateCallback)
                     m_UpdateCallback();
+            }
+            else
+            {
+                // don't know anything - ok, ask system
+                NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:ext];
+                if(image != nil)
+                {
+                    if(IsImageRepEqual([NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]], m_GenericFileIconBitmap))
+                    {
+                        // dummy icon - this extension has no set icon, so just don't use it
+                        dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = 0; });
+                    }
+                    else
+                    {
+                        NSImageRep *rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+                        dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = rep; });
+                        _meta->filetype = rep;
+                        if(m_UpdateCallback)
+                            m_UpdateCallback();
+                    }
+                }
             }
         }
     }
@@ -395,7 +450,8 @@ void IconsGenerator::SetIconSize(int _size)
     assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // STA api design    
     if((int)m_IconSize.size.width == _size) return;
     m_IconSize = NSMakeRect(0, 0, _size, _size);
-    BuildGenericIcons();    
+    BuildGenericIcons();
+    dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache.clear(); });
 }
 
 void IconsGenerator::SetUpdateCallback(void (^_cb)())

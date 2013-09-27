@@ -60,13 +60,20 @@ private:
     
     std::map<unsigned short, std::shared_ptr<Meta>> m_Icons;
     unsigned int m_LastIconID;
-    NSRect m_IconSize;    
+    NSRect m_IconSize;
+
+    
+    NSImage *m_GenericFileIconImage;
+    NSImage *m_GenericFolderIconImage;
     NSImageRep *m_GenericFileIcon;
     NSImageRep *m_GenericFolderIcon;
+    NSBitmapImageRep *m_GenericFileIconBitmap;
+    NSBitmapImageRep *m_GenericFolderIconBitmap;
 
     dispatch_group_t m_WorkGroup;    // working queue is concurrent
     dispatch_queue_t m_ControlQueue; // linear queue
-
+    dispatch_queue_t m_IconsCacheQueue;
+    
     int              m_StopWorkQueue;
     int              m_IconsMode;
     void             (^m_UpdateCallback)();
@@ -75,6 +82,8 @@ private:
     void Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGenerator> _guard);
     void StopWorkQueue();
     
+    
+    std::map<std::string, NSImageRep*> m_IconsCache;
     
     
     // denied! (c) Quake3

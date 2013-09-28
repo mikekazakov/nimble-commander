@@ -7,6 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <vector>
+#import <string>
 #import "MainWindowStateProtocol.h"
 #import "FlexChainedStringsChunk.h"
 
@@ -20,5 +22,7 @@
 - (void)ActivatePanelByController:(PanelController *)controller;
 - (void)PanelPathChanged:(PanelController*)_panel;
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
+
+- (void)GetFilePanelsGlobalPaths:(std::vector<std::string> &)_paths;
 
 @end

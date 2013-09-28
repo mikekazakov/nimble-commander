@@ -23,4 +23,6 @@
 
 - (IBAction)OnMenuSendFeedback:(id)sender;
 
+- (NSArray*) GetMainWindowControllers;
+
 @end

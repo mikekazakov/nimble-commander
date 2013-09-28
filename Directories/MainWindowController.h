@@ -12,6 +12,7 @@
 #import "VFS.h"
 
 @class OperationsController;
+@class MainWindowFilePanelState;
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate>
 
@@ -26,5 +27,8 @@
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 
 - (void)RequestBigFileView: (const char*)_filepath with_fs:(std::shared_ptr<VFSHost>) _host;
+
+// at current moment any main window must jave have file panel state, but it may change in the future
+- (MainWindowFilePanelState*) FilePanelState;
 
 @end

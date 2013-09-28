@@ -196,12 +196,14 @@ enum ActiveState
     [m_LeftPanelGoToButton setTarget:self];
     [m_LeftPanelGoToButton setAction:@selector(LeftPanelGoToButtonAction:)];
     [m_LeftPanelGoToButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_LeftPanelGoToButton SetOwner:self];
     [self addSubview:m_LeftPanelGoToButton];
 
     m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     [m_RightPanelGoToButton setTarget:self];
     [m_RightPanelGoToButton setAction:@selector(RightPanelGoToButtonAction:)];
     [m_RightPanelGoToButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_RightPanelGoToButton SetOwner:self];
     [self addSubview:m_RightPanelGoToButton];
 
     m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
@@ -1423,6 +1425,16 @@ enum ActiveState
     [pasteBoard clearContents];
     [pasteBoard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
     [pasteBoard setPropertyList:filenames forType:NSFilenamesPboardType];
+}
+
+- (void)GetFilePanelsGlobalPaths:(std::vector<std::string> &)_paths
+{
+    _paths.clear();
+    char tmp[MAXPATHLEN*8];
+    m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(tmp);
+    _paths.push_back(tmp);
+    m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(tmp);
+    _paths.push_back(tmp);
 }
 
 @end

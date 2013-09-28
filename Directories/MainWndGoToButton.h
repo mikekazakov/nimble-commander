@@ -8,9 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class MainWindowFilePanelState;
+
 @interface MainWndGoToButton : NSPopUpButton
 
 - (NSString*) GetCurrentSelectionPath;
 - (void) SetCurrentPath: (const char*)_path;
+- (void) SetOwner:(MainWindowFilePanelState*) _owner;
 
 @end

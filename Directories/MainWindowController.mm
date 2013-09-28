@@ -180,4 +180,9 @@
             [i OnApplicationWillTerminate];
 }
 
+- (MainWindowFilePanelState*) FilePanelState
+{
+    return m_BaseWindowState;
+}
+
 @end

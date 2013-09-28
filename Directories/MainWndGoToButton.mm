@@ -6,12 +6,15 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <unistd.h>
+#import <sys/types.h>
+#import <pwd.h>
+#import <assert.h>
 #import "MainWndGoToButton.h"
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
-#include <assert.h>
+#import "AppDelegate.h"
 #import "Common.h"
+#import "MainWindowFilePanelState.h"
+#import "MainWindowController.h"
 
 static NSString *RealHomeDirectory()
 {
@@ -28,11 +31,21 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
     return b ? [path2 length] : 0;
 }
 
+struct AdditionalPath
+{
+    NSString *path;
+    NSString *visible_path; // may be truncated in the middle for convenience
+};
+
 @implementation MainWndGoToButton
 {
     NSMutableArray *m_UserDirs;
-    NSArray *m_Volumes;
+    NSArray *m_Volumes;        // array of NSUrl
+    std::vector<AdditionalPath> m_OtherPanelsPaths;
+    
     NSString *m_CurrentPath;
+
+    __weak MainWindowFilePanelState *m_Owner;
 }
 
 
@@ -49,6 +62,11 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
 -(void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void) SetOwner:(MainWindowFilePanelState*) _owner
+{
+    m_Owner = _owner;
 }
 
 - (void)awakeFromNib
@@ -108,18 +126,6 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
         assert([paths count] > 0);
         [m_UserDirs addObject:[paths objectAtIndex:0]];
     }
-    
-    
-    
-//    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES );
-//    NSArray* paths = [[NSFileManager defaultManager]
-//                      URLsForDirectory:NSUserDirectory
-//                      inDomains:NSUserDomainMask];
-
-    
-
-    
-    
 }
 
 - (void) UpdateUrls
@@ -128,6 +134,55 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
     m_Volumes = [[NSFileManager defaultManager]
                      mountedVolumeURLsIncludingResourceValuesForKeys:keys
                      options:NSVolumeEnumerationSkipHiddenVolumes];
+}
+
+- (void) UpdateOtherPanelPaths
+{
+    static NSDictionary* attributes = [NSDictionary dictionaryWithObject:[NSFont menuFontOfSize:0] forKey:NSFontAttributeName];
+    m_OtherPanelsPaths.clear();
+    
+    bool append = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu"];
+    if(!append) return;
+    
+    std::vector<std::string> current_paths;
+    [m_Owner GetFilePanelsGlobalPaths:current_paths];
+    
+    NSArray *main_wnd_controllers = [(AppDelegate*)[NSApp delegate] GetMainWindowControllers];
+    for(MainWindowController *ctr in main_wnd_controllers)
+    {
+        MainWindowFilePanelState *state = [ctr FilePanelState];
+        if(state == m_Owner)
+            continue;
+        
+        std::vector<std::string> paths;
+        [state GetFilePanelsGlobalPaths:paths];
+    
+        for(const auto& i: paths)
+        {
+            bool copy = false;
+            for(const auto &j: current_paths)
+                if(i == j)
+                {
+                    copy = true;
+                    break;
+                }
+            if(copy) continue;
+            
+            NSString *path = [NSString stringWithUTF8String:i.c_str()];
+            for(const auto &j: m_OtherPanelsPaths)
+                if([j.path isEqualToString:path])
+                {
+                    copy = true;
+                    break;
+                }
+            if(copy) continue;
+            
+            AdditionalPath ap;
+            ap.path = path;
+            ap.visible_path = StringByTruncatingToWidth(path, 600, kTruncateAtMiddle, attributes);
+            m_OtherPanelsPaths.push_back(ap);
+        }
+    }
 }
 
 - (NSString*) GetCurrentSelectionPath
@@ -144,6 +199,10 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
         NSURL *url = [m_Volumes objectAtIndex:n - [m_UserDirs count] - 1];
         return [url path];
     }
+    else if( n - [m_UserDirs count] - [m_Volumes count] - 2 < m_OtherPanelsPaths.size())
+    {
+        return m_OtherPanelsPaths[n - [m_UserDirs count] - [m_Volumes count] - 2].path;
+    }
     assert(0);
 
     return 0;
@@ -152,6 +211,7 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
 - (void) WillPopUp:(NSNotification *) notification
 {
     [self UpdateUrls];
+    [self UpdateOtherPanelPaths];
     
     [self removeAllItems];
     [self addItemWithTitle:@"Go to"];
@@ -213,6 +273,13 @@ static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
                 common_item = [self itemWithTitle:volumeName];                
             }
         }
+    }
+    
+    if(!m_OtherPanelsPaths.empty())
+    {
+        [[self menu] addItem:[NSMenuItem separatorItem]];
+        for(const auto &i: m_OtherPanelsPaths)
+            [self addItemWithTitle:i.visible_path];
     }
     
     if(common_item != nil)

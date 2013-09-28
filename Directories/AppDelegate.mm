@@ -341,4 +341,12 @@
     [m_PreferencesController showWindow:self];
 }
 
+- (NSArray*) GetMainWindowControllers
+{
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:m_MainWindows.size()];
+    for(auto i: m_MainWindows)
+        [array addObject:i];
+    return array;
+}
+
 @end

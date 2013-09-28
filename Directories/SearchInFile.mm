@@ -12,6 +12,21 @@
 
 static const unsigned g_MaximumCodeUnit = 2;
 
+static bool IsWholePhrase(CFStringRef _string, CFRange _range)
+{
+    static NSCharacterSet *set = [NSCharacterSet alphanumericCharacterSet];
+    assert(_range.length > 0);
+    assert(_range.location >= 0);
+
+    if(_range.location > 0)
+        if( [set characterIsMember:CFStringGetCharacterAtIndex(_string, _range.location - 1)])
+            return false;
+    if(_range.location + _range.length < CFStringGetLength(_string))
+        if( [set characterIsMember:CFStringGetCharacterAtIndex(_string, _range.location + _range.length)])
+            return false;
+    return true;
+}
+
 SearchInFile::SearchInFile(FileWindow* _file):
     m_File(_file),
     m_Position(0),
@@ -20,7 +35,7 @@ SearchInFile::SearchInFile(FileWindow* _file):
     m_DecodedBufferString(0),
     m_TextSearchEncoding(ENCODING_INVALID),
     m_SearchOptions(0),
-    m_Queue(dispatch_queue_create("search in file", 0))
+    m_Queue(dispatch_queue_create("info.filesmanager.SearchInFile", 0))
 {
     assert(m_File->FileOpened());
     m_Position = _file->WindowPos();
@@ -68,6 +83,12 @@ SearchInFile::Result SearchInFile::Search(uint64_t *_offset, uint64_t *_bytes_le
         return SearchText(_offset, _bytes_len, _checker);
     
     return Result::NotFound;
+}
+
+bool SearchInFile::IsEOF() const
+{
+    assert(m_File != 0);
+    return m_Position >= m_File->FileSize();
 }
 
 SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
@@ -141,7 +162,14 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
         }
         else
         {
-            assert(result.location + result.length <= m_DecodedBufferSize);
+            assert(result.location + result.length <= m_DecodedBufferSize); // sanity check
+            // check for whole phrase is this option is set
+            if( (m_SearchOptions & OptionFindWholePhrase) && !IsWholePhrase(m_DecodedBufferString, result) )
+            {
+                // false alarm - just move position beyond found part ang go on
+                m_Position = m_Position + m_DecodedBufferIndx[result.location+result.length];
+                continue;
+            }
             
             *_offset = m_Position + m_DecodedBufferIndx[result.location];
             *_bytes_len = (result.location + result.length < m_DecodedBufferSize ?

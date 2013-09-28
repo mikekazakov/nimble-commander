@@ -161,6 +161,10 @@ static int FileWindowSize()
         m_SearchFileWindow = new FileWindow;
         m_SearchFileWindow->OpenFile(vfsfile);
         m_SearchInFile = new SearchInFile(m_SearchFileWindow);
+        m_SearchInFile->SetSearchOptions(
+                                         ([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewCaseSensitiveSearch"] ? SearchInFile::OptionCaseSensitive : 0) |
+                                         ([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewWholePhraseSearch"]   ? SearchInFile::OptionFindWholePhrase : 0) );
+        
         
         strcpy(m_FilePath, _fn);
         vfsfile->ComposeFullHostsPath(m_GlobalFilePath);
@@ -249,6 +253,9 @@ static int FileWindowSize()
     [m_SearchField setAction:@selector(UpdateSearchFilter:)];
     [[m_SearchField cell] setPlaceholderString:@"Search in file"];
     [[m_SearchField cell] setSendsWholeSearchString:true];
+    [[m_SearchField cell] setRecentsAutosaveName:@"BigFileViewRecentSearches"];
+    [[m_SearchField cell] setMaximumRecents:20];
+    [[m_SearchField cell] setSearchMenuTemplate:[self BuildSearchMenu]];
     [self addSubview:m_SearchField];
     
     m_SearchIndicator = [[NSProgressIndicator alloc] initWithFrame:NSRect()];
@@ -372,14 +379,15 @@ static int FileWindowSize()
     { // user did some changes in search request
         [m_SearchResult setStringValue:@""];
         [m_View SetSelectionInFile:CFRangeMake(-1, 0)]; // remove current selection
-        
-        uint64_t offset = [m_View VerticalPositionInBytes];
+
+        uint64_t view_offset = [m_View VerticalPositionInBytes];
         int encoding = [m_View Enconding];
         
         m_IsStopSearching = true; // we should stop current search if any
         dispatch_async(m_SearchInFile->Queue(), ^{
             m_IsStopSearching = false;
-            m_SearchInFile->MoveCurrentPosition(offset);
+            
+            m_SearchInFile->MoveCurrentPosition(view_offset);
             m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), encoding);
         });
     }
@@ -392,6 +400,10 @@ static int FileWindowSize()
     dispatch_async(m_SearchInFile->Queue(), ^{
         m_IsStopSearching = false;
         uint64_t offset, len;
+        
+        if(m_SearchInFile->IsEOF())
+            m_SearchInFile->MoveCurrentPosition(0);
+        
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifySearching:true];});
         auto result = m_SearchInFile->Search(&offset, &len, ^{return m_IsStopSearching;});
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifySearching:false];});
@@ -450,6 +462,66 @@ static int FileWindowSize()
     info->encoding = [m_View Enconding];
     info->selection = [m_View SelectionInFile];
     [[BigFileViewHistory sharedHistory] InsertEntry:info];
+}
+
+- (NSMenu*) BuildSearchMenu
+{
+    NSMenu *cellMenu = [[NSMenu alloc] initWithTitle:@"Search Menu"];
+    NSMenuItem *item;
+    
+    item = [[NSMenuItem alloc] initWithTitle:@"Case-sensitive search" action:@selector(SetCaseSensitiveSearch:) keyEquivalent:@""];
+    [item setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewCaseSensitiveSearch"]];
+    [item setTarget:self];
+    [cellMenu insertItem:item atIndex:0];
+
+    item = [[NSMenuItem alloc] initWithTitle:@"Find whole phrase" action:@selector(SetWholePhrasesSearch:) keyEquivalent:@""];
+    [item setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewWholePhraseSearch"]];
+    [item setTarget:self];    
+    [cellMenu insertItem:item atIndex:1];
+    
+    item = [[NSMenuItem alloc] initWithTitle:@"Clear Recents" action:NULL keyEquivalent:@""];
+    [item setTag:NSSearchFieldClearRecentsMenuItemTag];
+    [cellMenu insertItem:item atIndex:2];
+    
+    item = [NSMenuItem separatorItem];
+    [item setTag:NSSearchFieldRecentsTitleMenuItemTag];
+    [cellMenu insertItem:item atIndex:3];
+    
+    item = [[NSMenuItem alloc] initWithTitle:@"Recent Searches" action:NULL keyEquivalent:@""];
+    [item setTag:NSSearchFieldRecentsTitleMenuItemTag];
+    [cellMenu insertItem:item atIndex:4];
+    
+    item = [[NSMenuItem alloc] initWithTitle:@"Recents" action:NULL keyEquivalent:@""];
+    [item setTag:NSSearchFieldRecentsMenuItemTag];
+    [cellMenu insertItem:item atIndex:5];
+    
+    return cellMenu;
+}
+
+- (IBAction)SetCaseSensitiveSearch:(NSMenuItem *)menuItem
+{
+    int options = m_SearchInFile->SearchOptions();
+    options = (options & ~SearchInFile::OptionCaseSensitive) |
+        ((options & SearchInFile::OptionCaseSensitive) ? 0 : SearchInFile::OptionCaseSensitive); // invert this option
+    m_SearchInFile->SetSearchOptions(options);
+    
+    NSMenu* menu = [[m_SearchField cell] searchMenuTemplate];
+    [[menu itemAtIndex:0] setState:(options & SearchInFile::OptionCaseSensitive) != 0];
+    [[m_SearchField cell] setSearchMenuTemplate:menu];
+    [[NSUserDefaults standardUserDefaults] setBool:options&SearchInFile::OptionCaseSensitive forKey:@"BigFileViewCaseSensitiveSearch"];
+}
+
+- (IBAction)SetWholePhrasesSearch:(NSMenuItem *)menuItem
+{
+    int options = m_SearchInFile->SearchOptions();
+    options = (options & ~SearchInFile::OptionFindWholePhrase) |
+        ((options & SearchInFile::OptionFindWholePhrase) ? 0 : SearchInFile::OptionFindWholePhrase); // invert this option
+    m_SearchInFile->SetSearchOptions(options);
+    
+    NSMenu* menu = [[m_SearchField cell] searchMenuTemplate];
+    [[menu itemAtIndex:1] setState:(options & SearchInFile::OptionFindWholePhrase) != 0];
+    [[m_SearchField cell] setSearchMenuTemplate:menu];
+    [[NSUserDefaults standardUserDefaults] setBool:options&SearchInFile::OptionFindWholePhrase forKey:@"BigFileViewWholePhraseSearch"];
 }
 
 @end

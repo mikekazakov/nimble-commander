@@ -28,6 +28,8 @@ public:
     void SetSearchOptions(int _options);
     int SearchOptions();
     
+    bool IsEOF() const;
+    
     // passing ownage of _string to SearchInFile
     void ToggleTextSearch(CFStringRef _string, int _encoding);
     CFStringRef TextSearchString(); // may be NULL. don't alter it. don't release it
@@ -36,6 +38,7 @@ public:
     enum class Result
     {
         Invalid,    // invalid search request
+        IOErr,      // I/O error on underlying VFS
         Found,      // searched performed successfuly, found one and returning addresses
         NotFound,   // searched performed successfully, didn't found
         EndOfFile,  // can't seach since current position is already at the end of file
@@ -44,11 +47,14 @@ public:
     
     enum
     {
-        OptionCaseSensitive = 1 << 0 // default search option is case _insensitive_
+        OptionCaseSensitive     = 1 << 0,   // default search option is case _insensitive_
+        OptionFindWholePhrase   = 1 << 1
     };
     
     typedef bool (^CancelChecker)(void);
-    Result Search(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker); // checker can be nil
+    Result Search(uint64_t *_offset/*out*/,
+                  uint64_t *_bytes_len/*out*/,
+                  CancelChecker _checker); // checker can be nil
     
 private:
     SearchInFile(const SearchInFile&); // forbid

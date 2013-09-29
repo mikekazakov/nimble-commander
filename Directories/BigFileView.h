@@ -49,9 +49,6 @@ enum class BigFileViewModes
 - (bool)        WordWrap;
 - (void)        SetWordWrap:(bool)_wrapping;
 
-- (int)         ColumnOffset;
-- (void)        SetColumnOffset:(int)_offset;
-
 - (BigFileViewModes) Mode;
 - (void)        SetMode: (BigFileViewModes) _mode;
 

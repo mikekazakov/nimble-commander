@@ -808,6 +808,12 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
 }
 
+- (void) OnScrollWheel:(NSEvent *)theEvent
+{
+    
+    
+}
+
 @end
 
 

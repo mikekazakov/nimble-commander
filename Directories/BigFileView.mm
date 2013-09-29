@@ -44,8 +44,6 @@ static NSArray *MyDefaultsKeys()
     __strong id<BigFileViewDelegateProtocol> m_Delegate;
     
     NSScroller      *m_VerticalScroller;
-    int             m_ColumnOffset;
-    
     CFRange         m_SelectionInFile;  // in bytes, raw position within whole file
     CFRange         m_SelectionInWindow;         // in bytes, whithin current window positio
                                                  // updated when windows moves, regarding current selection in bytes
@@ -80,7 +78,6 @@ static NSArray *MyDefaultsKeys()
 - (void) DoInit
 {
     m_WrapWords = true;
-    m_ColumnOffset = 0;
     m_SelectionInFile = CFRangeMake(-1, 0);
     m_SelectionInWindow = CFRangeMake(-1, 0);
     m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
@@ -381,20 +378,8 @@ static NSArray *MyDefaultsKeys()
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];    
-    int idy = int([theEvent deltaY]); // TODO: temporary implementation
-    if(idy < 0) [m_ViewImpl OnDownArrow];
-    else if(idy > 0) [m_ViewImpl OnUpArrow];
-    
-    int idx = int([theEvent deltaX]);
-    if(idx < 0)
-        if([m_ViewImpl respondsToSelector:@selector(OnRightArrow)])
-            [m_ViewImpl OnRightArrow];
-    
-    if(idx > 0)
-        if([m_ViewImpl respondsToSelector:@selector(OnLeftArrow)])
-            [m_ViewImpl OnLeftArrow];
-    
+    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    [m_ViewImpl OnScrollWheel:theEvent];
     if(was_vert_pos != [self VerticalPositionInBytes])
         [m_Delegate BigFileViewScrolledByUser];
 }
@@ -409,7 +394,6 @@ static NSArray *MyDefaultsKeys()
     if(m_WrapWords != _wrapping)
     {
         m_WrapWords = _wrapping;
-        [self SetColumnOffset:0];
         if([m_ViewImpl respondsToSelector:@selector(OnWordWrappingChanged)])
             [m_ViewImpl OnWordWrappingChanged];
     }
@@ -557,19 +541,6 @@ static NSArray *MyDefaultsKeys()
 
 - (CFRange) SelectionInFile {
     return m_SelectionInFile;
-}
-
-- (int) ColumnOffset {
-    return m_ColumnOffset;
-}
-
-- (void) SetColumnOffset:(int)_offset
-{
-    if(m_ColumnOffset != _offset)
-    {
-        m_ColumnOffset = _offset;
-        [self setNeedsDisplay:true];
-    }
 }
 
 - (void) mouseDown:(NSEvent *)_event

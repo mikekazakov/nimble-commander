@@ -172,19 +172,22 @@ struct TextLine
     size_t          m_StringBufferSize; // should be equal to m_WindowSize
         
     // layout stuff
-    CGFloat                      m_FontHeight;
-    CGFloat                      m_FontAscent;
-    CGFloat                      m_FontDescent;
-    CGFloat                      m_FontLeading;
-    CGFloat                      m_FontWidth;
-    CGFloat                      m_LeftInset;
+    double                      m_FontHeight;
+    double                      m_FontAscent;
+    double                      m_FontDescent;
+    double                      m_FontLeading;
+    double                      m_FontWidth;
+    double                      m_LeftInset;
     CFMutableAttributedStringRef m_AttrString;
     std::vector<TextLine>        m_Lines;
     unsigned                     m_VerticalOffset; // offset in lines number within text lines
-
+    unsigned                     m_HorizontalOffset; // offset in characters from the left window edge
+    
     int                          m_FrameLines; // amount of lines in our frame size ( +1 to fit cutted line also)
     
-    int                          m_FramePxWidth;
+    CGSize                       m_FrameSize;
+    bool                         m_SmoothScroll; // turned on when we can view all file in file window without movements
+    CGPoint                      m_SmoothOffset;
 }
 
 - (id) InitWithData:(BigFileViewDataBackend*) _data
@@ -192,13 +195,18 @@ struct TextLine
 {
     m_View = _view;
     m_Data = _data;
-    m_FramePxWidth = 0;
+    m_FrameSize = CGSizeMake(0, 0);
     m_LeftInset = 5;
-    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * m_Data->RawSize()); // unichar for every byte in raw window - should be ok in all cases
-    [self GrabFontGeometry];
-    
-    [self OnFrameChanged];
+    m_HorizontalOffset = 0;
+    m_SmoothScroll = _data->IsFullCoverage();
 
+    if(!_data->IsFullCoverage())
+        m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * m_Data->RawSize()); // unichar for every byte in raw window - should be ok in all cases
+    else
+        m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * m_Data->UniCharsSize());
+    
+    [self GrabFontGeometry];
+    [self OnFrameChanged];
     [self OnBufferDecoded];
     
     [m_View setNeedsDisplay:true];
@@ -319,8 +327,8 @@ struct TextLine
 {
      NSRect v = [m_View visibleRect];
     CGPoint textPosition;
-    textPosition.x = ceil((m_LeftInset - [m_View ColumnOffset] * m_FontWidth));
-    textPosition.y = floor(v.size.height - m_FontHeight + m_FontDescent);
+    textPosition.x = ceil((m_LeftInset - m_HorizontalOffset * m_FontWidth)) - m_SmoothOffset.x;
+    textPosition.y = floor(v.size.height - m_FontHeight + m_FontDescent) + m_SmoothOffset.y;
     return textPosition;
 }
 
@@ -359,10 +367,15 @@ struct TextLine
     if(!m_StringBuffer) return;
     
     CGPoint textPosition = [self TextAnchor];
+    
     CGFloat view_width = [m_View visibleRect].size.width;
     
     size_t first_string = m_VerticalOffset;
-    uint32_t last_drawn_byte_pos = 0;
+    if(m_SmoothOffset.y < 0 && first_string > 0)
+    {
+        --first_string; // to be sure that we can see bottom-clipped lines
+        textPosition.y += m_FontHeight;        
+    }
     
     CFRange selection = [m_View SelectionWithinWindowUnichars];
     
@@ -408,21 +421,42 @@ struct TextLine
          
          CGContextSetTextPosition(_context, textPosition.x, textPosition.y);
          CTLineDraw(line, _context);
-
-         last_drawn_byte_pos = m_Lines[i].byte_no + m_Lines[i].bytes_len;
          
          textPosition.y -= m_FontHeight;
          if(textPosition.y < 0 - m_FontHeight)
              break;
      }
 
-    if(first_string < m_Lines.size())
+    [self UpdateVerticalScrollBar];
+}
+
+- (void) UpdateVerticalScrollBar
+{
+    if(!m_SmoothScroll)
     {
-        uint64_t byte_pos = m_Lines[first_string].byte_no + m_Data->FilePos();
-        uint64_t byte_scroll_size = m_Data->FileSize() - (last_drawn_byte_pos - m_Lines[first_string].byte_no);
-        double prop = double(last_drawn_byte_pos - m_Lines[first_string].byte_no) / double(m_Data->FileSize());
-        [m_View UpdateVerticalScroll:double(byte_pos) / double(byte_scroll_size)
-                                prop:prop];
+        if(m_VerticalOffset < m_Lines.size())
+        {
+            uint64_t byte_pos = m_Lines[m_VerticalOffset].byte_no + m_Data->FilePos();
+            uint64_t last_visible_byte_pos =
+                ((m_VerticalOffset + m_FrameLines < m_Lines.size()) ?
+                    m_Lines[m_VerticalOffset + m_FrameLines].byte_no :
+                    m_Lines.back().byte_no )
+                + m_Data->FilePos();;
+            uint64_t byte_scroll_size = m_Data->FileSize() - (last_visible_byte_pos - byte_pos);
+            double prop = double(last_visible_byte_pos - byte_pos) / double(m_Data->FileSize());
+            [m_View UpdateVerticalScroll:double(byte_pos) / double(byte_scroll_size)
+                                    prop:prop];
+        }
+    }
+    else
+    {
+        double pos = 0.;
+        if(m_Lines.size() > m_FrameLines)
+            pos = double(m_VerticalOffset) / double(m_Lines.size() - m_FrameLines);
+        double prop = 1.;
+        if(m_Lines.size() > m_FrameLines)
+            prop = double(m_FrameLines) / double(m_Lines.size());
+        [m_View UpdateVerticalScroll:pos prop:prop];
     }
 }
 
@@ -753,24 +787,112 @@ struct TextLine
 
 - (void) HandleVerticalScroll: (double) _pos
 {
-    // TODO: this is a very first implementation, contains many issues
-    uint64_t file_size = m_Data->FileSize();
-    uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
-    [self ScrollToByteOffset: bytepos];
+    if(!m_SmoothScroll)
+    { // scrolling by bytes offset
+        uint64_t file_size = m_Data->FileSize();
+        uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
+        [self ScrollToByteOffset: bytepos];
+        
+        if(m_Lines.size() - m_VerticalOffset < m_FrameLines )
+            m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
+
+        m_SmoothOffset.y = 0;
+    }
+    else
+    { // we have all file decomposed into strings, so we can do smooth scrolling now
+        double full_document_size = double(m_Lines.size()) * m_FontHeight;
+        double scroll_y_offset = _pos * (full_document_size - m_FrameSize.height);
+        m_VerticalOffset = floor(scroll_y_offset / m_FontHeight);
+        m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontHeight;
+        [m_View setNeedsDisplay:true];
+    }
+}
+
+- (void) OnScrollWheel:(NSEvent *)theEvent
+{
+    double delta_y = [theEvent scrollingDeltaY];
+    double delta_x = [theEvent scrollingDeltaX];
+    if(![theEvent hasPreciseScrollingDeltas])
+    {
+        delta_y *= m_FontHeight;
+        delta_x *= m_FontWidth;
+    }
     
-    if(m_Lines.size() - m_VerticalOffset < m_FrameLines )
-        m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
+    // vertical scrolling
+    if(!m_SmoothScroll)
+    {
+        if((delta_y > 0 && (m_Data->FilePos() > 0 ||
+                            m_VerticalOffset > 0)       ) ||
+           (delta_y < 0 && (m_Data->FilePos() + m_Data->RawSize() < m_Data->FileSize() ||
+                            m_VerticalOffset + m_FrameLines < m_Lines.size()) )
+           )
+        {
+            m_SmoothOffset.y -= delta_y;
+        
+            while(m_SmoothOffset.y < -m_FontHeight) {
+                [self OnUpArrow];
+                m_SmoothOffset.y += m_FontHeight;
+            }
+            while(m_SmoothOffset.y > m_FontHeight) {
+                [self OnDownArrow];
+                m_SmoothOffset.y -= m_FontHeight;
+            }
+        }
+    }
+    else
+    {
+        if((delta_y > 0 && m_VerticalOffset > 0) ||
+           (delta_y < 0 && m_VerticalOffset + m_FrameLines < m_Lines.size()) )
+        {
+            m_SmoothOffset.y -= delta_y;
+            if(m_SmoothOffset.y < -m_FontHeight)
+            {
+                int dl = int(-m_SmoothOffset.y / m_FontHeight);
+                if(m_VerticalOffset > dl) m_VerticalOffset -= dl;
+                else m_VerticalOffset = 0;
+                m_SmoothOffset.y += dl * m_FontHeight;
+            }
+            else if(m_SmoothOffset.y > m_FontHeight)
+            {
+                int dl = int(m_SmoothOffset.y / m_FontHeight);
+                if(m_VerticalOffset + m_FrameLines + dl < m_Lines.size()) m_VerticalOffset += dl;
+                else m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
+                m_SmoothOffset.y -= dl * m_FontHeight;
+            }
+        }
+    }
+    
+    // horizontal scrolling
+    if( ![m_View WordWrap] && ((delta_x > 0 && m_HorizontalOffset > 0) || delta_x < 0) )
+    {
+        m_SmoothOffset.x -= delta_x;
+        if(m_SmoothOffset.x > m_FontWidth)
+        {
+            int dx = int(m_SmoothOffset.x / m_FontWidth);
+            m_HorizontalOffset += dx;
+            m_SmoothOffset.x -= dx * m_FontWidth;
+            
+        }
+        else if(m_SmoothOffset.x < -m_FontWidth)
+        {
+            int dx = int(-m_SmoothOffset.x / m_FontWidth);
+            if(m_HorizontalOffset > dx) m_HorizontalOffset -= dx;
+            else m_HorizontalOffset = 0;
+            m_SmoothOffset.x += dx * m_FontWidth;
+        }
+    }
+    
+    [m_View setNeedsDisplay:true];
 }
 
 - (void) OnFrameChanged
 {
     NSRect fr = [m_View frame];
     m_FrameLines = fr.size.height / m_FontHeight;
-    if( m_FramePxWidth != (int)fr.size.width)
-    {
+
+    if(m_FrameSize.width != fr.size.width)
         [self BuildLayout];
-        m_FramePxWidth = (int)fr.size.width;
-    }
+    m_FrameSize = fr.size;
 }
 
 - (void) OnWordWrappingChanged
@@ -783,6 +905,8 @@ struct TextLine
         else
             m_VerticalOffset = 0;
     }
+    m_HorizontalOffset = 0;
+    m_SmoothOffset.x = 0;
 }
 
 - (void) OnFontSettingsChanged
@@ -794,14 +918,20 @@ struct TextLine
 
 - (void) OnLeftArrow
 {
-    if(![m_View WordWrap] && [m_View ColumnOffset] > 0)
-        [m_View SetColumnOffset:[m_View ColumnOffset]-1];
+    if(![m_View WordWrap] && m_HorizontalOffset > 0)
+    {
+        m_HorizontalOffset--;
+        [m_View setNeedsDisplay:true];
+    }
 }
 
 - (void) OnRightArrow
 {
     if(![m_View WordWrap])
-        [m_View SetColumnOffset:[m_View ColumnOffset]+1];
+    {
+        m_HorizontalOffset++;
+        [m_View setNeedsDisplay:true];
+    }
 }
 
 - (void) OnMouseDown:(NSEvent *)event

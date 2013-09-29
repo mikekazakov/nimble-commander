@@ -47,7 +47,7 @@
 	<key>BigFileViewDoSaveFileSelection</key>
 	<true/>
 	<key>BigFileViewFileWindowPow2X</key>
-	<integer>0</integer>
+	<integer>3</integer>
 	<key>BigFileViewCaseSensitiveSearch</key>
 	<false/>
 	<key>BigFileViewWholePhraseSearch</key>

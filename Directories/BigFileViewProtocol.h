@@ -22,6 +22,7 @@
 - (uint32_t) GetOffsetWithinWindow; // offset of a first visible symbol (+/-)
 
 // event handling
+- (void) OnScrollWheel:(NSEvent *)theEvent;
 - (void) OnBufferDecoded;
 - (void) OnUpArrow;
 - (void) OnDownArrow;

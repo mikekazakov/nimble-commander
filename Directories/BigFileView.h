@@ -31,12 +31,6 @@ enum class BigFileViewModes
 - (void) SetDelegate:(id<BigFileViewDelegateProtocol>) _delegate;
 - (void) DoClose;
 
-// Backend section
-// data access section
-- (const void*) RawWindow;
-- (uint64_t)    RawWindowSize;
-- (uint64_t)    RawWindowPosition;
-- (uint64_t)    FullSize;
 - (void) RequestWindowMovementAt: (uint64_t) _pos;
 - (void) UpdateVerticalScroll: (double) _pos prop:(double)prop;
 

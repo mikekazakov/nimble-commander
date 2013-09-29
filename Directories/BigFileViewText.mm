@@ -163,14 +163,11 @@ struct TextLine
 @implementation BigFileViewText
 {
     // basic stuff
-    BigFileView    *m_View;
-    const UniChar  *m_Window;
-    const uint32_t *m_Indeces;
-    size_t          m_WindowSize;
+    BigFileView             *m_View;
+    BigFileViewDataBackend  *m_Data;
 
-    UniChar        *m_FixupWindow;
-    
     // data stuff
+    UniChar        *m_FixupWindow;
     CFStringRef     m_StringBuffer;
     size_t          m_StringBufferSize; // should be equal to m_WindowSize
         
@@ -190,23 +187,19 @@ struct TextLine
     int                          m_FramePxWidth;
 }
 
-- (id) InitWithWindow:(const UniChar*) _unichar_window
-                offsets:(const uint32_t*) _unichar_indeces
-                   size:(size_t) _unichars_amount // unichars, not bytes (x2)
-                 parent:(BigFileView*) _view
+- (id) InitWithData:(BigFileViewDataBackend*) _data
+             parent:(BigFileView*) _view;
 {
     m_View = _view;
-    m_Window = _unichar_window;
-    m_Indeces = _unichar_indeces;
-    m_WindowSize = _unichars_amount;
+    m_Data = _data;
     m_FramePxWidth = 0;
     m_LeftInset = 5;
-    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * [m_View RawWindowSize]);
+    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * m_Data->RawSize()); // unichar for every byte in raw window - should be ok in all cases
     [self GrabFontGeometry];
     
     [self OnFrameChanged];
 
-    [self OnBufferDecoded:m_WindowSize];
+    [self OnBufferDecoded];
     
     [m_View setNeedsDisplay:true];
     return self;
@@ -226,18 +219,15 @@ struct TextLine
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
 }
 
-- (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
+- (void) OnBufferDecoded
 {
-//    assert(_new_size <= g_FixupWindowSize);
-    m_WindowSize = _new_size;
-    
     if(m_StringBuffer)
         CFRelease(m_StringBuffer);
     
-    memcpy(m_FixupWindow, m_Window, sizeof(UniChar) * m_WindowSize);
-    CleanUnicodeControlSymbols(m_FixupWindow, m_WindowSize);
+    memcpy(m_FixupWindow, m_Data->UniChars(), sizeof(UniChar) * m_Data->UniCharsSize());
+    CleanUnicodeControlSymbols(m_FixupWindow, m_Data->UniCharsSize());
 
-    m_StringBuffer = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow, m_WindowSize, kCFAllocatorNull);
+    m_StringBuffer = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow, m_Data->UniCharsSize(), kCFAllocatorNull);
     m_StringBufferSize = CFStringGetLength(m_StringBuffer);
 
     [self BuildLayout];
@@ -291,8 +281,8 @@ struct TextLine
         TextLine l;
         l.unichar_no = (uint32_t)start;
         l.unichar_len = (uint32_t)count;
-        l.byte_no = m_Indeces[start];
-        l.bytes_len = m_Indeces[start + count - 1] - l.byte_no;
+        l.byte_no = m_Data->UniCharToByteIndeces()[start];
+        l.bytes_len = m_Data->UniCharToByteIndeces()[start + count - 1] - l.byte_no;
         m_Lines.push_back(l);
         
         start += count;
@@ -428,9 +418,9 @@ struct TextLine
 
     if(first_string < m_Lines.size())
     {
-        uint64_t byte_pos = m_Lines[first_string].byte_no + [m_View RawWindowPosition];
-        uint64_t byte_scroll_size = [m_View FullSize] - (last_drawn_byte_pos - m_Lines[first_string].byte_no);
-        double prop = double(last_drawn_byte_pos - m_Lines[first_string].byte_no) / double([m_View FullSize]);
+        uint64_t byte_pos = m_Lines[first_string].byte_no + m_Data->FilePos();
+        uint64_t byte_scroll_size = m_Data->FileSize() - (last_drawn_byte_pos - m_Lines[first_string].byte_no);
+        double prop = double(last_drawn_byte_pos - m_Lines[first_string].byte_no) / double(m_Data->FileSize());
         [m_View UpdateVerticalScroll:double(byte_pos) / double(byte_scroll_size)
                                 prop:prop];
     }
@@ -451,8 +441,8 @@ struct TextLine
     else
     {
         // nope, we need to move file window if it is possible
-        uint64_t window_pos = [m_View RawWindowPosition];
-        uint64_t window_size = [m_View RawWindowSize];
+        uint64_t window_pos = m_Data->FilePos();
+        uint64_t window_size = m_Data->RawSize();
         if(window_pos > 0)
         {
             size_t anchor_index = m_VerticalOffset + 1;
@@ -496,9 +486,9 @@ struct TextLine
     else
     {
         // nope, we need to move file window if it is possible
-        uint64_t window_pos = [m_View RawWindowPosition];
-        uint64_t window_size = [m_View RawWindowSize];
-        uint64_t file_size = [m_View FullSize];
+        uint64_t window_pos = m_Data->FilePos();
+        uint64_t window_size = m_Data->RawSize();
+        uint64_t file_size = m_Data->FileSize();
         if(window_pos + window_size < file_size)
         {
             // remember last line offset so we can find it in a new window and layout breakdown
@@ -534,9 +524,9 @@ struct TextLine
     else
     {
         // nope, we need to move file window if it is possible
-        uint64_t window_pos = [m_View RawWindowPosition];
-        uint64_t window_size = [m_View RawWindowSize];
-        uint64_t file_size = [m_View FullSize];
+        uint64_t window_pos = m_Data->FilePos();
+        uint64_t window_size = m_Data->RawSize();
+        uint64_t file_size = m_Data->FileSize();
         if(window_pos + window_size < file_size)
         {
             size_t anchor_index = m_VerticalOffset + m_FrameLines - 1;
@@ -582,8 +572,8 @@ struct TextLine
     else
     {
         // nope, we need to move file window if it is possible
-        uint64_t window_pos = [m_View RawWindowPosition];
-        uint64_t window_size = [m_View RawWindowSize];
+        uint64_t window_pos = m_Data->FilePos();
+        uint64_t window_size = m_Data->RawSize();
         if(window_pos > 0)
         {
             size_t anchor_index = m_VerticalOffset;
@@ -623,7 +613,7 @@ struct TextLine
     bool found = false;
     size_t closest_ind = 0;
     uint64_t closest_dist = 1000000;
-    uint64_t window_pos = [m_View RawWindowPosition];
+    uint64_t window_pos = m_Data->FilePos();
     for(size_t i = 0; i < m_Lines.size(); ++i)
     {
         uint64_t pos = (uint64_t)m_Lines[i].byte_no + window_pos;
@@ -708,9 +698,9 @@ struct TextLine
 
 - (void) ScrollToByteOffset: (uint64_t)_offset
 {
-    uint64_t window_pos = [m_View RawWindowPosition];
-    uint64_t window_size = [m_View RawWindowSize];
-    uint64_t file_size = [m_View FullSize];
+    uint64_t window_pos = m_Data->FilePos();
+    uint64_t window_size = m_Data->RawSize();
+    uint64_t file_size = m_Data->FileSize();
     
     if(_offset >= window_pos && _offset < window_pos + window_size)
     {
@@ -764,7 +754,7 @@ struct TextLine
 - (void) HandleVerticalScroll: (double) _pos
 {
     // TODO: this is a very first implementation, contains many issues
-    uint64_t file_size = [m_View FullSize];
+    uint64_t file_size = m_Data->FileSize();
     uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
     [self ScrollToByteOffset: bytepos];
     
@@ -834,9 +824,9 @@ struct TextLine
         {
             int sel_start = i.unichar_no;
             int sel_end = i.unichar_no + i.unichar_len;
-            int sel_start_byte = m_Indeces[sel_start];
-            int sel_end_byte = sel_end < m_StringBufferSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
-            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
+            int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
+            int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
+            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
             break;
         }
 }
@@ -873,10 +863,10 @@ struct TextLine
         sel_start = uc_index;
         sel_end   = uc_index + 1;        
     }
-    
-    int sel_start_byte = m_Indeces[sel_start];
-    int sel_end_byte = sel_end < m_StringBufferSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
-    [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
+
+    int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
+    int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
+    [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
 }
 
 - (void) HandleSelectionWithMouseDragging: (NSEvent*) event
@@ -910,11 +900,10 @@ struct TextLine
         {
             int sel_start = base_ind > curr_ind ? curr_ind : base_ind;
             int sel_end   = base_ind < curr_ind ? curr_ind : base_ind;
-            int sel_start_byte = m_Indeces[sel_start];
-            int sel_end_byte = sel_end < m_StringBufferSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
+            int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
+            int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
             assert(sel_end_byte >= sel_start_byte);
-            
-            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
+            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
         }
         else
             [m_View SetSelectionInFile:CFRangeMake(-1,0)];

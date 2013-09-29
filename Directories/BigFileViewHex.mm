@@ -88,9 +88,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
 {
     // basic stuff
     BigFileView    *m_View;
-    const UniChar  *m_Window;
-    const uint32_t *m_Indeces;
-    size_t          m_WindowSize;
+    BigFileViewDataBackend *m_Data;
     UniChar        *m_FixupWindow;
     
     unsigned              m_RowsOffset;
@@ -103,21 +101,16 @@ static const unsigned char g_4Bits_To_Char[16] = {
     CGFloat                      m_LeftInset;    
     std::vector<TextLine> m_Lines;
 }
-
-- (id) InitWithWindow:(const UniChar*) _unichar_window
-              offsets:(const uint32_t*) _unichar_indeces
-                 size:(size_t) _unichars_amount // unichars, not bytes (x2)
-               parent:(BigFileView*) _view
+- (id) InitWithData:(BigFileViewDataBackend*) _data
+             parent:(BigFileView*) _view;
 {
     m_View = _view;
-    m_Window = _unichar_window;
-    m_Indeces = _unichar_indeces;
-    m_WindowSize = _unichars_amount;
-    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * [m_View RawWindowSize]);
+    m_Data = _data;
+    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * m_Data->RawSize());
     m_LeftInset = 5;
     
     [self GrabFontGeometry];
-    [self OnBufferDecoded:m_WindowSize];
+    [self OnBufferDecoded];
     
     m_RowsOffset = 0;
     
@@ -139,16 +132,16 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_FrameLines = floor([m_View frame].size.height / m_FontHeight);    
 }
 
-- (void) OnBufferDecoded: (size_t) _new_size // unichars, not bytes (x2)
+- (void) OnBufferDecoded
 {
     [self ClearLayout];
     
-    m_WindowSize = _new_size;
-    
     // fix our decoded window - clear control characters
-    for(size_t i = 0; i < m_WindowSize; ++i)
+    UniChar *uni_window = m_Data->UniChars();
+    size_t uni_window_sz = m_Data->UniCharsSize();
+    for(size_t i = 0; i < uni_window_sz; ++i)
     {
-        UniChar c = m_Window[i];
+        UniChar c = uni_window[i];
         if(c < 0x0020 ||
            c == 0x007F ||
            c == NSParagraphSeparatorCharacter ||
@@ -158,21 +151,21 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
     
     // split our string into a chunks of 16 bytes somehow
-    const uint64_t raw_window_pos = [m_View RawWindowPosition];
-    const uint64_t raw_window_size = [m_View RawWindowSize];
-    const unsigned char *raw_window = (const unsigned char *)[m_View RawWindow];
+    const uint64_t raw_window_pos = m_Data->FilePos();
+    const uint64_t raw_window_size = m_Data->RawSize();
+    const unsigned char *raw_window = (const unsigned char *)m_Data->Raw();
     uint32_t charind = 0; // for string breaking
     uint32_t charextrabytes = 0; // for string breaking, to handle large (more than 1 byte) characters
     uint32_t byteind = 0; // for hex rows
 
     while(true)
     {
-        if(charind >= m_WindowSize)
+        if(charind >= uni_window_sz)
             break;
         
         TextLine current;
         current.char_start = charind;
-        current.string_byte_start = m_Indeces[current.char_start];
+        current.string_byte_start = m_Data->UniCharToByteIndeces()[current.char_start];
         current.row_byte_start = byteind;
         current.chars_num = 1;
 
@@ -180,18 +173,18 @@ static const unsigned char g_4Bits_To_Char[16] = {
                                           g_BytesPerHexLine : (g_BytesPerHexLine - raw_window_pos % g_BytesPerHexLine));
         unsigned bytes_for_current_string = bytes_for_current_row - charextrabytes;
         
-        for(uint32_t i = charind + 1; i < m_WindowSize; ++i)
+        for(uint32_t i = charind + 1; i < uni_window_sz; ++i)
         {
-            if(m_Indeces[i] - current.string_byte_start >= bytes_for_current_string)
+            if(m_Data->UniCharToByteIndeces()[i] - current.string_byte_start >= bytes_for_current_string)
                 break;
             
             current.chars_num++;
         }
         
-        if(current.char_start + current.chars_num < m_WindowSize)
-            current.string_bytes_num = m_Indeces[current.char_start + current.chars_num] - current.string_byte_start;
+        if(current.char_start + current.chars_num < uni_window_sz)
+            current.string_bytes_num = m_Data->UniCharToByteIndeces()[current.char_start + current.chars_num] - current.string_byte_start;
         else
-            current.string_bytes_num = (uint32_t)[m_View RawWindowSize] - current.string_byte_start;
+            current.string_bytes_num = (uint32_t)raw_window_size - current.string_byte_start;
         
         charextrabytes = current.string_bytes_num > bytes_for_current_string ?
             current.string_bytes_num - bytes_for_current_string :
@@ -211,7 +204,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     CFDictionarySetValue(attributes, kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
     CFDictionarySetValue(attributes, kCTFontAttributeName, [m_View TextFont]);
     
-    CFStringRef big_string = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow, m_WindowSize, kCFAllocatorNull);
+    CFStringRef big_string = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow, uni_window_sz, kCFAllocatorNull);
     CFAttributedStringRef big_attr_str = CFAttributedStringCreate(0, big_string, attributes);
     CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(big_attr_str);
     
@@ -272,7 +265,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
 - (void) OnFontSettingsChanged
 {
     [self GrabFontGeometry];
-    [self OnBufferDecoded:m_WindowSize];    
+    [self OnBufferDecoded];
 }
 
 - (void) ClearLayout
@@ -320,7 +313,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     if(row_no < 0)
         return -1;
     if(row_no >= m_Lines.size())
-        return (int)[m_View RawWindowSize] + 1;
+        return (int)m_Data->RawSize() + 1;
 
     int x_off = _p.x - (left_upper.x + m_FontWidth * (g_RowOffsetSymbs + 3));
     int char_ind = ceil(x_off / m_FontWidth);
@@ -339,7 +332,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     if(row_no < 0)
         return -1;
     if(row_no >= m_Lines.size())
-        return (int)[m_View RawWindowSize] + 1;
+        return (int)m_Data->RawSize() + 1; // ???????? here should be m_Data->UniCharSize ?
     
     int x_off = _p.x - (left_upper.x +
                         m_FontWidth * (g_RowOffsetSymbs + 3) +
@@ -447,13 +440,13 @@ static const unsigned char g_4Bits_To_Char[16] = {
     
     // update scroller also
     double pos;
-    if( [m_View FullSize] > g_BytesPerHexLine * m_FrameLines)
-        pos = (double([m_View RawWindowPosition]) + double(m_RowsOffset*g_BytesPerHexLine) ) /
-            double([m_View FullSize] - g_BytesPerHexLine * m_FrameLines);
+    if( m_Data->FileSize() > g_BytesPerHexLine * m_FrameLines)
+        pos = (double(m_Data->FilePos()) + double(m_RowsOffset*g_BytesPerHexLine) ) /
+            double(m_Data->FileSize() - g_BytesPerHexLine * m_FrameLines);
     else
         pos = 0;
         
-    double prop = ( double(g_BytesPerHexLine) * double(m_FrameLines) ) / double([m_View FullSize]);
+    double prop = ( double(g_BytesPerHexLine) * double(m_FrameLines) ) / double(m_Data->FileSize());
     [m_View UpdateVerticalScroll:pos prop:prop];
 }
 
@@ -469,8 +462,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
     else
     {
-        uint64_t window_pos = [m_View RawWindowPosition];
-        uint64_t window_size = [m_View RawWindowSize];
+        uint64_t window_pos = m_Data->FilePos();
+        uint64_t window_size = m_Data->RawSize();
 
         // check if we can move our window up
         if(window_pos > 0)
@@ -485,8 +478,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
             
             [m_View RequestWindowMovementAt:desired_window_offset];
             
-            assert(anchor_row_offset >= [m_View RawWindowPosition]);
-            uint64_t anchor_new_offset = anchor_row_offset - [m_View RawWindowPosition];
+            assert(anchor_row_offset >= window_pos);
+            uint64_t anchor_new_offset = anchor_row_offset - window_pos;
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine);
             assert(m_RowsOffset < m_Lines.size());
             [m_View setNeedsDisplay:true];
@@ -514,9 +507,9 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
     else
     {
-        uint64_t window_pos = [m_View RawWindowPosition];
-        uint64_t window_size = [m_View RawWindowSize];
-        uint64_t file_size = [m_View FullSize];
+        uint64_t window_pos = m_Data->FilePos();
+        uint64_t window_size = m_Data->RawSize();
+        uint64_t file_size = m_Data->FileSize();
         if(window_pos + window_size < file_size)
         {
             uint64_t anchor_row_offset = (uint64_t)(m_Lines[m_RowsOffset].string_byte_start) + window_pos;
@@ -530,8 +523,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
             
             [m_View RequestWindowMovementAt:desired_window_offset];
             
-            assert(anchor_row_offset >= [m_View RawWindowPosition]);
-            uint64_t anchor_new_offset = anchor_row_offset - [m_View RawWindowPosition];
+            assert(anchor_row_offset >= window_pos);
+            uint64_t anchor_new_offset = anchor_row_offset - window_pos;
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) + 2; // why +2?
             assert(m_RowsOffset < m_Lines.size());
             [m_View setNeedsDisplay:true];
@@ -552,9 +545,9 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
     else
     {
-        uint64_t window_pos = [m_View RawWindowPosition];
-        uint64_t window_size = [m_View RawWindowSize];
-        uint64_t file_size = [m_View FullSize];
+        uint64_t window_pos = m_Data->FilePos();
+        uint64_t window_size = m_Data->RawSize();
+        uint64_t file_size = m_Data->FileSize();
         if(window_pos + window_size < file_size)
         {
             assert(m_RowsOffset + m_FrameLines < m_Lines.size());
@@ -569,8 +562,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
             
             [m_View RequestWindowMovementAt:desired_window_offset];
             
-            assert(anchor_row_offset >= [m_View RawWindowPosition]);
-            uint64_t anchor_new_offset = anchor_row_offset - [m_View RawWindowPosition];
+            assert(anchor_row_offset >= window_pos);
+            uint64_t anchor_new_offset = anchor_row_offset - window_pos;
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) + 1;
             assert(m_RowsOffset < m_Lines.size());
             [m_View setNeedsDisplay:true];
@@ -597,8 +590,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
     else
     {
-        uint64_t window_pos = [m_View RawWindowPosition];
-        uint64_t window_size = [m_View RawWindowSize];
+        uint64_t window_pos = m_Data->FilePos();
+        uint64_t window_size = m_Data->RawSize();
         if(window_pos > 0)
         {
             uint64_t anchor_row_offset = (uint64_t)(m_Lines[m_RowsOffset].string_byte_start) + window_pos;            
@@ -611,8 +604,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
             
             [m_View RequestWindowMovementAt:desired_window_offset];
 
-            assert(anchor_row_offset >= [m_View RawWindowPosition]);
-            uint64_t anchor_new_offset = anchor_row_offset - [m_View RawWindowPosition];
+            assert(anchor_row_offset >= window_pos);
+            uint64_t anchor_new_offset = anchor_row_offset - window_pos;
 //            assert(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines);
             if(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines)
                 m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) - m_FrameLines;
@@ -667,10 +660,10 @@ static const unsigned char g_4Bits_To_Char[16] = {
 
 - (void) HandleVerticalScroll: (double) _pos
 {
-    if([m_View FullSize] < g_BytesPerHexLine * m_FrameLines)
+    if(m_Data->FileSize() < g_BytesPerHexLine * m_FrameLines)
         return;
 
-    uint64_t file_size = [m_View FullSize];
+    uint64_t file_size = m_Data->FileSize();
     uint64_t bytepos = uint64_t( _pos * double(file_size - g_BytesPerHexLine * m_FrameLines) );
     [self ScrollToByteOffset:bytepos];
 }
@@ -682,9 +675,9 @@ static const unsigned char g_4Bits_To_Char[16] = {
 
 - (void) ScrollToByteOffset: (uint64_t)_offset
 {
-    uint64_t window_pos = [m_View RawWindowPosition];
-    uint64_t window_size = [m_View RawWindowSize];
-    uint64_t file_size = [m_View FullSize];
+    uint64_t window_pos = m_Data->FilePos();
+    uint64_t window_size = m_Data->RawSize();
+    uint64_t file_size = m_Data->FileSize();
     
     if(_offset > window_pos + g_BytesPerHexLine &&
        _offset + m_FrameLines * g_BytesPerHexLine < window_pos + window_size)
@@ -744,7 +737,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     if(hit_part == HitPart::DataDump)
     {
         CFRange orig_sel = [m_View SelectionWithinWindow];        
-        uint64_t window_size = [m_View RawWindowSize];
+        uint64_t window_size = m_Data->RawSize();
         int first_byte = CropIndex([self ByteIndexFromHitTest:first_down], (int)window_size);
         
         while ([event type]!=NSLeftMouseUp)
@@ -768,7 +761,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
             {
                 int sel_start = base_byte < curr_byte ? base_byte : curr_byte;
                 int sel_end   = base_byte > curr_byte ? base_byte : curr_byte;
-                [m_View SetSelectionInFile:CFRangeMake(sel_start + [m_View RawWindowPosition], sel_end - sel_start)];
+                [m_View SetSelectionInFile:CFRangeMake(sel_start + m_Data->FilePos(), sel_end - sel_start)];
             }
             else
                 [m_View SetSelectionInFile:CFRangeMake(-1,0)];
@@ -779,12 +772,12 @@ static const unsigned char g_4Bits_To_Char[16] = {
     else if(hit_part == HitPart::Text)
     {
         CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
-        int first_char = CropIndex([self CharIndexFromHitTest:first_down], (int)m_WindowSize);        
+        int first_char = CropIndex([self CharIndexFromHitTest:first_down], (int)m_Data->UniCharsSize());
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_char = CropIndex([self CharIndexFromHitTest:loc], (int)m_WindowSize);
+            int curr_char = CropIndex([self CharIndexFromHitTest:loc], (int)m_Data->UniCharsSize());
             
             int base_char = first_char;
             if(modifying_existing_selection && orig_sel.length > 0)
@@ -802,10 +795,10 @@ static const unsigned char g_4Bits_To_Char[16] = {
             {
                 int sel_start = base_char < curr_char ? base_char : curr_char;
                 int sel_end   = base_char > curr_char ? base_char : curr_char;
-                int sel_start_byte = sel_start < m_WindowSize ? m_Indeces[sel_start] : (int)[m_View RawWindowSize];
-                int sel_end_byte = sel_end < m_WindowSize ? m_Indeces[sel_end] : (int)[m_View RawWindowSize];
+                int sel_start_byte = sel_start < m_Data->UniCharsSize() ? m_Data->UniCharToByteIndeces()[sel_start] : (int)m_Data->RawSize();
+                int sel_end_byte = sel_end < m_Data->UniCharsSize() ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
                 assert(sel_end_byte >= sel_start_byte);
-                [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + [m_View RawWindowPosition], sel_end_byte - sel_start_byte)];
+                [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
             }
             else
                 [m_View SetSelectionInFile:CFRangeMake(-1,0)];

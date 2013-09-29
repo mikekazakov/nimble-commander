@@ -191,6 +191,7 @@ void InterpretUTF16BEBufferAsUniChar(
 
 namespace encodings
 {
+    bool IsValidEncoding(int _encoding);
     const char *NameFromEncoding(int _encoding);
     int EncodingFromName(const char* _name);
     

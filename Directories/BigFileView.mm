@@ -14,6 +14,7 @@
 #import "Common.h"
 #import "AppDelegate.h"
 #import "NSUserDefaults+myColorSupport.h"
+#import "BigFileViewDataBackend.h"
 
 static NSArray *MyDefaultsKeys()
 {
@@ -27,14 +28,7 @@ static NSArray *MyDefaultsKeys()
 @implementation BigFileView
 {
     FileWindow     *m_File;
-    
-    int             m_Encoding;
-    
-    // a file's window decoded into Unicode
-    UniChar         *m_DecodeBuffer;
-    // array indexing every m_DecodeBuffer unicode character into a byte offset within original file window
-    uint32_t        *m_DecodeBufferIndx;
-    size_t          m_DecodedBufferSize; // amount of unichars
+    std::shared_ptr<BigFileViewDataBackend> m_Data;
 
     CTFontRef       m_Font;
     CGColorRef      m_ForegroundColor;
@@ -81,15 +75,10 @@ static NSArray *MyDefaultsKeys()
     [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPaths:MyDefaultsKeys()];
     CFRelease(m_ForegroundColor);
     CFRelease(m_Font);
-    if(m_DecodeBuffer != 0)
-        free(m_DecodeBuffer);
-    if(m_DecodeBufferIndx != 0)
-        free(m_DecodeBufferIndx);
 }
 
 - (void) DoInit
 {
-    m_Encoding = ENCODING_UTF8;
     m_WrapWords = true;
     m_ColumnOffset = 0;
     m_SelectionInFile = CFRangeMake(-1, 0);
@@ -205,13 +194,8 @@ static NSArray *MyDefaultsKeys()
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    // Drawing code here.
-    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext]
-                                          graphicsPort];
-
-    if(m_ViewImpl != nil)
-        [m_ViewImpl DoDraw:context dirty:dirtyRect];
-
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    [m_ViewImpl DoDraw:context dirty:dirtyRect]; // m_ViewImpl can be nil
 }
 
 - (void) SetFile:(FileWindow*) _file
@@ -240,36 +224,19 @@ static NSArray *MyDefaultsKeys()
     assert(_encoding != ENCODING_INVALID);
     
     m_File = _file;
-    if(m_DecodeBuffer != 0)
-        free(m_DecodeBuffer);
-    if(m_DecodeBufferIndx != 0)
-        free(m_DecodeBufferIndx);
-    
-    m_DecodeBuffer = (UniChar*) malloc(sizeof(UniChar) * m_File->WindowSize());
-    m_DecodeBufferIndx = (uint32_t*) malloc(sizeof(uint32_t) * m_File->WindowSize());
-
-    m_Encoding = _encoding;
-    [self DecodeRawFileBuffer];    
+    m_Data = std::make_shared<BigFileViewDataBackend>(m_File, _encoding);
+    BigFileView* __weak weak_self = self;
+    m_Data->SetOnDecoded(^{
+        if(weak_self) {
+            BigFileView *__strong strong_self = weak_self;
+            [strong_self UpdateSelectionRange];
+            if(strong_self->m_ViewImpl)
+                [strong_self->m_ViewImpl OnBufferDecoded];
+        }
+    });
     
     m_ViewImpl = _mode == BigFileViewModes::Hex ? [BigFileViewHex alloc] : [BigFileViewText alloc];    
-    [m_ViewImpl InitWithWindow:m_DecodeBuffer offsets:m_DecodeBufferIndx size:m_DecodedBufferSize parent:self];
-}
-
-- (void) DecodeRawFileBuffer
-{
-    assert(encodings::BytesForCodeUnit(m_Encoding) <= 2); // TODO: support for UTF-32 in the future
-    bool odd = (encodings::BytesForCodeUnit(m_Encoding) == 2) && ((m_File->WindowPos() & 1) == 1);    
-    encodings::InterpretAsUnichar(m_Encoding,
-                                  (unsigned char*)m_File->Window() + (odd ? 1 : 0),
-                                  m_File->WindowSize() - (odd ? 1 : 0),
-                                  m_DecodeBuffer,
-                                  m_DecodeBufferIndx,
-                                  &m_DecodedBufferSize);
-    
-    [self UpdateSelectionRange];
-    
-    if(m_ViewImpl)
-        [m_ViewImpl OnBufferDecoded:m_DecodedBufferSize];
+    [m_ViewImpl InitWithData:m_Data.get() parent:self];
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -323,16 +290,13 @@ static NSArray *MyDefaultsKeys()
 
 - (int) Enconding
 {
-    return m_Encoding;
+    if(m_Data.get()) return m_Data->Encoding();
+    return ENCODING_UTF8; // ??
 }
 
 - (void) SetEncoding:(int)_encoding
 {
-    if(_encoding != m_Encoding && _encoding != ENCODING_INVALID)
-    {
-        m_Encoding = _encoding;
-        [self DecodeRawFileBuffer];
-    }
+    m_Data->SetEncoding(_encoding);
 }
 
 - (void)frameDidChange
@@ -364,31 +328,9 @@ static NSArray *MyDefaultsKeys()
     return m_ShouldSmoothFonts;
 }
 
-- (const void*) RawWindow
-{
-    return m_File->Window();
-}
-
-- (uint64_t) RawWindowPosition
-{
-    return m_File->WindowPos();
-}
-
-- (uint64_t) RawWindowSize
-{
-    return m_File->WindowSize();
-}
-
-- (uint64_t) FullSize
-{
-    return m_File->FileSize();
-}
-
 - (void) RequestWindowMovementAt: (uint64_t) _pos
 {
-    m_File->MoveWindow(_pos);
-    
-    [self DecodeRawFileBuffer];
+    m_Data->MoveWindowSync(_pos);
 }
 
 - (void) DoClose
@@ -488,7 +430,7 @@ static NSArray *MyDefaultsKeys()
     if(_mode == [self Mode])
         return;
     
-    uint32_t off = [m_ViewImpl GetOffsetWithinWindow];    
+    uint32_t current_offset = [m_ViewImpl GetOffsetWithinWindow];
     
     switch (_mode)
     {
@@ -502,12 +444,8 @@ static NSArray *MyDefaultsKeys()
             assert(0);
     }
 
-    [m_ViewImpl InitWithWindow:m_DecodeBuffer
-                       offsets:m_DecodeBufferIndx
-                          size:m_DecodedBufferSize
-                        parent:self];
-
-    [m_ViewImpl MoveOffsetWithinWindow:off];
+    [m_ViewImpl InitWithData:m_Data.get() parent:self];
+    [m_ViewImpl MoveOffsetWithinWindow:current_offset];
 }
 
 - (void) SetDelegate:(id<BigFileViewDelegateProtocol>) _delegate
@@ -519,7 +457,6 @@ static NSArray *MyDefaultsKeys()
 {
     return  [m_VerticalScroller doubleValue];
 }
-
 
 - (void) SetSelectionInFile: (CFRange) _selection
 {
@@ -591,20 +528,20 @@ static NSArray *MyDefaultsKeys()
         return;
     }
     
-    const uint32_t *offset = std::lower_bound(m_DecodeBufferIndx,
-                                              m_DecodeBufferIndx+m_DecodedBufferSize,
+    const uint32_t *offset = std::lower_bound(m_Data->UniCharToByteIndeces(),
+                                              m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(),
                                               start - window_pos);
-    assert(offset < m_DecodeBufferIndx+m_DecodedBufferSize);
+    assert(offset < m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize());
     
-    const uint32_t *tail = std::lower_bound(m_DecodeBufferIndx,
-                                            m_DecodeBufferIndx+m_DecodedBufferSize,
+    const uint32_t *tail = std::lower_bound(m_Data->UniCharToByteIndeces(),
+                                            m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(),
                                             end - window_pos);
-    assert(tail <= m_DecodeBufferIndx+m_DecodedBufferSize);
+    assert(tail <= m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize());
     
-    int startindex = int(offset - m_DecodeBufferIndx);
-    int endindex   = int(tail - m_DecodeBufferIndx);
-    assert(startindex >= 0 && startindex < m_DecodedBufferSize);
-    assert(endindex >= 0 && endindex <= m_DecodedBufferSize);
+    int startindex = int(offset - m_Data->UniCharToByteIndeces());
+    int endindex   = int(tail - m_Data->UniCharToByteIndeces());
+    assert(startindex >= 0 && startindex < m_Data->UniCharsSize());
+    assert(endindex >= 0 && endindex <= m_Data->UniCharsSize());
     
     m_SelectionInWindow = CFRangeMake(start - window_pos, end - start);
     m_SelectionInWindowUnichars = CFRangeMake(startindex, endindex - startindex);
@@ -645,7 +582,7 @@ static NSArray *MyDefaultsKeys()
 {
     if(m_SelectionInWindow.location >= 0 && m_SelectionInWindow.length > 0)
     {
-        NSString *str = [[NSString alloc] initWithCharactersNoCopy:m_DecodeBuffer + m_SelectionInWindowUnichars.location
+        NSString *str = [[NSString alloc] initWithCharactersNoCopy:m_Data->UniChars() + m_SelectionInWindowUnichars.location
                                                             length:m_SelectionInWindowUnichars.length
                                                       freeWhenDone:false];
         NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];

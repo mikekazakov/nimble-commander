@@ -11,12 +11,6 @@
 
 @interface BigFileViewHex : NSObject<BigFileViewProtocol>
 
-- (id) InitWithWindow:(const UniChar*) _unichar_window
-              offsets:(const uint32_t*) _unichar_indeces
-                 size:(size_t) _unichars_amount // unichars, not bytes (x2)
-               parent:(BigFileView*) _view;
-
-
-
+- (id) InitWithData:(BigFileViewDataBackend*) _data parent:(BigFileView*) _view;
 
 @end

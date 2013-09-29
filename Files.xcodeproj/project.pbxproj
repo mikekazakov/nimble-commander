@@ -232,6 +232,7 @@
 		CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
 		CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
+		CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
 		CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */; };
@@ -591,6 +592,8 @@
 		CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewHistory.mm; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
+		CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewDataBackend.mm; sourceTree = "<group>"; };
+		CFE0E66E17F7D16A00BCF557 /* BigFileViewDataBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewDataBackend.h; sourceTree = "<group>"; };
 		CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		CFE1A4F216C632F700EFBA3C /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
@@ -782,6 +785,8 @@
 			children = (
 				CF396AEF173FA8C600A20C42 /* BigFileView.h */,
 				CF396AF0173FA8C600A20C42 /* BigFileView.mm */,
+				CFE0E66E17F7D16A00BCF557 /* BigFileViewDataBackend.h */,
+				CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */,
 				CF396AF1173FA8C600A20C42 /* BigFileViewHex.h */,
 				CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */,
 				CF396AF3173FA8C600A20C42 /* BigFileViewProtocol.h */,
@@ -1495,6 +1500,7 @@
 				CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */,
 				CF9D0EA317CC961100CB8146 /* archive_read_support_format_by_code.c in Sources */,
 				CF9D0EC617CC961100CB8146 /* archive_write_open_fd.c in Sources */,
+				CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */,
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
 				CF9D0EDC17CC961100CB8146 /* filter_fork_windows.c in Sources */,
 				CF9D0E9717CC961100CB8146 /* archive_read_support_filter_grzip.c in Sources */,

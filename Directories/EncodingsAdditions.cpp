@@ -135,8 +135,18 @@ void InterpretAsUnichar(
     else
         assert(0);
 }
+    
+bool IsValidEncoding(int _encoding)
+{
+    if(_encoding >= ENCODING_SINGLE_BYTES_FIRST__ && _encoding <= ENCODING_SINGLE_BYTES_LAST__)
+        return true;
+    if(_encoding == ENCODING_UTF8)
+        return true;
+    if(_encoding == ENCODING_UTF16LE)
+        return true;
+    if(_encoding == ENCODING_UTF16BE)
+        return true;
+    return false;
+}
 
-    
-    
-    
 }

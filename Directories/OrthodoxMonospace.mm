@@ -236,20 +236,14 @@ int CalculateUniCharsAmountForSymbolsFromLeft(const UniChar *_s, size_t _unic_am
         if(!iscomb)
         {
             if(cpos == _symb_amount)
-            {
-                --i;
-                break;
-            }
+                return i;
             if(cpos + posdelta > _symb_amount) // for width = 2 case
-            {
-                --i;
-                break;
-            }
+                return i;
             cpos += posdelta;
             posdelta = g_WCWidthTableFixedMin1[*_s];
         }
     }
-    return i+1;
+    return i;    
 }
     
     

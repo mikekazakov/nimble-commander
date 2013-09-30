@@ -1097,7 +1097,7 @@ enum ActiveState
     assert(dispatch_get_current_queue() == dispatch_get_main_queue());
     
     PanelController *panel = [self ActivePanelController];
-    if([panel GoToGlobalHostsPathSync:_path])
+    if([panel GoToGlobalHostsPathSync:_path] == VFSError::Ok)
     {
         if(_entries->Amount() > 0)
             [panel ScheduleDelayedSelectionChangeForC:(*_entries)[0].str()

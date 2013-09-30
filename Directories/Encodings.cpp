@@ -699,7 +699,7 @@ void InterpretUTF8BufferAsUniChar(
     }
     
     *_output_sz = total;
-    *_output_buf = 0;
+//    *_output_buf = 0;
 }
 
 
@@ -843,7 +843,7 @@ void InterpretUTF8BufferAsIndexedUniChar(
     }
     
     *_output_sz = total;
-    *_output_buf = 0;
+//    *_output_buf = 0;
 }
 
 void InterpretUTF16LEBufferAsUniChar(

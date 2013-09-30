@@ -728,6 +728,8 @@ struct TextLine
     }
     
     m_VerticalOffset = (unsigned)closest;
+    assert(m_Lines.empty() ||
+           m_VerticalOffset < m_Lines.size());
 }
 
 - (void) ScrollToByteOffset: (uint64_t)_offset
@@ -783,6 +785,7 @@ struct TextLine
         desired_wnd_pos = file_size - window_size;
     
     [self MoveFileWindowTo:desired_wnd_pos WithAnchor:_offset AtLineNo:0];
+    assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
 
 - (void) HandleVerticalScroll: (double) _pos
@@ -806,6 +809,7 @@ struct TextLine
         m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontHeight;
         [m_View setNeedsDisplay:true];
     }
+    assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
 
 - (void) OnScrollWheel:(NSEvent *)theEvent
@@ -882,7 +886,20 @@ struct TextLine
         }
     }
     
+    // edge-case clipping (not allowing to appear a gap before first line or after last line or before the first line's character)
+    if(m_Data->FilePos() == 0 &&
+       m_VerticalOffset == 0 &&
+       m_SmoothOffset.y < 0)
+        m_SmoothOffset.y = 0;
+    if(m_Data->FilePos() + m_Data->RawSize() == m_Data->FileSize() &&
+       m_VerticalOffset + m_FrameLines >= m_Lines.size() &&
+       m_SmoothOffset.y > 0 )
+        m_SmoothOffset.y = 0;
+    if(m_HorizontalOffset == 0 && m_SmoothOffset.x > 0)
+        m_SmoothOffset.x = 0;
+    
     [m_View setNeedsDisplay:true];
+    assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
 
 - (void) OnFrameChanged

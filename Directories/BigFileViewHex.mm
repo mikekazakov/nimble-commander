@@ -92,13 +92,14 @@ static const unsigned char g_4Bits_To_Char[16] = {
     UniChar        *m_FixupWindow;
     
     unsigned              m_RowsOffset;
+    CGPoint               m_SmoothOffset;
     int                   m_FrameLines; // amount of lines in our frame size ( +1 to fit cutted line also)    
-    CGFloat               m_FontHeight;
-    CGFloat               m_FontWidth;
-    CGFloat                      m_FontAscent;
-    CGFloat                      m_FontDescent;
-    CGFloat                      m_FontLeading;
-    CGFloat                      m_LeftInset;    
+    double                m_FontHeight;
+    double                m_FontWidth;
+    double                m_FontAscent;
+    double                m_FontDescent;
+    double                m_FontLeading;
+    double                m_LeftInset;
     std::vector<TextLine> m_Lines;
 }
 - (id) InitWithData:(BigFileViewDataBackend*) _data
@@ -285,8 +286,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
 {
     NSRect v = [m_View visibleRect];
     CGPoint textPosition;
-    textPosition.x = ceil(m_LeftInset);
-    textPosition.y = floor(v.size.height - m_FontHeight);
+    textPosition.x = ceil(m_LeftInset) + m_SmoothOffset.x;
+    textPosition.y = floor(v.size.height - m_FontHeight) + m_SmoothOffset.y;
     return textPosition;
 }
 
@@ -363,7 +364,14 @@ static const unsigned char g_4Bits_To_Char[16] = {
     NSDictionary *text_attr =@{NSFontAttributeName:(NSFont*)[m_View TextFont],
                                NSForegroundColorAttributeName:[NSColor colorWithCGColorSafe:[m_View TextForegroundColor]]};
     
-    for(size_t i = m_RowsOffset; i < m_Lines.size(); ++i)
+    size_t first_row = m_RowsOffset;
+    if(m_SmoothOffset.y < 0 && first_row > 0)
+    {
+        --first_row; // to be sure that we can see bottom-clipped lines
+        text_pos.y += m_FontHeight;
+    }
+    
+    for(size_t i = first_row; i < m_Lines.size(); ++i)
     {
         auto &c = m_Lines[i];
         
@@ -478,8 +486,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
             
             [m_View RequestWindowMovementAt:desired_window_offset];
             
-            assert(anchor_row_offset >= window_pos);
-            uint64_t anchor_new_offset = anchor_row_offset - window_pos;
+            assert(anchor_row_offset >= m_Data->FilePos());
+            uint64_t anchor_new_offset = anchor_row_offset - m_Data->FilePos();
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine);
             assert(m_RowsOffset < m_Lines.size());
             [m_View setNeedsDisplay:true];
@@ -523,8 +531,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
             
             [m_View RequestWindowMovementAt:desired_window_offset];
             
-            assert(anchor_row_offset >= window_pos);
-            uint64_t anchor_new_offset = anchor_row_offset - window_pos;
+            assert(anchor_row_offset >= m_Data->FilePos());
+            uint64_t anchor_new_offset = anchor_row_offset - m_Data->FilePos();
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) + 2; // why +2?
             assert(m_RowsOffset < m_Lines.size());
             [m_View setNeedsDisplay:true];
@@ -562,8 +570,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
             
             [m_View RequestWindowMovementAt:desired_window_offset];
             
-            assert(anchor_row_offset >= window_pos);
-            uint64_t anchor_new_offset = anchor_row_offset - window_pos;
+            assert(anchor_row_offset >= m_Data->FilePos());
+            uint64_t anchor_new_offset = anchor_row_offset - m_Data->FilePos();
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) + 1;
             assert(m_RowsOffset < m_Lines.size());
             [m_View setNeedsDisplay:true];
@@ -604,8 +612,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
             
             [m_View RequestWindowMovementAt:desired_window_offset];
 
-            assert(anchor_row_offset >= window_pos);
-            uint64_t anchor_new_offset = anchor_row_offset - window_pos;
+            assert(anchor_row_offset >= m_Data->FilePos());
+            uint64_t anchor_new_offset = anchor_row_offset - m_Data->FilePos();
 //            assert(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines);
             if(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines)
                 m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) - m_FrameLines;
@@ -635,6 +643,8 @@ static const unsigned char g_4Bits_To_Char[16] = {
 
 - (void) MoveOffsetWithinWindow: (uint32_t)_offset
 {
+    // A VERY BAD IMPLEMENTATION!!!!
+    // TODO: optimize me
     uint32_t min_dist = 1000000;
     size_t closest = 0;
     for(size_t i = 0; i < m_Lines.size(); ++i)
@@ -656,6 +666,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
     
     m_RowsOffset = (unsigned)closest;
+    m_SmoothOffset.y = 0;
 }
 
 - (void) HandleVerticalScroll: (double) _pos
@@ -721,6 +732,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
             [m_View setNeedsDisplay:true];
         }
     }
+    m_SmoothOffset.y = 0;
 }
 
 - (void) OnMouseDown:(NSEvent *)event
@@ -810,8 +822,38 @@ static const unsigned char g_4Bits_To_Char[16] = {
 
 - (void) OnScrollWheel:(NSEvent *)theEvent
 {
+    double delta_y = [theEvent scrollingDeltaY];
+    if(![theEvent hasPreciseScrollingDeltas])
+        delta_y *= m_FontHeight;
     
+    if((delta_y > 0 && (m_Data->FilePos() > 0 ||
+                        m_RowsOffset > 0)       ) ||
+        (delta_y < 0 && (m_Data->FilePos() + m_Data->RawSize() < m_Data->FileSize() ||
+                            m_RowsOffset + m_FrameLines < m_Lines.size()) )
+           )
+    {
+        m_SmoothOffset.y -= delta_y;
+            
+        while(m_SmoothOffset.y < -m_FontHeight) {
+            [self OnUpArrow];
+            m_SmoothOffset.y += m_FontHeight;
+        }
+        while(m_SmoothOffset.y > m_FontHeight) {
+            [self OnDownArrow];
+            m_SmoothOffset.y -= m_FontHeight;
+        }
+        [m_View setNeedsDisplay:true];
+    }
     
+    // edge-case clipping (not allowing to appear a gap before first line or after last line)
+    if(m_Data->FilePos() == 0 &&
+       m_RowsOffset == 0 &&
+       m_SmoothOffset.y < 0)
+        m_SmoothOffset.y = 0;
+    if(m_Data->FilePos() + m_Data->RawSize() == m_Data->FileSize() &&
+       m_RowsOffset + m_FrameLines >= m_Lines.size() &&
+       m_SmoothOffset.y > 0 )
+        m_SmoothOffset.y = 0;
 }
 
 @end

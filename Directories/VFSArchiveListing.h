@@ -61,7 +61,7 @@ struct VFSArchiveListingItem : VFSListingItem
 class VFSArchiveListing : public VFSListing
 {
 public:
-    VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, std::shared_ptr<VFSArchiveHost> _host);
+    VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, std::shared_ptr<VFSArchiveHost> _host);
     ~VFSArchiveListing();
     
     virtual VFSListingItem& At(size_t _position) override;

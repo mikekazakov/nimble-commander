@@ -74,7 +74,7 @@ void PanelData::ReLoad(std::shared_ptr<VFSListing> _listing)
     // transfer custom data to new array using sorted indeces arrays
     size_t dst_i = 0, dst_e = _listing->Count(),
     src_i = 0, src_e = m_Listing->Count();
-    for(;src_i < src_e; ++src_i)
+    for(;src_i < src_e && dst_i < dst_e; ++src_i)
     {
         int src = (*m_EntriesByRawName)[src_i];
     check:  int dst = (*dirbyrawcname)[dst_i];

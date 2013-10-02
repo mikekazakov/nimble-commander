@@ -49,7 +49,12 @@ void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type,
             m_State->DisplayOffsetStack.pop();
     }
     
-    m_State->CursorPos = _cursor;
+    m_State->CursorPos = -1;
+    if(m_State->Data->SortedDirectoryEntries().size() > 0 &&
+       _cursor >= 0 &&
+       _cursor < m_State->Data->SortedDirectoryEntries().size())
+        m_State->CursorPos = _cursor;
+        
     EnsureCursorIsVisible();
     
     OnDirectoryChanged();
@@ -57,12 +62,19 @@ void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type,
 
 void PanelViewPresentation::SetCursorPos(int _pos)
 {
-    m_State->CursorPos = _pos;
+    m_State->CursorPos = -1;
+    if(m_State->Data->SortedDirectoryEntries().size() > 0 &&
+       _pos >= 0 &&
+       _pos < m_State->Data->SortedDirectoryEntries().size())
+        m_State->CursorPos = _pos;
+    
     EnsureCursorIsVisible();
 }
 
 void PanelViewPresentation::ScrollCursor(int _idx, int _idy)
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
     int max_visible_items = GetMaxVisibleItems();
     int per_col = GetMaxItemsPerColumn();
@@ -114,6 +126,8 @@ void PanelViewPresentation::ScrollCursor(int _idx, int _idy)
 
 void PanelViewPresentation::MoveCursorToNextItem()
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     if(m_State->CursorPos + 1 < m_State->Data->SortedDirectoryEntries().size())
         m_State->CursorPos++;
     EnsureCursorIsVisible();
@@ -121,6 +135,8 @@ void PanelViewPresentation::MoveCursorToNextItem()
 
 void PanelViewPresentation::MoveCursorToPrevItem()
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     if(m_State->CursorPos > 0)
         m_State->CursorPos--;
     EnsureCursorIsVisible();
@@ -128,6 +144,8 @@ void PanelViewPresentation::MoveCursorToPrevItem()
 
 void PanelViewPresentation::MoveCursorToNextPage()
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
     int max_visible_items = GetMaxVisibleItems();
     
@@ -145,6 +163,8 @@ void PanelViewPresentation::MoveCursorToNextPage()
 
 void PanelViewPresentation::MoveCursorToPrevPage()
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     int max_visible_items = GetMaxVisibleItems();
     if(m_State->CursorPos > max_visible_items)
         m_State->CursorPos -=  max_visible_items;
@@ -159,6 +179,8 @@ void PanelViewPresentation::MoveCursorToPrevPage()
 
 void PanelViewPresentation::MoveCursorToNextColumn()
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
     int items_per_column = GetMaxItemsPerColumn();
     int max_visible_items = GetMaxVisibleItems();
@@ -179,6 +201,8 @@ void PanelViewPresentation::MoveCursorToNextColumn()
 
 void PanelViewPresentation::MoveCursorToPrevColumn()
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     int items_per_column = GetMaxItemsPerColumn();
     if(m_State->CursorPos > items_per_column)
         m_State->CursorPos -= items_per_column;
@@ -196,12 +220,16 @@ void PanelViewPresentation::MoveCursorToPrevColumn()
 
 void PanelViewPresentation::MoveCursorToFirstItem()
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     m_State->CursorPos = 0;
     m_State->ItemsDisplayOffset = 0;
 }
 
 void PanelViewPresentation::MoveCursorToLastItem()
 {
+    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+    
     int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
     int max_visible_items = GetMaxVisibleItems();
     m_State->CursorPos = total_items - 1;

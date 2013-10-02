@@ -31,8 +31,10 @@
     assert(sup);
     
     NSView *me = [self view];
-    [me layer].backgroundColor = CGColorCreateGenericRGB(0.5, 0.5, 0.5, 0.6);
+    CGColorRef color = CGColorCreateGenericRGB(0.5, 0.5, 0.5, 0.6);
+    [me layer].backgroundColor = color;
     [me layer].cornerRadius = 10.;
+    CGColorRelease(color);
     
     [sup addSubview:me positioned:NSWindowAbove relativeTo:nil];
     

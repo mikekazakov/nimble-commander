@@ -42,12 +42,13 @@ const char *VFSNativeHost::FSTag() const
 }
 
 int VFSNativeHost::FetchDirectoryListing(const char *_path,
-                                  std::shared_ptr<VFSListing> *_target,
-                                  bool (^_cancel_checker)())
+                                         std::shared_ptr<VFSListing> *_target,
+                                         int _flags,
+                                         bool (^_cancel_checker)())
 {
     auto listing = std::make_shared<VFSNativeListing>(_path, SharedPtr());
     
-    int result = listing->LoadListingData(_cancel_checker);
+    int result = listing->LoadListingData(_flags, _cancel_checker);
     if(result != VFSError::Ok)
         return result;
     

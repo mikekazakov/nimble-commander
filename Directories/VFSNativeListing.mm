@@ -36,7 +36,7 @@ VFSNativeListing::~VFSNativeListing()
     EraseListing();
 }
 
-int VFSNativeListing::LoadListingData(bool (^_checker)())
+int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
 {
     EraseListing();
     
@@ -53,6 +53,8 @@ int VFSNativeListing::LoadListingData(bool (^_checker)())
     dirent *entp;
     
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
+    if(_flags & VFSHost::F_NoDotDot)
+        need_to_add_dot_dot = false;
     
     char pathwithslash[MAXPATHLEN]; // this buffer will be used for composing long filenames for stat()
     char *pathwithslashp = &pathwithslash[0];
@@ -70,8 +72,9 @@ int VFSNativeListing::LoadListingData(bool (^_checker)())
         
         if(entp->d_ino == 0) continue; // apple's documentation suggest to skip such files
         if(entp->d_namlen == 1 && entp->d_name[0] ==  '.') continue; // do not process self entry
-        if(entp->d_namlen == 2 && entp->d_name[0] ==  '.' && entp->d_name[1] ==  '.') // special case for dot-dot directory
+        if(entp->d_namlen == 2 && entp->d_name[0] ==  '.' && entp->d_name[1] ==  '.' ) // special case for dot-dot directory
         {
+            if(_flags & VFSHost::F_NoDotDot) continue;
             need_to_add_dot_dot = false;
             
             if(strcmp(pathwithslash, "/") == 0)
@@ -88,7 +91,6 @@ int VFSNativeListing::LoadListingData(bool (^_checker)())
         m_Items.push_back(VFSNativeListingItem() = {}); // check me twice - does it really zeroing all members?
         
         VFSNativeListingItem &current = m_Items.back();
-//        memset(&current, 0, sizeof(VFSNativeListingItem));
         current.unix_type = entp->d_type;
         current.inode  = entp->d_ino;
         current.namelen = entp->d_namlen;

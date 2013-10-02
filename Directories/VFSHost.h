@@ -25,9 +25,11 @@ public:
     virtual ~VFSHost();
     
     enum {
-        F_NoFollow = 1 // do not follow symlinks when resolving item name
-        
+        F_Default  = 0,
+        F_NoFollow = 1 << 0, // do not follow symlinks when resolving item name
+        F_NoDotDot = 1 << 1  // don't fetch dot-dot entry in directory listing
     };
+    
     
     virtual bool IsWriteable() const;
     // TODO: IsWriteableAtPath
@@ -49,6 +51,7 @@ public:
     
     virtual int FetchDirectoryListing(const char *_path,
                                       std::shared_ptr<VFSListing> *_target,
+                                      int _flags,
                                       bool (^_cancel_checker)());
     
     // IterateDirectoryListing will skip "." and ".." entries if they are present

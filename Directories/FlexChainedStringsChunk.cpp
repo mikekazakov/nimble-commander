@@ -40,7 +40,9 @@ FlexChainedStringsChunk* FlexChainedStringsChunk::Allocate()
 
 FlexChainedStringsChunk* FlexChainedStringsChunk::AllocateWithSingleString(const char *_str)
 {
-    return Allocate()->AddString(_str, 0);
+    FlexChainedStringsChunk *chunk = Allocate();
+    chunk->AddString(_str, 0);
+    return chunk;
 }
 
 void FlexChainedStringsChunk::FreeWithDescendants(FlexChainedStringsChunk** _first_chunk)

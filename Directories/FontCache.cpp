@@ -21,7 +21,8 @@ FontCache *FontCache::FontCacheFromFont(CTFontRef _basic_font)
             i->m_RefCount++;
             return i;
         }
-
+    
+    CFRelease(full_name);
     g_Caches.push_back(new FontCache(_basic_font));
     return g_Caches.back();
 }

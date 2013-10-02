@@ -43,6 +43,7 @@ bool VFSHost::IsWriteable() const
 int VFSHost::FetchDirectoryListing(
                                   const char *_path,
                                   std::shared_ptr<VFSListing> *_target,
+                                  int _flags,                                   
                                   bool (^_cancel_checker)()
                                   )
 {

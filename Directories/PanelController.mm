@@ -273,6 +273,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     return sort;
 }
 
+- (int) FetchFlags
+{
+    bool show_dot_dot = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralShowDotDotEntry"];
+    return show_dot_dot ? 0 : VFSHost::F_NoDotDot;
+}
+
 - (int) GoToRelativeSync:(const char*) _path
                 WithHosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>)_hosts
               SelectEntry:(const char*) _entry_name
@@ -284,7 +290,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     if(_hosts->back()->IsDirectory(_path, 0, 0))
     { // easy - just go there
         std::shared_ptr<VFSListing> listing;
-        int ret = _hosts->back()->FetchDirectoryListing(_path, &listing, 0);
+        int ret = _hosts->back()->FetchDirectoryListing(_path, &listing, self.FetchFlags, 0);
         if(ret >= 0)
         {
             [self FlushStopFlags]; // clean running operations if any
@@ -322,7 +328,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                     if(arhost->IsDirectory(path_buf, 0, 0))
                     { // yeah, going here!
                         std::shared_ptr<VFSListing> listing;
-                        int ret = arhost->FetchDirectoryListing(path_buf, &listing, 0);
+                        int ret = arhost->FetchDirectoryListing(path_buf, &listing, self.FetchFlags, 0);
                         if(ret >= 0)
                         {
                             [self FlushStopFlags]; // clean running operations if any
@@ -350,11 +356,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
     std::string entryname = std::string(_entry_name ? _entry_name : "");
     
-    if(m_IsDirectoryLoading)
-        m_IsStopDirectoryLoading = true;
+//    if(m_IsDirectoryLoading)
+//    m_IsStopDirectoryLoading = true;
+    [self FlushStopFlags];
     
-    if(m_IsStopDirectoryLoading)
-        dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
+//    if(m_IsStopDirectoryLoading)
+    dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
     
     dispatch_async(m_DirectoryLoadingQ, ^{
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
@@ -363,7 +370,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         if(_hosts->back()->IsDirectory(path.c_str(), 0, 0))
         { // easy - just go there
             std::shared_ptr<VFSListing> listing;
-            int ret = _hosts->back()->FetchDirectoryListing(path.c_str(), &listing, ^{return m_IsStopDirectoryLoading;});
+            int ret = _hosts->back()->FetchDirectoryListing(path.c_str(), &listing, self.FetchFlags, ^{return m_IsStopDirectoryLoading;});
             if(ret >= 0)
             {
                 [self FlushStopFlags]; // clean running operations if any
@@ -412,7 +419,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                         if(arhost->IsDirectory(path_buf, 0, 0))
                         { // yeah, going here!
                             std::shared_ptr<VFSListing> listing;
-                            int ret = arhost->FetchDirectoryListing(path_buf, &listing, ^{return m_IsStopDirectoryLoading;});
+                            int ret = arhost->FetchDirectoryListing(path_buf, &listing, self.FetchFlags, ^{return m_IsStopDirectoryLoading;});
                             if(ret >= 0)
                             {
                                 [self FlushStopFlags]; // clean running operations if any
@@ -591,6 +598,10 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) RefreshDirectory
 { // going async here
+    
+    if(m_IsDirectoryLoading)
+        return; //reducing overhead
+    
     char dirpathbuf[MAXPATHLEN];
     m_Data->GetDirectoryPathWithTrailingSlash(dirpathbuf);
     std::string dirpath(dirpathbuf);
@@ -605,14 +616,12 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
         
         std::shared_ptr<VFSListing> listing;
-        int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(), &listing, ^{return m_IsStopDirectoryReLoading;});
+        int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(), &listing, self.FetchFlags, ^{return m_IsStopDirectoryReLoading;});
         if(ret >= 0)
         {
             m_IsStopDirectoryReLoading = true;
             dispatch_async(dispatch_get_main_queue(), ^{
                 m_Data->ReLoad(listing);
-                assert(m_Data->DirectoryEntries().Count() > 0); // algo logic doesn't support this case now
-            
                 int newcursorrawpos = m_Data->FindEntryIndex(oldcursorname.c_str());
                 if( newcursorrawpos >= 0 )
                 {
@@ -625,7 +634,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
                         [m_View SetCursorPosition:oldcursorpos];
                     else
                         [m_View SetCursorPosition:int(m_Data->SortedDirectoryEntries().size() - 1)]; // assuming that any directory will have at leat ".."
-                }
+                }                
             
                 [self CheckAgainstRequestedSelection];
                 [m_View setNeedsDisplay:true];

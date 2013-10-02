@@ -229,8 +229,9 @@ int VFSArchiveHost::CreateFile(const char* _path,
 }
 
 int VFSArchiveHost::FetchDirectoryListing(const char *_path,
-                                  std::shared_ptr<VFSListing> *_target,
-                                  bool (^_cancel_checker)())
+                                          std::shared_ptr<VFSListing> *_target,
+                                          int _flags,
+                                          bool (^_cancel_checker)())
 {
     char path[1024];
     strcpy(path, _path);
@@ -243,7 +244,7 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
         return VFSError::NotFound;
 
     std::shared_ptr<VFSArchiveListing> listing = std::make_shared<VFSArchiveListing>
-        (i->second, path, SharedPtr());
+        (i->second, path, _flags, SharedPtr());
     
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;

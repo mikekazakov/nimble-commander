@@ -655,6 +655,7 @@ enum ActiveState
         return; // currently support volume info only on native fs
     
     int curpos = [curview GetCursorPosition];
+    if(curpos < 0) return;
     int rawpos = curdata->SortPosToRawPos(curpos);
     char src[__DARWIN_MAXPATHLEN];
     curdata->ComposeFullPathForEntry(rawpos, src);

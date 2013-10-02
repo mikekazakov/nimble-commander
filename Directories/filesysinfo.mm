@@ -304,7 +304,10 @@ int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilities
 //    CFErrorRef error;
 //    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, &error) == false)
     if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, 0) == false)
+    {
+        CFRelease(cfurl);
         return -1; // what to return???
+    }
     // TODO: how some unknown reasons kCFURLVolume"Localized"FormatDescriptionKey now returns
     // "Mac OS Extended (Journaled)" instead of "Mac OS Extended (журнальный)"
     // need to investigate why

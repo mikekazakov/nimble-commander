@@ -38,7 +38,7 @@
                                         </connections>
                                     </button>
                                     <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="770">
-                                        <rect key="frame" x="15" y="171" width="185" height="17"/>
+                                        <rect key="frame" x="15" y="151" width="185" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Delete (F8):" id="774">
                                             <font key="font" metaFont="system"/>
@@ -47,7 +47,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="771">
-                                        <rect key="frame" x="15" y="145" width="185" height="17"/>
+                                        <rect key="frame" x="15" y="125" width="185" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative Delete (Shift-F8):" id="772">
                                             <font key="font" metaFont="system"/>
@@ -56,14 +56,14 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="789">
-                                        <rect key="frame" x="204" y="166" width="159" height="26"/>
+                                        <rect key="frame" x="204" y="146" width="159" height="26"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="154" id="843"/>
                                         </constraints>
                                         <popUpButtonCell key="cell" type="push" title="Move To Trash" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" selectedItem="800" id="796">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="797">
                                                 <items>
                                                     <menuItem title="Move To Trash" id="800">
@@ -83,11 +83,11 @@
                                         </connections>
                                     </popUpButton>
                                     <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="790">
-                                        <rect key="frame" x="204" y="139" width="159" height="26"/>
+                                        <rect key="frame" x="204" y="119" width="159" height="26"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="push" title="Move To Trash" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="791">
+                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="791">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="792">
                                                 <items>
                                                     <menuItem title="Move To Trash" id="795">
@@ -115,6 +115,17 @@
                                         </buttonCell>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu" id="TNv-P7-9uV"/>
+                                        </connections>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
+                                        <rect key="frame" x="15" y="176" width="404" height="18"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="check" title="Show &quot;..&quot; entry in directory listing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tmQ-Kf-Ylo">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowDotDotEntry" id="QwH-3H-ODO"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -495,12 +506,12 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="178" id="271"/>
                                         </constraints>
-                                        <popUpButtonCell key="cell" type="push" title="Generic Icons" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="26">
+                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="26">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="27">
                                                 <items>
-                                                    <menuItem title="Generic Icons" state="on" id="30"/>
+                                                    <menuItem title="Generic Icons" id="30"/>
                                                     <menuItem title="File Icons" id="29"/>
                                                     <menuItem title="File Icons And Thumbnails" id="28"/>
                                                 </items>

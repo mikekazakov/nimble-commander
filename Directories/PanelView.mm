@@ -248,11 +248,11 @@ struct CursorSelectionState
 
 - (void) SetCursorPosition:(int)_pos
 {
-    assert(_pos >= 0 && _pos < m_State.Data->SortedDirectoryEntries().size());
+//    assert(_pos >= 0 && _pos < m_State.Data->SortedDirectoryEntries().size());
     
     if (m_State.CursorPos == _pos) return;
 
-    m_Presentation->SetCursorPos(_pos);
+    m_Presentation->SetCursorPos(_pos); // _pos wil be filtered here
 
     [self setNeedsDisplay:true];
     
@@ -324,7 +324,7 @@ struct CursorSelectionState
         const auto &click_entry = m_State.Data->DirectoryEntries()[raw_pos];
         
         bool deselect = click_entry.CFIsSelected();
-        if (m_State.CursorPos == -1) m_State.CursorPos = 0;
+        if (m_State.CursorPos == -1) m_State.CursorPos = 0; // ?????????
         [self SelectUnselectInRange:m_State.CursorPos last_included:cursor_pos select:!deselect];
     }
     

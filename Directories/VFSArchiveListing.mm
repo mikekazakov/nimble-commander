@@ -11,14 +11,15 @@
 #import "VFSArchiveInternal.h"
 #import "Encodings.h"
 
-VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, std::shared_ptr<VFSArchiveHost> _host):
+VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, std::shared_ptr<VFSArchiveHost> _host):
     VFSListing(_path, _host)
 {
-    m_Items.resize(_dir->entries.size()+1);
+    size_t shift = (_flags & VFSHost::F_NoDotDot) ? 0 : 1;
     size_t i = 0, e = _dir->entries.size();
+    m_Items.resize( _dir->entries.size() + shift);
     for(;i!=e;++i)
     {
-        auto &item = m_Items[i+1];
+        auto &item = m_Items[i+shift];
         item.name = _dir->entries[i].name;
         item.st = _dir->entries[i].st;
         item.cf_name = CFStringCreateWithBytesNoCopy(0,
@@ -60,6 +61,7 @@ VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_pat
             item.st.st_size = VFSListingItem::InvalidSize;
     }
     
+    if(shift)
     { // dot-dot
         auto &item = m_Items[0];
         item.name = "..";

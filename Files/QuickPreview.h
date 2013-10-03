@@ -19,5 +19,4 @@
 + (void)PreviewItem:(const char *)_path vfs:(std::shared_ptr<VFSHost>)_host sender:(PanelView *)_panel;
 + (void)UpdateData;
 
-+ (void)StartBackgroundTempPurging;
 @end

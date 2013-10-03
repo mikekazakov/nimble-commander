@@ -19,8 +19,7 @@
 #import "PreferencesWindowGeneralTab.h"
 #import "PreferencesWindowPanelsTab.h"
 #import "PreferencesWindowViewerTab.h"
-#import "QuickPreview.h"
-#import "PanelAux.h"
+#import "TemporaryNativeFileStorage.h"
 
 @implementation AppDelegate
 {
@@ -47,8 +46,7 @@
 {
     // modules initialization
     FSEventsDirUpdate::RunDiskArbitration();
-    [QuickPreview StartBackgroundTempPurging];
-    PanelVFSFileWorkspaceOpener::StartBackgroundPurging();
+    TemporaryNativeFileStorage::StartBackgroundPurging();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults addObserver:self

@@ -280,8 +280,8 @@
 		B5F00AC91711FCC200176F79 /* OperationDialogAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationDialogAlert.h; sourceTree = "<group>"; };
 		B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationDialogAlert.mm; sourceTree = "<group>"; };
 		B5F00ACF1712012C00176F79 /* OperationDialogProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OperationDialogProtocol.h; sourceTree = "<group>"; };
-		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Directories/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
-		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Directories/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
+		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
+		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSEventsDirUpdate.h; sourceTree = "<group>"; };
 		CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSEventsDirUpdate.mm; sourceTree = "<group>"; };
 		CF02F1D516F38805000AF870 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encodings.cpp; sourceTree = "<group>"; };
@@ -360,7 +360,7 @@
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
-		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Directories/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
+		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF6617EE17E48B5100593225 /* VFSError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSError.mm; sourceTree = "<group>"; };
 		CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_viewer_icon.png; sourceTree = "<group>"; };
 		CF6C5AD217BC71500007B648 /* pref_general_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_general_icon.png; sourceTree = "<group>"; };
@@ -650,7 +650,7 @@
 				B55DB19B171B0E9700E3610E /* question_icon.png */,
 			);
 			name = Resources;
-			path = Directories;
+			path = Files;
 			sourceTree = "<group>";
 		};
 		B528011916FCF347004E260D /* Operation */ = {
@@ -1190,6 +1190,7 @@
 				CFC5121616C4BD3D00D247EE /* Other Frameworks */,
 			);
 			name = Frameworks;
+			path = Files;
 			sourceTree = "<group>";
 		};
 		CFC5121616C4BD3D00D247EE /* Other Frameworks */ = {
@@ -1226,8 +1227,7 @@
 				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
 				CFC5121B16C4BD3D00D247EE /* Supporting Files */,
 			);
-			name = Files;
-			path = Directories;
+			path = Files;
 			sourceTree = "<group>";
 		};
 		CFC5121B16C4BD3D00D247EE /* Supporting Files */ = {
@@ -1255,7 +1255,7 @@
 				CF039EB8179142A900DC85D6 /* NSUserDefaults+myColorSupport.m */,
 			);
 			name = 3rd_party;
-			path = Directories;
+			path = Files;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1622,8 +1622,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = directories/3rd_party/built/include/;
-				LIBRARY_SEARCH_PATHS = directories/3rd_party/built/lib/;
+				HEADER_SEARCH_PATHS = Files/3rd_party/built/include/;
+				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -1653,8 +1653,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = directories/3rd_party/built/include/;
-				LIBRARY_SEARCH_PATHS = directories/3rd_party/built/lib/;
+				HEADER_SEARCH_PATHS = Files/3rd_party/built/include/;
+				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -1667,11 +1667,11 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Directories/Files-Prefix.pch";
-				INFOPLIST_FILE = "Directories/Files-Info.plist";
+				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				INFOPLIST_FILE = "Files/Files-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/migun/Documents/FarProject/Directories/trunk/Directories/3rd_party/built/lib,
+					/Users/migun/Documents/Files/trunk/Files/3rd_party/built/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = Files;
@@ -1685,11 +1685,11 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Directories/Files-Prefix.pch";
-				INFOPLIST_FILE = "Directories/Files-Info.plist";
+				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				INFOPLIST_FILE = "Files/Files-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/migun/Documents/FarProject/Directories/trunk/Directories/3rd_party/built/lib,
+					/Users/migun/Documents/Files/trunk/Files/3rd_party/built/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = Files;

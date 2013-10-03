@@ -37,8 +37,8 @@
                                             <binding destination="36" name="value" keyPath="values.FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask" id="769"/>
                                         </connections>
                                     </button>
-                                    <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="770">
-                                        <rect key="frame" x="15" y="151" width="185" height="17"/>
+                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="770">
+                                        <rect key="frame" x="15" y="153" width="185" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Delete (F8):" id="774">
                                             <font key="font" metaFont="system"/>
@@ -46,7 +46,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="771">
+                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="771">
                                         <rect key="frame" x="15" y="125" width="185" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative Delete (Shift-F8):" id="772">
@@ -55,8 +55,8 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="789">
-                                        <rect key="frame" x="204" y="146" width="159" height="26"/>
+                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="789">
+                                        <rect key="frame" x="204" y="150" width="159" height="26"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="154" id="843"/>
@@ -82,7 +82,7 @@
                                             <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsDeleteBehavior" id="841"/>
                                         </connections>
                                     </popUpButton>
-                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="790">
+                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="790">
                                         <rect key="frame" x="204" y="119" width="159" height="26"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="791">
@@ -142,6 +142,7 @@
                                     <constraint firstItem="789" firstAttribute="leading" secondItem="770" secondAttribute="trailing" constant="8" symbolic="YES" id="839"/>
                                     <constraint firstItem="771" firstAttribute="baseline" secondItem="790" secondAttribute="baseline" id="840"/>
                                     <constraint firstItem="790" firstAttribute="trailing" secondItem="789" secondAttribute="trailing" id="845"/>
+                                    <constraint firstItem="770" firstAttribute="top" secondItem="22" secondAttribute="top" constant="65" id="yS9-2J-5oX"/>
                                 </constraints>
                             </view>
                         </tabViewItem>

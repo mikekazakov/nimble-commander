@@ -48,6 +48,7 @@
     NSProgressIndicator *m_SpinningIndicator;
     
     NSButton            *m_EjectButton;
+    NSButton            *m_ShareButton;
     
     // delayed entry selection support
     struct
@@ -58,22 +59,33 @@
     } m_DelayedSelection;
 }
 
-
+// CONFIGURATION METHODS /////////////////////////////////////////////
 - (void) SetData:(PanelData*)_data;
 - (void) SetView:(PanelView*)_view;
-- (void) AttachToControls:(NSProgressIndicator*)_indicator eject:(NSButton*)_eject;
+- (void) AttachToControls:(NSProgressIndicator*)_indicator
+                    eject:(NSButton*)_eject
+                    share:(NSButton*)_share;
 - (void) SetWindowController:(MainWindowController *)_cntrl;
+//////////////////////////////////////////////////////////////////////
+
+
+
 
 - (void) LoadViewState:(NSDictionary *)_state;
 - (NSDictionary *) SaveViewState;
 
 - (void) RequestActivation;
 
+
+
+
 - (void) HandleReturnButton;
 - (void) HandleShiftReturnButton;
-
-
 - (void) HandleFileView; // F3
+
+- (void) HandleCursorChanged; // called by PanelView
+
+
 - (void) ToggleSortingByName; // user pressed ctrl+F3 by default
 - (void) ToggleSortingByExt; // user pressed ctrl+F4 by default
 - (void) ToggleSortingByMTime; // user pressed ctrl+F5 by default

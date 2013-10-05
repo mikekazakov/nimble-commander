@@ -13,4 +13,11 @@
 - (bool) GetCurrentFocusedEntryFilename:(char*) _filename; // return false if there's no focused entry (invalid state)
 - (bool) GetCurrentFocusedEntryFilePathRelativeToHost:(char*) _file_path; // return false if there's no focused entry (invalid state)
 
+
+
+// return a list of selected entries if any
+// if no entries is selected - return currently selected element if it is not dot-dot
+// if it is dot-dot returns 0
+- (FlexChainedStringsChunk*) GetSelectedEntriesOrFocusedEntryWithoutDotDot;
+
 @end

@@ -105,3 +105,13 @@ struct MachTimeBenchmark
 @end
 
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
+
+enum class OSXVersion
+{
+    OSX_7 = 107,
+    OSX_8 = 108,
+    OSX_9 = 109,
+    OSX_Unknown = 100500
+// every system which is not 10.7, 10.8 or 10.9 will be Unknown, which is greater than 10.9 since we don't support systems below 10.7
+};
+OSXVersion GetOSXVersion();

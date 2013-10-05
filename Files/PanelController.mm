@@ -5,8 +5,9 @@
 //  Created by Michael G. Kazakov on 22.02.13.
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
-
+#import <string>
 #import "PanelController.h"
+#import "PanelController+DataAccess.h"
 #import "FSEventsDirUpdate.h"
 #import "Common.h"
 #import "MainWindowController.h"
@@ -16,7 +17,7 @@
 #import "FileMask.h"
 #import "PanelFastSearchPopupViewController.h"
 #import "PanelAux.h"
-#import <string>
+#import "SharingService.h"
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
@@ -858,10 +859,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
 }
 
-- (void) AttachToControls:(NSProgressIndicator*)_indicator eject:(NSButton*)_eject;
+- (void) AttachToControls:(NSProgressIndicator*)_indicator eject:(NSButton*)_eject share:(NSButton*)_share
 {
     m_SpinningIndicator = _indicator;
     m_EjectButton = _eject;
+    m_ShareButton = _share;
     
     m_IsAnythingWorksInBackground = false;
     [m_SpinningIndicator stopAnimation:nil];
@@ -870,6 +872,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     
     [m_EjectButton setTarget:self];
     [m_EjectButton setAction:@selector(OnEjectButton:)];
+    
+    [m_ShareButton setTarget:self];
+    [m_ShareButton setAction:@selector(OnShareButton:)];
 }
 
 - (void) SetWindowController:(MainWindowController *)_cntrl
@@ -1077,6 +1082,44 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     });
     
     [m_View setNeedsDisplay:true];
+}
+
+- (void)OnShareButton:(id)sender
+{
+    if([SharingService IsCurrentlySharing])
+        return;
+    
+    if(FlexChainedStringsChunk *files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot])
+    {
+        char current_dir[MAXPATHLEN];
+        m_Data->GetDirectoryPathWithTrailingSlash(current_dir);
+        [[SharingService new] ShowItems:files
+                InDir:current_dir
+                InVFS:m_HostsStack.back()
+       RelativeToRect:[sender bounds]
+               OfView:sender
+        PreferredEdge:NSMinYEdge];
+    }
+}
+
+- (void) HandleCursorChanged
+{
+    // need to update some UI here
+    auto const *item = [m_View CurrentItem];
+    if(item)
+    {
+        if(item->IsDotDot())
+            [m_ShareButton setEnabled:m_Data->GetSelectedItemsCount() > 0];
+        else
+        {
+            if(m_HostsStack.back()->IsNativeFS())
+                [m_ShareButton setEnabled:true];
+            else
+                [m_ShareButton setEnabled:!item->IsDir() && item->Size() < [SharingService MaximumFileSizeForVFSShare]];
+        }
+    }
+    else
+        [m_ShareButton setEnabled:false];
 }
 
 @end

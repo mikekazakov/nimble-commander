@@ -53,6 +53,20 @@
     return true;
 }
 
-
+- (FlexChainedStringsChunk*) GetSelectedEntriesOrFocusedEntryWithoutDotDot
+{
+    FlexChainedStringsChunk *files = 0;
+    if(m_Data->GetSelectedItemsCount() > 0 )
+    {
+        files = m_Data->StringsFromSelectedEntries();
+    }
+    else
+    {
+        auto const *item = [m_View CurrentItem];
+        if(item && !item->IsDotDot())
+            files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
+    }
+    return files;
+}
 
 @end

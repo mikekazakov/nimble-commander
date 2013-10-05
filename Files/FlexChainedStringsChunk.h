@@ -56,6 +56,8 @@ public:
     static FlexChainedStringsChunk* AllocateWithSingleString(const char *_str);
     static void FreeWithDescendants(FlexChainedStringsChunk** _first_chunk);
     
+    void FreeWithDescendants() { FlexChainedStringsChunk* p = this; FreeWithDescendants(&p); }
+    
     // AddString return a chunk in which _str was inserted
     // it can be "this" if there was a space here, or it can be a freshly allocated descendant,
     // which is linked with .next field

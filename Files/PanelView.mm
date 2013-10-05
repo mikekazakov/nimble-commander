@@ -120,7 +120,7 @@ struct CursorSelectionState
 - (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor
 {
     if (m_Presentation) m_Presentation->DirectoryChanged(_type, _cursor);
-    [self setNeedsDisplay:true];
+    [self OnCursorPositionChanged];
 }
 
 - (void) SetPresentation:(PanelViewPresentation *)_presentation
@@ -158,8 +158,7 @@ struct CursorSelectionState
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included:origpos];
     
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) HandleNextFile
@@ -170,8 +169,7 @@ struct CursorSelectionState
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included:origpos];
     
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) HandlePrevPage
@@ -182,8 +180,7 @@ struct CursorSelectionState
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
 
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) HandleNextPage
@@ -194,8 +191,7 @@ struct CursorSelectionState
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];    
 
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) HandlePrevColumn
@@ -206,8 +202,7 @@ struct CursorSelectionState
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) HandleNextColumn
@@ -218,8 +213,7 @@ struct CursorSelectionState
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
 
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) HandleFirstFile;
@@ -230,8 +224,7 @@ struct CursorSelectionState
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) HandleLastFile;
@@ -242,8 +235,7 @@ struct CursorSelectionState
     if(m_CursorSelectionType != CursorSelectionState::No)
         [self SelectUnselectInRange:origpos last_included: m_State.CursorPos];    
 
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) SetCursorPosition:(int)_pos
@@ -254,15 +246,21 @@ struct CursorSelectionState
 
     m_Presentation->SetCursorPos(_pos); // _pos wil be filtered here
 
-    [self setNeedsDisplay:true];
-    
-    if(m_State.Active)
-        [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (int) GetCursorPosition
 {
     return m_State.CursorPos;
+}
+
+- (void) OnCursorPositionChanged
+{
+    [self setNeedsDisplay:true];
+    if(m_State.Active)
+        [self UpdateQuickPreview];
+    
+    [m_Controller HandleCursorChanged];
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags
@@ -340,8 +338,7 @@ struct CursorSelectionState
                              select:select];
     }
     
-    [self setNeedsDisplay:true];
-    [self UpdateQuickPreview];
+    [self OnCursorPositionChanged];
 }
 
 - (void) UpdateDragScroll
@@ -432,7 +429,7 @@ struct CursorSelectionState
         m_Presentation->ScrollCursor(idx, 0);
 
     if(old_curpos != m_State.CursorPos || old_offset != m_State.ItemsDisplayOffset)
-        [self setNeedsDisplay:true];
+        [self OnCursorPositionChanged];
 }
 
 - (const VFSListingItem*) CurrentItem

@@ -65,7 +65,9 @@ enum ActiveState
     NSProgressIndicator *m_RightPanelSpinningIndicator;
     NSButton            *m_LeftPanelEjectButton;
     NSButton            *m_RightPanelEjectButton;
-
+    NSButton            *m_LeftPanelShareButton;
+    NSButton            *m_RightPanelShareButton;
+    
     StackOfDisappearingWidgets *m_LeftStack;
     StackOfDisappearingWidgets *m_RightStack;
     
@@ -127,7 +129,7 @@ enum ActiveState
     [m_LeftPanelView SetPanelController:m_LeftPanelController];
     [m_LeftPanelController SetView:m_LeftPanelView];
     [m_LeftPanelController SetData:m_LeftPanelData];
-    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton];
+    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton share:m_LeftPanelShareButton];
     
     m_RightPanelData = new PanelData;
     m_RightPanelController = [PanelController new];
@@ -135,7 +137,7 @@ enum ActiveState
     [m_RightPanelView SetPanelController:m_RightPanelController];
     [m_RightPanelController SetView:m_RightPanelView];
     [m_RightPanelController SetData:m_RightPanelData];
-    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton];
+    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton share:m_RightPanelShareButton];
 
     m_Skin = ((AppDelegate*)[NSApp delegate]).Skin;
     if (m_Skin == ApplicationSkin::Modern)
@@ -241,6 +243,21 @@ enum ActiveState
     [m_RightPanelEjectButton setBezelStyle:NSRecessedBezelStyle];
     [self addSubview:m_RightPanelEjectButton];
     
+    if(GetOSXVersion() >= OSXVersion::OSX_8)
+    {
+        m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSRect()];
+        [m_LeftPanelShareButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [m_LeftPanelShareButton setBezelStyle:NSTexturedRoundedBezelStyle];
+        [m_LeftPanelShareButton setImage:[NSImage imageNamed:NSImageNameShareTemplate]];
+        [self addSubview:m_LeftPanelShareButton];
+
+        m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSRect()];
+        [m_RightPanelShareButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [m_RightPanelShareButton setBezelStyle:NSTexturedRoundedBezelStyle];
+        [m_RightPanelShareButton setImage:[NSImage imageNamed:NSImageNameShareTemplate]];
+        [self addSubview:m_RightPanelShareButton];
+    }
+    
     m_OpSummaryBox = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 350, 40)];
     [m_OpSummaryBox setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:m_OpSummaryBox];
@@ -271,6 +288,8 @@ enum ActiveState
     m_LeftStack = [[StackOfDisappearingWidgets alloc] initWithOrientation:StackOfDisappearingWidgetsOrientation::LeftToRight
                                                                AnchorView:m_LeftPanelGoToButton
                                                                 SuperView:self];
+    if(GetOSXVersion() >= OSXVersion::OSX_8)
+        [m_LeftStack AddWidget:m_LeftPanelShareButton];
     [m_LeftStack AddWidget:m_LeftPanelEjectButton];
     [m_LeftStack AddWidget:m_LeftPanelSpinningIndicator];
     [m_LeftStack Done];
@@ -278,6 +297,8 @@ enum ActiveState
     m_RightStack = [[StackOfDisappearingWidgets alloc] initWithOrientation:StackOfDisappearingWidgetsOrientation::RightToLeft
                                                                AnchorView:m_RightPanelGoToButton
                                                                 SuperView:self];
+    if(GetOSXVersion() >= OSXVersion::OSX_8)
+        [m_RightStack AddWidget:m_RightPanelShareButton];
     [m_RightStack AddWidget:m_RightPanelEjectButton];
     [m_RightStack AddWidget:m_RightPanelSpinningIndicator];
     [m_RightStack Done];
@@ -594,8 +615,8 @@ enum ActiveState
     else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
     [self UpdatePanelFrames];
     
-    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton];
-    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton];
+    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton share:m_LeftPanelShareButton];
+    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton share:m_RightPanelShareButton];
     
     [self SavePanelsSettings];
 }

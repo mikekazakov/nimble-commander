@@ -297,9 +297,25 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
 //    assert(_meta->filetype  == nil); // generic may be already set using icons cache
     assert(_meta->generic   != nil);
     
-    if( strcmp(_meta->host->FSTag(), "native") == 0 )
+    if(_meta->host->IsNativeFS())
     {
         // playing inside a real FS, that can be reached via QL framework
+        
+        // zero - if we haven't image for this extension - produce it
+        __block std::map<std::string, NSImageRep*>::const_iterator it;
+        dispatch_sync(m_IconsCacheQueue, ^{
+            it = m_IconsCache.find(_meta->extension);
+            if( it == m_IconsCache.end() )
+                m_IconsCache[_meta->extension] = 0; // to exclude parallel image building
+        });
+        if( it == m_IconsCache.end() )
+            if(NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]])
+            { // don't know anything about this extension - ok, ask system
+                if(!IsImageRepEqual([NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]], m_GenericFileIconBitmap)) {
+                    NSImageRep *rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+                    dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = rep; });
+                }
+            }
         
         // 1st - try to built a real thumbnail
         if(m_IconsMode == IconModeFileIconsThumbnails &&
@@ -332,6 +348,7 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
         if(m_StopWorkQueue > 0)
             return;
         
+        // 2nd - if we haven't built a real thumbnail - try an extention instead
         if(_meta->thumbnail == nil && m_IconsMode >= IconModeFileIcons)
         {
             NSString *item_path = [NSString stringWithUTF8String:_meta->relative_path.c_str()];
@@ -375,12 +392,8 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
         
         if(!_meta->thumbnail && !_meta->filetype && !_meta->extension.empty())
         {
-            NSString *ext = [NSString stringWithUTF8String:_meta->extension.c_str()];
-            
             // check if have some information in cache
-            
             __block std::map<std::string, NSImageRep*>::const_iterator it;
-            
             dispatch_sync(m_IconsCacheQueue, ^{ it = m_IconsCache.find(_meta->extension); });
             
             if( it != m_IconsCache.end() )
@@ -393,7 +406,7 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
             else
             {
                 // don't know anything - ok, ask system
-                NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:ext];
+                NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]];
                 if(image != nil)
                 {
                     if(IsImageRepEqual([NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]], m_GenericFileIconBitmap))

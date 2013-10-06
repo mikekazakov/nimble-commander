@@ -112,7 +112,6 @@ enum ActiveState
     [m_RightPanelController SetView:0];
     delete m_RightPanelData;
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void) Init
@@ -172,12 +171,7 @@ enum ActiveState
         int ret = [m_RightPanelController GoToGlobalHostsPathSync:"/"];
         assert(ret == VFSError::Ok);
     }
-    
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(frameDidChange)
-                                                 name:NSViewFrameDidChangeNotification
-                                               object:self];
+        
     m_ActiveState = StateLeftPanel;
     [m_LeftPanelView Activate];
 }

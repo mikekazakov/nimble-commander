@@ -81,6 +81,8 @@
         rightRect.size.width = newFrame.size.width - leftRect.size.width;
         [[[splitView subviews] objectAtIndex:1] setFrame:rightRect];
     }
+    else
+        [splitView adjustSubviews];
 }
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex

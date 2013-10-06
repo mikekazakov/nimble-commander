@@ -471,20 +471,9 @@ int ClassicPanelViewPresentation::GetMaxItemsPerColumn()
     return 1;
 }
 
-void ClassicPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size)
+int ClassicPanelViewPresentation::Granularity()
 {
-    float gran = 9.;
-    float center_x = _size.width / 2.;
-    float rest = fmod(center_x, gran);
-    
-    NSSize size = _left.frame.size;
-    size.width += -rest + 1;
-    [_left setFrameSize:size];
-    
-    NSRect frame = _right.frame;
-    frame.origin.x += -rest;
-    frame.size.width += rest;
-    [_right setFrame:frame];
+    return m_FontCache->Width();
 }
 
 void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef context)
@@ -609,7 +598,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         }
         else if(current_entry && m_SymbWidth >= 2 + 6)
         {   // draw current entry size info and time info
-            oms::DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, context, fontcache, m_RegularFileColor[0]);
+            oms::DrawStringXY(size_info, 0, 6, 1, m_SymbHeight - 2, context, fontcache, m_RegularFileColor[0]);
             int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
             if(symbs_for_name > 0)
             {

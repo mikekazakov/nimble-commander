@@ -25,6 +25,7 @@ class PanelViewPresentation;
 - (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor;
 
 // _presentation must be created using new. PanelView gains ownership of the _presentation.
+- (PanelViewPresentation*) Presentation;
 - (void) SetPresentation:(PanelViewPresentation *)_presentation;
 
 // user input handling          normal keys

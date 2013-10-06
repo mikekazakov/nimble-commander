@@ -136,6 +136,11 @@ struct CursorSelectionState
     }
 }
 
+- (PanelViewPresentation*) Presentation
+{
+    return m_Presentation;
+}
+
 - (void)UpdateQuickPreview
 {
     if ([QuickPreview IsVisible])

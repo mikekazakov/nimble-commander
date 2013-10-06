@@ -36,6 +36,7 @@
 #import "StackOfDisappearingWidgets.h"
 #import "SelectionWithMaskSheetController.h"
 #import "VFS.h"
+#import "FilePanelMainSplitView.h"
 
 enum ActiveState
 {
@@ -58,6 +59,8 @@ enum ActiveState
     PanelData *m_RightPanelData;                // creates and owns
     PanelController *m_RightPanelController;    // creates and owns
 
+    FilePanelMainSplitView *m_MainSplitView;
+    
     MainWndGoToButton *m_LeftPanelGoToButton;
     MainWndGoToButton *m_RightPanelGoToButton;
 
@@ -150,7 +153,6 @@ enum ActiveState
         [m_LeftPanelView SetPresentation:new ClassicPanelViewPresentation];
         [m_RightPanelView SetPresentation:new ClassicPanelViewPresentation];
     }
-    [self UpdatePanelFrames];
     
     [self LoadPanelsSettings];
     
@@ -180,19 +182,16 @@ enum ActiveState
     [m_LeftPanelView Activate];
 }
 
-- (void)frameDidChange
-{
-    [self UpdatePanelFrames];
-    
-}
-
 - (void) CreateControls
 {
     m_LeftPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    [self addSubview:m_LeftPanelView positioned:NSWindowBelow relativeTo:nil];
-    
     m_RightPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(100, 100, 100, 100)];
-    [self  addSubview:m_RightPanelView positioned:NSWindowBelow relativeTo:nil];
+    
+    m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
+    [m_MainSplitView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_MainSplitView addSubview:m_LeftPanelView];
+    [m_MainSplitView addSubview:m_RightPanelView];
+    [self addSubview:m_MainSplitView];    
     
     m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     [m_LeftPanelGoToButton setTarget:self];
@@ -267,7 +266,9 @@ enum ActiveState
     [m_SheetAnchorLine setBoxType:NSBoxSeparator];
     [self addSubview:m_SheetAnchorLine];
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_LeftPanelGoToButton, m_RightPanelGoToButton, m_OpSummaryBox, m_SheetAnchorLine);
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_LeftPanelGoToButton, m_RightPanelGoToButton, m_OpSummaryBox, m_SheetAnchorLine, m_MainSplitView);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(45)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SheetAnchorLine]-(==0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==44)-[m_SheetAnchorLine(<=1)]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(10)-[m_LeftPanelGoToButton(61)]" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
@@ -302,27 +303,6 @@ enum ActiveState
     [m_RightStack AddWidget:m_RightPanelEjectButton];
     [m_RightStack AddWidget:m_RightPanelSpinningIndicator];
     [m_RightStack Done];
-}
-
-- (void)UpdatePanelFrames
-{
-    // Make panels fill content view, excluding top gap.
-    // Make sure that x and width are integers.
-//    NSSize frameSize = [self.window contentRectForFrameRect:self.window.frame].size;
-    NSSize frameSize = [self frame].size;
-    
-    const int topgap = 45;
-    CGFloat panel_width = int(frameSize.width)/2;
-    NSRect frame = NSMakeRect(0, 0, panel_width, frameSize.height - topgap);
-    m_LeftPanelView.frame = frame;
-    frame.origin.x = panel_width;
-    frame.size.width = frameSize.width - panel_width;
-    m_RightPanelView.frame = frame;
-    
-    if (m_Skin == ApplicationSkin::Classic)
-        ClassicPanelViewPresentation::UpdatePanelFrames(m_LeftPanelView, m_RightPanelView, frameSize);
-    else
-        ModernPanelViewPresentation::UpdatePanelFrames(m_LeftPanelView, m_RightPanelView, frameSize);
 }
 
 - (NSView*) ContentView
@@ -375,8 +355,6 @@ enum ActiveState
         [m_LeftPanelView SetPresentation:new ClassicPanelViewPresentation];
         [m_RightPanelView SetPresentation:new ClassicPanelViewPresentation];
     }
-    
-    [self UpdatePanelFrames];
 }
 
 
@@ -608,12 +586,16 @@ enum ActiveState
 
 - (IBAction)OnSwapPanels:(id)sender{
     assert([self IsPanelActive]);
+    
+    if([m_MainSplitView AnyCollapsed])
+        return;
+    
     std::swap(m_LeftPanelView, m_RightPanelView);
     std::swap(m_LeftPanelData, m_RightPanelData);
     std::swap(m_LeftPanelController, m_RightPanelController);
     if(m_ActiveState == StateLeftPanel) m_ActiveState = StateRightPanel;
     else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
-    [self UpdatePanelFrames];
+    [m_MainSplitView SwapViews];
     
     [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton share:m_LeftPanelShareButton];
     [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton share:m_RightPanelShareButton];
@@ -1055,7 +1037,6 @@ enum ActiveState
 
 - (void)WindowDidResize
 {
-    [self UpdatePanelFrames];
     [m_OpSummaryController OnWindowResize];
     [self UpdateTitle];
 }

@@ -60,6 +60,7 @@
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB54179B959300FE639F /* EncodingsList.mm */; };
 		CF27414917FF04EF006D6687 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
+		CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
 		CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF27B50E172F8EAF005C9B28 /* pause_icon.png */; };
 		CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29312E17D79BA100648A90 /* IconsGenerator.mm */; };
 		CF29313417D9915600648A90 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
@@ -339,6 +340,8 @@
 		CF1FBB54179B959300FE639F /* EncodingsList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EncodingsList.mm; sourceTree = "<group>"; };
 		CF27414717FF04EF006D6687 /* SharingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharingService.h; sourceTree = "<group>"; };
 		CF27414817FF04EF006D6687 /* SharingService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharingService.mm; sourceTree = "<group>"; };
+		CF27414A18000832006D6687 /* FilePanelMainSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelMainSplitView.h; sourceTree = "<group>"; };
+		CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePanelMainSplitView.mm; sourceTree = "<group>"; };
 		CF27B50E172F8EAF005C9B28 /* pause_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_icon.png; sourceTree = "<group>"; };
 		CF29312E17D79BA100648A90 /* IconsGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IconsGenerator.mm; sourceTree = "<group>"; };
 		CF29312F17D79BA100648A90 /* IconsGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconsGenerator.h; sourceTree = "<group>"; };
@@ -822,6 +825,8 @@
 				CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */,
 				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
 				CF0519DA17E9C98A00590C74 /* PanelAux.h */,
+				CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */,
+				CF27414A18000832006D6687 /* FilePanelMainSplitView.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
 				CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */,
 				CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */,
@@ -1478,6 +1483,7 @@
 				CF9D0EA617CC961100CB8146 /* archive_read_support_format_empty.c in Sources */,
 				CF9D0E7617CC961100CB8146 /* archive_check_magic.c in Sources */,
 				CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */,
+				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
 				CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */,
 				CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */,
 				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,

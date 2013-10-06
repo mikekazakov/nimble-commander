@@ -30,7 +30,7 @@ public:
     int GetNumberOfItemColumns() override;
     int GetMaxItemsPerColumn() override;
     
-    static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
+    int Granularity();
     
 private:
     void BuildGeometry();

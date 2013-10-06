@@ -30,8 +30,6 @@ public:
     int GetNumberOfItemColumns() override;
     int GetMaxItemsPerColumn() override;
     
-    static void UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size);
-    
 private:
     friend class ModernPanelViewPresentationIconCache;
     static void OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);

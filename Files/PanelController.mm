@@ -115,9 +115,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) RequestActivation
 {
-    NSView *parent = [m_View superview];
-    assert([parent isKindOfClass: [MainWindowFilePanelState class]]);
-    [(MainWindowFilePanelState*)parent ActivatePanelByController:self];
+    [[self GetParentWindow] ActivatePanelByController:self];
 }
 
 - (void) HandleShiftReturnButton
@@ -1043,11 +1041,18 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     [self UpdateEjectButton];
 }
 
-- (void) SignalParentOfPathChanged
+- (MainWindowFilePanelState*) GetParentWindow
 {
     NSView *parent = [m_View superview];
-    assert([parent isKindOfClass: [MainWindowFilePanelState class]]);
-    [(MainWindowFilePanelState*)parent PanelPathChanged:self];
+    while(parent && ![parent isKindOfClass: [MainWindowFilePanelState class]])
+        parent = [parent superview];
+    assert(parent);
+    return (MainWindowFilePanelState*)parent;
+}
+
+- (void) SignalParentOfPathChanged
+{
+    [[self GetParentWindow] PanelPathChanged:self];
 }
 
 - (void)OnEjectButton:(id)sender

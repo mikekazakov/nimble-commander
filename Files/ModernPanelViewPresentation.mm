@@ -908,10 +908,6 @@ int ModernPanelViewPresentation::GetMaxItemsPerColumn()
     return m_ItemsPerColumn;
 }
 
-void ModernPanelViewPresentation::UpdatePanelFrames(PanelView *_left, PanelView *_right, NSSize _size)
-{
-}
-
 void ModernPanelViewPresentation::OnDirectoryChanged()
 {
     m_IconCache->Flush();

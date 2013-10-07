@@ -27,7 +27,7 @@
 {
     m_TargetView = _view;
     
-    NSView *sup = [m_TargetView superview];
+    NSView *sup = [[m_TargetView superview] superview];
     assert(sup);
     
     NSView *me = [self view];

@@ -217,14 +217,14 @@ void IconsGenerator::BuildGenericIcons()
     assert(image);
     m_GenericFolderIconImage = image;
     m_GenericFolderIcon = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
-    m_GenericFolderIconBitmap = [NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]];
+    m_GenericFolderIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFolderIcon CGImageForProposedRect:0 context:0 hints:0]];
     
     // Load predefined generic document file icon.
     image = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
     assert(image);
     m_GenericFileIconImage = image;
     m_GenericFileIcon = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
-    m_GenericFileIconBitmap = [NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]];
+    m_GenericFileIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFileIcon CGImageForProposedRect:0 context:0 hints:0]];
 }
 
 NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
@@ -302,20 +302,22 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
         // playing inside a real FS, that can be reached via QL framework
         
         // zero - if we haven't image for this extension - produce it
-        __block std::map<std::string, NSImageRep*>::const_iterator it;
-        dispatch_sync(m_IconsCacheQueue, ^{
-            it = m_IconsCache.find(_meta->extension);
+        if(!_meta->extension.empty())
+        {
+            __block std::map<std::string, NSImageRep*>::const_iterator it;
+            dispatch_sync(m_IconsCacheQueue, ^{
+                it = m_IconsCache.find(_meta->extension);
+                if( it == m_IconsCache.end() )
+                    m_IconsCache[_meta->extension] = 0; // to exclude parallel image building
+            });
             if( it == m_IconsCache.end() )
-                m_IconsCache[_meta->extension] = 0; // to exclude parallel image building
-        });
-        if( it == m_IconsCache.end() )
-            if(NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]])
-            { // don't know anything about this extension - ok, ask system
-                if(!IsImageRepEqual([NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]], m_GenericFileIconBitmap)) {
-                    NSImageRep *rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
-                    dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = rep; });
+                if(NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]])
+                { // don't know anything about this extension - ok, ask system
+                    auto rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+                    if(!IsImageRepEqual([[NSBitmapImageRep alloc] initWithCGImage:[rep CGImageForProposedRect:0 context:0 hints:0]], m_GenericFileIconBitmap))
+                        dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = rep; });
                 }
-            }
+        }
         
         // 1st - try to built a real thumbnail
         if(m_IconsMode == IconModeFileIconsThumbnails &&
@@ -409,14 +411,14 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
                 NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]];
                 if(image != nil)
                 {
-                    if(IsImageRepEqual([NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]], m_GenericFileIconBitmap))
+                    NSImageRep *rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+                    if(IsImageRepEqual([[NSBitmapImageRep alloc] initWithCGImage:[rep CGImageForProposedRect:0 context:0 hints:0]], m_GenericFileIconBitmap))
                     {
                         // dummy icon - this extension has no set icon, so just don't use it
                         dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = 0; });
                     }
                     else
                     {
-                        NSImageRep *rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
                         dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = rep; });
                         _meta->filetype = rep;
                         if(m_UpdateCallback)

@@ -1039,6 +1039,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     [self ClearSelectionRequest];   
     [self SignalParentOfPathChanged];
     [self UpdateEjectButton];
+    [self HandleCursorChanged];
 }
 
 - (MainWindowFilePanelState*) GetParentWindow

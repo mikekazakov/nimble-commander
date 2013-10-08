@@ -43,8 +43,6 @@ class PanelViewPresentation;
 - (void) mouseDragged:(NSEvent *)_event;
 - (void) mouseUp:(NSEvent *)_event;
 
-- (void) UpdateQuickPreview;
-
 // view type
 - (void) ToggleViewType:(PanelViewType)_type;
 - (PanelViewType) GetCurrentViewType;

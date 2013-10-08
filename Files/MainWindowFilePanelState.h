@@ -14,6 +14,7 @@
 
 @class PanelController;
 @class OperationsController;
+@class QuickLookView;
 
 @interface MainWindowFilePanelState : NSView<MainWindowStateProtocol>
 
@@ -24,5 +25,9 @@
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 
 - (void)GetFilePanelsGlobalPaths:(std::vector<std::string> &)_paths;
+
+
+- (QuickLookView*)RequestQuickLookView:(PanelController*)_panel;
+- (void)CloseQuickLookView:(PanelController*)_panel;
 
 @end

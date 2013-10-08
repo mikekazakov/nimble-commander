@@ -141,19 +141,6 @@ struct CursorSelectionState
     return m_Presentation;
 }
 
-- (void)UpdateQuickPreview
-{
-    if ([QuickPreview IsVisible])
-    {
-        int rawpos = m_State.Data->SortedDirectoryEntries()[m_State.CursorPos];
-        char path[__DARWIN_MAXPATHLEN];
-        m_State.Data->ComposeFullPathForEntry(rawpos, path);
-        [QuickPreview PreviewItem:path
-                              vfs:m_State.Data->Host()
-                           sender:self];
-    }
-}
-
 - (void) HandlePrevFile
 {
     int origpos = m_State.CursorPos;
@@ -262,9 +249,6 @@ struct CursorSelectionState
 - (void) OnCursorPositionChanged
 {
     [self setNeedsDisplay:true];
-    if(m_State.Active)
-        [self UpdateQuickPreview];
-    
     [m_Controller HandleCursorChanged];
 }
 
@@ -377,10 +361,11 @@ struct CursorSelectionState
         
         m_Presentation->SetCursorPos(cursor_pos);
         [self setNeedsDisplay:true];
-        [self UpdateQuickPreview];
         
         // Stop cursor scrolling.
         m_DragScrollDirection = 0;
+        
+        [self OnCursorPositionChanged];
         
         return;
     }

@@ -183,8 +183,7 @@ enum ActiveState
     
     m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
     [m_MainSplitView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_MainSplitView addSubview:m_LeftPanelView];
-    [m_MainSplitView addSubview:m_RightPanelView];
+    [m_MainSplitView SetBasicViews:m_LeftPanelView second:m_RightPanelView];
     [self addSubview:m_MainSplitView];    
     
     m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
@@ -317,10 +316,12 @@ enum ActiveState
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{
+    [m_MainSplitView SetLeftOverlay:0];
     [m_LeftPanelController GoToGlobalHostsPathAsync:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation] select_entry:0];
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
+    [m_MainSplitView SetRightOverlay:0];
     [m_RightPanelController GoToGlobalHostsPathAsync:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation] select_entry:0];
 }
 
@@ -401,6 +402,8 @@ enum ActiveState
 
 - (void) HandleTabButton
 {
+    if([m_MainSplitView AnyCollapsedOrOverlayed])
+        return;
     [self ActivatePanel:(m_ActiveState == StateLeftPanel ? StateRightPanel : StateLeftPanel)];
 }
 
@@ -425,7 +428,6 @@ enum ActiveState
         m_ActiveState = StateLeftPanel;
         [m_LeftPanelView Activate];
         [m_RightPanelView Disactivate];
-        [m_LeftPanelView UpdateQuickPreview];
     }
     else
     {
@@ -434,7 +436,6 @@ enum ActiveState
         m_ActiveState = StateRightPanel;
         [m_RightPanelView Activate];
         [m_LeftPanelView Disactivate];
-        [m_RightPanelView UpdateQuickPreview];
     }
     
     [self UpdateTitle];
@@ -566,6 +567,9 @@ enum ActiveState
 - (IBAction)OnSyncPanels:(id)sender{
     assert([self IsPanelActive]);
     char dirpath[__DARWIN_MAXPATHLEN];
+    if([m_MainSplitView AnyCollapsedOrOverlayed])
+        return;
+    
     if(m_ActiveState == StateLeftPanel)
     {
         m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
@@ -616,6 +620,8 @@ enum ActiveState
     assert([self IsPanelActive]);
     if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support file info only on native fs
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     
     FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
     FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
@@ -650,6 +656,8 @@ enum ActiveState
     PanelData *curdata = [self ActivePanelData];
     if(!curdata->Host()->IsNativeFS())
         return; // currently support volume info only on native fs
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     
     int curpos = [curview GetCursorPosition];
     if(curpos < 0) return;
@@ -663,12 +671,16 @@ enum ActiveState
 
 - (void)selectAll:(id)sender
 {
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     if([self IsPanelActive])
         [[self ActivePanelController] SelectAllEntries:true];
 }
 
 - (void)deselectAll:(id)sender
 {
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     if([self IsPanelActive])
         [[self ActivePanelController] SelectAllEntries:false];
 }
@@ -714,6 +726,8 @@ enum ActiveState
     assert([self IsPanelActive]);
     if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support files deletion only on native fs
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     
     __block FlexChainedStringsChunk *files = 0;
     if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
@@ -775,6 +789,8 @@ enum ActiveState
     PanelData *curdata = [self ActivePanelData];
     if(!curdata->Host()->IsNativeFS())
         return; // currently support directory creation only on native fs
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     
     CreateDirectorySheetController *cd = [[CreateDirectorySheetController alloc] init];
     [cd ShowSheet:[self window] handler:^(int _ret)
@@ -795,6 +811,9 @@ enum ActiveState
 
 - (IBAction)OnFileCopyCommand:(id)sender{
     assert([self IsPanelActive]);
+    if([m_MainSplitView AnyCollapsedOrOverlayed])
+        return;
+    
     const PanelData *source, *destination;
     if(m_ActiveState == StateLeftPanel)
     {
@@ -868,6 +887,8 @@ enum ActiveState
     assert([self IsPanelActive]);
     if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support copy as only on native fs (an easy way to prohibit it)
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
@@ -903,6 +924,8 @@ enum ActiveState
 
 - (IBAction)OnFileRenameMoveCommand:(id)sender{
     assert([self IsPanelActive]);
+    if([m_MainSplitView AnyCollapsedOrOverlayed])
+        return;
     const PanelData *source, *destination;
     if(m_ActiveState == StateLeftPanel)
     {
@@ -963,7 +986,8 @@ enum ActiveState
     
     // process only current cursor item
     assert([self IsPanelActive]);
-    
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support rename as only on native fs
     
@@ -1024,9 +1048,6 @@ enum ActiveState
     unsigned long flags = [NSEvent modifierFlags];
     [m_LeftPanelController ModifierFlagsChanged:flags];
     [m_RightPanelController ModifierFlagsChanged:flags];
-
-    if ([QuickPreview IsVisible])
-        [[self ActivePanelView] UpdateQuickPreview];
 }
 
 - (void)WindowDidResize
@@ -1075,6 +1096,8 @@ enum ActiveState
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender
 {
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     if([self IsPanelActive])
     {
         auto *i = [[self ActivePanelView] CurrentItem];
@@ -1149,6 +1172,8 @@ enum ActiveState
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender
 {
     assert([self IsPanelActive]);
+    if([m_MainSplitView AnyCollapsedOrOverlayed])
+        return;
     
     if(!m_RightPanelData->Host()->IsNativeFS() || !m_LeftPanelData->Host()->IsNativeFS())
         return; // currently support links only on native fs
@@ -1194,6 +1219,8 @@ enum ActiveState
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
     assert([self IsPanelActive]);
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
@@ -1235,6 +1262,8 @@ enum ActiveState
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
     assert([self IsPanelActive]);
+    if([m_MainSplitView AnyCollapsedOrOverlayed])
+        return;
     if(!m_RightPanelData->Host()->IsNativeFS() || !m_LeftPanelData->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
@@ -1281,6 +1310,8 @@ enum ActiveState
 
 - (IBAction)OnSelectByMask:(id)sender
 {
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
     [sheet ShowSheet:[self window]
              handler:^(int result) {
@@ -1292,6 +1323,8 @@ enum ActiveState
 
 - (IBAction)OnDeselectByMask:(id)sender
 {
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
     [sheet SetIsDeselect:true];
     [sheet ShowSheet:[self window]
@@ -1305,6 +1338,8 @@ enum ActiveState
 - (IBAction)OnGoToUpperDirectory:(id)sender
 {
     assert([self IsPanelActive]);
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
     [[self ActivePanelController] GoToUpperDirectoryAsync];    
 }
 
@@ -1332,6 +1367,9 @@ enum ActiveState
 
 - (IBAction)paste:(id)sender
 {
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
+    
     NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
 
     // check what's inside pasteboard
@@ -1432,6 +1470,30 @@ enum ActiveState
     _paths.push_back(tmp);
     m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(tmp);
     _paths.push_back(tmp);
+}
+
+- (QuickLookView*)RequestQuickLookView:(PanelController*)_panel
+{
+    QuickLookView *view = [[QuickLookView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    if(_panel == m_LeftPanelController)
+    {
+        [m_MainSplitView SetRightOverlay:view];
+        return view;
+    }
+    else if(_panel == m_RightPanelController)
+    {
+        [m_MainSplitView SetLeftOverlay:view];
+        return view;
+    }
+    return nil;
+}
+
+- (void)CloseQuickLookView:(PanelController*)_panel
+{
+    if(_panel == m_LeftPanelController)
+        [m_MainSplitView SetRightOverlay:0];
+    else if(_panel == m_RightPanelController)
+        [m_MainSplitView SetLeftOverlay:0];
 }
 
 @end

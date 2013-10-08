@@ -7,11 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include "PanelData.h"
-#include "PanelView.h"
-#import "PanelFastSearchPopupViewController.h"
+#import "PanelData.h"
+#import "PanelView.h"
 
 @class MainWindowController;
+@class QuickLookView;
+@class PanelFastSearchPopupViewController;
 
 @interface PanelController : NSViewController
 {
@@ -46,6 +47,9 @@
     // spinning indicator support
     bool                m_IsAnythingWorksInBackground;
     NSProgressIndicator *m_SpinningIndicator;
+    
+    // QuickLook support
+    __weak QuickLookView *m_QuickLook;
     
     NSButton            *m_EjectButton;
     NSButton            *m_ShareButton;

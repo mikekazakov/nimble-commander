@@ -18,6 +18,7 @@
 #import "PanelFastSearchPopupViewController.h"
 #import "PanelAux.h"
 #import "SharingService.h"
+#import "PanelFastSearchPopupViewController.h"
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
@@ -771,19 +772,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     {
         case 53: // Esc button
             [self CancelBackgroundOperations];
-            [QuickPreview Hide];
+            if(m_QuickLook)
+               [[self GetParentWindow] CloseQuickLookView:self];
             break;
     }
 }
 
 - (void) HandleFileView // F3
 {
-    // dummy for now. we need to analyze the selection and/or cursor position
-    
-    // Close quick preview, if it is open.
-    if ([QuickPreview IsVisible])
-    {
-        [QuickPreview Hide];
+    if (m_QuickLook != nil)
+    { // Close quick preview, if it is open.
+        [[self GetParentWindow] CloseQuickLookView:self];
         return;
     }
     
@@ -808,8 +807,8 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         }
         else
         {
-            [QuickPreview Show];
-            [m_View UpdateQuickPreview];
+            m_QuickLook = [[self GetParentWindow] RequestQuickLookView:self];
+            [self HandleCursorChanged];
         }
     }
 }
@@ -1047,7 +1046,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     NSView *parent = [m_View superview];
     while(parent && ![parent isKindOfClass: [MainWindowFilePanelState class]])
         parent = [parent superview];
-    assert(parent);
+    if(!parent) return nil;
     return (MainWindowFilePanelState*)parent;
 }
 
@@ -1126,6 +1125,14 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
     else
         [m_ShareButton setEnabled:false];
+    
+    // update QuickLook if any
+    if(m_QuickLook != nil)
+    {
+        char path[MAXPATHLEN];
+        if( [self GetCurrentFocusedEntryFilePathRelativeToHost:path] )
+            [m_QuickLook PreviewItem:path vfs:m_HostsStack.back()];
+    }
 }
 
 @end

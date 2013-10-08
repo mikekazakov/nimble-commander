@@ -7,16 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Quartz/Quartz.h>
 #import "VFS.h"
 
-@class PanelView;
+@interface QuickLookView : QLPreviewView
 
-@interface QuickPreview : NSObject
-
-+ (void)Show;
-+ (void)Hide;
-+ (BOOL)IsVisible;
-+ (void)PreviewItem:(const char *)_path vfs:(std::shared_ptr<VFSHost>)_host sender:(PanelView *)_panel;
-+ (void)UpdateData;
+- (void)PreviewItem:(const char *)_path vfs:(std::shared_ptr<VFSHost>)_host;
 
 @end

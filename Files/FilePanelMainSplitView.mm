@@ -13,6 +13,10 @@
 
 @implementation FilePanelMainSplitView
 {
+    PanelView *m_BasicViews[2]; // if there's no overlays - this will be nils
+                             // if any part becomes overlayed - basic view is backed up in this array
+    
+//    __weak NSView *m_Overlays[2];
     double m_Prop;
 }
 
@@ -38,7 +42,11 @@
 {
     m_Prop = proposedPosition / [self frame].size.width;
     
-    PanelView *v = [[self subviews] objectAtIndex:0];
+    PanelView *v;
+    if(m_BasicViews[0]) v = m_BasicViews[0];
+    else if(m_BasicViews[1]) v = m_BasicViews[1];
+    else v = [[self subviews] objectAtIndex:0];
+    
     if(dynamic_cast<ModernPanelViewPresentation*>([v Presentation]))
     {
         return proposedPosition;
@@ -60,7 +68,11 @@
         return;
     }
     
-    PanelView *v = [[self subviews] objectAtIndex:0];
+    PanelView *v;
+    if(m_BasicViews[0]) v = m_BasicViews[0];
+    else if(m_BasicViews[1]) v = m_BasicViews[1];
+    else v = [[self subviews] objectAtIndex:0];
+        
     if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>([v Presentation]))
     {
         NSRect leftRect  = [[[splitView subviews] objectAtIndex:0] frame];
@@ -100,9 +112,36 @@
     return YES;
 }
 
+- (bool) LeftCollapsed
+{
+    auto views = [self subviews];
+    if(views.count == 0) return false;
+    return [self isSubviewCollapsed:[views objectAtIndex:0]];
+}
+
+- (bool) RightCollapsed
+{
+    auto views = [self subviews];
+    if(views.count < 2) return false;
+    return [self isSubviewCollapsed:[views objectAtIndex:1]];
+}
+
 - (bool) AnyCollapsed
 {
     auto views = [self subviews];
+    if(views.count == 0) return false;
+    return [self isSubviewCollapsed:[views objectAtIndex:0]] ||
+        [self isSubviewCollapsed:[views objectAtIndex:1]];
+}
+
+- (bool) AnyCollapsedOrOverlayed
+{
+    if(m_BasicViews[0] != nil || m_BasicViews[1] != nil)
+        return true;
+    
+    auto views = [self subviews];
+    if(views.count == 0)
+        return false;
     return [self isSubviewCollapsed:[views objectAtIndex:0]] ||
         [self isSubviewCollapsed:[views objectAtIndex:1]];
 }
@@ -120,6 +159,96 @@
     
     [left setFrame:rightrect];
     [right setFrame:leftrect];
+
+    std::swap(m_BasicViews[0], m_BasicViews[1]);
+    [m_BasicViews[0] setFrame:leftrect];
+    [m_BasicViews[1] setFrame:rightrect];
+}
+
+- (void) SetBasicViews:(PanelView*)_v1 second:(PanelView*)_v2
+{
+    [self addSubview:_v1];
+    [self addSubview:_v2];
+}
+
+- (void) SetLeftOverlay:(NSView*)_o
+{
+    NSRect leftRect = [[[self subviews] objectAtIndex:0] frame];
+    if(_o != nil)
+    {
+        [_o setFrame:leftRect];
+        if(m_BasicViews[0])
+        {
+            [self replaceSubview:[[self subviews] objectAtIndex:0] with:_o];
+        }
+        else
+        {
+            m_BasicViews[0] = [[self subviews] objectAtIndex:0];
+            [self replaceSubview:m_BasicViews[0] with:_o];
+        }
+    }
+    else
+    {
+        if(m_BasicViews[0] != nil)
+        {
+            [m_BasicViews[0] setFrame:leftRect];
+            [self replaceSubview:[[self subviews] objectAtIndex:0] with:m_BasicViews[0]];
+            m_BasicViews[0] = nil;
+        }
+    }
+}
+
+- (void) SetRightOverlay:(NSView*)_o
+{
+    NSRect rightRect = [[[self subviews] objectAtIndex:1] frame];
+    if(_o != nil)
+    {
+        [_o setFrame:rightRect];
+        
+        if(m_BasicViews[1])
+        {
+            [self replaceSubview:[[self subviews] objectAtIndex:1] with:_o];
+        }
+        else
+        {
+            m_BasicViews[1] = [[self subviews] objectAtIndex:1];
+            [self replaceSubview:m_BasicViews[1] with:_o];
+        }
+    }
+    else
+    {
+        if(m_BasicViews[1] != nil)
+        {
+            [m_BasicViews[1] setFrame:rightRect];
+            [self replaceSubview:[[self subviews] objectAtIndex:1] with:m_BasicViews[1]];
+            m_BasicViews[1] = nil;
+        }
+    }
+//    [[[self subviews] objectAtIndex:1] setFrame:rightRect];
+}
+
+- (bool) AnyOverlayed
+{
+    return m_BasicViews[0] != nil || m_BasicViews[1] != nil;
+}
+
+- (bool) LeftOverlayed
+{
+    return m_BasicViews[0] != nil;
+}
+
+- (bool) RightOverlayed
+{
+    return m_BasicViews[1] != nil;
+}
+
+- (bool) IsViewCollapsedOrOverlayed:(NSView*)_v
+{
+    if(m_BasicViews[0] == _v ||
+       m_BasicViews[1] == _v)
+        return true;
+    
+    return [self isSubviewCollapsed:_v];
 }
 
 @end

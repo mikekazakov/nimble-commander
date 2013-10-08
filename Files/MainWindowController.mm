@@ -126,18 +126,6 @@
     [m_BaseWindowState RevealEntries:_entries inPath:_path];
 }
 
-// Quick Look panel support
-- (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel {
-    return YES;
-}
-
-- (void)beginPreviewPanelControl:(QLPreviewPanel *)panel {
-    [QuickPreview UpdateData];
-}
-
-- (void)endPreviewPanelControl:(QLPreviewPanel *)panel {
-}
-
 - (void) ResignAsWindowState:(id)_state
 {
     assert(_state != m_BaseWindowState);

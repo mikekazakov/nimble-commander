@@ -21,13 +21,15 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
 @implementation QuickLookView
 {
     std::string m_OrigPath;
+    volatile bool        m_Closed;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect style:QLPreviewViewStyleNormal];
     if (self) {
-        
+        m_Closed = false;
+        self.shouldCloseWithWindow = false;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(frameDidChange)
                                                      name:NSViewFrameDidChangeNotification
@@ -46,9 +48,22 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+-(void)close
+{
+    [super close];
+    m_Closed = true;
+}
+
+- (void)viewDidMoveToSuperview
+{
+    if(self.superview == nil)
+        [self close];
+}
+
 - (void)PreviewItem:(const char *)_path vfs:(std::shared_ptr<VFSHost>)_host
 {
     // may cause collisions of same filenames on different vfs, nevermind for now
+    assert(!m_Closed);
     if(m_OrigPath == _path) return;
     
     m_OrigPath = _path;
@@ -72,11 +87,12 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
             char tmp[MAXPATHLEN];
             if(!TemporaryNativeFileStorage::Instance().CopySingleFile(path.c_str(), _host, tmp))
                 return;
-            
             NSString *fn = [NSString stringWithUTF8String:tmp];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.previewItem = [NSURL fileURLWithPath:fn];
-            });
+            if(!m_Closed)
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if(!m_Closed)
+                        self.previewItem = [NSURL fileURLWithPath:fn];
+                });
         });
     }
 }

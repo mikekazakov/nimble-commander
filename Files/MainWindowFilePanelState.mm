@@ -37,6 +37,8 @@
 #import "SelectionWithMaskSheetController.h"
 #import "VFS.h"
 #import "FilePanelMainSplitView.h"
+#import "BriefSystemOverview.h"
+#import "sysinfo.h"
 
 enum ActiveState
 {
@@ -235,7 +237,7 @@ enum ActiveState
     [m_RightPanelEjectButton setBezelStyle:NSRecessedBezelStyle];
     [self addSubview:m_RightPanelEjectButton];
     
-    if(GetOSXVersion() >= OSXVersion::OSX_8)
+    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
     {
         m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSRect()];
         [m_LeftPanelShareButton setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -282,7 +284,7 @@ enum ActiveState
     m_LeftStack = [[StackOfDisappearingWidgets alloc] initWithOrientation:StackOfDisappearingWidgetsOrientation::LeftToRight
                                                                AnchorView:m_LeftPanelGoToButton
                                                                 SuperView:self];
-    if(GetOSXVersion() >= OSXVersion::OSX_8)
+    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
         [m_LeftStack AddWidget:m_LeftPanelShareButton];
     [m_LeftStack AddWidget:m_LeftPanelEjectButton];
     [m_LeftStack AddWidget:m_LeftPanelSpinningIndicator];
@@ -291,7 +293,7 @@ enum ActiveState
     m_RightStack = [[StackOfDisappearingWidgets alloc] initWithOrientation:StackOfDisappearingWidgetsOrientation::RightToLeft
                                                                AnchorView:m_RightPanelGoToButton
                                                                 SuperView:self];
-    if(GetOSXVersion() >= OSXVersion::OSX_8)
+    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
         [m_RightStack AddWidget:m_RightPanelShareButton];
     [m_RightStack AddWidget:m_RightPanelEjectButton];
     [m_RightStack AddWidget:m_RightPanelSpinningIndicator];
@@ -1476,19 +1478,27 @@ enum ActiveState
 {
     QuickLookView *view = [[QuickLookView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     if(_panel == m_LeftPanelController)
-    {
         [m_MainSplitView SetRightOverlay:view];
-        return view;
-    }
     else if(_panel == m_RightPanelController)
-    {
         [m_MainSplitView SetLeftOverlay:view];
-        return view;
-    }
-    return nil;
+    else
+        return nil;
+    return view;
 }
 
-- (void)CloseQuickLookView:(PanelController*)_panel
+- (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel
+{
+    BriefSystemOverview *view = [[BriefSystemOverview alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    if(_panel == m_LeftPanelController)
+        [m_MainSplitView SetRightOverlay:view];
+    else if(_panel == m_RightPanelController)
+        [m_MainSplitView SetLeftOverlay:view];
+    else
+        return nil;
+    return view;
+}
+
+- (void)CloseOverlay:(PanelController*)_panel
 {
     if(_panel == m_LeftPanelController)
         [m_MainSplitView SetRightOverlay:0];

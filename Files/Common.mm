@@ -374,23 +374,3 @@ bool IsVolumeContainingPathEjectable(const char *_path)
 
 @end
 
-OSXVersion GetOSXVersion()
-{
-    static OSXVersion version = OSXVersion::OSX_Unknown;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        if(NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"])
-        {
-            id prod_ver = [d objectForKey:@"ProductVersion"];
-            if(prod_ver != nil && [prod_ver isKindOfClass:[NSString class]])
-            {
-                NSString *prod_ver_s = prod_ver;
-                if([prod_ver_s isEqualToString:@"10.9"]) version = OSXVersion::OSX_9;
-                else if([prod_ver_s isEqualToString:@"10.8"]) version = OSXVersion::OSX_8;
-                else if([prod_ver_s isEqualToString:@"10.7"]) version = OSXVersion::OSX_7;
-            }
-        }
-    });
-    return version;
-}
-

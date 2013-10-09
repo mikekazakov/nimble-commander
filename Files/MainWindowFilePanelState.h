@@ -15,6 +15,7 @@
 @class PanelController;
 @class OperationsController;
 @class QuickLookView;
+@class BriefSystemOverview;
 
 @interface MainWindowFilePanelState : NSView<MainWindowStateProtocol>
 
@@ -28,6 +29,9 @@
 
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel;
-- (void)CloseQuickLookView:(PanelController*)_panel;
+- (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel;
+- (void)CloseOverlay:(PanelController*)_panel;
+
+
 
 @end

@@ -61,6 +61,8 @@
 		CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB54179B959300FE639F /* EncodingsList.mm */; };
 		CF27414917FF04EF006D6687 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
 		CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
+		CF2741501803F6A2006D6687 /* sysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414E1803F6A2006D6687 /* sysinfo.mm */; };
+		CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
 		CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF27B50E172F8EAF005C9B28 /* pause_icon.png */; };
 		CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29312E17D79BA100648A90 /* IconsGenerator.mm */; };
 		CF29313417D9915600648A90 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
@@ -342,6 +344,10 @@
 		CF27414817FF04EF006D6687 /* SharingService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharingService.mm; sourceTree = "<group>"; };
 		CF27414A18000832006D6687 /* FilePanelMainSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelMainSplitView.h; sourceTree = "<group>"; };
 		CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePanelMainSplitView.mm; sourceTree = "<group>"; };
+		CF27414E1803F6A2006D6687 /* sysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = sysinfo.mm; sourceTree = "<group>"; };
+		CF27414F1803F6A2006D6687 /* sysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysinfo.h; sourceTree = "<group>"; };
+		CF27415218046A6E006D6687 /* BriefSystemOverview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BriefSystemOverview.h; sourceTree = "<group>"; };
+		CF27415318046A6E006D6687 /* BriefSystemOverview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BriefSystemOverview.mm; sourceTree = "<group>"; };
 		CF27B50E172F8EAF005C9B28 /* pause_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_icon.png; sourceTree = "<group>"; };
 		CF29312E17D79BA100648A90 /* IconsGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IconsGenerator.mm; sourceTree = "<group>"; };
 		CF29312F17D79BA100648A90 /* IconsGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconsGenerator.h; sourceTree = "<group>"; };
@@ -638,15 +644,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B50976A6172A39EE0080412E /* QuickPreview */ = {
-			isa = PBXGroup;
-			children = (
-				B50976A7172A3A0E0080412E /* QuickPreview.h */,
-				B50976A8172A3A0E0080412E /* QuickPreview.mm */,
-			);
-			name = QuickPreview;
-			sourceTree = "<group>";
-		};
 		B51014CF170721340023FF24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -780,6 +777,23 @@
 			name = FileLinkOperation;
 			sourceTree = "<group>";
 		};
+		CF27414D1803E60D006D6687 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */,
+				CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */,
+				CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */,
+				CFBE65A817B607BD00451AE7 /* PanelFastSearchPopupViewController.h */,
+				CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */,
+				CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */,
+				B50976A7172A3A0E0080412E /* QuickPreview.h */,
+				B50976A8172A3A0E0080412E /* QuickPreview.mm */,
+				CF27415218046A6E006D6687 /* BriefSystemOverview.h */,
+				CF27415318046A6E006D6687 /* BriefSystemOverview.mm */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		CF29313117D9914700648A90 /* rdrand */ = {
 			isa = PBXGroup;
 			children = (
@@ -812,7 +826,7 @@
 		CF536C0D16C92EA200F37203 /* Panel */ = {
 			isa = PBXGroup;
 			children = (
-				B50976A6172A39EE0080412E /* QuickPreview */,
+				CF27414D1803E60D006D6687 /* Views */,
 				B52D9A81173D324600EC7154 /* Presentation */,
 				CFC5123416C5284800D247EE /* PanelData.mm */,
 				CFC5123516C5284800D247EE /* PanelData.h */,
@@ -829,12 +843,6 @@
 				CF27414A18000832006D6687 /* FilePanelMainSplitView.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
 				CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */,
-				CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */,
-				CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */,
-				CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */,
-				CFBE65A817B607BD00451AE7 /* PanelFastSearchPopupViewController.h */,
-				CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */,
-				CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */,
 				CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */,
 				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */,
 				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
@@ -1123,6 +1131,8 @@
 				CF4C5A5C17A7B48E00B1B061 /* FileMask.h */,
 				CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */,
 				CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */,
+				CF27414E1803F6A2006D6687 /* sysinfo.mm */,
+				CF27414F1803F6A2006D6687 /* sysinfo.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -1420,6 +1430,7 @@
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
 				CFB8F23917CAF8F9004574FE /* VFSNativeListing.mm in Sources */,
 				CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */,
+				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,
 				CF9D0E7917CC961100CB8146 /* archive_entry_copy_bhfi.c in Sources */,
 				CF9D0EBF17CC961100CB8146 /* archive_write_add_filter_uuencode.c in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
@@ -1509,6 +1520,7 @@
 				CF9D0EC217CC961100CB8146 /* archive_write_disk_acl.c in Sources */,
 				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.mm in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
+				CF2741501803F6A2006D6687 /* sysinfo.mm in Sources */,
 				CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */,
 				CF9D0E7517CC961100CB8146 /* archive_acl.c in Sources */,
 				CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */,

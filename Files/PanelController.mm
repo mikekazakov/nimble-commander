@@ -19,6 +19,7 @@
 #import "PanelAux.h"
 #import "SharingService.h"
 #import "PanelFastSearchPopupViewController.h"
+#import "BriefSystemOverview.h"
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
@@ -766,14 +767,21 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             if(ISMODIFIER(NSShiftKeyMask)) [self HandleShiftReturnButton];
             else                           [self HandleReturnButton];
             break;
+            
+        case u'l': // l key
+            if(ISMODIFIER(NSControlKeyMask))
+            {
+                m_BriefSystemOverview = [[self GetParentWindow] RequestBriefSystemOverview:self];
+            }
+            break;
     }
     
     switch (keycode)
     {
         case 53: // Esc button
             [self CancelBackgroundOperations];
-            if(m_QuickLook)
-               [[self GetParentWindow] CloseQuickLookView:self];
+//            if(m_QuickLook)
+            [[self GetParentWindow] CloseOverlay:self];
             break;
     }
 }
@@ -782,7 +790,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 {
     if (m_QuickLook != nil)
     { // Close quick preview, if it is open.
-        [[self GetParentWindow] CloseQuickLookView:self];
+        [[self GetParentWindow] CloseOverlay:self];
         return;
     }
     

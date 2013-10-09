@@ -13,6 +13,7 @@
 @class MainWindowController;
 @class QuickLookView;
 @class PanelFastSearchPopupViewController;
+@class BriefSystemOverview;
 
 @interface PanelController : NSViewController
 {
@@ -50,6 +51,9 @@
     
     // QuickLook support
     __weak QuickLookView *m_QuickLook;
+    
+    // BriefSystemOverview support
+    __weak BriefSystemOverview* m_BriefSystemOverview;
     
     NSButton            *m_EjectButton;
     NSButton            *m_ShareButton;

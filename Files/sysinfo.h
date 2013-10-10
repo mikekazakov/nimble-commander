@@ -31,6 +31,13 @@ struct CPULoad
     // system + user + idle = 1.0
 };
     
+struct SystemOverview
+{
+    NSString *computer_name;
+    NSString *user_full_name;
+    NSString *human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013), localizable
+};
+
 enum class OSXVersion
 {
     OSX_Old     = 1060,
@@ -54,7 +61,14 @@ bool GetCPULoad(CPULoad &_load);
  * Returns currently running OSX Version or 
  * OSX_Unknown if it's not possible to determine current version (future release maybe)  or
  * OSX_Below if current system is Snow Leopard or older
+ * Loads this info on first use, then return cached data instantly
  */
 OSXVersion GetOSXVersion();
-    
+
+
+/**
+ * Returns common information about system, such as computer name, computer model, user name etc
+ */
+bool GetSystemOverview(SystemOverview &_overview);
+
 }

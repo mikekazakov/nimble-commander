@@ -30,6 +30,8 @@
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */; };
 		CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
+		CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */; };
+		CF033A6D1805A50D0088CAB4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF033A6C1805A50D0088CAB4 /* IOKit.framework */; };
 		CF039E97179041CE00DC85D6 /* StackOfDisappearingWidgets.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039E96179041CE00DC85D6 /* StackOfDisappearingWidgets.mm */; };
 		CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -291,6 +293,8 @@
 		CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSEventsDirUpdate.mm; sourceTree = "<group>"; };
 		CF02F1D516F38805000AF870 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encodings.cpp; sourceTree = "<group>"; };
 		CF02F1D616F38805000AF870 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encodings.h; sourceTree = "<group>"; };
+		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		CF033A6C1805A50D0088CAB4 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		CF039E95179041CE00DC85D6 /* StackOfDisappearingWidgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackOfDisappearingWidgets.h; sourceTree = "<group>"; };
 		CF039E96179041CE00DC85D6 /* StackOfDisappearingWidgets.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StackOfDisappearingWidgets.mm; sourceTree = "<group>"; };
 		CF039EA21791112900DC85D6 /* RHPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferences.h; path = 3rd_party/RHPreferences/RHPreferences/RHPreferences.h; sourceTree = "<group>"; };
@@ -630,6 +634,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF033A6D1805A50D0088CAB4 /* IOKit.framework in Frameworks */,
+				CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */,
 				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
 				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
 				CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */,
@@ -1207,6 +1213,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF033A6C1805A50D0088CAB4 /* IOKit.framework */,
 				CF029BFC17E87C2700415033 /* libz.a */,
 				CF029BFA17E878A400415033 /* libbz2.a */,
 				CF561B1517D6290F009D37A4 /* liblzma.a */,
@@ -1221,6 +1228,7 @@
 		CFC5121616C4BD3D00D247EE /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */,
 				CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */,
 				B50976A31729BA150080412E /* Quartz.framework */,
 				CF76B3201701DEC70066A49F /* OpenDirectory.framework */,

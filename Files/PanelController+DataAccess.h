@@ -12,6 +12,7 @@
 
 - (bool) GetCurrentFocusedEntryFilename:(char*) _filename; // return false if there's no focused entry (invalid state)
 - (bool) GetCurrentFocusedEntryFilePathRelativeToHost:(char*) _file_path; // return false if there's no focused entry (invalid state)
+- (bool) GetCurrentDirectoryPathRelativeToHost:(char*) _path;
 
 
 

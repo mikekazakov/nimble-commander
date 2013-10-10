@@ -111,3 +111,8 @@ int VFSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(dirent 
 {
     return VFSError::NotSupported;
 }
+
+int VFSHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}

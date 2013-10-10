@@ -7,7 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "VFS.h"
 
 @interface BriefSystemOverview : NSView
+
+- (void) UpdateVFSTarget:(const char*)_path host:(std::shared_ptr<VFSHost>)_host;
 
 @end

@@ -69,4 +69,10 @@
     return files;
 }
 
+- (bool) GetCurrentDirectoryPathRelativeToHost:(char*) _path
+{
+    m_Data->GetDirectoryPathWithTrailingSlash(_path);
+    return true;
+}
+
 @end

@@ -316,3 +316,34 @@ int VFSNativeHost::IterateDirectoryListing(const char *_path, bool (^_handler)(s
     
     return VFSError::Ok;
 }
+
+int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+{
+    struct statfs info;
+    if(statfs(_path, &info) < 0)
+        return VFSError::FromErrno(errno);
+
+    _stat.total_bytes = (uint64_t)info.f_blocks * (uint64_t)info.f_bsize;
+    _stat.free_bytes  = (uint64_t)info.f_bfree  * (uint64_t)info.f_bsize;
+    _stat.avail_bytes = (uint64_t)info.f_bavail * (uint64_t)info.f_bsize;
+
+    struct
+    {
+        u_int32_t attr_length;
+        union
+        {
+            struct { attrreference val; char buf[NAME_MAX + 1]; }   __attribute__((aligned(4), packed)) name;
+        };
+    } __attribute__((aligned(4), packed)) attr_info;
+    
+    struct attrlist attrs;
+    memset(&attrs, 0, sizeof(attrs));
+    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+    attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_NAME;
+    if( getattrlist(info.f_mntonname, &attrs, &attr_info, sizeof(info), 0) != 0 )
+        return VFSError::FromErrno(errno);
+    
+    _stat.volume_name = ((char*)&attr_info.name.val) + attr_info.name.val.attr_dataoffset;
+    
+    return 0;
+}

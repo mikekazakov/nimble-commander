@@ -6,7 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <IOKit/IOKitLib.h>
 #import <sys/sysctl.h>
 //#import <sys/proc.h>
 //#import <sys/user.h>
@@ -28,8 +29,6 @@
 //#import <stdint.h>
 //#import <libproc.h>
 #import "sysinfo.h"
-
-
 
 typedef struct kinfo_proc kinfo_proc;
 //CPU_STATE_USER
@@ -137,38 +136,32 @@ namespace sysinfo
     
 bool GetMemoryInfo(MemoryInfo &_mem)
 {
-    int psmib[2] = {CTL_HW, HW_PAGESIZE};
-    int pagesize;
+    static int pagesize = 0;
     size_t length;
     
-    // get page size
-    length = sizeof (pagesize);
-    if (sysctl(psmib, 2, &pagesize, &length, NULL, 0) < 0)
-        return false;
+    // get page size (only once)
+    static dispatch_once_t once1;
+    dispatch_once(&once1, ^{
+        int psmib[2] = {CTL_HW, HW_PAGESIZE};
+        size_t length = sizeof (pagesize);
+        sysctl(psmib, 2, &pagesize, &length, NULL, 0);
+    });
     
     // get general memory info
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t vmstat;
     if (host_statistics (mach_host_self (), HOST_VM_INFO, (host_info_t) &vmstat, &count) != KERN_SUCCESS)
         return false;
-    uint64_t total_memory = vmstat.wire_count +
-                            vmstat.active_count +
-                            vmstat.inactive_count +
-                            vmstat.free_count/* +
-                            vmstat.zero_fill_count */;
-    total_memory *= pagesize;
-    uint64_t wired_memory = vmstat.wire_count * pagesize;
-    uint64_t active_memory = vmstat.active_count * pagesize;
-    uint64_t inactive_memory = vmstat.inactive_count * pagesize;
-    uint64_t free_memory = vmstat.free_count * pagesize;
-//    uint64_t speculative_memory = vmstat.speculative_count * pagesize;
 
-//    printf("%d", vmstat.free_count - vmstat.speculative_count);
-    
-    // checked - nearly as "memory used" in activity monitor
-    // but shows roughly +400-500 Mb of used memory. straaaange...
+    uint64_t wired_memory = (uint64_t)vmstat.wire_count * pagesize;
+    uint64_t active_memory = (uint64_t)vmstat.active_count * pagesize;
+    uint64_t inactive_memory = (uint64_t)vmstat.inactive_count * pagesize;
+    uint64_t free_memory = (uint64_t)vmstat.free_count * pagesize;
+    uint64_t total_memory = wired_memory + active_memory + inactive_memory + free_memory;
+    // NOT "memory used" in activity monitor in 10.9
+    // 10.9 "memory used" = "app memory" + "file cache" + "wired memory"
+    // have no ideas how to get "app memory" and "file cache"
     uint64_t used_memory = total_memory - free_memory;
-    
     _mem.total = total_memory;
     _mem.wired = wired_memory;
     _mem.active = active_memory;
@@ -184,13 +177,16 @@ bool GetMemoryInfo(MemoryInfo &_mem)
         return false;
     _mem.swap = swap_info.xsu_used;
     
-    int memsizemib[2] = {CTL_HW,HW_MEMSIZE};
-    uint64_t memsize;
-	length = sizeof(memsize);
-    if( sysctl(memsizemib, 2, &memsize, &length, NULL, NULL) < 0)
-        return false;
+    // get hardware memory size (once)
+    static uint64_t memsize = 0;
+    static dispatch_once_t once2;
+    dispatch_once(&once2, ^{
+        int memsizemib[2] = {CTL_HW,HW_MEMSIZE};
+        size_t length = sizeof(memsize);
+        sysctl(memsizemib, 2, &memsize, &length, NULL, NULL);
+    });
     _mem.total_hw = memsize;
-    
+
     return true;
 }
     
@@ -270,5 +266,62 @@ OSXVersion GetOSXVersion()
     });
     return version;
 }
+ 
+bool GetSystemOverview(SystemOverview &_overview)
+{
+    // get machine name everytime
+    CFStringRef computer_name = SCDynamicStoreCopyComputerName(0, 0);
+    if(computer_name == NULL)
+        return false;
+    _overview.computer_name =  (__bridge NSString*)computer_name;
+    
+    // get full user name everytime
+    _overview.user_full_name = NSFullUserName();
+    
+    // get machine model once
+    static NSString *human_model = @"???";
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        char model[256];
+        size_t len = 256;
+        if(sysctlbyname("hw.model", model, &len, NULL, 0) == 0)
+        {
+            NSString *ns_model = [NSString stringWithUTF8String:model];
+            NSDictionary *dict;
+            NSBundle *bundle;
+            if((bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/ServerInformation.framework/"]))
+                if(NSString *path = [bundle pathForResource:@"SIMachineAttributes" ofType:@"plist"])
+                    dict = [NSDictionary dictionaryWithContentsOfFile:path];
+            if(!dict && (bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/ServerKit.framework/"]))
+                if(NSString *path = [bundle pathForResource:@"XSMachineAttributes" ofType:@"plist"])
+                    dict = [NSDictionary dictionaryWithContentsOfFile:path];
+        
+            if(dict)
+                if(id nestdict = [dict objectForKey:ns_model])
+                    if(nestdict && [nestdict isKindOfClass:[NSDictionary class]])
+                    {
+                        id nestnestdict = [nestdict objectForKey:@"_LOCALIZABLE_"];
+                        if(nestnestdict && [nestnestdict isKindOfClass:[NSDictionary class]])
+                        {
+                            id nest_human_model = [nestnestdict objectForKey:@"model"];
+                            if(nest_human_model && [nest_human_model isKindOfClass:[NSString class]])
+                                human_model = nest_human_model;
+                            
+                            id marketing_model = [nestnestdict objectForKey:@"marketingModel"];
+                            if(nest_human_model && marketing_model && [marketing_model isKindOfClass:[NSString class]])
+                            {
+                                NSArray *split = [marketing_model componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"()"]];
+                                if([split count] == 3)
+                                    human_model = [NSString stringWithFormat:@"%@ (%@)", nest_human_model, [split objectAtIndex:1]];
+                            }
+                        }
+                    }
+        }
+    });
+    
+    _overview.human_model = human_model;
+    
+    return true;
+}    
     
 }

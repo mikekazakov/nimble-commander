@@ -17,6 +17,14 @@
 class VFSListing;
 class VFSFile;
 
+struct VFSStatFS
+{
+    uint64_t total_bytes;
+    uint64_t free_bytes;
+    uint64_t avail_bytes; // may be less than actuat free_bytes
+    std::string volume_name;
+};
+
 class VFSHost : public std::enable_shared_from_this<VFSHost>
 {
 public:
@@ -39,6 +47,12 @@ public:
     
     const char *JunctionPath() const;
     std::shared_ptr<VFSHost> Parent() const;
+    
+    
+    
+    virtual int StatFS(const char *_path, // path may be a file path, or directory path
+                       VFSStatFS &_stat,
+                       bool (^_cancel_checker)());
     
     virtual bool IsDirectory(const char *_path,
                              int _flags,

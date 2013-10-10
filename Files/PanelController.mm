@@ -771,7 +771,13 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         case u'l': // l key
             if(ISMODIFIER(NSControlKeyMask))
             {
-                m_BriefSystemOverview = [[self GetParentWindow] RequestBriefSystemOverview:self];
+                if(m_BriefSystemOverview)
+                    [[self GetParentWindow] CloseOverlay:self];
+                else
+                {
+                    m_BriefSystemOverview = [[self GetParentWindow] RequestBriefSystemOverview:self];
+                    [self UpdateBriefSystemOverview];
+                }
             }
             break;
     }
@@ -1047,6 +1053,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     [self SignalParentOfPathChanged];
     [self UpdateEjectButton];
     [self HandleCursorChanged];
+    [self UpdateBriefSystemOverview];
 }
 
 - (MainWindowFilePanelState*) GetParentWindow
@@ -1140,6 +1147,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         char path[MAXPATHLEN];
         if( [self GetCurrentFocusedEntryFilePathRelativeToHost:path] )
             [m_QuickLook PreviewItem:path vfs:m_HostsStack.back()];
+    }
+    
+}
+
+- (void) UpdateBriefSystemOverview
+{
+    if(m_BriefSystemOverview != nil)
+    {
+        char path[MAXPATHLEN];
+        if( [self GetCurrentDirectoryPathRelativeToHost:path] )
+            [m_BriefSystemOverview UpdateVFSTarget:path host:m_HostsStack.back()];
     }
 }
 

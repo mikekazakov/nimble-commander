@@ -213,26 +213,26 @@ NSTextField *CreateStockTF()
         [cpu_box addSubview:cpu_idle_title];
 
         m_TextCPULoadSystem = CreateStockTF();
+        [m_TextCPULoadSystem setAlignment:NSRightTextAlignment];
         [m_TextCPULoadSystem setFont: text_font];
         [m_TextCPULoadSystem setTextColor:[NSColor colorWithCalibratedRed:1.00 green:0.15 blue:0.10 alpha:1.0]];
         [cpu_box addSubview:m_TextCPULoadSystem];
     
         m_TextCPULoadUser = CreateStockTF();
+        [m_TextCPULoadUser setAlignment:NSRightTextAlignment];
         [m_TextCPULoadUser setFont: text_font];
         [m_TextCPULoadUser setTextColor:[NSColor colorWithCalibratedRed:0.10 green:0.15 blue:1.00 alpha:1.0]];
         [cpu_box addSubview:m_TextCPULoadUser];
     
         m_TextCPULoadIdle = CreateStockTF();
+        [m_TextCPULoadIdle setAlignment:NSRightTextAlignment];
         [m_TextCPULoadIdle setFont: text_font];
         [cpu_box addSubview:m_TextCPULoadIdle];
     
         NSDictionary *cpu_box_views = NSDictionaryOfVariableBindings(m_TextCPULoadSystem, m_TextCPULoadUser, m_TextCPULoadIdle, cpu_sysload_title, cpu_usrload_title, cpu_idle_title, line1, line2);
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_sysload_title]" options:0 metrics:nil views:cpu_box_views]];
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_usrload_title]" options:0 metrics:nil views:cpu_box_views]];
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_idle_title]" options:0 metrics:nil views:cpu_box_views]];
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextCPULoadSystem]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextCPULoadUser]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextCPULoadIdle]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
+        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_sysload_title]-(==8)-[m_TextCPULoadSystem]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
+        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_usrload_title]-(==8)-[m_TextCPULoadUser]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
+        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_idle_title]-(==8)-[m_TextCPULoadIdle]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
         [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line1]-(==1)-|" options:0 metrics:nil views:cpu_box_views]];
         [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line2]-(==1)-|" options:0 metrics:nil views:cpu_box_views]];
         [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[cpu_sysload_title]-(<=1)-[line1(==1)]-(==7)-[cpu_usrload_title]-(<=1)-[line2(==1)]-(==7)-[cpu_idle_title]" options:0 metrics:nil views:cpu_box_views]];
@@ -279,24 +279,24 @@ NSTextField *CreateStockTF()
         [ram_box addSubview:ram_swap_title];
     
         m_TextMemTotal = CreateStockTF();
+        [m_TextMemTotal setAlignment:NSRightTextAlignment];
         [m_TextMemTotal setFont: text_font];
         [ram_box addSubview:m_TextMemTotal];
 
         m_TextMemUsed = CreateStockTF();
+        [m_TextMemUsed setAlignment:NSRightTextAlignment];
         [m_TextMemUsed setFont: text_font];
         [ram_box addSubview:m_TextMemUsed];
 
         m_TextMemSwap = CreateStockTF();
+        [m_TextMemSwap setAlignment:NSRightTextAlignment];
         [m_TextMemSwap setFont: text_font];
         [ram_box addSubview:m_TextMemSwap];
     
         NSDictionary *ram_box_views = NSDictionaryOfVariableBindings(m_TextMemTotal, m_TextMemUsed, m_TextMemSwap, ram_total_title, ram_used_title, ram_swap_title, line1, line2);
-        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[ram_total_title]" options:0 metrics:nil views:ram_box_views]];
-        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[ram_used_title]" options:0 metrics:nil views:ram_box_views]];
-        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[ram_swap_title]" options:0 metrics:nil views:ram_box_views]];
-        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextMemTotal]-(==8)-|" options:0 metrics:nil views:ram_box_views]];
-        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextMemUsed]-(==8)-|" options:0 metrics:nil views:ram_box_views]];
-        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextMemSwap]-(==8)-|" options:0 metrics:nil views:ram_box_views]];
+        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[ram_total_title]-(==8)-[m_TextMemTotal]-(==8)-|" options:0 metrics:nil views:ram_box_views]];
+        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[ram_used_title]-(==8)-[m_TextMemUsed]-(==8)-|" options:0 metrics:nil views:ram_box_views]];
+        [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[ram_swap_title]-(==8)-[m_TextMemSwap]-(==8)-|" options:0 metrics:nil views:ram_box_views]];
         [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line1]-(==1)-|" options:0 metrics:nil views:ram_box_views]];
         [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line2]-(==1)-|" options:0 metrics:nil views:ram_box_views]];
         [ram_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[ram_total_title]-(<=1)-[line1(==1)]-(==7)-[ram_used_title]-(<=1)-[line2(==1)]-(==7)-[ram_swap_title]" options:0 metrics:nil views:ram_box_views]];
@@ -343,24 +343,24 @@ NSTextField *CreateStockTF()
         [system_box addSubview:user_title];
         
         m_TextMachineModel = CreateStockTF();
+        [m_TextMachineModel setAlignment:NSRightTextAlignment];
         [m_TextMachineModel setFont: text_font];
         [system_box addSubview:m_TextMachineModel];
     
         m_TextComputerName = CreateStockTF();
+        [m_TextComputerName setAlignment:NSRightTextAlignment];
         [m_TextComputerName setFont: text_font];
         [system_box addSubview:m_TextComputerName];
     
         m_TextUserName = CreateStockTF();
+        [m_TextUserName setAlignment:NSRightTextAlignment];
         [m_TextUserName setFont: text_font];
         [system_box addSubview:m_TextUserName];
         
         NSDictionary *system_box_views = NSDictionaryOfVariableBindings(m_TextMachineModel, m_TextComputerName, m_TextUserName, line1, line2, model_title, computer_title, user_title);
-        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextMachineModel]-(==8)-|" options:0 metrics:nil views:system_box_views]];
-        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextComputerName]-(==8)-|" options:0 metrics:nil views:system_box_views]];
-        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextUserName]-(==8)-|" options:0 metrics:nil views:system_box_views]];
-        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[model_title]" options:0 metrics:nil views:system_box_views]];
-        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[computer_title]" options:0 metrics:nil views:system_box_views]];
-        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[user_title]" options:0 metrics:nil views:system_box_views]];
+        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[model_title]-(==8)-[m_TextMachineModel]-(==8)-|" options:0 metrics:nil views:system_box_views]];
+        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[computer_title]-(==8)-[m_TextComputerName]-(==8)-|" options:0 metrics:nil views:system_box_views]];
+        [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[user_title]-(==8)-[m_TextUserName]-(==8)-|" options:0 metrics:nil views:system_box_views]];
         [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line1]-(==1)-|" options:0 metrics:nil views:system_box_views]];
         [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line2]-(==1)-|" options:0 metrics:nil views:system_box_views]];
 
@@ -408,27 +408,26 @@ NSTextField *CreateStockTF()
         [storage_box addSubview:free_title];
         
         m_TextVolumeName = CreateStockTF();
-        [m_TextUserName setFont: text_font];
+        [m_TextVolumeName setAlignment:NSRightTextAlignment];
+        [m_TextVolumeName setFont: [NSFont labelFontOfSize:12]];
         [storage_box addSubview:m_TextVolumeName];
     
         m_TextVolumeTotalBytes = CreateStockTF();
-        [m_TextUserName setFont: text_font];
+        [m_TextVolumeTotalBytes setAlignment:NSRightTextAlignment];
+        [m_TextVolumeTotalBytes setFont: [NSFont labelFontOfSize:12]];
         [storage_box addSubview:m_TextVolumeTotalBytes];
     
         m_TextVolumeAvailBytes = CreateStockTF();
-        [m_TextUserName setFont: text_font];
+        [m_TextVolumeAvailBytes setAlignment:NSRightTextAlignment];
+        [m_TextVolumeAvailBytes setFont: [NSFont labelFontOfSize:12]];
         [storage_box addSubview:m_TextVolumeAvailBytes];
     
         NSDictionary *storage_views = NSDictionaryOfVariableBindings(line1, line2, vol_title, bytes_title, free_title, m_TextVolumeName, m_TextVolumeTotalBytes, m_TextVolumeAvailBytes);
-        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextVolumeName]-(==8)-|" options:0 metrics:nil views:storage_views]];
-        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextVolumeTotalBytes]-(==8)-|" options:0 metrics:nil views:storage_views]];
-        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_TextVolumeAvailBytes]-(==8)-|" options:0 metrics:nil views:storage_views]];
-        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[vol_title]" options:0 metrics:nil views:storage_views]];
-        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[bytes_title]" options:0 metrics:nil views:storage_views]];
-        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[free_title]" options:0 metrics:nil views:storage_views]];
+        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[vol_title]-(==8)-[m_TextVolumeName]-(==8)-|" options:0 metrics:nil views:storage_views]];
+        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[bytes_title]-(==8)-[m_TextVolumeTotalBytes]-(==8)-|" options:0 metrics:nil views:storage_views]];
+        [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[free_title]-(==8)-[m_TextVolumeAvailBytes]-(==8)-|" options:0 metrics:nil views:storage_views]];
         [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line1]-(==1)-|" options:0 metrics:nil views:storage_views]];
         [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line2]-(==1)-|" options:0 metrics:nil views:storage_views]];
-
         [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[vol_title]-(<=1)-[line1(==1)]-(==7)-[bytes_title]-(<=1)-[line2(==1)]-(==7)-[free_title]" options:0 metrics:nil views:storage_views]];
         [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_TextVolumeName]-(<=1)-[line1]" options:0 metrics:nil views:storage_views]];
         [storage_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_TextVolumeTotalBytes]-(<=1)-[line2]" options:0 metrics:nil views:storage_views]];

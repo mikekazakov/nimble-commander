@@ -44,7 +44,11 @@ public:
     
     virtual const char *FSTag() const;
     inline bool IsNativeFS() const { return strcmp(FSTag(), "native") == 0; }
-    
+    /**
+     * returns a path of a filesystem root
+     * it may be a filepath for archive or network address for remote filesystem
+     * or even zero thing for special virtual filesystems
+     */
     const char *JunctionPath() const;
     std::shared_ptr<VFSHost> Parent() const;
     

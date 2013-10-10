@@ -36,6 +36,7 @@ public:
                              int _flags,
                              bool (^_cancel_checker)()) override;
     
+    virtual int StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)()) override;    
     virtual int Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)()) override;    
     
     virtual int CreateFile(const char* _path,
@@ -91,6 +92,8 @@ private:
     std::shared_ptr<VFSArchiveMediator>     m_Mediator;
     struct archive                         *m_Arc;
     std::map<std::string, VFSArchiveDir*>   m_PathToDir;
+    uint64_t                                m_ArchiveFileSize;
+    uint64_t                                m_ArchivedFilesTotalSize;
     unsigned long                           m_LastItemUID;
     
     std::list<std::shared_ptr<VFSArchiveSeekCache>> m_SeekCaches;

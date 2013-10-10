@@ -14,13 +14,16 @@
 #import "VFSArchiveInternal.h"
 #import "VFSArchiveFile.h"
 #import "VFSArchiveListing.h"
+#import "Common.h"
 
 VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
                                std::shared_ptr<VFSHost> _parent):
     VFSHost(_junction_path, _parent),
     m_Arc(0),
     m_SeekCacheControl(dispatch_queue_create("info.filesmanager.Files.VFSArchiveHost.sc_control_queue", DISPATCH_QUEUE_SERIAL)),
-    m_LastItemUID(0)
+    m_LastItemUID(0),
+    m_ArchivedFilesTotalSize(0),
+    m_ArchiveFileSize(0)
 {
 }
 
@@ -81,7 +84,7 @@ int VFSArchiveHost::Open()
     }
     
     res = ReadArchiveListing();
-    
+    m_ArchiveFileSize = m_ArFile->Size();    
     
     return res;
 }
@@ -143,6 +146,7 @@ int VFSArchiveHost::ReadArchiveListing()
 
         entry->aruid = aruid++;
         entry->st = *stat;
+        m_ArchivedFilesTotalSize += stat->st_size;
         
         if(isdir)
         {
@@ -513,4 +517,18 @@ std::shared_ptr<VFSArchiveSeekCache> VFSArchiveHost::SeekCache(unsigned long _re
     });
     
     return res;
+}
+
+int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+{
+    char vol_name[256];
+    if(!GetFilenameFromPath(JunctionPath(), vol_name))
+       return VFSError::InvalidCall;
+    
+    _stat.volume_name = vol_name;
+    _stat.total_bytes = m_ArchivedFilesTotalSize;
+    _stat.free_bytes = 0;
+    _stat.avail_bytes = 0;
+    
+    return 0;
 }

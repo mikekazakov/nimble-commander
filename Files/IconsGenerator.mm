@@ -351,7 +351,10 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
             return;
         
         // 2nd - if we haven't built a real thumbnail - try an extention instead
-        if(_meta->thumbnail == nil && m_IconsMode >= IconModeFileIcons)
+        if(_meta->thumbnail == nil &&
+           m_IconsMode >= IconModeFileIcons &&
+           CheckFileIsOK(_meta->relative_path.c_str()) // redundant call here. not good.
+           )
         {
             NSString *item_path = [NSString stringWithUTF8String:_meta->relative_path.c_str()];
             NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile:item_path];

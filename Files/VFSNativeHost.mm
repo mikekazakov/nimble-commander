@@ -323,10 +323,6 @@ int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_ch
     if(statfs(_path, &info) < 0)
         return VFSError::FromErrno(errno);
 
-    _stat.total_bytes = (uint64_t)info.f_blocks * (uint64_t)info.f_bsize;
-    _stat.free_bytes  = (uint64_t)info.f_bfree  * (uint64_t)info.f_bsize;
-    _stat.avail_bytes = (uint64_t)info.f_bavail * (uint64_t)info.f_bsize;
-
     struct
     {
         u_int32_t attr_length;
@@ -344,6 +340,9 @@ int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_ch
         return VFSError::FromErrno(errno);
     
     _stat.volume_name = ((char*)&attr_info.name.val) + attr_info.name.val.attr_dataoffset;
-    
+    _stat.total_bytes = (uint64_t)info.f_blocks * (uint64_t)info.f_bsize;
+    _stat.free_bytes  = (uint64_t)info.f_bfree  * (uint64_t)info.f_bsize;
+    _stat.avail_bytes = (uint64_t)info.f_bavail * (uint64_t)info.f_bsize;
+
     return 0;
 }

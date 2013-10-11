@@ -11,6 +11,7 @@
 #import <pwd.h>
 #import <DiskArbitration/DiskArbitration.h>
 #import "Common.h"
+#import "sysinfo.h"
 
 uint64_t (*GetTimeInNanoseconds)() = nullptr;
 
@@ -214,7 +215,7 @@ void SyncMessageBoxNS(NSString *_ns_string)
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText: _ns_string];
     
-    if(dispatch_get_current_queue() == dispatch_get_main_queue())
+    if(dispatch_is_main_queue())
         [alert runModal];
     else
         dispatch_sync(dispatch_get_main_queue(), ^{ [alert runModal]; } );
@@ -374,3 +375,10 @@ bool IsVolumeContainingPathEjectable(const char *_path)
 
 @end
 
+@implementation NSTimer (SafeTolerance)
+- (void) SetSafeTolerance
+{
+    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9)
+        [self setTolerance:[self timeInterval]/10.];
+}
+@end

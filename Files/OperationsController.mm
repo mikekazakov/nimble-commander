@@ -7,6 +7,7 @@
 //
 
 #import "OperationsController.h"
+#import "Common.h"
 
 // "Private" methods' declarations.
 @interface OperationsController ()
@@ -80,6 +81,7 @@
                                                        selector:@selector(Update)
                                                        userInfo:nil
                                                         repeats:YES];
+        [m_UpdateTimer SetSafeTolerance];
     }
 }
 

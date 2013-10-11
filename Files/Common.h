@@ -104,4 +104,10 @@ struct MachTimeBenchmark
 + (NSColor *)colorWithCGColorSafe:(CGColorRef)CGColor;
 @end
 
+@interface NSTimer (SafeTolerance)
+- (void) SetSafeTolerance;
+@end
+
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
+
+inline bool dispatch_is_main_queue() { return [NSThread isMainThread]; }

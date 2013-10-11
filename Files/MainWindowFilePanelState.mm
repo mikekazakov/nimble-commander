@@ -1116,7 +1116,7 @@ enum ActiveState
 
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path
 {
-    assert(dispatch_get_current_queue() == dispatch_get_main_queue());
+    assert(dispatch_is_main_queue());
     
     PanelController *panel = [self ActivePanelController];
     if([panel GoToGlobalHostsPathSync:_path] == VFSError::Ok)

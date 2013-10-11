@@ -9,6 +9,7 @@
 #import <assert.h>
 #import <vector>
 #import "StackOfDisappearingWidgets.h"
+#import "Common.h"
 
 static const double g_Gap = 8.0;
 
@@ -157,7 +158,7 @@ static const double g_Gap = 8.0;
     for(NSLayoutConstraint *c: to_add)
         [m_Constraints addObject: c];
     
-    if(dispatch_get_current_queue() != dispatch_get_main_queue())
+    if(!dispatch_is_main_queue())
         dispatch_sync(dispatch_get_main_queue(), ^{
             [m_SuperView removeConstraints:to_remove];
             [m_SuperView addConstraints:to_add];

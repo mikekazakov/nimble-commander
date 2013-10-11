@@ -48,6 +48,7 @@ static NSString* Bool2ToString(const bool b[2])
                                                        selector:@selector(UpdateByTimer:)
                                                        userInfo:nil
                                                         repeats:YES];
+    [m_UpdateTimer SetSafeTolerance];
 
     NSString *uuid = [NSString stringWithFormat:@"UUID:\n\t%@\n",
                       m_Capabilities.attr.vol.uuid[0]?

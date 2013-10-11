@@ -104,11 +104,12 @@ NSTextField *CreateStockTF()
         [self CreateControls];
         [self UpdateControls];
         
-        m_UpdateTimer = [NSTimer scheduledTimerWithTimeInterval:2 // 2 sec update
+        m_UpdateTimer = [NSTimer scheduledTimerWithTimeInterval:2. // 2 sec update
                                                          target:self
                                                        selector:@selector(UpdateByTimer:)
                                                        userInfo:nil
                                                         repeats:YES];
+        [m_UpdateTimer SetSafeTolerance];
     }
     return self;
 }
@@ -409,17 +410,17 @@ NSTextField *CreateStockTF()
         
         m_TextVolumeName = CreateStockTF();
         [m_TextVolumeName setAlignment:NSRightTextAlignment];
-        [m_TextVolumeName setFont: [NSFont labelFontOfSize:12]];
+        [m_TextVolumeName setFont: text_font];
         [storage_box addSubview:m_TextVolumeName];
     
         m_TextVolumeTotalBytes = CreateStockTF();
         [m_TextVolumeTotalBytes setAlignment:NSRightTextAlignment];
-        [m_TextVolumeTotalBytes setFont: [NSFont labelFontOfSize:12]];
+        [m_TextVolumeTotalBytes setFont: text_font];
         [storage_box addSubview:m_TextVolumeTotalBytes];
     
         m_TextVolumeAvailBytes = CreateStockTF();
         [m_TextVolumeAvailBytes setAlignment:NSRightTextAlignment];
-        [m_TextVolumeAvailBytes setFont: [NSFont labelFontOfSize:12]];
+        [m_TextVolumeAvailBytes setFont: text_font];
         [storage_box addSubview:m_TextVolumeAvailBytes];
     
         NSDictionary *storage_views = NSDictionaryOfVariableBindings(line1, line2, vol_title, bytes_title, free_title, m_TextVolumeName, m_TextVolumeTotalBytes, m_TextVolumeAvailBytes);
@@ -479,7 +480,10 @@ NSTextField *CreateStockTF()
     [m_TextMachineModel setStringValue:m_Overview.human_model];
     [m_TextComputerName setStringValue:m_Overview.computer_name];
     [m_TextUserName setStringValue:m_Overview.user_full_name];
-    [m_TextVolumeName setStringValue:[NSString stringWithUTF8String:m_StatFS.volume_name.c_str()]];
+    if(!m_StatFS.volume_name.empty())
+        [m_TextVolumeName setStringValue:[NSString stringWithUTF8String:m_StatFS.volume_name.c_str()]];
+    else
+        [m_TextVolumeName setStringValue:@"N/A"];         
     [m_TextVolumeTotalBytes setIntegerValue:m_StatFS.total_bytes];
     [m_TextVolumeAvailBytes setIntegerValue:m_StatFS.avail_bytes];
 }

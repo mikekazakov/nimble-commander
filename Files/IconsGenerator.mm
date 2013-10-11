@@ -229,7 +229,7 @@ void IconsGenerator::BuildGenericIcons()
 
 NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
 {
-    assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // STA api design
+    assert(dispatch_is_main_queue()); // STA api design
     
     auto &entry = _listing.At(_no);
     if(entry.CIcon() > 0)
@@ -450,14 +450,14 @@ void IconsGenerator::StopWorkQueue()
 
 void IconsGenerator::SetIconMode(int _mode)
 {
-    assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // STA api design
+    assert(dispatch_is_main_queue()); // STA api design
     assert(_mode >= 0 && _mode < IconModesCount);
     m_IconsMode = (IconMode)_mode;
 }
 
 void IconsGenerator::Flush()
 {
-    assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // STA api design
+    assert(dispatch_is_main_queue()); // STA api design
     StopWorkQueue();
     m_Icons.clear();
     m_LastIconID = 0;
@@ -465,7 +465,7 @@ void IconsGenerator::Flush()
 
 void IconsGenerator::SetIconSize(int _size)
 {
-    assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // STA api design    
+    assert(dispatch_is_main_queue()); // STA api design
     if((int)m_IconSize.size.width == _size) return;
     m_IconSize = NSMakeRect(0, 0, _size, _size);
     BuildGenericIcons();

@@ -379,6 +379,7 @@ struct CursorSelectionState
                                                            selector:@selector(UpdateDragScroll)
                                                            userInfo:nil
                                                             repeats:YES];
+        [m_DragScrollTimer SetSafeTolerance];
     }
 }
 

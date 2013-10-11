@@ -992,7 +992,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) ScheduleDelayedSelectionChangeForC:(const char*)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
 {
-    assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // to preserve against fancy threading stuff
+    assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     assert(_item_name);
     // we assume that _item_name will not contain any forward slashes
     
@@ -1006,7 +1006,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) CheckAgainstRequestedSelection
 {
-    assert(dispatch_get_current_queue() == dispatch_get_main_queue()); // to preserve against fancy threading stuff
+    assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     if(!m_DelayedSelection.isvalid)
         return;
 

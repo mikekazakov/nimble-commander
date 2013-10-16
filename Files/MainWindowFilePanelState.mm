@@ -566,6 +566,10 @@ enum ActiveState
     [[self ActivePanelController] HandleFileView];
 }
 
+- (IBAction)OnBriefSystemOverviewCommand:(id)sender{
+    [[self ActivePanelController] HandleBriefSystemOverview];
+}
+
 - (IBAction)OnSyncPanels:(id)sender{
     assert([self IsPanelActive]);
     char dirpath[__DARWIN_MAXPATHLEN];

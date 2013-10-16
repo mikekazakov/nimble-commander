@@ -255,12 +255,12 @@ OSXVersion GetOSXVersion()
             if(prod_ver != nil && [prod_ver isKindOfClass:[NSString class]])
             {
                 NSString *prod_ver_s = prod_ver;
-                if([prod_ver_s isEqualToString:@"10.9"]) version = OSXVersion::OSX_9;
-                else if([prod_ver_s isEqualToString:@"10.8"]) version = OSXVersion::OSX_8;
-                else if([prod_ver_s isEqualToString:@"10.7"]) version = OSXVersion::OSX_7;
-                else if([prod_ver_s isEqualToString:@"10.6"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver_s isEqualToString:@"10.5"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver_s isEqualToString:@"10.4"]) version = OSXVersion::OSX_Old;
+                if([prod_ver_s hasPrefix:@"10.9"]) version = OSXVersion::OSX_9;
+                else if([prod_ver_s hasPrefix:@"10.8"]) version = OSXVersion::OSX_8;
+                else if([prod_ver_s hasPrefix:@"10.7"]) version = OSXVersion::OSX_7;
+                else if([prod_ver_s hasPrefix:@"10.6"]) version = OSXVersion::OSX_Old;
+                else if([prod_ver_s hasPrefix:@"10.5"]) version = OSXVersion::OSX_Old;
+                else if([prod_ver_s hasPrefix:@"10.4"]) version = OSXVersion::OSX_Old;
             }
         }
     });

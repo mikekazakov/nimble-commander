@@ -767,19 +767,6 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             if(ISMODIFIER(NSShiftKeyMask)) [self HandleShiftReturnButton];
             else                           [self HandleReturnButton];
             break;
-            
-        case u'l': // l key
-            if(ISMODIFIER(NSControlKeyMask))
-            {
-                if(m_BriefSystemOverview)
-                    [[self GetParentWindow] CloseOverlay:self];
-                else
-                {
-                    m_BriefSystemOverview = [[self GetParentWindow] RequestBriefSystemOverview:self];
-                    [self UpdateBriefSystemOverview];
-                }
-            }
-            break;
     }
     
     switch (keycode)
@@ -790,6 +777,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             [[self GetParentWindow] CloseOverlay:self];
             break;
     }
+}
+
+- (void) HandleBriefSystemOverview
+{
+    if(m_BriefSystemOverview)
+    {
+        [[self GetParentWindow] CloseOverlay:self];
+        return;
+    }
+    m_BriefSystemOverview = [[self GetParentWindow] RequestBriefSystemOverview:self];
+    [self UpdateBriefSystemOverview];
 }
 
 - (void) HandleFileView // F3

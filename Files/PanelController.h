@@ -90,6 +90,7 @@
 - (void) HandleReturnButton;
 - (void) HandleShiftReturnButton;
 - (void) HandleFileView; // F3
+- (void) HandleBriefSystemOverview;
 
 - (void) HandleCursorChanged; // called by PanelView
 

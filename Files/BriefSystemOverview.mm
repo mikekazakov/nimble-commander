@@ -49,7 +49,7 @@ static NSString *FormHumanReadableMemSize(uint64_t _sz)
         return @"";
 }
 
-NSTextField *CreateStockTF()
+static NSTextField *CreateStockTF()
 {
     auto tf = [[NSTextField alloc] initWithFrame:NSRect()];
     [tf setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -87,20 +87,22 @@ NSTextField *CreateStockTF()
     std::shared_ptr<VFSHost> m_TargetVFSHost;
     bool m_IsRight;
     NSTimer                      *m_UpdateTimer;
+    NSNumberFormatter            *m_BytesFormatter;
+    NSColor                      *m_BackgrounColor;
 }
-
-
-
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
+        m_BytesFormatter = [NSNumberFormatter new];
+        [m_BytesFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+        m_BackgrounColor = [NSColor colorWithCalibratedRed:0.97 green:0.97 blue:0.97 alpha:1.0];
         m_IsRight = true;
         memset(&m_MemoryInfo, 0, sizeof(m_MemoryInfo));
         memset(&m_CPULoad, 0, sizeof(m_CPULoad));
+
         [self UpdateData];
-        
         [self CreateControls];
         [self UpdateControls];
         
@@ -121,17 +123,14 @@ NSTextField *CreateStockTF()
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    [self UpdateAlignment];
-    
 	[super drawRect:dirtyRect];
-    NSColor *c;
     NSGraphicsContext *contetx = [NSGraphicsContext currentContext];
     [contetx saveGraphicsState];
-    c = [NSColor colorWithCalibratedRed:0.97 green:0.97 blue:0.97 alpha:1.0];
-    [c set];
+    [m_BackgrounColor set];
     NSRectFill([self bounds]);
     [contetx restoreGraphicsState];
-
+    
+    [self UpdateAlignment];
 }
 
 - (void) UpdateAlignment
@@ -151,6 +150,9 @@ NSTextField *CreateStockTF()
     {
         [self CreateControls];
         [self UpdateControls];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * USEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [self setNeedsDisplay:true]; // 10.8-specific (or maybe VM) code
+        });
     }
 }
 
@@ -483,13 +485,16 @@ NSTextField *CreateStockTF()
     if(!m_StatFS.volume_name.empty())
         [m_TextVolumeName setStringValue:[NSString stringWithUTF8String:m_StatFS.volume_name.c_str()]];
     else
-        [m_TextVolumeName setStringValue:@"N/A"];         
-    [m_TextVolumeTotalBytes setIntegerValue:m_StatFS.total_bytes];
-    [m_TextVolumeAvailBytes setIntegerValue:m_StatFS.avail_bytes];
+        [m_TextVolumeName setStringValue:@"N/A"];
+    
+    [m_TextVolumeTotalBytes setStringValue:[m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.total_bytes]]];
+    [m_TextVolumeAvailBytes setStringValue:[m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.avail_bytes]]];
 }
 
 - (void) UpdateVFSTarget:(const char*)_path host:(std::shared_ptr<VFSHost>)_host
 {
+    // TODO: need to prevent inefficient updates here when volume remains the same. (?)
+    
     m_TargetVFSPath = _path;
     m_TargetVFSHost = _host;
 

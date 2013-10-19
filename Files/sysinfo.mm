@@ -279,7 +279,7 @@ bool GetSystemOverview(SystemOverview &_overview)
     _overview.user_full_name = NSFullUserName();
     
     // get machine model once
-    static NSString *human_model = @"???";
+    static NSString *human_model = @"N/A";
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         char model[256];

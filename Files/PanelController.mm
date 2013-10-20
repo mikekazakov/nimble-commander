@@ -773,8 +773,9 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     {
         case 53: // Esc button
             [self CancelBackgroundOperations];
-//            if(m_QuickLook)
             [[self GetParentWindow] CloseOverlay:self];
+            m_BriefSystemOverview = nil;
+            m_QuickLook = nil;
             break;
     }
 }
@@ -784,6 +785,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     if(m_BriefSystemOverview)
     {
         [[self GetParentWindow] CloseOverlay:self];
+        m_BriefSystemOverview = nil;
         return;
     }
     m_BriefSystemOverview = [[self GetParentWindow] RequestBriefSystemOverview:self];
@@ -795,6 +797,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     if (m_QuickLook != nil)
     { // Close quick preview, if it is open.
         [[self GetParentWindow] CloseOverlay:self];
+        m_QuickLook = nil;
         return;
     }
     

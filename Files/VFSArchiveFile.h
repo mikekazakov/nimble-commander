@@ -12,6 +12,7 @@
 #import "VFSFile.h"
 
 struct VFSArchiveMediator;
+struct AppleDoubleEA;
 
 class VFSArchiveFile : public VFSFile
 {
@@ -23,15 +24,19 @@ public:
     virtual int     Open(int _open_flags) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;
-
     virtual ssize_t Read(void *_buf, size_t _size) override;
-    
     virtual ReadParadigm GetReadParadigm() const override;
     virtual ssize_t Pos() const override;
     virtual ssize_t Size() const override;
-    virtual bool Eof() const override;    
+    virtual bool Eof() const override;
+    virtual unsigned XAttrCount() const override;
+    virtual void XAttrIterateNames( bool (^_handler)(const char* _xattr_name) ) const override;
+    virtual ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const override;
 private:
+    AppleDoubleEA *m_EA;
+    size_t         m_EACount;
     struct archive *m_Arc;
+    struct archive_entry *m_Entry;
     std::shared_ptr<VFSFile> m_ArFile;
     std::shared_ptr<VFSArchiveMediator> m_Mediator;
     ssize_t m_Position;

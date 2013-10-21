@@ -297,6 +297,19 @@ void FileCopyOperationJobFromGeneric::EraseXattrs(int _fd_in)
     }
 }
 
+void FileCopyOperationJobFromGeneric::CopyXattrs(std::shared_ptr<VFSFile> _file, int _fd_to)
+{
+    void *buf = m_Buffer1;
+    size_t buf_sz = BUFFER_SIZE;
+    
+    _file->XAttrIterateNames(^bool(const char *name){
+        ssize_t res = _file->XAttrGet(name, buf, buf_sz);
+        if(res >= 0)
+            fsetxattr(_fd_to, name, buf, res, 0, 0);
+        return true;
+    });    
+}
+
 bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_dest)
 {
     int ret, oldumask, destinationfd = -1, dstopenflags=0;
@@ -506,8 +519,10 @@ dolseek: // find right position in destination file
     // erase destination's xattrs
     if(m_Options.copy_xattrs && erase_xattrs)
         EraseXattrs(destinationfd);
-    
-    // no xattrs copying now
+
+    // copy xattrs from src to dst
+    if(m_Options.copy_xattrs && src_file->XAttrCount() > 0)
+        CopyXattrs(src_file, destinationfd);
     
     // change ownage
     if(m_Options.copy_unix_owners)

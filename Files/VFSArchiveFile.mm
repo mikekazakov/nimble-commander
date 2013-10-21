@@ -10,13 +10,16 @@
 #import "3rd_party/libarchive/archive_entry.h"
 #import "VFSArchiveFile.h"
 #import "VFSArchiveInternal.h"
-
+#import "AppleDoubleEA.h"
 
 VFSArchiveFile::VFSArchiveFile(const char* _relative_path, std::shared_ptr<VFSArchiveHost> _host):
     VFSFile(_relative_path, _host),
     m_Arc(0),
     m_ShouldCommitSC(0),
-    m_UID(0)
+    m_UID(0),
+    m_Entry(0),
+    m_EA(0),
+    m_EACount(0)
 {
 }
 
@@ -83,16 +86,19 @@ int VFSArchiveFile::Open(int _open_flags)
             return VFSError::NotFound;
         }
         
+        m_Entry = entry;
         m_Position = 0;
         m_Size = archive_entry_size(entry);
         m_ShouldCommitSC = true;
+        
+        // read and parse metadata(xattrs) if any
+        size_t s;
+        m_EA = ExtractEAFromAppleDouble(archive_entry_mac_metadata(m_Entry, &s), s, &m_EACount);
 
         return VFSError::Ok;
     }
     else
     {
-//        auto sc = host->SeekCache();
-        
         bool found = false;
         struct archive_entry *entry;
         char path[1024];
@@ -111,12 +117,18 @@ int VFSArchiveFile::Open(int _open_flags)
             return VFSError::NotFound;
         }
 
+        m_Entry = entry;
         m_Arc = sc->arc;
         m_ArFile = sc->mediator->file;
         m_Mediator = sc->mediator;
         m_Position = 0;
         m_Size = archive_entry_size(entry);
         m_ShouldCommitSC = true;
+
+        // read and parse metadata(xattrs) if any
+        size_t s;
+        m_EA = ExtractEAFromAppleDouble(archive_entry_mac_metadata(m_Entry, &s), s, &m_EACount);
+        
         return VFSError::Ok;
     }
 }
@@ -127,7 +139,7 @@ bool VFSArchiveFile::IsOpened() const
 }
 
 int VFSArchiveFile::Close()
-{
+{    
     if(m_Arc != 0)
     {
         if(!m_ShouldCommitSC)
@@ -151,6 +163,15 @@ int VFSArchiveFile::Close()
             m_ArFile.reset();
         }
     }
+    
+    m_Entry = 0;
+    m_EACount = 0;
+    if(m_EA != 0)
+    {
+        free(m_EA);
+        m_EA = 0;
+    }
+    
     return VFSError::Ok;
 }
 
@@ -199,3 +220,37 @@ ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
     return size;
 }
 
+unsigned VFSArchiveFile::XAttrCount() const
+{
+    return (unsigned)m_EACount;
+}
+
+void VFSArchiveFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name) ) const
+{
+    if(!_handler || m_EACount == 0)
+        return;
+    assert(m_EA != 0);
+    
+    for(int i = 0; i < m_EACount; ++i)
+        if( !_handler(m_EA[i].name) )
+            break;
+}
+
+ssize_t VFSArchiveFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
+{
+    if(!m_Arc || !_xattr_name)
+        return VFSError::InvalidCall;
+    
+    for(int i = 0; i < m_EACount; ++i)
+        if(strcmp(m_EA[i].name, _xattr_name) == 0)
+        {
+            if(_buffer == 0)
+                return m_EA[i].data_sz;
+    
+            size_t sz = std::min(m_EA[i].data_sz, (uint32_t)_buf_size);
+            memcpy(_buffer, m_EA[i].data, sz);
+            return sz;
+        }
+
+    return VFSError::NotFound;
+}

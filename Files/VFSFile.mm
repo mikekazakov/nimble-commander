@@ -86,6 +86,15 @@ void VFSFile::ComposeFullHostsPath(char *_buf) const
     strcat(_buf, m_RelativePath.c_str());
 }
 
+unsigned VFSFile::XAttrCount() const
+{
+    return 0;
+}
+
+void VFSFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name) ) const
+{
+}
+
 NSData *VFSFile::ReadFile()
 {
     if(!IsOpened())
@@ -115,4 +124,9 @@ NSData *VFSFile::ReadFile()
     }
     
     return [NSData dataWithBytesNoCopy:buf length:sz]; // NSData will deallocate buf
+}
+
+ssize_t VFSFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
+{
+    return VFSError::NotSupported;
 }

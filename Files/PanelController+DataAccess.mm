@@ -75,4 +75,9 @@
     return true;
 }
 
+- (std::shared_ptr<VFSHost>) GetCurrentVFSHost
+{
+    return m_HostsStack.back();
+}
+
 @end

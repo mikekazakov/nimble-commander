@@ -273,7 +273,12 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
         return false;
     
     // change unix mode
-    chmod(_dest, src_stat_buffer.st_mode);
+    mode_t mode = src_stat_buffer.st_mode;
+    if((mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0)
+    { // guard against malformed(?) archives
+        mode |= S_IRWXU | S_IRGRP | S_IXGRP;
+    }
+    chmod(_dest, mode);
     
     // change flags
     chflags(_dest, src_stat_buffer.st_flags);

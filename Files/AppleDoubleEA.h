@@ -9,6 +9,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "VFS.h"
 
 struct AppleDoubleEA
 {
@@ -20,11 +21,14 @@ struct AppleDoubleEA
 };
 
  /**
-  * ExtractEAFromAppleDouble interpret memory block of EAs packed into AppleDouble file, usually for archives
-  * return NULL or array of AppleDoubleEA allocated with malloc
-  * caller is responsible for deallocating this memory
+  * ExtractEAFromAppleDouble interpret memory block of EAs packed into AppleDouble file, usually for archives.
+  * Return NULL or array of AppleDoubleEA (number of _ea_count) allocated with malloc.
+  * Caller is responsible for deallocating this memory.
   */
 AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
                                        size_t      _memory_size,
                                        size_t     *_ea_count
                                        );
+
+void *BuildAppleDoubleFromEA(std::shared_ptr<VFSFile> _file,
+                             size_t *_buf_sz);

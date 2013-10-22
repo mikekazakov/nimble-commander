@@ -42,26 +42,36 @@ public:
         NoRead      = 0
     };
     
+    enum class WriteParadigm {
+        Random      = 3,
+        Seek        = 2,
+        Sequential  = 1,
+        NoWrite     = 0
+    };
+    
     VFSFile(const char* _relative_path, std::shared_ptr<VFSHost> _host);
     virtual ~VFSFile();
 
     enum {
-        OF_Read,
-        OF_Write,
-        OF_ShLock, // not implemented
-        OF_ExLock  // not implemented
+        OF_Read     = 0x0001,
+        OF_Write    = 0x0002,
+        OF_Create   = 0x0004,
+        OF_ShLock   = 0x0008, // not yet implemented
+        OF_ExLock   = 0x0010  // not yet implemented
     };
     virtual int     Open(int _open_flags);
     virtual bool    IsOpened() const;
     virtual int     Close();
 
-    virtual ReadParadigm GetReadParadigm() const;
+    virtual ReadParadigm  GetReadParadigm() const;
+    virtual WriteParadigm GetWriteParadigm() const;
     virtual ssize_t Read(void *_buf, size_t _size);
+    virtual ssize_t Write(const void *_buf, size_t _size);
     
     /**
-     * ReadAt is available only on Random level
-     * will not move any file pointers
-     * read up to _size bytes, may return less
+     * ReadAt is available only on Random level.
+     * It will not move any file pointers.
+     * Reads up to _size bytes, may return less.
      */
     virtual ssize_t ReadAt(off_t _pos, void *_buf, size_t _size);
     
@@ -72,32 +82,34 @@ public:
     };
     
     /**
-     * Seek() is available if Read paradigm is Seek or above
+     * Seek() is available if Read paradigm is Seek or above.
      */
     virtual off_t Seek(off_t _off, int _basis);
     
     /**
-     * Pos() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported
+     * Pos() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported.
      */
     virtual ssize_t Pos() const;
 
     /**
-     * Size() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported
+     * Size() should always be available, except of dummy VFSFile class, which returns VFSError::NotSupported.
      */
     virtual ssize_t Size() const;
 
     /**
-     * Eof() should always be available, return true on not-valid file state
+     * Eof() should always be available, return true on not-valid file state.
      */
     virtual bool Eof() const;
     
     /**
-     * XAttrCount() should be always available, returning 0 on non-supported case
+     * XAttrCount() should be always available, returning 0 on non-supported case.
+     * This function may cause blocking I/O.
      */
     virtual unsigned XAttrCount() const;
     
     /**
-     * XAttrIterateNames() will call block with every xattr name for this file while handler returns true
+     * XAttrIterateNames() will call block with every xattr name for this file while handler returns true.
+     * This function may cause blocking I/O.
      */
     virtual void XAttrIterateNames(
                                    bool (^_handler)(const char* _xattr_name) // return true for allowing iteration, false to stop it
@@ -109,6 +121,7 @@ public:
      * If _buffer is NULL and requested xattr was found then size of this xattr is returned.
      * If _buf_size is smaller than required buffer for _xattr_name then data will be truncated and _buf_size will be returned.
      * Generally this function returns amount of bytes copied (note that valid xattr value can be 0 bytes long).
+     * This function may cause blocking I/O     
      */
     virtual ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const;
     

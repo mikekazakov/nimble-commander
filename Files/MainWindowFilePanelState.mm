@@ -39,6 +39,7 @@
 #import "FilePanelMainSplitView.h"
 #import "BriefSystemOverview.h"
 #import "sysinfo.h"
+#import "FileCompressOperation.h"
 
 enum ActiveState
 {
@@ -272,7 +273,7 @@ enum ActiveState
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_RightPanelGoToButton(61)]-(10)-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(10)-[m_RightPanelGoToButton(22)]" options:0 metrics:nil views:views]];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(1)-[m_OpSummaryBox(40)]" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_OpSummaryBox(40)]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_OpSummaryBox(350)]" options:0 metrics:nil views:views]];    
     [self addConstraint: [NSLayoutConstraint constraintWithItem:m_OpSummaryBox
                                                       attribute:NSLayoutAttributeCenterX
@@ -1508,6 +1509,36 @@ enum ActiveState
         [m_MainSplitView SetRightOverlay:0];
     else if(_panel == m_RightPanelController)
         [m_MainSplitView SetLeftOverlay:0];
+}
+
+- (IBAction)OnCompressFiles:(id)sender
+{
+    FlexChainedStringsChunk *files = [[self ActivePanelController] GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    if(!files)
+        return;
+    std::shared_ptr<VFSHost> srcvfs, dstvfs;
+    char srcroot[MAXPATHLEN], dstroot[MAXPATHLEN];
+    if([self ActivePanelController] == m_LeftPanelController) {
+        srcvfs = [m_LeftPanelController GetCurrentVFSHost];
+        dstvfs = [m_RightPanelController GetCurrentVFSHost];
+        [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost:srcroot];
+        [m_RightPanelController GetCurrentDirectoryPathRelativeToHost:dstroot];
+    }
+    else {
+        srcvfs = [m_RightPanelController GetCurrentVFSHost];
+        dstvfs = [m_LeftPanelController GetCurrentVFSHost];
+        [m_RightPanelController GetCurrentDirectoryPathRelativeToHost:srcroot];
+        [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost:dstroot];
+    }
+    
+    
+    [m_OperationsController AddOperation:
+        [[FileCompressOperation alloc] initWithFiles:files
+                                             srcroot:srcroot
+                                              srcvfs:srcvfs
+                                             dstroot:dstroot
+                                              dstvfs:dstvfs]
+     ];
 }
 
 @end

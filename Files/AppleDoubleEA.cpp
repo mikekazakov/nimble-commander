@@ -12,11 +12,41 @@
 #include <sys/types.h>
 #include <sys/xattr.h>
 #include <libkern/OSByteOrder.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #include "AppleDoubleEA.h"
 
+//#include <copyfile.h>
+//#include <quarantine.h>
+/*
+EA com.apple.quarantine won't be handled properly, since this should involve the following functions,
+which are private. fuck you, apple.
+// homebrew quarantine.h, since there's no public one
+typedef struct _qtn_file_s *qtn_file_t;
+extern qtn_file_t _qtn_file_alloc();
+extern void _qtn_file_free(qtn_file_t);
+extern qtn_file_t _qtn_file_clone(qtn_file_t);
+extern int _qtn_file_init_with_fd(qtn_file_t file, int fd);
+extern int _qtn_file_apply_to_fd(qtn_file_t file, int fd);
+extern int _qtn_file_init_with_path(qtn_file_t file, const char *path);
+extern int _qtn_file_init_with_data(qtn_file_t file, const void *, size_t);
+extern int _qtn_file_to_data(qtn_file_t file, void *, size_t*);
+extern const char *_qtn_error(int err);
+extern const char *_qtn_xattr_name;
+#define QTN_SERIALIZED_DATA_MAX 4096
+#define qtn_file_alloc _qtn_file_alloc
+#define qtn_file_free _qtn_file_free
+#define qtn_file_clone _qtn_file_clone
+#define qtn_file_init_with_fd _qtn_file_init_with_fd
+#define qtn_file_apply_to_fd _qtn_file_apply_to_fd
+#define qtn_file_init_with_path _qtn_file_init_with_path
+#define qtn_file_init_with_data _qtn_file_init_with_data
+#define qtn_file_to_data _qtn_file_to_data
+#define qtn_error _qtn_error
+#define qtn_xattr_name _qtn_xattr_name
+*/
 
-// thanks filecopy.c from Apple
+// thanks filecopy.c from Apple:
 
 /*
    Typical "._" AppleDouble Header File layout:
@@ -155,6 +185,7 @@ typedef struct attr_header
 #define SWAP64(x)	OSSwapBigToHostInt64(x)
 
 #define ATTR_ALIGN 3L  /* Use four-byte alignment */
+#define ATTR_DATA_ALIGN 1L  /* Use two-byte alignment */
 
 #define ATTR_ENTRY_LENGTH(namelen)  \
         ((sizeof(attr_entry_t) - 1 + (namelen) + ATTR_ALIGN) & (~ATTR_ALIGN))
@@ -247,6 +278,8 @@ AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
             int count = attrhdr.num_attrs;
             eas = (AppleDoubleEA*) malloc( sizeof(AppleDoubleEA) * (has_finfo ? count + 1 : count) );
             
+//            int a = sizeof(attr_header);
+            
             const attr_entry_t *entry = (const attr_entry_t *)((char*)_memory_buf + sizeof(attr_header_t));
             for (int i = 0; i < count; i++)
             {
@@ -261,7 +294,8 @@ AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
                 // safely calculate a name len
                 for(const char *si = name; si < (char*)_memory_buf + _memory_size && (*si) != 0; ++si, ++namelen)
                     ;
-                
+              
+
                 if(namelen > 0 &&
                    name + namelen < (char*)_memory_buf + _memory_size &&
                    name[namelen] == 0 &&
@@ -292,4 +326,112 @@ AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
     *_ea_count = eas_last;
     
     return eas;
+}
+
+void *BuildAppleDoubleFromEA(std::shared_ptr<VFSFile> _file,
+                             size_t *_buf_sz)
+{
+    unsigned ret_xattr_count = _file->XAttrCount();
+    if(ret_xattr_count == 0)
+        return 0;
+    
+    static const int max_eas = 64;
+    __block struct {
+        char name[256];
+        int name_len;
+        void *data;
+        unsigned data_sz;
+        bool isfinfo;
+        unsigned attr_hdr_offset;
+        unsigned attr_data_offset;
+    } file_eas_s[max_eas];
+    auto *file_eas = &file_eas_s[0]; // to bypass block prohibition of arrays modification
+    memset(file_eas, 0, sizeof(file_eas_s));
+    
+    assert(ret_xattr_count < max_eas); // anti-crash protection;
+    
+    __block int eas_count = 0;
+    
+    __block bool has_finfo = false;
+    
+    _file->XAttrIterateNames(^bool(const char *_name){
+            assert(eas_count < max_eas);
+            file_eas[eas_count].name_len = (int)strlen(_name);
+            assert(file_eas[eas_count].name_len < 256);
+            strcpy(file_eas[eas_count].name, _name);
+            if(strcmp(_name, XATTR_FINDERINFO_NAME) == 0) {
+                has_finfo = true;
+                file_eas[eas_count].isfinfo = true;
+            }
+            eas_count++;
+            return true;
+        });
+    
+    for(int i = 0; i < eas_count; ++i) {
+        ssize_t sz = _file->XAttrGet(file_eas[i].name, 0, 0);
+        if(sz > 0) {
+            file_eas[i].data = alloca(sz);
+            assert(file_eas[i].data);
+            file_eas[i].data_sz = (unsigned)sz;
+            _file->XAttrGet(file_eas[i].name, file_eas[i].data, file_eas[i].data_sz);
+        }
+    }
+
+    unsigned attrs_hdrs_size = 0;
+    uint16_t attrs_hdrs_count = 0;
+    for(int i = 0; i < eas_count; ++i)
+        if(!file_eas[i].isfinfo) {
+            file_eas[i].attr_hdr_offset = sizeof(attr_header) + attrs_hdrs_size;
+            attrs_hdrs_size += ATTR_ENTRY_LENGTH(file_eas[i].name_len+1); // namelen with zero-terminator
+            ++attrs_hdrs_count;
+        }
+    
+    unsigned attrs_data_size = 0;
+    for(int i = 0; i < eas_count; ++i)
+        if(!file_eas[i].isfinfo) {
+            file_eas[i].attr_data_offset = sizeof(attr_header) + attrs_hdrs_size + attrs_data_size;
+            attrs_data_size += (file_eas[i].data_sz + ATTR_ALIGN) & (~ATTR_ALIGN);
+        }
+    
+    unsigned full_ad_size = sizeof(attr_header) + attrs_hdrs_size + attrs_data_size;
+    void *apple_double = malloc(full_ad_size);
+    memset(apple_double, 0, full_ad_size);
+    
+    attr_header *attr_header_p = (attr_header *) apple_double;
+    attr_header_p->appledouble.magic                = SWAP32(ADH_MAGIC);
+    attr_header_p->appledouble.version              = SWAP32(ADH_VERSION);
+    memcpy(attr_header_p->appledouble.filler, ADH_MACOSX, sizeof(attr_header_p->appledouble.filler));
+    attr_header_p->appledouble.numEntries           = SWAP16(2);
+    attr_header_p->appledouble.entries[0].type      = SWAP32(AD_FINDERINFO);
+    attr_header_p->appledouble.entries[0].offset    = SWAP32(offsetof(apple_double_header, finfo));
+    attr_header_p->appledouble.entries[0].length    = SWAP32(full_ad_size - offsetof(apple_double_header, finfo));
+    attr_header_p->appledouble.entries[1].type      = SWAP32(AD_RESOURCE);
+    attr_header_p->appledouble.entries[1].offset    = SWAP32(full_ad_size);
+  /*attr_header_p->appledouble.entries[1].length    = SWAP32(0);*/
+    attr_header_p->magic                            = SWAP32(ATTR_HDR_MAGIC);
+  /*attr_header_p->debug_tag                        = SWAP32(0);*/
+    attr_header_p->total_size                       = SWAP32(full_ad_size);
+    attr_header_p->data_start                       = SWAP32(sizeof(attr_header) + attrs_hdrs_size);
+    attr_header_p->data_length                      = SWAP32( full_ad_size - (sizeof(attr_header) + attrs_hdrs_size) );
+  /*attr_header_p->flags                            = SWAP32(0);*/
+    attr_header_p->num_attrs                        = SWAP16(attrs_hdrs_count);
+    
+    for(int i = 0; i < eas_count; ++i)
+        if(!file_eas[i].isfinfo) {
+            attr_entry_t *entry = (attr_entry_t *)((char *)apple_double + file_eas[i].attr_hdr_offset);
+            entry->offset   = SWAP32(file_eas[i].attr_data_offset);
+            entry->length   = SWAP32(file_eas[i].data_sz);
+            entry->namelen  = file_eas[i].name_len + 1;
+            strcpy((char*)&entry->name[0], file_eas[i].name);
+            memcpy((char *)apple_double + file_eas[i].attr_data_offset, file_eas[i].data, file_eas[i].data_sz);
+        }
+        else {
+            memcpy(&attr_header_p->appledouble.finfo[0],
+                   file_eas[i].data,
+                   std::min(32u, file_eas[i].data_sz)
+                   );
+        }
+
+    *_buf_sz = full_ad_size;
+    return apple_double;
 }

@@ -166,11 +166,8 @@ int VFSArchiveFile::Close()
     
     m_Entry = 0;
     m_EACount = 0;
-    if(m_EA != 0)
-    {
-        free(m_EA);
-        m_EA = 0;
-    }
+    free(m_EA);
+    m_EA = 0;
     
     return VFSError::Ok;
 }

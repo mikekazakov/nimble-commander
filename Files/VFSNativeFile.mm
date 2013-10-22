@@ -6,15 +6,18 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFSNativeFile.h"
-#import "VFSNativeHost.h"
+#import <sys/xattr.h>
+#import <sys/attr.h>
 #import <unistd.h>
 #import <stdlib.h>
+#import "VFSNativeFile.h"
+#import "VFSNativeHost.h"
 
 VFSNativeFile::VFSNativeFile(const char* _relative_path, std::shared_ptr<VFSNativeHost> _host):
     VFSFile(_relative_path, _host),
     m_FD(-1),
-    m_Position(0)
+    m_Position(0),
+    m_OpenFlags(0)
 {
 }
 
@@ -31,7 +34,9 @@ int VFSNativeFile::Open(int _open_flags)
     else if((_open_flags & VFSFile::OF_Read) != 0) openflags |= O_RDONLY;
     else if((_open_flags & VFSFile::OF_Write) != 0) openflags |= O_WRONLY;
     
-    m_FD = open(RelativePath(), openflags);
+    if(_open_flags & VFSFile::OF_Create) openflags |= O_CREAT;
+    
+    m_FD = open(RelativePath(), openflags, 0640);
     if(m_FD < 0)
     {
         return VFSError::FromErrno(errno);
@@ -40,9 +45,15 @@ int VFSNativeFile::Open(int _open_flags)
     fcntl(m_FD, F_SETFL, fcntl(m_FD, F_GETFL) & ~O_NONBLOCK);
     
     m_Position = 0;
-    
+    m_OpenFlags = _open_flags;
     m_Size = lseek(m_FD, 0, SEEK_END);
     lseek(m_FD, 0, SEEK_SET);
+    
+//    NSLog(@"%u", XAttrCount());
+/*    XAttrIterateNames(^bool(const char*_name){
+        NSLog(@"%s", _name);
+        return true;
+    });*/
     
     return VFSError::Ok;
 }
@@ -58,6 +69,9 @@ int VFSNativeFile::Close()
     {
         close(m_FD);
         m_FD = -1;
+        m_OpenFlags = 0;
+        m_Size = 0;
+        m_Position = 0;
     }
     return VFSError::Ok;
 }
@@ -102,9 +116,40 @@ off_t VFSNativeFile::Seek(off_t _off, int _basis)
     return VFSError::FromErrno(errno);
 }
 
+ssize_t VFSNativeFile::Write(const void *_buf, size_t _size)
+{
+    if(m_FD < 0)
+        return VFSError::InvalidCall;
+
+    ssize_t ret = write(m_FD, _buf, _size);
+    if(ret >= 0)
+    {
+        if(m_Position + ret > m_Size)
+            m_Size = m_Position + ret;
+        m_Position += ret;
+        return ret;
+    }
+    return VFSError::FromErrno(errno);
+}
+
 VFSFile::ReadParadigm VFSNativeFile::GetReadParadigm() const
 {
-    return VFSFile::ReadParadigm::Random;
+    if(m_FD < 0) // on not-opened files we return maximum possible value
+        return VFSFile::ReadParadigm::Random;
+    
+    if(m_OpenFlags & VFSFile::OF_Read)
+        return VFSFile::ReadParadigm::Random; // does ANY native filesystem in fact supports random read/write?
+    return VFSFile::ReadParadigm::NoRead;
+}
+
+VFSFile::WriteParadigm VFSNativeFile::GetWriteParadigm() const
+{
+    if(m_FD < 0) // on not-opened files we return maximum possible value
+        return VFSFile::WriteParadigm::Random;
+        
+    if(m_OpenFlags & VFSFile::OF_Write)
+        return VFSFile::WriteParadigm::Random; // does ANY native filesystem in fact supports random read/write?
+    return VFSFile::WriteParadigm::NoWrite;
 }
 
 ssize_t VFSNativeFile::Pos() const
@@ -125,7 +170,7 @@ bool VFSNativeFile::Eof() const
 {
     if(m_FD < 0)
         return true;
-    return m_Position == m_Size;
+    return m_Position >= m_Size;
 }
 
 std::shared_ptr<VFSFile> VFSNativeFile::Clone() const
@@ -134,3 +179,66 @@ std::shared_ptr<VFSFile> VFSNativeFile::Clone() const
                                            RelativePath(),
                                            std::dynamic_pointer_cast<VFSNativeHost>(Host()));
 }
+
+unsigned VFSNativeFile::XAttrCount() const
+{
+    if(m_FD < 0)
+        return 0;
+
+    ssize_t bf_sz = flistxattr(m_FD, 0, 0, 0);
+    if(bf_sz <= 0) // on error or if there're no xattrs available for this file
+        return 0;
+
+    char *buf = (char*)alloca(bf_sz);
+    assert(buf != 0);
+    
+    ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
+    if(ret < 0)
+        return 0;
+  
+    char *s = buf, *e = buf + ret;
+    unsigned count = 0;
+    while(s < e) {
+        ++count;
+        s += strlen(s)+1;
+    }
+    return count;
+}
+
+void VFSNativeFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name) ) const
+{
+    if(m_FD < 0 || !_handler)
+        return;
+    
+    ssize_t bf_sz = flistxattr(m_FD, 0, 0, 0);
+    if(bf_sz <= 0) // on error or if there're no xattrs available for this file
+        return;
+    
+    char *buf = (char*)alloca(bf_sz);
+    assert(buf != 0);
+    
+    ssize_t ret = flistxattr(m_FD, buf, bf_sz, 0);
+    if(ret < 0)
+        return;
+    
+    char *s = buf, *e = buf + ret;
+    while(s < e) {
+        if(!_handler(s))
+            break;
+        
+        s += strlen(s)+1;
+    }
+}
+
+ssize_t VFSNativeFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
+{
+    if(m_FD < 0)
+        return VFSError::InvalidCall;
+
+    ssize_t ret = fgetxattr(m_FD, _xattr_name, _buffer, _buf_size, 0, 0);
+    if(ret < 0)
+        return VFSError::FromErrno(errno);
+    
+    return ret;
+}
+

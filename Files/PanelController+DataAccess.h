@@ -21,4 +21,6 @@
 // if it is dot-dot returns 0
 - (FlexChainedStringsChunk*) GetSelectedEntriesOrFocusedEntryWithoutDotDot;
 
+- (std::shared_ptr<VFSHost>) GetCurrentVFSHost;
+
 @end

@@ -35,9 +35,19 @@ VFSFile::ReadParadigm VFSFile::GetReadParadigm() const
     return ReadParadigm::NoRead;
 }
 
+VFSFile::WriteParadigm VFSFile::GetWriteParadigm() const
+{
+    return WriteParadigm::NoWrite;
+}
+
 ssize_t VFSFile::Read(void *_buf, size_t _size)
 {
     return VFSError::NotSupported;
+}
+
+ssize_t VFSFile::Write(const void *_buf, size_t _size)
+{
+    return VFSError::NotSupported;    
 }
 
 ssize_t VFSFile::ReadAt(off_t _pos, void *_buf, size_t _size)

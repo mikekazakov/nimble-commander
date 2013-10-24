@@ -28,6 +28,8 @@ FileCompressOperationJob::~FileCompressOperationJob()
 {
     if(m_InitialItems)
         FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
+    if(m_ScannedItems)
+        FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);
 }
 
 void FileCompressOperationJob::Init(FlexChainedStringsChunk* _src_files,

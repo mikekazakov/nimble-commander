@@ -9,6 +9,7 @@
 #pragma once
 
 #include <assert.h>
+#include <string.h>
 
 struct FlexChainedStringsChunk
 {
@@ -58,10 +59,19 @@ public:
     
     void FreeWithDescendants() { FlexChainedStringsChunk* p = this; FreeWithDescendants(&p); }
     
-    // AddString return a chunk in which _str was inserted
-    // it can be "this" if there was a space here, or it can be a freshly allocated descendant,
-    // which is linked with .next field
-    FlexChainedStringsChunk* AddString(const char *_str, int _len, const node *_prefix);
+    /**
+     * AddString return a chunk in which _str was inserted.
+     * It can be "this" if there was a space here, or it can be a freshly allocated descendant, which is linked with .next field.
+     * To immediately accest lastly inserted string, use back() method or directly operator[Amount()-1].
+     * _len field is used for minor run-time speedup.
+     */
+    FlexChainedStringsChunk* AddString(const char *_str, unsigned _len, const node *_prefix);
+    
+    /**
+     * AddString return a chunk in which _str was inserted.
+     * It can be "this" if there was a space here, or it can be a freshly allocated descendant, which is linked with .next field.
+     * To immediately accest lastly inserted string, use back() method or directly operator[Amount()-1].
+     */
     FlexChainedStringsChunk* AddString(const char *_str, const node *_prefix);
     
     // return amount of strings in current chunk
@@ -131,3 +141,9 @@ private:
     void operator=(const FlexChainedStringsChunk&);   // no implementation
     
 }; // sizeof(FlexStringsChunk) == 1024
+
+
+inline FlexChainedStringsChunk* FlexChainedStringsChunk::AddString(const char *_str, const node *_prefix)
+{
+    return AddString(_str, (unsigned) strlen(_str), _prefix);
+}

@@ -64,7 +64,7 @@ void FlexChainedStringsChunk::FreeWithDescendants(FlexChainedStringsChunk** _fir
     }  while(current != 0);
 }
 
-FlexChainedStringsChunk* FlexChainedStringsChunk::AddString(const char *_str, int _len, const node *_prefix)
+FlexChainedStringsChunk* FlexChainedStringsChunk::AddString(const char *_str, unsigned _len, const node *_prefix)
 {
     // check for available space in current chunk
     if(amount < strings_per_chunk)
@@ -92,11 +92,6 @@ FlexChainedStringsChunk* FlexChainedStringsChunk::AddString(const char *_str, in
         next = Allocate();
         return next->AddString(_str, _prefix);
     }
-}
-
-FlexChainedStringsChunk* FlexChainedStringsChunk::AddString(const char *_str, const node *_prefix)
-{
-    return AddString(_str, (int)strlen(_str), _prefix);
 }
 
 unsigned FlexChainedStringsChunk::CountStringsWithDescendants() const

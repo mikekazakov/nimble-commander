@@ -118,10 +118,125 @@ struct zip {
 	char	format_name[64];
 };
 
+/*
+ 4.3.15 Zip64 end of central directory locator
+ 
+ zip64 end of central dir locator
+ signature                       4 bytes  (0x07064b50)
+ number of the disk with the
+ start of the zip64 end of
+ central directory               4 bytes
+ relative offset of the zip64
+ end of central directory record 8 bytes
+ total number of disks           4 bytes
+ */
+#pragma pack(1)
+struct Zip64EndOfCentralDirectoryLocator
+{
+    uint32_t    signature;
+    uint32_t    zip64_eocd_disk_no;
+    int64_t     zip64_eocd_offset;
+    uint32_t    total_disks;
+};
+
+
+/*
+ 4.3.16  End of central directory record:
+ end of central dir signature    4 bytes  (0x06054b50)
+ number of this disk             2 bytes
+ number of the disk with the
+ start of the central directory  2 bytes
+ total number of entries in the
+ central directory on this disk  2 bytes
+ total number of entries in
+ the central directory           2 bytes
+ size of the central directory   4 bytes
+ offset of start of central
+ directory with respect to
+ the starting disk number        4 bytes
+ .ZIP file comment length        2 bytes
+ .ZIP file comment       (variable size)
+ */
+struct EndOfCentralDirectoryRecord {
+    uint32_t    signature;
+    uint16_t    number_of_disk;
+    uint16_t    number_of_cd_disk;
+    uint16_t    entries_here;
+    uint16_t    entries_total;
+    uint32_t    cd_size;
+     int32_t    cd_offset;
+    uint16_t    commentlength;
+};
+/*
+ 4.3.12  Central directory structure:
+ 
+ [central directory header 1]
+ .
+ .
+ .
+ [central directory header n]
+ [digital signature]
+ 
+ File header:
+ 
+ central file header signature   4 bytes  (0x02014b50)
+ version made by                 2 bytes
+ version needed to extract       2 bytes
+ general purpose bit flag        2 bytes
+ compression method              2 bytes
+ last mod file time              2 bytes
+ last mod file date              2 bytes
+ crc-32                          4 bytes
+ compressed size                 4 bytes
+ uncompressed size               4 bytes
+ file name length                2 bytes
+ extra field length              2 bytes
+ file comment length             2 bytes
+ disk number start               2 bytes
+ internal file attributes        2 bytes
+ external file attributes        4 bytes
+ relative offset of local header 4 bytes
+ 
+ file name (variable size)
+ extra field (variable size)
+ file comment (variable size)
+*/
+struct CentralDirectoryHeader {
+    uint32_t    signature;
+    uint16_t    version_mady_by;
+    uint16_t    version_need_to_extract;
+    uint16_t    gpbf;
+    uint16_t    compression;
+    uint16_t    mod_time;
+    uint16_t    mod_date;
+    uint32_t    crc32;
+    uint32_t    compressed_size;
+    uint32_t    uncompressed_size;
+    uint16_t    filename_len;
+    uint16_t    extr_field_len;
+    uint16_t    filecomm_len;
+    uint16_t    disk_number_st;
+    uint16_t    int_attrs;
+    uint32_t    ext_attrs;
+    uint32_t    local_hdr_off;
+};
+
+/*
+ 4.3.13 Digital signature:
+ 
+ header signature                4 bytes  (0x05054b50)
+ size of data                    2 bytes
+ signature data (variable size)
+ 
+ */
+
+
+#pragma pack()
+
 #define ZIP_LENGTH_AT_END	8
-#define ZIP_ENCRYPTED		(1<<0)	
-#define ZIP_STRONG_ENCRYPTED	(1<<6)	
-#define ZIP_UTF8_NAME		(1<<11)	
+#define ZIP_ENCRYPTED		(1<<0)
+#define ZIP_STRONG_ENCRYPTED	(1<<6)
+#define ZIP_UTF8_NAME		(1<<11)
 
 static int	archive_read_format_zip_streamable_bid(struct archive_read *,
 		    int);
@@ -233,6 +348,34 @@ archive_read_support_format_zip(struct archive *a)
 }
 
 /*
+ * Iterates withing central directory and counts it's real entries amount
+ */
+static int
+archive_read_format_zip_seekable_count_cd_entries(struct archive_read *a, size_t cd_offset)
+{
+    size_t next_off, total_entries = 0;
+    
+    if(__archive_read_seek(a, cd_offset, SEEK_SET) < 0)
+        return -1;
+    
+    while(1) {
+        const char *p = __archive_read_ahead(a, 46, NULL);
+        if(!p)
+            break;
+
+        if( archive_le32dec(p + 0) != 0x02014b50)
+            break;
+        
+        total_entries++;
+     
+        next_off = 46 + archive_le16dec(p + 28) + archive_le16dec(p + 30) + archive_le16dec(p + 32);
+        if(__archive_read_seek(a, next_off, SEEK_CUR) < 0)
+            break;
+     }
+    ((struct zip *)a->format->data)->central_directory_entries = total_entries;
+}
+
+/*
  * TODO: This is a performance sink because it forces the read core to
  * drop buffered data from the start of file, which will then have to
  * be re-read again if this bidder loses.
@@ -306,7 +449,7 @@ archive_read_format_zip_seekable_bid(struct archive_read *a, int best_bid)
 		if (!found)
 			return 0;
 	}
-
+    
 	/* Since we've already done the hard work of finding the
 	   end of central directory record, let's save the important
 	   information. */
@@ -323,6 +466,8 @@ archive_read_format_zip_seekable_bid(struct archive_read *a, int best_bid)
 	    (int64_t)zip->central_directory_size > filesize)
 		return 0;
 
+    archive_read_format_zip_seekable_count_cd_entries(a, zip->central_directory_offset);
+    
 	/* This is just a tiny bit higher than the maximum returned by
 	   the streaming Zip bidder.  This ensures that the more accurate
 	   seeking Zip parser wins whenever seek is available. */
@@ -509,11 +654,25 @@ slurp_central_directory(struct archive_read *a, struct zip *zip)
 		} else {
 			/* Generate resource fork name to find its resource
 			 * file at zip->tree_rsrc. */
-			archive_strcpy(&(zip_entry->rsrcname), "__MACOSX/");
-			archive_strncat(&(zip_entry->rsrcname), name, r - name);
-			archive_strcat(&(zip_entry->rsrcname), "._");
-			archive_strncat(&(zip_entry->rsrcname),
-			    name + (r - name), filename_length - (r - name));
+            if(name[filename_length-1] != '/' )
+            {
+                archive_strcpy(&(zip_entry->rsrcname), "__MACOSX/");
+                archive_strncat(&(zip_entry->rsrcname), name, r - name);
+                archive_strcat(&(zip_entry->rsrcname), "._");
+                archive_strncat(&(zip_entry->rsrcname),
+                            name + (r - name), filename_length - (r - name));
+            }
+            else
+            {
+                /* special case for directories to produce rsrc name - need to cut out last slash*/
+                const char *base = name + filename_length - 2;
+                for(; base > name && *base != '/'; --base);
+                if(*base == '/') ++base;
+                archive_strcpy(&(zip_entry->rsrcname), "__MACOSX/");
+                archive_strncat(&(zip_entry->rsrcname), name, base - name);
+                archive_strcat(&(zip_entry->rsrcname), "._");
+                archive_strncat(&(zip_entry->rsrcname), base, filename_length - (base - name) - 1);
+            }
 			/* Register an entry to RB tree to sort it by
 			 * file offset. */
 			__archive_rb_tree_insert_node(&zip->tree,

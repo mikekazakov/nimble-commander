@@ -39,6 +39,7 @@ private:
     bool CopyDirectoryTo(const char *_src, const char *_dest);
     void EraseXattrs(int _fd_in);
     void CopyXattrs(std::shared_ptr<VFSFile> _file, int _fd_to);
+    void CopyXattrsFn(std::shared_ptr<VFSFile> _file, const char *_fn_to);
     
     enum class ItemFlags
     {

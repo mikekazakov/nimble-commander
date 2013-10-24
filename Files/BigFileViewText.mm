@@ -770,6 +770,7 @@ struct TextLine
         if((unsigned)closest + m_FrameLines < m_Lines.size())
         { // check that we will fill whole screen after scrolling
             m_VerticalOffset = (unsigned)closest;
+            m_SmoothOffset.y = 0;
             [m_View setNeedsDisplay:true];
             return;
         }
@@ -786,6 +787,7 @@ struct TextLine
     
     [self MoveFileWindowTo:desired_wnd_pos WithAnchor:_offset AtLineNo:0];
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
+    m_SmoothOffset.y = 0;
 }
 
 - (void) HandleVerticalScroll: (double) _pos

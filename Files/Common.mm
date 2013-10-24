@@ -171,25 +171,6 @@ bool GetExtensionFromPath(const char* _path, char *_buf)
     return true;
 }
 
-bool GetFilenameFromPath(const char* _path, char *_buf)
-{
-    const char* last_sl  = strrchr(_path, '/');
-    if(!last_sl) return false;
-    if(last_sl == _path + strlen(_path) - 1) return false;
-    strcpy(_buf, last_sl+1);
-    return true;
-}
-
-bool GetDirectoryContainingItemFromPath(const char* _path, char *_buf)
-{
-    const char* last_sl = strrchr(_path, '/');
-    if(!last_sl) // if path is like /foo/bar/ then /foo/bar/ will be returned
-        return false;
-    memcpy(_buf, _path, last_sl - _path + 1);
-    _buf[last_sl - _path + 1] = 0;
-    return true;
-}
-
 static mach_timebase_info_data_t info_data;
 uint64_t GetTimeInNanosecondsScale()
 {

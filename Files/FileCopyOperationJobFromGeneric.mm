@@ -283,6 +283,16 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     // change flags
     chflags(_dest, src_stat_buffer.st_flags);
     
+    // xattr processing
+    if(m_Options.copy_xattrs)
+    {
+        std::shared_ptr<VFSFile> src_file;
+        if(m_SrcHost->CreateFile(_src, &src_file, 0) >= 0)
+            if(src_file->Open(VFSFile::OF_Read || VFSFile::OF_ShLock) >= 0)
+                if(src_file->XAttrCount() > 0)
+                    CopyXattrsFn(src_file, _dest);
+    }
+    
     return true;
 }
 
@@ -300,6 +310,19 @@ void FileCopyOperationJobFromGeneric::EraseXattrs(int _fd_in)
             s += strlen(s)+1;
         }
     }
+}
+
+void FileCopyOperationJobFromGeneric::CopyXattrsFn(std::shared_ptr<VFSFile> _file, const char *_fn_to)
+{
+    void *buf = m_Buffer1;
+    size_t buf_sz = BUFFER_SIZE;
+    
+    _file->XAttrIterateNames(^bool(const char *name){
+        ssize_t res = _file->XAttrGet(name, buf, buf_sz);
+        if(res >= 0)
+            setxattr(_fn_to, name, buf, res, 0, 0);
+        return true;
+    });
 }
 
 void FileCopyOperationJobFromGeneric::CopyXattrs(std::shared_ptr<VFSFile> _file, int _fd_to)

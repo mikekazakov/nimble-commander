@@ -15,9 +15,12 @@
 #import "FileCompressOperationJob.h"
 #import "FileCompressOperation.h"
 #import "AppleDoubleEA.h"
+#import "Common.h"
 
 FileCompressOperationJob::FileCompressOperationJob():
-    m_SkipAll(0)
+    m_SkipAll(0),
+    m_SourceTotalBytes(0),
+    m_TotalBytesProcessed(0)
 {
 }
 
@@ -48,6 +51,8 @@ void FileCompressOperationJob::Do()
 {
     ScanItems();
   
+    m_Stats.SetMaxValue(m_SourceTotalBytes);
+    
     char target_archive[MAXPATHLEN];
     if(FindSuitableFilename(target_archive))
     {
@@ -134,7 +139,7 @@ void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_sho
     struct stat stat_buffer;
     
 retry_stat:
-    int stat_ret = m_SrcVFS->Stat(fullpath, stat_buffer, 0, 0); // no symlinks support currently
+    int stat_ret = m_SrcVFS->Stat(fullpath, stat_buffer, VFSHost::F_NoFollow, 0); // no symlinks support currently
     
     if(stat_ret == VFSError::Ok)
     {
@@ -143,7 +148,7 @@ retry_stat:
             m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
             m_ScannedItemsLast = m_ScannedItemsLast->AddString(_short_path, _prefix);
 //            m_SourceNumberOfFiles++;
-//            m_SourceTotalBytes += stat_buffer.st_size;
+            m_SourceTotalBytes += stat_buffer.st_size;
         }
         else if(S_ISDIR(stat_buffer.st_mode))
         {
@@ -196,6 +201,8 @@ retry_stat:
 
 void FileCompressOperationJob::ProcessItems()
 {
+    m_Stats.StartTimeTracking();
+    
     int n = 0;
     for(const auto&i: *m_ScannedItems)
     {
@@ -205,6 +212,8 @@ void FileCompressOperationJob::ProcessItems()
         
         if(CheckPauseOrStop()) return;
     }
+    
+    m_Stats.SetCurrentItem(nullptr);    
 }
 
 void FileCompressOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_node, int _number)
@@ -228,6 +237,35 @@ void FileCompressOperationJob::ProcessItem(const FlexChainedStringsChunk::node *
             archive_entry_copy_stat(entry, &st);
             archive_write_header(m_Archive, entry);
             archive_entry_free(entry);
+            
+            // metadata
+            std::shared_ptr<VFSFile> src_file;
+            m_SrcVFS->CreateFile(sourcepath, &src_file, 0);
+            if(src_file->Open(VFSFile::OF_Read) >= 0)
+            {
+                // metadata
+                size_t metadata_sz = 0;
+                // will quick almost immediately if there's no EAs
+                void *metadata = BuildAppleDoubleFromEA(src_file, &metadata_sz);
+                if(metadata != 0) {
+                    itemname[strlen(itemname)-1] = 0; // our paths extracting routine don't works with paths like /Dir/
+                    char item_path[MAXPATHLEN], item_name[MAXPATHLEN];
+                    if(GetFilenameFromRelPath(itemname, item_name) && GetDirectoryContainingItemFromRelPath(itemname, item_path))
+                    {
+                        char metadata_path[MAXPATHLEN];
+                        sprintf(metadata_path, "__MACOSX/%s._%s", item_path, item_name);
+                        struct archive_entry *entry = archive_entry_new();
+                        archive_entry_set_pathname(entry, metadata_path);
+                        archive_entry_set_size(entry, metadata_sz);
+                        archive_entry_set_filetype(entry, AE_IFREG);
+                        archive_entry_set_perm(entry, 0644);
+                        archive_write_header(m_Archive, entry);
+                        archive_write_data(m_Archive, metadata, metadata_sz);
+                        archive_entry_free(entry);
+                        free(metadata);
+                    }
+                }
+            }
         }
     }
     else
@@ -239,36 +277,50 @@ void FileCompressOperationJob::ProcessItem(const FlexChainedStringsChunk::node *
             m_SrcVFS->CreateFile(sourcepath, &src_file, 0);
             src_file->Open(VFSFile::OF_Read);
             
-            // metadata
-            size_t metadata_sz = 0;
-            void *metadata = BuildAppleDoubleFromEA(src_file, &metadata_sz);
-            if(metadata != 0) {
-                char metadata_path[MAXPATHLEN];
-                sprintf(metadata_path, "__MACOSX/._%s", itemname);
-                struct archive_entry *entry = archive_entry_new();
-                archive_entry_set_pathname(entry, metadata_path);
-                archive_entry_set_size(entry, metadata_sz);
-                archive_entry_set_filetype(entry, AE_IFREG);
-                archive_entry_set_perm(entry, 0644);
-                archive_write_header(m_Archive, entry);
-                archive_write_data(m_Archive, metadata, metadata_sz);
-                archive_entry_free(entry);
-                free(metadata);
-            }
-            
             struct archive_entry *entry = archive_entry_new();
             archive_entry_set_pathname(entry, itemname);
             archive_entry_copy_stat(entry, &st);
             archive_write_header(m_Archive, entry);
             
-            
             int buf_sz = 256*1024;
             char buf[buf_sz];
-            ssize_t ret;
-            while( (ret = src_file->Read(buf, buf_sz)) > 0 )
-                archive_write_data(m_Archive, buf, ret);
-            
+            ssize_t vfs_ret;
+            while( (vfs_ret = src_file->Read(buf, buf_sz)) > 0 )
+            {
+                ssize_t ls_ret = archive_write_data(m_Archive, buf, vfs_ret);
+                assert(ls_ret == vfs_ret);
+                
+                // update statistics
+                m_Stats.SetValue(m_TotalBytesProcessed);
+                m_TotalBytesProcessed += vfs_ret;
+            }
             archive_entry_free(entry);
+            
+            
+            // metadata
+            size_t metadata_sz = 0;
+            // will quick almost immediately if there's no EAs
+            void *metadata = BuildAppleDoubleFromEA(src_file, &metadata_sz);
+            if(metadata != 0) {
+                char item_path[MAXPATHLEN], item_name[MAXPATHLEN];
+                if(GetFilenameFromRelPath(itemname, item_name) && GetDirectoryContainingItemFromRelPath(itemname, item_path))
+                {
+                    char metadata_path[MAXPATHLEN];
+                    sprintf(metadata_path, "__MACOSX/%s._%s", item_path, item_name);
+                    //                    sprintf(metadata_path, "__MACOSX/%s!!%s", item_path, item_name);
+                    struct archive_entry *entry = archive_entry_new();
+                    archive_entry_set_pathname(entry, metadata_path);
+                    archive_entry_set_size(entry, metadata_sz);
+                    archive_entry_set_filetype(entry, AE_IFREG);
+                    archive_entry_set_perm(entry, 0644);
+                    archive_write_header(m_Archive, entry);
+                    archive_write_data(m_Archive, metadata, metadata_sz);
+                    archive_entry_free(entry);
+                    free(metadata);
+                }
+            }
         }
     }
+    
+//    printf("%d,\n", files_written);
 }

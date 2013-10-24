@@ -54,6 +54,8 @@ private:
     std::shared_ptr<VFSHost>        m_DstVFS;
     bool m_SkipAll;
     const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;
+    uint64_t                        m_SourceTotalBytes;
+    uint64_t                        m_TotalBytesProcessed;
     std::vector<uint8_t>            m_ItemFlags;
     struct archive                  *m_Archive;
     std::shared_ptr<VFSFile>        m_TargetFile;

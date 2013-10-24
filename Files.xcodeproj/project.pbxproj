@@ -17,7 +17,6 @@
 		B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */; };
 		B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
 		B52EB79317228B73004ABC2E /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = B52EB79217228B73004ABC2E /* Defaults.plist */; };
-		B55DB19A1717397F00E3610E /* OperationProgressValueTransformer.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1991717397F00E3610E /* OperationProgressValueTransformer.mm */; };
 		B55DB19C171B0E9700E3610E /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B55DB19B171B0E9700E3610E /* question_icon.png */; };
 		B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */; };
 		B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
@@ -275,8 +274,6 @@
 		B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentation.h; sourceTree = "<group>"; };
 		B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentation.mm; sourceTree = "<group>"; };
 		B52EB79217228B73004ABC2E /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
-		B55DB1981717397E00E3610E /* OperationProgressValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationProgressValueTransformer.h; sourceTree = "<group>"; };
-		B55DB1991717397F00E3610E /* OperationProgressValueTransformer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationProgressValueTransformer.mm; sourceTree = "<group>"; };
 		B55DB19B171B0E9700E3610E /* question_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = question_icon.png; sourceTree = "<group>"; };
 		B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionSheetController.h; sourceTree = "<group>"; };
 		B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionSheetController.mm; sourceTree = "<group>"; };
@@ -758,8 +755,6 @@
 		B5AD9CDF17030E550099BC6D /* SummaryView */ = {
 			isa = PBXGroup;
 			children = (
-				B55DB1981717397E00E3610E /* OperationProgressValueTransformer.h */,
-				B55DB1991717397F00E3610E /* OperationProgressValueTransformer.mm */,
 				CF76B307170146240066A49F /* GenericOperationView.h */,
 				CF76B308170146240066A49F /* GenericOperationView.mm */,
 				CF76B309170146240066A49F /* OperationsSummaryViewController.h */,
@@ -1524,7 +1519,6 @@
 				CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */,
 				CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */,
 				CF9D0EB717CC961100CB8146 /* archive_write_add_filter_bzip2.c in Sources */,
-				B55DB19A1717397F00E3610E /* OperationProgressValueTransformer.mm in Sources */,
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
 				CF9D0E9217CC961100CB8146 /* archive_read_set_format.c in Sources */,
 				CF9D0ED217CC961100CB8146 /* archive_write_set_format_pax.c in Sources */,

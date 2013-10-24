@@ -10,7 +10,6 @@
 #import "AppDelegate.h"
 #import "FontCache.h"
 #import "MainWindowController.h"
-#import "OperationProgressValueTransformer.h"
 #import "OperationsController.h"
 #import "Common.h"
 #import "FlexChainedStringsChunk.h"
@@ -56,8 +55,6 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
-    [NSValueTransformer setValueTransformer:[[OperationProgressValueTransformer alloc] init]
-                                    forName:@"OperationProgressValueTransformer"];
     
     if(m_MainWindows.empty())
         [self AllocateNewMainWindow]; // if there's no restored windows - we'll create a freshly new one

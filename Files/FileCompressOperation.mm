@@ -12,6 +12,7 @@
 @implementation FileCompressOperation
 {
     FileCompressOperationJob m_Job;
+    int m_LastInfoUpdateTime;    
 }
 
 - (id)initWithFiles:(FlexChainedStringsChunk*)_src_files // passing with ownership, operation will free it on finish
@@ -23,18 +24,26 @@
     self = [super initWithJob:&m_Job];
     if (self)
     {
-//        strcpy(m_OriginalPathRequest, _path);
-//        m_OperationStart = GetTimeInNanoseconds();
-//        m_Job.Init(_path, _rootpath, self);
-//        self.Caption = [NSString stringWithFormat:@"Creating directory \"%@\"",
-//                        [NSString stringWithUTF8String:_path]];
-        
         m_Job.Init(_src_files, _src_root, _src_vfs, _dst_root, _dst_vfs, self);
+        m_LastInfoUpdateTime = 0;
         
-        self.Caption = @"Compressing...";
+        self.Caption = @"Compressing..."; // TODO: need good title here, not a dummy
     }
     return self;
 }
 
+- (void)Update
+{
+    OperationStats &stats = m_Job.GetStats();
+    float progress = stats.GetProgress();
+    if (self.Progress != progress)
+        self.Progress = progress;
+    
+    int time = stats.GetTime();
+    if (time - m_LastInfoUpdateTime >= 1000) {
+        self.ShortInfo = [self ProduceDescriptionStringForBytesProcess];
+        m_LastInfoUpdateTime = time;
+    }
+}
 
 @end

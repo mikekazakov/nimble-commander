@@ -6,12 +6,64 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <algorithm>
 #import "Operation.h"
-
 #import "OperationJob.h"
 #import "OperationDialogController.h"
 
-#import <algorithm>
+static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
+{
+    if(_time < 60) // seconds
+    {
+        sprintf(_out, "%llu s", _time);
+    }
+    else if(_time < 60*60) // minutes
+    {
+        sprintf(_out, "%llu min", (_time + 30)/60);
+    }
+    else if(_time < 24*3600lu) // hours
+    {
+        sprintf(_out, "%llu h", (_time + 1800)/3600);
+    }
+    else if(_time < 31*86400lu) // days
+    {
+        sprintf(_out, "%llu d", (_time + 43200)/86400lu);
+    }
+}
+
+static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
+{
+    if(_sz < 1024) // bytes
+    {
+        sprintf(_out, "%3llu", _sz);
+    }
+    else if(_sz < 1024lu * 1024lu) // kilobytes
+    {
+        double size = _sz/1024.0;
+        sprintf(_out, "%.1f KB", size);
+    }
+    else if(_sz < 1024lu * 1048576lu) // megabytes
+    {
+        double size = (_sz/1024)/1024.0;
+        sprintf(_out, "%.1fMB", size);
+    }
+    else if(_sz < 1024lu * 1073741824lu) // gigabytes
+    {
+        double size = (_sz/1048576lu)/1024.0;
+        sprintf(_out, "%.1fGB", size);
+    }
+    else if(_sz < 1024lu * 1099511627776lu) // terabytes
+    {
+        double size = (_sz/1073741824lu)/1024.0;
+        sprintf(_out, "%.1f TB", size);
+    }
+    else if(_sz < 1024lu * 1125899906842624lu) // petabytes
+    {
+        double size = (_sz/1099511627776lu)/1024.0;
+        sprintf(_out, "%.1f PB", size);
+    }
+}
+
 
 const int MaxDialogs = 2;
 
@@ -38,6 +90,9 @@ const int MaxDialogs = 2;
         m_Job = _job;
         _DialogsCount = 0;
         _TargetPanel = nil;
+        _Progress = 0;
+        _IsIndeterminate = true;
+        
         for (int i = 0; i < MaxDialogs; ++i) m_Dialogs[i] = nil;
     }
     return self;
@@ -154,6 +209,42 @@ const int MaxDialogs = 2;
     m_Job->GetStats().ResumeTimeTracking();
     
     if (_dialog.Result == OperationDialogResult::Stop) [self Stop];
+}
+
+- (NSString*) ProduceDescriptionStringForBytesProcess
+{
+    OperationStats &stats = m_Job->GetStats();
+    int time = stats.GetTime();
+    uint64_t copy_speed = 0;
+    if (time)
+        copy_speed = stats.GetValue()*1000/time;
+    uint64_t eta_value = 0;
+    if (copy_speed)
+        eta_value = (stats.GetMaxValue() - stats.GetValue())/copy_speed;
+        
+    char copied[18] = {0}, total[18] = {0}, speed[18] = {0}, eta[18] = {0};
+    FormHumanReadableSizeRepresentation(stats.GetValue(), copied);
+    FormHumanReadableSizeRepresentation(stats.GetMaxValue(), total);
+    FormHumanReadableSizeRepresentation(copy_speed, speed);
+    if (copy_speed)
+        FormHumanReadableTimeRepresentation(eta_value, eta);
+
+    NSString *desc = nil;
+    if (copy_speed)
+        desc = [NSString stringWithFormat:@"%s of %s - %s/s - %s",
+                            copied, total, speed, eta];
+    else
+        desc = [NSString stringWithFormat:@"%s of %s - %s/s",
+                            copied, total, speed];
+    return desc;
+}
+
+
+- (void) setProgress:(float)Progress
+{
+    _Progress = Progress;
+    if(_IsIndeterminate == true && Progress > 0.001f)
+        self.IsIndeterminate = false;
 }
 
 @end

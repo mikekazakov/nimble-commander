@@ -13,7 +13,8 @@
 #import "Common.h"
 #import "sysinfo.h"
 
-uint64_t (*GetTimeInNanoseconds)() = nullptr;
+static uint64_t InitGetTimeInNanoseconds();
+uint64_t (*GetTimeInNanoseconds)() = InitGetTimeInNanoseconds;
 
 static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)
 {
@@ -160,30 +161,23 @@ bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size)
     return true;
 }
 
-bool GetExtensionFromPath(const char* _path, char *_buf)
-{
-    const char* last_sl  = strrchr(_path, '/');
-    const char* last_dot = strrchr(_path, '.');
-    if(!last_sl || !last_dot) return false;
-    if(last_dot == last_sl+1) return false;
-    if(last_dot == _path + strlen(_path) - 1) return false;
-    strcpy(_buf, last_dot+1);
-    return true;
-}
-
 static mach_timebase_info_data_t info_data;
-uint64_t GetTimeInNanosecondsScale()
+static uint64_t GetTimeInNanosecondsScale()
 {
     return mach_absolute_time()*info_data.numer/info_data.denom;
 }
 
-void InitGetTimeInNanoseconds()
+static uint64_t InitGetTimeInNanoseconds()
 {
-    mach_timebase_info(&info_data);
-    if (info_data.denom == info_data.numer)
-        GetTimeInNanoseconds = &mach_absolute_time;
-    else
-        GetTimeInNanoseconds = &GetTimeInNanosecondsScale;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        mach_timebase_info(&info_data);
+        if (info_data.denom == info_data.numer)
+            GetTimeInNanoseconds = &mach_absolute_time;
+        else
+            GetTimeInNanoseconds = &GetTimeInNanosecondsScale;
+    });
+    return GetTimeInNanoseconds();
 }
 
 void SyncMessageBoxUTF8(const char *_utf8_string)

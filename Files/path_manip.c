@@ -57,3 +57,14 @@ bool GetDirectoryContainingItemFromRelPath(const char* _path, char *_buf)
     _buf[last_sl - _path + 1] = 0;
     return true;
 }
+
+bool GetExtensionFromPath(const char* _path, char *_buf)
+{
+    const char* last_sl  = strrchr(_path, '/');
+    const char* last_dot = strrchr(_path, '.');
+    if(!last_sl || !last_dot) return false;
+    if(last_dot == last_sl+1) return false;
+    if(last_dot == _path + strlen(_path) - 1) return false;
+    strcpy(_buf, last_dot+1);
+    return true;
+}

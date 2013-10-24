@@ -28,9 +28,7 @@
 }
 
 + (void)initialize
-{
-    InitGetTimeInNanoseconds();
-    
+{    
     NSString *defaults_file = [[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"];
     NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];

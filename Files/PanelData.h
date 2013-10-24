@@ -156,7 +156,6 @@ private:
     DirSortIndT                             *m_EntriesByCustomSort; // custom defined sort
     PanelSortMode                           m_CustomSortMode;
     dispatch_group_t                        m_SortExecGroup;
-    dispatch_queue_t                        m_SortExecQueue;
     
     // statistics
     unsigned long                           m_TotalBytesInDirectory; // assuming regular files ONLY!

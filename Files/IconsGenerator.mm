@@ -281,7 +281,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     entry.SetCIcon(meta_no+1);
     
     auto sh_this = shared_from_this();
-    dispatch_group_async(m_WorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_group_async(m_WorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         Runner(meta, sh_this);
     });
     

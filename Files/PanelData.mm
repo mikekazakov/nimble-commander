@@ -21,7 +21,6 @@ PanelData::PanelData()
     m_CustomSortMode.sort = m_CustomSortMode.SortByName;
     m_CustomSortMode.show_hidden = false;
     m_SortExecGroup = dispatch_group_create();
-    m_SortExecQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     m_Listing = std::make_shared<VFSListing>("", std::shared_ptr<VFSHost>(0));
 }
 
@@ -38,12 +37,12 @@ void PanelData::Load(std::shared_ptr<VFSListing> _listing)
     m_Listing = _listing;
     
     // now sort our new data
-    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+    dispatch_group_async(m_SortExecGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         PanelSortMode sort;
         sort.sort = PanelSortMode::SortByRawCName;
         sort.sep_dirs = false;
         DoSort(m_Listing, m_EntriesByRawName, sort); });
-    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+    dispatch_group_async(m_SortExecGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         PanelSortMode mode;
         mode.sep_dirs = false;
         mode.sort = PanelSortMode::SortByName;
@@ -51,7 +50,7 @@ void PanelData::Load(std::shared_ptr<VFSListing> _listing)
         mode.case_sens = false;
         mode.numeric_sort = false;
         DoSort(m_Listing, m_EntriesByHumanName, mode); });
-    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+    dispatch_group_async(m_SortExecGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
     dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
     
@@ -109,7 +108,7 @@ void PanelData::ReLoad(std::shared_ptr<VFSListing> _listing)
     m_EntriesByRawName = dirbyrawcname;
     
     // now sort our new data with custom sortings
-    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+    dispatch_group_async(m_SortExecGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         PanelSortMode mode;
         mode.sep_dirs = false;
         mode.sort = PanelSortMode::SortByName;
@@ -117,7 +116,7 @@ void PanelData::ReLoad(std::shared_ptr<VFSListing> _listing)
         mode.case_sens = false;
         mode.numeric_sort = false;
         DoSort(m_Listing, m_EntriesByHumanName, mode); });
-    dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+    dispatch_group_async(m_SortExecGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
     dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
     
@@ -417,14 +416,14 @@ void PanelData::SetCustomSortMode(PanelSortMode _mode)
         {
             m_CustomSortMode = _mode;
             // need to update fast search indeces also, since there are structural changes
-            dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+            dispatch_group_async(m_SortExecGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
                 PanelSortMode mode;
                 mode.sep_dirs = false;
                 mode.sort = PanelSortMode::SortByName;
                 mode.show_hidden = m_CustomSortMode.show_hidden;
                 mode.case_sens = false;
                 DoSort(m_Listing, m_EntriesByHumanName, mode); });
-            dispatch_group_async(m_SortExecGroup, m_SortExecQueue, ^{
+            dispatch_group_async(m_SortExecGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
                 DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
             dispatch_group_wait(m_SortExecGroup, DISPATCH_TIME_FOREVER);
             

@@ -114,6 +114,8 @@ void FileCompressOperationJob::Do()
 
         m_TargetFile->Close();
     
+        if(CheckPauseOrStop())
+            m_DstVFS->Unlink(m_TargetFileName, 0);        
     }
     
     SetCompleted();
@@ -186,7 +188,7 @@ retry_stat:
     if(stat_ret == VFSError::Ok) {
         if(S_ISREG(stat_buffer.st_mode))
         {
-            if(stat_buffer.st_size < 0xFFFF)
+            if(stat_buffer.st_size < 0xFFFFFFFFul)
             { // currently we don't support Zip64 so maximum file size we can handle is 4Gb
                 m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
                 m_ScannedItemsLast = m_ScannedItemsLast->AddString(_short_path, _prefix);

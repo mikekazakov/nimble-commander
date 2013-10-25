@@ -116,3 +116,8 @@ int VFSHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)
 {
     return VFSError::NotSupported;
 }
+
+int VFSHost::Unlink(const char *_path, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}

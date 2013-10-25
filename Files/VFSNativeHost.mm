@@ -346,3 +346,11 @@ int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_ch
 
     return 0;
 }
+
+int VFSNativeHost::Unlink(const char *_path, bool (^_cancel_checker)())
+{
+    int ret = unlink(_path);
+    if(ret == 0)
+        return 0;
+    return VFSError::FromErrno(errno);
+}

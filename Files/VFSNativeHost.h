@@ -56,6 +56,8 @@ public:
                                              void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                              ) override;
     
+    virtual int Unlink(const char *_path, bool (^_cancel_checker)()) override;
+    
     std::shared_ptr<const VFSNativeHost> SharedPtr() const {return std::static_pointer_cast<const VFSNativeHost>(VFSHost::SharedPtr());}
     std::shared_ptr<VFSNativeHost> SharedPtr() {return std::static_pointer_cast<VFSNativeHost>(VFSHost::SharedPtr());}
     static std::shared_ptr<VFSNativeHost> SharedHost();

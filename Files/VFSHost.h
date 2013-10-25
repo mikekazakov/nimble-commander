@@ -98,6 +98,8 @@ public:
                      int _flags,
                      bool (^_cancel_checker)());
     
+    virtual int Unlink(const char *_path, bool (^_cancel_checker)());
+    
     // return value 0 means error or unsupported for this VFS
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());
     virtual void StopDirChangeObserving(unsigned long _ticket);

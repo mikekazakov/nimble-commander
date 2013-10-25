@@ -42,7 +42,18 @@ bool GetDirectoryContainingItemFromRelPath(const char* _path, char *_buf);
  * It will not extract extensions from filenames like ".filename" or "filename."
  */
 bool GetExtensionFromPath(const char* _path, char *_buf);    
-    
+
+/**
+ * IsPathWithTrailingSlash actually does _path[strlen(_path)-1] == '/' and some prior checking
+ */
+inline bool IsPathWithTrailingSlash(const char* _path)
+{
+    if(_path[0] == 0)
+        return false;
+        
+    return _path[ strlen(_path) - 1 ] == '/';
+}
+
 #ifdef __cplusplus
 }
 #endif

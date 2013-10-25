@@ -104,7 +104,7 @@ bool VFSNativeHost::FindLastValidItem(const char *_orig_path,
     
     char tmp[MAXPATHLEN*8];
     strcpy(tmp, _orig_path);
-    if(tmp[strlen(tmp)-1] == '/') tmp[strlen(tmp)-1] = 0; // cut trailing slash if any
+    if(IsPathWithTrailingSlash(tmp)) tmp[strlen(tmp)-1] = 0; // cut trailing slash if any
     
     while(true)
     {

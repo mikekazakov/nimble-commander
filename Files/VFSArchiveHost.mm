@@ -178,7 +178,7 @@ int VFSArchiveHost::ReadArchiveListing()
 
 VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
 {
-    assert(_path_with_tr_sl[strlen(_path_with_tr_sl)-1] == '/');
+    assert(IsPathWithTrailingSlash(_path_with_tr_sl));
     auto i = m_PathToDir.find(_path_with_tr_sl);
     if(i != m_PathToDir.end())
         return (*i).second;

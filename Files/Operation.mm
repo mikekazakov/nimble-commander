@@ -243,7 +243,7 @@ const int MaxDialogs = 2;
 - (void) setProgress:(float)Progress
 {
     _Progress = Progress;
-    if(_IsIndeterminate == true && Progress > 0.001f)
+    if(_IsIndeterminate == true && Progress > 0.0001f)
         self.IsIndeterminate = false;
 }
 

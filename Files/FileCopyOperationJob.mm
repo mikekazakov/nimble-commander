@@ -274,8 +274,8 @@ void FileCopyOperationJob::ScanDestination()
             else            m_WorkMode = RenameToFixedPath;
         }
         else
-        {            
-            if(m_Destination[strlen(m_Destination)-1] == '/' )
+        {
+            if(IsPathWithTrailingSlash(m_Destination))
             {
                 // user want to copy/rename/move file(s) to some directory, like "Abra/Carabra/" or "/bin/abra/"
                 if(m_Destination[0] != '/')
@@ -553,8 +553,8 @@ void FileCopyOperationJob::ProcessCopyToPathPreffix(const char *_path, int _numb
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];    
     if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir)
     {
-        assert(m_Destination[strlen(m_Destination)-1] == '/');
-        assert(_path[strlen(_path)-1] == '/');
+        assert(IsPathWithTrailingSlash(m_Destination));
+        assert(IsPathWithTrailingSlash(_path));
         
         strcpy(destinationpath, m_Destination);
         strcat(destinationpath, _path);
@@ -574,7 +574,7 @@ void FileCopyOperationJob::ProcessCopyToPathPreffix(const char *_path, int _numb
         strcat(sourcepath, _path);
         
         // compose dest name
-        assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
+        assert(IsPathWithTrailingSlash(m_Destination)); // just a sanity check.
         strcpy(destinationpath, m_Destination);
         strcat(destinationpath, _path);
         
@@ -592,8 +592,8 @@ void FileCopyOperationJob::ProcessCopyToFixedPath(const char *_path, int _number
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
     if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir)
     {
-        assert(m_Destination[strlen(m_Destination)-1] != '/');
-        assert(_path[strlen(_path)-1] == '/');
+        assert(!IsPathWithTrailingSlash(m_Destination));
+        assert(IsPathWithTrailingSlash(_path));
         
         strcpy(destinationpath, m_Destination);
         // here we need to find if user wanted just to copy a single top-level directory
@@ -651,7 +651,7 @@ void FileCopyOperationJob::ProcessMoveToFixedPath(const char *_path, int _number
     char sourcepath[MAXPATHLEN];
     if(!(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir))
     {
-        assert(_path[strlen(_path)-1] != '/'); // sanity check
+        assert(!IsPathWithTrailingSlash(_path)); // sanity check
         // compose real src name
         strcpy(sourcepath, m_SourceDirectory);
         strcat(sourcepath, _path);
@@ -667,7 +667,7 @@ void FileCopyOperationJob::ProcessMoveToFixedPath(const char *_path, int _number
     }
     else
     {
-        assert(_path[strlen(_path)-1] == '/'); // sanity check
+        assert(IsPathWithTrailingSlash(_path)); // sanity check
         // compose real src name
         strcpy(sourcepath, m_SourceDirectory);
         strcat(sourcepath, _path);
@@ -685,13 +685,13 @@ void FileCopyOperationJob::ProcessMoveToPathPreffix(const char *_path, int _numb
     
     if(!(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir))
     {
-        assert(_path[strlen(_path)-1] != '/'); // sanity check
+        assert(!IsPathWithTrailingSlash(_path)); // sanity check
         // compose real src name
         strcpy(sourcepath, m_SourceDirectory);
         strcat(sourcepath, _path);
     
         // compose dest name
-        assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
+        assert(IsPathWithTrailingSlash(m_Destination)); // just a sanity check.
         strcpy(destinationpath, m_Destination);
         strcat(destinationpath, _path);
         assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen
@@ -706,13 +706,13 @@ void FileCopyOperationJob::ProcessMoveToPathPreffix(const char *_path, int _numb
     }
     else
     {
-        assert(_path[strlen(_path)-1] == '/'); // sanity check
+        assert(IsPathWithTrailingSlash(_path)); // sanity check
         // compose real src name
         strcpy(sourcepath, m_SourceDirectory);
         strcat(sourcepath, _path);
         
         // compose dest name
-        assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
+        assert(IsPathWithTrailingSlash(m_Destination)); // just a sanity check.
         strcpy(destinationpath, m_Destination);
         strcat(destinationpath, _path);
         assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen

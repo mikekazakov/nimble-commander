@@ -336,7 +336,7 @@ void *BuildAppleDoubleFromEA(std::shared_ptr<VFSFile> _file,
         return 0;
     
     static const int max_eas = 64;
-    __block struct {
+    struct {
         char name[256];
         int name_len;
         void *data;

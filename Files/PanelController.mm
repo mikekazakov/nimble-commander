@@ -563,7 +563,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             char junct[1024];
             strcpy(junct, m_HostsStack.back()->JunctionPath());
             assert(strlen(junct) > 0);
-            if( junct[strlen(junct)-1] == '/' ) junct[strlen(junct)-1] = 0;
+            if(IsPathWithTrailingSlash(junct)) junct[strlen(junct)-1] = 0;
             char junct_entry[1024];
             char directory_path[1024];
             strcpy(junct_entry, strrchr(junct, '/')+1);

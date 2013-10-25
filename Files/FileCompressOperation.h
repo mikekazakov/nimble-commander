@@ -9,6 +9,7 @@
 #import "FlexChainedStringsChunk.h"
 #import "VFS.h"
 #import "Operation.h"
+#import "OperationDialogAlert.h"
 
 @interface FileCompressOperation : Operation
 
@@ -18,5 +19,11 @@
             dstroot:(const char*)_dst_root
              dstvfs:(std::shared_ptr<VFSHost>)_dst_vfs;
 
+
+- (OperationDialogAlert *)OnCantAccessSourceItem:(NSError*)_error forPath:(const char *)_path;
+- (OperationDialogAlert *)OnCantAccessSourceDir:(NSError*)_error forPath:(const char *)_path;
+- (OperationDialogAlert *)OnReadError:(NSError*)_error forPath:(const char *)_path;
+- (OperationDialogAlert *)OnWriteError:(NSError*)_error;
+- (void) SayAbout4Gb:(const char*) _path;
 
 @end

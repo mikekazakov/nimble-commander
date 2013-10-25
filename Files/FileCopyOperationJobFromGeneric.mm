@@ -246,7 +246,7 @@ void FileCopyOperationJobFromGeneric::ProcessItem(const FlexChainedStringsChunk:
     strcat(sourcepath, itemname);
 
     // compose dest name
-    assert(m_Destination[strlen(m_Destination)-1] == '/'); // just a sanity check.
+    assert(IsPathWithTrailingSlash(m_Destination)); // just a sanity check.
     strcpy(destinationpath, m_Destination);
     strcat(destinationpath, itemname);
     
@@ -354,7 +354,7 @@ statsource:
     ret = m_SrcHost->Stat(_src, src_stat_buffer, 0, 0);
     if(ret < 0)
     { // failed to stat source file
-        if(m_SkipAll) goto statsource;
+        if(m_SkipAll) goto cleanup;
         int result = [[m_Operation OnCopyCantAccessSrcFile:VFSError::ToNSError(ret) ForFile:_src] WaitForResult];
         if(result == OperationDialogResult::Retry) goto createsource;
         if(result == OperationDialogResult::Skip) goto cleanup;

@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFSListing.h"
 #import <assert.h>
+#import "VFSListing.h"
+#import "Common.h"
 
 VFSListing::VFSListing(const char* _relative_path, std::shared_ptr<VFSHost> _host):
     m_RelativePath(_relative_path),
@@ -69,7 +70,7 @@ void VFSListing::ComposeFullPathForEntry(size_t _entry_position, char *_buf) con
         strcpy(_buf, RelativePath());
         if(strcmp(_buf, "/") != 0)
         {
-            if(_buf[strlen(_buf)-1] == '/') _buf[strlen(_buf)-1] = 0; // cut trailing slash
+            if(IsPathWithTrailingSlash(_buf)) _buf[strlen(_buf)-1] = 0; // cut trailing slash
             char *s = strrchr(_buf, '/');
             if(s != _buf) *s = 0;
             else *(s+1) = 0;

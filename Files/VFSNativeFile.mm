@@ -39,7 +39,7 @@ int VFSNativeFile::Open(int _open_flags)
     m_FD = open(RelativePath(), openflags, 0640);
     if(m_FD < 0)
     {
-        return VFSError::FromErrno(errno);
+        return SetLastError(VFSError::FromErrno(errno));
     }
     
     fcntl(m_FD, F_SETFL, fcntl(m_FD, F_GETFL) & ~O_NONBLOCK);
@@ -48,12 +48,6 @@ int VFSNativeFile::Open(int _open_flags)
     m_OpenFlags = _open_flags;
     m_Size = lseek(m_FD, 0, SEEK_END);
     lseek(m_FD, 0, SEEK_SET);
-    
-//    NSLog(@"%u", XAttrCount());
-/*    XAttrIterateNames(^bool(const char*_name){
-        NSLog(@"%s", _name);
-        return true;
-    });*/
     
     return VFSError::Ok;
 }
@@ -78,7 +72,7 @@ int VFSNativeFile::Close()
 
 ssize_t VFSNativeFile::Read(void *_buf, size_t _size)
 {
-    if(m_FD < 0) return VFSError::InvalidCall;
+    if(m_FD < 0) return SetLastError(VFSError::InvalidCall);
     if(Eof())    return 0;
     
     ssize_t ret = read(m_FD, _buf, _size);
@@ -87,23 +81,23 @@ ssize_t VFSNativeFile::Read(void *_buf, size_t _size)
         m_Position += ret;
         return ret;
     }
-    return VFSError::FromErrno(errno);
+    return SetLastError(VFSError::FromErrno(errno));
 }
 
 ssize_t VFSNativeFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if(m_FD < 0)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
     ssize_t ret = pread(m_FD, _buf, _size, _pos);
     if(ret < 0)
-        return VFSError::FromErrno(errno);
+        return SetLastError(VFSError::FromErrno(errno));
     return ret;
 }
 
 off_t VFSNativeFile::Seek(off_t _off, int _basis)
 {
     if(m_FD < 0)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
 //    printf("seek:%lld/%d \n", _off, _basis);
 //    assert(m_FD >= 0);
     
@@ -113,13 +107,13 @@ off_t VFSNativeFile::Seek(off_t _off, int _basis)
         m_Position = ret;
         return ret;
     }
-    return VFSError::FromErrno(errno);
+    return SetLastError(VFSError::FromErrno(errno));
 }
 
 ssize_t VFSNativeFile::Write(const void *_buf, size_t _size)
 {
     if(m_FD < 0)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
 
     ssize_t ret = write(m_FD, _buf, _size);
     if(ret >= 0)
@@ -129,7 +123,7 @@ ssize_t VFSNativeFile::Write(const void *_buf, size_t _size)
         m_Position += ret;
         return ret;
     }
-    return VFSError::FromErrno(errno);
+    return SetLastError(VFSError::FromErrno(errno));
 }
 
 VFSFile::ReadParadigm VFSNativeFile::GetReadParadigm() const
@@ -155,14 +149,14 @@ VFSFile::WriteParadigm VFSNativeFile::GetWriteParadigm() const
 ssize_t VFSNativeFile::Pos() const
 {
     if(m_FD < 0)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
     return m_Position;
 }
 
 ssize_t VFSNativeFile::Size() const
 {
     if(m_FD < 0)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
     return m_Size;
 }
 
@@ -233,11 +227,11 @@ void VFSNativeFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name)
 ssize_t VFSNativeFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
 {
     if(m_FD < 0)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
 
     ssize_t ret = fgetxattr(m_FD, _xattr_name, _buffer, _buf_size, 0, 0);
     if(ret < 0)
-        return VFSError::FromErrno(errno);
+        return SetLastError(VFSError::FromErrno(errno));
     
     return ret;
 }

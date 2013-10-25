@@ -28,6 +28,10 @@ public:
               std::shared_ptr<VFSHost> _dst_vfs,
               FileCompressOperation *_operation);
     
+    
+    const char *TargetFileName() const;
+    unsigned FilesAmount() const;
+    bool IsDoneScanning() const;
 private:
     virtual void Do();
     void ScanItems();
@@ -52,6 +56,8 @@ private:
     std::shared_ptr<VFSHost>        m_SrcVFS;
     char                            m_DstRoot[MAXPATHLEN];
     std::shared_ptr<VFSHost>        m_DstVFS;
+    char                            m_TargetFileName[MAXPATHLEN];
+    bool                            m_DoneScanning;
     bool m_SkipAll;
     const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;
     uint64_t                        m_SourceTotalBytes;

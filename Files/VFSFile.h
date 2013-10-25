@@ -102,6 +102,11 @@ public:
     virtual bool Eof() const;
     
     /**
+     * LastError() return last VFSError occured for this VFSFile. Overwritten only on error occurs, normal workflow won't overwrite last error code.
+     */
+    int LastError() const;
+    
+    /**
      * XAttrCount() should be always available, returning 0 on non-supported case.
      * This function may cause blocking I/O.
      */
@@ -149,12 +154,32 @@ public:
     inline std::shared_ptr<const VFSFile> SharedPtr() const { return shared_from_this(); }
     const char* RelativePath() const;
     std::shared_ptr<VFSHost> Host() const;
+protected:
+    /**
+     * Sets a new last error code and returns it for convenience.
+     */
+    int SetLastError(int _error) const;
+    
 private:
     std::string m_RelativePath;
     std::shared_ptr<VFSHost> m_Host;
+
+    /**
+     * m_LastError should be set when any error occurs. This storage is not thread-safe - concurrent accesses may overwrite it.
+     */
+    mutable int m_LastError;
     
     // forbid copying
     VFSFile(const VFSFile&) = delete;
     void operator=(const VFSFile&) = delete;
 };
 
+inline int VFSFile::SetLastError(int _error) const
+{
+    return m_LastError = _error;
+}
+
+inline int VFSFile::LastError() const
+{
+    return m_LastError;
+}

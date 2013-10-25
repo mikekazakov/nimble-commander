@@ -153,7 +153,7 @@ void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPAT
     {
         // need to cut the last slash
         strcpy(_buf, m_Listing->RelativePath());
-        if(_buf[strlen(_buf)-1] == '/') _buf[strlen(_buf)-1] = 0; // cut trailing slash
+        if(IsPathWithTrailingSlash(_buf)) _buf[strlen(_buf)-1] = 0; // cut trailing slash
         char *s = strrchr(_buf, '/');
         if(s != _buf) *s = 0;
         else *(s+1) = 0;
@@ -217,7 +217,7 @@ void PanelData::GetDirectoryPath(char _buf[__DARWIN_MAXPATHLEN]) const
         return;
     }
     strcpy(_buf, m_Listing->RelativePath());
-    if(_buf[strlen(_buf)-1] == '/' && strlen(_buf) > 1)
+    if(IsPathWithTrailingSlash(_buf) && strlen(_buf) > 1)
         _buf[strlen(_buf)-1] = 0; // TODO: optimize me later
 //    char *slash = strrchr(_buf, '/');
 //    if (slash && slash != _buf) *slash = 0;

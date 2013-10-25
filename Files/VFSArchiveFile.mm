@@ -31,13 +31,13 @@ VFSArchiveFile::~VFSArchiveFile()
 int VFSArchiveFile::Open(int _open_flags)
 {
     if( strlen(RelativePath()) < 2 || RelativePath()[0] != '/' )
-        return VFSError::NotFound;
+        return SetLastError(VFSError::NotFound);
     
     auto host = std::dynamic_pointer_cast<VFSArchiveHost>(Host());
     
     unsigned long myuid = host->ItemUID(RelativePath());
     if(myuid == 0)
-        return VFSError::NotFound;
+        return SetLastError(VFSError::NotFound);
     m_UID = myuid;
     
 //    unsigned long scuid = host->SeekCachePosition();
@@ -51,7 +51,7 @@ int VFSArchiveFile::Open(int _open_flags)
     
         res = m_ArFile->Open(VFSFile::OF_Read);
         if(res < 0)
-            return res;
+            return SetLastError(res);
     
         m_Mediator = std::make_shared<VFSArchiveMediator>();
         m_Mediator->file = m_ArFile;
@@ -66,7 +66,7 @@ int VFSArchiveFile::Open(int _open_flags)
         if(res < 0)
         {
             Close();
-            return VFSError::FromLibarchive(archive_errno(m_Arc));
+            return SetLastError(VFSError::FromLibarchive(archive_errno(m_Arc)));
         }
         bool found = false;
         struct archive_entry *entry;
@@ -83,7 +83,7 @@ int VFSArchiveFile::Open(int _open_flags)
         if(!found)
         {
             Close();
-            return VFSError::NotFound;
+            return SetLastError(VFSError::NotFound);
         }
         
         m_Entry = entry;
@@ -114,7 +114,7 @@ int VFSArchiveFile::Open(int _open_flags)
         if(!found)
         {
             archive_read_free(sc->arc);
-            return VFSError::NotFound;
+            return SetLastError(VFSError::NotFound);
         }
 
         m_Entry = entry;
@@ -180,14 +180,14 @@ VFSFile::ReadParadigm VFSArchiveFile::GetReadParadigm() const
 ssize_t VFSArchiveFile::Pos() const
 {
     if(!m_Arc)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
     return m_Position;
 }
 
 ssize_t VFSArchiveFile::Size() const
 {
     if(!m_Arc)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
     return m_Size;
 }
 
@@ -200,7 +200,7 @@ bool VFSArchiveFile::Eof() const
 
 ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
 {
-    if(m_Arc < 0) return VFSError::InvalidCall;
+    if(m_Arc < 0) return SetLastError(VFSError::InvalidCall);
     if(Eof())     return 0;
     
     assert(_buf != 0);
@@ -211,7 +211,7 @@ ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
         // TODO: libarchive error - convert it into our errors
         printf("libarchive error: %s\n", archive_error_string(m_Arc));
 //        return -1;
-        return VFSError::FromLibarchive(archive_errno(m_Arc));
+        return SetLastError(VFSError::FromLibarchive(archive_errno(m_Arc)));
     }
     
     return size;
@@ -236,7 +236,7 @@ void VFSArchiveFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name
 ssize_t VFSArchiveFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
 {
     if(!m_Arc || !_xattr_name)
-        return VFSError::InvalidCall;
+        return SetLastError(VFSError::InvalidCall);
     
     for(int i = 0; i < m_EACount; ++i)
         if(strcmp(m_EA[i].name, _xattr_name) == 0)
@@ -249,5 +249,5 @@ ssize_t VFSArchiveFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t 
             return sz;
         }
 
-    return VFSError::NotFound;
+    return SetLastError(VFSError::NotFound);
 }

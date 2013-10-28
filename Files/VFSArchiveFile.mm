@@ -33,6 +33,9 @@ int VFSArchiveFile::Open(int _open_flags)
     if( strlen(RelativePath()) < 2 || RelativePath()[0] != '/' )
         return SetLastError(VFSError::NotFound);
     
+    if(_open_flags & VFSFile::OF_Write)
+        return SetLastError(VFSError::NotSupported); // ArchiveFile is Read-Only
+    
     auto host = std::dynamic_pointer_cast<VFSArchiveHost>(Host());
     
     unsigned long myuid = host->ItemUID(RelativePath());

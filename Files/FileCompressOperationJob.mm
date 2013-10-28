@@ -84,9 +84,9 @@ void FileCompressOperationJob::Init(FlexChainedStringsChunk* _src_files,
     m_SrcVFS = _src_vfs;
     m_DstVFS = _dst_vfs;
     strcpy(m_SrcRoot, _src_root);
-    if(m_SrcRoot[strlen(m_SrcRoot)-1] != '/') strcat(m_SrcRoot, "/");
+    if(!IsPathWithTrailingSlash(m_SrcRoot)) strcat(m_SrcRoot, "/");
     strcpy(m_DstRoot, _dst_root);
-    if(m_DstRoot[strlen(m_DstRoot)-1] != '/') strcat(m_DstRoot, "/");
+    if(!IsPathWithTrailingSlash(m_DstRoot)) strcat(m_DstRoot, "/");
     m_Operation = _operation;
 }
 
@@ -115,7 +115,7 @@ void FileCompressOperationJob::Do()
         m_TargetFile->Close();
     
         if(CheckPauseOrStop())
-            m_DstVFS->Unlink(m_TargetFileName, 0);        
+            m_DstVFS->Unlink(m_TargetFileName, 0);
     }
     
     SetCompleted();

@@ -30,7 +30,7 @@ struct VFSArchiveMediator
 struct VFSArchiveSeekCache
 {
     struct archive *arc;
-    unsigned long uid; // uid of a last read item. if client want to use such cache, their's uid should be bigger than uid
+    uint32_t uid; // uid of a last read item. if client want to use such cache, their's uid should be bigger than uid
     std::shared_ptr<VFSArchiveMediator> mediator; // includes a valid opened VFSFile;
 };
 
@@ -38,7 +38,7 @@ struct VFSArchiveDirEntry
 {
     std::string name; // optimize
     struct stat st;
-    unsigned long aruid; // unique number inside archive in same order as appearance in archive
+    uint32_t aruid; // unique number inside archive in same order as appearance in archive
 };
 
 struct VFSArchiveDir

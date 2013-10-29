@@ -38,7 +38,7 @@ int VFSArchiveFile::Open(int _open_flags)
     
     auto host = std::dynamic_pointer_cast<VFSArchiveHost>(Host());
     
-    unsigned long myuid = host->ItemUID(RelativePath());
+    uint32_t myuid = host->ItemUID(RelativePath());
     if(myuid == 0)
         return SetLastError(VFSError::NotFound);
     m_UID = myuid;

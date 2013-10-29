@@ -65,14 +65,14 @@ public:
     // Caching section - to reduce seeking overhead:
     
     // return zero on not found
-    unsigned long ItemUID(const char* _filename);
+    uint32_t ItemUID(const char* _filename);
 
     // destruct call - will override currently stored one
     void CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc);
     
     // destructive call - host will no longer hold returned seek cache
     // if there're no caches, that can satisfy this call - zero ptr is returned
-    std::shared_ptr<VFSArchiveSeekCache> SeekCache(unsigned long _requested_item);
+    std::shared_ptr<VFSArchiveSeekCache> SeekCache(uint32_t _requested_item);
     
     
     std::shared_ptr<VFSFile> ArFile() const;
@@ -94,7 +94,7 @@ private:
     std::map<std::string, VFSArchiveDir*>   m_PathToDir;
     uint64_t                                m_ArchiveFileSize;
     uint64_t                                m_ArchivedFilesTotalSize;
-    unsigned long                           m_LastItemUID;
+    uint32_t                                m_LastItemUID;
     
     std::list<std::shared_ptr<VFSArchiveSeekCache>> m_SeekCaches;
     

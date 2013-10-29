@@ -20,12 +20,12 @@ OperationStats::OperationStats()
     m_MaxValue(1),
     m_CurrentItemChanged(false)
 {
-    pthread_mutex_init(&m_Mutex, nullptr);
+    m_ControlQue = dispatch_queue_create("info.filesmanager.OperationStats", 0);
 }
 
 OperationStats::~OperationStats()
 {
-    pthread_mutex_destroy(&m_Mutex);
+    dispatch_release(m_ControlQue);
 }
 
 void OperationStats::SetMaxValue(uint64_t _max_value)
@@ -83,57 +83,47 @@ bool OperationStats::IsCurrentItemChanged()
 
 void OperationStats::StartTimeTracking()
 {
-    pthread_mutex_lock(&m_Mutex);
-    
-    assert(!m_Started);
-    
-    m_StartTime = GetTimeInNanoseconds();
-    
-    if (m_Paused) m_PauseTime = m_StartTime;
-    
-    m_Started = true;
-    
-    pthread_mutex_unlock(&m_Mutex);
+    dispatch_sync(m_ControlQue, ^{
+        assert(!m_Started);
+        m_StartTime = GetTimeInNanoseconds();
+        if (m_Paused)
+            m_PauseTime = m_StartTime;
+        m_Started = true;
+    });
 }
 
 void OperationStats::PauseTimeTracking()
 {
-    pthread_mutex_lock(&m_Mutex);
-    
-    if (++m_Paused == 1)
-        m_PauseTime = GetTimeInNanoseconds();
-
-    pthread_mutex_unlock(&m_Mutex);
+    dispatch_sync(m_ControlQue, ^{
+        if (++m_Paused == 1)
+            m_PauseTime = GetTimeInNanoseconds();
+    });
 }
 
 void OperationStats::ResumeTimeTracking()
 {
-    pthread_mutex_lock(&m_Mutex);
-    
-    assert(m_Paused >= 1);
-    if (--m_Paused == 0)
-    {
-        uint64_t pause_duration = GetTimeInNanoseconds() - m_PauseTime;
-        m_StartTime += pause_duration;
-    }
-    
-    pthread_mutex_unlock(&m_Mutex);
+    dispatch_sync(m_ControlQue, ^{
+        assert(m_Paused >= 1);
+        if (--m_Paused == 0)
+        {
+            uint64_t pause_duration = GetTimeInNanoseconds() - m_PauseTime;
+            m_StartTime += pause_duration;
+        }
+    });
 }
 
 int OperationStats::GetTime() const
 {
-    pthread_mutex_lock(&m_Mutex);
+    __block uint64_t time;
     
-    uint64_t time;
-    
-    if (!m_Started)
-        time = 0;
-    else if (m_Paused)
-        time = m_PauseTime - m_StartTime;
-    else
-        time = GetTimeInNanoseconds() - m_StartTime;
- 
-    pthread_mutex_unlock(&m_Mutex);
+    dispatch_sync(m_ControlQue, ^{
+        if (!m_Started)
+            time = 0;
+        else if (m_Paused)
+            time = m_PauseTime - m_StartTime;
+        else
+            time = GetTimeInNanoseconds() - m_StartTime;
+    });
     
     return int(time/1000000);
 }

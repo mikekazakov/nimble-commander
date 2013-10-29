@@ -92,7 +92,7 @@ int VFSArchiveHost::Open()
 int VFSArchiveHost::ReadArchiveListing()
 {
     assert(m_Arc != 0);
-    unsigned long aruid = 1;
+    uint32_t aruid = 1;
     VFSArchiveDir *root = new VFSArchiveDir;
     root->full_path = "/";
     root->name_in_parent  = "";
@@ -406,7 +406,7 @@ int VFSArchiveHost::IterateDirectoryListing(const char *_path, bool (^_handler)(
     return VFSError::Ok;
 }
 
-unsigned long VFSArchiveHost::ItemUID(const char* _filename)
+uint32_t VFSArchiveHost::ItemUID(const char* _filename)
 {
     auto it = FindEntry(_filename);
     if(it)
@@ -477,29 +477,21 @@ void VFSArchiveHost::CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc)
     });
 }
 
-/*unsigned long VFSArchiveHost::SeekCachePosition()
-{
-    return m_SeekCache.get() ? m_SeekCache->uid : 0;
-}*/
-
-std::shared_ptr<VFSArchiveSeekCache> VFSArchiveHost::SeekCache(unsigned long _requested_item)
+std::shared_ptr<VFSArchiveSeekCache> VFSArchiveHost::SeekCache(uint32_t _requested_item)
 {
     if(_requested_item == 0)
         return 0;
-/*    assert(m_SeekCache.get());
-    auto t = m_SeekCache;
-    m_SeekCache.reset();
-    return t;*/
+
     __block std::shared_ptr<VFSArchiveSeekCache> res;
     dispatch_sync(m_SeekCacheControl, ^{
         // choose the closest if any
-        unsigned long best_delta = -1;
+        uint32_t best_delta = -1;
         auto best = m_SeekCaches.end();
         for(auto i = m_SeekCaches.begin(); i != m_SeekCaches.end(); ++i)
         {
             if((*i)->uid < _requested_item)
             {
-                unsigned long delta = _requested_item - (*i)->uid;
+                uint32_t delta = _requested_item - (*i)->uid;
                 if(delta < best_delta)
                 {
                     best_delta = delta;

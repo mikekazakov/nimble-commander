@@ -35,7 +35,7 @@ static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char* _p
 
 static bool WriteEAsIfAny(std::shared_ptr<VFSFile> _src, struct archive *_a, const char *_source_fn)
 {
-    assert(_source_fn[strlen(_source_fn)-1] != '/');
+    assert(!IsPathWithTrailingSlash(_source_fn));
     
     size_t metadata_sz = 0;
     // will quick almost immediately if there's no EAs
@@ -100,22 +100,23 @@ void FileCompressOperationJob::Do()
         m_Stats.SetMaxValue(m_SourceTotalBytes);
         
         m_DstVFS->CreateFile(m_TargetFileName, &m_TargetFile, 0);
-        m_TargetFile->Open(VFSFile::OF_Write | VFSFile::OF_Create);
+        if(m_TargetFile->Open(VFSFile::OF_Write | VFSFile::OF_Create) == 0)
+        {
+            m_Archive = archive_write_new();
+            archive_write_set_format_zip(m_Archive);
+            archive_write_open(m_Archive, this, 0, la_archive_write_callback, 0);
+            archive_write_set_bytes_in_last_block(m_Archive, 1);
+
+            ProcessItems();
+
+            archive_write_close(m_Archive);
+            archive_write_free(m_Archive);
+
+            m_TargetFile->Close();
     
-        m_Archive = archive_write_new();
-        archive_write_set_format_zip(m_Archive);
-        archive_write_open(m_Archive, this, 0, la_archive_write_callback, 0);
-        archive_write_set_bytes_in_last_block(m_Archive, 1);
-
-        ProcessItems();
-
-        archive_write_close(m_Archive);
-        archive_write_free(m_Archive);
-
-        m_TargetFile->Close();
-    
-        if(CheckPauseOrStop())
-            m_DstVFS->Unlink(m_TargetFileName, 0);
+            if(CheckPauseOrStop())
+                m_DstVFS->Unlink(m_TargetFileName, 0);
+        }
     }
     
     SetCompleted();

@@ -49,7 +49,7 @@ private:
     volatile uint64_t m_Value;
     volatile uint64_t m_MaxValue;
     
-    mutable pthread_mutex_t m_Mutex;
+    dispatch_queue_t m_ControlQue;
     
     OperationStats(const OperationStats&) = delete;
     void operator=(const OperationStats&) = delete;

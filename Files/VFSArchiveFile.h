@@ -41,6 +41,6 @@ private:
     std::shared_ptr<VFSArchiveMediator> m_Mediator;
     ssize_t m_Position;
     ssize_t m_Size;
-    unsigned long m_UID;
+    uint32_t m_UID;
     bool    m_ShouldCommitSC;
 };

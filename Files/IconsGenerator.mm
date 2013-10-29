@@ -90,19 +90,25 @@ static NSImageRep *ProduceThumbnailForVFS(const char *_path,
 
     if(rename(pattern_buf, filename_ext) == 0)
     {
-        NSString *item_path = [NSString stringWithUTF8String:filename_ext];
-        CFURLRef url = CFURLCreateWithFileSystemPath( 0, (CFStringRef) item_path, kCFURLPOSIXPathStyle, false);
-        void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-        void *values[] = {(void*)kCFBooleanTrue};
-        static CFDictionaryRef dict = CFDictionaryCreate(CFAllocatorGetDefault(), (const void**)keys, (const void**)values, 1, 0, 0);
-        CGImageRef thumbnail = QLThumbnailImageCreate(CFAllocatorGetDefault(), url, _sz, dict);
-        CFRelease(url);
-                    
-        if(thumbnail != nil)
+        CFStringRef item_path = CFStringCreateWithBytesNoCopy(0,
+                                                         (UInt8*)filename_ext,
+                                                         strlen(filename_ext),
+                                                         kCFStringEncodingUTF8,
+                                                         false,
+                                                         kCFAllocatorNull);
+
+        CFURLRef url = CFURLCreateWithFileSystemPath(0, item_path, kCFURLPOSIXPathStyle, false);
+        static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
+        static void *values[] = {(void*)kCFBooleanTrue};
+        static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
+        if(CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _sz, dict))
         {
             result = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
             CGImageRelease(thumbnail);
         }
+
+        CFRelease(url);
+        CFRelease(item_path);
         unlink(filename_ext);
     }
     else
@@ -186,7 +192,6 @@ static NSImageRep *ProduceBundleThumbnailForVFS(const char *_path,
 
 IconsGenerator::IconsGenerator()
 {
-//    m_WorkQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.work_queue", DISPATCH_QUEUE_SERIAL);
     m_ControlQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
     m_IconsCacheQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);
     m_WorkGroup = dispatch_group_create();
@@ -321,30 +326,26 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
         
         // 1st - try to built a real thumbnail
         if(m_IconsMode == IconModeFileIconsThumbnails &&
-           (_meta->unix_mode & S_IFMT) != S_IFDIR)
+           (_meta->unix_mode & S_IFMT) != S_IFDIR &&
+           _meta->file_size > 0 &&
+           _meta->file_size <= MaxFileSizeForThumbnailNative &&
+           CheckFileIsOK(_meta->relative_path.c_str())
+           )
         {
-            CGImageRef thumbnail = NULL;
-
-            if(_meta->file_size > 0 &&
-               _meta->file_size <= MaxFileSizeForThumbnailNative &&
-               CheckFileIsOK(_meta->relative_path.c_str()))
-            {
-                NSString *item_path = [NSString stringWithUTF8String:_meta->relative_path.c_str()];
-                CFURLRef url = CFURLCreateWithFileSystemPath( 0, (CFStringRef) item_path, kCFURLPOSIXPathStyle, false);
-                void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-                void *values[] = {(void*)kCFBooleanTrue};
-                static CFDictionaryRef dict = CFDictionaryCreate(CFAllocatorGetDefault(), (const void**)keys, (const void**)values, 1, 0, 0);
-                thumbnail = QLThumbnailImageCreate(CFAllocatorGetDefault(), url, m_IconSize.size, dict);
-                CFRelease(url);
-            }
-            
-            if(thumbnail != NULL)
+            CFStringRef item_path = CFStringCreateWithUTF8StdStringNoCopy(_meta->relative_path);
+            CFURLRef url = CFURLCreateWithFileSystemPath( 0, item_path, kCFURLPOSIXPathStyle, false);
+            static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
+            static void *values[] = {(void*)kCFBooleanTrue};
+            static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
+            if(CGImageRef thumbnail = QLThumbnailImageCreate(0, url, m_IconSize.size, dict))
             {
                 _meta->thumbnail = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
                 CGImageRelease(thumbnail);
                 if(m_UpdateCallback)
                     m_UpdateCallback();
             }
+            CFRelease(url);
+            CFRelease(item_path);
         }
         
         if(m_StopWorkQueue > 0)
@@ -353,13 +354,14 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
         // 2nd - if we haven't built a real thumbnail - try an extention instead
         if(_meta->thumbnail == nil &&
            m_IconsMode >= IconModeFileIcons &&
-           CheckFileIsOK(_meta->relative_path.c_str()) // redundant call here. not good.
+           CheckFileIsOK(_meta->relative_path.c_str()) // possible redundant call here. not good.
            )
         {
-            NSString *item_path = [NSString stringWithUTF8String:_meta->relative_path.c_str()];
-            NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile:item_path];
+            CFStringRef item_path = CFStringCreateWithUTF8StdStringNoCopy(_meta->relative_path);
+            NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile: (__bridge NSString*)item_path];
             _meta->filetype = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
             
+            CFRelease(item_path);
             if(m_UpdateCallback)
                 m_UpdateCallback();
         }

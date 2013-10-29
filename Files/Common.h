@@ -7,7 +7,9 @@
 //
 #pragma once
 
+#include <string>
 #include "path_manip.h"
+
 
 struct DialogResult
 {
@@ -65,6 +67,16 @@ void SyncMessageBoxUTF8(const char *_utf8_string);
 void SyncMessageBoxNS(NSString *_ns_string);
 
 extern uint64_t (*GetTimeInNanoseconds)();
+
+inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const std::string &_s)
+{
+    return CFStringCreateWithBytesNoCopy(0,
+                                         (UInt8*)_s.c_str(),
+                                         _s.length(),
+                                         kCFStringEncodingUTF8,
+                                         false,
+                                         kCFAllocatorNull);
+}
 
 typedef enum
 {

@@ -9,9 +9,14 @@
 #import <sys/types.h>
 #import <sys/dirent.h>
 #import <sys/stat.h>
+#import <sys/xattr.h>
 #import <dirent.h>
 #import "TemporaryNativeFileStorage.h"
 #import "Common.h"
+
+// hack to access function from libc implementation directly.
+// this func does readdir but without mutex locking
+struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
 static TemporaryNativeFileStorage *g_SharedInstance = 0;
 static const char *g_Pref = "info.filesmanager.tmp.";
@@ -128,7 +133,7 @@ bool TemporaryNativeFileStorage::CopySingleFile(const char* _vfs_filename,
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
     
     const size_t bufsz = 256*1024;
-    char buf[bufsz];
+    char buf[bufsz], *bufp = buf;
     ssize_t res_read;
     while( (res_read = vfs_file->Read(buf, bufsz)) > 0 ) {
         ssize_t res_write;
@@ -142,8 +147,18 @@ bool TemporaryNativeFileStorage::CopySingleFile(const char* _vfs_filename,
     }
     if(res_read < 0)
         goto error;
-
+    
+    { // xattrs stuff
+        vfs_file->XAttrIterateNames(^bool(const char *name){
+            ssize_t res = vfs_file->XAttrGet(name, bufp, bufsz);
+            if(res >= 0)
+                fsetxattr(fd, name, bufp, res, 0, 0);
+            return true;
+        });
+    }
+    
     close(fd);
+    
     strcpy(_tmp_filename, native_path);
     return true;
     
@@ -164,7 +179,7 @@ static bool DoSubDirPurge(const char *_dir)
     int filesnum = 0;
     
     dirent *entp;
-    while((entp = readdir(dirp)) != NULL)
+    while((entp = _readdir_unlocked(dirp, 1)) != NULL)
     {
         if(strcmp(entp->d_name, ".") == 0 || strcmp(entp->d_name, "..") == 0 ) continue;
 
@@ -202,7 +217,7 @@ static void DoTempPurge()
         return;
     
     dirent *entp;
-    while((entp = readdir(dirp)) != NULL)
+    while((entp = _readdir_unlocked(dirp, 1)) != NULL)
         if( strncmp(entp->d_name, g_Pref, strlen(g_Pref)) == 0 )
         {
             char fn[MAXPATHLEN];

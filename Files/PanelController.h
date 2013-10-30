@@ -61,9 +61,20 @@
     // delayed entry selection support
     struct
     {
+        /**
+         * Turn on or off this selection mechanics
+         */
         bool        isvalid;
+
+        /**
+         * Requested item name to select.
+         */
         char        filename[MAXPATHLEN];
-        uint64_t    request_end; // time after which request is meaningless and should be removed
+        
+        /**
+         * Time after which request is meaningless and should be removed
+         */
+        uint64_t    request_end;
     } m_DelayedSelection;
 }
 
@@ -82,6 +93,7 @@
 - (void) LoadViewState:(NSDictionary *)_state;
 - (NSDictionary *) SaveViewState;
 
+- (bool) IsActivePanel;
 - (void) RequestActivation;
 
 
@@ -125,18 +137,10 @@
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void)keyDown:(NSEvent *)event;
 
-// delayed entry selection change
-// panel controller will memorize such request
-// if _check_now flag is on then controller will look for requested element and if it was found - select it
-// if there was another pending selection request - it will be overwrited by the new one
-// controller will check for entry appearance on every directory update
-// request will be removed upon directory change
-// one request is accomplished it will be removed
-// if on any checking it will be found that time for request has went out - it will be removed
-// 500ms is just ok for _time_out_in_ms
-- (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now;
-- (void) ScheduleDelayedSelectionChangeForC:(const char*)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now;
-
 - (void) SelectAllEntries: (bool) _select; // if false - then deselect all
 - (void) SelectEntriesByMask:(NSString*) _mask select:(bool) _select; // if false - then deselect elements by mask
 @end
+
+
+#import "PanelController+DataAccess.h"
+#import "PanelController+DelayedSelection.h"

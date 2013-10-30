@@ -21,7 +21,9 @@
 
 @property OperationsController *OperationsController;
 
+- (PanelController*) ActivePanelController;
 - (void)ActivatePanelByController:(PanelController *)controller;
+
 - (void)PanelPathChanged:(PanelController*)_panel;
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 

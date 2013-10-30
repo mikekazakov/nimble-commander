@@ -7,7 +7,6 @@
 //
 #import <string>
 #import "PanelController.h"
-#import "PanelController+DataAccess.h"
 #import "FSEventsDirUpdate.h"
 #import "Common.h"
 #import "MainWindowController.h"
@@ -113,6 +112,11 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
         [NSNumber numberWithInt:(int)[m_View GetCurrentViewType]], @"ViewMode",
         [NSNumber numberWithInt:(int)mode.sort], @"SortMode",
         nil];
+}
+
+- (bool) IsActivePanel
+{
+    return [[self GetParentWindow] ActivePanelController] == self;
 }
 
 - (void) RequestActivation
@@ -980,64 +984,6 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 //        [self GoToDirectory:path];
         [self GoToRelativeToHostAsync:path select_entry:0];
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-// Delayed cursors movement support
-
-- (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
-{
-    [self ScheduleDelayedSelectionChangeForC:[_item_name fileSystemRepresentation]
-                                   timeoutms:_time_out_in_ms
-                                    checknow:_check_now];
-}
-
-- (void) ScheduleDelayedSelectionChangeForC:(const char*)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
-{
-    assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
-    assert(_item_name);
-    // we assume that _item_name will not contain any forward slashes
-    
-    m_DelayedSelection.isvalid = true;
-    m_DelayedSelection.request_end = GetTimeInNanoseconds() + _time_out_in_ms*USEC_PER_SEC;
-    strcpy(m_DelayedSelection.filename, _item_name);
-    
-    if(_check_now)
-        [self CheckAgainstRequestedSelection];
-}
-
-- (void) CheckAgainstRequestedSelection
-{
-    assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
-    if(!m_DelayedSelection.isvalid)
-        return;
-
-    uint64_t now = GetTimeInNanoseconds();
-    if(now > m_DelayedSelection.request_end)
-    {
-        m_DelayedSelection.isvalid = false;
-        return;
-    }
-    
-    // now try to find it
-    int entryindex = m_Data->FindEntryIndex(m_DelayedSelection.filename);
-    if( entryindex >= 0 )
-    {
-        // we found this entry. regardless of appearance of this entry in current directory presentation
-        // there's no reason to search for it again
-        m_DelayedSelection.isvalid = false;
-        
-        int sortpos = m_Data->FindSortedEntryIndex(entryindex);
-        if( sortpos >= 0 )
-            [m_View SetCursorPosition:sortpos];
-    }
-}
-
-- (void) ClearSelectionRequest
-{
-    m_DelayedSelection.isvalid = false;
-}
-
-
 
 - (void) SelectAllEntries:(bool) _select
 {

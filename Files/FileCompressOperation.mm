@@ -9,6 +9,8 @@
 #import "FileCompressOperation.h"
 #import "FileCompressOperationJob.h"
 #import "Common.h"
+#import "PanelController.h"
+
 @implementation FileCompressOperation
 {
     FileCompressOperationJob m_Job;
@@ -145,6 +147,18 @@
     SyncMessageBoxNS([NSString stringWithFormat:@"Sorry, currently Files can't compress items larger than 4Gb.\nThis file will be skipped:\n%@",
                       [NSString stringWithUTF8String:_path] ]
                      );
+}
+
+- (void) Finished
+{
+    NSString *arc_name = m_ArchiveName;
+    PanelController *target = self.TargetPanel;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [target ScheduleDelayedSelectionChangeFor:arc_name
+                                        timeoutms:500
+                                         checknow:true];
+    });
 }
 
 @end

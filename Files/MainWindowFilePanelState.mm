@@ -1136,7 +1136,6 @@ enum ActiveState
         if(_entries->Amount() > 1)
         {
             PanelData *data = [self ActivePanelData];
-            data->CustomFlagsSelectAll(false);
             
             for(auto &i: *_entries)
             {
@@ -1520,17 +1519,20 @@ enum ActiveState
         return;
     std::shared_ptr<VFSHost> srcvfs, dstvfs;
     char srcroot[MAXPATHLEN], dstroot[MAXPATHLEN];
+    PanelController *target_pc;
     if([self ActivePanelController] == m_LeftPanelController) {
         srcvfs = [m_LeftPanelController GetCurrentVFSHost];
         dstvfs = [m_RightPanelController GetCurrentVFSHost];
         [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost:srcroot];
         [m_RightPanelController GetCurrentDirectoryPathRelativeToHost:dstroot];
+        target_pc = m_RightPanelController;
     }
     else {
         srcvfs = [m_RightPanelController GetCurrentVFSHost];
         dstvfs = [m_LeftPanelController GetCurrentVFSHost];
         [m_RightPanelController GetCurrentDirectoryPathRelativeToHost:srcroot];
         [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost:dstroot];
+        target_pc = m_LeftPanelController;
     }
     
     
@@ -1540,6 +1542,7 @@ enum ActiveState
                                               srcvfs:srcvfs
                                              dstroot:dstroot
                                               dstvfs:dstvfs]
+                               WithPanel:target_pc
      ];
 }
 

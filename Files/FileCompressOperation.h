@@ -26,4 +26,7 @@
 - (OperationDialogAlert *)OnWriteError:(NSError*)_error;
 - (void) SayAbout4Gb:(const char*) _path;
 
+
+- (void) Finished; // called by nested Job
+
 @end

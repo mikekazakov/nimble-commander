@@ -79,6 +79,7 @@
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF6617EF17E48B5100593225 /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6617EE17E48B5100593225 /* VFSError.mm */; };
+		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6C5AD117BC70DE0007B648 /* pref_viewer_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */; };
 		CF6C5AD317BC71500007B648 /* pref_general_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF6C5AD217BC71500007B648 /* pref_general_icon.png */; };
 		CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
@@ -383,6 +384,8 @@
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF6617EE17E48B5100593225 /* VFSError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSError.mm; sourceTree = "<group>"; };
+		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
+		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
 		CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_viewer_icon.png; sourceTree = "<group>"; };
 		CF6C5AD217BC71500007B648 /* pref_general_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_general_icon.png; sourceTree = "<group>"; };
 		CF73A6201816B36C00F59016 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
@@ -730,6 +733,7 @@
 		B5A23000171E81AA00D9C1A6 /* Controls */ = {
 			isa = PBXGroup;
 			children = (
+				CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */,
 				B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */,
 				B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */,
 				CF039E95179041CE00DC85D6 /* StackOfDisappearingWidgets.h */,
@@ -808,6 +812,10 @@
 				B50976A8172A3A0E0080412E /* QuickPreview.mm */,
 				CF27415218046A6E006D6687 /* BriefSystemOverview.h */,
 				CF27415318046A6E006D6687 /* BriefSystemOverview.mm */,
+				CF27414A18000832006D6687 /* FilePanelMainSplitView.h */,
+				CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */,
+				CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */,
+				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -821,7 +829,7 @@
 			name = rdrand;
 			sourceTree = "<group>";
 		};
-		CF396AEB173FA89A00A20C42 /* BigFileView */ = {
+		CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
 				CF396AEF173FA8C600A20C42 /* BigFileView.h */,
@@ -838,10 +846,10 @@
 				CF07DE3A175D997A00757DE1 /* MainWindowBigFileViewState.h */,
 				CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */,
 			);
-			name = BigFileView;
+			name = BigFileViewMainWindowState;
 			sourceTree = "<group>";
 		};
-		CF536C0D16C92EA200F37203 /* Panel */ = {
+		CF536C0D16C92EA200F37203 /* PanelMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
 				CF27414D1803E60D006D6687 /* Views */,
@@ -855,20 +863,18 @@
 				CF3C88D516D73A23006346CD /* PanelController.h */,
 				CFD712D417EED43800DA15EF /* PanelController+DataAccess.h */,
 				CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */,
+				CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */,
+				CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */,
 				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
 				CF0519DA17E9C98A00590C74 /* PanelAux.h */,
-				CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */,
-				CF27414A18000832006D6687 /* FilePanelMainSplitView.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
 				CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */,
-				CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */,
-				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */,
 				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
 				CF29312E17D79BA100648A90 /* IconsGenerator.mm */,
 				CF27414717FF04EF006D6687 /* SharingService.h */,
 				CF27414817FF04EF006D6687 /* SharingService.mm */,
 			);
-			name = Panel;
+			name = PanelMainWindowState;
 			sourceTree = "<group>";
 		};
 		CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */ = {
@@ -1261,15 +1267,14 @@
 		CFC5121A16C4BD3D00D247EE /* Files */ = {
 			isa = PBXGroup;
 			children = (
-				CFB8F22B17CA3C65004574FE /* VFS */,
-				CF396AEB173FA89A00A20C42 /* BigFileView */,
-				B5A23000171E81AA00D9C1A6 /* Controls */,
-				B528011916FCF347004E260D /* Operation */,
 				CFAC50D5171557E100A3E5C5 /* Core */,
-				CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */,
-				CF536C0D16C92EA200F37203 /* Panel */,
+				CFB8F22B17CA3C65004574FE /* VFS */,
+				B528011916FCF347004E260D /* Operation */,
+				CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */,
+				CF536C0D16C92EA200F37203 /* PanelMainWindowState */,
 				CF8B09CA16ECEE9C0013B6A8 /* MainWindow */,
 				B52EB78B172277C5004ABC2E /* Preferences */,
+				B5A23000171E81AA00D9C1A6 /* Controls */,
 				B5A89D481746537C00EAB999 /* ApplicationSkins.h */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
 				CFC5122716C4BD3D00D247EE /* AppDelegate.mm */,
@@ -1471,6 +1476,7 @@
 				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,
 				CF9D0E7917CC961100CB8146 /* archive_entry_copy_bhfi.c in Sources */,
 				CF9D0EBF17CC961100CB8146 /* archive_write_add_filter_uuencode.c in Sources */,
+				CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF9D0E9D17CC961100CB8146 /* archive_read_support_filter_rpm.c in Sources */,
 				CF9D0E7B17CC961100CB8146 /* archive_entry_link_resolver.c in Sources */,

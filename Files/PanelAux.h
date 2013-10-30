@@ -14,6 +14,7 @@ class PanelVFSFileWorkspaceOpener
 {
 public:
     // can be called from main thread - it will execute it's job in background
-    static void Open(const char* _filename, std::shared_ptr<VFSHost> _host);
-    
+    static void Open(const char* _filename,
+                     std::shared_ptr<VFSHost> _host
+                     );
 };

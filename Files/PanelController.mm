@@ -126,25 +126,17 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) HandleShiftReturnButton
 {
-    char path[MAXPATHLEN];
-    int pos = [m_View GetCursorPosition];
-    if(pos >= 0)
+    if(auto *item = [m_View CurrentItem])
     {
-        int rawpos = m_Data->SortPosToRawPos(pos);
-        const auto &ent = m_Data->EntryAtRawPosition(rawpos);
-
+        char path[MAXPATHLEN];
         m_Data->GetDirectoryPathWithTrailingSlash(path);
-        if(!ent.IsDotDot())
-            strcat(path, ent.Name());
-        
-        if(m_Data->Host()->IsNativeFS())
-        {
-            bool success = [[NSWorkspace sharedWorkspace]
-                            openFile:[NSString stringWithUTF8String:path]];
-            if (!success) NSBeep();
-        }
-        else
-            PanelVFSFileWorkspaceOpener::Open(path, m_Data->Host()); // going async here
+
+        // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"
+        if(!item->IsDotDot())
+            strcat(path, item->Name());
+
+        // may go async here on non-native VFS
+        PanelVFSFileWorkspaceOpener::Open(path, m_Data->Host());
     }
 }
 

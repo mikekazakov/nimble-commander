@@ -20,17 +20,13 @@ struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked)
 
 static TemporaryNativeFileStorage *g_SharedInstance = 0;
 static const char *g_Pref = "info.filesmanager.tmp.";
+static const size_t g_PrefLen = strlen(g_Pref);
+static char g_TmpDirPath[MAXPATHLEN] = {0}; // will be temp dir with trailing slash
 
 TemporaryNativeFileStorage::TemporaryNativeFileStorage()
 {
     m_ControlQueue = dispatch_queue_create("info.filesmanager.Files.TemporaryNativeFileStorage", NULL);
     
-    NSString *temp_dir = NSTemporaryDirectory();
-    assert(temp_dir);
-    strcpy(m_TmpDirPath, [temp_dir fileSystemRepresentation]);
-    if(m_TmpDirPath[strlen(m_TmpDirPath)-1] != '/')
-        strcat(m_TmpDirPath, "/");
-
     char tmp_1st[MAXPATHLEN];
     if(NewTempDir(tmp_1st))
         m_SubDirs.push_back(tmp_1st);
@@ -51,7 +47,7 @@ TemporaryNativeFileStorage &TemporaryNativeFileStorage::Instance()
 bool TemporaryNativeFileStorage::NewTempDir(char *_full_path)
 {
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%s%sXXXXXX", m_TmpDirPath, g_Pref);
+    sprintf(pattern_buf, "%s%sXXXXXX", g_TmpDirPath, g_Pref);
     char *res = mkdtemp(pattern_buf);
     if(res == 0)
         return false;
@@ -211,20 +207,20 @@ static bool DoSubDirPurge(const char *_dir)
 
 static void DoTempPurge()
 {
-    NSString *temp_dir = NSTemporaryDirectory();
-    DIR *dirp = opendir([temp_dir fileSystemRepresentation]);
+    DIR *dirp = opendir(g_TmpDirPath);
     if(!dirp)
         return;
     
     dirent *entp;
     while((entp = _readdir_unlocked(dirp, 1)) != NULL)
-        if( strncmp(entp->d_name, g_Pref, strlen(g_Pref)) == 0 )
+        if( strncmp(entp->d_name, g_Pref, g_PrefLen) == 0 &&
+           entp->d_type == DT_DIR
+           )
         {
             char fn[MAXPATHLEN];
-            strcpy(fn, [temp_dir fileSystemRepresentation]);
-            if( fn[strlen(fn)-1] != '/') strcat(fn, "/");
+            strcpy(fn, g_TmpDirPath);
             strcat(fn, entp->d_name);
-            if( fn[strlen(fn)-1] != '/') strcat(fn, "/");
+            strcat(fn, "/");
             
             if(DoSubDirPurge(fn))
                 rmdir(fn); // if temp directory is empty - remove it
@@ -242,6 +238,13 @@ static void DoTempPurge()
 
 void TemporaryNativeFileStorage::StartBackgroundPurging()
 {
+    // also initialize some stuff
+    NSString *temp_dir = NSTemporaryDirectory();
+    assert(temp_dir);
+    strcpy(g_TmpDirPath, [temp_dir fileSystemRepresentation]);
+    if(g_TmpDirPath[strlen(g_TmpDirPath)-1] != '/')
+        strcat(g_TmpDirPath, "/");
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         DoTempPurge();
     });

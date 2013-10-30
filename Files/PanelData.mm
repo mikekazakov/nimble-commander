@@ -141,20 +141,18 @@ const PanelData::DirSortIndT& PanelData::SortedDirectoryEntries() const
 
 void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPATHLEN])
 {
-    const char *ent_name = (*m_Listing)[_entry_no].Name();
+    const auto &entry = (*m_Listing)[_entry_no];
     
-    if(strcmp(ent_name, ".."))
+    if(!entry.IsDotDot())
     {
-        strcpy(_buf, m_Listing->RelativePath());
-        if(_buf[strlen(_buf)-1] != '/') strcat(_buf, "/");
+        const char *ent_name = entry.Name();
+        GetDirectoryPathWithTrailingSlash(_buf);
         strcat(_buf, ent_name);
     }
     else
     {
-        // need to cut the last slash
-        strcpy(_buf, m_Listing->RelativePath());
-        if(IsPathWithTrailingSlash(_buf)) _buf[strlen(_buf)-1] = 0; // cut trailing slash
-        char *s = strrchr(_buf, '/');
+        GetDirectoryPathWithoutTrailingSlash(_buf);
+        char *s = strrchr(_buf, '/'); // need to cut the last slash
         if(s != _buf) *s = 0;
         else *(s+1) = 0;
     }
@@ -210,17 +208,24 @@ int PanelData::FindSortedEntryIndex(unsigned _desired_value) const
     return -1;
 }
 
-void PanelData::GetDirectoryPath(char _buf[__DARWIN_MAXPATHLEN]) const
+void PanelData::GetDirectoryPathWithoutTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const
 {
     if(m_Listing.get() == 0) {
         strcpy(_buf, "");
         return;
     }
-    strcpy(_buf, m_Listing->RelativePath());
-    if(IsPathWithTrailingSlash(_buf) && strlen(_buf) > 1)
-        _buf[strlen(_buf)-1] = 0; // TODO: optimize me later
-//    char *slash = strrchr(_buf, '/');
-//    if (slash && slash != _buf) *slash = 0;
+    
+    const char *path = m_Listing->RelativePath();
+    int size = (int)strlen(path);
+    if(size == 0) {
+        strcpy(_buf, "");
+        return;
+    }
+    
+    memcpy(_buf, path, size+1);
+
+    if(path[size-1] == '/' && size > 1)
+        _buf[size-1] = 0;
 }
 
 void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const
@@ -229,9 +234,20 @@ void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]
         strcpy(_buf, "");
         return;
     }
-    strcpy(_buf, m_Listing->RelativePath());
-    if(_buf[strlen(_buf)-1]!='/') strcat(_buf, "/"); // TODO: optimize me later
     
+    const char *path = m_Listing->RelativePath();
+    int size = (int)strlen(path);
+    if(size == 0) {
+        strcpy(_buf, "");
+        return;
+    }
+
+    memcpy(_buf, path, size+1);
+
+    if(path[size-1] != '/') {
+        _buf[size] = '/';
+        _buf[size+1] = 0;
+    }
 }
 
 void PanelData::GetDirectoryPathShort(char _buf[__DARWIN_MAXPATHLEN]) const

@@ -244,12 +244,14 @@ enum ActiveState
         [m_LeftPanelShareButton setTranslatesAutoresizingMaskIntoConstraints:NO];
         [m_LeftPanelShareButton setBezelStyle:NSTexturedRoundedBezelStyle];
         [m_LeftPanelShareButton setImage:[NSImage imageNamed:NSImageNameShareTemplate]];
+        [m_LeftPanelShareButton sendActionOn:NSLeftMouseDownMask];
         [self addSubview:m_LeftPanelShareButton];
 
         m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSRect()];
         [m_RightPanelShareButton setTranslatesAutoresizingMaskIntoConstraints:NO];
         [m_RightPanelShareButton setBezelStyle:NSTexturedRoundedBezelStyle];
         [m_RightPanelShareButton setImage:[NSImage imageNamed:NSImageNameShareTemplate]];
+        [m_RightPanelShareButton sendActionOn:NSLeftMouseDownMask];
         [self addSubview:m_RightPanelShareButton];
     }
     
@@ -806,7 +808,7 @@ enum ActiveState
          {
 
              char pdir[MAXPATHLEN];
-             curdata->GetDirectoryPath(pdir);
+             curdata->GetDirectoryPathWithoutTrailingSlash(pdir);
              
              [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] fileSystemRepresentation]
                                                                                         rootpath:pdir

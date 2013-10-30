@@ -954,7 +954,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 - (void) UpdateEjectButton
 {
     char path[MAXPATHLEN];
-    m_Data->GetDirectoryPath(path);
+    m_Data->GetDirectoryPathWithoutTrailingSlash(path);
     bool should_be_hidden = !IsVolumeContainingPathEjectable(path);
     
     if([m_EjectButton isHidden] != should_be_hidden)
@@ -975,7 +975,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 {
     // TODO: recovering to upper host needed
     char path[MAXPATHLEN];
-    m_Data->GetDirectoryPath(path);
+    m_Data->GetDirectoryPathWithoutTrailingSlash(path);
     if(GetFirstAvailableDirectoryFromPath(path))
 //        [self GoToDirectory:path];
         [self GoToRelativeToHostAsync:path select_entry:0];
@@ -1075,7 +1075,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         char path[MAXPATHLEN];
-        m_Data->GetDirectoryPath(path); // not thread-safe, potentialy may cause problems, but not likely
+        m_Data->GetDirectoryPathWithoutTrailingSlash(path); // not thread-safe, potentialy may cause problems, but not likely
         EjectVolumeContainingPath(path);
     });
 }

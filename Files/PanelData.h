@@ -102,7 +102,7 @@ public:
         // return -1 if didn't found
         // _desired_value - raw item index
     
-    void GetDirectoryPath(char _buf[__DARWIN_MAXPATHLEN]) const;
+    void GetDirectoryPathWithoutTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const;
         // return current directory in long variant starting from /
     void GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const;
         // same as above but path will ends with slash

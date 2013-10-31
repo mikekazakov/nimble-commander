@@ -155,6 +155,7 @@
     PanelController *target = self.TargetPanel;
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        [target RefreshDirectory];
         [target ScheduleDelayedSelectionChangeFor:arc_name
                                         timeoutms:500
                                          checknow:true];

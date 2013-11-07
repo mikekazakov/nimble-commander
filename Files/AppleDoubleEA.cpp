@@ -278,8 +278,6 @@ AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
             int count = attrhdr.num_attrs;
             eas = (AppleDoubleEA*) malloc( sizeof(AppleDoubleEA) * (has_finfo ? count + 1 : count) );
             
-//            int a = sizeof(attr_header);
-            
             const attr_entry_t *entry = (const attr_entry_t *)((char*)_memory_buf + sizeof(attr_header_t));
             for (int i = 0; i < count; i++)
             {

@@ -1100,4 +1100,33 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
 }
 
+- (void) HandleItemsContextMenu
+{
+    const VFSListingItem* cur_focus = [m_View CurrentItem];
+    if(!cur_focus || cur_focus->IsDotDot())
+        return;
+    
+    std::vector<const VFSListingItem*> items;
+    
+    // 2 variants - currently focused item or all selected items (if focus is also selected)
+    if(m_Data->GetSelectedItemsCount() == 0 || !cur_focus->CFIsSelected())
+    { // use focused items solely
+        items.push_back(cur_focus);
+    }
+    else
+    { // use selected items
+        auto &listing = m_Data->DirectoryEntries();
+        for(int i = 0, e = listing.Count(); i!=e; ++i)
+            if(listing[i].CFIsSelected())
+                items.push_back(&listing[i]);
+    }
+
+    char path[MAXPATHLEN];
+    if( [self GetCurrentDirectoryPathRelativeToHost:path] )
+        [[self GetParentWindow] RequestContextMenuOn:items
+                                                path:path
+                                                 vfs:m_HostsStack.back()
+                                              caller:self];
+}
+
 @end

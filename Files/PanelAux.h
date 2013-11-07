@@ -17,4 +17,9 @@ public:
     static void Open(const char* _filename,
                      std::shared_ptr<VFSHost> _host
                      );
+    
+    static void Open(const char* _filename,
+                     std::shared_ptr<VFSHost> _host,
+                     const char* _with_app_path // can be NULL, use default app in such case
+                     );
 };

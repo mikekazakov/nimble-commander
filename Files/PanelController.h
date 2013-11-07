@@ -104,8 +104,10 @@
 - (void) HandleFileView; // F3
 - (void) HandleBriefSystemOverview;
 
-- (void) HandleCursorChanged; // called by PanelView
-
+// called by PanelView ///////////////////////////////////////////////
+- (void) HandleCursorChanged;
+- (void) HandleItemsContextMenu;
+///////////////////////////////////////////////////////////////////////
 
 - (void) ToggleSortingByName; // user pressed ctrl+F3 by default
 - (void) ToggleSortingByExt; // user pressed ctrl+F4 by default

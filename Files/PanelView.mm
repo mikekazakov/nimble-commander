@@ -330,6 +330,17 @@ struct CursorSelectionState
     [self OnCursorPositionChanged];
 }
 
+- (void)rightMouseDown:(NSEvent *)_event
+{
+    [self mouseDown:_event];
+    
+    NSPoint event_location = [_event locationInWindow];
+    NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
+    if (cursor_pos >= 0)
+        [m_Controller HandleItemsContextMenu];
+}
+
 - (void) UpdateDragScroll
 {
     assert(m_DragScrollDirection >= -1 && m_DragScrollDirection <= 1);

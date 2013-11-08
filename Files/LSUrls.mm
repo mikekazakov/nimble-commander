@@ -8,30 +8,43 @@
 
 #import <Foundation/Foundation.h>
 #import "LSUrls.h"
+#import "Common.h"
 
 void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, std::shared_ptr<VFSHost> _host, const char* _path, LauchServicesHandlers* _result)
 {
+    _result->uti.clear();
     _result->paths.clear();
     _result->default_path = -1;
     
     if(_host->IsNativeFS())
     {
-        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:_path]];
-        CFURLRef default_app_url;
-        if(LSGetApplicationForURL((__bridge CFURLRef) url, kLSRolesAll, 0, &default_app_url) == 0)
-        {
-            NSArray *apps = (NSArray *)CFBridgingRelease(LSCopyApplicationURLsForURL((__bridge CFURLRef) url,kLSRolesAll));
-    
-            int ind = 0;
-            for(NSURL *url in apps)
-            {
-                const char *path = [url fileSystemRepresentation];
-                _result->paths.push_back(path);
-                if([(__bridge NSURL*)(default_app_url) isEqual: url])
-                    _result->default_path = ind;
-                
-                ++ind;
+        if(_it->HasExtension()) {
+            if(CFStringRef ext = CFStringCreateWithUTF8StringNoCopy(_it->Extension())) {
+                if(CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL)) {
+                    _result->uti = [((__bridge NSString*)UTI) UTF8String];
+                    CFRelease(UTI);
+                }
+                CFRelease(ext);
             }
+        }
+        
+        if(CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)_path, strlen(_path), false))
+        {
+            CFURLRef default_app_url;
+            if(LSGetApplicationForURL(url, kLSRolesAll, 0, &default_app_url) == 0)
+            {
+                NSArray *apps = (NSArray *)CFBridgingRelease(LSCopyApplicationURLsForURL(url, kLSRolesAll));
+                int ind = 0;
+                for(NSURL *url in apps)
+                {
+                    _result->paths.push_back([url fileSystemRepresentation]);
+                    if([(__bridge NSURL*)(default_app_url) isEqual: url])
+                        _result->default_path = ind;
+                    ++ind;
+                }
+                CFRelease(default_app_url);
+            }
+            CFRelease(url);
         }
     }
     else
@@ -41,43 +54,44 @@ void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, std::shared_ptr<
                 
         if(_it->HasExtension())
         {
-            NSString *ext = [NSString stringWithUTF8String:_it->Extension()];
-            CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)ext, NULL);
-        
-            NSString *default_bundle = (__bridge_transfer id)LSCopyDefaultRoleHandlerForContentType(UTI,kLSRolesAll);
-            NSArray *apps = (NSArray *)CFBridgingRelease(LSCopyAllRoleHandlersForContentType(UTI,kLSRolesAll));
-            
-            int ind = 0;
-            for (NSString* bundleIdentifier in apps)
+            CFStringRef ext = CFStringCreateWithUTF8StringNoCopy(_it->Extension());
+            CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL);
+            CFRelease(ext);
+            if(UTI != 0)
             {
-                NSString* nspath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier: bundleIdentifier];
-                if(nspath)
+                _result->uti = [((__bridge NSString*)UTI) UTF8String];
+                NSString *default_bundle = (__bridge_transfer id)LSCopyDefaultRoleHandlerForContentType(UTI,kLSRolesAll);
+                NSArray *apps = (NSArray *)CFBridgingRelease(LSCopyAllRoleHandlersForContentType(UTI,kLSRolesAll));
+                int ind = 0;
+                for (NSString* bundleIdentifier in apps)
                 {
-                    const char *path = [nspath fileSystemRepresentation];
-                    _result->paths.push_back(path);
-                    if([bundleIdentifier isEqualToString:default_bundle])
-                        _result->default_path = ind;
-                    ++ind;
+                    NSString* nspath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier: bundleIdentifier];
+                    if(nspath)
+                    {
+                        const char *path = [nspath fileSystemRepresentation];
+                        _result->paths.push_back(path);
+                        if([bundleIdentifier isEqualToString:default_bundle])
+                            _result->default_path = ind;
+                        ++ind;
+                    }
                 }
+                CFRelease(UTI);
             }
         }
     }
-    
-    
 }
 
 void LauchServicesHandlers::DoMerge(const std::list<LauchServicesHandlers>* _input, LauchServicesHandlers* _result)
 {
     std::string default_handler; // empty handler path means that there's no default handler available
+    std::string default_uti; // -""-
     if(!_input->empty())
     {
         int ind = (*_input->begin()).default_path;
         if(ind >= 0)
             default_handler = (*_input->begin()).paths[ind];
         
-        auto i = _input->begin()++;
-        auto e = _input->end();
-        for(;i!=e;++i)
+        for(auto i = _input->begin()++, e = _input->end(); i!=e ; ++i)
         {
             int nind = (*i).default_path;
             if(ind < 0)
@@ -93,6 +107,14 @@ void LauchServicesHandlers::DoMerge(const std::list<LauchServicesHandlers>* _inp
                 break;
             }
         }
+        
+        default_uti = (*_input->begin()).uti;
+        for(auto i = _input->begin()++, e = _input->end(); i!=e ; ++i)
+            if((*i).uti != default_uti)
+            {
+                default_uti = "";
+                break;
+            }
     }
     
     // maps handler path to usage amount
@@ -104,6 +126,7 @@ void LauchServicesHandlers::DoMerge(const std::list<LauchServicesHandlers>* _inp
     int total_input = (int)_input->size();
     
     _result->paths.clear();
+    _result->uti = default_uti;
     _result->default_path = -1;
     
     for(auto i = handlers_count.begin(), e = handlers_count.end(); i!=e; ++i)
@@ -113,4 +136,33 @@ void LauchServicesHandlers::DoMerge(const std::list<LauchServicesHandlers>* _inp
             if(i->first == default_handler)
                 _result->default_path = (int)_result->paths.size()-1;
         }
+}
+
+bool LauchServicesHandlers::SetDefaultHandler(const char *_uti, const char* _path)
+{
+    assert(_uti != 0 && _path != 0);
+    
+    NSString *path = [NSString stringWithUTF8String:_path];
+    if(!path)
+        return false;
+    
+    NSString *uti = [NSString stringWithUTF8String:_uti];
+    if(!uti)
+        return false;
+    
+    NSBundle *handler_bundle = [NSBundle bundleWithPath:path];
+    if(!handler_bundle)
+        return false;
+    
+    NSString *bundle_id = [handler_bundle bundleIdentifier];
+    if(!bundle_id)
+        return false;
+    
+    
+    OSStatus ret = LSSetDefaultRoleHandlerForContentType(
+                                                         (__bridge CFStringRef)uti,
+                                                         kLSRolesAll,
+                                                         (__bridge CFStringRef)bundle_id);
+
+    return ret == 0;
 }

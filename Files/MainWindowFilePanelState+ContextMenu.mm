@@ -73,6 +73,8 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
     NSView                     *m_InView;
     std::vector<std::string>    m_Items;
     std::vector<OpenWithHandler> m_OpenWithHandlers;
+    std::string                 m_ItemsUTI;
+    
     
     int                         m_DirsCount;
     int                         m_FilesCount;
@@ -136,8 +138,10 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
         
         LauchServicesHandlers items_handlers;
         LauchServicesHandlers::DoMerge(&per_item_handlers, &items_handlers);
+        m_ItemsUTI = items_handlers.uti;
         
-        NSMenu *submenu = [NSMenu new];
+        NSMenu *openwith_submenu = [NSMenu new];
+        NSMenu *always_openwith_submenu = [NSMenu new];
         
         // prepare open with handlers information
         for(int i = 0; i < items_handlers.paths.size(); ++i)
@@ -167,9 +171,14 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
                 [item setTag:i];
                 [item setTarget:self];
                 [item setAction:@selector(OnOpenWith:)];
-                [submenu addItem:item];
+                [openwith_submenu addItem:item];
+                
+                item = [item copy];
+                [item setAction:@selector(OnAlwaysOpenWith:)];
+                [always_openwith_submenu addItem:item];
 
-                [submenu addItem:[NSMenuItem separatorItem]];
+                [openwith_submenu addItem:[NSMenuItem separatorItem]];
+                [always_openwith_submenu addItem:[NSMenuItem separatorItem]];
                 any_handlers_added = true;
                 break;
             }
@@ -184,25 +193,49 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
                 [item setTag:i];
                 [item setTarget:self];
                 [item setAction:@selector(OnOpenWith:)];
-                [submenu addItem:item];
+                [openwith_submenu addItem:item];
+                
+                item = [item copy];
+                [item setAction:@selector(OnAlwaysOpenWith:)];
+                [always_openwith_submenu addItem:item];
+                
                 any_handlers_added = true;
             }
 
         // separate them
-        if(!any_handlers_added)
-            [submenu addItem:[[NSMenuItem alloc] initWithTitle:@"<None>" action:nil keyEquivalent:@""]];
-        [submenu addItem:[NSMenuItem separatorItem]];
+        if(!any_handlers_added) {
+            [openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:@"<None>" action:nil keyEquivalent:@""]];
+            [always_openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:@"<None>" action:nil keyEquivalent:@""]];
+        }
+        [openwith_submenu addItem:[NSMenuItem separatorItem]];
+        [always_openwith_submenu addItem:[NSMenuItem separatorItem]];
         
+        // let user to select program manually
         NSMenuItem *item = [NSMenuItem new];
         [item setTitle:@"Other..."];
         [item setTarget:self];
         [item setAction:@selector(OnOpenWithOther:)];
-        [submenu addItem:item];
+        [openwith_submenu addItem:item];
         
-        NSMenuItem *submenu_item = [NSMenuItem new];
-        [submenu_item setTitle:@"Open With"];
-        [submenu_item setSubmenu:submenu];
-        [self addItem:submenu_item];
+        item = [item copy];
+        [item setAction:@selector(OnAlwaysOpenWithOther:)];
+        [always_openwith_submenu addItem:item];
+
+        // and put this stuff into root-level menu
+        NSMenuItem *openwith = [NSMenuItem new];
+        [openwith setTitle:@"Open With"];
+        [openwith setSubmenu:openwith_submenu];
+        [openwith setKeyEquivalent:@""];
+        [self addItem:openwith];
+        
+        NSMenuItem *always_openwith = [NSMenuItem new];
+        [always_openwith setTitle:@"Always Open With"];
+        [always_openwith setSubmenu:always_openwith_submenu];
+        [always_openwith setAlternate:YES];
+        [always_openwith setKeyEquivalent:@""];
+        [always_openwith setKeyEquivalentModifierMask:NSAlternateKeyMask];
+        [self addItem:always_openwith];
+        
     }
 }
 
@@ -218,6 +251,16 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
     [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path.c_str()];
 }
 
+- (void)OnAlwaysOpenWith:(id)sender
+{
+    int app_no = (int)[sender tag];
+    assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
+    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path.c_str()];
+    
+    if(!m_ItemsUTI.empty())
+        LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), m_OpenWithHandlers[app_no].path.c_str());
+}
+
 - (void) OpenItemsWithApp:(const char*)_app_path
 {
     for(auto &i: m_Items) {
@@ -227,7 +270,7 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
     }
 }
 
-- (void)OnOpenWithOther:(id)sender
+- (NSOpenPanel*) BuildAppChoose
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     [panel setAllowsMultipleSelection:NO];
@@ -235,10 +278,30 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
     [panel setCanChooseDirectories:NO];
     [panel setDirectoryURL:[[NSURL alloc] initFileURLWithPath:@"/Applications" isDirectory:true]];
     [panel setAllowedFileTypes:[NSArray arrayWithObject:@"app"]];
+    return panel;
+}
+
+- (void)OnOpenWithOther:(id)sender
+{
+    NSOpenPanel *panel = [self BuildAppChoose];
     [panel beginSheetModalForWindow:[m_InView window]
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
                           [self OpenItemsWithApp:[[panel URL]fileSystemRepresentation]];
+                  }];
+}
+
+- (void)OnAlwaysOpenWithOther:(id)sender
+{
+    NSOpenPanel *panel = [self BuildAppChoose];
+    [panel beginSheetModalForWindow:[m_InView window]
+                  completionHandler:^(NSInteger result){
+                      if(result == NSFileHandlingPanelOKButton)
+                      {
+                          [self OpenItemsWithApp:[[panel URL]fileSystemRepresentation]];
+                          if(!m_ItemsUTI.empty())
+                              LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), [[panel URL]fileSystemRepresentation]);
+                      }
                   }];
 }
 

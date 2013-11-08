@@ -78,6 +78,16 @@ inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const std::string &_s)
                                          kCFAllocatorNull);
 }
 
+inline CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s)
+{
+    return CFStringCreateWithBytesNoCopy(0,
+                                         (UInt8*)_s,
+                                         strlen(_s),
+                                         kCFStringEncodingUTF8,
+                                         false,
+                                         kCFAllocatorNull);
+}
+
 typedef enum
 {
     kTruncateAtStart,
@@ -118,6 +128,12 @@ struct MachTimeBenchmark
 @interface NSTimer (SafeTolerance)
 - (void) SetSafeTolerance;
 @end
+
+
+@interface NSString(PerformanceAdditions)
++ (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString;
+@end
+
 
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
 

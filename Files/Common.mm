@@ -357,3 +357,12 @@ bool IsVolumeContainingPathEjectable(const char *_path)
         [self setTolerance:[self timeInterval]/10.];
 }
 @end
+
+@implementation NSString(PerformanceAdditions)
+
++ (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString
+{
+    return (NSString*) CFBridgingRelease(CFStringCreateWithUTF8StringNoCopy(nullTerminatedCString));
+}
+
+@end

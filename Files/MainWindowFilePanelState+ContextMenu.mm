@@ -10,6 +10,7 @@
 #import "Common.h"
 #import "PanelAux.h"
 #import "LSUrls.h"
+#import "3rd_party/sparkle/SUStandardVersionComparator.h"
 
 struct OpenWithHandler
 {
@@ -17,6 +18,7 @@ struct OpenWithHandler
     NSString *app_name;
     NSImage  *app_icon;
     NSString *app_version;
+    NSString *app_id;
     
     bool is_default;
     
@@ -36,6 +38,8 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
     if(handler_bundle == nil)
         return false;
     
+    
+    NSString *bundle_id = [handler_bundle bundleIdentifier];
     NSString* version = [[handler_bundle infoDictionary] objectForKey:@"CFBundleVersion"];
     
     NSString *appName = [[NSFileManager defaultManager] displayNameAtPath: path];
@@ -47,10 +51,36 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
     _hndl.app_name = appName;
     _hndl.app_icon = appicon;
     _hndl.app_version = version;
+    _hndl.app_id = bundle_id;
     
     return true;
 }
 
+static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
+{
+    // _handlers should be already sorted here
+    for(int i = 0; i < (int)_handlers.size() - 1;)
+    {
+        if([_handlers[i].app_name isEqualToString:_handlers[i+1].app_name] &&
+           [_handlers[i].app_id isEqualToString:_handlers[i+1].app_id]
+           )
+        {
+            // choose the latest version
+            if([[SUStandardVersionComparator defaultComparator] compareVersion:_handlers[i].app_version
+                toVersion:_handlers[i+1].app_version] >= NSOrderedSame)
+            { // _handlers[i] has later version or they are the same
+                _handlers.erase(_handlers.begin() + i + 1);
+                
+            }
+            else
+            { // _handlers[i+1] has later version
+                _handlers.erase(_handlers.begin() + i);
+                continue;
+            }
+        }
+        ++i;
+    }
+}
 
 @interface MainWindowFilePanelContextMenu : NSMenu
 
@@ -157,6 +187,9 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
         
         // sort them using it's user-friendly name
         std::sort(m_OpenWithHandlers.begin(), m_OpenWithHandlers.end());
+        
+        // get rid of duplicates in handlers list
+        PurgeDuplicateHandlers(m_OpenWithHandlers);
         
         // show default handler if any
         bool any_handlers_added = false;

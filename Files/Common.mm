@@ -362,7 +362,22 @@ bool IsVolumeContainingPathEjectable(const char *_path)
 
 + (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString
 {
-    return (NSString*) CFBridgingRelease(CFStringCreateWithUTF8StringNoCopy(nullTerminatedCString));
+    return (NSString*) CFBridgingRelease(CFStringCreateWithBytesNoCopy(0,
+                                         (UInt8*)nullTerminatedCString,
+                                         strlen(nullTerminatedCString),
+                                         kCFStringEncodingUTF8,
+                                         false,
+                                         kCFAllocatorNull));
+}
+
++ (instancetype)stringWithUTF8StdStringNoCopy:(const std::string&)stdstring
+{
+    return (NSString*) CFBridgingRelease(CFStringCreateWithBytesNoCopy(0,
+                                                                       (UInt8*)stdstring.c_str(),
+                                                                       stdstring.length(),
+                                                                       kCFStringEncodingUTF8,
+                                                                       false,
+                                                                       kCFAllocatorNull));
 }
 
 @end

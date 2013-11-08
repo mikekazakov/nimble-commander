@@ -132,6 +132,7 @@ struct MachTimeBenchmark
 
 @interface NSString(PerformanceAdditions)
 + (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString;
++ (instancetype)stringWithUTF8StdStringNoCopy:(const std::string&)stdstring;
 @end
 
 

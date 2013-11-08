@@ -244,6 +244,7 @@
 		CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */; };
 		CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
+		CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
@@ -628,6 +629,9 @@
 		CFDA4CCC182A17C7006EC35C /* LSUrls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LSUrls.mm; sourceTree = "<group>"; };
 		CFDA4CCE182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+ContextMenu.h"; sourceTree = "<group>"; };
 		CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+ContextMenu.mm"; sourceTree = "<group>"; };
+		CFDA4CD2182CBA68006EC35C /* SUStandardVersionComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUStandardVersionComparator.h; path = 3rd_party/sparkle/SUStandardVersionComparator.h; sourceTree = "<group>"; };
+		CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUStandardVersionComparator.m; path = 3rd_party/sparkle/SUStandardVersionComparator.m; sourceTree = "<group>"; };
+		CFDA4CD4182CBA68006EC35C /* SUVersionComparisonProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUVersionComparisonProtocol.h; path = 3rd_party/sparkle/SUVersionComparisonProtocol.h; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
 		CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewDataBackend.mm; sourceTree = "<group>"; };
@@ -1323,6 +1327,7 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
+				CFDA4CD1182CBA51006EC35C /* sparkle */,
 				CF29313117D9914700648A90 /* rdrand */,
 				CF9D0CEE17CC957700CB8146 /* archivelib */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
@@ -1333,6 +1338,16 @@
 			);
 			name = 3rd_party;
 			path = Files;
+			sourceTree = "<group>";
+		};
+		CFDA4CD1182CBA51006EC35C /* sparkle */ = {
+			isa = PBXGroup;
+			children = (
+				CFDA4CD2182CBA68006EC35C /* SUStandardVersionComparator.h */,
+				CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */,
+				CFDA4CD4182CBA68006EC35C /* SUVersionComparisonProtocol.h */,
+			);
+			name = sparkle;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1482,6 +1497,7 @@
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 				CF9D0ECA17CC961100CB8146 /* archive_write_set_format_7zip.c in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
+				CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */,
 				CFB8F23917CAF8F9004574FE /* VFSNativeListing.mm in Sources */,
 				CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */,
 				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,

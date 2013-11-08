@@ -354,3 +354,14 @@ int VFSNativeHost::Unlink(const char *_path, bool (^_cancel_checker)())
         return 0;
     return VFSError::FromErrno(errno);
 }
+
+bool VFSNativeHost::IsWriteable() const
+{
+    return true; // dummy now
+}
+
+bool VFSNativeHost::IsWriteableAtPath(const char *_dir) const
+{
+    return true; // dummy now
+}
+

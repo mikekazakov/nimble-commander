@@ -40,7 +40,7 @@ public:
     
     
     virtual bool IsWriteable() const;
-    // TODO: IsWriteableAtPath
+    virtual bool IsWriteableAtPath(const char *_dir) const;
     
     virtual const char *FSTag() const;
     inline bool IsNativeFS() const { return strcmp(FSTag(), "native") == 0; }

@@ -17,6 +17,9 @@ public:
     
     virtual const char *FSTag() const override;
     
+    virtual bool IsWriteable() const override;
+    virtual bool IsWriteableAtPath(const char *_dir) const override;
+    
     virtual bool IsDirectory(const char *_path,
                              int _flags,
                              bool (^_cancel_checker)()) override;

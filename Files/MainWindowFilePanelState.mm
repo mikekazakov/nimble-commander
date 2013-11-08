@@ -1505,4 +1505,9 @@
      ];
 }
 
+- (void) AddOperation:(Operation*)_operation
+{
+    [m_OperationsController AddOperation:_operation];
+}
+
 @end

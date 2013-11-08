@@ -40,6 +40,11 @@ bool VFSHost::IsWriteable() const
     return false;
 }
 
+bool VFSHost::IsWriteableAtPath(const char *_dir) const
+{
+    return false;
+}
+
 int VFSHost::FetchDirectoryListing(
                                   const char *_path,
                                   std::shared_ptr<VFSListing> *_target,

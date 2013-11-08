@@ -13,6 +13,7 @@
 #import "FlexChainedStringsChunk.h"
 
 class PanelData;
+@class Operation;
 @class PanelView;
 @class PanelController;
 @class OperationsController;
@@ -84,6 +85,7 @@ enum ActiveState
 - (void)CloseOverlay:(PanelController*)_panel;
 
 
+- (void) AddOperation:(Operation*)_operation;
 
 @end
 

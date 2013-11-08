@@ -6,11 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import "3rd_party/sparkle/SUStandardVersionComparator.h"
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "Common.h"
 #import "PanelAux.h"
 #import "LSUrls.h"
-#import "3rd_party/sparkle/SUStandardVersionComparator.h"
+#import "FileDeletionOperation.h"
 
 struct OpenWithHandler
 {
@@ -31,13 +32,12 @@ struct OpenWithHandler
 static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hndl)
 {
 //    static const double icon_size = [NSFont systemFontSize];
-    static const double icon_size = 14;
+    static const double icon_size = 14; // hard-coding is bad, but line above gives 13., which looks worse
     
     NSString *path = [NSString stringWithUTF8String:_path.c_str()];
     NSBundle *handler_bundle = [NSBundle bundleWithPath:path];
     if(handler_bundle == nil)
         return false;
-    
     
     NSString *bundle_id = [handler_bundle bundleIdentifier];
     NSString* version = [[handler_bundle infoDictionary] objectForKey:@"CFBundleVersion"];
@@ -104,6 +104,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     std::vector<std::string>    m_Items;
     std::vector<OpenWithHandler> m_OpenWithHandlers;
     std::string                 m_ItemsUTI;
+    MainWindowFilePanelState    *m_MainWnd;
     
     
     int                         m_DirsCount;
@@ -115,15 +116,18 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
                 vfs:(std::shared_ptr<VFSHost>) _host
                 pos:(NSPoint)_pos
              inView:(NSView*)_in_view
+            mainWnd:(MainWindowFilePanelState*)_wnd;
 {
     self = [super init];
     if(self)
     {
         assert(IsPathWithTrailingSlash(_path));
+        assert(!_items.empty());
         m_Host = _host;
         m_DirPath = _path;
         m_Pos = _pos;
         m_InView = _in_view;
+        m_MainWnd = _wnd;
         m_DirsCount = m_FilesCount = 0;
         
         for(auto &i: _items)
@@ -134,6 +138,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
             if(i->IsReg()) m_FilesCount++;
         }
     
+        [self setMinimumWidth:200]; // hardcoding is bad!
         [self Stuffing:_items];
     
         
@@ -164,18 +169,25 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
             char full_path[MAXPATHLEN];
             sprintf(full_path, "%s%s", m_DirPath.c_str(), i->Name());
             LauchServicesHandlers::DoOnItem(i, m_Host, full_path, &per_item_handlers.back());
+            
+            // check if there is no need to investigate types further since there's already no intersection
+            LauchServicesHandlers items_check;
+            LauchServicesHandlers::DoMerge(&per_item_handlers, &items_check);
+            if(items_check.paths.empty() && items_check.uti.empty())
+                break;
         }
         
         LauchServicesHandlers items_handlers;
         LauchServicesHandlers::DoMerge(&per_item_handlers, &items_handlers);
-        m_ItemsUTI = items_handlers.uti;
         
+        m_ItemsUTI = items_handlers.uti;
+
         NSMenu *openwith_submenu = [NSMenu new];
         NSMenu *always_openwith_submenu = [NSMenu new];
         
         // prepare open with handlers information
         for(int i = 0; i < items_handlers.paths.size(); ++i)
-        { // TODO: exclude duplicates here
+        {
             OpenWithHandler h;
             if(ExposeOpenWithHandler(items_handlers.paths[i], h))
             {
@@ -269,6 +281,45 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
         [always_openwith setKeyEquivalentModifierMask:NSAlternateKeyMask];
         [self addItem:always_openwith];
         
+        [self addItem:[NSMenuItem separatorItem]];
+    }
+
+    //////////////////////////////////////////////////////////////////////
+    // Move to Trash / Delete Permanently stuff
+    if(m_Host->IsWriteableAtPath(m_DirPath.c_str()))
+    {
+        NSMenuItem *item = [NSMenuItem new];
+        [item setTitle:@"Move to Trash"];
+        [item setTarget:self];
+        [item setAction:@selector(OnMoveToTrash:)];
+        [item setKeyEquivalent:@""];
+        [self addItem:item];
+        
+        item = [NSMenuItem new];
+        [item setTitle:@"Delete Permanently"];
+        [item setTarget:self];
+        [item setAction:@selector(OnDeletePermanently:)];
+        [item setAlternate:YES];
+        [item setKeyEquivalent:@""];
+        [item setKeyEquivalentModifierMask:NSAlternateKeyMask];
+        [self addItem:item];
+    }
+    
+    [self addItem:[NSMenuItem separatorItem]];
+    
+    //////////////////////////////////////////////////////////////////////
+    // Copy element for native FS. simply copies selected items' paths
+    if(m_Host->IsNativeFS())
+    {
+        NSMenuItem *item = [NSMenuItem new];
+        if(m_Items.size() > 1)
+            [item setTitle:[NSString stringWithFormat:@"Copy %lu Items", m_Items.size()]];
+        else
+            [item setTitle:[NSString stringWithFormat:@"Copy \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]]];
+        [item setTarget:self];
+        [item setAction:@selector(OnCopyPaths:)];
+        [self addItem:item];
+        [self addItem:[NSMenuItem separatorItem]];
     }
 }
 
@@ -338,10 +389,68 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
                   }];
 }
 
+- (void)OnMoveToTrash:(id)sender
+{
+    // TODO: currently no VFS support in DeletionOperation. should be implemented later, using native FS now
+    FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate(), *files_it = files;
+    for(auto &i:m_Items)
+        files_it = files_it->AddString(i.c_str(), (int)i.length(), 0);
+    
+    FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                 initWithFiles:files
+                                 type:FileDeletionOperationType::MoveToTrash
+                                 rootpath:m_DirPath.c_str()];
+    [m_MainWnd AddOperation:op];
+}
+
+- (void)OnDeletePermanently:(id)sender
+{
+    // TODO: currently no VFS support in DeletionOperation. should be implemented later, using native FS now
+    FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate(), *files_it = files;
+    for(auto &i:m_Items)
+        files_it = files_it->AddString(i.c_str(), (int)i.length(), 0);
+    
+    FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                 initWithFiles:files
+                                 type:FileDeletionOperationType::Delete
+                                 rootpath:m_DirPath.c_str()];
+    [m_MainWnd AddOperation:op];
+}
+
+- (void)OnCopyPaths:(id)sender
+{
+    NSMutableArray *filenames = [NSMutableArray new];
+    
+    char tmp[MAXPATHLEN];
+    for(auto &i: m_Items) {
+        strcpy(tmp, m_DirPath.c_str());
+        strcat(tmp, i.c_str());
+        [filenames addObject:[NSString stringWithUTF8String:tmp]];
+    }
+    
+    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+    [pasteBoard clearContents];
+    [pasteBoard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+    [pasteBoard setPropertyList:filenames forType:NSFilenamesPboardType];
+}
+
 - (void) PopUp
 {
-    [self popUpMenuPositioningItem:0 atLocation:m_Pos inView:m_InView];
+    // ensure that there will be no vertical scroll
+    NSRect vis_frame = [[[m_InView window] screen] visibleFrame];
+    NSSize mysize = [self size];
+    NSPoint windowPoint = [m_InView convertPoint:m_Pos toView:nil];
+    NSPoint screenPoint = [m_InView.window convertBaseToScreen:windowPoint];
+    if(screenPoint.y < mysize.height + vis_frame.origin.y)
+        screenPoint.y = mysize.height + vis_frame.origin.y;
+    NSPoint loc = [m_InView.window convertScreenToBase:screenPoint];
+    loc = [m_InView convertPoint:loc fromView:nil];
+    
+    [self popUpMenuPositioningItem:0 atLocation:loc inView:m_InView];
 }
+
+
+
 
 @end
 
@@ -362,7 +471,8 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
                                                                                          OnPath:_path
                                                                                             vfs:_host
                                                                                             pos:mouseLoc
-                                                                                         inView:self];
+                                                                                         inView:self
+                                                                                        mainWnd:self];
     [menu PopUp];
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <set>
 #import "LSUrls.h"
 #import "Common.h"
 
@@ -120,9 +121,17 @@ void LauchServicesHandlers::DoMerge(const std::list<LauchServicesHandlers>* _inp
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
     std::map<std::string, int> handlers_count;
+    
     for(auto i1 = _input->begin(), e1 = _input->end(); i1!=e1; ++i1)
+    {
+        std::set<std::string> inserted; // a very inefficient approach, should be rewritten if will cause lags on UI
         for(auto i2 = (*i1).paths.begin(), e2 = (*i1).paths.end(); i2!=e2; ++i2)
-            handlers_count[*i2]++;
+            if(inserted.find(*i2) == inserted.end()) // here we exclude multiple counting for repeating handlers for one content type
+            {
+                handlers_count[*i2]++;
+                inserted.insert(*i2);
+            }
+    }
     int total_input = (int)_input->size();
     
     _result->paths.clear();

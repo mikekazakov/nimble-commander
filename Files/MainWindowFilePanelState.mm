@@ -270,6 +270,66 @@
 - (void) Assigned
 {
     [self UpdateTitle];
+    [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]
+                             returnTypes:[NSArray arrayWithObjects:nil]];
+}
+
+- (id)validRequestorForSendType:(NSString *)sendType
+                     returnType:(NSString *)returnType
+{
+    if([sendType isEqualToString:NSFilenamesPboardType] &&
+       [self ActivePanelData]->Host()->IsNativeFS() )
+        return self;
+    
+    return [super validRequestorForSendType:sendType returnType:returnType];
+}
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
+                             types:(NSArray *)types
+{
+    if ([types containsObject:NSFilenamesPboardType] == NO)
+        return NO;
+    
+    return [self WriteToPasteboard:pboard];
+}
+
+- (bool)WriteToPasteboard:(NSPasteboard *)pboard
+{
+    if(![self ActivePanelData]->Host()->IsNativeFS())
+        return false;
+    
+    NSMutableArray *filenames = [NSMutableArray new];
+    
+    char dir_path[MAXPATHLEN], tmp[MAXPATHLEN];
+    PanelData *pd = [self ActivePanelData];
+    pd->GetDirectoryPathWithTrailingSlash(dir_path);
+    if(pd->GetSelectedItemsCount() > 0)
+    {
+        for(auto &i: pd->DirectoryEntries())
+            if(i.CFIsSelected())
+            {
+                strcpy(tmp, dir_path);
+                strcat(tmp, i.Name());
+                [filenames addObject:[NSString stringWithUTF8String:tmp]];
+            }
+    }
+    else
+    {
+        auto const *item = [[self ActivePanelView] CurrentItem];
+        if(item && !item->IsDotDot())
+        {
+            strcpy(tmp, dir_path);
+            strcat(tmp, item->Name());
+            [filenames addObject:[NSString stringWithUTF8String:tmp]];
+        }
+    }
+    
+    if([filenames count] == 0)
+        return false;
+    
+    [pboard clearContents];
+    [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+    return [pboard setPropertyList:filenames forType:NSFilenamesPboardType] == TRUE;
 }
 
 - (void) Resigned
@@ -1390,43 +1450,8 @@
 
 - (IBAction)copy:(id)sender
 {
+    [self WriteToPasteboard:[NSPasteboard generalPasteboard]];
     // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
-    if(![self ActivePanelData]->Host()->IsNativeFS())
-        return;
-    
-    NSMutableArray *filenames = [NSMutableArray new];
-    
-    char dir_path[MAXPATHLEN], tmp[MAXPATHLEN];
-    PanelData *pd = [self ActivePanelData];
-    pd->GetDirectoryPathWithTrailingSlash(dir_path);
-    if(pd->GetSelectedItemsCount() > 0)
-    {
-        for(auto &i: pd->DirectoryEntries())
-            if(i.CFIsSelected())
-            {
-                strcpy(tmp, dir_path);
-                strcat(tmp, i.Name());
-                [filenames addObject:[NSString stringWithUTF8String:tmp]];
-            }
-    }
-    else
-    {
-        auto const *item = [[self ActivePanelView] CurrentItem];
-        if(item && !item->IsDotDot())
-        {
-            strcpy(tmp, dir_path);
-            strcat(tmp, item->Name());
-            [filenames addObject:[NSString stringWithUTF8String:tmp]];
-        }
-    }
-    
-    if([filenames count] == 0)
-        return;
-    
-    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
-    [pasteBoard clearContents];
-    [pasteBoard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
-    [pasteBoard setPropertyList:filenames forType:NSFilenamesPboardType];
 }
 
 - (void)GetFilePanelsGlobalPaths:(std::vector<std::string> &)_paths

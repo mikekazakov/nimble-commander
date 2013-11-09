@@ -9,6 +9,7 @@
 #import "3rd_party/sparkle/SUStandardVersionComparator.h"
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "Common.h"
+#import "sysinfo.h"
 #import "PanelAux.h"
 #import "LSUrls.h"
 #import "FileDeletionOperation.h"
@@ -92,7 +93,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     }
 }
 
-@interface MainWindowFilePanelContextMenu : NSMenu
+@interface MainWindowFilePanelContextMenu : NSMenu<NSMenuDelegate>
 
 
 - (id) initWithData:(const std::vector<const VFSListingItem*>&) _items
@@ -120,7 +121,8 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     MainWindowFilePanelState    *m_MainWnd;
     PanelController             *m_CurrentController;
     PanelController             *m_OppositeController;
-
+    NSMutableArray              *m_ShareItemsURLs;
+    NSMenu                      *m_OriginalServicesMenu;
     
     int                         m_DirsCount;
     int                         m_FilesCount;
@@ -148,6 +150,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
         m_CurrentController = _my_cont;
         m_OppositeController = _opp_cont;
         m_DirsCount = m_FilesCount = 0;
+        self.delegate = self;
         
         for(auto &i: _items)
         {
@@ -365,6 +368,47 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
         [item setKeyEquivalentModifierMask:NSAlternateKeyMask];
         [self addItem:item];
     }
+
+    //////////////////////////////////////////////////////////////////////
+    // Share stuff
+    {
+        NSMenu *share_submenu = [NSMenu new];
+        bool eligible = (sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8) && m_Host->IsNativeFS();
+        if(eligible)
+        {
+            m_ShareItemsURLs = [NSMutableArray new];
+            for(auto &i:m_Items) {
+                char path[MAXPATHLEN];
+                strcpy(path, m_DirPath.c_str());
+                strcat(path, i.c_str());
+                if(NSString *s = [NSString stringWithUTF8String:path])
+                    if(NSURL *url = [[NSURL alloc] initFileURLWithPath:s])
+                        [m_ShareItemsURLs addObject:url];
+            }
+            
+            NSArray *sharingServices = [NSSharingService sharingServicesForItems:m_ShareItemsURLs];
+            if (sharingServices.count > 0)
+                for (NSSharingService *currentService in sharingServices) {
+                    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:currentService.title
+                                                                  action:@selector(OnShareWithService:)
+                                                           keyEquivalent:@""];
+                    item.image = currentService.image;
+                    item.representedObject = currentService;
+                    item.target = self;
+                    [share_submenu addItem:item];
+                }
+            else
+                eligible = false;
+        }
+        
+        NSMenuItem *share_menuitem = [NSMenuItem new];
+        [share_menuitem setTitle:@"Share"];
+        [share_menuitem setSubmenu:share_submenu];
+        [share_menuitem setEnabled:eligible];
+        [self addItem:share_menuitem];
+    }
+    
+    [self addItem:[NSMenuItem separatorItem]];
     
     //////////////////////////////////////////////////////////////////////
     // Copy element for native FS. simply copies selected items' paths
@@ -381,6 +425,20 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
         [self addItem:item];
     }
     [self addItem:[NSMenuItem separatorItem]];
+
+    //////////////////////////////////////////////////////////////////////
+    // Services menu. Have a bug here - with some elements selected and context menu on non-selected element,
+    // service will work with selected elements, not on current element as other context menu handler. BUG!!!!
+    {
+        NSMenu *services_submenu = [NSMenu new];
+        NSMenuItem *services_menuitem = [NSMenuItem new];
+        [services_menuitem setTitle:@"Services"];
+        [services_menuitem setSubmenu:services_submenu];
+        [self addItem:services_menuitem];
+
+        m_OriginalServicesMenu = [NSApp servicesMenu];
+        [NSApp setServicesMenu:services_submenu];
+    }
 }
 
 - (void)OnRegularOpen:(id)sender
@@ -516,6 +574,12 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     [m_MainWnd AddOperation:op];
 }
 
+- (void)OnShareWithService:(id)sender
+{
+    NSSharingService *service = ((NSMenuItem*)sender).representedObject;
+    [service performWithItems:m_ShareItemsURLs];
+}
+
 - (void) PopUp
 {
     // ensure that there will be no vertical scroll
@@ -531,8 +595,11 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     [self popUpMenuPositioningItem:0 atLocation:loc inView:m_InView];
 }
 
-
-
+- (void)menuDidClose:(NSMenu *)menu
+{
+    assert(menu == self);
+    [NSApp setServicesMenu:m_OriginalServicesMenu];
+}
 
 @end
 

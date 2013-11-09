@@ -603,37 +603,41 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     m_Data->GetDirectoryPathWithTrailingSlash(dirpathbuf);
     std::string dirpath(dirpathbuf);
     
-    int oldcursorpos = [m_View GetCursorPosition];
-    std::string oldcursorname = (oldcursorpos >= 0 ? [m_View CurrentItem]->Name() : "");
-    
     if(m_IsStopDirectoryReLoading)
         dispatch_async(m_DirectoryReLoadingQ, ^{ m_IsStopDirectoryReLoading = false; } );
     dispatch_async(m_DirectoryReLoadingQ, ^{
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryReLoading:true];});
-
-        
+    
         std::shared_ptr<VFSListing> listing;
         int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(), &listing, self.FetchFlags, ^{return m_IsStopDirectoryReLoading;});
         if(ret >= 0)
         {
             m_IsStopDirectoryReLoading = true;
             dispatch_async(dispatch_get_main_queue(), ^{
+                int oldcursorpos = [m_View GetCursorPosition];
+                std::string oldcursorname;
+                if(oldcursorpos >= 0 && [m_View CurrentItem] != 0)
+                    oldcursorname = [m_View CurrentItem]->Name();
+                
                 m_Data->ReLoad(listing);
-                int newcursorrawpos = m_Data->FindEntryIndex(oldcursorname.c_str());
-                if( newcursorrawpos >= 0 )
+                
+                if(![self CheckAgainstRequestedSelection])
                 {
-                    int sortpos = m_Data->FindSortedEntryIndex(newcursorrawpos);
-                    [m_View SetCursorPosition:sortpos >= 0 ? sortpos : 0];
-                }
-                else
-                {
-                    if( oldcursorpos < m_Data->SortedDirectoryEntries().size() )
-                        [m_View SetCursorPosition:oldcursorpos];
+                    int newcursorrawpos = m_Data->FindEntryIndex(oldcursorname.c_str());
+                    if( newcursorrawpos >= 0 )
+                    {
+                        int sortpos = m_Data->FindSortedEntryIndex(newcursorrawpos);
+                        [m_View SetCursorPosition:sortpos >= 0 ? sortpos : 0];
+                    }
                     else
-                        [m_View SetCursorPosition:int(m_Data->SortedDirectoryEntries().size() - 1)]; // assuming that any directory will have at leat ".."
-                }                
-            
-                [self CheckAgainstRequestedSelection];
+                    {
+                        if( oldcursorpos < m_Data->SortedDirectoryEntries().size() )
+                            [m_View SetCursorPosition:oldcursorpos];
+                        else
+                            [m_View SetCursorPosition:int(m_Data->SortedDirectoryEntries().size() - 1)]; // assuming that any directory will have at leat ".."
+                    }
+                }
+
                 [m_View setNeedsDisplay:true];
             });
         }

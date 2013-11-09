@@ -40,6 +40,18 @@
     return self;
 }
 
+- (void) ExtractTargetFn
+{
+    if(!m_HasTargetFn)
+        if(strcmp(m_Job.TargetFileName(), "") != 0) {
+            char tmp[MAXPATHLEN];
+            if(GetFilenameFromPath(m_Job.TargetFileName(), tmp)) {
+                m_ArchiveName = [NSString stringWithUTF8String:tmp];
+                m_HasTargetFn = true;
+            }
+        }
+}
+
 - (void)Update
 {
     OperationStats &stats = m_Job.GetStats();
@@ -53,14 +65,8 @@
     if(m_NeedUpdateCaption)
     {
         if(!m_HasTargetFn)
-            if(strcmp(m_Job.TargetFileName(), "") != 0) {
-                char tmp[MAXPATHLEN];
-                if(GetFilenameFromPath(m_Job.TargetFileName(), tmp)) {
-                    m_ArchiveName = [NSString stringWithUTF8String:tmp];
-                    m_HasTargetFn = true;
-                }
-            }
-    
+            [self ExtractTargetFn];
+            
         if(m_HasTargetFn)
         {
             if(!m_Job.IsDoneScanning()) {
@@ -151,8 +157,14 @@
 
 - (void) Finished
 {
+    if(!m_HasTargetFn)
+        [self ExtractTargetFn];
+    
     NSString *arc_name = m_ArchiveName;
     PanelController *target = self.TargetPanel;
+    
+    if(!arc_name)
+        return;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [target RefreshDirectory];

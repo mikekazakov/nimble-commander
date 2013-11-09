@@ -768,11 +768,11 @@
 
              char pdir[MAXPATHLEN];
              curdata->GetDirectoryPathWithoutTrailingSlash(pdir);
-             
-             [m_OperationsController AddOperation:[[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] fileSystemRepresentation]
-                                                                                        rootpath:pdir
-                                                   ]
-                                        WithPanel:[self ActivePanelController]];
+             CreateDirectoryOperation *op = [[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] fileSystemRepresentation]
+                                                                                  rootpath:pdir
+                                             ];
+             op.TargetPanel = [self ActivePanelController];
+             [m_OperationsController AddOperation:op];
          }
      }];
 }
@@ -1494,15 +1494,13 @@
         target_pc = m_LeftPanelController;
     }
     
-    
-    [m_OperationsController AddOperation:
-        [[FileCompressOperation alloc] initWithFiles:files
-                                             srcroot:srcroot
-                                              srcvfs:srcvfs
-                                             dstroot:dstroot
-                                              dstvfs:dstvfs]
-                               WithPanel:target_pc
-     ];
+    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:files
+                                                                     srcroot:srcroot
+                                                                      srcvfs:srcvfs
+                                                                     dstroot:dstroot
+                                                                      dstvfs:dstvfs];
+    op.TargetPanel = target_pc;
+    [m_OperationsController AddOperation:op];
 }
 
 - (void) AddOperation:(Operation*)_operation

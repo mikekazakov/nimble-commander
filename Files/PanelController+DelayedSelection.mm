@@ -35,17 +35,17 @@
         [self CheckAgainstRequestedSelection];
 }
 
-- (void) CheckAgainstRequestedSelection
+- (bool) CheckAgainstRequestedSelection
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     if(!m_DelayedSelection.isvalid)
-        return;
+        return false;
     
     uint64_t now = GetTimeInNanoseconds();
     if(now > m_DelayedSelection.request_end)
     {
         m_DelayedSelection.isvalid = false;
-        return;
+        return false;
     }
     
     // now try to find it
@@ -63,8 +63,10 @@
             m_Data->CustomFlagsSelectAll(false);
             if(![self IsActivePanel])
                [self RequestActivation];
+            return true;
         }
     }
+    return false;
 }
 
 - (void) ClearSelectionRequest

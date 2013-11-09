@@ -33,8 +33,9 @@
 
 /**
  * Private PanelController method.
+ * Return true if it moved or just set the cursor position.
  */
-- (void) CheckAgainstRequestedSelection;
+- (bool) CheckAgainstRequestedSelection;
 
 /**
  * Private PanelController method.

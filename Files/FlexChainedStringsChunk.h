@@ -137,8 +137,8 @@ public:
 private:
     FlexChainedStringsChunk();                        // no implementation
     ~FlexChainedStringsChunk();                       // no implementation
-    FlexChainedStringsChunk(const FlexChainedStringsChunk&); // no implementation
-    void operator=(const FlexChainedStringsChunk&);   // no implementation
+    FlexChainedStringsChunk(const FlexChainedStringsChunk&) = delete; // no implementation
+    void operator=(const FlexChainedStringsChunk&) = delete;   // no implementation
     
 }; // sizeof(FlexStringsChunk) == 1024
 

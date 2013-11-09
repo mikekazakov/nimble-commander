@@ -12,6 +12,8 @@
 #import "PanelAux.h"
 #import "LSUrls.h"
 #import "FileDeletionOperation.h"
+#import "PanelController.h"
+#import "FileCompressOperation.h"
 
 struct OpenWithHandler
 {
@@ -56,6 +58,14 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
     return true;
 }
 
+static inline FlexChainedStringsChunk *StringsFromVector(const std::vector<std::string> &_files)
+{
+    FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate(), *files_it = files;
+    for(auto &i:_files)
+        files_it = files_it->AddString(i.c_str(), (int)i.length(), 0);
+    return files;
+}
+
 static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
 {
     // _handlers should be already sorted here
@@ -89,7 +99,10 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
              OnPath:(const char*)_path
                 vfs:(std::shared_ptr<VFSHost>) _host
                 pos:(NSPoint)_pos
-             inView:(NSView*)_in_view;
+             inView:(NSView*)_in_view
+            mainWnd:(MainWindowFilePanelState*)_wnd
+             myCont:(PanelController*)_my_cont
+            oppCont:(PanelController*)_opp_cont;
 
 - (void) PopUp;
 
@@ -105,7 +118,9 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     std::vector<OpenWithHandler> m_OpenWithHandlers;
     std::string                 m_ItemsUTI;
     MainWindowFilePanelState    *m_MainWnd;
-    
+    PanelController             *m_CurrentController;
+    PanelController             *m_OppositeController;
+
     
     int                         m_DirsCount;
     int                         m_FilesCount;
@@ -116,7 +131,9 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
                 vfs:(std::shared_ptr<VFSHost>) _host
                 pos:(NSPoint)_pos
              inView:(NSView*)_in_view
-            mainWnd:(MainWindowFilePanelState*)_wnd;
+            mainWnd:(MainWindowFilePanelState*)_wnd
+             myCont:(PanelController*)_my_cont
+            oppCont:(PanelController*)_opp_cont
 {
     self = [super init];
     if(self)
@@ -128,6 +145,8 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
         m_Pos = _pos;
         m_InView = _in_view;
         m_MainWnd = _wnd;
+        m_CurrentController = _my_cont;
+        m_OppositeController = _opp_cont;
         m_DirsCount = m_FilesCount = 0;
         
         for(auto &i: _items)
@@ -148,6 +167,13 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
 
 - (void) Stuffing:(const std::vector<const VFSListingItem*>&) _items
 {
+    // cur_pnl_path should be the same as m_DirPath!!!
+    char cur_pnl_path[MAXPATHLEN], opp_pnl_path[MAXPATHLEN];
+    [m_CurrentController GetCurrentDirectoryPathRelativeToHost:cur_pnl_path];
+    [m_OppositeController GetCurrentDirectoryPathRelativeToHost:opp_pnl_path];
+    bool cur_pnl_writable = [m_CurrentController GetCurrentVFSHost]->IsWriteableAtPath(cur_pnl_path);
+    bool opp_pnl_writable = [m_OppositeController GetCurrentVFSHost]->IsWriteableAtPath(opp_pnl_path);
+    
     //////////////////////////////////////////////////////////////////////
     // regular Open item
     if(m_FilesCount > 0 || m_Host->IsNativeFS())
@@ -286,41 +312,75 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
 
     //////////////////////////////////////////////////////////////////////
     // Move to Trash / Delete Permanently stuff
-    if(m_Host->IsWriteableAtPath(m_DirPath.c_str()))
     {
         NSMenuItem *item = [NSMenuItem new];
         [item setTitle:@"Move to Trash"];
-        [item setTarget:self];
-        [item setAction:@selector(OnMoveToTrash:)];
+        if(cur_pnl_writable) { // gray out this thing on read-only fs
+            [item setTarget:self];
+            [item setAction:@selector(OnMoveToTrash:)];
+        }
         [item setKeyEquivalent:@""];
         [self addItem:item];
         
         item = [NSMenuItem new];
         [item setTitle:@"Delete Permanently"];
-        [item setTarget:self];
-        [item setAction:@selector(OnDeletePermanently:)];
+        if(cur_pnl_writable) { // gray out this thing on read-only fs
+            [item setTarget:self];
+            [item setAction:@selector(OnDeletePermanently:)];
+        }
         [item setAlternate:YES];
         [item setKeyEquivalent:@""];
         [item setKeyEquivalentModifierMask:NSAlternateKeyMask];
         [self addItem:item];
     }
-    
     [self addItem:[NSMenuItem separatorItem]];
+    
+    
+    //////////////////////////////////////////////////////////////////////
+    // Compression stuff
+    {
+        NSMenuItem *item = [NSMenuItem new];
+        if(m_Items.size() > 1)
+            [item setTitle:[NSString stringWithFormat:@"Compress %lu Items", m_Items.size()]];
+        else
+            [item setTitle:[NSString stringWithFormat:@"Compress \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]]];
+        if(opp_pnl_writable) { // gray out this thing if we can't compress on opposite panel
+            [item setTarget:self];
+            [item setAction:@selector(OnCompressToOppositePanel:)];
+        }
+        [item setKeyEquivalent:@""];
+        [self addItem:item];
+        
+        item = [NSMenuItem new];
+        if(m_Items.size() > 1)
+            [item setTitle:[NSString stringWithFormat:@"Compress %lu Items Here", m_Items.size()]];
+        else
+            [item setTitle:[NSString stringWithFormat:@"Compress \"%@\" Here", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]]];
+        if(cur_pnl_writable) { // gray out this thing if we can't compress on this panel
+            [item setTarget:self];
+            [item setAction:@selector(OnCompressToCurrentPanel:)];
+        }
+        [item setKeyEquivalent:@""];
+        [item setAlternate:YES];
+        [item setKeyEquivalentModifierMask:NSAlternateKeyMask];
+        [self addItem:item];
+    }
     
     //////////////////////////////////////////////////////////////////////
     // Copy element for native FS. simply copies selected items' paths
-    if(m_Host->IsNativeFS())
     {
         NSMenuItem *item = [NSMenuItem new];
         if(m_Items.size() > 1)
             [item setTitle:[NSString stringWithFormat:@"Copy %lu Items", m_Items.size()]];
         else
             [item setTitle:[NSString stringWithFormat:@"Copy \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]]];
-        [item setTarget:self];
-        [item setAction:@selector(OnCopyPaths:)];
+        if(m_Host->IsNativeFS()) {  // such thing works only on native file systems
+            [item setTarget:self];
+            [item setAction:@selector(OnCopyPaths:)];
+        }
         [self addItem:item];
-        [self addItem:[NSMenuItem separatorItem]];
     }
+    [self addItem:[NSMenuItem separatorItem]];
 }
 
 - (void)OnRegularOpen:(id)sender
@@ -392,12 +452,8 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
 - (void)OnMoveToTrash:(id)sender
 {
     // TODO: currently no VFS support in DeletionOperation. should be implemented later, using native FS now
-    FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate(), *files_it = files;
-    for(auto &i:m_Items)
-        files_it = files_it->AddString(i.c_str(), (int)i.length(), 0);
-    
     FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                 initWithFiles:files
+                                 initWithFiles:StringsFromVector(m_Items)
                                  type:FileDeletionOperationType::MoveToTrash
                                  rootpath:m_DirPath.c_str()];
     [m_MainWnd AddOperation:op];
@@ -434,6 +490,32 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     [pasteBoard setPropertyList:filenames forType:NSFilenamesPboardType];
 }
 
+- (void)OnCompressToOppositePanel:(id)sender
+{
+    char dstroot[MAXPATHLEN];
+    [m_OppositeController GetCurrentDirectoryPathRelativeToHost:dstroot];
+    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:StringsFromVector(m_Items)
+                                                                     srcroot:m_DirPath.c_str()
+                                                                      srcvfs:[m_CurrentController GetCurrentVFSHost]
+                                                                     dstroot:dstroot
+                                                                      dstvfs:[m_OppositeController GetCurrentVFSHost]
+                                 ];
+    op.TargetPanel = m_OppositeController;
+    [m_MainWnd AddOperation:op];
+}
+
+- (void)OnCompressToCurrentPanel:(id)sender
+{
+    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:StringsFromVector(m_Items)
+                                                                     srcroot:m_DirPath.c_str()
+                                                                      srcvfs:[m_CurrentController GetCurrentVFSHost]
+                                                                     dstroot:m_DirPath.c_str()
+                                                                      dstvfs:[m_CurrentController GetCurrentVFSHost]
+                                 ];
+    op.TargetPanel = m_CurrentController;
+    [m_MainWnd AddOperation:op];
+}
+
 - (void) PopUp
 {
     // ensure that there will be no vertical scroll
@@ -462,17 +544,29 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
                           vfs:(std::shared_ptr<VFSHost>) _host
                        caller:(PanelController*) _caller
 {
-
+    PanelController *current_cont = _caller;
+    PanelController *opp_cont;
+    if(current_cont == m_LeftPanelController)
+        opp_cont = m_RightPanelController;
+    else if(current_cont == m_RightPanelController)
+        opp_cont = m_LeftPanelController;
+    else
+        assert(0);
+    
     NSPoint mouseLoc;
     mouseLoc = [NSEvent mouseLocation]; //get current mouse position
     mouseLoc = [self.window convertScreenToBase:mouseLoc];
     mouseLoc = [self convertPoint:mouseLoc fromView:nil];
-    MainWindowFilePanelContextMenu *menu = [[MainWindowFilePanelContextMenu alloc] initWithData:_items
-                                                                                         OnPath:_path
-                                                                                            vfs:_host
-                                                                                            pos:mouseLoc
-                                                                                         inView:self
-                                                                                        mainWnd:self];
+    MainWindowFilePanelContextMenu *menu = [MainWindowFilePanelContextMenu alloc];
+    menu = [menu initWithData:_items
+                       OnPath:_path
+                          vfs:_host
+                          pos:mouseLoc
+                       inView:self
+                      mainWnd:self
+                       myCont:current_cont
+                      oppCont:opp_cont];
+
     [menu PopUp];
 }
 

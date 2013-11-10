@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <sys/stat.h>
 #import "3rd_party/sparkle/SUStandardVersionComparator.h"
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "Common.h"
@@ -15,6 +16,7 @@
 #import "FileDeletionOperation.h"
 #import "PanelController.h"
 #import "FileCompressOperation.h"
+#import "FileCopyOperation.h"
 
 struct OpenWithHandler
 {
@@ -370,6 +372,18 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     }
 
     //////////////////////////////////////////////////////////////////////
+    // Duplicate stuff
+    {
+        NSMenuItem *item = [NSMenuItem new];
+        [item setTitle:@"Duplicate"];
+        if(m_Items.size() == 1 && cur_pnl_writable) {
+            [item setTarget:self];
+            [item setAction:@selector(OnDuplicateItem:)];
+        }
+        [self addItem:item];
+    }
+    
+    //////////////////////////////////////////////////////////////////////
     // Share stuff
     {
         NSMenu *share_submenu = [NSMenu new];
@@ -427,7 +441,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     [self addItem:[NSMenuItem separatorItem]];
 
     //////////////////////////////////////////////////////////////////////
-    // Services menu. Have a bug here - with some elements selected and context menu on non-selected element,
+    // Services menu. Caveat! Have a bug here - with some elements selected and context menu on non-selected element,
     // service will work with selected elements, not on current element as other context menu handler. BUG!!!!
     {
         NSMenu *services_submenu = [NSMenu new];
@@ -578,6 +592,64 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
 {
     NSSharingService *service = ((NSMenuItem*)sender).representedObject;
     [service performWithItems:m_ShareItemsURLs];
+}
+
+- (void)OnDuplicateItem:(id)sender
+{
+    // TODO: currently no VFS support in CopyOperation. should be implemented later, using native FS now
+    char filename[MAXPATHLEN], ext[MAXPATHLEN];
+    bool has_ext = false;
+    {
+        const char *orig = m_Items[0].c_str();
+        char *last_dot = strrchr(orig, '.');
+        if(last_dot == 0) {
+            strcpy(filename, orig);
+        }
+        else
+        {
+            if(last_dot == orig || last_dot == orig + strlen(orig) - 1) {
+                strcpy(filename, orig);
+            }
+            else {
+                memcpy(filename, orig, last_dot - orig);
+                filename[last_dot - orig] = 0;
+                strcpy(ext, last_dot+1);
+                has_ext = true;
+            }
+        }
+    }
+    
+    char target[MAXPATHLEN];
+    sprintf(target, "%s%s copy", m_DirPath.c_str(), filename);
+    if(has_ext) {
+        strcat(target, ".");
+        strcat(target, ext);
+    }
+    
+    struct stat st;
+    if(m_Host->Stat(target, st, VFSHost::F_NoFollow, 0) == 0)
+    { // this file already exists, will try another ones
+        for(int i = 2; i < 100; ++i) {
+            sprintf(target, "%s%s copy %d", m_DirPath.c_str(), filename, i);
+            if(has_ext) {
+                strcat(target, ".");
+                strcat(target, ext);
+            }
+            if(m_Host->Stat(target, st, VFSHost::F_NoFollow, 0) != 0)
+                goto proceed;
+            
+        }
+        return; // we're full of such filenames, no reason to go on
+    }
+    
+proceed:;
+    FileCopyOperationOptions opts;
+    opts.docopy = true;
+    FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:FlexChainedStringsChunk::AllocateWithSingleString(m_Items[0].c_str())
+                                                                root:m_DirPath.c_str()
+                                                                dest:target
+                                                             options:&opts];
+    [m_MainWnd AddOperation:op];
 }
 
 - (void) PopUp

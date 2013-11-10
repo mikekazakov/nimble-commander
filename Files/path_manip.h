@@ -44,6 +44,12 @@ bool GetDirectoryContainingItemFromRelPath(const char* _path, char *_buf);
 bool GetExtensionFromPath(const char* _path, char *_buf);    
 
 /**
+ * GetExtensionFromRelPath can work with absolute path and paths like "filename.txt"
+ * It will not extract extensions from filenames like ".filename" or "filename."
+ */
+bool GetExtensionFromRelPath(const char* _path, char *_buf);
+    
+/**
  * IsPathWithTrailingSlash actually does _path[strlen(_path)-1] == '/' and some prior checking
  */
 inline bool IsPathWithTrailingSlash(const char* _path)

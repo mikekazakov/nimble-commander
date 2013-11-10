@@ -328,11 +328,15 @@ struct CursorSelectionState
     }
     
     [self OnCursorPositionChanged];
+
+    if ((_event.modifierFlags & NSControlKeyMask) != 0)
+        [self rightMouseDown:_event]; // emulate right-mouse down    
 }
 
 - (void)rightMouseDown:(NSEvent *)_event
 {
-    [self mouseDown:_event];
+    if ((_event.modifierFlags & NSControlKeyMask) == 0)
+        [self mouseDown:_event]; // we'll call rightMouseDown from mouseDown with ctrl, so need to exclude cycle here
     
     NSPoint event_location = [_event locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];

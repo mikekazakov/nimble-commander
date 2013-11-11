@@ -73,6 +73,7 @@
 		CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
 		CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
+		CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47F6971830CDB30060D474 /* NewVersionChecker.mm */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */; };
 		CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
@@ -377,6 +378,8 @@
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
 		CF435FFB17CF1C5C004BA507 /* VFS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFS.h; sourceTree = "<group>"; };
+		CF47F6961830CDB30060D474 /* NewVersionChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewVersionChecker.h; sourceTree = "<group>"; };
+		CF47F6971830CDB30060D474 /* NewVersionChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NewVersionChecker.mm; sourceTree = "<group>"; };
 		CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask.mm; sourceTree = "<group>"; };
 		CF4C5A5C17A7B48E00B1B061 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMask.h; sourceTree = "<group>"; };
 		CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionWithMaskSheetController.h; sourceTree = "<group>"; };
@@ -1175,6 +1178,8 @@
 				CF27414F1803F6A2006D6687 /* sysinfo.h */,
 				CFDA4CCB182A17C7006EC35C /* LSUrls.h */,
 				CFDA4CCC182A17C7006EC35C /* LSUrls.mm */,
+				CF47F6961830CDB30060D474 /* NewVersionChecker.h */,
+				CF47F6971830CDB30060D474 /* NewVersionChecker.mm */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -1648,6 +1653,7 @@
 				CF9D0EBE17CC961100CB8146 /* archive_write_add_filter_program.c in Sources */,
 				CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */,
 				CF9D0EB817CC961100CB8146 /* archive_write_add_filter_compress.c in Sources */,
+				CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */,
 				CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */,
 				CF9D0EC417CC961100CB8146 /* archive_write_disk_set_standard_lookup.c in Sources */,
 				CF9D0EBB17CC961100CB8146 /* archive_write_add_filter_lrzip.c in Sources */,

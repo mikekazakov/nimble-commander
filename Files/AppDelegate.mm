@@ -19,6 +19,7 @@
 #import "PreferencesWindowPanelsTab.h"
 #import "PreferencesWindowViewerTab.h"
 #import "TemporaryNativeFileStorage.h"
+#import "NewVersionChecker.h"
 
 @implementation AppDelegate
 {
@@ -44,6 +45,7 @@
     // modules initialization
     FSEventsDirUpdate::RunDiskArbitration();
     TemporaryNativeFileStorage::StartBackgroundPurging();
+    NewVersionChecker::Go();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults addObserver:self

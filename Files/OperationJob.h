@@ -11,6 +11,8 @@
 
 #import "OperationStats.h"
 
+@class Operation;
+
 class OperationJob
 {
 public:
@@ -39,6 +41,8 @@ public:
     State GetState() const;
     
     OperationStats& GetStats();
+    
+    void SetBaseOperation(Operation *_op); // should be called only by Operation class
     
 protected:
     virtual void Do() = 0;
@@ -73,6 +77,8 @@ private:
     // Requests internal thread to stop execution.
     // Internal thread only reads this variable.
     volatile bool m_RequestStop;
+    
+    Operation *m_BaseOperation;
     
     // Disable copy constructor and operator.
     OperationJob(const OperationJob&) = delete;

@@ -792,6 +792,7 @@
                                                   initWithFiles:files
                                                   type:type
                                                   rootpath:root_path];
+                     op.TargetPanel = [self ActivePanelController];
                      [m_OperationsController AddOperation:op];
                  }
                  else
@@ -885,22 +886,28 @@
              [mc FillOptions:&opts];
              
              
+             FileCopyOperation *op;
              if(source->Host()->IsNativeFS() && destination->Host()->IsNativeFS())
-                 [m_OperationsController AddOperation:
-                  [[FileCopyOperation alloc] initWithFiles:files
+                  op = [[FileCopyOperation alloc] initWithFiles:files
                                                       root:root_path
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                                   options:&opts]];
+                                                   options:&opts];
              else if(destination->Host()->IsNativeFS() &&
                      strlen([[mc.TextField stringValue] fileSystemRepresentation]) > 0 &&
                      [[mc.TextField stringValue] fileSystemRepresentation][0] == '/'
                      )
-                 [m_OperationsController AddOperation:
-                  [[FileCopyOperation alloc] initWithFiles:files
+                  op = [[FileCopyOperation alloc] initWithFiles:files
                                                       root:root_path
                                                    rootvfs:source->Host()
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                                   options:&opts]];
+                                                   options:&opts];
+             [op AddOnFinishHandler:^{
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [m_LeftPanelController RefreshDirectory];
+                     [m_RightPanelController RefreshDirectory];
+                 });
+             }];
+             [m_OperationsController AddOperation:op];
          }
          else
          {
@@ -937,11 +944,18 @@
              opts.docopy = true;
              [mc FillOptions:&opts];
              
-             [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:files
-                                                  root:root_path
-                                                  dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                               options:&opts]];
+             
+             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
+                                                                         root:root_path
+                                                                         dest:[[mc.TextField stringValue] fileSystemRepresentation]
+                                                                      options:&opts];
+             [op AddOnFinishHandler:^{
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [m_LeftPanelController RefreshDirectory];
+                     [m_RightPanelController RefreshDirectory];
+                 });
+             }];
+             [m_OperationsController AddOperation:op];
          }
          else
          {
@@ -1000,8 +1014,18 @@
              opts.docopy = false;
              [mc FillOptions:&opts];
              
-             [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:files root:root_path dest:[[mc.TextField stringValue] fileSystemRepresentation] options:&opts]];
+             
+             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
+                                                                         root:root_path
+                                                                         dest:[[mc.TextField stringValue] fileSystemRepresentation]
+                                                                      options:&opts];
+             [op AddOnFinishHandler:^{
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [m_LeftPanelController RefreshDirectory];
+                     [m_RightPanelController RefreshDirectory];
+                 });
+             }];
+            [m_OperationsController AddOperation:op];
          }
          else
          {
@@ -1038,11 +1062,18 @@
              opts.docopy = false;
              [mc FillOptions:&opts];
              
-             [m_OperationsController AddOperation:
-              [[FileCopyOperation alloc] initWithFiles:files
-                                                  root:root_path
-                                                  dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                               options:&opts]];
+             
+             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
+                                                                         root:root_path
+                                                                         dest:[[mc.TextField stringValue] fileSystemRepresentation]
+                                                                      options:&opts];
+             [op AddOnFinishHandler:^{
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [m_LeftPanelController RefreshDirectory];
+                     [m_RightPanelController RefreshDirectory];
+                 });
+             }];             
+             [m_OperationsController AddOperation:op];
          }
          else
          {

@@ -10,6 +10,7 @@
 #import "FileDeletionOperationJob.h"
 #import "OperationDialogAlert.h"
 #import "Common.h"
+#import "PanelController.h"
 
 @implementation FileDeletionOperation
 {
@@ -45,6 +46,14 @@
                             _files->CountStringsWithDescendants(),
                             [NSString stringWithUTF8String:buff]];
         }
+        
+        [self AddOnFinishHandler:^{
+            if(self.TargetPanel != nil) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.TargetPanel RefreshDirectory];
+                });
+            }
+        }];
     }
     return self;
 }   

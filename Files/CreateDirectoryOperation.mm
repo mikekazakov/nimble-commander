@@ -49,10 +49,12 @@
     return alert;
 }
 
-- (void) Finished
+- (void) OnFinish
 {
-    const uint64_t op_time_thresh = 500 * USEC_PER_SEC; // if operation was done in 500ms - we will ask panel to change cursor
+    [super OnFinish];
     
+    const uint64_t op_time_thresh = 500 * USEC_PER_SEC; // if operation was done in 500ms - we will ask panel to change cursor
+        
     if(self.TargetPanel != nil && (GetTimeInNanoseconds() - m_OperationStart < op_time_thresh) )
     {
         if(strchr(m_OriginalPathRequest, '/') == 0)

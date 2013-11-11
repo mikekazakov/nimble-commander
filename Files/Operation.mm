@@ -7,6 +7,7 @@
 //
 
 #import <algorithm>
+#import <vector>
 #import "Operation.h"
 #import "OperationJob.h"
 #import "OperationDialogController.h"
@@ -71,6 +72,7 @@ const int MaxDialogs = 2;
 {
     OperationJob *m_Job;
     id<OperationDialogProtocol> m_Dialogs[MaxDialogs];
+    std::vector<void(^)()> m_Handlers;
 }
 
 - (void)setIsPaused:(BOOL)IsPaused
@@ -94,6 +96,8 @@ const int MaxDialogs = 2;
         _IsIndeterminate = true;
         
         for (int i = 0; i < MaxDialogs; ++i) m_Dialogs[i] = nil;
+        
+        _job->SetBaseOperation(self);
     }
     return self;
 }
@@ -245,6 +249,17 @@ const int MaxDialogs = 2;
     _Progress = Progress;
     if(_IsIndeterminate == true && Progress > 0.0001f)
         self.IsIndeterminate = false;
+}
+
+- (void)OnFinish
+{
+    for(auto i: m_Handlers)
+        i();
+}
+
+- (void)AddOnFinishHandler:(void (^)())_handler
+{
+    m_Handlers.push_back(_handler);
 }
 
 @end

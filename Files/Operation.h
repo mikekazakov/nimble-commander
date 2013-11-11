@@ -97,6 +97,16 @@ class OperationJob;
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog;
 
 
+/**
+ * OnFinish called by Job on SetCompleted() event.
+ */
+- (void)OnFinish;
+
+/**
+ * Will execute _handler upon succesful finish. It will be exectuted in background thread.
+ */
+- (void)AddOnFinishHandler:(void (^)())_handler;
+
 - (void) setProgress:(float)Progress;
 
 - (NSString*) ProduceDescriptionStringForBytesProcess;

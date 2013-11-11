@@ -15,6 +15,4 @@
 
 - (OperationDialogAlert *)DialogOnCrDirError:(int)_error
                                       ForDir:(const char *)_path;
-
-- (void) Finished; // called by nested Job
 @end

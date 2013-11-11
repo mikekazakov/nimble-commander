@@ -155,8 +155,10 @@
                      );
 }
 
-- (void) Finished
+- (void) OnFinish
 {
+    [super OnFinish];    
+    
     if(!m_HasTargetFn)
         [self ExtractTargetFn];
     

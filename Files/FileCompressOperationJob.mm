@@ -114,14 +114,12 @@ void FileCompressOperationJob::Do()
 
             m_TargetFile->Close();
     
-            if(!CheckPauseOrStop())
-                [m_Operation Finished];
-            
             if(CheckPauseOrStop())
                 m_DstVFS->Unlink(m_TargetFileName, 0);
         }
     }
     
+    if(CheckPauseOrStop()) { SetStopped(); return; }    
     SetCompleted();
 }
 

@@ -6,7 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "OperationJob.h"
+#import "OperationJob.h"
+#import "Operation.h"
 
 OperationJob::OperationJob()
 :   m_State(StateReady),
@@ -89,6 +90,8 @@ void OperationJob::SetCompleted()
     assert(m_State == StateRunning);
     
     m_State = StateCompleted;
+    
+    [m_BaseOperation OnFinish];
 }
 
 bool OperationJob::CheckPauseOrStop(int _sleep_in_ms)
@@ -104,4 +107,9 @@ bool OperationJob::CheckPauseOrStop(int _sleep_in_ms)
     }
     
     return m_RequestStop;
+}
+
+void OperationJob::SetBaseOperation(Operation *_op)
+{
+    m_BaseOperation = _op;
 }

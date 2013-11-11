@@ -104,7 +104,7 @@ domkdir2:
         }
     }
 
-    [m_Operation Finished];
+    if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();
 }
 

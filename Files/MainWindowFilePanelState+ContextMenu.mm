@@ -503,7 +503,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     [panel beginSheetModalForWindow:[m_InView window]
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
-                          [self OpenItemsWithApp:[[panel URL]fileSystemRepresentation]];
+                          [self OpenItemsWithApp:[[[panel URL] path] fileSystemRepresentation]];
                   }];
 }
 
@@ -514,9 +514,9 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
                       {
-                          [self OpenItemsWithApp:[[panel URL]fileSystemRepresentation]];
+                          [self OpenItemsWithApp:[[[panel URL] path] fileSystemRepresentation]];
                           if(!m_ItemsUTI.empty())
-                              LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), [[panel URL]fileSystemRepresentation]);
+                              LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), [[[panel URL] path] fileSystemRepresentation]);
                       }
                   }];
 }

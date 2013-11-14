@@ -38,7 +38,7 @@ void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, std::shared_ptr<
                 int ind = 0;
                 for(NSURL *url in apps)
                 {
-                    _result->paths.push_back([url fileSystemRepresentation]);
+                    _result->paths.push_back([[url path] fileSystemRepresentation]);
                     if([(__bridge NSURL*)(default_app_url) isEqual: url])
                         _result->default_path = ind;
                     ++ind;

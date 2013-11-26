@@ -11,6 +11,8 @@
 #import "FontCache.h"
 #import "TermScreen.h"
 #import "TermParser.h"
+#import "Common.h"
+
 
 static const DoubleColor& TermColorToDoubleColor(int _color)
 {
@@ -113,14 +115,23 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     if(!m_Screen)
         return;
     
+/*    static uint64_t last_redraw = GetTimeInNanoseconds();
+    uint64_t now = GetTimeInNanoseconds();
+    NSLog(@"%llu", (now - last_redraw)/1000000);
+    last_redraw = now;*/
+    
+//    MachTimeBenchmark tmb;
+    
     m_Screen->Lock();
     
     // Drawing code here.
     CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
     CGContextFillRect(context, NSRectToCGRect(dirtyRect));
-    oms::SetParamsForUserASCIIArt(context, m_FontCache);
+//    oms::SetParamsForUserASCIIArt(context, m_FontCache);
+    oms::SetParamsForUserReadableText(context, m_FontCache);
+    CGContextSetShouldSmoothFonts(context, true);
     
-    oms::SetFillColor(context, DoubleColor(1,1,1,1));
+//    oms::SetFillColor(context, DoubleColor(1,1,1,1));
 
     
     int x = 0, y = 0;
@@ -128,28 +139,55 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     
     for(int i = 0; i < lines_no; ++i)
     {
-        x = 0;
+
         auto *line = m_Screen->GetLine(i);
+        
+        
+        
+        // draw backgrounds
+        DoubleColor curr_c = {-1, -1, -1, -1};
+        x = 0;
         for(int n = 0; n < line->size(); ++n)
         {
-            auto &char_space = (*line)[n];
+            TermScreen::Space char_space = (*line)[n];
+//            int foreground = char_space.foreground;
+//            if(char_space.intensity) foreground += 8;
+            const DoubleColor &c = TermColorToDoubleColor(char_space.background);
+            if(c != curr_c)
+                oms::SetFillColor(context, curr_c = c);
+
+            CGContextFillRect(context,
+                              CGRectMake(x * m_FontCache->Width(),
+                                         y * m_FontCache->Height(),
+                                         m_FontCache->Width(),
+                                         m_FontCache->Height()));
+            ++x;
+        }
+        
+        // draw glyphs
+        x = 0;
+        curr_c = {-1, -1, -1, -1};
+        for(int n = 0; n < line->size(); ++n)
+        {
+            TermScreen::Space char_space = (*line)[n];
             int foreground = char_space.foreground;
             if(char_space.intensity) foreground += 8;
-            int background = char_space.background;
+//            int background = char_space.background;
 //            printf("%d", background);
             
-            oms::DrawSingleUniCharXY(char_space.l,
-                                     x,
-                                     y,
-                                     context,
-                                     m_FontCache,
-                                     TermColorToDoubleColor(foreground),
-                                     TermColorToDoubleColor(background)
-                                     );
+            if(char_space.l != 0 && char_space.l != 32)
+            {
+                const DoubleColor &c = TermColorToDoubleColor(foreground);
+                if(c != curr_c)
+                    oms::SetFillColor(context, curr_c = c);
+                
+                oms::DrawSingleUniCharXY(char_space.l, x, y, context, m_FontCache);
+            }
             
             if(char_space.underline)
             {
                 /* NEED REAL UNDERLINE POSITION HERE !!! */
+                // need to set color here?
                 CGRect rc;
                 rc.origin.x = x * m_FontCache->Width();
                 rc.origin.y = y * m_FontCache->Height() + m_FontCache->Height() - 1;
@@ -161,14 +199,14 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
             ++x;
         }
         
-        
-        
         ++y;
     }
     
     
 //    [self.window setTitle:[NSString stringWithUTF8String:m_Screen->Title()]];
     m_Screen->Unlock();
+    
+//    tmb.Reset("drawn in: ");
 }
 
 @end

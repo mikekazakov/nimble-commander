@@ -139,8 +139,8 @@ void TermTask::ReadChildOutput()
     int rc;
     fd_set fd_in;
 
-    int input_sz = 4096;
-    char input[4096];
+    static const int input_sz = 65536;
+    char input[65536];
     
     while (1)
     {

@@ -31,8 +31,8 @@
 //        [m_View SetDelegate:self];
         [self addSubview:m_View];
         NSDictionary *views = NSDictionaryOfVariableBindings(m_View);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=0)-[m_View]-(<=0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=0)-[m_View]-(<=0)-|" options:0 metrics:nil views:views]];
         
         
         m_Task = new TermTask;
@@ -61,7 +61,7 @@
             memcpy(tmp, _d, _sz);
             tmp[_sz] = 0;
 /*            [self.CommandText setStringValue:[NSString stringWithUTF8String:tmp]];*/
-            printf("new BASH cwd: %s", tmp);
+//            printf("new BASH cwd: %s", tmp);
         });
         
 //        char *param[2] = {(char*)"-L", 0};

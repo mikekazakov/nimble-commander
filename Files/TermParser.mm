@@ -346,10 +346,11 @@ void TermParser::EatByte(unsigned char _byte)
                 m_Scr->DoCursorRight();
                 m_Scr->DoCursorRight();
                 m_Scr->DoCursorRight();
+                /* not true implementation */
                 return;
         case 10:
         case 11:
-        case 12: m_Scr->DoLineFeed();
+        case 12: m_Scr->DoLineFeed(); return;
         case 13: m_Scr->DoCarriageReturn(); return;
         case 24:
         case 26: m_EscState = S_Normal; return;
@@ -876,6 +877,7 @@ void TermParser::CSI_DEC_PMS(bool _on)
                 case 7:			/* Autowrap on/off */
 //                    decawm = on_off;
                     /*NOT YET IMPLEMENTED*/
+                    printf("autowrap: %d\n", (int) _on);
                     break;
                 default:
                     printf("unhandled CSI_DEC_PMS?: %d on:%d\n", m_Params[i], (int)_on);
@@ -897,10 +899,21 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
     NSString*  const character = [_event charactersIgnoringModifiers];
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
-    unsigned short const keycode = [_event keyCode];
+//    unsigned short const keycode = [_event keyCode];
+    
+
+//    static char buf[20];
+
+    NSUInteger modflag = [_event modifierFlags];
+    int mod=0;
+    if((modflag & NSControlKeyMask) && (modflag&NSShiftKeyMask)) mod=6;
+    else if(modflag & NSControlKeyMask) mod=5;
+    else if(modflag & NSShiftKeyMask) mod=2;
+    
     
     const char *seq_resp = 0;
-    
+//#define CURSOR_MOD_UP        "\033[1;%dA"
+//#define KEY_FUNCTION_FORMAT  "\033[%d~"
     switch (unicode)
     {
         case NSUpArrowFunctionKey:      seq_resp = "\eOA"; break;
@@ -908,8 +921,18 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         case NSRightArrowFunctionKey:   seq_resp = "\eOC"; break;
         case NSLeftArrowFunctionKey:    seq_resp = "\eOD"; break;
 
-        
-            
+        case NSF1FunctionKey:           seq_resp = "\eOP"; break;
+        case NSF2FunctionKey:           seq_resp = "\eOQ"; break;
+        case NSF3FunctionKey:           seq_resp = "\eOR"; break;
+        case NSF4FunctionKey:           seq_resp = "\eOS"; break;
+        case NSF5FunctionKey:           seq_resp = "\e[15~"; break;
+        case NSF6FunctionKey:           seq_resp = "\e[17~"; break;
+        case NSF7FunctionKey:           seq_resp = "\e[18~"; break;
+        case NSF8FunctionKey:           seq_resp = "\e[19~"; break;
+        case NSF9FunctionKey:           seq_resp = "\e[20~"; break;
+        case NSF10FunctionKey:          seq_resp = "\e[21~"; break;
+        case NSF11FunctionKey:          seq_resp = "\e[23~"; break;
+        case NSF12FunctionKey:          seq_resp = "\e[24~"; break;
             
             
 //        case NSDownArrowFunctionKey: m_Task->WriteChildInput("\033[1B", 4); return;
@@ -939,8 +962,10 @@ void TermParser::CSI_n_P()
 {
     int p = m_Params[0];
     
-    if(p + m_Scr->GetCursorX() >= m_Scr->GetWidth() )
-        p = m_Scr->GetWidth() - m_Scr->GetCursorX() - 1;
+//    if(p + m_Scr->GetCursorX() >= m_Scr->GetWidth() )
+//        p = m_Scr->GetWidth() - m_Scr->GetCursorX() - 1;
+    if(p > m_Scr->GetWidth() - m_Scr->GetCursorX())
+        p = m_Scr->GetWidth() - m_Scr->GetCursorX();
     else if(!p)
         p = 1;
     m_Scr->DoShiftRowLeft(p);

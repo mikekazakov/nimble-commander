@@ -28,6 +28,12 @@ struct DoubleColor
     void Set(CGContextRef _context) const {
         CGContextSetRGBFillColor(_context, r, g, b, a);
     };
+    inline bool operator==(const DoubleColor& _r) const {
+        return memcmp(this, &_r, sizeof(*this)) == 0;
+    }
+    inline bool operator!=(const DoubleColor& _r) const {
+        return memcmp(this, &_r, sizeof(*this)) != 0;
+    }
 };
 
 namespace oms

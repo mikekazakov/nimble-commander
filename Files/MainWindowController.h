@@ -28,6 +28,9 @@
 
 - (void)RequestBigFileView: (const char*)_filepath with_fs:(std::shared_ptr<VFSHost>) _host;
 
+
+- (void)RequestTerminal;
+
 // at current moment any main window must jave have file panel state, but it may change in the future
 - (MainWindowFilePanelState*) FilePanelState;
 

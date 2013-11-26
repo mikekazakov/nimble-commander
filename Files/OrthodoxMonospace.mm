@@ -76,6 +76,17 @@ void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCac
     DrawSingleUniChar(_s, _x * _cache->Width(), _y * _cache->Height(), _cont, _cache, _color);
 }
 
+void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color, const DoubleColor &_bk_color)
+{
+    SetFillColor(_cont, _bk_color);
+    CGContextFillRect(_cont,
+                      CGRectMake(_x * _cache->Width(),
+                                 _y * _cache->Height(),
+                                 _cache->Width(),
+                                 _cache->Height()));
+    DrawSingleUniChar(_s, _x * _cache->Width(), _y * _cache->Height(), _cont, _cache, _color);
+}
+    
 void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache *_cache)
 {
     // TODO: implement it rolled-up, it should be (?) faster

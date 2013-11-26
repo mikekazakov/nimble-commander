@@ -60,6 +60,7 @@ void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache);
 // drawing routines
 void DrawSingleUniChar(UniChar _s, double _x, double _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
 void DrawSingleUniChar(UniChar _s, double _x, double _y, CGContextRef _cont, FontCache *_cache);
+void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color, const DoubleColor &_bk_color);    
 void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
 void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache);
 void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache *_cache);

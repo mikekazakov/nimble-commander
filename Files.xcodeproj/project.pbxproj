@@ -217,6 +217,11 @@
 		CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
+		CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */; };
+		CFB3E4831844ACD700D375E2 /* TermTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermTask.mm */; };
+		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
+		CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
+		CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.cpp */; };
 		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
@@ -578,6 +583,16 @@
 		CFB060DC172E6AC4001F6949 /* Common.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Common.mm; sourceTree = "<group>"; };
 		CFB190D717A3B1FA005B8B15 /* ObjcToCppObservingBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcToCppObservingBridge.h; sourceTree = "<group>"; };
 		CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
+		CFB3E4781844AC8A00D375E2 /* MainWindowTerminalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowTerminalState.h; sourceTree = "<group>"; };
+		CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowTerminalState.mm; sourceTree = "<group>"; };
+		CFB3E47B1844ACD700D375E2 /* TermTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermTask.mm; sourceTree = "<group>"; };
+		CFB3E47C1844ACD700D375E2 /* TermTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermTask.h; sourceTree = "<group>"; };
+		CFB3E47D1844ACD700D375E2 /* TermParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermParser.mm; sourceTree = "<group>"; };
+		CFB3E47E1844ACD700D375E2 /* TermView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermView.mm; sourceTree = "<group>"; };
+		CFB3E47F1844ACD700D375E2 /* TermScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermScreen.h; sourceTree = "<group>"; };
+		CFB3E4801844ACD700D375E2 /* TermScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TermScreen.cpp; sourceTree = "<group>"; };
+		CFB3E4811844ACD700D375E2 /* TermParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermParser.h; sourceTree = "<group>"; };
+		CFB3E4821844ACD700D375E2 /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermView.h; sourceTree = "<group>"; };
 		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
 		CFB8F22D17CA3C80004574FE /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSHost.h; sourceTree = "<group>"; };
 		CFB8F22F17CA4175004574FE /* VFSListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSListing.mm; sourceTree = "<group>"; };
@@ -1184,6 +1199,23 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
+		CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */ = {
+			isa = PBXGroup;
+			children = (
+				CFB3E47C1844ACD700D375E2 /* TermTask.h */,
+				CFB3E47B1844ACD700D375E2 /* TermTask.mm */,
+				CFB3E4811844ACD700D375E2 /* TermParser.h */,
+				CFB3E47D1844ACD700D375E2 /* TermParser.mm */,
+				CFB3E47F1844ACD700D375E2 /* TermScreen.h */,
+				CFB3E4801844ACD700D375E2 /* TermScreen.cpp */,
+				CFB3E4821844ACD700D375E2 /* TermView.h */,
+				CFB3E47E1844ACD700D375E2 /* TermView.mm */,
+				CFB3E4781844AC8A00D375E2 /* MainWindowTerminalState.h */,
+				CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */,
+			);
+			name = TerminalMainWindowState;
+			sourceTree = "<group>";
+		};
 		CFB8F22B17CA3C65004574FE /* VFS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1290,6 +1322,7 @@
 				CFB8F22B17CA3C65004574FE /* VFS */,
 				B528011916FCF347004E260D /* Operation */,
 				CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */,
+				CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */,
 				CF536C0D16C92EA200F37203 /* PanelMainWindowState */,
 				CF8B09CA16ECEE9C0013B6A8 /* MainWindow */,
 				B52EB78B172277C5004ABC2E /* Preferences */,
@@ -1474,10 +1507,12 @@
 				CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */,
 				CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */,
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
+				CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CF9D0E9117CC961100CB8146 /* archive_read_open_memory.c in Sources */,
 				CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */,
+				CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */,
 				CF9D0E9E17CC961100CB8146 /* archive_read_support_filter_uu.c in Sources */,
 				CF9D0EAC17CC961100CB8146 /* archive_read_support_format_tar.c in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
@@ -1499,7 +1534,9 @@
 				CF9D0E8317CC961100CB8146 /* archive_options.c in Sources */,
 				CF9D0ED917CC961100CB8146 /* archive_write_set_options.c in Sources */,
 				CF9D0B6717CC910100CB8146 /* VFSArchiveInternal.mm in Sources */,
+				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
+				CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */,
 				CF9D0ECA17CC961100CB8146 /* archive_write_set_format_7zip.c in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
 				CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */,
@@ -1611,6 +1648,7 @@
 				CF9D0EDC17CC961100CB8146 /* filter_fork_windows.c in Sources */,
 				CF9D0E9717CC961100CB8146 /* archive_read_support_filter_grzip.c in Sources */,
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
+				CFB3E4831844ACD700D375E2 /* TermTask.mm in Sources */,
 				CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */,
 				CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */,
 				CF9D0E9917CC961100CB8146 /* archive_read_support_filter_lrzip.c in Sources */,

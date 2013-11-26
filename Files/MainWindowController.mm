@@ -14,12 +14,13 @@
 #import "BigFileView.h"
 #import "MainWindowBigFileViewState.h"
 #import "MainWindowFilePanelState.h"
+#import "MainWindowTerminalState.h"
 
 @class QLPreviewPanel;
 
 @implementation MainWindowController
 {
-    std::vector<MainWindowBigFileViewState *> m_WindowState; // .back is current state
+    std::vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_BaseWindowState;
 }
 
@@ -47,7 +48,7 @@
     [[self window] setDelegate:self];
     
     m_BaseWindowState = [[MainWindowFilePanelState alloc] initWithFrame: [[[self window] contentView] frame]];
-    [self PushNewWindowState:(MainWindowBigFileViewState*)m_BaseWindowState];
+    [self PushNewWindowState:m_BaseWindowState];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(DidBecomeKeyWindow)
@@ -72,7 +73,9 @@
     
     while(!m_WindowState.empty())
     {
-        [m_WindowState.back() Resigned];
+        if([m_WindowState.back() respondsToSelector:@selector(Resigned)])
+            [m_WindowState.back() Resigned];
+        
         m_WindowState.pop_back();
     }
     m_BaseWindowState = nil;
@@ -131,22 +134,27 @@
     assert(_state != m_BaseWindowState);
     assert(m_WindowState.size() > 1);
     assert(m_WindowState.back() == _state);
-    
-    [m_WindowState.back() Resigned];
+
+    if([m_WindowState.back() respondsToSelector:@selector(Resigned)])
+        [m_WindowState.back() Resigned];
     m_WindowState.pop_back();
     
     [[self window] setContentView:[m_WindowState.back() ContentView]];
     [[self window] makeFirstResponder: [[self window] contentView]];
-    [m_WindowState.back() Assigned];    
+    
+    if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
+        [m_WindowState.back() Assigned];
 }
 
-- (void) PushNewWindowState:(MainWindowBigFileViewState *)_state
+- (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
 {
     m_WindowState.push_back(_state);
     [[self window] setContentView:[m_WindowState.back() ContentView]];
     [[self window] makeFirstResponder: [[self window] contentView]];
     
-    [m_WindowState.back() Assigned];
+    
+    if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
+        [m_WindowState.back() Assigned];
 }
 
 - (OperationsController*) OperationsController
@@ -171,6 +179,12 @@
 - (MainWindowFilePanelState*) FilePanelState
 {
     return m_BaseWindowState;
+}
+
+- (void)RequestTerminal
+{
+    MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[[[self window] contentView] frame]];
+    [self PushNewWindowState:state];
 }
 
 @end

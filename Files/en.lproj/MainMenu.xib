@@ -532,6 +532,12 @@ CA
                                     <action selector="performZoom:" target="-1" id="240"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Show Terminal" keyEquivalent="o" id="ewK-BS-zbN">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="OnShowTerminal:" target="-1" id="Mgz-GL-J6s"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="92">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

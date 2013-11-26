@@ -1564,4 +1564,14 @@
     [m_OperationsController AddOperation:_operation];
 }
 
+///////////////////////////////////////////////////////////////
+- (IBAction)OnShowTerminal:(id)sender
+{
+    [(MainWindowController*)[[self window] delegate] RequestTerminal];    
+}
+///////////////////////////////////////////////////////////////
+
+
+
+
 @end

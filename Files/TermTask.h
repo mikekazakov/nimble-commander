@@ -15,13 +15,8 @@ class TermTask
 public:
     TermTask();
     
-    void Launch(
-        const char *_work_dir,
-        const char *_prog_name,
-        char *const _argv[],
-        int _sx,
-        int _sy
-    );
+    // launches /bin/bash actually
+    void Launch(const char *_work_dir, int _sx, int _sy);
     
     
     void SetOnChildOutput(void (^)(const void* _d, int _sz));
@@ -35,9 +30,8 @@ private:
     void (^m_OnBashPrompt)(const void* _d, int _sz);
     
     int m_MasterFD;
-    int m_SlaveFD;
+//    int m_SlaveFD;
     pthread_mutex_t m_Lock; // will lock on WriteChildInput
     
     int m_CwdPipe[2];
-//    int Pipe[2];
 };

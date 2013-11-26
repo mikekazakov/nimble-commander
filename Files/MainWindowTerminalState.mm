@@ -34,13 +34,16 @@
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
         
+        
+        m_Task = new TermTask;
+        
         m_Screen = new TermScreen([m_View SymbWidth], [m_View SymbHeight]);
         m_Parser = new TermParser(m_Screen, m_Task);
         [m_View AttachToScreen:m_Screen];
         [m_View AttachToParser:m_Parser];
-        
-        m_Task = new TermTask;
-        
+//        [self.window makeFirstResponder:m_View];
+
+//        setInitialFirstResponder
         m_Task->SetOnChildOutput(^(const void* _d, int _sz){
             m_Screen->Lock();
             for(int i = 0; i < _sz; ++i)
@@ -48,21 +51,22 @@
             
             m_Parser->Flush();
             m_Screen->Unlock();
-            
+
             //    m_Screen->PrintToConsole();
             [m_View setNeedsDisplay:true];
         });
 
         m_Task->SetOnBashPrompt(^(const void* _d, int _sz){
-/*            char tmp[1024];
+            char tmp[1024];
             memcpy(tmp, _d, _sz);
             tmp[_sz] = 0;
-            [self.CommandText setStringValue:[NSString stringWithUTF8String:tmp]];*/
+/*            [self.CommandText setStringValue:[NSString stringWithUTF8String:tmp]];*/
+            printf("new BASH cwd: %s", tmp);
         });
         
-        char *param[2] = {(char*)"-L", 0};
+//        char *param[2] = {(char*)"-L", 0};
         //    char *param[2] = {0};
-        m_Task->Launch("/Users/migun/", "/bin/bash", param, [m_View SymbWidth], [m_View SymbHeight]);
+        m_Task->Launch("/Users/migun/", [m_View SymbWidth], [m_View SymbHeight]);
 
         
     }
@@ -71,9 +75,9 @@
 
 - (void) dealloc
 {
-    delete m_Task;
     delete m_Parser;
     delete m_Screen;
+    delete m_Task;
 }
 
 - (NSView*) ContentView

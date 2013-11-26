@@ -156,12 +156,6 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
                 rc.size.width = m_FontCache->Width();
                 rc.size.height = 1;
                 CGContextFillRect(context, rc);
-                
-/*                CGRectMake(_x * _cache->Width(),
-                           _y * _cache->Height(),
-                           _cache->Width(),
-                           _cache->Height()));*/
-                
             }
             
             ++x;
@@ -173,7 +167,7 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     }
     
     
-    [self.window setTitle:[NSString stringWithUTF8String:m_Screen->Title()]];
+//    [self.window setTitle:[NSString stringWithUTF8String:m_Screen->Title()]];
     m_Screen->Unlock();
 }
 

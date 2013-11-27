@@ -10,7 +10,7 @@
 
 #include <list>
 #include <vector>
-#include <pthread.h>
+#include <mutex>
 
 /*
 Intensity	0	1	2	3	4	5	6	7
@@ -62,18 +62,21 @@ public:
         static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
     };
     
-    void Lock();
-    void Unlock();
+    inline void Lock()      { m_Lock.lock();   }
+    inline void Unlock()    { m_Lock.unlock(); }
     
-    int GetLinesCount() const;
-    const std::vector<Space> *GetLine(int _line_no) const;
+//    int GetLinesCount() const;
+    const std::vector<Space> *GetScreenLine(int _line_no) const;
+    const std::vector<Space> *GetScrollBackLine(int _line_no) const;
+    
+    inline int ScrollBackLinesCount() const { return (int)m_ScrollBack.size(); }
+    
     
     void PutCh(unsigned short _char);
     void SetColor(unsigned char _color);
     void SetIntensity(unsigned char _intensity);
     void SetUnderline(bool _is_underline);
-    
-    void PrintToConsole();
+
 
     void GoTo(int _x, int _y);
     void DoCursorUp(int _n = 1);
@@ -118,7 +121,7 @@ private:
     static const int        m_TitleMaxLen = 1024;
     char                    m_Title[m_TitleMaxLen];
     
-    pthread_mutex_t m_Lock;
+    std::mutex      m_Lock;
     unsigned char m_Color;
     
     unsigned char m_Intensity;
@@ -131,9 +134,9 @@ private:
     
     ScreenShot *m_ScreenShot;
     
-    std::vector<Space> *AddNewLine();
-    void ScrollBufferUp();
     std::vector<Space> *GetLineRW(int _line_no);
     
-    std::list<std::vector<Space>> m_Chars;
+    std::list<std::vector<Space>> m_Screen;
+    std::list<std::vector<Space>> m_ScrollBack;
+    
 };

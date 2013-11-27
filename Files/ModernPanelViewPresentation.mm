@@ -16,7 +16,6 @@
 #import "ObjcToCppObservingBridge.h"
 #import "IconsGenerator.h"
 #import <deque>
-#import <pthread.h>
 
 
 static void FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, UniChar _out[128], size_t &_symbs)

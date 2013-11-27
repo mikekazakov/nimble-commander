@@ -30,12 +30,10 @@ TermScreen::TermScreen(int _w, int _h):
     
     m_Title[0] = 0;
     
-    pthread_mutex_init(&m_Lock, NULL);
-    
     for(int i =0; i < m_Height; ++i)
     {
-        m_Chars.push_back(std::vector<TermScreen::Space>());
-        std::vector<TermScreen::Space> *line = &m_Chars.back();
+        m_Screen.push_back(std::vector<TermScreen::Space>());
+        std::vector<TermScreen::Space> *line = &m_Screen.back();
         line->resize(m_Width, m_EraseChar);
     }
 }
@@ -45,26 +43,11 @@ TermScreen::~TermScreen()
     /* MANY STUFF HERE ! */
 }
 
-void TermScreen::Lock()
+const std::vector<TermScreen::Space> *TermScreen::GetScreenLine(int _line_no) const
 {
-    pthread_mutex_lock(&m_Lock);
-}
-
-void TermScreen::Unlock()
-{
-    pthread_mutex_unlock(&m_Lock);
-}
-
-int TermScreen::GetLinesCount() const
-{
-    return (int)m_Chars.size();
-}
-
-const std::vector<TermScreen::Space> *TermScreen::GetLine(int _line_no) const
-{
-    if(_line_no >= m_Chars.size()) return 0;
+    if(_line_no >= m_Screen.size()) return 0;
     
-    auto it = m_Chars.begin();
+    auto it = m_Screen.begin();
     for(int i = 0; i < _line_no; ++i)
         ++it;
   
@@ -73,9 +56,9 @@ const std::vector<TermScreen::Space> *TermScreen::GetLine(int _line_no) const
 
 std::vector<TermScreen::Space> *TermScreen::GetLineRW(int _line_no)
 {
-    if(_line_no >= m_Chars.size()) return 0;
+    if(_line_no >= m_Screen.size()) return 0;
     
-    auto it = m_Chars.begin();
+    auto it = m_Screen.begin();
     for(int i = 0; i < _line_no; ++i)
         ++it;
     
@@ -84,11 +67,11 @@ std::vector<TermScreen::Space> *TermScreen::GetLineRW(int _line_no)
 
 void TermScreen::PutCh(unsigned short _char)
 {
-    assert(m_PosY < m_Chars.size());
+    assert(m_PosY < m_Screen.size());
     assert(m_PosX >= 0 && m_PosX < m_Width);
-    // TODO: optimize
+    // TODO: optimize it out
     
-    auto it = m_Chars.begin();
+    auto it = m_Screen.begin();
     for(int i = 0; i < m_PosY; ++i) ++it;
     std::vector<TermScreen::Space> *line = &(*it);
     auto &sp = (*line)[m_PosX];
@@ -100,39 +83,6 @@ void TermScreen::PutCh(unsigned short _char)
     sp.underline = m_Underline;
     
     ++m_PosX;
-/*    if(m_PosX == m_Width)
-    {
-        m_PosX = 0;
-        DoLineFeed(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    }*/
-}
-
-std::vector<TermScreen::Space> *TermScreen::AddNewLine()
-{
-    m_Chars.push_back(std::vector<TermScreen::Space>());
-    std::vector<TermScreen::Space> *line = &m_Chars.back();
-    
-    line->resize(m_Width, TermScreen::Space());
-    return line;
-}
-
-void TermScreen::PrintToConsole()
-{
-    printf("\n------------------------------------\n");
- 
-    for(auto &l: m_Chars)
-    {
-        for(auto i: l)
-        {
-            unsigned short c = i.l;
-//            printf("%c", (unsigned char)i.l);
-            if(c)
-                printf("%C", (wchar_t)c);
-            else
-                printf(" ");
-        }
-        printf("\n");
-    }
 }
 
 // ED – Erase Display	Clears part of the screen.
@@ -152,7 +102,7 @@ void TermScreen::DoEraseScreen(int _mode)
         }
     } else if(_mode == 2)
     { // clear all screen
-        for(auto &l: m_Chars)
+        for(auto &l: m_Screen)
             for(int i =0; i < l.size(); ++i)
                 l[i] = m_EraseChar;
         
@@ -226,17 +176,6 @@ y++; \
 {
     GoTo(0, m_PosY);
 }*/
-
-void TermScreen::ScrollBufferUp()
-{
-    if(!m_Chars.empty())
-    {
-        m_Chars.erase( m_Chars.begin() );
-        m_Chars.push_back(std::vector<TermScreen::Space>());
-        std::vector<TermScreen::Space> *line = &m_Chars.back();
-        line->resize(m_Width, m_EraseChar);
-    }
-}
 
 void TermScreen::DoEraseInLine(int _mode)
 {
@@ -371,6 +310,14 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
     if(_lines < 1)
         return;
 
+    if(_top == 0 && _bottom == m_Height)
+        for(int i = 0; i < _lines; ++i)
+        { // we're scrolling up the whole screen - let's feed scrollback with leftover
+            // TODO: optimize this on speed and possible memory consumpion
+            auto *src = GetLineRW(i);
+            assert(src);
+            m_ScrollBack.push_back(*src);
+        }
     
     for(int i = _top; i < _bottom - _lines; ++i)
     {
@@ -400,7 +347,7 @@ void TermScreen::SaveScreen()
     m_ScreenShot->width = m_Width;
     m_ScreenShot->height = m_Height;
     int y = 0;
-    for(auto &i: m_Chars)
+    for(auto &i: m_Screen)
     {
         int x = 0;
         for(auto j: i)
@@ -416,7 +363,7 @@ void TermScreen::RestoreScreen()
     
     int y = 0;
     int xmax = m_Width > m_ScreenShot->width ? m_ScreenShot->width : m_Width;
-    for(auto &i: m_Chars)
+    for(auto &i: m_Screen)
     {
         if(y >= m_ScreenShot->height)
             break;
@@ -429,4 +376,15 @@ void TermScreen::RestoreScreen()
     
     free(m_ScreenShot);
     m_ScreenShot = 0;
+}
+
+const std::vector<TermScreen::Space> *TermScreen::GetScrollBackLine(int _line_no) const
+{
+    if(_line_no >= m_ScrollBack.size()) return 0;
+    
+    auto it = m_ScrollBack.begin();
+    for(int i = 0; i < _line_no; ++i)
+        ++it;
+    
+    return &(*it);    
 }

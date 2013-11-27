@@ -10,6 +10,6 @@
 
 #import "MainWindowStateProtocol.h"
 
-@interface MainWindowTerminalState : NSView<MainWindowStateProtocol>
+@interface MainWindowTerminalState : NSScrollView<MainWindowStateProtocol>
 
 @end

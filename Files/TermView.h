@@ -19,4 +19,6 @@ class TermParser;
 - (void) AttachToScreen:(TermScreen*)_scr;
 - (void) AttachToParser:(TermParser*)_par;
 
+- (void)adjustSizes;
+
 @end

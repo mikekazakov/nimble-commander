@@ -7,8 +7,7 @@
 //
 
 #pragma once
-#include <pthread.h>
-
+#include <mutex>
 
 class TermTask
 {
@@ -31,7 +30,7 @@ private:
     
     int m_MasterFD;
 //    int m_SlaveFD;
-    pthread_mutex_t m_Lock; // will lock on WriteChildInput
+    std::mutex m_Lock; // will lock on WriteChildInput
     
     int m_CwdPipe[2];
 };

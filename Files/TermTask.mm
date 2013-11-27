@@ -34,7 +34,6 @@ TermTask::TermTask():
     m_MasterFD(-1),
     m_OnChildOutput(0)
 {
-    pthread_mutex_init(&m_Lock, NULL);    
 }
 
 void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
@@ -202,7 +201,8 @@ void TermTask::SetOnChildOutput(void (^_h)(const void* _d, int _sz))
 
 void TermTask::WriteChildInput(const void *_d, int _sz)
 {
-    pthread_mutex_lock(&m_Lock);
+    m_Lock.lock();
     write(m_MasterFD, _d, _sz);
-    pthread_mutex_unlock(&m_Lock);
+//    pthread_mutex_unlock(&m_Lock);
+    m_Lock.unlock();
 }

@@ -8,7 +8,6 @@
 
 #import "OperationStats.h"
 #import "Common.h"
-#import <pthread.h>
 
 OperationStats::OperationStats()
 :   m_StartTime(0),

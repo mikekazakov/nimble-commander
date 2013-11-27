@@ -19,7 +19,8 @@ TermScreen::TermScreen(int _w, int _h):
     m_PosY(0),
     m_Color(0x7),
     m_Intensity(0),
-    m_Underline(false)
+    m_Underline(false),
+    m_ScreenShot(0)
 {
     m_EraseChar.l = 0;
     m_EraseChar.foreground = 0x7;
@@ -37,6 +38,11 @@ TermScreen::TermScreen(int _w, int _h):
         std::vector<TermScreen::Space> *line = &m_Chars.back();
         line->resize(m_Width, m_EraseChar);
     }
+}
+
+TermScreen::~TermScreen()
+{
+    /* MANY STUFF HERE ! */
 }
 
 void TermScreen::Lock()
@@ -79,6 +85,7 @@ std::vector<TermScreen::Space> *TermScreen::GetLineRW(int _line_no)
 void TermScreen::PutCh(unsigned short _char)
 {
     assert(m_PosY < m_Chars.size());
+    assert(m_PosX >= 0 && m_PosX < m_Width);
     // TODO: optimize
     
     auto it = m_Chars.begin();
@@ -93,11 +100,11 @@ void TermScreen::PutCh(unsigned short _char)
     sp.underline = m_Underline;
     
     ++m_PosX;
-    if(m_PosX == m_Width)
+/*    if(m_PosX == m_Width)
     {
         m_PosX = 0;
-        DoLineFeed();
-    }
+        DoLineFeed(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    }*/
 }
 
 std::vector<TermScreen::Space> *TermScreen::AddNewLine()
@@ -144,7 +151,7 @@ void TermScreen::DoEraseScreen(int _mode)
             }
         }
     } else if(_mode == 2)
-    { // clear all screen and moves cursor to (0,0)
+    { // clear all screen
         for(auto &l: m_Chars)
             for(int i =0; i < l.size(); ++i)
                 l[i] = m_EraseChar;
@@ -189,18 +196,34 @@ void TermScreen::DoCursorRight(int _n)
     GoTo(m_PosX+_n, m_PosY);
 }
 
-void TermScreen::DoLineFeed()
-{
-    if(m_PosY == m_Height - 1)
-        ScrollBufferUp();
-    else
-        DoCursorDown(1);
-}
+//void TermScreen::DoLineFeed()
+//{
+//    if(m_PosY == m_Height - 1)
+//        ScrollBufferUp();
+//    else
+//        DoCursorDown(1);
+    
+    /*
+#define lf() do { \
+if (y+1==bottom) \
+{ \
+scrup(foo,top,bottom,1,(top==0 && bottom==height)?YES:NO); \
+} \
+else if (y<height-1) \
+{ \
+y++; \
+[ts ts_goto: x:y]; \
+} \
+} while (0)
+*/
 
-void TermScreen::DoCarriageReturn()
+    
+//}
+
+/*void TermScreen::DoCarriageReturn()
 {
     GoTo(0, m_PosY);
-}
+}*/
 
 void TermScreen::ScrollBufferUp()
 {
@@ -319,4 +342,90 @@ void TermScreen::DoScrollDown(int _top, int _bottom, int _lines)
         for(int j = 0; j < m_Width; ++j)
             (*line)[j] = m_EraseChar;
     }
+}
+
+void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
+{
+    /*
+     scrup(foo,top,bottom,1,(top==0 && bottom==height)?YES:NO);
+     #define scrup(foo,t,b,nr,indirect_scroll) do { \
+        int scrup_nr=nr; \
+     \
+        if (t+scrup_nr >= b) \
+            scrup_nr = b - t - 1; \
+        if (b > height || t >= b || scrup_nr < 1) \
+            return; \
+        [ts ts_scrollUp: t:b  rows: scrup_nr  save: indirect_scroll]; \
+        [ts ts_putChar: video_erase_char  count: width*scrup_nr  offset: width*(b-scrup_nr)]; \
+     } while (0)
+     */
+    if(_top < 0)
+        _top = 0;
+    if(_bottom > m_Height)
+        _bottom = m_Height;
+    
+    if(_top + _lines >= _bottom)
+        _lines = _bottom - _top - 1;
+
+    if(_lines < 1)
+        return;
+
+    
+    for(int i = _top; i < _bottom - _lines; ++i)
+    {
+        auto *src = GetLineRW(i + _lines);
+        auto *dst = GetLineRW(i);
+        assert(src && dst);
+        
+        *dst = *src;
+    }
+    
+    for(int i = _bottom - 1; i >= _bottom - _lines; --i)
+    {
+        auto *line = GetLineRW(i);
+        assert(line);
+        for(int j = 0; j < m_Width; ++j)
+            (*line)[j] = m_EraseChar;
+    }
+}
+
+void TermScreen::SaveScreen()
+{
+    if(m_ScreenShot)
+        return;
+    free(m_ScreenShot);
+
+    m_ScreenShot = (ScreenShot*) malloc(ScreenShot::sizefor(m_Width, m_Height));
+    m_ScreenShot->width = m_Width;
+    m_ScreenShot->height = m_Height;
+    int y = 0;
+    for(auto &i: m_Chars)
+    {
+        int x = 0;
+        for(auto j: i)
+            m_ScreenShot->chars[y*m_Width + x++] = j;
+        ++y;
+    }
+}
+
+void TermScreen::RestoreScreen()
+{
+    if(!m_ScreenShot)
+        return;
+    
+    int y = 0;
+    int xmax = m_Width > m_ScreenShot->width ? m_ScreenShot->width : m_Width;
+    for(auto &i: m_Chars)
+    {
+        if(y >= m_ScreenShot->height)
+            break;
+        
+        for(int x = 0; x < xmax; ++x)
+            i[x] = m_ScreenShot->chars[y*m_ScreenShot->width + x];
+        
+        ++y;
+    }
+    
+    free(m_ScreenShot);
+    m_ScreenShot = 0;
 }

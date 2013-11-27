@@ -186,6 +186,9 @@ void TermParser::Reset()
     m_UniChar = 0;
     m_UTFCount = 0;
     m_UniCharsStockLen = 0;
+    m_DECPMS_SavedCurX = 0;
+    m_DECPMS_SavedCurY = 0;
+    
     
     SetTranslate(LAT1_MAP);
     UpdateAttrs();
@@ -297,10 +300,17 @@ void TermParser::Flush()
             break;
         }
     
+    unsigned short *chars = 0;
+    int chars_len = 0;
+    
+    unsigned short recomp[16384];
+    
     if(!hi)
     {
-        for(int i = 0; i < m_UniCharsStockLen; ++i)
-            m_Scr->PutCh(m_UniCharsStock[i]);
+//        for(int i = 0; i < m_UniCharsStockLen; ++i)
+//            m_Scr->PutCh(m_UniCharsStock[i]);
+        chars = m_UniCharsStock;
+        chars_len = m_UniCharsStockLen;
     }
     else
     {
@@ -313,12 +323,27 @@ void TermParser::Flush()
         NSString *orig = [NSString stringWithCharacters:m_UniCharsStock length:m_UniCharsStockLen];
         NSString *comp = [orig precomposedStringWithCanonicalMapping];
         int comp_len = (int)[comp length];
-        unsigned short recomp[16384];
         [comp getCharacters:recomp];
     
-        for(int i = 0; i < comp_len; ++i)
-            m_Scr->PutCh(recomp[i]);
+//        for(int i = 0; i < comp_len; ++i)
+//            m_Scr->PutCh(recomp[i]);
+        chars = recomp;
+        chars_len = comp_len;
     }
+    
+    for(int i = 0; i < chars_len; ++i)
+    {
+        if(m_Scr->GetCursorX() >= m_Scr->GetWidth())
+        {
+            CR();
+            LF();
+        }
+        
+        m_Scr->PutCh(chars[i]);
+        
+        
+    }
+
     
     m_UniCharsStockLen = 0;
 }
@@ -350,8 +375,9 @@ void TermParser::EatByte(unsigned char _byte)
                 return;
         case 10:
         case 11:
-        case 12: m_Scr->DoLineFeed(); return;
-        case 13: m_Scr->DoCarriageReturn(); return;
+//        case 12: m_Scr->DoLineFeed(); return;
+        case 12: LF(); return;
+        case 13: CR(); return;
         case 24:
         case 26: m_EscState = S_Normal; return;
         case 27: m_EscState = S_Esc; return;
@@ -364,45 +390,20 @@ void TermParser::EatByte(unsigned char _byte)
             m_EscState = S_Normal;
             switch (c)
             {
-                case '[':
-                    m_EscState = S_LeftBr;
-                    return;
-                case ']':
-                    m_EscState = S_RightBr;
-                    return;
-                case 'D':
-                    m_Scr->DoLineFeed();
-                    return;
-                case 'E':
-                    m_Scr->DoCarriageReturn();
-                    return;
-                case '(':
-                    m_EscState = S_SetG0;
-                    return;
-                case ')':
-                    m_EscState = S_SetG1;
-                    return;
-                case '>':  /* Numeric keypad */
-                    // ignoring now
-                    return;
-                case '=':  /* Appl. keypad */
-                    // ignoring now
-                    return;
-                case '7':
-                    EscSave();
-                    return;
-                case '8':
-                    EscRestore();
-                    return;
-                case 'M':
-                    ESC_RI();
-                    return;
-                case 'c':
-                    Reset();
-                    return;
+                case '[': m_EscState = S_LeftBr;    return;
+                case ']': m_EscState = S_RightBr;   return;
+                case '(': m_EscState = S_SetG0;     return;
+                case ')': m_EscState = S_SetG1;     return;
+                case '>':  /* Numeric keypad - ignoring now */  return;
+                case '=':  /* Appl. keypad - ignoring now */    return;
+                case '7': EscSave();    return;
+                case '8': EscRestore(); return;
+                case 'E': CR();         return;
+                case 'D': LF();         return;
+                case 'M': RI();         return;
+                case 'c': Reset();      return;
                 default:
                     printf("missed Esc char: %d(\'%c\')\n", (int)c, c);
-                    
             }
             return;
             
@@ -879,6 +880,46 @@ void TermParser::CSI_DEC_PMS(bool _on)
                     /*NOT YET IMPLEMENTED*/
                     printf("autowrap: %d\n", (int) _on);
                     break;
+				case 47: // alternate screen buffer mode
+					if(_on) m_Scr->SaveScreen();
+					else    m_Scr->RestoreScreen();
+					break;
+                case 1048:
+                    if(_on) {
+                        m_DECPMS_SavedCurX = m_Scr->GetCursorX();
+                        m_DECPMS_SavedCurY = m_Scr->GetCursorY();
+                    }
+                    else
+                        m_Scr->GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
+                    break;
+                case 1049:
+                    if(_on) {
+                        m_DECPMS_SavedCurX = m_Scr->GetCursorX();
+                        m_DECPMS_SavedCurY = m_Scr->GetCursorY();
+                        m_Scr->SaveScreen();
+                        m_Scr->DoEraseScreen(2);
+                    }
+                    else {
+                        m_Scr->GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
+                        m_Scr->RestoreScreen();
+                    }
+                    break;
+                    
+                    
+/*
+"Pm = 47"
+h   Use Alternate Screen Buffer
+l   Use Normal Screen Buffer
+"Pm = 1047"
+h   Use Alternate Screen Buffer
+l   Use Normal Screen Buffer - clear Alternate Screen Buffer if returning from it
+"Pm = 1048"
+h   Save cursor position
+l   Restore cursor position
+"Pm = 1049"
+h   Use Alternate Screen Buffer - clear Alternate Screen Buffer if switching to it
+l   Use Normal Screen Buffer
+*/
                 default:
                     printf("unhandled CSI_DEC_PMS?: %d on:%d\n", m_Params[i], (int)_on);
             }
@@ -1069,7 +1110,7 @@ void TermParser::CSI_n_r()
     {
         m_Top       = m_Params[0] - 1;
         m_Bottom    = m_Params[1];
-        DoGoTo(0, 0);
+//        DoGoTo(0, 0);
     }
 }
 
@@ -1086,10 +1127,40 @@ void TermParser::DoGoTo(int _x, int _y)
     m_Scr->GoTo(_x, _y);
 }
 
-void TermParser::ESC_RI()
+void TermParser::RI()
 {
-    if(m_Scr->GetCursorY() == 0)
+    if(m_Scr->GetCursorY() == m_Top)
         m_Scr->DoScrollDown(m_Top, m_Bottom, 1);
     else
         m_Scr->DoCursorUp();
+}
+
+void TermParser::LF()
+{
+    /*
+     #define lf() do { \
+     if (y+1==bottom) \
+     { \
+     scrup(foo,top,bottom,1,(top==0 && bottom==height)?YES:NO); \
+     } \
+     else if (y<height-1) \
+     { \
+     y++; \
+     [ts ts_goto: x:y]; \
+     } \
+     } while (0)
+     */
+    if(m_Scr->GetCursorY()+1 == m_Bottom)
+    {
+        m_Scr->DoScrollUp(m_Top, m_Bottom, 1);
+    }
+    else
+    {
+        m_Scr->DoCursorDown();
+    }
+}
+
+void TermParser::CR()
+{
+    m_Scr->GoTo(0, m_Scr->GetCursorY());
 }

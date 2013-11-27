@@ -43,7 +43,7 @@ class TermScreen
 {
 public:
     TermScreen(int _w, int _h);
-    
+    ~TermScreen();
 
     struct Space
     {
@@ -52,6 +52,14 @@ public:
         unsigned int background :3;
         unsigned int intensity  :1;
         unsigned int underline  :1;
+    };
+    
+    struct ScreenShot // allocated with malloc, line by line from [0] till [height-1]
+    {
+        int width;
+        int height;
+        Space chars[1]; // chars will be a real size
+        static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
     };
     
     void Lock();
@@ -74,11 +82,15 @@ public:
     void DoCursorDown(int _n = 1);
     void DoCursorLeft(int _n = 1);
     void DoCursorRight(int _n = 1);
-    void DoLineFeed();
-    void DoCarriageReturn();
+//    void DoLineFeed();
+//    void DoCarriageReturn();
     void DoEraseCharacters(int _n);
     
     void DoScrollDown(int _top, int _bottom, int _lines);
+    void DoScrollUp(int _top, int _bottom, int _lines);
+    
+    void SaveScreen();
+    void RestoreScreen();
     
     
     inline int GetWidth()   const { return m_Width;  }
@@ -90,7 +102,7 @@ public:
 // ED – Erase Display	Clears part of the screen.
 //    If n is zero (or missing), clear from cursor to end of screen.
 //    If n is one, clear from cursor to beginning of the screen.
-//    If n is two, clear entire screen (and moves cursor to upper left on DOS ANSI.SYS).
+//    If n is two, clear entire screen
     void DoEraseScreen(int _mode);
 
 // CSI n K
@@ -120,6 +132,8 @@ private:
     int m_PosX;
     int m_PosY;
     Space m_EraseChar;
+    
+    ScreenShot *m_ScreenShot;
     
     std::vector<Space> *AddNewLine();
     void ScrollBufferUp();

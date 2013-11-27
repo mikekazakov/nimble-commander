@@ -76,9 +76,6 @@ private:
 
     
     unsigned char           m_DefaultColor;
-
-
-    
     static const int        m_TitleMaxLen = 1024;
     char                    m_Title[m_TitleMaxLen];
     int                     m_TitleLen;
@@ -87,6 +84,9 @@ private:
     int                     m_Top;    // see DECSTBM  [
     int                     m_Bottom; //              )
     bool                    m_LineAbs; // if true - then y coordinates treats from the first line, otherwise from m_Top
+    
+    int                     m_DECPMS_SavedCurX; // used only for DEC private modes 1048/1049
+    int                     m_DECPMS_SavedCurY; // -""-
     
     void SetTranslate(int _charset);
     void Reset();
@@ -106,10 +106,13 @@ private:
     void CSI_n_r();
     void CSI_DEC_PMS(bool _on);
 
-    void ESC_RI();
+
     
     void EscSave();
     void EscRestore();
+    void RI(); // move/scroll window down one line
+    void LF(); // line feed
+    void CR(); // carriage return
     
     void SetDefaultAttrs();
     void UpdateAttrs();

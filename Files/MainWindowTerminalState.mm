@@ -11,7 +11,7 @@
 #import "TermScreen.h"
 #import "TermParser.h"
 #import "TermView.h"
-
+#import "MainWindowController.h"
 
 @implementation MainWindowTerminalState
 {
@@ -28,7 +28,6 @@
     {
         m_View = [[TermView alloc] initWithFrame:self.frame];
         [m_View setTranslatesAutoresizingMaskIntoConstraints:NO];
-//        [m_View SetDelegate:self];
         [self addSubview:m_View];
         NSDictionary *views = NSDictionaryOfVariableBindings(m_View);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=0)-[m_View]-(<=0)-|" options:0 metrics:nil views:views]];
@@ -41,7 +40,9 @@
         m_Parser = new TermParser(m_Screen, m_Task);
         [m_View AttachToScreen:m_Screen];
         [m_View AttachToParser:m_Parser];
-//        [self.window makeFirstResponder:m_View];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self.window makeFirstResponder:m_View];
+//        });
 
 //        setInitialFirstResponder
         m_Task->SetOnChildOutput(^(const void* _d, int _sz){
@@ -64,8 +65,6 @@
 //            printf("new BASH cwd: %s", tmp);
         });
         
-//        char *param[2] = {(char*)"-L", 0};
-        //    char *param[2] = {0};
         m_Task->Launch("/Users/migun/", [m_View SymbWidth], [m_View SymbHeight]);
 
         
@@ -85,7 +84,15 @@
     return self;
 }
 
+- (void) Assigned
+{
+    [self.window makeFirstResponder:m_View];
+ //   [self UpdateTitle];
+}
 
-
+- (void)cancelOperation:(id)sender
+{
+    [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
+}
 
 @end

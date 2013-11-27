@@ -70,7 +70,6 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
 - (BOOL)acceptsFirstResponder
 {
     return YES;
-//    return NO;
 }
 
 -(BOOL) isOpaque
@@ -105,6 +104,23 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
     */
+    
+    NSString*  const character = [event charactersIgnoringModifiers];
+    if ( [character length] == 1 )
+    {
+        unichar const unicode        = [character characterAtIndex:0];
+        NSUInteger mod = [event modifierFlags];
+        if(unicode == 'o' &&
+           (mod & NSAlternateKeyMask) &&
+           (mod & NSCommandKeyMask)
+           )
+        {
+            [self.superview cancelOperation:self];
+            return;
+        }
+    }
+
+    
     m_Parser->ProcessKeyDown(event);
 }
 

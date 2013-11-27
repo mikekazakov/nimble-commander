@@ -22,6 +22,8 @@
 {
     std::vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_BaseWindowState;
+    
+    MainWindowTerminalState     *m_Terminal;
 }
 
 - (id)init {
@@ -183,8 +185,16 @@
 
 - (void)RequestTerminal
 {
-    MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[[[self window] contentView] frame]];
-    [self PushNewWindowState:state];
+    if(m_Terminal == nil)
+    {
+        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[[[self window] contentView] frame]];
+        [self PushNewWindowState:state];
+        m_Terminal = state;
+    }
+    else
+    {
+        [self PushNewWindowState:m_Terminal];
+    }
 }
 
 @end

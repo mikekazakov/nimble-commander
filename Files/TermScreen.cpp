@@ -294,11 +294,10 @@ void TermScreen::DoShiftRowLeft(int _chars)
     if(!line)
         return;
     
-//    assert(_chars <= m_PosX);
-//    if(_chars))
-    for(int x = m_PosX; x < m_Width; ++x)
+    for(int x = m_PosX + _chars; x < m_Width; ++x)
         if(x-_chars >= 0)
             (*line)[x-_chars] = (*line)[x];
+    
     for(int i = 0; i < _chars; ++i)
         (*line)[m_Width-i-1] = m_EraseChar;
 }

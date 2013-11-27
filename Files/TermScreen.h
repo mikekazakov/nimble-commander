@@ -73,17 +73,13 @@ public:
     void SetIntensity(unsigned char _intensity);
     void SetUnderline(bool _is_underline);
     
-    
     void PrintToConsole();
-    
 
     void GoTo(int _x, int _y);
     void DoCursorUp(int _n = 1);
     void DoCursorDown(int _n = 1);
     void DoCursorLeft(int _n = 1);
     void DoCursorRight(int _n = 1);
-//    void DoLineFeed();
-//    void DoCarriageReturn();
     void DoEraseCharacters(int _n);
     
     void DoScrollDown(int _top, int _bottom, int _lines);

@@ -197,6 +197,14 @@ void TermParser::Reset()
 
     m_Title[m_TitleLen] = 0;
     m_Scr->SetTitle(m_Title);
+    
+    
+//    m_TabStop[8];
+    m_TabStop[0]= 0x01010100;
+/*    m_TabStop[1]=m_TabStop[2]=m_TabStop[3]=m_TabStop[4]=
+    m_TabStop[5]=m_TabStop[6]=m_TabStop[7]=0x01010101;*/
+    for(int i = 1; i < 16; ++i)
+        m_TabStop[i] = 0x01010101;
 }
 
 #if defined(HAVE_UNICODE_UNORM2_H)
@@ -356,26 +364,20 @@ void TermParser::EatByte(unsigned char _byte)
     
     switch (c)
     {
-        case 0: return;
-        case 7: if(m_EscState == S_TitleBuf)
-                {
-                    m_Title[m_TitleLen] = 0;
-                    m_Scr->SetTitle(m_Title);
-                    m_EscState = S_Normal;
-                    return;
-                }
-                NSBeep();
-                return;
-        case 8: m_Scr->DoCursorLeft(); return;
-        case 9: m_Scr->DoCursorRight();
-                m_Scr->DoCursorRight();
-                m_Scr->DoCursorRight();
-                m_Scr->DoCursorRight();
-                /* not true implementation */
-                return;
+        case  0: return;
+        case  7: if(m_EscState == S_TitleBuf)
+                 {
+                     m_Title[m_TitleLen] = 0;
+                     m_Scr->SetTitle(m_Title);
+                     m_EscState = S_Normal;
+                     return;
+                 }
+                 NSBeep();
+                 return;
+        case  8: m_Scr->DoCursorLeft(); return;
+        case  9: HT(); return;
         case 10:
         case 11:
-//        case 12: m_Scr->DoLineFeed(); return;
         case 12: LF(); return;
         case 13: CR(); return;
         case 24:
@@ -402,13 +404,10 @@ void TermParser::EatByte(unsigned char _byte)
                 case 'D': LF();         return;
                 case 'M': RI();         return;
                 case 'c': Reset();      return;
-                default:
-                    printf("missed Esc char: %d(\'%c\')\n", (int)c, c);
+                default: printf("missed Esc char: %d(\'%c\')\n", (int)c, c); return;
             }
-            return;
             
         case S_RightBr:
-//            printf("Right bracket %c\n", c);
             switch (c)
             {
                 case '0':
@@ -1163,4 +1162,38 @@ void TermParser::LF()
 void TermParser::CR()
 {
     m_Scr->GoTo(0, m_Scr->GetCursorY());
+}
+
+void TermParser::HT()
+{
+    /*m_Scr->DoCursorRight();
+     m_Scr->DoCursorRight();
+     m_Scr->DoCursorRight();
+     m_Scr->DoCursorRight();*/
+    /* not true implementation */
+    int x = m_Scr->GetCursorX();
+    while(x < m_Scr->GetWidth() - 1) {
+        ++x;
+        if(m_TabStop[x >> 5] & (1 << (x & 31)))
+            break;
+    }
+    m_Scr->GoTo(x, m_Scr->GetCursorY());
+    
+    
+    /*
+     case 'H':
+     tab_stop[x >> 5] |= (1 << (x & 31));
+     return;*/
+    
+    /*		case 'g':
+     if (!par[0])
+     tab_stop[x >> 5] &= ~(1 << (x & 31));
+     else if (par[0] == 3) {
+     tab_stop[0] =
+     tab_stop[1] =
+     tab_stop[2] =
+     tab_stop[3] =
+     tab_stop[4] = 0;
+     }
+     return;*/
 }

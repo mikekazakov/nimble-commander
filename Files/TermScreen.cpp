@@ -168,6 +168,8 @@ void TermScreen::DoEraseScreen(int _mode)
 
 void TermScreen::GoTo(int _x, int _y)
 {
+    // any cursor movement which change Y should end here!
+    
     m_PosX = _x;
     m_PosY = _y;
     if(m_PosX < 0) m_PosX = 0;

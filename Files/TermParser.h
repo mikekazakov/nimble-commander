@@ -88,6 +88,8 @@ private:
     int                     m_DECPMS_SavedCurX; // used only for DEC private modes 1048/1049
     int                     m_DECPMS_SavedCurY; // -""-
     
+    unsigned int            m_TabStop[16];
+    
     void SetTranslate(int _charset);
     void Reset();
     
@@ -110,6 +112,8 @@ private:
     
     void EscSave();
     void EscRestore();
+    
+    void HT(); // horizontal tab
     void RI(); // move/scroll window down one line
     void LF(); // line feed
     void CR(); // carriage return

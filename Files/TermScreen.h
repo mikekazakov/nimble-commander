@@ -45,6 +45,8 @@ public:
     TermScreen(int _w, int _h);
     ~TermScreen();
 
+    static const unsigned short MultiCellGlyph = 0xFFFE;
+    
     struct Space
     {
         unsigned short l; // letter. consider UTF-32 here? (16bit is not enough)

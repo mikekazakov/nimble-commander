@@ -19,6 +19,7 @@ class TermParser;
 - (void) AttachToScreen:(TermScreen*)_scr;
 - (void) AttachToParser:(TermParser*)_par;
 
-- (void)adjustSizes;
+- (void) adjustSizes; // implicitly calls scrollToBottom when full height changes
+- (void) scrollToBottom;
 
 @end

@@ -113,12 +113,13 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
            (mod & NSCommandKeyMask)
            )
         {
-            [self.superview cancelOperation:self];
+            [self.superview.superview cancelOperation:self];
             return;
         }
     }
 
     m_Parser->ProcessKeyDown(event);
+    [self scrollToBottom];
 }
 
 - (void)adjustSizes
@@ -137,7 +138,11 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
     
     [self setFrame: NSMakeRect(0, 0, sx, sy + rest)];
     
-    
+    [self scrollToBottom];
+}
+
+- (void) scrollToBottom
+{
     NSPoint newScrollOrigin;
     newScrollOrigin = NSMakePoint(0.0, NSMaxY([self frame]) - NSHeight([self.superview bounds]));
     [self scrollPoint:newScrollOrigin];
@@ -230,7 +235,10 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
         if(char_space.intensity)
             foreground += 8;
         
-        if(char_space.l != 0 && char_space.l != 32)
+        if(char_space.l != 0 &&
+           char_space.l != 32 &&
+           char_space.l != TermScreen::MultiCellGlyph
+           )
         {
             const DoubleColor &c = TermColorToDoubleColor(foreground);
             if(c != curr_c)

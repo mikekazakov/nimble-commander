@@ -11,6 +11,7 @@
 #include <assert.h>
 
 #include "TermScreen.h"
+#include "FontCache.h"
 
 TermScreen::TermScreen(int _w, int _h):
     m_Width(_w),
@@ -74,7 +75,7 @@ void TermScreen::PutCh(unsigned short _char)
     auto it = m_Screen.begin();
     for(int i = 0; i < m_PosY; ++i) ++it;
     std::vector<TermScreen::Space> *line = &(*it);
-    auto &sp = (*line)[m_PosX];
+    auto &sp = (*line)[m_PosX++];
     
     sp.l = _char;
     sp.foreground = m_Color & 0x7;
@@ -82,7 +83,12 @@ void TermScreen::PutCh(unsigned short _char)
     sp.intensity = m_Intensity;
     sp.underline = m_Underline;
     
-    ++m_PosX;
+    if(g_WCWidthTableFixedMin1[_char] == 2 && m_PosX < m_Width)
+    {
+        auto &foll = (*line)[m_PosX++];
+        foll = sp;
+        foll.l = MultiCellGlyph;
+    }
 }
 
 // ED – Erase Display	Clears part of the screen.

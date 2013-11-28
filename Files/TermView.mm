@@ -13,7 +13,6 @@
 #import "TermParser.h"
 #import "Common.h"
 
-
 static const DoubleColor& TermColorToDoubleColor(int _color)
 {
     static const DoubleColor colors[16] = {
@@ -38,6 +37,8 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     return colors[_color];
 }
 
+static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
+
 @implementation TermView
 {
     int             m_SymbHeight;
@@ -45,9 +46,8 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     FontCache      *m_FontCache;
     TermScreen     *m_Screen;
     TermParser     *m_Parser;
-//    /*NSScroller*/TermViewScroller     *m_Scroller;
-//    int             m_ScrollPos; // zero means that real screen fits view
-                                 // any positive values show number of lines that real screen is scrolled down
+    
+    int             m_LastScreenFSY;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -61,24 +61,7 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
         
         m_SymbHeight = floor(frame.size.height / m_FontCache->Height());
         m_SymbWidth = floor(frame.size.width / m_FontCache->Width());
-//        m_ScrollPos = 0;
-        
-/*        m_Scroller = [[TermViewScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-//        [m_Scroller setWantsLayer:true];
-        m_Scroller.knobAlphaValue = 1;
-        [m_Scroller setScrollerStyle:NSScrollerStyleOverlay];
-        [m_Scroller setEnabled:YES];
-        [m_Scroller setTarget:self];
-        [m_Scroller setAction:@selector(VerticalScroll:)];
-        [m_Scroller setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [self addSubview:m_Scroller];
- 
-        
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_Scroller);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_Scroller(15)]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_Scroller]-(==0)-|" options:0 metrics:nil views:views]];
-        */
-//        [self setWantsLayer:true];
+        m_LastScreenFSY = 0;
     }
     return self;
 }
@@ -140,15 +123,35 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
 
 - (void)adjustSizes
 {
+    int fsy = m_Screen->GetHeight() + m_Screen->ScrollBackLinesCount();
+    if(fsy == m_LastScreenFSY)
+        return;
+    
+    m_LastScreenFSY = fsy;
+    
     double sx = m_Screen->GetWidth() * m_FontCache->Width();
-    double sy = (m_Screen->GetHeight() + m_Screen->ScrollBackLinesCount()) * m_FontCache->Height();
-    [self setFrame: NSMakeRect(0, 0, sx, sy)];
+    double sy = fsy * m_FontCache->Height();
+    
+    double rest = [self.superview frame].size.height -
+        floor([self.superview frame].size.height / m_FontCache->Height()) * m_FontCache->Height();
+    
+    [self setFrame: NSMakeRect(0, 0, sx, sy + rest)];
+    
+    
+    NSPoint newScrollOrigin;
+    newScrollOrigin = NSMakePoint(0.0, NSMaxY([self frame]) - NSHeight([self.superview bounds]));
+    [self scrollPoint:newScrollOrigin];
 }
 
 - (void)drawRect:(NSRect)dirtyRect
 {
 	[super drawRect:dirtyRect];
 	
+    // Drawing code here.
+    CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+    oms::SetFillColor(context, g_BackgroundColor);
+    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+    
     if(!m_Screen)
         return;
     
@@ -159,27 +162,15 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     
 //    MachTimeBenchmark tmb;
     
-//    NSLog(@"%f - %f", dirtyRect.origin.y, dirtyRect.origin.y + dirtyRect.size.height);
-    
-    int line_start = floor(dirtyRect.origin.y / m_FontCache->Height());
-    int line_end   = line_start +  ceil(dirtyRect.size.height / m_FontCache->Height());
-    
+    int line_start = floor([self.superview bounds].origin.y / m_FontCache->Height());
+    int line_end   = line_start + ceil(NSHeight(self.superview.bounds) / m_FontCache->Height());
     
     m_Screen->Lock();
     
-    
-    // Drawing code here.
-    CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
 //    oms::SetParamsForUserASCIIArt(context, m_FontCache);
     oms::SetParamsForUserReadableText(context, m_FontCache);
     CGContextSetShouldSmoothFonts(context, true);
 
-    
-    int y = /*0*/ line_start;
-//    int lines_no = m_Screen->GetLinesCount();
-    int lines_no = m_Screen->GetHeight();
-//    for(int i = 0; i < lines_no; ++i)
     for(int i = line_start; i < line_end; ++i)
     {
         
@@ -187,35 +178,17 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
         {
             // scrollback
             auto *line = m_Screen->GetScrollBackLine(i);
-                        if(line)
-            [self DrawLine:line at_y:y context:context];
+            if(line)
+                [self DrawLine:line at_y:i context:context];
         }
         else
         {
             // real screen
             auto *line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
             if(line)
-                [self DrawLine:line at_y:y context:context];
+                [self DrawLine:line at_y:i context:context];
         }
-        
-        ++y;
     }
-    
-    
-//    [self.window setTitle:[NSString stringWithUTF8String:m_Screen->Title()]];
-
-    // update scrolling stuff
-/*    double prop = 1;
-    if( m_Screen->ScrollBackLinesCount() > 0 )
-        prop = double(m_Screen->GetHeight()) / double(m_Screen->ScrollBackLinesCount() + m_Screen->GetHeight());
-    [m_Scroller setKnobProportion: prop];
-
-    double pos = 1.;
-    if(m_ScrollPos > 0)
-        pos = double(m_Screen->ScrollBackLinesCount() - m_ScrollPos) /
-            double(m_Screen->ScrollBackLinesCount());
-    [m_Scroller setDoubleValue:pos];
-    */
     
     
     m_Screen->Unlock();
@@ -233,14 +206,17 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     {
         TermScreen::Space char_space = (*_line)[n];
         const DoubleColor &c = TermColorToDoubleColor(char_space.background);
-        if(c != curr_c)
-            oms::SetFillColor(_context, curr_c = c);
+        if(c != g_BackgroundColor)
+        {
+            if(c != curr_c)
+                oms::SetFillColor(_context, curr_c = c);
         
-        CGContextFillRect(_context,
-                          CGRectMake(x * m_FontCache->Width(),
-                                     _y * m_FontCache->Height(),
-                                     m_FontCache->Width(),
-                                     m_FontCache->Height()));
+            CGContextFillRect(_context,
+                            CGRectMake(x * m_FontCache->Width(),
+                                        _y * m_FontCache->Height(),
+                                        m_FontCache->Width(),
+                                        m_FontCache->Height()));
+        }
         ++x;
     }
     
@@ -279,50 +255,14 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
     }
 }
 
-- (void)VerticalScroll:(id)sender
+- (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
-/*    switch ([m_Scroller hitPart])
-    {
-        case NSScrollerKnob:
-            // This case is when the knob itself is pressed
-//            [m_ViewImpl HandleVerticalScroll:[m_VerticalScroller doubleValue]];
-            {
-//                double full_sz = m_Screen->GetHeight() + m_Screen->ScrollBackLinesCount();
-                double off = [m_Scroller doubleValue] * double(m_Screen->ScrollBackLinesCount());
-                m_ScrollPos = m_Screen->ScrollBackLinesCount() - floor(off);
-                [self setNeedsDisplay:true];
-                break;
-            }
-    } */
+    NSRect modifiedRect=proposedVisibleRect;
     
-/*    double full_document_size = double(m_Lines.size()) * m_FontHeight;
-    double scroll_y_offset = _pos * (full_document_size - m_FrameSize.height);
-    m_VerticalOffset = floor(scroll_y_offset / m_FontHeight);
-    m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontHeight;
-    [m_View setNeedsDisplay:true];*/
-}
-
-- (void)scrollWheel1:(NSEvent *)theEvent
-{
-    double delta_y = [theEvent scrollingDeltaY];
-//    double delta_x = [theEvent scrollingDeltaX];
-//    if(![theEvent hasPreciseScrollingDeltas])
-//    {
-/*    if(delta_y < 0)
-    {
-        if(m_ScrollPos > 0)
-            m_ScrollPos--;
-            
-        
-        
-    }
-    else if(delta_y > 0)
-    {
-        if(m_ScrollPos < m_Screen->ScrollBackLinesCount())
-            m_ScrollPos++;
-        
-    }
-    [self setNeedsDisplay:true];*/
+    modifiedRect.origin.y = (int)(modifiedRect.origin.y/m_FontCache->Height()) * m_FontCache->Height();
+    
+    // return the modified rectangle
+    return modifiedRect;
 }
 
 @end

@@ -33,18 +33,15 @@
         [self setBorderType:NSNoBorder];
         
         m_View = [[TermView alloc] initWithFrame:self.frame];
-//        [m_View setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [self setDocumentView:m_View];
-        [[self contentView] setCopiesOnScroll:false];
-        [self setVerticalScrollElasticity:NSScrollElasticityNone];
 
-/*        [self addSubview:m_View];
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_View);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=0)-[m_View]-(<=0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=0)-[m_View]-(<=0)-|" options:0 metrics:nil views:views]];*/
+        [self setDocumentView:m_View];
+        [self setVerticalScrollElasticity:NSScrollElasticityNone];
+        [self setScrollsDynamically:false];        
+        [[self contentView] setCopiesOnScroll:NO];
+        [[self contentView] setCanDrawConcurrently:false];
+        [[self contentView] setDrawsBackground:false];
         
         m_Task = new TermTask;
-        
         m_Screen = new TermScreen([m_View SymbWidth], [m_View SymbHeight]);
         m_Parser = new TermParser(m_Screen, m_Task);
         [m_View AttachToScreen:m_Screen];
@@ -52,7 +49,7 @@
 
         m_Task->SetOnChildOutput(^(const void* _d, int _sz){
             
-            MachTimeBenchmark tmb;
+//            MachTimeBenchmark tmb;
             m_Screen->Lock();
             for(int i = 0; i < _sz; ++i)
                 m_Parser->EatByte(((const char*)_d)[i]);
@@ -60,14 +57,12 @@
             m_Parser->Flush();
             m_Screen->Unlock();
             
-            tmb.Reset("Parsed in: ");
-
-            //    m_Screen->PrintToConsole();
-//            [m_View adjustSizes];
-  
+//            tmb.Reset("Parsed in: ");  
             dispatch_async(dispatch_get_main_queue(), ^{
                 [m_View adjustSizes];
                 [m_View setNeedsDisplay:true];
+//                [[self contentView] setNeedsDisplay:true];
+//                [self setNeedsDisplay:true];
             });
 //            [self setNeedsDisplay:true];
 //            [[self contentView] setNeedsDisplay:true];

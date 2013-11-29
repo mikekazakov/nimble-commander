@@ -21,7 +21,6 @@
     TermScreen      *m_Screen;
     TermParser      *m_Parser;
     TermView        *m_View;
-//    NSScrollView    *m_ScrollView;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -31,15 +30,15 @@
     {
         [self setHasVerticalScroller:YES];
         [self setBorderType:NSNoBorder];
-        
-        m_View = [[TermView alloc] initWithFrame:self.frame];
-
-        [self setDocumentView:m_View];
         [self setVerticalScrollElasticity:NSScrollElasticityNone];
-        [self setScrollsDynamically:false];        
+        [self setScrollsDynamically:false];
         [[self contentView] setCopiesOnScroll:NO];
         [[self contentView] setCanDrawConcurrently:false];
         [[self contentView] setDrawsBackground:false];
+        
+        
+        m_View = [[TermView alloc] initWithFrame:self.frame];
+        [self setDocumentView:m_View];
         
         m_Task = new TermTask;
         m_Screen = new TermScreen([m_View SymbWidth], [m_View SymbHeight]);
@@ -61,11 +60,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [m_View adjustSizes];
                 [m_View setNeedsDisplay:true];
-//                [[self contentView] setNeedsDisplay:true];
-//                [self setNeedsDisplay:true];
             });
-//            [self setNeedsDisplay:true];
-//            [[self contentView] setNeedsDisplay:true];
         });
 
         m_Task->SetOnBashPrompt(^(const void* _d, int _sz){
@@ -73,10 +68,8 @@
             memcpy(tmp, _d, _sz);
             tmp[_sz] = 0;
 /*            [self.CommandText setStringValue:[NSString stringWithUTF8String:tmp]];*/
-//            printf("new BASH cwd: %s", tmp);
+            printf("BASH cwd: %s", tmp);
         });
-        
-        m_Task->Launch("/Users/migun/", [m_View SymbWidth], [m_View SymbHeight]);
     }
     return self;
 }
@@ -95,7 +88,16 @@
 
 - (void) Assigned
 {
+    // need right CWD here
+    if(m_Task->State() == TermTask::StateInactive)
+        m_Task->Launch("/Users/migun/", [m_View SymbWidth], [m_View SymbHeight]);
+    
+//    m_Task->ChDir("/users/migun/!");
+//    m_Task->ChDir("/users/migun/applications (parallels)");
+    
     [self.window makeFirstResponder:m_View];
+    
+    
  //   [self UpdateTitle];
 }
 

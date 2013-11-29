@@ -6,60 +6,60 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <sys/select.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <termios.h>
-#include <sys/select.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
 #include <string.h>
-#include <signal.h>
-#include <dispatch/dispatch.h>
 #include "TermTask.h"
 
-static const char *g_ShellProg = "/bin/bash";
+static const char *g_ShellProg     = "/bin/bash";
 static       char *g_ShellParam[2] = {(char*)"-L", 0};
-
-static void chldied (int dummy)
-{
-    /* Просто кончимся */
-    //   termination (34);
-    printf("Child died\n");
-}
+static const int   g_PromptPipe    = 20;
+static const char *g_PromptString  = "/bin/pwd>&20";
 
 TermTask::TermTask():
     m_MasterFD(-1),
-    m_OnChildOutput(0)
+    m_OnChildOutput(0),
+    m_State(StateInactive),
+    m_ShellPID(-1)
 {
+    m_CwdPipe[0] = m_CwdPipe[1] = -1;
+}
+
+TermTask::~TermTask()
+{
+    CleanUp();
 }
 
 void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
 {
-    int rc;
     m_MasterFD = posix_openpt(O_RDWR);
+    assert(m_MasterFD >= 0);
+    
     grantpt(m_MasterFD);
     unlockpt(m_MasterFD);
-    
-    struct sigaction sact;
-    /* Установим обработку сигнала о завершении потомка */
-    sact.sa_handler = chldied;
-    sigemptyset(&sact.sa_mask);
-    sact.sa_flags = 0;
-    sigaction(SIGCHLD, &sact, (struct sigaction *) NULL);
     
     int slave_fd = open(ptsname(m_MasterFD), O_RDWR);
     
     // init FIFO stuff for BASH' CWD
-    rc = pipe(m_CwdPipe);
+    int rc = pipe(m_CwdPipe);
     assert(rc == 0);
     
     // Create the child process
-    if(fork())
+    if((rc = fork()))
     { // master
+        m_ShellPID = rc;
         close(slave_fd);
+        close(m_CwdPipe[1]);
+        
+        SetState(StateShell);
+        
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             ReadChildOutput();
         });
@@ -67,9 +67,6 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
     else
     { // slave/child
         struct termios term_sett; // Saved terminal settings
-
-        // Close the master side of the PTY
-        close(m_MasterFD);
         
         // Save the defaults parameters of the slave side of the PTY
         rc = tcgetattr(slave_fd, &term_sett);
@@ -99,9 +96,6 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
         dup(slave_fd); // PTY becomes standard output (1)
         dup(slave_fd); // PTY becomes standard error (2)
         
-        // Now the original file descriptor is useless
-        close(slave_fd);
-        
         // Make the current process a new session leader
         setsid();
         
@@ -119,11 +113,19 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
         setenv("LANG", "en_US.UTF-8", 1);
 
         // setup piping for CWD prompt
-        // using FD 20 becuse bash is closing fds [3,20) upon opening in logon mode (our case)
-        rc = dup2(m_CwdPipe[1], 20);
-        assert(rc == 20);
-        close(m_CwdPipe[1]);
-        setenv("PROMPT_COMMAND", "/bin/pwd>&20", 1);
+        // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)
+        rc = dup2(m_CwdPipe[1], g_PromptPipe);
+        assert(rc == g_PromptPipe);
+        setenv("PROMPT_COMMAND", g_PromptString, 1);
+        
+        // close all file descriptors except [0], [1], [2] and [g_PromptPipe]
+        // implicitly closing m_MasterFD, slave_fd and m_CwdPipe[1]
+        // A BAD, BAAAD implementation - it tries to close ANY possible file descriptor for this process
+        // consider a better way here
+        int max_fd = (int)sysconf(_SC_OPEN_MAX);
+        for(int fd = 3; fd < max_fd; fd++)
+            if(fd != g_PromptPipe)
+                close(fd);
         
         // execution of the program
         execv(g_ShellProg, g_ShellParam);
@@ -136,7 +138,7 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
 void TermTask::ReadChildOutput()
 {
     int rc;
-    fd_set fd_in;
+    fd_set fd_in, fd_err;
 
     static const int input_sz = 65536;
     char input[65536];
@@ -147,9 +149,13 @@ void TermTask::ReadChildOutput()
         FD_ZERO(&fd_in);
         FD_SET(m_MasterFD, &fd_in);
         FD_SET(m_CwdPipe[0], &fd_in);
+        
+        FD_ZERO(&fd_err);
+        FD_SET(m_MasterFD, &fd_err);
+        
         int max_fd = m_MasterFD > m_CwdPipe[0] ? m_MasterFD : m_CwdPipe[0];
         
-        rc = select(max_fd + 1, &fd_in, NULL, NULL, NULL);
+        rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
         switch(rc)
         {
             case -1 : fprintf(stderr, "Error %d on select()\n", errno);
@@ -157,8 +163,8 @@ void TermTask::ReadChildOutput()
                 
             default :
             {
-                // If data on master side of PTY
-                if (FD_ISSET(m_MasterFD, &fd_in))
+                // If data on master side of PTY (some child's output)
+                if(FD_ISSET(m_MasterFD, &fd_in))
                 {
                     rc = (int)read(m_MasterFD, input, input_sz);
                     if (rc > 0)
@@ -174,35 +180,124 @@ void TermTask::ReadChildOutput()
                             exit(1);
                         }
                     }
+                    
+                    /*
+                     if(bytesread < 0 && !(errno == EAGAIN || errno == EINTR)) {
+                     [self brokenPipe];
+                     return;
+                     }
+                     */
+                }
+                
+                // check if child process died
+                if(FD_ISSET(m_MasterFD, &fd_err))
+                {
+                    ShellDied();
+                    goto end_of_all;
                 }
                 
                 // check BASH_PROMPT output
                 if (FD_ISSET(m_CwdPipe[0], &fd_in))
                 {
-                    char buf[1024];
-                    rc = (int)read(m_CwdPipe[0], buf, 1024);
+                    rc = (int)read(m_CwdPipe[0], input, input_sz);
                     if(rc > 0)
                     {
-//                        buf[rc] = 0;
-//                        printf("%s\n", buf);
                         if(m_OnBashPrompt)
-                            m_OnBashPrompt(buf, rc);
+                            m_OnBashPrompt(input, rc);
+                        
+                        if(m_State == TermState::StateProgramExternal ||
+                           m_State == TermState::StateProgramInternal )
+                        {
+                            // shell just finished running something - let's back it to StateShell state
+                            SetState(StateShell);
+                        }
                     }
                 }
             }
         } // End switch
     } // End while
-}
-
-void TermTask::SetOnChildOutput(void (^_h)(const void* _d, int _sz))
-{
-    m_OnChildOutput = _h;
+end_of_all:
+    ;
 }
 
 void TermTask::WriteChildInput(const void *_d, int _sz)
 {
+    if(m_State == StateInactive ||
+       m_State == StateDead )
+        return;
+    
+    if(_sz <= 0)
+        return;
+    
     m_Lock.lock();
+    
+    
     write(m_MasterFD, _d, _sz);
-//    pthread_mutex_unlock(&m_Lock);
+    
+    
+    if( ((char*)_d)[_sz-1] == '\n' ||
+        ((char*)_d)[_sz-1] == '\r' )
+    {
+        if(m_State == StateShell)
+        {
+            SetState(StateProgramInternal);
+        }
+    }
+    
+    
     m_Lock.unlock();
+}
+
+void TermTask::CleanUp()
+{
+    m_Lock.lock();
+    
+    if(m_MasterFD >= 0)
+    {
+        close(m_MasterFD);
+        m_MasterFD = -1;
+    }
+    
+    if(m_CwdPipe[0] >= 0)
+    {
+        close(m_CwdPipe[0]);
+        m_CwdPipe[0] = m_CwdPipe[1] = -1;
+    }
+    
+    m_ShellPID = -1;
+    
+    SetState(StateInactive);
+    
+    m_Lock.unlock();
+}
+
+void TermTask::ShellDied()
+{
+    SetState(StateDead);
+    CleanUp();
+}
+
+void TermTask::SetState(TermTask::TermState _new_state)
+{
+    m_State = _new_state;
+    
+    printf("TermTask state changed to %d\n", _new_state);
+}
+
+void TermTask::ChDir(const char *_new_cwd)
+{
+    // escape special symbols
+    NSString *orig = [NSString stringWithUTF8String:_new_cwd];
+    if(!orig) return;
+//    NSString *escap = [orig stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    if(!escap) return;
+    const char *cwd = [/*escap*/ orig UTF8String];
+    
+    WriteChildInput(" cd '", 5);
+    WriteChildInput(cwd, (int)strlen(cwd));
+    WriteChildInput("'\n", 2);
+//    char r = 13;
+//    WriteChildInput(, 1);
+//    write_all (mc_global.tty.subshell_pty, "\n", 1);
+    
 }

@@ -32,30 +32,42 @@ public:
         // shell died
         StateDead            = 4
     };
+
+    inline void SetOnChildOutput(void (^_)(const void* _d, int _sz)) { m_OnChildOutput = _; };
+    inline void SetOnBashPrompt(void (^_)(const char*)) { m_OnBashPrompt = _; };
     
     // launches /bin/bash actually (hardcoded now)
     void Launch(const char *_work_dir, int _sx, int _sy);
-    
-    inline void SetOnChildOutput(void (^_)(const void* _d, int _sz)) { m_OnChildOutput = _; };
-    inline void SetOnBashPrompt(void (^_)(const void* _d, int _sz)) { m_OnBashPrompt = _; };
-    
-    
     void ChDir(const char *_new_cwd);
+    void Execute(const char *_short_fn);
+    
+    
+    
     void WriteChildInput(const void *_d, int _sz);
+    
+    
     
     inline TermState State() const { return m_State; }
     
 private:
+    void ProcessBashPrompt(const void *_d, int _sz);
     void SetState(TermState _new_state);
     void ShellDied();
     void CleanUp();
     void ReadChildOutput();
     void (^m_OnChildOutput)(const void* _d, int _sz);
-    void (^m_OnBashPrompt)(const void* _d, int _sz);
-    
-    int m_MasterFD;
-    int m_ShellPID;
-    int m_CwdPipe[2];
-    std::mutex m_Lock; // will lock on WriteChildInput or on cleanup process
+    void (^m_OnBashPrompt)(const char *_cwd);
+
     TermState m_State;
+    volatile int m_MasterFD;
+    volatile int m_ShellPID;
+    int m_CwdPipe[2];
+    
+    volatile bool m_TemporarySuppressed; // will give no output until the next bash prompt will show m_RequestedCWD path
+    char m_RequestedCWD[1024];
+    char m_CWD[1024];
+    
+    std::recursive_mutex m_Lock; // will lock on WriteChildInput or on cleanup process
+
+
 };

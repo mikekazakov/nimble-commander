@@ -12,4 +12,8 @@
 
 @interface MainWindowTerminalState : NSScrollView<MainWindowStateProtocol>
 
+- (void) SetInitialWD:(const char*)_wd;
+- (void) ChDir:(const char*)_new_dir;
+- (void) Execute:(const char *)_short_fn;
+
 @end

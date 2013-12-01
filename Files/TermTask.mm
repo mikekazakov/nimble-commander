@@ -17,19 +17,23 @@
 #include <termios.h>
 #include <string.h>
 #include "TermTask.h"
+#include "Common.h"
 
 static const char *g_ShellProg     = "/bin/bash";
 static       char *g_ShellParam[2] = {(char*)"-L", 0};
 static const int   g_PromptPipe    = 20;
-static const char *g_PromptString  = "/bin/pwd>&20";
+static const char *g_PromptString  = "PROMPT_COMMAND=/bin/pwd>&20";
 
 TermTask::TermTask():
     m_MasterFD(-1),
     m_OnChildOutput(0),
     m_State(StateInactive),
-    m_ShellPID(-1)
+    m_ShellPID(-1),
+    m_TemporarySuppressed(false)
 {
     m_CwdPipe[0] = m_CwdPipe[1] = -1;
+    m_RequestedCWD[0] = 0;
+    m_CWD[0] = 0;
 }
 
 TermTask::~TermTask()
@@ -39,6 +43,8 @@ TermTask::~TermTask()
 
 void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
 {
+    signal(SIGCHLD, SIG_IGN); /* Silently (and portably) reap children. */
+    
     m_MasterFD = posix_openpt(O_RDWR);
     assert(m_MasterFD >= 0);
     
@@ -60,6 +66,7 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
         
         SetState(StateShell);
         
+        // TODO: consider using thread here, not a queue (mind maximum running queues issue)
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             ReadChildOutput();
         });
@@ -104,9 +111,11 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
         ioctl(0, TIOCSCTTY, 1);
         chdir(_work_dir);
         
+        // putenv is a bit better than setenv in terms of performance(no mallocs), so try to use it wisely
+        
         // basic terminal environment setup
-        setenv("TERM", "xterm-16color", 1);
-        setenv("TERM_PROGRAM", "Files.app", 1);
+        putenv ((char *) "TERM=xterm-16color");
+        putenv ((char *) "TERM_PROGRAM=Files.app");
         
         // need real config here
         setenv("LC_ALL", "en_US.UTF-8", 1);
@@ -116,7 +125,10 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
         // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)
         rc = dup2(m_CwdPipe[1], g_PromptPipe);
         assert(rc == g_PromptPipe);
-        setenv("PROMPT_COMMAND", g_PromptString, 1);
+        putenv((char*)g_PromptString);
+        
+        // say BASH to not put into history any command starting with space character
+        putenv((char *)"HISTCONTROL=ignorespace");
         
         // close all file descriptors except [0], [1], [2] and [g_PromptPipe]
         // implicitly closing m_MasterFD, slave_fd and m_CwdPipe[1]
@@ -156,68 +168,96 @@ void TermTask::ReadChildOutput()
         int max_fd = m_MasterFD > m_CwdPipe[0] ? m_MasterFD : m_CwdPipe[0];
         
         rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
-        switch(rc)
+        if(rc < 0 || m_ShellPID < 0)
         {
-            case -1 : fprintf(stderr, "Error %d on select()\n", errno);
-                exit(1);
-                
-            default :
+            // error on select(), let's think that shell has died
+            // mb call ShellDied() here?
+            goto end_of_all;
+        }
+        
+        // If data on master side of PTY (some child's output)
+        if(FD_ISSET(m_MasterFD, &fd_in))
+        {
+            rc = (int)read(m_MasterFD, input, input_sz);
+            if (rc > 0)
             {
-                // If data on master side of PTY (some child's output)
-                if(FD_ISSET(m_MasterFD, &fd_in))
+//                printf("has output\n");                      
+                if(m_OnChildOutput && !m_TemporarySuppressed)
+                    m_OnChildOutput(input, rc);
+            }
+            else
+            {
+                if (rc < 0)
                 {
-                    rc = (int)read(m_MasterFD, input, input_sz);
-                    if (rc > 0)
-                    {
-                        if(m_OnChildOutput)
-                            m_OnChildOutput(input, rc);
-                    }
-                    else
-                    {
-                        if (rc < 0)
-                        {
-                            fprintf(stderr, "Error %d on read master PTY\n", errno);
-                            exit(1);
-                        }
-                    }
-                    
+                    fprintf(stderr, "Error %d on read master PTY\n", errno);
+                    exit(1);
+                }
+            }
                     /*
                      if(bytesread < 0 && !(errno == EAGAIN || errno == EINTR)) {
                      [self brokenPipe];
                      return;
                      }
                      */
-                }
+//                    continue;
+        }
                 
-                // check if child process died
-                if(FD_ISSET(m_MasterFD, &fd_err))
-                {
-                    ShellDied();
-                    goto end_of_all;
-                }
-                
-                // check BASH_PROMPT output
-                if (FD_ISSET(m_CwdPipe[0], &fd_in))
-                {
-                    rc = (int)read(m_CwdPipe[0], input, input_sz);
-                    if(rc > 0)
-                    {
-                        if(m_OnBashPrompt)
-                            m_OnBashPrompt(input, rc);
-                        
-                        if(m_State == TermState::StateProgramExternal ||
-                           m_State == TermState::StateProgramInternal )
-                        {
-                            // shell just finished running something - let's back it to StateShell state
-                            SetState(StateShell);
-                        }
-                    }
-                }
+        // check BASH_PROMPT output
+        if (FD_ISSET(m_CwdPipe[0], &fd_in))
+        {
+            rc = (int)read(m_CwdPipe[0], input, input_sz);
+            if(rc > 0)
+            {
+                ProcessBashPrompt(input, rc);
             }
-        } // End switch
+        }
+                
+        // check if child process died
+        if(FD_ISSET(m_MasterFD, &fd_err))
+        {
+            ShellDied();
+            goto end_of_all;
+        }
     } // End while
 end_of_all:
     ;
+}
+
+void TermTask::ProcessBashPrompt(const void *_d, int _sz)
+{
+    m_Lock.lock();
+    
+    char tmp[1024];
+    memcpy(tmp, _d, _sz);
+    tmp[_sz] = 0;
+    while(strlen(tmp) > 0 && ( // need MOAR slow strlens in this while! gimme MOAR!!!!!
+                              tmp[strlen(tmp)-1] == '\n' ||
+                              tmp[strlen(tmp)-1] == '\r' ))
+        tmp[strlen(tmp)-1] = 0;
+    
+    strcpy(m_CWD, tmp);
+    
+    if(m_OnBashPrompt)
+        m_OnBashPrompt(tmp);
+    
+    if(m_State == TermState::StateProgramExternal ||
+       m_State == TermState::StateProgramInternal )
+    {
+        // shell just finished running something - let's back it to StateShell state
+        SetState(StateShell);
+    }
+    
+    if(m_TemporarySuppressed && strcmp(tmp, m_RequestedCWD) == 0)
+    {
+        m_TemporarySuppressed = false;
+        m_RequestedCWD[0] = 0;
+            
+        if(m_OnChildOutput)
+            m_OnChildOutput("\n\r", 2); // hack
+
+    }
+    
+    m_Lock.unlock();
 }
 
 void TermTask::WriteChildInput(const void *_d, int _sz)
@@ -237,13 +277,8 @@ void TermTask::WriteChildInput(const void *_d, int _sz)
     
     if( ((char*)_d)[_sz-1] == '\n' ||
         ((char*)_d)[_sz-1] == '\r' )
-    {
         if(m_State == StateShell)
-        {
             SetState(StateProgramInternal);
-        }
-    }
-    
     
     m_Lock.unlock();
 }
@@ -251,6 +286,14 @@ void TermTask::WriteChildInput(const void *_d, int _sz)
 void TermTask::CleanUp()
 {
     m_Lock.lock();
+    
+    if(m_ShellPID > 0)
+    {
+        int pid = m_ShellPID;
+        m_ShellPID = -1;
+        kill(pid, SIGKILL);
+        // waitpid(pid, 0, 0);
+    }
     
     if(m_MasterFD >= 0)
     {
@@ -264,7 +307,9 @@ void TermTask::CleanUp()
         m_CwdPipe[0] = m_CwdPipe[1] = -1;
     }
     
-    m_ShellPID = -1;
+    m_TemporarySuppressed = false;
+    m_RequestedCWD[0] = 0;
+    m_CWD[0] = 0;
     
     SetState(StateInactive);
     
@@ -273,8 +318,11 @@ void TermTask::CleanUp()
 
 void TermTask::ShellDied()
 {
-    SetState(StateDead);
-    CleanUp();
+    if(m_ShellPID > 0) // no need to call it if PID is already set to invalid - we're in closing state
+    {
+        SetState(StateDead);
+        CleanUp();
+    }
 }
 
 void TermTask::SetState(TermTask::TermState _new_state)
@@ -286,18 +334,58 @@ void TermTask::SetState(TermTask::TermState _new_state)
 
 void TermTask::ChDir(const char *_new_cwd)
 {
+    char new_cwd[MAXPATHLEN];
+    strcpy(new_cwd, _new_cwd);
+    if(IsPathWithTrailingSlash(new_cwd) && strlen(new_cwd) > 1) // cd command don't like trailing slashes
+        new_cwd[strlen(new_cwd)-1] = 0;
+    
+    if(strcmp(m_CWD, new_cwd) == 0) // do nothing if current working directory is the same as requested
+        return;
+    
+    if(!IsDirectoryAvailableForBrowsing(new_cwd)) // file I/O here
+        return;
+    
     // escape special symbols
-    NSString *orig = [NSString stringWithUTF8String:_new_cwd];
+    NSString *orig = [NSString stringWithUTF8String:new_cwd];
     if(!orig) return;
 //    NSString *escap = [orig stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 //    if(!escap) return;
     const char *cwd = [/*escap*/ orig UTF8String];
     
+    m_TemporarySuppressed = true; // will show no output of bash when changing a directory
+    strcpy(m_RequestedCWD, new_cwd);
+    
     WriteChildInput(" cd '", 5);
     WriteChildInput(cwd, (int)strlen(cwd));
     WriteChildInput("'\n", 2);
-//    char r = 13;
-//    WriteChildInput(, 1);
-//    write_all (mc_global.tty.subshell_pty, "\n", 1);
+}
+
+void TermTask::Execute(const char *_short_fn)
+{
+    // TODO: OPTIMIZE!
+    NSString *orig = [NSString stringWithUTF8String:_short_fn];
+    if(!orig) return;
     
+    NSMutableString *destString = [@"" mutableCopy];
+    NSCharacterSet *escapeCharsSet = [NSCharacterSet characterSetWithCharactersInString:@" ()\\"];
+    
+    NSScanner *scanner = [NSScanner scannerWithString:orig];
+    while (![scanner isAtEnd]) {
+        NSString *tempString;
+        [scanner scanUpToCharactersFromSet:escapeCharsSet intoString:&tempString];
+        if([scanner isAtEnd]){
+            [destString appendString:tempString];
+        }
+        else {
+            [destString appendFormat:@"%@\\%@", tempString, [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
+            [scanner setScanLocation:[scanner scanLocation]+1];
+        }
+    }
+    
+    
+    const char *utf8 = [destString UTF8String];
+    WriteChildInput("./", 2);
+    WriteChildInput(utf8, (int)strlen(utf8));
+    WriteChildInput("\n", 1);
+//    const char *ut = [/*escap*/ orig UTF8String];
 }

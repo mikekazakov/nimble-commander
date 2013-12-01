@@ -530,10 +530,13 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     if(sort_pos < 0)
         return;
     int raw_pos = m_Data->SortedDirectoryEntries()[sort_pos];
+    
+    const auto &entry = m_Data->DirectoryEntries()[raw_pos];
+    
     // Handle directories.
-    if (m_Data->DirectoryEntries()[raw_pos].IsDir())
+    if(entry.IsDir())
     {
-        if(!m_Data->DirectoryEntries()[raw_pos].IsDotDot() ||
+        if(!entry.IsDotDot() ||
            strcmp(m_Data->DirectoryEntries().RelativePath(), "/"))
         {
             char pathbuf[__DARWIN_MAXPATHLEN];
@@ -541,7 +544,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 //            std::string path = std::string(pathbuf);
         
             std::string curdirname("");
-            if( m_Data->DirectoryEntries()[raw_pos].IsDotDot())
+            if(entry.IsDotDot())
             { // go to parent directory
                 char curdirnamebuf[__DARWIN_MAXPATHLEN];
                 m_Data->GetDirectoryPathShort(curdirnamebuf);
@@ -586,6 +589,21 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
             [self GoToRelativeToHostAsync:"/" select_entry:0];
             return;
         }
+    }
+    
+    // need more sophisticated executable handling here
+    if([self GetCurrentVFSHost]->IsNativeFS() &&
+       (
+        (entry.UnixMode() & S_IXUSR) ||
+        (entry.UnixMode() & S_IXGRP) ||
+        (entry.UnixMode() & S_IXOTH)
+        )
+       )
+    {
+        char pathbuf[__DARWIN_MAXPATHLEN];
+        [self GetCurrentDirectoryPathRelativeToHost:pathbuf];
+        [m_WindowController RequestTerminalExecution:entry.Name() at:pathbuf];
+        return;
     }
     
     // If previous code didn't handle current item,

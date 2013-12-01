@@ -270,6 +270,10 @@
 - (void) Assigned
 {
     [self UpdateTitle];
+    
+    [m_LeftPanelController SetWindowController:(MainWindowController*)[self.window delegate]];
+    [m_RightPanelController SetWindowController:(MainWindowController*)[self.window delegate]];
+    
     [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]
                              returnTypes:[NSArray arrayWithObjects:nil]];
 }
@@ -1567,7 +1571,11 @@
 ///////////////////////////////////////////////////////////////
 - (IBAction)OnShowTerminal:(id)sender
 {
-    [(MainWindowController*)[[self window] delegate] RequestTerminal];    
+    char path[MAXPATHLEN];
+    path[0] = 0;
+    if([[self ActivePanelController] GetCurrentVFSHost]->IsNativeFS())
+        [[self ActivePanelController] GetCurrentDirectoryPathRelativeToHost:path];
+    [(MainWindowController*)[[self window] delegate] RequestTerminal:path];
 }
 ///////////////////////////////////////////////////////////////
 

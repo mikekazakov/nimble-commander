@@ -183,18 +183,37 @@
     return m_BaseWindowState;
 }
 
-- (void)RequestTerminal
+- (void)RequestTerminal:(const char*)_cwd;
 {
     if(m_Terminal == nil)
     {
         MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[[[self window] contentView] frame]];
+        [state SetInitialWD:_cwd];
         [self PushNewWindowState:state];
         m_Terminal = state;
     }
     else
     {
         [self PushNewWindowState:m_Terminal];
+        [m_Terminal ChDir:_cwd];
     }
+}
+
+- (void)RequestTerminalExecution:(const char*)_filename at:(const char*)_cwd
+{
+    if(m_Terminal == nil)
+    {
+        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[[[self window] contentView] frame]];
+        [state SetInitialWD:_cwd];
+        [self PushNewWindowState:state];
+        m_Terminal = state;
+    }
+    else
+    {
+        [self PushNewWindowState:m_Terminal];
+        [m_Terminal ChDir:_cwd];
+    }
+    [m_Terminal Execute:_filename];
 }
 
 @end

@@ -355,14 +355,7 @@ void TermTask::ChDir(const char *_new_cwd)
     
     if(!IsDirectoryAvailableForBrowsing(new_cwd)) // file I/O here
         return;
-    
-    // escape special symbols
-//    NSString *orig = [NSString stringWithUTF8String:new_cwd];
-//    if(!orig) return;
-//    NSString *escap = [orig stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//    if(!escap) return;
-//    const char *cwd = [/*escap*/ orig UTF8String];
-    
+
     m_TemporarySuppressed = true; // will show no output of bash when changing a directory
     strcpy(m_RequestedCWD, new_cwd);
     
@@ -380,9 +373,9 @@ void TermTask::Execute(const char *_short_fn, const char *_at)
     NSString *orig = [NSString stringWithUTF8String:_short_fn];
     if(!orig) return;
     
+    // TODO: rewrite this NS-style shit with plain C-strings manipulations
     NSMutableString *destString = [@"" mutableCopy];
     NSCharacterSet *escapeCharsSet = [NSCharacterSet characterSetWithCharactersInString:@" ()\\!"];
-    
     NSScanner *scanner = [NSScanner scannerWithString:orig];
     while (![scanner isAtEnd]) {
         NSString *tempString;
@@ -400,16 +393,6 @@ void TermTask::Execute(const char *_short_fn, const char *_at)
     }
     
     const char *cmd = [destString UTF8String];
-    bool cmd_hashigh = HasHigh(cmd);
-/*    bool has_high = false;
-    int len = (int)strlen(utf8);
-    for(int i = 0; i < len; ++i)
-        if(((unsigned char*)utf8)[i] > 127)
-        {
-            has_high = true;
-            break;
-        }*/
-    
     
     // process cwd stuff if any
     char cwd[MAXPATHLEN];
@@ -433,23 +416,10 @@ void TermTask::Execute(const char *_short_fn, const char *_at)
     
     
     char input[2048];
-    if(cwd[0] != 0)
-    {
-/*        if(cmd_hashigh) sprintf(input, "cd '%s'; ./'%s'\n", cwd, cmd);
-        else            */sprintf(input, "cd '%s'; ./%s\n", cwd, cmd);
-    }
-    else
-    {
-/*        if(cmd_hashigh)     sprintf(input, "./'%s'\n", cmd);
-        else                */sprintf(input, "./%s\n", cmd);
-    }
+    if(cwd[0] != 0) sprintf(input, "cd '%s'; ./%s\n", cwd, cmd);
+    else            sprintf(input, "./%s\n", cmd);
     
     
     SetState(StateProgramExternal);
     WriteChildInput(input, (int)strlen(input));
-    
-/*    const char *utf8 = [destString UTF8String];
-    WriteChildInput("./'", 3);
-    WriteChildInput(utf8, (int)strlen(utf8));
-    WriteChildInput("'\n", 2);*/
 }

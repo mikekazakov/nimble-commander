@@ -21,6 +21,7 @@ TermScreen::TermScreen(int _w, int _h):
     m_Color(0x7),
     m_Intensity(0),
     m_Underline(false),
+    m_Reverse(false),
     m_ScreenShot(0)
 {
     m_EraseChar.l = 0;
@@ -28,6 +29,7 @@ TermScreen::TermScreen(int _w, int _h):
     m_EraseChar.background = 0;
     m_EraseChar.intensity = 0;
     m_EraseChar.underline = 0;
+    m_EraseChar.reverse   = 0;
     
     m_Title[0] = 0;
     
@@ -82,6 +84,7 @@ void TermScreen::PutCh(unsigned short _char)
     sp.background = (m_Color & 0x38) >> 3;
     sp.intensity = m_Intensity;
     sp.underline = m_Underline;
+    sp.reverse   = m_Reverse;
     
     if(g_WCWidthTableFixedMin1[_char] == 2 && m_PosX < m_Width)
     {
@@ -231,6 +234,12 @@ void TermScreen::SetUnderline(bool _is_underline)
 {
     m_Underline = _is_underline;
     m_EraseChar.underline = _is_underline;
+}
+
+void TermScreen::SetReverse(bool _is_reverse)
+{
+    m_Reverse = _is_reverse;
+    m_EraseChar.reverse = _is_reverse;
 }
 
 void TermScreen::DoShiftRowLeft(int _chars)

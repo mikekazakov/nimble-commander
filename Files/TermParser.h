@@ -67,6 +67,7 @@ private:
         int                   charset_no;
         unsigned char         intensity; // can be 0 or 1 now
         bool                  underline;
+        bool                  reverse;
         int                   x; // used only for save&restore purposes
         int                   y; // used only for save&restore purposes
     } m_State[2]; // [0] - current, [1] - saved
@@ -106,6 +107,7 @@ private:
     void CSI_n_P();
     void CSI_n_X();
     void CSI_n_r();
+    void CSI_n_M();
     void CSI_DEC_PMS(bool _on);
 
 
@@ -124,18 +126,3 @@ private:
     void DoGoTo(int _x, int _y); // translates _y when m_LineAbs is false.
                                  // on cases when _y stay unchanged it's not necessary to call it
 };
-
-
-/*
- enum { ESnormal, ESesc, ESsquare, ESgetpars, ESgotpars, ESfunckey,
- EShash, ESsetG0, ESsetG1, ESpercent, ESignore, ESnonstd,
- ESpalette, EStitle_semi, EStitle_buf } ESstate;
- int vc_state;
- 
- 
- - initWithTerminalScreen: (id<TerminalScreen>)ats  width: (int)w  height: (int)h;
- -(void) processByte: (unsigned char)c;
- -(void) setTerminalScreenWidth: (int)w height: (int)h;
- -(void) handleKeyEvent: (NSEvent *)e;
- -(void) sendString: (NSString *)str;
-*/

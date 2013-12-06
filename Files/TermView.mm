@@ -143,9 +143,13 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
 
 - (void) scrollToBottom
 {
-    NSPoint newScrollOrigin;
-    newScrollOrigin = NSMakePoint(0.0, NSMaxY([self frame]) - NSHeight([self.superview bounds]));
-    [self scrollPoint:newScrollOrigin];
+//    NSPoint newScrollOrigin;
+//    newScrollOrigin = NSMakePoint(0.0, NSMaxY([self frame]) - NSHeight([self.superview bounds]));
+//    [self scrollPoint:newScrollOrigin];
+    
+    
+    [((NSClipView*)self.superview) scrollToPoint:NSMakePoint(0,
+                                              self.frame.size.height - ((NSScrollView*)self.superview.superview).contentSize.height)];
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -184,17 +188,21 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
             // scrollback
             auto *line = m_Screen->GetScrollBackLine(i);
             if(line)
-                [self DrawLine:line at_y:i context:context];
+                [self DrawLine:line at_y:i context:context cursor_at:-1];
         }
         else
         {
             // real screen
             auto *line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
             if(line)
-                [self DrawLine:line at_y:i context:context];
+            {
+                if(m_Screen->GetCursorY() != i - m_Screen->ScrollBackLinesCount())
+                    [self DrawLine:line at_y:i context:context cursor_at:-1];
+                else
+                    [self DrawLine:line at_y:i context:context cursor_at:m_Screen->GetCursorX()];
+            }
         }
     }
-    
     
     m_Screen->Unlock();
     
@@ -202,7 +210,10 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
     
 }
 
-- (void) DrawLine:(const std::vector<TermScreen::Space> *)_line at_y:(int)_y context:(CGContextRef)_context
+- (void) DrawLine:(const std::vector<TermScreen::Space> *)_line
+             at_y:(int)_y
+          context:(CGContextRef)_context
+        cursor_at:(int)_cur_x
 {
     // draw backgrounds
     DoubleColor curr_c = {-1, -1, -1, -1};
@@ -210,7 +221,7 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
     for(int n = 0; n < _line->size(); ++n)
     {
         TermScreen::Space char_space = (*_line)[n];
-        const DoubleColor &c = TermColorToDoubleColor(char_space.background);
+        const DoubleColor &c = TermColorToDoubleColor(char_space.reverse ? char_space.foreground : char_space.background);
         if(c != g_BackgroundColor)
         {
             if(c != curr_c)
@@ -223,6 +234,17 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
                                         m_FontCache->Height()));
         }
         ++x;
+    }
+    
+    // draw cursor if it's here
+    if(_cur_x >= 0)
+    {
+        CGContextSetRGBFillColor(_context, 0.4, 0.4, 0.4, 1.);
+        CGContextFillRect(_context,
+                        CGRectMake(_cur_x * m_FontCache->Width(),
+                                    _y * m_FontCache->Height(),
+                                    m_FontCache->Width(),
+                                    m_FontCache->Height()));
     }
     
     // draw glyphs
@@ -240,7 +262,7 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
            char_space.l != TermScreen::MultiCellGlyph
            )
         {
-            const DoubleColor &c = TermColorToDoubleColor(foreground);
+            const DoubleColor &c = TermColorToDoubleColor(char_space.reverse ? char_space.background : foreground);
             if(c != curr_c)
                 oms::SetFillColor(_context, curr_c = c);
             
@@ -265,12 +287,8 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
 
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
-    NSRect modifiedRect=proposedVisibleRect;
-    
-    modifiedRect.origin.y = (int)(modifiedRect.origin.y/m_FontCache->Height()) * m_FontCache->Height();
-    
-    // return the modified rectangle
-    return modifiedRect;
+    proposedVisibleRect.origin.y = (int)(proposedVisibleRect.origin.y/m_FontCache->Height() + 0.5) * m_FontCache->Height();
+    return proposedVisibleRect;
 }
 
 @end

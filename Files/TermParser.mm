@@ -419,6 +419,7 @@ void TermParser::EatByte(unsigned char _byte)
                 case 'R':
 //                NSDebugLLog(@"term",@"ignore ESnonstd R");
                     m_EscState = S_Normal;
+                default: printf("non-std right br char: %d(\'%c\')\n", (int)c, c); return;                    
             }
             
             m_EscState = S_Normal;
@@ -474,11 +475,6 @@ void TermParser::EatByte(unsigned char _byte)
                 case 'h': CSI_DEC_PMS(true);  return;
                 case 'l': CSI_DEC_PMS(false); return;
             }
-/*            if(m_QuestionFlag) {
-                m_QuestionFlag = false;
-                printf("returned with %c\n", c);
-                return;
-            }*/
             
             switch(c) {
                 case 'A': CSI_n_A(); return;
@@ -491,15 +487,12 @@ void TermParser::EatByte(unsigned char _byte)
                 case 'J': CSI_n_J(); return;
                 case 'K': CSI_n_K(); return;
                 case 'm': CSI_n_m(); return;
+                case 'M': CSI_n_M(); return;
                 case 'P': CSI_n_P(); return;
                 case 'X': CSI_n_X(); return;
                 case 's': EscSave(); return;
                 case 'u': EscRestore(); return;
                 case 'r': CSI_n_r(); return;
-
-                    
-                    
-                    
                 default: printf("unhandled: CSI %c\n", c);
             }
             return;
@@ -703,11 +696,22 @@ void TermParser::CSI_n_X()
                              );
 }
 
+void TermParser::CSI_n_M()
+{
+    unsigned n = m_Params[0];
+    if(n > m_Scr->GetHeight() - m_Scr->GetCursorY())
+        n = m_Scr->GetHeight() - m_Scr->GetCursorY();
+    else if(n == 0)
+        n = 1;
+    m_Scr->DoScrollUp(m_Scr->GetCursorY(), m_Bottom, n);
+}
+
 void TermParser::SetDefaultAttrs()
 {
     m_State[0].color = m_DefaultColor;
     m_State[0].intensity = 0;
     m_State[0].underline = false;
+    m_State[0].reverse = false;
 }
 
 void TermParser::UpdateAttrs()
@@ -715,6 +719,7 @@ void TermParser::UpdateAttrs()
     m_Scr->SetColor(m_State[0].color);
     m_Scr->SetIntensity(m_State[0].intensity);
     m_Scr->SetUnderline(m_State[0].underline);
+    m_Scr->SetReverse(m_State[0].reverse);
 }
 
 void TermParser::CSI_n_m()
@@ -728,6 +733,8 @@ void TermParser::CSI_n_m()
 			case 2:  m_State[0].intensity = 0;      break;
 			case 4:  m_State[0].underline = true;   break;
 			case 24: m_State[0].underline = false;  break;
+            case 7:  m_State[0].reverse   = true;   break;
+            case 27: m_State[0].reverse   = false;  break;
             case 30: m_State[0].color =  TermScreenColors::Black          | (m_State[0].color & 0x38); break;
             case 31: m_State[0].color =  TermScreenColors::Red            | (m_State[0].color & 0x38); break;
             case 32: m_State[0].color =  TermScreenColors::Green          | (m_State[0].color & 0x38); break;

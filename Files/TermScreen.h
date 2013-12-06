@@ -49,6 +49,7 @@ public:
         unsigned int background :3;
         unsigned int intensity  :1;
         unsigned int underline  :1;
+        unsigned int reverse    :1;
     };
     
     struct ScreenShot // allocated with malloc, line by line from [0] till [height-1]
@@ -73,7 +74,7 @@ public:
     void SetColor(unsigned char _color);
     void SetIntensity(unsigned char _intensity);
     void SetUnderline(bool _is_underline);
-
+    void SetReverse(bool _is_reverse);
 
     void GoTo(int _x, int _y);
     void DoCursorUp(int _n = 1);
@@ -123,6 +124,7 @@ private:
     
     unsigned char m_Intensity;
     bool          m_Underline;
+    bool          m_Reverse;
     int m_Width;
     int m_Height;
     int m_PosX;

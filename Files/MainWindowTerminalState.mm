@@ -29,19 +29,18 @@
     self = [super initWithFrame:frameRect];
     if(self)
     {
-        [self setHasVerticalScroller:YES];
-        [self setBorderType:NSNoBorder];
-        [self setVerticalScrollElasticity:NSScrollElasticityNone];
-        [self setScrollsDynamically:false];
-        [[self contentView] setCopiesOnScroll:NO];
-        [[self contentView] setCanDrawConcurrently:false];
-        [[self contentView] setDrawsBackground:false];
-        
         strcpy(m_InitalWD, "/");
         GetUserHomeDirectoryPath(m_InitalWD);
         
         m_View = [[TermView alloc] initWithFrame:self.frame];
         [self setDocumentView:m_View];
+        [self setHasVerticalScroller:YES];
+        [self setBorderType:NSNoBorder];
+        [self setVerticalScrollElasticity:NSScrollElasticityNone];
+        [self setScrollsDynamically:YES];
+        [[self contentView] setCopiesOnScroll:NO];
+        [[self contentView] setCanDrawConcurrently:NO];
+        [[self contentView] setDrawsBackground:NO];
         
         m_Task = new TermTask;
         m_Screen = new TermScreen([m_View SymbWidth], [m_View SymbHeight]);
@@ -131,6 +130,15 @@
 - (void)cancelOperation:(id)sender
 {
     [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
+}
+
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    NSRect scrollRect;
+    scrollRect = [self documentVisibleRect];
+    scrollRect.origin.y -= [theEvent deltaY] * [self verticalLineScroll];
+    [[self documentView] scrollRectToVisible: scrollRect];
 }
 
 @end

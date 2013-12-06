@@ -39,6 +39,11 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
 
 static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
 
+static inline bool IsBoxDrawingCharacter(unsigned short _ch)
+{
+    return _ch >= 0x2500 && _ch <= 0x257F;
+}
+
 @implementation TermView
 {
     int             m_SymbHeight;
@@ -250,6 +255,9 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
     // draw glyphs
     x = 0;
     curr_c = {-1, -1, -1, -1};
+    bool is_aa = true;
+    CGContextSetShouldAntialias(_context, is_aa);
+    
     for(int n = 0; n < _line->size(); ++n)
     {
         TermScreen::Space char_space = (*_line)[n];
@@ -265,6 +273,10 @@ static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
             const DoubleColor &c = TermColorToDoubleColor(char_space.reverse ? char_space.background : foreground);
             if(c != curr_c)
                 oms::SetFillColor(_context, curr_c = c);
+            
+            bool should_aa = !IsBoxDrawingCharacter(char_space.l);
+            if(should_aa != is_aa)
+                CGContextSetShouldAntialias(_context, is_aa = should_aa);
             
             oms::DrawSingleUniCharXY(char_space.l, x, _y, _context, m_FontCache);
         }

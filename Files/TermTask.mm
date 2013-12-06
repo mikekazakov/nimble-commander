@@ -22,7 +22,7 @@
 static const char *g_ShellProg     = "/bin/bash";
 static       char *g_ShellParam[2] = {(char*)"-L", 0};
 static const int   g_PromptPipe    = 20;
-static const char *g_PromptString  = "PROMPT_COMMAND=/bin/pwd>&20";
+static const char *g_PromptStringPID  = "a=$$; b=%d; if [ $a -eq $b ]; then /bin/pwd>&20; fi";
 
 static bool HasHigh(const char *_s)
 {
@@ -134,7 +134,11 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
         // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)
         rc = dup2(m_CwdPipe[1], g_PromptPipe);
         assert(rc == g_PromptPipe);
-        putenv((char*)g_PromptString);
+        
+        // set bash prompt so it will report only when executed by original fork (to exclude execution by it's later forks)
+        char bash_prompt[1024];
+        sprintf(bash_prompt, g_PromptStringPID, (int)getpid());
+        setenv("PROMPT_COMMAND", bash_prompt, 1);
         
         // say BASH to not put into history any command starting with space character
         putenv((char *)"HISTCONTROL=ignorespace");
@@ -287,7 +291,9 @@ void TermTask::WriteChildInput(const void *_d, int _sz)
     if( ((char*)_d)[_sz-1] == '\n' ||
         ((char*)_d)[_sz-1] == '\r' )
         if(m_State == StateShell)
+        {
             SetState(StateProgramInternal);
+        }
     
     m_Lock.unlock();
 }
@@ -345,6 +351,9 @@ void TermTask::SetState(TermTask::TermState _new_state)
 
 void TermTask::ChDir(const char *_new_cwd)
 {
+    if(m_State != StateShell)
+        return;
+    
     char new_cwd[MAXPATHLEN];
     strcpy(new_cwd, _new_cwd);
     if(IsPathWithTrailingSlash(new_cwd) && strlen(new_cwd) > 1) // cd command don't like trailing slashes

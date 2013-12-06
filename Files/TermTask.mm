@@ -24,6 +24,15 @@ static       char *g_ShellParam[2] = {(char*)"-L", 0};
 static const int   g_PromptPipe    = 20;
 static const char *g_PromptString  = "PROMPT_COMMAND=/bin/pwd>&20";
 
+static bool HasHigh(const char *_s)
+{
+    int len = (int)strlen(_s);
+    for(int i = 0; i < len; ++i)
+        if(((unsigned char*)_s)[i] > 127)
+            return true;
+    return false;
+}
+
 TermTask::TermTask():
     m_MasterFD(-1),
     m_OnChildOutput(0),
@@ -181,7 +190,7 @@ void TermTask::ReadChildOutput()
             rc = (int)read(m_MasterFD, input, input_sz);
             if (rc > 0)
             {
-//                printf("has output\n");                      
+//                printf("has output\n");
                 if(m_OnChildOutput && !m_TemporarySuppressed)
                     m_OnChildOutput(input, rc);
             }
@@ -328,6 +337,8 @@ void TermTask::ShellDied()
 void TermTask::SetState(TermTask::TermState _new_state)
 {
     m_State = _new_state;
+  
+    // do some fancy stuff here
     
     printf("TermTask state changed to %d\n", _new_state);
 }
@@ -346,28 +357,31 @@ void TermTask::ChDir(const char *_new_cwd)
         return;
     
     // escape special symbols
-    NSString *orig = [NSString stringWithUTF8String:new_cwd];
-    if(!orig) return;
+//    NSString *orig = [NSString stringWithUTF8String:new_cwd];
+//    if(!orig) return;
 //    NSString *escap = [orig stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 //    if(!escap) return;
-    const char *cwd = [/*escap*/ orig UTF8String];
+//    const char *cwd = [/*escap*/ orig UTF8String];
     
     m_TemporarySuppressed = true; // will show no output of bash when changing a directory
     strcpy(m_RequestedCWD, new_cwd);
     
     WriteChildInput(" cd '", 5);
-    WriteChildInput(cwd, (int)strlen(cwd));
+    WriteChildInput(new_cwd, (int)strlen(new_cwd));
     WriteChildInput("'\n", 2);
 }
 
-void TermTask::Execute(const char *_short_fn)
+void TermTask::Execute(const char *_short_fn, const char *_at)
 {
+    if(m_State != StateShell)
+        return;
+    
     // TODO: OPTIMIZE!
     NSString *orig = [NSString stringWithUTF8String:_short_fn];
     if(!orig) return;
     
     NSMutableString *destString = [@"" mutableCopy];
-    NSCharacterSet *escapeCharsSet = [NSCharacterSet characterSetWithCharactersInString:@" ()\\"];
+    NSCharacterSet *escapeCharsSet = [NSCharacterSet characterSetWithCharactersInString:@" ()\\!"];
     
     NSScanner *scanner = [NSScanner scannerWithString:orig];
     while (![scanner isAtEnd]) {
@@ -377,15 +391,65 @@ void TermTask::Execute(const char *_short_fn)
             [destString appendString:tempString];
         }
         else {
-            [destString appendFormat:@"%@\\%@", tempString, [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
+            if(tempString != nil)
+                [destString appendFormat:@"%@\\%@", tempString, [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
+            else
+                [destString appendFormat:@"\\%@", [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
             [scanner setScanLocation:[scanner scanLocation]+1];
         }
     }
     
+    const char *cmd = [destString UTF8String];
+    bool cmd_hashigh = HasHigh(cmd);
+/*    bool has_high = false;
+    int len = (int)strlen(utf8);
+    for(int i = 0; i < len; ++i)
+        if(((unsigned char*)utf8)[i] > 127)
+        {
+            has_high = true;
+            break;
+        }*/
     
-    const char *utf8 = [destString UTF8String];
-    WriteChildInput("./", 2);
+    
+    // process cwd stuff if any
+    char cwd[MAXPATHLEN];
+    cwd[0] = 0;
+    if(_at != 0)
+    {
+        strcpy(cwd, _at);
+        if(IsPathWithTrailingSlash(cwd) && strlen(cwd) > 1) // cd command don't like trailing slashes
+            cwd[strlen(cwd)-1] = 0;
+        
+        if(strcmp(m_CWD, cwd) == 0)
+        {
+            cwd[0] = 0;
+        }
+        else
+        {
+            if(!IsDirectoryAvailableForBrowsing(cwd)) // file I/O here
+                return;
+        }
+    }
+    
+    
+    char input[2048];
+    if(cwd[0] != 0)
+    {
+/*        if(cmd_hashigh) sprintf(input, "cd '%s'; ./'%s'\n", cwd, cmd);
+        else            */sprintf(input, "cd '%s'; ./%s\n", cwd, cmd);
+    }
+    else
+    {
+/*        if(cmd_hashigh)     sprintf(input, "./'%s'\n", cmd);
+        else                */sprintf(input, "./%s\n", cmd);
+    }
+    
+    
+    SetState(StateProgramExternal);
+    WriteChildInput(input, (int)strlen(input));
+    
+/*    const char *utf8 = [destString UTF8String];
+    WriteChildInput("./'", 3);
     WriteChildInput(utf8, (int)strlen(utf8));
-    WriteChildInput("\n", 1);
-//    const char *ut = [/*escap*/ orig UTF8String];
+    WriteChildInput("'\n", 2);*/
 }

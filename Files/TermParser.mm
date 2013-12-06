@@ -315,8 +315,6 @@ void TermParser::Flush()
     
     if(!hi)
     {
-//        for(int i = 0; i < m_UniCharsStockLen; ++i)
-//            m_Scr->PutCh(m_UniCharsStock[i]);
         chars = m_UniCharsStock;
         chars_len = m_UniCharsStockLen;
     }
@@ -348,10 +346,7 @@ void TermParser::Flush()
         }
         
         m_Scr->PutCh(chars[i]);
-        
-        
     }
-
     
     m_UniCharsStockLen = 0;
 }
@@ -940,6 +935,7 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
 //    unsigned short const keycode = [_event keyCode];
+//    NSLog(@"%i", (int) keycode);
     
 
 //    static char buf[20];
@@ -960,7 +956,6 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         case NSDownArrowFunctionKey:    seq_resp = "\eOB"; break;
         case NSRightArrowFunctionKey:   seq_resp = "\eOC"; break;
         case NSLeftArrowFunctionKey:    seq_resp = "\eOD"; break;
-
         case NSF1FunctionKey:           seq_resp = "\eOP"; break;
         case NSF2FunctionKey:           seq_resp = "\eOQ"; break;
         case NSF3FunctionKey:           seq_resp = "\eOR"; break;
@@ -973,7 +968,18 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         case NSF10FunctionKey:          seq_resp = "\e[21~"; break;
         case NSF11FunctionKey:          seq_resp = "\e[23~"; break;
         case NSF12FunctionKey:          seq_resp = "\e[24~"; break;
-            
+        case NSHomeFunctionKey:         seq_resp = "\e[1~"; break;
+        case NSInsertFunctionKey:       seq_resp = "\e[2~"; break;
+        case NSDeleteFunctionKey:       seq_resp = "\e[3~"; break;
+        case NSEndFunctionKey:          seq_resp = "\e[4~"; break;
+        case NSPageUpFunctionKey:       seq_resp = "\e[5~"; break;
+        case NSPageDownFunctionKey:     seq_resp = "\e[6~"; break;
+        case 9: /* tab */
+            if (modflag & NSShiftKeyMask) /* do we really getting these messages? */
+                seq_resp = "\e[Z";
+            else
+                seq_resp = "\011";
+            break;
             
 //        case NSDownArrowFunctionKey: m_Task->WriteChildInput("\033[1B", 4); return;
 //        case NSDownArrowFunctionKey: m_Task->WriteChildInput("\033OP", 3); return;
@@ -992,10 +998,25 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         
     }
     
+    // process regular keys down
+    if(modflag & NSControlKeyMask) {
+        unsigned short cc = 0xFFFF;
+        if (unicode >= 'a' && unicode <= 'z')                           cc = unicode - 'a' + 1;
+        else if (unicode == ' ' || unicode == '2' || unicode == '@')    cc = 0;
+        else if (unicode == '[')                                        cc = 27;
+        else if (unicode == '\\')                                       cc = 28;
+        else if (unicode == ']')                                        cc = 29;
+        else if (unicode == '^' || unicode == '6')                      cc = 30;
+        else if (unicode == '-' || unicode == '_')                      cc = 31;
+        m_Task->WriteChildInput(&cc, 1);
+        return;
+    }
 
-    unsigned char c = unicode;
-    m_Task->WriteChildInput(&c, 1);
+    const char* utf8 = [character UTF8String];
+    m_Task->WriteChildInput(utf8, (int)strlen(utf8));
     
+//    unsigned char c = unicode;
+//    m_Task->WriteChildInput(&c, 1);
 }
 
 void TermParser::CSI_n_P()
@@ -1136,27 +1157,10 @@ void TermParser::RI()
 
 void TermParser::LF()
 {
-    /*
-     #define lf() do { \
-     if (y+1==bottom) \
-     { \
-     scrup(foo,top,bottom,1,(top==0 && bottom==height)?YES:NO); \
-     } \
-     else if (y<height-1) \
-     { \
-     y++; \
-     [ts ts_goto: x:y]; \
-     } \
-     } while (0)
-     */
     if(m_Scr->GetCursorY()+1 == m_Bottom)
-    {
         m_Scr->DoScrollUp(m_Top, m_Bottom, 1);
-    }
     else
-    {
         m_Scr->DoCursorDown();
-    }
 }
 
 void TermParser::CR()
@@ -1166,11 +1170,6 @@ void TermParser::CR()
 
 void TermParser::HT()
 {
-    /*m_Scr->DoCursorRight();
-     m_Scr->DoCursorRight();
-     m_Scr->DoCursorRight();
-     m_Scr->DoCursorRight();*/
-    /* not true implementation */
     int x = m_Scr->GetCursorX();
     while(x < m_Scr->GetWidth() - 1) {
         ++x;
@@ -1178,22 +1177,4 @@ void TermParser::HT()
             break;
     }
     m_Scr->GoTo(x, m_Scr->GetCursorY());
-    
-    
-    /*
-     case 'H':
-     tab_stop[x >> 5] |= (1 << (x & 31));
-     return;*/
-    
-    /*		case 'g':
-     if (!par[0])
-     tab_stop[x >> 5] &= ~(1 << (x & 31));
-     else if (par[0] == 3) {
-     tab_stop[0] =
-     tab_stop[1] =
-     tab_stop[2] =
-     tab_stop[3] =
-     tab_stop[4] = 0;
-     }
-     return;*/
 }

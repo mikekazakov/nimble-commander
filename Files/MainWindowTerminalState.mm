@@ -123,9 +123,9 @@
     m_Task->ChDir(_new_dir);
 }
 
-- (void) Execute:(const char *)_short_fn
+- (void) Execute:(const char *)_short_fn at:(const char*)_at
 {
-    m_Task->Execute(_short_fn);
+    m_Task->Execute(_short_fn, _at);
 }
 
 - (void)cancelOperation:(id)sender

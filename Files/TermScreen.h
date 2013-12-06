@@ -12,11 +12,6 @@
 #include <vector>
 #include <mutex>
 
-/*
-Intensity	0	1	2	3	4	5	6	7
-Normal	Black	Red	Green	Yellow[11]	Blue	Magenta	Cyan	White
-Bright	Black	Red	Green	Yellow	Blue	Magenta	Cyan	White
-*/
 struct TermScreenColors
 {
     enum {

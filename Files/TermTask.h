@@ -39,7 +39,7 @@ public:
     // launches /bin/bash actually (hardcoded now)
     void Launch(const char *_work_dir, int _sx, int _sy);
     void ChDir(const char *_new_cwd);
-    void Execute(const char *_short_fn);
+    void Execute(const char *_short_fn, const char *_at); // _at can be NULL. if it is the same as CWD - then ignored
     
     
     

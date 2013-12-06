@@ -211,9 +211,9 @@
     else
     {
         [self PushNewWindowState:m_Terminal];
-        [m_Terminal ChDir:_cwd];
+//        [m_Terminal ChDir:_cwd];
     }
-    [m_Terminal Execute:_filename];
+    [m_Terminal Execute:_filename at:_cwd];
 }
 
 @end

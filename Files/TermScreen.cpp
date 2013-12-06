@@ -41,7 +41,7 @@ TermScreen::TermScreen(int _w, int _h):
 
 TermScreen::~TermScreen()
 {
-    /* MANY STUFF HERE ! */
+    free(m_ScreenShot);
 }
 
 const std::vector<TermScreen::Space> *TermScreen::GetScreenLine(int _line_no) const

@@ -97,8 +97,13 @@
 - (BOOL)windowShouldClose:(id)sender {
     for(auto i = m_WindowState.rbegin(), e = m_WindowState.rend(); i != e; ++i)
         if([*i respondsToSelector:@selector(WindowShouldClose:)])
-            if(![*i WindowShouldClose:sender])
+            if(![*i WindowShouldClose:self])
                 return false;
+    
+    if(m_Terminal != nil)
+            if(![m_Terminal WindowShouldClose:self])
+                return false;
+        
     return true;
 }
 

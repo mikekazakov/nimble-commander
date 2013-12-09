@@ -22,7 +22,7 @@ public:
     
     void EatByte(unsigned char _byte);
     void Flush();
-    
+    void Resized();
     
     void ProcessKeyDown(NSEvent *_event);
     
@@ -82,6 +82,8 @@ private:
     int                     m_TitleLen;
     int                     m_TitleType;
     
+    int                     m_Height;
+    int                     m_Width;
     int                     m_Top;    // see DECSTBM  [
     int                     m_Bottom; //              )
     bool                    m_LineAbs; // if true - then y coordinates treats from the first line, otherwise from m_Top

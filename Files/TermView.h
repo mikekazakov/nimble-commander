@@ -10,16 +10,17 @@
 
 class TermScreen;
 class TermParser;
+class FontCache;
 
 @interface TermView : NSView
 
-- (int) SymbWidth;
-- (int) SymbHeight;
+
+- (FontCache*) FontCache;
 
 - (void) AttachToScreen:(TermScreen*)_scr;
 - (void) AttachToParser:(TermParser*)_par;
 
-- (void) adjustSizes; // implicitly calls scrollToBottom when full height changes
+- (void) adjustSizes:(bool)_mandatory; // implicitly calls scrollToBottom when full height changes
 - (void) scrollToBottom;
 
 @end

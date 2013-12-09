@@ -169,6 +169,9 @@ TermParser::TermParser(TermScreen *_scr, TermTask *_task):
 
 void TermParser::Reset()
 {
+    m_Height = m_Scr->Height();
+    m_Width = m_Scr->Width();
+    
     memset(&m_State, 0, sizeof(m_State));
     m_State[0].color = 0x07;
     m_State[0].g0_charset = LAT1_MAP;
@@ -178,7 +181,7 @@ void TermParser::Reset()
     m_TitleType = 0;
     m_LineAbs = true;
     m_Top = 0;
-    m_Bottom = m_Scr->GetHeight();
+    m_Bottom = m_Scr->Height();
     m_EscState = S_Normal;
     m_ParamsCnt = 0;
     m_QuestionFlag = false;
@@ -339,7 +342,7 @@ void TermParser::Flush()
     
     for(int i = 0; i < chars_len; ++i)
     {
-        if(m_Scr->GetCursorX() >= m_Scr->GetWidth())
+        if(m_Scr->CursorX() >= m_Scr->Width())
         {
             CR();
             LF();
@@ -664,13 +667,13 @@ void TermParser::CSI_n_D()
 void TermParser::CSI_n_G()
 {
     m_Params[0]--;
-    m_Scr->GoTo(m_Params[0], m_Scr->GetCursorY());
+    m_Scr->GoTo(m_Params[0], m_Scr->CursorY());
 }
 
 void TermParser::CSI_n_d()
 {
     m_Params[0]--;
-    DoGoTo(m_Scr->GetCursorX(), m_Params[0]);
+    DoGoTo(m_Scr->CursorX(), m_Params[0]);
 }
 
 void TermParser::CSI_n_H()
@@ -689,9 +692,9 @@ void TermParser::CSI_n_X()
 {
     if(m_Params[0] == 0)
         m_Params[0]++;
-    int pos = m_Scr->GetCursorX();
-    m_Scr->DoEraseCharacters(m_Params[0] + pos > m_Scr->GetWidth() ?
-                             m_Scr->GetWidth() - pos :
+    int pos = m_Scr->CursorX();
+    m_Scr->DoEraseCharacters(m_Params[0] + pos > m_Scr->Width() ?
+                             m_Scr->Width() - pos :
                              m_Params[0]
                              );
 }
@@ -699,11 +702,11 @@ void TermParser::CSI_n_X()
 void TermParser::CSI_n_M()
 {
     unsigned n = m_Params[0];
-    if(n > m_Scr->GetHeight() - m_Scr->GetCursorY())
-        n = m_Scr->GetHeight() - m_Scr->GetCursorY();
+    if(n > m_Scr->Height() - m_Scr->CursorY())
+        n = m_Scr->Height() - m_Scr->CursorY();
     else if(n == 0)
         n = 1;
-    m_Scr->DoScrollUp(m_Scr->GetCursorY(), m_Bottom, n);
+    m_Scr->DoScrollUp(m_Scr->CursorY(), m_Bottom, n);
 }
 
 void TermParser::SetDefaultAttrs()
@@ -887,16 +890,16 @@ void TermParser::CSI_DEC_PMS(bool _on)
 					break;
                 case 1048:
                     if(_on) {
-                        m_DECPMS_SavedCurX = m_Scr->GetCursorX();
-                        m_DECPMS_SavedCurY = m_Scr->GetCursorY();
+                        m_DECPMS_SavedCurX = m_Scr->CursorX();
+                        m_DECPMS_SavedCurY = m_Scr->CursorY();
                     }
                     else
                         m_Scr->GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
                     break;
                 case 1049:
                     if(_on) {
-                        m_DECPMS_SavedCurX = m_Scr->GetCursorX();
-                        m_DECPMS_SavedCurY = m_Scr->GetCursorY();
+                        m_DECPMS_SavedCurX = m_Scr->CursorX();
+                        m_DECPMS_SavedCurY = m_Scr->CursorY();
                         m_Scr->SaveScreen();
                         m_Scr->DoEraseScreen(2);
                     }
@@ -1032,8 +1035,8 @@ void TermParser::CSI_n_P()
     
 //    if(p + m_Scr->GetCursorX() >= m_Scr->GetWidth() )
 //        p = m_Scr->GetWidth() - m_Scr->GetCursorX() - 1;
-    if(p > m_Scr->GetWidth() - m_Scr->GetCursorX())
-        p = m_Scr->GetWidth() - m_Scr->GetCursorX();
+    if(p > m_Scr->Width() - m_Scr->CursorX())
+        p = m_Scr->Width() - m_Scr->CursorX();
     else if(!p)
         p = 1;
     m_Scr->DoShiftRowLeft(p);
@@ -1098,8 +1101,8 @@ void TermParser::EscSave()
  saved_G1	= G1_charset; \
  } while (0)
  */
-    m_State[0].x = m_Scr->GetCursorX();
-    m_State[0].y = m_Scr->GetCursorY();
+    m_State[0].x = m_Scr->CursorX();
+    m_State[0].y = m_Scr->CursorY();
     memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
 }
 
@@ -1130,10 +1133,10 @@ void TermParser::CSI_n_r()
 //Esc[Line;Liner	Set top and bottom lines of a window	DECSTBM
 //    int a  =10;
     if(m_Params[0] == 0)  m_Params[0]++;
-    if(m_Params[1] == 0)  m_Params[1] = m_Scr->GetHeight();
+    if(m_Params[1] == 0)  m_Params[1] = m_Scr->Height();
 
     // Minimum allowed region is 2 lines
-    if(m_Params[0] < m_Params[1] && m_Params[1] <= m_Scr->GetHeight())
+    if(m_Params[0] < m_Params[1] && m_Params[1] <= m_Scr->Height())
     {
         m_Top       = m_Params[0] - 1;
         m_Bottom    = m_Params[1];
@@ -1156,7 +1159,7 @@ void TermParser::DoGoTo(int _x, int _y)
 
 void TermParser::RI()
 {
-    if(m_Scr->GetCursorY() == m_Top)
+    if(m_Scr->CursorY() == m_Top)
         m_Scr->DoScrollDown(m_Top, m_Bottom, 1);
     else
         m_Scr->DoCursorUp();
@@ -1164,7 +1167,7 @@ void TermParser::RI()
 
 void TermParser::LF()
 {
-    if(m_Scr->GetCursorY()+1 == m_Bottom)
+    if(m_Scr->CursorY()+1 == m_Bottom)
         m_Scr->DoScrollUp(m_Top, m_Bottom, 1);
     else
         m_Scr->DoCursorDown();
@@ -1172,16 +1175,30 @@ void TermParser::LF()
 
 void TermParser::CR()
 {
-    m_Scr->GoTo(0, m_Scr->GetCursorY());
+    m_Scr->GoTo(0, m_Scr->CursorY());
 }
 
 void TermParser::HT()
 {
-    int x = m_Scr->GetCursorX();
-    while(x < m_Scr->GetWidth() - 1) {
+    int x = m_Scr->CursorX();
+    while(x < m_Scr->Width() - 1) {
         ++x;
         if(m_TabStop[x >> 5] & (1 << (x & 31)))
             break;
     }
-    m_Scr->GoTo(x, m_Scr->GetCursorY());
+    m_Scr->GoTo(x, m_Scr->CursorY());
+}
+
+void TermParser::Resized()
+{
+//    int old_w = m_Width;
+    int old_h = m_Height;
+    
+    m_Height = m_Scr->Height();
+    m_Width = m_Scr->Width();
+
+    if(m_Bottom == old_h)
+        m_Bottom = m_Height;
+    
+    // any manipulations on cursor pos here?
 }

@@ -13,6 +13,7 @@
 #import "TermView.h"
 #import "MainWindowController.h"
 #import "MessageBox.h"
+#import "FontCache.h"
 
 #import "Common.h"
 
@@ -44,16 +45,24 @@
         [[self contentView] setDrawsBackground:NO];
         
         m_Task = new TermTask;
-        m_Screen = new TermScreen([m_View SymbWidth], [m_View SymbHeight]);
+        m_Screen = new TermScreen(floor(frameRect.size.width / [m_View FontCache]->Width()),
+                                  floor(frameRect.size.height / [m_View FontCache]->Height()));
         m_Parser = new TermParser(m_Screen, m_Task);
         [m_View AttachToScreen:m_Screen];
         [m_View AttachToParser:m_Parser];
+        
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(frameDidChange)
+                                                     name:NSViewFrameDidChangeNotification
+                                                   object:self];
     }
     return self;
 }
 
 - (void) dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     delete m_Parser;
     delete m_Screen;
     delete m_Task;
@@ -73,7 +82,7 @@
 {
     // need right CWD here
     if(m_Task->State() == TermTask::StateInactive)
-        m_Task->Launch(m_InitalWD, [m_View SymbWidth], [m_View SymbHeight]);
+        m_Task->Launch(m_InitalWD, m_Screen->Width(), m_Screen->Height());
     
     __weak MainWindowTerminalState *weakself = self;
     
@@ -91,7 +100,7 @@
         
             //            tmb.Reset("Parsed in: ");
             dispatch_async(dispatch_get_main_queue(), ^{
-                [strongself->m_View adjustSizes];
+                [strongself->m_View adjustSizes:false];
                 [strongself->m_View setNeedsDisplay:true];
             });
         }
@@ -152,7 +161,7 @@
     [[self documentView] scrollRectToVisible: scrollRect];
 }
 
-- (bool)WindowShouldClose:(id)sender
+- (bool)WindowShouldClose:(MainWindowController*)sender
 {
 //    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
     
@@ -181,15 +190,15 @@
     [dialog addButtonWithTitle:@"Terminate And Close"];
     [dialog addButtonWithTitle:@"Cancel"];
     
-//    NSWindow *wnd = self.window;
-    __weak MainWindowTerminalState *weakself = self;
+//    NSWindow *wnd = self.windo
+//    __weak MainWindowTerminalState *weakself = self;
     [dialog ShowSheetWithHandler:self.window handler:^(int result) {
         if (result == NSAlertFirstButtonReturn)
         {
 //            NSLog(@"3! %ld", CFGetRetainCount((__bridge CFTypeRef)wself));
             [dialog.window orderOut:nil];
 //            [wnd close];
-            [weakself.window close];
+            [sender.window close];
         }
     }];
  
@@ -207,5 +216,25 @@
     
     return false;
 }
+
+- (void)frameDidChange
+{
+    if(self.frame.size.width != m_View.frame.size.width)
+    {
+        NSRect dr = m_View.frame;
+        dr.size.width = self.frame.size.width;
+        [m_View setFrame:dr];
+    }
+    
+    int sy = floor(self.frame.size.height / [m_View FontCache]->Height());
+    int sx = floor(m_View.frame.size.width / [m_View FontCache]->Width());
+
+    m_Screen->ResizeScreen(sx, sy);
+    m_Task->ResizeWindow(sx, sy);
+    m_Parser->Resized();
+    
+    [m_View adjustSizes:true];
+}
+
 
 @end

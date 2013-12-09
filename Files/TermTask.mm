@@ -41,7 +41,9 @@ TermTask::TermTask():
     m_OnChildOutput(0),
     m_State(StateInactive),
     m_ShellPID(-1),
-    m_TemporarySuppressed(false)
+    m_TemporarySuppressed(false),
+    m_TermSX(0),
+    m_TermSY(0)
 {
     m_CwdPipe[0] = m_CwdPipe[1] = -1;
     m_RequestedCWD[0] = 0;
@@ -55,6 +57,9 @@ TermTask::~TermTask()
 
 void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
 {
+    m_TermSX = _sx;
+    m_TermSY = _sy;
+    
     signal(SIGCHLD, SIG_IGN); /* Silently (and portably) reap children. */
     
     m_MasterFD = posix_openpt(O_RDWR);
@@ -468,4 +473,23 @@ again:  if(ppid == m_ShellPID)
     
     free(proc_list);
     return true;
+}
+
+void TermTask::ResizeWindow(int _sx, int _sy)
+{
+    if(m_TermSX == _sx && m_TermSY == _sy)
+        return;
+
+    m_TermSX = _sx;
+    m_TermSY = _sy;
+    
+    if(m_State != StateInactive && m_State != StateDead)
+    {
+        struct winsize winsize;
+        winsize.ws_col = _sx;
+        winsize.ws_row = _sy;
+        winsize.ws_xpixel = 0;
+        winsize.ws_ypixel = 0;
+        ioctl(m_MasterFD, TIOCSWINSZ, (char *)&winsize);
+    }
 }

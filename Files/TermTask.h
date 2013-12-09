@@ -42,7 +42,7 @@ public:
     void Launch(const char *_work_dir, int _sx, int _sy);
     void ChDir(const char *_new_cwd);
     void Execute(const char *_short_fn, const char *_at); // _at can be NULL. if it is the same as CWD - then ignored
-    
+    void ResizeWindow(int _sx, int _sy);
     
     
     void WriteChildInput(const void *_d, int _sz);
@@ -64,6 +64,8 @@ private:
     volatile TermState m_State;
     volatile int m_MasterFD;
     volatile int m_ShellPID;
+    int m_TermSX;
+    int m_TermSY;
     int m_CwdPipe[2];
     
     volatile bool m_TemporarySuppressed; // will give no output until the next bash prompt will show m_RequestedCWD path

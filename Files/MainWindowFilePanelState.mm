@@ -1136,7 +1136,7 @@
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];
 }
 
-- (bool)WindowShouldClose:(id)sender
+- (bool)WindowShouldClose:(MainWindowController*)sender
 {
     if (m_OperationsController.OperationsCount == 0)
         return true;

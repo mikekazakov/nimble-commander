@@ -46,8 +46,6 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 
 @implementation TermView
 {
-    int             m_SymbHeight;
-    int             m_SymbWidth;
     FontCache      *m_FontCache;
     TermScreen     *m_Screen;
     TermParser     *m_Parser;
@@ -63,12 +61,14 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         CTFontRef font = CTFontCreateWithName( (CFStringRef) @"Menlo-Regular", 13, 0);
         m_FontCache = FontCache::FontCacheFromFont(font);
         CFRelease(font);
-        
-        m_SymbHeight = floor(frame.size.height / m_FontCache->Height());
-        m_SymbWidth = floor(frame.size.width / m_FontCache->Width());
         m_LastScreenFSY = 0;
     }
     return self;
+}
+
+-(void) dealloc
+{
+    FontCache::ReleaseCache(m_FontCache);
 }
 
 - (BOOL)isFlipped
@@ -86,14 +86,9 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 	return YES;
 }
 
-- (int) SymbWidth
+- (FontCache*) FontCache
 {
-    return m_SymbWidth;
-}
-
-- (int) SymbHeight
-{
-    return m_SymbHeight;
+    return m_FontCache;
 }
 
 - (void) AttachToScreen:(TermScreen*)_scr
@@ -127,15 +122,15 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     [self scrollToBottom];
 }
 
-- (void)adjustSizes
+- (void)adjustSizes:(bool)_mandatory
 {
-    int fsy = m_Screen->GetHeight() + m_Screen->ScrollBackLinesCount();
-    if(fsy == m_LastScreenFSY)
+    int fsy = m_Screen->Height() + m_Screen->ScrollBackLinesCount();
+    if(fsy == m_LastScreenFSY && _mandatory == false)
         return;
     
     m_LastScreenFSY = fsy;
     
-    double sx = m_Screen->GetWidth() * m_FontCache->Width();
+    double sx = self.frame.size.width;
     double sy = fsy * m_FontCache->Height();
     
     double rest = [self.superview frame].size.height -
@@ -148,11 +143,6 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 
 - (void) scrollToBottom
 {
-//    NSPoint newScrollOrigin;
-//    newScrollOrigin = NSMakePoint(0.0, NSMaxY([self frame]) - NSHeight([self.superview bounds]));
-//    [self scrollPoint:newScrollOrigin];
-    
-    
     [((NSClipView*)self.superview) scrollToPoint:NSMakePoint(0,
                                               self.frame.size.height - ((NSScrollView*)self.superview.superview).contentSize.height)];
 }
@@ -201,10 +191,10 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
             auto *line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
             if(line)
             {
-                if(m_Screen->GetCursorY() != i - m_Screen->ScrollBackLinesCount())
+                if(m_Screen->CursorY() != i - m_Screen->ScrollBackLinesCount())
                     [self DrawLine:line at_y:i context:context cursor_at:-1];
                 else
-                    [self DrawLine:line at_y:i context:context cursor_at:m_Screen->GetCursorX()];
+                    [self DrawLine:line at_y:i context:context cursor_at:m_Screen->CursorX()];
             }
         }
     }

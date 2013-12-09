@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "ApplicationSkins.h"
 
+
+@class MainWindowController;
+
 @protocol MainWindowStateProtocol <NSObject>
 
 - (NSView*) ContentView;
@@ -22,7 +25,7 @@
 - (void)WindowWillClose;
 - (void)WindowWillBeginSheet;
 - (void)WindowDidEndSheet;
-- (bool)WindowShouldClose:(id)sender;
+- (bool)WindowShouldClose:(MainWindowController*)sender;
 - (void)SkinSettingsChanged;
 - (void)ApplySkin:(ApplicationSkin)_skin;
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect;

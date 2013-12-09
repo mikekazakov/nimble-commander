@@ -69,6 +69,7 @@ public:
     
     inline int ScrollBackLinesCount() const { return (int)m_ScrollBack.size(); }
     
+    void ResizeScreen(int _new_sx, int _new_sy);
     
     void PutCh(unsigned short _char);
     void SetColor(unsigned char _color);
@@ -90,10 +91,10 @@ public:
     void RestoreScreen();
     
     
-    inline int GetWidth()   const { return m_Width;  }
-    inline int GetHeight()  const { return m_Height; }
-    inline int GetCursorX() const { return m_PosX;   }
-    inline int GetCursorY() const { return m_PosY;   }
+    inline int Width()   const { return m_Width;  }
+    inline int Height()  const { return m_Height; }
+    inline int CursorX() const { return m_PosX;   }
+    inline int CursorY() const { return m_PosY;   }
     
 // CSI n J
 // ED – Erase Display	Clears part of the screen.

@@ -403,3 +403,59 @@ const std::vector<TermScreen::Space> *TermScreen::GetScrollBackLine(int _line_no
     
     return &(*it);    
 }
+
+void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
+{
+    if(m_Width == _new_sx && m_Height == _new_sy)
+        return;
+        
+    Lock();
+    // resize main screen
+//    int old_w = m_Width;
+///    int old_h = m_Height;
+    
+/*    for(int i =0; i < m_Height; ++i)
+    {
+        m_Screen.push_back(std::vector<TermScreen::Space>());
+        std::vector<TermScreen::Space> *line = &m_Screen.back();
+        line->resize(m_Width, m_EraseChar);
+    }*/
+    m_Height = _new_sy;
+    m_Width = _new_sx;
+//    if(m_Screen.size() > m_Height)
+    m_Screen.resize(m_Height);
+    for(auto &l: m_Screen)
+    {
+//        if()
+        l.resize(m_Width, m_EraseChar);
+    }
+    
+/*    struct ScreenShot // allocated with malloc, line by line from [0] till [height-1]
+    {
+        int width;
+        int height;
+        Space chars[1]; // chars will be a real size
+        static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
+    };*/
+    
+    if(m_ScreenShot != 0)
+    {
+        ScreenShot *old = m_ScreenShot;
+        m_ScreenShot = (ScreenShot*) malloc(ScreenShot::sizefor(m_Width, m_Height));
+        m_ScreenShot->width = m_Width;
+        m_ScreenShot->height = m_Height;
+
+        for(int i = 0; i < m_Width*m_Height; ++i)
+            m_ScreenShot->chars[i] = m_EraseChar;
+        
+        for(int y = 0; y < m_ScreenShot->height && y < old->height; ++y)
+            for(int x = 0; x < m_ScreenShot->width && x < old->width; ++x)
+                m_ScreenShot->chars[ y*m_ScreenShot->width + x ] = old->chars[ y*old->width + x ];
+        
+        free(old);
+    }
+        
+    // resize(?) alternative screen
+    
+    Unlock();
+}

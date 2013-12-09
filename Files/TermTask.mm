@@ -8,6 +8,7 @@
 
 #include <sys/select.h>
 #include <sys/ioctl.h>
+#include <sys/sysctl.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -16,8 +17,10 @@
 #include <stdio.h>
 #include <termios.h>
 #include <string.h>
+#include <libproc.h>
 #include "TermTask.h"
 #include "Common.h"
+#include "sysinfo.h"
 
 static const char *g_ShellProg     = "/bin/bash";
 static       char *g_ShellParam[2] = {(char*)"-L", 0};
@@ -431,4 +434,38 @@ void TermTask::Execute(const char *_short_fn, const char *_at)
     
     SetState(StateProgramExternal);
     WriteChildInput(input, (int)strlen(input));
+}
+
+bool TermTask::GetChildrenList(std::vector<std::string> &_children)
+{
+    if(m_State == StateInactive || m_State == StateDead || m_ShellPID < 0)
+        return false;
+    
+    size_t proc_cnt = 0;
+    kinfo_proc *proc_list;
+    if(sysinfo::GetBSDProcessList(&proc_list, &proc_cnt) != 0)
+        return false;
+
+    for(int i = 0; i < proc_cnt; ++i)
+    {
+        int pid = proc_list[i].kp_proc.p_pid;
+        int ppid = proc_list[i].kp_eproc.e_ppid;
+        
+again:  if(ppid == m_ShellPID)
+        {
+            char name[1024];
+            int ret = proc_name(pid, name, sizeof(name));
+            _children.push_back(ret > 0 ? name : proc_list[i].kp_proc.p_comm);
+        }
+        else if(ppid >= 1024)
+            for(int j = 0; j < proc_cnt; ++j)
+                if(proc_list[j].kp_proc.p_pid == ppid)
+                {
+                    ppid = proc_list[j].kp_eproc.e_ppid;
+                    goto again;
+                }
+    }
+    
+    free(proc_list);
+    return true;
 }

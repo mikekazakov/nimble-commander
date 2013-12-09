@@ -22,7 +22,6 @@
 {
     std::vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_BaseWindowState;
-    
     MainWindowTerminalState     *m_Terminal;
 }
 
@@ -66,6 +65,9 @@
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
+//    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)m_Terminal));
+    
+    
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(WindowWillClose)])
             [i WindowWillClose];
@@ -81,6 +83,7 @@
         m_WindowState.pop_back();
     }
     m_BaseWindowState = nil;
+    m_Terminal = nil;
     
     [(AppDelegate*)[NSApp delegate] RemoveMainWindow:self];
 }

@@ -8,6 +8,8 @@
 
 #pragma once
 
+typedef struct kinfo_proc kinfo_proc;
+
 namespace sysinfo
 {
     
@@ -65,10 +67,19 @@ bool GetCPULoad(CPULoad &_load);
  */
 OSXVersion GetOSXVersion();
 
-
 /**
  * Returns common information about system, such as computer name, computer model, user name etc
  */
 bool GetSystemOverview(SystemOverview &_overview);
+
+/**
+ * Returns a list of all BSD processes on the system.  This routine
+ * allocates the list and puts it in *procList and a count of the
+ * number of entries in *procCount.  You are responsible for freeing
+ * this list (use "free" from System framework).
+ * On success, the function returns 0.
+ * On error, the function returns a BSD errno value.
+ */
+int GetBSDProcessList(kinfo_proc **procList, size_t *procCount);
 
 }

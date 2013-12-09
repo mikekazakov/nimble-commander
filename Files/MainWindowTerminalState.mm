@@ -12,6 +12,7 @@
 #import "TermParser.h"
 #import "TermView.h"
 #import "MainWindowController.h"
+#import "MessageBox.h"
 
 #import "Common.h"
 
@@ -72,22 +73,28 @@
 {
     // need right CWD here
     if(m_Task->State() == TermTask::StateInactive)
-        m_Task->Launch(/*"/Users/migun/"*/ m_InitalWD, [m_View SymbWidth], [m_View SymbHeight]);
+        m_Task->Launch(m_InitalWD, [m_View SymbWidth], [m_View SymbHeight]);
+    
+    __weak MainWindowTerminalState *weakself = self;
     
     m_Task->SetOnChildOutput(^(const void* _d, int _sz){
         //            MachTimeBenchmark tmb;
-        m_Screen->Lock();
-        for(int i = 0; i < _sz; ++i)
-            m_Parser->EatByte(((const char*)_d)[i]);
+        if(weakself != nil)
+        {
+            __strong MainWindowTerminalState *strongself = weakself;
+            strongself->m_Screen->Lock();
+            for(int i = 0; i < _sz; ++i)
+                strongself->m_Parser->EatByte(((const char*)_d)[i]);
         
-        m_Parser->Flush();
-        m_Screen->Unlock();
+            strongself->m_Parser->Flush();
+            strongself->m_Screen->Unlock();
         
-        //            tmb.Reset("Parsed in: ");
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_View adjustSizes];
-            [m_View setNeedsDisplay:true];
-        });
+            //            tmb.Reset("Parsed in: ");
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [strongself->m_View adjustSizes];
+                [strongself->m_View setNeedsDisplay:true];
+            });
+        }
     });
     
     m_Task->SetOnBashPrompt(^(const char *_cwd){
@@ -112,9 +119,13 @@
 
 - (void) Resigned
 {
+    
+    
     // remove handlers with references to self
     m_Task->SetOnChildOutput(0);
     m_Task->SetOnBashPrompt(0);
+    
+//    NSLog(@"%ld", CFGetRetainCount((__bridge CFTypeRef)self));
 }
 
 - (void) ChDir:(const char*)_new_dir
@@ -139,6 +150,62 @@
     scrollRect = [self documentVisibleRect];
     scrollRect.origin.y -= [theEvent deltaY] * [self verticalLineScroll];
     [[self documentView] scrollRectToVisible: scrollRect];
+}
+
+- (bool)WindowShouldClose:(id)sender
+{
+//    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
+    
+    if(m_Task->State() == TermTask::StateDead ||
+       m_Task->State() == TermTask::StateInactive ||
+       m_Task->State() == TermTask::StateShell)
+        return true;
+    
+    std::vector<std::string> children;
+    m_Task->GetChildrenList(children);
+    if(children.empty())
+        return true;
+
+    MessageBox *dialog = [[MessageBox alloc] init];
+    [dialog setMessageText:@"Do you want to close this window?"];
+    NSMutableString *cap = [NSMutableString new];
+    [cap appendString:@"Closing this window will terminate the running processes: "];
+    for(int i = 0; i < children.size(); ++i)
+    {
+        [cap appendString:[NSString stringWithUTF8String:children[i].c_str()]];
+        if(i != children.size() - 1)
+            [cap appendString:@", "];
+    }
+    [cap appendString:@"."];
+    [dialog setInformativeText:cap];
+    [dialog addButtonWithTitle:@"Terminate And Close"];
+    [dialog addButtonWithTitle:@"Cancel"];
+    
+//    NSWindow *wnd = self.window;
+    __weak MainWindowTerminalState *weakself = self;
+    [dialog ShowSheetWithHandler:self.window handler:^(int result) {
+        if (result == NSAlertFirstButtonReturn)
+        {
+//            NSLog(@"3! %ld", CFGetRetainCount((__bridge CFTypeRef)wself));
+            [dialog.window orderOut:nil];
+//            [wnd close];
+            [weakself.window close];
+        }
+    }];
+ 
+
+/*    NSLog(@"!! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
+    __weak MainWindowTerminalState *wself = self;
+    NSLog(@"!!! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
+    
+    NSWindow *w = self.window;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [w close];
+    });*/
+    
+//    NSLog(@"2! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
+    
+    return false;
 }
 
 @end

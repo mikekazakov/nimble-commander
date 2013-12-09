@@ -30,16 +30,12 @@
 //#import <libproc.h>
 #import "sysinfo.h"
 
-typedef struct kinfo_proc kinfo_proc;
+namespace sysinfo
+{
+
 //CPU_STATE_USER
 //processor_info_array_t
-static int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
-// Returns a list of all BSD processes on the system.  This routine
-// allocates the list and puts it in *procList and a count of the
-// number of entries in *procCount.  You are responsible for freeing
-// this list (use "free" from System framework).
-// On success, the function returns 0.
-// On error, the function returns a BSD errno value.
+int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
 {
     int                 err;
     kinfo_proc *        result;
@@ -126,13 +122,6 @@ static int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
     
     return err;
 }
-
-
-namespace sysinfo
-{
-
-    
-    
     
 bool GetMemoryInfo(MemoryInfo &_mem)
 {

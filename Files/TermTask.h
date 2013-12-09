@@ -8,6 +8,8 @@
 
 #pragma once
 #include <mutex>
+#include <vector>
+#include <string>
 
 class TermTask
 {
@@ -48,6 +50,7 @@ public:
     
     
     inline TermState State() const { return m_State; }
+    bool GetChildrenList(std::vector<std::string> &_children); // return false immediately if State is Inactive or Dead
     
 private:
     void ProcessBashPrompt(const void *_d, int _sz);
@@ -58,7 +61,7 @@ private:
     void (^m_OnChildOutput)(const void* _d, int _sz);
     void (^m_OnBashPrompt)(const char *_cwd);
 
-    TermState m_State;
+    volatile TermState m_State;
     volatile int m_MasterFD;
     volatile int m_ShellPID;
     int m_CwdPipe[2];

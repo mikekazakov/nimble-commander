@@ -9,12 +9,6 @@
 #include "OrthodoxMonospace.h"
 #include "FontCache.h"
 
-#define ISUNICODECOMBININGCHARACTER(a) (\
-((a) >= 0x0300 && (a) <= 0x036F) || \
-((a) >= 0x1DC0 && (a) <= 0x1DFF) || \
-((a) >= 0x20D0 && (a) <= 0x20FF) || \
-((a) >= 0xFE20 && (a) <= 0xFE2F) )
-
 namespace oms
 {
 
@@ -116,7 +110,7 @@ void DrawString(UniChar *_s,
     {
         if(!*s) continue;
             
-        bool iscomb = ISUNICODECOMBININGCHARACTER(*s);
+        bool iscomb = IsUnicodeCombiningCharacter(*s);
             
         if(!iscomb)
         {
@@ -231,7 +225,7 @@ int CalculateSymbolsSpaceForString(const UniChar *_s, size_t _amount)
 {
     int output = 0;
     for(size_t i = 0; i < _amount; ++i, ++_s)
-        if(!ISUNICODECOMBININGCHARACTER(*_s))
+        if(!IsUnicodeCombiningCharacter(*_s))
             output += g_WCWidthTableFixedMin1[*_s];
     return output;
 }
@@ -243,7 +237,7 @@ int CalculateUniCharsAmountForSymbolsFromLeft(const UniChar *_s, size_t _unic_am
     int cpos = 0, i=0, posdelta = 1;
     for(; i < _unic_amount; ++i, ++_s)
     {
-        bool iscomb = ISUNICODECOMBININGCHARACTER(*_s);
+        bool iscomb = IsUnicodeCombiningCharacter(*_s);
         if(!iscomb)
         {
             if(cpos == _symb_amount)
@@ -266,7 +260,7 @@ int CalculateUniCharsAmountForSymbolsFromRight(const UniChar *_s, size_t _unic_a
     _s += i;
     for(;; --i, --_s)
     {
-        bool iscomb = ISUNICODECOMBININGCHARACTER(*_s);
+        bool iscomb = IsUnicodeCombiningCharacter(*_s);
             
         if(!iscomb)
         {

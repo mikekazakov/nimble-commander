@@ -54,14 +54,6 @@ public:
         unsigned int reverse    :1;
     };
     
-    struct ScreenShot // allocated with malloc, line by line from [0] till [height-1]
-    {
-        int width;
-        int height;
-        Space chars[1]; // chars will be a real size
-        static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
-    };
-    
     inline void Lock()      { m_Lock.lock();   }
     inline void Unlock()    { m_Lock.unlock(); }
     
@@ -75,7 +67,7 @@ public:
     
     void PutCh(unsigned short _char);
     void SetColor(unsigned char _color);
-    void SetIntensity(unsigned char _intensity);
+    void SetIntensity(bool _intensity);
     void SetUnderline(bool _is_underline);
     void SetReverse(bool _is_reverse);
 
@@ -119,26 +111,30 @@ public:
     inline const char* Title() const { return m_Title; }
     
 private:
+    struct ScreenShot // allocated with malloc, line by line from [0] till [height-1]
+    {
+        int width;
+        int height;
+        Space chars[1]; // chars will be a real size
+        static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
+    };
+    
+    std::mutex                    m_Lock;
+    unsigned char                 m_Color;
+    bool                          m_Intensity;
+    bool                          m_Underline;
+    bool                          m_Reverse;
+    int                           m_Width;
+    int                           m_Height;
+    int                           m_PosX;
+    int                           m_PosY;
+    Space                         m_EraseChar;
+    ScreenShot                   *m_ScreenShot;
+    std::list<std::vector<Space>> m_Screen;
+    std::list<std::vector<Space>> m_ScrollBack;
     static const int        m_TitleMaxLen = 1024;
     char                    m_Title[m_TitleMaxLen];
     
-    std::mutex      m_Lock;
-    unsigned char m_Color;
-    
-    unsigned char m_Intensity;
-    bool          m_Underline;
-    bool          m_Reverse;
-    int m_Width;
-    int m_Height;
-    int m_PosX;
-    int m_PosY;
-    Space m_EraseChar;
-    
-    ScreenShot *m_ScreenShot;
     
     std::vector<Space> *GetLineRW(int _line_no);
-    
-    std::list<std::vector<Space>> m_Screen;
-    std::list<std::vector<Space>> m_ScrollBack;
-    
 };

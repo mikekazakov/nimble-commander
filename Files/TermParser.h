@@ -63,19 +63,16 @@ private:
     
     struct{
         unsigned char         color;
-        int                   g0_charset;
-        int                   g1_charset;
-        int                   charset_no;
-        unsigned char         intensity; // can be 0 or 1 now
+        unsigned char         g0_charset;
+        unsigned char         g1_charset;
+        unsigned char         charset_no;
+        bool                  intensity;
         bool                  underline;
         bool                  reverse;
         int                   x; // used only for save&restore purposes
         int                   y; // used only for save&restore purposes
     } m_State[2]; // [0] - current, [1] - saved
     
-    
-
-
     
     unsigned char           m_DefaultColor;
     static const int        m_TitleMaxLen = 1024;
@@ -94,9 +91,8 @@ private:
     
     unsigned int            m_TabStop[16];
     
-    void SetTranslate(int _charset);
+    void SetTranslate(unsigned char _charset);
     void Reset();
-    
     void CSI_n_A();
     void CSI_n_B();
     void CSI_n_C();
@@ -113,20 +109,14 @@ private:
     void CSI_n_r();
     void CSI_n_M();
     void CSI_DEC_PMS(bool _on);
-
-
-    
     void EscSave();
     void EscRestore();
-    
     void HT(); // horizontal tab
     void RI(); // move/scroll window down one line
     void LF(); // line feed
     void CR(); // carriage return
-    
     void SetDefaultAttrs();
     void UpdateAttrs();
-    
     void DoGoTo(int _x, int _y); // translates _y when m_LineAbs is false.
                                  // on cases when _y stay unchanged it's not necessary to call it
 };

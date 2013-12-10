@@ -459,7 +459,8 @@ void TermParser::EatByte(unsigned char _byte)
                 m_UniChar = c;
             }
             
-            m_UniCharsStock[m_UniCharsStockLen++] = m_UniChar;
+            if(m_UniCharsStockLen < m_UniCharsStockSize)
+                m_UniCharsStock[m_UniCharsStockLen++] = m_UniChar;
             
             return;
     }
@@ -532,7 +533,7 @@ void TermParser::EatByte(unsigned char _byte)
     
 }
 
-void TermParser::SetTranslate(int _charset)
+void TermParser::SetTranslate(unsigned char _charset)
 {
     if(_charset < 0 || _charset >= 4)
         m_TranslateMap = translate_maps[0];
@@ -612,7 +613,7 @@ void TermParser::CSI_n_M()
 void TermParser::SetDefaultAttrs()
 {
     m_State[0].color = m_DefaultColor;
-    m_State[0].intensity = 0;
+    m_State[0].intensity = false;
     m_State[0].underline = false;
     m_State[0].reverse = false;
 }
@@ -632,8 +633,8 @@ void TermParser::CSI_n_m()
             case 0:  SetDefaultAttrs();             break;
 			case 1:
             case 21:
-            case 22: m_State[0].intensity = 1;      break;
-			case 2:  m_State[0].intensity = 0;      break;
+            case 22: m_State[0].intensity = true;   break;
+			case 2:  m_State[0].intensity = false;  break;
 			case 4:  m_State[0].underline = true;   break;
 			case 24: m_State[0].underline = false;  break;
             case 7:  m_State[0].reverse   = true;   break;

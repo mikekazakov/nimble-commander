@@ -20,7 +20,7 @@ TermScreen::TermScreen(int _w, int _h):
     m_PosX(0),
     m_PosY(0),
     m_Color(0x7),
-    m_Intensity(0),
+    m_Intensity(false),
     m_Underline(false),
     m_Reverse(false),
     m_ScreenShot(0)
@@ -243,7 +243,7 @@ void TermScreen::SetColor(unsigned char _color)
     m_EraseChar.background = (m_Color & 0x38) >> 3;
 }
 
-void TermScreen::SetIntensity(unsigned char _intensity)
+void TermScreen::SetIntensity(bool _intensity)
 {
     m_Intensity = _intensity;
     m_EraseChar.intensity = m_Intensity;
@@ -429,36 +429,17 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         return;
         
     Lock();
-    // resize main screen
-//    int old_w = m_Width;
-///    int old_h = m_Height;
     
-/*    for(int i =0; i < m_Height; ++i)
-    {
-        m_Screen.push_back(std::vector<TermScreen::Space>());
-        std::vector<TermScreen::Space> *line = &m_Screen.back();
-        line->resize(m_Width, m_EraseChar);
-    }*/
     m_Height = _new_sy;
     m_Width = _new_sx;
-//    if(m_Screen.size() > m_Height)
+
+    // resize main screen
     m_Screen.resize(m_Height);
     for(auto &l: m_Screen)
-    {
-//        if()
         l.resize(m_Width, m_EraseChar);
-    }
-    
-/*    struct ScreenShot // allocated with malloc, line by line from [0] till [height-1]
-    {
-        int width;
-        int height;
-        Space chars[1]; // chars will be a real size
-        static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
-    };*/
     
     if(m_ScreenShot != 0)
-    {
+    { // resize alternative screen
         ScreenShot *old = m_ScreenShot;
         m_ScreenShot = (ScreenShot*) malloc(ScreenShot::sizefor(m_Width, m_Height));
         m_ScreenShot->width = m_Width;
@@ -474,7 +455,5 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         free(old);
     }
         
-    // resize(?) alternative screen
-    
     Unlock();
 }

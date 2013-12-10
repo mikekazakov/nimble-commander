@@ -45,6 +45,8 @@ public:
     struct Space
     {
         unsigned short l; // letter. consider UTF-32 here? (16bit is not enough)
+        unsigned short c1; // combining character 1. zero if no
+        unsigned short c2; // combining character 2. zero if no
         unsigned int foreground :3;
         unsigned int background :3;
         unsigned int intensity  :1;

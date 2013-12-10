@@ -221,7 +221,7 @@
 		CFB3E4831844ACD700D375E2 /* TermTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermTask.mm */; };
 		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
 		CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
-		CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.cpp */; };
+		CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.mm */; };
 		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
@@ -590,7 +590,7 @@
 		CFB3E47D1844ACD700D375E2 /* TermParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermParser.mm; sourceTree = "<group>"; };
 		CFB3E47E1844ACD700D375E2 /* TermView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermView.mm; sourceTree = "<group>"; };
 		CFB3E47F1844ACD700D375E2 /* TermScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermScreen.h; sourceTree = "<group>"; };
-		CFB3E4801844ACD700D375E2 /* TermScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TermScreen.cpp; sourceTree = "<group>"; };
+		CFB3E4801844ACD700D375E2 /* TermScreen.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermScreen.mm; sourceTree = "<group>"; };
 		CFB3E4811844ACD700D375E2 /* TermParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermParser.h; sourceTree = "<group>"; };
 		CFB3E4821844ACD700D375E2 /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermView.h; sourceTree = "<group>"; };
 		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
@@ -1207,7 +1207,7 @@
 				CFB3E4811844ACD700D375E2 /* TermParser.h */,
 				CFB3E47D1844ACD700D375E2 /* TermParser.mm */,
 				CFB3E47F1844ACD700D375E2 /* TermScreen.h */,
-				CFB3E4801844ACD700D375E2 /* TermScreen.cpp */,
+				CFB3E4801844ACD700D375E2 /* TermScreen.mm */,
 				CFB3E4821844ACD700D375E2 /* TermView.h */,
 				CFB3E47E1844ACD700D375E2 /* TermView.mm */,
 				CFB3E4781844AC8A00D375E2 /* MainWindowTerminalState.h */,
@@ -1536,7 +1536,7 @@
 				CF9D0B6717CC910100CB8146 /* VFSArchiveInternal.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
-				CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */,
+				CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */,
 				CF9D0ECA17CC961100CB8146 /* archive_write_set_format_7zip.c in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
 				CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */,

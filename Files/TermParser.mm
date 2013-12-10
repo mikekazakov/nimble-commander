@@ -10,6 +10,7 @@
 #include "TermScreen.h"
 #include "TermTask.h"
 #include "Common.h"
+#include "OrthodoxMonospace.h"
 
 #define GRAF_MAP  1
 #define LAT1_MAP  0
@@ -202,103 +203,11 @@ void TermParser::Reset()
     m_Title[m_TitleLen] = 0;
     m_Scr->SetTitle(m_Title);
     
-    
-//    m_TabStop[8];
+
     m_TabStop[0]= 0x01010100;
-/*    m_TabStop[1]=m_TabStop[2]=m_TabStop[3]=m_TabStop[4]=
-    m_TabStop[5]=m_TabStop[6]=m_TabStop[7]=0x01010101;*/
     for(int i = 1; i < 16; ++i)
         m_TabStop[i] = 0x01010101;
 }
-
-#if defined(HAVE_UNICODE_UNORM2_H)
-- (NSString *) _normalizedICUStringOfType: (const char*)normalization mode: (UNormalization2Mode)mode
-{
-    UErrorCode            err;
-    const UNormalizer2    *normalizer;
-    int32_t               length;
-    int32_t               newLength;
-    NSString              *newString;
-    
-    length = (uint32_t)[self length];
-    if (0 == length)
-    {
-        return @"";       // Simple case ... empty string
-    }
-    
-    err = 0;
-    normalizer = unorm2_getInstance(NULL, normalization, mode, &err);
-    if (U_FAILURE(err))
-    {
-        [NSException raise: NSCharacterConversionException
-                    format: @"libicu unorm2_getInstance() failed"];
-    }
-    
-    if (length < 200)
-    {
-        unichar   src[length];
-        unichar   dst[length*3];
-        
-        /* For a short string, it's very efficient to just use on-stack
-         * buffers for the libicu work, and then let the standard string
-         * initialiser convert that to an inline string.
-         */
-        [self getCharacters: (unichar *)src range: NSMakeRange(0, length)];
-        err = 0;
-        newLength = unorm2_normalize(normalizer, (UChar*)src, length,
-                                     (UChar*)dst, length*3, &err);
-        if (U_FAILURE(err))
-        {
-            [NSException raise: NSCharacterConversionException
-                        format: @"precompose/decompose failed"];
-        }
-        newString = [[NSString alloc] initWithCharacters: dst length: newLength];
-    }
-    else
-    {
-        unichar   *src;
-        unichar   *dst;
-        
-        /* For longer strings, we copy the source into a buffer on the heap
-         * for the libicu operation, determine the length needed for the
-         * output buffer, then do the actual conversion to build the string.
-         */
-        src = (unichar*)malloc(length * sizeof(unichar));
-        [self getCharacters: (unichar*)src range: NSMakeRange(0, length)];
-        err = 0;
-        newLength = unorm2_normalize(normalizer, (UChar*)src, length,
-                                     0, 0, &err);
-        if (U_BUFFER_OVERFLOW_ERROR != err)
-        {
-            free(src);
-            [NSException raise: NSCharacterConversionException
-                        format: @"precompose/decompose length check failed"];
-        }
-#if	GS_WITH_GC
-        dst = NSAllocateCollectable(newLength * sizeof(unichar), 0);
-#else
-        dst = NSZoneMalloc(NSDefaultMallocZone(), newLength * sizeof(unichar));
-#endif
-        err = 0;
-        unorm2_normalize(normalizer, (UChar*)src, length,
-                         (UChar*)dst, newLength, &err);
-        free(src);
-        if (U_FAILURE(err))
-        {
-#if	!GS_WITH_GC
-            NSZoneFree(NSDefaultMallocZone(), dst);
-#endif
-            [NSException raise: NSCharacterConversionException
-                        format: @"precompose/decompose failed"];
-        }
-        newString = [[NSString alloc] initWithCharactersNoCopy: dst
-                                                        length: newLength
-                                                  freeWhenDone: YES];
-    }
-    
-    return AUTORELEASE(newString);
-}
-#endif
 
 void TermParser::Flush()
 {
@@ -312,57 +221,33 @@ void TermParser::Flush()
             break;
         }
     
-    unsigned short *chars = 0;
-    int chars_len = 0;
+    int chars_len = m_UniCharsStockLen;
     
-    unsigned short recomp[16384];
-    
-    if(!hi)
+    if(hi)
     {
-        chars = m_UniCharsStock;
-        chars_len = m_UniCharsStockLen;
-    }
-    else
-    {
-        // REWRITE THIS USING ICU!!!!!!!!!!!
-/*
-#if (GS_USE_ICU == 1) && defined(HAVE_UNICODE_UNORM2_H)
-        return [self _normalizedICUStringOfType: "nfc" mode: UNORM2_COMPOSE];
-#else
-*/
-//        NSString *orig = [NSString stringWithCharacters:m_UniCharsStock length:m_UniCharsStockLen];
-        NSString *orig = [NSString stringWithCharactersNoCopy:m_UniCharsStock length:m_UniCharsStockLen];
-//        NSString *orig = NSString stringwit
-        NSString *comp = [orig precomposedStringWithCanonicalMapping];
-        int comp_len = (int)[comp length];
-//        [comp getCharacters:recomp];
-  
-//        - (BOOL)getBytes:(void *)buffer maxLength:(NSUInteger)maxBufferCount usedLength:(NSUInteger *)usedBufferCount encoding:(NSStringEncoding)encoding options:(NSStringEncodingConversionOptions)options range:(NSRange)range remainingRange:(NSRangePointer)leftover
-        [comp getBytes:recomp
-             maxLength:16384
-            usedLength:NULL
-              encoding:NSUTF16LittleEndianStringEncoding
-               options:NSStringEncodingConversionAllowLossy
-                 range:NSMakeRange(0, comp_len)
-        remainingRange:NULL];
-        
-        
-        
-//        for(int i = 0; i < comp_len; ++i)
-//            m_Scr->PutCh(recomp[i]);
-        chars = recomp;
-        chars_len = comp_len;
+        CFMutableStringRef str = CFStringCreateMutableWithExternalCharactersNoCopy (
+                                                                              NULL,
+                                                                              m_UniCharsStock,
+                                                                              m_UniCharsStockLen,
+                                                                              m_UniCharsStockSize,
+                                                                              kCFAllocatorNull
+                                                                              );
+        assert(str != NULL);
+        CFStringNormalize(str, kCFStringNormalizationFormC);
+        chars_len = (int)CFStringGetLength(str);
+        CFRelease(str);
     }
     
     for(int i = 0; i < chars_len; ++i)
     {
-        if(m_Scr->CursorX() >= m_Scr->Width())
+        if( m_Scr->CursorX() >= m_Scr->Width() &&
+           !oms::IsUnicodeCombiningCharacter(m_UniCharsStock[i]) )
         {
             CR();
             LF();
         }
         
-        m_Scr->PutCh(chars[i]);
+        m_Scr->PutCh(m_UniCharsStock[i]);
     }
     
     m_UniCharsStockLen = 0;

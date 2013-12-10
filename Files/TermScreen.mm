@@ -12,6 +12,7 @@
 
 #include "TermScreen.h"
 #include "FontCache.h"
+#include "OrthodoxMonospace.h"
 
 TermScreen::TermScreen(int _w, int _h):
     m_Width(_w),
@@ -25,6 +26,8 @@ TermScreen::TermScreen(int _w, int _h):
     m_ScreenShot(0)
 {
     m_EraseChar.l = 0;
+    m_EraseChar.c1 = 0;
+    m_EraseChar.c2 = 0;
     m_EraseChar.foreground = 0x7;
     m_EraseChar.background = 0;
     m_EraseChar.intensity = 0;
@@ -71,26 +74,42 @@ std::vector<TermScreen::Space> *TermScreen::GetLineRW(int _line_no)
 void TermScreen::PutCh(unsigned short _char)
 {
     assert(m_PosY < m_Screen.size());
-    assert(m_PosX >= 0 && m_PosX < m_Width);
     // TODO: optimize it out
     
     auto it = m_Screen.begin();
     for(int i = 0; i < m_PosY; ++i) ++it;
-    std::vector<TermScreen::Space> *line = &(*it);
-    auto &sp = (*line)[m_PosX++];
+    std::vector<TermScreen::Space> &line = *it;
     
-    sp.l = _char;
-    sp.foreground = m_Color & 0x7;
-    sp.background = (m_Color & 0x38) >> 3;
-    sp.intensity = m_Intensity;
-    sp.underline = m_Underline;
-    sp.reverse   = m_Reverse;
-    
-    if(g_WCWidthTableFixedMin1[_char] == 2 && m_PosX < m_Width)
+    if(!oms::IsUnicodeCombiningCharacter(_char))
     {
-        auto &foll = (*line)[m_PosX++];
-        foll = sp;
-        foll.l = MultiCellGlyph;
+        assert(m_PosX >= 0 && m_PosX < m_Width);
+        auto &sp = line[m_PosX++];
+        sp.l = _char;
+        sp.c1 = 0;
+        sp.c2 = 0;
+        sp.foreground = m_Color & 0x7;
+        sp.background = (m_Color & 0x38) >> 3;
+        sp.intensity = m_Intensity;
+        sp.underline = m_Underline;
+        sp.reverse   = m_Reverse;
+    
+        if(g_WCWidthTableFixedMin1[_char] == 2 && m_PosX < m_Width)
+        {
+            auto &foll = line[m_PosX++];
+            foll = sp;
+            foll.l = MultiCellGlyph;
+        }
+    }
+    else
+    { // combining characters goes here
+        if(m_PosX > 0)
+        {
+            assert(m_PosX <= m_Width);
+            int target_pos = m_PosX - 1;
+            if((line[target_pos].l == MultiCellGlyph) && (target_pos > 0)) target_pos--;
+            if(line[target_pos].c1 == 0) line[target_pos].c1 = _char;
+            else if(line[target_pos].c2 == 0) line[target_pos].c2 = _char;
+        }
     }
 }
 

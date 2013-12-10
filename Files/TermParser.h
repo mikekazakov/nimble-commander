@@ -55,7 +55,8 @@ private:
 
     int m_UniChar;
     int m_UTFCount;
-    unsigned short m_UniCharsStock[16384];
+    static const int m_UniCharsStockSize = 16384;
+    unsigned short m_UniCharsStock[m_UniCharsStockSize];
     int m_UniCharsStockLen;
     
     const unsigned short    *m_TranslateMap;

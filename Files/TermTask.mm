@@ -354,7 +354,7 @@ void TermTask::SetState(TermTask::TermState _new_state)
   
     // do some fancy stuff here
     
-    printf("TermTask state changed to %d\n", _new_state);
+//    printf("TermTask state changed to %d\n", _new_state);
 }
 
 void TermTask::ChDir(const char *_new_cwd)

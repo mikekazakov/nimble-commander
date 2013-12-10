@@ -127,6 +127,13 @@ int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const UniChar *_s, size_t 
     // returns a number of actual unichars in _out
     // requires that _symb_amount should be >= 3, otherwise it's meaningless
 
-    
+inline bool IsUnicodeCombiningCharacter(unsigned short a)
+{
+    return
+    (a >= 0x0300 && a <= 0x036F) ||
+    (a >= 0x1DC0 && a <= 0x1DFF) ||
+    (a >= 0x20D0 && a <= 0x20FF) ||
+    (a >= 0xFE20 && a <= 0xFE2F) ;
+}
     
 }

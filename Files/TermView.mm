@@ -269,7 +269,12 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
                 CGContextSetShouldAntialias(_context, is_aa = should_aa);
             
             oms::DrawSingleUniCharXY(char_space.l, x, _y, _context, m_FontCache);
-        }
+            
+            if(char_space.c1 != 0)
+                oms::DrawSingleUniCharXY(char_space.c1, x, _y, _context, m_FontCache);
+            if(char_space.c2 != 0)
+                oms::DrawSingleUniCharXY(char_space.c2, x, _y, _context, m_FontCache);
+        }        
         
         if(char_space.underline)
         {

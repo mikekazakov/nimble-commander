@@ -64,15 +64,11 @@ private:
     volatile TermState m_State;
     volatile int m_MasterFD;
     volatile int m_ShellPID;
-    int m_TermSX;
-    int m_TermSY;
     int m_CwdPipe[2];
-    
+    std::recursive_mutex m_Lock;         // will lock on WriteChildInput or on cleanup process
     volatile bool m_TemporarySuppressed; // will give no output until the next bash prompt will show m_RequestedCWD path
+    int m_TermSX;
+    int m_TermSY;    
     char m_RequestedCWD[1024];
     char m_CWD[1024];
-    
-    std::recursive_mutex m_Lock; // will lock on WriteChildInput or on cleanup process
-
-
 };

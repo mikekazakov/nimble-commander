@@ -380,4 +380,12 @@ bool IsVolumeContainingPathEjectable(const char *_path)
                                                                        kCFAllocatorNull));
 }
 
++ (instancetype)stringWithCharactersNoCopy:(const unichar *)characters length:(NSUInteger)length
+{
+    return (NSString*) CFBridgingRelease(CFStringCreateWithCharactersNoCopy(0,
+                                                                            characters,
+                                                                            length,
+                                                                            kCFAllocatorNull));
+}
+
 @end

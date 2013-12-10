@@ -105,6 +105,7 @@ private:
     void CSI_n_H();
     void CSI_n_J();
     void CSI_n_K();
+    void CSI_n_L();
     void CSI_n_m();
     void CSI_n_P();
     void CSI_n_X();

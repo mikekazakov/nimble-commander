@@ -9,6 +9,7 @@
 #include "TermParser.h"
 #include "TermScreen.h"
 #include "TermTask.h"
+#include "Common.h"
 
 #define GRAF_MAP  1
 #define LAT1_MAP  0
@@ -329,11 +330,24 @@ void TermParser::Flush()
         return [self _normalizedICUStringOfType: "nfc" mode: UNORM2_COMPOSE];
 #else
 */
-        NSString *orig = [NSString stringWithCharacters:m_UniCharsStock length:m_UniCharsStockLen];
+//        NSString *orig = [NSString stringWithCharacters:m_UniCharsStock length:m_UniCharsStockLen];
+        NSString *orig = [NSString stringWithCharactersNoCopy:m_UniCharsStock length:m_UniCharsStockLen];
+//        NSString *orig = NSString stringwit
         NSString *comp = [orig precomposedStringWithCanonicalMapping];
         int comp_len = (int)[comp length];
-        [comp getCharacters:recomp];
-    
+//        [comp getCharacters:recomp];
+  
+//        - (BOOL)getBytes:(void *)buffer maxLength:(NSUInteger)maxBufferCount usedLength:(NSUInteger *)usedBufferCount encoding:(NSStringEncoding)encoding options:(NSStringEncodingConversionOptions)options range:(NSRange)range remainingRange:(NSRangePointer)leftover
+        [comp getBytes:recomp
+             maxLength:16384
+            usedLength:NULL
+              encoding:NSUTF16LittleEndianStringEncoding
+               options:NSStringEncodingConversionAllowLossy
+                 range:NSMakeRange(0, comp_len)
+        remainingRange:NULL];
+        
+        
+        
 //        for(int i = 0; i < comp_len; ++i)
 //            m_Scr->PutCh(recomp[i]);
         chars = recomp;
@@ -489,6 +503,7 @@ void TermParser::EatByte(unsigned char _byte)
                 case 'G': case '`': CSI_n_G(); return;
                 case 'J': CSI_n_J(); return;
                 case 'K': CSI_n_K(); return;
+                case 'L': CSI_n_L(); return;
                 case 'm': CSI_n_m(); return;
                 case 'M': CSI_n_M(); return;
                 case 'P': CSI_n_P(); return;
@@ -1142,6 +1157,23 @@ void TermParser::CSI_n_r()
         m_Bottom    = m_Params[1];
 //        DoGoTo(0, 0);
     }
+}
+
+void TermParser::CSI_n_L()
+{
+/*   	if (nr > height - y)
+		nr = height - y;
+	else if (!nr)
+		nr = 1;
+    
+	scrdown(foo,y,bottom,nr);
+    */
+    int p = m_Params[0];
+    if(p > m_Scr->Height() - m_Scr->CursorY())
+        p = m_Scr->Height() - m_Scr->CursorY();
+    else if(p == 0)
+        p = 1;
+    m_Scr->DoScrollDown(m_Scr->CursorY(), m_Bottom, p);
 }
 
 void TermParser::DoGoTo(int _x, int _y)

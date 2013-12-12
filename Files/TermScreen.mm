@@ -62,7 +62,7 @@ const std::vector<TermScreen::Space> *TermScreen::GetScreenLine(int _line_no) co
 
 std::vector<TermScreen::Space> *TermScreen::GetLineRW(int _line_no)
 {
-    if(_line_no >= m_Screen.size()) return 0;
+    if(_line_no >= m_Screen.size() || _line_no < 0) return 0;
     
     auto it = m_Screen.begin();
     for(int i = 0; i < _line_no; ++i)
@@ -267,12 +267,39 @@ void TermScreen::DoShiftRowLeft(int _chars)
     if(!line)
         return;
     
+    assert(m_PosX >= 0 && m_PosX < m_Width);
+    
     for(int x = m_PosX + _chars; x < m_Width; ++x)
-        if(x-_chars >= 0)
+//        if(x-_chars >= 0)
             (*line)[x-_chars] = (*line)[x];
     
     for(int i = 0; i < _chars; ++i)
-        (*line)[m_Width-i-1] = m_EraseChar;
+        (*line)[m_Width-i-1] = m_EraseChar; // why m_Width here???
+}
+
+void TermScreen::DoShiftRowRight(int _chars)
+{
+    auto *line = GetLineRW(m_PosY);
+    if(!line)
+        return;
+
+    assert(m_PosX >= 0 && m_PosX < m_Width);
+    
+    for(int x = m_Width-1; x >= m_PosX + _chars; --x)
+        (*line)[x] = (*line)[x - _chars];
+        
+    for(int i = 0; i < _chars; ++i)
+        (*line)[m_PosX + i] = m_EraseChar;
+}
+
+void TermScreen::DoEraseAt(int _x, int _y, int _count)
+{    
+    auto *line = GetLineRW(_y);
+    if(!line)
+        return;
+    
+    for(int i = _x; i < _x + _count && i > 0 && i < m_Width; ++i)
+        (*line)[i] = m_EraseChar;
 }
 
 void TermScreen::DoScrollDown(int _top, int _bottom, int _lines)
@@ -350,7 +377,15 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
             // TODO: optimize this on speed and possible memory consumpion
             auto *src = GetLineRW(i);
             assert(src);
-            m_ScrollBack.push_back(*src);
+            
+            // trim zero characters in scrollback - there's no need to store them
+            int sz = (int)src->size();
+            while(sz > 0)
+                if((*src)[sz-1].l == 0) sz--;
+                else break;
+            m_ScrollBack.push_back( std::vector<TermScreen::Space>(sz) );
+            memcpy(m_ScrollBack.back().data(), src->data(), sz * sizeof(TermScreen::Space));
+//            m_ScrollBack.push_back(*src);
         }
     
     for(int i = _top; i < _bottom - _lines; ++i)

@@ -236,5 +236,23 @@
     [m_View adjustSizes:true];
 }
 
+- (IBAction)paste:(id)sender
+{
+    if(m_Task->State() == TermTask::StateDead ||
+       m_Task->State() == TermTask::StateInactive )
+        return;
+
+    NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
+    NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
+    if(!best_type)
+        return;
+    
+    NSString *text = [paste_board stringForType:NSStringPboardType];
+    if(!text)
+        return;
+
+    const char* utf8str = [text UTF8String];
+    m_Task->WriteChildInput(utf8str, (int)strlen(utf8str));
+}
 
 @end

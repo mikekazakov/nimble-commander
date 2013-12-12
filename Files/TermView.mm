@@ -13,6 +13,18 @@
 #import "TermParser.h"
 #import "Common.h"
 
+struct SelPoint
+{
+    int x;
+    int y;
+    inline bool operator > (const SelPoint&_r) const { return (y > _r.y) || (y == _r.y && x >  _r.x); }
+    inline bool operator >=(const SelPoint&_r) const { return (y > _r.y) || (y == _r.y && x >= _r.x); }
+    inline bool operator < (const SelPoint&_r) const { return !(*this >= _r); }
+    inline bool operator <=(const SelPoint&_r) const { return !(*this >  _r); }
+    inline bool operator ==(const SelPoint&_r) const { return y == _r.y && x == _r.x; }
+    inline bool operator !=(const SelPoint&_r) const { return y != _r.y || x != _r.x; }
+};
+
 static const DoubleColor& TermColorToDoubleColor(int _color)
 {
     static const DoubleColor colors[16] = {
@@ -38,6 +50,7 @@ static const DoubleColor& TermColorToDoubleColor(int _color)
 }
 
 static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
+static const DoubleColor g_SelectionColor = {0.1, 0.2, 1.0, 0.7};
 
 static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 {
@@ -51,6 +64,10 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     TermParser     *m_Parser;
     
     int             m_LastScreenFSY;
+    
+    bool            m_HasSelection;
+    SelPoint        m_SelStart;
+    SelPoint        m_SelEnd;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -62,6 +79,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         m_FontCache = FontCache::FontCacheFromFont(font);
         CFRelease(font);
         m_LastScreenFSY = 0;
+        m_HasSelection = false;
     }
     return self;
 }
@@ -106,6 +124,8 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     NSString*  const character = [event charactersIgnoringModifiers];
     if ( [character length] == 1 )
     {
+        m_HasSelection = false;
+        
         unichar const unicode        = [character characterAtIndex:0];
         NSUInteger mod = [event modifierFlags];
         if(unicode == 'o' &&
@@ -183,7 +203,11 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
             // scrollback
             auto *line = m_Screen->GetScrollBackLine(i);
             if(line)
-                [self DrawLine:line at_y:i context:context cursor_at:-1];
+                [self DrawLine:line
+                          at_y:i
+                         sel_y:i - m_Screen->ScrollBackLinesCount()
+                       context:context
+                     cursor_at:-1];
         }
         else
         {
@@ -192,9 +216,17 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
             if(line)
             {
                 if(m_Screen->CursorY() != i - m_Screen->ScrollBackLinesCount())
-                    [self DrawLine:line at_y:i context:context cursor_at:-1];
+                    [self DrawLine:line
+                              at_y:i
+                             sel_y:i - m_Screen->ScrollBackLinesCount()
+                           context:context
+                         cursor_at:-1];
                 else
-                    [self DrawLine:line at_y:i context:context cursor_at:m_Screen->CursorX()];
+                    [self DrawLine:line
+                              at_y:i
+                             sel_y:i - m_Screen->ScrollBackLinesCount()
+                           context:context
+                         cursor_at:m_Screen->CursorX()];
             }
         }
     }
@@ -207,6 +239,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 
 - (void) DrawLine:(const std::vector<TermScreen::Space> *)_line
              at_y:(int)_y
+            sel_y:(int)_sel_y
           context:(CGContextRef)_context
         cursor_at:(int)_cur_x
 {
@@ -229,6 +262,39 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
                                         m_FontCache->Height()));
         }
         ++x;
+    }
+    
+    // draw selection if it's here
+    if(m_HasSelection)
+    {
+        CGRect rc = {{-1, -1}, {0, 0}};
+        if(m_SelStart.y == m_SelEnd.y && m_SelStart.y == _sel_y)
+            rc = CGRectMake(m_SelStart.x * m_FontCache->Width(),
+                            _y * m_FontCache->Height(),
+                            (m_SelEnd.x - m_SelStart.x) * m_FontCache->Width(),
+                            m_FontCache->Height());
+        else if(_sel_y < m_SelEnd.y && _sel_y > m_SelStart.y)
+            rc = CGRectMake(0,
+                            _y * m_FontCache->Height(),
+                            self.frame.size.width,
+                            m_FontCache->Height());
+        else if(_sel_y == m_SelStart.y)
+            rc = CGRectMake(m_SelStart.x * m_FontCache->Width(),
+                            _y * m_FontCache->Height(),
+                            self.frame.size.width - m_SelStart.x * m_FontCache->Width(),
+                            m_FontCache->Height());
+        else if(_sel_y == m_SelEnd.y)
+            rc = CGRectMake(0,
+                            _y * m_FontCache->Height(),
+                            m_SelEnd.x * m_FontCache->Width(),
+                            m_FontCache->Height());
+        
+        if(rc.origin.x >= 0)
+        {
+            oms::SetFillColor(_context, g_SelectionColor);
+            CGContextFillRect(_context, rc);
+        }
+        
     }
     
     // draw cursor if it's here
@@ -296,6 +362,131 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 {
     proposedVisibleRect.origin.y = (int)(proposedVisibleRect.origin.y/m_FontCache->Height() + 0.5) * m_FontCache->Height();
     return proposedVisibleRect;
+}
+
+/**
+ * return predicted character position regarding current font setup
+ * y values [0...+y should be treated as rows in real terminal screen
+ * y values -y...0) should be treated as rows in backscroll. y=-1 mean the closes to real screen row
+ * x values are trivial - float x position divided by font's width
+ * returned points may not correlate with real lines' lengths or scroll sizes, so they need to be treated carefully
+ */
+- (SelPoint)ProjectPoint:(NSPoint)_point
+{
+    int line_predict = floor(_point.y / m_FontCache->Height()) - m_Screen->ScrollBackLinesCount();
+    int col_predict = floor(_point.x / m_FontCache->Width());
+    return SelPoint{col_predict, line_predict};
+}
+
+- (void) mouseDown:(NSEvent *)_event
+{
+
+//    NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
+//    [self ProjectPoint:[self convertPoint:[_event locationInWindow] fromView:nil]];
+    [self HandleSelectionWithMouseDragging:_event];
+}
+
+- (void) HandleSelectionWithMouseDragging: (NSEvent*) event
+{
+    NSPoint first_loc = [self convertPoint:[event locationInWindow] fromView:nil];
+    
+    while ([event type]!=NSLeftMouseUp)
+    {
+        NSPoint curr_loc = [self convertPoint:[event locationInWindow] fromView:nil];
+        
+        SelPoint start = [self ProjectPoint:first_loc];
+        SelPoint end   = [self ProjectPoint:curr_loc];
+        
+        if(start > end)
+            std::swap(start, end);
+        
+        if(!m_HasSelection || m_SelEnd != end || m_SelStart != start)
+        {
+            m_HasSelection = true;
+            m_SelStart = start;
+            m_SelEnd = end;
+            [self setNeedsDisplay:true];
+        }
+        
+        
+/*        NSPoint curr_loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
+        int curr_ind = CropIndex([self CharIndexFromPoint:curr_loc], (int)m_StringBufferSize);
+        
+        int base_ind = first_ind;
+        if(modifying_existing_selection && orig_sel.length > 0)
+        {
+            if(first_ind > orig_sel.location && first_ind <= orig_sel.location + orig_sel.length)
+                base_ind =
+                first_ind - orig_sel.location > orig_sel.location + orig_sel.length - first_ind ?
+                (int)orig_sel.location : (int)orig_sel.location + (int)orig_sel.length;
+            else if(first_ind < orig_sel.location + orig_sel.length && curr_ind < orig_sel.location + orig_sel.length)
+                base_ind = (int)orig_sel.location + (int)orig_sel.length;
+            else if(first_ind > orig_sel.location && curr_ind > orig_sel.location)
+                base_ind = (int)orig_sel.location;
+        }
+        
+        if(base_ind != curr_ind)
+        {
+            int sel_start = base_ind > curr_ind ? curr_ind : base_ind;
+            int sel_end   = base_ind < curr_ind ? curr_ind : base_ind;
+            int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
+            int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
+            assert(sel_end_byte >= sel_start_byte);
+            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
+        }
+        else
+            [m_View SetSelectionInFile:CFRangeMake(-1,0)];
+        */
+        event = [[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+    }
+    
+    
+}
+
+- (void)copy:(id)sender
+{
+    if(!m_HasSelection)
+        return;
+    
+    if(m_SelStart == m_SelEnd)
+        return;
+    
+    std::vector<unsigned short> unichars;
+    SelPoint curr = m_SelStart;
+    while(true)
+    {
+        if(curr >= m_SelEnd) break;
+        
+        const std::vector<TermScreen::Space> *line = 0;
+        if(curr.y < 0) line = m_Screen->GetScrollBackLine( m_Screen->ScrollBackLinesCount() + curr.y );
+        else           line = m_Screen->GetScreenLine(curr.y);
+        
+        if(!line) {
+            curr.y++;
+            continue;
+        }
+        
+        for(; curr.x < line->size() && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
+            auto &sp = (*line)[curr.x];
+            if(sp.l == TermScreen::MultiCellGlyph) continue;
+            unichars.push_back(sp.l != 0 ? sp.l : ' ');
+            if(sp.c1 != 0) unichars.push_back(sp.c1);
+            if(sp.c2 != 0) unichars.push_back(sp.c2);
+        }
+    
+        if(curr >= m_SelEnd)
+            break;
+        
+        curr.y++;
+        curr.x = 0;
+        unichars.push_back(0x000A);
+    }
+    
+    NSString *result = [NSString stringWithCharactersNoCopy:unichars.data() length:unichars.size()];
+    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+    [pasteBoard clearContents];
+    [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+    [pasteBoard setString:result forType:NSStringPboardType];
 }
 
 @end

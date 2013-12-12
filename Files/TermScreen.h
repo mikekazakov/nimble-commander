@@ -104,8 +104,11 @@ public:
 // If n is two, clear entire line. Cursor position does not change.
     void DoEraseInLine(int _mode);
     
+    void DoEraseAt(int _x, int _y, int _count=1);
+    
     
     void DoShiftRowLeft(int _chars);
+    void DoShiftRowRight(int _chars);    
     
     inline void SetTitle(const char *_t) { strcpy(m_Title, _t); }
     inline const char* Title() const { return m_Title; }

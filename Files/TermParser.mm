@@ -396,6 +396,7 @@ void TermParser::EatByte(unsigned char _byte)
                 case 's': EscSave(); return;
                 case 'u': EscRestore(); return;
                 case 'r': CSI_n_r(); return;
+                case '@': CSI_n_At(); return;
                 default: printf("unhandled: CSI %c\n", c);
             }
             return;
@@ -988,20 +989,6 @@ void TermParser::CSI_n_P()
 
 void TermParser::EscSave()
 {
-/*
- #define save_cur(foo) do { \
- saved_x		= x; \
- saved_y		= y; \
- s_intensity	= intensity; \
- s_underline	= underline; \
- s_blink		= blink; \
- s_reverse	= reverse; \
- s_charset	= charset; \
- s_color		= color; \
- saved_G0	= G0_charset; \
- saved_G1	= G1_charset; \
- } while (0)
- */
     m_State[0].x = m_Scr->CursorX();
     m_State[0].y = m_Scr->CursorY();
     memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
@@ -1009,20 +996,6 @@ void TermParser::EscSave()
 
 void TermParser::EscRestore()
 {
-/*
- #define restore_cur(foo) do { \
- gotoxy(currcons,saved_x,saved_y); \
- intensity	= s_intensity; \
- underline	= s_underline; \
- blink		= s_blink; \
- reverse		= s_reverse; \
- charset		= s_charset; \
- color		= s_color; \
- G0_charset	= saved_G0; \
- G1_charset	= saved_G1; \
- translate	= set_translate(charset ? G1_charset : G0_charset,currcons); \
- } while (0)
- */
     memcpy(&m_State[0], &m_State[1], sizeof(m_State[0]));
     m_Scr->GoTo(m_State[0].x, m_State[0].y);
     SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
@@ -1060,6 +1033,17 @@ void TermParser::CSI_n_L()
     else if(p == 0)
         p = 1;
     m_Scr->DoScrollDown(m_Scr->CursorY(), m_Bottom, p);
+}
+
+void TermParser::CSI_n_At()
+{
+    int p = m_Params[0];
+    if(p > m_Scr->Width() - m_Scr->CursorX())
+        p = m_Scr->Width() - m_Scr->CursorX();
+    else if(p == 0)
+        p = 1;
+    m_Scr->DoShiftRowRight(p);
+    m_Scr->DoEraseAt(m_Scr->CursorX(), m_Scr->CursorY(), p);
 }
 
 void TermParser::DoGoTo(int _x, int _y)

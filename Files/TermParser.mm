@@ -392,6 +392,8 @@ void TermParser::EatByte(unsigned char _byte)
                 case 'm': CSI_n_m(); return;
                 case 'M': CSI_n_M(); return;
                 case 'P': CSI_n_P(); return;
+                case 'S': CSI_n_S(); return;
+                case 'T': CSI_n_T(); return;
                 case 'X': CSI_n_X(); return;
                 case 's': EscSave(); return;
                 case 'u': EscRestore(); return;
@@ -465,73 +467,6 @@ void TermParser::EatByte(unsigned char _byte)
             
             return;
     }
-    
-/*    switch (c)
-	{
-        case 0:
-            return;
-        case 7:
-            if (vc_state==EStitle_buf)
-            {
-                NSString *new_title;
-                title_buf[title_len]=0;
-                new_title=[NSString stringWithCString: title_buf];
-                [ts ts_setTitle: new_title  type: title_type];
-                vc_state=ESnormal;
-                
-                return;
-            }
-            NSBeep();
-            return;
-        case 8:
-            if (x>0)
-            {
-                x--;
-                [ts ts_goto: x:y];
-            }
-            return;
-        case 9:
-            while (x < width - 1) {
-                x++;
-                if (tab_stop[x >> 5] & (1 << (x & 31)))
-                    break;
-            }
-            [ts ts_goto: x:y];
-            return;
-        case 10: case 11: case 12:
-            lf();
-			return;
-        case 13:
-            cr();
-            return;
-        case 14:
-            charset = 1;
-            translate = set_translate(G1_charset,currcons);
-            disp_ctrl = 1;
-            return;
-        case 15:
-            charset = 0;
-            translate = set_translate(G0_charset,currcons);
-            disp_ctrl = 0;
-            return;
-        case 24: case 26:
-            vc_state = ESnormal;
-            return;
-        case 27:
-            vc_state = ESesc;
-            return;
-        case 127:
-            //		del(currcons);
-            return;
-        case 128+27:			// This kills UTF-8 unless we do some funky stuff
-            if (!utf_count) {
-                vc_state = ESsquare;
-                return;
-            }
-	}*/
-    
-    
-    
 }
 
 void TermParser::SetTranslate(unsigned char _charset)
@@ -1103,4 +1038,16 @@ void TermParser::Resized()
         m_Bottom = m_Height;
     
     // any manipulations on cursor pos here?
+}
+
+void TermParser::CSI_n_T()
+{
+    int p = m_Params[0] ? m_Params[0] : 1;
+    while(p--) m_Scr->DoScrollDown(m_Top, m_Bottom, 1);
+}
+
+void TermParser::CSI_n_S()
+{
+    int p = m_Params[0] ? m_Params[0] : 1;
+    while(p--) m_Scr->DoScrollUp(m_Top, m_Bottom, 1);
 }

@@ -109,6 +109,8 @@ private:
     void CSI_n_r();
     void CSI_n_M();
     void CSI_n_At();
+    void CSI_n_S();
+    void CSI_n_T();
     void CSI_DEC_PMS(bool _on);
     void EscSave();
     void EscRestore();

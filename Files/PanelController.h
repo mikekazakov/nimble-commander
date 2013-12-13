@@ -129,8 +129,8 @@
 - (void) RefreshDirectory; // user pressed cmd+r by default
 
 // MAIN NAVIGATION METHODS ////////////////////////////////////////////
-- (void) GoToRelativeToHostAsync:(const char*) _path select_entry:(const char*) _entry;
-- (void) GoToGlobalHostsPathAsync:(const char*) _path select_entry:(const char*) _entry;
+- (void) GoToRelativeToHostAsync:(const char*) _path select_entry:(const char*) _entry; // _entry may be NULL
+- (void) GoToGlobalHostsPathAsync:(const char*) _path select_entry:(const char*) _entry; // _entry may be NULL
 - (int)  GoToRelativeToHostSync:(const char*) _path;
 - (int)  GoToGlobalHostsPathSync:(const char*) _path;
 - (void) GoToUpperDirectoryAsync;

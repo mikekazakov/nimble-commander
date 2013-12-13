@@ -19,4 +19,6 @@
 - (bool) IsAnythingRunning;
 - (void) Terminate;
 
+- (bool) GetCWD:(char *)_cwd;
+
 @end

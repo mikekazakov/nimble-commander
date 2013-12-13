@@ -15,6 +15,7 @@
 #import "MainWindowBigFileViewState.h"
 #import "MainWindowFilePanelState.h"
 #import "MainWindowTerminalState.h"
+#import "PanelController.h"
 
 @implementation MainWindowController
 {
@@ -143,6 +144,8 @@
     assert(m_WindowState.size() > 1);
     assert(m_WindowState.back() == _state);
 
+    bool is_terminal_resigning = m_WindowState.back() == m_Terminal;
+    
     if([m_WindowState.back() respondsToSelector:@selector(Resigned)])
         [m_WindowState.back() Resigned];
     m_WindowState.pop_back();
@@ -152,6 +155,14 @@
     
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
         [m_WindowState.back() Assigned];
+    
+    if(m_WindowState.back() == m_PanelState && is_terminal_resigning)
+    {
+        // here we need to synchonize cwd in terminal and cwd in active file panel
+        char termcwd[MAXPATHLEN];
+        if([m_Terminal GetCWD:termcwd])
+            [[m_PanelState ActivePanelController] GoToGlobalHostsPathAsync:termcwd select_entry:NULL];
+    }
 }
 
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
@@ -217,7 +228,6 @@
     else
     {
         [self PushNewWindowState:m_Terminal];
-//        [m_Terminal ChDir:_cwd];
     }
     [m_Terminal Execute:_filename at:_cwd];
 }

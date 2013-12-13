@@ -123,20 +123,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 {
     NSString*  const character = [event charactersIgnoringModifiers];
     if ( [character length] == 1 )
-    {
         m_HasSelection = false;
-        
-        unichar const unicode        = [character characterAtIndex:0];
-        NSUInteger mod = [event modifierFlags];
-        if(unicode == 'o' &&
-           (mod & NSAlternateKeyMask) &&
-           (mod & NSCommandKeyMask)
-           )
-        {
-            [self.superview.superview cancelOperation:self];
-            return;
-        }
-    }
 
     m_Parser->ProcessKeyDown(event);
     [self scrollToBottom];

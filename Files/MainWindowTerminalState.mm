@@ -147,12 +147,6 @@
     m_Task->Execute(_short_fn, _at);
 }
 
-- (void)cancelOperation:(id)sender
-{
-    [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
-}
-
-
 - (void)scrollWheel:(NSEvent *)theEvent
 {
     NSRect scrollRect;
@@ -264,6 +258,24 @@
 - (void) Terminate
 {
     m_Task->Terminate();
+}
+
+- (bool) GetCWD:(char *)_cwd
+{
+    if(m_Task->State() == TermTask::StateInactive ||
+       m_Task->State() == TermTask::StateDead)
+        return false;
+    
+    if(strlen(m_Task->CWD()) == 0)
+       return 0;
+    
+    strcpy(_cwd, m_Task->CWD());
+    return true;
+}
+
+- (IBAction)OnShowTerminal:(id)sender
+{
+    [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
 }
 
 @end

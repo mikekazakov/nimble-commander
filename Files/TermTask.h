@@ -51,6 +51,7 @@ public:
     
     
     inline TermState State() const { return m_State; }
+    inline const char* CWD() const { return m_CWD; }
     bool GetChildrenList(std::vector<std::string> &_children); // return false immediately if State is Inactive or Dead
     
     

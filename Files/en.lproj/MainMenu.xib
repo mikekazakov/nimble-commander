@@ -510,6 +510,13 @@ CA
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="t5L-ik-2nt"/>
+                            <menuItem title="Show/Hide Terminal" keyEquivalent="o" id="wOP-H6-qux">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="OnShowTerminal:" target="-1" id="8m7-vW-0pQ"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -530,12 +537,6 @@ CA
                             <menuItem title="Zoom" id="239">
                                 <connections>
                                     <action selector="performZoom:" target="-1" id="240"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Show Terminal" keyEquivalent="o" id="ewK-BS-zbN">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="OnShowTerminal:" target="-1" id="Mgz-GL-J6s"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="92">
@@ -565,5 +566,6 @@ CA
         </menu>
         <customObject id="494" customClass="AppDelegate"/>
         <customObject id="420" customClass="NSFontManager"/>
+        <menuItem isSeparatorItem="YES" id="3mP-P0-iJk"/>
     </objects>
 </document>

@@ -16,4 +16,7 @@
 - (void) ChDir:(const char*)_new_dir;
 - (void) Execute:(const char *)_short_fn at:(const char*)_at;
 
+- (bool) IsAnythingRunning;
+- (void) Terminate;
+
 @end

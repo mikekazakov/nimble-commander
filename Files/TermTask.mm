@@ -499,3 +499,8 @@ void TermTask::ResizeWindow(int _sx, int _sy)
         ioctl(m_MasterFD, TIOCSWINSZ, (char *)&winsize);
     }
 }
+
+void TermTask::Terminate()
+{
+    CleanUp();
+}

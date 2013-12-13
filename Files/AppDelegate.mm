@@ -20,6 +20,7 @@
 #import "PreferencesWindowViewerTab.h"
 #import "TemporaryNativeFileStorage.h"
 #import "NewVersionChecker.h"
+#import "MainWindowTerminalState.h"
 
 @implementation AppDelegate
 {
@@ -169,6 +170,11 @@
             has_running_ops = YES;
             break;
         }
+        if(wincont.TerminalState && [wincont.TerminalState IsAnythingRunning])
+        {
+            has_running_ops = YES;
+            break;
+        }
     }
     
     if (has_running_ops)
@@ -185,6 +191,7 @@
         for (MainWindowController *wincont : m_MainWindows)
         {
             [wincont.OperationsController Stop];
+            [wincont.TerminalState Terminate];
         }
     }
     

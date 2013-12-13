@@ -40,6 +40,7 @@ public:
     
     // launches /bin/bash actually (hardcoded now)
     void Launch(const char *_work_dir, int _sx, int _sy);
+    void Terminate();
     void ChDir(const char *_new_cwd);
     void Execute(const char *_short_fn, const char *_at); // _at can be NULL. if it is the same as CWD - then ignored
     void ResizeWindow(int _sx, int _sy);
@@ -51,6 +52,8 @@ public:
     
     inline TermState State() const { return m_State; }
     bool GetChildrenList(std::vector<std::string> &_children); // return false immediately if State is Inactive or Dead
+    
+    
     
 private:
     void ProcessBashPrompt(const void *_d, int _sz);

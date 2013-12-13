@@ -255,4 +255,15 @@
     m_Task->WriteChildInput(utf8str, (int)strlen(utf8str));
 }
 
+- (bool) IsAnythingRunning
+{
+    return m_Task->State() == TermTask::StateProgramExternal ||
+           m_Task->State() == TermTask::StateProgramInternal;
+}
+
+- (void) Terminate
+{
+    m_Task->Terminate();
+}
+
 @end

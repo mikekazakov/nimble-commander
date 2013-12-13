@@ -16,12 +16,10 @@
 #import "MainWindowFilePanelState.h"
 #import "MainWindowTerminalState.h"
 
-@class QLPreviewPanel;
-
 @implementation MainWindowController
 {
     std::vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
-    MainWindowFilePanelState    *m_BaseWindowState;
+    MainWindowFilePanelState    *m_PanelState;
     MainWindowTerminalState     *m_Terminal;
 }
 
@@ -48,8 +46,8 @@
     [super windowDidLoad];
     [[self window] setDelegate:self];
     
-    m_BaseWindowState = [[MainWindowFilePanelState alloc] initWithFrame: [[[self window] contentView] frame]];
-    [self PushNewWindowState:m_BaseWindowState];
+    m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame: [[[self window] contentView] frame]];
+    [self PushNewWindowState:m_PanelState];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(DidBecomeKeyWindow)
@@ -82,7 +80,7 @@
         
         m_WindowState.pop_back();
     }
-    m_BaseWindowState = nil;
+    m_PanelState = nil;
     m_Terminal = nil;
     
     [(AppDelegate*)[NSApp delegate] RemoveMainWindow:self];
@@ -136,12 +134,12 @@
 }
 
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path {
-    [m_BaseWindowState RevealEntries:_entries inPath:_path];
+    [m_PanelState RevealEntries:_entries inPath:_path];
 }
 
 - (void) ResignAsWindowState:(id)_state
 {
-    assert(_state != m_BaseWindowState);
+    assert(_state != m_PanelState);
     assert(m_WindowState.size() > 1);
     assert(m_WindowState.back() == _state);
 
@@ -169,7 +167,7 @@
 
 - (OperationsController*) OperationsController
 {
-    return m_BaseWindowState.OperationsController;
+    return m_PanelState.OperationsController;
 }
 
 - (void) RequestBigFileView:(const char*) _filepath with_fs:(std::shared_ptr<VFSHost>) _host
@@ -188,7 +186,7 @@
 
 - (MainWindowFilePanelState*) FilePanelState
 {
-    return m_BaseWindowState;
+    return m_PanelState;
 }
 
 - (void)RequestTerminal:(const char*)_cwd;
@@ -222,6 +220,11 @@
 //        [m_Terminal ChDir:_cwd];
     }
     [m_Terminal Execute:_filename at:_cwd];
+}
+
+- (MainWindowTerminalState*) TerminalState
+{
+    return m_Terminal;
 }
 
 @end

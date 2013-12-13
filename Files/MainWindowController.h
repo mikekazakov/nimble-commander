@@ -13,6 +13,7 @@
 
 @class OperationsController;
 @class MainWindowFilePanelState;
+@class MainWindowTerminalState;
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate>
 
@@ -28,11 +29,10 @@
 
 - (void)RequestBigFileView: (const char*)_filepath with_fs:(std::shared_ptr<VFSHost>) _host;
 
-
 - (void)RequestTerminal:(const char*)_cwd;
 - (void)RequestTerminalExecution:(const char*)_filename at:(const char*)_cwd;
 
-// at current moment any main window must jave have file panel state, but it may change in the future
-- (MainWindowFilePanelState*) FilePanelState;
-
+- (MainWindowFilePanelState*) FilePanelState; // one and only one per window
+- (MainWindowTerminalState*) TerminalState;   // zero or one per window
 @end
+

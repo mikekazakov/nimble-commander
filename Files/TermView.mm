@@ -388,6 +388,9 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 
 - (void) HandleSelectionWithMouseDragging: (NSEvent*) event
 {
+    // TODO: not a precise selection modification. look at viewer, it has better implementation.
+    
+    bool modifying_existing_selection = ([event modifierFlags] & NSShiftKeyMask) ? true : false;
     NSPoint first_loc = [self convertPoint:[event locationInWindow] fromView:nil];
     
     while ([event type]!=NSLeftMouseUp)
@@ -400,47 +403,28 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         if(start > end)
             std::swap(start, end);
         
-        if(!m_HasSelection || m_SelEnd != end || m_SelStart != start)
+        
+        if(modifying_existing_selection && m_HasSelection)
+        {
+            if(end > m_SelStart) {
+                m_SelEnd = end;
+                [self setNeedsDisplay:true];
+            }
+            else if(end < m_SelStart) {
+                m_SelStart = end;
+                [self setNeedsDisplay:true];
+            }
+        }
+        else if(!m_HasSelection || m_SelEnd != end || m_SelStart != start)
         {
             m_HasSelection = true;
             m_SelStart = start;
             m_SelEnd = end;
             [self setNeedsDisplay:true];
         }
-        
-        
-/*        NSPoint curr_loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-        int curr_ind = CropIndex([self CharIndexFromPoint:curr_loc], (int)m_StringBufferSize);
-        
-        int base_ind = first_ind;
-        if(modifying_existing_selection && orig_sel.length > 0)
-        {
-            if(first_ind > orig_sel.location && first_ind <= orig_sel.location + orig_sel.length)
-                base_ind =
-                first_ind - orig_sel.location > orig_sel.location + orig_sel.length - first_ind ?
-                (int)orig_sel.location : (int)orig_sel.location + (int)orig_sel.length;
-            else if(first_ind < orig_sel.location + orig_sel.length && curr_ind < orig_sel.location + orig_sel.length)
-                base_ind = (int)orig_sel.location + (int)orig_sel.length;
-            else if(first_ind > orig_sel.location && curr_ind > orig_sel.location)
-                base_ind = (int)orig_sel.location;
-        }
-        
-        if(base_ind != curr_ind)
-        {
-            int sel_start = base_ind > curr_ind ? curr_ind : base_ind;
-            int sel_end   = base_ind < curr_ind ? curr_ind : base_ind;
-            int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
-            int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
-            assert(sel_end_byte >= sel_start_byte);
-            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
-        }
-        else
-            [m_View SetSelectionInFile:CFRangeMake(-1,0)];
-        */
+
         event = [[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
     }
-    
-    
 }
 
 - (void)copy:(id)sender
@@ -466,12 +450,14 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
             continue;
         }
         
+        bool any_inserted = false;
         for(; curr.x < line->size() && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
             auto &sp = (*line)[curr.x];
             if(sp.l == TermScreen::MultiCellGlyph) continue;
             unichars.push_back(sp.l != 0 ? sp.l : ' ');
             if(sp.c1 != 0) unichars.push_back(sp.c1);
             if(sp.c2 != 0) unichars.push_back(sp.c2);
+            any_inserted = true;
         }
     
         if(curr >= m_SelEnd)
@@ -479,7 +465,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         
         curr.y++;
         curr.x = 0;
-        unichars.push_back(0x000A);
+        if(any_inserted) unichars.push_back(0x000A);
     }
     
     NSString *result = [NSString stringWithCharactersNoCopy:unichars.data() length:unichars.size()];
@@ -488,5 +474,22 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
     [pasteBoard setString:result forType:NSStringPboardType];
 }
+
+- (void)selectAll:(id)sender
+{
+    m_HasSelection = true;
+    m_SelStart.y = -m_Screen->ScrollBackLinesCount();
+    m_SelStart.x = 0;
+    m_SelEnd.y = m_Screen->Height()-1;
+    m_SelEnd.x = m_Screen->Width();
+    [self setNeedsDisplay:true];
+}
+
+- (void)deselectAll:(id)sender
+{
+    m_HasSelection = false;
+    [self setNeedsDisplay:true];
+}
+
 
 @end

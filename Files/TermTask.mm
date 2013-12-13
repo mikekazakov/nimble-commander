@@ -60,7 +60,12 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
     m_TermSX = _sx;
     m_TermSY = _sy;
     
-    signal(SIGCHLD, SIG_IGN); /* Silently (and portably) reap children. */
+    // remember current locale and encoding
+    char locenc[256];
+    sprintf(locenc, "%s.UTF-8", [[NSLocale currentLocale] localeIdentifier].UTF8String);
+    
+    // Silently (and portably) reap children.
+    signal(SIGCHLD, SIG_IGN);
     
     m_MasterFD = posix_openpt(O_RDWR);
     assert(m_MasterFD >= 0);
@@ -135,9 +140,10 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
         putenv ((char *) "TERM_PROGRAM=Files.app");
         
         // need real config here
-        setenv("LC_ALL", "en_US.UTF-8", 1);
-        setenv("LANG", "en_US.UTF-8", 1);
-
+        setenv("LANG"  , locenc, 1);
+        setenv("LC_ALL", locenc, 1);
+        // we possibly need to also set LC_COLLATE, LC_CTYPE, LC_MESSAGES, LC_MONETARY, LC_NUMERIC and LC_TIME.
+        
         // setup piping for CWD prompt
         // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)
         rc = dup2(m_CwdPipe[1], g_PromptPipe);

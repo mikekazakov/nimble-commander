@@ -27,9 +27,7 @@ public:
     void ProcessKeyDown(NSEvent *_event);
     
 private:
-    TermScreen *m_Scr;
-    TermTask   *m_Task;
-    
+    // enumerations and constants
     enum EState{
         S_Normal,
         S_Esc,
@@ -43,54 +41,51 @@ private:
         S_TitleBuf
     };
     
-    int m_EscState;
-  
-    enum {
-        MaxParams = 16
-    };
-    int m_Params[MaxParams];
-    int m_ParamsCnt;
-    bool m_ParsingParamNow;
-    bool m_QuestionFlag;
-
-    int m_UniChar;
-    int m_UTFCount;
-    static const int m_UniCharsStockSize = 16384;
-    unsigned short m_UniCharsStock[m_UniCharsStockSize];
-    int m_UniCharsStockLen;
-    
-    const unsigned short    *m_TranslateMap;
-    
-    struct{
-        unsigned char         color;
-        unsigned char         g0_charset;
-        unsigned char         g1_charset;
-        unsigned char         charset_no;
-        bool                  intensity;
-        bool                  underline;
-        bool                  reverse;
-        int                   x; // used only for save&restore purposes
-        int                   y; // used only for save&restore purposes
-    } m_State[2]; // [0] - current, [1] - saved
-    
-    
-    unsigned char           m_DefaultColor;
+    static const int        m_ParamsSize = 16;
+    static const int        m_UniCharsStockSize = 16384;
     static const int        m_TitleMaxLen = 1024;
-    char                    m_Title[m_TitleMaxLen];
+    static const unsigned char m_DefaultColor = 0x07;
+    
+    // data and linked objects
+    TermScreen             *m_Scr;
+    TermTask               *m_Task;
+    int                     m_EscState;
+    int                     m_Params[m_ParamsSize];
+    int                     m_ParamsCnt;
+    int                     m_UniChar;
+    int                     m_UTFCount;
+    int                     m_UniCharsStockLen;
+    const unsigned short   *m_TranslateMap;
     int                     m_TitleLen;
     int                     m_TitleType;
-    
     int                     m_Height;
     int                     m_Width;
     int                     m_Top;    // see DECSTBM  [
     int                     m_Bottom; //              )
-    bool                    m_LineAbs; // if true - then y coordinates treats from the first line, otherwise from m_Top
-    
     int                     m_DECPMS_SavedCurX; // used only for DEC private modes 1048/1049
     int                     m_DECPMS_SavedCurY; // -""-
+    struct{
+        unsigned char       color;
+        unsigned char       g0_charset;
+        unsigned char       g1_charset;
+        unsigned char       charset_no;
+        bool                intensity;
+        bool                underline;
+        bool                reverse;
+        int                 x; // used only for save&restore purposes
+        int                 y; // used only for save&restore purposes
+    } m_State[2]; // [0] - current, [1] - saved
+
+    bool                    m_LineAbs; // if true - then y coordinates treats from the first line, otherwise from m_Top
+    bool                    m_ParsingParamNow;
+    bool                    m_QuestionFlag;
     
+    // 'big' data comes at last
     unsigned int            m_TabStop[16];
+    unsigned short          m_UniCharsStock[m_UniCharsStockSize];
+    char                    m_Title[m_TitleMaxLen];
     
+    // methods
     void SetTranslate(unsigned char _charset);
     void Reset();
     void CSI_n_A();

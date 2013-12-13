@@ -178,7 +178,6 @@ void TermParser::Reset()
     m_State[0].color = 0x07;
     m_State[0].g0_charset = LAT1_MAP;
     m_State[0].g1_charset = GRAF_MAP;
-    m_DefaultColor = 0x07;
     m_TitleLen = 0;
     m_TitleType = 0;
     m_LineAbs = true;
@@ -213,6 +212,8 @@ void TermParser::Flush()
 {
     if( m_UniCharsStockLen == 0 ) return;
     
+    
+    // possible changes this checking to IsUnicodeCombiningCharacter checking - it may reduce redundant normalizings
     bool hi = false;
     for(int i = 0; i < m_UniCharsStockLen; ++i)
         if(m_UniCharsStock[i] > 0x7F)
@@ -355,7 +356,7 @@ void TermParser::EatByte(unsigned char _byte)
             }
                  
         case S_ProcParams:
-            if(c == ';' && m_ParamsCnt < MaxParams - 1) {
+            if(c == ';' && m_ParamsCnt < m_ParamsSize - 1) {
                 m_ParamsCnt++;
                 return;
             } else if( c >= '0' && c <= '9' ) {
@@ -419,7 +420,7 @@ void TermParser::EatByte(unsigned char _byte)
             SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
             return;
             
-        default:
+        case S_Normal:
             if(c > 0x7f) {
                 if (m_UTFCount && (c&0xc0)==0x80) {
                     m_UniChar = (m_UniChar<<6) | (c&0x3f);
@@ -465,7 +466,7 @@ void TermParser::EatByte(unsigned char _byte)
             if(m_UniCharsStockLen < m_UniCharsStockSize)
                 m_UniCharsStock[m_UniCharsStockLen++] = m_UniChar;
             
-            return;
+            return;            
     }
 }
 
@@ -596,103 +597,7 @@ void TermParser::CSI_n_m()
             // [...] MANY MORE HERE
             default: printf("unhandled CSI_n_m: %d\n", m_Params[i]);
         }
-    UpdateAttrs();
-    
-/*
- #define foreground (color & 0x0f)
- #define background (color & 0xf0)
- int i;
-	for (i=0;i<=npar;i++)
-		switch (par[i]) {
-			case 0:	// all attributes off
-				[self _default_attr];
-				break;
-			case 1:
-				intensity = 2;
-				break;
-			case 2:
-				intensity = 0;
-				break;
-			case 4:
-				underline = 1;
-				break;
-			case 5:
-				blink = 1;
-				break;
-			case 7:
-				reverse = 1;
-				break;
-			case 10: // ANSI X3.64-1979 (SCO-ish?)
-                     //Select primary font, don't display
-                      // control chars if defined, don't set
-                      // bit 8 on output.
-
-				translate = set_translate(charset == 0
-                                          ? G0_charset
-                                          : G1_charset,currcons);
-				disp_ctrl = 0;
-				toggle_meta = 0;
-				break;
-			case 11: // ANSI X3.64-1979 (SCO-ish?)
-                    //Select first alternate font, lets
-                      // chars < 32 be displayed as ROM chars.
-                      //
-				translate = set_translate(IBMPC_MAP,currcons);
-				disp_ctrl = 1;
-				toggle_meta = 0;
-				break;
-			case 12: // ANSI X3.64-1979 (SCO-ish?)
-                      // Select second alternate font, toggle
-                      // high bit before displaying as ROM char.
-                      //
-				translate = set_translate(IBMPC_MAP,currcons);
-				disp_ctrl = 1;
-				toggle_meta = 1;
-				break;
-			case 21:
-			case 22:
-				intensity = 1;
-				break;
-			case 24:
-				underline = 0;
-				break;
-			case 25:
-				blink = 0;
-				break;
-			case 27:
-				reverse = 0;
-				break;
-			case 38: // ANSI X3.64-1979 (SCO-ish?)
-                      // Enables underscore, white foreground
-                      // with white underscore (Linux - use
-                      // default foreground).
-                      //
-				color = (def_color & 0x0f) | background;
-				underline = 1;
-				break;
-			case 39: // ANSI X3.64-1979 (SCO-ish?)
-                      // Disable underline option.
-                      // Reset colour to default? It did this
-                      // before...
-                
-				color = (def_color & 0x0f) | background;
-				underline = 0;
-				break;
-			case 49:
-				color = (def_color & 0xf0) | foreground;
-				break;
-			default:
-				if (par[i] >= 30 && par[i] <= 37)
-					color = color_table[par[i]-30]
-                    | background;
-				else if (par[i] >= 40 && par[i] <= 47)
-					color = (color_table[par[i]-40]<<4)
-                    | foreground;
-				break;
-		}
-    
-	[self _update_attr]*/
-    
+    UpdateAttrs(); // need to rewrite it with separate SetXXX function call - it will be faster
 }
 
 void TermParser::CSI_DEC_PMS(bool _on)
@@ -869,57 +774,11 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
 void TermParser::CSI_n_P()
 {
     int p = m_Params[0];
-    
-//    if(p + m_Scr->GetCursorX() >= m_Scr->GetWidth() )
-//        p = m_Scr->GetWidth() - m_Scr->GetCursorX() - 1;
     if(p > m_Scr->Width() - m_Scr->CursorX())
         p = m_Scr->Width() - m_Scr->CursorX();
     else if(!p)
         p = 1;
     m_Scr->DoShiftRowLeft(p);
-//    m_Scr->DoEraseCharacters(p);
-    
-/*	if (nr > width - x)
-		nr = width - x;
-	else if (!nr)
-		nr = 1;
-	delete_char(currcons, nr);*/
-/*#define delete_char(foo,nr) do { \
-[ts ts_shiftRow: y  at: x+nr  delta: -nr]; \
-[ts ts_putChar: video_erase_char  count: nr  at: width-nr:y]; \
-} while (0)*/
-    /*	screen_char_t *aLine;
-	int i;
-	
-#if DEBUG_METHOD_TRACE
-    NSLog(@"%s(%d):-[VT100Screen deleteCharacter]: %d", __FILE__, __LINE__, n);
-#endif
-    
-    if (CURSOR_X >= 0 && CURSOR_X < WIDTH &&
-        CURSOR_Y >= 0 && CURSOR_Y < HEIGHT)
-    {
-		int idx;
-		
-		idx=CURSOR_Y*WIDTH;
-		if (n+CURSOR_X>WIDTH) n=WIDTH-CURSOR_X;
-		
-		// get the appropriate screen line
-		aLine = [self getLineAtScreenIndex: CURSOR_Y];
-		
-		if (n<WIDTH)
-		{
-			memmove(aLine + CURSOR_X, aLine + CURSOR_X + n, (WIDTH-CURSOR_X-n)*sizeof(screen_char_t));
-		}
-		for(i = 0; i < n; i++)
-		{
-			aLine[WIDTH-n+i].ch = 0;
-			aLine[WIDTH-n+i].fg_color = [TERMINAL foregroundColorCodeReal];
-			aLine[WIDTH-n+i].bg_color = [TERMINAL backgroundColorCodeReal];
-		}
-		memset(dirty+idx+CURSOR_X,1,WIDTH-CURSOR_X);
-    };*/
-    
-    
 }
 
 void TermParser::EscSave()
@@ -955,13 +814,6 @@ void TermParser::CSI_n_r()
 
 void TermParser::CSI_n_L()
 {
-/*   	if (nr > height - y)
-		nr = height - y;
-	else if (!nr)
-		nr = 1;
-    
-	scrdown(foo,y,bottom,nr);
-    */
     int p = m_Params[0];
     if(p > m_Scr->Height() - m_Scr->CursorY())
         p = m_Scr->Height() - m_Scr->CursorY();

@@ -56,6 +56,8 @@ public:
     
     
     
+    inline void Lock()      { m_Lock.lock();   }
+    inline void Unlock()    { m_Lock.unlock(); }
 private:
     void ProcessBashPrompt(const void *_d, int _sz);
     void SetState(TermState _new_state);

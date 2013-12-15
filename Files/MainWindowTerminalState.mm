@@ -92,9 +92,18 @@
         if(weakself != nil)
         {
             __strong MainWindowTerminalState *strongself = weakself;
+            
+            bool newtitle = false;
             strongself->m_Screen->Lock();
             for(int i = 0; i < _sz; ++i)
-                strongself->m_Parser->EatByte(((const char*)_d)[i]);
+            {
+                int flags = 0;
+
+                strongself->m_Parser->EatByte(((const char*)_d)[i], flags);
+
+                if(flags & TermParser::Result_ChangedTitle)
+                    newtitle = true;
+            }
         
             strongself->m_Parser->Flush();
             strongself->m_Screen->Unlock();
@@ -103,29 +112,44 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [strongself->m_View adjustSizes:false];
                 [strongself->m_View setNeedsDisplay:true];
+                if(newtitle)
+                    [strongself UpdateTitle];
             });
         }
     });
     
     m_Task->SetOnBashPrompt(^(const char *_cwd){
-//        char tmp[1024];
-//        memcpy(tmp, _d, _sz);
-//        tmp[_sz] = 0;
-        /*            [self.CommandText setStringValue:[NSString stringWithUTF8String:tmp]];*/
-//        printf("BASH cwd: %s\n", _cwd);
+        if(weakself != nil)
+        {
+            __strong MainWindowTerminalState *strongself = weakself;
+            strongself->m_Screen->SetTitle("");
+            [strongself UpdateTitle];
+        }
     });
     
-    
-    
-    
-    
     [self.window makeFirstResponder:m_View];
-    
-    
- //   [self UpdateTitle];
+    [self UpdateTitle];
 }
 
 
+- (void) UpdateTitle
+{
+    NSString *title = 0;
+    
+    m_Screen->Lock();
+    if(strlen(m_Screen->Title()) > 0)
+        title = [NSString stringWithUTF8String:m_Screen->Title()];
+    m_Screen->Unlock();
+    
+    if(title == 0)
+    {
+        m_Task->Lock();
+        title = [NSString stringWithUTF8String:m_Task->CWD()];
+        m_Task->Unlock();
+    }
+
+    self.window.title = title;
+}
 
 - (void) Resigned
 {

@@ -18,9 +18,15 @@ class TermTask;
 class TermParser
 {
 public:
+    enum ResulFlags{
+        Result_ChangedTitle = 0x0001
+    };
+    
+    
+    
     TermParser(TermScreen *_scr, TermTask *_task);
     
-    void EatByte(unsigned char _byte);
+    void EatByte(unsigned char _byte, int &_result_flags);
     void Flush();
     void Resized();
     

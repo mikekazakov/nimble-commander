@@ -259,7 +259,7 @@ void TermParser::Flush()
     m_UniCharsStockLen = 0;
 }
 
-void TermParser::EatByte(unsigned char _byte)
+void TermParser::EatByte(unsigned char _byte, int &_result_flags)
 {
     unsigned char c = _byte;
     
@@ -273,6 +273,7 @@ void TermParser::EatByte(unsigned char _byte)
                      m_Title[m_TitleLen] = 0;
                      m_Scr->SetTitle(m_Title);
                      m_EscState = S_Normal;
+                     _result_flags |= TermParser::Result_ChangedTitle;
                      return;
                  }
                  NSBeep();

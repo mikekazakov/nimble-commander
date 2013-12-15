@@ -573,37 +573,59 @@ void TermParser::CSI_n_m()
 {
     for(int i = 0; i < m_ParamsCnt; ++i)
         switch (m_Params[i]) {
-            case 0:  SetDefaultAttrs();             break;
+            case 0:  SetDefaultAttrs(); UpdateAttrs(); break;
 			case 1:
             case 21:
-            case 22: m_State[0].intensity = true;   break;
-			case 2:  m_State[0].intensity = false;  break;
-			case 4:  m_State[0].underline = true;   break;
-			case 24: m_State[0].underline = false;  break;
-            case 7:  m_State[0].reverse   = true;   break;
-            case 27: m_State[0].reverse   = false;  break;
-            case 30: m_State[0].color =  TermScreenColors::Black          | (m_State[0].color & 0x38); break;
-            case 31: m_State[0].color =  TermScreenColors::Red            | (m_State[0].color & 0x38); break;
-            case 32: m_State[0].color =  TermScreenColors::Green          | (m_State[0].color & 0x38); break;
-            case 33: m_State[0].color =  TermScreenColors::Yellow         | (m_State[0].color & 0x38); break;
-            case 34: m_State[0].color =  TermScreenColors::Blue           | (m_State[0].color & 0x38); break;
-            case 35: m_State[0].color =  TermScreenColors::Magenta        | (m_State[0].color & 0x38); break;
-            case 36: m_State[0].color =  TermScreenColors::Cyan           | (m_State[0].color & 0x38); break;
-            case 37: m_State[0].color =  TermScreenColors::White          | (m_State[0].color & 0x38); break;
-            case 40: m_State[0].color = (TermScreenColors::Black   << 3 ) | (m_State[0].color & 0x07); break;
-            case 41: m_State[0].color = (TermScreenColors::Red     << 3 ) | (m_State[0].color & 0x07); break;
-            case 42: m_State[0].color = (TermScreenColors::Green   << 3 ) | (m_State[0].color & 0x07); break;
-            case 43: m_State[0].color = (TermScreenColors::Yellow  << 3 ) | (m_State[0].color & 0x07); break;
-            case 44: m_State[0].color = (TermScreenColors::Blue    << 3 ) | (m_State[0].color & 0x07); break;
-            case 45: m_State[0].color = (TermScreenColors::Magenta << 3 ) | (m_State[0].color & 0x07); break;
-            case 46: m_State[0].color = (TermScreenColors::Cyan    << 3 ) | (m_State[0].color & 0x07); break;
-            case 47: m_State[0].color = (TermScreenColors::White   << 3 ) | (m_State[0].color & 0x07); break;
-			case 39: m_State[0].color = (m_DefaultColor & 0x07) | (m_State[0].color & 0x38); m_State[0].underline = false; break;
-			case 49: m_State[0].color = (m_DefaultColor & 0x38) | (m_State[0].color & 0x07); break;
+            case 22: m_State[0].intensity = true;   m_Scr->SetIntensity(m_State[0].intensity);  break;
+			case 2:  m_State[0].intensity = false;  m_Scr->SetIntensity(m_State[0].intensity);  break;
+			case 4:  m_State[0].underline = true;   m_Scr->SetUnderline(m_State[0].underline);  break;
+			case 24: m_State[0].underline = false;  m_Scr->SetUnderline(m_State[0].underline);  break;
+            case 7:  m_State[0].reverse   = true;   m_Scr->SetReverse(m_State[0].reverse);      break;
+            case 27: m_State[0].reverse   = false;  m_Scr->SetReverse(m_State[0].reverse);      break;
+            case 30: m_State[0].color =  TermScreenColors::Black          | (m_State[0].color & 0x38); m_Scr->SetColor(m_State[0].color); break;
+            case 31: m_State[0].color =  TermScreenColors::Red            | (m_State[0].color & 0x38); m_Scr->SetColor(m_State[0].color); break;
+            case 32: m_State[0].color =  TermScreenColors::Green          | (m_State[0].color & 0x38); m_Scr->SetColor(m_State[0].color); break;
+            case 33: m_State[0].color =  TermScreenColors::Yellow         | (m_State[0].color & 0x38); m_Scr->SetColor(m_State[0].color); break;
+            case 34: m_State[0].color =  TermScreenColors::Blue           | (m_State[0].color & 0x38); m_Scr->SetColor(m_State[0].color); break;
+            case 35: m_State[0].color =  TermScreenColors::Magenta        | (m_State[0].color & 0x38); m_Scr->SetColor(m_State[0].color); break;
+            case 36: m_State[0].color =  TermScreenColors::Cyan           | (m_State[0].color & 0x38); m_Scr->SetColor(m_State[0].color); break;
+            case 37: m_State[0].color =  TermScreenColors::White          | (m_State[0].color & 0x38); m_Scr->SetColor(m_State[0].color); break;
+            case 40: m_State[0].color = (TermScreenColors::Black   << 3 ) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+            case 41: m_State[0].color = (TermScreenColors::Red     << 3 ) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+            case 42: m_State[0].color = (TermScreenColors::Green   << 3 ) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+            case 43: m_State[0].color = (TermScreenColors::Yellow  << 3 ) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+            case 44: m_State[0].color = (TermScreenColors::Blue    << 3 ) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+            case 45: m_State[0].color = (TermScreenColors::Magenta << 3 ) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+            case 46: m_State[0].color = (TermScreenColors::Cyan    << 3 ) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+            case 47: m_State[0].color = (TermScreenColors::White   << 3 ) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+			case 39: m_State[0].color = (m_DefaultColor & 0x07) | (m_State[0].color & 0x38); m_State[0].underline = false; m_Scr->SetColor(m_State[0].color); m_Scr->SetUnderline(m_State[0].underline); break;
+			case 49: m_State[0].color = (m_DefaultColor & 0x38) | (m_State[0].color & 0x07); m_Scr->SetColor(m_State[0].color); break;
+            case  5: break; /* Blink: Slow  - less than 150 per minute*/
+            case  6: break; /* Blink: Rapid - MS-DOS ANSI.SYS; 150 per minute or more; not widely supported*/
+            case 25: break; /* Blink: off */
+            case 90:
+            case 91:
+            case 92:
+            case 93:
+            case 94:
+            case 95:
+            case 96:
+            case 97:
+            case 98:
+            case 99: break; /* Set foreground text color, high intensity	aixterm (not in standard) */
+            case 100:
+            case 101:
+            case 102:
+            case 103:
+            case 104:
+            case 105:
+            case 106:
+            case 107:
+            case 108:
+            case 109: break; /* Set background color, high intensity	aixterm (not in standard) */
             // [...] MANY MORE HERE
             default: printf("unhandled CSI_n_m: %d\n", m_Params[i]);
         }
-    UpdateAttrs(); // need to rewrite it with separate SetXXX function call - it will be faster
 }
 
 void TermParser::CSI_DEC_PMS(bool _on)

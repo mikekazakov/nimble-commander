@@ -57,7 +57,6 @@ public:
     inline void Lock()      { m_Lock.lock();   }
     inline void Unlock()    { m_Lock.unlock(); }
     
-//    int GetLinesCount() const;
     const std::vector<Space> *GetScreenLine(int _line_no) const;
     const std::vector<Space> *GetScrollBackLine(int _line_no) const;
     

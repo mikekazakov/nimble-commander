@@ -75,7 +75,8 @@
 
 - (void) SetInitialWD:(const char*)_wd
 {
-    strcpy(m_InitalWD, _wd);
+    if(_wd && strlen(_wd) > 0)
+        strcpy(m_InitalWD, _wd);
 }
 
 - (void) Assigned

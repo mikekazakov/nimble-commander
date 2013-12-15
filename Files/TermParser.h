@@ -76,6 +76,7 @@ private:
         int                 y; // used only for save&restore purposes
     } m_State[2]; // [0] - current, [1] - saved
 
+    bool                    m_InsertMode;
     bool                    m_LineAbs; // if true - then y coordinates treats from the first line, otherwise from m_Top
     bool                    m_ParsingParamNow;
     bool                    m_QuestionFlag;

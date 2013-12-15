@@ -473,6 +473,24 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (void) GoToGlobalHostsPathAsync:(const char*) _path select_entry:(const char*) _entry
 {
+    if(_path == 0)
+        return;
+
+    if(_entry == 0)
+    { // check we're already on this path (don't check if we're also asked to select some entry)
+        char asked[MAXPATHLEN*8];
+        strcpy(asked, _path);
+        
+        char current[MAXPATHLEN*8];
+        m_Data->GetDirectoryFullHostsPathWithTrailingSlash(current);
+        
+        if(!IsPathWithTrailingSlash(asked))
+            strcat(asked, "/");
+        
+        if(strcmp(asked, current) == 0) // will return false on the same path written other way (case insensitivity issues), but that's ok
+            return;
+    }
+    
     char rest[MAXPATHLEN*8];
     std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> stack;
     if([self GetCommonHostsStackForPath:_path rest:rest hosts:stack])
@@ -489,6 +507,20 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 - (int) GoToGlobalHostsPathSync:(const char*) _path
 {
+    { // check we're already on this path
+        char asked[MAXPATHLEN*8];
+        strcpy(asked, _path);
+        
+        char current[MAXPATHLEN*8];
+        m_Data->GetDirectoryFullHostsPathWithTrailingSlash(current);
+        
+        if(!IsPathWithTrailingSlash(asked))
+            strcat(asked, "/");
+        
+        if(strcmp(asked, current) == 0) // will return false on the same path written other way (case insensitivity issues), but that's ok
+            return 0;
+    }
+    
     char rest[MAXPATHLEN*8];
     std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> stack;
     if([self GetCommonHostsStackForPath:_path rest:rest hosts:stack])

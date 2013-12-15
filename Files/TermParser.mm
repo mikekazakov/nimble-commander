@@ -11,6 +11,7 @@
 #include "TermTask.h"
 #include "Common.h"
 #include "OrthodoxMonospace.h"
+#include "FontCache.h"
 
 #define GRAF_MAP  1
 #define LAT1_MAP  0
@@ -181,6 +182,7 @@ void TermParser::Reset()
     m_TitleLen = 0;
     m_TitleType = 0;
     m_LineAbs = true;
+    m_InsertMode = false;
     m_Top = 0;
     m_Bottom = m_Scr->Height();
     m_EscState = S_Normal;
@@ -247,6 +249,9 @@ void TermParser::Flush()
             CR();
             LF();
         }
+        
+        if(m_InsertMode)
+            m_Scr->DoShiftRowRight(g_WCWidthTableFixedMin1[m_UniCharsStock[i]]);
         
         m_Scr->PutCh(m_UniCharsStock[i]);
     }
@@ -651,6 +656,15 @@ void TermParser::CSI_DEC_PMS(bool _on)
                     }
                     break;
                     
+                case 1002:
+                case 1003:
+                case 1005:
+                case 1006:
+                case 1015:
+                    // mouse stuff is not implemented
+                    break;
+                    
+                    
                     
 /*
 "Pm = 47"
@@ -666,6 +680,16 @@ l   Restore cursor position
 h   Use Alternate Screen Buffer - clear Alternate Screen Buffer if switching to it
 l   Use Normal Screen Buffer
 */
+                    
+                    
+                    
+                case 1034:
+                    // dont give a fuck what meta mode is, need to implement
+                    // 1034:
+                    // rmm     mo      End meta mode
+                    // smm     mm      Begin meta mode (8th bit set)
+                    break;
+                    
                 default:
                     printf("unhandled CSI_DEC_PMS?: %d on:%d\n", m_Params[i], (int)_on);
             }
@@ -673,8 +697,7 @@ l   Use Normal Screen Buffer
             switch (m_Params[i]) /* ANSI modes set/reset */
             {
                 case 4:			/* Insert Mode on/off */
-//                    decim = on_off;
-                    printf("insert: %d\n", (int)_on);
+                    m_InsertMode = _on;
                     break;
                 default:
                     printf("unhandled CSI_DEC_PMS: %d on:%d\n", m_Params[i], (int)_on);

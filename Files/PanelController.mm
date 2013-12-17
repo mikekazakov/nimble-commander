@@ -22,6 +22,27 @@
 
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
+inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
+{
+    // TODO: need more sophisticated executable handling here
+    // THIS IS WRONG!
+    bool uexec = (_item.UnixMode() & S_IXUSR) ||
+                 (_item.UnixMode() & S_IXGRP) ||
+                 (_item.UnixMode() & S_IXOTH) ;
+    
+    if(!uexec) return false;
+    
+    if(!_item.HasExtension())
+        return true; // if file has no extension and had execute rights - let's try it
+    
+    const char *ext = _item.Extension();
+
+    return  strcmp(ext, "sh") == 0 ||
+            strcmp(ext, "pl") == 0 ||
+            strcmp(ext, "rb") == 0 ||
+            false; // need MOAR HERE!
+}
+
 @implementation PanelController
 
 
@@ -624,13 +645,7 @@ static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
     }
     
     // need more sophisticated executable handling here
-    if([self GetCurrentVFSHost]->IsNativeFS() &&
-       (
-        (entry.UnixMode() & S_IXUSR) ||
-        (entry.UnixMode() & S_IXGRP) ||
-        (entry.UnixMode() & S_IXOTH)
-        )
-       )
+    if([self GetCurrentVFSHost]->IsNativeFS() && IsEligbleToTryToExecuteInConsole(entry))
     {
         char pathbuf[__DARWIN_MAXPATHLEN];
         [self GetCurrentDirectoryPathRelativeToHost:pathbuf];

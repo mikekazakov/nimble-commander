@@ -104,6 +104,11 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 	return YES;
 }
 
+- (void)resetCursorRects
+{
+    [self addCursorRect:self.frame cursor:[NSCursor IBeamCursor]];
+}
+
 - (FontCache*) FontCache
 {
     return m_FontCache;

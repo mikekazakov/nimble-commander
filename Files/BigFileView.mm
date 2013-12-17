@@ -195,6 +195,11 @@ static NSArray *MyDefaultsKeys()
     [m_ViewImpl DoDraw:context dirty:dirtyRect]; // m_ViewImpl can be nil
 }
 
+- (void)resetCursorRects
+{
+    [self addCursorRect:self.frame cursor:[NSCursor IBeamCursor]];
+}
+
 - (void) SetFile:(FileWindow*) _file
 {
     int encoding = encodings::EncodingFromName(

@@ -90,3 +90,4 @@ enum ActiveState
 @end
 
 #import "MainWindowFilePanelState+ContextMenu.h"
+#import "MainWindowFilePanelState+Menu.h"

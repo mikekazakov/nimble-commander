@@ -93,6 +93,7 @@
 		CF76B319170146240066A49F /* TimedDummyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B312170146240066A49F /* TimedDummyOperationJob.mm */; };
 		CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
+		CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
 		CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */; };
@@ -417,6 +418,8 @@
 		CF76B31A170148FF0066A49F /* FileSysEntryAttrSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysEntryAttrSheetController.h; sourceTree = "<group>"; };
 		CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileSysEntryAttrSheetController.xib; sourceTree = "<group>"; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
+		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
+		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailedVolumeInformationSheetController.h; sourceTree = "<group>"; };
 		CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DetailedVolumeInformationSheetController.mm; sourceTree = "<group>"; };
 		CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
@@ -897,6 +900,8 @@
 				CF0519DA17E9C98A00590C74 /* PanelAux.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
 				CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */,
+				CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */,
+				CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */,
 				CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */,
 				CFDA4CCE182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.h */,
 				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
@@ -1495,6 +1500,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF9D0E7F17CC961100CB8146 /* archive_entry_xattr.c in Sources */,
 				CF9D0EDF17CCC51C00CB8146 /* VFSArchiveFile.mm in Sources */,
 				CFC5122116C4BD3D00D247EE /* main.m in Sources */,

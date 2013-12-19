@@ -20,6 +20,8 @@
 #import "PanelFastSearchPopupViewController.h"
 #import "BriefSystemOverview.h"
 
+#define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
+
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
 inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
@@ -785,53 +787,47 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     [self HandleFastSearch:nil];
 }
 
-- (void)keyDown:(NSEvent *)event
+- (bool) ProcessKeyDown:(NSEvent *)event; // return true if key was processed
 {
     NSString*  const character = [event charactersIgnoringModifiers];
 
     NSUInteger const modif       = [event modifierFlags];
-    
-#define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
 
     if(ISMODIFIER(NSAlternateKeyMask) || ISMODIFIER(NSAlternateKeyMask|NSAlphaShiftKeyMask))
         [self HandleFastSearch:character];
     
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
     
-    if ( [character length] != 1 ) return;
+    if ( [character length] != 1 ) return false;
     unichar const unicode        = [character characterAtIndex:0];
     unsigned short const keycode = [event keyCode];
 
     switch (unicode)
     {
-        case NSHomeFunctionKey: [m_View HandleFirstFile]; break;
-        case NSEndFunctionKey:  [m_View HandleLastFile]; break;
-        case NSPageDownFunctionKey:      [m_View HandleNextPage]; break;
-        case NSPageUpFunctionKey:        [m_View HandlePrevPage]; break;            
+        case NSHomeFunctionKey: [m_View HandleFirstFile]; return true;
+        case NSEndFunctionKey:  [m_View HandleLastFile]; return true;
+        case NSPageDownFunctionKey:      [m_View HandleNextPage]; return true;
+        case NSPageUpFunctionKey:        [m_View HandlePrevPage]; return true;
         case NSLeftArrowFunctionKey:
             if(modif & NSCommandKeyMask) [m_View HandleFirstFile];
             else if(modif &  NSAlternateKeyMask); // now nothing wilh alt+left now
             else                         [m_View HandlePrevColumn];
-            break;
+            return true;
         case NSRightArrowFunctionKey:
             if(modif & NSCommandKeyMask) [m_View HandleLastFile];
             else if(modif &  NSAlternateKeyMask); // now nothing wilh alt+right now   
             else                         [m_View HandleNextColumn];
-            break;
+            return true;
         case NSUpArrowFunctionKey:
             if(modif & NSCommandKeyMask) [m_View HandlePrevPage];
             else if(modif & NSAlternateKeyMask) [self HandleFastSearchPrevious];
             else                         [m_View HandlePrevFile];
-            break;
+            return true;
         case NSDownArrowFunctionKey:
             if(modif & NSCommandKeyMask) [m_View HandleNextPage];
             else if(modif &  NSAlternateKeyMask) [self HandleFastSearchNext];
             else                         [m_View HandleNextFile];
-            break;
-        case NSCarriageReturnCharacter: // RETURN key
-            if(ISMODIFIER(NSShiftKeyMask)) [self HandleShiftReturnButton];
-            else                           [self HandleReturnButton];
-            break;
+            return true;
     }
     
     switch (keycode)
@@ -841,8 +837,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             [[self GetParentWindow] CloseOverlay:self];
             m_BriefSystemOverview = nil;
             m_QuickLook = nil;
-            break;
+            return true;
     }
+    return false;
 }
 
 - (void) HandleBriefSystemOverview

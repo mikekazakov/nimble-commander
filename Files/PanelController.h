@@ -99,8 +99,8 @@
 
 
 
-- (void) HandleReturnButton;
-- (void) HandleShiftReturnButton;
+- (void) HandleReturnButton;        // 'Open' menu item
+- (void) HandleShiftReturnButton;   // 'Open Natively' menu item
 - (void) HandleFileView; // F3
 - (void) HandleBriefSystemOverview;
 
@@ -137,7 +137,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
-- (void)keyDown:(NSEvent *)event;
+- (bool) ProcessKeyDown:(NSEvent *)event; // return true if key was processed
 
 - (void) SelectAllEntries: (bool) _select; // if false - then deselect all
 - (void) SelectEntriesByMask:(NSString*) _mask select:(bool) _select; // if false - then deselect elements by mask

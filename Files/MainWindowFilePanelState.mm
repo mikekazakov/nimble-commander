@@ -498,15 +498,26 @@
 
 - (void)keyDown:(NSEvent *)event
 {
-    NSString*  const character = [event charactersIgnoringModifiers];
-    if ( [character length] != 1 ) return;
-    unichar const unicode        = [character characterAtIndex:0];
+    NSString* character = [event charactersIgnoringModifiers];
+    if ( [character length] != 1 ) { [super keyDown:event]; return; }
+    unichar unicode = [character characterAtIndex:0];
+
     
-    if([self IsPanelActive])
-        [[self ActivePanelController] keyDown:event];
+    if([self IsPanelActive] && [[self ActivePanelController] ProcessKeyDown:event])
+            return;
     
     if(unicode == NSTabCharacter) // TAB key
-        [self HandleTabButton];
+        return [self HandleTabButton];
+    
+    // handle RETURN manually, to prevent annoying by menu highlighting by hotkey
+    if(unicode == NSCarriageReturnCharacter) {
+        NSUInteger modif = [event modifierFlags];
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ) [self OnOpenNatively:self];
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == 0              ) [self OnOpen:self];
+        return;
+    }
+    
+    [super keyDown:event];
 }
 
 - (void)LoadPanelsSettings
@@ -1578,6 +1589,7 @@
     [(MainWindowController*)[[self window] delegate] RequestTerminal:path];
 }
 ///////////////////////////////////////////////////////////////
+
 
 
 

@@ -37,10 +37,96 @@ struct AdditionalPath
     NSString *visible_path; // may be truncated in the middle for convenience
 };
 
+static NSMutableArray *GetFindersFavorites()
+{
+    // thanks Adam Strzelecki nanoant.com
+    // https://gist.github.com/nanoant/1244807
+    
+    NSMutableArray *result = [NSMutableArray new];
+    
+    UInt32 seed;
+    LSSharedFileListRef sflRef = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
+    NSArray *list = (NSArray *)CFBridgingRelease(LSSharedFileListCopySnapshot(sflRef, &seed));
+	LSSharedFileListItemRef sflItemBeforeRef = (LSSharedFileListItemRef)kLSSharedFileListItemBeforeFirst;
+    
+	for(NSObject *object in list) {
+		LSSharedFileListItemRef sflItemRef = (__bridge LSSharedFileListItemRef)object;
+		CFURLRef urlRef = NULL;
+		LSSharedFileListItemResolve(sflItemRef,
+                                    kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes,
+                                    &urlRef,
+                                    NULL);
+        
+        if(urlRef != 0) {
+            NSURL* url = (__bridge NSURL*)urlRef;
+            
+            if([[url scheme] isEqualToString:@"file"] &&
+               [[url resourceSpecifier] rangeOfString:@".cannedSearch/"].location == NSNotFound)
+                [result addObject: url];
+            CFRelease(urlRef);
+        }
+		sflItemBeforeRef = sflItemRef;
+	}
+    
+	CFRelease(sflRef);
+    
+    if([result count] > 0) return result;
+    return 0;
+}
+
+static NSMutableArray *GetHardcodedFavorites()
+{
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:16];
+    
+    { // home dir
+        NSString *hd = RealHomeDirectory();
+        NSURL *url = [NSURL fileURLWithPath:hd isDirectory:true];
+        [result addObject:url];
+    }
+    
+    { // desktop
+        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask];
+        assert([paths count] > 0);
+        [result addObject:[paths objectAtIndex:0]];
+    }
+    
+    { // documents
+        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+        assert([paths count] > 0);
+        [result addObject:[paths objectAtIndex:0]];
+    }
+    
+    { // downloads
+        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask];
+        assert([paths count] > 0);
+        [result addObject:[paths objectAtIndex:0]];
+    }
+    
+    { // movies
+        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMoviesDirectory inDomains:NSUserDomainMask];
+        assert([paths count] > 0);
+        [result addObject:[paths objectAtIndex:0]];
+    }
+    
+    { // music
+        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMusicDirectory inDomains:NSUserDomainMask];
+        assert([paths count] > 0);
+        [result addObject:[paths objectAtIndex:0]];
+    }
+    
+    { // pictures
+        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSPicturesDirectory inDomains:NSUserDomainMask];
+        assert([paths count] > 0);
+        [result addObject:[paths objectAtIndex:0]];
+    }
+    
+    return result;
+}
+
 @implementation MainWndGoToButton
 {
-    NSMutableArray *m_UserDirs;
-    NSArray *m_Volumes;        // array of NSUrl
+    NSMutableArray  *m_UserDirs;       // array of NSUrls
+    NSArray         *m_Volumes;        // array of NSUrls
     std::vector<AdditionalPath> m_OtherPanelsPaths;
     
     NSString *m_CurrentPath;
@@ -83,49 +169,9 @@ struct AdditionalPath
     [self addItemWithTitle:@"Go to"];
     
     // grab user dir only in init, since they won't change
-    m_UserDirs = [NSMutableArray arrayWithCapacity:16];
-    
-    { // home dir
-        NSString *hd = RealHomeDirectory();
-        NSURL *url = [NSURL fileURLWithPath:hd isDirectory:true];
-        [m_UserDirs addObject:url];
-    }
-
-    { // desktop
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [m_UserDirs addObject:[paths objectAtIndex:0]];
-    }
-    
-    { // documents
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [m_UserDirs addObject:[paths objectAtIndex:0]];
-    }
-
-    { // downloads
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [m_UserDirs addObject:[paths objectAtIndex:0]];
-    }
-
-    { // movies
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMoviesDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [m_UserDirs addObject:[paths objectAtIndex:0]];
-    }
-
-    { // music
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMusicDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [m_UserDirs addObject:[paths objectAtIndex:0]];
-    }
-
-    { // pictures
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSPicturesDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [m_UserDirs addObject:[paths objectAtIndex:0]];
-    }
+    m_UserDirs = GetFindersFavorites();
+    if(m_UserDirs == NULL) // something bad happened, fallback to hardcoded version
+        m_UserDirs = GetHardcodedFavorites();
 }
 
 - (void) UpdateUrls

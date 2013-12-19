@@ -123,6 +123,26 @@ static NSMutableArray *GetHardcodedFavorites()
     return result;
 }
 
+static NSString *KeyEquivalentForUserDir(int _dir_ind)
+{
+    switch(_dir_ind) {
+        case  0: return @"1";
+        case  1: return @"2";
+        case  2: return @"3";
+        case  3: return @"4";
+        case  4: return @"5";
+        case  5: return @"6";
+        case  6: return @"7";
+        case  7: return @"8";
+        case  8: return @"9";
+        case  9: return @"0";
+        case 10: return @"-";
+        case 11: return @"=";
+        default: return @"";
+    }
+}
+
+
 @implementation MainWndGoToButton
 {
     NSMutableArray  *m_UserDirs;       // array of NSUrls
@@ -139,7 +159,20 @@ static NSMutableArray *GetHardcodedFavorites()
 {
     self = [super initWithFrame:frame];
     if (self) {        
-        [self awakeFromNib];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(WillPopUp:)
+                                                     name:@"NSPopUpButtonWillPopUpNotification"
+                                                   object:self];
+        
+        [self setBezelStyle:NSTexturedRoundedBezelStyle];
+        [self setPullsDown:true];
+        [self setRefusesFirstResponder:true];
+        [self addItemWithTitle:@"Go to"];
+        
+        // grab user dir only in init, since they won't change (we presume so - if not then user has to close/open Files window)
+        m_UserDirs = GetFindersFavorites();
+        if(m_UserDirs == NULL) // something bad happened, fallback to hardcoded version
+            m_UserDirs = GetHardcodedFavorites(); // (not sure if this will be ever called)
     }
     
     return self;
@@ -153,25 +186,6 @@ static NSMutableArray *GetHardcodedFavorites()
 - (void) SetOwner:(MainWindowFilePanelState*) _owner
 {
     m_Owner = _owner;
-}
-
-- (void)awakeFromNib
-{
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(WillPopUp:)
-     name:@"NSPopUpButtonWillPopUpNotification"
-     object:self];
-
-    [self setBezelStyle:NSTexturedRoundedBezelStyle];
-    [self setPullsDown:true];
-    [self setRefusesFirstResponder:true];
-    [self addItemWithTitle:@"Go to"];
-    
-    // grab user dir only in init, since they won't change
-    m_UserDirs = GetFindersFavorites();
-    if(m_UserDirs == NULL) // something bad happened, fallback to hardcoded version
-        m_UserDirs = GetHardcodedFavorites();
 }
 
 - (void) UpdateUrls
@@ -295,23 +309,8 @@ static NSMutableArray *GetHardcodedFavorites()
             }
         }
 
-        if(userdir_ind <= 11) {
-            switch(userdir_ind) { // BAD, UGLY CODE!
-                case  0: [last setKeyEquivalent:@"1"]; break;
-                case  1: [last setKeyEquivalent:@"2"]; break;
-                case  2: [last setKeyEquivalent:@"3"]; break;
-                case  3: [last setKeyEquivalent:@"4"]; break;
-                case  4: [last setKeyEquivalent:@"5"]; break;
-                case  5: [last setKeyEquivalent:@"6"]; break;
-                case  6: [last setKeyEquivalent:@"7"]; break;
-                case  7: [last setKeyEquivalent:@"8"]; break;
-                case  8: [last setKeyEquivalent:@"9"]; break;
-                case  9: [last setKeyEquivalent:@"0"]; break;
-                case 10: [last setKeyEquivalent:@"-"]; break;
-                case 11: [last setKeyEquivalent:@"="]; break;
-            }
-            [[self lastItem] setKeyEquivalentModifierMask:0];
-        }
+        [last setKeyEquivalent:KeyEquivalentForUserDir(userdir_ind)];
+        [last setKeyEquivalentModifierMask:0];
         ++userdir_ind;
     }
 

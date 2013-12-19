@@ -509,8 +509,10 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         
         if(!IsPathWithTrailingSlash(asked))
             strcat(asked, "/");
-        
-        if(strcmp(asked, current) == 0) // will return false on the same path written other way (case insensitivity issues), but that's ok
+
+        // will return false on the same path written other way (case insensitivity issues), but that's ok
+        if(strcmp(asked, current) == 0 &&
+            m_Data->Host() != 0) /* special case for initialization process*/
             return;
     }
     
@@ -540,7 +542,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         if(!IsPathWithTrailingSlash(asked))
             strcat(asked, "/");
         
-        if(strcmp(asked, current) == 0) // will return false on the same path written other way (case insensitivity issues), but that's ok
+        // will return false on the same path written other way (case insensitivity issues), but that's ok
+        if(strcmp(asked, current) == 0 &&
+           m_Data->Host() != 0) /* special case for initialization process*/
             return 0;
     }
     

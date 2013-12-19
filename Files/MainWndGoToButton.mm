@@ -161,7 +161,7 @@ static NSMutableArray *GetHardcodedFavorites()
      addObserver:self
      selector:@selector(WillPopUp:)
      name:@"NSPopUpButtonWillPopUpNotification"
-     object:nil];
+     object:self];
 
     [self setBezelStyle:NSTexturedRoundedBezelStyle];
     [self setPullsDown:true];
@@ -255,7 +255,7 @@ static NSMutableArray *GetHardcodedFavorites()
 }
 
 - (void) WillPopUp:(NSNotification *) notification
-{
+{    
     [self UpdateUrls];
     [self UpdateOtherPanelPaths];
     
@@ -267,6 +267,7 @@ static NSMutableArray *GetHardcodedFavorites()
     size_t common_path_max = 0;
     NSMenuItem *common_item = nil;
 
+    int userdir_ind = 0;
     for (NSURL *url in m_UserDirs)
     {
         NSError *error;
@@ -274,12 +275,14 @@ static NSMutableArray *GetHardcodedFavorites()
         [url getResourceValue:&name forKey:NSURLLocalizedNameKey error:&error];
         [self addItemWithTitle:name];
         
+        NSMenuItem *last = [self lastItem];
+        
         NSImage *img;
         [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error];
         if(img != nil)
         {
             [img setSize:NSMakeSize(icon_size, icon_size)];
-            [[self lastItem] setImage:img];
+            [last setImage:img];
         }
         
         if(m_CurrentPath != nil)
@@ -290,7 +293,26 @@ static NSMutableArray *GetHardcodedFavorites()
                 common_path_max = n;
                 common_item = [self itemWithTitle:name];
             }
-        }        
+        }
+
+        if(userdir_ind <= 11) {
+            switch(userdir_ind) { // BAD, UGLY CODE!
+                case  0: [last setKeyEquivalent:@"1"]; break;
+                case  1: [last setKeyEquivalent:@"2"]; break;
+                case  2: [last setKeyEquivalent:@"3"]; break;
+                case  3: [last setKeyEquivalent:@"4"]; break;
+                case  4: [last setKeyEquivalent:@"5"]; break;
+                case  5: [last setKeyEquivalent:@"6"]; break;
+                case  6: [last setKeyEquivalent:@"7"]; break;
+                case  7: [last setKeyEquivalent:@"8"]; break;
+                case  8: [last setKeyEquivalent:@"9"]; break;
+                case  9: [last setKeyEquivalent:@"0"]; break;
+                case 10: [last setKeyEquivalent:@"-"]; break;
+                case 11: [last setKeyEquivalent:@"="]; break;
+            }
+            [[self lastItem] setKeyEquivalentModifierMask:0];
+        }
+        ++userdir_ind;
     }
 
     [[self menu] addItem:[NSMenuItem separatorItem]];
@@ -330,11 +352,19 @@ static NSMutableArray *GetHardcodedFavorites()
     
     if(common_item != nil)
         [common_item setState:NSOnState];
+    
+    [[self menu] setDelegate:self];
 }
 
 - (void) SetCurrentPath: (const char*)_path
 {
     m_CurrentPath = [NSString stringWithUTF8String:_path];
+}
+
+- (void)menuDidClose:(NSMenu *)menu
+{
+    for(NSMenuItem* i in [[self menu] itemArray])
+        [i setKeyEquivalent:@""];
 }
 
 @end

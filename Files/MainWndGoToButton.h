@@ -10,7 +10,7 @@
 
 @class MainWindowFilePanelState;
 
-@interface MainWndGoToButton : NSPopUpButton
+@interface MainWndGoToButton : NSPopUpButton<NSMenuDelegate>
 
 - (NSString*) GetCurrentSelectionPath;
 - (void) SetCurrentPath: (const char*)_path;

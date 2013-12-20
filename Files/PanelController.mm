@@ -299,6 +299,16 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     return show_dot_dot ? 0 : VFSHost::F_NoDotDot;
 }
 
+- (void) GoToRelativeToHostAsync:(const char*) _path
+{
+    [self GoToRelativeToHostAsync:_path select_entry:0];
+}
+
+- (void) GoToGlobalHostsPathAsync:(const char*) _path
+{
+    [self GoToGlobalHostsPathAsync:_path select_entry:0];
+}
+
 - (int) GoToRelativeSync:(const char*) _path
                 WithHosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>)_hosts
               SelectEntry:(const char*) _entry_name
@@ -797,8 +807,11 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
     NSUInteger const modif       = [event modifierFlags];
 
-    if(ISMODIFIER(NSAlternateKeyMask) || ISMODIFIER(NSAlternateKeyMask|NSAlphaShiftKeyMask))
+    bool fast_search_handling = false;
+    if(ISMODIFIER(NSAlternateKeyMask) || ISMODIFIER(NSAlternateKeyMask|NSAlphaShiftKeyMask)) {
         [self HandleFastSearch:character];
+        fast_search_handling = true;
+    }
     
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
     
@@ -843,6 +856,10 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             m_QuickLook = nil;
             return true;
     }
+    
+    if(fast_search_handling)
+        return true;
+    
     return false;
 }
 

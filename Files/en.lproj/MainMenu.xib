@@ -230,8 +230,8 @@ DQ
                                     <action selector="OnBriefSystemOverviewCommand:" target="-1" id="zCw-xj-KAA"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Detailed Volume Information" keyEquivalent="l" id="826">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                            <menuItem title="Detailed Volume Information" id="826">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnDetailedVolumeInformation:" target="-1" id="828"/>
                                 </connections>
@@ -357,6 +357,43 @@ CA
                                         </menuItem>
                                     </items>
                                 </menu>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Go" id="7Mz-pE-ca5">
+                    <menu key="submenu" title="Go" id="01c-vh-In9">
+                        <items>
+                            <menuItem title="Documents" keyEquivalent="O" id="jYE-RA-K1O">
+                                <connections>
+                                    <action selector="OnGoToDocuments:" target="-1" id="PSI-qR-ujI"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Desktop" keyEquivalent="D" id="dJC-Rr-wZM">
+                                <connections>
+                                    <action selector="OnGoToDesktop:" target="-1" id="GdR-aF-EaR"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Downloads" keyEquivalent="l" id="gwr-gJ-MAM">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="OnGoToDownloads:" target="-1" id="drk-kr-AQQ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Home" keyEquivalent="H" id="iGm-8g-qdX">
+                                <connections>
+                                    <action selector="OnGoToHome:" target="-1" id="4ze-4F-PpV"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Applications" keyEquivalent="A" id="9db-hP-IrI">
+                                <connections>
+                                    <action selector="OnGoToApplications:" target="-1" id="rLP-Aq-5iY"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Utilities" keyEquivalent="U" id="BTy-M2-2G2">
+                                <connections>
+                                    <action selector="OnGoToUtilities:" target="-1" id="k7t-uR-adI"/>
+                                </connections>
                             </menuItem>
                         </items>
                     </menu>
@@ -545,13 +582,16 @@ CA
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="491">
                         <items>
-                            <menuItem title="Files Help" keyEquivalent="?" id="492">
+                            <menuItem title="Files Help" keyEquivalent="?" id="iBP-LD-aNS">
                                 <connections>
-                                    <action selector="showHelp:" target="-1" id="493"/>
+                                    <action selector="showHelp:" target="-1" id="kD5-TK-crO"/>
                                 </connections>
                             </menuItem>
                         </items>
                     </menu>
+                </menuItem>
+                <menuItem title="Help" id="9Iz-2J-FE9">
+                    <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
             </items>
         </menu>

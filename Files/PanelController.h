@@ -131,6 +131,8 @@
 // MAIN NAVIGATION METHODS ////////////////////////////////////////////
 - (void) GoToRelativeToHostAsync:(const char*) _path select_entry:(const char*) _entry; // _entry may be NULL
 - (void) GoToGlobalHostsPathAsync:(const char*) _path select_entry:(const char*) _entry; // _entry may be NULL
+- (void) GoToRelativeToHostAsync:(const char*) _path;
+- (void) GoToGlobalHostsPathAsync:(const char*) _path;
 - (int)  GoToRelativeToHostSync:(const char*) _path;
 - (int)  GoToGlobalHostsPathSync:(const char*) _path;
 - (void) GoToUpperDirectoryAsync;

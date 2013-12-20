@@ -16,7 +16,7 @@
 @class PanelFastSearchPopupViewController;
 @class BriefSystemOverview;
 
-@interface PanelController : NSViewController
+@interface PanelController : NSObject
 {
     PanelData *m_Data;
     PanelView *m_View;
@@ -33,21 +33,9 @@
     unsigned m_FastSearchOffset;
     PanelFastSearchPopupViewController *m_FastSearchPopupView;
     
-    // background directory size calculation support
-//    bool     m_IsStopDirectorySizeCounting; // flags current any other those tasks in queue that they need to stop
-//    bool     m_IsDirectorySizeCounting; // is background task currently working?
-//    dispatch_queue_t m_DirectorySizeCountingQ;
+    // background operations' queues
     SerialQueue m_DirectorySizeCountingQ;
-    
-    // background directory changing (loading) support
-//    bool     m_IsStopDirectoryLoading; // flags current any other those tasks in queue that they need to stop
-//    bool     m_IsDirectoryLoading; // is background task currently working?
-//    dispatch_queue_t m_DirectoryLoadingQ;
     SerialQueue m_DirectoryLoadingQ;
-    
-//    bool     m_IsStopDirectoryReLoading; // flags current any other those tasks in queue that they need to stop
-//    bool     m_IsDirectoryReLoading; // is background task currently working?
-//    dispatch_queue_t m_DirectoryReLoadingQ;
     SerialQueue m_DirectoryReLoadingQ;
     
     // spinning indicator support

@@ -48,31 +48,21 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 @implementation PanelController
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id) init
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
+    self = [super init];
+    if(self) {
         // Initialization code here.
         m_UpdatesObservationTicket = 0;
         m_FastSearchLastType = 0;
         m_FastSearchOffset = 0;
-//        m_IsStopDirectorySizeCounting = false;
-//        m_IsStopDirectoryLoading = false;
-//        m_IsStopDirectoryReLoading = false;
-//        m_IsDirectorySizeCounting = false;
         m_IsAnythingWorksInBackground = false;
-//        m_IsDirectoryLoading = false;
-//        m_IsDirectoryReLoading = false;
-//        m_DirectorySizeCountingQ = dispatch_queue_create("com.example.paneldirsizecounting", 0);
         m_DirectorySizeCountingQ = make_shared<SerialQueueT>("com.example.paneldirsizecounting");
-//        m_DirectoryLoadingQ = dispatch_queue_create("com.example.paneldirloading", 0);
         m_DirectoryLoadingQ = make_shared<SerialQueueT>("com.example.paneldirsizecounting");
-//        m_DirectoryReLoadingQ = dispatch_queue_create("com.example.paneldirreloading", 0);
         m_DirectoryReLoadingQ = make_shared<SerialQueueT>("com.example.paneldirreloading");
         m_DelayedSelection.isvalid = false;
         
         m_HostsStack.push_back( VFSNativeHost::SharedHost() );
-
         
         __weak PanelController* weakself = self;
         auto on_change = ^{
@@ -80,23 +70,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 [weakself UpdateSpinningIndicator];
             });
         };
-        
         m_DirectorySizeCountingQ->OnChange(on_change);
         m_DirectoryReLoadingQ->OnChange(on_change);
         m_DirectoryLoadingQ->OnChange(on_change);
     }
 
     return self;
-}
-
-- (void) dealloc
-{
-//    if(m_DirectorySizeCountingQ)
-//        dispatch_release(m_DirectorySizeCountingQ);
-//    if(m_DirectoryLoadingQ)
-//        dispatch_release(m_DirectoryLoadingQ);
-//    if(m_DirectoryReLoadingQ)
-//        dispatch_release(m_DirectoryReLoadingQ);
 }
 
 // without calling SetData:0 PanelController may not dealloc and crash later because of hanging obverve handlers
@@ -120,7 +99,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void) SetView:(PanelView*)_view
 {
     m_View = _view;
-    [self setView:_view]; // do we need it?
 }
 
 - (void) LoadViewState:(NSDictionary *)_state
@@ -274,14 +252,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         m_UpdatesObservationHost = m_HostsStack.back();
 }
 
-/*- (void) FlushStopFlags
-{
-    m_IsStopDirectorySizeCounting = true;
-    m_IsStopDirectoryLoading = true;
-//    m_IsStopDirectoryReLoading = true;
-//    m_DirectoryReLoadingQ->Stop();
-}*/
-
 - (void) GoToRelativeToHostAsync:(const char*) _path select_entry:(const char*) _entry
 {
     [self GoToRelativeAsync:_path
@@ -329,8 +299,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 WithHosts:(shared_ptr<vector<shared_ptr<VFSHost>>>)_hosts
               SelectEntry:(const char*) _entry_name
 {
-//    if(m_IsDirectoryLoading)
-//        m_IsStopDirectoryLoading = true;
     m_DirectoryLoadingQ->Stop();
     m_DirectoryLoadingQ->Wait();
 
@@ -401,21 +369,15 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                SelectEntry:(const char*) _entry_name
 {
     string path = string(_path);
-    
     string entryname = string(_entry_name ? _entry_name : "");
     
-//    if(m_IsDirectoryLoading)
-//    m_IsStopDirectoryLoading = true;
-    [self CancelBackgroundOperations];
-    m_DirectoryLoadingQ->Wait(); // check me!
+    // DOUBLE CHECK THIS LINES BELOW!
+    if(!m_DirectoryLoadingQ->Empty())
+        return;
+//    [self CancelBackgroundOperations];
+//    m_DirectoryLoadingQ->Wait(); // check me!
     
-//    if(m_IsStopDirectoryLoading)
-//    dispatch_async(m_DirectoryLoadingQ, ^{ m_IsStopDirectoryLoading = false; } );
-    
-//    dispatch_async(m_DirectoryLoadingQ, ^{
     m_DirectoryLoadingQ->Run(^(SerialQueue _q) {
-//        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:true];});
-        
         // 1st - try to use last host with this path
         if(_hosts->back()->IsDirectory(path.c_str(), 0, 0))
         { // easy - just go there
@@ -695,8 +657,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 }
 
 - (void) RefreshDirectory
-{ // going async here
-    
+{
+    // going async here
     if(!m_DirectoryLoadingQ->Empty())
         return; //reducing overhead
     
@@ -704,22 +666,11 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     m_Data->GetDirectoryPathWithTrailingSlash(dirpathbuf);
     string dirpath(dirpathbuf);
     
-//    if(m_IsStopDirectoryReLoading)
-//        dispatch_async(m_DirectoryReLoadingQ, ^{ m_IsStopDirectoryReLoading = false; } );
-//    dispatch_async(m_DirectoryReLoadingQ, ^{
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
-//        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryReLoading:true];});
-    
         shared_ptr<VFSListing> listing;
-        int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(),
-                                                             &listing,
-                                                             self.FetchFlags,
-//                                                             ^{/*return m_IsStopDirectoryReLoading;*/ return false;}
-                                                             ^{ return _q->IsStopped(); }
-                                                             );
+        int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(),&listing, self.FetchFlags, ^{ return _q->IsStopped(); });
         if(ret >= 0)
         {
-//            m_IsStopDirectoryReLoading = true;
             dispatch_async(dispatch_get_main_queue(), ^{
                 int oldcursorpos = [m_View GetCursorPosition];
                 string oldcursorname;
@@ -754,8 +705,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 [self RecoverFromInvalidDirectory];
             });
         }
-
-//        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryReLoading:false];});
     });
 }
 
@@ -940,10 +889,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files InDir:(const char*)_dir IsDotDot:(bool)_isdotdot
 {    
     string str(_dir);
-//    dispatch_async(m_DirectorySizeCountingQ, ^{
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
-//        m_IsStopDirectorySizeCounting = false;
-//        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:true];});
         // TODO: lock panel data?
         // guess it's better to move the following line into main thread
         // it may be a race condition with possible UB here. BAD!
@@ -956,11 +902,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         };
 
         if(!_isdotdot)
-            m_HostsStack.back()->CalculateDirectoriesSizes(_files, str, ^bool { /*return m_IsStopDirectorySizeCounting;*/ return _q->IsStopped();  }, complet);
+            m_HostsStack.back()->CalculateDirectoriesSizes(_files, str, ^bool { return _q->IsStopped();  }, complet);
         else
-            m_HostsStack.back()->CalculateDirectoryDotDotSize(str, ^bool { /*return m_IsStopDirectorySizeCounting;*/ return _q->IsStopped(); }, complet);
-        
-//        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:false];});
+            m_HostsStack.back()->CalculateDirectoryDotDotSize(str, ^bool { return _q->IsStopped(); }, complet);
     });
 }
 
@@ -1004,41 +948,16 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     m_WindowController = _cntrl;
 }
 
-/*- (void) NotifyDirectorySizeCounting:(bool) _is_running // true if task will start now, or false if it has just stopped
-{
-    m_IsDirectorySizeCounting = _is_running;
-    [self UpdateSpinningIndicator];
-}*/
-
-/*- (void) NotifyDirectoryLoading:(bool) _is_running // true if task will start now, or false if it has just stopped
-{
-    m_IsDirectoryLoading = _is_running;
-    [self UpdateSpinningIndicator];
-}*/
-
-/*- (void) NotifyDirectoryReLoading:(bool) _is_running // true if task will start now, or false if it has just stopped
-{
-//    m_IsDirectoryReLoading = _is_running;
-    [self UpdateSpinningIndicator];
-}*/
-
 - (void) CancelBackgroundOperations
 {
-//    m_IsStopDirectorySizeCounting = true;
     m_DirectorySizeCountingQ->Stop();
-//    m_IsStopDirectoryLoading = true;
     m_DirectoryLoadingQ->Stop();
-//    m_IsStopDirectoryReLoading = true;
     m_DirectoryReLoadingQ->Stop();    
 }
 
 - (void) UpdateSpinningIndicator
 {
-    bool is_anything_working =
-//    m_IsDirectorySizeCounting ||
-    !m_DirectorySizeCountingQ->Empty() ||
-    !m_DirectoryLoadingQ->Empty() ||
-    /*m_IsDirectoryReLoading*/!m_DirectoryReLoadingQ->Empty();
+    bool is_anything_working = !m_DirectorySizeCountingQ->Empty() || !m_DirectoryLoadingQ->Empty() || !m_DirectoryReLoadingQ->Empty();
     const auto visual_spinning_delay = 100ull; // in 100 ms of workload should be before user will get spinning indicator
     
     if(is_anything_working == m_IsAnythingWorksInBackground)

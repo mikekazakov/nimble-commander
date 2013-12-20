@@ -21,7 +21,7 @@ static volatile int g_IsCurrentlySharing = 0;
 @implementation SharingService
 {
     bool                        m_DidShared;
-    std::vector<std::string>    m_TmpFilepaths;
+    vector<string>    m_TmpFilepaths;
 }
 
 - (id) init
@@ -57,7 +57,7 @@ static volatile int g_IsCurrentlySharing = 0;
 
 - (void) ShowItems:(FlexChainedStringsChunk*)_entries
              InDir:(const char*)_dir
-             InVFS:(std::shared_ptr<VFSHost>)_host
+             InVFS:(shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
             OfView:(NSView*)_view
      PreferredEdge:(NSRectEdge)_preferredEdge
@@ -95,7 +95,7 @@ static volatile int g_IsCurrentlySharing = 0;
     }
     else
     { // need to move selected entires to native fs now, so going async here
-        std::string dir = _dir;
+        string dir = _dir;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             for(auto &i:*_entries)
             {

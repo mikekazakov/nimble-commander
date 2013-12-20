@@ -12,6 +12,8 @@
 #include <vector>
 #include <sys/dirent.h>
 
+using namespace std;
+
 class FSEventsDirUpdate
 {
 public:
@@ -27,12 +29,12 @@ public:
 private:
     struct WatchData
     {
-        std::string path;        // should include trailing slash
-        std::string volume_path; // root path of volume from this path. without trailing slash (except root)
+        string path;        // should include trailing slash
+        string volume_path; // root path of volume from this path. without trailing slash (except root)
         FSEventStreamRef stream;
-        std::vector<std::pair<unsigned long, void (^)()> > handlers;
+        vector<pair<unsigned long, void (^)()> > handlers;
     };
-    std::vector<WatchData*> m_Watches;
+    vector<WatchData*> m_Watches;
     unsigned long           m_LastTicket;
         
     FSEventsDirUpdate();

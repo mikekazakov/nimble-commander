@@ -12,6 +12,8 @@
 #import "OperationJob.h"
 #import "OperationDialogController.h"
 
+using namespace std;
+
 static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 {
     if(_time < 60) // seconds
@@ -72,7 +74,7 @@ const int MaxDialogs = 2;
 {
     OperationJob *m_Job;
     id<OperationDialogProtocol> m_Dialogs[MaxDialogs];
-    std::vector<void(^)()> m_Handlers;
+    vector<void(^)()> m_Handlers;
 }
 
 - (void)setIsPaused:(BOOL)IsPaused

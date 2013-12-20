@@ -69,8 +69,8 @@ struct PanelSortMode
 class PanelData
 {
 public:
-//    typedef std::deque<DirectoryEntryInformation> DirEntryInfoT;
-    typedef std::vector<unsigned>                 DirSortIndT; // value in this array is an index for DirEntryInfoT
+//    typedef deque<DirectoryEntryInformation> DirEntryInfoT;
+    typedef vector<unsigned>                 DirSortIndT; // value in this array is an index for DirEntryInfoT
     
     PanelData();
     ~PanelData();
@@ -79,10 +79,10 @@ public:
     // PanelData is solely sync class - it does not give a fuck about concurrency,
     // any parallelism should be done by callers (i.e. controller)
     // just like Metallica:
-    void Load(std::shared_ptr<VFSListing> _listing);
-    void ReLoad(std::shared_ptr<VFSListing> _listing);
+    void Load(shared_ptr<VFSListing> _listing);
+    void ReLoad(shared_ptr<VFSListing> _listing);
 
-    std::shared_ptr<VFSHost> Host() const;
+    shared_ptr<VFSHost> Host() const;
     const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
     FlexChainedStringsChunk* StringsFromSelectedEntries() const;
@@ -145,11 +145,11 @@ private:
     void operator=(const PanelData&) = delete;
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
-    static void DoSort(const std::shared_ptr<VFSListing> _from, DirSortIndT *_to, PanelSortMode _mode);
+    static void DoSort(const shared_ptr<VFSListing> _from, DirSortIndT *_to, PanelSortMode _mode);
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-    std::shared_ptr<VFSListing>             m_Listing;
+    shared_ptr<VFSListing>             m_Listing;
 
     DirSortIndT                             *m_EntriesByRawName;   // sorted with raw strcmp comparison
     DirSortIndT                             *m_EntriesByHumanName; // sorted with human-reasonable literal sort

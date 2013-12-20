@@ -17,7 +17,7 @@ struct AppleDoubleEA;
 class VFSArchiveFile : public VFSFile
 {
 public:
-    VFSArchiveFile(const char* _relative_path, std::shared_ptr<VFSArchiveHost> _host);
+    VFSArchiveFile(const char* _relative_path, shared_ptr<VFSArchiveHost> _host);
     ~VFSArchiveFile();
     
     
@@ -37,8 +37,8 @@ private:
     size_t         m_EACount;
     struct archive *m_Arc;
     struct archive_entry *m_Entry;
-    std::shared_ptr<VFSFile> m_ArFile;
-    std::shared_ptr<VFSArchiveMediator> m_Mediator;
+    shared_ptr<VFSFile> m_ArFile;
+    shared_ptr<VFSArchiveMediator> m_Mediator;
     ssize_t m_Position;
     ssize_t m_Size;
     uint32_t m_UID;

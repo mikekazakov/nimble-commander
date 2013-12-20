@@ -110,8 +110,8 @@ struct OtherAttrs
     bool                              m_HasCommonBTime;
     bool                              m_HasDirectoryEntries;
     bool                              m_ProcessSubfolders;
-    std::vector<user_info>            m_SystemUsers;
-    std::vector<group_info>           m_SystemGroups;
+    vector<user_info>            m_SystemUsers;
+    vector<group_info>           m_SystemGroups;
     FlexChainedStringsChunk          *m_Files;
     char                              m_RootPath[MAXPATHLEN];
 
@@ -299,7 +299,7 @@ struct OtherAttrs
             m_SystemUsers.push_back(curr);
         }
     }
-    std::sort(m_SystemUsers.begin(), m_SystemUsers.end());
+    sort(m_SystemUsers.begin(), m_SystemUsers.end());
     
     {
         ODNode *root = [ODNode nodeWithSession:[ODSession defaultSession] name:@"/Local/Default" error:nil];
@@ -327,7 +327,7 @@ struct OtherAttrs
             m_SystemGroups.push_back(curr);
         }
     }
-    std::sort(m_SystemGroups.begin(), m_SystemGroups.end());
+    sort(m_SystemGroups.begin(), m_SystemGroups.end());
 }
 
 - (void)ShowSheet: (NSWindow *)_window selentries: (const PanelData*)_data handler: (FileSysEntryAttrSheetCompletionHandler) handler

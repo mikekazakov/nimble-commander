@@ -24,8 +24,8 @@ public:
 //    int OpenFile(const char *_path); // will include VFS later
 //    int OpenFile(const char *_path, int _window_size);
     // return VFS error codes
-    int OpenFile(std::shared_ptr<VFSFile> _file); // will include VFS later
-    int OpenFile(std::shared_ptr<VFSFile> _file, int _window_size);
+    int OpenFile(shared_ptr<VFSFile> _file); // will include VFS later
+    int OpenFile(shared_ptr<VFSFile> _file, int _window_size);
 
     int CloseFile();
     
@@ -48,7 +48,7 @@ private:
     
 //    int m_FD; // will be some more complex after VFS design
   //  size_t m_FileSize;
-    std::shared_ptr<VFSFile> m_File;
+    shared_ptr<VFSFile> m_File;
     bool m_ShouldClose;
     void *m_Window;
     size_t m_WindowSize;

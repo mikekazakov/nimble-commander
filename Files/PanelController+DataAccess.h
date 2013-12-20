@@ -38,6 +38,6 @@
 /**
  * Return current (topmost in vfs stack) VFS Host.
  */
-- (std::shared_ptr<VFSHost>) GetCurrentVFSHost;
+- (shared_ptr<VFSHost>) GetCurrentVFSHost;
 
 @end

@@ -86,7 +86,7 @@ FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
 
 void FileCopyOperationJobFromGeneric::Init(FlexChainedStringsChunk *_src_files, // passing ownage to Job
           const char *_src_root,               // dir in where files are located
-          std::shared_ptr<VFSHost> _src_host,  // src host to deal with
+          shared_ptr<VFSHost> _src_host,  // src host to deal with
           const char *_dest,                   // where to copy
           FileCopyOperationOptions* _opts,
           FileCopyOperation *_op
@@ -286,7 +286,7 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     // xattr processing
     if(m_Options.copy_xattrs)
     {
-        std::shared_ptr<VFSFile> src_file;
+        shared_ptr<VFSFile> src_file;
         if(m_SrcHost->CreateFile(_src, &src_file, 0) >= 0)
             if(src_file->Open(VFSFile::OF_Read || VFSFile::OF_ShLock) >= 0)
                 if(src_file->XAttrCount() > 0)
@@ -312,7 +312,7 @@ void FileCopyOperationJobFromGeneric::EraseXattrs(int _fd_in)
     }
 }
 
-void FileCopyOperationJobFromGeneric::CopyXattrsFn(std::shared_ptr<VFSFile> _file, const char *_fn_to)
+void FileCopyOperationJobFromGeneric::CopyXattrsFn(shared_ptr<VFSFile> _file, const char *_fn_to)
 {
     void *buf = m_Buffer1;
     size_t buf_sz = BUFFER_SIZE;
@@ -325,7 +325,7 @@ void FileCopyOperationJobFromGeneric::CopyXattrsFn(std::shared_ptr<VFSFile> _fil
     });
 }
 
-void FileCopyOperationJobFromGeneric::CopyXattrs(std::shared_ptr<VFSFile> _file, int _fd_to)
+void FileCopyOperationJobFromGeneric::CopyXattrs(shared_ptr<VFSFile> _file, int _fd_to)
 {
     void *buf = m_Buffer1;
     size_t buf_sz = BUFFER_SIZE;
@@ -341,7 +341,7 @@ void FileCopyOperationJobFromGeneric::CopyXattrs(std::shared_ptr<VFSFile> _file,
 bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_dest)
 {
     int ret, oldumask, destinationfd = -1, dstopenflags=0;
-    std::shared_ptr<VFSFile> src_file;
+    shared_ptr<VFSFile> src_file;
     struct stat src_stat_buffer, dst_stat_buffer;
     bool remember_choice = false, was_successful = false, unlink_on_stop = false, adjust_dst_time = true, erase_xattrs = false;
     unsigned long dest_sz_on_stop = 0, startwriteoff = 0;
@@ -538,7 +538,7 @@ dolseek: // find right position in destination file
         if(io_totalwrote == src_file->Size()) break;
         
         io_leftwrite = io_nread;
-        std::swap(readbuf, writebuf); // swap our work buffers - read buffer become write buffer and vice versa
+        swap(readbuf, writebuf); // swap our work buffers - read buffer become write buffer and vice versa
         
         // update statistics
         m_Stats.SetValue(m_TotalCopied);

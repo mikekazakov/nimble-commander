@@ -52,7 +52,7 @@ struct FileCopyOperationOptions
 // VFS->native copying
 - (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
                root:(const char*)_root
-            rootvfs:(std::shared_ptr<VFSHost>)_vfs
+            rootvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts;
 

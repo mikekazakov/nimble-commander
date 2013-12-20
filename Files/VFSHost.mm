@@ -10,7 +10,7 @@
 
 
 VFSHost::VFSHost(const char *_junction_path,
-                 std::shared_ptr<VFSHost> _parent):
+                 shared_ptr<VFSHost> _parent):
     m_JunctionPath(_junction_path),
     m_Parent(_parent)
 {
@@ -25,7 +25,7 @@ const char *VFSHost::FSTag() const
     return "";
 }
 
-std::shared_ptr<VFSHost> VFSHost::Parent() const
+shared_ptr<VFSHost> VFSHost::Parent() const
 {
     return m_Parent;    
 }
@@ -47,7 +47,7 @@ bool VFSHost::IsWriteableAtPath(const char *_dir) const
 
 int VFSHost::FetchDirectoryListing(
                                   const char *_path,
-                                  std::shared_ptr<VFSListing> *_target,
+                                  shared_ptr<VFSListing> *_target,
                                   int _flags,                                   
                                   bool (^_cancel_checker)()
                                   )
@@ -56,7 +56,7 @@ int VFSHost::FetchDirectoryListing(
 }
 
 int VFSHost::CreateFile(const char* _path,
-                       std::shared_ptr<VFSFile> *_target,
+                       shared_ptr<VFSFile> *_target,
                        bool (^_cancel_checker)())
 {
     return VFSError::NotSupported;
@@ -79,7 +79,7 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
 
 int VFSHost::CalculateDirectoriesSizes(
                                     FlexChainedStringsChunk *_dirs, // transfered ownership
-                                    const std::string &_root_path,
+                                    const string &_root_path,
                                     bool (^_cancel_checker)(),
                                     void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                     )
@@ -90,7 +90,7 @@ int VFSHost::CalculateDirectoriesSizes(
 
 
 int VFSHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upon completion
-                                         const std::string &_root_path, // relative to current host path
+                                         const string &_root_path, // relative to current host path
                                          bool (^_cancel_checker)(),
                                          void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                          )

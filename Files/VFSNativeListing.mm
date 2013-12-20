@@ -25,7 +25,7 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-VFSNativeListing::VFSNativeListing(const char *_path, std::shared_ptr<VFSNativeHost> _host):
+VFSNativeListing::VFSNativeListing(const char *_path, shared_ptr<VFSNativeHost> _host):
     VFSListing(_path, _host)
 {
     assert(sizeof(VFSNativeListingItem) == 128);

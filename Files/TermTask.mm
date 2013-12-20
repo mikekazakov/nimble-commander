@@ -447,7 +447,7 @@ void TermTask::Execute(const char *_short_fn, const char *_at)
     WriteChildInput(input, (int)strlen(input));
 }
 
-bool TermTask::GetChildrenList(std::vector<std::string> &_children)
+bool TermTask::GetChildrenList(vector<string> &_children)
 {
     if(m_State == StateInactive || m_State == StateDead || m_ShellPID < 0)
         return false;

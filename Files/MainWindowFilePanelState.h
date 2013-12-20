@@ -12,6 +12,8 @@
 #import "MainWindowStateProtocol.h"
 #import "FlexChainedStringsChunk.h"
 
+using namespace std;
+
 class PanelData;
 @class Operation;
 @class PanelView;
@@ -77,7 +79,7 @@ enum ActiveState
 - (void)PanelPathChanged:(PanelController*)_panel;
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 
-- (void)GetFilePanelsGlobalPaths:(std::vector<std::string> &)_paths;
+- (void)GetFilePanelsGlobalPaths:(vector<string> &)_paths;
 
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel;

@@ -11,6 +11,8 @@
 #include <vector>
 #include <string>
 
+using namespace std;
+
 class TermTask
 {
 public:
@@ -52,7 +54,7 @@ public:
     
     inline TermState State() const { return m_State; }
     inline const char* CWD() const { return m_CWD; }
-    bool GetChildrenList(std::vector<std::string> &_children); // return false immediately if State is Inactive or Dead
+    bool GetChildrenList(vector<string> &_children); // return false immediately if State is Inactive or Dead
     
     
     
@@ -71,7 +73,7 @@ private:
     volatile int m_MasterFD;
     volatile int m_ShellPID;
     int m_CwdPipe[2];
-    std::recursive_mutex m_Lock;         // will lock on WriteChildInput or on cleanup process
+    recursive_mutex m_Lock;         // will lock on WriteChildInput or on cleanup process
     volatile bool m_TemporarySuppressed; // will give no output until the next bash prompt will show m_RequestedCWD path
     int m_TermSX;
     int m_TermSY;    

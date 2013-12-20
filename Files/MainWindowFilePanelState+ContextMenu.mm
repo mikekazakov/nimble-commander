@@ -20,7 +20,7 @@
 
 struct OpenWithHandler
 {
-    std::string path;
+    string path;
     NSString *app_name;
     NSImage  *app_icon;
     NSString *app_version;
@@ -34,7 +34,7 @@ struct OpenWithHandler
     }
 };
 
-static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hndl)
+static bool ExposeOpenWithHandler(const string &_path, OpenWithHandler &_hndl)
 {
 //    static const double icon_size = [NSFont systemFontSize];
     static const double icon_size = 14; // hard-coding is bad, but line above gives 13., which looks worse
@@ -61,7 +61,7 @@ static bool ExposeOpenWithHandler(const std::string &_path, OpenWithHandler &_hn
     return true;
 }
 
-static inline FlexChainedStringsChunk *StringsFromVector(const std::vector<std::string> &_files)
+static inline FlexChainedStringsChunk *StringsFromVector(const vector<string> &_files)
 {
     FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate(), *files_it = files;
     for(auto &i:_files)
@@ -69,7 +69,7 @@ static inline FlexChainedStringsChunk *StringsFromVector(const std::vector<std::
     return files;
 }
 
-static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
+static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 {
     // _handlers should be already sorted here
     for(int i = 0; i < (int)_handlers.size() - 1;)
@@ -98,9 +98,9 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
 @interface MainWindowFilePanelContextMenu : NSMenu<NSMenuDelegate>
 
 
-- (id) initWithData:(const std::vector<const VFSListingItem*>&) _items
+- (id) initWithData:(const vector<const VFSListingItem*>&) _items
              OnPath:(const char*)_path
-                vfs:(std::shared_ptr<VFSHost>) _host
+                vfs:(shared_ptr<VFSHost>) _host
                 pos:(NSPoint)_pos
              inView:(NSView*)_in_view
             mainWnd:(MainWindowFilePanelState*)_wnd
@@ -113,13 +113,13 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
 
 @implementation MainWindowFilePanelContextMenu
 {
-    std::string                 m_DirPath;
-    std::shared_ptr<VFSHost>    m_Host;
+    string                 m_DirPath;
+    shared_ptr<VFSHost>    m_Host;
     NSPoint                     m_Pos;
     NSView                     *m_InView;
-    std::vector<std::string>    m_Items;
-    std::vector<OpenWithHandler> m_OpenWithHandlers;
-    std::string                 m_ItemsUTI;
+    vector<string>    m_Items;
+    vector<OpenWithHandler> m_OpenWithHandlers;
+    string                 m_ItemsUTI;
     MainWindowFilePanelState    *m_MainWnd;
     PanelController             *m_CurrentController;
     PanelController             *m_OppositeController;
@@ -130,9 +130,9 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     int                         m_FilesCount;
 }
 
-- (id) initWithData:(const std::vector<const VFSListingItem*>&) _items
+- (id) initWithData:(const vector<const VFSListingItem*>&) _items
              OnPath:(const char*)_path
-                vfs:(std::shared_ptr<VFSHost>) _host
+                vfs:(shared_ptr<VFSHost>) _host
                 pos:(NSPoint)_pos
              inView:(NSView*)_in_view
             mainWnd:(MainWindowFilePanelState*)_wnd
@@ -170,7 +170,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     return self;
 }
 
-- (void) Stuffing:(const std::vector<const VFSListingItem*>&) _items
+- (void) Stuffing:(const vector<const VFSListingItem*>&) _items
 {
     // cur_pnl_path should be the same as m_DirPath!!!
     char cur_pnl_path[MAXPATHLEN], opp_pnl_path[MAXPATHLEN];
@@ -193,7 +193,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
     //////////////////////////////////////////////////////////////////////
     // Open With... stuff
     {
-        std::list<LauchServicesHandlers> per_item_handlers;
+        list<LauchServicesHandlers> per_item_handlers;
         for(auto &i: _items)
         {
             per_item_handlers.push_back(LauchServicesHandlers());
@@ -229,7 +229,7 @@ static void PurgeDuplicateHandlers(std::vector<OpenWithHandler> &_handlers)
         }
         
         // sort them using it's user-friendly name
-        std::sort(m_OpenWithHandlers.begin(), m_OpenWithHandlers.end());
+        sort(m_OpenWithHandlers.begin(), m_OpenWithHandlers.end());
         
         // get rid of duplicates in handlers list
         PurgeDuplicateHandlers(m_OpenWithHandlers);
@@ -690,9 +690,9 @@ proceed:;
 
 @implementation MainWindowFilePanelState (ContextMenu)
 
-- (void) RequestContextMenuOn:(const std::vector<const VFSListingItem*>&) _items
+- (void) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
                          path:(const char*) _path
-                          vfs:(std::shared_ptr<VFSHost>) _host
+                          vfs:(shared_ptr<VFSHost>) _host
                        caller:(PanelController*) _caller
 {
     PanelController *current_cont = _caller;

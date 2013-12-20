@@ -631,9 +631,9 @@
     if([m_MainSplitView AnyCollapsed])
         return;
     
-    std::swap(m_LeftPanelView, m_RightPanelView);
-    std::swap(m_LeftPanelData, m_RightPanelData);
-    std::swap(m_LeftPanelController, m_RightPanelController);
+    swap(m_LeftPanelView, m_RightPanelView);
+    swap(m_LeftPanelData, m_RightPanelData);
+    swap(m_LeftPanelController, m_RightPanelController);
     if(m_ActiveState == StateLeftPanel) m_ActiveState = StateRightPanel;
     else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
     [m_MainSplitView SwapViews];
@@ -1459,7 +1459,7 @@
     if(!ns_filenames)
         return;
     
-    std::map<std::string, std::vector<std::string>> filenames; // root directory to containing filename maps
+    map<string, vector<string>> filenames; // root directory to containing filename maps
     for(NSString *ns_filename in ns_filenames)
     {
         // filenames are without trailing slashes for dirs here
@@ -1500,7 +1500,7 @@
     // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
 }
 
-- (void)GetFilePanelsGlobalPaths:(std::vector<std::string> &)_paths
+- (void)GetFilePanelsGlobalPaths:(vector<string> &)_paths
 {
     _paths.clear();
     char tmp[MAXPATHLEN*8];
@@ -1547,7 +1547,7 @@
     FlexChainedStringsChunk *files = [[self ActivePanelController] GetSelectedEntriesOrFocusedEntryWithoutDotDot];
     if(!files)
         return;
-    std::shared_ptr<VFSHost> srcvfs, dstvfs;
+    shared_ptr<VFSHost> srcvfs, dstvfs;
     char srcroot[MAXPATHLEN], dstroot[MAXPATHLEN];
     PanelController *target_pc;
     if([self ActivePanelController] == m_LeftPanelController) {

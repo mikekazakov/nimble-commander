@@ -42,11 +42,11 @@ const char *VFSNativeHost::FSTag() const
 }
 
 int VFSNativeHost::FetchDirectoryListing(const char *_path,
-                                         std::shared_ptr<VFSListing> *_target,
+                                         shared_ptr<VFSListing> *_target,
                                          int _flags,
                                          bool (^_cancel_checker)())
 {
-    auto listing = std::make_shared<VFSNativeListing>(_path, SharedPtr());
+    auto listing = make_shared<VFSNativeListing>(_path, SharedPtr());
     
     int result = listing->LoadListingData(_flags, _cancel_checker);
     if(result != VFSError::Ok)
@@ -61,22 +61,22 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
 }
 
 int VFSNativeHost::CreateFile(const char* _path,
-                       std::shared_ptr<VFSFile> *_target,
+                       shared_ptr<VFSFile> *_target,
                        bool (^_cancel_checker)())
 {
-    auto file = std::make_shared<VFSNativeFile>(_path, SharedPtr());
+    auto file = make_shared<VFSNativeFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     *_target = file;
     return VFSError::Ok;
 }
 
-std::shared_ptr<VFSNativeHost> VFSNativeHost::SharedHost()
+shared_ptr<VFSNativeHost> VFSNativeHost::SharedHost()
 {
     static dispatch_once_t once;
-    static std::shared_ptr<VFSNativeHost> host;
+    static shared_ptr<VFSNativeHost> host;
     dispatch_once(&once, ^{
-        host = std::make_shared<VFSNativeHost>();
+        host = make_shared<VFSNativeHost>();
     });
     return host;
 }
@@ -203,7 +203,7 @@ cleanup:
 
 int VFSNativeHost::CalculateDirectoriesSizes(
                                       FlexChainedStringsChunk *_dirs, // transfered ownership
-                                      const std::string &_root_path, // relative to current host path
+                                      const string &_root_path, // relative to current host path
                                       bool (^_cancel_checker)(),
                                       void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                       )
@@ -251,7 +251,7 @@ cleanup:
 }
 
 int VFSNativeHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upon completion
-                                         const std::string &_root_path, // relative to current host path
+                                         const string &_root_path, // relative to current host path
                                          bool (^_cancel)(),
                                          void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                          )

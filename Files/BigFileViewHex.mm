@@ -100,7 +100,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     double                m_FontDescent;
     double                m_FontLeading;
     double                m_LeftInset;
-    std::vector<TextLine> m_Lines;
+    vector<TextLine> m_Lines;
 }
 - (id) InitWithData:(BigFileViewDataBackend*) _data
              parent:(BigFileView*) _view;

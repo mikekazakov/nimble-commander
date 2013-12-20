@@ -5,6 +5,8 @@
 #include <vector>
 #import <CoreFoundation/CoreFoundation.h>
 
+using namespace std;
+
 // unsigned short is just UniChar. not to let rubbish inter headers
 
 #define ENCODING_INVALID                0x00000000
@@ -195,7 +197,7 @@ namespace encodings
     const char *NameFromEncoding(int _encoding);
     int EncodingFromName(const char* _name);
     
-    const std::vector< std::pair<int, CFStringRef> >& LiteralEncodingsList();
+    const vector< pair<int, CFStringRef> >& LiteralEncodingsList();
     
     int BytesForCodeUnit(int _encoding);
     void InterpretAsUnichar(

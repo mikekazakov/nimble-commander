@@ -28,7 +28,7 @@ static NSArray *MyDefaultsKeys()
 @implementation BigFileView
 {
     FileWindow     *m_File;
-    std::shared_ptr<BigFileViewDataBackend> m_Data;
+    shared_ptr<BigFileViewDataBackend> m_Data;
 
     CTFontRef       m_Font;
     CGColorRef      m_ForegroundColor;
@@ -226,7 +226,7 @@ static NSArray *MyDefaultsKeys()
     assert(_encoding != ENCODING_INVALID);
     
     m_File = _file;
-    m_Data = std::make_shared<BigFileViewDataBackend>(m_File, _encoding);
+    m_Data = make_shared<BigFileViewDataBackend>(m_File, _encoding);
     BigFileView* __weak weak_self = self;
     m_Data->SetOnDecoded(^{
         if(weak_self) {
@@ -517,12 +517,12 @@ static NSArray *MyDefaultsKeys()
         return;
     }
     
-    const uint32_t *offset = std::lower_bound(m_Data->UniCharToByteIndeces(),
+    const uint32_t *offset = lower_bound(m_Data->UniCharToByteIndeces(),
                                               m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(),
                                               start - window_pos);
     assert(offset < m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize());
     
-    const uint32_t *tail = std::lower_bound(m_Data->UniCharToByteIndeces(),
+    const uint32_t *tail = lower_bound(m_Data->UniCharToByteIndeces(),
                                             m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(),
                                             end - window_pos);
     assert(tail <= m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize());

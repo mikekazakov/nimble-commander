@@ -131,9 +131,9 @@ static int FileWindowSize()
     [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
 }
 
-- (bool) OpenFile: (const char*) _fn with_fs:(std::shared_ptr<VFSHost>) _host
+- (bool) OpenFile: (const char*) _fn with_fs:(shared_ptr<VFSHost>) _host
 {
-    std::shared_ptr<VFSFile> vfsfile;
+    shared_ptr<VFSFile> vfsfile;
     if(_host->CreateFile(_fn, &vfsfile, 0) < 0)
         return false;
 
@@ -141,7 +141,7 @@ static int FileWindowSize()
         return false;
     if(vfsfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
     {
-        vfsfile = std::make_shared<VFSSeqToRandomROWrapperFile>(vfsfile);
+        vfsfile = make_shared<VFSSeqToRandomROWrapperFile>(vfsfile);
         vfsfile->Open(VFSFile::OF_Read);
     }
     

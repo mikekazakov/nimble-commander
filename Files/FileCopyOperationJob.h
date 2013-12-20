@@ -103,9 +103,9 @@ private:
     __weak FileCopyOperation *m_Operation;
     FlexChainedStringsChunk *m_InitialItems;
     FlexChainedStringsChunk *m_ScannedItems, *m_ScannedItemsLast;
-    std::vector<uint8_t> m_ItemFlags;
-    std::vector<const FlexChainedStringsChunk::node *> m_FilesToDelete; // used for move work mode
-    std::vector<const FlexChainedStringsChunk::node *> m_DirsToDelete; // used for move work mode
+    vector<uint8_t> m_ItemFlags;
+    vector<const FlexChainedStringsChunk::node *> m_FilesToDelete; // used for move work mode
+    vector<const FlexChainedStringsChunk::node *> m_DirsToDelete; // used for move work mode
     const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;
     char m_SourceDirectory[MAXPATHLEN];
     char m_Destination[MAXPATHLEN];

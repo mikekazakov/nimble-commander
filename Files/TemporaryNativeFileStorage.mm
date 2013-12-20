@@ -93,7 +93,7 @@ bool TemporaryNativeFileStorage::GetSubDirForFilename(const char *_filename, cha
     char newdir[MAXPATHLEN];
     if(NewTempDir(newdir))
     {
-        std::string newdirs = newdir;
+        string newdirs = newdir;
         dispatch_sync(m_ControlQueue, ^{ m_SubDirs.push_back(newdirs); });
         strcat(newdir, _filename);
         strcpy(_full_path, newdir);
@@ -103,11 +103,11 @@ bool TemporaryNativeFileStorage::GetSubDirForFilename(const char *_filename, cha
 }
 
 bool TemporaryNativeFileStorage::CopySingleFile(const char* _vfs_filename,
-                                                std::shared_ptr<VFSHost> _host,
+                                                shared_ptr<VFSHost> _host,
                                                 char *_tmp_filename
                                                 )
 {
-    std::shared_ptr<VFSFile> vfs_file;
+    shared_ptr<VFSFile> vfs_file;
     if(_host->CreateFile(_vfs_filename, &vfs_file, 0) < 0)
         return false;
 

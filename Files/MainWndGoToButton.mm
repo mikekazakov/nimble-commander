@@ -47,7 +47,6 @@ static NSMutableArray *GetFindersFavorites()
     UInt32 seed;
     LSSharedFileListRef sflRef = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
     NSArray *list = (NSArray *)CFBridgingRelease(LSSharedFileListCopySnapshot(sflRef, &seed));
-	LSSharedFileListItemRef sflItemBeforeRef = (LSSharedFileListItemRef)kLSSharedFileListItemBeforeFirst;
     
 	for(NSObject *object in list) {
 		LSSharedFileListItemRef sflItemRef = (__bridge LSSharedFileListItemRef)object;
@@ -65,7 +64,6 @@ static NSMutableArray *GetFindersFavorites()
                 [result addObject: url];
             CFRelease(urlRef);
         }
-		sflItemBeforeRef = sflItemRef;
 	}
     
 	CFRelease(sflRef);
@@ -147,7 +145,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
 {
     NSMutableArray  *m_UserDirs;       // array of NSUrls
     NSArray         *m_Volumes;        // array of NSUrls
-    std::vector<AdditionalPath> m_OtherPanelsPaths;
+    vector<AdditionalPath> m_OtherPanelsPaths;
     
     NSString *m_CurrentPath;
 
@@ -204,7 +202,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     bool append = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu"];
     if(!append) return;
     
-    std::vector<std::string> current_paths;
+    vector<string> current_paths;
     [m_Owner GetFilePanelsGlobalPaths:current_paths];
     
     NSArray *main_wnd_controllers = [(AppDelegate*)[NSApp delegate] GetMainWindowControllers];
@@ -214,7 +212,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
         if(state == m_Owner)
             continue;
         
-        std::vector<std::string> paths;
+        vector<string> paths;
         [state GetFilePanelsGlobalPaths:paths];
     
         for(const auto& i: paths)

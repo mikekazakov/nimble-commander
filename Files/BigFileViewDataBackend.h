@@ -12,7 +12,7 @@
 
 // this class encapsulates working with file windows and decoding raw data into UniChars
 // BigFileViewDataBackend has no ownership on FileWindow, it should be released by caller's code
-class BigFileViewDataBackend : public std::enable_shared_from_this<BigFileViewDataBackend>
+class BigFileViewDataBackend : public enable_shared_from_this<BigFileViewDataBackend>
 {
 public:
     BigFileViewDataBackend(FileWindow *_fw, int _encoding);

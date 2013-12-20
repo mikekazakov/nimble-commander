@@ -11,7 +11,7 @@
 #import "VFSArchiveInternal.h"
 #import "Encodings.h"
 
-VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, std::shared_ptr<VFSArchiveHost> _host):
+VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, shared_ptr<VFSArchiveHost> _host):
     VFSListing(_path, _host)
 {
     size_t shift = (_flags & VFSHost::F_NoDotDot) ? 0 : 1;

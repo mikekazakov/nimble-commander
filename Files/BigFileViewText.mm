@@ -179,7 +179,7 @@ struct TextLine
     double                      m_FontWidth;
     double                      m_LeftInset;
     CFMutableAttributedStringRef m_AttrString;
-    std::vector<TextLine>        m_Lines;
+    vector<TextLine>        m_Lines;
     unsigned                     m_VerticalOffset; // offset in lines number within text lines
     unsigned                     m_HorizontalOffset; // offset in characters from the left window edge
     

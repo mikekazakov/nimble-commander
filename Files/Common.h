@@ -10,6 +10,8 @@
 #include <string>
 #include "path_manip.h"
 
+using namespace std;
+
 
 struct DialogResult
 {
@@ -68,7 +70,7 @@ void SyncMessageBoxNS(NSString *_ns_string);
 
 extern uint64_t (*GetTimeInNanoseconds)();
 
-inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const std::string &_s)
+inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s)
 {
     return CFStringCreateWithBytesNoCopy(0,
                                          (UInt8*)_s.c_str(),
@@ -132,7 +134,7 @@ struct MachTimeBenchmark
 
 @interface NSString(PerformanceAdditions)
 + (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString;
-+ (instancetype)stringWithUTF8StdStringNoCopy:(const std::string&)stdstring;
++ (instancetype)stringWithUTF8StdStringNoCopy:(const string&)stdstring;
 + (instancetype)stringWithCharactersNoCopy:(const unichar *)characters length:(NSUInteger)length;
 @end
 

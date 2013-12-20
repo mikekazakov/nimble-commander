@@ -33,7 +33,7 @@ static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char* _p
     return ret == _md_s;
 }
 
-static bool WriteEAsIfAny(std::shared_ptr<VFSFile> _src, struct archive *_a, const char *_source_fn)
+static bool WriteEAsIfAny(shared_ptr<VFSFile> _src, struct archive *_a, const char *_source_fn)
 {
     assert(!IsPathWithTrailingSlash(_source_fn));
     
@@ -75,9 +75,9 @@ FileCompressOperationJob::~FileCompressOperationJob()
 
 void FileCompressOperationJob::Init(FlexChainedStringsChunk* _src_files,
           const char*_src_root,
-          std::shared_ptr<VFSHost> _src_vfs,
+          shared_ptr<VFSHost> _src_vfs,
           const char* _dst_root,
-          std::shared_ptr<VFSHost> _dst_vfs,
+          shared_ptr<VFSHost> _dst_vfs,
           FileCompressOperation *_operation)
 {
     m_InitialItems = _src_files;
@@ -285,7 +285,7 @@ void FileCompressOperationJob::ProcessItem(const FlexChainedStringsChunk::node *
             entry = 0;
             
             // metadata
-            std::shared_ptr<VFSFile> src_file;
+            shared_ptr<VFSFile> src_file;
             m_SrcVFS->CreateFile(sourcepath, &src_file, 0);
             if(src_file->Open(VFSFile::OF_Read) >= 0) {
                 itemname[strlen(itemname)-1] = 0; // our paths extracting routine don't works with paths like /Dir/
@@ -307,7 +307,7 @@ void FileCompressOperationJob::ProcessItem(const FlexChainedStringsChunk::node *
         retry_stat_file:;
         if((stat_ret = m_SrcVFS->Stat(sourcepath, st, 0, 0)) == 0) {
             
-            std::shared_ptr<VFSFile> src_file;
+            shared_ptr<VFSFile> src_file;
             m_SrcVFS->CreateFile(sourcepath, &src_file, 0);
             retry_open_file:;
             if( (open_file_ret = src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock)) == 0) {

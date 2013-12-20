@@ -269,14 +269,14 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void) GoToRelativeToHostAsync:(const char*) _path select_entry:(const char*) _entry
 {
     [self GoToRelativeAsync:_path
-                  WithHosts:std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack)
+                  WithHosts:make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack)
                 SelectEntry:_entry];
 }
 
 - (int) GoToRelativeToHostSync:(const char*) _path
 {
     return [self GoToRelativeSync:_path
-                        WithHosts:std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack)
+                        WithHosts:make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack)
                       SelectEntry:0];
 }
 
@@ -310,7 +310,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 }
 
 - (int) GoToRelativeSync:(const char*) _path
-                WithHosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>)_hosts
+                WithHosts:(shared_ptr<vector<shared_ptr<VFSHost>>>)_hosts
               SelectEntry:(const char*) _entry_name
 {
     if(m_IsDirectoryLoading)
@@ -319,7 +319,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     // 1st - try to use last host with this path
     if(_hosts->back()->IsDirectory(_path, 0, 0))
     { // easy - just go there
-        std::shared_ptr<VFSListing> listing;
+        shared_ptr<VFSListing> listing;
         int ret = _hosts->back()->FetchDirectoryListing(_path, &listing, self.FetchFlags, 0);
         if(ret >= 0)
         {
@@ -351,13 +351,13 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             if(!_hosts->back()->IsDirectory(valid_path, 0, 0))
             {
                 // TODO: support for different VFS
-                std::shared_ptr<VFSArchiveHost> arhost = std::make_shared<VFSArchiveHost>(valid_path, _hosts->back());
+                shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(valid_path, _hosts->back());
                 if(arhost->Open() >= 0)
                 {
                     strcpy(path_buf, path_buf + strlen(valid_path));
                     if(arhost->IsDirectory(path_buf, 0, 0))
                     { // yeah, going here!
-                        std::shared_ptr<VFSListing> listing;
+                        shared_ptr<VFSListing> listing;
                         int ret = arhost->FetchDirectoryListing(path_buf, &listing, self.FetchFlags, 0);
                         if(ret >= 0)
                         {
@@ -379,12 +379,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 }
 
 - (void) GoToRelativeAsync:(const char*) _path
-                 WithHosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>)_hosts
+                 WithHosts:(shared_ptr<vector<shared_ptr<VFSHost>>>)_hosts
                SelectEntry:(const char*) _entry_name
 {
-    std::string path = std::string(_path);
+    string path = string(_path);
     
-    std::string entryname = std::string(_entry_name ? _entry_name : "");
+    string entryname = string(_entry_name ? _entry_name : "");
     
 //    if(m_IsDirectoryLoading)
 //    m_IsStopDirectoryLoading = true;
@@ -399,7 +399,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         // 1st - try to use last host with this path
         if(_hosts->back()->IsDirectory(path.c_str(), 0, 0))
         { // easy - just go there
-            std::shared_ptr<VFSListing> listing;
+            shared_ptr<VFSListing> listing;
             int ret = _hosts->back()->FetchDirectoryListing(path.c_str(), &listing, self.FetchFlags, ^{return m_IsStopDirectoryLoading;});
             if(ret >= 0)
             {
@@ -442,13 +442,13 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 if(!_hosts->back()->IsDirectory(valid_path, 0, 0))
                 {
                     // TODO: support for different VFS
-                    std::shared_ptr<VFSArchiveHost> arhost = std::make_shared<VFSArchiveHost>(valid_path, _hosts->back());
+                    shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(valid_path, _hosts->back());
                     if(arhost->Open() >= 0)
                     {
                         strcpy(path_buf, path_buf + strlen(valid_path));
                         if(arhost->IsDirectory(path_buf, 0, 0))
                         { // yeah, going here!
-                            std::shared_ptr<VFSListing> listing;
+                            shared_ptr<VFSListing> listing;
                             int ret = arhost->FetchDirectoryListing(path_buf, &listing, self.FetchFlags, ^{return m_IsStopDirectoryLoading;});
                             if(ret >= 0)
                             {
@@ -471,14 +471,14 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     });
 }
 
-- (bool) GetCommonHostsStackForPath:(const char*) _path rest:(char*) _rest hosts:(std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>>&) _hosts
+- (bool) GetCommonHostsStackForPath:(const char*) _path rest:(char*) _rest hosts:(shared_ptr<vector<shared_ptr<VFSHost>>>&) _hosts
 {
     // no blocking ops here, can call from main thread
     // TODO later: here we assume that top-level host should began with '', but networks vfs will operate with other format
     if(m_HostsStack.empty()) return false;
     assert( strcmp(m_HostsStack[0]->JunctionPath(), "") == 0 );
     
-    std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> hosts = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>();
+    shared_ptr<vector<shared_ptr<VFSHost>>> hosts = make_shared<vector<shared_ptr<VFSHost>>>();
 
     int hn = 0;
     char rest[MAXPATHLEN*8];
@@ -527,14 +527,14 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     }
     
     char rest[MAXPATHLEN*8];
-    std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> stack;
+    shared_ptr<vector<shared_ptr<VFSHost>>> stack;
     if([self GetCommonHostsStackForPath:_path rest:rest hosts:stack])
     {
         [self GoToRelativeAsync:rest WithHosts:stack SelectEntry:_entry];
     }
     else
     {
-        stack = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>();
+        stack = make_shared<vector<shared_ptr<VFSHost>>>();
         stack->push_back(VFSNativeHost::SharedHost());
         [self GoToRelativeAsync:_path WithHosts:stack SelectEntry:_entry];
     }
@@ -559,14 +559,14 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     }
     
     char rest[MAXPATHLEN*8];
-    std::shared_ptr<std::vector<std::shared_ptr<VFSHost>>> stack;
+    shared_ptr<vector<shared_ptr<VFSHost>>> stack;
     if([self GetCommonHostsStackForPath:_path rest:rest hosts:stack])
     {
         return [self GoToRelativeSync:rest WithHosts:stack SelectEntry:0];
     }
     else
     {
-        stack = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>();
+        stack = make_shared<vector<shared_ptr<VFSHost>>>();
         stack->push_back(VFSNativeHost::SharedHost());
         return [self GoToRelativeSync:_path WithHosts:stack SelectEntry:0];
     }
@@ -610,9 +610,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         {
             char pathbuf[__DARWIN_MAXPATHLEN];
             m_Data->ComposeFullPathForEntry(raw_pos, pathbuf);
-//            std::string path = std::string(pathbuf);
+//            string path = string(pathbuf);
         
-            std::string curdirname("");
+            string curdirname("");
             if(entry.IsDotDot())
             { // go to parent directory
                 char curdirnamebuf[__DARWIN_MAXPATHLEN];
@@ -621,7 +621,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             }
             
             [self GoToRelativeAsync:pathbuf
-                          WithHosts:std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack)
+                          WithHosts:make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack)
                         SelectEntry:curdirname.c_str()
              ];
             return;
@@ -639,7 +639,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 *(strrchr(junct, '/')+1) = 0;
             strcpy(directory_path, junct);
             
-            auto hosts = std::make_shared<std::vector<std::shared_ptr<VFSHost>>>(m_HostsStack);
+            auto hosts = make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack);
             hosts->pop_back();
             
             [self GoToRelativeAsync:directory_path WithHosts:hosts SelectEntry:junct_entry];
@@ -651,7 +651,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     { // VFS stuff here
         char pathbuf[__DARWIN_MAXPATHLEN];
         m_Data->ComposeFullPathForEntry(raw_pos, pathbuf);
-        std::shared_ptr<VFSArchiveHost> arhost = std::make_shared<VFSArchiveHost>(pathbuf, m_HostsStack.back());
+        shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(pathbuf, m_HostsStack.back());
         if(arhost->Open() >= 0)
         {
             m_HostsStack.push_back(arhost);
@@ -682,21 +682,21 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     
     char dirpathbuf[MAXPATHLEN];
     m_Data->GetDirectoryPathWithTrailingSlash(dirpathbuf);
-    std::string dirpath(dirpathbuf);
+    string dirpath(dirpathbuf);
     
     if(m_IsStopDirectoryReLoading)
         dispatch_async(m_DirectoryReLoadingQ, ^{ m_IsStopDirectoryReLoading = false; } );
     dispatch_async(m_DirectoryReLoadingQ, ^{
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryReLoading:true];});
     
-        std::shared_ptr<VFSListing> listing;
+        shared_ptr<VFSListing> listing;
         int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(), &listing, self.FetchFlags, ^{return m_IsStopDirectoryReLoading;});
         if(ret >= 0)
         {
             m_IsStopDirectoryReLoading = true;
             dispatch_async(dispatch_get_main_queue(), ^{
                 int oldcursorpos = [m_View GetCursorPosition];
-                std::string oldcursorname;
+                string oldcursorname;
                 if(oldcursorpos >= 0 && [m_View CurrentItem] != 0)
                     oldcursorname = [m_View CurrentItem]->Name();
                 
@@ -913,7 +913,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files InDir:(const char*)_dir IsDotDot:(bool)_isdotdot
 {    
-    std::string str(_dir);
+    string str(_dir);
     dispatch_async(m_DirectorySizeCountingQ, ^{
         m_IsStopDirectorySizeCounting = false;
         dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectorySizeCounting:true];});
@@ -1193,7 +1193,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if(!cur_focus || cur_focus->IsDotDot())
         return;
     
-    std::vector<const VFSListingItem*> items;
+    vector<const VFSListingItem*> items;
     
     // 2 variants - currently focused item or all selected items (if focus is also selected)
     if(m_Data->GetSelectedItemsCount() == 0 || !cur_focus->CFIsSelected())

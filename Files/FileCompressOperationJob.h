@@ -23,9 +23,9 @@ public:
     
     void Init(FlexChainedStringsChunk* _src_files,
               const char*_src_root,
-              std::shared_ptr<VFSHost> _src_vfs,
+              shared_ptr<VFSHost> _src_vfs,
               const char* _dst_root,
-              std::shared_ptr<VFSHost> _dst_vfs,
+              shared_ptr<VFSHost> _dst_vfs,
               FileCompressOperation *_operation);
     
     
@@ -53,17 +53,17 @@ private:
                                     *m_ScannedItems,
                                     *m_ScannedItemsLast;
     char                            m_SrcRoot[MAXPATHLEN];
-    std::shared_ptr<VFSHost>        m_SrcVFS;
+    shared_ptr<VFSHost>        m_SrcVFS;
     char                            m_DstRoot[MAXPATHLEN];
-    std::shared_ptr<VFSHost>        m_DstVFS;
+    shared_ptr<VFSHost>        m_DstVFS;
     char                            m_TargetFileName[MAXPATHLEN];
     bool                            m_DoneScanning;
     bool m_SkipAll;
     const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;
     uint64_t                        m_SourceTotalBytes;
     uint64_t                        m_TotalBytesProcessed;
-    std::vector<uint8_t>            m_ItemFlags;
+    vector<uint8_t>            m_ItemFlags;
     struct archive                  *m_Archive;
-    std::shared_ptr<VFSFile>        m_TargetFile;
+    shared_ptr<VFSFile>        m_TargetFile;
 };
 

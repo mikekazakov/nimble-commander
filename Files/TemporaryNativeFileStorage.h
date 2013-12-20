@@ -19,7 +19,7 @@ class TemporaryNativeFileStorage
 {
 public:
     bool CopySingleFile(const char* _vfs_filename,
-                        std::shared_ptr<VFSHost> _host,
+                        shared_ptr<VFSHost> _host,
                         char *_tmp_filename
                         ); // can run from any thread
 
@@ -37,5 +37,5 @@ private:
     bool GetSubDirForFilename(const char *_filename, char *_full_path); // can run from any thread
     
     dispatch_queue_t        m_ControlQueue;
-    std::list<std::string>  m_SubDirs; // modifications should be guarded with m_ControlQueue
+    list<string>  m_SubDirs; // modifications should be guarded with m_ControlQueue
 };

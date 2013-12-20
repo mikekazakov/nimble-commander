@@ -189,7 +189,7 @@
        m_Task->State() == TermTask::StateShell)
         return true;
     
-    std::vector<std::string> children;
+    vector<string> children;
     m_Task->GetChildrenList(children);
     if(children.empty())
         return true;

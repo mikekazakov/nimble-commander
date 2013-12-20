@@ -9,7 +9,7 @@
 #import "VFSSeqToRandomWrapper.h"
 #import "VFSError.h"
 
-VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(std::shared_ptr<VFSFile> _file_to_wrap):
+VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(shared_ptr<VFSFile> _file_to_wrap):
     VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),
     m_SeqFile(_file_to_wrap),
     m_Ready(false),

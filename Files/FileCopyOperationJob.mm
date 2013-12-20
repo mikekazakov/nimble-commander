@@ -1156,7 +1156,7 @@ dolseek: // find right position in destination file
         if(io_totalwrote == src_stat_buffer.st_size) break;
         
         io_leftwrite = io_nread;
-        std::swap(readbuf, writebuf); // swap our work buffers - read buffer become write buffer and vice versa
+        swap(readbuf, writebuf); // swap our work buffers - read buffer become write buffer and vice versa
         
         // update statistics
         m_Stats.SetValue(m_TotalCopied);

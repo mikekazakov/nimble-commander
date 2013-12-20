@@ -192,7 +192,7 @@ const int g_TextInsetsInLine[4] = {7, 0, 5, 1}; // TODO: remove this black magic
 const int g_DividerWidth = 3;
 
 ModernPanelViewPresentation::ModernPanelViewPresentation():
-    m_IconCache(std::make_shared<IconsGenerator>()),
+    m_IconCache(make_shared<IconsGenerator>()),
     m_BackgroundColor(0),
     m_RegularOddBackgroundColor(0),
     m_ActiveSelectedItemBackgroundColor(0),

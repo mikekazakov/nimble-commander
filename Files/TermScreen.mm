@@ -38,8 +38,8 @@ TermScreen::TermScreen(int _w, int _h):
     
     for(int i =0; i < m_Height; ++i)
     {
-        m_Screen.push_back(std::vector<TermScreen::Space>());
-        std::vector<TermScreen::Space> *line = &m_Screen.back();
+        m_Screen.push_back(vector<TermScreen::Space>());
+        vector<TermScreen::Space> *line = &m_Screen.back();
         line->resize(m_Width, m_EraseChar);
     }
 }
@@ -49,7 +49,7 @@ TermScreen::~TermScreen()
     free(m_ScreenShot);
 }
 
-const std::vector<TermScreen::Space> *TermScreen::GetScreenLine(int _line_no) const
+const vector<TermScreen::Space> *TermScreen::GetScreenLine(int _line_no) const
 {
     if(_line_no >= m_Screen.size()) return 0;
     
@@ -60,7 +60,7 @@ const std::vector<TermScreen::Space> *TermScreen::GetScreenLine(int _line_no) co
     return &(*it);
 }
 
-std::vector<TermScreen::Space> *TermScreen::GetLineRW(int _line_no)
+vector<TermScreen::Space> *TermScreen::GetLineRW(int _line_no)
 {
     if(_line_no >= m_Screen.size() || _line_no < 0) return 0;
     
@@ -78,7 +78,7 @@ void TermScreen::PutCh(unsigned short _char)
     
     auto it = m_Screen.begin();
     for(int i = 0; i < m_PosY; ++i) ++it;
-    std::vector<TermScreen::Space> &line = *it;
+    vector<TermScreen::Space> &line = *it;
     
     if(!oms::IsUnicodeCombiningCharacter(_char))
     {
@@ -383,7 +383,7 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
             while(sz > 0)
                 if((*src)[sz-1].l == 0) sz--;
                 else break;
-            m_ScrollBack.push_back( std::vector<TermScreen::Space>(sz) );
+            m_ScrollBack.push_back( vector<TermScreen::Space>(sz) );
             memcpy(m_ScrollBack.back().data(), src->data(), sz * sizeof(TermScreen::Space));
 //            m_ScrollBack.push_back(*src);
         }
@@ -447,7 +447,7 @@ void TermScreen::RestoreScreen()
     m_ScreenShot = 0;
 }
 
-const std::vector<TermScreen::Space> *TermScreen::GetScrollBackLine(int _line_no) const
+const vector<TermScreen::Space> *TermScreen::GetScrollBackLine(int _line_no) const
 {
     if(_line_no >= m_ScrollBack.size()) return 0;
     

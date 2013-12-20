@@ -10,7 +10,7 @@
 #import "VFSListing.h"
 #import "Common.h"
 
-VFSListing::VFSListing(const char* _relative_path, std::shared_ptr<VFSHost> _host):
+VFSListing::VFSListing(const char* _relative_path, shared_ptr<VFSHost> _host):
     m_RelativePath(_relative_path),
     m_Host(_host)
 {
@@ -25,7 +25,7 @@ const char *VFSListing::RelativePath() const
     return m_RelativePath.c_str();    
 }
 
-std::shared_ptr<VFSHost> VFSListing::Host() const
+shared_ptr<VFSHost> VFSListing::Host() const
 {
     return m_Host;
 }

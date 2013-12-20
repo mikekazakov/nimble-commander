@@ -17,7 +17,7 @@
 
 struct VFSArchiveMediator
 {
-    std::shared_ptr<VFSFile> file;
+    shared_ptr<VFSFile> file;
     enum {bufsz = 65536 * 4};
     char buf[bufsz];
     
@@ -31,19 +31,19 @@ struct VFSArchiveSeekCache
 {
     struct archive *arc;
     uint32_t uid; // uid of a last read item. if client want to use such cache, their's uid should be bigger than uid
-    std::shared_ptr<VFSArchiveMediator> mediator; // includes a valid opened VFSFile;
+    shared_ptr<VFSArchiveMediator> mediator; // includes a valid opened VFSFile;
 };
 
 struct VFSArchiveDirEntry
 {
-    std::string name; // optimize
+    string name; // optimize
     struct stat st;
     uint32_t aruid; // unique number inside archive in same order as appearance in archive
 };
 
 struct VFSArchiveDir
 {
-    std::string full_path;          // should alway be with trailing slash
-    std::string name_in_parent;     // can be "" only for root directory, full_path will be "/"
-    std::deque<VFSArchiveDirEntry> entries;
+    string full_path;          // should alway be with trailing slash
+    string name_in_parent;     // can be "" only for root directory, full_path will be "/"
+    deque<VFSArchiveDirEntry> entries;
 };

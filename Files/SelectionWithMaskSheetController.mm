@@ -35,7 +35,7 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
 {
     NSMutableArray *m_History;
     bool            m_IsDirty;
-    std::map<void*, NSString*> m_SelectedMask;
+    map<void*, NSString*> m_SelectedMask;
 }
 
 + (NSString*) StorageFileName

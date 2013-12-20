@@ -17,7 +17,7 @@
 #import "Common.h"
 
 VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
-                               std::shared_ptr<VFSHost> _parent):
+                               shared_ptr<VFSHost> _parent):
     VFSHost(_junction_path, _parent),
     m_Arc(0),
     m_SeekCacheControl(dispatch_queue_create("info.filesmanager.Files.VFSArchiveHost.sc_control_queue", DISPATCH_QUEUE_SERIAL)),
@@ -62,7 +62,7 @@ int VFSArchiveHost::Open()
     if(res < 0)
         return res;
     
-    m_Mediator = std::make_shared<VFSArchiveMediator>();
+    m_Mediator = make_shared<VFSArchiveMediator>();
     m_Mediator->file = m_ArFile;
     
     m_Arc = archive_read_new();
@@ -96,7 +96,7 @@ int VFSArchiveHost::ReadArchiveListing()
     VFSArchiveDir *root = new VFSArchiveDir;
     root->full_path = "/";
     root->name_in_parent  = "";
-    m_PathToDir.insert(std::make_pair("/", root));
+    m_PathToDir.insert(make_pair("/", root));
 
     VFSArchiveDir *parent_dir = root;
     struct archive_entry *entry;
@@ -160,7 +160,7 @@ int VFSArchiveHost::ReadArchiveListing()
                 VFSArchiveDir *dir = new VFSArchiveDir;
                 dir->full_path = path; // full_path is with trailing slash
                 dir->name_in_parent = strrchr(tmp, '/')+1;
-                m_PathToDir.insert(std::make_pair(path, dir));
+                m_PathToDir.insert(make_pair(path, dir));
             }
         }
     }
@@ -198,7 +198,7 @@ VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
     VFSArchiveDir *entry = new VFSArchiveDir;
     entry->full_path = _path_with_tr_sl;
     entry->name_in_parent  = entry_name;
-    auto i2 = m_PathToDir.insert(std::make_pair(_path_with_tr_sl, entry));
+    auto i2 = m_PathToDir.insert(make_pair(_path_with_tr_sl, entry));
     return (*i2.first).second;
 }
 
@@ -216,16 +216,16 @@ struct archive* VFSArchiveHost::Archive()
     return m_Arc;
 }
 
-std::shared_ptr<VFSFile> VFSArchiveHost::ArFile() const
+shared_ptr<VFSFile> VFSArchiveHost::ArFile() const
 {
     return m_ArFile;
 }
 
 int VFSArchiveHost::CreateFile(const char* _path,
-                       std::shared_ptr<VFSFile> *_target,
+                       shared_ptr<VFSFile> *_target,
                        bool (^_cancel_checker)())
 {
-    auto file = std::make_shared<VFSArchiveFile>(_path, SharedPtr());
+    auto file = make_shared<VFSArchiveFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     *_target = file;
@@ -233,7 +233,7 @@ int VFSArchiveHost::CreateFile(const char* _path,
 }
 
 int VFSArchiveHost::FetchDirectoryListing(const char *_path,
-                                          std::shared_ptr<VFSListing> *_target,
+                                          shared_ptr<VFSListing> *_target,
                                           int _flags,
                                           bool (^_cancel_checker)())
 {
@@ -247,7 +247,7 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
     if(i == m_PathToDir.end())
         return VFSError::NotFound;
 
-    std::shared_ptr<VFSArchiveListing> listing = std::make_shared<VFSArchiveListing>
+    shared_ptr<VFSArchiveListing> listing = make_shared<VFSArchiveListing>
         (i->second, path, _flags, SharedPtr());
     
     if(_cancel_checker && _cancel_checker())
@@ -260,7 +260,7 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
 
 int VFSArchiveHost::CalculateDirectoriesSizes(
                                       FlexChainedStringsChunk *_dirs, // transfered ownership
-                                      const std::string &_root_path, // relative to current host path
+                                      const string &_root_path, // relative to current host path
                                       bool (^_cancel_checker)(),
                                       void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                       )
@@ -302,7 +302,7 @@ cleanup:
 }
 
 int VFSArchiveHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upon completion
-                                         const std::string &_root_path, // relative to current host path
+                                         const string &_root_path, // relative to current host path
                                          bool (^_cancel_checker)(),
                                          void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                          )
@@ -454,7 +454,7 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
     return 0;
 }
 
-void VFSArchiveHost::CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc)
+void VFSArchiveHost::CommitSeekCache(shared_ptr<VFSArchiveSeekCache> _sc)
 {
 /*    if(m_SeekCache.get())
     {
@@ -477,12 +477,12 @@ void VFSArchiveHost::CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc)
     });
 }
 
-std::shared_ptr<VFSArchiveSeekCache> VFSArchiveHost::SeekCache(uint32_t _requested_item)
+shared_ptr<VFSArchiveSeekCache> VFSArchiveHost::SeekCache(uint32_t _requested_item)
 {
     if(_requested_item == 0)
         return 0;
 
-    __block std::shared_ptr<VFSArchiveSeekCache> res;
+    __block shared_ptr<VFSArchiveSeekCache> res;
     dispatch_sync(m_SeekCacheControl, ^{
         // choose the closest if any
         uint32_t best_delta = -1;

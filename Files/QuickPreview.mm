@@ -20,7 +20,7 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
 
 @implementation QuickLookView
 {
-    std::string m_OrigPath;
+    string m_OrigPath;
     volatile bool        m_Closed;
 }
 
@@ -60,7 +60,7 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
         [self close];
 }
 
-- (void)PreviewItem:(const char *)_path vfs:(std::shared_ptr<VFSHost>)_host
+- (void)PreviewItem:(const char *)_path vfs:(shared_ptr<VFSHost>)_host
 {
     // may cause collisions of same filenames on different vfs, nevermind for now
     assert(!m_Closed);
@@ -74,7 +74,7 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
     }
     else
     {
-        std::string path = _path;
+        string path = _path;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             if(_host->IsDirectory(path.c_str(), 0, 0))
             {

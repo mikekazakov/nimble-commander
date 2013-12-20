@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "PanelData.h"
 #import "PanelView.h"
+#import "DispatchQueue.h"
 
 @class MainWindowController;
 @class QuickLookView;
@@ -19,11 +20,11 @@
 {
     PanelData *m_Data;
     PanelView *m_View;
-    std::vector<std::shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
+    vector<shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
     
     __unsafe_unretained MainWindowController *m_WindowController;
     
-    std::shared_ptr<VFSHost>    m_UpdatesObservationHost;
+    shared_ptr<VFSHost>    m_UpdatesObservationHost;
     unsigned long               m_UpdatesObservationTicket;
     
     // Fast searching section

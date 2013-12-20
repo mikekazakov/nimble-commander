@@ -12,12 +12,12 @@
 
 struct LauchServicesHandlers
 {
-    std::vector<std::string> paths; // unsorted list
-    std::string uti; // common UTI if any (if there was different UTI before merge - this field will be "")
+    vector<string> paths; // unsorted list
+    string uti; // common UTI if any (if there was different UTI before merge - this field will be "")
     int default_path; // may be < 0, so there's no default handler fow those types
     
 
-    static void DoOnItem(const VFSListingItem* _it, std::shared_ptr<VFSHost> _host, const char* _path, LauchServicesHandlers* _result);
-    static void DoMerge(const std::list<LauchServicesHandlers>* _input, LauchServicesHandlers* _result);
+    static void DoOnItem(const VFSListingItem* _it, shared_ptr<VFSHost> _host, const char* _path, LauchServicesHandlers* _result);
+    static void DoMerge(const list<LauchServicesHandlers>* _input, LauchServicesHandlers* _result);
     static bool SetDefaultHandler(const char *_uti, const char* _path);
 };

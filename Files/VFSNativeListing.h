@@ -102,7 +102,7 @@ struct VFSNativeListingItem : VFSListingItem
 class VFSNativeListing : public VFSListing
 {
 public:
-    VFSNativeListing(const char *_path, std::shared_ptr<VFSNativeHost> _host);
+    VFSNativeListing(const char *_path, shared_ptr<VFSNativeHost> _host);
     ~VFSNativeListing();
     
     
@@ -114,7 +114,7 @@ public:
     virtual int Count() const override;
 
     
-    std::deque<VFSNativeListingItem> m_Items;
+    deque<VFSNativeListingItem> m_Items;
     
 };
 
@@ -122,7 +122,7 @@ public:
 class VFSListing
 {
 public:
-    VFSListing(std::shared_ptr<VFSHost> _host);
+    VFSListing(shared_ptr<VFSHost> _host);
     virtual ~VFSListing();
     
     virtual VFSListingItem& At(int _position);
@@ -130,9 +130,9 @@ public:
     virtual int Count() const;
     virtual long Attributes() const; // bitfield with VFSListingAttributes values
     
-    std::shared_ptr<VFSHost> Host() const;
+    shared_ptr<VFSHost> Host() const;
 private:
-    std::shared_ptr<VFSHost> m_Host;
+    shared_ptr<VFSHost> m_Host;
     
     // forbid copying
     VFSListing(const VFSListing&);

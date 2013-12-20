@@ -74,14 +74,14 @@ unsigned long FSEventsDirUpdate::AddWatchPath(const char *_path, void (^_handler
     for(auto i: m_Watches)
         if( i->path == dirpath )
         { // then just increase refcount and exit
-            i->handlers.push_back(std::make_pair(m_LastTicket++, _handler));
+            i->handlers.push_back(make_pair(m_LastTicket++, _handler));
             return i->handlers.back().first;
         }
 
     // create new watch stream
     WatchData *w = new WatchData;
     w->path = dirpath;
-    w->handlers.push_back(std::make_pair(m_LastTicket++, _handler));
+    w->handlers.push_back(make_pair(m_LastTicket++, _handler));
     char volume[MAXPATHLEN] = {0};
     GetFileSystemRootFromPath(dirpath, volume);
     w->volume_path = volume;

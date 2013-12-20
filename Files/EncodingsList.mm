@@ -10,14 +10,14 @@
 
 namespace encodings
 {
-    const std::vector< std::pair<int, CFStringRef> >& LiteralEncodingsList()
+    const vector< pair<int, CFStringRef> >& LiteralEncodingsList()
     {
         // we don't need freeing upon application termination (atexit), sojust use 'new'
-        static std::vector< std::pair<int, CFStringRef> > *encodings = 0;
+        static vector< pair<int, CFStringRef> > *encodings = 0;
         static dispatch_once_t token = 0;
         dispatch_once(&token, ^{
-            encodings = new std::vector< std::pair<int, CFStringRef> >;
-#define _(a, b) encodings->push_back( std::make_pair((a), (CFStringRef) (b) ))
+            encodings = new vector< pair<int, CFStringRef> >;
+#define _(a, b) encodings->push_back( make_pair((a), (CFStringRef) (b) ))
             _(ENCODING_MACOS_ROMAN_WESTERN, @"Western (Mac OS Roman)");
             _(ENCODING_OEM866, @"OEM 866 (DOS)");
             _(ENCODING_WIN1251, @"Windows 1251");

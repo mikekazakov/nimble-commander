@@ -23,7 +23,7 @@ class VFSArchiveHost : public VFSHost
 {
 public:
     VFSArchiveHost(const char *_junction_path,
-                   std::shared_ptr<VFSHost> _parent);
+                   shared_ptr<VFSHost> _parent);
     ~VFSArchiveHost();
     
     virtual const char *FSTag() const override;
@@ -40,11 +40,11 @@ public:
     virtual int Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)()) override;    
     
     virtual int CreateFile(const char* _path,
-                           std::shared_ptr<VFSFile> *_target,
+                           shared_ptr<VFSFile> *_target,
                            bool (^_cancel_checker)()) override;
     
     virtual int FetchDirectoryListing(const char *_path,
-                                      std::shared_ptr<VFSListing> *_target,
+                                      shared_ptr<VFSListing> *_target,
                                       int _flags,                                      
                                       bool (^_cancel_checker)()) override;
     
@@ -52,12 +52,12 @@ public:
     
     virtual int CalculateDirectoriesSizes(
                                           FlexChainedStringsChunk *_dirs, // transfered ownership
-                                          const std::string &_root_path, // relative to current host path
+                                          const string &_root_path, // relative to current host path
                                           bool (^_cancel_checker)(),
                                           void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                           ) override;
     virtual int CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upon completion
-                                             const std::string &_root_path, // relative to current host path
+                                             const string &_root_path, // relative to current host path
                                              bool (^_cancel_checker)(),
                                              void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                              ) override;
@@ -68,19 +68,19 @@ public:
     uint32_t ItemUID(const char* _filename);
 
     // destruct call - will override currently stored one
-    void CommitSeekCache(std::shared_ptr<VFSArchiveSeekCache> _sc);
+    void CommitSeekCache(shared_ptr<VFSArchiveSeekCache> _sc);
     
     // destructive call - host will no longer hold returned seek cache
     // if there're no caches, that can satisfy this call - zero ptr is returned
-    std::shared_ptr<VFSArchiveSeekCache> SeekCache(uint32_t _requested_item);
+    shared_ptr<VFSArchiveSeekCache> SeekCache(uint32_t _requested_item);
     
     
-    std::shared_ptr<VFSFile> ArFile() const;
+    shared_ptr<VFSFile> ArFile() const;
     
     struct archive* Archive();
     
-    std::shared_ptr<const VFSArchiveHost> SharedPtr() const {return std::static_pointer_cast<const VFSArchiveHost>(VFSHost::SharedPtr());}
-    std::shared_ptr<VFSArchiveHost> SharedPtr() {return std::static_pointer_cast<VFSArchiveHost>(VFSHost::SharedPtr());}
+    shared_ptr<const VFSArchiveHost> SharedPtr() const {return static_pointer_cast<const VFSArchiveHost>(VFSHost::SharedPtr());}
+    shared_ptr<VFSArchiveHost> SharedPtr() {return static_pointer_cast<VFSArchiveHost>(VFSHost::SharedPtr());}
 private:
     int ReadArchiveListing();
     VFSArchiveDir* FindOrBuildDir(const char* _path_with_tr_sl);
@@ -88,15 +88,15 @@ private:
     
     void InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir_name);
     
-    std::shared_ptr<VFSFile>                m_ArFile;
-    std::shared_ptr<VFSArchiveMediator>     m_Mediator;
+    shared_ptr<VFSFile>                m_ArFile;
+    shared_ptr<VFSArchiveMediator>     m_Mediator;
     struct archive                         *m_Arc;
-    std::map<std::string, VFSArchiveDir*>   m_PathToDir;
+    map<string, VFSArchiveDir*>   m_PathToDir;
     uint64_t                                m_ArchiveFileSize;
     uint64_t                                m_ArchivedFilesTotalSize;
     uint32_t                                m_LastItemUID;
     
-    std::list<std::shared_ptr<VFSArchiveSeekCache>> m_SeekCaches;
+    list<shared_ptr<VFSArchiveSeekCache>> m_SeekCaches;
     
     dispatch_queue_t                        m_SeekCacheControl;
 };

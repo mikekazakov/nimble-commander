@@ -11,6 +11,8 @@
 #include <string>
 #include <memory>
 
+using namespace std;
+
 class VFSHost;
 class VFSListing;
 
@@ -110,10 +112,10 @@ private:
 // hold an items listing
 // perform access operations
 // support partial updates by callers code
-class VFSListing : public std::enable_shared_from_this<VFSListing>
+class VFSListing : public enable_shared_from_this<VFSListing>
 {
 public:
-    VFSListing(const char* _relative_path, std::shared_ptr<VFSHost> _host);
+    VFSListing(const char* _relative_path, shared_ptr<VFSHost> _host);
     virtual ~VFSListing();
     
     // generic virtual access - overloaded by descendants
@@ -130,12 +132,12 @@ public:
     
     
     // common stuff
-    inline std::shared_ptr<VFSListing> SharedPtr() { return shared_from_this(); }
-    inline std::shared_ptr<const VFSListing> SharedPtr() const { return shared_from_this(); }
+    inline shared_ptr<VFSListing> SharedPtr() { return shared_from_this(); }
+    inline shared_ptr<const VFSListing> SharedPtr() const { return shared_from_this(); }
     void ComposeFullPathForEntry(size_t _entry_position, char *_buf) const;
     
     const char *RelativePath() const;
-    std::shared_ptr<VFSHost> Host() const;
+    shared_ptr<VFSHost> Host() const;
     
     
     
@@ -173,8 +175,8 @@ public:
     
     
 private:
-    std::string m_RelativePath;
-    std::shared_ptr<VFSHost> m_Host;
+    string m_RelativePath;
+    shared_ptr<VFSHost> m_Host;
     
     // forbid copying
     VFSListing(const VFSListing&) = delete;

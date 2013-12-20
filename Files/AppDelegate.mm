@@ -24,7 +24,7 @@
 
 @implementation AppDelegate
 {
-    std::vector<MainWindowController *> m_MainWindows;
+    vector<MainWindowController *> m_MainWindows;
     RHPreferencesWindowController *m_PreferencesController;    
 }
 

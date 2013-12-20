@@ -7,7 +7,9 @@
 #include <list>
 #include "FontExtras.h"
 
-static std::list<FontCache*> g_Caches;
+using namespace std;
+
+static list<FontCache*> g_Caches;
 
 FontCache *FontCache::FontCacheFromFont(CTFontRef _basic_font)
 {

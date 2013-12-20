@@ -21,7 +21,7 @@ PanelData::PanelData()
     m_CustomSortMode.sort = m_CustomSortMode.SortByName;
     m_CustomSortMode.show_hidden = false;
     m_SortExecGroup = dispatch_group_create();
-    m_Listing = std::make_shared<VFSListing>("", std::shared_ptr<VFSHost>(0));
+    m_Listing = make_shared<VFSListing>("", shared_ptr<VFSHost>(0));
 }
 
 PanelData::~PanelData()
@@ -32,7 +32,7 @@ PanelData::~PanelData()
     dispatch_release(m_SortExecGroup);
 }
 
-void PanelData::Load(std::shared_ptr<VFSListing> _listing)
+void PanelData::Load(shared_ptr<VFSListing> _listing)
 {
     m_Listing = _listing;
     
@@ -58,7 +58,7 @@ void PanelData::Load(std::shared_ptr<VFSListing> _listing)
     UpdateStatictics();
 }
 
-void PanelData::ReLoad(std::shared_ptr<VFSListing> _listing)
+void PanelData::ReLoad(shared_ptr<VFSListing> _listing)
 {
     // sort new entries by raw c name for sync-swapping needs
     auto *dirbyrawcname = new DirSortIndT;
@@ -124,7 +124,7 @@ void PanelData::ReLoad(std::shared_ptr<VFSListing> _listing)
     UpdateStatictics();
 }
 
-std::shared_ptr<VFSHost> PanelData::Host() const
+shared_ptr<VFSHost> PanelData::Host() const
 {
     return m_Listing->Host();
 }
@@ -301,11 +301,11 @@ void PanelData::GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*
 struct SortPredLess
 {
 private:
-    const std::shared_ptr<VFSListing> ind_tar;
+    const shared_ptr<VFSListing> ind_tar;
     PanelSortMode                   sort_mode;
     CFStringCompareFlags            str_comp_flags;
 public:
-    SortPredLess(const std::shared_ptr<VFSListing> _items, PanelSortMode sort_mode):
+    SortPredLess(const shared_ptr<VFSListing> _items, PanelSortMode sort_mode):
         ind_tar(_items),
         sort_mode(sort_mode)
     {
@@ -383,7 +383,7 @@ public:
     }
 };
 
-void PanelData::DoSort(const std::shared_ptr<VFSListing> _from, PanelData::DirSortIndT *_to, PanelSortMode _mode)
+void PanelData::DoSort(const shared_ptr<VFSListing> _from, PanelData::DirSortIndT *_to, PanelSortMode _mode)
 {
     _to->clear();
     _to->resize(_from->Count());
@@ -416,7 +416,7 @@ void PanelData::DoSort(const std::shared_ptr<VFSListing> _from, PanelData::DirSo
     DirSortIndT::iterator start=_to->begin(), end=_to->end();
     if( (*_from)[0].IsDotDot() ) start++; // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
     
-    std::sort(start, end, pred);
+    sort(start, end, pred);
 }
 
 void PanelData::SetCustomSortMode(PanelSortMode _mode)

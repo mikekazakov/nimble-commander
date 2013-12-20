@@ -16,7 +16,7 @@ static const double g_Gap = 8.0;
 @implementation StackOfDisappearingWidgets
 {
     StackOfDisappearingWidgetsOrientation m_Orientation;
-    std::vector<NSView*>                  m_Widgets;
+    vector<NSView*>                  m_Widgets;
     NSMutableArray                        *m_Constraints;
     NSView                                *m_AnchorView;
     NSView                                *m_SuperView;
@@ -72,8 +72,8 @@ static const double g_Gap = 8.0;
 - (void) BuildLayout
 {
     assert(m_AllObjectsAdded);
-    std::vector<__weak NSView*> visible;
-    std::vector<__weak NSView*> hidden;
+    vector<__weak NSView*> visible;
+    vector<__weak NSView*> hidden;
     
     for(NSView *v: m_Widgets)
         if([v isHidden])

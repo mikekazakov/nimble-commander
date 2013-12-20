@@ -14,7 +14,7 @@ class VFSNativeHost;
 class VFSNativeFile : public VFSFile
 {
 public:
-    VFSNativeFile(const char* _relative_path, std::shared_ptr<VFSNativeHost> _host);
+    VFSNativeFile(const char* _relative_path, shared_ptr<VFSNativeHost> _host);
     ~VFSNativeFile();
     
     virtual int     Open(int _open_flags) override;
@@ -38,7 +38,7 @@ public:
     
     
     
-    virtual std::shared_ptr<VFSFile> Clone() const override;
+    virtual shared_ptr<VFSFile> Clone() const override;
 private:
     int     m_FD;
     int     m_OpenFlags;

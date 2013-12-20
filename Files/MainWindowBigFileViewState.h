@@ -13,6 +13,6 @@
 
 @interface MainWindowBigFileViewState : NSView<MainWindowStateProtocol, BigFileViewDelegateProtocol>
 
-- (bool) OpenFile: (const char*) _fn with_fs:(std::shared_ptr<VFSHost>) _host;
+- (bool) OpenFile: (const char*) _fn with_fs:(shared_ptr<VFSHost>) _host;
 
 @end

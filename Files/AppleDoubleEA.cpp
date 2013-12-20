@@ -326,7 +326,7 @@ AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
     return eas;
 }
 
-void *BuildAppleDoubleFromEA(std::shared_ptr<VFSFile> _file,
+void *BuildAppleDoubleFromEA(shared_ptr<VFSFile> _file,
                              size_t *_buf_sz)
 {
     unsigned ret_xattr_count = _file->XAttrCount();
@@ -426,7 +426,7 @@ void *BuildAppleDoubleFromEA(std::shared_ptr<VFSFile> _file,
         else {
             memcpy(&attr_header_p->appledouble.finfo[0],
                    file_eas[i].data,
-                   std::min(32u, file_eas[i].data_sz)
+                   min(32u, file_eas[i].data_sz)
                    );
         }
 

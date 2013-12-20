@@ -17,7 +17,7 @@ struct VFSArchiveDir;
 // sub-optimized version now
 struct VFSArchiveListingItem : VFSListingItem
 {
-    std::string name; // optimize
+    string name; // optimize
     struct stat st;
     CFStringRef cf_name;
     unsigned short extoffset;               // extension of a file if any. 0 if there's no extension, or position of a first char of an extention
@@ -61,7 +61,7 @@ struct VFSArchiveListingItem : VFSListingItem
 class VFSArchiveListing : public VFSListing
 {
 public:
-    VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, std::shared_ptr<VFSArchiveHost> _host);
+    VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, shared_ptr<VFSArchiveHost> _host);
     ~VFSArchiveListing();
     
     virtual VFSListingItem& At(size_t _position) override;
@@ -69,5 +69,5 @@ public:
     virtual int Count() const override;
     
 private:
-    std::vector<VFSArchiveListingItem> m_Items;
+    vector<VFSArchiveListingItem> m_Items;
 };

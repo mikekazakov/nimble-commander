@@ -160,7 +160,7 @@
     [left setFrame:rightrect];
     [right setFrame:leftrect];
 
-    std::swap(m_BasicViews[0], m_BasicViews[1]);
+    swap(m_BasicViews[0], m_BasicViews[1]);
     [m_BasicViews[0] setFrame:leftrect];
     [m_BasicViews[1] setFrame:rightrect];
 }

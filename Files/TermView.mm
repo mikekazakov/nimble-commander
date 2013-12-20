@@ -229,7 +229,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     
 }
 
-- (void) DrawLine:(const std::vector<TermScreen::Space> *)_line
+- (void) DrawLine:(const vector<TermScreen::Space> *)_line
              at_y:(int)_y
             sel_y:(int)_sel_y
           context:(CGContextRef)_context
@@ -393,7 +393,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         SelPoint end   = [self ProjectPoint:curr_loc];
         
         if(start > end)
-            std::swap(start, end);
+            swap(start, end);
         
         
         if(modifying_existing_selection && m_HasSelection)
@@ -427,13 +427,13 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     if(m_SelStart == m_SelEnd)
         return;
     
-    std::vector<unsigned short> unichars;
+    vector<unsigned short> unichars;
     SelPoint curr = m_SelStart;
     while(true)
     {
         if(curr >= m_SelEnd) break;
         
-        const std::vector<TermScreen::Space> *line = 0;
+        const vector<TermScreen::Space> *line = 0;
         if(curr.y < 0) line = m_Screen->GetScrollBackLine( m_Screen->ScrollBackLinesCount() + curr.y );
         else           line = m_Screen->GetScreenLine(curr.y);
         

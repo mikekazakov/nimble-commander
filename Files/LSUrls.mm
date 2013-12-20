@@ -11,7 +11,7 @@
 #import "LSUrls.h"
 #import "Common.h"
 
-void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, std::shared_ptr<VFSHost> _host, const char* _path, LauchServicesHandlers* _result)
+void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, shared_ptr<VFSHost> _host, const char* _path, LauchServicesHandlers* _result)
 {
     _result->uti.clear();
     _result->paths.clear();
@@ -82,10 +82,10 @@ void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, std::shared_ptr<
     }
 }
 
-void LauchServicesHandlers::DoMerge(const std::list<LauchServicesHandlers>* _input, LauchServicesHandlers* _result)
+void LauchServicesHandlers::DoMerge(const list<LauchServicesHandlers>* _input, LauchServicesHandlers* _result)
 {
-    std::string default_handler; // empty handler path means that there's no default handler available
-    std::string default_uti; // -""-
+    string default_handler; // empty handler path means that there's no default handler available
+    string default_uti; // -""-
     if(!_input->empty())
     {
         int ind = (*_input->begin()).default_path;
@@ -101,7 +101,7 @@ void LauchServicesHandlers::DoMerge(const std::list<LauchServicesHandlers>* _inp
                 break;
             }
             
-            const std::string &ndefault_handler = (*i).paths[nind];
+            const string &ndefault_handler = (*i).paths[nind];
             if(ndefault_handler != default_handler)
             {
                 default_handler = "";
@@ -120,11 +120,11 @@ void LauchServicesHandlers::DoMerge(const std::list<LauchServicesHandlers>* _inp
     
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
-    std::map<std::string, int> handlers_count;
+    map<string, int> handlers_count;
     
     for(auto i1 = _input->begin(), e1 = _input->end(); i1!=e1; ++i1)
     {
-        std::set<std::string> inserted; // a very inefficient approach, should be rewritten if will cause lags on UI
+        set<string> inserted; // a very inefficient approach, should be rewritten if will cause lags on UI
         for(auto i2 = (*i1).paths.begin(), e2 = (*i1).paths.end(); i2!=e2; ++i2)
             if(inserted.find(*i2) == inserted.end()) // here we exclude multiple counting for repeating handlers for one content type
             {

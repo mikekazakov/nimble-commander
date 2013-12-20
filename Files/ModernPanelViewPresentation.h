@@ -82,7 +82,7 @@ private:
     ObjcToCppObservingBridge *m_GeometryObserver;
     ObjcToCppObservingBridge *m_AppearanceObserver;
     
-    std::shared_ptr<IconsGenerator> m_IconCache;
+    shared_ptr<IconsGenerator> m_IconCache;
 //    ModernPanelViewPresentationIconCache *m_IconCache;
     
 };

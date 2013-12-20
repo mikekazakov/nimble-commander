@@ -12,7 +12,7 @@
 #import "VFSArchiveInternal.h"
 #import "AppleDoubleEA.h"
 
-VFSArchiveFile::VFSArchiveFile(const char* _relative_path, std::shared_ptr<VFSArchiveHost> _host):
+VFSArchiveFile::VFSArchiveFile(const char* _relative_path, shared_ptr<VFSArchiveHost> _host):
     VFSFile(_relative_path, _host),
     m_Arc(0),
     m_ShouldCommitSC(0),
@@ -36,7 +36,7 @@ int VFSArchiveFile::Open(int _open_flags)
     if(_open_flags & VFSFile::OF_Write)
         return SetLastError(VFSError::NotSupported); // ArchiveFile is Read-Only
     
-    auto host = std::dynamic_pointer_cast<VFSArchiveHost>(Host());
+    auto host = dynamic_pointer_cast<VFSArchiveHost>(Host());
     
     uint32_t myuid = host->ItemUID(RelativePath());
     if(myuid == 0)
@@ -49,14 +49,14 @@ int VFSArchiveFile::Open(int _open_flags)
 //    if(scuid == 0 || scuid >= myuid)
     if(!sc.get())
     {
-        m_ArFile = std::dynamic_pointer_cast<VFSArchiveHost>(Host())->ArFile()->Clone();
+        m_ArFile = dynamic_pointer_cast<VFSArchiveHost>(Host())->ArFile()->Clone();
         int res;
     
         res = m_ArFile->Open(VFSFile::OF_Read);
         if(res < 0)
             return SetLastError(res);
     
-        m_Mediator = std::make_shared<VFSArchiveMediator>();
+        m_Mediator = make_shared<VFSArchiveMediator>();
         m_Mediator->file = m_ArFile;
     
         // open for read-only now
@@ -156,11 +156,11 @@ int VFSArchiveFile::Close()
         {
             // transfer ownership of handles to Host
             assert(m_UID);
-            std::shared_ptr<VFSArchiveSeekCache> sc = std::make_shared<VFSArchiveSeekCache>();
+            shared_ptr<VFSArchiveSeekCache> sc = make_shared<VFSArchiveSeekCache>();
             sc->uid = m_UID;
             sc->arc = m_Arc;
             sc->mediator = m_Mediator;
-            std::dynamic_pointer_cast<VFSArchiveHost>(Host())->CommitSeekCache(sc);
+            dynamic_pointer_cast<VFSArchiveHost>(Host())->CommitSeekCache(sc);
             m_Arc = 0;
             m_Mediator.reset();
             m_ArFile.reset();
@@ -247,7 +247,7 @@ ssize_t VFSArchiveFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t 
             if(_buffer == 0)
                 return m_EA[i].data_sz;
     
-            size_t sz = std::min(m_EA[i].data_sz, (uint32_t)_buf_size);
+            size_t sz = min(m_EA[i].data_sz, (uint32_t)_buf_size);
             memcpy(_buffer, m_EA[i].data, sz);
             return sz;
         }

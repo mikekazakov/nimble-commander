@@ -10,12 +10,13 @@
 
 #import <string>
 #import <memory>
-
 #import "VFSError.h"
+
+using namespace std;
 
 class VFSHost;
 
-class VFSFile : public std::enable_shared_from_this<VFSFile>
+class VFSFile : public enable_shared_from_this<VFSFile>
 {
 public:
     enum class ReadParadigm {
@@ -49,7 +50,7 @@ public:
         NoWrite     = 0
     };
     
-    VFSFile(const char* _relative_path, std::shared_ptr<VFSHost> _host);
+    VFSFile(const char* _relative_path, shared_ptr<VFSHost> _host);
     virtual ~VFSFile();
 
     enum {
@@ -135,7 +136,7 @@ public:
      * Open status and file positions are not shared
      * Can return null pointer in some cases
      */
-    virtual std::shared_ptr<VFSFile> Clone() const;
+    virtual shared_ptr<VFSFile> Clone() const;
 
     /**
      * ComposeFullHostsPath() relies solely on RelativePath() and Host()
@@ -150,10 +151,10 @@ public:
     NSData *ReadFile();
 #endif
     
-    inline std::shared_ptr<VFSFile> SharedPtr() { return shared_from_this(); }
-    inline std::shared_ptr<const VFSFile> SharedPtr() const { return shared_from_this(); }
+    inline shared_ptr<VFSFile> SharedPtr() { return shared_from_this(); }
+    inline shared_ptr<const VFSFile> SharedPtr() const { return shared_from_this(); }
     const char* RelativePath() const;
-    std::shared_ptr<VFSHost> Host() const;
+    shared_ptr<VFSHost> Host() const;
 protected:
     /**
      * Sets a new last error code and returns it for convenience.
@@ -161,8 +162,8 @@ protected:
     int SetLastError(int _error) const;
     
 private:
-    std::string m_RelativePath;
-    std::shared_ptr<VFSHost> m_Host;
+    string m_RelativePath;
+    shared_ptr<VFSHost> m_Host;
 
     /**
      * m_LastError should be set when any error occurs. This storage is not thread-safe - concurrent accesses may overwrite it.

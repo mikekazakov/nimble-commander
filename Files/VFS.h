@@ -14,5 +14,6 @@
 #import "VFSHost.h"
 #import "VFSFile.h"
 #import "VFSListing.h"
+#import "VFSPath.h"
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"

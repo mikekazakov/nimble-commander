@@ -8,6 +8,8 @@
 
 #import <stack>
 
+using namespace std;
+
 class PanelData;
 
 enum class PanelViewType
@@ -41,5 +43,5 @@ struct PanelViewState
     bool Active;
     
     int ItemsDisplayOffset;
-    std::stack<int> DisplayOffsetStack;
+    stack<int> DisplayOffsetStack;
 };

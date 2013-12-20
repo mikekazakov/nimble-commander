@@ -17,14 +17,14 @@
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 
 void PanelVFSFileWorkspaceOpener::Open(const char* _filename,
-                                       std::shared_ptr<VFSHost> _host
+                                       shared_ptr<VFSHost> _host
                                        )
 {
     Open(_filename, _host, 0);
 }
 
 void PanelVFSFileWorkspaceOpener::Open(const char* _filename,
-                 std::shared_ptr<VFSHost> _host,
+                 shared_ptr<VFSHost> _host,
                  const char* _with_app_path
                  )
 {
@@ -46,8 +46,8 @@ void PanelVFSFileWorkspaceOpener::Open(const char* _filename,
         return;
     }
     
-    std::string path = _filename;
-    std::string app_path = _with_app_path != 0 ? _with_app_path : "";
+    string path = _filename;
+    string app_path = _with_app_path != 0 ? _with_app_path : "";
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         if(_host->IsDirectory(path.c_str(), 0, 0))
             return;

@@ -16,9 +16,9 @@
  * _items: temporary items info for quick decisions, will not be stored
  *
  */
-- (void) RequestContextMenuOn:(const std::vector<const VFSListingItem*>&) _items
+- (void) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
                          path:(const char*) _path
-                          vfs:(std::shared_ptr<VFSHost>) _host
+                          vfs:(shared_ptr<VFSHost>) _host
                        caller:(PanelController*) _caller;
 
 @end

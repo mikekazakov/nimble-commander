@@ -27,7 +27,7 @@
 
 - (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
 
-- (void)RequestBigFileView: (const char*)_filepath with_fs:(std::shared_ptr<VFSHost>) _host;
+- (void)RequestBigFileView: (const char*)_filepath with_fs:(shared_ptr<VFSHost>) _host;
 
 - (void)RequestTerminal:(const char*)_cwd;
 - (void)RequestTerminalExecution:(const char*)_filename at:(const char*)_cwd;

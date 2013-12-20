@@ -13,7 +13,7 @@
 
 #import "VFS.h"
 
-class IconsGenerator : public std::enable_shared_from_this<IconsGenerator>
+class IconsGenerator : public enable_shared_from_this<IconsGenerator>
 {
 public:
     IconsGenerator();
@@ -45,9 +45,9 @@ private:
     {
         uint64_t    file_size;
         mode_t      unix_mode;
-        std::string extension;
-        std::string relative_path;
-        std::shared_ptr<VFSHost> host;
+        string extension;
+        string relative_path;
+        shared_ptr<VFSHost> host;
         
         NSImageRep *generic;   // just folder or document icon
         
@@ -58,7 +58,7 @@ private:
         
     };
     
-    std::map<unsigned short, std::shared_ptr<Meta>> m_Icons;
+    map<unsigned short, shared_ptr<Meta>> m_Icons;
     unsigned int m_LastIconID;
     NSRect m_IconSize;
 
@@ -79,11 +79,11 @@ private:
     void             (^m_UpdateCallback)();
     
     void BuildGenericIcons();
-    void Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGenerator> _guard);
+    void Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _guard);
     void StopWorkQueue();
     
     
-    std::map<std::string, NSImageRep*> m_IconsCache;
+    map<string, NSImageRep*> m_IconsCache;
     
     
     // denied! (c) Quake3

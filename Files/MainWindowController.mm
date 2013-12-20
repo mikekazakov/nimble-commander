@@ -19,7 +19,7 @@
 
 @implementation MainWindowController
 {
-    std::vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
+    vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_PanelState;
     MainWindowTerminalState     *m_Terminal;
 }
@@ -181,7 +181,7 @@
     return m_PanelState.OperationsController;
 }
 
-- (void) RequestBigFileView:(const char*) _filepath with_fs:(std::shared_ptr<VFSHost>) _host
+- (void) RequestBigFileView:(const char*) _filepath with_fs:(shared_ptr<VFSHost>) _host
 {
     MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:[[[self window] contentView] frame]];
     if([state OpenFile:_filepath with_fs:_host])

@@ -33,12 +33,12 @@ bool FileWindow::FileOpened() const
     return true;
 }
 
-int FileWindow::OpenFile(std::shared_ptr<VFSFile> _file)
+int FileWindow::OpenFile(shared_ptr<VFSFile> _file)
 {
     return OpenFile(_file, DefaultWindowSize);
 }
 
-int FileWindow::OpenFile(std::shared_ptr<VFSFile> _file, int _window_size)
+int FileWindow::OpenFile(shared_ptr<VFSFile> _file, int _window_size)
 {
     if(_file->GetReadParadigm() < VFSFile::ReadParadigm::Random)
         return VFSError::InvalidCall;

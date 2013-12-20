@@ -13,7 +13,7 @@
 #import "VFSNativeFile.h"
 #import "VFSNativeHost.h"
 
-VFSNativeFile::VFSNativeFile(const char* _relative_path, std::shared_ptr<VFSNativeHost> _host):
+VFSNativeFile::VFSNativeFile(const char* _relative_path, shared_ptr<VFSNativeHost> _host):
     VFSFile(_relative_path, _host),
     m_FD(-1),
     m_Position(0),
@@ -167,11 +167,11 @@ bool VFSNativeFile::Eof() const
     return m_Position >= m_Size;
 }
 
-std::shared_ptr<VFSFile> VFSNativeFile::Clone() const
+shared_ptr<VFSFile> VFSNativeFile::Clone() const
 {
-    return std::make_shared<VFSNativeFile>(
+    return make_shared<VFSNativeFile>(
                                            RelativePath(),
-                                           std::dynamic_pointer_cast<VFSNativeHost>(Host()));
+                                           dynamic_pointer_cast<VFSNativeHost>(Host()));
 }
 
 unsigned VFSNativeFile::XAttrCount() const

@@ -15,9 +15,9 @@
 
 - (id)initWithFiles:(FlexChainedStringsChunk*)_src_files // passing with ownership, operation will free it on finish
             srcroot:(const char*)_src_root
-             srcvfs:(std::shared_ptr<VFSHost>)_src_vfs
+             srcvfs:(shared_ptr<VFSHost>)_src_vfs
             dstroot:(const char*)_dst_root
-             dstvfs:(std::shared_ptr<VFSHost>)_dst_vfs;
+             dstvfs:(shared_ptr<VFSHost>)_dst_vfs;
 
 
 - (OperationDialogAlert *)OnCantAccessSourceItem:(NSError*)_error forPath:(const char *)_path;

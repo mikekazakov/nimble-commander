@@ -67,8 +67,8 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
 @implementation FileCopyOperation
 {
 //    FileCopyOperationJob m_Job;
-    std::shared_ptr<FileCopyOperationJob> m_NativeToNativeJob;
-    std::shared_ptr<FileCopyOperationJobFromGeneric> m_GenericToNativeJob;
+    shared_ptr<FileCopyOperationJob> m_NativeToNativeJob;
+    shared_ptr<FileCopyOperationJobFromGeneric> m_GenericToNativeJob;
     
     
     int m_LastInfoUpdateTime;
@@ -79,7 +79,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts
 {
-    m_NativeToNativeJob = std::make_shared<FileCopyOperationJob>();
+    m_NativeToNativeJob = make_shared<FileCopyOperationJob>();
     self = [super initWithJob:m_NativeToNativeJob.get()];
     if (self)
     {
@@ -109,11 +109,11 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
 
 - (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
                root:(const char*)_root
-            rootvfs:(std::shared_ptr<VFSHost>)_vfs
+            rootvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts
 {
-    m_GenericToNativeJob = std::make_shared<FileCopyOperationJobFromGeneric>();
+    m_GenericToNativeJob = make_shared<FileCopyOperationJobFromGeneric>();
     self = [super initWithJob:m_GenericToNativeJob.get()];
     if (self)
     {

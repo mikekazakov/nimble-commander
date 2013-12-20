@@ -22,7 +22,7 @@ public:
 
     void Init(FlexChainedStringsChunk *_src_files, // passing ownage to Job
               const char *_src_root,               // dir in where files are located
-              std::shared_ptr<VFSHost> _src_host,  // src host to deal with
+              shared_ptr<VFSHost> _src_host,  // src host to deal with
               const char *_dest,                   // where to copy
               FileCopyOperationOptions* _opts,
               FileCopyOperation *_op
@@ -38,8 +38,8 @@ private:
     bool CopyFileTo(const char *_src, const char *_dest);
     bool CopyDirectoryTo(const char *_src, const char *_dest);
     void EraseXattrs(int _fd_in);
-    void CopyXattrs(std::shared_ptr<VFSFile> _file, int _fd_to);
-    void CopyXattrsFn(std::shared_ptr<VFSFile> _file, const char *_fn_to);
+    void CopyXattrs(shared_ptr<VFSFile> _file, int _fd_to);
+    void CopyXattrsFn(shared_ptr<VFSFile> _file, const char *_fn_to);
     
     enum class ItemFlags
     {
@@ -54,7 +54,7 @@ private:
     FlexChainedStringsChunk *m_ScannedItems, *m_ScannedItemsLast;
     const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;    
 
-    std::shared_ptr<VFSHost> m_SrcHost;
+    shared_ptr<VFSHost> m_SrcHost;
     char                     m_SrcDir[MAXPATHLEN];
     char                     m_Destination[MAXPATHLEN];
     
@@ -64,7 +64,7 @@ private:
     dispatch_queue_t m_WriteQueue;
     dispatch_group_t m_IOGroup;
     
-    std::vector<uint8_t> m_ItemFlags;    
+    vector<uint8_t> m_ItemFlags;    
     unsigned m_SourceNumberOfFiles;
     unsigned m_SourceNumberOfDirectories;
     unsigned long m_SourceTotalBytes;

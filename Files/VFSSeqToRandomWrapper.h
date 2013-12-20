@@ -14,7 +14,7 @@
 class VFSSeqToRandomROWrapperFile : public VFSFile
 {
 public:
-    VFSSeqToRandomROWrapperFile(std::shared_ptr<VFSFile> _file_to_wrap);
+    VFSSeqToRandomROWrapperFile(shared_ptr<VFSFile> _file_to_wrap);
     ~VFSSeqToRandomROWrapperFile();
     
     virtual int Open(int _flags) override;
@@ -39,7 +39,7 @@ private:
     int                      m_FD;
     ssize_t                  m_Pos;
     ssize_t                  m_Size;
-    std::shared_ptr<VFSFile> m_SeqFile;
+    shared_ptr<VFSFile> m_SeqFile;
     uint8_t                 *m_DataBuf; // used only when filesize <= MaxCachedInMem
     bool                     m_Ready;
 };

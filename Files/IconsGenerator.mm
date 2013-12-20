@@ -44,11 +44,11 @@ static bool IsImageRepEqual(NSBitmapImageRep *_img1, NSBitmapImageRep *_img2)
 
 static NSImageRep *ProduceThumbnailForVFS(const char *_path,
                                    const char *_ext,
-                                   std::shared_ptr<VFSHost> _host,
+                                   shared_ptr<VFSHost> _host,
                                    CGSize _sz)
 {
     NSImageRep *result = 0;
-    std::shared_ptr<VFSFile> vfs_file;
+    shared_ptr<VFSFile> vfs_file;
     if(_host->CreateFile(_path, &vfs_file, 0) < 0)
         return 0;
         
@@ -126,9 +126,9 @@ cleanup:
     return result;
 }
 
-static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, std::shared_ptr<VFSHost> _host)
+static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, shared_ptr<VFSHost> _host)
 {
-    std::shared_ptr<VFSFile> vfs_file;
+    shared_ptr<VFSFile> vfs_file;
     if(_host->CreateFile(_path, &vfs_file, 0) < 0)
         return 0;
     if(vfs_file->Open(VFSFile::OF_Read) < 0)
@@ -144,9 +144,9 @@ static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, std::shared_pt
     return obj;
 }
 
-static NSImage *ReadImageFromVFSFile(const char *_path, std::shared_ptr<VFSHost> _host)
+static NSImage *ReadImageFromVFSFile(const char *_path, shared_ptr<VFSHost> _host)
 {
-    std::shared_ptr<VFSFile> vfs_file;
+    shared_ptr<VFSFile> vfs_file;
     if(_host->CreateFile(_path, &vfs_file, 0) < 0)
         return 0;
     if(vfs_file->Open(VFSFile::OF_Read) < 0)
@@ -161,7 +161,7 @@ static NSImage *ReadImageFromVFSFile(const char *_path, std::shared_ptr<VFSHost>
 
 static NSImageRep *ProduceBundleThumbnailForVFS(const char *_path,
                                       const char *_ext,
-                                      std::shared_ptr<VFSHost> _host,
+                                      shared_ptr<VFSHost> _host,
                                       NSRect _rc)
 {
     char tmp[MAXPATHLEN];
@@ -259,7 +259,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         return entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
 
     unsigned short meta_no = m_LastIconID++;
-    auto ins_it = m_Icons.insert(std::make_pair( meta_no, std::make_shared<Meta>()));
+    auto ins_it = m_Icons.insert(make_pair( meta_no, make_shared<Meta>()));
     assert(ins_it.second == true); // another sanity check
     auto meta = ins_it.first->second;
     
@@ -277,7 +277,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     meta->extension = entry.HasExtension() ? entry.Extension() : "";
     if(m_IconsMode >= IconModeFileIcons && !meta->extension.empty())
     {
-        __block std::map<std::string, NSImageRep*>::const_iterator it;
+        __block map<string, NSImageRep*>::const_iterator it;
         dispatch_sync(m_IconsCacheQueue, ^{ it = m_IconsCache.find(meta->extension); });
         if(it != m_IconsCache.end())
             meta->filetype = it->second;
@@ -293,7 +293,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     return meta->filetype ? meta->filetype : meta->generic;
 }
 
-void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGenerator> _guard)
+void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _guard)
 {
     if(m_StopWorkQueue > 0)
         return;
@@ -309,7 +309,7 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
         // zero - if we haven't image for this extension - produce it
         if(!_meta->extension.empty())
         {
-            __block std::map<std::string, NSImageRep*>::const_iterator it;
+            __block map<string, NSImageRep*>::const_iterator it;
             dispatch_sync(m_IconsCacheQueue, ^{
                 it = m_IconsCache.find(_meta->extension);
                 if( it == m_IconsCache.end() )
@@ -400,7 +400,7 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
         if(!_meta->thumbnail && !_meta->filetype && !_meta->extension.empty())
         {
             // check if have some information in cache
-            __block std::map<std::string, NSImageRep*>::const_iterator it;
+            __block map<string, NSImageRep*>::const_iterator it;
             dispatch_sync(m_IconsCacheQueue, ^{ it = m_IconsCache.find(_meta->extension); });
             
             if( it != m_IconsCache.end() )
@@ -435,8 +435,8 @@ void IconsGenerator::Runner(std::shared_ptr<Meta> _meta, std::shared_ptr<IconsGe
     }
     
     // clear unnecessary meta data
-    std::string().swap(_meta->extension);
-    std::string().swap(_meta->relative_path);
+    string().swap(_meta->extension);
+    string().swap(_meta->relative_path);
     _meta->host.reset();
 }
 

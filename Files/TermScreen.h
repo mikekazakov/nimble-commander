@@ -12,6 +12,8 @@
 #include <vector>
 #include <mutex>
 
+using namespace std;
+
 struct TermScreenColors
 {
     enum {
@@ -57,8 +59,8 @@ public:
     inline void Lock()      { m_Lock.lock();   }
     inline void Unlock()    { m_Lock.unlock(); }
     
-    const std::vector<Space> *GetScreenLine(int _line_no) const;
-    const std::vector<Space> *GetScrollBackLine(int _line_no) const;
+    const vector<Space> *GetScreenLine(int _line_no) const;
+    const vector<Space> *GetScrollBackLine(int _line_no) const;
     
     inline int ScrollBackLinesCount() const { return (int)m_ScrollBack.size(); }
     
@@ -121,7 +123,7 @@ private:
         static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
     };
     
-    std::mutex                    m_Lock;
+    mutex                    m_Lock;
     unsigned char                 m_Color;
     bool                          m_Intensity;
     bool                          m_Underline;
@@ -132,11 +134,11 @@ private:
     int                           m_PosY;
     Space                         m_EraseChar;
     ScreenShot                   *m_ScreenShot;
-    std::list<std::vector<Space>> m_Screen;
-    std::list<std::vector<Space>> m_ScrollBack;
+    list<vector<Space>> m_Screen;
+    list<vector<Space>> m_ScrollBack;
     static const int        m_TitleMaxLen = 1024;
     char                    m_Title[m_TitleMaxLen];
     
     
-    std::vector<Space> *GetLineRW(int _line_no);
+    vector<Space> *GetLineRW(int _line_no);
 };

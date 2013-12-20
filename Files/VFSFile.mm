@@ -10,7 +10,7 @@
 #import "VFSError.h"
 #import "VFSHost.h"
 
-VFSFile::VFSFile(const char* _relative_path, std::shared_ptr<VFSHost> _host):
+VFSFile::VFSFile(const char* _relative_path, shared_ptr<VFSHost> _host):
     m_RelativePath(_relative_path),
     m_Host(_host),
     m_LastError(0)
@@ -26,7 +26,7 @@ const char* VFSFile::RelativePath() const
     return m_RelativePath.c_str();
 }
 
-std::shared_ptr<VFSHost> VFSFile::Host() const
+shared_ptr<VFSHost> VFSFile::Host() const
 {
     return m_Host;
 }
@@ -67,7 +67,7 @@ off_t   VFSFile::Seek(off_t, int)   { return SetLastError(VFSError::NotSupported
 ssize_t VFSFile::Pos() const        { return SetLastError(VFSError::NotSupported); }
 ssize_t VFSFile::Size() const       { return SetLastError(VFSError::NotSupported); }
 bool    VFSFile::Eof() const        { return true; }
-std::shared_ptr<VFSFile> VFSFile::Clone() const { return 0; }
+shared_ptr<VFSFile> VFSFile::Clone() const { return 0; }
 
 void VFSFile::ComposeFullHostsPath(char *_buf) const
 {

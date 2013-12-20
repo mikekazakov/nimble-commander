@@ -13,7 +13,7 @@
 
 - (void) ShowItems:(FlexChainedStringsChunk*)_entries
              InDir:(const char*)_dir
-             InVFS:(std::shared_ptr<VFSHost>)_host
+             InVFS:(shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
             OfView:(NSView*)_view
      PreferredEdge:(NSRectEdge)_preferredEdge;

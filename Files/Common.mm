@@ -370,7 +370,7 @@ bool IsVolumeContainingPathEjectable(const char *_path)
                                          kCFAllocatorNull));
 }
 
-+ (instancetype)stringWithUTF8StdStringNoCopy:(const std::string&)stdstring
++ (instancetype)stringWithUTF8StdStringNoCopy:(const string&)stdstring
 {
     return (NSString*) CFBridgingRelease(CFStringCreateWithBytesNoCopy(0,
                                                                        (UInt8*)stdstring.c_str(),

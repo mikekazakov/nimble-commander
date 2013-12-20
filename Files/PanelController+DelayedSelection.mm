@@ -49,14 +49,14 @@
     }
     
     // now try to find it
-    int entryindex = m_Data->FindEntryIndex(m_DelayedSelection.filename);
+    int entryindex = m_Data->RawIndexForName(m_DelayedSelection.filename);
     if( entryindex >= 0 )
     {
         // we found this entry. regardless of appearance of this entry in current directory presentation
         // there's no reason to search for it again
         m_DelayedSelection.isvalid = false;
         
-        int sortpos = m_Data->FindSortedEntryIndex(entryindex);
+        int sortpos = m_Data->SortedIndexForRawIndex(entryindex);
         if( sortpos >= 0 )
         {
             [m_View SetCursorPosition:sortpos];

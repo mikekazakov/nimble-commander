@@ -163,7 +163,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     {
         int rawpos = m_Data->SortedDirectoryEntries()[curpos];
         m_Data->SetCustomSortMode(_mode);
-        int newcurpos = m_Data->FindSortedEntryIndex(rawpos);
+        int newcurpos = m_Data->SortedIndexForRawIndex(rawpos);
         if(newcurpos >= 0)
         {
             [m_View SetCursorPosition:newcurpos];
@@ -266,19 +266,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                       SelectEntry:0];
 }
 
-- (int) FindSortIndexForEntryOrZero:(const char*) _entry
-{
-    int sort = 0;
-    int raw = m_Data->FindEntryIndex(_entry);
-
-    if(raw >= 0)
-        sort = m_Data->FindSortedEntryIndex(raw);
-    if(sort < 0)
-        sort = 0;
-    
-    return sort;
-}
-
 - (int) FetchFlags
 {
     bool show_dot_dot = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralShowDotDotEntry"];
@@ -318,7 +305,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                                newcursor:0];
             else // go into dot-dot dir
                 [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
-                               newcursor:[self FindSortIndexForEntryOrZero:_entry_name]];
+                               newcursor:max(m_Data->SortedIndexForName(_entry_name), 0)];
             [self OnPathChanged];
             return VFSError::Ok;
         }
@@ -395,7 +382,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                                        newcursor:0];
                     else // go into dot-dot dir
                         [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
-                                       newcursor:[self FindSortIndexForEntryOrZero:entryname.c_str()]];
+                                       newcursor:max(m_Data->SortedIndexForName(entryname.c_str()), 0)];
                     [self OnPathChanged];
                 });
             }
@@ -681,11 +668,11 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 
                 if(![self CheckAgainstRequestedSelection])
                 {
-                    int newcursorrawpos = m_Data->FindEntryIndex(oldcursorname.c_str());
+                    int newcursorrawpos = m_Data->RawIndexForName(oldcursorname.c_str());
                     if( newcursorrawpos >= 0 )
                     {
-                        int sortpos = m_Data->FindSortedEntryIndex(newcursorrawpos);
-                        [m_View SetCursorPosition:sortpos >= 0 ? sortpos : 0];
+                        int sortpos = m_Data->SortedIndexForRawIndex(newcursorrawpos);
+                        [m_View SetCursorPosition:max(sortpos, 0)];
                     }
                     else
                     {
@@ -734,7 +721,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         if(m_FastSearchOffset > range)
             m_FastSearchOffset = range;
             
-        int pos = m_Data->FindSortedEntryIndex(ind);
+        int pos = m_Data->SortedIndexForRawIndex(ind);
         if(pos >= 0)
             [m_View SetCursorPosition:pos];
     }

@@ -158,13 +158,14 @@ void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPAT
     }
 }
 
-int PanelData::FindEntryIndex(const char *_filename) const
+int PanelData::RawIndexForName(const char *_filename) const
 {
     assert(m_EntriesByRawName->size() == m_Listing->Count()); // consistency check
     assert(_filename != 0);
     
-    if(strcmp(_filename, "..") == 0)
-    {
+    if(_filename[0] == '.' &&
+       _filename[1] == '.' &&
+       _filename[2] == 0   ) {
         // special case - need to process it separately since dot-dot entry don't obey sort direction
         if(m_Listing->Count() && (*m_Listing)[0].IsDotDot())
             return 0;
@@ -172,39 +173,29 @@ int PanelData::FindEntryIndex(const char *_filename) const
     }
     
     // performing binary search on m_EntriesByRawName
-    int imin = 0, imax = (int)m_EntriesByRawName->size()-1;
-    if(imin <= imax && (*m_Listing)[(*m_EntriesByRawName)[imin]].IsDotDot() )
-        imin++; // exclude dot-dot entry from searching since it causes a nasty side-effect
-
-    while(imax >= imin)
-    {
-        int imid = (imin + imax) / 2;
-        
-        unsigned indx = (*m_EntriesByRawName)[imid];
-        assert(indx < m_Listing->Count());
-        
-        int res = strcmp(_filename, (*m_Listing)[indx].Name());
-
-        if(res < 0)
-            imax = imid - 1;
-        else if(res > 0)
-            imin = imid + 1;
-        else
-            return indx;
-    }
+    auto begin = m_EntriesByRawName->begin(), end = m_EntriesByRawName->end();
+    if(begin < end && (*m_Listing)[(*m_EntriesByRawName)[*begin]].IsDotDot() )
+        ++begin;
+    
+    auto i = lower_bound(begin, end, _filename,
+                         [=](unsigned _i, const char* _s) {
+                             return strcmp(_s, (*m_Listing)[_i].Name()) < 0;
+                         });
+    if(i < end &&
+       strcmp(_filename, (*m_Listing)[*i].Name()) == 0)
+        return *i;
     
     return -1;
 }
 
-int PanelData::FindSortedEntryIndex(unsigned _desired_value) const
+int PanelData::SortedIndexForRawIndex(unsigned _desired_raw_index) const
 {
     // TODO: consider creating reverse (raw entry->sorted entry) map to speed up performance
     // ( if the code below will every became a problem - we can change it from O(n) to O(1) )
-    size_t i = 0, e = m_EntriesByCustomSort->size();
-    const auto *v = m_EntriesByCustomSort->data();
-    for(;i<e;++i)
-        if(v[i] == _desired_value)
-            return (int)i;
+    auto i = find_if(m_EntriesByCustomSort->begin(), m_EntriesByCustomSort->end(),
+            [=](unsigned t) {return t == _desired_raw_index;} );
+    if( i < m_EntriesByCustomSort->end() )
+        return int(i - m_EntriesByCustomSort->begin());
     return -1;
 }
 
@@ -715,7 +706,7 @@ bool PanelData::FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset,
 bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size)
 {
     assert(_size != VFSListingItem::InvalidSize);
-    int n = FindEntryIndex(_entry);
+    int n = RawIndexForName(_entry);
     if(n >= 0)
     {
         auto &i = (*m_Listing)[n];
@@ -750,4 +741,14 @@ void PanelData::CustomIconClearAll()
 {
     for (auto &entry : *m_Listing)
         entry.SetCIcon(0);
+}
+
+
+int PanelData::SortedIndexForName(const char *_filename) const
+{
+    int raw = RawIndexForName(_filename);
+    if(raw < 0)
+        return -1;
+    
+    return SortedIndexForRawIndex(raw);
 }

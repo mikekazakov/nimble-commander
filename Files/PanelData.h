@@ -69,7 +69,6 @@ struct PanelSortMode
 class PanelData
 {
 public:
-//    typedef deque<DirectoryEntryInformation> DirEntryInfoT;
     typedef vector<unsigned>                 DirSortIndT; // value in this array is an index for DirEntryInfoT
     
     PanelData();
@@ -92,13 +91,17 @@ public:
     
     void ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPATHLEN]);
     
-    int FindEntryIndex(const char *_filename) const;
+    int RawIndexForName(const char *_filename) const;
         // TODO: improve this by using a name-sorted list
         // performs a bruteforce case-sensivitive search
         // return -1 if didn't found
         // returning value is in raw land, that is DirectoryEntries[N], not sorted ones
     
-    int FindSortedEntryIndex(unsigned _desired_value) const;
+    int SortedIndexForName(const char *_filename) const;
+        // return -1 if didn't found
+        // returned value is in sorted indxs land
+    
+    int SortedIndexForRawIndex(unsigned _desired_raw_index) const;
         // return -1 if didn't found
         // _desired_value - raw item index
     

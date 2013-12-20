@@ -11,6 +11,7 @@
 #import "Operation.h"
 #import "OperationJob.h"
 #import "OperationDialogController.h"
+#import "Common.h"
 
 using namespace std;
 
@@ -169,7 +170,7 @@ const int MaxDialogs = 2;
 {
     m_Job->GetStats().PauseTimeTracking();
     
-    dispatch_async(dispatch_get_main_queue(), ^(){
+    dispatch_to_main_queue( ^(){
         // Enqueue dialog.
         [_dialog OnDialogEnqueued:self];
         m_Dialogs[_DialogsCount] = _dialog;

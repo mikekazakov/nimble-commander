@@ -78,18 +78,18 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             if(_host->IsDirectory(path.c_str(), 0, 0))
             {
-                dispatch_async(dispatch_get_main_queue(), ^{ self.previewItem = nil; });
+                dispatch_to_main_queue( ^{ self.previewItem = nil; });
                 return;
             }
             struct stat st;
             if(_host->Stat(path.c_str(), st, 0, 0) < 0)
             {
-                dispatch_async(dispatch_get_main_queue(), ^{ self.previewItem = nil; });
+                dispatch_to_main_queue( ^{ self.previewItem = nil; });
                 return;
             }
             if(st.st_size > g_MaxFileSizeForVFSQL)
             {
-                dispatch_async(dispatch_get_main_queue(), ^{ self.previewItem = nil; });                
+                dispatch_to_main_queue( ^{ self.previewItem = nil; });                
                 return;
             }
             
@@ -98,7 +98,7 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
                 return;
             NSString *fn = [NSString stringWithUTF8String:tmp];
             if(!m_Closed)
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_to_main_queue( ^{
                     if(!m_Closed)
                         self.previewItem = [NSURL fileURLWithPath:fn];
                 });

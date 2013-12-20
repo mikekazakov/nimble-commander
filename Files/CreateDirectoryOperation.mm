@@ -63,7 +63,7 @@
             NSString *path = [NSString stringWithUTF8String:m_OriginalPathRequest];
             PanelController *target = self.TargetPanel;
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue( ^{
                 [target RefreshDirectory];
                 [target ScheduleDelayedSelectionChangeFor:path
                                                 timeoutms:500

@@ -917,7 +917,7 @@
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                    options:&opts];
              [op AddOnFinishHandler:^{
-                 dispatch_async(dispatch_get_main_queue(), ^{
+                 dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];
                      [m_RightPanelController RefreshDirectory];
                  });
@@ -965,7 +965,7 @@
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
              [op AddOnFinishHandler:^{
-                 dispatch_async(dispatch_get_main_queue(), ^{
+                 dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];
                      [m_RightPanelController RefreshDirectory];
                  });
@@ -1035,7 +1035,7 @@
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
              [op AddOnFinishHandler:^{
-                 dispatch_async(dispatch_get_main_queue(), ^{
+                 dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];
                      [m_RightPanelController RefreshDirectory];
                  });
@@ -1083,7 +1083,7 @@
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
              [op AddOnFinishHandler:^{
-                 dispatch_async(dispatch_get_main_queue(), ^{
+                 dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];
                      [m_RightPanelController RefreshDirectory];
                  });

@@ -66,7 +66,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         
         __weak PanelController* weakself = self;
         auto on_change = ^{
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue( ^{
                 [weakself UpdateSpinningIndicator];
             });
         };
@@ -386,7 +386,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             if(ret >= 0)
             {
                 [self CancelBackgroundOperations]; // clean running operations if any
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_to_main_queue( ^{
                     m_HostsStack = *_hosts; // some overhead here, nevermind
                     m_Data->Load(listing);
                     
@@ -407,7 +407,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                     NSAlert *alert = [[NSAlert alloc] init];
                     [alert setMessageText: [NSString stringWithFormat:@"Failed to enter directory %@", _path]];
                     [alert setInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedFailureReason]]];
-                    dispatch_async(dispatch_get_main_queue(), ^{ [alert runModal]; });
+                    dispatch_to_main_queue( ^{ [alert runModal]; });
                 };*/
             }
         }
@@ -435,7 +435,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                             if(ret >= 0)
                             {
                                 [self CancelBackgroundOperations]; // clean running operations if any
-                                dispatch_async(dispatch_get_main_queue(), ^{
+                                dispatch_to_main_queue( ^{
                                     m_HostsStack = *_hosts; // some overhead here, nevermind
                                     m_HostsStack.push_back(arhost);
                                     m_Data->Load(listing);
@@ -449,7 +449,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             }
         }
         
-//        dispatch_async(dispatch_get_main_queue(), ^{[self NotifyDirectoryLoading:false];});
+//        dispatch_to_main_queue( ^{[self NotifyDirectoryLoading:false];});
     });
 }
 
@@ -671,7 +671,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(),&listing, self.FetchFlags, ^{ return _q->IsStopped(); });
         if(ret >= 0)
         {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue( ^{
                 int oldcursorpos = [m_View GetCursorPosition];
                 string oldcursorname;
                 if(oldcursorpos >= 0 && [m_View CurrentItem] != 0)
@@ -701,7 +701,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         }
         else
         {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue( ^{
                 [self RecoverFromInvalidDirectory];
             });
         }
@@ -894,11 +894,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         // guess it's better to move the following line into main thread
         // it may be a race condition with possible UB here. BAD!
         auto complet = ^(const char* _dir, uint64_t _size){
-            if(m_Data->SetCalculatedSizeForDirectory(_dir, _size)){
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [m_View setNeedsDisplay:true];
-                });
-            }
+            if(m_Data->SetCalculatedSizeForDirectory(_dir, _size))
+                [m_View setNeedsDisplay];
         };
 
         if(!_isdotdot)

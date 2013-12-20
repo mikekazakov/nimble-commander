@@ -653,7 +653,7 @@ proceed:;
     GetFilenameFromPath(target, target_fn);
     NSString *target_fns = [NSString stringWithUTF8String:target_fn];
     [op AddOnFinishHandler:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_to_main_queue( ^{
             [m_CurrentController ScheduleDelayedSelectionChangeFor:target_fns
                                                          timeoutms:500
                                                           checknow:true];

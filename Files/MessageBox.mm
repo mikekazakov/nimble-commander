@@ -7,6 +7,7 @@
 //
 
 #import "MessageBox.h"
+#import "Common.h"
 
 @implementation MessageBox
 {
@@ -18,7 +19,7 @@
 {
     m_Handler = 0;
     m_Ptr = _retptr;
-    dispatch_async(dispatch_get_main_queue(), ^(){
+    dispatch_to_main_queue( ^(){
         [self beginSheetModalForWindow:_for_window
                          modalDelegate:self
                         didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)
@@ -30,7 +31,7 @@
 {
     m_Handler = _handler;
     m_Ptr = 0;
-    dispatch_async(dispatch_get_main_queue(), ^(){
+    dispatch_to_main_queue( ^(){
     [self beginSheetModalForWindow:_for_window
                      modalDelegate:self
                      didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)

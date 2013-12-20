@@ -98,7 +98,7 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
         struct termios term_sett; // Saved terminal settings
         
         // Save the defaults parameters of the slave side of the PTY
-        rc = tcgetattr(slave_fd, &term_sett);
+        tcgetattr(slave_fd, &term_sett);
         term_sett.c_iflag = ICRNL | IXON | IXANY | IMAXBEL | BRKINT;
         term_sett.c_oflag = OPOST | ONLCR;
         term_sett.c_cflag = CREAD | CS8 | HUPCL;

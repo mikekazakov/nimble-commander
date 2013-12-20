@@ -168,7 +168,7 @@
     if(!arc_name)
         return;
     
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_to_main_queue( ^{
         [target RefreshDirectory];
         [target ScheduleDelayedSelectionChangeFor:arc_name
                                         timeoutms:500

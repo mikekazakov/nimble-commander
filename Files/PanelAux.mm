@@ -65,7 +65,7 @@ void PanelVFSFileWorkspaceOpener::Open(const char* _filename,
             return;
         
         NSString *fn = [NSString stringWithUTF8String:tmp];
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_to_main_queue( ^{
             
             if(!app_path.empty())
             {

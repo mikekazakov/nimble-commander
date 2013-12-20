@@ -116,6 +116,10 @@ struct MachTimeBenchmark
     }    
 };
 
+@interface NSView (Sugar)
+- (void) setNeedsDisplay;
+@end
+
 @interface NSObject (MassObserving)
 - (void)addObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys options:(NSKeyValueObservingOptions)options context:(void *)context;
 - (void)removeObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys;
@@ -142,3 +146,5 @@ struct MachTimeBenchmark
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
 
 inline bool dispatch_is_main_queue() { return [NSThread isMainThread]; }
+inline void dispatch_to_main_queue(dispatch_block_t block) { dispatch_async(dispatch_get_main_queue(), block); }
+

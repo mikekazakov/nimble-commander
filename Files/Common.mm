@@ -389,3 +389,14 @@ bool IsVolumeContainingPathEjectable(const char *_path)
 }
 
 @end
+
+
+@implementation NSView (Sugar)
+- (void) setNeedsDisplay
+{
+    if(dispatch_is_main_queue())
+        [self setNeedsDisplay:TRUE];
+    else
+        dispatch_to_main_queue( ^{ [self setNeedsDisplay:TRUE]; } );
+}
+@end

@@ -109,7 +109,7 @@
             strongself->m_Screen->Unlock();
         
             //            tmb.Reset("Parsed in: ");
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue( ^{
                 [strongself->m_View adjustSizes:false];
                 [strongself->m_View setNeedsDisplay:true];
                 if(newtitle)
@@ -227,7 +227,7 @@
     NSLog(@"!!! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
     
     NSWindow *w = self.window;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_to_main_queue( ^{
         [w close];
     });*/
     

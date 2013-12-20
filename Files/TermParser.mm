@@ -739,10 +739,10 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
 //    static char buf[20];
 
     NSUInteger modflag = [_event modifierFlags];
-    int mod=0;
+/*    int mod=0;
     if((modflag & NSControlKeyMask) && (modflag&NSShiftKeyMask)) mod=6;
     else if(modflag & NSControlKeyMask) mod=5;
-    else if(modflag & NSShiftKeyMask) mod=2;
+    else if(modflag & NSShiftKeyMask) mod=2;*/
     
     
     const char *seq_resp = 0;

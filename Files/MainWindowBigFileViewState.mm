@@ -404,18 +404,18 @@ static int FileWindowSize()
         if(m_SearchInFile->IsEOF())
             m_SearchInFile->MoveCurrentPosition(0);
         
-        dispatch_async(dispatch_get_main_queue(), ^{[self NotifySearching:true];});
+        dispatch_to_main_queue( ^{[self NotifySearching:true];});
         auto result = m_SearchInFile->Search(&offset, &len, ^{return m_IsStopSearching;});
-        dispatch_async(dispatch_get_main_queue(), ^{[self NotifySearching:false];});
+        dispatch_to_main_queue( ^{[self NotifySearching:false];});
         
         if(result == SearchInFile::Result::Found)
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue( ^{
                 [m_SearchResult setStringValue:@""];
                 [m_View SetSelectionInFile:CFRangeMake(offset, len)];
                 [m_View ScrollToSelection];
             });
         else if(result == SearchInFile::Result::NotFound)
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue( ^{
                 [m_SearchResult setStringValue:@"Not found"];
             });
     });

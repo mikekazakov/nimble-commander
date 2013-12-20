@@ -14,6 +14,7 @@
 #import <dirent.h>
 #import "SharingService.h"
 #import "TemporaryNativeFileStorage.h"
+#import "Common.h"
 
 static const uint64_t g_MaxFileSizeForVFSShare = 64*1024*1024; // 64mb
 static volatile int g_IsCurrentlySharing = 0;
@@ -123,7 +124,7 @@ static volatile int g_IsCurrentlySharing = 0;
                             [items addObject:url];
                 
                 if([items count] > 0)
-                    dispatch_async(dispatch_get_main_queue(), ^{
+                    dispatch_to_main_queue( ^{
                         NSSharingServicePicker *sharingServicePicker = [[NSSharingServicePicker alloc] initWithItems:items];
                         sharingServicePicker.delegate = self;
                         [sharingServicePicker showRelativeToRect:_rect

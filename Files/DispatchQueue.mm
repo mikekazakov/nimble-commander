@@ -8,45 +8,107 @@
 
 #include "DispatchQueue.h"
 
-SerialQueue::SerialQueue(const char *_label):
+SerialQueueT::SerialQueueT(const char *_label):
     m_Queue(dispatch_queue_create(_label, DISPATCH_QUEUE_SERIAL)),
-    m_Length(0)
+    m_Length(0),
+    m_Stopped(false)
 {
     assert(m_Queue != 0);
 }
 
-SerialQueue::~SerialQueue()
+SerialQueueT::~SerialQueueT()
 {
     assert(Length() == 0);
     dispatch_release(m_Queue);
 }
 
-void SerialQueue::Run( void (^_block)() )
+void SerialQueueT::OnDry( void (^_block)() )
 {
-    Run( ^(shared_ptr<SerialQueue> _unused) {
-        
-            _block();
-        
-        }
-    );
+    m_OnDry = _block;
 }
 
-void SerialQueue::Run( void (^_block)(shared_ptr<SerialQueue>) )
+void SerialQueueT::OnWet( void (^_block)() )
 {
-    ++m_Length;
+    m_OnWet = _block;
+}
+
+void SerialQueueT::OnChange( void (^_block)() )
+{
+    m_OnChange = _block;
+}
+
+void SerialQueueT::Stop()
+{
+    if(m_Length.load() > 0)
+        m_Stopped.store(true);
+}
+
+bool SerialQueueT::IsStopped() const
+{
+    return m_Stopped.load();
+}
+
+void SerialQueueT::Run( void (^_block)() )
+{
+    Run( ^(shared_ptr<SerialQueueT> _unused) { _block(); } );
+}
+
+void SerialQueueT::Run( void (^_block)(shared_ptr<SerialQueueT>) )
+{
+    if(m_Stopped.load()) // won't push any the tasks until we're stopped
+        return;
+    
+    if((++m_Length) == 1)
+        BecameWet();
+    Changed();
     
     auto me = shared_from_this();
     
     dispatch_async(m_Queue, ^{
         
-        _block(me);
+        if(me->m_Stopped.load() == false)
+            _block(me);
         
-        --(me->m_Length);
-        
+        if(--(me->m_Length) == 0)
+            BecameDry();
+        Changed();
     });
 }
 
-int SerialQueue::Length() const
+void SerialQueueT::Wait()
+{
+    if(m_Length.load() == 0)
+        return;
+    
+    dispatch_sync(m_Queue, ^{});
+}
+
+int SerialQueueT::Length() const
 {
     return m_Length.load();
+}
+
+bool SerialQueueT::Empty() const
+{
+    return m_Length.load() == 0;
+}
+
+void SerialQueueT::BecameDry()
+{
+    m_Stopped.store(false);
+    
+    if(m_OnDry != 0)
+        m_OnDry();
+}
+
+void SerialQueueT::BecameWet()
+{
+    if(m_OnWet != 0)
+        m_OnWet();
+}
+
+void SerialQueueT::Changed()
+{
+    if(m_OnChange != 0)
+        m_OnChange();
 }

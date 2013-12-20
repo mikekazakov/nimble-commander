@@ -34,17 +34,21 @@
     PanelFastSearchPopupViewController *m_FastSearchPopupView;
     
     // background directory size calculation support
-    bool     m_IsStopDirectorySizeCounting; // flags current any other those tasks in queue that they need to stop
-    bool     m_IsDirectorySizeCounting; // is background task currently working?
-    dispatch_queue_t m_DirectorySizeCountingQ;
+//    bool     m_IsStopDirectorySizeCounting; // flags current any other those tasks in queue that they need to stop
+//    bool     m_IsDirectorySizeCounting; // is background task currently working?
+//    dispatch_queue_t m_DirectorySizeCountingQ;
+    SerialQueue m_DirectorySizeCountingQ;
     
     // background directory changing (loading) support
-    bool     m_IsStopDirectoryLoading; // flags current any other those tasks in queue that they need to stop
-    bool     m_IsDirectoryLoading; // is background task currently working?
-    dispatch_queue_t m_DirectoryLoadingQ;
-    bool     m_IsStopDirectoryReLoading; // flags current any other those tasks in queue that they need to stop
-    bool     m_IsDirectoryReLoading; // is background task currently working?
-    dispatch_queue_t m_DirectoryReLoadingQ;
+//    bool     m_IsStopDirectoryLoading; // flags current any other those tasks in queue that they need to stop
+//    bool     m_IsDirectoryLoading; // is background task currently working?
+//    dispatch_queue_t m_DirectoryLoadingQ;
+    SerialQueue m_DirectoryLoadingQ;
+    
+//    bool     m_IsStopDirectoryReLoading; // flags current any other those tasks in queue that they need to stop
+//    bool     m_IsDirectoryReLoading; // is background task currently working?
+//    dispatch_queue_t m_DirectoryReLoadingQ;
+    SerialQueue m_DirectoryReLoadingQ;
     
     // spinning indicator support
     bool                m_IsAnythingWorksInBackground;

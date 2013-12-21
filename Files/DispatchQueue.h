@@ -79,7 +79,15 @@ public:
     
     DispatchGroup(Priority _priority = Default);
     ~DispatchGroup();
+    
+    /**
+     * Run _block in group on queue with prioriry specified at construction time
+     */
     void Run( void (^_block)() );
+    
+    /**
+     * Wait indefinitely until all task in group will be finished
+     */
     void Wait();
     
 private:

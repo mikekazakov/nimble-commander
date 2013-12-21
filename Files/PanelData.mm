@@ -7,6 +7,16 @@
 #import "FlexChainedStringsChunk.h"
 #import "FileMask.h"
 
+static inline PanelSortMode RawSort()
+{
+    PanelSortMode sort;
+    sort.show_hidden = true;
+    sort.numeric_sort = false;
+    sort.sort = PanelSortMode::SortByRawCName;
+    sort.sep_dirs = false;
+    return sort;
+}
+
 PanelData::PanelData():
     m_SortExecGroup(DispatchGroup::High)
 {
@@ -16,26 +26,25 @@ PanelData::PanelData():
     m_Listing = make_shared<VFSListing>("", shared_ptr<VFSHost>(0));
 }
 
+PanelSortMode PanelData::HumanSort() const
+{
+    PanelSortMode mode;
+    mode.sep_dirs = false;
+    mode.sort = PanelSortMode::SortByName;
+    mode.show_hidden = m_CustomSortMode.show_hidden;
+    mode.case_sens = false;
+    mode.numeric_sort = false;
+    return mode;
+}
+
 void PanelData::Load(shared_ptr<VFSListing> _listing)
 {
     m_Listing = _listing;
     
     // now sort our new data
-    m_SortExecGroup.Run(^{
-        PanelSortMode sort;
-        sort.sort = PanelSortMode::SortByRawCName;
-        sort.sep_dirs = false;
-        DoSort(m_Listing, m_EntriesByRawName, sort); });
-    m_SortExecGroup.Run(^{
-        PanelSortMode mode;
-        mode.sep_dirs = false;
-        mode.sort = PanelSortMode::SortByName;
-        mode.show_hidden = m_CustomSortMode.show_hidden;
-        mode.case_sens = false;
-        mode.numeric_sort = false;
-        DoSort(m_Listing, m_EntriesByHumanName, mode); });
-    m_SortExecGroup.Run(^{
-        DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
+    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByRawName,    RawSort());        });
+    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName,  HumanSort());      });
+    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
     m_SortExecGroup.Wait();
     
     // update stats
@@ -46,13 +55,7 @@ void PanelData::ReLoad(shared_ptr<VFSListing> _listing)
 {
     // sort new entries by raw c name for sync-swapping needs
     DirSortIndT dirbyrawcname;
-    PanelSortMode rawsortmode;
-    rawsortmode.sort = PanelSortMode::SortByRawCName;
-    rawsortmode.sep_dirs = false;
-    rawsortmode.show_hidden = true;
-    rawsortmode.numeric_sort = false;
-    
-    DoSort(_listing, dirbyrawcname, rawsortmode);
+    DoSort(_listing, dirbyrawcname, RawSort());
     
     // transfer custom data to new array using sorted indeces arrays
     size_t dst_i = 0, dst_e = _listing->Count(),
@@ -89,16 +92,8 @@ void PanelData::ReLoad(shared_ptr<VFSListing> _listing)
     m_EntriesByRawName.swap(dirbyrawcname);
     
     // now sort our new data with custom sortings
-    m_SortExecGroup.Run(^{
-        PanelSortMode mode;
-        mode.sep_dirs = false;
-        mode.sort = PanelSortMode::SortByName;
-        mode.show_hidden = m_CustomSortMode.show_hidden;
-        mode.case_sens = false;
-        mode.numeric_sort = false;
-        DoSort(m_Listing, m_EntriesByHumanName, mode); });
-    m_SortExecGroup.Run(^{
-        DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
+    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName, HumanSort());        });
+    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode);  });
     m_SortExecGroup.Wait();
     
     // update stats
@@ -120,7 +115,7 @@ const PanelData::DirSortIndT& PanelData::SortedDirectoryEntries() const
     return m_EntriesByCustomSort;
 }
 
-void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPATHLEN])
+void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[MAXPATHLEN])
 {
     const auto &entry = (*m_Listing)[_entry_no];
     
@@ -146,9 +141,7 @@ int PanelData::RawIndexForName(const char *_filename) const
     if(_filename == nullptr)
         return -1;
     
-    if(_filename[0] == '.' &&
-       _filename[1] == '.' &&
-       _filename[2] == 0   ) {
+    if( strisdotdot(_filename) ) {
         // special case - need to process it separately since dot-dot entry don't obey sort direction
         if(m_Listing->Count() && (*m_Listing)[0].IsDotDot())
             return 0;
@@ -186,7 +179,7 @@ int PanelData::SortedIndexForRawIndex(int _desired_raw_index) const
     return -1;
 }
 
-void PanelData::GetDirectoryPathWithoutTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const
+void PanelData::GetDirectoryPathWithoutTrailingSlash(char _buf[MAXPATHLEN]) const
 {
     if(m_Listing.get() == 0) {
         strcpy(_buf, "");
@@ -206,7 +199,7 @@ void PanelData::GetDirectoryPathWithoutTrailingSlash(char _buf[__DARWIN_MAXPATHL
         _buf[size-1] = 0;
 }
 
-void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const
+void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[MAXPATHLEN]) const
 {
     if(m_Listing.get() == 0) {
         strcpy(_buf, "");
@@ -228,7 +221,7 @@ void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]
     }
 }
 
-void PanelData::GetDirectoryPathShort(char _buf[__DARWIN_MAXPATHLEN]) const
+void PanelData::GetDirectoryPathShort(char _buf[MAXPATHLEN]) const
 {
     if(m_Listing.get() == 0) {
         strcpy(_buf, "");
@@ -363,37 +356,33 @@ public:
 
 void PanelData::DoSort(shared_ptr<VFSListing> _from, PanelData::DirSortIndT &_to, PanelSortMode _mode)
 {
-    _to.resize(_from->Count());
-    if(_to.empty())
+    if(_from->Count() == 0) {
+        _to.clear();
         return;
-  
-    if(_mode.show_hidden)
-    {
-        size_t i = 0, e = _from->Count();
-        for(; i < e; ++i)
-            _to[i] = (unsigned)i;
     }
-    else
-    {
-        size_t nsrc = 0, ndst = 0;
-        size_t ssrc = _from->Count();
-        for(;nsrc<ssrc;++nsrc)
-            if( (*_from)[nsrc].IsHidden() == false )
-            {
-                _to[ndst] = (unsigned) nsrc;
-                ++ndst;
-            }
-        _to.resize(ndst); // now have only elements that are not hidden
+  
+    if(_mode.show_hidden) {
+        _to.resize(_from->Count());
+        unsigned index = 0;
+        generate( begin(_to), end(_to), [&]{return index++;} );
+    }
+    else {
+        _to.clear();
+        int size = _from->Count();
+        for(int i = 0; i < size; ++i)
+            if( !(*_from)[i].IsHidden())
+                _to.push_back(i);
+        // now have only elements that are not hidden
     }
     
     if(_mode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
  
     SortPredLess pred(_from, _mode);
-    DirSortIndT::iterator start = _to.begin(), end = _to.end();
+    DirSortIndT::iterator start = begin(_to);
     if( (*_from)[0].IsDotDot() ) start++; // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
     
-    sort(start, end, pred);
+    sort(start, end(_to), pred);
 }
 
 void PanelData::SetCustomSortMode(PanelSortMode _mode)
@@ -409,15 +398,8 @@ void PanelData::SetCustomSortMode(PanelSortMode _mode)
         {
             m_CustomSortMode = _mode;
             // need to update fast search indeces also, since there are structural changes
-            m_SortExecGroup.Run(^{
-                PanelSortMode mode;
-                mode.sep_dirs = false;
-                mode.sort = PanelSortMode::SortByName;
-                mode.show_hidden = m_CustomSortMode.show_hidden;
-                mode.case_sens = false;
-                DoSort(m_Listing, m_EntriesByHumanName, mode); });
-            m_SortExecGroup.Run(^{
-                DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
+            m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName, HumanSort()); });
+            m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
             m_SortExecGroup.Wait();
             
             UpdateStatictics(); // we need to update statistics since some selected enties may become invisible and hence should be deselected

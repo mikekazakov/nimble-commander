@@ -559,7 +559,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         if(m_SymbWidth > 14)
         {   // need to draw a path name
             char panelpath[MAXPATHLEN*8];
-            UniChar panelpathuni[__DARWIN_MAXPATHLEN];
+            UniChar panelpathuni[MAXPATHLEN];
             UniChar panelpathtrim[256]; // may crash here on weird cases
             size_t panelpathsz;
             m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);
@@ -747,7 +747,7 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     if(m_SymbWidth > 14)
     {   // need to draw a path name
         char panelpath[MAXPATHLEN*8];
-        UniChar panelpathuni[__DARWIN_MAXPATHLEN];
+        UniChar panelpathuni[MAXPATHLEN];
         UniChar panelpathtrim[256]; // may crash here on weird cases
         size_t panelpathsz;
         m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);

@@ -1,17 +1,12 @@
 #pragma once
-#include <sys/dirent.h>
 #include <vector>
 #include "DispatchQueue.h"
-
-#import "VFS.h"
+#include "VFS.h"
 
 struct FlexChainedStringsChunk;
 
 struct PanelSortMode
 {
-    // TODO: add sensivity flags, numerical flags
-
-    
     enum Mode
     {
         SortNoSort      = 0x000,
@@ -65,7 +60,16 @@ struct PanelSortMode
         return !(*this == _r);
     }
 };
-    
+
+/**
+ * PanelData actually does the following things:
+ * - sorting data
+ * - handling reloading with preserving of custom entries data
+ * - searching
+ * - paths accessing
+ * - custom information setting/getting
+ * - statistics
+ */
 class PanelData
 {
 public:
@@ -88,7 +92,7 @@ public:
     int SortPosToRawPos(int _pos) const; // does SortedDirectoryEntries()[_pos]
     const VFSListingItem& EntryAtRawPosition(int _pos) const;
     
-    void ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPATHLEN]);
+    void ComposeFullPathForEntry(int _entry_no, char _buf[MAXPATHLEN]);
     
     int RawIndexForName(const char *_filename) const;
         // TODO: improve this by using a name-sorted list
@@ -104,11 +108,11 @@ public:
         // return -1 if didn't found
         // _desired_value - raw item index
     
-    void GetDirectoryPathWithoutTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const;
+    void GetDirectoryPathWithoutTrailingSlash(char _buf[MAXPATHLEN]) const;
         // return current directory in long variant starting from /
-    void GetDirectoryPathWithTrailingSlash(char _buf[__DARWIN_MAXPATHLEN]) const;
+    void GetDirectoryPathWithTrailingSlash(char _buf[MAXPATHLEN]) const;
         // same as above but path will ends with slash
-    void GetDirectoryPathShort(char _buf[__DARWIN_MAXPATHLEN]) const;
+    void GetDirectoryPathShort(char _buf[MAXPATHLEN]) const;
         // return name of a current directory in a parent directory
         // returns a zero string for a root dir
     
@@ -149,6 +153,8 @@ private:
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
     static void DoSort(shared_ptr<VFSListing> _from, DirSortIndT &_to, PanelSortMode _mode);
+    
+    PanelSortMode HumanSort() const;
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing

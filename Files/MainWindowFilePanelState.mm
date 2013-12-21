@@ -609,7 +609,7 @@
 
 - (IBAction)OnSyncPanels:(id)sender{
     assert([self IsPanelActive]);
-    char dirpath[__DARWIN_MAXPATHLEN];
+    char dirpath[MAXPATHLEN];
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
     
@@ -705,7 +705,7 @@
     int curpos = [curview GetCursorPosition];
     if(curpos < 0) return;
     int rawpos = curdata->SortPosToRawPos(curpos);
-    char src[__DARWIN_MAXPATHLEN];
+    char src[MAXPATHLEN];
     curdata->ComposeFullPathForEntry(rawpos, src);
     
     DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];

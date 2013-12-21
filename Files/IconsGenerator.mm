@@ -190,11 +190,11 @@ static NSImageRep *ProduceBundleThumbnailForVFS(const char *_path,
     return [image bestRepresentationForRect:_rc context:nil hints:nil];
 }
 
-IconsGenerator::IconsGenerator()
+IconsGenerator::IconsGenerator():
+    m_WorkGroup(DispatchGroup::Low)
 {
     m_ControlQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
     m_IconsCacheQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);
-    m_WorkGroup = dispatch_group_create();
     m_IconSize = NSMakeRect(0, 0, 16, 16);
     m_LastIconID = 0;
     m_StopWorkQueue = false;
@@ -206,11 +206,9 @@ IconsGenerator::IconsGenerator()
 IconsGenerator::~IconsGenerator()
 {
     m_StopWorkQueue++;
-    dispatch_group_wait(m_WorkGroup, DISPATCH_TIME_FOREVER);
+    m_WorkGroup.Wait();
     if(m_ControlQueue != 0)
         dispatch_release(m_ControlQueue);
-    if(m_WorkGroup != 0)
-        dispatch_release(m_WorkGroup);
     if(m_IconsCacheQueue != 0)
         dispatch_release(m_IconsCacheQueue);
 }
@@ -286,7 +284,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     entry.SetCIcon(meta_no+1);
     
     auto sh_this = shared_from_this();
-    dispatch_group_async(m_WorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    m_WorkGroup.Run(^{
         Runner(meta, sh_this);
     });
     
@@ -445,7 +443,7 @@ void IconsGenerator::StopWorkQueue()
     m_StopWorkQueue++;
     auto sh_this = shared_from_this();
     dispatch_async(m_ControlQueue, ^{
-        dispatch_group_wait(m_WorkGroup, DISPATCH_TIME_FOREVER);
+        m_WorkGroup.Wait();
         sh_this->m_StopWorkQueue--; // possible race condition
     });
 }

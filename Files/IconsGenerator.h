@@ -10,6 +10,7 @@
 
 #import <memory>
 #import <map>
+#import "DispatchQueue.h"
 
 #import "VFS.h"
 
@@ -70,7 +71,7 @@ private:
     NSBitmapImageRep *m_GenericFileIconBitmap;
     NSBitmapImageRep *m_GenericFolderIconBitmap;
 
-    dispatch_group_t m_WorkGroup;    // working queue is concurrent
+    DispatchGroup    m_WorkGroup;    // working queue is concurrent
     dispatch_queue_t m_ControlQueue; // linear queue
     dispatch_queue_t m_IconsCacheQueue;
     

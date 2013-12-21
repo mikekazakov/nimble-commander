@@ -65,3 +65,28 @@ private:
 };
 
 typedef shared_ptr<SerialQueueT> SerialQueue;
+
+class DispatchGroup
+{
+public:
+    enum Priority
+    {
+        High        = DISPATCH_QUEUE_PRIORITY_HIGH,
+        Default     = DISPATCH_QUEUE_PRIORITY_DEFAULT,
+        Low         = DISPATCH_QUEUE_PRIORITY_LOW,
+        Background  = DISPATCH_QUEUE_PRIORITY_BACKGROUND
+    };
+    
+    DispatchGroup(Priority _priority = Default);
+    ~DispatchGroup();
+    void Run( void (^_block)() );
+    void Wait();
+    
+private:
+    DispatchGroup(const DispatchGroup&) = delete;
+    void operator=(const DispatchGroup&) = delete;
+    dispatch_queue_t m_Queue;
+    dispatch_group_t m_Group;
+};
+
+

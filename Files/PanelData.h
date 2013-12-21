@@ -1,7 +1,7 @@
 #pragma once
 #include <sys/dirent.h>
 #include <vector>
-
+#include "DispatchQueue.h"
 
 #import "VFS.h"
 
@@ -72,7 +72,6 @@ public:
     typedef vector<unsigned>                 DirSortIndT; // value in this array is an index for DirEntryInfoT
     
     PanelData();
-    ~PanelData();
     
     // these methods should be called by a controller, since some view's props have to be updated
     // PanelData is solely sync class - it does not give a fuck about concurrency,
@@ -149,23 +148,23 @@ private:
     void operator=(const PanelData&) = delete;
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
-    static void DoSort(const shared_ptr<VFSListing> _from, DirSortIndT *_to, PanelSortMode _mode);
+    static void DoSort(shared_ptr<VFSListing> _from, DirSortIndT &_to, PanelSortMode _mode);
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
     shared_ptr<VFSListing>             m_Listing;
 
-    DirSortIndT                             *m_EntriesByRawName;   // sorted with raw strcmp comparison
-    DirSortIndT                             *m_EntriesByHumanName; // sorted with human-reasonable literal sort
-    DirSortIndT                             *m_EntriesByCustomSort; // custom defined sort
+    DirSortIndT                             m_EntriesByRawName;    // sorted with raw strcmp comparison
+    DirSortIndT                             m_EntriesByHumanName;  // sorted with human-reasonable literal sort
+    DirSortIndT                             m_EntriesByCustomSort; // custom defined sort
     PanelSortMode                           m_CustomSortMode;
-    dispatch_group_t                        m_SortExecGroup;
+    DispatchGroup                           m_SortExecGroup;
     
     // statistics
-    unsigned long                           m_TotalBytesInDirectory; // assuming regular files ONLY!
-    unsigned                                m_TotalFilesInDirectory; // NOT DIRECTORIES! only regular files, maybe + symlinks and other stuff
-    unsigned long                           m_SelectedItemsSizeBytes;
-    unsigned                                m_SelectedItemsCount;
-    unsigned                                m_SelectedItemsFilesCount;
-    unsigned                                m_SelectedItemsDirectoriesCount;
+    unsigned long                           m_TotalBytesInDirectory = 0; // assuming regular files ONLY!
+    unsigned                                m_TotalFilesInDirectory = 0; // NOT DIRECTORIES! only regular files, maybe + symlinks and other stuff
+    unsigned long                           m_SelectedItemsSizeBytes = 0;
+    unsigned                                m_SelectedItemsCount = 0;
+    unsigned                                m_SelectedItemsFilesCount = 0;
+    unsigned                                m_SelectedItemsDirectoriesCount = 0;
 };

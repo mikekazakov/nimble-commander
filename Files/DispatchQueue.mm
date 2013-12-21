@@ -112,3 +112,26 @@ void SerialQueueT::Changed()
     if(m_OnChange != 0)
         m_OnChange();
 }
+
+DispatchGroup::DispatchGroup(Priority _priority):
+    m_Queue(dispatch_get_global_queue(_priority, 0)),
+    m_Group(dispatch_group_create())
+{
+    assert(m_Queue != 0);
+    assert(m_Group != 0);
+}
+
+DispatchGroup::~DispatchGroup()
+{
+    dispatch_release(m_Group);
+}
+
+void DispatchGroup::Run( void (^_block)() )
+{
+    dispatch_group_async(m_Group, m_Queue, _block);
+}
+
+void DispatchGroup::Wait()
+{
+    dispatch_group_wait(m_Group, DISPATCH_TIME_FOREVER);
+}

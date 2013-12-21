@@ -101,7 +101,7 @@ public:
         // return -1 if didn't found
         // returned value is in sorted indxs land
     
-    int SortedIndexForRawIndex(unsigned _desired_raw_index) const;
+    int SortedIndexForRawIndex(int _desired_raw_index) const;
         // return -1 if didn't found
         // _desired_value - raw item index
     
@@ -138,6 +138,7 @@ public:
     void CustomFlagsSelect(size_t _at_raw_pos, bool _is_selected);
     void CustomFlagsSelectAllSorted(bool _select);
     void CustomFlagsSelectAll(bool _select);
+    int CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs);
     
     void CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id);
     void CustomIconClearAll();

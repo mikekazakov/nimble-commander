@@ -213,6 +213,8 @@
 		CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */; };
 		CFA0B2291864064700501C35 /* VFSPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2271864064700501C35 /* VFSPath.mm */; };
 		CFA0B22C186412BD00501C35 /* DispatchQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.mm */; };
+		CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
+		CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
 		CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */; };
 		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
@@ -579,6 +581,10 @@
 		CFA0B2281864064700501C35 /* VFSPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSPath.h; sourceTree = "<group>"; };
 		CFA0B22A186412BD00501C35 /* DispatchQueue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DispatchQueue.mm; sourceTree = "<group>"; };
 		CFA0B22B186412BD00501C35 /* DispatchQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchQueue.h; sourceTree = "<group>"; };
+		CFA0B22D18648F9A00501C35 /* PanelHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelHistory.mm; sourceTree = "<group>"; };
+		CFA0B22E18648F9A00501C35 /* PanelHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelHistory.h; sourceTree = "<group>"; };
+		CFA0B23018653FF300501C35 /* PanelController+Navigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+Navigation.h"; sourceTree = "<group>"; };
+		CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+Navigation.mm"; sourceTree = "<group>"; };
 		CFA58397170EA3C400E508CF /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperation.h; sourceTree = "<group>"; };
 		CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperation.mm; sourceTree = "<group>"; };
 		CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperationJob.mm; sourceTree = "<group>"; };
@@ -898,10 +904,14 @@
 				CFC5123716C5287B00D247EE /* PanelView.h */,
 				CF3C88D616D73A23006346CD /* PanelController.mm */,
 				CF3C88D516D73A23006346CD /* PanelController.h */,
+				CFA0B23018653FF300501C35 /* PanelController+Navigation.h */,
+				CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */,
 				CFD712D417EED43800DA15EF /* PanelController+DataAccess.h */,
 				CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */,
 				CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */,
 				CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */,
+				CFA0B22D18648F9A00501C35 /* PanelHistory.mm */,
+				CFA0B22E18648F9A00501C35 /* PanelHistory.h */,
 				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
 				CF0519DA17E9C98A00590C74 /* PanelAux.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
@@ -1537,6 +1547,7 @@
 				CF9D0EA717CC961100CB8146 /* archive_read_support_format_iso9660.c in Sources */,
 				CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */,
 				CF9D0EC817CC961100CB8146 /* archive_write_open_filename.c in Sources */,
+				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* FlexChainedStringsChunk.cpp in Sources */,
 				CF9D0E9B17CC961100CB8146 /* archive_read_support_filter_none.c in Sources */,
 				CF9D0EE317CE11C800CB8146 /* VFSSeqToRandomWrapper.mm in Sources */,
@@ -1623,6 +1634,7 @@
 				CF9D0E7E17CC961100CB8146 /* archive_entry_strmode.c in Sources */,
 				CF9D0EA617CC961100CB8146 /* archive_read_support_format_empty.c in Sources */,
 				CF9D0E7617CC961100CB8146 /* archive_check_magic.c in Sources */,
+				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */,
 				CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
@@ -1769,7 +1781,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_STATIC_ANALYZER_MODE = deep;
+				CLANG_STATIC_ANALYZER_MODE = shallow;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1813,7 +1825,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_STATIC_ANALYZER_MODE = deep;
+				CLANG_STATIC_ANALYZER_MODE = shallow;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;

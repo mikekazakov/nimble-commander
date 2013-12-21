@@ -133,7 +133,7 @@ public:
     
     // common stuff
     inline shared_ptr<VFSListing> SharedPtr() { return shared_from_this(); }
-    inline shared_ptr<const VFSListing> SharedPtr() const { return shared_from_this(); }
+    inline shared_ptr<VFSListing> SharedPtr() const { return ((VFSListing*)this)->shared_from_this(); }
     void ComposeFullPathForEntry(size_t _entry_position, char *_buf) const;
     
     const char *RelativePath() const;

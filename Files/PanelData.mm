@@ -5,6 +5,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import "Common.h"
 #import "FlexChainedStringsChunk.h"
+#import "FileMask.h"
 
 PanelData::PanelData()
 {
@@ -161,7 +162,9 @@ void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[__DARWIN_MAXPAT
 int PanelData::RawIndexForName(const char *_filename) const
 {
     assert(m_EntriesByRawName->size() == m_Listing->Count()); // consistency check
-    assert(_filename != 0);
+
+    if(_filename == nullptr)
+        return -1;
     
     if(_filename[0] == '.' &&
        _filename[1] == '.' &&
@@ -179,7 +182,7 @@ int PanelData::RawIndexForName(const char *_filename) const
     
     auto i = lower_bound(begin, end, _filename,
                          [=](unsigned _i, const char* _s) {
-                             return strcmp(_s, (*m_Listing)[_i].Name()) < 0;
+                             return strcmp((*m_Listing)[_i].Name(), _s) < 0;
                          });
     if(i < end &&
        strcmp(_filename, (*m_Listing)[*i].Name()) == 0)
@@ -188,8 +191,12 @@ int PanelData::RawIndexForName(const char *_filename) const
     return -1;
 }
 
-int PanelData::SortedIndexForRawIndex(unsigned _desired_raw_index) const
+int PanelData::SortedIndexForRawIndex(int _desired_raw_index) const
 {
+    if(_desired_raw_index < 0 ||
+       _desired_raw_index >= m_Listing->Count())
+        return -1;
+    
     // TODO: consider creating reverse (raw entry->sorted entry) map to speed up performance
     // ( if the code below will every became a problem - we can change it from O(n) to O(1) )
     auto i = find_if(m_EntriesByCustomSort->begin(), m_EntriesByCustomSort->end(),
@@ -743,12 +750,30 @@ void PanelData::CustomIconClearAll()
         entry.SetCIcon(0);
 }
 
-
 int PanelData::SortedIndexForName(const char *_filename) const
 {
-    int raw = RawIndexForName(_filename);
-    if(raw < 0)
-        return -1;
+    return SortedIndexForRawIndex(RawIndexForName(_filename));
+}
+
+int PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs)
+{
+    FileMask mask(_mask);
+    int counter = 0;
     
-    return SortedIndexForRawIndex(raw);
+    for(auto i: *m_EntriesByCustomSort) {
+        const auto &entry = (*m_Listing)[i];
+        
+        if(_ignore_dirs && entry.IsDir())
+            continue;
+        
+        if(entry.IsDotDot())
+            continue;
+        
+        if(mask.MatchName((__bridge NSString*)entry.CFName())) {
+            CustomFlagsSelect(i, _select);
+            counter++;
+        }
+    }
+    
+    return counter;
 }

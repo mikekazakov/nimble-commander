@@ -666,16 +666,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 
                 m_Data->ReLoad(listing);
                 
-                if(![self CheckAgainstRequestedSelection])
-                {
+                if(![self CheckAgainstRequestedSelection]) {
                     int newcursorrawpos = m_Data->RawIndexForName(oldcursorname.c_str());
-                    if( newcursorrawpos >= 0 )
-                    {
-                        int sortpos = m_Data->SortedIndexForRawIndex(newcursorrawpos);
-                        [m_View SetCursorPosition:max(sortpos, 0)];
+                    if( newcursorrawpos >= 0 ) {
+                        [m_View SetCursorPosition:max(m_Data->SortedIndexForRawIndex(newcursorrawpos), 0)];
                     }
-                    else
-                    {
+                    else {
                         if( oldcursorpos < m_Data->SortedDirectoryEntries().size() )
                             [m_View SetCursorPosition:oldcursorpos];
                         else
@@ -1017,6 +1013,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     [self UpdateEjectButton];
     [self HandleCursorChanged];
     [self UpdateBriefSystemOverview];
+    
+    m_History.Put(VFSPathStack::CreateWithVFSListing(m_Data->DirectoryEntries().SharedPtr()));
 }
 
 - (MainWindowFilePanelState*) GetParentWindow
@@ -1044,27 +1042,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
 {
-    const int stripe_size = 100;
-    
-    FileMask mask(_mask), *maskp = &mask;
-    auto &entries = m_Data->DirectoryEntries();
-    auto &sorted_entries = m_Data->SortedDirectoryEntries();
     bool ignore_dirs = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask"];
-
-    dispatch_apply(sorted_entries.size() / stripe_size + 1, dispatch_get_global_queue(0, 0), ^(size_t n){
-        size_t max = sorted_entries.size();
-        for(size_t i = n*stripe_size; i < (n+1)*stripe_size && i < max; ++i) {
-            const auto &entry = entries[i];
-            if(ignore_dirs && entry.IsDir())
-                continue;
-            if(entry.IsDotDot())
-                continue;
-            if(maskp->MatchName((__bridge NSString*)entry.CFName()))
-                m_Data->CustomFlagsSelect(i, _select);
-        }
-    });
-    
-    [m_View setNeedsDisplay:true];
+    if(m_Data->CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
+        [m_View setNeedsDisplay:true];
 }
 
 - (void)OnShareButton:(id)sender

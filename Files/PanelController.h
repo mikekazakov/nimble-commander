@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "PanelData.h"
 #import "PanelView.h"
+#import "PanelHistory.h"
 #import "DispatchQueue.h"
 
 @class MainWindowController;
@@ -37,6 +38,8 @@
     SerialQueue m_DirectorySizeCountingQ;
     SerialQueue m_DirectoryLoadingQ;
     SerialQueue m_DirectoryReLoadingQ;
+    
+    PanelHistory m_History;
     
     // spinning indicator support
     bool                m_IsAnythingWorksInBackground;
@@ -141,3 +144,4 @@
 
 #import "PanelController+DataAccess.h"
 #import "PanelController+DelayedSelection.h"
+#import "PanelController+Navigation.h"

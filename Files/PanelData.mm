@@ -141,6 +141,9 @@ int PanelData::RawIndexForName(const char *_filename) const
     if(_filename == nullptr)
         return -1;
     
+    if(_filename[0] == 0)
+        return -1; // can't handle empty filenames
+    
     if( strisdotdot(_filename) ) {
         // special case - need to process it separately since dot-dot entry don't obey sort direction
         if(m_Listing->Count() && (*m_Listing)[0].IsDotDot())

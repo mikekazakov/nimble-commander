@@ -306,7 +306,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             else // go into dot-dot dir
                 [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
                                newcursor:max(m_Data->SortedIndexForName(_entry_name), 0)];
-            [self OnPathChanged];
+            [self OnPathChanged:0];
             return VFSError::Ok;
         }
         return ret;
@@ -339,7 +339,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                             m_HostsStack.push_back(arhost);
                             m_Data->Load(listing);
                             [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
-                            [self OnPathChanged];
+                            [self OnPathChanged:0];
                             return VFSError::Ok;
                         }
                     }
@@ -383,7 +383,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                     else // go into dot-dot dir
                         [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
                                        newcursor:max(m_Data->SortedIndexForName(entryname.c_str()), 0)];
-                    [self OnPathChanged];
+                    [self OnPathChanged:0];
                 });
             }
             else
@@ -427,7 +427,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                                     m_HostsStack.push_back(arhost);
                                     m_Data->Load(listing);
                                     [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
-                                    [self OnPathChanged];
+                                    [self OnPathChanged:0];
                                 });
                             }
                         }
@@ -864,7 +864,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         else
         {
             m_QuickLook = [[self GetParentWindow] RequestQuickLookView:self];
-            [self HandleCursorChanged];
+            [self OnCursorChanged];
         }
     }
 }
@@ -1003,7 +1003,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     [m_View setNeedsDisplay:true];
 }
 
-- (void) OnPathChanged
+- (void) OnPathChanged:(int)_flags
 {
     char path[MAXPATHLEN];
     m_Data->GetDirectoryPathWithTrailingSlash(path);
@@ -1011,10 +1011,44 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     [self ClearSelectionRequest];   
     [self SignalParentOfPathChanged];
     [self UpdateEjectButton];
-    [self HandleCursorChanged];
+    [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
     
-    m_History.Put(VFSPathStack::CreateWithVFSListing(m_Data->DirectoryEntries().SharedPtr()));
+    if((_flags & PanelControllerNavigation::NoHistory) == 0)
+    {
+//        auto const *item = [m_View CurrentItem];
+        auto listring = m_Data->DirectoryEntries().SharedPtr();
+        m_History.Put(VFSPathStack::CreateWithVFSListing(listring));
+    }
+}
+
+- (void) OnCursorChanged
+{
+    // need to update some UI here
+    auto const *item = [m_View CurrentItem];
+    if(item)
+    {
+        if(item->IsDotDot())
+            [m_ShareButton setEnabled:m_Data->GetSelectedItemsCount() > 0];
+        else
+        {
+            if(m_HostsStack.back()->IsNativeFS())
+                [m_ShareButton setEnabled:true];
+            else
+                [m_ShareButton setEnabled:!item->IsDir() && item->Size() < [SharingService MaximumFileSizeForVFSShare]];
+        }
+    }
+    else
+        [m_ShareButton setEnabled:false];
+    
+    // update QuickLook if any
+    if(m_QuickLook != nil)
+    {
+        char path[MAXPATHLEN];
+        if( [self GetCurrentFocusedEntryFilePathRelativeToHost:path] )
+            [m_QuickLook PreviewItem:path vfs:m_HostsStack.back()];
+    }
+    
 }
 
 - (MainWindowFilePanelState*) GetParentWindow
@@ -1063,35 +1097,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                OfView:sender
         PreferredEdge:NSMinYEdge];
     }
-}
-
-- (void) HandleCursorChanged
-{
-    // need to update some UI here
-    auto const *item = [m_View CurrentItem];
-    if(item)
-    {
-        if(item->IsDotDot())
-            [m_ShareButton setEnabled:m_Data->GetSelectedItemsCount() > 0];
-        else
-        {
-            if(m_HostsStack.back()->IsNativeFS())
-                [m_ShareButton setEnabled:true];
-            else
-                [m_ShareButton setEnabled:!item->IsDir() && item->Size() < [SharingService MaximumFileSizeForVFSShare]];
-        }
-    }
-    else
-        [m_ShareButton setEnabled:false];
-    
-    // update QuickLook if any
-    if(m_QuickLook != nil)
-    {
-        char path[MAXPATHLEN];
-        if( [self GetCurrentFocusedEntryFilePathRelativeToHost:path] )
-            [m_QuickLook PreviewItem:path vfs:m_HostsStack.back()];
-    }
-    
 }
 
 - (void) UpdateBriefSystemOverview

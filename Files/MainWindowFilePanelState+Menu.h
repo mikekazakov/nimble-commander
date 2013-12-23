@@ -14,6 +14,8 @@
 - (IBAction)OnOpenNatively:(id)sender;
 
 
+- (IBAction)OnGoBack:(id)sender;
+- (IBAction)OnGoForward:(id)sender;
 - (IBAction)OnGoToHome:(id)sender;
 - (IBAction)OnGoToDocuments:(id)sender;
 - (IBAction)OnGoToDesktop:(id)sender;

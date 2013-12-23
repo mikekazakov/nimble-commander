@@ -364,6 +364,16 @@ CA
                 <menuItem title="Go" id="7Mz-pE-ca5">
                     <menu key="submenu" title="Go" id="01c-vh-In9">
                         <items>
+                            <menuItem title="Back" keyEquivalent="[" id="6bU-dO-9Em">
+                                <connections>
+                                    <action selector="OnGoBack:" target="-1" id="AHy-9T-PWY"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Forward" keyEquivalent="]" id="shC-cZ-x2T">
+                                <connections>
+                                    <action selector="OnGoForward:" target="-1" id="Yki-UF-aeK"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Documents" keyEquivalent="O" id="jYE-RA-K1O">
                                 <connections>
                                     <action selector="OnGoToDocuments:" target="-1" id="PSI-qR-ujI"/>

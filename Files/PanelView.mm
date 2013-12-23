@@ -249,7 +249,7 @@ struct CursorSelectionState
 - (void) OnCursorPositionChanged
 {
     [self setNeedsDisplay:true];
-    [m_Controller HandleCursorChanged];
+    [m_Controller OnCursorChanged];
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags

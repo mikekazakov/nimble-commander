@@ -8,13 +8,6 @@
 
 #include "PanelHistory.h"
 
-PanelHistory::PanelHistory():
-    m_Position(0)
-{
-    
-    
-}
-
 bool PanelHistory::IsBeyond() const
 {
     assert(m_Position <= m_History.size());
@@ -61,11 +54,16 @@ void PanelHistory::Put(const VFSPathStack& _path)
     }
     else
     {
-        if(*Current() != _path)
+        m_Position++;
+        if(IsBeyond() || *Current() != _path)
         {
             m_History.resize(m_Position+1);
             m_History.back() = _path;
         }
-        m_Position++;
     }
+}
+
+unsigned PanelHistory::Length() const
+{
+    return (unsigned)m_History.size();
 }

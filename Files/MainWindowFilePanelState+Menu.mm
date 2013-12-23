@@ -73,4 +73,14 @@
     }
 }
 
+- (IBAction)OnGoBack:(id)sender
+{
+    [self.ActivePanelController OnGoBack];
+}
+
+- (IBAction)OnGoForward:(id)sender
+{
+    [self.ActivePanelController OnGoForward];
+}
+
 @end

@@ -17,6 +17,15 @@
 @class PanelFastSearchPopupViewController;
 @class BriefSystemOverview;
 
+struct PanelControllerNavigation
+{
+    enum {
+        NoHistory = 1
+        
+        
+    };
+};
+
 @interface PanelController : NSObject
 {
     PanelData *m_Data;
@@ -101,7 +110,7 @@
 - (void) HandleBriefSystemOverview;
 
 // called by PanelView ///////////////////////////////////////////////
-- (void) HandleCursorChanged;
+- (void) OnCursorChanged;
 - (void) HandleItemsContextMenu;
 ///////////////////////////////////////////////////////////////////////
 
@@ -141,6 +150,12 @@
 - (void) SelectEntriesByMask:(NSString*) _mask select:(bool) _select; // if false - then deselect elements by mask
 @end
 
+// internal stuff, move it somewehere else
+@interface PanelController ()
+- (int) FetchFlags;
+- (void) CancelBackgroundOperations;
+- (void) OnPathChanged:(int)_flags;
+@end
 
 #import "PanelController+DataAccess.h"
 #import "PanelController+DelayedSelection.h"

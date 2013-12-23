@@ -46,6 +46,7 @@ public:
     }
     const Part& operator[](size_t _n) const { return m_Path[_n]; }
     inline size_t size() const { return m_Path.size(); }
+    const Part& back() const { return m_Path.back(); }
 private:
     vector<Part> m_Path;
 };

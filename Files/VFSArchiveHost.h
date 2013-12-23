@@ -26,6 +26,7 @@ public:
                    shared_ptr<VFSHost> _parent);
     ~VFSArchiveHost();
     
+    static const char *Tag;
     virtual const char *FSTag() const override;
     
     int Open(); // flags will be added later

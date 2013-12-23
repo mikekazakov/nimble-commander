@@ -201,7 +201,7 @@ static void FormHumanReadableDirStatInfo32(unsigned long _sz, int _total_files, 
 static void FormHumanReadableBytesAndFiles128(unsigned long _sz, int _total_files, UniChar _out[128], size_t &_symbs, bool _space_prefix_and_postfix)
 {
     // TODO: localization support
-    char buf[128];
+    char buf[128] = {0};
     const char *postfix = _total_files > 1 ? "files" : "file";
     const char *space = _space_prefix_and_postfix ? " " : "";
 #define __1000_1(a) ( (a) % 1000lu )

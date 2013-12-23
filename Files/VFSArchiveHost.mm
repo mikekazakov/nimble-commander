@@ -16,6 +16,8 @@
 #import "VFSArchiveListing.h"
 #import "Common.h"
 
+const char *VFSArchiveHost::Tag = "archive";
+
 VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
                                shared_ptr<VFSHost> _parent):
     VFSHost(_junction_path, _parent),
@@ -41,7 +43,7 @@ VFSArchiveHost::~VFSArchiveHost()
 
 const char *VFSArchiveHost::FSTag() const
 {
-    return "archive";
+    return Tag;
 }
 
 int VFSArchiveHost::Open()

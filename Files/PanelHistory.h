@@ -15,17 +15,15 @@ using namespace std;
 class PanelHistory
 {
 public:
-    PanelHistory();
-    
     bool IsBeyond() const;
     bool IsBack() const;
+    unsigned Length() const;
 
     void MoveForth();
     void MoveBack();
     void Put(const VFSPathStack& _path);
     const VFSPathStack* Current() const;
-        
 private:
     list<VFSPathStack>  m_History;
-    unsigned            m_Position;
+    unsigned            m_Position{0};
 };

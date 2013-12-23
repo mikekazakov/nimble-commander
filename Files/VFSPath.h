@@ -8,8 +8,9 @@
 
 #pragma once
 
-#import "string"
-#import "vector"
+#import <string>
+#import <vector>
+#import <functional>
 
 using namespace std;
 
@@ -49,4 +50,25 @@ public:
     const Part& back() const { return m_Path.back(); }
 private:
     vector<Part> m_Path;
+};
+
+// calculating hash() of VFSPathStack
+template<>
+struct hash<VFSPathStack>
+{
+    typedef VFSPathStack argument_type;
+    typedef std::size_t value_type;
+        
+    value_type operator()(argument_type const& _v) const
+    {
+        string str;
+        for(int i = 0; i < _v.size(); ++i)
+        {
+            str += _v[i].fs_tag;
+            str += _v[i].path;
+            str += "|"; // really need this?
+        }
+        hash<string> h;
+        return h(str);
+    }
 };

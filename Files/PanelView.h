@@ -16,13 +16,16 @@
 class PanelData;
 class PanelViewPresentation;
 
-
 @interface PanelView : NSView
 
 - (void) SetPanelController:(PanelController *)_controller;
 
 - (void) SetPanelData:(PanelData*)_data;
-- (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor;
+
+- (void) DirectoryChanged:(const char*)_focused_filename;
+// if filename is nullptr or was not found - try to load view setting from history
+
+//- (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor;
 
 // _presentation must be created using new. PanelView gains ownership of the _presentation.
 - (PanelViewPresentation*) Presentation;
@@ -55,5 +58,9 @@ class PanelViewPresentation;
 - (int) GetCursorPosition;
 - (void) SetCursorPosition:(int)_pos; // will call EnsureCursorIsVisible implicitly
 - (const VFSListingItem*) CurrentItem; // return an item at current cursor position if any
+
+- (void) SavePathState;
+- (void) LoadPathState;
+
 
 @end

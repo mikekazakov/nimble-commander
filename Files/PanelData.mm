@@ -105,6 +105,11 @@ shared_ptr<VFSHost> PanelData::Host() const
     return m_Listing->Host();
 }
 
+shared_ptr<VFSListing> PanelData::Listing() const
+{
+    return m_Listing;
+}
+
 const VFSListing& PanelData::DirectoryEntries() const
 {
     return *m_Listing.get();

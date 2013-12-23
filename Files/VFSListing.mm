@@ -14,6 +14,8 @@ VFSListing::VFSListing(const char* _relative_path, shared_ptr<VFSHost> _host):
     m_RelativePath(_relative_path),
     m_Host(_host)
 {
+    if(!IsPathWithTrailingSlash(_relative_path))
+        m_RelativePath.push_back('/');
 }
 
 VFSListing::~VFSListing()

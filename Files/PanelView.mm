@@ -9,8 +9,6 @@
 #import "PanelView.h"
 #import "PanelData.h"
 #import "PanelViewPresentation.h"
-
-#import "QuickPreview.h"
 #import "PanelController.h"
 #import "Common.h"
 #import "VFS.h"
@@ -24,6 +22,13 @@ struct CursorSelectionState
         Unselection
     };
 };
+
+struct PanelViewStateStorage
+{
+    int dispay_offset;
+    string focused_item;
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +47,8 @@ struct CursorSelectionState
     
     PanelViewPresentation *m_Presentation;
     PanelViewState m_State;
+    
+    std::map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
 }
 
 - (BOOL)isFlipped
@@ -90,7 +97,7 @@ struct CursorSelectionState
 
 -(void) dealloc
 {
-    if (m_Presentation) delete m_Presentation;
+    delete m_Presentation;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -117,11 +124,11 @@ struct CursorSelectionState
     [self setNeedsDisplay:true];
 }
 
-- (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor
+/*- (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor
 {
     if (m_Presentation) m_Presentation->DirectoryChanged(_type, _cursor);
     [self OnCursorPositionChanged];
-}
+}*/
 
 - (void) SetPresentation:(PanelViewPresentation *)_presentation
 {
@@ -483,6 +490,103 @@ struct CursorSelectionState
 - (PanelViewType) GetCurrentViewType
 {
     return m_State.ViewType;
+}
+
+- (void) SavePathState
+{
+    if(!m_State.Data)
+        return;
+    
+    auto listing = m_State.Data->Listing();
+    if(listing.get() == nullptr)
+        return;
+    
+    auto item = self.CurrentItem;
+    if(item == nullptr)
+        return;
+    
+    auto path = VFSPathStack::CreateWithVFSListing(listing);
+    auto &storage = m_States[hash<VFSPathStack>()(path)];
+    
+    storage.focused_item = item->Name();
+    storage.dispay_offset = m_State.ItemsDisplayOffset;
+}
+
+- (void) LoadPathState
+{
+    if(!m_State.Data)
+        return;
+    
+    auto listing = m_State.Data->Listing();
+    if(listing.get() == nullptr)
+        return;
+    
+    auto path = VFSPathStack::CreateWithVFSListing(listing);
+    auto it = m_States.find(hash<VFSPathStack>()(path));
+    if(it == end(m_States))
+        return;
+    
+    auto &storage = it->second;
+    int cursor = m_State.Data->SortedIndexForName(storage.focused_item.c_str());
+    if(cursor < 0)
+        return;
+    
+    m_State.ItemsDisplayOffset = storage.dispay_offset;
+    m_Presentation->SetCursorPos(cursor);
+    [self OnCursorPositionChanged];
+}
+
+- (void) DirectoryChanged:(const char*)_focused_filename
+{
+/*    if (m_Presentation) m_Presentation->DirectoryChanged(_type, _cursor);
+    [self OnCursorPositionChanged];
+    if(_type == PanelViewDirectoryChangeType::GoIntoSubDir)
+    {
+        // Push current offset.
+        m_State->DisplayOffsetStack.push(m_State->ItemsDisplayOffset);
+    }
+    else if(_type == PanelViewDirectoryChangeType::GoIntoParentDir)
+    {
+        // Pop previous offset.
+        if(!m_State->DisplayOffsetStack.empty())
+        {
+            m_State->ItemsDisplayOffset = m_State->DisplayOffsetStack.top();
+            m_State->DisplayOffsetStack.pop();
+        }
+    }
+    else if(_type == PanelViewDirectoryChangeType::GoIntoOtherDir)
+    {
+        // Clear offset stack.
+        while(!m_State->DisplayOffsetStack.empty())
+            m_State->DisplayOffsetStack.pop();
+    }
+    
+    m_State->CursorPos = -1;
+    if(m_State->Data->SortedDirectoryEntries().size() > 0 &&
+       _cursor >= 0 &&
+       _cursor < m_State->Data->SortedDirectoryEntries().size())
+        m_State->CursorPos = _cursor;
+    
+    EnsureCursorIsVisible();
+    
+    OnDirectoryChanged();
+    */
+    m_State.ItemsDisplayOffset = 0;
+    m_State.CursorPos = -1;
+    
+    [self LoadPathState];
+    
+    int cur = m_State.Data->SortedIndexForName(_focused_filename);
+    if(cur >= 0) {
+        m_Presentation->SetCursorPos(cur);
+        [self OnCursorPositionChanged];
+    }
+    
+    if(m_State.CursorPos < 0 &&
+       m_State.Data->SortedDirectoryEntries().size() > 0) {
+        m_Presentation->SetCursorPos(0);
+        [self OnCursorPositionChanged];        
+    }
 }
 
 @end

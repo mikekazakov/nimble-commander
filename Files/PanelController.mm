@@ -297,15 +297,18 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         if(ret >= 0)
         {
             [self CancelBackgroundOperations]; // clean running operations if any
+            [m_View SavePathState];
+            
             m_HostsStack = *_hosts; // some overhead here, nevermind
             m_Data->Load(listing);
                     
-            if(!_entry_name || !strlen(_entry_name)) // go into some sub-dir
+/*            if(!_entry_name || !strlen(_entry_name)) // go into some sub-dir
                 [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir
                                newcursor:0];
             else // go into dot-dot dir
                 [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
-                               newcursor:max(m_Data->SortedIndexForName(_entry_name), 0)];
+                               newcursor:max(m_Data->SortedIndexForName(_entry_name), 0)];*/
+            [m_View DirectoryChanged:_entry_name];
             [self OnPathChanged:0];
             return VFSError::Ok;
         }
@@ -335,10 +338,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                         if(ret >= 0)
                         {
                             [self CancelBackgroundOperations]; // clean running operations if any
+                            [m_View SavePathState];
                             m_HostsStack = *_hosts; // some overhead here, nevermind
                             m_HostsStack.push_back(arhost);
                             m_Data->Load(listing);
-                            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+//                            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+                            [m_View DirectoryChanged:nullptr];
                             [self OnPathChanged:0];
                             return VFSError::Ok;
                         }
@@ -374,15 +379,17 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             {
                 [self CancelBackgroundOperations]; // clean running operations if any
                 dispatch_to_main_queue( ^{
+                    [m_View SavePathState];
                     m_HostsStack = *_hosts; // some overhead here, nevermind
                     m_Data->Load(listing);
                     
-                    if(entryname.empty()) // go into some sub-dir
+                    [m_View DirectoryChanged:entryname.c_str()];
+/*                    if(entryname.empty()) // go into some sub-dir
                         [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir
                                        newcursor:0];
                     else // go into dot-dot dir
                         [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
-                                       newcursor:max(m_Data->SortedIndexForName(entryname.c_str()), 0)];
+                                       newcursor:max(m_Data->SortedIndexForName(entryname.c_str()), 0)];*/
                     [self OnPathChanged:0];
                 });
             }
@@ -423,10 +430,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                             {
                                 [self CancelBackgroundOperations]; // clean running operations if any
                                 dispatch_to_main_queue( ^{
+                                    [m_View SavePathState];
                                     m_HostsStack = *_hosts; // some overhead here, nevermind
                                     m_HostsStack.push_back(arhost);
                                     m_Data->Load(listing);
-                                    [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+//                                    [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+                                    [m_View DirectoryChanged:nullptr];
                                     [self OnPathChanged:0];
                                 });
                             }
@@ -611,7 +620,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             auto hosts = make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack);
             hosts->pop_back();
             
-            [self GoToRelativeAsync:directory_path WithHosts:hosts SelectEntry:junct_entry];
+            [self GoToRelativeAsync:directory_path WithHosts:hosts SelectEntry:junct];
             
             return;
         }
@@ -1014,11 +1023,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
     
-    if((_flags & PanelControllerNavigation::NoHistory) == 0)
-    {
-//        auto const *item = [m_View CurrentItem];
-        auto listring = m_Data->DirectoryEntries().SharedPtr();
-        m_History.Put(VFSPathStack::CreateWithVFSListing(listring));
+    if((_flags & PanelControllerNavigation::NoHistory) == 0) {
+        auto listing = m_Data->DirectoryEntries().SharedPtr();
+        m_History.Put(VFSPathStack::CreateWithVFSListing(listing));
     }
 }
 

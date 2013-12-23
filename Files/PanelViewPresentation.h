@@ -19,7 +19,7 @@ public:
     void SetState(PanelViewState *_state);
     void SetView(PanelView *_view);
     
-    void DirectoryChanged(PanelViewDirectoryChangeType _type, int _cursor);
+//    void DirectoryChanged(PanelViewDirectoryChangeType _type, int _cursor);
     
     void SetCursorPos(int _pos);
     void ScrollCursor(int _idx, int _idy);

@@ -52,17 +52,15 @@
             if(hosts_stack.back()->IsDirectory(path.back().path.c_str(), 0, 0)) {
                 shared_ptr<VFSListing> listing;
                 int ret = hosts_stack.back()->FetchDirectoryListing(path.back().path.c_str(), &listing, self.FetchFlags, ^{return _q->IsStopped();});
-                if(ret >= 0) {
-                    [self CancelBackgroundOperations]; // clean running operations if any
+                if(ret >= 0)
                     dispatch_to_main_queue( ^{
+                        [self CancelBackgroundOperations]; // clean running operations if any
+                        [m_View SavePathState];
                         m_HostsStack = hosts_stack;
                         m_Data->Load(listing);
-                        
-                        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir
-                                           newcursor:max(m_Data->SortedIndexForName(focus.c_str()), 0)];
+                        [m_View DirectoryChanged:focus.c_str()];
                         [self OnPathChanged:_flags];
                     });
-                }
             }
         }
     });

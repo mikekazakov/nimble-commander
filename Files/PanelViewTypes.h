@@ -19,14 +19,14 @@ enum class PanelViewType
     ViewFull,
     ViewWide
 };
-
+/*
 enum class PanelViewDirectoryChangeType
 {
     GoIntoSubDir,
     GoIntoParentDir,
     GoIntoOtherDir
 };
-
+*/
 struct PanelViewState
 {
     PanelViewState()
@@ -41,7 +41,5 @@ struct PanelViewState
     int CursorPos;
     PanelViewType ViewType;
     bool Active;
-    
     int ItemsDisplayOffset;
-    stack<int> DisplayOffsetStack;
 };

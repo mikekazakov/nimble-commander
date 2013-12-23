@@ -26,7 +26,7 @@ void PanelViewPresentation::SetView(PanelView *_view)
     m_View = _view;
 }
 
-void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type, int _cursor)
+/*void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type, int _cursor)
 {
     if(_type == PanelViewDirectoryChangeType::GoIntoSubDir)
     {
@@ -58,7 +58,7 @@ void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type,
     EnsureCursorIsVisible();
     
     OnDirectoryChanged();
-}
+}*/
 
 void PanelViewPresentation::SetCursorPos(int _pos)
 {

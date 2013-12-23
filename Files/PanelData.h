@@ -85,6 +85,7 @@ public:
     void ReLoad(shared_ptr<VFSListing> _listing);
 
     shared_ptr<VFSHost> Host() const;
+    shared_ptr<VFSListing>  Listing() const;
     const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
     FlexChainedStringsChunk* StringsFromSelectedEntries() const;

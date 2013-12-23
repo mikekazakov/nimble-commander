@@ -6,10 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <stack>
-
-using namespace std;
-
 class PanelData;
 
 enum class PanelViewType
@@ -19,27 +15,12 @@ enum class PanelViewType
     ViewFull,
     ViewWide
 };
-/*
-enum class PanelViewDirectoryChangeType
-{
-    GoIntoSubDir,
-    GoIntoParentDir,
-    GoIntoOtherDir
-};
-*/
+
 struct PanelViewState
 {
-    PanelViewState()
-    :   Data(0),
-        CursorPos(-1),
-        Active(false),
-        ViewType(PanelViewType::ViewMedium),
-        ItemsDisplayOffset(0)
-    {}
-    
-    PanelData *Data;
-    int CursorPos;
-    PanelViewType ViewType;
-    bool Active;
-    int ItemsDisplayOffset;
+    PanelData       *Data       {nullptr};
+    int             CursorPos   {-1};
+    PanelViewType   ViewType    {PanelViewType::ViewMedium};
+    bool            Active      {false};
+    int             ItemsDisplayOffset {0};
 };

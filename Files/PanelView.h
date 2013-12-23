@@ -23,9 +23,6 @@ class PanelViewPresentation;
 - (void) SetPanelData:(PanelData*)_data;
 
 - (void) DirectoryChanged:(const char*)_focused_filename;
-// if filename is nullptr or was not found - try to load view setting from history
-
-//- (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor;
 
 // _presentation must be created using new. PanelView gains ownership of the _presentation.
 - (PanelViewPresentation*) Presentation;

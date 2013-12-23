@@ -57,6 +57,12 @@
     [self DoGoToNativeDirectoryFromMenuItem:"/Applications/Utilities/"];
 }
 
+- (IBAction)OnGoToLibrary:(id)sender
+{
+    NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask];
+    [self DoGoToNativeDirectoryFromMenuItem: [[paths objectAtIndex:0] fileSystemRepresentation]];
+}
+
 - (void) DoGoToNativeDirectoryFromMenuItem: (const char*)_path
 {
     if(_path == 0) return;

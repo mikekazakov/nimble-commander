@@ -538,39 +538,6 @@ struct PanelViewStateStorage
 
 - (void) DirectoryChanged:(const char*)_focused_filename
 {
-/*    if (m_Presentation) m_Presentation->DirectoryChanged(_type, _cursor);
-    [self OnCursorPositionChanged];
-    if(_type == PanelViewDirectoryChangeType::GoIntoSubDir)
-    {
-        // Push current offset.
-        m_State->DisplayOffsetStack.push(m_State->ItemsDisplayOffset);
-    }
-    else if(_type == PanelViewDirectoryChangeType::GoIntoParentDir)
-    {
-        // Pop previous offset.
-        if(!m_State->DisplayOffsetStack.empty())
-        {
-            m_State->ItemsDisplayOffset = m_State->DisplayOffsetStack.top();
-            m_State->DisplayOffsetStack.pop();
-        }
-    }
-    else if(_type == PanelViewDirectoryChangeType::GoIntoOtherDir)
-    {
-        // Clear offset stack.
-        while(!m_State->DisplayOffsetStack.empty())
-            m_State->DisplayOffsetStack.pop();
-    }
-    
-    m_State->CursorPos = -1;
-    if(m_State->Data->SortedDirectoryEntries().size() > 0 &&
-       _cursor >= 0 &&
-       _cursor < m_State->Data->SortedDirectoryEntries().size())
-        m_State->CursorPos = _cursor;
-    
-    EnsureCursorIsVisible();
-    
-    OnDirectoryChanged();
-    */
     m_State.ItemsDisplayOffset = 0;
     m_State.CursorPos = -1;
     

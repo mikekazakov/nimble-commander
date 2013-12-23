@@ -9,6 +9,7 @@
 #import <memory>
 #import "PanelViewPresentation.h"
 
+using namespace std;
 
 @class PanelView;
 @class ObjcToCppObservingBridge;
@@ -83,6 +84,4 @@ private:
     ObjcToCppObservingBridge *m_AppearanceObserver;
     
     shared_ptr<IconsGenerator> m_IconCache;
-//    ModernPanelViewPresentationIconCache *m_IconCache;
-    
 };

@@ -26,40 +26,6 @@ void PanelViewPresentation::SetView(PanelView *_view)
     m_View = _view;
 }
 
-/*void PanelViewPresentation::DirectoryChanged(PanelViewDirectoryChangeType _type, int _cursor)
-{
-    if(_type == PanelViewDirectoryChangeType::GoIntoSubDir)
-    {
-        // Push current offset.
-        m_State->DisplayOffsetStack.push(m_State->ItemsDisplayOffset);
-    }
-    else if(_type == PanelViewDirectoryChangeType::GoIntoParentDir)
-    {
-        // Pop previous offset.
-        if(!m_State->DisplayOffsetStack.empty())
-        {
-            m_State->ItemsDisplayOffset = m_State->DisplayOffsetStack.top();
-            m_State->DisplayOffsetStack.pop();
-        }
-    }
-    else if(_type == PanelViewDirectoryChangeType::GoIntoOtherDir)
-    {
-        // Clear offset stack.
-        while(!m_State->DisplayOffsetStack.empty())
-            m_State->DisplayOffsetStack.pop();
-    }
-    
-    m_State->CursorPos = -1;
-    if(m_State->Data->SortedDirectoryEntries().size() > 0 &&
-       _cursor >= 0 &&
-       _cursor < m_State->Data->SortedDirectoryEntries().size())
-        m_State->CursorPos = _cursor;
-        
-    EnsureCursorIsVisible();
-    
-    OnDirectoryChanged();
-}*/
-
 void PanelViewPresentation::SetCursorPos(int _pos)
 {
     m_State->CursorPos = -1;

@@ -243,14 +243,6 @@ DQ
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="896"/>
-                            <menuItem title="Go To Upper Directory" id="tMA-yo-gQ8">
-                                <string key="keyEquivalent" base64-UTF8="YES">
-CA
-</string>
-                                <connections>
-                                    <action selector="OnGoToUpperDirectory:" target="-1" id="bhZ-NI-ZD2"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Copy File Name" keyEquivalent="C" id="wUh-lo-NqX">
                                 <connections>
                                     <action selector="OnCopyCurrentFileName:" target="-1" id="jPx-9u-Ybz"/>
@@ -374,6 +366,12 @@ CA
                                     <action selector="OnGoForward:" target="-1" id="Yki-UF-aeK"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Enclosing Folder" keyEquivalent="" id="L3e-fZ-Zko">
+                                <connections>
+                                    <action selector="OnGoToUpperDirectory:" target="-1" id="wyJ-vy-YiN"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="qMe-Z3-B2I"/>
                             <menuItem title="Documents" keyEquivalent="O" id="jYE-RA-K1O">
                                 <connections>
                                     <action selector="OnGoToDocuments:" target="-1" id="PSI-qR-ujI"/>
@@ -393,6 +391,12 @@ CA
                             <menuItem title="Home" keyEquivalent="H" id="iGm-8g-qdX">
                                 <connections>
                                     <action selector="OnGoToHome:" target="-1" id="4ze-4F-PpV"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Library" id="YvS-GY-g28">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnGoToLibrary:" target="-1" id="iiG-dl-is4"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Applications" keyEquivalent="A" id="9db-hP-IrI">

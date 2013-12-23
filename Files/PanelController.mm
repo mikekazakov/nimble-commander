@@ -301,13 +301,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             
             m_HostsStack = *_hosts; // some overhead here, nevermind
             m_Data->Load(listing);
-                    
-/*            if(!_entry_name || !strlen(_entry_name)) // go into some sub-dir
-                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir
-                               newcursor:0];
-            else // go into dot-dot dir
-                [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
-                               newcursor:max(m_Data->SortedIndexForName(_entry_name), 0)];*/
             [m_View DirectoryChanged:_entry_name];
             [self OnPathChanged:0];
             return VFSError::Ok;
@@ -339,10 +332,11 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                         {
                             [self CancelBackgroundOperations]; // clean running operations if any
                             [m_View SavePathState];
+
                             m_HostsStack = *_hosts; // some overhead here, nevermind
                             m_HostsStack.push_back(arhost);
                             m_Data->Load(listing);
-//                            [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
+                            
                             [m_View DirectoryChanged:nullptr];
                             [self OnPathChanged:0];
                             return VFSError::Ok;
@@ -382,14 +376,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                     [m_View SavePathState];
                     m_HostsStack = *_hosts; // some overhead here, nevermind
                     m_Data->Load(listing);
-                    
                     [m_View DirectoryChanged:entryname.c_str()];
-/*                    if(entryname.empty()) // go into some sub-dir
-                        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoSubDir
-                                       newcursor:0];
-                    else // go into dot-dot dir
-                        [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoParentDir
-                                       newcursor:max(m_Data->SortedIndexForName(entryname.c_str()), 0)];*/
                     [self OnPathChanged:0];
                 });
             }
@@ -434,7 +421,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                                     m_HostsStack = *_hosts; // some overhead here, nevermind
                                     m_HostsStack.push_back(arhost);
                                     m_Data->Load(listing);
-//                                    [m_View DirectoryChanged:PanelViewDirectoryChangeType::GoIntoOtherDir newcursor:0];
                                     [m_View DirectoryChanged:nullptr];
                                     [self OnPathChanged:0];
                                 });
@@ -444,8 +430,6 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 }
             }
         }
-        
-//        dispatch_to_main_queue( ^{[self NotifyDirectoryLoading:false];});
     });
 }
 
@@ -572,28 +556,23 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 }
 
 - (void) HandleReturnButton
-{ // going async here
-    int sort_pos = [m_View GetCursorPosition];
-    if(sort_pos < 0)
+{
+    const auto entry = [m_View CurrentItem];
+    if(entry == nullptr)
         return;
-    int raw_pos = m_Data->SortedDirectoryEntries()[sort_pos];
-    
-    const auto &entry = m_Data->DirectoryEntries()[raw_pos];
     
     // Handle directories.
-    if(entry.IsDir())
+    if(entry->IsDir())
     {
-        if(!entry.IsDotDot() ||
-           strcmp(m_Data->DirectoryEntries().RelativePath(), "/"))
+        if(!entry->IsDotDot() ||
+           strcmp(m_Data->Listing()->RelativePath(), "/"))
         {
-            char pathbuf[__DARWIN_MAXPATHLEN];
-            m_Data->ComposeFullPathForEntry(raw_pos, pathbuf);
-//            string path = string(pathbuf);
+            char pathbuf[MAXPATHLEN];
+            m_Data->ComposeFullPathForEntry(m_Data->SortPosToRawPos([m_View GetCursorPosition]), pathbuf);
         
             string curdirname("");
-            if(entry.IsDotDot())
-            { // go to parent directory
-                char curdirnamebuf[__DARWIN_MAXPATHLEN];
+            if(entry->IsDotDot()) { // go to parent directory
+                char curdirnamebuf[MAXPATHLEN];
                 m_Data->GetDirectoryPathShort(curdirnamebuf);
                 curdirname = curdirnamebuf;
             }
@@ -613,8 +592,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             char junct_entry[1024];
             char directory_path[1024];
             strcpy(junct_entry, strrchr(junct, '/')+1);
-//            if(strrchr(junct, '/') != junct)
-                *(strrchr(junct, '/')+1) = 0;
+            *(strrchr(junct, '/')+1) = 0;
             strcpy(directory_path, junct);
             
             auto hosts = make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack);
@@ -628,7 +606,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     else
     { // VFS stuff here
         char pathbuf[__DARWIN_MAXPATHLEN];
-        m_Data->ComposeFullPathForEntry(raw_pos, pathbuf);
+        m_Data->ComposeFullPathForEntry(m_Data->SortPosToRawPos([m_View GetCursorPosition]), pathbuf);
         shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(pathbuf, m_HostsStack.back());
         if(arhost->Open() >= 0)
         {
@@ -639,11 +617,11 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     }
     
     // need more sophisticated executable handling here
-    if([self GetCurrentVFSHost]->IsNativeFS() && IsEligbleToTryToExecuteInConsole(entry))
+    if([self GetCurrentVFSHost]->IsNativeFS() && IsEligbleToTryToExecuteInConsole(*entry))
     {
         char pathbuf[__DARWIN_MAXPATHLEN];
         [self GetCurrentDirectoryPathRelativeToHost:pathbuf];
-        [m_WindowController RequestTerminalExecution:entry.Name() at:pathbuf];
+        [m_WindowController RequestTerminalExecution:entry->Name() at:pathbuf];
         return;
     }
     
@@ -793,23 +771,23 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         case NSPageDownFunctionKey:      [m_View HandleNextPage]; return true;
         case NSPageUpFunctionKey:        [m_View HandlePrevPage]; return true;
         case NSLeftArrowFunctionKey:
-            if(modif & NSCommandKeyMask) [m_View HandleFirstFile];
-            else if(modif &  NSAlternateKeyMask); // now nothing wilh alt+left now
+//            if(modif & NSCommandKeyMask) [m_View HandleFirstFile];
+             if(modif &  NSAlternateKeyMask); // now nothing wilh alt+left now
             else                         [m_View HandlePrevColumn];
             return true;
         case NSRightArrowFunctionKey:
-            if(modif & NSCommandKeyMask) [m_View HandleLastFile];
-            else if(modif &  NSAlternateKeyMask); // now nothing wilh alt+right now   
+//            if(modif & NSCommandKeyMask) [m_View HandleLastFile];
+             if(modif &  NSAlternateKeyMask); // now nothing wilh alt+right now
             else                         [m_View HandleNextColumn];
             return true;
         case NSUpArrowFunctionKey:
-            if(modif & NSCommandKeyMask) [m_View HandlePrevPage];
-            else if(modif & NSAlternateKeyMask) [self HandleFastSearchPrevious];
+//            if(modif & NSCommandKeyMask) [m_View HandlePrevPage];
+             if(modif & NSAlternateKeyMask) [self HandleFastSearchPrevious];
             else                         [m_View HandlePrevFile];
             return true;
         case NSDownArrowFunctionKey:
-            if(modif & NSCommandKeyMask) [m_View HandleNextPage];
-            else if(modif &  NSAlternateKeyMask) [self HandleFastSearchNext];
+            /*if(modif & NSCommandKeyMask) [m_View HandleNextPage];
+            else */if(modif &  NSAlternateKeyMask) [self HandleFastSearchNext];
             else                         [m_View HandleNextFile];
             return true;
     }

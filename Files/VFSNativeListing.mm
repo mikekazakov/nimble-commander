@@ -113,7 +113,6 @@ int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
         // ?? do we need to handle properly the usual ".." appearance, since we have a fix-up way anyhow?
         // add ".." entry by hand
         VFSNativeListingItem current = {};
-//        memset(&current, 0, sizeof(DirectoryEntryInformation));
         current.unix_type = DT_DIR;
         current.inode  = 0;
         current.namelen = 2;
@@ -180,6 +179,12 @@ int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
                 memcpy(s, linkpath, sz+1);
                 current->symlink = s;
             }
+            
+            // stat the original file so we can extract some interesting info from it
+            struct stat link_stat_buffer;
+            if(lstat(filename, &link_stat_buffer) == 0 &&
+                (link_stat_buffer.st_flags & UF_HIDDEN) )
+                current->unix_flags |= UF_HIDDEN; // current only using UF_HIDDEN flag
         }
     });
     

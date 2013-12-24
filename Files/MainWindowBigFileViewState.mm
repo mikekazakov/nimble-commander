@@ -437,7 +437,7 @@ static int FileWindowSize()
         [m_SearchIndicator stopAnimation:self];
 }
 
-- (void)performFindPanelAction:(id)sender
+- (IBAction)performFindPanelAction:(id)sender
 {
     [self.window makeFirstResponder:m_SearchField];
 }

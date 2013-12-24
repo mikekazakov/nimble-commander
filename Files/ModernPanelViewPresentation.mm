@@ -773,9 +773,22 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 
                 rect.size.width -= m_SizeColumWidth;
             }
-            
+
             // Draw item text.
-            [(__bridge NSString *)item->CFName() drawWithRect:rect options:options attributes:item_text_attr];
+            if(!item->IsHidden()) {
+                [(__bridge NSString *)item->CFName() drawWithRect:rect options:options attributes:item_text_attr];
+            }
+            else { // TODO: have to rewrite this shit into something normal
+                NSColor *oldcolor = (NSColor*)item_text_attr[NSForegroundColorAttributeName];
+                NSColor *c = [NSColor colorWithDeviceRed:[oldcolor redComponent]
+                                                   green:[oldcolor greenComponent]
+                                                    blue:[oldcolor blueComponent]
+                                                   alpha:[oldcolor alphaComponent] * 0.6];
+                NSDictionary *tmp_flags = @{NSFontAttributeName: item_text_attr[NSFontAttributeName],
+                                            NSParagraphStyleAttributeName: item_text_attr[NSParagraphStyleAttributeName],
+                                            NSForegroundColorAttributeName: c};
+                [(__bridge NSString *)item->CFName() drawWithRect:rect options:options attributes:tmp_flags];
+            }
 
             // Draw icon
             NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack

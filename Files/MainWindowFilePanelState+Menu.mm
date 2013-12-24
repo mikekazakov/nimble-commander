@@ -6,13 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <pwd.h>
 #import <assert.h>
 #import "MainWindowFilePanelState+Menu.h"
 #import "PanelController.h"
 #import "FilePanelMainSplitView.h"
 #import "GoToFolderSheetController.h"
 #import "Common.h"
+#import "common_paths.h"
 
 @implementation MainWindowFilePanelState (Menu)
 
@@ -28,56 +28,50 @@
 
 - (IBAction)OnGoToHome:(id)sender
 {
-    [self DoGoToNativeDirectoryFromMenuItem:getpwuid(getuid())->pw_dir];
+    [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Home)];
 }
 
 - (IBAction)OnGoToDocuments:(id)sender
 {
-    NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
-    [self DoGoToNativeDirectoryFromMenuItem: [[paths objectAtIndex:0] fileSystemRepresentation]];
+    [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Documents)];
 }
 
 - (IBAction)OnGoToDesktop:(id)sender
 {
-    NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask];
-    [self DoGoToNativeDirectoryFromMenuItem: [[paths objectAtIndex:0] fileSystemRepresentation]];    
+    [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Desktop)];
 }
 
 - (IBAction)OnGoToDownloads:(id)sender
 {
-    NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask];
-    [self DoGoToNativeDirectoryFromMenuItem: [[paths objectAtIndex:0] fileSystemRepresentation]];
+    [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Downloads)];
 }
 
 - (IBAction)OnGoToApplications:(id)sender
 {
-    [self DoGoToNativeDirectoryFromMenuItem:"/Applications/"];
+    [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Applications)];
 }
 
 - (IBAction)OnGoToUtilities:(id)sender
 {
-    [self DoGoToNativeDirectoryFromMenuItem:"/Applications/Utilities/"];
+    [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Utilities)];
 }
 
 - (IBAction)OnGoToLibrary:(id)sender
 {
-    NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask];
-    [self DoGoToNativeDirectoryFromMenuItem: [[paths objectAtIndex:0] fileSystemRepresentation]];
+    [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Library)];
 }
 
-- (void) DoGoToNativeDirectoryFromMenuItem: (const char*)_path
+- (void) DoGoToNativeDirectoryFromMenuItem:(std::string)_path
 {
-    if(_path == 0) return;
-    
     if(m_ActiveState == StateLeftPanel)
     {
         [m_MainSplitView SetLeftOverlay:0]; // seem to be a redundant
-        [m_LeftPanelController GoToGlobalHostsPathAsync:_path];
+        [m_LeftPanelController GoToGlobalHostsPathAsync:_path.c_str()];
     }
     else if(m_ActiveState == StateRightPanel)
     {
         [m_MainSplitView SetRightOverlay:0]; // seem to be a redundant
-        [m_RightPanelController GoToGlobalHostsPathAsync:_path];
+        [m_RightPanelController GoToGlobalHostsPathAsync:_path.c_str()];
     }
 }
 
@@ -102,7 +96,7 @@
             return [self.ActivePanelController GoToGlobalHostsPathSync: path.c_str()];
         } else if(path[0] == '~') {
             // relative to home
-            path.replace(0, 1, getpwuid(getuid())->pw_dir);
+            path.replace(0, 1, CommonPaths::Get(CommonPaths::Home));
             return [self.ActivePanelController GoToGlobalHostsPathSync: path.c_str()];
         } else {
             // sub-dir

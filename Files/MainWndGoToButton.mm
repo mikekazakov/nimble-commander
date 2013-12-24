@@ -6,22 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <unistd.h>
-#import <sys/types.h>
-#import <pwd.h>
 #import <assert.h>
 #import "MainWndGoToButton.h"
 #import "AppDelegate.h"
 #import "Common.h"
 #import "MainWindowFilePanelState.h"
 #import "MainWindowController.h"
-
-static NSString *RealHomeDirectory()
-{
-    struct passwd *pw = getpwuid(getuid());
-    assert(pw);
-    return [NSString stringWithUTF8String:pw->pw_dir];
-}
+#import "common_paths.h"
 
 static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
 {
@@ -72,52 +63,22 @@ static NSMutableArray *GetFindersFavorites()
     return 0;
 }
 
+static NSURL *URLFromCommonPath(CommonPaths::Path _p)
+{
+    NSString *str = [NSString stringWithUTF8String:CommonPaths::Get(_p).c_str()];
+    return [NSURL fileURLWithPath:str isDirectory:true];
+}
+
 static NSMutableArray *GetHardcodedFavorites()
 {
-    NSMutableArray *result = [NSMutableArray arrayWithCapacity:16];
-    
-    { // home dir
-        NSString *hd = RealHomeDirectory();
-        NSURL *url = [NSURL fileURLWithPath:hd isDirectory:true];
-        [result addObject:url];
-    }
-    
-    { // desktop
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [result addObject:[paths objectAtIndex:0]];
-    }
-    
-    { // documents
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [result addObject:[paths objectAtIndex:0]];
-    }
-    
-    { // downloads
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [result addObject:[paths objectAtIndex:0]];
-    }
-    
-    { // movies
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMoviesDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [result addObject:[paths objectAtIndex:0]];
-    }
-    
-    { // music
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMusicDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [result addObject:[paths objectAtIndex:0]];
-    }
-    
-    { // pictures
-        NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSPicturesDirectory inDomains:NSUserDomainMask];
-        assert([paths count] > 0);
-        [result addObject:[paths objectAtIndex:0]];
-    }
-    
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:10];
+    [result addObject:URLFromCommonPath(CommonPaths::Home)];
+    [result addObject:URLFromCommonPath(CommonPaths::Desktop)];
+    [result addObject:URLFromCommonPath(CommonPaths::Documents)];
+    [result addObject:URLFromCommonPath(CommonPaths::Downloads)];
+    [result addObject:URLFromCommonPath(CommonPaths::Movies)];
+    [result addObject:URLFromCommonPath(CommonPaths::Music)];
+    [result addObject:URLFromCommonPath(CommonPaths::Pictures)];
     return result;
 }
 

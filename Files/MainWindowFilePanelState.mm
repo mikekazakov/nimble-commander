@@ -497,24 +497,16 @@
 - (void)keyDown:(NSEvent *)event
 {
     NSString* character = [event charactersIgnoringModifiers];
-    if ( [character length] != 1 ) { [super keyDown:event]; return; }
-    unichar unicode = [character characterAtIndex:0];
-
-    
-    if([self IsPanelActive] && [[self ActivePanelController] ProcessKeyDown:event])
-            return;
-    
-    if(unicode == NSTabCharacter) // TAB key
-        return [self HandleTabButton];
-    
-    // handle RETURN manually, to prevent annoying by menu highlighting by hotkey
-    if(unicode == NSCarriageReturnCharacter) {
-        NSUInteger modif = [event modifierFlags];
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ) [self OnOpenNatively:self];
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == 0              ) [self OnOpen:self];
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSShiftKeyMask|NSAlternateKeyMask)) [self OnCalculateSizes:self];        
+    if ( [character length] != 1 ) {
+        [super keyDown:event];
         return;
     }
+
+    if([self IsPanelActive] && [[self ActivePanelController] ProcessKeyDown:event])
+        return;
+    
+    if([character characterAtIndex:0] == NSTabCharacter)
+        return [self HandleTabButton];
     
     [super keyDown:event];
 }

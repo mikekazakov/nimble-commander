@@ -570,7 +570,7 @@ FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries() const
     return chunk;
 }
 
-bool PanelData::FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset, unsigned *_out, unsigned *_range)
+bool PanelData::FindSuitableEntries(CFStringRef _prefix, unsigned _desired_offset, unsigned *_out, unsigned *_range) const
 {
     if(m_EntriesByHumanName.empty())
         return false;

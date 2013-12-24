@@ -694,7 +694,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         return;
 
     unsigned ind, range;
-    bool found_any = m_Data->FindSuitableEntry( (__bridge CFStringRef) m_FastSearchString, m_FastSearchOffset, &ind, &range);
+    bool found_any = m_Data->FindSuitableEntries( (__bridge CFStringRef) m_FastSearchString, m_FastSearchOffset, &ind, &range);
     if(found_any)
     {
         if(m_FastSearchOffset > range)
@@ -788,6 +788,15 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         [[self GetParentWindow] CloseOverlay:self];
         m_BriefSystemOverview = nil;
         m_QuickLook = nil;
+        return true;
+    }
+    
+    // handle RETURN manually, to prevent annoying by menu highlighting by hotkey
+    if(unicode == NSCarriageReturnCharacter) {
+        NSUInteger modif = [event modifierFlags];
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == 0              ) [self HandleReturnButton];
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ) [self HandleShiftReturnButton];
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSShiftKeyMask|NSAlternateKeyMask)) [self HandleCalculateSizes];
         return true;
     }
     

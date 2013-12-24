@@ -147,14 +147,18 @@ public:
     void SetCustomSortMode(PanelSortMode _mode);
     PanelSortMode GetCustomSortMode() const;
     
-    // fast search support
-    // _desired_offset is a offset from first suitable element.
-    // if _desired_offset causes going out of fitting ranges - the nearest valid element will be returned
-    // return raw index number if any
-    bool FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset, unsigned *_ind_out, unsigned *_range);
+    /**
+     * Fast search support.
+     * Searches on sorted elements (which can be less than non-sorted raw listing).
+     * _desired_offset is a offset from first suitable element.
+     * if _desired_offset causes going out of fitting ranges - the nearest valid element will be returned.
+     * return raw index into _ind_out number if any.
+     * _range is filled with number of valid suitable entries - 1 (for 1 valid entry _range will be filled with 0).
+     * Return true if there're any suitable entries, false otherwise.
+     */
+    bool FindSuitableEntries(CFStringRef _prefix, unsigned _desired_offset, unsigned *_ind_out, unsigned *_range) const;
     
     // files statistics - notes below
-    void UpdateStatictics();
     unsigned long GetTotalBytesInDirectory() const;
     unsigned GetTotalFilesInDirectory() const;
     unsigned GetSelectedItemsCount() const;
@@ -178,6 +182,7 @@ private:
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
     static void DoSort(shared_ptr<VFSListing> _from, DirSortIndT &_to, PanelSortMode _mode);
+    void UpdateStatictics();    
     
     PanelSortMode HumanSort() const;
     

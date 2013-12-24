@@ -29,7 +29,7 @@
     
     m_DelayedSelection.isvalid = true;
     m_DelayedSelection.request_end = GetTimeInNanoseconds() + _time_out_in_ms*USEC_PER_SEC;
-    strcpy(m_DelayedSelection.filename, _item_name);
+    m_DelayedSelection.filename = _item_name;
     
     if(_check_now)
         [self CheckAgainstRequestedSelection];
@@ -49,7 +49,7 @@
     }
     
     // now try to find it
-    int entryindex = m_Data->RawIndexForName(m_DelayedSelection.filename);
+    int entryindex = m_Data->RawIndexForName(m_DelayedSelection.filename.c_str());
     if( entryindex >= 0 )
     {
         // we found this entry. regardless of appearance of this entry in current directory presentation

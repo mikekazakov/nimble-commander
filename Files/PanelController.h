@@ -74,7 +74,7 @@ struct PanelControllerNavigation
         /**
          * Requested item name to select.
          */
-        char        filename[MAXPATHLEN];
+        string      filename;
         
         /**
          * Time after which request is meaningless and should be removed

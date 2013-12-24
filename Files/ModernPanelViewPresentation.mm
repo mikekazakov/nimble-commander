@@ -289,12 +289,6 @@ void ModernPanelViewPresentation::BuildGeometry()
     // Height of a single file line calculated from the font.
     m_FontHeight = int(GetLineHeightForFont((__bridge CTFontRef)m_Font));
     m_LineHeight = m_FontHeight + 2; // was 18 before (16 + 2)
-    
-    // build icon cache regarding current font size (icon size equals font height)
-//    if(!m_IconCache)
-//        m_IconCache = new ModernPanelViewPresentationIconCache(this, m_FontHeight);
-//    else
-//
     m_IconCache->SetIconSize(m_FontHeight);
 
     NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];
@@ -448,25 +442,6 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     const int items_per_column = GetMaxItemsPerColumn();
     const int max_items = (int)sorted_entries.size();
     const int columns_count = GetNumberOfItemColumns();
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Prepare icons for
-/*    bool created_icons = false;
-    int count = 0, total_count = items_per_column*columns_count;
-    int i = m_State->ItemsDisplayOffset;
-    for(; count < total_count && i < max_items; ++count, ++i)
-    {
-        int raw_index = sorted_entries[i];
-        const auto &entry = entries[raw_index];
-        if (entry.CIcon() == 0)
-        {
-            created_icons = true;
-            m_IconCache->CreateIcon(raw_index, m_State->Data);
-        }
-    }
-    
-    if (created_icons && m_IconCache->IsNeedsLoading())
-        m_IconCache->RunLoadThread(m_State->Data);*/
     
     ///////////////////////////////////////////////////////////////////////////////
     // Clear view background.
@@ -647,6 +622,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     // Draw items in columns.        
     const int icon_size = m_FontHeight;
     const int start_y = m_ItemsArea.origin.y;
+    double full_view_max_date_width = 0;
+    double full_wide_view_max_time_width = 0;
         
     for (int column = 0; column < columns_count; ++column)
     {
@@ -744,23 +721,36 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               rect.origin.y,
                                               m_TimeColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
-                
                 NSString *time_str = FormHumanReadableShortTime(item->MTime());
+                NSDictionary *attr = m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
+                NSRect time_str_real_rc = [time_str boundingRectWithSize:NSMakeSize(10000, 100)
+                                                                 options:options
+                                                              attributes:attr];
+                if( time_str_real_rc.size.width > full_wide_view_max_time_width)
+                    full_wide_view_max_time_width = time_str_real_rc.size.width;
                 [time_str drawWithRect:time_rect
                                options:options
-                            attributes:m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr];
+                            attributes:attr];
+                
                 
                 rect.size.width -= m_TimeColumnWidth;
                 spec_col_x -= m_TimeColumnWidth;
+                
                 
                 NSRect date_rect = NSMakeRect(spec_col_x - m_DateColumnWidth + g_TextInsetsInLine[0],
                                               rect.origin.y,
                                               m_DateColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 NSString *date_str = FormHumanReadableShortDate(item->MTime());
+                attr = m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
+                NSRect date_str_real_rc = [date_str boundingRectWithSize:NSMakeSize(10000, 100)
+                                                                 options:options
+                                                              attributes:attr];
+                if(date_str_real_rc.size.width > full_view_max_date_width)
+                    full_view_max_date_width = date_str_real_rc.size.width;
                 [date_str drawWithRect:date_rect
                                options:options
-                            attributes:m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr];
+                            attributes:attr];
 
                 rect.size.width -= m_DateColumnWidth;
                 spec_col_x -= m_DateColumnWidth;
@@ -788,8 +778,6 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             [(__bridge NSString *)item->CFName() drawWithRect:rect options:options attributes:item_text_attr];
 
             // Draw icon
-
-//            NSImageRep *image_rep = m_IconCache->GetIcon(*item);
             NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
             
             NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
@@ -830,6 +818,13 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             CGContextStrokeLineSegments(context, points, 2);
         }
     }
+    
+    // correct our predicted layout by really rendered geometry
+    if(full_view_max_date_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2] > m_DateColumnWidth)
+        m_DateColumnWidth = full_view_max_date_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    
+    if(full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2] > m_TimeColumnWidth)
+        m_TimeColumnWidth = full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
 }
 
 void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)

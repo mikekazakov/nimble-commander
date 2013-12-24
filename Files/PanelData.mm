@@ -7,6 +7,16 @@
 #import "FlexChainedStringsChunk.h"
 #import "FileMask.h"
 
+static inline PanelSortMode DefaultSortMode()
+{
+    PanelSortMode mode;
+    mode.sep_dirs = true;
+    mode.sort = PanelSortMode::SortByName;
+    mode.show_hidden = false;
+    return mode;
+    
+}
+
 static inline PanelSortMode RawSort()
 {
     PanelSortMode sort;
@@ -19,11 +29,9 @@ static inline PanelSortMode RawSort()
 
 PanelData::PanelData():
     m_SortExecGroup(DispatchGroup::High),
-    m_Listing(make_shared<VFSListing>("", shared_ptr<VFSHost>(0)))
+    m_Listing(make_shared<VFSListing>("", shared_ptr<VFSHost>(0))),
+    m_CustomSortMode(DefaultSortMode())
 {
-    m_CustomSortMode.sep_dirs = true;
-    m_CustomSortMode.sort = m_CustomSortMode.SortByName;
-    m_CustomSortMode.show_hidden = false;
 }
 
 PanelSortMode PanelData::HumanSort() const
@@ -517,23 +525,15 @@ void PanelData::CustomFlagsSelectAll(bool _select)
 
 void PanelData::CustomFlagsSelectAllSorted(bool _select)
 {
-    auto sz = m_Listing->Count();
-    if(_select)
-        for(auto i: m_EntriesByCustomSort)
-        {
-            assert(i < sz);
-            auto &ent = (*m_Listing)[i];
-            if(!ent.IsDotDot())
+    for(auto i: m_EntriesByCustomSort) {
+        auto &ent = m_Listing->At(i);
+        if(!ent.IsDotDot()) {
+            if(_select)
                 ent.SetCFlag(VFSListingItem::Flags::Selected);
-        }
-    else
-        for(auto i: m_EntriesByCustomSort)
-        {
-            assert(i < sz);
-            auto &ent = (*m_Listing)[i];
-            if(!ent.IsDotDot())
+            else
                 ent.UnsetCFlag(VFSListingItem::Flags::Selected);
-        }    
+        }
+    }
 
     UpdateStatictics();
 }
@@ -572,83 +572,40 @@ FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries() const
 
 bool PanelData::FindSuitableEntry(CFStringRef _prefix, unsigned _desired_offset, unsigned *_out, unsigned *_range)
 {
-    // TODO: rewrite this shit using standard algorithms
-    
     if(m_EntriesByHumanName.empty())
         return false;
+
+    auto prefix_len = CFStringGetLength(_prefix);
+    auto lb = lower_bound(begin(m_EntriesByHumanName), end(m_EntriesByHumanName), _prefix,
+                         [=](unsigned _i, CFStringRef _str) {
+                             auto const &item = (*m_Listing)[_i];
+                             CFRange range = CFRangeMake(0, min(prefix_len, CFStringGetLength(item.CFName())));
+                             return CFStringCompareWithOptions(_str,
+                                                               item.CFName(),
+                                                               range,
+                                                               kCFCompareCaseInsensitive) >= 0;
+                         });
     
-    int preflen = (int)CFStringGetLength(_prefix);
-    assert(preflen > 0);
-
-    // performing binary search on m_EntriesByHumanName
-    int imin = 0, imax = (int)m_EntriesByHumanName.size()-1;
-    while(imax >= imin)
-    {
-        int imid = (imin + imax) / 2;
+    auto ub = upper_bound(begin(m_EntriesByHumanName), end(m_EntriesByHumanName), _prefix,
+                          [=](CFStringRef _str, unsigned _i) {
+                              auto const &item = (*m_Listing)[_i];
+                              CFRange range = CFRangeMake(0, min(prefix_len, CFStringGetLength(item.CFName())));
+                              return CFStringCompareWithOptions(item.CFName(),
+                                                                _str,
+                                                                range,
+                                                                kCFCompareCaseInsensitive) > 0;
+                          });
+    
+    if(lb == ub) // didn't found anything
+        return false;
         
-        unsigned indx = m_EntriesByHumanName[imid];
-        auto const &item = (*m_Listing)[indx];
-        
-        int itemlen = (int)CFStringGetLength(item.CFName());
-        CFRange range = CFRangeMake(0, itemlen >= preflen ? preflen : itemlen );
-
-        CFComparisonResult res = CFStringCompareWithOptions(item.CFName(),
-                                                            _prefix,
-                                                            range,
-                                                            kCFCompareCaseInsensitive);
-        if(res == kCFCompareLessThan)
-        {
-            imin = imid + 1;
-        }
-        else if(res == kCFCompareGreaterThan)
-        {
-            imax = imid - 1;
-        }
-        else
-        {
-            if(itemlen < preflen)
-            {
-                imin = imid + 1;
-            }
-            else
-            {
-                // now find the first and last suitable element to be able to form a range of such elements
-                // TODO: here is an inefficient implementation, need to find the first and the last elements with range search
-                int start = imid, last = imid;
-                range = CFRangeMake(0, preflen);
-                while(start > 0)
-                {
-                    auto const &item = (*m_Listing)[m_EntriesByHumanName[start - 1]];
-                    if(CFStringGetLength(item.CFName()) < preflen)
-                        break;
-                    if(CFStringCompareWithOptions(item.CFName(), _prefix, range, kCFCompareCaseInsensitive) != kCFCompareEqualTo)
-                        break;
-                    start--;
-                }
-                
-                while(last < m_EntriesByHumanName.size() - 1)
-                {
-                    auto const &item = (*m_Listing)[m_EntriesByHumanName[last + 1]];
-                    if(CFStringGetLength(item.CFName()) < preflen)
-                        break;
-                    if(CFStringCompareWithOptions(item.CFName(), _prefix, range, kCFCompareCaseInsensitive) != kCFCompareEqualTo)
-                        break;
-                    last++;
-                }
-                
-                // our filterd result is in [start, last] range
-                int ind = start + _desired_offset;
-                if(ind > last) ind = last;
-                
-                *_out = m_EntriesByHumanName[ind];
-                *_range = last - start;
-                
-                return true;
-            }
-        }
-    }
-
-    return false;
+    // our filterd result is in [start, last] range
+    auto start = lb - begin(m_EntriesByHumanName);
+    auto last = start + ub - lb - 1;
+    auto ind = min(start + _desired_offset, last);
+    *_out = m_EntriesByHumanName[ind];
+    *_range = unsigned(last - start);
+    return true;
 }
 
 bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size)

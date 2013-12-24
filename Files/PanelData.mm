@@ -18,12 +18,12 @@ static inline PanelSortMode RawSort()
 }
 
 PanelData::PanelData():
-    m_SortExecGroup(DispatchGroup::High)
+    m_SortExecGroup(DispatchGroup::High),
+    m_Listing(make_shared<VFSListing>("", shared_ptr<VFSHost>(0)))
 {
     m_CustomSortMode.sep_dirs = true;
     m_CustomSortMode.sort = m_CustomSortMode.SortByName;
     m_CustomSortMode.show_hidden = false;
-    m_Listing = make_shared<VFSListing>("", shared_ptr<VFSHost>(0));
 }
 
 PanelSortMode PanelData::HumanSort() const
@@ -120,22 +120,23 @@ const PanelData::DirSortIndT& PanelData::SortedDirectoryEntries() const
     return m_EntriesByCustomSort;
 }
 
-void PanelData::ComposeFullPathForEntry(int _entry_no, char _buf[MAXPATHLEN])
+string PanelData::FullPathForEntry(int _raw_index) const
 {
-    const auto &entry = (*m_Listing)[_entry_no];
-    
-    if(!entry.IsDotDot())
-    {
-        const char *ent_name = entry.Name();
-        GetDirectoryPathWithTrailingSlash(_buf);
-        strcat(_buf, ent_name);
+    if(_raw_index < 0 || _raw_index >= m_Listing->Count())
+        return "";
+
+    const auto &entry = m_Listing->At(_raw_index);
+    if(!entry.IsDotDot()) {
+        return DirectoryPathWithTrailingSlash() + entry.Name();
     }
-    else
-    {
-        GetDirectoryPathWithoutTrailingSlash(_buf);
-        char *s = strrchr(_buf, '/'); // need to cut the last slash
-        if(s != _buf) *s = 0;
-        else *(s+1) = 0;
+    else {
+        auto t = DirectoryPathWithoutTrailingSlash();
+        auto i = t.rfind('/');
+        if(i == 0)
+            t.resize(i+1);
+        else if(i != string::npos)
+            t.resize(i);
+        return t;
     }
 }
 
@@ -187,69 +188,37 @@ int PanelData::SortedIndexForRawIndex(int _desired_raw_index) const
     return -1;
 }
 
-void PanelData::GetDirectoryPathWithoutTrailingSlash(char _buf[MAXPATHLEN]) const
+string PanelData::DirectoryPathWithoutTrailingSlash() const
 {
-    if(m_Listing.get() == 0) {
-        strcpy(_buf, "");
-        return;
-    }
+    if(m_Listing.get() == 0)
+        return "";
     
-    const char *path = m_Listing->RelativePath();
-    int size = (int)strlen(path);
-    if(size == 0) {
-        strcpy(_buf, "");
-        return;
-    }
+    string path = m_Listing->RelativePath();
+    if(path.size() > 1 && path.back() == '/')
+        path.pop_back();
     
-    memcpy(_buf, path, size+1);
-
-    if(path[size-1] == '/' && size > 1)
-        _buf[size-1] = 0;
+    return path;
 }
 
-void PanelData::GetDirectoryPathWithTrailingSlash(char _buf[MAXPATHLEN]) const
+string PanelData::DirectoryPathWithTrailingSlash() const
 {
-    if(m_Listing.get() == 0) {
-        strcpy(_buf, "");
-        return;
-    }
+    if(m_Listing.get() == 0)
+        return "";
     
-    const char *path = m_Listing->RelativePath();
-    int size = (int)strlen(path);
-    if(size == 0) {
-        strcpy(_buf, "");
-        return;
-    }
-
-    memcpy(_buf, path, size+1);
-
-    if(path[size-1] != '/') {
-        _buf[size] = '/';
-        _buf[size+1] = 0;
-    }
+    string path = m_Listing->RelativePath();
+    if(path.size() > 0 && path.back() != '/')
+        path.push_back('/');
+    
+    return path;
 }
 
-void PanelData::GetDirectoryPathShort(char _buf[MAXPATHLEN]) const
-{
-    if(m_Listing.get() == 0) {
-        strcpy(_buf, "");
-        return;
-    }
-    
-    if(strlen(m_Listing->RelativePath()) == 0)
-    {
-        _buf[0] = 0;
-    }
-    else
-    {
-        // TODO: optimize me later
-        char tmp[MAXPATHLEN];
-//        strcpy(tmp, m_Listing->RelativePath());
-        GetDirectoryPathWithTrailingSlash(tmp);
-        if(char *s = strrchr(tmp, '/')) *s = 0; // cut trailing slash
-        if(char *s = strrchr(tmp, '/')) strcpy(_buf, s+1);
-        else                            strcpy(_buf, tmp);
-    }
+string PanelData::DirectoryPathShort() const
+{    
+    string tmp = DirectoryPathWithoutTrailingSlash();
+    auto i = tmp.rfind('/');
+    if(i != string::npos)
+        return tmp.c_str() + i + 1;
+    return "";
 }
 
 void PanelData::GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*8]) const
@@ -480,10 +449,11 @@ unsigned PanelData::GetTotalFilesInDirectory() const
     return m_TotalFilesInDirectory;
 }
 
-int PanelData::SortPosToRawPos(int _pos) const
+int PanelData::RawIndexForSortIndex(int _index) const
 {
-    assert(_pos >= 0 && _pos < m_EntriesByCustomSort.size());
-    return m_EntriesByCustomSort[_pos];
+    if(_index < 0 || _index >= m_EntriesByCustomSort.size())
+        return -1;
+    return m_EntriesByCustomSort[_index];
 }
 
 //const DirectoryEntryInformation& PanelData::EntryAtRawPosition(int _pos) const

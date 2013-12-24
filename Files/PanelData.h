@@ -73,7 +73,7 @@ struct PanelSortMode
 class PanelData
 {
 public:
-    typedef vector<unsigned>                 DirSortIndT; // value in this array is an index for DirEntryInfoT
+    typedef vector<unsigned> DirSortIndT; // value in this array is an index for VFSListing
     
     PanelData();
     
@@ -90,33 +90,57 @@ public:
     const DirSortIndT&      SortedDirectoryEntries() const;
     FlexChainedStringsChunk* StringsFromSelectedEntries() const;
     
-    int SortPosToRawPos(int _pos) const; // does SortedDirectoryEntries()[_pos]
     const VFSListingItem& EntryAtRawPosition(int _pos) const;
     
-    void ComposeFullPathForEntry(int _entry_no, char _buf[MAXPATHLEN]);
+
+    /**
+     * will redirect ".." upwards
+     */
+    string FullPathForEntry(int _raw_index) const;
     
+    /**
+     * Converts sorted index into raw index. Returns -1 on any errors.
+     */
+    int RawIndexForSortIndex(int _index) const;
+    
+    /**
+     * Performs a binary case-sensivitive search.
+     * Return -1 if didn't found.
+     * Returning value is in raw land, that is DirectoryEntries[N], not sorted ones.
+     */
     int RawIndexForName(const char *_filename) const;
-        // TODO: improve this by using a name-sorted list
-        // performs a bruteforce case-sensivitive search
-        // return -1 if didn't found
-        // returning value is in raw land, that is DirectoryEntries[N], not sorted ones
     
+    /**
+     * return -1 if didn't found.
+     * returned value is in sorted indxs land.
+     */
     int SortedIndexForName(const char *_filename) const;
-        // return -1 if didn't found
-        // returned value is in sorted indxs land
     
+    /**
+     * does bruteforce O(N) search.
+     * return -1 if didn't found.
+     * _desired_raw_index - raw item index.
+     */
     int SortedIndexForRawIndex(int _desired_raw_index) const;
-        // return -1 if didn't found
-        // _desired_value - raw item index
     
-    void GetDirectoryPathWithoutTrailingSlash(char _buf[MAXPATHLEN]) const;
-        // return current directory in long variant starting from /
-    void GetDirectoryPathWithTrailingSlash(char _buf[MAXPATHLEN]) const;
-        // same as above but path will ends with slash
-    void GetDirectoryPathShort(char _buf[MAXPATHLEN]) const;
-        // return name of a current directory in a parent directory
-        // returns a zero string for a root dir
+    /**
+     * return current directory in long variant starting from /
+     */
+    string DirectoryPathWithoutTrailingSlash() const;
+
+    /**
+     * same as DirectoryPathWithoutTrailingSlash() but path will ends with slash
+     */
+    string DirectoryPathWithTrailingSlash() const;
     
+    /**
+     * return name of a current directory in a parent directory.
+     * returns a zero string for a root dir.
+     */
+    string DirectoryPathShort() const;
+    
+    
+    // TODO: refactor:    
     void GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*8]) const;
     
     // sorting

@@ -304,17 +304,16 @@
     
     NSMutableArray *filenames = [NSMutableArray new];
     
-    char dir_path[MAXPATHLEN], tmp[MAXPATHLEN];
     PanelData *pd = [self ActivePanelData];
-    pd->GetDirectoryPathWithTrailingSlash(dir_path);
+    string dir_path = pd->DirectoryPathWithTrailingSlash();
+    string tmp;
     if(pd->GetSelectedItemsCount() > 0)
     {
         for(auto &i: pd->DirectoryEntries())
             if(i.CFIsSelected())
             {
-                strcpy(tmp, dir_path);
-                strcat(tmp, i.Name());
-                [filenames addObject:[NSString stringWithUTF8String:tmp]];
+                tmp = dir_path + i.Name();
+                [filenames addObject:[NSString stringWithUTF8String:tmp.c_str()]];
             }
     }
     else
@@ -322,9 +321,8 @@
         auto const *item = [[self ActivePanelView] CurrentItem];
         if(item && !item->IsDotDot())
         {
-            strcpy(tmp, dir_path);
-            strcat(tmp, item->Name());
-            [filenames addObject:[NSString stringWithUTF8String:tmp]];
+            tmp = dir_path + item->Name();
+            [filenames addObject:[NSString stringWithUTF8String:tmp.c_str()]];
         }
     }
     
@@ -687,7 +685,7 @@
         int curpos = [curview GetCursorPosition];
         if(curpos >= 0)
         {
-            int rawpos = curdata->SortPosToRawPos(curpos);
+            int rawpos = curdata->RawIndexForSortIndex(curpos);
             if(!curdata->EntryAtRawPosition(rawpos).IsDotDot())
                 [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
         }
@@ -705,12 +703,12 @@
     
     int curpos = [curview GetCursorPosition];
     if(curpos < 0) return;
-    int rawpos = curdata->SortPosToRawPos(curpos);
-    char src[MAXPATHLEN];
-    curdata->ComposeFullPathForEntry(rawpos, src);
+
+    // TODO: THIS IS WRONG! using volume information on ".." should leave us in current directory
+    string path = curdata->FullPathForEntry(curdata->RawIndexForSortIndex(curpos));
     
     DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
-    [sheet ShowSheet:[self window] destpath:src];
+    [sheet ShowSheet:[self window] destpath:path.c_str()];
 }
 
 - (void)selectAll:(id)sender
@@ -801,13 +799,12 @@
                  {
                      FileDeletionOperationType type = [sheet GetType];
                      
-                     char root_path[MAXPATHLEN];
-                     [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+                     string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
                      
                      FileDeletionOperation *op = [[FileDeletionOperation alloc]
                                                   initWithFiles:files
                                                   type:type
-                                                  rootpath:root_path];
+                                                  rootpath:root_path.c_str()];
                      op.TargetPanel = [self ActivePanelController];
                      [m_OperationsController AddOperation:op];
                  }
@@ -843,10 +840,9 @@
          if(_ret == DialogResult::Create)
          {
 
-             char pdir[MAXPATHLEN];
-             curdata->GetDirectoryPathWithoutTrailingSlash(pdir);
+             string pdir = curdata->DirectoryPathWithoutTrailingSlash();
              CreateDirectoryOperation *op = [[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] fileSystemRepresentation]
-                                                                                  rootpath:pdir
+                                                                                  rootpath:pdir.c_str()
                                              ];
              op.TargetPanel = [self ActivePanelController];
              [m_OperationsController AddOperation:op];
@@ -886,16 +882,14 @@
     if(!files)
         return;
     
-    char dest_path[MAXPATHLEN];
-    destination->GetDirectoryPathWithTrailingSlash(dest_path);
-    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
+    string dest_path = destination->DirectoryPathWithTrailingSlash();
+    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
     MassCopySheetController *mc = [MassCopySheetController new];
     [mc ShowSheet:[self window] initpath:nsdirpath iscopying:true items:files handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
-             char root_path[MAXPATHLEN];
-             source->GetDirectoryPathWithTrailingSlash(root_path);
+             string root_path = source->DirectoryPathWithTrailingSlash();
              
              FileCopyOperationOptions opts;
              opts.docopy = true;
@@ -905,7 +899,7 @@
              FileCopyOperation *op;
              if(source->Host()->IsNativeFS() && destination->Host()->IsNativeFS())
                   op = [[FileCopyOperation alloc] initWithFiles:files
-                                                      root:root_path
+                                                      root:root_path.c_str()
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                    options:&opts];
              else if(destination->Host()->IsNativeFS() &&
@@ -913,7 +907,7 @@
                      [[mc.TextField stringValue] fileSystemRepresentation][0] == '/'
                      )
                   op = [[FileCopyOperation alloc] initWithFiles:files
-                                                      root:root_path
+                                                      root:root_path.c_str()
                                                    rootvfs:source->Host()
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                    options:&opts];
@@ -954,15 +948,13 @@
      {
          if(_ret == DialogResult::Copy)
          {
-             char root_path[MAXPATHLEN];
-             [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+             string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
              FileCopyOperationOptions opts;
              opts.docopy = true;
              [mc FillOptions:&opts];
              
-             
              FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
-                                                                         root:root_path
+                                                                         root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
              [op AddOnFinishHandler:^{
@@ -1014,17 +1006,15 @@
     if(!files)
         return;
     
-    char dest_path[MAXPATHLEN];
-    destination->GetDirectoryPathWithTrailingSlash(dest_path);
-    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path];
+    string dest_path = destination->DirectoryPathWithTrailingSlash();
+    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
     
     MassCopySheetController *mc = [MassCopySheetController new];
     [mc ShowSheet:[self window] initpath:nsdirpath iscopying:false items:files handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
-             char root_path[MAXPATHLEN];
-             source->GetDirectoryPathWithTrailingSlash(root_path);
+             string root_path = source->DirectoryPathWithTrailingSlash();
              
              FileCopyOperationOptions opts;
              opts.docopy = false;
@@ -1032,7 +1022,7 @@
              
              
              FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
-                                                                         root:root_path
+                                                                         root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
              [op AddOnFinishHandler:^{
@@ -1072,15 +1062,14 @@
      {
          if(_ret == DialogResult::Copy)
          {
-             char root_path[MAXPATHLEN];
-             [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(root_path);
+             string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
              FileCopyOperationOptions opts;
              opts.docopy = false;
              [mc FillOptions:&opts];
              
              
              FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
-                                                                         root:root_path
+                                                                         root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
              [op AddOnFinishHandler:^{
@@ -1105,15 +1094,13 @@
      
     if(_panel == m_LeftPanelController)
     {
-        char tmp[MAXPATHLEN];
-        m_LeftPanelData->GetDirectoryPathWithTrailingSlash(tmp);
-        [m_LeftPanelGoToButton SetCurrentPath:tmp];
+        string tmp = m_LeftPanelData->DirectoryPathWithTrailingSlash();
+        [m_LeftPanelGoToButton SetCurrentPath:tmp.c_str()];
     }
     if(_panel == m_RightPanelController)
     {
-        char tmp[MAXPATHLEN];
-        m_RightPanelData->GetDirectoryPathWithTrailingSlash(tmp);
-        [m_RightPanelGoToButton SetCurrentPath:tmp];
+        string tmp = m_RightPanelData->DirectoryPathWithTrailingSlash();
+        [m_RightPanelGoToButton SetCurrentPath:tmp.c_str()];
     }
 }
 
@@ -1178,10 +1165,8 @@
         auto *i = [[self ActivePanelView] CurrentItem];
         if(i)
         {
-            char tmp[MAXPATHLEN];
-            [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(tmp);
-            strcat(tmp, i->Name());
-            [(MainWindowController*)[[self window] delegate] RequestBigFileView:tmp
+            string tmp = [self ActivePanelData]->DirectoryPathWithTrailingSlash() + i->Name();
+            [(MainWindowController*)[[self window] delegate] RequestBigFileView:tmp.c_str()
              with_fs:[self ActivePanelData]->DirectoryEntries().Host()];
         }
     }
@@ -1252,34 +1237,29 @@
     if(!m_RightPanelData->Host()->IsNativeFS() || !m_LeftPanelData->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
-    char source_path[MAXPATHLEN];
-    char link_path[MAXPATHLEN];
+    string link_path;
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
         return;
     
-    [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(source_path);
+    string source_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
     if(!item->IsDotDot())
-        strcat(source_path, item->Name());
+        source_path += item->Name();
     
     if(m_ActiveState == StateLeftPanel)
-        m_RightPanelData->GetDirectoryPathWithTrailingSlash(link_path);
+        link_path = m_RightPanelData->DirectoryPathWithTrailingSlash();
     else
-        m_LeftPanelData->GetDirectoryPathWithTrailingSlash(link_path);
-    
+        link_path = m_LeftPanelData->DirectoryPathWithTrailingSlash();
+
     if(!item->IsDotDot())
-        strcat(link_path, item->Name());
+        link_path += item->Name();
     else
-    {
-        char tmp[256];
-        [self ActivePanelData]->GetDirectoryPathShort(tmp);
-        strcat(link_path, tmp);
-    }
+        link_path += [self ActivePanelData]->DirectoryPathShort();
 
     FileLinkNewSymlinkSheetController *sheet = [FileLinkNewSymlinkSheetController new];
     [sheet ShowSheet:[self window]
-          sourcepath:[NSString stringWithUTF8String:source_path]
-            linkpath:[NSString stringWithUTF8String:link_path]
+          sourcepath:[NSString stringWithUTF8String:source_path.c_str()]
+            linkpath:[NSString stringWithUTF8String:link_path.c_str()]
              handler:^(int result){
                  if(result == DialogResult::Create && [[sheet.LinkPath stringValue] length] > 0)
                      [m_OperationsController AddOperation:
@@ -1298,7 +1278,7 @@
     if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
-    char link_path[MAXPATHLEN];
+//    char link_path[MAXPATHLEN];
     auto const *item = [[self ActivePanelView] CurrentItem];
     if(!item)
         return;
@@ -1314,9 +1294,8 @@
         return;
     }
     
-    [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(link_path);
-    strcat(link_path, item->Name());
-    NSString *linkpath = [NSString stringWithUTF8String:link_path];
+    string link_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash() + item->Name();
+    NSString *linkpath = [NSString stringWithUTF8String:link_path.c_str()];
     
     FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
     [sheet ShowSheet:[self window]
@@ -1355,12 +1334,11 @@
         return;
     }
     
-    char dir_path[MAXPATHLEN], src_path[MAXPATHLEN];
-    [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(dir_path);
-    strcpy(src_path, dir_path);
-    strcat(src_path, item->Name());
-    NSString *srcpath = [NSString stringWithUTF8String:src_path];
-    NSString *dirpath = [NSString stringWithUTF8String:dir_path];
+//    char  src_path[MAXPATHLEN];
+    string dir_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+    string src_path = dir_path + item->Name();
+    NSString *srcpath = [NSString stringWithUTF8String:src_path.c_str()];
+    NSString *dirpath = [NSString stringWithUTF8String:dir_path.c_str()];
     
     FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
     [sheet ShowSheet:[self window]
@@ -1475,8 +1453,7 @@
     if(filenames.empty()) // invalid pasteboard?
         return;
     
-    char destination[MAXPATHLEN];
-    [self ActivePanelData]->GetDirectoryPathWithTrailingSlash(destination);
+    string destination = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
     
     for(auto i: filenames)
     {
@@ -1490,7 +1467,7 @@
         [m_OperationsController AddOperation:
              [[FileCopyOperation alloc] initWithFiles:files
                                                  root:i.first.c_str()
-                                                 dest:destination
+                                                 dest:destination.c_str()
                                               options:&opts]];
     }
 }

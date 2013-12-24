@@ -144,15 +144,14 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     if(auto *item = [m_View CurrentItem])
     {
-        char path[MAXPATHLEN];
-        m_Data->GetDirectoryPathWithTrailingSlash(path);
+        string path = m_Data->DirectoryPathWithTrailingSlash();
 
         // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"
         if(!item->IsDotDot())
-            strcat(path, item->Name());
+            path += item->Name();
 
         // may go async here on non-native VFS
-        PanelVFSFileWorkspaceOpener::Open(path, m_Data->Host());
+        PanelVFSFileWorkspaceOpener::Open(path.c_str(), m_Data->Host());
     }
 }
 
@@ -541,9 +540,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void) GoToUpperDirectoryAsync
 {
     // TODO: need some changes when VFS will became multi-root (network connections, FS like PS list etc)
-    char path[MAXPATHLEN*8], entry[MAXPATHLEN], last_path_entry[MAXPATHLEN];
+    char path[MAXPATHLEN*8], last_path_entry[MAXPATHLEN];
     m_Data->GetDirectoryFullHostsPathWithTrailingSlash(path);
-    m_Data->GetDirectoryPathShort(entry);
+    string entry = m_Data->DirectoryPathShort();
     
     char *s = strrchr(path, '/');
     if(!s) return;
@@ -552,8 +551,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if(!s) return;
     strcpy(last_path_entry, s+1);
     *(s+1) = 0;
-    if(strlen(entry) > 0) // normal condition
-        [self GoToGlobalHostsPathAsync:path select_entry:entry];
+    if(!entry.empty()) // normal condition
+        [self GoToGlobalHostsPathAsync:path select_entry:entry.c_str()];
     else // data has no info about how it's dir is named. seems that it's a VFS,
          // and currently junction file should be selected - it is a last part of a full path
         [self GoToGlobalHostsPathAsync:path select_entry:last_path_entry];
@@ -571,17 +570,13 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         if(!entry->IsDotDot() ||
            strcmp(m_Data->Listing()->RelativePath(), "/"))
         {
-            char pathbuf[MAXPATHLEN];
-            m_Data->ComposeFullPathForEntry(m_Data->SortPosToRawPos([m_View GetCursorPosition]), pathbuf);
-        
-            string curdirname("");
-            if(entry->IsDotDot()) { // go to parent directory
-                char curdirnamebuf[MAXPATHLEN];
-                m_Data->GetDirectoryPathShort(curdirnamebuf);
-                curdirname = curdirnamebuf;
-            }
+            string path = m_Data->FullPathForEntry(m_Data->RawIndexForSortIndex([m_View GetCursorPosition]));
             
-            [self GoToRelativeAsync:pathbuf
+            string curdirname;
+            if(entry->IsDotDot()) // go to parent directory
+                curdirname = m_Data->DirectoryPathShort();
+            
+            [self GoToRelativeAsync:path.c_str()
                           WithHosts:make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack)
                         SelectEntry:curdirname.c_str()
              ];
@@ -609,9 +604,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     }
     else
     { // VFS stuff here
-        char pathbuf[__DARWIN_MAXPATHLEN];
-        m_Data->ComposeFullPathForEntry(m_Data->SortPosToRawPos([m_View GetCursorPosition]), pathbuf);
-        shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(pathbuf, m_HostsStack.back());
+        string path = m_Data->FullPathForEntry(m_Data->RawIndexForSortIndex([m_View GetCursorPosition]));
+        shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(path.c_str(), m_HostsStack.back());
         if(arhost->Open() >= 0)
         {
             m_HostsStack.push_back(arhost);
@@ -640,9 +634,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if(!m_DirectoryLoadingQ->Empty())
         return; //reducing overhead
     
-    char dirpathbuf[MAXPATHLEN];
-    m_Data->GetDirectoryPathWithTrailingSlash(dirpathbuf);
-    string dirpath(dirpathbuf);
+    string dirpath = m_Data->DirectoryPathWithTrailingSlash();
     
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
         shared_ptr<VFSListing> listing;
@@ -832,8 +824,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) HandleCalculateSizes
 {
-    char dir[MAXPATHLEN];
-    m_Data->GetDirectoryPathWithTrailingSlash(dir);
+    string dir = m_Data->DirectoryPathWithTrailingSlash();
     if(m_Data->GetSelectedItemsCount()) {
         auto files = m_Data->StringsFromSelectedEntries();
         [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:false];
@@ -847,9 +838,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     }
 }
 
-- (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files InDir:(const char*)_dir IsDotDot:(bool)_isdotdot
-{    
-    string str(_dir);
+- (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files InDir:(std::string)_dir IsDotDot:(bool)_isdotdot
+{
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
         // TODO: lock panel data?
         // guess it's better to move the following line into main thread
@@ -860,9 +850,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         };
 
         if(!_isdotdot)
-            m_HostsStack.back()->CalculateDirectoriesSizes(_files, str, ^bool { return _q->IsStopped();  }, complet);
+            m_HostsStack.back()->CalculateDirectoriesSizes(_files, _dir, ^bool { return _q->IsStopped();  }, complet);
         else
-            m_HostsStack.back()->CalculateDirectoryDotDotSize(str, ^bool { return _q->IsStopped(); }, complet);
+            m_HostsStack.back()->CalculateDirectoryDotDotSize(_dir, ^bool { return _q->IsStopped(); }, complet);
     });
 }
 
@@ -947,9 +937,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) UpdateEjectButton
 {
-    char path[MAXPATHLEN];
-    m_Data->GetDirectoryPathWithoutTrailingSlash(path);
-    bool should_be_hidden = !IsVolumeContainingPathEjectable(path);
+    string path = m_Data->DirectoryPathWithoutTrailingSlash();
+    bool should_be_hidden = !IsVolumeContainingPathEjectable(path.c_str());
     
     if([m_EjectButton isHidden] != should_be_hidden)
         [m_EjectButton setHidden:should_be_hidden];
@@ -969,7 +958,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     // TODO: recovering to upper host needed
     char path[MAXPATHLEN];
-    m_Data->GetDirectoryPathWithoutTrailingSlash(path);
+    strcpy(path, m_Data->DirectoryPathWithoutTrailingSlash().c_str());
     if(GetFirstAvailableDirectoryFromPath(path))
 //        [self GoToDirectory:path];
         [self GoToRelativeToHostAsync:path select_entry:0];
@@ -983,9 +972,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) OnPathChanged:(int)_flags
 {
-    char path[MAXPATHLEN];
-    m_Data->GetDirectoryPathWithTrailingSlash(path);
-    [self ResetUpdatesObservation:path];
+    string path = m_Data->DirectoryPathWithTrailingSlash();
+    [self ResetUpdatesObservation:path.c_str()];
     [self ClearSelectionRequest];   
     [self SignalParentOfPathChanged];
     [self UpdateEjectButton];
@@ -1044,9 +1032,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void)OnEjectButton:(id)sender
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        char path[MAXPATHLEN];
-        m_Data->GetDirectoryPathWithoutTrailingSlash(path); // not thread-safe, potentialy may cause problems, but not likely
-        EjectVolumeContainingPath(path);
+        // not thread-safe, potentialy may cause problems, but not likely
+        EjectVolumeContainingPath(m_Data->DirectoryPathWithoutTrailingSlash().c_str());
     });
 }
 
@@ -1063,16 +1050,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         return;
     
     if(FlexChainedStringsChunk *files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot])
-    {
-        char current_dir[MAXPATHLEN];
-        m_Data->GetDirectoryPathWithTrailingSlash(current_dir);
         [[SharingService new] ShowItems:files
-                InDir:current_dir
+                InDir:m_Data->DirectoryPathWithTrailingSlash().c_str()
                 InVFS:m_HostsStack.back()
        RelativeToRect:[sender bounds]
                OfView:sender
         PreferredEdge:NSMinYEdge];
-    }
 }
 
 - (void) UpdateBriefSystemOverview

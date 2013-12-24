@@ -30,11 +30,14 @@
         return false;
     int raw_pos = m_Data->SortedDirectoryEntries()[sort_pos];
     // Handle directories.
-    auto const &entry = m_Data->DirectoryEntries()[raw_pos];
+    
+    strcpy(_file_path, m_Data->FullPathForEntry(raw_pos).c_str());
+    
+/*    auto const &entry = m_Data->DirectoryEntries()[raw_pos];
 
     if(!entry.IsDotDot())
     {
-        m_Data->GetDirectoryPathWithTrailingSlash(_file_path);
+        strcpy(_file_path, m_Data->DirectoryPathWithTrailingSlash().c_str());
         strcat(_file_path, entry.Name());
     }
     else
@@ -49,7 +52,7 @@
             if(s)
                 *(s+1) = 0;
         }
-    }
+    }*/
     return true;
 }
 
@@ -71,7 +74,8 @@
 
 - (bool) GetCurrentDirectoryPathRelativeToHost:(char*) _path
 {
-    m_Data->GetDirectoryPathWithTrailingSlash(_path);
+//    m_Data->GetDirectoryPathWithTrailingSlash(_path);
+    strcpy(_path, m_Data->DirectoryPathWithTrailingSlash().c_str());
     return true;
 }
 

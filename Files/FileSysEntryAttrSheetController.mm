@@ -340,7 +340,7 @@ struct OtherAttrs
     
     m_HasDirectoryEntries = _data->GetSelectedItemsDirectoriesCount() > 0;
     m_Files               = _data->StringsFromSelectedEntries();
-    _data->GetDirectoryPathWithTrailingSlash(m_RootPath);
+    strcpy(m_RootPath, _data->DirectoryPathWithTrailingSlash().c_str());
     [self LoadUsers];
     
     [NSApp beginSheet: [self window]
@@ -388,7 +388,7 @@ struct OtherAttrs
     m_HasDirectoryEntries = item.IsDir();
     m_Files = FlexChainedStringsChunk::Allocate();
     m_Files->AddString(item.Name(), 0);
-    _data->GetDirectoryPathWithTrailingSlash(m_RootPath);
+    strcpy(m_RootPath, _data->DirectoryPathWithTrailingSlash().c_str());
     
     [self LoadUsers];
     [NSApp beginSheet: [self window]

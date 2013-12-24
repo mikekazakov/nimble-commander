@@ -111,5 +111,9 @@
     }];
 }
 
+- (IBAction)OnCalculateSizes:(id)sender
+{
+    [[self ActivePanelController] HandleCalculateSizes];
+}
 
 @end

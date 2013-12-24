@@ -514,6 +514,7 @@
         NSUInteger modif = [event modifierFlags];
         if( (modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ) [self OnOpenNatively:self];
         if( (modif&NSDeviceIndependentModifierFlagsMask) == 0              ) [self OnOpen:self];
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSShiftKeyMask|NSAlternateKeyMask)) [self OnCalculateSizes:self];        
         return;
     }
     

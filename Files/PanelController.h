@@ -107,6 +107,7 @@ struct PanelControllerNavigation
 - (void) HandleReturnButton;        // 'Open' menu item
 - (void) HandleShiftReturnButton;   // 'Open Natively' menu item
 - (void) HandleFileView; // F3
+- (void) HandleCalculateSizes;
 - (void) HandleBriefSystemOverview;
 
 // called by PanelView ///////////////////////////////////////////////

@@ -99,6 +99,15 @@ DQ
                                     <action selector="OnOpenNatively:" target="-1" id="YXv-PR-7Uo"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Calculate Sizes" id="GcS-df-Z23">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES"/>
+                                <connections>
+                                    <action selector="OnCalculateSizes:" target="-1" id="GjP-If-Zpd"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="79">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

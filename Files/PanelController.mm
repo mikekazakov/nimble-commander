@@ -768,42 +768,35 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     unichar const unicode        = [character characterAtIndex:0];
     unsigned short const keycode = [event keyCode];
 
-    switch (unicode)
-    {
+    switch (unicode) {
         case NSHomeFunctionKey: [m_View HandleFirstFile]; return true;
         case NSEndFunctionKey:  [m_View HandleLastFile]; return true;
         case NSPageDownFunctionKey:      [m_View HandleNextPage]; return true;
         case NSPageUpFunctionKey:        [m_View HandlePrevPage]; return true;
         case NSLeftArrowFunctionKey:
-//            if(modif & NSCommandKeyMask) [m_View HandleFirstFile];
-             if(modif &  NSAlternateKeyMask); // now nothing wilh alt+left now
+            if(modif &  NSAlternateKeyMask); // now nothing wilh alt+left now
             else                         [m_View HandlePrevColumn];
             return true;
         case NSRightArrowFunctionKey:
-//            if(modif & NSCommandKeyMask) [m_View HandleLastFile];
-             if(modif &  NSAlternateKeyMask); // now nothing wilh alt+right now
+            if(modif &  NSAlternateKeyMask); // now nothing wilh alt+right now
             else                         [m_View HandleNextColumn];
             return true;
         case NSUpArrowFunctionKey:
-//            if(modif & NSCommandKeyMask) [m_View HandlePrevPage];
-             if(modif & NSAlternateKeyMask) [self HandleFastSearchPrevious];
+            if(modif & NSAlternateKeyMask) [self HandleFastSearchPrevious];
             else                         [m_View HandlePrevFile];
             return true;
         case NSDownArrowFunctionKey:
-            /*if(modif & NSCommandKeyMask) [m_View HandleNextPage];
-            else */if(modif &  NSAlternateKeyMask) [self HandleFastSearchNext];
+            if(modif &  NSAlternateKeyMask) [self HandleFastSearchNext];
             else                         [m_View HandleNextFile];
             return true;
     }
     
-    switch (keycode)
-    {
-        case 53: // Esc button
-            [self CancelBackgroundOperations];
-            [[self GetParentWindow] CloseOverlay:self];
-            m_BriefSystemOverview = nil;
-            m_QuickLook = nil;
-            return true;
+    if(keycode == 53) { // Esc button
+        [self CancelBackgroundOperations];
+        [[self GetParentWindow] CloseOverlay:self];
+        m_BriefSystemOverview = nil;
+        m_QuickLook = nil;
+        return true;
     }
     
     if(fast_search_handling)
@@ -826,37 +819,31 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) HandleFileView // F3
 {
-    if (m_QuickLook != nil)
-    { // Close quick preview, if it is open.
+    // Close quick preview, if it is open.
+    if(m_QuickLook) {
         [[self GetParentWindow] CloseOverlay:self];
         m_QuickLook = nil;
         return;
     }
     
+    m_QuickLook = [[self GetParentWindow] RequestQuickLookView:self];
+    [self OnCursorChanged];
+}
+
+- (void) HandleCalculateSizes
+{
     char dir[MAXPATHLEN];
     m_Data->GetDirectoryPathWithTrailingSlash(dir);
-    
-    if(m_Data->GetSelectedItemsCount())
-    {
+    if(m_Data->GetSelectedItemsCount()) {
         auto files = m_Data->StringsFromSelectedEntries();
         [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:false];
     }
-    else
-    {
+    else {
         auto const *item = [m_View CurrentItem];
-        if (!item) return;
-        if (item->IsDir())
-        {
-            bool dotdot = item->IsDotDot();
-            [self StartDirectorySizeCountingFor:dotdot ? 0 :FlexChainedStringsChunk::AllocateWithSingleString(item->Name())
+        if(item && item->IsDir())
+            [self StartDirectorySizeCountingFor:item->IsDotDot() ? 0 :FlexChainedStringsChunk::AllocateWithSingleString(item->Name())
                                           InDir:dir
-                                       IsDotDot:dotdot];
-        }
-        else
-        {
-            m_QuickLook = [[self GetParentWindow] RequestQuickLookView:self];
-            [self OnCursorChanged];
-        }
+                                       IsDotDot:item->IsDotDot()];
     }
 }
 

@@ -12,6 +12,7 @@
 
 - (IBAction)OnOpen:(id)sender;
 - (IBAction)OnOpenNatively:(id)sender;
+- (IBAction)OnCalculateSizes:(id)sender;
 
 // Navigation
 - (IBAction)OnGoBack:(id)sender;

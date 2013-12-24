@@ -11,6 +11,8 @@
 #import "MainWindowFilePanelState+Menu.h"
 #import "PanelController.h"
 #import "FilePanelMainSplitView.h"
+#import "GoToFolderSheetController.h"
+#import "Common.h"
 
 @implementation MainWindowFilePanelState (Menu)
 
@@ -88,5 +90,32 @@
 {
     [self.ActivePanelController OnGoForward];
 }
+
+- (IBAction)OnGoToFolder:(id)sender
+{
+    GoToFolderSheetController *sheet = [GoToFolderSheetController new];
+    [sheet ShowSheet:self.window handler:^int(){
+        string path = [sheet.Text.stringValue fileSystemRepresentation];
+        assert(!path.empty());
+        if(path[0] == '/') {
+            // absolute path
+            return [self.ActivePanelController GoToGlobalHostsPathSync: path.c_str()];
+        } else if(path[0] == '~') {
+            // relative to home
+            path.replace(0, 1, getpwuid(getuid())->pw_dir);
+            return [self.ActivePanelController GoToGlobalHostsPathSync: path.c_str()];
+        } else {
+            // sub-dir
+            char cwd[MAXPATHLEN];
+            if([self.ActivePanelController GetCurrentDirectoryPathRelativeToHost:cwd]) {
+                path.insert(0, cwd);
+                return [self.ActivePanelController GoToGlobalHostsPathSync:path.c_str()];
+            }
+        }
+
+        return 0;
+    }];
+}
+
 
 @end

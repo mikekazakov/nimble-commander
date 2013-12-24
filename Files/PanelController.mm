@@ -347,7 +347,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         }
     }
 
-    return VFSError::GenericError;
+    return VFSError::NotFound;
 }
 
 - (void) GoToRelativeAsync:(const char*) _path
@@ -504,6 +504,10 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (int) GoToGlobalHostsPathSync:(const char*) _path
 {
+    if(_path == nullptr ||
+       _path[0] != '/')
+        return VFSError::InvalidCall;
+    
     { // check we're already on this path
         char asked[MAXPATHLEN*8];
         strcpy(asked, _path);

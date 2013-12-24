@@ -62,8 +62,7 @@ struct VFSNativeListingItem : VFSListingItem
     {
         if(cf_name != 0)
             CFRelease(cf_name);
-        if(symlink != 0)
-            free((void*)symlink);
+        free((void*)symlink);
         if(namelen > 13)
             free((void*)*(const unsigned char**)(&namebuf[0]));
     }

@@ -60,7 +60,7 @@
         if( sortpos >= 0 )
         {
             [m_View SetCursorPosition:sortpos];
-            m_Data->CustomFlagsSelectAll(false);
+            m_Data->CustomFlagsSelectAllSorted(false);
             if(![self IsActivePanel])
                [self RequestActivation];
             return true;

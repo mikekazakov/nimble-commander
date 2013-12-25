@@ -48,7 +48,7 @@ private:
         node strings[strings_per_block];    // # 16
     }; // 1024 bytes long
 
-public: 
+public:
     struct iterator
     {
         const block *current;

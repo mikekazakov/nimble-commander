@@ -470,7 +470,7 @@ struct PanelViewStateStorage
         ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
     
     for(int i = _start; i <= _end; ++i)
-        m_State.Data->CustomFlagsSelect(m_State.Data->SortedDirectoryEntries()[i], _select);
+        m_State.Data->CustomFlagsSelectSorted(i, _select);
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end

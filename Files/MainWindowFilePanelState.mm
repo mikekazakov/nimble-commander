@@ -1120,14 +1120,7 @@
         
         PanelData *data = [self ActivePanelData];
         for(auto &i: _entries)
-        {
-            int idx = data->RawIndexForName(i.str());
-            if(idx>=0)
-            {
-                if(data->SortedIndexForRawIndex(idx) >= 0) // check if requested element is currently visible or we can get nice artifacts
-                    data->CustomFlagsSelect(idx, true);
-            }
-        }
+            data->CustomFlagsSelectSorted(data->SortedIndexForName(i.str()), true);
         
         [[self ActivePanelView] setNeedsDisplay:true];
     }

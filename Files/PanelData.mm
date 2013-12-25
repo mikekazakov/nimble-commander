@@ -385,11 +385,21 @@ void PanelData::SetCustomSortMode(PanelSortMode _mode)
             // need to update fast search indeces also, since there are structural changes
             m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName, HumanSort()); });
             m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
+            if(_mode.show_hidden == false)
+                m_SortExecGroup.Run(^{ ClearSelectedFlagsFromHiddenElements(); });
             m_SortExecGroup.Wait();
             
             UpdateStatictics(); // we need to update statistics since some selected enties may become invisible and hence should be deselected
         }
     }
+}
+
+// need to call UpdateStatictics() after this method since we alter selected set
+void PanelData::ClearSelectedFlagsFromHiddenElements()
+{
+    for(auto &i: *m_Listing)
+        if(i.IsHidden() && i.CFIsSelected())
+            i.UnsetCFlag(VFSListingItem::Flags::Selected);
 }
 
 PanelSortMode PanelData::GetCustomSortMode() const
@@ -472,23 +482,26 @@ const VFSListingItem& PanelData::EntryAtRawPosition(int _pos) const
     return (*m_Listing)[_pos];
 }
 
-void PanelData::CustomFlagsSelect(size_t _at_pos, bool _is_selected)
+
+void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
 {
-    assert(m_Listing.get());
-    assert(_at_pos < m_Listing->Count());
-    auto &entry = (*m_Listing)[_at_pos];
-    assert(entry.IsDotDot() == false); // assuming we can't select dotdot entry
+    auto &entry = m_Listing->At(_at_raw_pos);
+    
+    if(entry.IsDotDot())
+        return; // assuming we can't select dotdot entry
+    
     if(entry.CFIsSelected() == _is_selected) // check if item is already selected
         return;
+    
     if(_is_selected)
     {
         if(entry.Size() != VFSListingItem::InvalidSize)
             m_SelectedItemsSizeBytes += entry.Size();
         m_SelectedItemsCount++;
-
+        
         if(entry.IsDir()) m_SelectedItemsDirectoriesCount++;
         else              m_SelectedItemsFilesCount++;
-
+        
         entry.SetCFlag(VFSListingItem::Flags::Selected);
     }
     else
@@ -514,13 +527,12 @@ void PanelData::CustomFlagsSelect(size_t _at_pos, bool _is_selected)
     }
 }
 
-void PanelData::CustomFlagsSelectAll(bool _select)
+void PanelData::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
 {
-    assert(m_Listing.get());
-    size_t i = 0, e = m_Listing->Count();
-    if(e > 0 && (*m_Listing)[i].IsDotDot()) ++i;
-    for(;i<e;++i)
-        CustomFlagsSelect((int)i, _select);
+    if(_at_pos < 0 || _at_pos >= m_EntriesByCustomSort.size())
+        return;
+    
+    CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_pos], _is_selected);
 }
 
 void PanelData::CustomFlagsSelectAllSorted(bool _select)
@@ -665,7 +677,7 @@ int PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, b
             continue;
         
         if(mask.MatchName((__bridge NSString*)entry.CFName())) {
-            CustomFlagsSelect(i, _select);
+            CustomFlagsSelectRaw(i, _select);
             counter++;
         }
     }

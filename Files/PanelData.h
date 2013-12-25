@@ -84,14 +84,13 @@ public:
     void Load(shared_ptr<VFSListing> _listing);
     void ReLoad(shared_ptr<VFSListing> _listing);
 
-    shared_ptr<VFSHost> Host() const;
+    shared_ptr<VFSHost>     Host() const;
     shared_ptr<VFSListing>  Listing() const;
+    
     const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
+    const VFSListingItem&   EntryAtRawPosition(int _pos) const;
     chained_strings         StringsFromSelectedEntries() const;
-    
-    const VFSListingItem& EntryAtRawPosition(int _pos) const;
-    
 
     /**
      * will redirect ".." upwards
@@ -167,10 +166,9 @@ public:
     unsigned long GetSelectedItemsSizeBytes() const;
     
     // manupulation with user flags for directory entries
-    void CustomFlagsSelect(size_t _at_raw_pos, bool _is_selected);
+    void CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected);
     void CustomFlagsSelectAllSorted(bool _select);
-    void CustomFlagsSelectAll(bool _select);
-    int CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs);
+    int  CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs);
     
     void CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id);
     void CustomIconClearAll();
@@ -182,13 +180,15 @@ private:
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
     static void DoSort(shared_ptr<VFSListing> _from, DirSortIndT &_to, PanelSortMode _mode);
+    void CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected);
+    void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();    
     
     PanelSortMode HumanSort() const;
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-    shared_ptr<VFSListing>             m_Listing;
+    shared_ptr<VFSListing>                  m_Listing;
 
     DirSortIndT                             m_EntriesByRawName;    // sorted with raw strcmp comparison
     DirSortIndT                             m_EntriesByHumanName;  // sorted with human-reasonable literal sort

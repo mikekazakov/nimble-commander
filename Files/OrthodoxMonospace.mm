@@ -187,7 +187,8 @@ void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache)
     CGContextSetFont(_context, _cache->BaseCGFont());
     CGContextSetFontSize(_context, _cache->Size());
     CGContextSetTextDrawingMode(_context, kCGTextFill);
-    CGContextSetShouldSmoothFonts(_context, false);
+//    CGContextSetShouldSmoothFonts(_context, false);
+    CGContextSetShouldSmoothFonts(_context, true);
     CGContextSetShouldAntialias(_context, true);
         
     // font geometry
@@ -207,7 +208,8 @@ void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache)
     CGContextSetFont(_context, _cache->BaseCGFont());
     CGContextSetFontSize(_context, _cache->Size());
     CGContextSetTextDrawingMode(_context, kCGTextFill);
-    CGContextSetShouldSmoothFonts(_context, false);
+//    CGContextSetShouldSmoothFonts(_context, false);
+    CGContextSetShouldSmoothFonts(_context, true);
     CGContextSetShouldAntialias(_context, false);
         
     // font geometry

@@ -23,9 +23,9 @@
 	<key>BigFileViewClassicShouldAntialias</key>
 	<true/>
 	<key>BigFileViewClassicShouldSmoothFonts</key>
-	<false/>
+	<true/>
 	<key>BigFileViewClassicFont</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDoQBYwCYAZgAmACG</data>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
 	<key>BigFileViewClassicTextColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAEBAYY=</data>
 	<key>BigFileViewClassicSelectionColor</key>
@@ -111,7 +111,7 @@
 	<key>FilePanelsModernIconsMode</key>
 	<integer>2</integer>
 	<key>FilePanelsClassicFont</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmD4QBYwCYAZgAmACG</data>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
 	<key>FilePanelsClassicBackgroundColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAACDgYAAPwGG</data>
 	<key>FilePanelsClassicCursorBackgroundColor</key>

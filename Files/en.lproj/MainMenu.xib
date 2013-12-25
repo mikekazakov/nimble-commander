@@ -482,8 +482,8 @@ CA
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="878"/>
-                                        <menuItem title="View Hidden Files" tag="1020" id="869">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="View Hidden Files" tag="1020" keyEquivalent="I" id="869">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <action selector="ToggleViewHiddenFiles:" target="-1" id="872"/>
                                             </connections>

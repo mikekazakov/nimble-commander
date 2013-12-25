@@ -763,8 +763,8 @@
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     
-    __block FlexChainedStringsChunk *files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
-    if(!files)
+    auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
+    if(files->empty())
         return;
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -774,7 +774,7 @@
                                                                  : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
     
     FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-    [sheet ShowSheet:self.window Files:files Type:type
+    [sheet ShowSheet:self.window Files:files.get() Type:type
              Handler:^(int result){
                  if (result == DialogResult::Delete)
                  {
@@ -783,18 +783,13 @@
                      string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
                      
                      FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                                  initWithFiles:files
+                                                  initWithFiles:move(*files.get())
                                                   type:type
                                                   rootpath:root_path.c_str()];
                      op.TargetPanel = [self ActivePanelController];
                      [m_OperationsController AddOperation:op];
                  }
-                 else
-                 {
-                     FlexChainedStringsChunk::FreeWithDescendants(&files);
-                 }
              }];
-    
 }
 
 - (IBAction)OnDeleteCommand:(id)sender
@@ -837,25 +832,23 @@
         return;
     
     const PanelData *source, *destination;
-    if(m_ActiveState == StateLeftPanel)
-    {
+    if(m_ActiveState == StateLeftPanel) {
         source = m_LeftPanelData;
         destination = m_RightPanelData;
     }
-    else
-    {
+    else {
         source = m_RightPanelData;
         destination = m_LeftPanelData;
     }
     
-    __block FlexChainedStringsChunk *files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
-    if(!files)
+    auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
+    if(files->empty())
         return;
     
     string dest_path = destination->DirectoryPathWithTrailingSlash();
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:true items:files handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:true items:files.get() handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -865,10 +858,9 @@
              opts.docopy = true;
              [mc FillOptions:&opts];
              
-             
              FileCopyOperation *op;
              if(source->Host()->IsNativeFS() && destination->Host()->IsNativeFS())
-                  op = [[FileCopyOperation alloc] initWithFiles:files
+                  op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                       root:root_path.c_str()
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                    options:&opts];
@@ -876,7 +868,7 @@
                      strlen([[mc.TextField stringValue] fileSystemRepresentation]) > 0 &&
                      [[mc.TextField stringValue] fileSystemRepresentation][0] == '/'
                      )
-                  op = [[FileCopyOperation alloc] initWithFiles:files
+                  op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                       root:root_path.c_str()
                                                    rootvfs:source->Host()
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
@@ -888,11 +880,6 @@
                  });
              }];
              [m_OperationsController AddOperation:op];
-         }
-         else
-         {
-             FlexChainedStringsChunk::FreeWithDescendants(&files);
-             
          }
      }];
 }
@@ -911,10 +898,10 @@
     if(item->IsDotDot())
         return;
     
-    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
+    auto files = make_shared<chained_strings>(item->Name());
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:files handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:files.get() handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -923,7 +910,7 @@
              opts.docopy = true;
              [mc FillOptions:&opts];
              
-             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
+             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                                          root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
@@ -934,10 +921,6 @@
                  });
              }];
              [m_OperationsController AddOperation:op];
-         }
-         else
-         {
-             FlexChainedStringsChunk::FreeWithDescendants(&files);
          }
      }];
 }
@@ -961,15 +944,15 @@
     if(!source->Host()->IsNativeFS())
         return; // currently support rename only on native fs
     
-    __block FlexChainedStringsChunk *files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
-    if(!files)
+    auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
+    if(files->empty())
         return;
     
     string dest_path = destination->DirectoryPathWithTrailingSlash();
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:false items:files handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:nsdirpath iscopying:false items:files.get() handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -980,7 +963,7 @@
              [mc FillOptions:&opts];
              
              
-             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
+             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                                          root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
@@ -991,10 +974,6 @@
                  });
              }];
             [m_OperationsController AddOperation:op];
-         }
-         else
-         {
-             FlexChainedStringsChunk::FreeWithDescendants(&files);
          }
      }];
 }
@@ -1014,10 +993,10 @@
     if(item->IsDotDot())
         return;
     
-    __block FlexChainedStringsChunk *files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
+    auto files = make_shared<chained_strings>(item->Name());
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:files handler:^(int _ret)
+    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:files.get() handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
@@ -1027,7 +1006,7 @@
              [mc FillOptions:&opts];
              
              
-             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:files
+             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                                          root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
                                                                       options:&opts];
@@ -1038,10 +1017,6 @@
                  });
              }];             
              [m_OperationsController AddOperation:op];
-         }
-         else
-         {
-             FlexChainedStringsChunk::FreeWithDescendants(&files);
          }
      }];
 }
@@ -1131,36 +1106,31 @@
     }
 }
 
-- (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path
+- (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path
 {
     assert(dispatch_is_main_queue());
     
     PanelController *panel = [self ActivePanelController];
     if([panel GoToGlobalHostsPathSync:_path] == VFSError::Ok)
     {
-        if(_entries->Amount() > 0)
-            [panel ScheduleDelayedSelectionChangeForC:(*_entries)[0].str()
+        if(!_entries.empty())
+            [panel ScheduleDelayedSelectionChangeForC:_entries.front().str()
                                             timeoutms:100
                                              checknow:true];
         
-        if(_entries->Amount() > 1)
+        PanelData *data = [self ActivePanelData];
+        for(auto &i: _entries)
         {
-            PanelData *data = [self ActivePanelData];
-            
-            for(auto &i: *_entries)
+            int idx = data->RawIndexForName(i.str());
+            if(idx>=0)
             {
-                int idx = data->RawIndexForName(i.str());
-                if(idx>=0)
-                {
-                    if(data->SortedIndexForRawIndex(idx) >= 0) // check if requested element is currently visible or we can get nice artifacts
-                        data->CustomFlagsSelect(idx, true);
-                }
+                if(data->SortedIndexForRawIndex(idx) >= 0) // check if requested element is currently visible or we can get nice artifacts
+                    data->CustomFlagsSelect(idx, true);
             }
-            [[self ActivePanelView] setNeedsDisplay:true];
         }
+        
+        [[self ActivePanelView] setNeedsDisplay:true];
     }
-    
-    FlexChainedStringsChunk::FreeWithDescendants(&_entries);
 }
 
 - (void)WindowWillBeginSheet
@@ -1416,15 +1386,15 @@
     
     for(auto i: filenames)
     {
-        FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate();
+        chained_strings files;
         for(auto j: i.second)
-            files->AddString(j.c_str(), (int)j.length(), 0);
+            files.push_back(j.c_str(), (int)j.length(), nullptr);
         
         FileCopyOperationOptions opts;
         opts.docopy = true;
         
         [m_OperationsController AddOperation:
-             [[FileCopyOperation alloc] initWithFiles:files
+             [[FileCopyOperation alloc] initWithFiles:move(files)
                                                  root:i.first.c_str()
                                                  dest:destination.c_str()
                                               options:&opts]];
@@ -1481,8 +1451,8 @@
 
 - (IBAction)OnCompressFiles:(id)sender
 {
-    FlexChainedStringsChunk *files = [[self ActivePanelController] GetSelectedEntriesOrFocusedEntryWithoutDotDot];
-    if(!files)
+    auto files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    if(files.empty())
         return;
     shared_ptr<VFSHost> srcvfs, dstvfs;
     char srcroot[MAXPATHLEN], dstroot[MAXPATHLEN];
@@ -1502,7 +1472,7 @@
         target_pc = m_LeftPanelController;
     }
     
-    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:files
+    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(files)
                                                                      srcroot:srcroot
                                                                       srcvfs:srcvfs
                                                                      dstroot:dstroot

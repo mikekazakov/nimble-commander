@@ -37,7 +37,6 @@ static void Randomize(unsigned char *_data, unsigned _size)
 }
 
 FileDeletionOperationJob::FileDeletionOperationJob():
-    m_RequestedFiles(0),
     m_Type(FileDeletionOperationType::Invalid),
     m_ItemsCount(0),
     m_SkipAll(false)
@@ -47,15 +46,12 @@ FileDeletionOperationJob::FileDeletionOperationJob():
 
 FileDeletionOperationJob::~FileDeletionOperationJob()
 {
-    FlexChainedStringsChunk::FreeWithDescendants(&m_RequestedFiles);
-    FlexChainedStringsChunk::FreeWithDescendants(&m_Directories);
-    FlexChainedStringsChunk::FreeWithDescendants(&m_ItemsToDelete);
 }
 
-void FileDeletionOperationJob::Init(FlexChainedStringsChunk *_files, FileDeletionOperationType _type,
+void FileDeletionOperationJob::Init(chained_strings _files, FileDeletionOperationType _type,
                                     const char* _root, FileDeletionOperation *_op)
 {
-    m_RequestedFiles = _files;
+    m_RequestedFiles.swap(_files);  
     m_Type = _type;
     strcpy(m_RootPath, _root);
     m_Operation = _op;
@@ -67,7 +63,7 @@ void FileDeletionOperationJob::Do()
 
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
-    m_ItemsCount = m_ItemsToDelete->CountStringsWithDescendants();
+    m_ItemsCount = m_ItemsToDelete.size();
     
     char entryfilename[MAXPATHLEN], *entryfilename_var;
     strcpy(entryfilename, m_RootPath);
@@ -76,7 +72,7 @@ void FileDeletionOperationJob::Do()
     m_Stats.StartTimeTracking();
     m_Stats.SetMaxValue(m_ItemsCount);
     
-    for(auto &i: *m_ItemsToDelete)
+    for(auto &i: m_ItemsToDelete)
     {
         if(CheckPauseOrStop()) { SetStopped(); return; }
         
@@ -97,10 +93,7 @@ void FileDeletionOperationJob::Do()
 
 void FileDeletionOperationJob::DoScan()
 {
-    m_Directories = m_DirectoriesLast = FlexChainedStringsChunk::Allocate();
-    m_ItemsToDelete = m_ItemsToDeleteLast = FlexChainedStringsChunk::Allocate();
-    
-    for(auto &i: *m_RequestedFiles)
+    for(auto &i: m_RequestedFiles)
     {
         if (CheckPauseOrStop()) return;
         char fn[MAXPATHLEN];
@@ -113,7 +106,7 @@ void FileDeletionOperationJob::DoScan()
             if((st.st_mode&S_IFMT) == S_IFREG || (st.st_mode&S_IFMT) == S_IFLNK)
             {
                 // trivial case
-                m_ItemsToDeleteLast = m_ItemsToDeleteLast->AddString(i.str(), i.len, 0);
+                m_ItemsToDelete.push_back(i.str(), i.len, nullptr);
             }
             else if((st.st_mode&S_IFMT) == S_IFDIR)
             {
@@ -123,8 +116,9 @@ void FileDeletionOperationJob::DoScan()
                 tmp[i.len+1] = 0;
                 
                 // add new dir in our tree structure
-                m_DirectoriesLast = m_DirectoriesLast->AddString(tmp, 0); // optimize it to exclude strlen using
-                const FlexChainedStringsChunk::node *dirnode = &m_DirectoriesLast->back();
+                m_Directories.push_back(tmp, nullptr);
+                
+                auto dirnode = &m_Directories.back();
                 
                 // for moving to trash we need just to delete the topmost directories to preserve structure
                 if(m_Type != FileDeletionOperationType::MoveToTrash)
@@ -134,13 +128,13 @@ void FileDeletionOperationJob::DoScan()
                 }
 
                 // add directory itself at the end, since we need it to be deleted last of all
-                m_ItemsToDeleteLast = m_ItemsToDeleteLast->AddString(tmp, i.len+1, 0);
+                m_ItemsToDelete.push_back(tmp, i.len+1, nullptr);
             }
         }
     }
 }
 
-void FileDeletionOperationJob::DoScanDir(const char *_full_path, const FlexChainedStringsChunk::node *_prefix)
+void FileDeletionOperationJob::DoScanDir(const char *_full_path, const chained_strings::node *_prefix)
 {
     char fn[MAXPATHLEN], *fnvar; // fnvar - is a variable part for every file in directory
     strcpy(fn, _full_path);
@@ -167,7 +161,7 @@ retry_opendir:
             {
                 if((st.st_mode&S_IFMT) == S_IFREG || (st.st_mode&S_IFMT) == S_IFLNK)
                 {
-                    m_ItemsToDeleteLast = m_ItemsToDeleteLast->AddString(entp->d_name, entp->d_namlen, _prefix);
+                    m_ItemsToDelete.push_back(entp->d_name, entp->d_namlen, _prefix);
                 }
                 else if((st.st_mode&S_IFMT) == S_IFDIR)
                 {
@@ -176,14 +170,14 @@ retry_opendir:
                     tmp[entp->d_namlen] = '/';
                     tmp[entp->d_namlen+1] = 0;
                     // add new dir in our tree structure
-                    m_DirectoriesLast = m_DirectoriesLast->AddString(tmp, entp->d_namlen+1, _prefix);
-                    const FlexChainedStringsChunk::node *dirnode = &m_DirectoriesLast->back();                    
+                    m_Directories.push_back(tmp, entp->d_namlen+1, _prefix);
+                    auto dirnode = &m_Directories.back();
                     
                     // add all items in directory
                     DoScanDir(fn, dirnode);
 
                     // add directory itself at the end, since we need it to be deleted last of all
-                    m_ItemsToDeleteLast = m_ItemsToDeleteLast->AddString(tmp, entp->d_namlen+1, _prefix);
+                    m_ItemsToDelete.push_back(tmp, entp->d_namlen+1, _prefix);
                 }
             }
             else if (!m_SkipAll)

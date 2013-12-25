@@ -76,7 +76,7 @@ enum ActiveState
 - (void)ActivatePanelByController:(PanelController *)controller;
 
 - (void)PanelPathChanged:(PanelController*)_panel;
-- (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
+- (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path;
 
 - (void)GetFilePanelsGlobalPaths:(vector<string> &)_paths;
 

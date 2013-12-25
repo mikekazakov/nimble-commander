@@ -10,8 +10,7 @@
 
 #import "FileDeletionOperation.h"
 #import "ButtonWithOptions.h"
-
-struct FlexChainedStringsChunk;
+#import "FlexChainedStringsChunk.h"
 
 typedef void (^FileDeletionSheetCompletionHandler)(int result);
 
@@ -26,7 +25,7 @@ typedef void (^FileDeletionSheetCompletionHandler)(int result);
 
 - (id)init;
 
-- (void)ShowSheet:(NSWindow *)_window Files:(FlexChainedStringsChunk *)_files
+- (void)ShowSheet:(NSWindow *)_window Files:(chained_strings *)_files
              Type:(FileDeletionOperationType)_type
           Handler:(FileDeletionSheetCompletionHandler)_handler;
 

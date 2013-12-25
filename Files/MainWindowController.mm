@@ -134,8 +134,8 @@
             [i WindowDidEndSheet];
 }
 
-- (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path {
-    [m_PanelState RevealEntries:_entries inPath:_path];
+- (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path {
+    [m_PanelState RevealEntries:move(_entries) inPath:_path];
 }
 
 - (void) ResignAsWindowState:(id)_state

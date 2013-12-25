@@ -112,7 +112,7 @@ struct OtherAttrs
     bool                              m_ProcessSubfolders;
     vector<user_info>            m_SystemUsers;
     vector<group_info>           m_SystemGroups;
-    FlexChainedStringsChunk          *m_Files;
+    chained_strings              m_Files;
     char                              m_RootPath[MAXPATHLEN];
 
     FileSysAttrAlterCommand           *m_Result;
@@ -129,26 +129,20 @@ struct OtherAttrs
     return self;
 }
 
--(void) dealloc
-{
-    if(m_Files)
-        FlexChainedStringsChunk::FreeWithDescendants(&m_Files);
-}
-
 - (void)windowDidLoad
 {
     [super windowDidLoad];
     
     // Set title.
-    if (m_Files->Amount() == 1)
+    if (m_Files.size() == 1)
     {
         [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %@",
-                                    [NSString stringWithUTF8String:(*m_Files)[0].str()]]];
+                                    [NSString stringWithUTF8String:m_Files.front().str()]]];
     }
     else
     {
         [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %i "
-                                    "selected items", m_Files->CountStringsWithDescendants()]];
+                                    "selected items", m_Files.size()]];
     }
     
     [self PopulateControls];
@@ -339,7 +333,7 @@ struct OtherAttrs
     memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
     
     m_HasDirectoryEntries = _data->GetSelectedItemsDirectoriesCount() > 0;
-    m_Files               = _data->StringsFromSelectedEntries();
+    m_Files.swap(_data->StringsFromSelectedEntries());
     strcpy(m_RootPath, _data->DirectoryPathWithTrailingSlash().c_str());
     [self LoadUsers];
     
@@ -386,8 +380,7 @@ struct OtherAttrs
     memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
 
     m_HasDirectoryEntries = item.IsDir();
-    m_Files = FlexChainedStringsChunk::Allocate();
-    m_Files->AddString(item.Name(), 0);
+    m_Files.swap(chained_strings(item.Name()));
     strcpy(m_RootPath, _data->DirectoryPathWithTrailingSlash().c_str());
     
     [self LoadUsers];
@@ -585,7 +578,7 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
     [self OnTimeChange:[self BTimePicker]];
 
     // compose result
-    m_Result = (FileSysAttrAlterCommand*) malloc(sizeof(FileSysAttrAlterCommand));
+    m_Result = new FileSysAttrAlterCommand;
     for(int i = 0; i < FileSysAttrAlterCommand::fsf_totalcount; ++i)
         m_Result->flags[i] = m_State[1].fsfstate[i];
 
@@ -602,9 +595,8 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
     if((m_Result->set_btime = m_UserDidEditOthers[OtherAttrs::btime]) == true)
         m_Result->btime = m_State[1].btime;
     m_Result->process_subdirs = m_ProcessSubfolders;
-    m_Result->files = m_Files;
+    m_Result->files.swap(m_Files);
     strcpy(m_Result->root_path, m_RootPath);
-    m_Files = 0; // move ownership to m_Result;
     
     [NSApp endSheet:[self window] returnCode:DialogResult::Apply];    
 }
@@ -614,6 +606,7 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
     [[self window] orderOut:self];
     m_Handler((int)returnCode);
     self.ME = nil; // let ARC do it's duty
+    m_Handler = nil;
 }
 
 - (FileSysAttrAlterCommand*) Result

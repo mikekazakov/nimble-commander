@@ -62,6 +62,7 @@
     
     if(m_Handler)
         m_Handler((int)returnCode);
+    m_Handler = nil;
 }
 
 @end

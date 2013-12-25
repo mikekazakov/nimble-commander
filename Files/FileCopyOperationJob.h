@@ -19,7 +19,7 @@ public:
     FileCopyOperationJob();
     ~FileCopyOperationJob();
 
-    void Init(FlexChainedStringsChunk *_files, // passing ownage to Job
+    void Init(chained_strings _files,
                              const char *_root,               // dir in where files are located
                              const char *_dest,                // where to copy
                              FileCopyOperationOptions* _opts,
@@ -75,9 +75,9 @@ private:
     virtual void Do();
     void ScanDestination();
     void ScanItems();
-    void ScanItem(const char *_full_path, const char *_short_path, const FlexChainedStringsChunk::node *_prefix);
+    void ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix);
     void ProcessItems();
-    void ProcessItem(const FlexChainedStringsChunk::node *_node, int _number);
+    void ProcessItem(const chained_strings::node *_node, int _number);
     
     // _path is relative filename of source item
     void ProcessCopyToPathPreffix(const char *_path, int _number);
@@ -101,12 +101,13 @@ private:
     void CopyXattrs(int _fd_from, int _fd_to);
     
     __weak FileCopyOperation *m_Operation;
-    FlexChainedStringsChunk *m_InitialItems;
-    FlexChainedStringsChunk *m_ScannedItems, *m_ScannedItemsLast;
+    chained_strings m_InitialItems;
+    chained_strings m_ScannedItems;
+    
     vector<uint8_t> m_ItemFlags;
-    vector<const FlexChainedStringsChunk::node *> m_FilesToDelete; // used for move work mode
-    vector<const FlexChainedStringsChunk::node *> m_DirsToDelete; // used for move work mode
-    const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;
+    vector<const chained_strings::node *> m_FilesToDelete; // used for move work mode
+    vector<const chained_strings::node *> m_DirsToDelete; // used for move work mode
+    const chained_strings::node *m_CurrentlyProcessingItem;
     char m_SourceDirectory[MAXPATHLEN];
     char m_Destination[MAXPATHLEN];
     unsigned m_SourceNumberOfFiles;

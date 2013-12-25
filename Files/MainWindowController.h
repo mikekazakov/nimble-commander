@@ -25,7 +25,7 @@
 - (void)ApplySkin:(ApplicationSkin)_skin;
 - (void)OnApplicationWillTerminate;
 
-- (void)RevealEntries:(FlexChainedStringsChunk*)_entries inPath:(const char*)_path;
+- (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path;
 
 - (void)RequestBigFileView: (const char*)_filepath with_fs:(shared_ptr<VFSHost>) _host;
 

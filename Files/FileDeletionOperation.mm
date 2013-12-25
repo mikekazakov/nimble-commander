@@ -19,33 +19,32 @@
     
 }
 
-// _files - passing with ownership, operation will free it on finish
-- (id)initWithFiles:(FlexChainedStringsChunk*)_files
+- (id)initWithFiles:(chained_strings)_files
                type:(FileDeletionOperationType)_type
            rootpath:(const char*)_path
 {
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_SingleItem = _files->Amount() == 1;
-        
-        m_Job.Init(_files, _type, _path, self);
+        m_SingleItem = _files.size() == 1;
         
         // Set caption.
         char buff[128] = {0};
         GetDirectoryFromPath(_path, buff, 128);
-        if (_files->Amount() == 1)
+        if(_files.size() == 1)
         {
             self.Caption = [NSString stringWithFormat:@"Deleting \"%@\" from \"%@\"",
-                            [NSString stringWithUTF8String:(*_files)[0].str()],
+                            [NSString stringWithUTF8String:_files.front().str()],
                             [NSString stringWithUTF8String:buff]];
         }
         else
         {
             self.Caption = [NSString stringWithFormat:@"Deleting %i items from \"%@\"",
-                            _files->CountStringsWithDescendants(),
+                            _files.size(),
                             [NSString stringWithUTF8String:buff]];
         }
+        
+        m_Job.Init(std::move(_files), _type, _path, self);        
         
         [self AddOnFinishHandler:^{
             if(self.TargetPanel != nil) {

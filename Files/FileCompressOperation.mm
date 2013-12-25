@@ -20,7 +20,7 @@
     NSString *m_ArchiveName;
 }
 
-- (id)initWithFiles:(FlexChainedStringsChunk*)_src_files // passing with ownership, operation will free it on finish
+- (id)initWithFiles:(chained_strings)_src_files
             srcroot:(const char*)_src_root
              srcvfs:(shared_ptr<VFSHost>)_src_vfs
             dstroot:(const char*)_dst_root
@@ -29,7 +29,7 @@
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_Job.Init(_src_files, _src_root, _src_vfs, _dst_root, _dst_vfs, self);
+        m_Job.Init(move(_src_files), _src_root, _src_vfs, _dst_root, _dst_vfs, self);
         m_LastInfoUpdateTime = 0;
         m_HasTargetFn = false;
         m_NeedUpdateCaption = true;

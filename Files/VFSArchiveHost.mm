@@ -261,16 +261,14 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
 }
 
 int VFSArchiveHost::CalculateDirectoriesSizes(
-                                      FlexChainedStringsChunk *_dirs, // transfered ownership
+                                      chained_strings _dirs,
                                       const string &_root_path, // relative to current host path
                                       bool (^_cancel_checker)(),
                                       void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                       )
 {
-    int error = VFSError::Ok;
-    
     // can be sub-optimal (exhaustive search), consider hierarchical traversing
-    for(const auto &i: *_dirs)
+    for(const auto &i: _dirs)
     {
         char directory_path[1024];
         strcpy(directory_path, _root_path.c_str());
@@ -285,10 +283,7 @@ int VFSArchiveHost::CalculateDirectoriesSizes(
         for(const auto &ar_dir: m_PathToDir)
         {
             if(_cancel_checker && _cancel_checker())
-            {
-                error = VFSError::Cancelled;
-                goto cleanup;
-            }
+                return VFSError::Cancelled;
             
             if(ar_dir.first.length() >= directory_path_sz &&
                strncmp(directory_path, ar_dir.first.c_str(), directory_path_sz) == 0)
@@ -298,9 +293,8 @@ int VFSArchiveHost::CalculateDirectoriesSizes(
         }
         _completion_handler(i.str(), total_size);
     }
-cleanup:
-    FlexChainedStringsChunk::FreeWithDescendants(&_dirs);
-    return error;
+
+    return VFSError::Ok;
 }
 
 int VFSArchiveHost::CalculateDirectoryDotDotSize( // will pass ".." as _dir_sh_name upon completion

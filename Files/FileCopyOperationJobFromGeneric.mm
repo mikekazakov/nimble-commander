@@ -79,12 +79,9 @@ FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
         dispatch_release(m_IOGroup);
         m_IOGroup = 0;
     }
-    
-    if(m_ScannedItems)
-        FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);
 }
 
-void FileCopyOperationJobFromGeneric::Init(FlexChainedStringsChunk *_src_files, // passing ownage to Job
+void FileCopyOperationJobFromGeneric::Init(chained_strings _src_files,
           const char *_src_root,               // dir in where files are located
           shared_ptr<VFSHost> _src_host,  // src host to deal with
           const char *_dest,                   // where to copy
@@ -94,7 +91,7 @@ void FileCopyOperationJobFromGeneric::Init(FlexChainedStringsChunk *_src_files, 
 {
     assert(_src_host.get());
     m_Operation = _op;
-    m_InitialItems = _src_files;
+    m_InitialItems.swap(_src_files);
     m_Options = *_opts;
     m_SrcHost = _src_host;
     strcpy(m_SrcDir, _src_root);
@@ -137,21 +134,16 @@ bool FileCopyOperationJobFromGeneric::CheckDestinationIsValidDir()
 
 void FileCopyOperationJobFromGeneric::ScanItems()
 {
-    m_ScannedItems = FlexChainedStringsChunk::Allocate();
-    m_ScannedItemsLast = m_ScannedItems;
     // iterate in original filenames
-    for(const auto&i: *m_InitialItems)
+    for(const auto&i: m_InitialItems)
     {
         ScanItem(i.str(), i.str(), 0);
         
         if(CheckPauseOrStop()) return;
     }
-    
-    if(m_InitialItems)
-        FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
 }
 
-void FileCopyOperationJobFromGeneric::ScanItem(const char *_full_path, const char *_short_path, const FlexChainedStringsChunk::node *_prefix)
+void FileCopyOperationJobFromGeneric::ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix)
 {
     char fullpath[MAXPATHLEN];
     strcpy(fullpath, m_SrcDir);
@@ -167,7 +159,7 @@ retry_stat:
         if(S_ISREG(stat_buffer.st_mode))
         {
             m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
-            m_ScannedItemsLast = m_ScannedItemsLast->AddString(_short_path, _prefix);
+            m_ScannedItems.push_back(_short_path, _prefix);
             m_SourceNumberOfFiles++;
             m_SourceTotalBytes += stat_buffer.st_size;
         }
@@ -177,8 +169,8 @@ retry_stat:
             char dirpath[MAXPATHLEN];
             sprintf(dirpath, "%s/", _short_path);
             m_ItemFlags.push_back((uint8_t)ItemFlags::is_dir);
-            m_ScannedItemsLast = m_ScannedItemsLast->AddString(dirpath, _prefix);
-            const FlexChainedStringsChunk::node *dirnode = &((*m_ScannedItemsLast)[m_ScannedItemsLast->Amount()-1]);
+            m_ScannedItems.push_back(dirpath, _prefix);
+            auto dirnode = &m_ScannedItems.back();
             m_SourceNumberOfDirectories++;
             
         retry_opendir:
@@ -223,7 +215,7 @@ void FileCopyOperationJobFromGeneric::ProcessItems()
     m_Stats.StartTimeTracking();
     
     int n = 0;
-    for(const auto&i: *m_ScannedItems)
+    for(const auto&i: m_ScannedItems)
     {
         m_CurrentlyProcessingItem = &i;
         
@@ -235,7 +227,7 @@ void FileCopyOperationJobFromGeneric::ProcessItems()
     m_Stats.SetCurrentItem(nullptr);
 }
 
-void FileCopyOperationJobFromGeneric::ProcessItem(const FlexChainedStringsChunk::node *_node, int _number)
+void FileCopyOperationJobFromGeneric::ProcessItem(const chained_strings::node *_node, int _number)
 {
     char itemname[MAXPATHLEN];
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];

@@ -558,16 +558,13 @@ unsigned PanelData::GetSelectedItemsDirectoriesCount() const
     return m_SelectedItemsDirectoriesCount;
 }
 
-FlexChainedStringsChunk* PanelData::StringsFromSelectedEntries() const
+chained_strings PanelData::StringsFromSelectedEntries() const
 {
-    FlexChainedStringsChunk *chunk = FlexChainedStringsChunk::Allocate();
-    FlexChainedStringsChunk *last = chunk;
-    
+    chained_strings str;
     for(auto const &i: *m_Listing)
         if(i.CFIsSelected())
-            last = last->AddString(i.Name(), (int)i.NameLen(), 0);
-    
-    return chunk;
+            str.push_back(i.Name(), (int)i.NameLen(), nullptr);
+    return str;
 }
 
 bool PanelData::FindSuitableEntries(CFStringRef _prefix, unsigned _desired_offset, unsigned *_out, unsigned *_range) const

@@ -178,6 +178,7 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
     [[self window] orderOut:self];
     m_ParentWindow = nil;
     m_Handler((int)returnCode);
+    m_Handler = nil;
 }
 
 - (void)ShowSheet:(NSWindow *)_window handler:(SelectionWithMaskCompletionHandler)_handler

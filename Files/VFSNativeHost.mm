@@ -202,7 +202,7 @@ cleanup:
 
 
 int VFSNativeHost::CalculateDirectoriesSizes(
-                                      FlexChainedStringsChunk *_dirs, // transfered ownership
+                                      chained_strings _dirs,
                                       const string &_root_path, // relative to current host path
                                       bool (^_cancel_checker)(),
                                       void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
@@ -221,7 +221,7 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     
     int error = VFSError::Ok;
     
-    for(const auto &i: *_dirs)
+    for(const auto &i: _dirs)
     {
         memcpy(var, i.str(), i.len+1);
         
@@ -246,7 +246,7 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     
 cleanup:
     dispatch_release(stat_queue);
-    FlexChainedStringsChunk::FreeWithDescendants(&_dirs);
+//    FlexChainedStringsChunk::FreeWithDescendants(&_dirs);
     return error;
 }
 

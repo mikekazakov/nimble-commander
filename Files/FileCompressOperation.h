@@ -13,7 +13,7 @@
 
 @interface FileCompressOperation : Operation
 
-- (id)initWithFiles:(FlexChainedStringsChunk*)_src_files // passing with ownership, operation will free it on finish
+- (id)initWithFiles:(chained_strings)_src_files // passing with ownership, operation will free it on finish
             srcroot:(const char*)_src_root
              srcvfs:(shared_ptr<VFSHost>)_src_vfs
             dstroot:(const char*)_dst_root

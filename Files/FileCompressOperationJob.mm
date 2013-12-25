@@ -67,20 +67,16 @@ FileCompressOperationJob::FileCompressOperationJob():
 
 FileCompressOperationJob::~FileCompressOperationJob()
 {
-    if(m_InitialItems)
-        FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
-    if(m_ScannedItems)
-        FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);
 }
 
-void FileCompressOperationJob::Init(FlexChainedStringsChunk* _src_files,
+void FileCompressOperationJob::Init(chained_strings _src_files,
           const char*_src_root,
           shared_ptr<VFSHost> _src_vfs,
           const char* _dst_root,
           shared_ptr<VFSHost> _dst_vfs,
           FileCompressOperation *_operation)
 {
-    m_InitialItems = _src_files;
+    m_InitialItems.swap(_src_files);
     m_SrcVFS = _src_vfs;
     m_DstVFS = _dst_vfs;
     strcpy(m_SrcRoot, _src_root);
@@ -139,10 +135,10 @@ bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
     
     assert(IsPathWithTrailingSlash(m_DstRoot));
     
-    if(m_InitialItems->Amount() > 1)
+    if(m_InitialItems.size() > 1)
         strcpy(arc_pref, "Archive");
     else
-        strcpy(arc_pref, (*m_InitialItems)[0].str());
+        strcpy(arc_pref, m_InitialItems.front().str());
     
     sprintf(fn, "%s%s.zip", m_DstRoot, arc_pref);
     struct stat st;
@@ -166,10 +162,8 @@ bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
 
 void FileCompressOperationJob::ScanItems()
 {
-    m_ScannedItems = FlexChainedStringsChunk::Allocate();
-    m_ScannedItemsLast = m_ScannedItems;
     // iterate in original filenames
-    for(const auto&i: *m_InitialItems)
+    for(const auto&i: m_InitialItems)
     {
         ScanItem(i.str(), i.str(), 0);
         
@@ -177,7 +171,7 @@ void FileCompressOperationJob::ScanItems()
     }
 }
 
-void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_short_path, const FlexChainedStringsChunk::node *_prefix)
+void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix)
 {
     char fullpath[MAXPATHLEN];
     strcpy(fullpath, m_SrcRoot);
@@ -193,7 +187,7 @@ retry_stat:
             if(stat_buffer.st_size < 0xFFFFFFFFul)
             { // currently we don't support Zip64 so maximum file size we can handle is 4Gb
                 m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
-                m_ScannedItemsLast = m_ScannedItemsLast->AddString(_short_path, _prefix);
+                m_ScannedItems.push_back(_short_path, _prefix);
                 m_SourceTotalBytes += stat_buffer.st_size;
             }
             else
@@ -204,8 +198,8 @@ retry_stat:
             char dirpath[MAXPATHLEN];
             sprintf(dirpath, "%s/", _short_path);
             m_ItemFlags.push_back((uint8_t)ItemFlags::is_dir);
-            m_ScannedItemsLast = m_ScannedItemsLast->AddString(dirpath, _prefix);
-            const FlexChainedStringsChunk::node *dirnode = &((*m_ScannedItemsLast)[m_ScannedItemsLast->Amount()-1]);
+            m_ScannedItems.push_back(dirpath, _prefix);
+            auto dirnode = &m_ScannedItems.back();
             
         retry_opendir:
             int iter_ret = m_SrcVFS->IterateDirectoryListing(fullpath, ^bool(struct dirent &_dirent){
@@ -247,7 +241,7 @@ void FileCompressOperationJob::ProcessItems()
     m_Stats.StartTimeTracking();
     
     int n = 0;
-    for(const auto&i: *m_ScannedItems)
+    for(const auto&i: m_ScannedItems)
     {
         m_CurrentlyProcessingItem = &i;
         
@@ -259,7 +253,7 @@ void FileCompressOperationJob::ProcessItems()
     m_Stats.SetCurrentItem(nullptr);    
 }
 
-void FileCompressOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_node, int _number)
+void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, int _number)
 {
     struct stat st;
     char itemname[MAXPATHLEN];

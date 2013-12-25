@@ -30,10 +30,7 @@ FileSysAttrChangeOperationJob::FileSysAttrChangeOperationJob():
 
 FileSysAttrChangeOperationJob::~FileSysAttrChangeOperationJob()
 {
-    if(m_Files != m_Command->files)
-        FlexChainedStringsChunk::FreeWithDescendants(&m_Files);
-    FlexChainedStringsChunk::FreeWithDescendants(&m_Command->files);
-    free(m_Command);
+    delete m_Command;
 }
 
 void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand *_command, FileSysAttrChangeOperation *_operation)
@@ -51,9 +48,9 @@ void FileSysAttrChangeOperationJob::Do()
     else
     {
         // just use original files list
-        m_Files = m_Command->files;
+        m_Files.swap(m_Command->files);
     }
-    unsigned items_count = m_Files->CountStringsWithDescendants();
+    unsigned items_count = m_Files.size();
     assert(items_count != 0);
 
     if(CheckPauseOrStop()) { SetStopped(); return; }
@@ -65,7 +62,7 @@ void FileSysAttrChangeOperationJob::Do()
     m_Stats.StartTimeTracking();
     m_Stats.SetMaxValue(items_count);
     
-    for(auto &i: *m_Files)
+    for(auto &i: m_Files)
     {
         m_Stats.SetCurrentItem(i.str());
         
@@ -84,9 +81,7 @@ void FileSysAttrChangeOperationJob::Do()
 void FileSysAttrChangeOperationJob::ScanDirs()
 {
     // iterates on original files list, find if entry is a dir, and if so then process it recursively
-    m_FilesLast = m_Files = FlexChainedStringsChunk::Allocate();
-
-    for(auto &i: *m_Command->files)
+    for(auto &i: m_Command->files)
     {
         char fn[MAXPATHLEN];
         strcpy(fn, m_Command->root_path);
@@ -98,15 +93,15 @@ void FileSysAttrChangeOperationJob::ScanDirs()
             if((st.st_mode&S_IFMT) == S_IFREG)
             {
                 // trivial case
-                m_FilesLast = m_FilesLast->AddString(i.str(), i.len, 0);
+                m_Files.push_back(i.str(), i.len, nullptr);
             }
             else if((st.st_mode&S_IFMT) == S_IFDIR)
             {
                 char tmp[MAXPATHLEN];
                 strcpy(tmp, i.str());
                 strcat(tmp, "/");
-                m_FilesLast = m_FilesLast->AddString(tmp, 0); // optimize it to exclude strlen using
-                const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->back();
+                m_Files.push_back(tmp, nullptr);
+                auto dirnode = &m_Files.back();
                 ScanDir(fn, dirnode);
                 if (CheckPauseOrStop()) return;
             }
@@ -114,7 +109,7 @@ void FileSysAttrChangeOperationJob::ScanDirs()
     }
 }
 
-void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const FlexChainedStringsChunk::node *_prefix)
+void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const chained_strings::node *_prefix)
 {
     if(CheckPauseOrStop()) return;
     
@@ -174,7 +169,7 @@ retry_stat:
             {
                 if((st.st_mode&S_IFMT) == S_IFREG)
                 {
-                    m_FilesLast = m_FilesLast->AddString(entp->d_name, entp->d_namlen, _prefix);
+                    m_Files.push_back(entp->d_name, entp->d_namlen, _prefix);
                 }
                 else if((st.st_mode&S_IFMT) == S_IFDIR)
                 {
@@ -182,9 +177,8 @@ retry_stat:
                     memcpy(tmp, entp->d_name, entp->d_namlen);
                     tmp[entp->d_namlen] = '/';
                     tmp[entp->d_namlen+1] = 0;
-                    m_FilesLast = m_FilesLast->AddString(tmp, entp->d_namlen+1, _prefix);
-                    const FlexChainedStringsChunk::node *dirnode = &m_FilesLast->back();
-                    ScanDir(fn, dirnode);
+                    m_Files.push_back(tmp, entp->d_namlen+1, _prefix);
+                    ScanDir(fn, &m_Files.back());
                 }
             }
         }        

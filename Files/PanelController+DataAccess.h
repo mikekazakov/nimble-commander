@@ -33,7 +33,7 @@
  * If it is dot-dot returns 0.
  * Caller is responsible for deallocation returned value.
  */
-- (FlexChainedStringsChunk*) GetSelectedEntriesOrFocusedEntryWithoutDotDot;
+- (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot;
 
 /**
  * Return current (topmost in vfs stack) VFS Host.

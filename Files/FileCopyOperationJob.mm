@@ -90,7 +90,6 @@ static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
 
 FileCopyOperationJob::FileCopyOperationJob():
     m_Operation(0),
-    m_InitialItems(0),
     m_SourceNumberOfFiles(0),
     m_SourceNumberOfDirectories(0),
     m_SourceTotalBytes(0),
@@ -133,11 +132,9 @@ FileCopyOperationJob::~FileCopyOperationJob()
         dispatch_release(m_IOGroup);
         m_IOGroup = 0;
     }
-    if(m_ScannedItems)
-        FlexChainedStringsChunk::FreeWithDescendants(&m_ScannedItems);
 }
 
-void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing ownage to Job
+void FileCopyOperationJob::Init(chained_strings _files, // passing ownage to Job
                          const char *_root,               // dir in where files are located
                          const char *_dest,                // where to copy
                          FileCopyOperationOptions* _opts,
@@ -145,7 +142,7 @@ void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing owna
                          )
 {
     m_Operation = _op;
-    m_InitialItems = _files;
+    m_InitialItems.swap(_files);
     m_Options = *_opts;
     strcpy(m_Destination, _dest);
     strcpy(m_SourceDirectory, _root);
@@ -153,7 +150,7 @@ void FileCopyOperationJob::Init(FlexChainedStringsChunk *_files, // passing owna
 
 void FileCopyOperationJob::Do()
 {
-    m_IsSingleEntryCopy = m_InitialItems->CountStringsWithDescendants() == 1;
+    m_IsSingleEntryCopy = m_InitialItems.size() == 1;
     
     // this will analyze what user wants from us
     ScanDestination();
@@ -171,15 +168,9 @@ void FileCopyOperationJob::Do()
     {
         assert(m_WorkMode == RenameToFixedPath || m_WorkMode == RenameToPathPreffix);
         // renaming is trivial, don't scan source deeply - we need just a top level
-        m_ScannedItems = m_InitialItems;
-        m_InitialItems = 0;
-        
-        m_Stats.SetMaxValue(m_ScannedItems->CountStringsWithDescendants());
+        m_ScannedItems.swap(m_InitialItems);
+        m_Stats.SetMaxValue(m_ScannedItems.size());
     }
-
-    // we don't need it any more - so free memory as soon as possible
-    if(m_InitialItems)
-        FlexChainedStringsChunk::FreeWithDescendants(&m_InitialItems);
 
     if(m_WorkMode == CopyToFixedPath || m_WorkMode == CopyToPathPreffix || m_WorkMode == MoveToFixedPath || m_WorkMode == MoveToPathPreffix  )
     {
@@ -372,14 +363,11 @@ domkdir:    if(mkdir(destpath, 0777) == -1)
 
 void FileCopyOperationJob::ScanItems()
 {
-    m_ScannedItems = FlexChainedStringsChunk::Allocate();
-    m_ScannedItemsLast = m_ScannedItems;
-
-    if(m_InitialItems->Amount() > 1)
+    if(m_InitialItems.size() > 1)
         m_IsSingleFileCopy = false;
     
     // iterate in original filenames
-    for(const auto&i: *m_InitialItems)
+    for(const auto&i: m_InitialItems)
     {
         ScanItem(i.str(), i.str(), 0);
 
@@ -387,7 +375,7 @@ void FileCopyOperationJob::ScanItems()
     }
 }
 
-void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_path, const FlexChainedStringsChunk::node *_prefix)
+void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix)
 {
     // TODO: optimize it ALL!
     // TODO: this path composing can be optimized
@@ -411,10 +399,7 @@ retry_stat:
         if(isreg || issymlink)
         {
             m_ItemFlags.push_back(issymlink ? (uint8_t)ItemFlags::is_symlink : (uint8_t)ItemFlags::no_flags);
-            m_ScannedItemsLast = m_ScannedItemsLast->AddString(
-                                                               _short_path,
-                                                               _prefix
-                                                               ); // TODO: make this insertion with strlen since we already know it
+            m_ScannedItems.push_back(_short_path, _prefix);
             m_SourceNumberOfFiles++;
             m_SourceTotalBytes += stat_buffer.st_size;
         }
@@ -424,11 +409,8 @@ retry_stat:
             char dirpath[MAXPATHLEN];
             sprintf(dirpath, "%s/", _short_path);
             m_ItemFlags.push_back((uint8_t)ItemFlags::is_dir);
-            m_ScannedItemsLast = m_ScannedItemsLast->AddString(
-                                                               dirpath,
-                                                               _prefix
-                                                               ); // TODO: make this insertion with strlen since we already know it
-            const FlexChainedStringsChunk::node *dirnode = &((*m_ScannedItemsLast)[m_ScannedItemsLast->Amount()-1]);
+            m_ScannedItems.push_back(dirpath, _prefix);
+            auto dirnode = &m_ScannedItems.back();
             m_SourceNumberOfDirectories++;
             
         retry_opendir:
@@ -486,7 +468,7 @@ void FileCopyOperationJob::ProcessItems()
     m_Stats.StartTimeTracking();
     
     int n = 0;
-    for(const auto&i: *m_ScannedItems)
+    for(const auto&i: m_ScannedItems)
     {
         m_CurrentlyProcessingItem = &i;
         
@@ -503,7 +485,7 @@ void FileCopyOperationJob::ProcessItems()
         ProcessFoldersRemoval();
 }
 
-void FileCopyOperationJob::ProcessItem(const FlexChainedStringsChunk::node *_node, int _number)
+void FileCopyOperationJob::ProcessItem(const chained_strings::node *_node, int _number)
 {
     assert(_node->len != 0);
     

@@ -43,7 +43,10 @@
 {
     [[self window] orderOut:nil];
     if(m_Handler)
+    {
         m_Handler((int)returnCode);
+        m_Handler = nil;
+    }
     if(m_Ptr)
         *m_Ptr = (int)returnCode;
 

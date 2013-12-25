@@ -44,13 +44,13 @@ struct FileCopyOperationOptions
 
 
 // native->native copying
-- (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
+- (id)initWithFiles:(chained_strings)_files
                root:(const char*)_root
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts;
 
 // VFS->native copying
-- (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
+- (id)initWithFiles:(chained_strings)_files
                root:(const char*)_root
             rootvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest

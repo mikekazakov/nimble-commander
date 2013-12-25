@@ -20,7 +20,7 @@ public:
     FileCopyOperationJobFromGeneric();
     ~FileCopyOperationJobFromGeneric();
 
-    void Init(FlexChainedStringsChunk *_src_files, // passing ownage to Job
+    void Init(chained_strings _src_files,
               const char *_src_root,               // dir in where files are located
               shared_ptr<VFSHost> _src_host,  // src host to deal with
               const char *_dest,                   // where to copy
@@ -32,9 +32,9 @@ private:
     virtual void Do();
     bool CheckDestinationIsValidDir();
     void ScanItems();
-    void ScanItem(const char *_full_path, const char *_short_path, const FlexChainedStringsChunk::node *_prefix);    
+    void ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix);
     void ProcessItems();
-    void ProcessItem(const FlexChainedStringsChunk::node *_node, int _number);
+    void ProcessItem(const chained_strings::node *_node, int _number);
     bool CopyFileTo(const char *_src, const char *_dest);
     bool CopyDirectoryTo(const char *_src, const char *_dest);
     void EraseXattrs(int _fd_in);
@@ -50,9 +50,9 @@ private:
     
     __weak FileCopyOperation *m_Operation;
     FileCopyOperationOptions m_Options;    
-    FlexChainedStringsChunk *m_InitialItems;
-    FlexChainedStringsChunk *m_ScannedItems, *m_ScannedItemsLast;
-    const FlexChainedStringsChunk::node *m_CurrentlyProcessingItem;    
+    chained_strings m_InitialItems;
+    chained_strings m_ScannedItems;
+    const chained_strings::node *m_CurrentlyProcessingItem;    
 
     shared_ptr<VFSHost> m_SrcHost;
     char                     m_SrcDir[MAXPATHLEN];

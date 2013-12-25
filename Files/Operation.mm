@@ -258,6 +258,7 @@ const int MaxDialogs = 2;
 {
     for(auto i: m_Handlers)
         i();
+    m_Handlers.clear(); // erase all hanging (possibly strong) links to self
 }
 
 - (void)AddOnFinishHandler:(void (^)())_handler

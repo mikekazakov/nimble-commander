@@ -29,7 +29,7 @@ enum class FileDeletionOperationType // do not change ordering, there's a raw va
 
 @interface FileDeletionOperation : Operation
 
-- (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
+- (id)initWithFiles:(chained_strings)_files
                type:(FileDeletionOperationType)_type
            rootpath:(const char*)_path;
 

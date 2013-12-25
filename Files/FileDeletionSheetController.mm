@@ -19,7 +19,7 @@
 
 @implementation FileDeletionSheetController
 {
-    FlexChainedStringsChunk *m_Files;
+    chained_strings *m_Files;
     FileDeletionSheetCompletionHandler m_Handler;
     FileDeletionOperationType m_DefaultType;
     FileDeletionOperationType m_ResultType;
@@ -30,15 +30,15 @@
     [super windowDidLoad];
     
     NSString *label;
-    if (m_Files->Amount() == 1)
+    if (m_Files->size() == 1)
     {
         label = [NSString stringWithFormat:@"Do you wish to delete %@?",
-                 [NSString stringWithUTF8String:(*m_Files)[0].str()]];
+                 [NSString stringWithUTF8String:m_Files->front().str()]];
     }
     else
     {
         label = [NSString stringWithFormat:@"Do you wish to delete %i items?",
-                 m_Files->CountStringsWithDescendants()];
+                 m_Files->size()];
     }
     [self.Label setStringValue:label];
     
@@ -65,6 +65,7 @@
     
     if(m_Handler)
         m_Handler((int)_code);
+    m_Handler = nil;
 }
 
 - (IBAction)OnDeleteAction:(id)sender
@@ -100,11 +101,11 @@
     return self;
 }
 
-- (void)ShowSheet:(NSWindow *)_window Files:(FlexChainedStringsChunk *)_files
+- (void)ShowSheet:(NSWindow *)_window Files:(chained_strings *)_files
              Type:(FileDeletionOperationType)_type
           Handler:(FileDeletionSheetCompletionHandler)_handler
 {
-    assert(_files->Amount() > 0);
+    assert(!_files->empty());
     assert(_handler);
     
     m_Files = _files;

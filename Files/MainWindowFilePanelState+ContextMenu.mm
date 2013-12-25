@@ -61,11 +61,11 @@ static bool ExposeOpenWithHandler(const string &_path, OpenWithHandler &_hndl)
     return true;
 }
 
-static inline FlexChainedStringsChunk *StringsFromVector(const vector<string> &_files)
+static inline chained_strings StringsFromVector(const vector<string> &_files)
 {
-    FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate(), *files_it = files;
+    chained_strings files;
     for(auto &i:_files)
-        files_it = files_it->AddString(i.c_str(), (int)i.length(), 0);
+        files.push_back(i.c_str(), (int)i.length(), nullptr);
     return files;
 }
 
@@ -534,12 +534,12 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void)OnDeletePermanently:(id)sender
 {
     // TODO: currently no VFS support in DeletionOperation. should be implemented later, using native FS now
-    FlexChainedStringsChunk *files = FlexChainedStringsChunk::Allocate(), *files_it = files;
+    chained_strings files;
     for(auto &i:m_Items)
-        files_it = files_it->AddString(i.c_str(), (int)i.length(), 0);
+        files.push_back(i, nullptr);
     
     FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                 initWithFiles:files
+                                 initWithFiles:std::move(files)
                                  type:FileDeletionOperationType::Delete
                                  rootpath:m_DirPath.c_str()];
     [m_MainWnd AddOperation:op];
@@ -645,7 +645,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 proceed:;
     FileCopyOperationOptions opts;
     opts.docopy = true;
-    FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:FlexChainedStringsChunk::AllocateWithSingleString(m_Items[0].c_str())
+    FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:chained_strings(m_Items[0])
                                                                 root:m_DirPath.c_str()
                                                                 dest:target
                                                              options:&opts];

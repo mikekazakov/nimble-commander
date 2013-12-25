@@ -56,20 +56,20 @@
     return true;
 }
 
-- (FlexChainedStringsChunk*) GetSelectedEntriesOrFocusedEntryWithoutDotDot
+- (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot
 {
-    FlexChainedStringsChunk *files = 0;
     if(m_Data->GetSelectedItemsCount() > 0 )
     {
-        files = m_Data->StringsFromSelectedEntries();
+        return m_Data->StringsFromSelectedEntries();
     }
     else
     {
+        chained_strings files;
         auto const *item = [m_View CurrentItem];
         if(item && !item->IsDotDot())
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
+            files.push_back(item->Name(), (unsigned)item->NameLen(), nullptr);
+        return files;
     }
-    return files;
 }
 
 - (bool) GetCurrentDirectoryPathRelativeToHost:(char*) _path

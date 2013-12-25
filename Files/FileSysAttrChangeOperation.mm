@@ -25,10 +25,10 @@
         m_Job.Init(_command, self);
         
         // Set caption.
-        if (_command->files->Amount() == 1)
+        if (_command->files.size() == 1)
         {
             self.Caption = [NSString stringWithFormat:@"Altering attributes of \"%@\"",
-                            [NSString stringWithUTF8String:(*_command->files)[0].str()]];
+                            [NSString stringWithUTF8String:_command->files.front().str()]];
         }
         else
         {
@@ -37,7 +37,7 @@
             GetDirectoryFromPath(_command->root_path, buff, 128);
             
             self.Caption = [NSString stringWithFormat:@"Altering attributes of %i items in \"%@\"",
-                            _command->files->CountStringsWithDescendants(),
+                            _command->files.size(),
                             [NSString stringWithUTF8String:buff]];
         }
             

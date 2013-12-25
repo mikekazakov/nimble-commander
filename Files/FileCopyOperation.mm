@@ -74,7 +74,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     int m_LastInfoUpdateTime;
 }
 
-- (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
+- (id)initWithFiles:(chained_strings)_files
                root:(const char*)_root
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts
@@ -83,18 +83,16 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     self = [super initWithJob:m_NativeToNativeJob.get()];
     if (self)
     {
-        m_NativeToNativeJob->Init(_files, _root, _dest, _opts, self);
-        
         // Set caption.
         char buff[128] = {0};
         bool use_buff = GetDirectoryFromPath(_dest, buff, 128);
-        int items_amount = _files->CountStringsWithDescendants();
+        int items_amount = _files.size();
         
         // TODO: copy/rename title difference
         if (items_amount == 1)
         {
             self.Caption = [NSString stringWithFormat:@"Copying \"%@\" to \"%@\"",
-                            [NSString stringWithUTF8String:(*_files)[0].str()],
+                            [NSString stringWithUTF8String:_files.front().str()],
                             [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
         }
         else
@@ -103,11 +101,13 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                             items_amount,
                             [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
         }
+
+        m_NativeToNativeJob->Init(move(_files), _root, _dest, _opts, self);
     }
     return self;
 }
 
-- (id)initWithFiles:(FlexChainedStringsChunk*)_files // passing with ownership, operation will free it on finish
+- (id)initWithFiles:(chained_strings)_files
                root:(const char*)_root
             rootvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
@@ -117,13 +117,12 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     self = [super initWithJob:m_GenericToNativeJob.get()];
     if (self)
     {
-        m_GenericToNativeJob->Init(_files, _root, _vfs, _dest, _opts, self);
+        m_GenericToNativeJob->Init(move(_files), _root, _vfs, _dest, _opts, self);
 
         // other stuff here
     }
     return self;
 }
-
 
 - (void)Update
 {

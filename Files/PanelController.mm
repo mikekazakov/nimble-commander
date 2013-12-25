@@ -835,20 +835,22 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     string dir = m_Data->DirectoryPathWithTrailingSlash();
     if(m_Data->GetSelectedItemsCount()) {
-        auto files = m_Data->StringsFromSelectedEntries();
-        [self StartDirectorySizeCountingFor:files InDir:dir IsDotDot:false];
+        [self StartDirectorySizeCountingFor:m_Data->StringsFromSelectedEntries()
+                                      InDir:dir
+                                   IsDotDot:false];
     }
     else {
         auto const *item = [m_View CurrentItem];
         if(item && item->IsDir())
-            [self StartDirectorySizeCountingFor:item->IsDotDot() ? 0 :FlexChainedStringsChunk::AllocateWithSingleString(item->Name())
+            [self StartDirectorySizeCountingFor:item->IsDotDot() ? chained_strings() : chained_strings(item->Name())
                                           InDir:dir
                                        IsDotDot:item->IsDotDot()];
     }
 }
 
-- (void) StartDirectorySizeCountingFor:(FlexChainedStringsChunk *)_files InDir:(std::string)_dir IsDotDot:(bool)_isdotdot
+- (void) StartDirectorySizeCountingFor:(chained_strings)_files InDir:(std::string)_dir IsDotDot:(bool)_isdotdot
 {
+    __block chained_strings files(move(_files));
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
         // TODO: lock panel data?
         // guess it's better to move the following line into main thread
@@ -859,7 +861,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         };
 
         if(!_isdotdot)
-            m_HostsStack.back()->CalculateDirectoriesSizes(_files, _dir, ^bool { return _q->IsStopped();  }, complet);
+            m_HostsStack.back()->CalculateDirectoriesSizes(move(files), _dir, ^bool { return _q->IsStopped();  }, complet);
         else
             m_HostsStack.back()->CalculateDirectoryDotDotSize(_dir, ^bool { return _q->IsStopped(); }, complet);
     });
@@ -1058,13 +1060,16 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if([SharingService IsCurrentlySharing])
         return;
     
-    if(FlexChainedStringsChunk *files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot])
-        [[SharingService new] ShowItems:files
-                InDir:m_Data->DirectoryPathWithTrailingSlash().c_str()
-                InVFS:m_HostsStack.back()
-       RelativeToRect:[sender bounds]
-               OfView:sender
-        PreferredEdge:NSMinYEdge];
+    auto files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    if(files.empty())
+        return;
+    
+    [[SharingService new] ShowItems:move(files)
+                              InDir:m_Data->DirectoryPathWithTrailingSlash().c_str()
+                              InVFS:m_HostsStack.back()
+                     RelativeToRect:[sender bounds]
+                             OfView:sender
+                      PreferredEdge:NSMinYEdge];
 }
 
 - (void) UpdateBriefSystemOverview

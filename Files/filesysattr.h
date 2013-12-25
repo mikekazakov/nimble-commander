@@ -7,9 +7,9 @@
 //
 
 #pragma once
+#include "FlexChainedStringsChunk.h"
 
 class PanelData;
-struct FlexChainedStringsChunk;
 
 struct FileSysAttrAlterCommand
 {
@@ -73,7 +73,7 @@ struct FileSysAttrAlterCommand
     bool     set_btime;
     time_t   btime;
     bool     process_subdirs;
-    FlexChainedStringsChunk *files;
+    chained_strings files;
     char     root_path[MAXPATHLEN];
 
     // section that operates with selected panel items

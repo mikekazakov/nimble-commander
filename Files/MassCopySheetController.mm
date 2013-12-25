@@ -13,7 +13,7 @@
 @implementation MassCopySheetController
 {
     MassCopySheetCompletionHandler m_Handler;
-    FlexChainedStringsChunk *m_Items;
+    chained_strings *m_Items;
     NSString *m_InitialPath;
     bool m_IsCopying;
 }
@@ -30,15 +30,16 @@
     [[self TextField] setStringValue:m_InitialPath];
     [[self TextField] becomeFirstResponder];
     
-    int amount = m_Items->CountStringsWithDescendants();
+    int amount = m_Items->size();
     assert(amount > 0);
+    
     if(m_IsCopying)
     {
         if(amount > 1)
             [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Copy %i items to:", amount]];
         else
             [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Copy %@ to:",
-                                                  [NSString stringWithUTF8String:(*m_Items)[0].str()]]];
+                                                  [NSString stringWithUTF8String:m_Items->front().str()]]];
         [self.CopyButton setTitle:@"Copy"];
     }
     else
@@ -47,7 +48,7 @@
             [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Rename/move %i items to:", amount]];
         else
             [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Rename/move %@ to:",
-                                                  [NSString stringWithUTF8String:(*m_Items)[0].str()]]];
+                                                  [NSString stringWithUTF8String:m_Items->front().str()]]];
         [self.CopyButton setTitle:@"Rename"];
     }
     
@@ -108,7 +109,7 @@
     [window setMaxSize:NSMakeSize(800, newFrame.size.height+10)];
 }
 
-- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(FlexChainedStringsChunk*)_items handler:(MassCopySheetCompletionHandler)_handler
+- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(chained_strings*)_items handler:(MassCopySheetCompletionHandler)_handler
 {
     m_Handler = _handler;
     m_InitialPath = _path;
@@ -128,6 +129,7 @@
     
     if(m_Handler)
         m_Handler((int)returnCode);
+    m_Handler = nil;
 }
 
 - (void)FillOptions:(FileCopyOperationOptions*) _opts

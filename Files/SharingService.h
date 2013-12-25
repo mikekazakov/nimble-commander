@@ -11,7 +11,7 @@
 #import "VFS.h"
 @interface SharingService : NSObject<NSSharingServicePickerDelegate>
 
-- (void) ShowItems:(FlexChainedStringsChunk*)_entries
+- (void) ShowItems:(chained_strings)_entries
              InDir:(const char*)_dir
              InVFS:(shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect

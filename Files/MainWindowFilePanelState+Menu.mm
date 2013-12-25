@@ -125,12 +125,12 @@
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     
-    auto *files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
-    if(!files)
+    auto files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    if(files.empty())
         return;
     
     FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                 initWithFiles:files
+                                 initWithFiles:move(files)
                                  type:FileDeletionOperationType::MoveToTrash
                                  rootpath:[self ActivePanelData]->DirectoryPathWithTrailingSlash().c_str()];
     op.TargetPanel = [self ActivePanelController];

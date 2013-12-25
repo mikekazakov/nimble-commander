@@ -61,6 +61,7 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
         [defaults setValue:self.Text.stringValue forKey:g_LastGoToKey];
 
         [NSApp endSheet:[self window] returnCode:DialogResult::OK];
+        m_Handler = nil;
     }
     else
     {

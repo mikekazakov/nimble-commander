@@ -251,7 +251,7 @@
     // TODO: need to implement handling muliple directory paths in the future
     char common_path[MAXPATHLEN];
     common_path[0]=0;
-    FlexChainedStringsChunk *filenames = FlexChainedStringsChunk::Allocate();
+    chained_strings filenames;
     
     // compose requested path and items names
     NSArray *items = [pboard pasteboardItems];
@@ -276,13 +276,13 @@
                 { // set common directory as root
                     strcpy(common_path, "/");
                     if(*(lastslash+1) != 0)
-                        filenames->AddString(lastslash+1, nullptr);
+                        filenames.push_back(lastslash+1, nullptr);
                         
                 }
                 else if(strcmp(common_path, "/") == 0)
                 { // add current item into root dir
                     if(*(lastslash+1) != 0)
-                        filenames->AddString(lastslash+1, nullptr);
+                        filenames.push_back(lastslash+1, nullptr);
                 }
             }
             else
@@ -291,11 +291,11 @@
                 if(common_path[0]==0)
                 { // get the first directory as main directory
                     strcpy(common_path, path);
-                    filenames->AddString(lastslash+1, nullptr);
+                    filenames.push_back(lastslash+1, nullptr);
                 }
                 else if(strcmp(common_path, path) == 0)
                 { // get only files which fall into common directory
-                    filenames->AddString(lastslash+1, nullptr);
+                    filenames.push_back(lastslash+1, nullptr);
                 }
             }
         }
@@ -323,7 +323,7 @@
     {
         [target_window makeKeyAndOrderFront:self];
         MainWindowController *contr = (MainWindowController*)[target_window windowController];
-        [contr RevealEntries:filenames inPath:common_path];
+        [contr RevealEntries:std::move(filenames) inPath:common_path];
     }
 }
 

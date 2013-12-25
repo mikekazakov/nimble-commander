@@ -56,7 +56,7 @@ static volatile int g_IsCurrentlySharing = 0;
     return g_IsCurrentlySharing > 0;
 }
 
-- (void) ShowItems:(FlexChainedStringsChunk*)_entries
+- (void) ShowItems:(chained_strings)_entries
              InDir:(const char*)_dir
              InVFS:(shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
@@ -64,11 +64,10 @@ static volatile int g_IsCurrentlySharing = 0;
      PreferredEdge:(NSRectEdge)_preferredEdge
 {
     ++g_IsCurrentlySharing;
-    // only native FS now
     if(_host->IsNativeFS())
     {
         NSMutableArray *items = [NSMutableArray new];
-        for(auto &i:*_entries)
+        for(auto &i:_entries)
         {
             char path[MAXPATHLEN];
             strcpy(path, _dir);
@@ -83,8 +82,6 @@ static volatile int g_IsCurrentlySharing = 0;
             }
         }
         
-        _entries->FreeWithDescendants();
-        
         if([items count] > 0)
         {
             NSSharingServicePicker *sharingServicePicker = [[NSSharingServicePicker alloc] initWithItems:items];
@@ -97,8 +94,9 @@ static volatile int g_IsCurrentlySharing = 0;
     else
     { // need to move selected entires to native fs now, so going async here
         string dir = _dir;
+        __block auto entries(move(_entries));
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            for(auto &i:*_entries)
+            for(auto &i:entries)
             {
                 char path[MAXPATHLEN];
                 struct stat st;
@@ -113,7 +111,6 @@ static volatile int g_IsCurrentlySharing = 0;
                 if(TemporaryNativeFileStorage::Instance().CopySingleFile(path, _host, native_path))
                     m_TmpFilepaths.push_back(native_path);
             }
-            _entries->FreeWithDescendants();
             
             if(!m_TmpFilepaths.empty())
             {

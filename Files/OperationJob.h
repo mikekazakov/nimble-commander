@@ -78,7 +78,7 @@ private:
     // Internal thread only reads this variable.
     volatile bool m_RequestStop;
     
-    Operation *m_BaseOperation;
+    __weak Operation *m_BaseOperation;
     
     // Disable copy constructor and operator.
     OperationJob(const OperationJob&) = delete;

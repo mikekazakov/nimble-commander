@@ -78,13 +78,12 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
 }
 
 int VFSHost::CalculateDirectoriesSizes(
-                                    FlexChainedStringsChunk *_dirs, // transfered ownership
+                                    chained_strings _dirs,
                                     const string &_root_path,
                                     bool (^_cancel_checker)(),
                                     void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                     )
 {
-    FlexChainedStringsChunk::FreeWithDescendants(&_dirs);
     return VFSError::NotSupported;
 }
 

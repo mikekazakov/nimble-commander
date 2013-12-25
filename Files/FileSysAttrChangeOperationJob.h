@@ -10,7 +10,7 @@
 
 #import "OperationJob.h"
 #include "filesysattr.h"
-#include "FlexChainedStringsChunk.h"
+#include "chained_strings.h"
 
 @class FileSysAttrChangeOperation;
 

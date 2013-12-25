@@ -8,7 +8,7 @@
 
 #import "FileDeletionSheetController.h"
 
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "Common.h"
 
 @interface FileDeletionSheetController ()

@@ -12,7 +12,7 @@
 #import "MainWindowController.h"
 #import "OperationsController.h"
 #import "Common.h"
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "FSEventsDirUpdate.h"
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #import "PreferencesWindowGeneralTab.h"

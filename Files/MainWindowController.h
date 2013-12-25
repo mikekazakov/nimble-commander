@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "ApplicationSkins.h"
 #import "VFS.h"
 

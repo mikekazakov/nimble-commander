@@ -7,7 +7,7 @@
 //
 
 #import "Operation.h"
-#include "FlexChainedStringsChunk.h"
+#include "chained_strings.h"
 
 @class OperationDialogAlert;
 

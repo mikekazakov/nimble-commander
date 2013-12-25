@@ -4,7 +4,7 @@
 #import <assert.h>
 #import <CoreFoundation/CoreFoundation.h>
 #import "Common.h"
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "FileMask.h"
 
 static inline PanelSortMode DefaultSortMode()

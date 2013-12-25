@@ -7,7 +7,7 @@
 //
 
 #import "Operation.h"
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "OperationDialogAlert.h"
 #import "FileAlreadyExistSheetController.h"
 #import "VFS.h"

@@ -9,7 +9,7 @@
 #pragma once
 
 #import <vector>
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "VFS.h"
 #import "OperationJob.h"
 

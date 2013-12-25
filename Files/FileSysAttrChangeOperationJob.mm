@@ -7,7 +7,7 @@
 //
 
 #include "FileSysAttrChangeOperationJob.h"
-#include "FlexChainedStringsChunk.h"
+#include "chained_strings.h"
 #include <sys/types.h>
 #include <sys/dirent.h>
 #include <sys/stat.h>

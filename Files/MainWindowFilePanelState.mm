@@ -20,7 +20,7 @@
 #import "FileSysAttrChangeOperation.h"
 #import "FileSysEntryAttrSheetController.h"
 #import "DetailedVolumeInformationSheetController.h"
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "FileDeletionSheetController.h"
 #import "MassCopySheetController.h"
 #import "FileCopyOperation.h"

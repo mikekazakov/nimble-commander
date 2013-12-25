@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#include "FlexChainedStringsChunk.h"
+#include "chained_strings.h"
 
 class PanelData;
 

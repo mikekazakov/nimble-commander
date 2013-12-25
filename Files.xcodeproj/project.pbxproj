@@ -265,7 +265,7 @@
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
 		CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */; };
 		CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
-		CFE2697C16F01BAB0048A393 /* FlexChainedStringsChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */; };
+		CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
 		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */; };
 		CFEE8E5117748E3D00F6A254 /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEE8E4F17748E3D00F6A254 /* FontExtras.mm */; };
 		CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */; };
@@ -684,8 +684,8 @@
 		CFE2697416EF0E3E0048A393 /* MassCopySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassCopySheetController.h; sourceTree = "<group>"; };
 		CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassCopySheetController.mm; sourceTree = "<group>"; };
 		CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetController.xib; sourceTree = "<group>"; };
-		CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlexChainedStringsChunk.cpp; sourceTree = "<group>"; };
-		CFE2697B16F01BAA0048A393 /* FlexChainedStringsChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlexChainedStringsChunk.h; sourceTree = "<group>"; };
+		CFE2697A16F01BA90048A393 /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chained_strings.cpp; sourceTree = "<group>"; };
+		CFE2697B16F01BAA0048A393 /* chained_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chained_strings.h; sourceTree = "<group>"; };
 		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TemporaryNativeFileStorage.mm; sourceTree = "<group>"; };
 		CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileStorage.h; sourceTree = "<group>"; };
 		CFEE8E4F17748E3D00F6A254 /* FontExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontExtras.mm; sourceTree = "<group>"; };
@@ -1203,8 +1203,8 @@
 				CF2AC58F1818DD4800B0BEB4 /* path_manip.h */,
 				CFA0B2381869542200501C35 /* common_paths.mm */,
 				CFA0B2391869542200501C35 /* common_paths.h */,
-				CFE2697A16F01BA90048A393 /* FlexChainedStringsChunk.cpp */,
-				CFE2697B16F01BAA0048A393 /* FlexChainedStringsChunk.h */,
+				CFE2697A16F01BA90048A393 /* chained_strings.cpp */,
+				CFE2697B16F01BAA0048A393 /* chained_strings.h */,
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
 				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
 				CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */,
@@ -1562,7 +1562,7 @@
 				CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */,
 				CF9D0EC817CC961100CB8146 /* archive_write_open_filename.c in Sources */,
 				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
-				CFE2697C16F01BAB0048A393 /* FlexChainedStringsChunk.cpp in Sources */,
+				CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */,
 				CF9D0E9B17CC961100CB8146 /* archive_read_support_filter_none.c in Sources */,
 				CF9D0EE317CE11C800CB8146 /* VFSSeqToRandomWrapper.mm in Sources */,
 				CF9D0EB117CC961100CB8146 /* archive_string.c in Sources */,

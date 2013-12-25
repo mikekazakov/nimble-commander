@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "VFS.h"
 #import "Operation.h"
 #import "OperationDialogAlert.h"

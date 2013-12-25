@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import "VFS.h"
 @interface SharingService : NSObject<NSSharingServicePickerDelegate>
 

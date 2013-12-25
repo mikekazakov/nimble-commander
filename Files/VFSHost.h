@@ -14,7 +14,7 @@
 using namespace std;
 
 #import "VFSError.h"
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 
 class VFSListing;
 class VFSFile;

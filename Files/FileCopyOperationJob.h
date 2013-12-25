@@ -10,7 +10,7 @@
 
 #import "OperationJob.h"
 #import "FileCopyOperation.h"
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 #import <vector>
 
 class FileCopyOperationJob : public OperationJob

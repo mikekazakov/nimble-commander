@@ -10,7 +10,7 @@
 #import <vector>
 #import <string>
 #import "MainWindowStateProtocol.h"
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 
 using namespace std;
 

@@ -10,7 +10,7 @@
 
 #import "FileDeletionOperation.h"
 #import "ButtonWithOptions.h"
-#import "FlexChainedStringsChunk.h"
+#import "chained_strings.h"
 
 typedef void (^FileDeletionSheetCompletionHandler)(int result);
 

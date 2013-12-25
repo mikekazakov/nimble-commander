@@ -49,6 +49,7 @@ static NSImageRep *ProduceThumbnailForVFS(const char *_path,
 {
     NSImageRep *result = 0;
     shared_ptr<VFSFile> vfs_file;
+    string filename_ext;
     if(_host->CreateFile(_path, &vfs_file, 0) < 0)
         return 0;
         
@@ -83,20 +84,10 @@ static NSImageRep *ProduceThumbnailForVFS(const char *_path,
     close(fd);
     fd = -1;
 
-    char filename_ext[MAXPATHLEN];
-    strcpy(filename_ext, pattern_buf);
-    strcat(filename_ext, ".");
-    strcat(filename_ext, _ext);
-
-    if(rename(pattern_buf, filename_ext) == 0)
+    filename_ext = string(pattern_buf) + "." + _ext;
+    if(rename(pattern_buf, filename_ext.c_str()) == 0)
     {
-        CFStringRef item_path = CFStringCreateWithBytesNoCopy(0,
-                                                         (UInt8*)filename_ext,
-                                                         strlen(filename_ext),
-                                                         kCFStringEncodingUTF8,
-                                                         false,
-                                                         kCFAllocatorNull);
-
+        CFStringRef item_path = (CFStringRef) CFBridgingRetain([NSString stringWithUTF8StdStringNoCopy:filename_ext]);
         CFURLRef url = CFURLCreateWithFileSystemPath(0, item_path, kCFURLPOSIXPathStyle, false);
         static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
         static void *values[] = {(void*)kCFBooleanTrue};
@@ -109,13 +100,13 @@ static NSImageRep *ProduceThumbnailForVFS(const char *_path,
 
         CFRelease(url);
         CFRelease(item_path);
-        unlink(filename_ext);
+        unlink(filename_ext.c_str());
     }
     else
     {
         unlink(pattern_buf);
     }
-                
+    
 cleanup:
     if(fd >= 0)
     {
@@ -264,13 +255,9 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     meta->file_size = entry.Size();
     meta->unix_mode = entry.UnixMode();
     meta->host = _listing.Host();
-    char buf[MAXPATHLEN];
-    if(!entry.IsDotDot())
-        _listing.ComposeFullPathForEntry(_no, buf);
-    else
-        strcpy(buf, _listing.RelativePath());
-    
-    meta->relative_path = buf;
+    meta->relative_path = entry.IsDotDot() ?
+                        _listing.RelativePath() :
+                        _listing.ComposeFullPathForEntry(_no);
     meta->generic = entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
     meta->extension = entry.HasExtension() ? entry.Extension() : "";
     if(m_IconsMode >= IconModeFileIcons && !meta->extension.empty())

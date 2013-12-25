@@ -56,32 +56,31 @@ long VFSListing::Attributes() const
     return 0;
 }
 
-void VFSListing::ComposeFullPathForEntry(size_t _entry_position, char *_buf) const
+string VFSListing::ComposeFullPathForEntry(size_t _entry_position) const
 {
     if(_entry_position >= Count())
-    {
-        strcpy(_buf, "");
-        return;
-    }
+        return "";
   
+    string res = RelativePath();
     const auto &entry = At(_entry_position);
-    
     if(entry.IsDotDot())
     {
         // need to cut the last slash
-        strcpy(_buf, RelativePath());
-        if(strcmp(_buf, "/") != 0)
+        if(res != "/")
         {
-            if(IsPathWithTrailingSlash(_buf)) _buf[strlen(_buf)-1] = 0; // cut trailing slash
-            char *s = strrchr(_buf, '/');
-            if(s != _buf) *s = 0;
-            else *(s+1) = 0;
+            if(res.back() == '/')
+                res.pop_back();
+            auto i = res.rfind('/');
+            if(i == 0)
+                res.resize(i+1);
+            else if(i != string::npos)
+                res.resize(i);
         }
     }
     else
     {
-        strcpy(_buf, RelativePath());
-        if(_buf[strlen(_buf)-1] != '/') strcat(_buf, "/");
-        strcat(_buf, entry.Name());
+        if(res.back() != '/') res += '/';
+        res += entry.Name();
     }
+    return res;
 }

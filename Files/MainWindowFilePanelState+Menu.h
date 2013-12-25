@@ -26,4 +26,7 @@
 - (IBAction)OnGoToUtilities:(id)sender;
 - (IBAction)OnGoToFolder:(id)sender;
 
+// Operations
+- (IBAction)OnMoveToTrash:(id)sender;
+
 @end

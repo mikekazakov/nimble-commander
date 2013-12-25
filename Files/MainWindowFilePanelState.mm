@@ -763,18 +763,7 @@
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     
-    __block FlexChainedStringsChunk *files = 0;
-    if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
-    {
-        files = [self ActivePanelData]->StringsFromSelectedEntries();
-    }
-    else
-    {
-        auto const *item = [[self ActivePanelView] CurrentItem];
-        if(item && !item->IsDotDot())
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
-    }
-    
+    __block FlexChainedStringsChunk *files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
     if(!files)
         return;
     
@@ -859,18 +848,7 @@
         destination = m_LeftPanelData;
     }
     
-    __block FlexChainedStringsChunk *files = 0;
-    if(source->GetSelectedItemsCount() > 0 )
-    {
-        files = source->StringsFromSelectedEntries();
-    }
-    else
-    {
-        auto const *item = [[self ActivePanelView] CurrentItem];
-        if(item && !item->IsDotDot())
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
-    }
-    
+    __block FlexChainedStringsChunk *files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
     if(!files)
         return;
     
@@ -983,18 +961,7 @@
     if(!source->Host()->IsNativeFS())
         return; // currently support rename only on native fs
     
-    __block FlexChainedStringsChunk *files = 0;
-    if(source->GetSelectedItemsCount() > 0 )
-    {
-        files = source->StringsFromSelectedEntries();
-    }
-    else
-    {
-        auto const *item = [[self ActivePanelView] CurrentItem];
-        if(item && !item->IsDotDot())
-            files = FlexChainedStringsChunk::AllocateWithSingleString(item->Name());
-    }
-    
+    __block FlexChainedStringsChunk *files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
     if(!files)
         return;
     

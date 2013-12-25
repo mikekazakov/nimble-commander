@@ -9,8 +9,10 @@
 #import <assert.h>
 #import "MainWindowFilePanelState+Menu.h"
 #import "PanelController.h"
+#import "FileDeletionOperation.h"
 #import "FilePanelMainSplitView.h"
 #import "GoToFolderSheetController.h"
+#import "OperationsController.h"
 #import "Common.h"
 #import "common_paths.h"
 
@@ -114,6 +116,25 @@
 - (IBAction)OnCalculateSizes:(id)sender
 {
     [[self ActivePanelController] HandleCalculateSizes];
+}
+
+- (IBAction)OnMoveToTrash:(id)sender
+{
+    if(![self ActivePanelData]->Host()->IsNativeFS())
+        return; // currently support files deletion only on native fs
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
+    
+    auto *files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    if(!files)
+        return;
+    
+    FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                 initWithFiles:files
+                                 type:FileDeletionOperationType::MoveToTrash
+                                 rootpath:[self ActivePanelData]->DirectoryPathWithTrailingSlash().c_str()];
+    op.TargetPanel = [self ActivePanelController];
+    [m_OperationsController AddOperation:op];
 }
 
 @end

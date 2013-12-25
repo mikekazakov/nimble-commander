@@ -226,43 +226,51 @@ DQ
                                     <action selector="OnCompressFiles:" target="-1" id="rx8-at-X80"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Copy To" keyEquivalent="" id="838">
+                            <menuItem title="Copy To..." keyEquivalent="" id="838">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnFileCopyCommand:" target="-1" id="840"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Copy As" alternate="YES" keyEquivalent="" id="841">
+                            <menuItem title="Copy As..." alternate="YES" keyEquivalent="" id="841">
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                 <connections>
                                     <action selector="OnFileCopyAsCommand:" target="-1" id="843"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Rename/Move To" keyEquivalent="" id="844">
+                            <menuItem title="Rename/Move To..." keyEquivalent="" id="844">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnFileRenameMoveCommand:" target="-1" id="848"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Rename/Move As" alternate="YES" keyEquivalent="" id="849">
+                            <menuItem title="Rename/Move As..." alternate="YES" keyEquivalent="" id="849">
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                 <connections>
                                     <action selector="OnFileRenameMoveAsCommand:" target="-1" id="851"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Create Directory" keyEquivalent="" id="835">
+                            <menuItem title="Create Directory..." keyEquivalent="" id="835">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnCreateDirectoryCommand:" target="-1" id="837"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Delete" keyEquivalent="" id="832">
+                            <menuItem title="Move To Trash" id="1dC-SU-pRc">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                <connections>
+                                    <action selector="OnMoveToTrash:" target="-1" id="6mM-F6-n4u"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Delete..." keyEquivalent="" id="832">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnDeleteCommand:" target="-1" id="834"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Alternative Delete" alternate="YES" keyEquivalent="" id="926">
+                            <menuItem title="Alternative Delete..." alternate="YES" keyEquivalent="" id="926">
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                 <connections>
                                     <action selector="OnAlternativeDeleteCommand:" target="-1" id="928"/>

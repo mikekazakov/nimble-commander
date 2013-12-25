@@ -73,7 +73,6 @@ enum ActiveState
 
 @property OperationsController *OperationsController;
 
-- (PanelController*) ActivePanelController;
 - (void)ActivatePanelByController:(PanelController *)controller;
 
 - (void)PanelPathChanged:(PanelController*)_panel;
@@ -88,6 +87,12 @@ enum ActiveState
 
 
 - (void) AddOperation:(Operation*)_operation;
+
+
+
+- (PanelData*) ActivePanelData;
+- (PanelController*) ActivePanelController;
+- (PanelView*) ActivePanelView;
 
 @end
 

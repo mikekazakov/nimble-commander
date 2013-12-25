@@ -332,7 +332,7 @@ struct OtherAttrs
                                               m_State[0].ctime, m_HasCommonCTime, m_State[0].btime, m_HasCommonBTime);
     memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
     
-    m_HasDirectoryEntries = _data->GetSelectedItemsDirectoriesCount() > 0;
+    m_HasDirectoryEntries = _data->Stats().selected_dirs_amount > 0;
     m_Files.swap(_data->StringsFromSelectedEntries());
     strcpy(m_RootPath, _data->DirectoryPathWithTrailingSlash().c_str());
     [self LoadUsers];

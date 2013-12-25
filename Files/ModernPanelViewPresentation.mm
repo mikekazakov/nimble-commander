@@ -542,12 +542,12 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     // Footer string.
     // If any number of items are selected, then draw selection stats.
     // Otherwise, draw stats of cursor item.
-    if(m_State->Data->GetSelectedItemsCount() != 0)
+    if(m_State->Data->Stats().selected_entries_amount != 0)
     {
         UniChar selectionbuf[512];
         size_t sz;
-        FormHumanReadableBytesAndFiles(m_State->Data->GetSelectedItemsSizeBytes(),
-                                       m_State->Data->GetSelectedItemsCount(), selectionbuf, sz);
+        FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_selected_entries,
+                                       m_State->Data->Stats().selected_entries_amount, selectionbuf, sz);
         
         const int delta = (header_height - m_LineHeight)/2;
         const int offset = 10;

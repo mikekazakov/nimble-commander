@@ -61,6 +61,32 @@ struct PanelSortMode
     }
 };
 
+struct PanelDataStatistics
+{
+    /**
+     * All regular files in listing, including hidden ones.
+     * Not counting directories even when it's size was calculated.
+     */
+    uint64_t bytes_in_raw_reg_files = 0;
+    
+    /**
+     * Amount of regular files in directory listing, regardless of sorting.
+     * Includes the possibly hidden ones.
+     */
+    uint32_t raw_reg_files_amount = 0;
+    
+    /**
+     * Total bytes in all selected entries, including reg files and directories (if it's size was calculated).
+     *
+     */
+    uint64_t bytes_in_selected_entries = 0;
+    
+    // trivial
+    uint32_t selected_entries_amount = 0;
+    uint32_t selected_reg_amount = 0;
+    uint32_t selected_dirs_amount = 0;
+};
+
 /**
  * PanelData actually does the following things:
  * - sorting data
@@ -157,13 +183,7 @@ public:
      */
     bool FindSuitableEntries(CFStringRef _prefix, unsigned _desired_offset, unsigned *_ind_out, unsigned *_range) const;
     
-    // files statistics - notes below
-    unsigned long GetTotalBytesInDirectory() const;
-    unsigned GetTotalFilesInDirectory() const;
-    unsigned GetSelectedItemsCount() const;
-    unsigned GetSelectedItemsFilesCount() const;
-    unsigned GetSelectedItemsDirectoriesCount() const;
-    unsigned long GetSelectedItemsSizeBytes() const;
+    const PanelDataStatistics &Stats() const;
     
     // manupulation with user flags for directory entries
     void CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected);
@@ -195,12 +215,10 @@ private:
     DirSortIndT                             m_EntriesByCustomSort; // custom defined sort
     PanelSortMode                           m_CustomSortMode;
     DispatchGroup                           m_SortExecGroup;
-    
-    // statistics
-    unsigned long                           m_TotalBytesInDirectory = 0; // assuming regular files ONLY!
-    unsigned                                m_TotalFilesInDirectory = 0; // NOT DIRECTORIES! only regular files, maybe + symlinks and other stuff
-    unsigned long                           m_SelectedItemsSizeBytes = 0;
-    unsigned                                m_SelectedItemsCount = 0;
-    unsigned                                m_SelectedItemsFilesCount = 0;
-    unsigned                                m_SelectedItemsDirectoriesCount = 0;
+    PanelDataStatistics                     m_Stats;
 };
+
+inline const PanelDataStatistics &PanelData::Stats() const
+{
+    return m_Stats;
+}

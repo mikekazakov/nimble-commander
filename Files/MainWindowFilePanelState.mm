@@ -306,24 +306,14 @@
     
     PanelData *pd = [self ActivePanelData];
     string dir_path = pd->DirectoryPathWithTrailingSlash();
-    string tmp;
-    if(pd->GetSelectedItemsCount() > 0)
-    {
-        for(auto &i: pd->DirectoryEntries())
-            if(i.CFIsSelected())
-            {
-                tmp = dir_path + i.Name();
-                [filenames addObject:[NSString stringWithUTF8String:tmp.c_str()]];
-            }
+    if(pd->Stats().selected_entries_amount > 0) {
+        for(auto &i: pd->StringsFromSelectedEntries())
+            [filenames addObject:[NSString stringWithUTF8String:(dir_path + i.str()).c_str()]];
     }
-    else
-    {
+    else {
         auto const *item = [[self ActivePanelView] CurrentItem];
         if(item && !item->IsDotDot())
-        {
-            tmp = dir_path + item->Name();
-            [filenames addObject:[NSString stringWithUTF8String:tmp.c_str()]];
-        }
+            [filenames addObject:[NSString stringWithUTF8String:(dir_path + item->Name()).c_str()]];
     }
     
     if([filenames count] == 0)
@@ -666,7 +656,7 @@
         }
     };
 
-    if([self ActivePanelData]->GetSelectedItemsCount() > 0 )
+    if([self ActivePanelData]->Stats().selected_entries_amount > 0 )
     {
         [sheet ShowSheet:[self window] selentries:[self ActivePanelData] handler:handler];
     }

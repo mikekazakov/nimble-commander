@@ -834,7 +834,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void) HandleCalculateSizes
 {
     string dir = m_Data->DirectoryPathWithTrailingSlash();
-    if(m_Data->GetSelectedItemsCount()) {
+    if(m_Data->Stats().selected_entries_amount) {
         [self StartDirectorySizeCountingFor:m_Data->StringsFromSelectedEntries()
                                       InDir:dir
                                    IsDotDot:false];
@@ -1004,7 +1004,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if(item)
     {
         if(item->IsDotDot())
-            [m_ShareButton setEnabled:m_Data->GetSelectedItemsCount() > 0];
+            [m_ShareButton setEnabled:m_Data->Stats().selected_entries_amount > 0];
         else
         {
             if(m_HostsStack.back()->IsNativeFS())
@@ -1091,17 +1091,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     vector<const VFSListingItem*> items;
     
     // 2 variants - currently focused item or all selected items (if focus is also selected)
-    if(m_Data->GetSelectedItemsCount() == 0 || !cur_focus->CFIsSelected())
-    { // use focused items solely
-        items.push_back(cur_focus);
-    }
+    if(m_Data->Stats().selected_entries_amount == 0 || !cur_focus->CFIsSelected())
+        items.push_back(cur_focus); // use focused item solely
     else
-    { // use selected items
-        auto &listing = m_Data->DirectoryEntries();
-        for(int i = 0, e = listing.Count(); i!=e; ++i)
-            if(listing[i].CFIsSelected())
-                items.push_back(&listing[i]);
-    }
+        for(auto &i: *m_Data->Listing()) // use selected items
+            if(i.CFIsSelected())
+                items.push_back(&i);
 
     char path[MAXPATHLEN];
     if( [self GetCurrentDirectoryPathRelativeToHost:path] )

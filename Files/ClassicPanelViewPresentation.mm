@@ -607,11 +607,11 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
             }
         }
         
-        if(m_State->Data->GetSelectedItemsCount() != 0 && m_SymbWidth > 12)
+        if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 12)
         { // process selection if any
             UniChar selectionbuf[128], selectionbuftrim[128];
             size_t sz;
-            FormHumanReadableBytesAndFiles128(m_State->Data->GetSelectedItemsSizeBytes(), m_State->Data->GetSelectedItemsCount(), selectionbuf, sz, true);
+            FormHumanReadableBytesAndFiles128(m_State->Data->Stats().bytes_in_selected_entries, m_State->Data->Stats().selected_entries_amount, selectionbuf, sz, true);
             int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
             symbs_for_selected_bytes = oms::CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
             selected_bytes_start_pos = (m_SymbWidth-symbs_for_selected_bytes) / 2;
@@ -625,7 +625,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         { // process bytes in directory
             UniChar bytes[128], bytestrim[128];
             size_t sz;
-            FormHumanReadableBytesAndFiles128(m_State->Data->GetTotalBytesInDirectory(), (int)m_State->Data->GetTotalFilesInDirectory(), bytes, sz, true);
+            FormHumanReadableBytesAndFiles128(m_State->Data->Stats().bytes_in_raw_reg_files, (int)m_State->Data->Stats().raw_reg_files_amount, bytes, sz, true);
             int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(bytes, sz, m_SymbWidth - 2, bytestrim);
             symbs_for_bytes_in_dir = oms::CalculateSymbolsSpaceForString(bytestrim, unichars);
             bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
@@ -785,7 +785,7 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     { // process bytes in directory
         UniChar bytes[128], bytestrim[128];
         size_t sz;
-        FormHumanReadableBytesAndFiles128(m_State->Data->GetTotalBytesInDirectory(), (int)m_State->Data->GetTotalFilesInDirectory(), bytes, sz, true);
+        FormHumanReadableBytesAndFiles128(m_State->Data->Stats().bytes_in_raw_reg_files, (int)m_State->Data->Stats().raw_reg_files_amount, bytes, sz, true);
         int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(bytes, sz, m_SymbWidth - 2, bytestrim);
         symbs_for_bytes_in_dir = oms::CalculateSymbolsSpaceForString(bytestrim, unichars);
         bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
@@ -795,11 +795,11 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw selection if any
-    if(m_State->Data->GetSelectedItemsCount() != 0 && m_SymbWidth > 12)
+    if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 12)
     {
         UniChar selectionbuf[128], selectionbuftrim[128];
         size_t sz;
-        FormHumanReadableBytesAndFiles128(m_State->Data->GetSelectedItemsSizeBytes(), m_State->Data->GetSelectedItemsCount(), selectionbuf, sz, true);
+        FormHumanReadableBytesAndFiles128(m_State->Data->Stats().bytes_in_selected_entries, m_State->Data->Stats().selected_entries_amount, selectionbuf, sz, true);
         int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
         symbs_for_selected_bytes = oms::CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
         selected_bytes_start_pos = (m_SymbWidth-symbs_for_selected_bytes) / 2;

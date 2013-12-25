@@ -58,17 +58,17 @@
 
 - (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot
 {
-    if(m_Data->GetSelectedItemsCount() > 0 )
+    if(m_Data->Stats().selected_entries_amount)
     {
         return m_Data->StringsFromSelectedEntries();
     }
     else
     {
-        chained_strings files;
         auto const *item = [m_View CurrentItem];
         if(item && !item->IsDotDot())
-            files.push_back(item->Name(), (unsigned)item->NameLen(), nullptr);
-        return files;
+            return chained_strings(item->Name());
+        
+        return chained_strings();
     }
 }
 

@@ -409,62 +409,28 @@ PanelSortMode PanelData::GetCustomSortMode() const
 
 void PanelData::UpdateStatictics()
 {
-    if(m_Listing.get() == 0)
-    {
-        m_TotalBytesInDirectory = 0;
-        m_TotalFilesInDirectory = 0;
-        m_SelectedItemsSizeBytes = 0;
-        m_SelectedItemsCount = 0;
-        m_SelectedItemsDirectoriesCount = 0;
-        m_SelectedItemsFilesCount = 0;
+    m_Stats = PanelDataStatistics();
+    if(m_Listing.get() == nullptr)
         return;
-    }
     
-    unsigned long totalbytes = 0;
-    unsigned totalfiles = 0;
-    unsigned long totalselectedbytes = 0;
-    unsigned totalselected = 0;
-    unsigned totalselectedfiles = 0;
-    unsigned totalselecteddirs = 0;
-
     // calculate totals for directory
     for(const auto &i: *m_Listing)
-        if(i.IsReg())
-        {
-            totalbytes += i.Size();
-            totalfiles++;
+        if(i.IsReg()) {
+            m_Stats.bytes_in_raw_reg_files += i.Size();
+            m_Stats.raw_reg_files_amount++;
         }
     
     // calculate totals for selected. look only for entries which is visible (sorted/filtered ones)
-    for(auto n: m_EntriesByCustomSort)
-    {
-        const auto &i = (*m_Listing)[n];
-        if(i.CFIsSelected())
-        {
+    for(auto n: m_EntriesByCustomSort) {
+        const auto &i = m_Listing->At(n);
+        if(i.CFIsSelected()) {
             if(i.Size() != VFSListingItem::InvalidSize)
-                totalselectedbytes += i.Size();
-            totalselected++;
-            if(i.IsDir())  totalselecteddirs++;
-            else           totalselectedfiles++;
+                m_Stats.bytes_in_selected_entries += i.Size();
+            m_Stats.selected_entries_amount++;
+            if(i.IsDir())  m_Stats.selected_dirs_amount++;
+            else           m_Stats.selected_reg_amount++;
         }
     }
-    
-    m_TotalBytesInDirectory = totalbytes;
-    m_TotalFilesInDirectory = totalfiles;
-    m_SelectedItemsSizeBytes = totalselectedbytes;
-    m_SelectedItemsCount = totalselected;
-    m_SelectedItemsDirectoriesCount = totalselecteddirs;
-    m_SelectedItemsFilesCount = totalselectedfiles;
-}
-
-unsigned long PanelData::GetTotalBytesInDirectory() const
-{
-    return m_TotalBytesInDirectory;
-}
-
-unsigned PanelData::GetTotalFilesInDirectory() const
-{
-    return m_TotalFilesInDirectory;
 }
 
 int PanelData::RawIndexForSortIndex(int _index) const
@@ -496,11 +462,11 @@ void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
     if(_is_selected)
     {
         if(entry.Size() != VFSListingItem::InvalidSize)
-            m_SelectedItemsSizeBytes += entry.Size();
-        m_SelectedItemsCount++;
+            m_Stats.bytes_in_selected_entries += entry.Size();
+        m_Stats.selected_entries_amount++;
         
-        if(entry.IsDir()) m_SelectedItemsDirectoriesCount++;
-        else              m_SelectedItemsFilesCount++;
+        if(entry.IsDir()) m_Stats.selected_dirs_amount++;
+        else              m_Stats.selected_reg_amount++; // mb another check for reg here?
         
         entry.SetCFlag(VFSListingItem::Flags::Selected);
     }
@@ -508,20 +474,20 @@ void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
     {
         if(entry.Size() != VFSListingItem::InvalidSize)
         {
-            assert(m_SelectedItemsSizeBytes >= entry.Size()); // sanity check
-            m_SelectedItemsSizeBytes -= entry.Size();
+            assert(m_Stats.bytes_in_selected_entries >= entry.Size()); // sanity check
+            m_Stats.bytes_in_selected_entries -= entry.Size();
         }
-        assert(m_SelectedItemsCount >= 0); // sanity check
-        m_SelectedItemsCount--;
+        assert(m_Stats.selected_entries_amount > 0); // sanity check
+        m_Stats.selected_entries_amount--;
         if(entry.IsDir())
         {
-            assert(m_SelectedItemsDirectoriesCount >= 0);
-            m_SelectedItemsDirectoriesCount--;
+            assert(m_Stats.selected_dirs_amount > 0);
+            m_Stats.selected_dirs_amount--;
         }
         else
         {
-            assert(m_SelectedItemsFilesCount >= 0);
-            m_SelectedItemsFilesCount--;
+            assert(m_Stats.selected_reg_amount > 0);
+            m_Stats.selected_reg_amount--;
         }
         entry.UnsetCFlag(VFSListingItem::Flags::Selected);
     }
@@ -548,26 +514,6 @@ void PanelData::CustomFlagsSelectAllSorted(bool _select)
     }
 
     UpdateStatictics();
-}
-
-unsigned PanelData::GetSelectedItemsCount() const
-{
-    return m_SelectedItemsCount;
-}
-
-unsigned long PanelData::GetSelectedItemsSizeBytes() const
-{
-    return m_SelectedItemsSizeBytes;
-}
-
-unsigned PanelData::GetSelectedItemsFilesCount() const
-{
-    return m_SelectedItemsFilesCount;
-}
-
-unsigned PanelData::GetSelectedItemsDirectoriesCount() const
-{
-    return m_SelectedItemsDirectoriesCount;
 }
 
 chained_strings PanelData::StringsFromSelectedEntries() const
@@ -630,10 +576,10 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long 
             { // need to adjust our selected bytes statistic
                 if(i.Size() != VFSListingItem::InvalidSize)
                 {
-                    assert(i.Size() <= m_SelectedItemsSizeBytes);
-                    m_SelectedItemsSizeBytes -= i.Size();
+                    assert(i.Size() <= m_Stats.bytes_in_selected_entries);
+                    m_Stats.bytes_in_selected_entries -= i.Size();
                 }
-                m_SelectedItemsSizeBytes += _size;
+                m_Stats.bytes_in_selected_entries += _size;
             }
 
             i.SetSize(_size);

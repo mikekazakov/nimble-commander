@@ -151,7 +151,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             path += item->Name();
 
         // may go async here on non-native VFS
-        PanelVFSFileWorkspaceOpener::Open(path.c_str(), m_Data->Host());
+        PanelVFSFileWorkspaceOpener::Open(path, m_Data->Host());
     }
 }
 
@@ -617,9 +617,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     // need more sophisticated executable handling here
     if([self GetCurrentVFSHost]->IsNativeFS() && IsEligbleToTryToExecuteInConsole(*entry))
     {
-        char pathbuf[__DARWIN_MAXPATHLEN];
-        [self GetCurrentDirectoryPathRelativeToHost:pathbuf];
-        [m_WindowController RequestTerminalExecution:entry->Name() at:pathbuf];
+        auto path = [self GetCurrentDirectoryPathRelativeToHost];
+        [m_WindowController RequestTerminalExecution:entry->Name() at:path.c_str()];
         return;
     }
     
@@ -834,37 +833,37 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void) HandleCalculateSizes
 {
     string dir = m_Data->DirectoryPathWithTrailingSlash();
-    if(m_Data->Stats().selected_entries_amount) {
-        [self StartDirectorySizeCountingFor:m_Data->StringsFromSelectedEntries()
-                                      InDir:dir
-                                   IsDotDot:false];
-    }
-    else {
-        auto const *item = [m_View CurrentItem];
-        if(item && item->IsDir())
-            [self StartDirectorySizeCountingFor:item->IsDotDot() ? chained_strings() : chained_strings(item->Name())
-                                          InDir:dir
-                                       IsDotDot:item->IsDotDot()];
-    }
-}
 
-- (void) StartDirectorySizeCountingFor:(chained_strings)_files InDir:(std::string)_dir IsDotDot:(bool)_isdotdot
-{
-    __block chained_strings files(move(_files));
-    m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
-        // TODO: lock panel data?
-        // guess it's better to move the following line into main thread
-        // it may be a race condition with possible UB here. BAD!
-        auto complet = ^(const char* _dir, uint64_t _size){
+    auto complet = ^(const char* _dir, uint64_t _size) {
+        string dir = _dir;
+        dispatch_to_main_queue(^{
             if(m_Data->SetCalculatedSizeForDirectory(_dir, _size))
                 [m_View setNeedsDisplay];
+        });
+    };
+    
+    void (^block)(SerialQueue _q);
+    if(m_Data->Stats().selected_entries_amount) {
+        __block auto files = m_Data->StringsFromSelectedEntries();
+        block = ^(SerialQueue _q){
+            m_HostsStack.back()->CalculateDirectoriesSizes(move(files), dir, ^bool { return _q->IsStopped(); }, complet);
         };
-
-        if(!_isdotdot)
-            m_HostsStack.back()->CalculateDirectoriesSizes(move(files), _dir, ^bool { return _q->IsStopped();  }, complet);
-        else
-            m_HostsStack.back()->CalculateDirectoryDotDotSize(_dir, ^bool { return _q->IsStopped(); }, complet);
-    });
+    }
+    else {
+        if(auto const *item = [m_View CurrentItem]) {
+            if(item->IsDotDot())
+                block = ^(SerialQueue _q){
+                    m_HostsStack.back()->CalculateDirectoryDotDotSize(dir, ^bool { return _q->IsStopped(); }, complet);
+                };
+            else {
+                __block auto files = chained_strings(item->Name());
+                block = ^(SerialQueue _q){
+                    m_HostsStack.back()->CalculateDirectoriesSizes(move(files), dir, ^bool { return _q->IsStopped();  }, complet);
+                };
+            }
+        }
+    }
+    m_DirectoryReLoadingQ->Run(block);
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
@@ -1018,12 +1017,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     
     // update QuickLook if any
     if(m_QuickLook != nil)
-    {
-        char path[MAXPATHLEN];
-        if( [self GetCurrentFocusedEntryFilePathRelativeToHost:path] )
-            [m_QuickLook PreviewItem:path vfs:m_HostsStack.back()];
-    }
-    
+        [m_QuickLook PreviewItem:[self GetCurrentFocusedEntryFilePathRelativeToHost]
+                             vfs:m_HostsStack.back()];
 }
 
 - (MainWindowFilePanelState*) GetParentWindow
@@ -1042,9 +1037,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void)OnEjectButton:(id)sender
 {
+    string path = m_Data->DirectoryPathWithoutTrailingSlash();
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // not thread-safe, potentialy may cause problems, but not likely
-        EjectVolumeContainingPath(m_Data->DirectoryPathWithoutTrailingSlash().c_str());
+        EjectVolumeContainingPath(path.c_str());
     });
 }
 
@@ -1065,7 +1060,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         return;
     
     [[SharingService new] ShowItems:move(files)
-                              InDir:m_Data->DirectoryPathWithTrailingSlash().c_str()
+                              InDir:m_Data->DirectoryPathWithTrailingSlash()
                               InVFS:m_HostsStack.back()
                      RelativeToRect:[sender bounds]
                              OfView:sender
@@ -1075,11 +1070,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void) UpdateBriefSystemOverview
 {
     if(m_BriefSystemOverview != nil)
-    {
-        char path[MAXPATHLEN];
-        if( [self GetCurrentDirectoryPathRelativeToHost:path] )
-            [m_BriefSystemOverview UpdateVFSTarget:path host:m_HostsStack.back()];
-    }
+        [m_BriefSystemOverview UpdateVFSTarget:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+                                          host:m_HostsStack.back()];
 }
 
 - (void) HandleItemsContextMenu
@@ -1098,12 +1090,10 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             if(i.CFIsSelected())
                 items.push_back(&i);
 
-    char path[MAXPATHLEN];
-    if( [self GetCurrentDirectoryPathRelativeToHost:path] )
-        [[self GetParentWindow] RequestContextMenuOn:items
-                                                path:path
-                                                 vfs:m_HostsStack.back()
-                                              caller:self];
+    [[self GetParentWindow] RequestContextMenuOn:items
+                                            path:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+                                             vfs:m_HostsStack.back()
+                                          caller:self];
 }
 
 @end

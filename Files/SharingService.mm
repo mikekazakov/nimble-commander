@@ -17,7 +17,7 @@
 #import "Common.h"
 
 static const uint64_t g_MaxFileSizeForVFSShare = 64*1024*1024; // 64mb
-static volatile int g_IsCurrentlySharing = 0;
+static atomic<int> g_IsCurrentlySharing(0);
 
 @implementation SharingService
 {
@@ -57,7 +57,7 @@ static volatile int g_IsCurrentlySharing = 0;
 }
 
 - (void) ShowItems:(chained_strings)_entries
-             InDir:(const char*)_dir
+             InDir:(string)_dir
              InVFS:(shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
             OfView:(NSView*)_view
@@ -69,11 +69,8 @@ static volatile int g_IsCurrentlySharing = 0;
         NSMutableArray *items = [NSMutableArray new];
         for(auto &i:_entries)
         {
-            char path[MAXPATHLEN];
-            strcpy(path, _dir);
-            strcat(path, i.str());
-  
-            NSString *s = [NSString stringWithUTF8String:path];
+            string path = _dir + i.str();
+            NSString *s = [NSString stringWithUTF8String:path.c_str()];
             if(s)
             {
                 NSURL *url = [[NSURL alloc] initFileURLWithPath:s];
@@ -93,22 +90,18 @@ static volatile int g_IsCurrentlySharing = 0;
     }
     else
     { // need to move selected entires to native fs now, so going async here
-        string dir = _dir;
         __block auto entries(move(_entries));
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             for(auto &i:entries)
             {
-                char path[MAXPATHLEN];
+                string path = _dir + i.str();
                 struct stat st;
-                strcpy(path, dir.c_str());
-                strcat(path, i.str());
-
-                if(_host->IsDirectory(path, 0, 0)) continue; // will skip any directories here
-                if(_host->Stat(path, st, 0, 0) < 0) continue;
+                if(_host->IsDirectory(path.c_str(), 0, 0)) continue; // will skip any directories here
+                if(_host->Stat(path.c_str(), st, 0, 0) < 0) continue;
                 if(st.st_size > g_MaxFileSizeForVFSShare) continue;
                 
                 char native_path[MAXPATHLEN];
-                if(TemporaryNativeFileStorage::Instance().CopySingleFile(path, _host, native_path))
+                if(TemporaryNativeFileStorage::Instance().CopySingleFile(path.c_str(), _host, native_path))
                     m_TmpFilepaths.push_back(native_path);
             }
             

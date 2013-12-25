@@ -14,12 +14,12 @@ class PanelVFSFileWorkspaceOpener
 {
 public:
     // can be called from main thread - it will execute it's job in background
-    static void Open(const char* _filename,
+    static void Open(string _filename,
                      shared_ptr<VFSHost> _host
                      );
     
-    static void Open(const char* _filename,
+    static void Open(string _filename,
                      shared_ptr<VFSHost> _host,
-                     const char* _with_app_path // can be NULL, use default app in such case
+                     string _with_app_path // can be "", use default app in such case
                      );
 };

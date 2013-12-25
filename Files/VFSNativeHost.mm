@@ -246,7 +246,6 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     
 cleanup:
     dispatch_release(stat_queue);
-//    FlexChainedStringsChunk::FreeWithDescendants(&_dirs);
     return error;
 }
 

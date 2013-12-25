@@ -16,25 +16,26 @@
 
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 
-void PanelVFSFileWorkspaceOpener::Open(const char* _filename,
+void PanelVFSFileWorkspaceOpener::Open(string _filename,
                                        shared_ptr<VFSHost> _host
                                        )
 {
-    Open(_filename, _host, 0);
+    Open(_filename, _host, "");
 }
 
-void PanelVFSFileWorkspaceOpener::Open(const char* _filename,
+void PanelVFSFileWorkspaceOpener::Open(string _filename,
                  shared_ptr<VFSHost> _host,
-                 const char* _with_app_path
+                 string _with_app_path
                  )
 {
     if(_host->IsNativeFS())
     {
-        NSString *filename = [NSString stringWithUTF8String:_filename];
+        NSString *filename = [NSString stringWithUTF8String:_filename.c_str()];
         
-        if(_with_app_path != 0)
+        if(!_with_app_path.empty())
         {
-            if (![[NSWorkspace sharedWorkspace] openFile:filename withApplication:[NSString stringWithUTF8String:_with_app_path]])
+            if (![[NSWorkspace sharedWorkspace] openFile:filename
+                                         withApplication:[NSString stringWithUTF8String:_with_app_path.c_str()]])
                 NSBeep();
         }
         else
@@ -46,14 +47,12 @@ void PanelVFSFileWorkspaceOpener::Open(const char* _filename,
         return;
     }
     
-    string path = _filename;
-    string app_path = _with_app_path != 0 ? _with_app_path : "";
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if(_host->IsDirectory(path.c_str(), 0, 0))
+        if(_host->IsDirectory(_filename.c_str(), 0, 0))
             return;
         
         struct stat st;
-        if(_host->Stat(path.c_str(), st, 0, 0) < 0)
+        if(_host->Stat(_filename.c_str(), st, 0, 0) < 0)
             return;
         
         if(st.st_size > g_MaxFileSizeForVFSOpen)
@@ -61,15 +60,16 @@ void PanelVFSFileWorkspaceOpener::Open(const char* _filename,
         
         char tmp[MAXPATHLEN];
         
-        if(!TemporaryNativeFileStorage::Instance().CopySingleFile(path.c_str(), _host, tmp))
+        if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_filename.c_str(), _host, tmp))
             return;
         
         NSString *fn = [NSString stringWithUTF8String:tmp];
         dispatch_to_main_queue( ^{
             
-            if(!app_path.empty())
+            if(!_with_app_path.empty())
             {
-                if (![[NSWorkspace sharedWorkspace] openFile:fn withApplication:[NSString stringWithUTF8String:app_path.c_str()]])
+                if (![[NSWorkspace sharedWorkspace] openFile:fn
+                                             withApplication:[NSString stringWithUTF8String:_with_app_path.c_str()]])
                     NSBeep();
             }
             else

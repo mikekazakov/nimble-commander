@@ -102,11 +102,8 @@
             return [self.ActivePanelController GoToGlobalHostsPathSync: path.c_str()];
         } else {
             // sub-dir
-            char cwd[MAXPATHLEN];
-            if([self.ActivePanelController GetCurrentDirectoryPathRelativeToHost:cwd]) {
-                path.insert(0, cwd);
-                return [self.ActivePanelController GoToGlobalHostsPathSync:path.c_str()];
-            }
+            path.insert(0, [self.ActivePanelController GetCurrentDirectoryPathRelativeToHost]);
+            return [self.ActivePanelController GoToGlobalHostsPathSync:path.c_str()];
         }
 
         return 0;

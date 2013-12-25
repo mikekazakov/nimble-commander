@@ -12,20 +12,20 @@
 
 /**
  * Copies currently focused entry name.
- * Return false if there's no focused entry (invalid state).
+ * Return "" if there's no focused entry (invalid state).
  */
-- (bool) GetCurrentFocusedEntryFilename:(char*) _filename;
+- (string) GetCurrentFocusedEntryFilename;
 
 /**
  * Copies currently focused item's full path relating to it's host.
- * Return false if there's no focused entry (invalid state).
+ * Return "" if there's no focused entry (invalid state).
  */
-- (bool) GetCurrentFocusedEntryFilePathRelativeToHost:(char*) _file_path;
+- (string) GetCurrentFocusedEntryFilePathRelativeToHost;
 
 /**
  * Copies directory path with trailing slash relating to it's host.
  */
-- (bool) GetCurrentDirectoryPathRelativeToHost:(char*) _path;
+- (string) GetCurrentDirectoryPathRelativeToHost;
 
 /**
  * Return a list of selected entries if any.

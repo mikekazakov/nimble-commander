@@ -173,11 +173,10 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void) Stuffing:(const vector<const VFSListingItem*>&) _items
 {
     // cur_pnl_path should be the same as m_DirPath!!!
-    char cur_pnl_path[MAXPATHLEN], opp_pnl_path[MAXPATHLEN];
-    [m_CurrentController GetCurrentDirectoryPathRelativeToHost:cur_pnl_path];
-    [m_OppositeController GetCurrentDirectoryPathRelativeToHost:opp_pnl_path];
-    bool cur_pnl_writable = [m_CurrentController GetCurrentVFSHost]->IsWriteableAtPath(cur_pnl_path);
-    bool opp_pnl_writable = [m_OppositeController GetCurrentVFSHost]->IsWriteableAtPath(opp_pnl_path);
+    string cur_pnl_path = [m_CurrentController GetCurrentDirectoryPathRelativeToHost];
+    string opp_pnl_path = [m_OppositeController GetCurrentDirectoryPathRelativeToHost];
+    bool cur_pnl_writable = [m_CurrentController GetCurrentVFSHost]->IsWriteableAtPath(cur_pnl_path.c_str());
+    bool opp_pnl_writable = [m_OppositeController GetCurrentVFSHost]->IsWriteableAtPath(opp_pnl_path.c_str());
     
     //////////////////////////////////////////////////////////////////////
     // regular Open item
@@ -457,33 +456,30 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnRegularOpen:(id)sender
 {
-    [self OpenItemsWithApp:0];
+    [self OpenItemsWithApp:""];
 }
 
 - (void)OnOpenWith:(id)sender
 {
     int app_no = (int)[sender tag];
     assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path.c_str()];
+    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path];
 }
 
 - (void)OnAlwaysOpenWith:(id)sender
 {
     int app_no = (int)[sender tag];
     assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path.c_str()];
+    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path];
     
     if(!m_ItemsUTI.empty())
         LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), m_OpenWithHandlers[app_no].path.c_str());
 }
 
-- (void) OpenItemsWithApp:(const char*)_app_path
+- (void) OpenItemsWithApp:(string)_app_path
 {
-    for(auto &i: m_Items) {
-        char full_path[MAXPATHLEN];
-        sprintf(full_path, "%s%s", m_DirPath.c_str(), i.c_str());
-        PanelVFSFileWorkspaceOpener::Open(full_path, m_Host, _app_path);
-    }
+    for(auto &i: m_Items)
+        PanelVFSFileWorkspaceOpener::Open(m_DirPath + i, m_Host, _app_path);
 }
 
 - (NSOpenPanel*) BuildAppChoose
@@ -564,12 +560,10 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnCompressToOppositePanel:(id)sender
 {
-    char dstroot[MAXPATHLEN];
-    [m_OppositeController GetCurrentDirectoryPathRelativeToHost:dstroot];
     FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:StringsFromVector(m_Items)
                                                                      srcroot:m_DirPath.c_str()
                                                                       srcvfs:[m_CurrentController GetCurrentVFSHost]
-                                                                     dstroot:dstroot
+                                                                     dstroot:[m_OppositeController GetCurrentDirectoryPathRelativeToHost].c_str()
                                                                       dstvfs:[m_OppositeController GetCurrentVFSHost]
                                  ];
     op.TargetPanel = m_OppositeController;

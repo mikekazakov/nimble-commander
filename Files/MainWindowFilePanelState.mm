@@ -1309,24 +1309,18 @@
 
 - (IBAction)OnCopyCurrentFileName:(id)sender
 {
-    char buf[MAXPATHLEN];
-    if([[self ActivePanelController] GetCurrentFocusedEntryFilename:buf])
-    {
-        NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
-        [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
-        [pasteBoard setString:[NSString stringWithUTF8String:buf] forType:NSStringPboardType];
-    }
+    auto focus = [self.ActivePanelController GetCurrentFocusedEntryFilename];
+    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+    [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+    [pasteBoard setString:[NSString stringWithUTF8String:focus.c_str()] forType:NSStringPboardType];
 }
 
 - (IBAction)OnCopyCurrentFilePath:(id)sender
 {
-    char buf[MAXPATHLEN];
-    if([[self ActivePanelController] GetCurrentFocusedEntryFilePathRelativeToHost:buf])
-    {
-        NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
-        [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
-        [pasteBoard setString:[NSString stringWithUTF8String:buf] forType:NSStringPboardType];
-    }
+    auto path = [self.ActivePanelController GetCurrentFocusedEntryFilePathRelativeToHost];
+    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+    [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+    [pasteBoard setString:[NSString stringWithUTF8String:path.c_str()] forType:NSStringPboardType];
 }
 
 - (IBAction)paste:(id)sender
@@ -1438,27 +1432,27 @@
     if(files.empty())
         return;
     shared_ptr<VFSHost> srcvfs, dstvfs;
-    char srcroot[MAXPATHLEN], dstroot[MAXPATHLEN];
+    string srcroot, dstroot;
     PanelController *target_pc;
     if([self ActivePanelController] == m_LeftPanelController) {
         srcvfs = [m_LeftPanelController GetCurrentVFSHost];
         dstvfs = [m_RightPanelController GetCurrentVFSHost];
-        [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost:srcroot];
-        [m_RightPanelController GetCurrentDirectoryPathRelativeToHost:dstroot];
+        srcroot = [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost];
+        dstroot = [m_RightPanelController GetCurrentDirectoryPathRelativeToHost];
         target_pc = m_RightPanelController;
     }
     else {
         srcvfs = [m_RightPanelController GetCurrentVFSHost];
         dstvfs = [m_LeftPanelController GetCurrentVFSHost];
-        [m_RightPanelController GetCurrentDirectoryPathRelativeToHost:srcroot];
-        [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost:dstroot];
+        srcroot = [m_RightPanelController GetCurrentDirectoryPathRelativeToHost];
+        dstroot = [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost];
         target_pc = m_LeftPanelController;
     }
     
     FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(files)
-                                                                     srcroot:srcroot
+                                                                     srcroot:srcroot.c_str()
                                                                       srcvfs:srcvfs
-                                                                     dstroot:dstroot
+                                                                     dstroot:dstroot.c_str()
                                                                       dstvfs:dstvfs];
     op.TargetPanel = target_pc;
     [m_OperationsController AddOperation:op];
@@ -1472,11 +1466,10 @@
 ///////////////////////////////////////////////////////////////
 - (IBAction)OnShowTerminal:(id)sender
 {
-    char path[MAXPATHLEN];
-    path[0] = 0;
+    string path;
     if([[self ActivePanelController] GetCurrentVFSHost]->IsNativeFS())
-        [[self ActivePanelController] GetCurrentDirectoryPathRelativeToHost:path];
-    [(MainWindowController*)[[self window] delegate] RequestTerminal:path];
+        path = [[self ActivePanelController] GetCurrentDirectoryPathRelativeToHost];
+    [(MainWindowController*)[[self window] delegate] RequestTerminal:path.c_str()];
 }
 ///////////////////////////////////////////////////////////////
 

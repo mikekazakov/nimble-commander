@@ -12,7 +12,7 @@
 @interface SharingService : NSObject<NSSharingServicePickerDelegate>
 
 - (void) ShowItems:(chained_strings)_entries
-             InDir:(const char*)_dir
+             InDir:(string)_dir
              InVFS:(shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
             OfView:(NSView*)_view

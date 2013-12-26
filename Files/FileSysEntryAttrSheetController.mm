@@ -137,7 +137,7 @@ struct OtherAttrs
     if (m_Files.size() == 1)
     {
         [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %@",
-                                    [NSString stringWithUTF8String:m_Files.front().str()]]];
+                                    [NSString stringWithUTF8String:m_Files.front().c_str()]]];
     }
     else
     {

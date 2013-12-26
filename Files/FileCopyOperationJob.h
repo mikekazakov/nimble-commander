@@ -41,9 +41,9 @@ public:
 private:
     enum class ItemFlags
     {
-        no_flags    = 0,
-        is_dir      = 1 << 0,
-        is_symlink  = 1 << 1
+        no_flags    = 0b0000,
+        is_dir      = 0b0001,
+        is_symlink  = 0b0010,
     };
     
     enum WorkMode

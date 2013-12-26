@@ -137,7 +137,7 @@ void FileCopyOperationJobFromGeneric::ScanItems()
     // iterate in original filenames
     for(const auto&i: m_InitialItems)
     {
-        ScanItem(i.str(), i.str(), 0);
+        ScanItem(i.c_str(), i.c_str(), 0);
         
         if(CheckPauseOrStop()) return;
     }

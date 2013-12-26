@@ -39,7 +39,7 @@
             [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Copy %i items to:", amount]];
         else
             [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Copy %@ to:",
-                                                  [NSString stringWithUTF8String:m_Items->front().str()]]];
+                                                  [NSString stringWithUTF8String:m_Items->front().c_str()]]];
         [self.CopyButton setTitle:@"Copy"];
     }
     else
@@ -48,7 +48,7 @@
             [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Rename/move %i items to:", amount]];
         else
             [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Rename/move %@ to:",
-                                                  [NSString stringWithUTF8String:m_Items->front().str()]]];
+                                                  [NSString stringWithUTF8String:m_Items->front().c_str()]]];
         [self.CopyButton setTitle:@"Rename"];
     }
     

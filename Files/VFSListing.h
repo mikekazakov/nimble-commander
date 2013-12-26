@@ -86,7 +86,7 @@ public:
     virtual bool            IsHidden()  const { return false; }
     virtual bool            HasExtension() const { return false; }
     virtual unsigned short  ExtensionOffset() const { return 0; }
-    virtual const char*     Extension() const { return false; }
+    virtual const char*     Extension() const { return 0; }
     
     // overridable part - setters
     virtual void            SetSize(uint64_t _size) {};

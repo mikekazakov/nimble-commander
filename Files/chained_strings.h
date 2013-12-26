@@ -25,6 +25,9 @@ public:
     // #0 bytes offset
     struct node
     {
+    private:
+        friend class chained_strings;
+
         char buf[buffer_length];   // #0
         // UTF-8, including null-term. if .len >=buffer_length => (char**)&str[0] is a buffer from malloc for .len+1 bytes
         
@@ -35,7 +38,10 @@ public:
         // can be null. client must process it recursively to the root to get full string (to the element with .prefix = 0)
         // or just use str_with_pref function
         
-        const char* str() const;
+    public:
+        
+        const char* c_str() const;
+        unsigned short size() const;
         void str_with_pref(char *_buf) const;
     }; // 24 bytes long
     
@@ -124,7 +130,13 @@ private:
     block *m_Last;
 };
 
-inline const char* chained_strings::node::str() const
+
+inline unsigned short chained_strings::node::size() const
+{
+    return len;
+}
+
+inline const char* chained_strings::node::c_str() const
 {
     if(len < buffer_length)
         return buf;

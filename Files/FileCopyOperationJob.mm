@@ -369,7 +369,7 @@ void FileCopyOperationJob::ScanItems()
     // iterate in original filenames
     for(const auto&i: m_InitialItems)
     {
-        ScanItem(i.str(), i.str(), 0);
+        ScanItem(i.c_str(), i.c_str(), 0);
 
         if(CheckPauseOrStop()) return;
     }
@@ -487,7 +487,7 @@ void FileCopyOperationJob::ProcessItems()
 
 void FileCopyOperationJob::ProcessItem(const chained_strings::node *_node, int _number)
 {
-    assert(_node->len != 0);
+    assert(_node->size() != 0);
     
     // compose file name - reverse lookup
     char itemname[MAXPATHLEN];
@@ -505,7 +505,7 @@ void FileCopyOperationJob::ProcessFilesRemoval()
 {
     for(auto i: m_FilesToDelete)
     {
-        assert(i->str()[i->len-1] != '/'); // sanity check
+        assert(i->c_str()[i->size()-1] != '/'); // sanity check
         
         char itemname[MAXPATHLEN], path[MAXPATHLEN];
         i->str_with_pref(itemname);
@@ -520,7 +520,7 @@ void FileCopyOperationJob::ProcessFoldersRemoval()
     for(auto i = m_DirsToDelete.rbegin(); i != m_DirsToDelete.rend(); ++i)
     {
         const auto item = *i;
-        assert(item->str()[item->len-1] == '/'); // sanity check
+        assert(item->c_str()[item->size()-1] == '/'); // sanity check
         
         char itemname[MAXPATHLEN], path[MAXPATHLEN];
         item->str_with_pref(itemname);

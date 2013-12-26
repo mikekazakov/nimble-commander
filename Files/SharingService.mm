@@ -69,7 +69,7 @@ static atomic<int> g_IsCurrentlySharing(0);
         NSMutableArray *items = [NSMutableArray new];
         for(auto &i:_entries)
         {
-            string path = _dir + i.str();
+            string path = _dir + i.c_str();
             NSString *s = [NSString stringWithUTF8String:path.c_str()];
             if(s)
             {
@@ -94,7 +94,7 @@ static atomic<int> g_IsCurrentlySharing(0);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             for(auto &i:entries)
             {
-                string path = _dir + i.str();
+                string path = _dir + i.c_str();
                 struct stat st;
                 if(_host->IsDirectory(path.c_str(), 0, 0)) continue; // will skip any directories here
                 if(_host->Stat(path.c_str(), st, 0, 0) < 0) continue;

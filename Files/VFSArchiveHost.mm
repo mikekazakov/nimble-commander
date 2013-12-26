@@ -273,7 +273,7 @@ int VFSArchiveHost::CalculateDirectoriesSizes(
         char directory_path[1024];
         strcpy(directory_path, _root_path.c_str());
         if(directory_path[strlen(directory_path)-1] != '/' ) strcat(directory_path, "/");
-        strcat(directory_path, i.str());
+        strcat(directory_path, i.c_str());
         if(directory_path[strlen(directory_path)-1] != '/' ) strcat(directory_path, "/"); // need this?
         size_t directory_path_sz = strlen(directory_path);
         
@@ -291,7 +291,7 @@ int VFSArchiveHost::CalculateDirectoriesSizes(
                     if((dir_ent.st.st_mode & S_IFMT) == S_IFREG )
                         total_size += dir_ent.st.st_size;
         }
-        _completion_handler(i.str(), total_size);
+        _completion_handler(i.c_str(), total_size);
     }
 
     return VFSError::Ok;

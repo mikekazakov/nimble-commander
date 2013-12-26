@@ -223,7 +223,7 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     
     for(const auto &i: _dirs)
     {
-        memcpy(var, i.str(), i.len+1);
+        memcpy(var, i.c_str(), i.size() + 1);
         
         int64_t total_size = 0;
         
@@ -239,7 +239,7 @@ int VFSNativeHost::CalculateDirectoriesSizes(
             goto cleanup;
         
         if(result >= 0)
-            _completion_handler(i.str(), total_size);
+            _completion_handler(i.c_str(), total_size);
         else
             error = result;
     }

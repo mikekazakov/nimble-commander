@@ -76,11 +76,11 @@ void FileDeletionOperationJob::Do()
     {
         if(CheckPauseOrStop()) { SetStopped(); return; }
         
-        m_Stats.SetCurrentItem(i.str());
+        m_Stats.SetCurrentItem(i.c_str());
         
         i.str_with_pref(entryfilename_var);
         
-        DoFile(entryfilename, i.str()[i.len-1] == '/');
+        DoFile(entryfilename, i.c_str()[i.size() - 1] == '/');
     
         m_Stats.AddValue(1);
     }
@@ -98,7 +98,7 @@ void FileDeletionOperationJob::DoScan()
         if (CheckPauseOrStop()) return;
         char fn[MAXPATHLEN];
         strcpy(fn, m_RootPath);
-        strcat(fn, i.str()); // TODO: optimize me
+        strcat(fn, i.c_str()); // TODO: optimize me
         
         struct stat st;
         if(lstat(fn, &st) == 0)
@@ -106,14 +106,14 @@ void FileDeletionOperationJob::DoScan()
             if((st.st_mode&S_IFMT) == S_IFREG || (st.st_mode&S_IFMT) == S_IFLNK)
             {
                 // trivial case
-                m_ItemsToDelete.push_back(i.str(), i.len, nullptr);
+                m_ItemsToDelete.push_back(i.c_str(), i.size(), nullptr);
             }
             else if((st.st_mode&S_IFMT) == S_IFDIR)
             {
                 char tmp[MAXPATHLEN]; // i.str() + '/'
-                memcpy(tmp, i.str(), i.len);
-                tmp[i.len] = '/';
-                tmp[i.len+1] = 0;
+                memcpy(tmp, i.c_str(), i.size());
+                tmp[i.size()] = '/';
+                tmp[i.size()+1] = 0;
                 
                 // add new dir in our tree structure
                 m_Directories.push_back(tmp, nullptr);
@@ -128,7 +128,7 @@ void FileDeletionOperationJob::DoScan()
                 }
 
                 // add directory itself at the end, since we need it to be deleted last of all
-                m_ItemsToDelete.push_back(tmp, i.len+1, nullptr);
+                m_ItemsToDelete.push_back(tmp, i.size()+1, nullptr);
             }
         }
     }

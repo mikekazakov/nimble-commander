@@ -308,7 +308,7 @@
     string dir_path = pd->DirectoryPathWithTrailingSlash();
     if(pd->Stats().selected_entries_amount > 0) {
         for(auto &i: pd->StringsFromSelectedEntries())
-            [filenames addObject:[NSString stringWithUTF8String:(dir_path + i.str()).c_str()]];
+            [filenames addObject:[NSString stringWithUTF8String:(dir_path + i.c_str()).c_str()]];
     }
     else {
         auto const *item = [[self ActivePanelView] CurrentItem];
@@ -1104,13 +1104,13 @@
     if([panel GoToGlobalHostsPathSync:_path] == VFSError::Ok)
     {
         if(!_entries.empty())
-            [panel ScheduleDelayedSelectionChangeForC:_entries.front().str()
+            [panel ScheduleDelayedSelectionChangeForC:_entries.front().c_str()
                                             timeoutms:100
                                              checknow:true];
         
         PanelData *data = [self ActivePanelData];
         for(auto &i: _entries)
-            data->CustomFlagsSelectSorted(data->SortedIndexForName(i.str()), true);
+            data->CustomFlagsSelectSorted(data->SortedIndexForName(i.c_str()), true);
         
         [[self ActivePanelView] setNeedsDisplay:true];
     }

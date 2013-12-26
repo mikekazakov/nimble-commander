@@ -34,7 +34,7 @@
         if(_files.size() == 1)
         {
             self.Caption = [NSString stringWithFormat:@"Deleting \"%@\" from \"%@\"",
-                            [NSString stringWithUTF8String:_files.front().str()],
+                            [NSString stringWithUTF8String:_files.front().c_str()],
                             [NSString stringWithUTF8String:buff]];
         }
         else

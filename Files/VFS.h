@@ -17,3 +17,4 @@
 #import "VFSPath.h"
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"
+#import "VFSPSHost.h"

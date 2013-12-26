@@ -138,7 +138,7 @@ bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
     if(m_InitialItems.size() > 1)
         strcpy(arc_pref, "Archive");
     else
-        strcpy(arc_pref, m_InitialItems.front().str());
+        strcpy(arc_pref, m_InitialItems.front().c_str());
     
     sprintf(fn, "%s%s.zip", m_DstRoot, arc_pref);
     struct stat st;
@@ -165,7 +165,7 @@ void FileCompressOperationJob::ScanItems()
     // iterate in original filenames
     for(const auto&i: m_InitialItems)
     {
-        ScanItem(i.str(), i.str(), 0);
+        ScanItem(i.c_str(), i.c_str(), 0);
         
         if(CheckPauseOrStop()) return;
     }

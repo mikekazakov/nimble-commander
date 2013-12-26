@@ -57,9 +57,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         m_FastSearchLastType = 0;
         m_FastSearchOffset = 0;
         m_IsAnythingWorksInBackground = false;
-        m_DirectorySizeCountingQ = make_shared<SerialQueueT>("com.example.paneldirsizecounting");
-        m_DirectoryLoadingQ = make_shared<SerialQueueT>("com.example.paneldirsizecounting");
-        m_DirectoryReLoadingQ = make_shared<SerialQueueT>("com.example.paneldirreloading");
+        m_DirectorySizeCountingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirsizecounting");
+        m_DirectoryLoadingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirsizecounting");
+        m_DirectoryReLoadingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirreloading");
         m_DelayedSelection.isvalid = false;
         
         m_HostsStack.push_back( VFSNativeHost::SharedHost() );
@@ -837,7 +837,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     auto complet = ^(const char* _dir, uint64_t _size) {
         string dir = _dir;
         dispatch_to_main_queue(^{
-            if(m_Data->SetCalculatedSizeForDirectory(_dir, _size))
+            if(m_Data->SetCalculatedSizeForDirectory(dir.c_str(), _size))
                 [m_View setNeedsDisplay];
         });
     };

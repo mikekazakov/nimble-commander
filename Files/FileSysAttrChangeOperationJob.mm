@@ -64,7 +64,7 @@ void FileSysAttrChangeOperationJob::Do()
     
     for(auto &i: m_Files)
     {
-        m_Stats.SetCurrentItem(i.str());
+        m_Stats.SetCurrentItem(i.c_str());
         
         i.str_with_pref(entryfilename_var);
 
@@ -85,7 +85,7 @@ void FileSysAttrChangeOperationJob::ScanDirs()
     {
         char fn[MAXPATHLEN];
         strcpy(fn, m_Command->root_path);
-        strcat(fn, i.str());
+        strcat(fn, i.c_str());
         
         struct stat st;
         if(stat(fn, &st) == 0)
@@ -93,12 +93,12 @@ void FileSysAttrChangeOperationJob::ScanDirs()
             if((st.st_mode&S_IFMT) == S_IFREG)
             {
                 // trivial case
-                m_Files.push_back(i.str(), i.len, nullptr);
+                m_Files.push_back(i.c_str(), i.size(), nullptr);
             }
             else if((st.st_mode&S_IFMT) == S_IFDIR)
             {
                 char tmp[MAXPATHLEN];
-                strcpy(tmp, i.str());
+                strcpy(tmp, i.c_str());
                 strcat(tmp, "/");
                 m_Files.push_back(tmp, nullptr);
                 auto dirnode = &m_Files.back();

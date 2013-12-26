@@ -28,7 +28,7 @@
         if (_command->files.size() == 1)
         {
             self.Caption = [NSString stringWithFormat:@"Altering attributes of \"%@\"",
-                            [NSString stringWithUTF8String:_command->files.front().str()]];
+                            [NSString stringWithUTF8String:_command->files.front().c_str()]];
         }
         else
         {

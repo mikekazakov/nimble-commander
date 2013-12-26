@@ -92,7 +92,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
         if (items_amount == 1)
         {
             self.Caption = [NSString stringWithFormat:@"Copying \"%@\" to \"%@\"",
-                            [NSString stringWithUTF8String:_files.front().str()],
+                            [NSString stringWithUTF8String:_files.front().c_str()],
                             [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
         }
         else

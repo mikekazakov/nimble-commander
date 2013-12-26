@@ -57,6 +57,9 @@ chained_strings::~chained_strings()
 
 void chained_strings::push_back(const char *_str, unsigned _len, const node *_prefix)
 {
+    if(_str == nullptr)
+        throw std::exception();
+    
     if(m_Last == nullptr)
         construct();
     
@@ -68,6 +71,9 @@ void chained_strings::push_back(const char *_str, unsigned _len, const node *_pr
 
 void chained_strings::push_back(const char *_str, const node *_prefix)
 {
+    if(_str == nullptr)
+        throw std::exception();
+    
     push_back(_str, (unsigned)strlen(_str), _prefix);
 }
 
@@ -119,15 +125,19 @@ void chained_strings::grow()
 
 const chained_strings::node &chained_strings::front() const
 {
-    assert(m_Begin != nullptr);
+    if( m_Begin == nullptr)
+        throw std::exception();
+
     assert(m_Begin->amount > 0);
     return m_Begin->strings[0];
 }
 
 const chained_strings::node &chained_strings::back() const
 {
-    assert(m_Last != nullptr);
-    assert(m_Last->amount > 0);    
+    if( m_Last == nullptr)
+        throw std::exception();
+    
+    assert(m_Last->amount > 0);
     return m_Last->strings[m_Last->amount-1];
 }
 
@@ -143,7 +153,7 @@ void chained_strings::node::str_with_pref(char *_buf) const
     
     for(int i = nodes_n-1; i >= 0; --i)
     {
-        memcpy(_buf + bufsz, nodes[i]->str(), nodes[i]->len);
+        memcpy(_buf + bufsz, nodes[i]->c_str(), nodes[i]->len);
         bufsz += nodes[i]->len;
     }
     _buf[bufsz] = 0;

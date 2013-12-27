@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <random>
 #include "tests_common.h"
 #include "chained_strings.h"
 
@@ -71,13 +72,16 @@
 
 - (void)testPrefix
 {
-    const int amount = 100;
-    
+    random_device rd;
+    mt19937 mt(rd());
+    uniform_int_distribution<int> dist(0, 100000);
+
     chained_strings strings;
     const chained_strings::node *pref = nullptr;
     string predicted_string;
+    const int amount = 100;
     for(int i = 0; i < amount; ++i) {
-        string rnd = to_string(rand());
+        string rnd = to_string(dist(mt));
         
         predicted_string += rnd;
         strings.push_back(rnd, pref);

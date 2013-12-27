@@ -19,6 +19,7 @@
 #import <sys/mount.h>
 #import <unistd.h>
 #import <stdlib.h>
+#import <random>
 #import "OperationDialogAlert.h"
 #import "rdrand.h"
 #import "Common.h"
@@ -30,9 +31,13 @@ static void Randomize(unsigned char *_data, unsigned _size)
     int r = rdrand_get_bytes(_size, _data);
     if( r != RDRAND_SUCCESS)
     {
-        // fallback mode - call traditional sluggish rand()
+        // fallback mode - call traditional sluggish random
+        random_device rd;
+        mt19937 mt(rd());
+        uniform_int_distribution<unsigned char> dist(0, 255);
+
         for(unsigned i = 0; i < _size; ++i)
-            _data[i] = rand()%256;
+            _data[i] = dist(mt);
     }
 }
 

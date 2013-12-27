@@ -76,6 +76,7 @@
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
 		CF47A988186C607C00745C4C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF47A986186C607C00745C4C /* InfoPlist.strings */; };
 		CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
+		CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A996186C743A00745C4C /* VFSPS_Tests.mm */; };
 		CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47F6971830CDB30060D474 /* NewVersionChecker.mm */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */; };
@@ -413,6 +414,7 @@
 		CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files Tests-Prefix.pch"; sourceTree = "<group>"; };
 		CF47A992186C61A600745C4C /* chained_strings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chained_strings_Tests.mm; sourceTree = "<group>"; };
 		CF47A994186C663000745C4C /* tests_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests_common.h; sourceTree = "<group>"; };
+		CF47A996186C743A00745C4C /* VFSPS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPS_Tests.mm; sourceTree = "<group>"; };
 		CF47F6961830CDB30060D474 /* NewVersionChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewVersionChecker.h; sourceTree = "<group>"; };
 		CF47F6971830CDB30060D474 /* NewVersionChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NewVersionChecker.mm; sourceTree = "<group>"; };
 		CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask.mm; sourceTree = "<group>"; };
@@ -942,6 +944,7 @@
 			isa = PBXGroup;
 			children = (
 				CF47A994186C663000745C4C /* tests_common.h */,
+				CF47A996186C743A00745C4C /* VFSPS_Tests.mm */,
 				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
@@ -1637,6 +1640,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */,
 				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2102,6 +2106,7 @@
 				CF47A990186C607C00745C4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "Files" */ = {
 			isa = XCConfigurationList;

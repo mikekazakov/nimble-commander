@@ -10,9 +10,5 @@
 
 int main(int argc, char *argv[])
 {
-    // TODO: remove
-    srand((unsigned int)time(0));
-    
-    
     return NSApplicationMain(argc, (const char **)argv);
 }

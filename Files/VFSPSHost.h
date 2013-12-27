@@ -28,9 +28,15 @@ public:
     static const char *Tag;    
     virtual const char *FSTag() const override;
     
+    virtual int CreateFile(const char* _path,
+                           shared_ptr<VFSFile> *_target,
+                           bool (^_cancel_checker)()) override;    
+    
     virtual bool IsDirectory(const char *_path,
                              int _flags,
                              bool (^_cancel_checker)()) override;
+    
+    virtual int Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)()) override;
     
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> *_target,
@@ -45,6 +51,8 @@ public:
     struct ProcInfo;
     struct Snapshot;
 private:
+    int ProcIndexFromFilepath(const char *_filepath);
+    
     static vector<ProcInfo> GetProcs();
     void CommitProcs(vector<ProcInfo> _procs);
     string ProcInfoIntoFile(const ProcInfo& _info);

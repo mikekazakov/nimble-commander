@@ -97,4 +97,12 @@
     XCTAssert( predicted_string == buffer);
 }
 
+- (void)testRegressions
+{
+    chained_strings strings;
+    XCTAssert( begin(strings) == end(strings) );
+    XCTAssert( !(begin(strings) != end(strings)) );
+    
+}
+
 @end

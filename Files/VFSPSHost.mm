@@ -16,6 +16,7 @@
 #import "VFSPSHost.h"
 #import "VFSPSInternal.h"
 #import "VFSPSListing.h"
+#import "VFSPSFile.h"
 
 using namespace std;
 
@@ -135,3 +136,62 @@ bool VFSPSHost::IsDirectory(const char *_path,
     return true;
 }
 
+int VFSPSHost::CreateFile(const char* _path,
+                       shared_ptr<VFSFile> *_target,
+                       bool (^_cancel_checker)())
+{
+    if(_path == nullptr)
+        return VFSError::InvalidCall;
+    
+    auto index = ProcIndexFromFilepath(_path);
+    
+    if(index < 0)
+        return VFSError::NotFound;
+    
+    
+    auto file = make_shared<VFSPSFile>(_path, SharedPtr(), m_Data->files[index]);
+    if(_cancel_checker && _cancel_checker())
+        return VFSError::Cancelled;
+    *_target = file;
+    return VFSError::Ok;
+}
+
+int VFSPSHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
+{
+    if(_path == nullptr)
+        return VFSError::InvalidCall;
+    
+    auto index = ProcIndexFromFilepath(_path);
+    
+    if(index < 0)
+        return VFSError::NotFound;
+    
+    memset(&_st, 0, sizeof(_st));
+    _st.st_size = m_Data->files[index].length();
+    _st.st_mode = S_IFREG | S_IRUSR | S_IRGRP;
+    _st.st_mtimespec.tv_sec = m_Data->taken_time;
+    _st.st_atimespec.tv_sec = m_Data->taken_time;
+    _st.st_ctimespec.tv_sec = m_Data->taken_time;
+    _st.st_birthtimespec.tv_sec = m_Data->taken_time;
+
+    return VFSError::Ok;
+}
+
+int VFSPSHost::ProcIndexFromFilepath(const char *_filepath)
+{
+    if(_filepath == nullptr)
+        return -1;
+    
+    if(_filepath[0] != '/')
+        return -1;
+    
+    auto plain_fn = _filepath + 1;
+    
+    auto it = find(begin(m_Data->plain_filenames),
+                   end(m_Data->plain_filenames),
+                   plain_fn);
+    if(it == end(m_Data->plain_filenames))
+        return -1;
+    
+    return int(it - begin(m_Data->plain_filenames));
+}

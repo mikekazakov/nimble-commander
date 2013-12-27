@@ -102,6 +102,8 @@
 		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
 		CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
+		CF9A17CC186D9FCC00160CDB /* VFSPSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */; };
+		CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */; };
 		CF9B9BCF17BA7C68002A863A /* pref_panels_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF9B9BCE17BA7C68002A863A /* pref_panels_icon.png */; };
 		CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060317CB2DC900CB8146 /* VFSFile.mm */; };
 		CF9D060817CB3B0400CB8146 /* VFSNativeFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060617CB3B0400CB8146 /* VFSNativeFile.mm */; };
@@ -457,6 +459,10 @@
 		CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
+		CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPSFile.mm; sourceTree = "<group>"; };
+		CF9A17CB186D9FCC00160CDB /* VFSPSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSPSFile.h; sourceTree = "<group>"; };
+		CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSGenericMemReadOnlyFile.mm; sourceTree = "<group>"; };
+		CF9A17CE186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSGenericMemReadOnlyFile.h; sourceTree = "<group>"; };
 		CF9B9BCE17BA7C68002A863A /* pref_panels_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_panels_icon.png; sourceTree = "<group>"; };
 		CF9D060317CB2DC900CB8146 /* VFSFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFile.mm; sourceTree = "<group>"; };
 		CF9D060417CB2DC900CB8146 /* VFSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSFile.h; sourceTree = "<group>"; };
@@ -1175,6 +1181,8 @@
 			children = (
 				CF9D0EE117CE11C800CB8146 /* VFSSeqToRandomWrapper.mm */,
 				CF9D0EE217CE11C800CB8146 /* VFSSeqToRandomWrapper.h */,
+				CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */,
+				CF9A17CE186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.h */,
 			);
 			name = Wrapping;
 			sourceTree = "<group>";
@@ -1201,6 +1209,8 @@
 				CFF2EA09186C0C0A00BC7A63 /* VFSPSInternal.h */,
 				CFF2EA0A186C1E4C00BC7A63 /* VFSPSListing.mm */,
 				CFF2EA0B186C1E4C00BC7A63 /* VFSPSListing.h */,
+				CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */,
+				CF9A17CB186D9FCC00160CDB /* VFSPSFile.h */,
 			);
 			name = PS;
 			sourceTree = "<group>";
@@ -1778,6 +1788,7 @@
 				CF9D0E8917CC961100CB8146 /* archive_read_disk_entry_from_file.c in Sources */,
 				CF9D0ED417CC961100CB8146 /* archive_write_set_format_ustar.c in Sources */,
 				CFA0B23A1869542200501C35 /* common_paths.mm in Sources */,
+				CF9A17CC186D9FCC00160CDB /* VFSPSFile.mm in Sources */,
 				CF9D0E8517CC961100CB8146 /* archive_ppmd7.c in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
 				CF9D0ED517CC961100CB8146 /* archive_write_set_format_v7tar.c in Sources */,
@@ -1873,6 +1884,7 @@
 				CFBE65AB17B607BE00451AE7 /* PanelFastSearchPopupViewController.mm in Sources */,
 				CF9D0E8017CC961100CB8146 /* archive_entry.c in Sources */,
 				CF27414917FF04EF006D6687 /* SharingService.mm in Sources */,
+				CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

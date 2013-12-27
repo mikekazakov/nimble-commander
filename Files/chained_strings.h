@@ -73,6 +73,9 @@ public:
         {
             if(_right.current == (block *)0xDEADBEEFDEADBEEF)
             { // caller asked us if we're finished
+                if(current == nullptr)
+                    return true; // special case for empty containers
+                
                 assert(index <= current->amount);
                 return index == current->amount;
             }
@@ -84,6 +87,9 @@ public:
         {
             if(_right.current == (block *)0xDEADBEEFDEADBEEF)
             { // caller asked us if we're finished
+                if(current == nullptr)
+                    return false; // special case for empty containers
+                
                 assert(index <= current->amount);
                 return index < current->amount;
             }

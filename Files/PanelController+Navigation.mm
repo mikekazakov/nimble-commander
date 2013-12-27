@@ -13,13 +13,15 @@
 
 - (void) AsyncGoToVFSPathStack:(const VFSPathStack&)_path
                      withFlags:(int)_flags
-                      andFocus:(const char*)_filename
+                      andFocus:(string)_filename
 {
     if(!m_DirectoryLoadingQ->Empty())
         return;
+    
+    if(_path.empty())
+        return;
  
     VFSPathStack path = _path;
-    string focus = _filename ? _filename : "";
     
     m_DirectoryLoadingQ->Run(^(SerialQueue _q) {
         vector<shared_ptr<VFSHost>> current_hosts_stack = m_HostsStack;
@@ -37,14 +39,19 @@
             following = false;
             
             // process junction here
-            assert(path[pp].fs_tag == VFSArchiveHost::Tag); // we simply don't support anything else yet
-            
-            shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(path[pp-1].path.c_str(), hosts_stack.back());
-            if(arhost->Open() >= 0) {
-                hosts_stack.push_back(arhost);
+            if(path[pp].fs_tag == VFSArchiveHost::Tag)
+            {
+                shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(path[pp-1].path.c_str(), hosts_stack.back());
+                if(arhost->Open() >= 0) {
+                    hosts_stack.push_back(arhost);
+                }
+                else {
+                    break;
+                }
             }
-            else {
-                break;
+            else if(path[pp].fs_tag == VFSPSHost::Tag)
+            {
+                hosts_stack.push_back(make_shared<VFSPSHost>());
             }
         }
     
@@ -58,7 +65,7 @@
                         [m_View SavePathState];
                         m_HostsStack = hosts_stack;
                         m_Data->Load(listing);
-                        [m_View DirectoryChanged:focus.c_str()];
+                        [m_View DirectoryChanged:_filename.c_str()];
                         [self OnPathChanged:_flags];
                     });
             }

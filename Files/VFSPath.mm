@@ -6,9 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFSPath.h"
-#import "VFSListing.h"
-#import "VFSHost.h"
+#import "VFS.h"
 
 VFSPathStack VFSPathStack::CreateWithVFSListing(shared_ptr<VFSListing> _listing)
 {
@@ -37,5 +35,14 @@ VFSPathStack VFSPathStack::CreateWithVFSListing(shared_ptr<VFSListing> _listing)
     
     assert(depth == 0);
         
+    return ret;
+}
+
+VFSPathStack VFSPathStack::SecretFunction___CreateVFSPSPath()
+{
+    VFSPathStack ret;
+    ret.m_Path.resize(1);
+    ret.m_Path[0].fs_tag = VFSPSHost::Tag;
+    ret.m_Path[0].path = "/";
     return ret;
 }

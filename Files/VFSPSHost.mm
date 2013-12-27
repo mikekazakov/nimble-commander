@@ -124,3 +124,14 @@ int VFSPSHost::FetchDirectoryListing(const char *_path,
 
     return VFSError::Ok;
 }
+
+bool VFSPSHost::IsDirectory(const char *_path,
+                         int _flags,
+                         bool (^_cancel_checker)())
+{
+    if(_path == 0 ||
+       strcmp(_path, "/") != 0)
+        return false;
+    return true;
+}
+

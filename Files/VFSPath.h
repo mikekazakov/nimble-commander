@@ -38,6 +38,8 @@ public:
     };
     
     static VFSPathStack CreateWithVFSListing(shared_ptr<VFSListing> _listing);
+    static VFSPathStack SecretFunction___CreateVFSPSPath();
+    
     
     inline bool operator==(const VFSPathStack& _r) const {
         return m_Path == _r.m_Path;
@@ -46,6 +48,7 @@ public:
         return m_Path != _r.m_Path;
     }
     const Part& operator[](size_t _n) const { return m_Path[_n]; }
+    inline bool empty() const {return m_Path.empty(); }
     inline size_t size() const { return m_Path.size(); }
     const Part& back() const { return m_Path.back(); }
 private:

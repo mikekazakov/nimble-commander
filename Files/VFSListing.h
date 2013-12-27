@@ -105,8 +105,8 @@ public:
     InvalidSize = (0xFFFFFFFFFFFFFFFFu)
     };
 private:
-    unsigned int   cflags;
-    unsigned short cicon;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
+    unsigned int   cflags = 0;
+    unsigned short cicon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
 }; // 8 + 4 + 2 bytes = 14 total
 
 // hold an items listing

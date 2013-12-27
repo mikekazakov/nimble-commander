@@ -12,7 +12,7 @@
 
 - (void) AsyncGoToVFSPathStack:(const VFSPathStack&)_path
                      withFlags:(int)_flags
-                      andFocus:(const char*)_filename;
+                      andFocus:(string)_filename;
 
 - (void) OnGoBack;
 - (void) OnGoForward;

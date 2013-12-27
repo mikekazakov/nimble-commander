@@ -28,6 +28,10 @@ public:
     static const char *Tag;    
     virtual const char *FSTag() const override;
     
+    virtual bool IsDirectory(const char *_path,
+                             int _flags,
+                             bool (^_cancel_checker)()) override;
+    
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> *_target,
                                       int _flags,

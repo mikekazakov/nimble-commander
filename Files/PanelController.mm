@@ -789,6 +789,16 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         m_QuickLook = nil;
         return true;
     }
+    if(keycode == 35 ) // 'P' button
+    {
+        NSUInteger modif = [event modifierFlags];
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
+        {
+            auto path = VFSPathStack::SecretFunction___CreateVFSPSPath();
+            [self AsyncGoToVFSPathStack:path withFlags:0 andFocus:""];
+            return true;
+        }
+    }
     
     // handle RETURN manually, to prevent annoying by menu highlighting by hotkey
     if(unicode == NSCarriageReturnCharacter) {

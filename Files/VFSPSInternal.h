@@ -35,6 +35,7 @@ struct VFSPSHost::ProcInfo
 
 struct VFSPSHost::Snapshot
 {
+    time_t           taken_time;
     vector<ProcInfo> procs;
     vector<string>   files;
     

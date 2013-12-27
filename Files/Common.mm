@@ -243,27 +243,27 @@ int GetFileSystemRootFromPath(const char *_path, char *_root)
     return errno;
 }
 
-void EjectVolumeContainingPath(const char *_path)
+void EjectVolumeContainingPath(string _path)
 {
-    char root[MAXPATHLEN];
-    
-    if(GetFileSystemRootFromPath(_path, root) == 0)
-    {
-        DASessionRef session = DASessionCreate(kCFAllocatorDefault);
-        
-        CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8 *)root, strlen(_path), true);
-        if(url)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        char root[MAXPATHLEN];
+        if(GetFileSystemRootFromPath(_path.c_str(), root) == 0)
         {
-            DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
-            if(disk)
+            DASessionRef session = DASessionCreate(kCFAllocatorDefault);        
+            CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8 *)root, strlen(root), true);
+            if(url)
             {
-                DADiskUnmount(disk, kDADiskUnmountOptionDefault, NULL, NULL);
-                CFRelease(disk);
+                DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
+                if(disk)
+                {
+                    DADiskUnmount(disk, kDADiskUnmountOptionDefault, NULL, NULL);
+                    CFRelease(disk);
+                }
+                CFRelease(url);
             }
-            CFRelease(url);
+            CFRelease(session);
         }
-        CFRelease(session);
-    }
+    });
 }
 
 bool IsVolumeContainingPathEjectable(const char *_path)

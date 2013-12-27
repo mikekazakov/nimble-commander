@@ -95,6 +95,7 @@ void VFSPSHost::CommitProcs(vector<ProcInfo> _procs)
 {
     auto newdata = make_shared<Snapshot>();
     
+    newdata->taken_time = [[NSDate date] timeIntervalSince1970];
     newdata->procs = _procs;
     
     for(auto &i: newdata->procs)

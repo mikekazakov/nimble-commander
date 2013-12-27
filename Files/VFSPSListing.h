@@ -22,15 +22,23 @@ struct VFSPSListingItem : VFSListingItem
         return data->plain_filenames[index].c_str();
     }
     
-    virtual CFStringRef     CFName()    const override {
-        return cf_name;
-    }
-    
     virtual size_t          NameLen()   const override {
         return data->plain_filenames[index].length();
     }
     
+    virtual CFStringRef     CFName()    const override {
+        return cf_name;
+    }
     
+    virtual uint64_t        Size()      const override {
+        return data->files[index].size();
+    }
+    
+    virtual time_t          ATime()     const override { return data->taken_time; }
+    virtual time_t          MTime()     const override { return data->taken_time; }
+    virtual time_t          CTime()     const override { return data->taken_time; }
+    virtual time_t          BTime()     const override { return data->taken_time; }
+    virtual mode_t          UnixMode()  const override { return S_IFREG | S_IRUSR | S_IRGRP; }
     
     inline void Destroy()
     {

@@ -1021,10 +1021,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void)OnEjectButton:(id)sender
 {
-    string path = m_Data->DirectoryPathWithoutTrailingSlash();
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        EjectVolumeContainingPath(path.c_str());
-    });
+    if(m_Data)
+        EjectVolumeContainingPath(m_Data->DirectoryPathWithoutTrailingSlash());
 }
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select

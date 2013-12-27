@@ -563,9 +563,13 @@ bool PanelData::FindSuitableEntries(CFStringRef _prefix, unsigned _desired_offse
     return true;
 }
 
-bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size)
+bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)
 {
-    assert(_size != VFSListingItem::InvalidSize);
+    if(_entry    == nullptr ||
+       _entry[0] == 0       ||
+       _size == VFSListingItem::InvalidSize )
+        return false;
+    
     int n = RawIndexForName(_entry);
     if(n >= 0)
     {

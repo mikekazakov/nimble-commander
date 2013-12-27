@@ -832,38 +832,22 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) HandleCalculateSizes
 {
-    string dir = m_Data->DirectoryPathWithTrailingSlash();
-
-    auto complet = ^(const char* _dir, uint64_t _size) {
-        string dir = _dir;
+    auto complet = ^(const char* _sub_dir, uint64_t _size) {
+        string sub_dir = _sub_dir;
         dispatch_to_main_queue(^{
-            if(m_Data->SetCalculatedSizeForDirectory(dir.c_str(), _size))
+            if(m_Data->SetCalculatedSizeForDirectory(sub_dir.c_str(), _size))
                 [m_View setNeedsDisplay];
         });
     };
     
-    void (^block)(SerialQueue _q);
-    if(m_Data->Stats().selected_entries_amount) {
-        __block auto files = m_Data->StringsFromSelectedEntries();
-        block = ^(SerialQueue _q){
-            m_HostsStack.back()->CalculateDirectoriesSizes(move(files), dir, ^bool { return _q->IsStopped(); }, complet);
-        };
-    }
-    else {
-        if(auto const *item = [m_View CurrentItem]) {
-            if(item->IsDotDot())
-                block = ^(SerialQueue _q){
-                    m_HostsStack.back()->CalculateDirectoryDotDotSize(dir, ^bool { return _q->IsStopped(); }, complet);
-                };
-            else {
-                __block auto files = chained_strings(item->Name());
-                block = ^(SerialQueue _q){
-                    m_HostsStack.back()->CalculateDirectoriesSizes(move(files), dir, ^bool { return _q->IsStopped();  }, complet);
-                };
-            }
-        }
-    }
-    m_DirectoryReLoadingQ->Run(block);
+    string current_dir = m_Data->DirectoryPathWithTrailingSlash();    
+    __block auto sub_dir_names = self.GetSelectedEntriesOrFocusedEntryWithDotDot;
+    m_DirectorySizeCountingQ->Run( ^(SerialQueue _q){
+        m_HostsStack.back()->CalculateDirectoriesSizes(move(sub_dir_names),
+                                                       current_dir,
+                                                       ^bool { return _q->IsStopped(); },
+                                                       complet);
+    });
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed

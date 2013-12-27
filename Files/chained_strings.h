@@ -111,11 +111,11 @@ public:
     void push_back(const char *_str, const node *_prefix);
     void push_back(const string& _str, const node *_prefix);
 
-    const node &front() const;
-    const node &back() const;
-    bool empty() const;
-    unsigned size() const; // linear(!) time
-
+    const node &front() const; // O(1)
+    const node &back() const;  // O(1)
+    bool empty() const;        // O(1)
+    unsigned size() const;     // O(N) linear(!) time, N - number of blocks
+    bool singleblock() const;  // O(1)
     
     void swap(chained_strings &_rhs);
     void swap(chained_strings &&_rhs);

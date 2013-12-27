@@ -48,6 +48,24 @@
     }
 }
 
+- (chained_strings) GetSelectedEntriesOrFocusedEntryWithDotDot
+{
+    if(!m_Data || !m_View)
+        return chained_strings();
+    
+    if(m_Data->Stats().selected_entries_amount)
+    {
+        return m_Data->StringsFromSelectedEntries();
+    }
+    else
+    {
+        if(auto item = [m_View CurrentItem])
+            return chained_strings(item->Name());
+        
+        return chained_strings();
+    }
+}
+
 - (string) GetCurrentDirectoryPathRelativeToHost
 {
     if(!m_Data)

@@ -26,6 +26,7 @@
     XCTAssertCPPThrows( strings.push_back(nullptr, 0, nullptr) );
     XCTAssertCPPThrows( strings.push_back(nullptr, nullptr) );
     XCTAssert( strings.empty() == true );
+    XCTAssert( strings.singleblock() == false );
     
     string str("hello");
     strings.push_back(str, nullptr);
@@ -33,7 +34,8 @@
     XCTAssert( strings.size() == 1);
     XCTAssert( str == strings.front().c_str() );
     XCTAssert( str == strings.back().c_str() );
-
+    XCTAssert( strings.singleblock() == true );
+    
     for(auto i: strings)
         XCTAssert( str == i.c_str() );
     
@@ -61,6 +63,7 @@
     for(int i = 0; i < amount; ++i)
         strings.push_back(str, nullptr);
     
+    XCTAssert( strings.singleblock() == false );    
     XCTAssert( strings.size() == amount );
     
     unsigned total_sz = 0;

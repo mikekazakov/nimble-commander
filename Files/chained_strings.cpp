@@ -175,6 +175,12 @@ unsigned chained_strings::size() const
     return stock;
 }
 
+bool chained_strings::singleblock() const
+{
+    return m_Begin != nullptr &&
+           m_Begin == m_Last;
+}
+
 void chained_strings::swap(chained_strings &_rhs)
 {
     ::swap(m_Begin, _rhs.m_Begin);

@@ -31,9 +31,14 @@
  * Return a list of selected entries if any.
  * If no entries is selected - return currently selected element if it is not dot-dot.
  * If it is dot-dot returns 0.
- * Caller is responsible for deallocation returned value.
  */
 - (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot;
+
+/**
+ * Return a list of selected entries if any.
+ * If no entries is selected - return currently selected element.
+ */
+- (chained_strings) GetSelectedEntriesOrFocusedEntryWithDotDot;
 
 /**
  * Return current (topmost in vfs stack) VFS Host.

@@ -89,7 +89,7 @@ struct PanelDataStatistics
 
 /**
  * PanelData actually does the following things:
- * - sorting data
+ * - sorting provided data
  * - handling reloading with preserving of custom entries data
  * - searching
  * - paths accessing
@@ -193,7 +193,12 @@ public:
     void CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id);
     void CustomIconClearAll();
     
-    bool SetCalculatedSizeForDirectory(const char *_entry, unsigned long _size); // return true if changed something
+    /**
+     * Searches for _entry using binary search with case-sensitive comparison,
+     * return true if changed something, false otherwise.
+     * _size should be less than uint64_t(-1).
+     */
+    bool SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size);
 private:    
     PanelData(const PanelData&) = delete;
     void operator=(const PanelData&) = delete;

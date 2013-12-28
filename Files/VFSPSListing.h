@@ -40,6 +40,12 @@ struct VFSPSListingItem : VFSListingItem
     virtual time_t          BTime()     const override { return data->taken_time; }
     virtual mode_t          UnixMode()  const override { return S_IFREG | S_IRUSR | S_IRGRP; }
     
+    
+    virtual bool            HasExtension() const { return true; }
+//    virtual unsigned short  ExtensionOffset() const { return 0; }
+    virtual const char*     Extension() const { return "txt"; }
+    
+    
     inline void Destroy()
     {
         if(cf_name != 0)

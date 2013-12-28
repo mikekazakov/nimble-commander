@@ -25,9 +25,9 @@
     //    int a =10;
     for(auto &i: *list)
     {
-        if(string("0 - kernel_task") == i.Name())
+        if(string("0 - kernel_task.txt") == i.Name())
             has_kernel_task = true;
-        if(string("1 - launchd") == i.Name())
+        if(string("1 - launchd.txt") == i.Name())
             has_launchd = true;
     }
 

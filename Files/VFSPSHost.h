@@ -43,21 +43,29 @@ public:
                                       int _flags,
                                       bool (^_cancel_checker)()) override;
     
+    virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
+    virtual void StopDirChangeObserving(unsigned long _ticket) override;
+    
     shared_ptr<const VFSPSHost> SharedPtr() const {return static_pointer_cast<const VFSPSHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSPSHost> SharedPtr() {return static_pointer_cast<VFSPSHost>(VFSHost::SharedPtr());}
     
-    
-    void UpdateCycle();
     struct ProcInfo;
     struct Snapshot;
 private:
+    void UpdateCycle();
+    void EnsureUpdateRunning();
     int ProcIndexFromFilepath(const char *_filepath);
+    
+    
     
     static vector<ProcInfo> GetProcs();
     void CommitProcs(vector<ProcInfo> _procs);
-    string ProcInfoIntoFile(const ProcInfo& _info);
+    static string ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _data);
     
     
     shared_ptr<Snapshot> m_Data;
+    vector<pair<unsigned long, void (^)()> > m_UpdateHandlers;
+    unsigned long       m_LastTicket = 1;
     SerialQueue         m_UpdateQ;
+    bool                m_UpdateStarted = false;
 };

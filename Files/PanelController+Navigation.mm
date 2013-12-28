@@ -39,7 +39,13 @@
             following = false;
             
             // process junction here
-            if(path[pp].fs_tag == VFSArchiveHost::Tag)
+            auto &part = path[pp];
+            
+            if(part.fs_tag == VFSNativeHost::Tag)
+                hosts_stack.push_back(make_shared<VFSNativeHost>());
+            else if(part.fs_tag == VFSPSHost::Tag)
+                hosts_stack.push_back(make_shared<VFSPSHost>());
+            else if(part.fs_tag == VFSArchiveHost::Tag)
             {
                 shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(path[pp-1].path.c_str(), hosts_stack.back());
                 if(arhost->Open() >= 0) {
@@ -48,10 +54,6 @@
                 else {
                     break;
                 }
-            }
-            else if(path[pp].fs_tag == VFSPSHost::Tag)
-            {
-                hosts_stack.push_back(make_shared<VFSPSHost>());
             }
         }
     

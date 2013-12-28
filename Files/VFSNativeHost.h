@@ -15,6 +15,7 @@ class VFSNativeHost : public VFSHost
 public:
     VFSNativeHost();
     
+    static const char *Tag;    
     virtual const char *FSTag() const override;
     
     virtual bool IsWriteable() const override;

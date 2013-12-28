@@ -31,6 +31,8 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
+const char *VFSNativeHost::Tag = "native";
+
 VFSNativeHost::VFSNativeHost():
     VFSHost("", 0)
 {
@@ -38,7 +40,7 @@ VFSNativeHost::VFSNativeHost():
 
 const char *VFSNativeHost::FSTag() const
 {
-    return "native";
+    return Tag;
 }
 
 int VFSNativeHost::FetchDirectoryListing(const char *_path,

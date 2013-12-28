@@ -35,9 +35,9 @@ public:
     virtual ~VFSHost();
     
     enum {
-        F_Default  = 0,
-        F_NoFollow = 1 << 0, // do not follow symlinks when resolving item name
-        F_NoDotDot = 1 << 1  // don't fetch dot-dot entry in directory listing
+        F_Default  = 0b0000,
+        F_NoFollow = 0b0001, // do not follow symlinks when resolving item name
+        F_NoDotDot = 0b0010  // don't fetch dot-dot entry in directory listing
     };
     
     

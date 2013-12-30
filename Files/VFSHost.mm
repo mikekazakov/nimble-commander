@@ -103,6 +103,8 @@ int VFSHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cance
 
 int VFSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(dirent &_dirent))
 {
+    // TODO: write a default implementation using listing fetching.
+    // it will be less efficient, but for some FS like PS it will be ok
     return VFSError::NotSupported;
 }
 

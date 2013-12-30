@@ -73,6 +73,7 @@ static cpu_type_t ArchTypeFromPID(pid_t _pid)
         if (err == 0)
             return cpuType;
     }
+    
     return 0;
 }
 

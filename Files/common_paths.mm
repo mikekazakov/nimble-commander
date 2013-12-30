@@ -18,19 +18,19 @@ string CommonPaths::Get(CommonPaths::Path _path)
         case Documents:
         {
             NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
-            return [[paths objectAtIndex:0] fileSystemRepresentation];
+            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
         }
             
         case Desktop:
         {
             NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask];
-            return [[paths objectAtIndex:0] fileSystemRepresentation];
+            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
         }
             
         case Downloads:
         {
             NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask];
-            return [[paths objectAtIndex:0] fileSystemRepresentation];
+            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
         }
             
         case Applications:
@@ -42,25 +42,25 @@ string CommonPaths::Get(CommonPaths::Path _path)
         case Library:
         {
             NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask];
-            return [[paths objectAtIndex:0] fileSystemRepresentation];            
+            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
         }
         
         case Movies:
         {
             NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMoviesDirectory inDomains:NSUserDomainMask];
-            return [[paths objectAtIndex:0] fileSystemRepresentation];
+            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
         }
         
         case Music:
         {
             NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMusicDirectory inDomains:NSUserDomainMask];
-            return [[paths objectAtIndex:0] fileSystemRepresentation];
+            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
         }
             
         case Pictures:
         {
             NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSPicturesDirectory inDomains:NSUserDomainMask];
-            return [[paths objectAtIndex:0] fileSystemRepresentation];
+            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
         }
     }
     return "";

@@ -246,16 +246,16 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
         NSError *error;
         NSString *name;
         [url getResourceValue:&name forKey:NSURLLocalizedNameKey error:&error];
-        [self addItemWithTitle:name];
-        
-        NSMenuItem *last = [self lastItem];
-        
+        NSMenuItem *menuitem = [NSMenuItem new];
+        [menuitem setTitle:name];
+        [[self menu] addItem:menuitem];
+
         NSImage *img;
         [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error];
         if(img != nil)
         {
             [img setSize:NSMakeSize(icon_size, icon_size)];
-            [last setImage:img];
+            [menuitem setImage:img];
         }
         
         if(m_CurrentPath != nil)
@@ -264,12 +264,12 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
             if(n > common_path_max)
             {
                 common_path_max = n;
-                common_item = [self itemWithTitle:name];
+                common_item = menuitem;
             }
         }
 
-        [last setKeyEquivalent:KeyEquivalentForUserDir(userdir_ind)];
-        [last setKeyEquivalentModifierMask:0];
+        [menuitem setKeyEquivalent:KeyEquivalentForUserDir(userdir_ind)];
+        [menuitem setKeyEquivalentModifierMask:0];
         ++userdir_ind;
     }
 
@@ -280,14 +280,16 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
         NSError *error;
         NSString *volumeName;
         [url getResourceValue:&volumeName forKey:NSURLVolumeNameKey error:&error];
-        [self addItemWithTitle:volumeName];
+        NSMenuItem *menuitem = [NSMenuItem new];
+        [menuitem setTitle:volumeName];
+        [[self menu] addItem:menuitem];
         
         NSImage *img;
         [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error];
         if(img != nil)
         {
             [img setSize:NSMakeSize(icon_size, icon_size)];
-            [[self lastItem] setImage:img];
+            [menuitem setImage:img];
         }
         
         if(m_CurrentPath != nil)
@@ -296,7 +298,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
             if(n > common_path_max)
             {
                 common_path_max = n;
-                common_item = [self itemWithTitle:volumeName];                
+                common_item = menuitem;
             }
         }
     }
@@ -305,7 +307,11 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     {
         [[self menu] addItem:[NSMenuItem separatorItem]];
         for(const auto &i: m_OtherPanelsPaths)
-            [self addItemWithTitle:i.visible_path];
+        {
+            NSMenuItem *menuitem = [NSMenuItem new];
+            [menuitem setTitle:i.visible_path];
+            [[self menu] addItem:menuitem];
+        }
     }
     
     if(common_item != nil)

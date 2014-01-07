@@ -12,7 +12,7 @@ static inline PanelSortMode DefaultSortMode()
     PanelSortMode mode;
     mode.sep_dirs = true;
     mode.sort = PanelSortMode::SortByName;
-    mode.show_hidden = false;
+//    mode.show_hidden = false;
     return mode;
     
 }
@@ -20,7 +20,7 @@ static inline PanelSortMode DefaultSortMode()
 static inline PanelSortMode RawSort()
 {
     PanelSortMode sort;
-    sort.show_hidden = true;
+//    sort.show_hidden = true;
     sort.numeric_sort = false;
     sort.sort = PanelSortMode::SortByRawCName;
     sort.sep_dirs = false;
@@ -39,7 +39,7 @@ PanelSortMode PanelData::HumanSort() const
     PanelSortMode mode;
     mode.sep_dirs = false;
     mode.sort = PanelSortMode::SortByName;
-    mode.show_hidden = m_CustomSortMode.show_hidden;
+//    mode.show_hidden = m_CustomSortMode.show_hidden;
     mode.case_sens = false;
     mode.numeric_sort = false;
     return mode;
@@ -51,8 +51,11 @@ void PanelData::Load(shared_ptr<VFSListing> _listing)
     
     // now sort our new data
     m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByRawName,    RawSort());        });
-    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName,  HumanSort());      });
-    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
+//    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName,  HumanSort());      });
+    m_SortExecGroup.Run(^{
+//      DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode);
+        DoSortWithHardFiltering(m_Listing, m_EntriesByCustomSort, m_EntriesShownFlags, m_CustomSortMode, m_HardFiltering);
+    });
     m_SortExecGroup.Wait();
     
     // update stats
@@ -100,9 +103,10 @@ void PanelData::ReLoad(shared_ptr<VFSListing> _listing)
     m_EntriesByRawName.swap(dirbyrawcname);
     
     // now sort our new data with custom sortings
-    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName, HumanSort());        });
-    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode);  });
-    m_SortExecGroup.Wait();
+//    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName, HumanSort());        });
+//    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode);  });
+//    m_SortExecGroup.Wait();
+    DoSortWithHardFiltering(m_Listing, m_EntriesByCustomSort, m_EntriesShownFlags, m_CustomSortMode, m_HardFiltering);
     
     // update stats
     UpdateStatictics();
@@ -346,11 +350,11 @@ void PanelData::DoSort(shared_ptr<VFSListing> _from, PanelData::DirSortIndT &_to
         return;
     }
   
-    if(_mode.show_hidden) {
+//    if(_mode.show_hidden) {
         _to.resize(_from->Count());
         unsigned index = 0;
         generate( begin(_to), end(_to), [&]{return index++;} );
-    }
+/*    }
     else {
         _to.clear();
         int size = _from->Count();
@@ -358,7 +362,7 @@ void PanelData::DoSort(shared_ptr<VFSListing> _from, PanelData::DirSortIndT &_to
             if( !(*_from)[i].IsHidden())
                 _to.push_back(i);
         // now have only elements that are not hidden
-    }
+    }*/
     
     if(_mode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
@@ -372,7 +376,7 @@ void PanelData::DoSort(shared_ptr<VFSListing> _from, PanelData::DirSortIndT &_to
 
 void PanelData::SetCustomSortMode(PanelSortMode _mode)
 {
-    if(m_CustomSortMode != _mode)
+/*    if(m_CustomSortMode != _mode)
     {
         if(m_CustomSortMode.show_hidden == _mode.show_hidden)
         {
@@ -391,15 +395,31 @@ void PanelData::SetCustomSortMode(PanelSortMode _mode)
             
             UpdateStatictics(); // we need to update statistics since some selected enties may become invisible and hence should be deselected
         }
-    }
+    }*/
+    if(m_CustomSortMode == _mode)
+        return;
+    
+    m_CustomSortMode = _mode;
+    DoSortWithHardFiltering(m_Listing,
+                            m_EntriesByCustomSort,
+                            m_EntriesShownFlags,
+                            m_CustomSortMode,
+                            m_HardFiltering);
+    
+//    UpdateStatictics();
 }
 
 // need to call UpdateStatictics() after this method since we alter selected set
 void PanelData::ClearSelectedFlagsFromHiddenElements()
 {
-    for(auto &i: *m_Listing)
+/*    for(auto &i: *m_Listing)
         if(i.IsHidden() && i.CFIsSelected())
-            i.UnsetCFlag(VFSListingItem::Flags::Selected);
+            i.UnsetCFlag(VFSListingItem::Flags::Selected);*/
+    int s = m_Listing->Count();
+    for(int i =0; i < s; ++i)
+        if(m_EntriesShownFlags[i] == false &&
+           (*m_Listing)[i].CFIsSelected() )
+            (*m_Listing)[i].UnsetCFlag(VFSListingItem::Flags::Selected);
 }
 
 PanelSortMode PanelData::GetCustomSortMode() const
@@ -633,4 +653,88 @@ int PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, b
     }
     
     return counter;
+}
+
+void PanelData::SetHardFiltering(PanelDataHardFiltering _filter)
+{
+    if(m_HardFiltering == _filter)
+        return;
+    
+    m_HardFiltering = _filter;
+    
+    DoSortWithHardFiltering(m_Listing,
+                            m_EntriesByCustomSort,
+                            m_EntriesShownFlags,
+                            m_CustomSortMode,
+                            m_HardFiltering);
+    
+    ClearSelectedFlagsFromHiddenElements();
+    UpdateStatictics();
+}
+
+bool PanelDataTextFiltering::IsValidItem(const VFSListingItem& _item) const
+{
+    if(text == nil)
+        return true;
+    
+    if(_item.IsDotDot())
+        return true; // never filter out the Holy Dot-Dot directory!
+    
+    if(type == Anywhere)
+    {
+//        NSLog(@"%@", _item.CFName());
+        auto r = [(__bridge NSString*) _item.CFName() rangeOfString:text
+                                                            options:NSCaseInsensitiveSearch];
+        return r.location != NSNotFound;
+    }
+    else
+        return false;
+    
+    /* some processing here */
+    return true;
+}
+
+bool PanelDataHardFiltering::IsValidItem(const VFSListingItem& _item) const
+{
+    if(show_hidden == false && _item.IsHidden())
+        return false;
+    
+    return text.IsValidItem(_item);
+}
+
+void PanelData::DoSortWithHardFiltering(shared_ptr<VFSListing> _from,
+                                    DirSortIndT &_to,
+                                    vector<bool> &_shown_flags,
+                                    PanelSortMode _mode,
+                                    PanelDataHardFiltering _filtering)
+{
+    _to.clear();
+    
+    int size = _from->Count();
+    
+    if(size == 0)
+        return;
+
+    _to.reserve(size);
+    _shown_flags.resize(size, true);
+    
+    for(int i = 0; i < size; ++i)
+        if( _filtering.IsValidItem((*_from)[i]) )
+            _to.push_back(i);
+        else
+            _shown_flags[i] = false;
+
+    if(_to.empty() ||
+       _mode.sort == PanelSortMode::SortNoSort)
+        return; // we're already done
+    
+    SortPredLess pred(_from, _mode);
+    DirSortIndT::iterator start = begin(_to);
+    
+    // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
+    // also assume that no filtering will exclude dotdot dir
+    if( (*_from)[0].IsDotDot() )
+        start++;
+    
+    sort(start, end(_to), pred);
 }

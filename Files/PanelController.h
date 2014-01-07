@@ -129,8 +129,10 @@ struct PanelControllerNavigation
 - (void) ToggleFullViewMode; // user pressed ctrl+3 by default
 - (void) ToggleWideViewMode; // user pressed ctrl+4 by default
 
+// refactor me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 - (PanelViewType) GetViewType;
 - (PanelSortMode) GetUserSortMode;
+- (PanelDataHardFiltering) GetUserHardFiltering;
 
 - (void) RefreshDirectory; // user pressed cmd+r by default
 

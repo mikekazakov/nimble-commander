@@ -83,7 +83,7 @@ public:
     virtual bool            IsReg()     const { return true;  }
     virtual bool            IsSymlink() const { return false; }
     virtual bool            IsDotDot()  const { return strcmp(Name(), "..") == 0; }
-    virtual bool            IsHidden()  const { return Name()[0]=='.'; }
+    virtual bool            IsHidden()  const { return Name()[0]=='.' && !IsDotDot(); }
     virtual bool            HasExtension() const { return false; }
     virtual unsigned short  ExtensionOffset() const { return 0; }
     virtual const char*     Extension() const { return 0; }

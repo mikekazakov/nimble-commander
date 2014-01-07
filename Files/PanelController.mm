@@ -106,7 +106,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     PanelSortMode mode = m_Data->GetCustomSortMode();
     
     mode.sep_dirs = [[_state valueForKey:@"SeparateDirectories"] boolValue];
-    mode.show_hidden = [[_state valueForKey:@"ViewHiddenFiles"] boolValue];
+    
+//    mode.show_hidden = [[_state valueForKey:@"ViewHiddenFiles"] boolValue];
+    
     mode.case_sens = [[_state valueForKey:@"CaseSensitiveComparison"] boolValue];
     mode.numeric_sort = [[_state valueForKey:@"NumericSort"] boolValue];
     mode.sort = (PanelSortMode::Mode)[[_state valueForKey:@"SortMode"] integerValue];
@@ -122,7 +124,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
-        [NSNumber numberWithBool:(mode.show_hidden != false)], @"ViewHiddenFiles",
+            
+//        [NSNumber numberWithBool:(mode.show_hidden != false)], @"ViewHiddenFiles",
+            
         [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
         [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
         [NSNumber numberWithInt:(int)[m_View GetCurrentViewType]], @"ViewMode",
@@ -155,6 +159,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     }
 }
 
+// REFACTOR ME!!!!
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode
 {
     int curpos = [m_View GetCursorPosition];
@@ -183,6 +188,34 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     [m_View setNeedsDisplay:true];
 }
 
+- (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter
+{
+    int curpos = [m_View GetCursorPosition];
+    if(curpos >= 0)
+    {
+        int rawpos = m_Data->SortedDirectoryEntries()[curpos];
+        m_Data->SetHardFiltering(_filter);
+        int newcurpos = m_Data->SortedIndexForRawIndex(rawpos);
+        if(newcurpos >= 0)
+        {
+            [m_View SetCursorPosition:newcurpos];
+        }
+        else
+        {
+            // there's no such element in this representation
+            if(curpos < m_Data->SortedDirectoryEntries().size())
+                [m_View SetCursorPosition:curpos];
+            else
+                [m_View SetCursorPosition:(int)m_Data->SortedDirectoryEntries().size()-1];
+        }
+    }
+    else
+    {
+        m_Data->SetHardFiltering(_filter);
+    }
+    [m_View setNeedsDisplay:true];
+}
+
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev
 {
     PanelSortMode mode = m_Data->GetCustomSortMode(); // we don't want to change anything in sort params except the mode itself
@@ -193,9 +226,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) ToggleViewHiddenFiles
 {
-    PanelSortMode mode = m_Data->GetCustomSortMode();
-    mode.show_hidden = !mode.show_hidden;
-    [self ChangeSortingModeTo:mode];    
+//    PanelSortMode mode = m_Data->GetCustomSortMode();
+//    mode.show_hidden = !mode.show_hidden;
+//    [self ChangeSortingModeTo:mode];
+    auto filtering = m_Data->HardFiltering();
+    filtering.show_hidden = !filtering.show_hidden;
+    [self ChangeHardFilteringTo:filtering];
 }
 
 - (void) ToggleSeparateFoldersFromFiles
@@ -956,6 +992,11 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (PanelSortMode) GetUserSortMode
 {
     return m_Data->GetCustomSortMode();
+}
+
+- (PanelDataHardFiltering) GetUserHardFiltering
+{
+    return m_Data->HardFiltering();
 }
 
 - (void) RecoverFromInvalidDirectory

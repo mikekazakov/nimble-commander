@@ -31,14 +31,18 @@ struct PanelSortMode
     
     Mode sort;
     bool sep_dirs;      // separate directories from files, like win-like
-    bool show_hidden;   // shown hidden files (which are: begining with "." or having hidden flag)
+
+    // move me to filtering
+//    bool show_hidden;   // shown hidden files (which are: begining with "." or having hidden flag)
+    
+    
     bool case_sens;     // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
     bool numeric_sort;  // try to treat filenames as numbers and use them as compare basis
     
     inline PanelSortMode():
         sort(SortByRawCName),
         sep_dirs(false),
-        show_hidden(true),
+//        show_hidden(true),
         case_sens(false),
         numeric_sort(false)
     {}
@@ -53,11 +57,74 @@ struct PanelSortMode
     }
     inline bool operator ==(const PanelSortMode& _r) const
     {
-        return sort == _r.sort && sep_dirs == _r.sep_dirs && show_hidden == _r.show_hidden && case_sens == _r.case_sens && numeric_sort == _r.numeric_sort;
+        return sort == _r.sort && sep_dirs == _r.sep_dirs && /*show_hidden == _r.show_hidden &&*/ case_sens == _r.case_sens && numeric_sort == _r.numeric_sort;
     }
     inline bool operator !=(const PanelSortMode& _r) const
     {
         return !(*this == _r);
+    }
+};
+
+struct PanelDataTextFiltering
+{
+    enum WhereEnum
+    {
+        Anywhere            = 0,
+        Beginning           = 1,
+        Ending              = 2, // handling extensions somehow
+        BeginningOrEnding   = 3
+    };
+    
+    WhereEnum type = Anywhere;
+    NSString *text = nil;
+    
+    inline bool operator==(const PanelDataTextFiltering& _r) const
+    {
+        if(type != _r.type)
+            return false;
+        
+        if(text == nil && _r.text != nil)
+            return false;
+        
+        if(text != nil && _r.text == nil)
+            return false;
+        
+        if(text == nil && _r.text == nil)
+            return true;
+        
+        return [text isEqualToString:_r.text]; // no decomposion here
+    }
+    
+    inline bool operator!=(const PanelDataTextFiltering& _r) const
+    {
+        return !(*this == _r);
+    }
+    
+    inline static PanelDataTextFiltering NoFiltering()
+    {
+        PanelDataTextFiltering filter;
+        filter.type = Anywhere;
+        filter.text = nil;
+        return filter;
+    }
+    
+    bool IsValidItem(const VFSListingItem& _item) const;
+};
+
+struct PanelDataHardFiltering
+{
+    bool show_hidden = true;
+    PanelDataTextFiltering text = PanelDataTextFiltering::NoFiltering();
+    bool IsValidItem(const VFSListingItem& _item) const;
+    
+    inline bool operator==(const PanelDataHardFiltering& _r) const
+    {
+        return show_hidden == _r.show_hidden && text == _r.text;
+    }
+    
+    inline bool operator!=(const PanelDataHardFiltering& _r) const
+    {
+        return show_hidden != _r.show_hidden || text != _r.text;
     }
 };
 
@@ -172,6 +239,10 @@ public:
     void SetCustomSortMode(PanelSortMode _mode);
     PanelSortMode GetCustomSortMode() const;
     
+    // filtering
+    void SetHardFiltering(PanelDataHardFiltering _filter);
+    inline PanelDataHardFiltering HardFiltering() const { return m_HardFiltering; }
+    
     /**
      * Fast search support.
      * Searches on sorted elements (which can be less than non-sorted raw listing).
@@ -205,6 +276,11 @@ private:
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
     static void DoSort(shared_ptr<VFSListing> _from, DirSortIndT &_to, PanelSortMode _mode);
+    static void DoSortWithHardFiltering(shared_ptr<VFSListing> _from,
+                                        DirSortIndT &_to,
+                                        vector<bool> &_shown_flags,
+                                        PanelSortMode _mode,
+                                        PanelDataHardFiltering _filtering);
     void CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected);
     void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();    
@@ -218,7 +294,10 @@ private:
     DirSortIndT                             m_EntriesByRawName;    // sorted with raw strcmp comparison
     DirSortIndT                             m_EntriesByHumanName;  // sorted with human-reasonable literal sort
     DirSortIndT                             m_EntriesByCustomSort; // custom defined sort
+    vector<bool>                            m_EntriesShownFlags;
+    
     PanelSortMode                           m_CustomSortMode;
+    PanelDataHardFiltering                  m_HardFiltering;
     DispatchGroup                           m_SortExecGroup;
     PanelDataStatistics                     m_Stats;
 };

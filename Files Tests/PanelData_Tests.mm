@@ -34,6 +34,7 @@ struct DummyVFSTestListing : public VFSListing
 
 
 @interface PanelData_Tests : XCTestCase
+
 @end
 
 
@@ -92,6 +93,105 @@ struct DummyVFSTestListing : public VFSListing
     XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 2);
     XCTAssert(data.SortedIndexForName(listing->items[1].Name()) == 3);
 }
+
+- (void)testHardFiltering
+{
+    auto listing = make_shared<DummyVFSTestListing>();
+    // just my home dir below
+    listing->items.emplace_back(@"..");
+    listing->items.emplace_back(@".cache");
+    listing->items.emplace_back(@".config");
+    listing->items.emplace_back(@".cups");
+    listing->items.emplace_back(@".dropbox");
+    listing->items.emplace_back(@".dvdcss");
+    listing->items.emplace_back(@".local");
+    listing->items.emplace_back(@".mplayer");
+    listing->items.emplace_back(@".ssh");
+    listing->items.emplace_back(@".subversion");
+    listing->items.emplace_back(@".Trash");
+    listing->items.emplace_back(@"Applications");
+    listing->items.emplace_back(@"Applications (Parallels)");
+    listing->items.emplace_back(@"что-то на русском языке");
+    listing->items.emplace_back(@"ЕЩЕ РУССКИЙ ЯЗЫК");
+    listing->items.emplace_back(@"Desktop");
+    listing->items.emplace_back(@"Documents");
+    listing->items.emplace_back(@"Downloads");
+    listing->items.emplace_back(@"Dropbox");
+    listing->items.emplace_back(@"Games");
+    listing->items.emplace_back(@"Library");
+    listing->items.emplace_back(@"Movies");
+    listing->items.emplace_back(@"Music");
+    listing->items.emplace_back(@"Pictures");
+    listing->items.emplace_back(@"Public");
+
+    auto empty_listing = make_shared<DummyVFSTestListing>();
+    
+    auto almost_empty_listing = make_shared<DummyVFSTestListing>();
+    almost_empty_listing->items.emplace_back(@"какой-то файл");
+    
+    PanelData data;
+    PanelSortMode sorting = data.GetCustomSortMode();
+    sorting.sort = PanelSortMode::SortByName;
+    data.SetCustomSortMode(sorting);
+    
+    PanelDataHardFiltering filtering = data.HardFiltering();
+    filtering.show_hidden = true;
+    data.SetHardFiltering(filtering);
+    
+    data.Load(listing);
+    XCTAssert(data.SortedIndexForName("..") == 0);
+    XCTAssert(data.SortedIndexForName(".Trash") >= 0);
+    XCTAssert(data.SortedIndexForName("Games") >= 0);
+    
+    filtering.show_hidden = false;
+    data.SetHardFiltering(filtering);
+    XCTAssert(data.SortedIndexForName("..") == 0);
+    XCTAssert(data.SortedIndexForName(".Trash") < 0);
+    XCTAssert(data.SortedIndexForName("Games") >= 0);
+
+    filtering.text.type = PanelDataTextFiltering::Anywhere;
+    filtering.text.text = @"D";
+    data.SetHardFiltering(filtering);
+    
+    XCTAssert(data.SortedIndexForName("..") == 0);
+    XCTAssert(data.SortedIndexForName(".Trash") < 0);
+    XCTAssert(data.SortedIndexForName("Games") < 0);
+    XCTAssert(data.SortedIndexForName("Desktop") >= 0);
+ 
+    filtering.text.text = @"a very long-long filtering string that will never leave any file even с другим языком внутри";
+    data.SetHardFiltering(filtering);
+    XCTAssert(data.SortedIndexForName("..") == 0);
+    XCTAssert(data.SortedIndexForName("Desktop") < 0);
+    XCTAssert(data.SortedDirectoryEntries().size() == 1);
+    
+    // now test what will happen on empty listing
+    data.Load(empty_listing);
+    XCTAssert(data.SortedIndexForName("..") < 0);
+
+    // now test what will happen on almost empty listing (will became empty after filtering)
+    data.Load(almost_empty_listing);
+    XCTAssert(data.SortedIndexForName("..") < 0);
+    
+    // now more comples situations
+    filtering.text.text = @"IC";
+    data.SetHardFiltering(filtering);
+    data.Load(listing);
+    XCTAssert(data.SortedIndexForName("..") == 0);
+    XCTAssert(data.SortedIndexForName("Music") >= 0);
+    XCTAssert(data.SortedIndexForName("Pictures") >= 0);
+    XCTAssert(data.SortedIndexForName("Public") >= 0);
+    XCTAssert(data.SortedDirectoryEntries().size() == 6);
+    
+    filtering.text.text = @"русск";
+    data.SetHardFiltering(filtering);
+    XCTAssert(data.SortedIndexForName("..") == 0);
+    XCTAssert(data.SortedIndexForName("Pictures") < 0);
+    XCTAssert(data.SortedIndexForName("Public") < 0);
+    XCTAssert(data.SortedIndexForName(@"что-то на русском языке".UTF8String) >= 0);
+    XCTAssert(data.SortedIndexForName(@"ЕЩЕ РУССКИЙ ЯЗЫК".UTF8String) >= 0);
+    
+}
+
 
 
 @end

@@ -232,28 +232,23 @@ private:
     
     if(object == defaults)
     {
-        if(keyPath == g_DefaultsQuickSearchKeyModifier)
-        {
+        if(keyPath == g_DefaultsQuickSearchKeyModifier) {
             m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchKeyModifier]);
             [self ClearFastSearchFiltering];
         }
-        else if(keyPath == g_DefaultsQuickSearchWhereToFind)
-        {
+        else if(keyPath == g_DefaultsQuickSearchWhereToFind) {
             m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchWhereToFind]);
             [self ClearFastSearchFiltering];
         }
-        else if(keyPath == g_DefaultsQuickSearchSoftFiltering)
-        {
+        else if(keyPath == g_DefaultsQuickSearchSoftFiltering) {
             m_QuickSearchIsSoftFiltering = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchSoftFiltering];
             [self ClearFastSearchFiltering];
         }
-        else if(keyPath == g_DefaultsQuickSearchTypingView)
-        {
+        else if(keyPath == g_DefaultsQuickSearchTypingView) {
             m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
             [self ClearFastSearchFiltering];
         }
-        else if(keyPath == g_DefaultsGeneralShowDotDotEntry)
-        {
+        else if(keyPath == g_DefaultsGeneralShowDotDotEntry) {
             if([defaults boolForKey:g_DefaultsGeneralShowDotDotEntry] == false)
                 m_VFSFetchingFlags |= VFSHost::F_NoDotDot;
             else
@@ -858,20 +853,13 @@ private:
     if(m_Data->SoftFiltering().text == nil)
         return;
     
-    bool found_any = !m_Data->EntriesBySoftFiltering().empty();
-    int range = (int)m_Data->EntriesBySoftFiltering().size();
-    int ind = -1;
-    if(found_any)
+    if(!m_Data->EntriesBySoftFiltering().empty())
     {
         if(m_QuickSearchOffset >= m_Data->EntriesBySoftFiltering().size())
             m_QuickSearchOffset = (unsigned)m_Data->EntriesBySoftFiltering().size() - 1;
-            
-        ind = m_QuickSearchOffset;
-        int pos = m_Data->EntriesBySoftFiltering()[ind];
-        [m_View SetCursorPosition:pos];
+        [m_View SetCursorPosition:m_Data->EntriesBySoftFiltering()[m_QuickSearchOffset]];
     }
     
-
     if(m_QuickSearchTypingView)
     {
         if(!m_QuickSearchPopupView)
@@ -885,7 +873,7 @@ private:
         }
 
         [m_QuickSearchPopupView UpdateWithString:m_Data->SoftFiltering().text
-                                         Matches:range];
+                                         Matches:(int)m_Data->EntriesBySoftFiltering().size()];
     }
 }
 
@@ -915,18 +903,26 @@ private:
 
     pers.Restore();
     
+    // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
+    if((m_VFSFetchingFlags & VFSHost::F_NoDotDot) == 0 &&
+       [m_View GetCursorPosition] == 0 &&
+        m_Data->SortedDirectoryEntries().size() >= 2)
+        [m_View SetCursorPosition:1];
+    
     [m_View setNeedsDisplay:true];
     
-    if(m_QuickSearchTypingView) {
+    if(m_QuickSearchTypingView) { // update typing UI
         if(!m_QuickSearchPopupView) {
             PanelFastSearchPopupViewController *view = [PanelFastSearchPopupViewController new];
             m_QuickSearchPopupView = view;
             [view PopUpWithView:m_View];
         }
 
-        // todo: exclude dot-dot entry
-        [m_QuickSearchPopupView UpdateWithString:filtering.text.text
-                                         Matches:(int)m_Data->SortedDirectoryEntries().size()];
+        int total = (int)m_Data->SortedDirectoryEntries().size();
+        if((m_VFSFetchingFlags & VFSHost::F_NoDotDot) == 0)
+            total--;
+        
+        [m_QuickSearchPopupView UpdateWithString:filtering.text.text Matches:total];
     }
 }
 

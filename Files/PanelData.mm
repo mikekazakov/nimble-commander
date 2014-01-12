@@ -370,42 +370,18 @@ void PanelData::DoSort(shared_ptr<VFSListing> _from, PanelData::DirSortIndT &_to
 
 void PanelData::SetCustomSortMode(PanelSortMode _mode)
 {
-/*    if(m_CustomSortMode != _mode)
-    {
-        if(m_CustomSortMode.show_hidden == _mode.show_hidden)
-        {
-            m_CustomSortMode = _mode;
-            DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode);
-        }
-        else
-        {
-            m_CustomSortMode = _mode;
-            // need to update fast search indeces also, since there are structural changes
-            m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName, HumanSort()); });
-            m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode); });
-            if(_mode.show_hidden == false)
-                m_SortExecGroup.Run(^{ ClearSelectedFlagsFromHiddenElements(); });
-            m_SortExecGroup.Wait();
-            
-            UpdateStatictics(); // we need to update statistics since some selected enties may become invisible and hence should be deselected
-        }
-    }*/
     if(m_CustomSortMode == _mode)
         return;
     
     m_CustomSortMode = _mode;
     DoSortWithHardFiltering();
     BuildSoftFilteringIndeces();
-    
-//    UpdateStatictics();
+    UpdateStatictics();
 }
 
 // need to call UpdateStatictics() after this method since we alter selected set
 void PanelData::ClearSelectedFlagsFromHiddenElements()
 {
-/*    for(auto &i: *m_Listing)
-        if(i.IsHidden() && i.CFIsSelected())
-            i.UnsetCFlag(VFSListingItem::Flags::Selected);*/
     int s = m_Listing->Count();
     for(int i =0; i < s; ++i)
         if(m_EntriesShownFlags[i] == false &&
@@ -645,19 +621,43 @@ bool PanelDataTextFiltering::IsValidItem(const VFSListingItem& _item) const
     if(ignoredotdot && _item.IsDotDot())
         return true; // never filter out the Holy Dot-Dot directory!
     
-    NSString *filename = (__bridge NSString*) _item.CFName();
+    auto textlen = text.length;
+    if(textlen == 0)
+        return true; // will return true on any item with @"" filter
+    
+    NSString *name = (__bridge NSString*) _item.CFName();
     if(type == Anywhere) {
-        auto r = [filename rangeOfString:text
-                                 options:NSCaseInsensitiveSearch];
-        return r.location != NSNotFound;
+        return [name rangeOfString:text
+                           options:NSCaseInsensitiveSearch].length != 0;
     }
     else if(type == Beginning) {
-        auto r = [filename rangeOfString:text
-                                 options:NSCaseInsensitiveSearch|NSAnchoredSearch];
-        return r.location == 0;
+        return [name rangeOfString:text
+                           options:NSCaseInsensitiveSearch|NSAnchoredSearch].length != 0;
     }
-    
-    /* some processing here */
+    else if(type == Ending || type == BeginningOrEnding) {
+        if((type == BeginningOrEnding) &&
+           [name rangeOfString:text // look at beginning
+                       options:NSCaseInsensitiveSearch|NSAnchoredSearch].length != 0)
+            return true;
+        
+        if(_item.HasExtension())
+        { // slow path here - look before extension
+            NSRange dotrange = [name rangeOfString:@"." options:NSBackwardsSearch];
+            if(dotrange.length != 0 &&
+               dotrange.location > textlen) {
+                auto r = [name rangeOfString:text
+                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch
+                                       range:NSMakeRange(dotrange.location - textlen, textlen)];
+                if(r.length != 0)
+                    return true;
+            }
+        }
+        
+        return [name rangeOfString:text // look at the end at last
+                           options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch].length != 0;
+    }
+
+    assert(0); // should never came here!
     return true;
 }
 

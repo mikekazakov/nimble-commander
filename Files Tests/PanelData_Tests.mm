@@ -201,8 +201,14 @@ struct DummyVFSTestListing : public VFSListing
     XCTAssert(data.SortedIndexForName("Applications (Parallels)") > 0);
     XCTAssert(data.SortedIndexForName("Another app") < 0);
     XCTAssert(data.SortedIndexForName("Another app number two") < 0);
-    
 
+    // test buggy filtering with @"" string
+    filtering.text.type = PanelDataTextFiltering::Beginning;
+    filtering.text.text = @"";
+    filtering.show_hidden = true;
+    data.SetHardFiltering(filtering);
+    XCTAssert(data.SortedIndexForName("..") == 0);
+    XCTAssert(data.SortedDirectoryEntries().size() == listing->Count());
 }
 
 

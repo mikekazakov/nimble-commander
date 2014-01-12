@@ -123,7 +123,7 @@ struct PanelDataTextFiltering
 
     inline bool IsFiltering() const
     {
-        return text != nil;
+        return text != nil && text.length > 0;
     }
 };
 

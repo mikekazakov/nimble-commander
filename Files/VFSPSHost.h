@@ -9,6 +9,7 @@
 #pragma once
 
 #import <map>
+#import <mutex>
 #import <list>
 #import <vector>
 
@@ -63,6 +64,7 @@ private:
     static string ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _data);
     
     
+    mutex               m_Lock; // bad and ugly, ok.
     shared_ptr<Snapshot> m_Data;
     vector<pair<unsigned long, void (^)()> > m_UpdateHandlers;
     unsigned long       m_LastTicket = 1;

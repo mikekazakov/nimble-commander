@@ -53,8 +53,12 @@ struct PanelQuickSearchMode
     
     __unsafe_unretained MainWindowController *m_WindowController;
     
-    shared_ptr<VFSHost>    m_UpdatesObservationHost;
+    // VFS changes observation
+    shared_ptr<VFSHost>         m_UpdatesObservationHost;
     unsigned long               m_UpdatesObservationTicket;
+    
+    // VFS listing fetch flags
+    int                         m_VFSFetchingFlags;
     
     // Quick searching section
     bool                                m_QuickSearchIsSoftFiltering;
@@ -178,7 +182,6 @@ struct PanelQuickSearchMode
 
 // internal stuff, move it somewehere else
 @interface PanelController ()
-- (int) FetchFlags;
 - (void) CancelBackgroundOperations;
 - (void) OnPathChanged:(int)_flags;
 @end

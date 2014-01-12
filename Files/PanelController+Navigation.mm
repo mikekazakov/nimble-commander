@@ -60,7 +60,7 @@
         if(hosts_stack.size() == path.size()) {
             if(hosts_stack.back()->IsDirectory(path.back().path.c_str(), 0, 0)) {
                 shared_ptr<VFSListing> listing;
-                int ret = hosts_stack.back()->FetchDirectoryListing(path.back().path.c_str(), &listing, self.FetchFlags, ^{return _q->IsStopped();});
+                int ret = hosts_stack.back()->FetchDirectoryListing(path.back().path.c_str(), &listing, m_VFSFetchingFlags, ^{return _q->IsStopped();});
                 if(ret >= 0)
                     dispatch_to_main_queue( ^{
                         [self CancelBackgroundOperations]; // clean running operations if any

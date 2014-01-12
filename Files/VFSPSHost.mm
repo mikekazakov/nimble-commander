@@ -188,8 +188,8 @@ void VFSPSHost::EnsureUpdateRunning()
 
 void VFSPSHost::CommitProcs(vector<ProcInfo> _procs)
 {
+    lock_guard<mutex> lock(m_Lock);
 
-    
     auto newdata = make_shared<Snapshot>();
     
     newdata->taken_time = [[NSDate date] timeIntervalSince1970];
@@ -288,6 +288,8 @@ int VFSPSHost::CreateFile(const char* _path,
                        shared_ptr<VFSFile> *_target,
                        bool (^_cancel_checker)())
 {
+    lock_guard<mutex> lock(m_Lock);
+    
     if(_path == nullptr)
         return VFSError::InvalidCall;
     
@@ -305,6 +307,8 @@ int VFSPSHost::CreateFile(const char* _path,
 
 int VFSPSHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
 {
+    lock_guard<mutex> lock(m_Lock);
+    
     if(_path == nullptr)
         return VFSError::InvalidCall;
     

@@ -5,7 +5,6 @@
 //  Created by Michael G. Kazakov on 22.02.13.
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
-#import <string>
 #import "PanelController.h"
 #import "FSEventsDirUpdate.h"
 #import "Common.h"
@@ -19,8 +18,6 @@
 #import "PanelFastSearchPopupViewController.h"
 #import "BriefSystemOverview.h"
 
-#define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
-
 // this constant should be the same as g_FadeDelay in PanelFastSearchController,
 // otherwise it may cause UI/Input inconsistency
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
@@ -30,6 +27,16 @@ static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKey
 static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
 static NSString *g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
 static NSString *g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
+static NSString *g_DefaultsGeneralShowDotDotEntry       = @"FilePanelsGeneralShowDotDotEntry";
+static NSString *g_DefaultsGeneralIgnoreDirsOnMaskSel   = @"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask";
+
+static NSArray *MyDefaultsKeys()
+{
+    return [NSArray arrayWithObjects:g_DefaultsQuickSearchKeyModifier,
+            g_DefaultsQuickSearchSoftFiltering, g_DefaultsQuickSearchWhereToFind,
+            g_DefaultsQuickSearchTypingView, g_DefaultsGeneralShowDotDotEntry,
+            g_DefaultsGeneralIgnoreDirsOnMaskSel, nil];
+};
 
 static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
@@ -169,10 +176,10 @@ private:
 {
     self = [super init];
     if(self) {
-        // Initialization code here.
         m_UpdatesObservationTicket = 0;
         m_QuickSearchLastType = 0;
         m_QuickSearchOffset = 0;
+        m_VFSFetchingFlags = 0;
         m_IsAnythingWorksInBackground = false;
         m_DirectorySizeCountingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirsizecounting");
         m_DirectoryLoadingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirsizecounting");
@@ -182,43 +189,36 @@ private:
         m_HostsStack.push_back( VFSNativeHost::SharedHost() );
         
         __weak PanelController* weakself = self;
-        auto on_change = ^{
-            dispatch_to_main_queue( ^{
-                [weakself UpdateSpinningIndicator];
-            });
-        };
+        auto on_change = ^{ dispatch_to_main_queue( ^{ [weakself UpdateSpinningIndicator]; }); };
         m_DirectorySizeCountingQ->OnChange(on_change);
         m_DirectoryReLoadingQ->OnChange(on_change);
         m_DirectoryLoadingQ->OnChange(on_change);
         
-        // TODO: automatic updating of this variables
-        m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt(
-                (int)[NSUserDefaults.standardUserDefaults integerForKey:g_DefaultsQuickSearchKeyModifier]);
-        m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt(
-                (int)[NSUserDefaults.standardUserDefaults integerForKey:g_DefaultsQuickSearchWhereToFind]);
-        m_QuickSearchIsSoftFiltering = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchSoftFiltering];
-        m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
+        // loading defaults via simulating it's change
+        [self observeValueForKeyPath:g_DefaultsQuickSearchKeyModifier ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
+        [self observeValueForKeyPath:g_DefaultsQuickSearchWhereToFind ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
+        [self observeValueForKeyPath:g_DefaultsQuickSearchSoftFiltering ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
+        [self observeValueForKeyPath:g_DefaultsQuickSearchTypingView ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
+        [self observeValueForKeyPath:g_DefaultsGeneralShowDotDotEntry ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:MyDefaultsKeys()];
     }
 
     return self;
 }
 
-// without calling SetData:0 PanelController may not dealloc and crash later because of hanging obverve handlers
+- (void) dealloc
+{
+    if(m_UpdatesObservationHost)
+        m_UpdatesObservationHost->StopDirChangeObserving(m_UpdatesObservationTicket);
+
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:MyDefaultsKeys()];
+}
+
+// without calling SetData:0 PanelController may do something very bad. need to discover what!
 - (void) SetData:(PanelData*)_data
 {
     m_Data = _data;
     [self CancelBackgroundOperations];
-    
-    if(m_Data == 0)
-    {
-        // we're deallocing - flush current observing if any
-        if(m_UpdatesObservationHost.get() && m_UpdatesObservationTicket)
-        {
-            m_UpdatesObservationHost->StopDirChangeObserving(m_UpdatesObservationTicket);
-            m_UpdatesObservationHost.reset();
-            m_UpdatesObservationTicket = 0;
-        }
-    }
 }
 
 - (void) SetView:(PanelView*)_view
@@ -226,32 +226,65 @@ private:
     m_View = _view;
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    
+    if(object == defaults)
+    {
+        if(keyPath == g_DefaultsQuickSearchKeyModifier)
+        {
+            m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchKeyModifier]);
+            [self ClearFastSearchFiltering];
+        }
+        else if(keyPath == g_DefaultsQuickSearchWhereToFind)
+        {
+            m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchWhereToFind]);
+            [self ClearFastSearchFiltering];
+        }
+        else if(keyPath == g_DefaultsQuickSearchSoftFiltering)
+        {
+            m_QuickSearchIsSoftFiltering = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchSoftFiltering];
+            [self ClearFastSearchFiltering];
+        }
+        else if(keyPath == g_DefaultsQuickSearchTypingView)
+        {
+            m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
+            [self ClearFastSearchFiltering];
+        }
+        else if(keyPath == g_DefaultsGeneralShowDotDotEntry)
+        {
+            if([defaults boolForKey:g_DefaultsGeneralShowDotDotEntry] == false)
+                m_VFSFetchingFlags |= VFSHost::F_NoDotDot;
+            else
+                m_VFSFetchingFlags &= ~VFSHost::F_NoDotDot;
+            [self RefreshDirectory];
+        }
+    }
+}
+
 - (void) LoadViewState:(NSDictionary *)_state
 {
-    PanelSortMode mode = m_Data->GetCustomSortMode();
+    auto hard_filtering = m_Data->HardFiltering();
+    hard_filtering.show_hidden = [[_state valueForKey:@"ViewHiddenFiles"] boolValue];
+    [self ChangeHardFilteringTo:hard_filtering];
     
-    mode.sep_dirs = [[_state valueForKey:@"SeparateDirectories"] boolValue];
-    
-//    mode.show_hidden = [[_state valueForKey:@"ViewHiddenFiles"] boolValue];
-    
-    mode.case_sens = [[_state valueForKey:@"CaseSensitiveComparison"] boolValue];
-    mode.numeric_sort = [[_state valueForKey:@"NumericSort"] boolValue];
-    mode.sort = (PanelSortMode::Mode)[[_state valueForKey:@"SortMode"] integerValue];
-    [self ChangeSortingModeTo:mode];
+    auto sort_mode = m_Data->GetCustomSortMode();
+    sort_mode.sep_dirs = [[_state valueForKey:@"SeparateDirectories"] boolValue];
+    sort_mode.case_sens = [[_state valueForKey:@"CaseSensitiveComparison"] boolValue];
+    sort_mode.numeric_sort = [[_state valueForKey:@"NumericSort"] boolValue];
+    sort_mode.sort = (PanelSortMode::Mode)[[_state valueForKey:@"SortMode"] integerValue];
+    [self ChangeSortingModeTo:sort_mode];
                                       
     [m_View ToggleViewType:(PanelViewType)[[_state valueForKey:@"ViewMode"] integerValue]];
-    
 }
 
 - (NSDictionary *) SaveViewState
 {
-    PanelSortMode mode = m_Data->GetCustomSortMode();
-    
+    auto mode = m_Data->GetCustomSortMode();
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
-            
-//        [NSNumber numberWithBool:(mode.show_hidden != false)], @"ViewHiddenFiles",
-            
+        [NSNumber numberWithBool:(m_Data->HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
         [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
         [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
         [NSNumber numberWithInt:(int)[m_View GetCurrentViewType]], @"ViewMode",
@@ -316,9 +349,6 @@ private:
 
 - (void) ToggleViewHiddenFiles
 {
-//    PanelSortMode mode = m_Data->GetCustomSortMode();
-//    mode.show_hidden = !mode.show_hidden;
-//    [self ChangeSortingModeTo:mode];
     auto filtering = m_Data->HardFiltering();
     filtering.show_hidden = !filtering.show_hidden;
     [self ChangeHardFilteringTo:filtering];
@@ -364,15 +394,15 @@ private:
 - (void) ToggleWideViewMode{
     [m_View ToggleViewType:PanelViewType::ViewWide];}
 
-- (void) ResetUpdatesObservation:(const char *) _new_path
+- (void) ResetUpdatesObservation:(string)_new_path
 {
-    if(m_UpdatesObservationHost.get() && m_UpdatesObservationTicket)
-    {
+    if(m_UpdatesObservationHost) {
         m_UpdatesObservationHost->StopDirChangeObserving(m_UpdatesObservationTicket);
         m_UpdatesObservationHost.reset();
     }
 
-    m_UpdatesObservationTicket = m_HostsStack.back()->DirChangeObserve(_new_path, ^{ [self RefreshDirectory]; } );
+    __weak PanelController *weakself = self;
+    m_UpdatesObservationTicket = m_HostsStack.back()->DirChangeObserve(_new_path.c_str(), ^{ [weakself RefreshDirectory]; } );
     if(m_UpdatesObservationTicket)
         m_UpdatesObservationHost = m_HostsStack.back();
 }
@@ -389,12 +419,6 @@ private:
     return [self GoToRelativeSync:_path
                         WithHosts:make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack)
                       SelectEntry:0];
-}
-
-- (int) FetchFlags
-{
-    bool show_dot_dot = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralShowDotDotEntry"];
-    return show_dot_dot ? 0 : VFSHost::F_NoDotDot;
 }
 
 - (void) GoToRelativeToHostAsync:(const char*) _path
@@ -418,7 +442,7 @@ private:
     if(_hosts->back()->IsDirectory(_path, 0, 0))
     { // easy - just go there
         shared_ptr<VFSListing> listing;
-        int ret = _hosts->back()->FetchDirectoryListing(_path, &listing, self.FetchFlags, 0);
+        int ret = _hosts->back()->FetchDirectoryListing(_path, &listing, m_VFSFetchingFlags, 0);
         if(ret >= 0)
         {
             [self CancelBackgroundOperations]; // clean running operations if any
@@ -452,7 +476,7 @@ private:
                     if(arhost->IsDirectory(path_buf, 0, 0))
                     { // yeah, going here!
                         shared_ptr<VFSListing> listing;
-                        int ret = arhost->FetchDirectoryListing(path_buf, &listing, self.FetchFlags, 0);
+                        int ret = arhost->FetchDirectoryListing(path_buf, &listing, m_VFSFetchingFlags, 0);
                         if(ret >= 0)
                         {
                             [self CancelBackgroundOperations]; // clean running operations if any
@@ -493,7 +517,7 @@ private:
         if(_hosts->back()->IsDirectory(path.c_str(), 0, 0))
         { // easy - just go there
             shared_ptr<VFSListing> listing;
-            int ret = _hosts->back()->FetchDirectoryListing(path.c_str(), &listing, self.FetchFlags, ^{return _q->IsStopped();});
+            int ret = _hosts->back()->FetchDirectoryListing(path.c_str(), &listing, m_VFSFetchingFlags, ^{return _q->IsStopped();});
             if(ret >= 0)
             {
                 [self CancelBackgroundOperations]; // clean running operations if any
@@ -537,7 +561,7 @@ private:
                         if(arhost->IsDirectory(path_buf, 0, 0))
                         { // yeah, going here!
                             shared_ptr<VFSListing> listing;
-                            int ret = arhost->FetchDirectoryListing(path_buf, &listing, self.FetchFlags, ^{return _q->IsStopped();});
+                            int ret = arhost->FetchDirectoryListing(path_buf, &listing, m_VFSFetchingFlags, ^{return _q->IsStopped();});
                             if(ret >= 0)
                             {
                                 [self CancelBackgroundOperations]; // clean running operations if any
@@ -755,6 +779,9 @@ private:
 
 - (void) RefreshDirectory
 {
+    if(m_Data == nullptr || m_View == nil)
+        return; // guard agains calls from init process
+    
     // going async here
     if(!m_DirectoryLoadingQ->Empty())
         return; //reducing overhead
@@ -763,7 +790,7 @@ private:
     
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
         shared_ptr<VFSListing> listing;
-        int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(),&listing, self.FetchFlags, ^{ return _q->IsStopped(); });
+        int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(),&listing, m_VFSFetchingFlags, ^{ return _q->IsStopped(); });
         if(ret >= 0)
         {
             dispatch_to_main_queue( ^{
@@ -788,6 +815,9 @@ private:
 
 - (void) ClearFastSearchFiltering
 {
+    if(m_View == nil || m_Data == nullptr)
+        return;
+    
     GenericCursorPersistance pers(m_View, m_Data);
     
     if(m_Data->ClearTextFiltering()) {
@@ -1146,8 +1176,7 @@ private:
 
 - (void) OnPathChanged:(int)_flags
 {
-    string path = m_Data->DirectoryPathWithTrailingSlash();
-    [self ResetUpdatesObservation:path.c_str()];
+    [self ResetUpdatesObservation:m_Data->DirectoryPathWithTrailingSlash()];
     [self ClearSelectionRequest];
     [self ClearFastSearchFiltering];
     [self SignalParentOfPathChanged];
@@ -1208,7 +1237,7 @@ private:
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
 {
-    bool ignore_dirs = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask"];
+    bool ignore_dirs = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
     if(m_Data->CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
         [m_View setNeedsDisplay:true];
 }

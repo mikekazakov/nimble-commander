@@ -14,7 +14,6 @@
 #import "MainWindowFilePanelState.h"
 #import "filesysinfo.h"
 #import "FileMask.h"
-#import "PanelFastSearchPopupViewController.h"
 #import "PanelAux.h"
 #import "SharingService.h"
 #import "PanelFastSearchPopupViewController.h"
@@ -22,9 +21,17 @@
 
 #define ISMODIFIER(_v) ( (modif&NSDeviceIndependentModifierFlagsMask) == (_v) )
 
+// this constant should be the same as g_FadeDelay in PanelFastSearchController,
+// otherwise it may cause UI/Input inconsistency
 static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
 
-inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
+
+static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
+static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
+static NSString *g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
+static NSString *g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
+
+static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     // TODO: need more sophisticated executable handling here
     // THIS IS WRONG!
@@ -45,6 +52,116 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             false; // need MOAR HERE!
 }
 
+static bool IsQuickSearchModifier(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
+{
+    // exclude CapsLock from our decision process
+    _modif &= ~NSAlphaShiftKeyMask;
+    
+    switch (_mode) {
+        case PanelQuickSearchMode::WithAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
+                   (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithCtrlAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
+                   (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithShiftAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithoutModif:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == 0 ||
+                   (_modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ;
+        default:
+            break;
+    }
+    return false;
+}
+
+static bool IsQuickSearchModifierForArrows(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
+{
+    // exclude CapsLock from our decision process
+    _modif &= ~NSAlphaShiftKeyMask;
+    
+    // arrow keydowns have NSNumericPadKeyMask and NSFunctionKeyMask flag raised
+    if((_modif & NSNumericPadKeyMask) == 0) return false;
+    if((_modif & NSFunctionKeyMask) == 0) return false;
+    _modif &= ~NSNumericPadKeyMask;
+    _modif &= ~NSFunctionKeyMask;
+    
+    switch (_mode) {
+        case PanelQuickSearchMode::WithAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
+                   (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithCtrlAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
+                   (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithShiftAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+        default:
+            break;
+    }
+    return false;
+}
+
+static bool IsQuickSearchStringCharacter(NSString *_s)
+{
+    static NSCharacterSet *chars;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        NSMutableCharacterSet *un = [NSMutableCharacterSet new];
+        [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
+        [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
+        [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+        chars = un;
+    });
+    
+    if(_s.length == 0)
+        return false;
+    
+    unichar u = [_s characterAtIndex:0]; // consider uing UTF-32 here
+    return [chars characterIsMember:u];
+}
+
+namespace {
+class GenericCursorPersistance
+{
+public:
+    GenericCursorPersistance(PanelView* _view, PanelData *_data):
+        view(_view),
+        data(_data),
+        oldcursorpos([_view GetCursorPosition])
+    {
+        if(oldcursorpos >= 0 && [view CurrentItem] != nullptr)
+            oldcursorname = [view CurrentItem]->Name();
+    }
+ 
+    
+    void Restore()
+    {
+        int newcursorrawpos = data->RawIndexForName(oldcursorname.c_str());
+        if( newcursorrawpos >= 0 )
+        {
+            int newcursorsortpos = data->SortedIndexForRawIndex(newcursorrawpos);
+            if(newcursorsortpos >= 0)
+                [view SetCursorPosition:newcursorsortpos];
+            else
+                [view SetCursorPosition:data->SortedDirectoryEntries().empty() ? -1 : 0];
+        }
+        else
+        {
+            if( oldcursorpos < data->SortedDirectoryEntries().size() )
+                [view SetCursorPosition:oldcursorpos];
+            else
+                [view SetCursorPosition:int(data->SortedDirectoryEntries().size()) - 1];
+        }
+    }
+    
+private:
+    PanelView *view;
+    PanelData *data;
+    int oldcursorpos;
+    string oldcursorname;
+};
+}
+
 @implementation PanelController
 
 
@@ -54,8 +171,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if(self) {
         // Initialization code here.
         m_UpdatesObservationTicket = 0;
-        m_FastSearchLastType = 0;
-        m_FastSearchOffset = 0;
+        m_QuickSearchLastType = 0;
+        m_QuickSearchOffset = 0;
         m_IsAnythingWorksInBackground = false;
         m_DirectorySizeCountingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirsizecounting");
         m_DirectoryLoadingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirsizecounting");
@@ -73,6 +190,14 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         m_DirectorySizeCountingQ->OnChange(on_change);
         m_DirectoryReLoadingQ->OnChange(on_change);
         m_DirectoryLoadingQ->OnChange(on_change);
+        
+        // TODO: automatic updating of this variables
+        m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt(
+                (int)[NSUserDefaults.standardUserDefaults integerForKey:g_DefaultsQuickSearchKeyModifier]);
+        m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt(
+                (int)[NSUserDefaults.standardUserDefaults integerForKey:g_DefaultsQuickSearchWhereToFind]);
+        m_QuickSearchIsSoftFiltering = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchSoftFiltering];
+        m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
     }
 
     return self;
@@ -159,60 +284,25 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     }
 }
 
-// REFACTOR ME!!!!
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode
 {
-    int curpos = [m_View GetCursorPosition];
-    if(curpos >= 0)
-    {
-        int rawpos = m_Data->SortedDirectoryEntries()[curpos];
-        m_Data->SetCustomSortMode(_mode);
-        int newcurpos = m_Data->SortedIndexForRawIndex(rawpos);
-        if(newcurpos >= 0)
-        {
-            [m_View SetCursorPosition:newcurpos];
-        }
-        else
-        {
-            // there's no such element in this representation
-            if(curpos < m_Data->SortedDirectoryEntries().size())
-                [m_View SetCursorPosition:curpos];
-            else
-                [m_View SetCursorPosition:(int)m_Data->SortedDirectoryEntries().size()-1];
-        }
-    }
-    else
-    {
-        m_Data->SetCustomSortMode(_mode);
-    }
+    GenericCursorPersistance pers(m_View, m_Data);
+    
+    m_Data->SetCustomSortMode(_mode);
+
+    pers.Restore();
+    
     [m_View setNeedsDisplay:true];
 }
 
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter
 {
-    int curpos = [m_View GetCursorPosition];
-    if(curpos >= 0)
-    {
-        int rawpos = m_Data->SortedDirectoryEntries()[curpos];
-        m_Data->SetHardFiltering(_filter);
-        int newcurpos = m_Data->SortedIndexForRawIndex(rawpos);
-        if(newcurpos >= 0)
-        {
-            [m_View SetCursorPosition:newcurpos];
-        }
-        else
-        {
-            // there's no such element in this representation
-            if(curpos < m_Data->SortedDirectoryEntries().size())
-                [m_View SetCursorPosition:curpos];
-            else
-                [m_View SetCursorPosition:(int)m_Data->SortedDirectoryEntries().size()-1];
-        }
-    }
-    else
-    {
-        m_Data->SetHardFiltering(_filter);
-    }
+    GenericCursorPersistance pers(m_View, m_Data);
+    
+    m_Data->SetHardFiltering(_filter);
+    
+    pers.Restore();
+    
     [m_View setNeedsDisplay:true];
 }
 
@@ -677,25 +767,12 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         if(ret >= 0)
         {
             dispatch_to_main_queue( ^{
-                int oldcursorpos = [m_View GetCursorPosition];
-                string oldcursorname;
-                if(oldcursorpos >= 0 && [m_View CurrentItem] != 0)
-                    oldcursorname = [m_View CurrentItem]->Name();
+                GenericCursorPersistance pers(m_View, m_Data);
                 
                 m_Data->ReLoad(listing);
                 
-                if(![self CheckAgainstRequestedSelection]) {
-                    int newcursorrawpos = m_Data->RawIndexForName(oldcursorname.c_str());
-                    if( newcursorrawpos >= 0 ) {
-                        [m_View SetCursorPosition:max(m_Data->SortedIndexForRawIndex(newcursorrawpos), 0)];
-                    }
-                    else {
-                        if( oldcursorpos < m_Data->SortedDirectoryEntries().size() )
-                            [m_View SetCursorPosition:oldcursorpos];
-                        else
-                            [m_View SetCursorPosition:int(m_Data->SortedDirectoryEntries().size() - 1)]; // assuming that any directory will have at leat ".."
-                    }
-                }
+                if(![self CheckAgainstRequestedSelection])
+                    pers.Restore();
 
                 [m_View setNeedsDisplay:true];
             });
@@ -709,84 +786,145 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     });
 }
 
-- (void)HandleFastSearch: (NSString*) _key
+- (void) ClearFastSearchFiltering
+{
+    GenericCursorPersistance pers(m_View, m_Data);
+    
+    if(m_Data->ClearTextFiltering()) {
+        pers.Restore();
+        [m_View setNeedsDisplay:true];
+    }
+    
+    if(m_QuickSearchPopupView != nil) {
+        [m_QuickSearchPopupView PopOut];
+        m_QuickSearchPopupView = nil;
+    }
+}
+
+- (void)HandleQuickSearchSoft: (NSString*) _key
 {
     _key = [_key decomposedStringWithCanonicalMapping];
     uint64_t currenttime = GetTimeInNanoseconds();
     if(_key != nil)
     {
-        if(m_FastSearchLastType + g_FastSeachDelayTresh < currenttime || m_FastSearchString == nil)
+        // update soft filtering
+        PanelDataTextFiltering filtering = m_Data->SoftFiltering();
+        
+        if(m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime ||
+           filtering.text == nil)
         {
-            m_FastSearchString = _key; // flush
-            m_FastSearchOffset = 0;
+            filtering.text = _key; // flush
+            m_QuickSearchOffset = 0;
         }
         else
-            m_FastSearchString = [m_FastSearchString stringByAppendingString:_key]; // append
+            filtering.text = [filtering.text stringByAppendingString:_key]; // append
+        
+        filtering.type = m_QuickSearchWhere;
+        filtering.ignoredotdot = false;
+        m_Data->SetSoftFiltering(filtering);
     }
-    m_FastSearchLastType = currenttime;
+    m_QuickSearchLastType = currenttime;
     
-    if(m_FastSearchString == nil)
+    if(m_Data->SoftFiltering().text == nil)
         return;
-
-    unsigned ind, range;
-    bool found_any = m_Data->FindSuitableEntries( (__bridge CFStringRef) m_FastSearchString, m_FastSearchOffset, &ind, &range);
+    
+    bool found_any = !m_Data->EntriesBySoftFiltering().empty();
+    int range = (int)m_Data->EntriesBySoftFiltering().size();
+    int ind = -1;
     if(found_any)
     {
-        if(m_FastSearchOffset > range)
-            m_FastSearchOffset = range;
+        if(m_QuickSearchOffset >= m_Data->EntriesBySoftFiltering().size())
+            m_QuickSearchOffset = (unsigned)m_Data->EntriesBySoftFiltering().size() - 1;
             
-        int pos = m_Data->SortedIndexForRawIndex(ind);
-        if(pos >= 0)
-            [m_View SetCursorPosition:pos];
+        ind = m_QuickSearchOffset;
+        int pos = m_Data->EntriesBySoftFiltering()[ind];
+        [m_View SetCursorPosition:pos];
     }
-
-    if(!m_FastSearchPopupView)
-    {
-        m_FastSearchPopupView = [PanelFastSearchPopupViewController new];
-        [m_FastSearchPopupView SetHandlers:^{[self HandleFastSearchPrevious];}
-                                      Next:^{[self HandleFastSearchNext];}];
-        [m_FastSearchPopupView PopUpWithView:m_View];
-    }
-
-    [m_FastSearchPopupView UpdateWithString:m_FastSearchString Matches:(found_any?range+1:0)];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_FastSeachDelayTresh+1000), dispatch_get_main_queue(),
-                   ^{
-                       if(m_FastSearchPopupView != nil)
-                       {
-                           uint64_t currenttime = GetTimeInNanoseconds();
-                           if(m_FastSearchLastType + g_FastSeachDelayTresh <= currenttime)
-                           {
-                               [m_FastSearchPopupView PopOut];
-                               m_FastSearchPopupView = nil;
-                           }
-                       }
-                   });
+
+    if(m_QuickSearchTypingView)
+    {
+        if(!m_QuickSearchPopupView)
+        {
+            PanelFastSearchPopupViewController *view = [PanelFastSearchPopupViewController new];
+            m_QuickSearchPopupView = view;
+            __weak PanelController *weakself = self;
+            [view SetHandlers:^{[weakself HandleFastSearchPrevious];}
+                         Next:^{[weakself HandleFastSearchNext];}];
+            [view PopUpWithView:m_View];
+        }
+
+        [m_QuickSearchPopupView UpdateWithString:m_Data->SoftFiltering().text
+                                         Matches:range];
+    }
+}
+
+- (void)HandleQuickSearchHard: (NSString*) _key
+{
+    _key = [_key decomposedStringWithCanonicalMapping];
+
+    PanelDataHardFiltering filtering = m_Data->HardFiltering();
+    
+    if(_key != nil)
+    {
+        // update hard filtering
+        if(filtering.text.text == nil)
+            filtering.text.text = _key;
+        else
+            filtering.text.text = [filtering.text.text stringByAppendingString:_key];
+    }
+
+    if(filtering.text.text == nil)
+        return;
+    
+    GenericCursorPersistance pers(m_View, m_Data);
+
+    filtering.text.type = m_QuickSearchWhere;
+    filtering.text.clearonnewlisting = true;
+    m_Data->SetHardFiltering(filtering);
+
+    pers.Restore();
+    
+    [m_View setNeedsDisplay:true];
+    
+    if(m_QuickSearchTypingView) {
+        if(!m_QuickSearchPopupView) {
+            PanelFastSearchPopupViewController *view = [PanelFastSearchPopupViewController new];
+            m_QuickSearchPopupView = view;
+            [view PopUpWithView:m_View];
+        }
+
+        // todo: exclude dot-dot entry
+        [m_QuickSearchPopupView UpdateWithString:filtering.text.text
+                                         Matches:(int)m_Data->SortedDirectoryEntries().size()];
+    }
 }
 
 - (void)HandleFastSearchPrevious
 {
-    if(m_FastSearchOffset > 0)
-        m_FastSearchOffset--;
-    [self HandleFastSearch:nil];
+    if(m_QuickSearchOffset > 0)
+        m_QuickSearchOffset--;
+    [self HandleQuickSearchSoft:nil];
 }
 
 - (void)HandleFastSearchNext
 {
-    m_FastSearchOffset++;
-    [self HandleFastSearch:nil];
+    m_QuickSearchOffset++;
+    [self HandleQuickSearchSoft:nil];
 }
 
 - (bool) ProcessKeyDown:(NSEvent *)event; // return true if key was processed
 {
-    NSString*  const character = [event charactersIgnoringModifiers];
-
+    NSString*  const character   = [event charactersIgnoringModifiers];
     NSUInteger const modif       = [event modifierFlags];
 
-    bool fast_search_handling = false;
-    if(ISMODIFIER(NSAlternateKeyMask) || ISMODIFIER(NSAlternateKeyMask|NSAlphaShiftKeyMask)) {
-        [self HandleFastSearch:character];
-        fast_search_handling = true;
+    bool fast_search_handling = IsQuickSearchModifier(modif, m_QuickSearchMode) &&
+                                IsQuickSearchStringCharacter(character);
+    if( fast_search_handling ) {
+        if(m_QuickSearchIsSoftFiltering)
+            [self HandleQuickSearchSoft:character];
+        else
+            [self HandleQuickSearchHard:character];
     }
     
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
@@ -796,25 +934,23 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     unsigned short const keycode = [event keyCode];
 
     switch (unicode) {
-        case NSHomeFunctionKey: [m_View HandleFirstFile]; return true;
-        case NSEndFunctionKey:  [m_View HandleLastFile]; return true;
-        case NSPageDownFunctionKey:      [m_View HandleNextPage]; return true;
-        case NSPageUpFunctionKey:        [m_View HandlePrevPage]; return true;
-        case NSLeftArrowFunctionKey:
-            if(modif &  NSAlternateKeyMask); // now nothing wilh alt+left now
-            else                         [m_View HandlePrevColumn];
-            return true;
-        case NSRightArrowFunctionKey:
-            if(modif &  NSAlternateKeyMask); // now nothing wilh alt+right now
-            else                         [m_View HandleNextColumn];
-            return true;
+        case NSHomeFunctionKey:       [m_View HandleFirstFile];     return true;
+        case NSEndFunctionKey:        [m_View HandleLastFile];      return true;
+        case NSPageDownFunctionKey:   [m_View HandleNextPage];      return true;
+        case NSPageUpFunctionKey:     [m_View HandlePrevPage];      return true;
+        case NSLeftArrowFunctionKey:  [m_View HandlePrevColumn];    return true;
+        case NSRightArrowFunctionKey: [m_View HandleNextColumn];    return true;
         case NSUpArrowFunctionKey:
-            if(modif & NSAlternateKeyMask) [self HandleFastSearchPrevious];
-            else                         [m_View HandlePrevFile];
+            if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
+                [self HandleFastSearchPrevious];
+            else
+                [m_View HandlePrevFile];
             return true;
         case NSDownArrowFunctionKey:
-            if(modif &  NSAlternateKeyMask) [self HandleFastSearchNext];
-            else                         [m_View HandleNextFile];
+            if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
+                [self HandleFastSearchNext];
+            else
+                [m_View HandleNextFile];
             return true;
     }
     
@@ -823,6 +959,7 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         [[self GetParentWindow] CloseOverlay:self];
         m_BriefSystemOverview = nil;
         m_QuickLook = nil;
+        [self ClearFastSearchFiltering];
         return true;
     }
     if(keycode == 35 ) // 'P' button
@@ -838,10 +975,11 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     
     // handle RETURN manually, to prevent annoying by menu highlighting by hotkey
     if(unicode == NSCarriageReturnCharacter) {
-        NSUInteger modif = [event modifierFlags];
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == 0              ) [self HandleReturnButton];
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ) [self HandleShiftReturnButton];
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSShiftKeyMask|NSAlternateKeyMask)) [self HandleCalculateSizes];
+        NSUInteger modif = [event modifierFlags] & NSDeviceIndependentModifierFlagsMask;
+        modif &= ~NSAlphaShiftKeyMask; // exclude CapsLock from our decision process
+        if( modif == 0              ) [self HandleReturnButton];
+        if( modif == NSShiftKeyMask ) [self HandleShiftReturnButton];
+        if( modif == (NSShiftKeyMask|NSAlternateKeyMask)) [self HandleCalculateSizes];
         return true;
     }
     
@@ -899,18 +1037,9 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 - (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
 {
     [m_View ModifierFlagsChanged:_flags];
-    
-    if(m_FastSearchString != nil && (_flags & NSAlternateKeyMask) == 0)
-    {
-        // user was fast searching something, need to flush that string
-        m_FastSearchString = nil;
-        m_FastSearchOffset = 0;
-        if(m_FastSearchPopupView != nil)
-        {
-            [m_FastSearchPopupView PopOut];
-            m_FastSearchPopupView = nil;
-        }
-    }
+
+    if(m_QuickSearchIsSoftFiltering)
+        [self ClearFastSearchFiltering];
 }
 
 - (void) AttachToControls:(NSProgressIndicator*)_indicator eject:(NSButton*)_eject share:(NSButton*)_share
@@ -1019,7 +1148,8 @@ inline static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     string path = m_Data->DirectoryPathWithTrailingSlash();
     [self ResetUpdatesObservation:path.c_str()];
-    [self ClearSelectionRequest];   
+    [self ClearSelectionRequest];
+    [self ClearFastSearchFiltering];
     [self SignalParentOfPathChanged];
     [self UpdateEjectButton];
     [self OnCursorChanged];

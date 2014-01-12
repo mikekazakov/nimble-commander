@@ -31,18 +31,12 @@ struct PanelSortMode
     
     Mode sort;
     bool sep_dirs;      // separate directories from files, like win-like
-
-    // move me to filtering
-//    bool show_hidden;   // shown hidden files (which are: begining with "." or having hidden flag)
-    
-    
     bool case_sens;     // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
     bool numeric_sort;  // try to treat filenames as numbers and use them as compare basis
     
     inline PanelSortMode():
         sort(SortByRawCName),
         sep_dirs(false),
-//        show_hidden(true),
         case_sens(false),
         numeric_sort(false)
     {}
@@ -57,7 +51,7 @@ struct PanelSortMode
     }
     inline bool operator ==(const PanelSortMode& _r) const
     {
-        return sort == _r.sort && sep_dirs == _r.sep_dirs && /*show_hidden == _r.show_hidden &&*/ case_sens == _r.case_sens && numeric_sort == _r.numeric_sort;
+        return sort == _r.sort && sep_dirs == _r.sep_dirs && case_sens == _r.case_sens && numeric_sort == _r.numeric_sort;
     }
     inline bool operator !=(const PanelSortMode& _r) const
     {
@@ -67,7 +61,7 @@ struct PanelSortMode
 
 struct PanelDataTextFiltering
 {
-    enum WhereEnum
+    enum WhereEnum // persistancy-bound values, don't change it
     {
         Anywhere            = 0,
         Beginning           = 1,
@@ -77,6 +71,9 @@ struct PanelDataTextFiltering
     
     WhereEnum type = Anywhere;
     NSString *text = nil;
+    bool      ignoredotdot = true; // will not apply filter on dot-dot entries
+    bool      clearonnewlisting = false; // if true then PanelData will automatically
+                                         // set text to nil on Load method call
     
     inline bool operator==(const PanelDataTextFiltering& _r) const
     {
@@ -100,15 +97,34 @@ struct PanelDataTextFiltering
         return !(*this == _r);
     }
     
+    inline static WhereEnum WhereFromInt(int _v)
+    {
+        if(_v >= 0 && _v <= BeginningOrEnding)
+            return WhereEnum(_v);
+        return Anywhere;
+    }
+    
     inline static PanelDataTextFiltering NoFiltering()
     {
         PanelDataTextFiltering filter;
         filter.type = Anywhere;
         filter.text = nil;
+        filter.ignoredotdot = true;
         return filter;
     }
     
     bool IsValidItem(const VFSListingItem& _item) const;
+    
+    void OnPanelDataLoad()
+    {
+        if(clearonnewlisting)
+            text = nil;
+    }
+
+    inline bool IsFiltering() const
+    {
+        return text != nil;
+    }
 };
 
 struct PanelDataHardFiltering
@@ -116,6 +132,11 @@ struct PanelDataHardFiltering
     bool show_hidden = true;
     PanelDataTextFiltering text = PanelDataTextFiltering::NoFiltering();
     bool IsValidItem(const VFSListingItem& _item) const;
+
+    bool IsFiltering() const
+    {
+        return !show_hidden || text.IsFiltering();
+    }
     
     inline bool operator==(const PanelDataHardFiltering& _r) const
     {
@@ -182,6 +203,13 @@ public:
     
     const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
+    
+    
+    /**
+     * EntriesBySoftFiltering return a vector of filtered indeces of sorted entries (not raw ones)
+     */
+    const DirSortIndT&      EntriesBySoftFiltering() const;
+    
     const VFSListingItem&   EntryAtRawPosition(int _pos) const;
     chained_strings         StringsFromSelectedEntries() const;
 
@@ -239,20 +267,19 @@ public:
     void SetCustomSortMode(PanelSortMode _mode);
     PanelSortMode GetCustomSortMode() const;
     
-    // filtering
+    // hard filtering filtering
     void SetHardFiltering(PanelDataHardFiltering _filter);
     inline PanelDataHardFiltering HardFiltering() const { return m_HardFiltering; }
     
+    void SetSoftFiltering(PanelDataTextFiltering _filter);
+    inline PanelDataTextFiltering SoftFiltering() const { return m_SoftFiltering; }
+
     /**
-     * Fast search support.
-     * Searches on sorted elements (which can be less than non-sorted raw listing).
-     * _desired_offset is a offset from first suitable element.
-     * if _desired_offset causes going out of fitting ranges - the nearest valid element will be returned.
-     * return raw index into _ind_out number if any.
-     * _range is filled with number of valid suitable entries - 1 (for 1 valid entry _range will be filled with 0).
-     * Return true if there're any suitable entries, false otherwise.
+     * ClearTextFiltering() efficiently sets SoftFiltering.text = nil and HardFiltering.text.text = nil.
+     * It's better than consequent calls of SetHardFiltering()+SetSoftFiltering() - less indeces rebuilding.
+     * Return true if calling of this method changed anything, and false if indeces was unchanged
      */
-    bool FindSuitableEntries(CFStringRef _prefix, unsigned _desired_offset, unsigned *_ind_out, unsigned *_range) const;
+    bool ClearTextFiltering();
     
     const PanelDataStatistics &Stats() const;
     
@@ -276,30 +303,26 @@ private:
     
     // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
     static void DoSort(shared_ptr<VFSListing> _from, DirSortIndT &_to, PanelSortMode _mode);
-    static void DoSortWithHardFiltering(shared_ptr<VFSListing> _from,
-                                        DirSortIndT &_to,
-                                        vector<bool> &_shown_flags,
-                                        PanelSortMode _mode,
-                                        PanelDataHardFiltering _filtering);
+    void DoSortWithHardFiltering();
     void CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected);
     void ClearSelectedFlagsFromHiddenElements();
-    void UpdateStatictics();    
-    
-    PanelSortMode HumanSort() const;
+    void UpdateStatictics();
+    void BuildSoftFilteringIndeces();
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-    shared_ptr<VFSListing>                  m_Listing;
+    shared_ptr<VFSListing> m_Listing;
 
-    DirSortIndT                             m_EntriesByRawName;    // sorted with raw strcmp comparison
-    DirSortIndT                             m_EntriesByHumanName;  // sorted with human-reasonable literal sort
-    DirSortIndT                             m_EntriesByCustomSort; // custom defined sort
-    vector<bool>                            m_EntriesShownFlags;
+    DirSortIndT             m_EntriesByRawName;    // sorted with raw strcmp comparison
+    DirSortIndT             m_EntriesByCustomSort; // custom defined sort
+    DirSortIndT             m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
+    vector<bool>            m_EntriesShownFlags;
     
-    PanelSortMode                           m_CustomSortMode;
-    PanelDataHardFiltering                  m_HardFiltering;
-    DispatchGroup                           m_SortExecGroup;
-    PanelDataStatistics                     m_Stats;
+    PanelSortMode           m_CustomSortMode;
+    PanelDataHardFiltering  m_HardFiltering;
+    PanelDataTextFiltering  m_SoftFiltering;
+    DispatchGroup           m_SortExecGroup;
+    PanelDataStatistics     m_Stats;
 };
 
 inline const PanelDataStatistics &PanelData::Stats() const

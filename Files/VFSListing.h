@@ -65,7 +65,7 @@ public:
     
     // overridable part - getters
     virtual const char     *Name()      const { return ""; }
-    virtual size_t          NameLen()   const { return 0; }
+    virtual size_t          NameLen()   const { return strlen(Name()); }
     virtual CFStringRef     CFName()    const { return CFSTR(""); }
     virtual uint64_t        Size()      const { return 0; }
     virtual uint64_t        Inode()     const { return 0; }

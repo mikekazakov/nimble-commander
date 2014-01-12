@@ -17,7 +17,6 @@ struct DummyVFSListingTestItem : public VFSListingItem
     NSString *name;
 
     virtual const char     *Name()      const override { return [name UTF8String]; }
-    virtual size_t          NameLen()   const override { return strlen([name UTF8String]); }
     virtual CFStringRef     CFName()    const override { return (__bridge CFStringRef)name; }
 };
 
@@ -110,6 +109,8 @@ struct DummyVFSTestListing : public VFSListing
     listing->items.emplace_back(@".subversion");
     listing->items.emplace_back(@".Trash");
     listing->items.emplace_back(@"Applications");
+    listing->items.emplace_back(@"Another app");
+    listing->items.emplace_back(@"Another app number two");
     listing->items.emplace_back(@"Applications (Parallels)");
     listing->items.emplace_back(@"что-то на русском языке");
     listing->items.emplace_back(@"ЕЩЕ РУССКИЙ ЯЗЫК");
@@ -190,6 +191,18 @@ struct DummyVFSTestListing : public VFSListing
     XCTAssert(data.SortedIndexForName(@"что-то на русском языке".UTF8String) >= 0);
     XCTAssert(data.SortedIndexForName(@"ЕЩЕ РУССКИЙ ЯЗЫК".UTF8String) >= 0);
     
+    filtering.text.type = PanelDataTextFiltering::Beginning;
+    filtering.text.text = @"APP";
+    data.SetHardFiltering(filtering);
+    XCTAssert(data.SortedIndexForName("..") == 0);
+    XCTAssert(data.SortedIndexForName("Pictures") < 0);
+    XCTAssert(data.SortedIndexForName("Public") < 0);
+    XCTAssert(data.SortedIndexForName("Applications") > 0);
+    XCTAssert(data.SortedIndexForName("Applications (Parallels)") > 0);
+    XCTAssert(data.SortedIndexForName("Another app") < 0);
+    XCTAssert(data.SortedIndexForName("Another app number two") < 0);
+    
+
 }
 
 

@@ -136,5 +136,13 @@
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQAAAYY=</data>
 	<key>FilePanelsClassicFocusedOtherColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQAAAYY=</data>
+	<key>FilePanelsQuickSearchKeyModifier</key>
+	<integer>0</integer>
+	<key>FilePanelsQuickSearchWhereToFind</key>
+	<integer>0</integer>
+	<key>FilePanelsQuickSearchSoftFiltering</key>
+	<true/>
+	<key>FilePanelsQuickSearchTypingView</key>
+	<true/>
 </dict>
 </plist>

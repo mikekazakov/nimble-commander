@@ -34,30 +34,22 @@ PanelData::PanelData():
 {
 }
 
-PanelSortMode PanelData::HumanSort() const
-{
-    PanelSortMode mode;
-    mode.sep_dirs = false;
-    mode.sort = PanelSortMode::SortByName;
-//    mode.show_hidden = m_CustomSortMode.show_hidden;
-    mode.case_sens = false;
-    mode.numeric_sort = false;
-    return mode;
-}
-
 void PanelData::Load(shared_ptr<VFSListing> _listing)
 {
     m_Listing = _listing;
+    
+    m_HardFiltering.text.OnPanelDataLoad();
+    m_SoftFiltering.OnPanelDataLoad();
     
     // now sort our new data
     m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByRawName,    RawSort());        });
 //    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName,  HumanSort());      });
     m_SortExecGroup.Run(^{
 //      DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode);
-        DoSortWithHardFiltering(m_Listing, m_EntriesByCustomSort, m_EntriesShownFlags, m_CustomSortMode, m_HardFiltering);
+        DoSortWithHardFiltering();
     });
     m_SortExecGroup.Wait();
-    
+    BuildSoftFilteringIndeces();
     // update stats
     UpdateStatictics();
 }
@@ -106,7 +98,9 @@ void PanelData::ReLoad(shared_ptr<VFSListing> _listing)
 //    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByHumanName, HumanSort());        });
 //    m_SortExecGroup.Run(^{ DoSort(m_Listing, m_EntriesByCustomSort, m_CustomSortMode);  });
 //    m_SortExecGroup.Wait();
-    DoSortWithHardFiltering(m_Listing, m_EntriesByCustomSort, m_EntriesShownFlags, m_CustomSortMode, m_HardFiltering);
+    DoSortWithHardFiltering();
+    
+    BuildSoftFilteringIndeces();
     
     // update stats
     UpdateStatictics();
@@ -400,11 +394,8 @@ void PanelData::SetCustomSortMode(PanelSortMode _mode)
         return;
     
     m_CustomSortMode = _mode;
-    DoSortWithHardFiltering(m_Listing,
-                            m_EntriesByCustomSort,
-                            m_EntriesShownFlags,
-                            m_CustomSortMode,
-                            m_HardFiltering);
+    DoSortWithHardFiltering();
+    BuildSoftFilteringIndeces();
     
 //    UpdateStatictics();
 }
@@ -545,44 +536,6 @@ chained_strings PanelData::StringsFromSelectedEntries() const
     return str;
 }
 
-bool PanelData::FindSuitableEntries(CFStringRef _prefix, unsigned _desired_offset, unsigned *_out, unsigned *_range) const
-{
-    if(m_EntriesByHumanName.empty())
-        return false;
-
-    auto prefix_len = CFStringGetLength(_prefix);
-    auto lb = lower_bound(begin(m_EntriesByHumanName), end(m_EntriesByHumanName), _prefix,
-                         [=](unsigned _i, CFStringRef _str) {
-                             auto const &item = (*m_Listing)[_i];
-                             CFRange range = CFRangeMake(0, min(prefix_len, CFStringGetLength(item.CFName())));
-                             return CFStringCompareWithOptions(_str,
-                                                               item.CFName(),
-                                                               range,
-                                                               kCFCompareCaseInsensitive) >= 0;
-                         });
-    
-    auto ub = upper_bound(begin(m_EntriesByHumanName), end(m_EntriesByHumanName), _prefix,
-                          [=](CFStringRef _str, unsigned _i) {
-                              auto const &item = (*m_Listing)[_i];
-                              CFRange range = CFRangeMake(0, min(prefix_len, CFStringGetLength(item.CFName())));
-                              return CFStringCompareWithOptions(item.CFName(),
-                                                                _str,
-                                                                range,
-                                                                kCFCompareCaseInsensitive) > 0;
-                          });
-    
-    if(lb == ub) // didn't found anything
-        return false;
-        
-    // our filterd result is in [start, last] range
-    auto start = lb - begin(m_EntriesByHumanName);
-    auto last = start + ub - lb - 1;
-    auto ind = min(start + _desired_offset, last);
-    *_out = m_EntriesByHumanName[ind];
-    *_range = unsigned(last - start);
-    return true;
-}
-
 bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)
 {
     if(_entry    == nullptr ||
@@ -655,6 +608,22 @@ int PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, b
     return counter;
 }
 
+bool PanelData::ClearTextFiltering()
+{
+    if(m_SoftFiltering.text == nil &&
+       m_HardFiltering.text.text == nil)
+        return false;
+    
+    m_SoftFiltering.text = nil;
+    m_HardFiltering.text.text = nil;
+    
+    DoSortWithHardFiltering();
+    ClearSelectedFlagsFromHiddenElements(); // not sure if this is needed here
+    BuildSoftFilteringIndeces();
+    UpdateStatictics();
+    return true;
+}
+
 void PanelData::SetHardFiltering(PanelDataHardFiltering _filter)
 {
     if(m_HardFiltering == _filter)
@@ -662,13 +631,9 @@ void PanelData::SetHardFiltering(PanelDataHardFiltering _filter)
     
     m_HardFiltering = _filter;
     
-    DoSortWithHardFiltering(m_Listing,
-                            m_EntriesByCustomSort,
-                            m_EntriesShownFlags,
-                            m_CustomSortMode,
-                            m_HardFiltering);
-    
+    DoSortWithHardFiltering();
     ClearSelectedFlagsFromHiddenElements();
+    BuildSoftFilteringIndeces();
     UpdateStatictics();
 }
 
@@ -677,18 +642,20 @@ bool PanelDataTextFiltering::IsValidItem(const VFSListingItem& _item) const
     if(text == nil)
         return true;
     
-    if(_item.IsDotDot())
+    if(ignoredotdot && _item.IsDotDot())
         return true; // never filter out the Holy Dot-Dot directory!
     
-    if(type == Anywhere)
-    {
-//        NSLog(@"%@", _item.CFName());
-        auto r = [(__bridge NSString*) _item.CFName() rangeOfString:text
-                                                            options:NSCaseInsensitiveSearch];
+    NSString *filename = (__bridge NSString*) _item.CFName();
+    if(type == Anywhere) {
+        auto r = [filename rangeOfString:text
+                                 options:NSCaseInsensitiveSearch];
         return r.location != NSNotFound;
     }
-    else
-        return false;
+    else if(type == Beginning) {
+        auto r = [filename rangeOfString:text
+                                 options:NSCaseInsensitiveSearch|NSAnchoredSearch];
+        return r.location == 0;
+    }
     
     /* some processing here */
     return true;
@@ -702,39 +669,72 @@ bool PanelDataHardFiltering::IsValidItem(const VFSListingItem& _item) const
     return text.IsValidItem(_item);
 }
 
-void PanelData::DoSortWithHardFiltering(shared_ptr<VFSListing> _from,
-                                    DirSortIndT &_to,
-                                    vector<bool> &_shown_flags,
-                                    PanelSortMode _mode,
-                                    PanelDataHardFiltering _filtering)
+void PanelData::DoSortWithHardFiltering()
 {
-    _to.clear();
+    m_EntriesByCustomSort.clear();
     
-    int size = _from->Count();
+    int size = m_Listing->Count();
     
     if(size == 0)
         return;
 
-    _to.reserve(size);
-    _shown_flags.resize(size, true);
-    
-    for(int i = 0; i < size; ++i)
-        if( _filtering.IsValidItem((*_from)[i]) )
-            _to.push_back(i);
-        else
-            _shown_flags[i] = false;
+    m_EntriesByCustomSort.reserve(size);
+    m_EntriesShownFlags.resize(size, true);
+  
+    if(m_HardFiltering.IsFiltering())
+    {
+        for(int i = 0; i < size; ++i)
+            if( m_HardFiltering.IsValidItem(m_Listing->At(i)) )
+                m_EntriesByCustomSort.push_back(i);
+            else
+                m_EntriesShownFlags[i] = false;
+    }
+    else
+    {
+        m_EntriesByCustomSort.resize(m_Listing->Count());
+        unsigned index = 0;
+        generate( begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), [&]{return index++;} );
+    }
 
-    if(_to.empty() ||
-       _mode.sort == PanelSortMode::SortNoSort)
+    if(m_EntriesByCustomSort.empty() ||
+       m_CustomSortMode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
     
-    SortPredLess pred(_from, _mode);
-    DirSortIndT::iterator start = begin(_to);
+    SortPredLess pred(m_Listing, m_CustomSortMode);
+    DirSortIndT::iterator start = begin(m_EntriesByCustomSort);
     
     // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
     // also assume that no filtering will exclude dotdot dir
-    if( (*_from)[0].IsDotDot() )
+    if( m_Listing->At(0).IsDotDot() )
         start++;
     
-    sort(start, end(_to), pred);
+    sort(start, end(m_EntriesByCustomSort), pred);
+}
+
+void PanelData::SetSoftFiltering(PanelDataTextFiltering _filter)
+{
+    m_SoftFiltering = _filter;
+    BuildSoftFilteringIndeces();
+}
+
+const PanelData::DirSortIndT& PanelData::EntriesBySoftFiltering() const
+{
+    return m_EntriesBySoftFiltering;
+}
+
+void PanelData::BuildSoftFilteringIndeces()
+{
+    if(m_SoftFiltering.IsFiltering()) {
+        m_EntriesBySoftFiltering.clear();
+        m_EntriesBySoftFiltering.reserve(m_EntriesByCustomSort.size());
+        int i = 0, e = (int)m_EntriesByCustomSort.size();
+        for(;i!=e;++i)
+            if(m_SoftFiltering.IsValidItem(m_Listing->At(m_EntriesByCustomSort[i])))
+                m_EntriesBySoftFiltering.push_back(i);
+    }
+    else {
+        m_EntriesBySoftFiltering.resize(m_EntriesByCustomSort.size());
+        unsigned index = 0;
+        generate( begin(m_EntriesBySoftFiltering), end(m_EntriesBySoftFiltering), [&]{return index++;} );
+    }
 }

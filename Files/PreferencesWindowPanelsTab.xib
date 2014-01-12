@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="13A584" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4511" systemVersion="13B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4511"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
@@ -146,10 +146,97 @@
                                 </constraints>
                             </view>
                         </tabViewItem>
+                        <tabViewItem label="Quick Search" identifier="1" id="7ue-46-YVg">
+                            <view key="view" id="ToK-0j-GCa">
+                                <rect key="frame" x="10" y="33" width="434" height="235"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7n2-PE-X2b">
+                                        <rect key="frame" x="15" y="216" width="229" height="18"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="check" title="Soft filtering" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="qmw-Ul-eSK">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsQuickSearchSoftFiltering" id="ZmK-MD-oS4"/>
+                                        </connections>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="P2p-mW-Hz8">
+                                        <rect key="frame" x="15" y="196" width="229" height="18"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="check" title="Typing view" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="WwL-AC-0hP">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsQuickSearchTypingView" id="qw8-Pw-SKg"/>
+                                        </connections>
+                                    </button>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aWa-FM-fe7">
+                                        <rect key="frame" x="17" y="173" width="227" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Key modifier:" id="EBC-2p-BQv">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Rb-w0-PZZ">
+                                        <rect key="frame" x="29" y="141" width="164" height="26"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="LEU-be-d00">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                            <menu key="menu" title="OtherViews" id="FXa-o4-dhn">
+                                                <items>
+                                                    <menuItem title="⌥" id="TpP-J2-OmP"/>
+                                                    <menuItem title="⌃⌥" id="LGJ-Op-2nQ"/>
+                                                    <menuItem title="⇧⌥" id="Qu9-e4-IYz"/>
+                                                    <menuItem title="No modifiers" id="4uL-sd-1Qi"/>
+                                                    <menuItem title="Disabled" id="4aj-lb-702"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                        <connections>
+                                            <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsQuickSearchKeyModifier" id="IoF-n0-Mw0"/>
+                                        </connections>
+                                    </popUpButton>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HPL-rh-Bha">
+                                        <rect key="frame" x="17" y="119" width="227" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Appearance:" id="eQJ-GQ-QOA">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Elx-DZ-5GF">
+                                        <rect key="frame" x="29" y="87" width="164" height="26"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Yp8-cZ-7kX">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                            <menu key="menu" title="OtherViews" id="hwd-Vk-Rmi">
+                                                <items>
+                                                    <menuItem title="Anywhere" id="ZK4-um-VIS"/>
+                                                    <menuItem title="Beginning" id="wWO-qC-fR7"/>
+                                                    <menuItem title="Ending" id="GOP-4J-s2Y"/>
+                                                    <menuItem title="Beginning or ending" id="ivN-Nv-wkZ"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                        <connections>
+                                            <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsQuickSearchWhereToFind" id="CBT-sT-Neg"/>
+                                        </connections>
+                                    </popUpButton>
+                                </subviews>
+                            </view>
+                        </tabViewItem>
                         <tabViewItem label="Classic" identifier="2" id="4">
                             <view key="view" id="7">
                                 <rect key="frame" x="10" y="33" width="434" height="235"/>
-                                <autoresizingMask key="autoresizingMask"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="274">
                                         <rect key="frame" x="164" y="-3" width="82" height="32"/>
@@ -499,7 +586,7 @@
                         <tabViewItem label="Modern" identifier="3" id="5">
                             <view key="view" id="6">
                                 <rect key="frame" x="10" y="33" width="434" height="235"/>
-                                <autoresizingMask key="autoresizingMask"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="25">
                                         <rect key="frame" x="237" y="208" width="183" height="26"/>

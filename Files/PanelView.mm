@@ -530,6 +530,7 @@ struct PanelViewStateStorage
     int cursor = m_State.Data->SortedIndexForName(storage.focused_item.c_str());
     if(cursor < 0)
         return;
+    // what happen if current cursor became out-of-boundary?
     
     m_State.ItemsDisplayOffset = storage.dispay_offset;
     m_Presentation->SetCursorPos(cursor);

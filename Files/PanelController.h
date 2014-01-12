@@ -26,6 +26,25 @@ struct PanelControllerNavigation
     };
 };
 
+struct PanelQuickSearchMode
+{
+    enum KeyModif { // persistancy-bound values, don't change it
+        WithAlt         = 0,
+        WithCtrlAlt     = 1,
+        WithShiftAlt    = 2,
+        WithoutModif    = 3,
+        Disabled        = 4
+    };
+    
+    static KeyModif KeyModifFromInt(int _k)
+    {
+        if(_k >= 0 && _k <= Disabled)
+            return (KeyModif)_k;
+        return WithAlt;
+    }
+    
+};
+
 @interface PanelController : NSObject
 {
     PanelData *m_Data;
@@ -37,11 +56,15 @@ struct PanelControllerNavigation
     shared_ptr<VFSHost>    m_UpdatesObservationHost;
     unsigned long               m_UpdatesObservationTicket;
     
-    // Fast searching section
-    NSString *m_FastSearchString;
-    uint64_t m_FastSearchLastType;
-    unsigned m_FastSearchOffset;
-    PanelFastSearchPopupViewController *m_FastSearchPopupView;
+    // Quick searching section
+    bool                                m_QuickSearchIsSoftFiltering;
+    bool                                m_QuickSearchTypingView;
+    PanelQuickSearchMode::KeyModif      m_QuickSearchMode;
+    PanelDataTextFiltering::WhereEnum   m_QuickSearchWhere;
+    uint64_t                            m_QuickSearchLastType;
+    unsigned                            m_QuickSearchOffset;
+    __weak PanelFastSearchPopupViewController
+                                       *m_QuickSearchPopupView;
     
     // background operations' queues
     SerialQueue m_DirectorySizeCountingQ;

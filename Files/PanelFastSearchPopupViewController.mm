@@ -8,26 +8,32 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import "PanelFastSearchPopupViewController.h"
+#import "Common.h"
+
+static const uint64_t g_FadeDelay   = 5000000000; // 5 sec
+static const double   g_FadeTime    = 0.7; // 0.7 sec
 
 @implementation PanelFastSearchPopupViewController
 {
-    NSView *m_TargetView;
     void (^m_OnPrev)();
     void (^m_OnNext)();
+    uint64_t m_LastUpdateTime;
+    PanelFastSearchPopupViewController *m_Me;
 }
 
 - (id) init
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nil];
-    [self loadView];
+    if(self) {
+        [self loadView];
+        m_LastUpdateTime = 0;
+    }
     return self;
 }
 
 - (void) PopUpWithView:(NSView*)_view
 {
-    m_TargetView = _view;
-    
-    NSView *sup = [[m_TargetView superview] superview];
+    NSView *sup = [[_view superview] superview];
     assert(sup);
     
     NSView *me = [self view];
@@ -41,14 +47,14 @@
     NSLayoutConstraint *c1 = [NSLayoutConstraint constraintWithItem:me
                                                           attribute:NSLayoutAttributeCenterX
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:m_TargetView
+                                                             toItem:_view
                                                           attribute:NSLayoutAttributeCenterX
                                                          multiplier:1
                                                            constant:0];
     NSLayoutConstraint *c2 = [NSLayoutConstraint constraintWithItem:me
                                                           attribute:NSLayoutAttributeBottom
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:m_TargetView
+                                                             toItem:_view
                                                           attribute:NSLayoutAttributeBottom
                                                          multiplier:1
                                                            constant:0];
@@ -75,27 +81,30 @@
     [self.Stepper setMaxValue:1];
     [self.Stepper setIncrement:-1];
     [self.Stepper setIntegerValue:0];
+    [self.Stepper setHidden:true];
     
     [[self.Label cell] setBackgroundStyle:NSBackgroundStyleRaised];
     
     [[self view] setHidden:false];
+
+    m_Me = self;
 }
 
 - (void) PopOut
 {
     m_OnNext = 0;
     m_OnPrev = 0;
-    m_TargetView = 0;
     CABasicAnimation* fadeAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
     fadeAnim.fromValue = [NSNumber numberWithFloat: [[self view] layer].opacity];
     fadeAnim.toValue = [NSNumber numberWithFloat:0.0];
-    fadeAnim.duration = 1.0;
+    fadeAnim.duration = g_FadeTime;
     [[[self view] layer] addAnimation:fadeAnim forKey:@"opacity"];
     [[self view] layer].opacity = 0.0;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(),
                    ^{
                        [[self view] removeFromSuperview];
+                       m_Me = nil;
                    });
 }
 
@@ -118,6 +127,14 @@
         [self.Label setStringValue:[NSString stringWithFormat:@"%i matches", _matches]];
         [self.Stepper setEnabled:true];
     }
+    
+    m_LastUpdateTime = GetTimeInNanoseconds();
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_FadeDelay+1000), dispatch_get_main_queue(),
+                   ^{
+                        if(m_LastUpdateTime + g_FadeDelay <= GetTimeInNanoseconds())
+                            [self PopOut];
+                   });
 }
 
 - (IBAction)OnStepper:(id)sender
@@ -136,6 +153,7 @@
 {
     m_OnPrev = _on_prev;
     m_OnNext = _on_next;
+    [self.Stepper setHidden:(_on_prev == nil && _on_next == nil)];
 }
 
 @end

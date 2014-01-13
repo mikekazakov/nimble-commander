@@ -273,9 +273,6 @@ ModernPanelViewPresentation::~ModernPanelViewPresentation()
     CGColorRelease(m_CursorFrameColor);
     CGColorRelease(m_ColumnDividerColor);
     
-//    assert(m_IconCache);
-//    delete m_IconCache;
-
     if(m_State->Data != 0)
         m_State->Data->CustomIconClearAll();
 }
@@ -287,7 +284,7 @@ void ModernPanelViewPresentation::BuildGeometry()
     if(!m_Font) m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
     
     // Height of a single file line calculated from the font.
-    m_FontHeight = int(GetLineHeightForFont((__bridge CTFontRef)m_Font));
+    m_FontHeight = int(GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent));
     m_LineHeight = m_FontHeight + 2; // was 18 before (16 + 2)
     m_IconCache->SetIconSize(m_FontHeight);
 
@@ -620,7 +617,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     ///////////////////////////////////////////////////////////////////////////////
     // Draw items in columns.        
-    const int icon_size = m_FontHeight;
+    const int icon_size = m_IconCache->IconSize();
     const int start_y = m_ItemsArea.origin.y;
     double full_view_max_date_width = 0;
     double full_wide_view_max_time_width = 0;
@@ -655,18 +652,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             const VFSListingItem *item = nullptr;
             auto raw_index = 0;
             
-            if (i < max_items)
-            {
+            if (i < max_items) {
                 raw_index = sorted_entries[i];
                 item = &entries[raw_index];
             }
-            
-            NSRect rect = NSMakeRect(start_x + icon_size + 2*g_TextInsetsInLine[0],
-                                     start_y + count*m_LineHeight + g_TextInsetsInLine[1],
-                                     column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
-                                     m_LineHeight - g_TextInsetsInLine[1] - g_TextInsetsInLine[3]);
-            
-            NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
             
             // Draw background.
             if (item && item->CFIsSelected())
@@ -712,6 +701,11 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 CGContextRestoreGState(context);
             }
             
+            NSRect rect = NSMakeRect(start_x + icon_size + 2*g_TextInsetsInLine[0],
+                       start_y + count*m_LineHeight + m_FontAscent,
+                       column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
+                       m_LineHeight);
+            
             // Draw stats columns for specific views.
             NSDictionary *item_text_attr = (m_State->Active && item->CFIsSelected()) ? m_ActiveSelectedItemTextAttr : m_ItemTextAttr;
             int spec_col_x = m_ItemsArea.size.width;
@@ -724,12 +718,12 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 NSString *time_str = FormHumanReadableShortTime(item->MTime());
                 NSDictionary *attr = m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
                 NSRect time_str_real_rc = [time_str boundingRectWithSize:NSMakeSize(10000, 100)
-                                                                 options:options
+                                                                 options:0
                                                               attributes:attr];
                 if( time_str_real_rc.size.width > full_wide_view_max_time_width)
                     full_wide_view_max_time_width = time_str_real_rc.size.width;
                 [time_str drawWithRect:time_rect
-                               options:options
+                               options:0
                             attributes:attr];
                 
                 
@@ -744,12 +738,12 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 NSString *date_str = FormHumanReadableShortDate(item->MTime());
                 attr = m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
                 NSRect date_str_real_rc = [date_str boundingRectWithSize:NSMakeSize(10000, 100)
-                                                                 options:options
+                                                                 options:0
                                                               attributes:attr];
                 if(date_str_real_rc.size.width > full_view_max_date_width)
                     full_view_max_date_width = date_str_real_rc.size.width;
                 [date_str drawWithRect:date_rect
-                               options:options
+                               options:0
                             attributes:attr];
 
                 rect.size.width -= m_DateColumnWidth;
@@ -768,7 +762,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 FormHumanReadableSizeReprentationForDirEnt6(*item, size_info);
                 NSString *size_str = [[NSString alloc] initWithCharactersNoCopy:size_info length:6 freeWhenDone:false];
                 [size_str drawWithRect:size_rect
-                               options:options
+                               options:0
                             attributes:m_State->Active && item->CFIsSelected() ? m_ActiveSelectedSizeColumnTextAttr : m_SizeColumnTextAttr];
                 
                 rect.size.width -= m_SizeColumWidth;
@@ -776,7 +770,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 
             // Draw item text.
             if(!item->IsHidden()) {
-                [(__bridge NSString *)item->CFName() drawWithRect:rect options:options attributes:item_text_attr];
+                [(__bridge NSString *)item->CFName() drawWithRect:rect options:0 attributes:item_text_attr];
             }
             else { // TODO: have to rewrite this shit into something normal
                 NSColor *oldcolor = (NSColor*)item_text_attr[NSForegroundColorAttributeName];
@@ -787,14 +781,14 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 NSDictionary *tmp_flags = @{NSFontAttributeName: item_text_attr[NSFontAttributeName],
                                             NSParagraphStyleAttributeName: item_text_attr[NSParagraphStyleAttributeName],
                                             NSForegroundColorAttributeName: c};
-                [(__bridge NSString *)item->CFName() drawWithRect:rect options:options attributes:tmp_flags];
+                [(__bridge NSString *)item->CFName() drawWithRect:rect options:0 attributes:tmp_flags];
             }
 
             // Draw icon
             NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
             
             NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
-                                     start_y + count*m_LineHeight + m_LineHeight - icon_size - 1,
+                                     start_y + count*m_LineHeight + (m_LineHeight - icon_size) / 2,
                                      icon_size, icon_size);
             [image_rep drawInRect:icon_rect fromRect:NSZeroRect operation:NSCompositeSourceOver
                          fraction:1.0 respectFlipped:YES hints:nil];

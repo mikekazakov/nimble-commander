@@ -42,6 +42,7 @@ private:
     void BuildAppearance();
     
     NSFont *m_Font;
+    double m_FontAscent;
     int m_FontHeight;
     int m_LineHeight; // full height of a row with gaps
     int m_SizeColumWidth;

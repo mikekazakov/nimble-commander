@@ -34,13 +34,14 @@ double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent
     leading = floor (leading + 0.5);
     lineHeight = floor (ascent + 0.5) + floor (descent + 0.5) + leading;
     
-/*    if (leading > 0)
-        ascenderDelta = 0;
-    else
-        ascenderDelta = floor (0.2 * lineHeight + 0.5);*/
+    // in case if not sure that font line is calculating ok -
+    // use the following block to compare, should be the same.
+    /*
+    NSFont *f = (__bridge NSFont*)iFont;
+    NSLayoutManager *lm = [NSLayoutManager new];
+    auto lm_lineheight = [lm defaultLineHeightForFont:f];
+    */
     
-//    defaultLineHeight = lineHeight + ascenderDelta;
-//    return lineHeight + ascenderDelta;
     return lineHeight;
 }
 

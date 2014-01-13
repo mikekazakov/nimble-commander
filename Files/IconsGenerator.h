@@ -22,7 +22,9 @@ public:
     
     void SetUpdateCallback(void (^_cb)()); // callback will be executed in main thread
     void SetIconMode(int _mode);
-    void SetIconSize(int _size);    
+    void SetIconSize(int _size);
+    int IconSize() { return m_IconSize.size.height; }
+    
     NSImageRep *ImageFor(unsigned _no, VFSListing &_listing);
     void Flush(); // should be called on every directory changes thus loosing generating icons' ID
     

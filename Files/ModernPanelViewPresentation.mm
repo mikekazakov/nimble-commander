@@ -518,7 +518,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                         options:0
                      attributes:header_text_attr];
     
-    [FormHumanReadableSortModeReprentation(m_State->Data->GetCustomSortMode().sort)
+    [FormHumanReadableSortModeReprentation(m_State->Data->SortMode().sort)
                     drawWithRect:NSMakeRect(0,
                                             g_TextInsetsInLine[1] + m_FontAscent,
                                             20,

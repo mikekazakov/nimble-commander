@@ -545,7 +545,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         if(m_State->CursorPos >= 0) current_entry = &raw_entries[sorted_entries[m_State->CursorPos]];
         UniChar time_info[14], size_info[6], sort_mode[1];
         size_t buf_size = 0;
-        FormHumanReadableSortModeReprentation1(m_State->Data->GetCustomSortMode().sort, sort_mode);
+        FormHumanReadableSortModeReprentation1(m_State->Data->SortMode().sort, sort_mode);
         if(current_entry)
         {
             FormHumanReadableTimeRepresentation14(current_entry->MTime(), time_info);
@@ -775,7 +775,7 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     // draw sorting mode
     {
         UniChar sort_mode[1];
-        FormHumanReadableSortModeReprentation1(m_State->Data->GetCustomSortMode().sort, sort_mode);
+        FormHumanReadableSortModeReprentation1(m_State->Data->SortMode().sort, sort_mode);
         oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, fontcache, m_SelectedColor[0]);
     }
     

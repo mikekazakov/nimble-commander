@@ -264,7 +264,7 @@ private:
     hard_filtering.show_hidden = [[_state valueForKey:@"ViewHiddenFiles"] boolValue];
     [self ChangeHardFilteringTo:hard_filtering];
     
-    auto sort_mode = m_Data->GetCustomSortMode();
+    auto sort_mode = m_Data->SortMode();
     sort_mode.sep_dirs = [[_state valueForKey:@"SeparateDirectories"] boolValue];
     sort_mode.case_sens = [[_state valueForKey:@"CaseSensitiveComparison"] boolValue];
     sort_mode.numeric_sort = [[_state valueForKey:@"NumericSort"] boolValue];
@@ -276,7 +276,7 @@ private:
 
 - (NSDictionary *) SaveViewState
 {
-    auto mode = m_Data->GetCustomSortMode();
+    auto mode = m_Data->SortMode();
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
         [NSNumber numberWithBool:(m_Data->HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
@@ -316,7 +316,7 @@ private:
 {
     GenericCursorPersistance pers(m_View, m_Data);
     
-    m_Data->SetCustomSortMode(_mode);
+    m_Data->SetSortMode(_mode);
 
     pers.Restore();
     
@@ -336,7 +336,7 @@ private:
 
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev
 {
-    PanelSortMode mode = m_Data->GetCustomSortMode(); // we don't want to change anything in sort params except the mode itself
+    PanelSortMode mode = m_Data->SortMode(); // we don't want to change anything in sort params except the mode itself
     if(mode.sort != _direct)  mode.sort = _direct;
     else                      mode.sort = _rev;
     [self ChangeSortingModeTo:mode];
@@ -351,21 +351,21 @@ private:
 
 - (void) ToggleSeparateFoldersFromFiles
 {
-    PanelSortMode mode = m_Data->GetCustomSortMode();
+    PanelSortMode mode = m_Data->SortMode();
     mode.sep_dirs = !mode.sep_dirs;
     [self ChangeSortingModeTo:mode];
 }
 
 - (void) ToggleCaseSensitiveComparison
 {
-    PanelSortMode mode = m_Data->GetCustomSortMode();
+    PanelSortMode mode = m_Data->SortMode();
     mode.case_sens = !mode.case_sens;
     [self ChangeSortingModeTo:mode];
 }
 
 - (void) ToggleNumericComparison
 {
-    PanelSortMode mode = m_Data->GetCustomSortMode();
+    PanelSortMode mode = m_Data->SortMode();
     mode.numeric_sort = !mode.numeric_sort;
     [self ChangeSortingModeTo:mode];
 }
@@ -1146,7 +1146,7 @@ private:
 
 - (PanelSortMode) GetUserSortMode
 {
-    return m_Data->GetCustomSortMode();
+    return m_Data->SortMode();
 }
 
 - (PanelDataHardFiltering) GetUserHardFiltering

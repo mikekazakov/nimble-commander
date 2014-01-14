@@ -668,7 +668,8 @@
         if(curpos >= 0)
         {
             int rawpos = curdata->RawIndexForSortIndex(curpos);
-            if(!curdata->EntryAtRawPosition(rawpos).IsDotDot())
+            if(rawpos >= 0 &&
+               curdata->EntryAtRawPosition(rawpos)->IsDotDot() == false)
                 [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
         }
     }

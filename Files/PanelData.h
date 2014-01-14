@@ -3,8 +3,6 @@
 #include "DispatchQueue.h"
 #include "VFS.h"
 
-struct FlexChainedStringsChunk;
-
 struct PanelSortMode
 {
     enum Mode
@@ -210,7 +208,7 @@ public:
      */
     const DirSortIndT&      EntriesBySoftFiltering() const;
     
-    const VFSListingItem&   EntryAtRawPosition(int _pos) const;
+    const VFSListingItem*   EntryAtRawPosition(int _pos) const;
     chained_strings         StringsFromSelectedEntries() const;
 
     /**
@@ -264,8 +262,8 @@ public:
     void GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*8]) const;
     
     // sorting
-    void SetCustomSortMode(PanelSortMode _mode);
-    PanelSortMode GetCustomSortMode() const;
+    void SetSortMode(PanelSortMode _mode);
+    PanelSortMode SortMode() const;
     
     // hard filtering filtering
     void SetHardFiltering(PanelDataHardFiltering _filter);
@@ -301,8 +299,8 @@ private:
     PanelData(const PanelData&) = delete;
     void operator=(const PanelData&) = delete;
     
-    // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to _mode
-    static void DoSort(shared_ptr<VFSListing> _from, DirSortIndT &_to, PanelSortMode _mode);
+    // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to raw sort mode
+    static void DoRawSort(shared_ptr<VFSListing> _from, DirSortIndT &_to);
     void DoSortWithHardFiltering();
     void CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected);
     void ClearSelectedFlagsFromHiddenElements();

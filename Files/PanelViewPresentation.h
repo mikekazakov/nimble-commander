@@ -50,6 +50,7 @@ protected:
     
     PanelViewState *m_State;
     
+    inline PanelView *View() { return m_View; }
 private:
     virtual void OnDirectoryChanged() {}
     

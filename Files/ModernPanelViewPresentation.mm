@@ -7,6 +7,7 @@
 //
 
 
+#import "PanelView.h"
 #import "ModernPanelViewPresentation.h"
 #import "PanelData.h"
 #import "Encodings.h"
@@ -18,34 +19,34 @@
 #import <deque>
 
 
-static void FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, UniChar _out[128], size_t &_symbs)
+static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
 {
     // TODO: localization support
-    char buf[128] = {0};
-    const char *postfix = _total_files > 1 ? "files" : "file";
+    NSString *postfix = _total_files > 1 ? @"files" : @"file";
+    NSString *bytes = @"";
+    
 #define __1000_1(a) ( (a) % 1000lu )
 #define __1000_2(a) __1000_1( (a)/1000lu )
 #define __1000_3(a) __1000_1( (a)/1000000lu )
 #define __1000_4(a) __1000_1( (a)/1000000000lu )
 #define __1000_5(a) __1000_1( (a)/1000000000000lu )
     if(_sz < 1000lu)
-        sprintf(buf, "Selected %lu bytes in %d %s", _sz, _total_files, postfix);
+        bytes = [NSString stringWithFormat:@"%llu", _sz];
     else if(_sz < 1000lu * 1000lu)
-        sprintf(buf, "Selected %lu %03lu bytes in %d %s", __1000_2(_sz), __1000_1(_sz), _total_files, postfix);
+        bytes = [NSString stringWithFormat:@"%llu %03llu", __1000_2(_sz), __1000_1(_sz)];
     else if(_sz < 1000lu * 1000lu * 1000lu)
-        sprintf(buf, "Selected %lu %03lu %03lu bytes in %d %s", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix);
+        bytes = [NSString stringWithFormat:@"%llu %03llu %03llu", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz)];
     else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu)
-        sprintf(buf, "Selected %lu %03lu %03lu %03lu bytes in %d %s", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix);
+        bytes = [NSString stringWithFormat:@"%llu %03llu %03llu %03llu", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz)];
     else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu)
-        sprintf(buf, "Selected %lu %03lu %03lu %03lu %03lu bytes in %d %s", __1000_5(_sz), __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz), _total_files, postfix);
+        bytes = [NSString stringWithFormat:@"%llu %03llu %03llu %03llu %03llu", __1000_5(_sz), __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz)];
 #undef __1000_1
 #undef __1000_2
 #undef __1000_3
 #undef __1000_4
 #undef __1000_5
-    
-    _symbs = strlen(buf);
-    for(int i = 0; i < _symbs; ++i) _out[i] = buf[i];
+
+    return [NSString stringWithFormat:@"Selected %@ in %d %@", bytes, _total_files, postfix];
 }
 
 static NSString* FormHumanReadableDateTime(time_t _in)
@@ -90,94 +91,93 @@ static NSString* FormHumanReadableShortTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-// _out will be _not_ null-terminated, just a raw buffer
-static void FormHumanReadableSizeRepresentation6(unsigned long _sz, UniChar _out[6])
+static NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz)
 {
-    char buf[32];
-    
     if(_sz < 1000000) // bytes
-    {
-        sprintf(buf, "%6ld", _sz);
-    }
+        return [NSString stringWithFormat:@"%6llu", _sz];
     else if(_sz < 9999lu * 1024lu) // kilobytes
     {
-        unsigned long div = 1024lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld K", res + (_sz - res * div) / (div/2));
+        uint64_t div = 1024lu;
+        uint64_t res = _sz / div;
+        return [NSString stringWithFormat:@"%4llu K", res + (_sz - res * div) / (div/2)];
     }
     else if(_sz < 9999lu * 1048576lu) // megabytes
     {
-        unsigned long div = 1048576lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld M", res + (_sz - res * div) / (div/2));
+        uint64_t div = 1048576lu;
+        uint64_t res = _sz / div;
+        return [NSString stringWithFormat:@"%4llu M", res + (_sz - res * div) / (div/2)];
     }
     else if(_sz < 9999lu * 1073741824lu) // gigabytes
     {
-        unsigned long div = 1073741824lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld G", res + (_sz - res * div) / (div/2));
+        uint64_t div = 1073741824lu;
+        uint64_t res = _sz / div;
+        return [NSString stringWithFormat:@"%4llu G", res + (_sz - res * div) / (div/2)];
     }
     else if(_sz < 9999lu * 1099511627776lu) // terabytes
     {
-        unsigned long div = 1099511627776lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld T", res + (_sz - res * div) / (div/2));
+        uint64_t div = 1099511627776lu;
+        uint64_t res = _sz / div;
+        return [NSString stringWithFormat:@"%4llu T", res + (_sz - res * div) / (div/2)];
     }
     else if(_sz < 9999lu * 1125899906842624lu) // petabytes
     {
-        unsigned long div = 1125899906842624lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld P", res + (_sz - res * div) / (div/2));
+        uint64_t div = 1125899906842624lu;
+        uint64_t res = _sz / div;
+        return [NSString stringWithFormat:@"%4llu P", res + (_sz - res * div) / (div/2)];
     }
-    else memset(buf, 0, 32);
-    
-    for(int i = 0; i < 6; ++i) _out[i] = buf[i];
+    return @"";
 }
 
-static void FormHumanReadableSizeReprentationForDirEnt6(const VFSListingItem &_dirent, UniChar _out[6])
+static NSString* FormHumanReadableSizeReprentationForDirEnt6(const VFSListingItem &_dirent)
 {
     if( _dirent.IsDir() )
     {
         if( _dirent.Size() != VFSListingItem::InvalidSize)
         {
-            FormHumanReadableSizeRepresentation6(_dirent.Size(), _out); // this code will be used some day when F3 will be implemented
+            return FormHumanReadableSizeRepresentation6(_dirent.Size());
         }
         else
         {
-            char buf[32];
-            memset(buf, 0, sizeof(buf));
-            
-            if( !_dirent.IsDotDot())  strcpy(buf, "Folder");
-            else                      strcpy(buf, "    Up");
-            
-            for(int i = 0; i < 6; ++i) _out[i] = buf[i];
+            if(_dirent.IsDotDot())
+                return @"Up";
+            else
+                return @"Folder";
         }
     }
     else
     {
-        FormHumanReadableSizeRepresentation6(_dirent.Size(), _out);
+        return FormHumanReadableSizeRepresentation6(_dirent.Size());
     }
 }
 
-static void ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, UniChar _buff[256], size_t &_sz)
-{   // output is a direct filename or symlink path in ->filename form
+static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
+{
+    // output is a direct filename or symlink path in ->filename form
     if(!_dirent.IsSymlink())
-    {
-        InterpretUTF8BufferAsUniChar( (const unsigned char*)_dirent.Name(), _dirent.NameLen(), _buff, &_sz, 0xFFFD);
+        return ((__bridge NSString*) _dirent.CFName()).copy;
+    else if(_dirent.Symlink() != 0) {
+        NSString *link = [NSString stringWithUTF8String:_dirent.Symlink()];
+        if(link != nil)
+            return [@"->" stringByAppendingString:link];
     }
-    else
+    return @""; // fallback case
+}
+
+static NSString *FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode)
+{
+    switch (_mode)
     {
-        if(_dirent.Symlink() != 0)
-        {
-            _buff[0]='-';
-            _buff[1]='>';
-            InterpretUTF8BufferAsUniChar( (unsigned char*)_dirent.Symlink(), strlen(_dirent.Symlink()), _buff+2, &_sz, 0xFFFD);
-            _sz += 2;
-        }
-        else
-        {
-            _sz = 0; // fallback case
-        }
+        case PanelSortMode::SortByName:     return @"n";
+        case PanelSortMode::SortByNameRev:  return @"N";
+        case PanelSortMode::SortByExt:      return @"e";
+        case PanelSortMode::SortByExtRev:   return @"E";
+        case PanelSortMode::SortBySize:     return @"s";
+        case PanelSortMode::SortBySizeRev:  return @"S";
+        case PanelSortMode::SortByMTime:    return @"m";
+        case PanelSortMode::SortByMTimeRev: return @"M";
+        case PanelSortMode::SortByBTime:    return @"b";
+        case PanelSortMode::SortByBTimeRev: return @"B";
+        default:                            return @"?";
     }
 }
 
@@ -187,9 +187,9 @@ static void ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, UniChar
 
 // Item name display insets inside the item line.
 // Order: left, top, right, bottom.
-const int g_TextInsetsInLine[4] = {7, 0, 5, 1}; // TODO: remove this black magic
+const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 // Width of the divider between views.
-const int g_DividerWidth = 3;
+const double g_DividerWidth = 3;
 
 ModernPanelViewPresentation::ModernPanelViewPresentation():
     m_IconCache(make_shared<IconsGenerator>()),
@@ -284,30 +284,30 @@ void ModernPanelViewPresentation::BuildGeometry()
     if(!m_Font) m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
     
     // Height of a single file line calculated from the font.
-    m_FontHeight = int(GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent));
-    m_LineHeight = m_FontHeight + 2; // was 18 before (16 + 2)
+    m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
+    m_LineHeight = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3]; // + 1 + 1
     m_IconCache->SetIconSize(m_FontHeight);
 
     NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];
     
-    m_SizeColumWidth = (int)ceil([@"999999" sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    m_SizeColumWidth = ceil([@"999999" sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
     
     // 9 days after 1970
-    m_DateColumnWidth = (int)ceil([FormHumanReadableShortDate(777600) sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    m_DateColumnWidth = ceil([FormHumanReadableShortDate(777600) sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
     
     // to exclude possible issues with timezones, showing/not showing preffix zeroes and 12/24 stuff...
     // ... we do the following: take every in 24 hours and get the largest width
     m_TimeColumnWidth = 0;
     for(int i = 0; i < 24; ++i)
     {
-        int tw = (int)ceil([FormHumanReadableShortTime(777600 + i * 60 * 60) sizeWithAttributes:attributes].width)
+        double tw = ceil([FormHumanReadableShortTime(777600 + i * 60 * 60) sizeWithAttributes:attributes].width)
             + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
         if(tw > m_TimeColumnWidth)
             m_TimeColumnWidth = tw;
     }
     
     NSString *max_footer_datetime = [NSString stringWithFormat:@"%@A", FormHumanReadableDateTime(777600)];
-    m_DateTimeFooterWidth = (int)ceil([max_footer_datetime sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    m_DateTimeFooterWidth = ceil([max_footer_datetime sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
 }
 
 void ModernPanelViewPresentation::BuildAppearance()
@@ -474,7 +474,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     ///////////////////////////////////////////////////////////////////////////////
     // Header and footer.
     static CGColorRef header_stroke_color = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
-    int header_height = m_ItemsArea.origin.y;
+    const double header_height = m_ItemsArea.origin.y;
     
     NSShadow *header_text_shadow = m_State->Active ? m_ActiveHeaderTextShadow : m_InactiveHeaderTextShadow;
     CGGradientRef header_gradient = m_State->Active ? m_ActiveHeaderGradient : m_InactiveHeaderGradient;
@@ -500,26 +500,35 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     NSString *header_string = [NSString stringWithUTF8String:panelpath];
     if(header_string == nil) header_string = @"...";
     
-    int delta = (header_height - m_LineHeight)/2;
-    NSRect rect = NSMakeRect(20, delta, m_ItemsArea.size.width - 40, m_LineHeight);
-    
-    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
-    
-    static const NSMutableParagraphStyle *header_text_pstyle = ^{
-        NSMutableParagraphStyle *p = [[NSMutableParagraphStyle alloc] init];
+    static const NSParagraphStyle *header_text_pstyle = ^{
+        NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
         p.alignment = NSCenterTextAlignment;
         p.lineBreakMode = NSLineBreakByTruncatingHead;
-        return p;
+        return p.copy;
     }();
     
     NSDictionary *header_text_attr =@{NSFontAttributeName: m_Font,
                                       NSParagraphStyleAttributeName: header_text_pstyle,
                                       NSShadowAttributeName: header_text_shadow};
     
-    [header_string drawWithRect:rect options:options attributes:header_text_attr];
+    [header_string drawWithRect:NSMakeRect(20,
+                                           g_TextInsetsInLine[1] + m_FontAscent,
+                                           m_ItemsArea.size.width - 40,
+                                           m_FontHeight)
+                        options:0
+                     attributes:header_text_attr];
+    
+    [FormHumanReadableSortModeReprentation(m_State->Data->GetCustomSortMode().sort)
+                    drawWithRect:NSMakeRect(0,
+                                            g_TextInsetsInLine[1] + m_FontAscent,
+                                            20,
+                                            m_FontHeight)
+                         options:0
+                      attributes:header_text_attr];
     
     // Footer
-    const int footer_y = m_ItemsArea.origin.y + m_ItemsArea.size.height;
+    const double footer_y = m_ItemsArea.origin.y + m_ItemsArea.size.height;
+    const double footer_x_offset = 10;
     
     // Footer gradient.
     CGContextSaveGState(context);
@@ -540,96 +549,88 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     // If any number of items are selected, then draw selection stats.
     // Otherwise, draw stats of cursor item.
     if(m_State->Data->Stats().selected_entries_amount != 0)
-    {
-        UniChar selectionbuf[512];
-        size_t sz;
-        FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_selected_entries,
-                                       m_State->Data->Stats().selected_entries_amount, selectionbuf, sz);
-        
-        const int delta = (header_height - m_LineHeight)/2;
-        const int offset = 10;
-        
-        NSString *sel_str = [NSString stringWithCharacters:selectionbuf length:sz];
-        [sel_str drawWithRect:NSMakeRect(offset, footer_y + delta,
-                                         m_ItemsArea.size.width - 2*offset, m_LineHeight)
-                      options:NSStringDrawingUsesLineFragmentOrigin
-                   attributes:m_State->Active?m_ActiveSelectedItemsFooterTextAttr:m_SelectedItemsFooterTextAttr];
-    }
+        [FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_selected_entries,
+                                        m_State->Data->Stats().selected_entries_amount)
+         drawWithRect:NSMakeRect(footer_x_offset,
+                                 footer_y + g_TextInsetsInLine[1] + m_FontAscent,
+                                 m_ItemsArea.size.width - 2.*footer_x_offset,
+                                 m_FontHeight)
+              options:0
+           attributes:m_State->Active ? m_ActiveSelectedItemsFooterTextAttr : m_SelectedItemsFooterTextAttr];
     else if(m_State->CursorPos >= 0)
     {
-        UniChar buff[256];
-        size_t buf_size = 0;
-        const auto &current_entry = entries[sorted_entries[m_State->CursorPos]];
-
-        const int delta = (header_height - m_LineHeight)/2;
-        const int offset = 10;
-
-        NSDictionary *footer_text_attr;
+        const auto *current_entry = View().CurrentItem;
+        assert(current_entry);
         
         if (m_State->ViewType != PanelViewType::ViewFull)
         {
-            static const NSMutableParagraphStyle *pstyle = ^{
+            static const NSParagraphStyle *pstyle = ^{
                 NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
                 p.alignment = NSRightTextAlignment;
                 p.lineBreakMode = NSLineBreakByClipping;
-                return p;
+                return p.copy;
             } ();
             
-            footer_text_attr = @{NSFontAttributeName: m_Font,
+            NSDictionary *footer_text_attr = footer_text_attr = @{NSFontAttributeName:m_Font,
                                  NSParagraphStyleAttributeName:pstyle,
-                                 NSShadowAttributeName: header_text_shadow};
+                                 NSShadowAttributeName:header_text_shadow};
             
-            NSString *time_str = FormHumanReadableDateTime(current_entry.MTime());
-            [time_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - m_DateTimeFooterWidth,
-                                              footer_y + delta,
-                                              m_DateTimeFooterWidth, m_LineHeight)
-                           options:NSStringDrawingUsesLineFragmentOrigin
-                        attributes:footer_text_attr];
+            [FormHumanReadableDateTime(current_entry->MTime())
+                drawWithRect:NSMakeRect(m_ItemsArea.size.width - footer_x_offset - m_DateTimeFooterWidth,
+                                        footer_y + g_TextInsetsInLine[1] + m_FontAscent,
+                                        m_DateTimeFooterWidth,
+                                        m_FontHeight)
+                     options:0
+                  attributes:footer_text_attr];
             
-            UniChar size_info[6];
-            FormHumanReadableSizeReprentationForDirEnt6(current_entry, size_info);
-            NSString *size_str = [[NSString alloc] initWithCharactersNoCopy:size_info length:6 freeWhenDone:false];
-            [size_str drawWithRect:NSMakeRect(m_ItemsArea.size.width - offset - m_DateTimeFooterWidth - m_SizeColumWidth,
-                                              footer_y + delta,
-                                              m_SizeColumWidth, m_LineHeight)
-                           options:NSStringDrawingUsesLineFragmentOrigin
-                        attributes:footer_text_attr];
+            [FormHumanReadableSizeReprentationForDirEnt6(*current_entry)
+                drawWithRect:NSMakeRect(m_ItemsArea.size.width - footer_x_offset - m_DateTimeFooterWidth - m_SizeColumWidth,
+                                        footer_y + g_TextInsetsInLine[1] + m_FontAscent,
+                                        m_SizeColumWidth,
+                                        m_FontHeight)
+                     options:0
+                  attributes:footer_text_attr];
         }
         
-        static const NSMutableParagraphStyle *footer_text_pstyle = (NSMutableParagraphStyle *)^{
+        static const NSParagraphStyle *footer_text_pstyle = (NSMutableParagraphStyle *)^{
             NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
             p.alignment = NSLeftTextAlignment;
             p.lineBreakMode = NSLineBreakByTruncatingHead;
-            return p;
+            return p.copy;
         } ();
         
-        footer_text_attr = @{NSFontAttributeName: m_Font,
-                             NSParagraphStyleAttributeName: footer_text_pstyle,
-                             NSShadowAttributeName: header_text_shadow};
+        NSDictionary *footer_text_attr = @{NSFontAttributeName: m_Font,
+                                           NSParagraphStyleAttributeName: footer_text_pstyle,
+                                           NSShadowAttributeName: header_text_shadow};
         
-        int name_width = m_ItemsArea.size.width - 2*offset;
+        int name_width = m_ItemsArea.size.width - 2*footer_x_offset;
         if (m_State->ViewType != PanelViewType::ViewFull)
             name_width -= m_DateTimeFooterWidth + m_SizeColumWidth;
-        ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
-        NSString *name_str = [NSString stringWithCharacters:buff length:buf_size];
-        [name_str drawWithRect:NSMakeRect(offset, footer_y + delta, name_width, m_LineHeight) options:options attributes:footer_text_attr];
+
+        [ComposeFooterFileNameForEntry(*current_entry)
+            drawWithRect:NSMakeRect(footer_x_offset,
+                                    footer_y + g_TextInsetsInLine[1] + m_FontAscent,
+                                    name_width,
+                                    m_FontHeight)
+                 options:0
+              attributes:footer_text_attr];
     }
     
     ///////////////////////////////////////////////////////////////////////////////
     // Draw items in columns.        
-    const int icon_size = m_IconCache->IconSize();
-    const int start_y = m_ItemsArea.origin.y;
+    const double icon_size = m_IconCache->IconSize();
+    const double start_y = m_ItemsArea.origin.y;
     double full_view_max_date_width = 0;
     double full_wide_view_max_time_width = 0;
         
     for (int column = 0; column < columns_count; ++column)
     {
         // Draw column.
-        int column_width = int(m_ItemsArea.size.width - (columns_count - 1))/columns_count;
+        double column_width = floor(m_ItemsArea.size.width - (columns_count - 1))/columns_count;
         // Calculate index of the first item in current column.
         int i = m_State->ItemsDisplayOffset + column*items_per_column;
         // X position of items.
-        int start_x = column*(column_width + 1);
+        double start_x = column*(column_width + 1);
         
         if (column == columns_count - 1)
             column_width += int(m_ItemsArea.size.width - (columns_count - 1))%columns_count;
@@ -701,10 +702,15 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 CGContextRestoreGState(context);
             }
             
+            CGContextSaveGState(context);
+            
+            if(item->IsHidden())
+                CGContextSetAlpha(context, 0.6);
+            
             NSRect rect = NSMakeRect(start_x + icon_size + 2*g_TextInsetsInLine[0],
-                       start_y + count*m_LineHeight + m_FontAscent,
+                       start_y + count*m_LineHeight + g_TextInsetsInLine[1] + m_FontAscent,
                        column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
-                       m_LineHeight);
+                       m_FontHeight);
             
             // Draw stats columns for specific views.
             NSDictionary *item_text_attr = (m_State->Active && item->CFIsSelected()) ? m_ActiveSelectedItemTextAttr : m_ItemTextAttr;
@@ -758,9 +764,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_SizeColumWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
 
-                UniChar size_info[6];
-                FormHumanReadableSizeReprentationForDirEnt6(*item, size_info);
-                NSString *size_str = [[NSString alloc] initWithCharactersNoCopy:size_info length:6 freeWhenDone:false];
+                NSString *size_str = FormHumanReadableSizeReprentationForDirEnt6(*item);
                 [size_str drawWithRect:size_rect
                                options:0
                             attributes:m_State->Active && item->CFIsSelected() ? m_ActiveSelectedSizeColumnTextAttr : m_SizeColumnTextAttr];
@@ -769,21 +773,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             }
 
             // Draw item text.
-            if(!item->IsHidden()) {
-                [(__bridge NSString *)item->CFName() drawWithRect:rect options:0 attributes:item_text_attr];
-            }
-            else { // TODO: have to rewrite this shit into something normal
-                NSColor *oldcolor = (NSColor*)item_text_attr[NSForegroundColorAttributeName];
-                NSColor *c = [NSColor colorWithDeviceRed:[oldcolor redComponent]
-                                                   green:[oldcolor greenComponent]
-                                                    blue:[oldcolor blueComponent]
-                                                   alpha:[oldcolor alphaComponent] * 0.6];
-                NSDictionary *tmp_flags = @{NSFontAttributeName: item_text_attr[NSFontAttributeName],
-                                            NSParagraphStyleAttributeName: item_text_attr[NSParagraphStyleAttributeName],
-                                            NSForegroundColorAttributeName: c};
-                [(__bridge NSString *)item->CFName() drawWithRect:rect options:0 attributes:tmp_flags];
-            }
-
+            [(__bridge NSString *)item->CFName() drawWithRect:rect options:0 attributes:item_text_attr];
+            
             // Draw icon
             NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
             NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
@@ -795,6 +786,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                          fraction:1.0
                    respectFlipped:YES
                             hints:nil];
+            
+            CGContextRestoreGState(context);
         }
     }
     
@@ -831,10 +824,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     // correct our predicted layout by really rendered geometry
     if(full_view_max_date_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2] > m_DateColumnWidth)
-        m_DateColumnWidth = full_view_max_date_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+        m_DateColumnWidth = floor(full_view_max_date_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2]);
     
     if(full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2] > m_TimeColumnWidth)
-        m_TimeColumnWidth = full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+        m_TimeColumnWidth = floor(full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2]);
 }
 
 void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
@@ -851,8 +844,8 @@ void ModernPanelViewPresentation::CalculateLayoutFromFrame()
     
     m_ItemsArea.origin.x = 0;
     m_ItemsArea.origin.y = header_height;
-    m_ItemsArea.size.height = m_Size.height - 2*header_height;
-    m_ItemsArea.size.width = m_Size.width - g_DividerWidth;
+    m_ItemsArea.size.height = floor(m_Size.height - 2*header_height);
+    m_ItemsArea.size.width = floor(m_Size.width - g_DividerWidth);
     if (!m_IsLeft) m_ItemsArea.origin.x += g_DividerWidth;
     
     m_ItemsPerColumn = int(m_ItemsArea.size.height/m_LineHeight);

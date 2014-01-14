@@ -43,12 +43,12 @@ private:
     
     NSFont *m_Font;
     double m_FontAscent;
-    int m_FontHeight;
-    int m_LineHeight; // full height of a row with gaps
-    int m_SizeColumWidth;
-    int m_DateColumnWidth;
-    int m_TimeColumnWidth;
-    int m_DateTimeFooterWidth;
+    double m_FontHeight;
+    double m_LineHeight; // full height of a row with gaps
+    double m_SizeColumWidth;
+    double m_DateColumnWidth;
+    double m_TimeColumnWidth;
+    double m_DateTimeFooterWidth;
     
     bool m_IsLeft;
     

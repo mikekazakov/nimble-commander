@@ -10,29 +10,22 @@
 
 double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent, CGFloat *_leading)
 {
-    CGFloat lineHeight = 0.0/*, ascenderDelta = 0.0*/;
-    
     assert(iFont != NULL);
-    
-    // Get the ascent from the font, already scaled for the font's size
-    CGFloat ascent = CTFontGetAscent(iFont);
-    if(_ascent) *_ascent = ascent;
-    
-    // Get the descent from the font, already scaled for the font's size
-    CGFloat descent = CTFontGetDescent(iFont);
-    if(_descent) *_descent = floor(descent + 0.5);
-    
-    // Get the leading from the font, already scaled for the font's size
-    CGFloat leading = CTFontGetLeading(iFont);
-    if(_leading) *_leading = leading;
+    double ascent   = CTFontGetAscent(iFont);
+    double descent  = CTFontGetDescent(iFont);
+    double leading  = CTFontGetLeading(iFont);
     
     // calculation taken from here: http://stackoverflow.com/questions/5511830/how-does-line-spacing-work-in-core-text-and-why-is-it-different-from-nslayoutm
         
-    if (leading < 0)
-        leading = 0;
+    if (leading < 0.)
+        leading = 0.;
+    else
+        leading = floor(leading + 0.5);
     
-    leading = floor (leading + 0.5);
-    lineHeight = floor (ascent + 0.5) + floor (descent + 0.5) + leading;
+    ascent  = floor(ascent  + 0.5);
+    descent = floor(descent + 0.5);
+    
+    auto lineHeight = ascent + descent + leading;
     
     // in case if not sure that font line is calculating ok -
     // use the following block to compare, should be the same.
@@ -41,6 +34,10 @@ double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent
     NSLayoutManager *lm = [NSLayoutManager new];
     auto lm_lineheight = [lm defaultLineHeightForFont:f];
     */
+    
+    if(_ascent)  *_ascent = ascent;
+    if(_descent) *_descent = descent;
+    if(_leading) *_leading = leading;
     
     return lineHeight;
 }

@@ -786,12 +786,15 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 
             // Draw icon
             NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
-            
             NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
                                      start_y + count*m_LineHeight + (m_LineHeight - icon_size) / 2,
                                      icon_size, icon_size);
-            [image_rep drawInRect:icon_rect fromRect:NSZeroRect operation:NSCompositeSourceOver
-                         fraction:1.0 respectFlipped:YES hints:nil];
+            [image_rep drawInRect:icon_rect
+                         fromRect:NSZeroRect
+                        operation:NSCompositeSourceOver
+                         fraction:1.0
+                   respectFlipped:YES
+                            hints:nil];
         }
     }
     

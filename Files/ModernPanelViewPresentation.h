@@ -81,6 +81,8 @@ private:
     CGGradientRef m_InactiveHeaderGradient;
     NSShadow *m_InactiveHeaderTextShadow;
 
+    NSImage *m_SymlinkArrowImage;
+    
     ObjcToCppObservingBridge *m_GeometryObserver;
     ObjcToCppObservingBridge *m_AppearanceObserver;
     

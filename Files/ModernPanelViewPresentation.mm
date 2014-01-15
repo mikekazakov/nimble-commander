@@ -243,7 +243,10 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
         m_InactiveHeaderGradient = CGGradientCreateWithColorComponents(color_space, components, locations, 4);
         CGColorSpaceRelease(color_space);
     }
-
+    
+    
+    m_SymlinkArrowImage = [NSImage imageNamed:@"linkarrow_icon.png"];
+    
     m_GeometryObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnGeometryChanged object:this];
     [m_GeometryObserver observeChangesInObject:[NSUserDefaults standardUserDefaults] forKeyPath:@"FilePanelsModernFont" options:0 context:0];
     
@@ -786,6 +789,19 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                          fraction:1.0
                    respectFlipped:YES
                             hints:nil];
+            
+     
+            if(item->IsSymlink())
+                [m_SymlinkArrowImage drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0],
+                                           start_y + count*m_LineHeight + m_LineHeight - m_SymlinkArrowImage.size.height - 1,
+                                           m_SymlinkArrowImage.size.width,
+                                           m_SymlinkArrowImage.size.height)
+                       fromRect:NSZeroRect
+                      operation:NSCompositeSourceOver
+                       fraction:1.0
+                 respectFlipped:YES
+                          hints:nil
+                 ];
             
             CGContextRestoreGState(context);
         }

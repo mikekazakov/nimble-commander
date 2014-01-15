@@ -235,6 +235,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         
         // show default handler if any
         bool any_handlers_added = false;
+        bool any_non_default_handlers_added = false;
         for(int i = 0; i < m_OpenWithHandlers.size(); ++i)
             if(m_OpenWithHandlers[i].is_default)
             {
@@ -275,6 +276,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
                 [always_openwith_submenu addItem:item];
                 
                 any_handlers_added = true;
+                any_non_default_handlers_added = true;
             }
 
         // separate them
@@ -282,8 +284,11 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             [openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:@"<None>" action:nil keyEquivalent:@""]];
             [always_openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:@"<None>" action:nil keyEquivalent:@""]];
         }
-        [openwith_submenu addItem:[NSMenuItem separatorItem]];
-        [always_openwith_submenu addItem:[NSMenuItem separatorItem]];
+        
+        if(any_non_default_handlers_added || !any_handlers_added) {
+            [openwith_submenu addItem:[NSMenuItem separatorItem]];
+            [always_openwith_submenu addItem:[NSMenuItem separatorItem]];
+        }
         
         // let user to select program manually
         NSMenuItem *item = [NSMenuItem new];

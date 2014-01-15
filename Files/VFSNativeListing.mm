@@ -150,12 +150,12 @@ int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
         }
         
         // parse extension if any
-        for(int i = current->namelen - 1; i >= 0; --i)
-            if(entryname[i] == '.')
-            {
-                if(i == current->namelen - 1 || i == 0)
-                    break; // degenerate case, lets think that there's no extension at all
-                current->extoffset = i+1; // CHECK THIS! may be some bugs with UTF
+        // here we skip possible cases like
+        // filename. and .filename
+        // in such cases we think there's no extension at all
+        for(int i = int(current->namelen) - 2; i > 0; --i)
+            if(entryname[i] == '.') {
+                current->extoffset = i+1;
                 break;
             }
         

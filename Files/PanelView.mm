@@ -124,12 +124,6 @@ struct PanelViewStateStorage
     [self setNeedsDisplay:true];
 }
 
-/*- (void) DirectoryChanged:(PanelViewDirectoryChangeType)_type newcursor:(int)_cursor
-{
-    if (m_Presentation) m_Presentation->DirectoryChanged(_type, _cursor);
-    [self OnCursorPositionChanged];
-}*/
-
 - (void) SetPresentation:(PanelViewPresentation *)_presentation
 {
     if (m_Presentation) delete m_Presentation;

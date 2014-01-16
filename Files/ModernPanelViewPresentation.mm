@@ -128,7 +128,7 @@ static NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz)
     return @"";
 }
 
-static NSString* FormHumanReadableSizeReprentationForDirEnt6(const VFSListingItem &_dirent)
+static NSString* SizeToString6(const VFSListingItem &_dirent)
 {
     if( _dirent.IsDir() )
     {
@@ -586,7 +586,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                      options:0
                   attributes:footer_text_attr];
             
-            [FormHumanReadableSizeReprentationForDirEnt6(*current_entry)
+            [SizeToString6(*current_entry)
                 drawWithRect:NSMakeRect(m_ItemsArea.size.width - footer_x_offset - m_DateTimeFooterWidth - m_SizeColumWidth,
                                         footer_y + g_TextInsetsInLine[1] + m_FontAscent,
                                         m_SizeColumWidth,
@@ -653,6 +653,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         int count = 0;
         for (; count < items_per_column; ++count, ++i)
         {
+            const double item_start_y = start_y + count*m_LineHeight;
             const VFSListingItem *item = nullptr;
             auto raw_index = 0;
             
@@ -670,7 +671,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                     int offset = (m_State->CursorPos == i) ? 2 : 1;
                     CGContextSetFillColorWithColor(context, m_ActiveSelectedItemBackgroundColor);
                     CGContextFillRect(context, NSMakeRect(start_x + offset,
-                                                          start_y + count*m_LineHeight + offset,
+                                                          item_start_y + offset,
                                                           column_width - 2*offset,
                                                           m_LineHeight - 2*offset + 1));
                 }
@@ -678,14 +679,14 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 {
                     CGContextSetFillColorWithColor(context, m_InactiveSelectedItemBackgroundColor);
                     CGContextFillRect(context, NSMakeRect(start_x + 1,
-                                                          start_y + count*m_LineHeight + 1,
+                                                          item_start_y + 1,
                                                           column_width - 2, m_LineHeight - 1));
                 }
             }
             else if (count % 2 == 1)
             {
                 CGContextSetFillColorWithColor(context, m_RegularOddBackgroundColor);
-                CGContextFillRect(context, NSMakeRect(start_x + 1, start_y + count*m_LineHeight + 1,
+                CGContextFillRect(context, NSMakeRect(start_x + 1, item_start_y + 1,
                                                       column_width - 2, m_LineHeight - 1));
             }
             
@@ -700,7 +701,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 CGContextSetLineDash(context, 0, dashes, 2);
                 CGContextSetStrokeColorWithColor(context, m_CursorFrameColor);
                 CGContextStrokeRect(context, NSMakeRect(start_x + 1.5,
-                                                        start_y + count*m_LineHeight + 1.5,
+                                                        item_start_y + 1.5,
                                                         column_width - 3, m_LineHeight - 2));
                 CGContextRestoreGState(context);
             }
@@ -711,7 +712,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 CGContextSetAlpha(context, 0.6);
             
             NSRect rect = NSMakeRect(start_x + icon_size + 2*g_TextInsetsInLine[0],
-                       start_y + count*m_LineHeight + g_TextInsetsInLine[1] + m_FontAscent,
+                       item_start_y + g_TextInsetsInLine[1] + m_FontAscent,
                        column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                        m_FontHeight);
             
@@ -767,10 +768,11 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_SizeColumWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
 
-                NSString *size_str = FormHumanReadableSizeReprentationForDirEnt6(*item);
-                [size_str drawWithRect:size_rect
-                               options:0
-                            attributes:m_State->Active && item->CFIsSelected() ? m_ActiveSelectedSizeColumnTextAttr : m_SizeColumnTextAttr];
+                [SizeToString6(*item) drawWithRect:size_rect
+                                           options:0
+                                        attributes:m_State->Active && item->CFIsSelected() ?
+                                                    m_ActiveSelectedSizeColumnTextAttr :
+                                                    m_SizeColumnTextAttr];
                 
                 rect.size.width -= m_SizeColumWidth;
             }
@@ -780,27 +782,27 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             
             // Draw icon
             NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
-            NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
-                                     start_y + count*m_LineHeight + (m_LineHeight - icon_size) / 2,
-                                     icon_size, icon_size);
-            [image_rep drawInRect:icon_rect
+            [image_rep drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0],
+                                             item_start_y + (m_LineHeight - icon_size) / 2,
+                                             icon_size,
+                                             icon_size)
                          fromRect:NSZeroRect
                         operation:NSCompositeSourceOver
                          fraction:1.0
                    respectFlipped:YES
                             hints:nil];
             
-     
+            // Draw symlink arrow over an icon
             if(item->IsSymlink())
                 [m_SymlinkArrowImage drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0],
-                                           start_y + count*m_LineHeight + m_LineHeight - m_SymlinkArrowImage.size.height - 1,
-                                           m_SymlinkArrowImage.size.width,
-                                           m_SymlinkArrowImage.size.height)
-                       fromRect:NSZeroRect
-                      operation:NSCompositeSourceOver
-                       fraction:1.0
-                 respectFlipped:YES
-                          hints:nil
+                                                           item_start_y + m_LineHeight - m_SymlinkArrowImage.size.height - 1,
+                                                           m_SymlinkArrowImage.size.width,
+                                                           m_SymlinkArrowImage.size.height)
+                                       fromRect:NSZeroRect
+                                      operation:NSCompositeSourceOver
+                                       fraction:1.0
+                                 respectFlipped:YES
+                                          hints:nil
                  ];
             
             CGContextRestoreGState(context);

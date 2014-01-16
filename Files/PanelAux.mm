@@ -77,8 +77,60 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
                 if (![[NSWorkspace sharedWorkspace] openFile:fn])
                     NSBeep();
             }
-            
-            
         });
+    });
+}
+
+void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
+                                       shared_ptr<VFSHost> _host,
+                                       NSString *_with_app_bundle // can be nil, use default app in such case
+                )
+{
+    if(_host->IsNativeFS())
+    {
+        NSMutableArray *arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
+        for(auto &i: _filenames)
+            if(NSString *s = [NSString stringWithUTF8String:i.c_str()])
+                [arr addObject: [[NSURL alloc] initFileURLWithPath:s] ];
+        
+        if(![NSWorkspace.sharedWorkspace openURLs:arr
+                          withAppBundleIdentifier:_with_app_bundle
+                                          options:0
+                   additionalEventParamDescriptor:nil
+                                launchIdentifiers:nil])
+            NSBeep();
+
+        return;
+    }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSMutableArray *arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
+        for(auto &i: _filenames)
+        {
+            if(_host->IsDirectory(i.c_str(), 0, 0))
+                continue;
+            
+            struct stat st;
+            if(_host->Stat(i.c_str(), st, 0, 0) < 0)
+                continue;
+            
+            if(st.st_size > g_MaxFileSizeForVFSOpen)
+                continue;
+            
+            char tmp[MAXPATHLEN];
+            
+            if(!TemporaryNativeFileStorage::Instance().CopySingleFile(i.c_str(), _host, tmp))
+                continue;
+            
+            if(NSString *s = [NSString stringWithUTF8String:tmp])
+                [arr addObject: [[NSURL alloc] initFileURLWithPath:s] ];
+        }
+
+        if(![NSWorkspace.sharedWorkspace openURLs:arr
+                          withAppBundleIdentifier:_with_app_bundle
+                                          options:0
+                   additionalEventParamDescriptor:nil
+                                launchIdentifiers:nil])
+            NSBeep();
     });
 }

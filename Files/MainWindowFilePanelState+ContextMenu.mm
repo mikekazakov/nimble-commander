@@ -461,30 +461,38 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnRegularOpen:(id)sender
 {
-    [self OpenItemsWithApp:""];
+    [self OpenItemsWithApp:"" bundle_id:nil];
 }
 
 - (void)OnOpenWith:(id)sender
 {
     int app_no = (int)[sender tag];
     assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path];
+    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path bundle_id:m_OpenWithHandlers[app_no].app_id];
 }
 
 - (void)OnAlwaysOpenWith:(id)sender
 {
     int app_no = (int)[sender tag];
     assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path];
+    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path bundle_id:m_OpenWithHandlers[app_no].app_id];
     
     if(!m_ItemsUTI.empty())
         LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), m_OpenWithHandlers[app_no].path.c_str());
 }
 
-- (void) OpenItemsWithApp:(string)_app_path
+- (void) OpenItemsWithApp:(string)_app_path bundle_id:(NSString*)_app_id
 {
-    for(auto &i: m_Items)
-        PanelVFSFileWorkspaceOpener::Open(m_DirPath + i, m_Host, _app_path);
+    if(m_Items.size() > 1)
+    {
+        vector<string> items;
+        for(auto &i: m_Items)
+            items.push_back(m_DirPath + i);
+            
+        PanelVFSFileWorkspaceOpener::Open(items, m_Host, _app_id);
+    }
+    else if(m_Items.size() == 1)
+        PanelVFSFileWorkspaceOpener::Open(m_DirPath + m_Items.front(), m_Host, _app_path);
 }
 
 - (NSOpenPanel*) BuildAppChoose
@@ -504,7 +512,11 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     [panel beginSheetModalForWindow:[m_InView window]
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
-                          [self OpenItemsWithApp:[[[panel URL] path] fileSystemRepresentation]];
+                      {
+                          OpenWithHandler hndl;
+                          if(ExposeOpenWithHandler(panel.URL.path.fileSystemRepresentation, hndl))
+                              [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
+                      }
                   }];
 }
 
@@ -515,9 +527,12 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
                       {
-                          [self OpenItemsWithApp:[[[panel URL] path] fileSystemRepresentation]];
                           if(!m_ItemsUTI.empty())
-                              LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), [[[panel URL] path] fileSystemRepresentation]);
+                              LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), panel.URL.path.fileSystemRepresentation);
+                          
+                          OpenWithHandler hndl;
+                          if(ExposeOpenWithHandler(panel.URL.path.fileSystemRepresentation, hndl))
+                              [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
                       }
                   }];
 }

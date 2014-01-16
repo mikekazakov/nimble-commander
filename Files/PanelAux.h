@@ -22,4 +22,10 @@ public:
                      shared_ptr<VFSHost> _host,
                      string _with_app_path // can be "", use default app in such case
                      );
+    
+    static void Open(vector<string> _filenames,
+                     shared_ptr<VFSHost> _host,
+                     NSString *_with_app_bundle // can be nil, use default app in such case
+                    );
+    
 };

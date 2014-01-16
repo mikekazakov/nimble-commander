@@ -82,7 +82,7 @@ static NSArray *MyDefaultsKeys()
     m_SelectionInWindow = CFRangeMake(-1, 0);
     m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
 
-    if( [(AppDelegate*)[NSApp delegate] Skin] == ApplicationSkin::Modern)
+    if( [(AppDelegate*)[NSApplication sharedApplication].delegate Skin] == ApplicationSkin::Modern)
         [self InitAppearanceForModernPresentation];
     else
         [self InitAppearanceForClassicPresentation];
@@ -133,7 +133,7 @@ static NSArray *MyDefaultsKeys()
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
-    auto skin = [(AppDelegate*)[NSApp delegate] Skin];
+    auto skin = [(AppDelegate*)[NSApplication sharedApplication].delegate Skin];
 
     if(skin == ApplicationSkin::Modern) {
         if([keyPath isEqualToString:@"BigFileViewModernBackgroundColor"])

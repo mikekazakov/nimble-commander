@@ -302,7 +302,7 @@ static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100P
     }
     
     if ([controller respondsToSelector:@selector(identifier)]){
-        return [(id)controller identifier];
+        return [(id<RHPreferencesViewControllerProtocol>)controller identifier];
     }
     
     return nil;

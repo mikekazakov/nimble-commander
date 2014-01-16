@@ -44,14 +44,13 @@
 
 - (void)CloseDialogWithResult:(int)_result
 {
-    assert(m_Operation);
     assert(_result != OperationDialogResult::None);
     
     m_Result = _result;
  
     if ([self IsVisible]) [self HideDialog];
     
-    [m_Operation OnDialogClosed:self];
+    [(Operation*)m_Operation OnDialogClosed:self];
 }
 
 - (int)WaitForResult

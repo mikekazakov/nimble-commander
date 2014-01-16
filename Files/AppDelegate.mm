@@ -144,7 +144,7 @@
     NSWindow *window = nil;
     if ([identifier isEqualToString:@"mainwindow"])
     {
-        AppDelegate *app = [NSApp delegate];
+        AppDelegate *app = (AppDelegate*)[NSApplication sharedApplication].delegate;
         window = [[app AllocateNewMainWindow] window];
     }
     completionHandler(window, nil);
@@ -245,7 +245,7 @@
     }
 }
 
-- (void)IClicked:(NSPasteboard *)pboard userData:(NSString *)data error:(NSString **)error
+- (void)IClicked:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
 {
     // we support only one directory path now
     // TODO: need to implement handling muliple directory paths in the future
@@ -343,12 +343,9 @@
     [m_PreferencesController showWindow:self];
 }
 
-- (NSArray*) GetMainWindowControllers
+- (vector<MainWindowController*>) GetMainWindowControllers
 {
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:m_MainWindows.size()];
-    for(auto i: m_MainWindows)
-        [array addObject:i];
-    return array;
+    return m_MainWindows;
 }
 
 @end

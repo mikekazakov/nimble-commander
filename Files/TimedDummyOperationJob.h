@@ -26,7 +26,7 @@ protected:
 private:
     int m_CompleteTime;
     
-    __weak TimedDummyOperation *m_Operation;
+    __unsafe_unretained TimedDummyOperation *m_Operation;
     
 };
 

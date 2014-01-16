@@ -23,7 +23,7 @@ protected:
     virtual void Do();
     
 private:
-    __weak CreateDirectoryOperation *m_Operation;
+    __unsafe_unretained CreateDirectoryOperation *m_Operation;
     char m_Name[MAXPATHLEN];
     char m_Path[MAXPATHLEN];
     char m_RootPath[MAXPATHLEN];

@@ -16,8 +16,8 @@ typedef void (^FileDeletionSheetCompletionHandler)(int result);
 
 @interface FileDeletionSheetController : NSWindowController
 
-@property (weak) IBOutlet NSTextField *Label;
-@property (weak) IBOutlet ButtonWithOptions *DeleteButton;
+@property (strong) IBOutlet NSTextField *Label;
+@property (strong) IBOutlet ButtonWithOptions *DeleteButton;
 @property (strong) IBOutlet NSMenu *DeleteButtonMenu;
 - (IBAction)OnDeleteAction:(id)sender;
 - (IBAction)OnCancelAction:(id)sender;

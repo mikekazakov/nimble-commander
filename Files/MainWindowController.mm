@@ -84,7 +84,7 @@
     m_PanelState = nil;
     m_Terminal = nil;
     
-    [(AppDelegate*)[NSApp delegate] RemoveMainWindow:self];
+    [(AppDelegate*)[NSApplication sharedApplication].delegate RemoveMainWindow:self];
 }
 
 - (void)ApplySkin:(ApplicationSkin)_skin {

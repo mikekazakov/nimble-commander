@@ -100,7 +100,7 @@ private:
     void EraseXattrs(int _fd_in);
     void CopyXattrs(int _fd_from, int _fd_to);
     
-    __weak FileCopyOperation *m_Operation;
+    __unsafe_unretained FileCopyOperation *m_Operation;
     chained_strings m_InitialItems;
     chained_strings m_ScannedItems;
     

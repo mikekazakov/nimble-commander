@@ -12,8 +12,8 @@
 
 @property int NewTime;
 
-@property (weak) IBOutlet NSTextField *Label;
-@property (weak) IBOutlet NSTextField *TimeField;
+@property (strong) IBOutlet NSTextField *Label;
+@property (strong) IBOutlet NSTextField *TimeField;
 
 - (IBAction)OkButtonAction:(NSButton *)sender;
 - (IBAction)CancelButtonAction:(NSButton *)sender;

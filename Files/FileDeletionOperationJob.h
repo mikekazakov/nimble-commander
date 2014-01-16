@@ -40,5 +40,5 @@ protected:
     State m_State;
     bool m_SkipAll;
     
-    __weak FileDeletionOperation *m_Operation;
+    __unsafe_unretained FileDeletionOperation *m_Operation;
 };

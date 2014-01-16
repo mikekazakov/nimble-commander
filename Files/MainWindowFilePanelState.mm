@@ -103,7 +103,7 @@
     [m_RightPanelController SetData:m_RightPanelData];
     [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton share:m_RightPanelShareButton];
 
-    m_Skin = ((AppDelegate*)[NSApp delegate]).Skin;
+    m_Skin = ((AppDelegate*)[NSApplication sharedApplication].delegate).Skin;
     if (m_Skin == ApplicationSkin::Modern)
     {
         [m_LeftPanelView SetPresentation:new ModernPanelViewPresentation];

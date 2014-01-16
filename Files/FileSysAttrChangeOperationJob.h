@@ -31,7 +31,7 @@ private:
     
     FileSysAttrAlterCommand *m_Command;
     chained_strings m_Files;
-    __weak FileSysAttrChangeOperation *m_Operation;
+    __unsafe_unretained FileSysAttrChangeOperation *m_Operation;
     bool m_SkipAllErrors;
 };
 

@@ -289,14 +289,14 @@ bool GetSystemOverview(SystemOverview &_overview)
                 if(id nestdict = [dict objectForKey:ns_model])
                     if(nestdict && [nestdict isKindOfClass:[NSDictionary class]])
                     {
-                        id nestnestdict = [nestdict objectForKey:@"_LOCALIZABLE_"];
+                        id nestnestdict = [(NSDictionary*)nestdict objectForKey:@"_LOCALIZABLE_"];
                         if(nestnestdict && [nestnestdict isKindOfClass:[NSDictionary class]])
                         {
-                            id nest_human_model = [nestnestdict objectForKey:@"model"];
+                            id nest_human_model = [(NSDictionary*)nestnestdict objectForKey:@"model"];
                             if(nest_human_model && [nest_human_model isKindOfClass:[NSString class]])
                                 human_model = nest_human_model;
                             
-                            id marketing_model = [nestnestdict objectForKey:@"marketingModel"];
+                            id marketing_model = [(NSDictionary*)nestnestdict objectForKey:@"marketingModel"];
                             if(nest_human_model && marketing_model && [marketing_model isKindOfClass:[NSString class]])
                             {
                                 NSArray *split = [marketing_model componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"()"]];

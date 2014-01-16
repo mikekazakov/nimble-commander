@@ -258,7 +258,7 @@ bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
 
 bool FileDeletionOperationJob::DoMoveToTrash(const char *_full_path, bool _is_dir)
 {
-    if( [[NSFileManager defaultManager] respondsToSelector: @selector(trashItemAtURL)]  )
+    if( [[NSFileManager defaultManager] respondsToSelector: @selector(trashItemAtURL:resultingItemURL:error:)]  )
     {
         // We're on 10.8 or later
         // This construction is VERY slow. Thanks, Apple!

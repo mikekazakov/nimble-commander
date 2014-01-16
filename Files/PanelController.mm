@@ -189,7 +189,11 @@ private:
         m_HostsStack.push_back( VFSNativeHost::SharedHost() );
         
         __weak PanelController* weakself = self;
-        auto on_change = ^{ dispatch_to_main_queue( ^{ [weakself UpdateSpinningIndicator]; }); };
+        auto on_change = ^{
+            dispatch_to_main_queue( ^{
+                [(PanelController*)weakself UpdateSpinningIndicator];
+            });
+        };
         m_DirectorySizeCountingQ->OnChange(on_change);
         m_DirectoryReLoadingQ->OnChange(on_change);
         m_DirectoryLoadingQ->OnChange(on_change);
@@ -397,7 +401,9 @@ private:
     }
 
     __weak PanelController *weakself = self;
-    m_UpdatesObservationTicket = m_HostsStack.back()->DirChangeObserve(_new_path.c_str(), ^{ [weakself RefreshDirectory]; } );
+    m_UpdatesObservationTicket = m_HostsStack.back()->DirChangeObserve(_new_path.c_str(),
+        ^{[(PanelController *)weakself RefreshDirectory];} );
+    
     if(m_UpdatesObservationTicket)
         m_UpdatesObservationHost = m_HostsStack.back();
 }
@@ -820,8 +826,8 @@ private:
         [m_View setNeedsDisplay:true];
     }
     
-    if(m_QuickSearchPopupView != nil) {
-        [m_QuickSearchPopupView PopOut];
+    if(PanelFastSearchPopupViewController* popup = m_QuickSearchPopupView) {
+        [popup PopOut];
         m_QuickSearchPopupView = nil;
     }
 }
@@ -862,18 +868,18 @@ private:
     
     if(m_QuickSearchTypingView)
     {
-        if(!m_QuickSearchPopupView)
-        {
-            PanelFastSearchPopupViewController *view = [PanelFastSearchPopupViewController new];
+        PanelFastSearchPopupViewController *view = m_QuickSearchPopupView;
+        if(view == nil) {
+            view = [PanelFastSearchPopupViewController new];
             m_QuickSearchPopupView = view;
             __weak PanelController *weakself = self;
-            [view SetHandlers:^{[weakself HandleFastSearchPrevious];}
-                         Next:^{[weakself HandleFastSearchNext];}];
+            [view SetHandlers:^{[(PanelController*)weakself HandleFastSearchPrevious];}
+                         Next:^{[(PanelController*)weakself HandleFastSearchNext];}];
             [view PopUpWithView:m_View];
         }
 
-        [m_QuickSearchPopupView UpdateWithString:m_Data->SoftFiltering().text
-                                         Matches:(int)m_Data->EntriesBySoftFiltering().size()];
+        [view UpdateWithString:m_Data->SoftFiltering().text
+                       Matches:(int)m_Data->EntriesBySoftFiltering().size()];
     }
 }
 
@@ -912,8 +918,9 @@ private:
     [m_View setNeedsDisplay:true];
     
     if(m_QuickSearchTypingView) { // update typing UI
-        if(!m_QuickSearchPopupView) {
-            PanelFastSearchPopupViewController *view = [PanelFastSearchPopupViewController new];
+        PanelFastSearchPopupViewController *view = m_QuickSearchPopupView;
+        if(view == nil) {
+            view = [PanelFastSearchPopupViewController new];
             m_QuickSearchPopupView = view;
             [view PopUpWithView:m_View];
         }
@@ -922,7 +929,7 @@ private:
         if((m_VFSFetchingFlags & VFSHost::F_NoDotDot) == 0)
             total--;
         
-        [m_QuickSearchPopupView UpdateWithString:filtering.text.text Matches:total];
+        [view UpdateWithString:filtering.text.text Matches:total];
     }
 }
 
@@ -1206,9 +1213,9 @@ private:
         [m_ShareButton setEnabled:false];
     
     // update QuickLook if any
-    if(m_QuickLook != nil)
-        [m_QuickLook PreviewItem:[self GetCurrentFocusedEntryFilePathRelativeToHost]
-                             vfs:m_HostsStack.back()];
+    if(QuickLookView *ql = m_QuickLook)
+        [ql PreviewItem:[self GetCurrentFocusedEntryFilePathRelativeToHost]
+                    vfs:m_HostsStack.back()];
 }
 
 - (MainWindowFilePanelState*) GetParentWindow
@@ -1257,9 +1264,9 @@ private:
 
 - (void) UpdateBriefSystemOverview
 {
-    if(m_BriefSystemOverview != nil)
-        [m_BriefSystemOverview UpdateVFSTarget:[self GetCurrentDirectoryPathRelativeToHost].c_str()
-                                          host:m_HostsStack.back()];
+    if(BriefSystemOverview *bso = m_BriefSystemOverview)
+        [bso UpdateVFSTarget:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+                        host:m_HostsStack.back()];
 }
 
 - (void) HandleItemsContextMenu

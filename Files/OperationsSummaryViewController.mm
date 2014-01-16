@@ -46,7 +46,7 @@
                        [NSColor colorWithDeviceRed:0.9 green:0.9 blue:0.9 alpha:1.0],
                        [NSColor colorWithDeviceRed:0.86 green:0.86 blue:0.86 alpha:1.0],
                        nil];
-    [_CollectionView setBackgroundColors:colors];
+    [(NSCollectionView*)_CollectionView setBackgroundColors:colors];
     
     _ScrollView.layer.cornerRadius = 3;
     _ScrollView.layer.borderWidth = 1;
@@ -62,7 +62,7 @@
     const NSUInteger max_height_in_items = 5;
     
     // Calculate height of the expanded list.
-    NSUInteger item_height = self.CollectionView.itemPrototype.view.frame.size.height;
+    NSUInteger item_height = ((NSCollectionView*)_CollectionView).itemPrototype.view.frame.size.height;
     NSUInteger count = self.OperationsController.OperationsCount;
     NSUInteger window_height_in_items = self.view.window.frame.size.height / item_height;
     NSUInteger height_in_items = max_height_in_items;

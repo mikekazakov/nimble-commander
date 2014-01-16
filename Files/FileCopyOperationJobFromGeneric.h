@@ -47,7 +47,7 @@ private:
         is_dir      = 0b0001,
     };
     
-    __weak FileCopyOperation *m_Operation;
+    __unsafe_unretained FileCopyOperation *m_Operation;
     FileCopyOperationOptions m_Options;    
     chained_strings m_InitialItems;
     chained_strings m_ScannedItems;

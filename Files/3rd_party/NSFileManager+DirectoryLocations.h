@@ -30,7 +30,7 @@
 - (NSString *)findOrCreateDirectory:(NSSearchPathDirectory)searchPathDirectory
 	inDomain:(NSSearchPathDomainMask)domainMask
 	appendPathComponent:(NSString *)appendComponent
-	error:(NSError **)errorOut;
+	error:(__strong NSError **)errorOut;
 - (NSString *)applicationSupportDirectory;
 
 @end

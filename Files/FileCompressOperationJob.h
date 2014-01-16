@@ -48,7 +48,7 @@ private:
     };
     
     
-    __weak FileCompressOperation    *m_Operation;
+    __unsafe_unretained FileCompressOperation    *m_Operation;
     chained_strings                 m_InitialItems;
     chained_strings                 m_ScannedItems;
     char                            m_SrcRoot[MAXPATHLEN];

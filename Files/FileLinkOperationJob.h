@@ -39,7 +39,7 @@ private:
     char m_File[MAXPATHLEN];
     char m_Link[MAXPATHLEN];
     Mode m_Mode;
-    __weak FileLinkOperation *m_Op;
+    __unsafe_unretained FileLinkOperation *m_Op;
 };
 
     

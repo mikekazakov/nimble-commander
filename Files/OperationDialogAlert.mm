@@ -25,15 +25,13 @@ const int MaxButtonsCount = 6;
 - (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode
         contextInfo:(void *)contextInfo;
 {
-    assert(m_Operation);
-    
     NSInteger button_number = returnCode - NSAlertFirstButtonReturn;
     assert(button_number >=0 && button_number < m_ButtonsCount);
     int result = m_ButtonsResults[button_number];
     m_Result = result;
     
     if (m_Result != OperationDialogResult::None)
-        [m_Operation OnDialogClosed:self];
+        [(Operation*)m_Operation OnDialogClosed:self];
 }
 
 - (void)ShowDialogForWindow:(NSWindow *)_parent
@@ -65,7 +63,7 @@ const int MaxButtonsCount = 6;
         m_Result = _result;
         
         if (m_Result != OperationDialogResult::None)
-            [m_Operation OnDialogClosed:self];
+            [(Operation*)m_Operation OnDialogClosed:self];
     }
 }
 

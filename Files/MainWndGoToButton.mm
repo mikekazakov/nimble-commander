@@ -164,13 +164,14 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     if(!append) return;
     
     vector<string> current_paths;
-    [m_Owner GetFilePanelsGlobalPaths:current_paths];
+    MainWindowFilePanelState *owner = m_Owner;
+    [owner GetFilePanelsGlobalPaths:current_paths];
     
-    NSArray *main_wnd_controllers = [(AppDelegate*)[NSApp delegate] GetMainWindowControllers];
-    for(MainWindowController *ctr in main_wnd_controllers)
+    auto main_wnd_controllers = [(AppDelegate*)[NSApplication sharedApplication].delegate GetMainWindowControllers];
+    for(auto ctr: main_wnd_controllers)
     {
         MainWindowFilePanelState *state = [ctr FilePanelState];
-        if(state == m_Owner)
+        if(state == owner)
             continue;
         
         vector<string> paths;

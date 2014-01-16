@@ -7,10 +7,15 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <vector>
 
 #import "ApplicationSkins.h"
 
+using namespace std;
+
 @class MainWindowController;
+
+
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowRestoration>
 
@@ -23,6 +28,6 @@
 
 - (IBAction)OnMenuSendFeedback:(id)sender;
 
-- (NSArray*) GetMainWindowControllers;
+- (vector<MainWindowController*>) GetMainWindowControllers;
 
 @end

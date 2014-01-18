@@ -13,14 +13,6 @@
 #import "Common.h"
 #import "FontExtras.h"
 
-
-static inline int CropIndex(int _val, int _max_possible)
-{
-    if(_val < 0) return 0;
-    if(_val > _max_possible) return _max_possible;
-    return _val;
-}
-
 static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
 {
     const auto len = CFStringGetLength(_string);
@@ -966,7 +958,7 @@ struct TextLine
 - (void) HandleSelectionWithTripleClick: (NSEvent*) event
 {
     NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int uc_index = CropIndex([self CharIndexFromPoint:pt], (int)m_StringBufferSize);
+    int uc_index = clip([self CharIndexFromPoint:pt], 0, (int)m_StringBufferSize);
 
     for(const auto &i: m_Lines)
         if(i.unichar_no <= uc_index && i.unichar_no + i.unichar_len > uc_index)
@@ -983,7 +975,7 @@ struct TextLine
 - (void) HandleSelectionWithDoubleClick: (NSEvent*) event
 {
     NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int uc_index = CropIndex([self CharIndexFromPoint:pt], (int)m_StringBufferSize);
+    int uc_index = clip([self CharIndexFromPoint:pt], 0, (int)m_StringBufferSize);
 
     __block int sel_start = 0, sel_end = 0;
     
@@ -1023,14 +1015,14 @@ struct TextLine
     bool modifying_existing_selection = ([event modifierFlags] & NSShiftKeyMask) ? true : false;
     
     NSPoint first_down = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int first_ind = CropIndex([self CharIndexFromPoint:first_down], (int)m_StringBufferSize);
+    int first_ind = clip([self CharIndexFromPoint:first_down], 0, (int)m_StringBufferSize);
     
     CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
     
     while ([event type]!=NSLeftMouseUp)
     {
         NSPoint curr_loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-        int curr_ind = CropIndex([self CharIndexFromPoint:curr_loc], (int)m_StringBufferSize);
+        int curr_ind = clip([self CharIndexFromPoint:curr_loc], 0, (int)m_StringBufferSize);
         
         int base_ind = first_ind;
         if(modifying_existing_selection && orig_sel.length > 0)

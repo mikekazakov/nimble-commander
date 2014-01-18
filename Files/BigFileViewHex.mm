@@ -20,14 +20,6 @@ static const unsigned g_GapBetweenColumns = 2;
 static const unsigned g_SymbsPerBytes = 2;
 static const unsigned g_GapBetweenBytes = 1;
 
-
-static inline int CropIndex(int _val, int _max_possible)
-{
-    if(_val < 0) return 0;
-    if(_val > _max_possible) return _max_possible;
-    return _val;
-}
-
 // return monospace char index before the specified _byte byte.
 // includes spaces (2 space) between columns and spaces (1 space) between bytes
 // handles the last byte + 1 separately
@@ -759,12 +751,12 @@ static const unsigned char g_4Bits_To_Char[16] = {
     {
         CFRange orig_sel = [m_View SelectionWithinWindow];        
         uint64_t window_size = m_Data->RawSize();
-        int first_byte = CropIndex([self ByteIndexFromHitTest:first_down], (int)window_size);
+        int first_byte = clip([self ByteIndexFromHitTest:first_down], 0, (int)window_size);
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_byte = CropIndex([self ByteIndexFromHitTest:loc], (int)window_size);
+            int curr_byte = clip([self ByteIndexFromHitTest:loc], 0, (int)window_size);
 
             int base_byte = first_byte;
             if(modifying_existing_selection && orig_sel.length > 0)
@@ -793,12 +785,12 @@ static const unsigned char g_4Bits_To_Char[16] = {
     else if(hit_part == HitPart::Text)
     {
         CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
-        int first_char = CropIndex([self CharIndexFromHitTest:first_down], (int)m_Data->UniCharsSize());
+        int first_char = clip([self CharIndexFromHitTest:first_down], 0, (int)m_Data->UniCharsSize());
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_char = CropIndex([self CharIndexFromHitTest:loc], (int)m_Data->UniCharsSize());
+            int curr_char = clip([self CharIndexFromHitTest:loc], 0, (int)m_Data->UniCharsSize());
             
             int base_char = first_char;
             if(modifying_existing_selection && orig_sel.length > 0)

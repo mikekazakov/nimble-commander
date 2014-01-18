@@ -16,6 +16,9 @@
 static const unsigned g_BytesPerHexLine = 16;
 static const unsigned g_HexColumns = 2;
 static const unsigned g_RowOffsetSymbs = 10;
+static const unsigned g_GapBetweenColumns = 2;
+static const unsigned g_SymbsPerBytes = 2;
+static const unsigned g_GapBetweenBytes = 1;
 
 
 static inline int CropIndex(int _val, int _max_possible)
@@ -25,31 +28,37 @@ static inline int CropIndex(int _val, int _max_possible)
     return _val;
 }
 
+// return monospace char index before the specified _byte byte.
+// includes spaces (2 space) between columns and spaces (1 space) between bytes
+// handles the last byte + 1 separately
 static int Hex_CharPosFromByteNo(int _byte)
 {
     const int byte_per_col = g_BytesPerHexLine / g_HexColumns;
+    const int chars_pers_byte = g_SymbsPerBytes + g_GapBetweenBytes;
     assert(_byte <= g_BytesPerHexLine);
     
     if(_byte == g_BytesPerHexLine) // special case
-        return (byte_per_col * 3 + 2) * g_HexColumns - 3;
+        return (byte_per_col * chars_pers_byte + g_GapBetweenColumns) * g_HexColumns - g_GapBetweenColumns;
     
     int col_num = _byte / byte_per_col;
     int byte_in_col = _byte % byte_per_col;
     
-    int char_in_col = byte_in_col * 3;
+    int char_in_col = byte_in_col * chars_pers_byte;
     
-    return char_in_col + (byte_per_col * 3 + 2) * col_num;
+    return char_in_col + (byte_per_col * chars_pers_byte + g_GapBetweenColumns) * col_num;
 }
 
 static int Hex_ByteFromCharPos(int _char)
 {
     const int byte_per_col = g_BytesPerHexLine / g_HexColumns;
-    if(_char < 0) return -1;
-    if(_char >= (byte_per_col * 3 + 2) * g_HexColumns) return g_BytesPerHexLine;
+    const int chars_pers_byte = g_SymbsPerBytes + g_GapBetweenBytes;
     
-    int col_num = _char / (byte_per_col * 3 + 2);
-    int char_in_col = _char % (byte_per_col * 3 + 2);
-    int byte_in_col = char_in_col / 3;
+    if(_char < 0) return -1;
+    if(_char >= (byte_per_col * chars_pers_byte + g_GapBetweenColumns) * g_HexColumns) return g_BytesPerHexLine;
+    
+    int col_num = _char / (byte_per_col * chars_pers_byte + g_GapBetweenColumns);
+    int char_in_col = _char % (byte_per_col * chars_pers_byte + g_GapBetweenColumns);
+    int byte_in_col = char_in_col / chars_pers_byte;
     
     return byte_in_col + col_num * byte_per_col;
 }
@@ -138,7 +147,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     [self ClearLayout];
     
     // fix our decoded window - clear control characters
-    UniChar *uni_window = m_Data->UniChars();
+    auto uni_window = m_Data->UniChars();
     size_t uni_window_sz = m_Data->UniCharsSize();
     for(size_t i = 0; i < uni_window_sz; ++i)
     {

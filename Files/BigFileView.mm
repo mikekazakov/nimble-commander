@@ -558,9 +558,8 @@ static NSArray *MyDefaultsKeys()
 {
     if(m_SelectionInWindow.location >= 0 && m_SelectionInWindow.length > 0)
     {
-        NSString *str = [[NSString alloc] initWithCharactersNoCopy:m_Data->UniChars() + m_SelectionInWindowUnichars.location
-                                                            length:m_SelectionInWindowUnichars.length
-                                                      freeWhenDone:false];
+        NSString *str = [[NSString alloc] initWithCharacters:m_Data->UniChars() + m_SelectionInWindowUnichars.location
+                                                      length:m_SelectionInWindowUnichars.length];
         NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
         [pasteBoard clearContents];
         [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];

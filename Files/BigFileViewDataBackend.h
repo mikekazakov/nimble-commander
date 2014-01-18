@@ -8,15 +8,16 @@
 
 #pragma once
 #import "FileWindow.h"
-#import <memory>
+#import <vector>
+
+using namespace std;
 
 // this class encapsulates working with file windows and decoding raw data into UniChars
 // BigFileViewDataBackend has no ownership on FileWindow, it should be released by caller's code
-class BigFileViewDataBackend : public enable_shared_from_this<BigFileViewDataBackend>
+class BigFileViewDataBackend
 {
 public:
     BigFileViewDataBackend(FileWindow *_fw, int _encoding);
-    ~BigFileViewDataBackend();
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // settings
@@ -38,9 +39,9 @@ public:
     const void *Raw() const;            // data of current file window
     uint64_t    RawSize() const;        // file window size. it will not change with this object lives
     
-    UniChar     *UniChars() const;      // decoded buffer
-    uint32_t    *UniCharToByteIndeces() const;  // byte indeces within file window of decoded unichars
-    uint32_t    UniCharsSize() const;   // decoded buffer size in unichars
+    const UniChar     *UniChars() const;      // decoded buffer
+    const uint32_t    *UniCharToByteIndeces() const;  // byte indeces within file window of decoded unichars
+    uint32_t           UniCharsSize() const;   // decoded buffer size in unichars
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // handlers
@@ -51,12 +52,15 @@ private:
     FileWindow *m_FileWindow;
     int         m_Encoding;
     void        (^m_OnDecoded)();
-    
-    UniChar         *m_DecodeBuffer;        // decoded buffer with unichars
+
+    vector<UniChar>  m_DecodeBuffer;
+                                            // decoded buffer with unichars
                                             // useful size of m_DecodedBufferSize
-    uint32_t        *m_DecodeBufferIndx;    // array indexing every m_DecodeBuffer unicode character into a
+
+    vector<uint32_t> m_DecodeBufferIndx;    // array indexing every m_DecodeBuffer unicode character into a
                                             // byte offset within original file window
                                             // useful size of m_DecodedBufferSize
+    
     size_t          m_DecodedBufferSize;    // amount of unichars
     
     BigFileViewDataBackend(const BigFileViewDataBackend&) = delete;
@@ -84,14 +88,14 @@ inline uint64_t BigFileViewDataBackend::RawSize() const
     return m_FileWindow->WindowSize();
 }
 
-inline UniChar *BigFileViewDataBackend::UniChars() const
+inline const UniChar *BigFileViewDataBackend::UniChars() const
 {
-    return m_DecodeBuffer;
+    return m_DecodeBuffer.data();
 }
 
-inline uint32_t *BigFileViewDataBackend::UniCharToByteIndeces() const
+inline const uint32_t *BigFileViewDataBackend::UniCharToByteIndeces() const
 {
-    return m_DecodeBufferIndx;
+    return m_DecodeBufferIndx.data();
 }
 
 inline uint32_t BigFileViewDataBackend::UniCharsSize() const

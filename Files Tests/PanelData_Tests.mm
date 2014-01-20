@@ -55,9 +55,9 @@ struct DummyVFSTestListing : public VFSListing
         XCTAssert(data.RawIndexForName(listing->items[i].Name()) == i);
     
     // testing basic sorting (direct by filename)
-    auto sorting = data.GetCustomSortMode();
+    auto sorting = data.SortMode();
     sorting.sort = PanelSortMode::SortByName;
-    data.SetCustomSortMode(sorting);
+    data.SetSortMode(sorting);
     
     XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 0);
     XCTAssert(data.SortedIndexForName(listing->items[2].Name()) == 1);
@@ -74,10 +74,10 @@ struct DummyVFSTestListing : public VFSListing
     listing->items.emplace_back(@"ББББ");
 
     PanelData data;
-    auto sorting = data.GetCustomSortMode();
+    auto sorting = data.SortMode();
     sorting.sort = PanelSortMode::SortByName;
     sorting.case_sens = false;
-    data.SetCustomSortMode(sorting);
+    data.SetSortMode(sorting);
     data.Load(listing);
     
     XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 0);
@@ -86,7 +86,7 @@ struct DummyVFSTestListing : public VFSListing
     XCTAssert(data.SortedIndexForName(listing->items[3].Name()) == 3);
     
     sorting.case_sens = true;
-    data.SetCustomSortMode(sorting);
+    data.SetSortMode(sorting);
     XCTAssert(data.SortedIndexForName(listing->items[2].Name()) == 0);
     XCTAssert(data.SortedIndexForName(listing->items[3].Name()) == 1);
     XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 2);
@@ -131,9 +131,9 @@ struct DummyVFSTestListing : public VFSListing
     almost_empty_listing->items.emplace_back(@"какой-то файл");
     
     PanelData data;
-    PanelSortMode sorting = data.GetCustomSortMode();
+    PanelSortMode sorting = data.SortMode();
     sorting.sort = PanelSortMode::SortByName;
-    data.SetCustomSortMode(sorting);
+    data.SetSortMode(sorting);
     
     PanelDataHardFiltering filtering = data.HardFiltering();
     filtering.show_hidden = true;

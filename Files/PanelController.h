@@ -67,8 +67,7 @@ struct PanelQuickSearchMode
     PanelDataTextFiltering::WhereEnum   m_QuickSearchWhere;
     uint64_t                            m_QuickSearchLastType;
     unsigned                            m_QuickSearchOffset;
-    __weak PanelFastSearchPopupViewController
-                                       *m_QuickSearchPopupView;
+    PanelFastSearchPopupViewController *m_QuickSearchPopupView;
     
     // background operations' queues
     SerialQueue m_DirectorySizeCountingQ;

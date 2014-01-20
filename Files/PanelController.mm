@@ -826,10 +826,8 @@ private:
         [m_View setNeedsDisplay:true];
     }
     
-    if(PanelFastSearchPopupViewController* popup = m_QuickSearchPopupView) {
-        [popup PopOut];
-        m_QuickSearchPopupView = nil;
-    }
+    [m_QuickSearchPopupView PopOut];
+    m_QuickSearchPopupView = nil;
 }
 
 - (void)HandleQuickSearchSoft: (NSString*) _key
@@ -875,6 +873,7 @@ private:
             __weak PanelController *weakself = self;
             [view SetHandlers:^{[(PanelController*)weakself HandleFastSearchPrevious];}
                          Next:^{[(PanelController*)weakself HandleFastSearchNext];}];
+            view.OnAutoPopOut = ^{ if(PanelController* pc = weakself) pc->m_QuickSearchPopupView = nil; };
             [view PopUpWithView:m_View];
         }
 
@@ -922,11 +921,14 @@ private:
         if(view == nil) {
             view = [PanelFastSearchPopupViewController new];
             m_QuickSearchPopupView = view;
+            __weak PanelController *weakself = self;
+            view.OnAutoPopOut = ^{ if(PanelController* pc = weakself) pc->m_QuickSearchPopupView = nil; };
             [view PopUpWithView:m_View];
         }
 
         int total = (int)m_Data->SortedDirectoryEntries().size();
-        if((m_VFSFetchingFlags & VFSHost::F_NoDotDot) == 0)
+        if(total > 0 &&
+           m_Data->Listing()->At(0).IsDotDot())
             total--;
         
         [view UpdateWithString:filtering.text.text Matches:total];

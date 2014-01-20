@@ -17,7 +17,6 @@ public:
                               shared_ptr<VFSHost> _host,
                               const void *_memory,
                               uint64_t _mem_size);
-    ~VFSGenericMemReadOnlyFile();
     
     
     virtual int     Open(int _open_flags) override;

@@ -18,7 +18,7 @@ static const double   g_FadeTime    = 0.7; // 0.7 sec
     void (^m_OnPrev)();
     void (^m_OnNext)();
     uint64_t m_LastUpdateTime;
-    PanelFastSearchPopupViewController *m_Me;
+    bool     m_FadingOut;
 }
 
 - (id) init
@@ -27,6 +27,7 @@ static const double   g_FadeTime    = 0.7; // 0.7 sec
     if(self) {
         [self loadView];
         m_LastUpdateTime = 0;
+        m_FadingOut = false;
     }
     return self;
 }
@@ -86,14 +87,16 @@ static const double   g_FadeTime    = 0.7; // 0.7 sec
     [[self.Label cell] setBackgroundStyle:NSBackgroundStyleRaised];
     
     [[self view] setHidden:false];
-
-    m_Me = self;
 }
 
 - (void) PopOut
 {
+    if(m_FadingOut)
+        return;
+
     m_OnNext = 0;
     m_OnPrev = 0;
+    m_FadingOut = true;
     CABasicAnimation* fadeAnim = [CABasicAnimation animationWithKeyPath:@"opacity"];
     fadeAnim.fromValue = [NSNumber numberWithFloat: [[self view] layer].opacity];
     fadeAnim.toValue = [NSNumber numberWithFloat:0.0];
@@ -104,7 +107,6 @@ static const double   g_FadeTime    = 0.7; // 0.7 sec
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(),
                    ^{
                        [[self view] removeFromSuperview];
-                       m_Me = nil;
                    });
 }
 
@@ -132,8 +134,13 @@ static const double   g_FadeTime    = 0.7; // 0.7 sec
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_FadeDelay+1000), dispatch_get_main_queue(),
                    ^{
-                        if(m_LastUpdateTime + g_FadeDelay <= GetTimeInNanoseconds())
+                        if(m_LastUpdateTime + g_FadeDelay <= GetTimeInNanoseconds() &&
+                           !m_FadingOut)
+                        {
                             [self PopOut];
+                            if(self.OnAutoPopOut != nil)
+                                self.OnAutoPopOut();
+                        }
                    });
 }
 

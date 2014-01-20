@@ -15,7 +15,4 @@ class VFSPSFile : public VFSGenericMemReadOnlyFile
 {
 public:
     VFSPSFile(const char* _relative_path, shared_ptr<VFSHost> _host, const string &_file);
-    
-private:
-    string m_File;
 };

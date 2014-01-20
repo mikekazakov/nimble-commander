@@ -18,10 +18,6 @@ VFSGenericMemReadOnlyFile::VFSGenericMemReadOnlyFile(const char* _relative_path,
 {
 }
 
-VFSGenericMemReadOnlyFile::~VFSGenericMemReadOnlyFile()
-{
-}
-
 ssize_t VFSGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
 {
     if(!IsOpened())

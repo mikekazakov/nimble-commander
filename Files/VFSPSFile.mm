@@ -12,7 +12,6 @@ VFSPSFile::VFSPSFile(const char* _relative_path, shared_ptr<VFSHost> _host, cons
     VFSGenericMemReadOnlyFile(_relative_path,
                               _host,
                               _file.c_str(),
-                              _file.length()),
-    m_File(_file)
+                              _file.length())
 {
 }

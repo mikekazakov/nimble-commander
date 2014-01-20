@@ -21,4 +21,6 @@
 - (void) UpdateWithString:(NSString*)_string Matches:(int)_matches;
 - (IBAction)OnStepper:(id)sender;
 
+@property (strong) void (^OnAutoPopOut)();
+
 @end

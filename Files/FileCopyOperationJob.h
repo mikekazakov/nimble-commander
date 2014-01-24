@@ -11,6 +11,7 @@
 #import "OperationJob.h"
 #import "FileCopyOperation.h"
 #import "chained_strings.h"
+#import "DispatchQueue.h"
 #import <vector>
 
 class FileCopyOperationJob : public OperationJob
@@ -117,9 +118,7 @@ private:
     WorkMode m_WorkMode;
     void *m_Buffer1;
     void *m_Buffer2;
-    dispatch_queue_t m_ReadQueue;
-    dispatch_queue_t m_WriteQueue;
-    dispatch_group_t m_IOGroup;
+    DispatchGroup m_IOGroup;
     bool m_SkipAll;
     bool m_OverwriteAll;
     bool m_AppendAll;

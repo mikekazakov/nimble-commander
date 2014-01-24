@@ -11,6 +11,7 @@
 
 #import "OperationJob.h"
 #import "FileCopyOperation.h"
+#import "DispatchQueue.h"
 #import "VFS.h"
 
 // copy from generic vfs host to native file system
@@ -59,9 +60,7 @@ private:
     
     void *m_Buffer1;
     void *m_Buffer2;    
-    dispatch_queue_t m_ReadQueue;
-    dispatch_queue_t m_WriteQueue;
-    dispatch_group_t m_IOGroup;
+    DispatchGroup m_IOGroup;
     
     vector<uint8_t> m_ItemFlags;    
     unsigned m_SourceNumberOfFiles;

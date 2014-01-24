@@ -47,9 +47,6 @@ FileCopyOperationJobFromGeneric::FileCopyOperationJobFromGeneric()
     m_CurrentlyProcessingItem = 0;
     m_Buffer1 = 0;
     m_Buffer2 = 0;
-    m_ReadQueue = 0;
-    m_WriteQueue = 0;
-    m_IOGroup = 0;
 }
 
 FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
@@ -63,21 +60,6 @@ FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
     {
         free(m_Buffer2);
         m_Buffer2 = 0;
-    }
-    if(m_ReadQueue)
-    {
-        dispatch_release(m_ReadQueue);
-        m_ReadQueue = 0;
-    }
-    if(m_WriteQueue)
-    {
-        dispatch_release(m_WriteQueue);
-        m_WriteQueue = 0;
-    }
-    if(m_IOGroup)
-    {
-        dispatch_release(m_IOGroup);
-        m_IOGroup = 0;
     }
 }
 
@@ -113,10 +95,6 @@ void FileCopyOperationJobFromGeneric::Do()
     
     m_Buffer1 = malloc(BUFFER_SIZE);
     m_Buffer2 = malloc(BUFFER_SIZE);    
-    m_ReadQueue = dispatch_queue_create("info.filesmanager.files.FileCopyOperationJobFromGeneric.read", 0);
-    m_WriteQueue = dispatch_queue_create("info.filesmanager.files.FileCopyOperationJobFromGeneric.write", 0);
-    m_IOGroup = dispatch_group_create();
-
     
     ProcessItems();
     if(CheckPauseOrStop()) { SetStopped(); return; }
@@ -485,7 +463,7 @@ dolseek: // find right position in destination file
         if(CheckPauseOrStop()) goto cleanup;
      
         __block ssize_t io_nread = 0;
-        dispatch_group_async(m_IOGroup, m_ReadQueue, ^{
+        m_IOGroup.Run(^{
         doread:
             if(io_totalread < src_file->Size())
             {
@@ -503,7 +481,7 @@ dolseek: // find right position in destination file
             }
         });
 
-        dispatch_group_async(m_IOGroup, m_WriteQueue, ^{
+        m_IOGroup.Run(^{
             unsigned long alreadywrote = 0;
             while(io_leftwrite > 0)
             {
@@ -525,7 +503,7 @@ dolseek: // find right position in destination file
             m_TotalCopied += alreadywrote;
         });
 
-        dispatch_group_wait(m_IOGroup, DISPATCH_TIME_FOREVER);
+        m_IOGroup.Wait();
         if(io_docancel) goto cleanup;
         if(io_totalwrote == src_file->Size()) break;
         

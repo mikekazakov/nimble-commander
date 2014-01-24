@@ -125,9 +125,6 @@ FileCopyOperationJob::FileCopyOperationJob():
     m_IsSingleFileCopy(true),
     m_SameVolume(false),
     m_IsSingleEntryCopy(false),
-    m_ReadQueue(0),
-    m_WriteQueue(0),
-    m_IOGroup(0),
     m_SourceHasExternalEAs(false),
     m_DestinationHasExternalEAs(false)
 {
@@ -141,21 +138,6 @@ FileCopyOperationJob::~FileCopyOperationJob()
 {
     if(m_Buffer1) { free(m_Buffer1); m_Buffer1 = 0; }
     if(m_Buffer2) { free(m_Buffer2); m_Buffer2 = 0; }
-    if(m_ReadQueue)
-    {
-        dispatch_release(m_ReadQueue);
-        m_ReadQueue = 0;
-    }
-    if(m_WriteQueue)
-    {
-        dispatch_release(m_WriteQueue);
-        m_WriteQueue = 0;
-    }
-    if(m_IOGroup)
-    {
-        dispatch_release(m_IOGroup);
-        m_IOGroup = 0;
-    }
 }
 
 void FileCopyOperationJob::Init(chained_strings _files, // passing ownage to Job
@@ -206,9 +188,6 @@ void FileCopyOperationJob::Do()
         // allocate buffers and queues only when we'll need them
         m_Buffer1 = malloc(BUFFER_SIZE);
         m_Buffer2 = malloc(BUFFER_SIZE);
-        m_ReadQueue = dispatch_queue_create("info.filesmanager.files.FileCopyOperationJob.read", 0);
-        m_WriteQueue = dispatch_queue_create("info.filesmanager.files.FileCopyOperationJob.write", 0);
-        m_IOGroup = dispatch_group_create();
     }
 
     ProcessItems();
@@ -1132,7 +1111,7 @@ dolseek: // find right position in destination file
         if(CheckPauseOrStop()) goto cleanup;
         
         __block ssize_t io_nread = 0;
-        dispatch_group_async(m_IOGroup, m_ReadQueue, ^{
+        m_IOGroup.Run(^{
         doread:
             if(io_totalread < src_stat_buffer.st_size)
             {
@@ -1150,7 +1129,7 @@ dolseek: // find right position in destination file
             }
         });
         
-        dispatch_group_async(m_IOGroup, m_WriteQueue, ^{
+        m_IOGroup.Run(^{
             unsigned long alreadywrote = 0;
             while(io_leftwrite > 0)
             {
@@ -1172,7 +1151,7 @@ dolseek: // find right position in destination file
             m_TotalCopied += alreadywrote;
         });
         
-        dispatch_group_wait(m_IOGroup, DISPATCH_TIME_FOREVER);
+        m_IOGroup.Wait();
         if(io_docancel) goto cleanup;
         if(io_totalwrote == src_stat_buffer.st_size) break;
         

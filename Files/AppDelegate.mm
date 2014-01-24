@@ -13,7 +13,6 @@
 #import "OperationsController.h"
 #import "Common.h"
 #import "chained_strings.h"
-#import "FSEventsDirUpdate.h"
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #import "PreferencesWindowGeneralTab.h"
 #import "PreferencesWindowPanelsTab.h"
@@ -21,6 +20,7 @@
 #import "TemporaryNativeFileStorage.h"
 #import "NewVersionChecker.h"
 #import "MainWindowTerminalState.h"
+#import "NativeFSManager.h"
 
 @implementation AppDelegate
 {
@@ -44,9 +44,9 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     // modules initialization
-    FSEventsDirUpdate::RunDiskArbitration();
     TemporaryNativeFileStorage::StartBackgroundPurging();
     NewVersionChecker::Go();
+    NativeFSManager::Instance();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults addObserver:self

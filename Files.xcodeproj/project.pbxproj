@@ -103,6 +103,7 @@
 		CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
+		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF9A17CC186D9FCC00160CDB /* VFSPSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */; };
 		CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */; };
 		CF9B9BCF17BA7C68002A863A /* pref_panels_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF9B9BCE17BA7C68002A863A /* pref_panels_icon.png */; };
@@ -462,6 +463,8 @@
 		CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
+		CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeFSManager.mm; sourceTree = "<group>"; };
+		CF8F29CB188FEE490095D6F9 /* NativeFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFSManager.h; sourceTree = "<group>"; };
 		CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPSFile.mm; sourceTree = "<group>"; };
 		CF9A17CB186D9FCC00160CDB /* VFSPSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSPSFile.h; sourceTree = "<group>"; };
 		CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSGenericMemReadOnlyFile.mm; sourceTree = "<group>"; };
@@ -1299,6 +1302,8 @@
 				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
 				CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.mm */,
+				CF8F29CB188FEE490095D6F9 /* NativeFSManager.h */,
+				CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */,
 				CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */,
 				CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */,
 				CF07DE3D1769754400757DE1 /* SearchInFile.mm */,
@@ -1690,6 +1695,7 @@
 				CF9D0EAC17CC961100CB8146 /* archive_read_support_format_tar.c in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
+				CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */,
 				CF9D0EB417CC961100CB8146 /* archive_windows.c in Sources */,
 				CF9D0EA717CC961100CB8146 /* archive_read_support_format_iso9660.c in Sources */,
 				CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */,

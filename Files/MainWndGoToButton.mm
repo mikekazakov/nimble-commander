@@ -13,6 +13,7 @@
 #import "MainWindowFilePanelState.h"
 #import "MainWindowController.h"
 #import "common_paths.h"
+#import "NativeFSManager.h"
 
 static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
 {
@@ -105,7 +106,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
 @implementation MainWndGoToButton
 {
     NSMutableArray  *m_UserDirs;       // array of NSUrls
-    NSArray         *m_Volumes;        // array of NSUrls
+    vector<shared_ptr<NativeFileSystemInfo>> m_Volumes;
     vector<AdditionalPath> m_OtherPanelsPaths;
     
     NSString *m_CurrentPath;
@@ -149,10 +150,10 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
 
 - (void) UpdateUrls
 {
-    NSArray *keys = [NSArray arrayWithObjects:NSURLVolumeNameKey/*, NSURLPathKey*/, nil];
-    m_Volumes = [[NSFileManager defaultManager]
-                     mountedVolumeURLsIncludingResourceValuesForKeys:keys
-                     options:NSVolumeEnumerationSkipHiddenVolumes];
+    m_Volumes.clear();
+    for(auto &i: NativeFSManager::Instance().Volumes())
+        if(i->mount_flags.dont_browse == false)
+            m_Volumes.emplace_back(i);
 }
 
 - (void) UpdateOtherPanelPaths
@@ -210,19 +211,11 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     NSInteger n = [self indexOfSelectedItem] - 1;
     
     if(n >= 0 && n < [m_UserDirs count])
-    {
-        NSURL *url = [m_UserDirs objectAtIndex:n];
-        return [url path];
-    }
-    else if( n - [m_UserDirs count] - 1 < [m_Volumes count] )
-    {
-        NSURL *url = [m_Volumes objectAtIndex:n - [m_UserDirs count] - 1];
-        return [url path];
-    }
-    else if( n - [m_UserDirs count] - [m_Volumes count] - 2 < m_OtherPanelsPaths.size())
-    {
-        return m_OtherPanelsPaths[n - [m_UserDirs count] - [m_Volumes count] - 2].path;
-    }
+        return [[m_UserDirs objectAtIndex:n] path];
+    else if( n - [m_UserDirs count] - 1 < m_Volumes.size() )
+        return m_Volumes[n - [m_UserDirs count] - 1]->verbose.mounted_at_path;
+    else if( n - [m_UserDirs count] - m_Volumes.size() - 2 < m_OtherPanelsPaths.size())
+        return m_OtherPanelsPaths[n - [m_UserDirs count] - m_Volumes.size() - 2].path;
     assert(0);
 
     return 0;
@@ -276,26 +269,22 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
 
     [[self menu] addItem:[NSMenuItem separatorItem]];
     
-    for (NSURL *url in m_Volumes)
+    for(auto &i: m_Volumes)
     {
-        NSError *error;
-        NSString *volumeName;
-        [url getResourceValue:&volumeName forKey:NSURLVolumeNameKey error:&error];
         NSMenuItem *menuitem = [NSMenuItem new];
-        [menuitem setTitle:volumeName];
+        [menuitem setTitle:i->verbose.name];
         [[self menu] addItem:menuitem];
         
-        NSImage *img;
-        [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error];
-        if(img != nil)
+        if(i->verbose.icon != nil)
         {
+            NSImage *img = [i->verbose.icon copy];
             [img setSize:NSMakeSize(icon_size, icon_size)];
             [menuitem setImage:img];
         }
         
         if(m_CurrentPath != nil)
         {
-            size_t n = CommonCharsInPath(url, m_CurrentPath);
+            size_t n = CommonCharsInPath(i->verbose.url, m_CurrentPath);
             if(n > common_path_max)
             {
                 common_path_max = n;

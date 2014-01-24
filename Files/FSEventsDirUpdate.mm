@@ -7,7 +7,6 @@
 //
 
 #import <CoreFoundation/CoreFoundation.h>
-#import <DiskArbitration/DiskArbitration.h>
 #import <Cocoa/Cocoa.h>
 #import "FSEventsDirUpdate.h"
 #import "Common.h"
@@ -142,7 +141,7 @@ bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
     return false;
 }
 
-void FSEventsDirUpdate::DiskDisappeared(DADiskRef disk, void *context)
+void FSEventsDirUpdate::OnVolumeDidUnmount(string _on_path)
 {
     // when some volume is removed from system we force every panel to reload it's data
     // TODO: this is a brute approach, need to build a more intelligent volume monitoring machinery later
@@ -151,11 +150,4 @@ void FSEventsDirUpdate::DiskDisappeared(DADiskRef disk, void *context)
     for(auto i: me->m_Watches)
         for(auto &h: (*i).handlers)
             h.second();
-}
-
-void FSEventsDirUpdate::RunDiskArbitration()
-{
-    DASessionRef session = DASessionCreate(kCFAllocatorDefault);
-    DARegisterDiskDisappearedCallback(session, NULL, FSEventsDirUpdate::DiskDisappeared, NULL);
-    DASessionScheduleWithRunLoop(session, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 }

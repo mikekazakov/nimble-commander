@@ -24,8 +24,8 @@ public:
     
     bool RemoveWatchPathWithTicket(unsigned long _ticket); // it's better to use this method
     
-    static void RunDiskArbitration(); // should be called by NSApp once upon starting
-    
+    // called exclusevily by NativeFSManager
+    static void OnVolumeDidUnmount(string _on_path);
 private:
     struct WatchData
     {

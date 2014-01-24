@@ -7,6 +7,7 @@
 //
 
 #import "FileDeletionOperationJob.h"
+#import "NativeFSManager.h"
 #import <sys/types.h>
 #import <sys/dirent.h>
 #import <sys/stat.h>
@@ -41,10 +42,32 @@ static void Randomize(unsigned char *_data, unsigned _size)
     }
 }
 
+static inline bool CanBeExternalEA(const char *_short_filename)
+{
+    return  _short_filename[0] == '.' &&
+            _short_filename[1] == '_' &&
+            _short_filename[2] != 0;
+}
+
+static inline bool EAHasMainFile(const char *_full_ea_path)
+{
+    char tmp[MAXPATHLEN];
+    strcpy(tmp, _full_ea_path);
+    
+    char *last_dst = strrchr(tmp, '/');
+    const char *last_src = strrchr(_full_ea_path, '/'); // suboptimal
+    
+    strcpy(last_dst + 1, last_src + 3);
+           
+    struct stat st;
+    return lstat(tmp, &st) == 0;
+}
+
 FileDeletionOperationJob::FileDeletionOperationJob():
     m_Type(FileDeletionOperationType::Invalid),
     m_ItemsCount(0),
-    m_SkipAll(false)
+    m_SkipAll(false),
+    m_RootHasExternalEAs(false)
 {
     
 }
@@ -58,12 +81,16 @@ void FileDeletionOperationJob::Init(chained_strings _files, FileDeletionOperatio
 {
     m_RequestedFiles.swap(_files);  
     m_Type = _type;
-    strcpy(m_RootPath, _root);
+    m_RootPath = _root;
     m_Operation = _op;
 }
 
 void FileDeletionOperationJob::Do()
 {
+    auto volume = NativeFSManager::Instance().VolumeFromPath(m_RootPath);
+    if(volume)
+        m_RootHasExternalEAs = volume->interfaces.extended_attr == false;    
+    
     DoScan();
 
     if(CheckPauseOrStop()) { SetStopped(); return; }
@@ -71,7 +98,7 @@ void FileDeletionOperationJob::Do()
     m_ItemsCount = m_ItemsToDelete.size();
     
     char entryfilename[MAXPATHLEN], *entryfilename_var;
-    strcpy(entryfilename, m_RootPath);
+    strcpy(entryfilename, m_RootPath.c_str());
     entryfilename_var = &entryfilename[0] + strlen(entryfilename);
     
     m_Stats.StartTimeTracking();
@@ -102,15 +129,24 @@ void FileDeletionOperationJob::DoScan()
     {
         if (CheckPauseOrStop()) return;
         char fn[MAXPATHLEN];
-        strcpy(fn, m_RootPath);
+        strcpy(fn, m_RootPath.c_str());
         strcat(fn, i.c_str()); // TODO: optimize me
         
         struct stat st;
         if(lstat(fn, &st) == 0)
         {
-            if((st.st_mode&S_IFMT) == S_IFREG || (st.st_mode&S_IFMT) == S_IFLNK)
+            if((st.st_mode&S_IFMT) == S_IFREG)
             {
                 // trivial case
+                bool skip = false;
+                if( m_RootHasExternalEAs && CanBeExternalEA(i.c_str()) && EAHasMainFile(fn) )
+                    skip = true;
+                
+                if(!skip)
+                    m_ItemsToDelete.push_back(i.c_str(), i.size(), nullptr);
+            }
+            else if((st.st_mode&S_IFMT) == S_IFLNK)
+            {
                 m_ItemsToDelete.push_back(i.c_str(), i.size(), nullptr);
             }
             else if((st.st_mode&S_IFMT) == S_IFDIR)
@@ -164,7 +200,16 @@ retry_opendir:
             struct stat st;
             if(lstat(fn, &st) == 0)
             {
-                if((st.st_mode&S_IFMT) == S_IFREG || (st.st_mode&S_IFMT) == S_IFLNK)
+                if((st.st_mode&S_IFMT) == S_IFREG)
+                {
+                    bool skip = false;
+                    if( m_RootHasExternalEAs && CanBeExternalEA(entp->d_name) && EAHasMainFile(fn) )
+                        skip = true;
+
+                    if(!skip)
+                        m_ItemsToDelete.push_back(entp->d_name, entp->d_namlen, _prefix);
+                }
+                else if((st.st_mode&S_IFMT) == S_IFLNK)
                 {
                     m_ItemsToDelete.push_back(entp->d_name, entp->d_namlen, _prefix);
                 }

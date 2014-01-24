@@ -124,6 +124,8 @@ private:
     bool m_OverwriteAll;
     bool m_AppendAll;
     bool m_IsSingleFileCopy;
+    bool m_SourceHasExternalEAs;
+    bool m_DestinationHasExternalEAs;
     
     FileCopyOperationOptions m_Options;
     bool m_IsSingleEntryCopy;

@@ -70,6 +70,27 @@ static bool CheckSameVolume(const char *_fn1, const char*_fn2, bool &_same, bool
     return true;
 }
 
+static inline bool CanBeExternalEA(const char *_short_filename)
+{
+    return  _short_filename[0] == '.' &&
+    _short_filename[1] == '_' &&
+    _short_filename[2] != 0;
+}
+
+static inline bool EAHasMainFile(const char *_full_ea_path)
+{
+    char tmp[MAXPATHLEN];
+    strcpy(tmp, _full_ea_path);
+    
+    char *last_dst = strrchr(tmp, '/');
+    const char *last_src = strrchr(_full_ea_path, '/'); // suboptimal
+    
+    strcpy(last_dst + 1, last_src + 3);
+    
+    struct stat st;
+    return lstat(tmp, &st) == 0;
+}
+
 static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
 {
     struct attrlist attrs;
@@ -106,7 +127,9 @@ FileCopyOperationJob::FileCopyOperationJob():
     m_IsSingleEntryCopy(false),
     m_ReadQueue(0),
     m_WriteQueue(0),
-    m_IOGroup(0)
+    m_IOGroup(0),
+    m_SourceHasExternalEAs(false),
+    m_DestinationHasExternalEAs(false)
 {
     // in xattr operations we'll use our big Buf1 and Buf2 - they should be quite enough
     // in OS X 10.4-10.6 maximum size of xattr value was 4Kb
@@ -157,6 +180,11 @@ void FileCopyOperationJob::Do()
     ScanDestination();
     if(CheckPauseOrStop()) { SetStopped(); return; }
 
+    auto dest_volume = NativeFSManager::Instance().VolumeFromPath(m_Destination);
+    auto source_volume = NativeFSManager::Instance().VolumeFromPath(m_SourceDirectory);
+    assert(dest_volume && source_volume);
+    m_SourceHasExternalEAs = source_volume->interfaces.extended_attr == false;
+    m_DestinationHasExternalEAs = dest_volume->interfaces.extended_attr == false;
     
     if(m_WorkMode == CopyToFixedPath || m_WorkMode == CopyToPathPreffix || m_WorkMode == MoveToFixedPath || m_WorkMode == MoveToPathPreffix )
     {
@@ -399,10 +427,20 @@ retry_stat:
 
         if(isreg || issymlink)
         {
-            m_ItemFlags.push_back(issymlink ? (uint8_t)ItemFlags::is_symlink : (uint8_t)ItemFlags::no_flags);
-            m_ScannedItems.push_back(_short_path, _prefix);
-            m_SourceNumberOfFiles++;
-            m_SourceTotalBytes += stat_buffer.st_size;
+            bool skip = false;
+            if(!issymlink &&
+               m_SourceHasExternalEAs &&
+               CanBeExternalEA(_short_path) &&
+               EAHasMainFile(fullpath) )
+                skip = true;
+            
+            if(!skip)
+            {
+                m_ItemFlags.push_back(issymlink ? (uint8_t)ItemFlags::is_symlink : (uint8_t)ItemFlags::no_flags);
+                m_ScannedItems.push_back(_short_path, _prefix);
+                m_SourceNumberOfFiles++;
+                m_SourceTotalBytes += stat_buffer.st_size;
+            }
         }
         else if(isdir)
         {

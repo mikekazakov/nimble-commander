@@ -7,8 +7,6 @@
 //
 
 #pragma once
-#include <sys/param.h>
-#include <sys/ucred.h>
 #include <sys/mount.h>
 #import <vector>
 #import <string>
@@ -455,7 +453,7 @@ struct NativeFileSystemInfo
         /**
          * When set, the volume supports native named streams.
          */
-        bool named_strems;
+        bool named_streams;
         
     } interfaces;
 
@@ -509,6 +507,12 @@ public:
     shared_ptr<NativeFileSystemInfo> VolumeFromPath(string _path);
     
     /**
+     * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
+     * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
+     */
+    shared_ptr<NativeFileSystemInfo> VolumeFromPath(const char* _path);
+    
+    /**
      * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
      * so should be used very carefully only time-critical paths (this method dont make any syscalls).
@@ -520,7 +524,16 @@ public:
      * Is fast, since dont make any syscalls.
      */
     shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(string _mount_point);
+
+    /**
+     * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
+     * Is fast, since dont make any syscalls.
+     */
+    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const char *_mount_point);
     
+    /**
+     * UpdateSpaceInformation() forces to fetch and recalculate space information contained in _volume.
+     */
     void UpdateSpaceInformation(shared_ptr<NativeFileSystemInfo> _volume);
     
     

@@ -11,7 +11,6 @@
 #import "OperationJob.h"
 #import "FileDeletionOperation.h"
 
-
 class FileDeletionOperationJob : public OperationJob
 {
 public:
@@ -34,11 +33,12 @@ protected:
     chained_strings m_Directories; // this container will store directories structure in direct order
     chained_strings m_ItemsToDelete; // this container will store files and directories to direct, they will use m_Directories to link path
     FileDeletionOperationType m_Type;
-    char m_RootPath[MAXPATHLEN];
+    string m_RootPath;
     unsigned m_ItemsCount;
     unsigned m_CurrentItemNumber;
     State m_State;
     bool m_SkipAll;
+    bool m_RootHasExternalEAs;
     
     __unsafe_unretained FileDeletionOperation *m_Operation;
 };

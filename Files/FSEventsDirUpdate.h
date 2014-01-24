@@ -30,7 +30,6 @@ private:
     struct WatchData
     {
         string path;        // should include trailing slash
-        string volume_path; // root path of volume from this path. without trailing slash (except root)
         FSEventStreamRef stream;
         vector<pair<unsigned long, void (^)()> > handlers;
     };

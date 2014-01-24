@@ -10,6 +10,7 @@
 #import <dirent.h>
 #import <pwd.h>
 #import <DiskArbitration/DiskArbitration.h>
+#import "NativeFSManager.h"
 #import "Common.h"
 #import "sysinfo.h"
 
@@ -232,34 +233,18 @@ bool GetUserHomeDirectoryPath(char *_path)
     return true;
 }
 
-int GetFileSystemRootFromPath(const char *_path, char *_root)
-{
-    struct statfs info;
-    if(statfs(_path, &info) == 0)
-    {
-        strcpy(_root, info.f_mntonname);
-        return 0;
-    }
-    return errno;
-}
-
 void EjectVolumeContainingPath(string _path)
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        char root[MAXPATHLEN];
-        if(GetFileSystemRootFromPath(_path.c_str(), root) == 0)
+        if(auto volume = NativeFSManager::Instance().VolumeFromPath(_path))
         {
-            DASessionRef session = DASessionCreate(kCFAllocatorDefault);        
-            CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8 *)root, strlen(root), true);
-            if(url)
+            DASessionRef session = DASessionCreate(kCFAllocatorDefault);
+            CFURLRef url = (__bridge CFURLRef)volume->verbose.url;
+            DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
+            if(disk)
             {
-                DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
-                if(disk)
-                {
-                    DADiskUnmount(disk, kDADiskUnmountOptionDefault, NULL, NULL);
-                    CFRelease(disk);
-                }
-                CFRelease(url);
+                DADiskUnmount(disk, kDADiskUnmountOptionDefault, NULL, NULL);
+                CFRelease(disk);
             }
             CFRelease(session);
         }
@@ -268,52 +253,22 @@ void EjectVolumeContainingPath(string _path)
 
 bool IsVolumeContainingPathEjectable(const char *_path)
 {
-    char root[MAXPATHLEN];
-    if(GetFileSystemRootFromPath(_path, root) == 0)
-    {
-        if(strcmp(root, "/net") == 0 || strcmp(root, "/dev") == 0 || strcmp(root, "/home") == 0)
-            return false;
-        
-        bool ejectable = false;
-        CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)root, strlen(root), false);
-                
-        CFBooleanRef isremovable_volume = 0;
-        if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable_volume, 0) && isremovable_volume)
-        {
-            if(CFBooleanGetValue(isremovable_volume))
-                ejectable = true;
-            CFRelease(isremovable_volume);
-        }
-        
-        CFBooleanRef isejactable_volume = 0;
-        if(!ejectable && CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejactable_volume, 0) && isejactable_volume)
-        {
-            if(CFBooleanGetValue(isejactable_volume))
-                ejectable = true;
-            CFRelease(isejactable_volume);
-        }
-        
-        CFBooleanRef isinternal_volume = 0;
-        if(!ejectable && CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal_volume, 0) && isinternal_volume)
-        {
-            if(CFBooleanGetValue(isinternal_volume) == false)
-                ejectable = true;
-            CFRelease(isinternal_volume);
-        }
-        
-        CFBooleanRef islocal;
-        if(!ejectable && CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0))
-        {
-            if(!CFBooleanGetValue(islocal))
-                ejectable = true;
-            CFRelease(islocal);
-        }
-        
-        CFRelease(cfurl);
-        return ejectable;
-    }
-
-    return false;
+    auto volume = NativeFSManager::Instance().VolumeFromPath(_path);
+    
+    if(!volume)
+        return false;
+    
+    static string net("/net"), dev("/dev"), home("/home");
+    
+    if(volume->mounted_at_path == net ||
+       volume->mounted_at_path == dev ||
+       volume->mounted_at_path == home )
+        return false;
+    
+    return  volume->mount_flags.ejectable   == true  ||
+            volume->mount_flags.removable   == true  ||
+            volume->mount_flags.internal    == false ||
+            volume->mount_flags.local       == false ;
 }
 
 @implementation NSObject (MassObserving)

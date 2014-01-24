@@ -32,27 +32,35 @@ struct NativeFSManagerProxy2
     static void OnDidMount(string _on_path)     { g_SharedFSManager->OnDidMount(_on_path);      }
     static void OnWillUnmount(string _on_path)  { g_SharedFSManager->OnWillUnmount(_on_path);   }
     static void OnDidUnmount(string _on_path)   { g_SharedFSManager->OnDidUnmount(_on_path);    }
+    static void OnDidRename(string _old_path, string _new_path) { g_SharedFSManager->OnDidRename(_old_path, _new_path); }
 };
 
 @interface NativeFSManagerProxy : NSObject
 @end
-
 @implementation NativeFSManagerProxy
 + (void) volumeDidMount:(NSNotification *)aNotification
 {    
-    NSString *path = aNotification.userInfo[@"NSDevicePath"];
+    NSString *path = aNotification.userInfo[NSWorkspaceDidMountNotification];
     NativeFSManagerProxy2::OnDidMount([path fileSystemRepresentation]);
+}
+
++ (void) volumeDidRename:(NSNotification *)aNotification
+{
+    NSURL *new_path = aNotification.userInfo[NSWorkspaceVolumeURLKey];
+    NSURL *old_path = aNotification.userInfo[NSWorkspaceVolumeOldURLKey];
+    NativeFSManagerProxy2::OnDidRename(old_path.path.UTF8String,
+                                       new_path.path.UTF8String);
 }
 
 + (void) volumeWillUnmount:(NSNotification *)aNotification
 {
-    NSString *path = aNotification.userInfo[@"NSDevicePath"];
+    NSString *path = aNotification.userInfo[NSWorkspaceWillUnmountNotification];
     NativeFSManagerProxy2::OnWillUnmount([path fileSystemRepresentation]);
 }
 
 + (void) volumeDidUnmount:(NSNotification *)aNotification
 {
-    NSString *path = aNotification.userInfo[@"NSDevicePath"];
+    NSString *path = aNotification.userInfo[NSWorkspaceDidUnmountNotification];
     NativeFSManagerProxy2::OnDidUnmount([path fileSystemRepresentation]);
 }
 @end
@@ -71,11 +79,9 @@ NativeFSManager::NativeFSManager()
         GetAllInfos(*volume.get());
     }
     
-    NSWorkspace *workspace = NSWorkspace.sharedWorkspace;
-	NSNotificationCenter *center = workspace.notificationCenter;
-    
-    //TODO: NSWorkspaceDidRenameVolumeNotification
+	NSNotificationCenter *center = NSWorkspace.sharedWorkspace.notificationCenter;
 	[center addObserver:[NativeFSManagerProxy class] selector:@selector(volumeDidMount:) name:NSWorkspaceDidMountNotification object:nil];
+	[center addObserver:[NativeFSManagerProxy class] selector:@selector(volumeDidRename:) name:NSWorkspaceDidRenameVolumeNotification object:nil];
 	[center addObserver:[NativeFSManagerProxy class] selector:@selector(volumeDidUnmount:) name:NSWorkspaceDidUnmountNotification object:nil];
 	[center addObserver:[NativeFSManagerProxy class] selector:@selector(volumeWillUnmount:) name:NSWorkspaceWillUnmountNotification object:nil];
 }
@@ -98,6 +104,7 @@ void NativeFSManager::GetAllInfos(NativeFileSystemInfo &_volume)
     GetFormatInfo(_volume);
     GetInterfacesInfo(_volume);
     GetVerboseInfo(_volume);
+    UpdateSpaceInfo(_volume);
 }
 
 bool NativeFSManager::GetBasicInfo(NativeFileSystemInfo &_volume)
@@ -231,6 +238,7 @@ bool NativeFSManager::GetVerboseInfo(NativeFileSystemInfo &_volume)
     
     NSString *string;
     NSImage *img;
+    NSNumber *number;
     NSError *error;
     
     if([url getResourceValue:&string forKey:NSURLVolumeNameKey error:&error])
@@ -241,6 +249,15 @@ bool NativeFSManager::GetVerboseInfo(NativeFileSystemInfo &_volume)
     
     if([url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error])
         _volume.verbose.icon = img;
+    
+    if([url getResourceValue:&number forKey:NSURLVolumeIsEjectableKey error:&error])
+        _volume.mount_flags.ejectable = number.boolValue;
+    
+    if([url getResourceValue:&number forKey:NSURLVolumeIsRemovableKey error:&error])
+        _volume.mount_flags.removable = number.boolValue;
+    
+    if([url getResourceValue:&number forKey:NSURLVolumeIsInternalKey error:&error])
+        _volume.mount_flags.internal = number.boolValue;
     
     return true;
 }
@@ -279,7 +296,7 @@ void NativeFSManager::OnDidUnmount(string _on_path)
     
     auto it = find_if(begin(m_Volumes),
                       end(m_Volumes),
-                      [=] (shared_ptr<NativeFileSystemInfo>& _v) {
+                      [&] (shared_ptr<NativeFileSystemInfo>& _v) {
                           return _v->mounted_at_path == _on_path;
                         }
                       );
@@ -291,6 +308,32 @@ void NativeFSManager::OnDidUnmount(string _on_path)
     FSEventsDirUpdate::OnVolumeDidUnmount(_on_path);
 }
 
+void NativeFSManager::OnDidRename(string _old_path, string _new_path)
+{
+    m_Lock.lock();
+    
+    auto it = find_if(begin(m_Volumes),
+                      end(m_Volumes),
+                      [&] (shared_ptr<NativeFileSystemInfo>& _v) {
+                          return _v->mounted_at_path == _old_path;
+                        }
+                      );
+    if(it != end(m_Volumes))
+    {
+        auto volume = *it;
+        volume->mounted_at_path = _new_path;
+        GetVerboseInfo(*volume.get());
+    }
+    else
+    {
+        OnDidMount(_new_path);
+    }
+
+    m_Lock.unlock();
+
+    FSEventsDirUpdate::OnVolumeDidUnmount(_old_path);
+}
+
 vector<shared_ptr<NativeFileSystemInfo>> NativeFSManager::Volumes()
 {
     m_Lock.lock();
@@ -298,4 +341,93 @@ vector<shared_ptr<NativeFileSystemInfo>> NativeFSManager::Volumes()
     m_Lock.unlock();
     
     return copy;
+}
+
+bool NativeFSManager::UpdateSpaceInfo(NativeFileSystemInfo &_volume)
+{
+    struct statfs stat;
+    
+    if(statfs(_volume.mounted_at_path.c_str(), &stat) != 0)
+        return false;
+    
+    _volume.basic.total_blocks      = stat.f_blocks;
+    _volume.basic.free_blocks       = stat.f_bfree;
+    _volume.basic.available_blocks  = stat.f_bavail;
+
+    _volume.basic.total_bytes       = _volume.basic.block_size * _volume.basic.total_blocks;
+    _volume.basic.free_bytes        = _volume.basic.block_size * _volume.basic.free_blocks;
+    _volume.basic.available_bytes   = _volume.basic.block_size * _volume.basic.available_blocks;
+
+    return true;
+}
+
+void NativeFSManager::UpdateSpaceInformation(shared_ptr<NativeFileSystemInfo> _volume)
+{
+    if(!_volume)
+        return;
+    
+    m_Lock.lock();
+    UpdateSpaceInfo(*_volume.get());
+    m_Lock.unlock();
+}
+
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(string _path)
+{
+    shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
+
+    if(_path.empty())
+        return result;
+
+    int best_fit_ind    = -1;
+    size_t best_fit_sz  = 0;
+
+    m_Lock.lock();
+    
+    for(int i = 0; i < m_Volumes.size(); ++i)
+    {
+        auto &vol = m_Volumes[i];
+        if(_path.compare(0, vol->mounted_at_path.size(), vol->mounted_at_path) == 0 &&
+           vol->mounted_at_path.size() > best_fit_sz
+           )
+        {
+            best_fit_sz = vol->mounted_at_path.size();
+            best_fit_ind = i;
+        }
+    }
+    
+    if(best_fit_ind >= 0)
+        result = m_Volumes[best_fit_ind];
+    
+    m_Lock.unlock();
+    
+    return result;
+}
+
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(string _mount_point)
+{
+    shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
+    
+    m_Lock.lock();
+    
+    auto it = find_if(begin(m_Volumes),
+                      end(m_Volumes),
+                      [&] (shared_ptr<NativeFileSystemInfo>& _v) {
+                          return _v->mounted_at_path == _mount_point;
+                        }
+                      );
+    if(it != end(m_Volumes))
+        result = *it;
+    
+    m_Lock.unlock();
+    
+    return result;
+}
+
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(string _path)
+{
+    struct statfs info;
+    if(statfs(_path.c_str(), &info) < 0)
+        return nullptr;
+    
+    return VolumeFromMountPoint(info.f_mntonname);
 }

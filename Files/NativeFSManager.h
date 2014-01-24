@@ -86,6 +86,21 @@ struct NativeFileSystemInfo
          */
         uint64_t mount_flags;
         
+        /**
+         * Total data bytes in file system.
+         */
+        uint64_t total_bytes;
+        
+        /**
+         * Free bytes in filesystem.
+         */
+        uint64_t free_bytes;
+        
+        /**
+         * Free bytes in filesystem available to non-superuser.
+         */
+        uint64_t available_bytes;
+        
     } basic;
     
     struct {
@@ -183,6 +198,21 @@ struct NativeFileSystemInfo
          * File system supports per-file encrypted data protection.
          */
         bool cprotect;
+        
+        /**
+         * True if the volume's media is ejectable from the drive mechanism under software control.
+         */
+        bool ejectable;
+        
+        /**
+         * True if the volume's media is removable from the drive mechanism.
+         */
+        bool removable;
+        
+        /**
+         * True if the volume's device is connected to an internal bus, false if connected to an external bus.
+         */
+        bool internal;
         
     } mount_flags;
 
@@ -466,7 +496,33 @@ class NativeFSManager
 public:
     static NativeFSManager &Instance();
     
+    /**
+     * Returns a list of volumes in a system.
+     */
     vector<shared_ptr<NativeFileSystemInfo>> Volumes();
+    
+    
+    /**
+     * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
+     * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
+     */
+    shared_ptr<NativeFileSystemInfo> VolumeFromPath(string _path);
+    
+    /**
+     * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.
+     * It don't take into consideration invalid paths or symlinks following somewhere in _path,
+     * so should be used very carefully only time-critical paths (this method dont make any syscalls).
+     */
+    shared_ptr<NativeFileSystemInfo> VolumeFromPathFast(string _path);
+    
+    /**
+     * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
+     * Is fast, since dont make any syscalls.
+     */
+    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(string _mount_point);
+    
+    void UpdateSpaceInformation(shared_ptr<NativeFileSystemInfo> _volume);
+    
     
 private:
     NativeFSManager();
@@ -476,12 +532,14 @@ private:
     static bool GetFormatInfo(NativeFileSystemInfo &_volume);
     static bool GetInterfacesInfo(NativeFileSystemInfo &_volume);
     static bool GetVerboseInfo(NativeFileSystemInfo &_volume);
+    static bool UpdateSpaceInfo(NativeFileSystemInfo &_volume);
     
     void OnDidMount(string _on_path);
     void OnWillUnmount(string _on_path);
     void OnDidUnmount(string _on_path);
+    void OnDidRename(string _old_path, string _new_path);
     
-    mutex                                    m_Lock;
+    recursive_mutex                          m_Lock;
     vector<shared_ptr<NativeFileSystemInfo>> m_Volumes;
     
     friend struct NativeFSManagerProxy2;

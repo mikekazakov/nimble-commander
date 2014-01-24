@@ -8,11 +8,12 @@
 
 #import "DetailedVolumeInformationSheetController.h"
 #include "filesysinfo.h"
+#include "NativeFSManager.h"
 #include "Common.h"
 
 @implementation DetailedVolumeInformationSheetController
 {
-    char                          m_Root[MAXPATHLEN];
+    string                        m_Root;
     VolumeCapabilitiesInformation m_Capabilities;
     VolumeAttributesInformation   m_Attributes;
     NSTimer                      *m_UpdateTimer;
@@ -33,7 +34,7 @@ static NSString* Bool2ToString(const bool b[2])
 
 - (void) UpdateByTimer:(NSTimer*)theTimer
 {
-    if(FetchVolumeAttributesInformation(m_Root, &m_Capabilities, &m_Attributes) == 0)
+    if(FetchVolumeAttributesInformation(m_Root.c_str(), &m_Capabilities, &m_Attributes) == 0)
         [self PopulateControls];
 }
 
@@ -275,11 +276,13 @@ static NSString* Bool2ToString(const bool b[2])
 
 - (void)ShowSheet: (NSWindow *)_window destpath: (const char*)_path
 {
-    if(GetFileSystemRootFromPath(_path, m_Root) != 0)
+    auto volume = NativeFSManager::Instance().VolumeFromPath(_path);
+    if(volume)
+        m_Root = volume->mounted_at_path;
+    
+    if(FetchVolumeCapabilitiesInformation(m_Root.c_str(), &m_Capabilities) != 0)
         return;
-    if(FetchVolumeCapabilitiesInformation(m_Root, &m_Capabilities) != 0)
-        return;
-    if(FetchVolumeAttributesInformation(m_Root, &m_Capabilities, &m_Attributes) != 0)
+    if(FetchVolumeAttributesInformation(m_Root.c_str(), &m_Capabilities, &m_Attributes) != 0)
         return;
 
     [NSApp beginSheet: [self window]

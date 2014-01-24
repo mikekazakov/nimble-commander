@@ -27,6 +27,8 @@
 #import "FSEventsDirUpdate.h"
 #import "Common.h"
 
+#import "NativeFSManager.h"
+
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
@@ -318,27 +320,17 @@ int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_ch
     if(statfs(_path, &info) < 0)
         return VFSError::FromErrno(errno);
 
-    struct
-    {
-        u_int32_t attr_length;
-        union
-        {
-            struct { attrreference val; char buf[NAME_MAX + 1]; }   __attribute__((aligned(4), packed)) name;
-        };
-    } __attribute__((aligned(4), packed)) attr_info;
+    auto volume = NativeFSManager::Instance().VolumeFromMountPoint(info.f_mntonname);
+    if(!volume)
+        return VFSError::GenericError;
     
-    struct attrlist attrs;
-    memset(&attrs, 0, sizeof(attrs));
-    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-    attrs.volattr = ATTR_VOL_INFO | ATTR_VOL_NAME;
-    if( getattrlist(info.f_mntonname, &attrs, &attr_info, sizeof(info), 0) != 0 )
-        return VFSError::FromErrno(errno);
+    NativeFSManager::Instance().UpdateSpaceInformation(volume);
     
-    _stat.volume_name = ((char*)&attr_info.name.val) + attr_info.name.val.attr_dataoffset;
-    _stat.total_bytes = (uint64_t)info.f_blocks * (uint64_t)info.f_bsize;
-    _stat.free_bytes  = (uint64_t)info.f_bfree  * (uint64_t)info.f_bsize;
-    _stat.avail_bytes = (uint64_t)info.f_bavail * (uint64_t)info.f_bsize;
-
+    _stat.volume_name   = volume->verbose.name.UTF8String;
+    _stat.total_bytes   = volume->basic.total_bytes;
+    _stat.free_bytes    = volume->basic.free_bytes;
+    _stat.avail_bytes   = volume->basic.available_bytes;
+    
     return 0;
 }
 

@@ -81,9 +81,6 @@ unsigned long FSEventsDirUpdate::AddWatchPath(const char *_path, void (^_handler
     WatchData *w = new WatchData;
     w->path = dirpath;
     w->handlers.push_back(make_pair(m_LastTicket++, _handler));
-    char volume[MAXPATHLEN] = {0};
-    GetFileSystemRootFromPath(dirpath, volume);
-    w->volume_path = volume;
     
     FSEventStreamContext context = {0, w, NULL, NULL, NULL};
     CFStringRef path = CFStringCreateWithBytes(0, (const UInt8*)_path, strlen(_path), kCFStringEncodingUTF8, false);

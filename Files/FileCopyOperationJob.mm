@@ -8,6 +8,7 @@
 
 #import "FileCopyOperationJob.h"
 #import "filesysinfo.h"
+#import "NativeFSManager.h"
 #import <algorithm>
 #import <sys/types.h>
 #import <sys/dirent.h>
@@ -60,11 +61,11 @@ static bool CheckSameVolume(const char *_fn1, const char*_fn2, bool &_same, bool
         *s = 0;
     }
 
-    char root1[MAXPATHLEN], root2[MAXPATHLEN];
-    if(GetFileSystemRootFromPath(_fn1, root1) != 0) return false;
-    if(GetFileSystemRootFromPath(fn2, root2) != 0) return false;
+    auto volume1 = NativeFSManager::Instance().VolumeFromPath(_fn1);
+    auto volume2 = NativeFSManager::Instance().VolumeFromPath(fn2);
+    if(!volume1 || !volume2) return false;
 
-    _same = strcmp(root1, root2) == 0;
+    _same = volume1.get() == volume2.get();
 
     return true;
 }

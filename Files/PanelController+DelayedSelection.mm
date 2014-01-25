@@ -7,6 +7,7 @@
 //
 
 #import "PanelController+DelayedSelection.h"
+#import "MainWindowFilePanelState.h"
 #import "Common.h"
 
 @implementation PanelController (DelayedSelection)
@@ -49,20 +50,20 @@
     }
     
     // now try to find it
-    int entryindex = m_Data->RawIndexForName(m_DelayedSelection.filename.c_str());
+    int entryindex = m_Data.RawIndexForName(m_DelayedSelection.filename.c_str());
     if( entryindex >= 0 )
     {
         // we found this entry. regardless of appearance of this entry in current directory presentation
         // there's no reason to search for it again
         m_DelayedSelection.isvalid = false;
         
-        int sortpos = m_Data->SortedIndexForRawIndex(entryindex);
+        int sortpos = m_Data.SortedIndexForRawIndex(entryindex);
         if( sortpos >= 0 )
         {
             [m_View SetCursorPosition:sortpos];
-            m_Data->CustomFlagsSelectAllSorted(false);
+            m_Data.CustomFlagsSelectAllSorted(false);
             if(![self IsActivePanel])
-               [self RequestActivation];
+                [(MainWindowFilePanelState*)self.state ActivatePanelByController:self];
             return true;
         }
     }

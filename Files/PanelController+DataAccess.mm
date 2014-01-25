@@ -23,20 +23,20 @@
 
 - (string) GetCurrentFocusedEntryFilePathRelativeToHost
 {
-    if(!m_Data || !m_View)
+    if(!m_View)
         return "";
     
-    return m_Data->FullPathForEntry(m_Data->RawIndexForSortIndex([m_View GetCursorPosition]));
+    return m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex([m_View GetCursorPosition]));
 }
 
 - (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot
 {
-    if(!m_Data || !m_View)
+    if(!m_View)
         return chained_strings();    
     
-    if(m_Data->Stats().selected_entries_amount)
+    if(m_Data.Stats().selected_entries_amount)
     {
-        return m_Data->StringsFromSelectedEntries();
+        return m_Data.StringsFromSelectedEntries();
     }
     else
     {
@@ -50,12 +50,12 @@
 
 - (chained_strings) GetSelectedEntriesOrFocusedEntryWithDotDot
 {
-    if(!m_Data || !m_View)
+    if(!m_View)
         return chained_strings();
     
-    if(m_Data->Stats().selected_entries_amount)
+    if(m_Data.Stats().selected_entries_amount)
     {
-        return m_Data->StringsFromSelectedEntries();
+        return m_Data.StringsFromSelectedEntries();
     }
     else
     {
@@ -68,10 +68,7 @@
 
 - (string) GetCurrentDirectoryPathRelativeToHost
 {
-    if(!m_Data)
-        return "";
-    
-    return m_Data->DirectoryPathWithTrailingSlash();
+    return m_Data.DirectoryPathWithTrailingSlash();
 }
 
 - (shared_ptr<VFSHost>) GetCurrentVFSHost

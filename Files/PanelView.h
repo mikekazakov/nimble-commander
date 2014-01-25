@@ -12,13 +12,20 @@
 #import "PanelViewTypes.h"
 #import "VFS.h"
 
-@class PanelController;
+@class PanelView;
 class PanelData;
 class PanelViewPresentation;
 
-@interface PanelView : NSView
+@protocol PanelViewDelegate<NSObject>
+@optional
+- (void) PanelViewCursorChanged:(PanelView*)_view;
+- (void) PanelViewRequestsActivation:(PanelView*)_view;
+- (void) PanelViewRequestsContextMenu:(PanelView*)_view;
+- (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
+@end
 
-- (void) SetPanelController:(PanelController *)_controller;
+@interface PanelView : NSView
+@property (weak) id <PanelViewDelegate> delegate;
 
 - (void) SetPanelData:(PanelData*)_data;
 

@@ -50,30 +50,12 @@
 {
     self = [super initWithFrame:frameRect];
     if(self)
-    {
         [self Init];
-    }
     return self;
 }
 
 - (BOOL)acceptsFirstResponder {
     return YES;
-}
-
-- (void) dealloc
-{
-    [m_LeftPanelView SetPanelData:0];
-    [m_LeftPanelView SetPanelController:0];
-    [m_LeftPanelController SetData:0];
-    [m_LeftPanelController SetView:0];
-    delete m_LeftPanelData;
-    
-    [m_RightPanelView SetPanelData:0];
-    [m_RightPanelView SetPanelController:0];
-    [m_RightPanelController SetData:0];
-    [m_RightPanelController SetView:0];
-    delete m_RightPanelData;
-    
 }
 
 - (void) Init
@@ -83,36 +65,29 @@
     m_OperationsController = [[OperationsController alloc] init];
     m_OpSummaryController = [[OperationsSummaryViewController alloc] initWthController:m_OperationsController];
     
+    m_LeftPanelController = [PanelController new];
+    m_RightPanelController = [PanelController new];
+    
     [self CreateControls];
     [m_OpSummaryController AddViewTo:m_OpSummaryBox];
     
     // panel creation and preparation
-    m_LeftPanelData = new PanelData;
-    m_LeftPanelController = [PanelController new];
-    [m_LeftPanelView SetPanelData:m_LeftPanelData];
-    [m_LeftPanelView SetPanelController:m_LeftPanelController];
-    [m_LeftPanelController SetView:m_LeftPanelView];
-    [m_LeftPanelController SetData:m_LeftPanelData];
+    m_LeftPanelController.state = self;
     [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton share:m_LeftPanelShareButton];
-    
-    m_RightPanelData = new PanelData;
-    m_RightPanelController = [PanelController new];
-    [m_RightPanelView SetPanelData:m_RightPanelData];
-    [m_RightPanelView SetPanelController:m_RightPanelController];
-    [m_RightPanelController SetView:m_RightPanelView];
-    [m_RightPanelController SetData:m_RightPanelData];
+
+    m_RightPanelController.state = self;
     [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton share:m_RightPanelShareButton];
 
     m_Skin = ((AppDelegate*)[NSApplication sharedApplication].delegate).Skin;
     if (m_Skin == ApplicationSkin::Modern)
     {
-        [m_LeftPanelView SetPresentation:new ModernPanelViewPresentation];
-        [m_RightPanelView SetPresentation:new ModernPanelViewPresentation];
+        [m_LeftPanelController.View SetPresentation:new ModernPanelViewPresentation];
+        [m_RightPanelController.View SetPresentation:new ModernPanelViewPresentation];
     }
     else if (m_Skin == ApplicationSkin::Classic)
     {
-        [m_LeftPanelView SetPresentation:new ClassicPanelViewPresentation];
-        [m_RightPanelView SetPresentation:new ClassicPanelViewPresentation];
+        [m_LeftPanelController.View SetPresentation:new ClassicPanelViewPresentation];
+        [m_RightPanelController.View SetPresentation:new ClassicPanelViewPresentation];
     }
     
     [self LoadPanelsSettings];
@@ -135,17 +110,14 @@
     }
         
     m_ActiveState = StateLeftPanel;
-    [m_LeftPanelView Activate];
+    [m_LeftPanelController.View Activate];
 }
 
 - (void) CreateControls
 {
-    m_LeftPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    m_RightPanelView = [[PanelView alloc] initWithFrame:NSMakeRect(100, 100, 100, 100)];
-    
     m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
     [m_MainSplitView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_MainSplitView SetBasicViews:m_LeftPanelView second:m_RightPanelView];
+    [m_MainSplitView SetBasicViews:m_LeftPanelController.View second:m_RightPanelController.View];
     [self addSubview:m_MainSplitView];    
     
     m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
@@ -270,10 +242,6 @@
 - (void) Assigned
 {
     [self UpdateTitle];
-    
-    [m_LeftPanelController SetWindowController:(MainWindowController*)[self.window delegate]];
-    [m_RightPanelController SetWindowController:(MainWindowController*)[self.window delegate]];
-    
     [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]
                              returnTypes:[NSArray arrayWithObjects:nil]];
 }
@@ -358,13 +326,13 @@
     
     if (_skin == ApplicationSkin::Modern)
     {
-        [m_LeftPanelView SetPresentation:new ModernPanelViewPresentation];
-        [m_RightPanelView SetPresentation:new ModernPanelViewPresentation];
+        [m_LeftPanelController.View SetPresentation:new ModernPanelViewPresentation];
+        [m_RightPanelController.View SetPresentation:new ModernPanelViewPresentation];
     }
     else if (_skin == ApplicationSkin::Classic)
     {
-        [m_LeftPanelView SetPresentation:new ClassicPanelViewPresentation];
-        [m_RightPanelView SetPresentation:new ClassicPanelViewPresentation];
+        [m_LeftPanelController.View SetPresentation:new ClassicPanelViewPresentation];
+        [m_RightPanelController.View SetPresentation:new ClassicPanelViewPresentation];
     }
 }
 
@@ -378,11 +346,11 @@
 {
     if(m_ActiveState == StateLeftPanel)
     {
-        return m_LeftPanelView;
+        return m_LeftPanelController.View;
     }
     else if(m_ActiveState == StateRightPanel)
     {
-        return m_RightPanelView;
+        return m_RightPanelController.View;
     }
     assert(0);
     return 0;
@@ -392,11 +360,11 @@
 {
     if(m_ActiveState == StateLeftPanel)
     {
-        return m_LeftPanelData;
+        return &m_LeftPanelController.Data;
     }
     else if(m_ActiveState == StateRightPanel)
     {
-        return m_RightPanelData;
+        return &m_RightPanelController.Data;
     }
     assert(0);
     return 0;
@@ -442,16 +410,16 @@
         assert(m_ActiveState == StateRightPanel);
         
         m_ActiveState = StateLeftPanel;
-        [m_LeftPanelView Activate];
-        [m_RightPanelView Disactivate];
+        [m_LeftPanelController.View Activate];
+        [m_RightPanelController.View Disactivate];
     }
     else
     {
         assert(m_ActiveState == StateLeftPanel);
         
         m_ActiveState = StateRightPanel;
-        [m_RightPanelView Activate];
-        [m_LeftPanelView Disactivate];
+        [m_RightPanelController.View Activate];
+        [m_LeftPanelController.View Disactivate];
     }
     
     [self UpdateTitle];
@@ -596,12 +564,12 @@
     
     if(m_ActiveState == StateLeftPanel)
     {
-        m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
+        m_LeftPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
         [m_RightPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
     }
     else
     {
-        m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
+        m_RightPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
         [m_LeftPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
     }
 }
@@ -612,8 +580,6 @@
     if([m_MainSplitView AnyCollapsed])
         return;
     
-    swap(m_LeftPanelView, m_RightPanelView);
-    swap(m_LeftPanelData, m_RightPanelData);
     swap(m_LeftPanelController, m_RightPanelController);
     if(m_ActiveState == StateLeftPanel) m_ActiveState = StateRightPanel;
     else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
@@ -737,7 +703,6 @@
         case MenuTags::PanelSortByMTime: upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByMTimeMask); break;
         case MenuTags::PanelSortBySize:  upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortBySizeMask); break;
         case MenuTags::PanelSortByBTime: upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByBTimeMask); break;
-//        case MenuTags::PanelSortViewHidden: [item setState:[contr GetUserSortMode].show_hidden ? NSOnState : NSOffState]; break;
         case MenuTags::PanelSortViewHidden: [item setState:[contr GetUserHardFiltering].show_hidden ? NSOnState : NSOffState]; break;            
         case MenuTags::PanelSortSepDirs:    [item setState:[contr GetUserSortMode].sep_dirs    ? NSOnState : NSOffState]; break;
         case MenuTags::PanelSortCaseSensitive:[item setState:[contr GetUserSortMode].case_sens ? NSOnState : NSOffState]; break;
@@ -825,12 +790,12 @@
     
     const PanelData *source, *destination;
     if(m_ActiveState == StateLeftPanel) {
-        source = m_LeftPanelData;
-        destination = m_RightPanelData;
+        source = &m_LeftPanelController.Data;
+        destination = &m_RightPanelController.Data;
     }
     else {
-        source = m_RightPanelData;
-        destination = m_LeftPanelData;
+        source = &m_RightPanelController.Data;
+        destination = &m_LeftPanelController.Data;
     }
     
     auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
@@ -924,13 +889,13 @@
     const PanelData *source, *destination;
     if(m_ActiveState == StateLeftPanel)
     {
-        source = m_LeftPanelData;
-        destination = m_RightPanelData;
+        source = &m_LeftPanelController.Data;
+        destination = &m_RightPanelController.Data;
     }
     else
     {
-        source = m_RightPanelData;
-        destination = m_LeftPanelData;
+        source = &m_RightPanelController.Data;
+        destination = &m_LeftPanelController.Data;
     }
     
     if(!source->Host()->IsNativeFS())
@@ -1020,12 +985,12 @@
      
     if(_panel == m_LeftPanelController)
     {
-        string tmp = m_LeftPanelData->DirectoryPathWithTrailingSlash();
+        string tmp = m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost;
         [m_LeftPanelGoToButton SetCurrentPath:tmp.c_str()];
     }
     if(_panel == m_RightPanelController)
     {
-        string tmp = m_RightPanelData->DirectoryPathWithTrailingSlash();
+        string tmp = m_RightPanelController.GetCurrentDirectoryPathRelativeToHost;
         [m_RightPanelGoToButton SetCurrentPath:tmp.c_str()];
     }
 }
@@ -1054,10 +1019,10 @@
     char path[MAXPATHLEN*8];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(path);
+    m_LeftPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(path);
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"FirstPanelPath"];
      
-    m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(path);
+    m_RightPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(path);
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];
 }
 
@@ -1148,7 +1113,7 @@
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
     
-    if(!m_RightPanelData->Host()->IsNativeFS() || !m_LeftPanelData->Host()->IsNativeFS())
+    if(!m_RightPanelController.GetCurrentVFSHost->IsNativeFS() || !m_LeftPanelController.GetCurrentVFSHost->IsNativeFS())
         return; // currently support links only on native fs
     
     string link_path;
@@ -1161,9 +1126,9 @@
         source_path += item->Name();
     
     if(m_ActiveState == StateLeftPanel)
-        link_path = m_RightPanelData->DirectoryPathWithTrailingSlash();
+        link_path = m_RightPanelController.GetCurrentDirectoryPathRelativeToHost;
     else
-        link_path = m_LeftPanelData->DirectoryPathWithTrailingSlash();
+        link_path = m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost;
 
     if(!item->IsDotDot())
         link_path += item->Name();
@@ -1231,7 +1196,7 @@
     assert([self IsPanelActive]);
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
-    if(!m_RightPanelData->Host()->IsNativeFS() || !m_LeftPanelData->Host()->IsNativeFS())
+    if(!m_RightPanelController.GetCurrentVFSHost->IsNativeFS() || !m_LeftPanelController.GetCurrentVFSHost->IsNativeFS())
         return; // currently support links only on native fs
     
     auto const *item = [[self ActivePanelView] CurrentItem];
@@ -1390,9 +1355,9 @@
 {
     _paths.clear();
     char tmp[MAXPATHLEN*8];
-    m_LeftPanelData->GetDirectoryFullHostsPathWithTrailingSlash(tmp);
+    m_LeftPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(tmp);
     _paths.push_back(tmp);
-    m_RightPanelData->GetDirectoryFullHostsPathWithTrailingSlash(tmp);
+    m_RightPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(tmp);
     _paths.push_back(tmp);
 }
 

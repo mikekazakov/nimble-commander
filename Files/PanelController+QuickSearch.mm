@@ -95,12 +95,12 @@ static inline bool IsBackspace(NSString *_s)
 
 - (void) QuickSearchClearFiltering
 {
-    if(m_View == nil || m_Data == nullptr)
+    if(m_View == nil)
         return;
     
     panel::GenericCursorPersistance pers(m_View, m_Data);
     
-    if(m_Data->ClearTextFiltering()) {
+    if(m_Data.ClearTextFiltering()) {
         pers.Restore();
         [m_View setNeedsDisplay:true];
     }
@@ -116,7 +116,7 @@ static inline bool IsBackspace(NSString *_s)
     if(_key != nil)
     {
         // update soft filtering
-        PanelDataTextFiltering filtering = m_Data->SoftFiltering();
+        PanelDataTextFiltering filtering = m_Data.SoftFiltering();
 
         if(!IsBackspace(_key))
         {
@@ -139,18 +139,18 @@ static inline bool IsBackspace(NSString *_s)
         
         filtering.type = m_QuickSearchWhere;
         filtering.ignoredotdot = false;
-        m_Data->SetSoftFiltering(filtering);
+        m_Data.SetSoftFiltering(filtering);
     }
     m_QuickSearchLastType = currenttime;
     
-    if(m_Data->SoftFiltering().text == nil)
+    if(m_Data.SoftFiltering().text == nil)
         return false;
     
-    if(!m_Data->EntriesBySoftFiltering().empty())
+    if(!m_Data.EntriesBySoftFiltering().empty())
     {
-        if(m_QuickSearchOffset >= m_Data->EntriesBySoftFiltering().size())
-            m_QuickSearchOffset = (unsigned)m_Data->EntriesBySoftFiltering().size() - 1;
-        [m_View SetCursorPosition:m_Data->EntriesBySoftFiltering()[m_QuickSearchOffset]];
+        if(m_QuickSearchOffset >= m_Data.EntriesBySoftFiltering().size())
+            m_QuickSearchOffset = (unsigned)m_Data.EntriesBySoftFiltering().size() - 1;
+        [m_View SetCursorPosition:m_Data.EntriesBySoftFiltering()[m_QuickSearchOffset]];
     }
     
     if(m_QuickSearchTypingView)
@@ -166,8 +166,8 @@ static inline bool IsBackspace(NSString *_s)
             [view PopUpWithView:m_View];
         }
         
-        [view UpdateWithString:m_Data->SoftFiltering().text
-                       Matches:(int)m_Data->EntriesBySoftFiltering().size()];
+        [view UpdateWithString:m_Data.SoftFiltering().text
+                       Matches:(int)m_Data.EntriesBySoftFiltering().size()];
     }
     return true;
 }
@@ -176,7 +176,7 @@ static inline bool IsBackspace(NSString *_s)
 {
     _key = [_key decomposedStringWithCanonicalMapping];
     
-    PanelDataHardFiltering filtering = m_Data->HardFiltering();
+    PanelDataHardFiltering filtering = m_Data.HardFiltering();
     
     if(_key != nil)
     {
@@ -204,14 +204,14 @@ static inline bool IsBackspace(NSString *_s)
     
     filtering.text.type = m_QuickSearchWhere;
     filtering.text.clearonnewlisting = true;
-    m_Data->SetHardFiltering(filtering);
+    m_Data.SetHardFiltering(filtering);
     
     pers.Restore();
     
     // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
     if((m_VFSFetchingFlags & VFSHost::F_NoDotDot) == 0 &&
        [m_View GetCursorPosition] == 0 &&
-       m_Data->SortedDirectoryEntries().size() >= 2)
+       m_Data.SortedDirectoryEntries().size() >= 2)
         [m_View SetCursorPosition:1];
     
     [m_View setNeedsDisplay:true];
@@ -226,9 +226,9 @@ static inline bool IsBackspace(NSString *_s)
             [view PopUpWithView:m_View];
         }
         
-        int total = (int)m_Data->SortedDirectoryEntries().size();
+        int total = (int)m_Data.SortedDirectoryEntries().size();
         if(total > 0 &&
-           m_Data->Listing()->At(0).IsDotDot())
+           m_Data.Listing()->At(0).IsDotDot())
             total--;
         
         [view UpdateWithString:filtering.text.text Matches:total];

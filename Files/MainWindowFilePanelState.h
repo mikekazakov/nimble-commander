@@ -36,15 +36,10 @@ enum ActiveState
 @interface MainWindowFilePanelState : NSView<MainWindowStateProtocol>
 {
     ApplicationSkin m_Skin;
-    
+
     ActiveState m_ActiveState;
     
-    PanelView *m_LeftPanelView;                 // creates and owns
-    PanelData *m_LeftPanelData;                 // creates and owns
     PanelController *m_LeftPanelController;     // creates and owns
-    
-    PanelView *m_RightPanelView;                // creates and owns
-    PanelData *m_RightPanelData;                // creates and owns
     PanelController *m_RightPanelController;    // creates and owns
     
     FilePanelMainSplitView *m_MainSplitView;

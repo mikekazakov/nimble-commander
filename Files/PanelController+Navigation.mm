@@ -66,7 +66,7 @@
                         [self CancelBackgroundOperations]; // clean running operations if any
                         [m_View SavePathState];
                         m_HostsStack = hosts_stack;
-                        m_Data->Load(listing);
+                        m_Data.Load(listing);
                         [m_View DirectoryChanged:_filename.c_str()];
                         [self OnPathChanged:_flags];
                     });

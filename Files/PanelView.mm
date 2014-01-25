@@ -9,7 +9,6 @@
 #import "PanelView.h"
 #import "PanelData.h"
 #import "PanelViewPresentation.h"
-#import "PanelController.h"
 #import "Common.h"
 #import "VFS.h"
 
@@ -34,8 +33,6 @@ struct PanelViewStateStorage
 
 @implementation PanelView
 {
-    __unsafe_unretained PanelController *m_Controller;
-
     unsigned long   m_KeysModifiersFlags;
     
     // Exists during mouse drag operations only.
@@ -50,6 +47,8 @@ struct PanelViewStateStorage
     
     std::map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
 }
+
+@synthesize delegate;
 
 - (BOOL)isFlipped
 {
@@ -97,6 +96,7 @@ struct PanelViewStateStorage
 
 -(void) dealloc
 {
+    m_State.Data = nullptr;
     delete m_Presentation;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -111,11 +111,6 @@ struct PanelViewStateStorage
 {
     if (m_Presentation)
         m_Presentation->OnFrameChanged([self frame]);
-}
-
-- (void) SetPanelController:(PanelController *)_controller
-{
-    m_Controller = _controller;
 }
 
 - (void) SetPanelData: (PanelData*) _data
@@ -250,7 +245,10 @@ struct PanelViewStateStorage
 - (void) OnCursorPositionChanged
 {
     [self setNeedsDisplay:true];
-    [m_Controller OnCursorChanged];
+    
+    if(id<PanelViewDelegate> del = self.delegate)
+        if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
+            [del PanelViewCursorChanged:self];
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags
@@ -293,7 +291,9 @@ struct PanelViewStateStorage
 - (void) mouseDown:(NSEvent *)_event
 {
     if (!m_State.Active)
-        [m_Controller RequestActivation];
+        if(id<PanelViewDelegate> del = self.delegate)
+            if([del respondsToSelector:@selector(PanelViewRequestsActivation:)])
+                [del PanelViewRequestsActivation:self];
     
     NSPoint event_location = [_event locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
@@ -343,7 +343,9 @@ struct PanelViewStateStorage
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
     if (cursor_pos >= 0)
-        [m_Controller HandleItemsContextMenu];
+        if(id<PanelViewDelegate> del = self.delegate)
+            if([del respondsToSelector:@selector(PanelViewRequestsContextMenu:)])
+                [del PanelViewRequestsContextMenu:self];
 }
 
 - (void) UpdateDragScroll
@@ -416,8 +418,12 @@ struct PanelViewStateStorage
         NSPoint local_point = [self convertPoint:event_location fromView:nil];
         
         int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
-        if (cursor_pos == -1 || cursor_pos != m_State.CursorPos) return;
-        [m_Controller HandleReturnButton];
+        if (cursor_pos < 0 || cursor_pos != m_State.CursorPos)
+            return;
+        
+        if(id<PanelViewDelegate> del = self.delegate)
+            if([del respondsToSelector:@selector(PanelViewDoubleClick:atElement:)])
+                [del PanelViewDoubleClick:self atElement:cursor_pos];
     }
 }
 

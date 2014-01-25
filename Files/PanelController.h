@@ -12,10 +12,10 @@
 #import "PanelHistory.h"
 #import "DispatchQueue.h"
 
-@class MainWindowController;
 @class QuickLookView;
 @class PanelFastSearchPopupViewController;
 @class BriefSystemOverview;
+@class MainWindowFilePanelState;
 
 struct PanelControllerNavigation
 {
@@ -50,7 +50,7 @@ namespace panel
     class GenericCursorPersistance
     {
     public:
-        GenericCursorPersistance(PanelView* _view, PanelData *_data):
+        GenericCursorPersistance(PanelView* _view, const PanelData &_data):
         view(_view),
         data(_data),
         oldcursorpos([_view GetCursorPosition])
@@ -62,40 +62,39 @@ namespace panel
         
         void Restore()
         {
-            int newcursorrawpos = data->RawIndexForName(oldcursorname.c_str());
+            int newcursorrawpos = data.RawIndexForName(oldcursorname.c_str());
             if( newcursorrawpos >= 0 )
             {
-                int newcursorsortpos = data->SortedIndexForRawIndex(newcursorrawpos);
+                int newcursorsortpos = data.SortedIndexForRawIndex(newcursorrawpos);
                 if(newcursorsortpos >= 0)
                     [view SetCursorPosition:newcursorsortpos];
                 else
-                    [view SetCursorPosition:data->SortedDirectoryEntries().empty() ? -1 : 0];
+                    [view SetCursorPosition:data.SortedDirectoryEntries().empty() ? -1 : 0];
             }
             else
             {
-                if( oldcursorpos < data->SortedDirectoryEntries().size() )
+                if( oldcursorpos < data.SortedDirectoryEntries().size() )
                     [view SetCursorPosition:oldcursorpos];
                 else
-                    [view SetCursorPosition:int(data->SortedDirectoryEntries().size()) - 1];
+                    [view SetCursorPosition:int(data.SortedDirectoryEntries().size()) - 1];
             }
         }
         
     private:
         PanelView *view;
-        PanelData *data;
+        const PanelData &data;
         int oldcursorpos;
         string oldcursorname;
     };
 }
 
 
-@interface PanelController : NSObject
+@interface PanelController : NSObject<PanelViewDelegate>
 {
-    PanelData *m_Data;
-    PanelView *m_View;
-    vector<shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
+    PanelData m_Data;   // owns
+    PanelView *m_View;  // create and owns
     
-    __unsafe_unretained MainWindowController *m_WindowController;
+    vector<shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
     
     // VFS changes observation
     shared_ptr<VFSHost>         m_UpdatesObservationHost;
@@ -153,37 +152,29 @@ namespace panel
     } m_DelayedSelection;
 }
 
+@property (weak) MainWindowFilePanelState* state;
+
 // CONFIGURATION METHODS /////////////////////////////////////////////
-- (void) SetData:(PanelData*)_data;
-- (void) SetView:(PanelView*)_view;
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
                     eject:(NSButton*)_eject
                     share:(NSButton*)_share;
-- (void) SetWindowController:(MainWindowController *)_cntrl;
 //////////////////////////////////////////////////////////////////////
 
-
+- (PanelData&) Data;
+- (PanelView*) View;
 
 
 - (void) LoadViewState:(NSDictionary *)_state;
 - (NSDictionary *) SaveViewState;
 
 - (bool) IsActivePanel;
-- (void) RequestActivation;
-
-
 
 
 - (void) HandleReturnButton;        // 'Open' menu item
 - (void) HandleShiftReturnButton;   // 'Open Natively' menu item
-- (void) HandleFileView; // F3
-- (void) HandleCalculateSizes;
-- (void) HandleBriefSystemOverview;
-
-// called by PanelView ///////////////////////////////////////////////
-- (void) OnCursorChanged;
-- (void) HandleItemsContextMenu;
-///////////////////////////////////////////////////////////////////////
+- (void) HandleFileView;            // F3
+- (void) HandleCalculateSizes;      // alt+shift+return
+- (void) HandleBriefSystemOverview; // cmd+L
 
 - (void) ToggleSortingByName; // user pressed ctrl+F3 by default
 - (void) ToggleSortingByExt; // user pressed ctrl+F4 by default

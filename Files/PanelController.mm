@@ -55,6 +55,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 @implementation PanelController
 
+@synthesize state;
 
 - (id) init
 {
@@ -89,6 +90,10 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         [self observeValueForKeyPath:g_DefaultsQuickSearchTypingView ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsGeneralShowDotDotEntry ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:MyDefaultsKeys()];
+        
+        m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        m_View.delegate = self;
+        [m_View SetPanelData:&m_Data];
     }
 
     return self;
@@ -102,16 +107,14 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:MyDefaultsKeys()];
 }
 
-// without calling SetData:0 PanelController may do something very bad. need to discover what!
-- (void) SetData:(PanelData*)_data
+- (PanelData&) Data
 {
-    m_Data = _data;
-    [self CancelBackgroundOperations];
+    return m_Data;
 }
 
-- (void) SetView:(PanelView*)_view
+- (PanelView*) View
 {
-    m_View = _view;
+    return m_View;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -148,11 +151,11 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) LoadViewState:(NSDictionary *)_state
 {
-    auto hard_filtering = m_Data->HardFiltering();
+    auto hard_filtering = m_Data.HardFiltering();
     hard_filtering.show_hidden = [[_state valueForKey:@"ViewHiddenFiles"] boolValue];
     [self ChangeHardFilteringTo:hard_filtering];
     
-    auto sort_mode = m_Data->SortMode();
+    auto sort_mode = m_Data.SortMode();
     sort_mode.sep_dirs = [[_state valueForKey:@"SeparateDirectories"] boolValue];
     sort_mode.case_sens = [[_state valueForKey:@"CaseSensitiveComparison"] boolValue];
     sort_mode.numeric_sort = [[_state valueForKey:@"NumericSort"] boolValue];
@@ -164,10 +167,10 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (NSDictionary *) SaveViewState
 {
-    auto mode = m_Data->SortMode();
+    auto mode = m_Data.SortMode();
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
-        [NSNumber numberWithBool:(m_Data->HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
+        [NSNumber numberWithBool:(m_Data.HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
         [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
         [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
         [NSNumber numberWithInt:(int)[m_View GetCurrentViewType]], @"ViewMode",
@@ -177,26 +180,21 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (bool) IsActivePanel
 {
-    return [[self GetParentWindow] ActivePanelController] == self;
-}
-
-- (void) RequestActivation
-{
-    [[self GetParentWindow] ActivatePanelByController:self];
+    return [(MainWindowFilePanelState*)self.state ActivePanelController] == self;
 }
 
 - (void) HandleShiftReturnButton
 {
     if(auto *item = [m_View CurrentItem])
     {
-        string path = m_Data->DirectoryPathWithTrailingSlash();
+        string path = m_Data.DirectoryPathWithTrailingSlash();
 
         // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"
         if(!item->IsDotDot())
             path += item->Name();
 
         // may go async here on non-native VFS
-        PanelVFSFileWorkspaceOpener::Open(path, m_Data->Host());
+        PanelVFSFileWorkspaceOpener::Open(path, m_Data.Host());
     }
 }
 
@@ -204,7 +202,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     panel::GenericCursorPersistance pers(m_View, m_Data);
     
-    m_Data->SetSortMode(_mode);
+    m_Data.SetSortMode(_mode);
 
     pers.Restore();
     
@@ -215,7 +213,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     panel::GenericCursorPersistance pers(m_View, m_Data);
     
-    m_Data->SetHardFiltering(_filter);
+    m_Data.SetHardFiltering(_filter);
     
     pers.Restore();
     
@@ -224,7 +222,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev
 {
-    PanelSortMode mode = m_Data->SortMode(); // we don't want to change anything in sort params except the mode itself
+    PanelSortMode mode = m_Data.SortMode(); // we don't want to change anything in sort params except the mode itself
     if(mode.sort != _direct)  mode.sort = _direct;
     else                      mode.sort = _rev;
     [self ChangeSortingModeTo:mode];
@@ -232,28 +230,28 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) ToggleViewHiddenFiles
 {
-    auto filtering = m_Data->HardFiltering();
+    auto filtering = m_Data.HardFiltering();
     filtering.show_hidden = !filtering.show_hidden;
     [self ChangeHardFilteringTo:filtering];
 }
 
 - (void) ToggleSeparateFoldersFromFiles
 {
-    PanelSortMode mode = m_Data->SortMode();
+    PanelSortMode mode = m_Data.SortMode();
     mode.sep_dirs = !mode.sep_dirs;
     [self ChangeSortingModeTo:mode];
 }
 
 - (void) ToggleCaseSensitiveComparison
 {
-    PanelSortMode mode = m_Data->SortMode();
+    PanelSortMode mode = m_Data.SortMode();
     mode.case_sens = !mode.case_sens;
     [self ChangeSortingModeTo:mode];
 }
 
 - (void) ToggleNumericComparison
 {
-    PanelSortMode mode = m_Data->SortMode();
+    PanelSortMode mode = m_Data.SortMode();
     mode.numeric_sort = !mode.numeric_sort;
     [self ChangeSortingModeTo:mode];
 }
@@ -334,7 +332,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             [m_View SavePathState];
             
             m_HostsStack = *_hosts; // some overhead here, nevermind
-            m_Data->Load(listing);
+            m_Data.Load(listing);
             [m_View DirectoryChanged:_entry_name];
             [self OnPathChanged:0];
             return VFSError::Ok;
@@ -369,7 +367,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
                             m_HostsStack = *_hosts; // some overhead here, nevermind
                             m_HostsStack.push_back(arhost);
-                            m_Data->Load(listing);
+                            m_Data.Load(listing);
                             
                             [m_View DirectoryChanged:nullptr];
                             [self OnPathChanged:0];
@@ -409,7 +407,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                 dispatch_to_main_queue( ^{
                     [m_View SavePathState];
                     m_HostsStack = *_hosts; // some overhead here, nevermind
-                    m_Data->Load(listing);
+                    m_Data.Load(listing);
                     [m_View DirectoryChanged:entryname.c_str()];
                     [self OnPathChanged:0];
                 });
@@ -454,7 +452,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
                                     [m_View SavePathState];
                                     m_HostsStack = *_hosts; // some overhead here, nevermind
                                     m_HostsStack.push_back(arhost);
-                                    m_Data->Load(listing);
+                                    m_Data.Load(listing);
                                     [m_View DirectoryChanged:nullptr];
                                     [self OnPathChanged:0];
                                 });
@@ -511,14 +509,14 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         strcpy(asked, _path);
         
         char current[MAXPATHLEN*8];
-        m_Data->GetDirectoryFullHostsPathWithTrailingSlash(current);
+        m_Data.GetDirectoryFullHostsPathWithTrailingSlash(current);
         
         if(!IsPathWithTrailingSlash(asked))
             strcat(asked, "/");
 
         // will return false on the same path written other way (case insensitivity issues), but that's ok
         if(strcmp(asked, current) == 0 &&
-            m_Data->Host() != 0) /* special case for initialization process*/
+            m_Data.Host() != 0) /* special case for initialization process*/
             return;
     }
     
@@ -547,14 +545,14 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         strcpy(asked, _path);
         
         char current[MAXPATHLEN*8];
-        m_Data->GetDirectoryFullHostsPathWithTrailingSlash(current);
+        m_Data.GetDirectoryFullHostsPathWithTrailingSlash(current);
         
         if(!IsPathWithTrailingSlash(asked))
             strcat(asked, "/");
         
         // will return false on the same path written other way (case insensitivity issues), but that's ok
         if(strcmp(asked, current) == 0 &&
-           m_Data->Host() != 0) /* special case for initialization process*/
+           m_Data.Host() != 0) /* special case for initialization process*/
             return 0;
     }
     
@@ -576,8 +574,8 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     // TODO: need some changes when VFS will became multi-root (network connections, FS like PS list etc)
     char path[MAXPATHLEN*8], last_path_entry[MAXPATHLEN];
-    m_Data->GetDirectoryFullHostsPathWithTrailingSlash(path);
-    string entry = m_Data->DirectoryPathShort();
+    m_Data.GetDirectoryFullHostsPathWithTrailingSlash(path);
+    string entry = m_Data.DirectoryPathShort();
     
     char *s = strrchr(path, '/');
     if(!s) return;
@@ -603,13 +601,13 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if(entry->IsDir())
     {
         if(!entry->IsDotDot() ||
-           strcmp(m_Data->Listing()->RelativePath(), "/"))
+           strcmp(m_Data.Listing()->RelativePath(), "/"))
         {
-            string path = m_Data->FullPathForEntry(m_Data->RawIndexForSortIndex([m_View GetCursorPosition]));
+            string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex([m_View GetCursorPosition]));
             
             string curdirname;
             if(entry->IsDotDot()) // go to parent directory
-                curdirname = m_Data->DirectoryPathShort();
+                curdirname = m_Data.DirectoryPathShort();
             
             [self GoToRelativeAsync:path.c_str()
                           WithHosts:make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack)
@@ -639,7 +637,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     }
     else
     { // VFS stuff here
-        string path = m_Data->FullPathForEntry(m_Data->RawIndexForSortIndex([m_View GetCursorPosition]));
+        string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex([m_View GetCursorPosition]));
         shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(path.c_str(), m_HostsStack.back());
         if(arhost->Open() >= 0)
         {
@@ -653,7 +651,8 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if([self GetCurrentVFSHost]->IsNativeFS() && IsEligbleToTryToExecuteInConsole(*entry))
     {
         auto path = [self GetCurrentDirectoryPathRelativeToHost];
-        [m_WindowController RequestTerminalExecution:entry->Name() at:path.c_str()];
+        [(MainWindowController*)((MainWindowFilePanelState*)self.state).window.delegate RequestTerminalExecution:entry->Name() at:path.c_str()];
+        
         return;
     }
     
@@ -664,14 +663,14 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) RefreshDirectory
 {
-    if(m_Data == nullptr || m_View == nil)
+    if(/*m_Data == nullptr || */m_View == nil)
         return; // guard agains calls from init process
     
     // going async here
     if(!m_DirectoryLoadingQ->Empty())
         return; //reducing overhead
     
-    string dirpath = m_Data->DirectoryPathWithTrailingSlash();
+    string dirpath = m_Data.DirectoryPathWithTrailingSlash();
     
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
         shared_ptr<VFSListing> listing;
@@ -681,7 +680,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             dispatch_to_main_queue( ^{
                 panel::GenericCursorPersistance pers(m_View, m_Data);
                 
-                m_Data->ReLoad(listing);
+                m_Data.ReLoad(listing);
                 
                 if(![self CheckAgainstRequestedSelection])
                     pers.Restore();
@@ -726,7 +725,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     
     if(keycode == 53) { // Esc button
         [self CancelBackgroundOperations];
-        [[self GetParentWindow] CloseOverlay:self];
+        [(MainWindowFilePanelState*)self.state CloseOverlay:self];
         m_BriefSystemOverview = nil;
         m_QuickLook = nil;
         [self QuickSearchClearFiltering];
@@ -758,11 +757,11 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     if(m_BriefSystemOverview)
     {
-        [[self GetParentWindow] CloseOverlay:self];
+        [(MainWindowFilePanelState*)self.state CloseOverlay:self];
         m_BriefSystemOverview = nil;
         return;
     }
-    m_BriefSystemOverview = [[self GetParentWindow] RequestBriefSystemOverview:self];
+    m_BriefSystemOverview = [(MainWindowFilePanelState*)self.state RequestBriefSystemOverview:self];
     [self UpdateBriefSystemOverview];
 }
 
@@ -770,12 +769,12 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     // Close quick preview, if it is open.
     if(m_QuickLook) {
-        [[self GetParentWindow] CloseOverlay:self];
+        [(MainWindowFilePanelState*)self.state CloseOverlay:self];
         m_QuickLook = nil;
         return;
     }
     
-    m_QuickLook = [[self GetParentWindow] RequestQuickLookView:self];
+    m_QuickLook = [(MainWindowFilePanelState*)self.state RequestQuickLookView:self];
     [self OnCursorChanged];
 }
 
@@ -784,12 +783,12 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     auto complet = ^(const char* _sub_dir, uint64_t _size) {
         string sub_dir = _sub_dir;
         dispatch_to_main_queue(^{
-            if(m_Data->SetCalculatedSizeForDirectory(sub_dir.c_str(), _size))
+            if(m_Data.SetCalculatedSizeForDirectory(sub_dir.c_str(), _size))
                 [m_View setNeedsDisplay];
         });
     };
     
-    string current_dir = m_Data->DirectoryPathWithTrailingSlash();    
+    string current_dir = m_Data.DirectoryPathWithTrailingSlash();
     __block auto sub_dir_names = self.GetSelectedEntriesOrFocusedEntryWithDotDot;
     m_DirectorySizeCountingQ->Run( ^(SerialQueue _q){
         m_HostsStack.back()->CalculateDirectoriesSizes(move(sub_dir_names),
@@ -823,11 +822,6 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     
     [m_ShareButton setTarget:self];
     [m_ShareButton setAction:@selector(OnShareButton:)];
-}
-
-- (void) SetWindowController:(MainWindowController *)_cntrl
-{
-    m_WindowController = _cntrl;
 }
 
 - (void) CancelBackgroundOperations
@@ -871,7 +865,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) UpdateEjectButton
 {
-    string path = m_Data->DirectoryPathWithoutTrailingSlash();
+    string path = m_Data.DirectoryPathWithoutTrailingSlash();
     bool should_be_hidden = !IsVolumeContainingPathEjectable(path.c_str());
     
     if([m_EjectButton isHidden] != should_be_hidden)
@@ -885,19 +879,19 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (PanelSortMode) GetUserSortMode
 {
-    return m_Data->SortMode();
+    return m_Data.SortMode();
 }
 
 - (PanelDataHardFiltering) GetUserHardFiltering
 {
-    return m_Data->HardFiltering();
+    return m_Data.HardFiltering();
 }
 
 - (void) RecoverFromInvalidDirectory
 {
     // TODO: recovering to upper host needed
     char path[MAXPATHLEN];
-    strcpy(path, m_Data->DirectoryPathWithoutTrailingSlash().c_str());
+    strcpy(path, m_Data.DirectoryPathWithoutTrailingSlash().c_str());
     if(GetFirstAvailableDirectoryFromPath(path))
 //        [self GoToDirectory:path];
         [self GoToRelativeToHostAsync:path select_entry:0];
@@ -905,22 +899,22 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) SelectAllEntries:(bool) _select
 {
-    m_Data->CustomFlagsSelectAllSorted(_select);
+    m_Data.CustomFlagsSelectAllSorted(_select);
     [m_View setNeedsDisplay:true];
 }
 
 - (void) OnPathChanged:(int)_flags
 {
-    [self ResetUpdatesObservation:m_Data->DirectoryPathWithTrailingSlash()];
+    [self ResetUpdatesObservation:m_Data.DirectoryPathWithTrailingSlash()];
     [self ClearSelectionRequest];
     [self QuickSearchClearFiltering];
-    [self SignalParentOfPathChanged];
+    [(MainWindowFilePanelState*)self.state PanelPathChanged:self];
     [self UpdateEjectButton];
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
     
     if((_flags & PanelControllerNavigation::NoHistory) == 0) {
-        auto listing = m_Data->DirectoryEntries().SharedPtr();
+        auto listing = m_Data.DirectoryEntries().SharedPtr();
         m_History.Put(VFSPathStack::CreateWithVFSListing(listing));
     }
 }
@@ -932,7 +926,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     if(item)
     {
         if(item->IsDotDot())
-            [m_ShareButton setEnabled:m_Data->Stats().selected_entries_amount > 0];
+            [m_ShareButton setEnabled:m_Data.Stats().selected_entries_amount > 0];
         else
         {
             if(m_HostsStack.back()->IsNativeFS())
@@ -945,41 +939,25 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         [m_ShareButton setEnabled:false];
     
     // update QuickLook if any
-    if(QuickLookView *ql = m_QuickLook)
-        [ql PreviewItem:[self GetCurrentFocusedEntryFilePathRelativeToHost]
-                    vfs:m_HostsStack.back()];
-}
-
-- (MainWindowFilePanelState*) GetParentWindow
-{
-    NSView *parent = [m_View superview];
-    while(parent && ![parent isKindOfClass: [MainWindowFilePanelState class]])
-        parent = [parent superview];
-    if(!parent) return nil;
-    return (MainWindowFilePanelState*)parent;
-}
-
-- (void) SignalParentOfPathChanged
-{
-    [[self GetParentWindow] PanelPathChanged:self];
+    [(QuickLookView *)m_QuickLook PreviewItem:[self GetCurrentFocusedEntryFilePathRelativeToHost]
+                                          vfs:m_HostsStack.back()];
 }
 
 - (void)OnEjectButton:(id)sender
 {
-    if(m_Data)
-        EjectVolumeContainingPath(m_Data->DirectoryPathWithoutTrailingSlash());
+    EjectVolumeContainingPath(m_Data.DirectoryPathWithoutTrailingSlash());
 }
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
 {
     bool ignore_dirs = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
-    if(m_Data->CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
+    if(m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
         [m_View setNeedsDisplay:true];
 }
 
 - (void)OnShareButton:(id)sender
 {
-    if([SharingService IsCurrentlySharing])
+    if(SharingService.IsCurrentlySharing)
         return;
     
     auto files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot];
@@ -987,7 +965,7 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
         return;
     
     [[SharingService new] ShowItems:move(files)
-                              InDir:m_Data->DirectoryPathWithTrailingSlash()
+                              InDir:m_Data.DirectoryPathWithTrailingSlash()
                               InVFS:m_HostsStack.back()
                      RelativeToRect:[sender bounds]
                              OfView:sender
@@ -996,12 +974,21 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 - (void) UpdateBriefSystemOverview
 {
-    if(BriefSystemOverview *bso = m_BriefSystemOverview)
-        [bso UpdateVFSTarget:[self GetCurrentDirectoryPathRelativeToHost].c_str()
-                        host:m_HostsStack.back()];
+    [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+                                                             host:m_HostsStack.back()];
 }
 
-- (void) HandleItemsContextMenu
+- (void) PanelViewCursorChanged:(PanelView*)_view
+{
+    [self OnCursorChanged];
+}
+
+- (void) PanelViewRequestsActivation:(PanelView*)_view
+{
+    [(MainWindowFilePanelState*)self.state ActivatePanelByController:self];
+}
+
+- (void) PanelViewRequestsContextMenu:(PanelView*)_view
 {
     const VFSListingItem* cur_focus = [m_View CurrentItem];
     if(!cur_focus || cur_focus->IsDotDot())
@@ -1010,17 +997,23 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     vector<const VFSListingItem*> items;
     
     // 2 variants - currently focused item or all selected items (if focus is also selected)
-    if(m_Data->Stats().selected_entries_amount == 0 || !cur_focus->CFIsSelected())
+    if(m_Data.Stats().selected_entries_amount == 0 || !cur_focus->CFIsSelected())
         items.push_back(cur_focus); // use focused item solely
     else
-        for(auto &i: *m_Data->Listing()) // use selected items
+        for(auto &i: *m_Data.Listing()) // use selected items
             if(i.CFIsSelected())
                 items.push_back(&i);
-
-    [[self GetParentWindow] RequestContextMenuOn:items
-                                            path:[self GetCurrentDirectoryPathRelativeToHost].c_str()
-                                             vfs:m_HostsStack.back()
-                                          caller:self];
+    
+    [(MainWindowFilePanelState*)self.state RequestContextMenuOn:items
+                                                           path:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+                                                            vfs:m_HostsStack.back()
+                                                         caller:self];
 }
+
+- (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos
+{
+    [self HandleReturnButton];
+}
+
 
 @end

@@ -15,13 +15,7 @@
 #import "FileMask.h"
 #import "PanelAux.h"
 #import "SharingService.h"
-#import "PanelFastSearchPopupViewController.h"
 #import "BriefSystemOverview.h"
-
-// this constant should be the same as g_FadeDelay in PanelFastSearchController,
-// otherwise it may cause UI/Input inconsistency
-static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
-
 
 static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
@@ -57,116 +51,6 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             strcmp(ext, "pl") == 0 ||
             strcmp(ext, "rb") == 0 ||
             false; // need MOAR HERE!
-}
-
-static bool IsQuickSearchModifier(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
-{
-    // exclude CapsLock from our decision process
-    _modif &= ~NSAlphaShiftKeyMask;
-    
-    switch (_mode) {
-        case PanelQuickSearchMode::WithAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
-                   (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithCtrlAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
-                   (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithShiftAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithoutModif:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == 0 ||
-                   (_modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ;
-        default:
-            break;
-    }
-    return false;
-}
-
-static bool IsQuickSearchModifierForArrows(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
-{
-    // exclude CapsLock from our decision process
-    _modif &= ~NSAlphaShiftKeyMask;
-    
-    // arrow keydowns have NSNumericPadKeyMask and NSFunctionKeyMask flag raised
-    if((_modif & NSNumericPadKeyMask) == 0) return false;
-    if((_modif & NSFunctionKeyMask) == 0) return false;
-    _modif &= ~NSNumericPadKeyMask;
-    _modif &= ~NSFunctionKeyMask;
-    
-    switch (_mode) {
-        case PanelQuickSearchMode::WithAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
-                   (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithCtrlAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
-                   (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithShiftAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
-        default:
-            break;
-    }
-    return false;
-}
-
-static bool IsQuickSearchStringCharacter(NSString *_s)
-{
-    static NSCharacterSet *chars;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        NSMutableCharacterSet *un = [NSMutableCharacterSet new];
-        [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
-        [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
-        [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
-        chars = un;
-    });
-    
-    if(_s.length == 0)
-        return false;
-    
-    unichar u = [_s characterAtIndex:0]; // consider uing UTF-32 here
-    return [chars characterIsMember:u];
-}
-
-namespace {
-class GenericCursorPersistance
-{
-public:
-    GenericCursorPersistance(PanelView* _view, PanelData *_data):
-        view(_view),
-        data(_data),
-        oldcursorpos([_view GetCursorPosition])
-    {
-        if(oldcursorpos >= 0 && [view CurrentItem] != nullptr)
-            oldcursorname = [view CurrentItem]->Name();
-    }
- 
-    
-    void Restore()
-    {
-        int newcursorrawpos = data->RawIndexForName(oldcursorname.c_str());
-        if( newcursorrawpos >= 0 )
-        {
-            int newcursorsortpos = data->SortedIndexForRawIndex(newcursorrawpos);
-            if(newcursorsortpos >= 0)
-                [view SetCursorPosition:newcursorsortpos];
-            else
-                [view SetCursorPosition:data->SortedDirectoryEntries().empty() ? -1 : 0];
-        }
-        else
-        {
-            if( oldcursorpos < data->SortedDirectoryEntries().size() )
-                [view SetCursorPosition:oldcursorpos];
-            else
-                [view SetCursorPosition:int(data->SortedDirectoryEntries().size()) - 1];
-        }
-    }
-    
-private:
-    PanelView *view;
-    PanelData *data;
-    int oldcursorpos;
-    string oldcursorname;
-};
 }
 
 @implementation PanelController
@@ -238,19 +122,19 @@ private:
     {
         if(keyPath == g_DefaultsQuickSearchKeyModifier) {
             m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchKeyModifier]);
-            [self ClearFastSearchFiltering];
+            [self QuickSearchClearFiltering];
         }
         else if(keyPath == g_DefaultsQuickSearchWhereToFind) {
             m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchWhereToFind]);
-            [self ClearFastSearchFiltering];
+            [self QuickSearchClearFiltering];
         }
         else if(keyPath == g_DefaultsQuickSearchSoftFiltering) {
             m_QuickSearchIsSoftFiltering = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchSoftFiltering];
-            [self ClearFastSearchFiltering];
+            [self QuickSearchClearFiltering];
         }
         else if(keyPath == g_DefaultsQuickSearchTypingView) {
             m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
-            [self ClearFastSearchFiltering];
+            [self QuickSearchClearFiltering];
         }
         else if(keyPath == g_DefaultsGeneralShowDotDotEntry) {
             if([defaults boolForKey:g_DefaultsGeneralShowDotDotEntry] == false)
@@ -318,7 +202,7 @@ private:
 
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode
 {
-    GenericCursorPersistance pers(m_View, m_Data);
+    panel::GenericCursorPersistance pers(m_View, m_Data);
     
     m_Data->SetSortMode(_mode);
 
@@ -329,7 +213,7 @@ private:
 
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter
 {
-    GenericCursorPersistance pers(m_View, m_Data);
+    panel::GenericCursorPersistance pers(m_View, m_Data);
     
     m_Data->SetHardFiltering(_filter);
     
@@ -795,7 +679,7 @@ private:
         if(ret >= 0)
         {
             dispatch_to_main_queue( ^{
-                GenericCursorPersistance pers(m_View, m_Data);
+                panel::GenericCursorPersistance pers(m_View, m_Data);
                 
                 m_Data->ReLoad(listing);
                 
@@ -814,157 +698,18 @@ private:
     });
 }
 
-- (void) ClearFastSearchFiltering
-{
-    if(m_View == nil || m_Data == nullptr)
-        return;
-    
-    GenericCursorPersistance pers(m_View, m_Data);
-    
-    if(m_Data->ClearTextFiltering()) {
-        pers.Restore();
-        [m_View setNeedsDisplay:true];
-    }
-    
-    [m_QuickSearchPopupView PopOut];
-    m_QuickSearchPopupView = nil;
-}
-
-- (void)HandleQuickSearchSoft: (NSString*) _key
-{
-    _key = [_key decomposedStringWithCanonicalMapping];
-    uint64_t currenttime = GetTimeInNanoseconds();
-    if(_key != nil)
-    {
-        // update soft filtering
-        PanelDataTextFiltering filtering = m_Data->SoftFiltering();
-        
-        if(m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime ||
-           filtering.text == nil)
-        {
-            filtering.text = _key; // flush
-            m_QuickSearchOffset = 0;
-        }
-        else
-            filtering.text = [filtering.text stringByAppendingString:_key]; // append
-        
-        filtering.type = m_QuickSearchWhere;
-        filtering.ignoredotdot = false;
-        m_Data->SetSoftFiltering(filtering);
-    }
-    m_QuickSearchLastType = currenttime;
-    
-    if(m_Data->SoftFiltering().text == nil)
-        return;
-    
-    if(!m_Data->EntriesBySoftFiltering().empty())
-    {
-        if(m_QuickSearchOffset >= m_Data->EntriesBySoftFiltering().size())
-            m_QuickSearchOffset = (unsigned)m_Data->EntriesBySoftFiltering().size() - 1;
-        [m_View SetCursorPosition:m_Data->EntriesBySoftFiltering()[m_QuickSearchOffset]];
-    }
-    
-    if(m_QuickSearchTypingView)
-    {
-        PanelFastSearchPopupViewController *view = m_QuickSearchPopupView;
-        if(view == nil) {
-            view = [PanelFastSearchPopupViewController new];
-            m_QuickSearchPopupView = view;
-            __weak PanelController *weakself = self;
-            [view SetHandlers:^{[(PanelController*)weakself HandleFastSearchPrevious];}
-                         Next:^{[(PanelController*)weakself HandleFastSearchNext];}];
-            view.OnAutoPopOut = ^{ if(PanelController* pc = weakself) pc->m_QuickSearchPopupView = nil; };
-            [view PopUpWithView:m_View];
-        }
-
-        [view UpdateWithString:m_Data->SoftFiltering().text
-                       Matches:(int)m_Data->EntriesBySoftFiltering().size()];
-    }
-}
-
-- (void)HandleQuickSearchHard: (NSString*) _key
-{
-    _key = [_key decomposedStringWithCanonicalMapping];
-
-    PanelDataHardFiltering filtering = m_Data->HardFiltering();
-    
-    if(_key != nil)
-    {
-        // update hard filtering
-        if(filtering.text.text == nil)
-            filtering.text.text = _key;
-        else
-            filtering.text.text = [filtering.text.text stringByAppendingString:_key];
-    }
-
-    if(filtering.text.text == nil)
-        return;
-    
-    GenericCursorPersistance pers(m_View, m_Data);
-
-    filtering.text.type = m_QuickSearchWhere;
-    filtering.text.clearonnewlisting = true;
-    m_Data->SetHardFiltering(filtering);
-
-    pers.Restore();
-    
-    // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
-    if((m_VFSFetchingFlags & VFSHost::F_NoDotDot) == 0 &&
-       [m_View GetCursorPosition] == 0 &&
-        m_Data->SortedDirectoryEntries().size() >= 2)
-        [m_View SetCursorPosition:1];
-    
-    [m_View setNeedsDisplay:true];
-    
-    if(m_QuickSearchTypingView) { // update typing UI
-        PanelFastSearchPopupViewController *view = m_QuickSearchPopupView;
-        if(view == nil) {
-            view = [PanelFastSearchPopupViewController new];
-            m_QuickSearchPopupView = view;
-            __weak PanelController *weakself = self;
-            view.OnAutoPopOut = ^{ if(PanelController* pc = weakself) pc->m_QuickSearchPopupView = nil; };
-            [view PopUpWithView:m_View];
-        }
-
-        int total = (int)m_Data->SortedDirectoryEntries().size();
-        if(total > 0 &&
-           m_Data->Listing()->At(0).IsDotDot())
-            total--;
-        
-        [view UpdateWithString:filtering.text.text Matches:total];
-    }
-}
-
-- (void)HandleFastSearchPrevious
-{
-    if(m_QuickSearchOffset > 0)
-        m_QuickSearchOffset--;
-    [self HandleQuickSearchSoft:nil];
-}
-
-- (void)HandleFastSearchNext
-{
-    m_QuickSearchOffset++;
-    [self HandleQuickSearchSoft:nil];
-}
-
 - (bool) ProcessKeyDown:(NSEvent *)event; // return true if key was processed
 {
-    NSString*  const character   = [event charactersIgnoringModifiers];
-    NSUInteger const modif       = [event modifierFlags];
-
-    bool fast_search_handling = IsQuickSearchModifier(modif, m_QuickSearchMode) &&
-                                IsQuickSearchStringCharacter(character);
-    if( fast_search_handling ) {
-        if(m_QuickSearchIsSoftFiltering)
-            [self HandleQuickSearchSoft:character];
-        else
-            [self HandleQuickSearchHard:character];
-    }
-    
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
     
-    if ( [character length] != 1 ) return false;
+    if([self QuickSearchProcessKeyDown:event])
+        return true;
+    
+    NSString*  const character   = [event charactersIgnoringModifiers];
+    if ( [character length] != 1 )
+        return false;
+    
+    NSUInteger const modif       = [event modifierFlags];
     unichar const unicode        = [character characterAtIndex:0];
     unsigned short const keycode = [event keyCode];
 
@@ -975,18 +720,8 @@ private:
         case NSPageUpFunctionKey:     [m_View HandlePrevPage];      return true;
         case NSLeftArrowFunctionKey:  [m_View HandlePrevColumn];    return true;
         case NSRightArrowFunctionKey: [m_View HandleNextColumn];    return true;
-        case NSUpArrowFunctionKey:
-            if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
-                [self HandleFastSearchPrevious];
-            else
-                [m_View HandlePrevFile];
-            return true;
-        case NSDownArrowFunctionKey:
-            if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
-                [self HandleFastSearchNext];
-            else
-                [m_View HandleNextFile];
-            return true;
+        case NSUpArrowFunctionKey:    [m_View HandlePrevFile];      return true;
+        case NSDownArrowFunctionKey:  [m_View HandleNextFile];      return true;
     }
     
     if(keycode == 53) { // Esc button
@@ -994,12 +729,10 @@ private:
         [[self GetParentWindow] CloseOverlay:self];
         m_BriefSystemOverview = nil;
         m_QuickLook = nil;
-        [self ClearFastSearchFiltering];
+        [self QuickSearchClearFiltering];
         return true;
     }
-    if(keycode == 35 ) // 'P' button
-    {
-        NSUInteger modif = [event modifierFlags];
+    if(keycode == 35 ) { // 'P' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
             auto path = VFSPathStack::SecretFunction___CreateVFSPSPath();
@@ -1017,9 +750,6 @@ private:
         if( modif == (NSShiftKeyMask|NSAlternateKeyMask)) [self HandleCalculateSizes];
         return true;
     }
-    
-    if(fast_search_handling)
-        return true;
     
     return false;
 }
@@ -1074,7 +804,7 @@ private:
     [m_View ModifierFlagsChanged:_flags];
 
     if(m_QuickSearchIsSoftFiltering)
-        [self ClearFastSearchFiltering];
+        [self QuickSearchClearFiltering];
 }
 
 - (void) AttachToControls:(NSProgressIndicator*)_indicator eject:(NSButton*)_eject share:(NSButton*)_share
@@ -1183,7 +913,7 @@ private:
 {
     [self ResetUpdatesObservation:m_Data->DirectoryPathWithTrailingSlash()];
     [self ClearSelectionRequest];
-    [self ClearFastSearchFiltering];
+    [self QuickSearchClearFiltering];
     [self SignalParentOfPathChanged];
     [self UpdateEjectButton];
     [self OnCursorChanged];

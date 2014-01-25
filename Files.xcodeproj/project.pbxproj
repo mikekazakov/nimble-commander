@@ -263,6 +263,7 @@
 		CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FF181537A800D82455 /* FileCompressOperation.mm */; };
 		CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.mm */; };
+		CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
 		CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */; };
 		CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
@@ -700,6 +701,8 @@
 		CFCD87FF181537A800D82455 /* FileCompressOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCompressOperation.mm; sourceTree = "<group>"; };
 		CFCD88011815409000D82455 /* FileCompressOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCompressOperationJob.mm; sourceTree = "<group>"; };
 		CFCD88021815409000D82455 /* FileCompressOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCompressOperationJob.h; sourceTree = "<group>"; };
+		CFCF862518939589000552CD /* PanelController+QuickSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+QuickSearch.h"; sourceTree = "<group>"; };
+		CFCF862618939589000552CD /* PanelController+QuickSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+QuickSearch.mm"; sourceTree = "<group>"; };
 		CFD712D417EED43800DA15EF /* PanelController+DataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DataAccess.h"; sourceTree = "<group>"; };
 		CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DataAccess.mm"; sourceTree = "<group>"; };
 		CFDA110D177E83F8009E29F7 /* BigFileViewHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewHistory.h; sourceTree = "<group>"; };
@@ -994,6 +997,8 @@
 				CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */,
 				CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */,
 				CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */,
+				CFCF862518939589000552CD /* PanelController+QuickSearch.h */,
+				CFCF862618939589000552CD /* PanelController+QuickSearch.mm */,
 				CFA0B22D18648F9A00501C35 /* PanelHistory.mm */,
 				CFA0B22E18648F9A00501C35 /* PanelHistory.h */,
 				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
@@ -1890,6 +1895,7 @@
 				CF9D0E9417CC961100CB8146 /* archive_read_support_filter_all.c in Sources */,
 				CFA0B23E186BE3DF00501C35 /* VFSPSHost.mm in Sources */,
 				CF9D0EC317CC961100CB8146 /* archive_write_disk_posix.c in Sources */,
+				CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */,
 				CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */,
 				CF9D0E8F17CC961100CB8146 /* archive_read_open_file.c in Sources */,
 				CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */,

@@ -45,6 +45,50 @@ struct PanelQuickSearchMode
     
 };
 
+namespace panel
+{
+    class GenericCursorPersistance
+    {
+    public:
+        GenericCursorPersistance(PanelView* _view, PanelData *_data):
+        view(_view),
+        data(_data),
+        oldcursorpos([_view GetCursorPosition])
+        {
+            if(oldcursorpos >= 0 && [view CurrentItem] != nullptr)
+                oldcursorname = [view CurrentItem]->Name();
+        }
+        
+        
+        void Restore()
+        {
+            int newcursorrawpos = data->RawIndexForName(oldcursorname.c_str());
+            if( newcursorrawpos >= 0 )
+            {
+                int newcursorsortpos = data->SortedIndexForRawIndex(newcursorrawpos);
+                if(newcursorsortpos >= 0)
+                    [view SetCursorPosition:newcursorsortpos];
+                else
+                    [view SetCursorPosition:data->SortedDirectoryEntries().empty() ? -1 : 0];
+            }
+            else
+            {
+                if( oldcursorpos < data->SortedDirectoryEntries().size() )
+                    [view SetCursorPosition:oldcursorpos];
+                else
+                    [view SetCursorPosition:int(data->SortedDirectoryEntries().size()) - 1];
+            }
+        }
+        
+    private:
+        PanelView *view;
+        PanelData *data;
+        int oldcursorpos;
+        string oldcursorname;
+    };
+}
+
+
 @interface PanelController : NSObject
 {
     PanelData *m_Data;
@@ -188,3 +232,4 @@ struct PanelQuickSearchMode
 #import "PanelController+DataAccess.h"
 #import "PanelController+DelayedSelection.h"
 #import "PanelController+Navigation.h"
+#import "PanelController+QuickSearch.h"

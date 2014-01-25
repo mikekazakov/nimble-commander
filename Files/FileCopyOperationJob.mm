@@ -162,8 +162,8 @@ void FileCopyOperationJob::Do()
     ScanDestination();
     if(CheckPauseOrStop()) { SetStopped(); return; }
 
-    auto dest_volume = NativeFSManager::Instance().VolumeFromPath(m_Destination);
-    auto source_volume = NativeFSManager::Instance().VolumeFromPath(m_SourceDirectory);
+    auto dest_volume = NativeFSManager::Instance().VolumeFromPathFast(m_Destination);
+    auto source_volume = NativeFSManager::Instance().VolumeFromPathFast(m_SourceDirectory);
     assert(dest_volume && source_volume);
     m_SourceHasExternalEAs = source_volume->interfaces.extended_attr == false;
     m_DestinationHasExternalEAs = dest_volume->interfaces.extended_attr == false;

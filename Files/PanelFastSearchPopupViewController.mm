@@ -82,7 +82,7 @@ static const double   g_FadeTime    = 0.7; // 0.7 sec
     [self.Stepper setMaxValue:1];
     [self.Stepper setIncrement:-1];
     [self.Stepper setIntegerValue:0];
-    [self.Stepper setHidden:true];
+    [self.Stepper setHidden:(m_OnPrev == nil && m_OnNext == nil)];
     
     [[self.Label cell] setBackgroundStyle:NSBackgroundStyleRaised];
     
@@ -160,7 +160,6 @@ static const double   g_FadeTime    = 0.7; // 0.7 sec
 {
     m_OnPrev = _on_prev;
     m_OnNext = _on_next;
-    [self.Stepper setHidden:(_on_prev == nil && _on_next == nil)];
 }
 
 @end

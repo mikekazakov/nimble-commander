@@ -72,9 +72,7 @@ struct NativeFSManagerProxy2
 
 NativeFSManager::NativeFSManager()
 {
-    auto list = GetFullFSList();
-
-    for(auto &i: list)
+    for(auto &i: GetFullFSList())
     {
         m_Volumes.emplace_back(make_shared<NativeFileSystemInfo>());
         
@@ -222,7 +220,7 @@ bool NativeFSManager::GetInterfacesInfo(NativeFileSystemInfo &_v)
     _v.interfaces.user_access       = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_USERACCESS;
     _v.interfaces.mandatory_lock    = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_MANLOCK;
     _v.interfaces.extended_attr     = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_EXTENDED_ATTR;
-    _v.interfaces.named_streams      = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_NAMEDSTREAMS;
+    _v.interfaces.named_streams     = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_NAMEDSTREAMS;
     
     return true;
 }
@@ -383,25 +381,15 @@ shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(string _pat
     if(_path.empty())
         return result;
 
-    int best_fit_ind    = -1;
-    size_t best_fit_sz  = 0;
-
     m_Lock.lock();
-    
-    for(int i = 0; i < m_Volumes.size(); ++i)
-    {
-        auto &vol = m_Volumes[i];
+    size_t best_fit_sz = 0;
+    for(auto &vol: m_Volumes)
         if(_path.compare(0, vol->mounted_at_path.size(), vol->mounted_at_path) == 0 &&
-           vol->mounted_at_path.size() > best_fit_sz
-           )
+           vol->mounted_at_path.size() > best_fit_sz)
         {
             best_fit_sz = vol->mounted_at_path.size();
-            best_fit_ind = i;
+            result = vol;
         }
-    }
-    
-    if(best_fit_ind >= 0)
-        result = m_Volumes[best_fit_ind];
     
     m_Lock.unlock();
     

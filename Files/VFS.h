@@ -18,3 +18,4 @@
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"
 #import "VFSPSHost.h"
+#import "VFSEasyOps.h"

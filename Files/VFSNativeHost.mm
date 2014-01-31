@@ -85,18 +85,6 @@ shared_ptr<VFSNativeHost> VFSNativeHost::SharedHost()
     return host;
 }
 
-bool VFSNativeHost::IsDirectory(const char *_path, int _flags, bool (^_cancel_checker)())
-{
-    assert(_path[0] == '/'); // here in VFS we work only with absolute paths
-    struct stat st;
-    int ret = (_flags & F_NoFollow) == 0 ? stat(_path, &st) : lstat(_path, &st);
-
-    if(ret < 0)
-        return false;
-
-    return (st.st_mode & S_IFMT) == S_IFDIR;
-}
-
 bool VFSNativeHost::FindLastValidItem(const char *_orig_path,
                                char *_valid_path,
                                int _flags,
@@ -352,3 +340,10 @@ bool VFSNativeHost::IsWriteableAtPath(const char *_dir) const
     return true; // dummy now
 }
 
+int VFSNativeHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
+{
+    int ret = mkdir(_path, 0777);
+    if(ret == 0)
+        return 0;
+    return VFSError::FromErrno(errno);
+}

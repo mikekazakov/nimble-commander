@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <sys/stat.h>
 #import "VFSHost.h"
 
 
@@ -66,7 +67,11 @@ bool VFSHost::IsDirectory(const char *_path,
                           int _flags,
                           bool (^_cancel_checker)())
 {
-    return false;
+    struct stat st;
+    if(Stat(_path, st, _flags, _cancel_checker) < 0)
+        return false;
+    
+    return (st.st_mode & S_IFMT) == S_IFDIR;
 }
 
 bool VFSHost::FindLastValidItem(const char *_orig_path,
@@ -114,6 +119,11 @@ int VFSHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)
 }
 
 int VFSHost::Unlink(const char *_path, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}
+
+int VFSHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
 {
     return VFSError::NotSupported;
 }

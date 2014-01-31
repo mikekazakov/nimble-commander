@@ -21,8 +21,6 @@ struct PanelControllerNavigation
 {
     enum {
         NoHistory = 1
-        
-        
     };
 };
 
@@ -50,35 +48,8 @@ namespace panel
     class GenericCursorPersistance
     {
     public:
-        GenericCursorPersistance(PanelView* _view, const PanelData &_data):
-        view(_view),
-        data(_data),
-        oldcursorpos([_view GetCursorPosition])
-        {
-            if(oldcursorpos >= 0 && [view CurrentItem] != nullptr)
-                oldcursorname = [view CurrentItem]->Name();
-        }
-        
-        
-        void Restore()
-        {
-            int newcursorrawpos = data.RawIndexForName(oldcursorname.c_str());
-            if( newcursorrawpos >= 0 )
-            {
-                int newcursorsortpos = data.SortedIndexForRawIndex(newcursorrawpos);
-                if(newcursorsortpos >= 0)
-                    [view SetCursorPosition:newcursorsortpos];
-                else
-                    [view SetCursorPosition:data.SortedDirectoryEntries().empty() ? -1 : 0];
-            }
-            else
-            {
-                if( oldcursorpos < data.SortedDirectoryEntries().size() )
-                    [view SetCursorPosition:oldcursorpos];
-                else
-                    [view SetCursorPosition:int(data.SortedDirectoryEntries().size()) - 1];
-            }
-        }
+        GenericCursorPersistance(PanelView* _view, const PanelData &_data);
+        void Restore();
         
     private:
         PanelView *view;
@@ -88,12 +59,11 @@ namespace panel
     };
 }
 
-
-@interface PanelController : NSObject<PanelViewDelegate>
+@interface PanelController : NSObject<PanelViewDelegate/*, NSDraggingSource, NSPasteboardItemDataProvider*/>
 {
-    PanelData m_Data;   // owns
-    PanelView *m_View;  // create and owns
-    
+    // Main controller's possessions
+    PanelData                   m_Data;   // owns
+    PanelView                   *m_View;  // create and owns
     vector<shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
     
     // VFS changes observation
@@ -117,6 +87,7 @@ namespace panel
     SerialQueue m_DirectoryLoadingQ;
     SerialQueue m_DirectoryReLoadingQ;
     
+    // navigation support
     PanelHistory m_History;
     
     // spinning indicator support

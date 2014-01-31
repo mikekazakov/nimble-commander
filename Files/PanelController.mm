@@ -6,12 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 #import "PanelController.h"
-#import "FSEventsDirUpdate.h"
 #import "Common.h"
 #import "MainWindowController.h"
 #import "QuickPreview.h"
 #import "MainWindowFilePanelState.h"
-#import "filesysinfo.h"
 #import "FileMask.h"
 #import "PanelAux.h"
 #import "SharingService.h"
@@ -51,6 +49,36 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             strcmp(ext, "pl") == 0 ||
             strcmp(ext, "rb") == 0 ||
             false; // need MOAR HERE!
+}
+
+
+panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
+    view(_view),
+    data(_data),
+oldcursorpos([_view GetCursorPosition])
+{
+    if(oldcursorpos >= 0 && [view CurrentItem] != nullptr)
+        oldcursorname = [view CurrentItem]->Name();
+}
+    
+void panel::GenericCursorPersistance::Restore()
+{
+    int newcursorrawpos = data.RawIndexForName(oldcursorname.c_str());
+    if( newcursorrawpos >= 0 )
+    {
+        int newcursorsortpos = data.SortedIndexForRawIndex(newcursorrawpos);
+        if(newcursorsortpos >= 0)
+            [view SetCursorPosition:newcursorsortpos];
+        else
+            [view SetCursorPosition:data.SortedDirectoryEntries().empty() ? -1 : 0];
+    }
+    else
+    {
+        if( oldcursorpos < data.SortedDirectoryEntries().size() )
+            [view SetCursorPosition:oldcursorpos];
+        else
+            [view SetCursorPosition:int(data.SortedDirectoryEntries().size()) - 1];
+    }
 }
 
 @implementation PanelController
@@ -1014,6 +1042,5 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     [self HandleReturnButton];
 }
-
 
 @end

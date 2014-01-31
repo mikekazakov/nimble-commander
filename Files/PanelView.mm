@@ -46,6 +46,10 @@ struct PanelViewStateStorage
     PanelViewState m_State;
     
     std::map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
+    
+    
+    bool m_ReadyToDrag;
+    NSPoint m_LButtonDownPos;
 }
 
 @synthesize delegate;
@@ -331,7 +335,12 @@ struct PanelViewStateStorage
     [self OnCursorPositionChanged];
 
     if ((_event.modifierFlags & NSControlKeyMask) != 0)
-        [self rightMouseDown:_event]; // emulate right-mouse down    
+        [self rightMouseDown:_event]; // emulate right-mouse down
+    else
+    {
+        m_ReadyToDrag = true;
+        m_LButtonDownPos = local_point;
+    }
 }
 
 - (void)rightMouseDown:(NSEvent *)_event
@@ -365,44 +374,30 @@ struct PanelViewStateStorage
 
 - (void) mouseDragged:(NSEvent *)_event
 {
-    NSPoint event_location = [_event locationInWindow];
-    NSPoint local_point = [self convertPoint:event_location fromView:nil];
-    
-    // Check if mouse cursor position is inside or outside of files columns.
-    NSRect columns_rect = m_Presentation->GetItemColumnsRect();
-    if (local_point.y >= columns_rect.origin.y
-        && local_point.y <= columns_rect.origin.y + columns_rect.size.height)
+    if(m_ReadyToDrag)
     {
-        // Mouse cursor is inside files columns. Set cursor position.
-        int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
-        if (cursor_pos == -1) return;
+        NSPoint event_location = [_event locationInWindow];
+        NSPoint local_point = [self convertPoint:event_location fromView:nil];
         
-        m_Presentation->SetCursorPos(cursor_pos);
-        [self setNeedsDisplay:true];
+
+        double dist = hypot(local_point.x - m_LButtonDownPos.x,
+                       local_point.y - m_LButtonDownPos.y);
         
-        // Stop cursor scrolling.
-        m_DragScrollDirection = 0;
+        if(dist > 5)
+        {
+            if(id<PanelViewDelegate> del = self.delegate)
+                if([del respondsToSelector:@selector(PanelViewWantsDragAndDrop:event:)])
+                    [del PanelViewWantsDragAndDrop:self event:_event];
         
-        [self OnCursorPositionChanged];
-        
-        return;
-    }
-    
-    // Mouse cursor is outside file columns. Initiate cursor scrolling.
-    m_DragScrollDirection = (local_point.y < columns_rect.origin.y ? -1 : 1);
-    if (!m_DragScrollTimer)
-    {
-        m_DragScrollTimer = [NSTimer scheduledTimerWithTimeInterval:0.033
-                                                             target:self
-                                                           selector:@selector(UpdateDragScroll)
-                                                           userInfo:nil
-                                                            repeats:YES];
-        [m_DragScrollTimer SetSafeTolerance];
+            m_ReadyToDrag = false;
+        }
     }
 }
 
 - (void) mouseUp:(NSEvent *)_event
 {
+    m_ReadyToDrag = false;
+    
     // Reset drag scroll (release timer).
     if (m_DragScrollTimer)
     {
@@ -431,6 +426,12 @@ struct PanelViewStateStorage
 {
     if (!m_State.Active) // will react only on active panels
         return;
+    
+    // TODO: correlate line_height, scroll distance and momentum phase
+//    if(theEvent.momentumPhase != NSEventPhaseNone &&
+//       theEvent.phase == NSEventPhaseNone
+//       )
+//        return; // don't handle scrolling caused by mouse momentum
     
     int idy = int([theEvent deltaY]);
     int idx = int([theEvent deltaX]/2.0); // less sensitive than vertical scrolling

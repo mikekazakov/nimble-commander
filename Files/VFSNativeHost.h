@@ -21,10 +21,6 @@ public:
     virtual bool IsWriteable() const override;
     virtual bool IsWriteableAtPath(const char *_dir) const override;
     
-    virtual bool IsDirectory(const char *_path,
-                             int _flags,
-                             bool (^_cancel_checker)()) override;
-    
     virtual int StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)()) override;    
     
     virtual int Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)()) override;
@@ -44,6 +40,10 @@ public:
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> *_target,
                            bool (^_cancel_checker)()) override;
+    
+    virtual int CreateDirectory(const char* _path,
+                                bool (^_cancel_checker)()
+                                ) override;
     
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;

@@ -60,6 +60,10 @@ public:
                        VFSStatFS &_stat,
                        bool (^_cancel_checker)());
     
+    /**
+     * Default implementation calls Stat() and then returns (st.st_mode & S_IFMT) == S_IFDIR.
+     * On any errors returns false.
+     */
     virtual bool IsDirectory(const char *_path,
                              int _flags,
                              bool (^_cancel_checker)());
@@ -84,6 +88,10 @@ public:
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> *_target,
                            bool (^_cancel_checker)());
+    
+    virtual int CreateDirectory(const char* _path,
+                                bool (^_cancel_checker)()
+                                );
     
     virtual int CalculateDirectoriesSizes(
                                         chained_strings _dirs,

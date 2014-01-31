@@ -22,6 +22,9 @@ class PanelViewPresentation;
 - (void) PanelViewRequestsActivation:(PanelView*)_view;
 - (void) PanelViewRequestsContextMenu:(PanelView*)_view;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
+- (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event;
+
+
 @end
 
 @interface PanelView : NSView
@@ -46,9 +49,9 @@ class PanelViewPresentation;
 - (void) HandleLastFile;     // end (fn+right)
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
-- (void) mouseDown:(NSEvent *)_event;
-- (void) mouseDragged:(NSEvent *)_event;
-- (void) mouseUp:(NSEvent *)_event;
+//- (void) mouseDown:(NSEvent *)_event;
+//- (void) mouseDragged:(NSEvent *)_event;
+//- (void) mouseUp:(NSEvent *)_event;
 
 // view type
 - (void) ToggleViewType:(PanelViewType)_type;

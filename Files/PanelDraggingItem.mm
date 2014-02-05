@@ -69,6 +69,8 @@
 - (void) Clear
 {
     m_VFS.reset();
+    string().swap(m_Filename);
+    string().swap(m_Path);
 }
 
 

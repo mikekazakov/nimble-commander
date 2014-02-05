@@ -21,6 +21,7 @@ struct VFSError
         NotSupported    = -2,       // call not supported by current object
         InvalidCall     = -3,       // object state is invalid for such call
         GenericError    = -4,       // generic(unknown) error has occured
+        SmallBuffer     = -5,       // Buffer passed to VFS is too small to accomplish operation
         
         // specific error codes
         NotFound        = -100,     // requested item was not found

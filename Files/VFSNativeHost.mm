@@ -347,3 +347,81 @@ int VFSNativeHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
         return 0;
     return VFSError::FromErrno(errno);
 }
+
+int VFSNativeHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, bool (^_cancel_checker)())
+{
+    ssize_t sz = readlink(_path, _buffer, _buffer_size);
+    if(sz < 0)
+        return VFSError::FromErrno(errno);
+    
+    if(sz >= _buffer_size)
+        return VFSError::SmallBuffer;
+    
+    _buffer[sz] = 0;
+    return 0;
+}
+
+int VFSNativeHost::CreateSymlink(const char *_symlink_path,
+                                 const char *_symlink_value,
+                                 bool (^_cancel_checker)())
+{
+    int result = symlink(_symlink_value, _symlink_path);
+    if(result < 0)
+        return VFSError::FromErrno(errno);
+    
+    return 0;
+}
+
+int VFSNativeHost::SetTimes(const char *_path,
+                            int _flags,
+                            struct timespec *_birth_time,
+                            struct timespec *_mod_time,
+                            struct timespec *_chg_time,
+                            struct timespec *_acc_time,
+                            bool (^_cancel_checker)()
+                            )
+{
+    if(_path == nullptr)
+        return VFSError::InvalidCall;
+    
+    if(_birth_time == nullptr &&
+       _mod_time == nullptr &&
+       _chg_time == nullptr &&
+       _acc_time == nullptr)
+        return 0;
+    
+    // TODO: optimize this with first opening a file descriptor and then using fsetattrlist.
+    // (that should be faster).
+    
+    int result = 0;
+    int flags = (_flags & VFSHost::F_NoFollow) ? FSOPT_NOFOLLOW : 0;
+    struct attrlist attrs;
+    memset(&attrs, 0, sizeof(attrs));
+    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+    
+    if(_birth_time != nullptr) {
+        attrs.commonattr = ATTR_CMN_CRTIME;
+        if(setattrlist(_path, &attrs, _birth_time, sizeof(struct timespec), flags) < 0)
+            result = VFSError::FromErrno(errno);
+    }
+    
+    if(_chg_time != nullptr) {
+        attrs.commonattr = ATTR_CMN_CHGTIME;
+        if(setattrlist(_path, &attrs, _chg_time, sizeof(struct timespec), flags) < 0)
+            result = VFSError::FromErrno(errno);
+    }
+    
+    if(_mod_time != nullptr) {
+        attrs.commonattr = ATTR_CMN_MODTIME;
+        if(setattrlist(_path, &attrs, _mod_time, sizeof(struct timespec), flags) < 0)
+            result = VFSError::FromErrno(errno);
+    }
+        
+    if(_acc_time != nullptr) {
+        attrs.commonattr = ATTR_CMN_ACCTIME;
+        if(setattrlist(_path, &attrs, _acc_time, sizeof(struct timespec), flags) < 0)
+            result = VFSError::FromErrno(errno);
+    }
+    
+    return result;
+}

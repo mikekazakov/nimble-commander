@@ -94,6 +94,12 @@
 {
 //    kPasteboardTypeFilePromiseContent
     
+    for(PanelDraggingItem *item in [session.draggingPasteboard readObjectsForClasses:@[[PanelDraggingItem class]]
+                                                                             options:nil])
+        [item Clear];
+
+    
+    
     return;
     if(operation == NSDragOperationCopy && m_URLPromiseTarget != nil)
     {

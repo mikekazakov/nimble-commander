@@ -12,7 +12,7 @@
 
 VFSHost::VFSHost(const char *_junction_path,
                  shared_ptr<VFSHost> _parent):
-    m_JunctionPath(_junction_path),
+    m_JunctionPath(_junction_path ? _junction_path : ""),
     m_Parent(_parent)
 {
 }
@@ -124,6 +124,28 @@ int VFSHost::Unlink(const char *_path, bool (^_cancel_checker)())
 }
 
 int VFSHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}
+
+int VFSHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}
+
+int VFSHost::CreateSymlink(const char *_symlink_path, const char *_symlink_value, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}
+
+int VFSHost::SetTimes(const char *_path,
+                      int _flags,
+                      struct timespec *_birth_time,
+                      struct timespec *_mod_time,
+                      struct timespec *_chg_time,
+                      struct timespec *_acc_time,
+                      bool (^_cancel_checker)()
+                     )
 {
     return VFSError::NotSupported;
 }

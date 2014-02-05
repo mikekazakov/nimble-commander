@@ -55,7 +55,25 @@ public:
                                         void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                         ) override;
     
+    virtual int ReadSymlink(const char *_path,
+                            char *_buffer,
+                            size_t _buffer_size,
+                            bool (^_cancel_checker)()) override;
+    
+    virtual int CreateSymlink(const char *_symlink_path,
+                              const char *_symlink_value,
+                              bool (^_cancel_checker)()) override;
+    
     virtual int Unlink(const char *_path, bool (^_cancel_checker)()) override;
+    
+    virtual int SetTimes(const char *_path,
+                         int _flags,
+                         struct timespec *_birth_time,
+                         struct timespec *_mod_time,
+                         struct timespec *_chg_time,
+                         struct timespec *_acc_time,
+                         bool (^_cancel_checker)()
+                         ) override;
     
     shared_ptr<const VFSNativeHost> SharedPtr() const {return static_pointer_cast<const VFSNativeHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSNativeHost> SharedPtr() {return static_pointer_cast<VFSNativeHost>(VFSHost::SharedPtr());}

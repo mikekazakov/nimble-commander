@@ -28,6 +28,12 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
                          shared_ptr<VFSHost> _dst_host
                          );
 
+int VFSEasyCopySymlink(const char *_src_full_path,
+                       shared_ptr<VFSHost> _src_host,
+                       const char *_dst_full_path,
+                       shared_ptr<VFSHost> _dst_host
+                       );
+
 int VFSEasyCopyNode(const char *_src_full_path,
                     shared_ptr<VFSHost> _src_host,
                     const char *_dst_full_path,

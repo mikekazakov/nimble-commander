@@ -104,7 +104,53 @@ public:
                      int _flags,
                      bool (^_cancel_checker)());
     
+    /**
+     * Return zero upon succes, negative value on error.
+     */
+    virtual int ReadSymlink(const char *_symlink_path,
+                            char *_buffer,
+                            size_t _buffer_size,
+                            bool (^_cancel_checker)());
+
+    /**
+     * Return zero upon succes, negative value on error.
+     */
+    virtual int CreateSymlink(const char *_symlink_path,
+                              const char *_symlink_value,
+                              bool (^_cancel_checker)());
+    
+    /**
+     * Unlinkes(deletes) a file. Dont follow last symlink, in case of.
+     */
     virtual int Unlink(const char *_path, bool (^_cancel_checker)());
+
+    
+/*
+    attrs.commonattr = ATTR_CMN_MODTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_mtimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CRTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_birthtimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_ACCTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_atimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CHGTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times->st_ctimespec, sizeof(struct timespec), 0);
+*/
+//    struct timespec
+    /**
+     * Adjust file node times. Any of timespec time pointers can be NULL, so they will be ignored.
+     * NoFollow flag can be specified to alter symlink node itself.
+     */
+    virtual int SetTimes(const char *_path,
+                         int _flags,
+                         struct timespec *_birth_time,
+                         struct timespec *_mod_time,
+                         struct timespec *_chg_time,
+                         struct timespec *_acc_time,
+                         bool (^_cancel_checker)()
+                         );
     
     // return value 0 means error or unsupported for this VFS
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());

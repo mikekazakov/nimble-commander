@@ -20,8 +20,28 @@ static int CopyNodeAttrs(const char *_src_full_path,
                          const char *_dst_full_path,
                          shared_ptr<VFSHost> _dst_host)
 {
-    /* TODO: impement me. */
-    // copy permissions, flags, times, xattrs and ACLs here. LOL!
+    /* copy permissions,
+     owners,
+     flags,
+     times, <- done.
+     xattrs
+     and ACLs
+     here. LOL!
+     */
+    
+    struct stat st;
+    int result = _src_host->Stat(_src_full_path, st, VFSHost::F_NoFollow, 0);
+    if(result < 0)
+        return result;
+
+    _dst_host->SetTimes(_dst_full_path,
+                        VFSHost::F_NoFollow,
+                        &st.st_birthtimespec,
+                        &st.st_mtimespec,
+                        &st.st_ctimespec,
+                        &st.st_atimespec,
+                        0);
+    
     return 0;
 }
 
@@ -224,6 +244,40 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     return 0;
 }
 
+int VFSEasyCopySymlink(const char *_src_full_path,
+                       shared_ptr<VFSHost> _src_host,
+                       const char *_dst_full_path,
+                       shared_ptr<VFSHost> _dst_host
+                       )
+{
+    int result = 0;
+    if(_src_full_path == nullptr    ||
+       _src_full_path[0] != '/'     ||
+       _src_host == false           ||
+       _dst_full_path == nullptr    ||
+       _dst_full_path[0] != '/'     ||
+       _dst_host == false
+       )
+        return VFSError::InvalidCall;
+    
+    char symlink_val[MAXPATHLEN];
+    
+    result = _src_host->ReadSymlink(_src_full_path, symlink_val, MAXPATHLEN, 0);
+    if(result < 0)
+        return result;
+    
+    result = _dst_host->CreateSymlink(_dst_full_path, symlink_val, 0);
+    if(result < 0)
+        return result;
+    
+    result = CopyNodeAttrs(_src_full_path, _src_host,
+                           _dst_full_path, _dst_host);
+    if(result < 0)
+        return result;
+    
+    return 0;
+}
+
 int VFSEasyCopyNode(const char *_src_full_path,
                     shared_ptr<VFSHost> _src_host,
                     const char *_dst_full_path,
@@ -239,9 +293,23 @@ int VFSEasyCopyNode(const char *_src_full_path,
        )
         return VFSError::InvalidCall;
     
-    // TODO: separate branch for symlinks
-    if(_src_host->IsDirectory(_src_full_path, 0, 0))
-        return VFSEasyCopyDirectory(_src_full_path, _src_host, _dst_full_path, _dst_host);
-    else
-        return VFSEasyCopyFile(_src_full_path, _src_host, _dst_full_path, _dst_host);
+    struct stat st;
+    int result;
+    
+    result = _src_host->Stat(_src_full_path, st, VFSHost::F_NoFollow, 0);
+    if(result < 0)
+        return result;
+    
+    switch (st.st_mode & S_IFMT){
+        case S_IFDIR:
+            return VFSEasyCopyDirectory(_src_full_path, _src_host, _dst_full_path, _dst_host);
+            
+        case S_IFREG:
+            return VFSEasyCopyFile(_src_full_path, _src_host, _dst_full_path, _dst_host);
+
+        case S_IFLNK:
+            return VFSEasyCopySymlink(_src_full_path, _src_host, _dst_full_path, _dst_host);
+    }
+    
+    return VFSError::GenericError;
 }

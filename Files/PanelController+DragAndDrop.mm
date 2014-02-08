@@ -35,6 +35,18 @@ static NSFont *FontForDragImages()
     return font;
 }
 
+static NSString *FilenamesPasteboardUTI()
+{
+    static dispatch_once_t once;
+    static NSString *uti = nil;
+    dispatch_once(&once, ^{
+        CFStringRef tmp = UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData);
+        uti = (NSString*)CFBridgingRelease(tmp);
+    });
+    
+    return uti;
+}
+
 static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 {
     if(_item == nil ||
@@ -204,7 +216,18 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                         );
 
         [item setString:[NSString stringWithUTF8String:dest.c_str()]
-                forType:(NSString *)kPasteboardTypeFileURLPromise];
+                forType:type];
+        return;
+    }
+    
+    if([type isEqualToString:(NSString *)kUTTypeFileURL] ||
+       [type isEqualToString:(NSString *)kUTTypeURL])
+    {
+        // converting NSURL into string is bad, since sandboxed app can't resolve it (no access)
+        // need to somehow out NSURL into pasteboard item
+        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:(item.path+item.filename).c_str()]];
+        [item setData:[[url absoluteString] dataUsingEncoding:NSUTF8StringEncoding]
+              forType:type];
     }
 }
 
@@ -235,9 +258,10 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     if( focus_item == nullptr || focus_item->IsDotDot() == true )
         return;
     
+    auto vfs = self.GetCurrentVFSHost;
     PanelControllerDragSourceBroker *broker = [PanelControllerDragSourceBroker new];
     broker.controller = self;
-    broker.vfs = self.GetCurrentVFSHost;
+    broker.vfs = vfs;
     broker.root_path = m_Data.DirectoryPathWithTrailingSlash();
     
     NSMutableArray *drag_items = [NSMutableArray new];
@@ -255,16 +279,28 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     dragPosition.x -= 16;
     dragPosition.y -= 16;
     
+    // we still can't provide NSFilenamesPboardType due to gaps(?) in API, so some apps like VLC can't accept our drags
+    NSMutableArray *pasteboard_types = [NSMutableArray new];
+    [pasteboard_types addObject:(NSString *)kPasteboardTypeFileURLPromise];
+    [pasteboard_types addObject:kPrivateDragUTI];
+    if(vfs->IsNativeFS()) {
+        [pasteboard_types addObject:(NSString *)kUTTypeFileURL];
+        [pasteboard_types addObject:(NSString *)kUTTypeURL];
+    }
+    
     for(auto *i: vfs_items) {
         PanelDraggingItem *pbItem = [PanelDraggingItem new];
-        [pbItem setDataProvider:broker
-                       forTypes:@[(NSString *)kPasteboardTypeFileURLPromise, kPrivateDragUTI]];
-        
-        [pbItem setString:(NSString*)kUTTypeData forType:(NSString *)kPasteboardTypeFilePromiseContent];
+        [pbItem setDataProvider:broker forTypes:pasteboard_types];
+    
+        // internal information
         pbItem.filename = i->Name();
         pbItem.path = broker.root_path;
-        pbItem.vfs = m_Data.Host();
+        pbItem.vfs = vfs;
+
+        // for File URL Promise
+        [pbItem setString:(NSString*)kUTTypeData forType:(NSString *)kPasteboardTypeFilePromiseContent];
         
+        // visual appearance of a drag
         NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter:pbItem];
         dragItem.draggingFrame = NSMakeRect(dragPosition.x, dragPosition.y, 32, 32);
 

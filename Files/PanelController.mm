@@ -122,6 +122,7 @@ void panel::GenericCursorPersistance::Restore()
         m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_View.delegate = self;
         [m_View SetPanelData:&m_Data];
+        [self RegisterDragAndDropListeners];
     }
 
     return self;

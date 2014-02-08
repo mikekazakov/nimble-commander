@@ -195,3 +195,4 @@ namespace panel
 #import "PanelController+DelayedSelection.h"
 #import "PanelController+Navigation.h"
 #import "PanelController+QuickSearch.h"
+#import "PanelController+DragAndDrop.h"

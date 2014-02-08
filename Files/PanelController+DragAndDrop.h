@@ -10,4 +10,6 @@
 
 @interface PanelController (DragAndDrop)
 
+- (void) RegisterDragAndDropListeners;
+
 @end

@@ -23,11 +23,13 @@ class PanelViewPresentation;
 - (void) PanelViewRequestsContextMenu:(PanelView*)_view;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event;
-
+- (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
+- (NSDragOperation)PanelViewDraggingUpdated:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
+- (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 
 @end
 
-@interface PanelView : NSView
+@interface PanelView : NSView<NSDraggingDestination>
 @property (weak) id <PanelViewDelegate> delegate;
 
 - (void) SetPanelData:(PanelData*)_data;

@@ -33,26 +33,18 @@ struct PanelViewStateStorage
 
 @implementation PanelView
 {
-    unsigned long   m_KeysModifiersFlags;
-    
-    // Exists during mouse drag operations only.
-    NSTimer *m_DragScrollTimer;
-    // Possible values: -1, 0, 1.
-    int m_DragScrollDirection;
-    
-    CursorSelectionState::Type m_CursorSelectionType;
-    
-    PanelViewPresentation *m_Presentation;
-    PanelViewState m_State;
+    unsigned long               m_KeysModifiersFlags;
+    CursorSelectionState::Type  m_CursorSelectionType;
+    PanelViewPresentation      *m_Presentation;
+    PanelViewState              m_State;
     
     std::map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
     
     
-    bool m_ReadyToDrag;
-    NSPoint m_LButtonDownPos;
+    bool                        m_ReadyToDrag;
+    NSPoint                     m_LButtonDownPos;
+    bool                        m_DraggingIntoMe;
 }
-
-@synthesize delegate;
 
 - (BOOL)isFlipped
 {
@@ -87,12 +79,14 @@ struct PanelViewStateStorage
     self = [super initWithFrame:frame];
     if (self) {
         m_KeysModifiersFlags = 0;
+        m_DraggingIntoMe = false;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(frameDidChange)
                                                      name:NSViewFrameDidChangeNotification
                                                    object:self];
         [self frameDidChange];
+        
     }
     
     return self;
@@ -109,6 +103,13 @@ struct PanelViewStateStorage
 {
     if (!m_State.Data || !m_Presentation) return;
     m_Presentation->Draw(dirtyRect);
+    
+    if(m_DraggingIntoMe) {
+        [NSGraphicsContext saveGraphicsState];
+        NSSetFocusRingStyle(NSFocusRingOnly);
+        [[NSBezierPath bezierPathWithRect:NSInsetRect([self bounds],2,2)] fill];
+        [NSGraphicsContext restoreGraphicsState];
+    }
 }
 
 - (void)frameDidChange
@@ -357,21 +358,6 @@ struct PanelViewStateStorage
                 [del PanelViewRequestsContextMenu:self];
 }
 
-- (void) UpdateDragScroll
-{
-    assert(m_DragScrollDirection >= -1 && m_DragScrollDirection <= 1);
-    
-    if (m_DragScrollDirection == 0 || m_State.CursorPos == -1) return;
-    
-    int new_pos = m_State.CursorPos + m_DragScrollDirection;
-    
-    int max_pos = (int)m_State.Data->SortedDirectoryEntries().size();
-    if (new_pos < 0) new_pos = 0;
-    else if (new_pos >= max_pos) new_pos = max_pos - 1;
-    
-    [self SetCursorPosition:new_pos];
-}
-
 - (void) mouseDragged:(NSEvent *)_event
 {
     if(m_ReadyToDrag)
@@ -397,14 +383,6 @@ struct PanelViewStateStorage
 - (void) mouseUp:(NSEvent *)_event
 {
     m_ReadyToDrag = false;
-    
-    // Reset drag scroll (release timer).
-    if (m_DragScrollTimer)
-    {
-        [m_DragScrollTimer invalidate];
-        m_DragScrollTimer = nil;
-        m_DragScrollDirection = 0;
-    }
     
     if ([_event clickCount] == 2)
     {
@@ -555,6 +533,58 @@ struct PanelViewStateStorage
         m_Presentation->SetCursorPos(0);
         [self OnCursorPositionChanged];        
     }
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    NSDragOperation result = NSDragOperationNone;
+    if(id<PanelViewDelegate> del = self.delegate)
+        if([del respondsToSelector:@selector(PanelViewDraggingEntered:sender:)])
+            result = [del PanelViewDraggingEntered:self sender:sender];
+
+    if(result != NSDragOperationNone && m_DraggingIntoMe == false) {
+        m_DraggingIntoMe = true;
+        [self setNeedsDisplay];
+    }
+    
+    return result;
+}
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+{
+    NSDragOperation result = NSDragOperationNone;
+    if(id<PanelViewDelegate> del = self.delegate)
+        if([del respondsToSelector:@selector(PanelViewDraggingUpdated:sender:)])
+            result = [del PanelViewDraggingUpdated:self sender:sender];
+    
+    if(result != NSDragOperationNone && m_DraggingIntoMe == false) {
+        m_DraggingIntoMe = true;
+        [self setNeedsDisplay];
+    }
+    
+    return result;
+}
+
+- (void)draggingExited:(id <NSDraggingInfo>)sender
+{
+    m_DraggingIntoMe = false;
+    [self setNeedsDisplay];
+}
+
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+{
+    m_DraggingIntoMe = false;
+    [self setNeedsDisplay];
+    // possibly add some checking stage here later
+    return YES;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    if(id<PanelViewDelegate> del = self.delegate)
+        if([del respondsToSelector:@selector(PanelViewPerformDragOperation:sender:)])
+            return [del PanelViewPerformDragOperation:self sender:sender];
+    return NO;
 }
 
 @end

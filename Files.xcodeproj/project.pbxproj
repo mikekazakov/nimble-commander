@@ -264,7 +264,6 @@
 		CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FF181537A800D82455 /* FileCompressOperation.mm */; };
 		CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.mm */; };
 		CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
-		CFCF862A1894F8C6000552CD /* PanelDraggingItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF86291894F8C6000552CD /* PanelDraggingItem.mm */; };
 		CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFCF86301896B42E000552CD /* VFSEasyOps.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862E1896B42E000552CD /* VFSEasyOps.mm */; };
 		CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
@@ -706,8 +705,6 @@
 		CFCD88021815409000D82455 /* FileCompressOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCompressOperationJob.h; sourceTree = "<group>"; };
 		CFCF862518939589000552CD /* PanelController+QuickSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+QuickSearch.h"; sourceTree = "<group>"; };
 		CFCF862618939589000552CD /* PanelController+QuickSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+QuickSearch.mm"; sourceTree = "<group>"; };
-		CFCF86281894F8C6000552CD /* PanelDraggingItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelDraggingItem.h; sourceTree = "<group>"; };
-		CFCF86291894F8C6000552CD /* PanelDraggingItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelDraggingItem.mm; sourceTree = "<group>"; };
 		CFCF862B18961393000552CD /* PanelController+DragAndDrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DragAndDrop.h"; sourceTree = "<group>"; };
 		CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DragAndDrop.mm"; sourceTree = "<group>"; };
 		CFCF862E1896B42E000552CD /* VFSEasyOps.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSEasyOps.mm; sourceTree = "<group>"; };
@@ -1010,8 +1007,6 @@
 				CFCF862618939589000552CD /* PanelController+QuickSearch.mm */,
 				CFCF862B18961393000552CD /* PanelController+DragAndDrop.h */,
 				CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */,
-				CFCF86281894F8C6000552CD /* PanelDraggingItem.h */,
-				CFCF86291894F8C6000552CD /* PanelDraggingItem.mm */,
 				CFA0B22D18648F9A00501C35 /* PanelHistory.mm */,
 				CFA0B22E18648F9A00501C35 /* PanelHistory.h */,
 				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
@@ -1755,7 +1750,6 @@
 				CF9D0EA117CC961100CB8146 /* archive_read_support_format_all.c in Sources */,
 				B528012516FCF361004E260D /* Operation.mm in Sources */,
 				CF76B30617000C090066A49F /* filesysattr.mm in Sources */,
-				CFCF862A1894F8C6000552CD /* PanelDraggingItem.mm in Sources */,
 				CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */,
 				CF76B313170146240066A49F /* GenericOperationView.mm in Sources */,
 				CF9D0E8217CC961100CB8146 /* archive_match.c in Sources */,

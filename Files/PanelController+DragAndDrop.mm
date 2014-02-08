@@ -8,13 +8,20 @@
 
 #import "PanelController+DragAndDrop.h"
 #import "MainWindowFilePanelState.h"
-#import "PanelDraggingItem.h"
 #import "FileCopyOperation.h"
 #import "FileLinkOperation.h"
 #import "OperationsController.h"
 #import "FontExtras.h"
 
 static NSString *kPrivateDragUTI = @"info.filesmanager.filepanelsdraganddrop";
+
+@interface PanelDraggingItem : NSPasteboardItem
+@property string filename;
+@property string path;
+@property shared_ptr<VFSHost> vfs;
+- (bool) IsValid;
+- (void) Clear;
+@end
 
 static NSFont *FontForDragImages()
 {
@@ -43,9 +50,9 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     double line_height = GetLineHeightForFont( (__bridge CTFontRef) font, &font_ascent, &font_descent);
     
     NSImage *icon_image;
-    if(_item.VFS->IsNativeFS())
+    if(_item.vfs->IsNativeFS())
     {
-        string path = _item.Path + _item.Filename;
+        string path = _item.path + _item.filename;
         icon_image = [[NSWorkspace sharedWorkspace] iconForFile:[NSString stringWithUTF8String:path.c_str()]];
     }
     else
@@ -80,7 +87,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                   NSParagraphStyleAttributeName: item_text_pstyle,
                                   NSShadowAttributeName: label_shadow };
     
-    NSString *itemName = [NSString stringWithUTF8String:_item.Filename.c_str()];
+    NSString *itemName = [NSString stringWithUTF8String:_item.filename.c_str()];
     
     [itemName drawWithRect:NSMakeRect(0, font_descent, label_width, line_height)
                    options:0
@@ -94,6 +101,35 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     
     return components;
 }
+
+
+
+
+@implementation PanelDraggingItem
+{
+    string m_Filename;
+    string m_Path;
+    shared_ptr<VFSHost> m_VFS;
+}
+
+@synthesize filename = m_Filename;
+@synthesize path = m_Path;
+@synthesize vfs = m_VFS;
+
+- (bool) IsValid
+{
+    return bool(m_VFS);
+}
+
+- (void) Clear
+{
+    m_VFS.reset();
+    string().swap(m_Filename);
+    string().swap(m_Path);
+}
+
+@end
+
 
 
 @interface PanelControllerDragSourceBroker : NSObject<NSDraggingSource, NSPasteboardItemDataProvider>
@@ -159,10 +195,10 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         string dest = m_URLPromiseTarget.path.fileSystemRepresentation;
         if(dest.back() != '/')
             dest += '/';
-        dest += item.Filename;
+        dest += item.filename;
         
-        VFSEasyCopyNode((item.Path+item.Filename).c_str(),
-                        item.VFS,
+        VFSEasyCopyNode((item.path+item.filename).c_str(),
+                        item.vfs,
                         dest.c_str(),
                         make_shared<VFSNativeHost>()
                         );
@@ -179,6 +215,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         [item Clear];
     
     m_VFS.reset();
+    m_URLPromiseTarget = nil;
 }
 
 @end
@@ -224,10 +261,9 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                        forTypes:@[(NSString *)kPasteboardTypeFileURLPromise, kPrivateDragUTI]];
         
         [pbItem setString:(NSString*)kUTTypeData forType:(NSString *)kPasteboardTypeFilePromiseContent];
-        [pbItem SetFilename:i->Name()];
-        [pbItem SetPath:broker.root_path];
-        [pbItem SetVFS:m_Data.Host()];
-        
+        pbItem.filename = i->Name();
+        pbItem.path = broker.root_path;
+        pbItem.vfs = m_Data.Host();
         
         NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter:pbItem];
         dragItem.draggingFrame = NSMakeRect(dragPosition.x, dragPosition.y, 32, 32);
@@ -290,7 +326,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             chained_strings files;
             for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[[PanelDraggingItem class]]
                                                                                     options:nil])
-                files.push_back(item.Filename, nullptr);
+                files.push_back(item.filename, nullptr);
 
             if(files.empty())
                 return false;

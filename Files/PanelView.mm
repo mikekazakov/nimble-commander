@@ -40,6 +40,7 @@ struct PanelViewStateStorage
     
     std::map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
     
+    double                      m_ScrollDY;
     
     bool                        m_ReadyToDrag;
     NSPoint                     m_LButtonDownPos;
@@ -80,6 +81,7 @@ struct PanelViewStateStorage
     if (self) {
         m_KeysModifiersFlags = 0;
         m_DraggingIntoMe = false;
+        m_ScrollDY = 0.0;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(frameDidChange)
@@ -293,6 +295,11 @@ struct PanelViewStateStorage
     }
 }
 
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+    return YES;
+}
+
 - (void) mouseDown:(NSEvent *)_event
 {
     if (!m_State.Active)
@@ -404,18 +411,22 @@ struct PanelViewStateStorage
 {
     if (!m_State.Active) // will react only on active panels
         return;
+#if 0
+    if(theEvent.momentumPhase != NSEventPhaseNone && theEvent.phase == NSEventPhaseNone)
+        return; // expiremental - don't handle scrolling caused by mouse momentum
+#endif
     
-    int idy = theEvent.hasPreciseScrollingDeltas ?
-        theEvent.scrollingDeltaY / m_Presentation->GetSingleItemHeight() :
-        [theEvent deltaY];
-    
+    const double item_height = m_Presentation->GetSingleItemHeight();
+    m_ScrollDY += theEvent.hasPreciseScrollingDeltas ? theEvent.scrollingDeltaY : theEvent.deltaY * item_height;
     int idx = int([theEvent deltaX]/2.0); // less sensitive than vertical scrolling
     int old_curpos = m_State.CursorPos, old_offset = m_State.ItemsDisplayOffset;
     
-    if(idy != 0)
-        for(;idy != 0; idy -= idy/abs(idy) )
-            m_Presentation->ScrollCursor(0, idy);
-    if(idx != 0)
+    if(fabs(m_ScrollDY) >= item_height) {
+        const double sgn = m_ScrollDY / fabs(m_ScrollDY);
+        for(;fabs(m_ScrollDY) >= item_height; m_ScrollDY -= item_height * sgn)
+            m_Presentation->ScrollCursor(0, int(sgn));
+    }
+    else if(idx != 0)
         m_Presentation->ScrollCursor(idx, 0);
 
     if(old_curpos != m_State.CursorPos || old_offset != m_State.ItemsDisplayOffset)

@@ -17,9 +17,9 @@
 static NSString *kPrivateDragUTI = @"info.filesmanager.filepanelsdraganddrop";
 
 @interface PanelDraggingItem : NSPasteboardItem
-@property string filename;
-@property string path;
-@property shared_ptr<VFSHost> vfs;
+@property(nonatomic) string filename;
+@property(nonatomic) string path;
+@property(nonatomic) shared_ptr<VFSHost> vfs;
 - (bool) IsValid;
 - (void) Clear;
 @end
@@ -146,10 +146,10 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 
 @interface PanelControllerDragSourceBroker : NSObject<NSDraggingSource, NSPasteboardItemDataProvider>
-@property (weak) PanelController* controller;
-@property shared_ptr<VFSHost> vfs;
-@property string root_path;
-@property int count;
+@property(weak)         PanelController    *controller;
+@property(nonatomic)    shared_ptr<VFSHost> vfs;
+@property(nonatomic)    string              root_path;
+@property(nonatomic)    int                 count;
 @end
 
 @implementation PanelControllerDragSourceBroker

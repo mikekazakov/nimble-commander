@@ -2127,7 +2127,7 @@
 				INFOPLIST_FILE = "Files/Files-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/migun/Documents/Files/trunk/Files/3rd_party/built/lib,
+					Files/3rd_party/built/lib,
 					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -2163,7 +2163,7 @@
 				INFOPLIST_FILE = "Files/Files-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/migun/Documents/Files/trunk/Files/3rd_party/built/lib,
+					Files/3rd_party/built/lib,
 					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;

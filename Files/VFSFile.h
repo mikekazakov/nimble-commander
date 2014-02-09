@@ -54,11 +54,12 @@ public:
     virtual ~VFSFile();
 
     enum {
-        OF_Read     = 0x0001,
-        OF_Write    = 0x0002,
-        OF_Create   = 0x0004,
-        OF_ShLock   = 0x0008, // not yet implemented
-        OF_ExLock   = 0x0010  // not yet implemented
+        OF_Read     = 0b00000001,
+        OF_Write    = 0b00000010,
+        OF_Create   = 0b00000100,
+        OF_NoExist  = 0b00001000, // POSIX O_EXCL actucally, for clarity
+        OF_ShLock   = 0b00010000, // not yet implemented
+        OF_ExLock   = 0b00100000  // not yet implemented
     };
     virtual int     Open(int _open_flags);
     virtual bool    IsOpened() const;

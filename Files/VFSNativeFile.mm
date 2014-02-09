@@ -35,6 +35,7 @@ int VFSNativeFile::Open(int _open_flags)
     else if((_open_flags & VFSFile::OF_Write) != 0) openflags |= O_WRONLY;
     
     if(_open_flags & VFSFile::OF_Create) openflags |= O_CREAT;
+    if(_open_flags & VFSFile::OF_NoExist) openflags |= O_EXCL;
     
     m_FD = open(RelativePath(), openflags, 0640);
     if(m_FD < 0)

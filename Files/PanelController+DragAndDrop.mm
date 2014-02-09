@@ -12,6 +12,7 @@
 #import "FileLinkOperation.h"
 #import "OperationsController.h"
 #import "FontExtras.h"
+#import "path_manip.h"
 
 static NSString *kPrivateDragUTI = @"info.filesmanager.filepanelsdraganddrop";
 
@@ -249,7 +250,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 - (void) RegisterDragAndDropListeners
 {
-    [m_View registerForDraggedTypes:@[kPrivateDragUTI]];
+    [m_View registerForDraggedTypes:@[kPrivateDragUTI, (NSString *)kUTTypeFileURL]];
 }
 
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event
@@ -337,6 +338,16 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 return mask;
             }
         }
+    
+    if([[sender.draggingPasteboard types] containsObject:(NSString *)kUTTypeFileURL])
+    {
+        if(!m_HostsStack.back()->IsWriteable())
+            return NSDragOperationNone;
+  
+        NSDragOperation mask = sender.draggingSourceOperationMask;
+        if(mask & NSDragOperationCopy)
+            return NSDragOperationCopy;
+    }
     return NSDragOperationNone;
 }
 
@@ -347,7 +358,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 - (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
-    if(id idsource = sender.draggingSource)
+    if(id idsource = sender.draggingSource) {
         if([idsource isKindOfClass:[PanelControllerDragSourceBroker class]]) {
             // we're dragging something here from another PanelView, lets understand what actually
             PanelControllerDragSourceBroker *source_broker = (PanelControllerDragSourceBroker *)idsource;
@@ -412,8 +423,29 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 return true;
             }
         }
-    
-    
+    }
+    else if([[sender.draggingPasteboard types] containsObject:(NSString *)kUTTypeFileURL]) {
+        
+        NSArray *fileURLs = [sender.draggingPasteboard
+                             readObjectsForClasses:@[[NSURL class]]
+                             options:@{NSPasteboardURLReadingFileURLsOnlyKey:@YES}
+                             ];
+        
+        bool result = false;
+        for(NSURL *url in fileURLs) {
+            string source_path = url.path.fileSystemRepresentation;
+            char item_name[MAXPATHLEN];
+            GetFilenameFromPath(source_path.c_str(), item_name);
+            
+            result = VFSEasyCopyNode(source_path.c_str(),
+                                     make_shared<VFSNativeHost>(),
+                                     (self.GetCurrentDirectoryPathRelativeToHost + item_name).c_str(),
+                                     make_shared<VFSNativeHost>()
+                                     ) == 0;
+        }
+        
+        return result;
+    }
     
     return false;
 }

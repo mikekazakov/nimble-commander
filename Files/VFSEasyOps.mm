@@ -176,7 +176,7 @@ int VFSEasyCopyFile(const char *_src_full_path,
     if(result != 0)
         return result;
     
-    result = dest_file->Open(VFSFile::OF_Write | VFSFile::OF_Create);
+    result = dest_file->Open(VFSFile::OF_Write | VFSFile::OF_Create | VFSFile::OF_NoExist);
     if(result != 0)
         return result;
     

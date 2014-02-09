@@ -224,11 +224,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     if([type isEqualToString:(NSString *)kUTTypeFileURL] ||
        [type isEqualToString:(NSString *)kUTTypeURL])
     {
-        // converting NSURL into string is bad, since sandboxed app can't resolve it (no access)
-        // need to somehow out NSURL into pasteboard item
         NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:(item.path+item.filename).c_str()]];
-        [item setData:[[url absoluteString] dataUsingEncoding:NSUTF8StringEncoding]
-              forType:type];
+        [url writeToPasteboard:sender];
     }
 }
 

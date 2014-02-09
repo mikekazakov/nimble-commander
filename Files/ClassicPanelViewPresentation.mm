@@ -867,3 +867,8 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     
     oms::DrawUniCharsXY(b, context, fontcache);
 }
+
+double ClassicPanelViewPresentation::GetSingleItemHeight()
+{
+    return m_SymbHeight;
+}

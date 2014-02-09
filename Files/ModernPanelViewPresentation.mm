@@ -606,17 +606,18 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                            NSParagraphStyleAttributeName: footer_text_pstyle,
                                            NSShadowAttributeName: header_text_shadow};
         
-        int name_width = m_ItemsArea.size.width - 2*footer_x_offset;
+        double name_width = m_ItemsArea.size.width - 2.*footer_x_offset;
         if (m_State->ViewType != PanelViewType::ViewFull)
             name_width -= m_DateTimeFooterWidth + m_SizeColumWidth;
 
-        [ComposeFooterFileNameForEntry(*current_entry)
-            drawWithRect:NSMakeRect(footer_x_offset,
-                                    footer_y + g_TextInsetsInLine[1] + m_FontAscent,
-                                    name_width,
-                                    m_FontHeight)
-                 options:0
-              attributes:footer_text_attr];
+        if(name_width > 0.)
+            [ComposeFooterFileNameForEntry(*current_entry)
+             drawWithRect:NSMakeRect(footer_x_offset,
+                                     footer_y + g_TextInsetsInLine[1] + m_FontAscent,
+                                     name_width,
+                                     m_FontHeight)
+                    options:0
+                attributes:footer_text_attr];
     }
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -778,7 +779,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             }
 
             // Draw item text.
-            [(__bridge NSString *)item->CFName() drawWithRect:rect options:0 attributes:item_text_attr];
+            if(rect.size.width > 0)
+                [(__bridge NSString *)item->CFName() drawWithRect:rect options:0 attributes:item_text_attr];
             
             // Draw icon
             NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
@@ -927,4 +929,9 @@ void ModernPanelViewPresentation::OnDirectoryChanged()
 {
     m_IconCache->Flush();
 //    m_IconCache->OnDirectoryChanged(m_State->Data);
+}
+
+double ModernPanelViewPresentation::GetSingleItemHeight()
+{
+    return m_LineHeight;
 }

@@ -32,6 +32,8 @@ public:
     
     int Granularity();
     
+    double GetSingleItemHeight() override;
+    
 private:
     void BuildGeometry();
     void BuildAppearance();

@@ -88,19 +88,16 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
         bool use_buff = GetDirectoryFromPath(_dest, buff, 128);
         int items_amount = _files.size();
         
-        // TODO: copy/rename title difference
+        NSString *operation = _opts->docopy ? @"Copying" : @"Moving";
         if (items_amount == 1)
-        {
-            self.Caption = [NSString stringWithFormat:@"Copying \"%@\" to \"%@\"",
+            self.Caption = [NSString stringWithFormat:@"%@ \"%@\" to \"%@\"",
+                            operation,
                             [NSString stringWithUTF8String:_files.front().c_str()],
                             [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
-        }
         else
-        {
             self.Caption = [NSString stringWithFormat:@"Copying %i items to \"%@\"",
                             items_amount,
                             [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
-        }
 
         m_NativeToNativeJob->Init(move(_files), _root, _dest, _opts, self);
     }
@@ -117,9 +114,24 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     self = [super initWithJob:m_GenericToNativeJob.get()];
     if (self)
     {
+        // Set caption.
+        char buff[128] = {0};
+        bool use_buff = GetDirectoryFromPath(_dest, buff, 128);
+        int items_amount = _files.size();
+        
+        NSString *operation = _opts->docopy ? @"Copying" : @"Moving";
+        if (items_amount == 1)
+            self.Caption = [NSString stringWithFormat:@"%@ \"%@\" to \"%@\"",
+                            operation,
+                            [NSString stringWithUTF8String:_files.front().c_str()],
+                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+        else
+            self.Caption = [NSString stringWithFormat:@"%@ %i items to \"%@\"",
+                            operation,
+                            items_amount,
+                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+        
         m_GenericToNativeJob->Init(move(_files), _root, _vfs, _dest, _opts, self);
-
-        // other stuff here
     }
     return self;
 }

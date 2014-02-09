@@ -45,6 +45,11 @@ public:
     virtual int GetMaxItemsPerColumn() = 0;
     int GetMaxVisibleItems();
     
+    /**
+     * Return a height of a single file item. So this height*number_of_items_vertically should be something like height of a view minus decors.
+     */
+    virtual double GetSingleItemHeight() = 0;
+    
 protected:
     void SetViewNeedsDisplay();
     

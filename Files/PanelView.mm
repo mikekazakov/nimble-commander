@@ -405,19 +405,17 @@ struct PanelViewStateStorage
     if (!m_State.Active) // will react only on active panels
         return;
     
-    // TODO: correlate line_height, scroll distance and momentum phase
-//    if(theEvent.momentumPhase != NSEventPhaseNone &&
-//       theEvent.phase == NSEventPhaseNone
-//       )
-//        return; // don't handle scrolling caused by mouse momentum
+    int idy = theEvent.hasPreciseScrollingDeltas ?
+        theEvent.scrollingDeltaY / m_Presentation->GetSingleItemHeight() :
+        [theEvent deltaY];
     
-    int idy = int([theEvent deltaY]);
     int idx = int([theEvent deltaX]/2.0); // less sensitive than vertical scrolling
-    
     int old_curpos = m_State.CursorPos, old_offset = m_State.ItemsDisplayOffset;
+    
     if(idy != 0)
-        m_Presentation->ScrollCursor(0, idy);
-    else if(idx != 0)
+        for(;idy != 0; idy -= idy/abs(idy) )
+            m_Presentation->ScrollCursor(0, idy);
+    if(idx != 0)
         m_Presentation->ScrollCursor(idx, 0);
 
     if(old_curpos != m_State.CursorPos || old_offset != m_State.ItemsDisplayOffset)

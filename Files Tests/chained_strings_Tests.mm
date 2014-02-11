@@ -75,8 +75,7 @@
 
 - (void)testPrefix
 {
-    random_device rd;
-    mt19937 mt(rd());
+    mt19937 mt((random_device())());
     uniform_int_distribution<int> dist(0, 100000);
 
     chained_strings strings;

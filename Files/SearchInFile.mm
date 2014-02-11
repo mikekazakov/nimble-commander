@@ -34,13 +34,12 @@ SearchInFile::SearchInFile(FileWindow* _file):
     m_RequestedTextSearch(0),
     m_DecodedBufferString(0),
     m_TextSearchEncoding(ENCODING_INVALID),
-    m_SearchOptions(0),
-    m_Queue(dispatch_queue_create("info.filesmanager.SearchInFile", 0))
+    m_SearchOptions(0)
 {
     assert(m_File->FileOpened());
     m_Position = _file->WindowPos();
-    m_DecodedBuffer = (UniChar*) malloc(sizeof(UniChar) * _file->WindowSize());
-    m_DecodedBufferIndx = (uint32_t*) malloc(sizeof(uint32_t) * _file->WindowSize());
+    m_DecodedBuffer.reset(new UniChar[_file->WindowSize()]);
+    m_DecodedBufferIndx.reset(new uint32_t[_file->WindowSize()]);
 }
 
 SearchInFile::~SearchInFile()
@@ -48,12 +47,7 @@ SearchInFile::~SearchInFile()
     if(m_RequestedTextSearch != 0)
         CFRelease(m_RequestedTextSearch);
     if(m_DecodedBufferString != 0)
-        CFRelease(m_DecodedBufferString);    
-    if(m_DecodedBuffer != 0)
-        free(m_DecodedBuffer);
-    if(m_DecodedBufferIndx != 0)
-        free(m_DecodedBufferIndx);
-    dispatch_release(m_Queue);
+        CFRelease(m_DecodedBufferString);
 }
 
 void SearchInFile::MoveCurrentPosition(uint64_t _pos)
@@ -128,8 +122,8 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
         encodings::InterpretAsUnichar(m_TextSearchEncoding,
                                       (const unsigned char*) m_File->Window() + left_window_gap  + (isodd ? 1 : 0),
                                       m_File->WindowSize() - left_window_gap  - (isodd ? 1 : 0),
-                                      m_DecodedBuffer,
-                                      m_DecodedBufferIndx,
+                                      m_DecodedBuffer.get(),
+                                      m_DecodedBufferIndx.get(),
                                       &m_DecodedBufferSize);
 
         assert(m_DecodedBufferSize != 0);
@@ -137,7 +131,10 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
         // use this UniChars to produce a regular CFString
         if(m_DecodedBufferString != 0)
             CFRelease(m_DecodedBufferString);
-        m_DecodedBufferString = CFStringCreateWithCharactersNoCopy(0, m_DecodedBuffer, m_DecodedBufferSize, kCFAllocatorNull);
+        m_DecodedBufferString = CFStringCreateWithCharactersNoCopy(0,
+                                                                   m_DecodedBuffer.get(),
+                                                                   m_DecodedBufferSize,
+                                                                   kCFAllocatorNull);
 
         CFRange result = CFStringFind (
                                        m_DecodedBufferString,
@@ -171,11 +168,14 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
                 continue;
             }
             
-            *_offset = m_Position + m_DecodedBufferIndx[result.location];
-            *_bytes_len = (result.location + result.length < m_DecodedBufferSize ?
-                           m_DecodedBufferIndx[result.location+result.length] :
-                           m_File->WindowSize() - left_window_gap )
-                            - m_DecodedBufferIndx[result.location];
+            if(_offset != nullptr)
+                *_offset = m_Position + m_DecodedBufferIndx[result.location];
+            
+            if(_offset != nullptr)
+                *_bytes_len = (result.location + result.length < m_DecodedBufferSize ?
+                               m_DecodedBufferIndx[result.location+result.length] :
+                               m_File->WindowSize() - left_window_gap )
+                                - m_DecodedBufferIndx[result.location];
             m_Position = m_Position + m_DecodedBufferIndx[result.location+result.length];
             return Result::Found;
         }
@@ -202,9 +202,4 @@ void SearchInFile::SetSearchOptions(int _options)
 int SearchInFile::SearchOptions()
 {
     return m_SearchOptions;
-}
-
-dispatch_queue_t SearchInFile::Queue()
-{
-    return m_Queue;
 }

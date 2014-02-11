@@ -260,6 +260,8 @@
 		CFC5123916C5287B00D247EE /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
 		CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFCA09DE174BA93500AEC8C2 /* files.icns */; };
 		CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */; };
+		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
+		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FF181537A800D82455 /* FileCompressOperation.mm */; };
 		CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.mm */; };
@@ -697,6 +699,9 @@
 		CFC5123816C5287B00D247EE /* PanelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelView.mm; sourceTree = "<group>"; };
 		CFCA09DE174BA93500AEC8C2 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = files.icns; sourceTree = "<group>"; };
 		CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
+		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
+		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
 		CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppleDoubleEA.cpp; sourceTree = "<group>"; };
 		CFCD87FB18143F5500D82455 /* AppleDoubleEA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleDoubleEA.h; sourceTree = "<group>"; };
 		CFCD87FE181537A800D82455 /* FileCompressOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCompressOperation.h; sourceTree = "<group>"; };
@@ -970,6 +975,7 @@
 				CF47A996186C743A00745C4C /* VFSPS_Tests.mm */,
 				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
+				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
 			path = "Files Tests";
@@ -1327,6 +1333,8 @@
 				CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */,
 				CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */,
 				CF4C5A5C17A7B48E00B1B061 /* FileMask.h */,
+				CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */,
+				CFCD3B6C18A9DC7300028B41 /* FileSearch.h */,
 				CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */,
 				CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */,
 				CF27414E1803F6A2006D6687 /* sysinfo.mm */,
@@ -1678,6 +1686,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */,
+				CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */,
 				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
 				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
 			);
@@ -1910,6 +1919,7 @@
 				CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */,
 				CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */,
 				CF9D0E8F17CC961100CB8146 /* archive_read_open_file.c in Sources */,
+				CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */,
 				CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */,
 				CF9D0ED117CC961100CB8146 /* archive_write_set_format_mtree.c in Sources */,
 				CF9D0EA917CC961100CB8146 /* archive_read_support_format_mtree.c in Sources */,

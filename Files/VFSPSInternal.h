@@ -50,6 +50,10 @@ struct VFSPSHost::Snapshot
     vector<ProcInfo>        procs;
 
     map<pid_t, unsigned>    pid_to_index;
+    
+    // content itself
     vector<string>          files;
+    
+    // like "75 - KernelEventAgent.txt"
     vector<string>          plain_filenames;
 };

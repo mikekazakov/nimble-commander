@@ -1,14 +1,8 @@
 #pragma once
 
 #include <stddef.h>
-
+#include <memory>
 #include "VFSFile.h"
-
-// TODO: remove this trash
-//#define ERROR_OK            0
-//#define ERROR_FILENOTEXIST  1
-//#define ERROR_FILENOACCESS  2
-
 
 class FileWindow
 {
@@ -18,39 +12,51 @@ public:
         DefaultWindowSize = 32768
     };
 
-    FileWindow();
-    ~FileWindow();
-    
-//    int OpenFile(const char *_path); // will include VFS later
-//    int OpenFile(const char *_path, int _window_size);
-    // return VFS error codes
-    int OpenFile(shared_ptr<VFSFile> _file); // will include VFS later
-    int OpenFile(shared_ptr<VFSFile> _file, int _window_size);
+    /**
+     * For files with Sequential and Seek read paradigms, FileWindow need exclusive access to VFSFile,
+     * so that no one else can touch it's seek pointers.
+     */
+    int OpenFile(shared_ptr<VFSFile> _file, int _window_size = DefaultWindowSize);
 
     int CloseFile();
+    bool FileOpened() const;
     
-    bool   FileOpened() const;
+    /**
+     * Returns size of an underlying VFS file.
+     */
     size_t FileSize() const;
+    
+    /**
+     * Raw pointer to a data window in file. Size of this window is WindowSize.
+     */
     void *Window() const;
-    size_t WindowSize() const; // WindowSize can't be larger than FileSize
+    
+    /**
+     * WindowSize can't be larger than FileSize.
+     */
+    size_t WindowSize() const;
+    
+    /**
+     * Current window position in file.
+     */
     size_t WindowPos() const;
     
+    /**
+     * Move window position in file and immediately reload it's content.
+     * Will move only in valid boundaries. in case of invalid boundaries return InvalidCall.
+     * Behaves depending on VFS files - when it supports Random access, it will just move indeces.
+     * For Seek paradigm it will call Seek().
+     * For Sequential paradigm it will read until met the requested position.
+     * In Sequential case any call to move _offset lower than current position fill fail with InvalidCall error.
+     */
     int MoveWindow(size_t _offset);
-        // move window position in file and immediately reload it's content
-        // will move only in valid boundaries. in case of invalid boundaries it will assert and then exit(0)
     
 private:
-    int ReadFileWindow();
-    int ReadFileWindowPart(size_t _offset, size_t _len);
-    
-    FileWindow(const FileWindow&) = delete;
-    void operator=(const FileWindow&_r) = delete;
-    
-//    int m_FD; // will be some more complex after VFS design
-  //  size_t m_FileSize;
+    int ReadFileWindowRandomPart(size_t _offset, size_t _len);
+    int ReadFileWindowSeqPart(size_t _offset, size_t _len);
+
     shared_ptr<VFSFile> m_File;
-    bool m_ShouldClose;
-    void *m_Window;
-    size_t m_WindowSize;
-    size_t m_WindowPos;
+    unique_ptr<uint8_t[]> m_Window;
+    size_t m_WindowSize = -1;
+    size_t m_WindowPos = -1;
 };

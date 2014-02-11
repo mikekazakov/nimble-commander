@@ -9,6 +9,7 @@
 #pragma once
 
 #import <stdint.h>
+#import <memory>
 
 class FileWindow;
 
@@ -19,9 +20,6 @@ public:
     // assumes that _file is in exclusive use in SearchInFile - that no one else will alter it
     SearchInFile(FileWindow *_file);
     ~SearchInFile();
-    
-    dispatch_queue_t Queue(); // called should run all non-trivial methods whithin this queue
-                              // one async queue per search object
     
     void MoveCurrentPosition(uint64_t _pos);
 
@@ -71,7 +69,8 @@ private:
     
     FileWindow *m_File;
     uint64_t    m_Position; // position where next search attempt should start
-                            // in bytes, should be inside file window
+                            // in bytes, should be inside file + 1 byte
+                            // need this because it can point behind end of file to signal that search is ended
 
     int         m_SearchOptions;    
     
@@ -79,12 +78,11 @@ private:
     CFStringRef m_RequestedTextSearch;
     int         m_TextSearchEncoding;
     
-    UniChar    *m_DecodedBuffer;
-    uint32_t   *m_DecodedBufferIndx;
+    unique_ptr<UniChar[]> m_DecodedBuffer;
+    unique_ptr<uint32_t[]> m_DecodedBufferIndx;
+    
     size_t      m_DecodedBufferSize;
     CFStringRef m_DecodedBufferString;
     
     WorkMode    m_WorkMode;
-    
-    dispatch_queue_t m_Queue;
 };

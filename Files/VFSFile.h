@@ -65,10 +65,15 @@ public:
     virtual bool    IsOpened() const;
     virtual int     Close();
 
+    /**
+     * Return available read paradigm. Should return some considerable value even on non-opened files.
+     */
     virtual ReadParadigm  GetReadParadigm() const;
     virtual WriteParadigm GetWriteParadigm() const;
     virtual ssize_t Read(void *_buf, size_t _size);
     virtual ssize_t Write(const void *_buf, size_t _size);
+
+    virtual ssize_t Skip(size_t _size);
     
     /**
      * ReadAt is available only on Random level.

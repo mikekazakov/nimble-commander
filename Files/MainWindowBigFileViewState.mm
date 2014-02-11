@@ -13,6 +13,7 @@
 #import "Common.h"
 #import "SearchInFile.h"
 #import "BigFileViewHistory.h"
+#import "DispatchQueue.h"
 
 #import "VFSFile.h"
 #import "VFSNativeHost.h"
@@ -33,6 +34,7 @@ static int FileWindowSize()
     FileWindow  *m_FileWindow;
     FileWindow  *m_SearchFileWindow;
     SearchInFile *m_SearchInFile;
+    SerialQueue m_SearchInFileQueue;
     
     BigFileView *m_View;
     NSPopUpButton *m_EncodingSelect;
@@ -49,6 +51,8 @@ static int FileWindowSize()
 
     char        m_FilePath[MAXPATHLEN];
     char        m_GlobalFilePath[MAXPATHLEN*8];
+    
+
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -58,6 +62,7 @@ static int FileWindowSize()
     {        
         m_IsStopSearching = false;
         m_IsSearchRunning = false;
+        m_SearchInFileQueue = make_shared<SerialQueueT>();
         [self CreateControls];
     }
     return self;
@@ -384,7 +389,7 @@ static int FileWindowSize()
         int encoding = [m_View Enconding];
         
         m_IsStopSearching = true; // we should stop current search if any
-        dispatch_async(m_SearchInFile->Queue(), ^{
+        m_SearchInFileQueue->Run(^{
             m_IsStopSearching = false;
             
             m_SearchInFile->MoveCurrentPosition(view_offset);
@@ -397,7 +402,7 @@ static int FileWindowSize()
             return; // we're already performing this request now, nothing to do
     }
     
-    dispatch_async(m_SearchInFile->Queue(), ^{
+    m_SearchInFileQueue->Run(^{
         m_IsStopSearching = false;
         uint64_t offset, len;
         

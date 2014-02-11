@@ -217,6 +217,8 @@ ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
         return SetLastError(VFSError::FromLibarchive(archive_errno(m_Arc)));
     }
     
+    m_Position += size;
+    
     return size;
 }
 

@@ -11,7 +11,7 @@
 #import "VFSHost.h"
 
 VFSFile::VFSFile(const char* _relative_path, shared_ptr<VFSHost> _host):
-    m_RelativePath(_relative_path),
+    m_RelativePath(_relative_path ? _relative_path : ""),
     m_Host(_host),
     m_LastError(0)
 {
@@ -140,4 +140,22 @@ NSData *VFSFile::ReadFile()
 ssize_t VFSFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
 {
     return SetLastError(VFSError::NotSupported);
+}
+
+ssize_t VFSFile::Skip(size_t _size)
+{
+    const size_t trash_size = 32768;
+    static char trash[trash_size];
+    size_t skipped = 0;
+    
+    while(_size > 0) {
+        ssize_t r = Read(trash, min(_size, trash_size));
+        if(r < 0)
+            return r;
+        if(r == 0)
+            return VFSError::UnexpectedEOF;
+        _size -= r;
+        skipped += r;
+    }
+    return skipped;
 }

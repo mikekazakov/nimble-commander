@@ -7,7 +7,6 @@
 //
 
 #import <sys/types.h>
-#import <sys/dirent.h>
 #import <sys/stat.h>
 #import <dirent.h>
 #import "PanelAux.h"

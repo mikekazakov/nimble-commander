@@ -81,14 +81,14 @@ void FileSearch::AsyncProc(const char *_from_path, VFSHost *_in_host)
         m_DirsFIFO.pop_front();
         
         _in_host->IterateDirectoryListing(path.c_str(),
-                                      ^(struct dirent &_dirent)
+                                      ^(const VFSDirEnt &_dirent)
                                       {
                                           string full_path = path;
                                           if(full_path.back() != '/') full_path += '/';
-                                          full_path += _dirent.d_name;
+                                          full_path += _dirent.name;
                                           
                                           ProcessDirent(full_path.c_str(),
-                                                        _from_path,
+                                                        path.c_str(),
                                                         _dirent,
                                                         _in_host);
                                           
@@ -99,66 +99,82 @@ void FileSearch::AsyncProc(const char *_from_path, VFSHost *_in_host)
 
 void FileSearch::ProcessDirent(const char* _full_path,
                                const char* _dir_path,
-                               struct dirent &_dirent,
+                               const VFSDirEnt &_dirent,
                                VFSHost *_in_host
                                )
 {
 //    NSLog(@"%s", _full_path);
     bool failed_filtering = false;
     
+    // Filter by filename
     if(failed_filtering == false &&
-       m_FilterNameMask) {
-        NSString *filename = [NSString stringWithUTF8StringNoCopy:_dirent.d_name];
-        if(filename == nil ||
-           m_FilterNameMask->MatchName(filename) == false)
-            failed_filtering = true;
-    }
+       m_FilterNameMask &&
+       !FilterByFilename(_dirent.name)
+       )
+        failed_filtering = true;
     
-    if(failed_filtering == false &&
-       _dirent.d_type == DT_REG  &&
-       m_FilterContent) while(1) {
-        shared_ptr<VFSFile> file;
-        if(_in_host->CreateFile(_full_path, &file, 0) != 0) {
-            failed_filtering = true;
-            break;
-        }
-        
-        if(file->Open(VFSFile::OF_Read) != 0) {
-            failed_filtering = true;
-            break;
-        }
-        
-        FileWindow fw;
-        if(fw.OpenFile(file) != 0 ) {
-            failed_filtering = true;
-            break;
-        }
-        
-        SearchInFile sif(&fw);
-        sif.ToggleTextSearch((CFStringRef)CFBridgingRetain(m_FilterContent->text),
-                             m_FilterContent->encoding);
-        
-        auto result = sif.Search(nullptr, nullptr, nil);
-        if(result != SearchInFile::Result::Found)
-            failed_filtering = true;
-        
-        fw.CloseFile();
-
-        break;
+    // Filter by file content
+    if(failed_filtering == false && m_FilterContent)
+    {
+       if(_dirent.type != VFSDirEnt::Reg || !FilterByContent(_full_path, _in_host) )
+           failed_filtering = true;
     }
-    
     
     if(failed_filtering == false) {
-        NSLog(@"%s", _full_path);
+        ProcessValidEntry(_full_path, _dir_path, _dirent, _in_host);
     }
     
     if(m_SearchOptions & Options::GoIntoSubDirs)
     {
-        if(_dirent.d_type == DT_DIR)
+        if(_dirent.type == VFSDirEnt::Dir)
         {
             m_DirsFIFO.emplace_back(_full_path);
         }
     }
         
     
+}
+
+bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host)
+{
+    shared_ptr<VFSFile> file;
+    if(_in_host->CreateFile(_full_path, &file, 0) != 0)
+        return false;
+    
+    if(file->Open(VFSFile::OF_Read) != 0)
+        return false;
+    
+    FileWindow fw;
+    if(fw.OpenFile(file) != 0 )
+        return false;
+    
+    SearchInFile sif(&fw);
+    sif.ToggleTextSearch((CFStringRef)CFBridgingRetain(m_FilterContent->text),
+                         m_FilterContent->encoding);
+    
+    auto result = sif.Search(nullptr, nullptr, nil);
+    
+    fw.CloseFile();
+
+    return result == SearchInFile::Result::Found;
+}
+
+bool FileSearch::FilterByFilename(const char* _filename)
+{
+    NSString *filename = [NSString stringWithUTF8StringNoCopy:_filename];
+    if(filename == nil ||
+       m_FilterNameMask->MatchName(filename) == false)
+        return false;
+    
+    return true;
+}
+
+bool FileSearch::ProcessValidEntry(const char* _full_path,
+                       const char* _dir_path,
+                       const VFSDirEnt &_dirent,
+                       VFSHost *_in_host)
+{
+    if(m_Callback)
+        return m_Callback(_dirent.name, _dir_path);
+    return true;
 }

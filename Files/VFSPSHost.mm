@@ -13,7 +13,6 @@
 #import <pwd.h>
 #import <stdio.h>
 #import <stdlib.h>
-#import <dirent.h>
 #import "sysinfo.h"
 #import "Common.h"
 #import "VFSPSHost.h"
@@ -365,7 +364,7 @@ void VFSPSHost::StopDirChangeObserving(unsigned long _ticket)
         m_UpdateHandlers.erase(it);
 }
 
-int VFSPSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(dirent &_dirent))
+int VFSPSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
 {
     assert(_path != 0);
     if(_path[0] != '/' || _path[1] != 0)
@@ -380,11 +379,10 @@ int VFSPSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(diren
         
     for(auto &i: snapshot->plain_filenames)
     {
-        struct dirent dir;
-        dir.d_ino = 0;
-        strcpy(dir.d_name, i.c_str());
-        dir.d_namlen = i.size();
-        dir.d_type = DT_REG;
+        VFSDirEnt dir;
+        strcpy(dir.name, i.c_str());
+        dir.name_len = i.size();
+        dir.type = VFSDirEnt::Reg;
         
         if(!_handler(dir))
             break;

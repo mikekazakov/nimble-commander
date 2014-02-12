@@ -145,6 +145,8 @@ struct MachTimeBenchmark
 
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
 
+NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz);
+
 inline bool dispatch_is_main_queue() { return [NSThread isMainThread]; }
 inline void dispatch_to_main_queue(dispatch_block_t block) { dispatch_async(dispatch_get_main_queue(), block); }
 inline bool strisdotdot(const char *s) { return s && s[0] == '.' && s[1] == '.' && s[2] == 0; }

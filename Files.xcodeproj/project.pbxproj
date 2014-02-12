@@ -262,6 +262,8 @@
 		CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
+		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
+		CFCD3B7D18AB64C600028B41 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCD3B7B18AB64C600028B41 /* FindFilesSheetController.xib */; };
 		CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FF181537A800D82455 /* FileCompressOperation.mm */; };
 		CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.mm */; };
@@ -702,6 +704,9 @@
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
+		CFCD3B7918AB64C600028B41 /* FindFilesSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindFilesSheetController.h; sourceTree = "<group>"; };
+		CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindFilesSheetController.mm; sourceTree = "<group>"; };
+		CFCD3B7B18AB64C600028B41 /* FindFilesSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FindFilesSheetController.xib; sourceTree = "<group>"; };
 		CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppleDoubleEA.cpp; sourceTree = "<group>"; };
 		CFCD87FB18143F5500D82455 /* AppleDoubleEA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleDoubleEA.h; sourceTree = "<group>"; };
 		CFCD87FE181537A800D82455 /* FileCompressOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCompressOperation.h; sourceTree = "<group>"; };
@@ -935,6 +940,9 @@
 				CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */,
 				CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */,
 				CFA0B23518693F1100501C35 /* GoToFolderSheetController.xib */,
+				CFCD3B7918AB64C600028B41 /* FindFilesSheetController.h */,
+				CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */,
+				CFCD3B7B18AB64C600028B41 /* FindFilesSheetController.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -1638,6 +1646,7 @@
 				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,
 				CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */,
+				CFCD3B7D18AB64C600028B41 /* FindFilesSheetController.xib in Resources */,
 				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
 				B55DB19C171B0E9700E3610E /* question_icon.png in Resources */,
 				B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */,
@@ -1898,6 +1907,7 @@
 				CF9D0EB317CC961100CB8146 /* archive_virtual.c in Sources */,
 				CF9D0E9617CC961100CB8146 /* archive_read_support_filter_compress.c in Sources */,
 				CF9D0EAE17CC961100CB8146 /* archive_read_support_format_zip.c in Sources */,
+				CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */,
 				CF9D0E8A17CC961100CB8146 /* archive_read_disk_posix.c in Sources */,
 				CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF9D0EBE17CC961100CB8146 /* archive_write_add_filter_program.c in Sources */,

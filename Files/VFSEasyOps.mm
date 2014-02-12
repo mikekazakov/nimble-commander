@@ -220,15 +220,15 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     if(result < 0)
         return result;
     
-    result = _src_host->IterateDirectoryListing(_src_full_path, ^bool(struct dirent &_dirent)
+    result = _src_host->IterateDirectoryListing(_src_full_path, ^bool(const VFSDirEnt &_dirent)
     {
         string source(_src_full_path);
         source += '/';
-        source += _dirent.d_name;
+        source += _dirent.name;
         
         string destination(_dst_full_path);
         destination += '/';
-        destination += _dirent.d_name;
+        destination += _dirent.name;
 
         VFSEasyCopyNode(source.c_str(),
                         _src_host,

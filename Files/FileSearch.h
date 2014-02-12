@@ -64,9 +64,17 @@ private:
     void AsyncProc(const char* _from_path, VFSHost *_in_host);
     void ProcessDirent(const char* _full_path,
                        const char* _dir_path,
-                       struct dirent &_dirent,
+                       const VFSDirEnt &_dirent,
                        VFSHost *_in_host
                        );
+    bool ProcessValidEntry(const char* _full_path,
+                           const char* _dir_path,
+                           const VFSDirEnt &_dirent,
+                           VFSHost *_in_host);
+    
+    
+    bool FilterByContent(const char* _full_path, VFSHost *_in_host);
+    bool FilterByFilename(const char* _filename);
     
     SerialQueue             m_Queue;
     unique_ptr<FilterName>  m_FilterName;

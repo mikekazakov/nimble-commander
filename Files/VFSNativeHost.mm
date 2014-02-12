@@ -10,13 +10,13 @@
 #import <sys/types.h>
 #import <sys/dirent.h>
 #import <sys/stat.h>
-#import <dirent.h>
 #import <sys/time.h>
 #import <sys/xattr.h>
 #import <sys/attr.h>
 #import <sys/vnode.h>
 #import <sys/param.h>
 #import <sys/mount.h>
+#import <dirent.h>
 #import <unistd.h>
 #import <stdlib.h>
 
@@ -280,20 +280,25 @@ int VFSNativeHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^
     return VFSError::FromErrno(errno);
 }
 
-int VFSNativeHost::IterateDirectoryListing(const char *_path, bool (^_handler)(struct dirent &_dirent))
+int VFSNativeHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
 {
     DIR *dirp = opendir(_path);
     if(dirp == 0)
         return VFSError::FromErrno(errno);
         
     dirent *entp;
+    VFSDirEnt vfs_dirent;
     while((entp = readdir(dirp)) != NULL)
     {
         if((entp->d_namlen == 1 && entp->d_name[0] == '.') ||
            (entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.'))
             continue;
+
+        vfs_dirent.type = entp->d_type;
+        vfs_dirent.name_len = entp->d_namlen;
+        memcpy(vfs_dirent.name, entp->d_name, entp->d_namlen+1);
             
-        if(!_handler(*entp))
+        if(!_handler(vfs_dirent))
             break;
     }
     

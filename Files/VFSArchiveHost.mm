@@ -370,7 +370,7 @@ int VFSArchiveHost::Stat(const char *_path, struct stat &_st, int _flags, bool (
     return VFSError::NotFound;
 }
 
-int VFSArchiveHost::IterateDirectoryListing(const char *_path, bool (^_handler)(dirent &_dirent))
+int VFSArchiveHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
 {
     assert(_path != 0);
     if(_path[0] != '/')
@@ -385,17 +385,16 @@ int VFSArchiveHost::IterateDirectoryListing(const char *_path, bool (^_handler)(
     if(i == m_PathToDir.end())
         return VFSError::NotFound;
     
-    struct dirent dir;
-    dir.d_ino = 0; // not supported currently
+    VFSDirEnt dir;
     
     for(const auto &it: i->second->entries)
         {
-            memcpy(dir.d_name, it.name.c_str(), it.name.length()+1);
-            dir.d_namlen = it.name.length();
+            strcpy(dir.name, it.name.c_str());
+            dir.name_len = it.name.length();
             
-            if(S_ISDIR(it.st.st_mode)) dir.d_type = DT_DIR;
-            else if(S_ISREG(it.st.st_mode)) dir.d_type = DT_REG;
-            else dir.d_type = DT_UNKNOWN; // symlinks and other stuff are not supported currently
+            if(S_ISDIR(it.st.st_mode)) dir.type = VFSDirEnt::Dir;
+            else if(S_ISREG(it.st.st_mode)) dir.type = VFSDirEnt::Reg;
+            else dir.type = VFSDirEnt::Unknown; // symlinks and other stuff are not supported currently
 
             if(!_handler(dir))
                 break;

@@ -35,7 +35,7 @@ public:
                                       int _flags,                                      
                                       bool (^_cancel_checker)()) override;
     
-    virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(struct dirent &_dirent)) override;
+    virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
 
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> *_target,

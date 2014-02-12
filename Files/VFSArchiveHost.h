@@ -49,7 +49,7 @@ public:
                                       int _flags,                                      
                                       bool (^_cancel_checker)()) override;
     
-    virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(dirent &_dirent)) override;
+    virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
     
     virtual int CalculateDirectoriesSizes(
                                           chained_strings _dirs,

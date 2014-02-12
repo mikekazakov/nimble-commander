@@ -15,6 +15,9 @@
 #import "SharingService.h"
 #import "BriefSystemOverview.h"
 
+// todo: remove me
+#import "FindFilesSheetController.h"
+
 static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
 static NSString *g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
@@ -768,6 +771,19 @@ void panel::GenericCursorPersistance::Restore()
             return true;
         }
     }
+    
+    if(keycode == 17 ) { // 'T' button
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
+        {
+            FindFilesSheetController *sheet = [FindFilesSheetController new];
+            [sheet ShowSheet:self.state.window
+                     withVFS:self.GetCurrentVFSHost
+                    fromPath:self.GetCurrentFocusedEntryFilePathRelativeToHost
+             ];
+        }
+    }
+
+    
     
     // handle RETURN manually, to prevent annoying by menu highlighting by hotkey
     if(unicode == NSCarriageReturnCharacter) {

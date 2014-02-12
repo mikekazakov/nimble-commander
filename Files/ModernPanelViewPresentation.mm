@@ -91,43 +91,6 @@ static NSString* FormHumanReadableShortTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-static NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz)
-{
-    if(_sz < 1000000) // bytes
-        return [NSString stringWithFormat:@"%6llu", _sz];
-    else if(_sz < 9999lu * 1024lu) // kilobytes
-    {
-        uint64_t div = 1024lu;
-        uint64_t res = _sz / div;
-        return [NSString stringWithFormat:@"%4llu K", res + (_sz - res * div) / (div/2)];
-    }
-    else if(_sz < 9999lu * 1048576lu) // megabytes
-    {
-        uint64_t div = 1048576lu;
-        uint64_t res = _sz / div;
-        return [NSString stringWithFormat:@"%4llu M", res + (_sz - res * div) / (div/2)];
-    }
-    else if(_sz < 9999lu * 1073741824lu) // gigabytes
-    {
-        uint64_t div = 1073741824lu;
-        uint64_t res = _sz / div;
-        return [NSString stringWithFormat:@"%4llu G", res + (_sz - res * div) / (div/2)];
-    }
-    else if(_sz < 9999lu * 1099511627776lu) // terabytes
-    {
-        uint64_t div = 1099511627776lu;
-        uint64_t res = _sz / div;
-        return [NSString stringWithFormat:@"%4llu T", res + (_sz - res * div) / (div/2)];
-    }
-    else if(_sz < 9999lu * 1125899906842624lu) // petabytes
-    {
-        uint64_t div = 1125899906842624lu;
-        uint64_t res = _sz / div;
-        return [NSString stringWithFormat:@"%4llu P", res + (_sz - res * div) / (div/2)];
-    }
-    return @"";
-}
-
 static NSString* SizeToString6(const VFSListingItem &_dirent)
 {
     if( _dirent.IsDir() )

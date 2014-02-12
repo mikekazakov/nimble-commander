@@ -7,14 +7,12 @@
 //
 
 #pragma once
-
 #import <string>
 #import <memory>
-
-using namespace std;
-
 #import "VFSError.h"
 #import "chained_strings.h"
+
+using namespace std;
 
 class VFSListing;
 class VFSFile;
@@ -26,6 +24,27 @@ struct VFSStatFS
     uint64_t avail_bytes; // may be less than actuat free_bytes
     string volume_name;
 };
+
+struct VFSDirEnt
+{
+    enum {
+        Unknown     =  0, /* = DT_UNKNOWN */
+        FIFO        =  1, /* = DT_FIFO    */
+        Char        =  2, /* = DT_CHR     */
+        Dir         =  4, /* = DT_DIR     */
+        Block       =  6, /* = DT_BLK     */
+        Reg         =  8, /* = DT_REG     */
+        Link        = 10, /* = DT_LNK     */
+        Socket      = 12, /* = DT_SOCK    */
+        Whiteout    = 14  /* = DT_WHT     */
+    };
+    
+    uint16_t    type;
+    uint16_t    name_len;
+    char        name[1024];
+};
+
+// TODO: struct VFSStat {...}
 
 class VFSHost : public enable_shared_from_this<VFSHost>
 {
@@ -78,11 +97,13 @@ public:
                                       int _flags,
                                       bool (^_cancel_checker)());
     
-    // IterateDirectoryListing will skip "." and ".." entries if they are present
-    // do not rely on it to build a directory listing, it's for contents iteration
+    /**
+     * IterateDirectoryListing will skip "." and ".." entries if they are present.
+     * Do not rely on it to build a directory listing, it's for contents iteration.
+     */
     virtual int IterateDirectoryListing(
                                     const char *_path,
-                                    bool (^_handler)(struct dirent &_dirent) // return true for allowing iteration, false to stop it
+                                    bool (^_handler)(const VFSDirEnt &_dirent) // return true for allowing iteration, false to stop it
                                     );
     
     virtual int CreateFile(const char* _path,
@@ -124,21 +145,6 @@ public:
      */
     virtual int Unlink(const char *_path, bool (^_cancel_checker)());
 
-    
-/*
-    attrs.commonattr = ATTR_CMN_MODTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times->st_mtimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CRTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times->st_birthtimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_ACCTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times->st_atimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CHGTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times->st_ctimespec, sizeof(struct timespec), 0);
-*/
-//    struct timespec
     /**
      * Adjust file node times. Any of timespec time pointers can be NULL, so they will be ignored.
      * NoFollow flag can be specified to alter symlink node itself.

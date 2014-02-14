@@ -49,12 +49,15 @@ void FileSearch::SetFilterContent(FilterContent *_filter)
         m_FilterContent.reset( new FilterContent(*_filter));
 }
 
-void FileSearch::Go(string _from_path,
+bool FileSearch::Go(string _from_path,
                     shared_ptr<VFSHost> _in_host,
                     int _options,
                     FoundCallBack _found_callback,
                     FinishCallBack _finish_callback)
 {
+    if(IsRunning())
+        return false;
+    
     assert(m_Callback == nil);
     
     m_Callback = _found_callback;
@@ -64,6 +67,18 @@ void FileSearch::Go(string _from_path,
     m_Queue->Run(^{
         AsyncProcPrologue(_from_path, _in_host);
     });
+    
+    return true;
+}
+
+void FileSearch::Stop()
+{
+    m_Queue->Stop();
+}
+
+void FileSearch::Wait()
+{
+    m_Queue->Wait();
 }
 
 void FileSearch::AsyncProcPrologue(string _from_path, shared_ptr<VFSHost> _in_host)
@@ -77,6 +92,9 @@ void FileSearch::AsyncProc(const char *_from_path, VFSHost *_in_host)
     
     while(!m_DirsFIFO.empty())
     {
+        if(m_Queue->IsStopped())
+            break;
+        
         string path = m_DirsFIFO.front();
         m_DirsFIFO.pop_front();
         
@@ -177,4 +195,9 @@ bool FileSearch::ProcessValidEntry(const char* _full_path,
     if(m_Callback)
         return m_Callback(_dirent.name, _dir_path);
     return true;
+}
+
+bool FileSearch::IsRunning() const
+{
+    return m_Queue->Empty() == false;
 }

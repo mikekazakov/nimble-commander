@@ -772,7 +772,7 @@ void panel::GenericCursorPersistance::Restore()
         }
     }
     
-    if(keycode == 17 ) { // 'T' button
+    if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
             FindFilesSheetController *sheet = [FindFilesSheetController new];

@@ -159,7 +159,7 @@ struct TextLine
     BigFileViewDataBackend  *m_Data;
 
     // data stuff
-    UniChar        *m_FixupWindow;
+    unique_ptr<UniChar[]> m_FixupWindow;
     CFStringRef     m_StringBuffer;
     size_t          m_StringBufferSize; // should be equal to m_WindowSize
         
@@ -193,9 +193,9 @@ struct TextLine
     m_SmoothScroll = _data->IsFullCoverage();
 
     if(!_data->IsFullCoverage())
-        m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * m_Data->RawSize()); // unichar for every byte in raw window - should be ok in all cases
+        m_FixupWindow.reset(new UniChar[m_Data->RawSize()]); // unichar for every byte in raw window - should be ok in all cases
     else
-        m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * m_Data->UniCharsSize());
+        m_FixupWindow.reset(new UniChar[m_Data->UniCharsSize()]);
     
     [self GrabFontGeometry];
     [self OnFrameChanged];
@@ -209,8 +209,7 @@ struct TextLine
 {
     [self ClearLayout];
     if(m_StringBuffer)
-        CFRelease(m_StringBuffer);    
-    free(m_FixupWindow);
+        CFRelease(m_StringBuffer);
 }
 
 - (void) GrabFontGeometry
@@ -224,10 +223,10 @@ struct TextLine
     if(m_StringBuffer)
         CFRelease(m_StringBuffer);
     
-    memcpy(m_FixupWindow, m_Data->UniChars(), sizeof(UniChar) * m_Data->UniCharsSize());
-    CleanUnicodeControlSymbols(m_FixupWindow, m_Data->UniCharsSize());
+    memcpy(&m_FixupWindow[0], m_Data->UniChars(), sizeof(UniChar) * m_Data->UniCharsSize());
+    CleanUnicodeControlSymbols(&m_FixupWindow[0], m_Data->UniCharsSize());
 
-    m_StringBuffer = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow, m_Data->UniCharsSize(), kCFAllocatorNull);
+    m_StringBuffer = CFStringCreateWithCharactersNoCopy(0, &m_FixupWindow[0], m_Data->UniCharsSize(), kCFAllocatorNull);
     m_StringBufferSize = CFStringGetLength(m_StringBuffer);
 
     [self BuildLayout];

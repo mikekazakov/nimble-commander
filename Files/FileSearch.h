@@ -53,12 +53,15 @@ public:
     /**
      * Returns immediately, run in background thread
      */
-    void Go(string _from_path,
+    bool Go(string _from_path,
             shared_ptr<VFSHost> _in_host,
             int _options,
             FoundCallBack _found_callback,
             FinishCallBack _finish_callback
             );
+    void Stop();
+    void Wait();
+    bool IsRunning() const;
 private:
     void AsyncProcPrologue(string _from_path, shared_ptr<VFSHost> _in_host);
     void AsyncProc(const char* _from_path, VFSHost *_in_host);

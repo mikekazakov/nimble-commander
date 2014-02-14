@@ -13,8 +13,7 @@ VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(shared_ptr<VFSFile> _fi
     VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),
     m_SeqFile(_file_to_wrap),
     m_Ready(false),
-    m_FD(-1),
-    m_DataBuf(0)
+    m_FD(-1)
 {
 }
 
@@ -47,9 +46,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags)
         // we just read a whole file into a memory buffer
         m_Pos = 0;
         m_Size = m_SeqFile->Size();
-        if(m_DataBuf != 0)
-            free(m_DataBuf);
-        m_DataBuf = (uint8_t*)malloc(m_Size);
+        m_DataBuf.reset(new uint8_t[m_Size]);
         
         uint8_t *d = &m_DataBuf[0];
         uint8_t *e = d + m_Size;
@@ -126,11 +123,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags)
 int VFSSeqToRandomROWrapperFile::Close()
 {
     m_SeqFile.reset();
-    if(m_DataBuf)
-    {
-        free(m_DataBuf);
-        m_DataBuf = 0;
-    }
+    m_DataBuf.reset();
     if(m_FD >= 0)
     {
         close(m_FD);
@@ -186,7 +179,7 @@ ssize_t VFSSeqToRandomROWrapperFile::Read(void *_buf, size_t _size)
     if(m_Pos == m_Size)
         return 0;
     
-    if(m_DataBuf != 0)
+    if(m_DataBuf)
     {
         size_t to_read = MIN(m_Size - m_Pos, _size);
         memcpy(_buf, &m_DataBuf[m_Pos], to_read);
@@ -219,7 +212,7 @@ ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size
     if(_pos < 0 || _pos > m_Size)
         return VFSError::InvalidCall;
     
-    if(m_DataBuf != 0)
+    if(m_DataBuf)
     {
         ssize_t toread = MIN(m_Size - _pos, _size);
         memcpy(_buf, &m_DataBuf[_pos], toread);
@@ -227,7 +220,6 @@ ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size
     }
     else if(m_FD >= 0)
     {
-//ssize_t pread(int fildes, void *buf, size_t nbyte, off_t offset);
         ssize_t toread = MIN(m_Size - _pos, _size);
         ssize_t res = pread(m_FD, _buf, toread, _pos);
         if(res >= 0)

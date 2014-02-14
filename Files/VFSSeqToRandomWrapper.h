@@ -21,9 +21,7 @@ public:
     virtual int Close() override;
     
     enum {
-        MaxCachedInMem = 16*1024*1024
-//        MaxCachedInMem = 1*1024*1024
-    
+        MaxCachedInMem = 16*1024*1024    
     };
     
     virtual bool    IsOpened() const override;
@@ -40,6 +38,6 @@ private:
     ssize_t                  m_Pos;
     ssize_t                  m_Size;
     shared_ptr<VFSFile> m_SeqFile;
-    uint8_t                 *m_DataBuf; // used only when filesize <= MaxCachedInMem
+    unique_ptr<uint8_t[]>    m_DataBuf; // used only when filesize <= MaxCachedInMem
     bool                     m_Ready;
 };

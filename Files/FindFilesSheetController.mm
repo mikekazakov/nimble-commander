@@ -84,6 +84,8 @@ struct FoundItem
 - (IBAction)OnClose:(id)sender
 {
     // TODO: stop searching here and wait until search actually flushes it's backgroun thread
+    m_FileSearch->Stop();
+    m_FileSearch->Wait();
     [NSApp endSheet:[self window] returnCode:0];
 }
 
@@ -173,4 +175,8 @@ struct FoundItem
 }
 
 
+- (IBAction)OnStop:(id)sender
+{
+    m_FileSearch->Stop();    
+}
 @end

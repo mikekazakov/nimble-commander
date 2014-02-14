@@ -90,7 +90,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     // basic stuff
     BigFileView    *m_View;
     BigFileViewDataBackend *m_Data;
-    UniChar        *m_FixupWindow;
+    unique_ptr<UniChar[]> m_FixupWindow;
     
     unsigned              m_RowsOffset;
     CGPoint               m_SmoothOffset;
@@ -108,7 +108,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
 {
     m_View = _view;
     m_Data = _data;
-    m_FixupWindow = (UniChar*) malloc(sizeof(UniChar) * m_Data->RawSize());
+    m_FixupWindow.reset(new UniChar[m_Data->RawSize()]);
     m_LeftInset = 5;
     
     [self GrabFontGeometry];
@@ -124,7 +124,6 @@ static const unsigned char g_4Bits_To_Char[16] = {
 - (void) dealloc
 {
     [self ClearLayout];
-    free(m_FixupWindow);    
 }
 
 - (void) GrabFontGeometry
@@ -206,7 +205,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     CFDictionarySetValue(attributes, kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
     CFDictionarySetValue(attributes, kCTFontAttributeName, [m_View TextFont]);
     
-    CFStringRef big_string = CFStringCreateWithCharactersNoCopy(0, m_FixupWindow, uni_window_sz, kCFAllocatorNull);
+    CFStringRef big_string = CFStringCreateWithCharactersNoCopy(0, &m_FixupWindow[0], uni_window_sz, kCFAllocatorNull);
     CFAttributedStringRef big_attr_str = CFAttributedStringCreate(0, big_string, attributes);
     CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(big_attr_str);
     

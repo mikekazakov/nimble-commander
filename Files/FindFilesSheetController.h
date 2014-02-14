@@ -19,11 +19,13 @@
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnSearch:(id)sender;
+- (IBAction)OnStop:(id)sender;
 
 @property (strong) IBOutlet NSButton *CloseButton;
 @property (strong) IBOutlet NSButton *SearchButton;
 @property (strong) IBOutlet NSTextField *MaskTextField;
 @property (strong) IBOutlet NSTextField *ContainingTextField;
 @property (strong) IBOutlet NSTableView *TableView;
+
 
 @end

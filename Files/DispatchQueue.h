@@ -17,8 +17,6 @@ public:
     SerialQueueT(const char *_label = NULL);
     ~SerialQueueT();
     
-    // operations
-    
     /**
      * Just a form to call the long Run(..) version with dummy parameter
      */
@@ -40,14 +38,35 @@ public:
      */
     void Wait();
     
-    // current state
+    /**
+     * Return value of a stop flag.
+     */
     bool IsStopped() const;
+    
+    /**
+     * Returns count of block commited into queue, including current running block, if any.
+     * Zero returned length means that queue is dry.
+     */
     int Length() const;
+    
+    /**
+     * Actually returns Length() == 0. Just a syntax sugar.
+     */
     bool Empty() const;
     
-    // handlers
+    /**
+     * Sets handler to be called when queue becomes dry (no blocks are commited or running).
+     */
     void OnDry( void (^_block)() );
+    
+    /**
+     * Sets handler to be called when queue becomes wet (when block is commited to run in it).
+     */
     void OnWet( void (^_block)() );
+    
+    /**
+     * Sets handler to be called when queue length is changed.
+     */
     void OnChange( void (^_block)() );
     
 private:

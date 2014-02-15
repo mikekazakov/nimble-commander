@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include <dirent.h>
+#include <sys/stat.h>
 #include "FileSearch.h"
 #include "FileWindow.h"
 #include "SearchInFile.h"
@@ -14,7 +14,7 @@
 
 FileSearch::FileSearch():
     m_FilterName(nullptr),
-    m_Queue(make_shared<SerialQueueT>())
+    m_Queue(SerialQueueT::Make())
 {
     m_Queue->OnDry(^{
         auto tmp = m_FinishCallback;
@@ -57,6 +57,11 @@ bool FileSearch::Go(string _from_path,
 {
     if(IsRunning())
         return false;
+    
+    if(!m_FilterName &&
+       !m_FilterContent &&
+       !m_FilterSize )
+        return false; // need at least one filter to be set
     
     assert(m_Callback == nil);
     
@@ -121,7 +126,6 @@ void FileSearch::ProcessDirent(const char* _full_path,
                                VFSHost *_in_host
                                )
 {
-//    NSLog(@"%s", _full_path);
     bool failed_filtering = false;
     
     // Filter by filename
@@ -131,6 +135,22 @@ void FileSearch::ProcessDirent(const char* _full_path,
        )
         failed_filtering = true;
     
+    // Filter by filesize
+    if(failed_filtering == false && m_FilterSize) {
+        if(_dirent.type == VFSDirEnt::Reg) {
+            struct stat st;
+            if(_in_host->Stat(_full_path, st, 0, 0) == 0) {
+                if(st.st_size < m_FilterSize->min ||
+                   st.st_size > m_FilterSize->max )
+                    failed_filtering = true;
+            }
+            else
+                failed_filtering = true;
+        }
+        else
+            failed_filtering = true;
+    }
+    
     // Filter by file content
     if(failed_filtering == false && m_FilterContent)
     {
@@ -138,9 +158,8 @@ void FileSearch::ProcessDirent(const char* _full_path,
            failed_filtering = true;
     }
     
-    if(failed_filtering == false) {
+    if(failed_filtering == false)
         ProcessValidEntry(_full_path, _dir_path, _dirent, _in_host);
-    }
     
     if(m_SearchOptions & Options::GoIntoSubDirs)
     {
@@ -149,8 +168,6 @@ void FileSearch::ProcessDirent(const char* _full_path,
             m_DirsFIFO.emplace_back(_full_path);
         }
     }
-        
-    
 }
 
 bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host)
@@ -167,10 +184,16 @@ bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host)
         return false;
     
     SearchInFile sif(&fw);
-    sif.ToggleTextSearch((CFStringRef)CFBridgingRetain(m_FilterContent->text),
-                         m_FilterContent->encoding);
+    sif.ToggleTextSearch((__bridge CFStringRef)m_FilterContent->text, m_FilterContent->encoding);
+    sif.SetSearchOptions((m_FilterContent->case_sensitive  ? SearchInFile::OptionCaseSensitive   : 0) |
+                         (m_FilterContent->whole_phrase    ? SearchInFile::OptionFindWholePhrase : 0) );
     
-    auto result = sif.Search(nullptr, nullptr, nil);
+    auto result = sif.Search(nullptr,
+                             nullptr,
+                             ^bool{
+                                 return m_Queue->IsStopped();
+                             }
+                             );
     
     fw.CloseFile();
 
@@ -187,17 +210,24 @@ bool FileSearch::FilterByFilename(const char* _filename)
     return true;
 }
 
-bool FileSearch::ProcessValidEntry(const char* _full_path,
+void FileSearch::ProcessValidEntry(const char* _full_path,
                        const char* _dir_path,
                        const VFSDirEnt &_dirent,
                        VFSHost *_in_host)
 {
     if(m_Callback)
-        return m_Callback(_dirent.name, _dir_path);
-    return true;
+        m_Callback(_dirent.name, _dir_path);
 }
 
 bool FileSearch::IsRunning() const
 {
     return m_Queue->Empty() == false;
+}
+
+void FileSearch::SetFilterSize(FilterSize *_filter)
+{
+    if(_filter == nullptr)
+        m_FilterSize.reset();
+    else
+        m_FilterSize.reset( new FilterSize(*_filter));
 }

@@ -393,7 +393,7 @@ static int FileWindowSize()
             m_IsStopSearching = false;
             
             m_SearchInFile->MoveCurrentPosition(view_offset);
-            m_SearchInFile->ToggleTextSearch((CFStringRef) CFBridgingRetain(str), encoding);
+            m_SearchInFile->ToggleTextSearch((__bridge CFStringRef)str, encoding);
         });
     }
     else

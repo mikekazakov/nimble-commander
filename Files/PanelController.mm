@@ -778,7 +778,7 @@ void panel::GenericCursorPersistance::Restore()
             FindFilesSheetController *sheet = [FindFilesSheetController new];
             [sheet ShowSheet:self.state.window
                      withVFS:self.GetCurrentVFSHost
-                    fromPath:self.GetCurrentFocusedEntryFilePathRelativeToHost
+                    fromPath:self.GetCurrentDirectoryPathRelativeToHost
              ];
         }
     }

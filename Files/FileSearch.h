@@ -12,6 +12,7 @@
 #include "VFS.h"
 #include "DispatchQueue.h"
 #include "FileMask.h"
+#include "Encodings.h"
 
 using namespace std;
 
@@ -32,10 +33,17 @@ public:
     
     struct FilterContent {
         NSString *text;
-        int encoding;
+        int encoding = ENCODING_UTF8;
+        bool whole_phrase = false; // search for a phrase, not a part of something
+        bool case_sensitive = false;
     };
     
-    typedef bool (^FoundCallBack)(const char *_filename, const char *_in_path);
+    struct FilterSize {
+        uint64_t min = 0;
+        uint64_t max = numeric_limits<uint64_t>::max();
+    };
+    
+    typedef void (^FoundCallBack)(const char *_filename, const char *_in_path);
     typedef void (^FinishCallBack)();
     
     FileSearch();
@@ -49,6 +57,11 @@ public:
      * Can be nullptr, so just reset current if any.
      */
     void SetFilterContent(FilterContent *_filter);
+
+    /**
+     * Can be nullptr, so just reset current if any.
+     */
+    void SetFilterSize(FilterSize *_filter);
     
     /**
      * Returns immediately, run in background thread
@@ -70,7 +83,7 @@ private:
                        const VFSDirEnt &_dirent,
                        VFSHost *_in_host
                        );
-    bool ProcessValidEntry(const char* _full_path,
+    void ProcessValidEntry(const char* _full_path,
                            const char* _dir_path,
                            const VFSDirEnt &_dirent,
                            VFSHost *_in_host);
@@ -83,6 +96,7 @@ private:
     unique_ptr<FilterName>  m_FilterName;
     unique_ptr<FileMask>    m_FilterNameMask;
     unique_ptr<FilterContent> m_FilterContent;
+    unique_ptr<FilterSize>  m_FilterSize;
     
     
     FoundCallBack           m_Callback;

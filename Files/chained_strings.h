@@ -22,14 +22,18 @@ class chained_strings
     };
 
 public:
-    // #0 bytes offset
+    
+#pragma pack(1)
     struct node
     {
     private:
         friend class chained_strings;
 
-        char buf[buffer_length];   // #0
-        // UTF-8, including null-term. if .len >=buffer_length => (char**)&str[0] is a buffer from malloc for .len+1 bytes
+        union { // #0
+            char buf[buffer_length];
+            char *buf_ptr;
+        };
+        // UTF-8, including null-term. if .len >=buffer_length => buf_ptr is a buffer from malloc for .len+1 bytes
         
         unsigned short len; // #14
         // NB! not-including null-term (len for "abra" is 4, not 5!)
@@ -44,7 +48,8 @@ public:
         unsigned short size() const;
         void str_with_pref(char *_buf) const;
     }; // 24 bytes long
-    
+#pragma pack()
+
 private:
     struct block
     { // keep 'hot' data first
@@ -144,7 +149,5 @@ inline unsigned short chained_strings::node::size() const
 
 inline const char* chained_strings::node::c_str() const
 {
-    if(len < buffer_length)
-        return buf;
-    return *(const char**)(&buf[0]);
+    return len < buffer_length ? buf : buf_ptr;
 }

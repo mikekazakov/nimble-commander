@@ -17,7 +17,7 @@ namespace encodings
         static dispatch_once_t token = 0;
         dispatch_once(&token, ^{
             encodings = new vector< pair<int, CFStringRef> >;
-#define _(a, b) encodings->push_back( make_pair((a), (CFStringRef) (b) ))
+#define _(a, b) encodings->emplace_back(a, (CFStringRef)b)
             _(ENCODING_MACOS_ROMAN_WESTERN, @"Western (Mac OS Roman)");
             _(ENCODING_OEM866, @"OEM 866 (DOS)");
             _(ENCODING_WIN1251, @"Windows 1251");

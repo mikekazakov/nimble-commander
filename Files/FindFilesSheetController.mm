@@ -13,48 +13,150 @@
 #import "FileSearch.h"
 #import "Common.h"
 
+static const int g_MaximumSearchResults = 16384;
+
+namespace {
+    
 struct FoundItem
 {
-    string filename;
-    string dir_path;
+    string filename = "!";
+    string dir_path = "!!";
+    string full_filename;
     struct stat st;
 };
+    
+}
+
+@interface FindFilesSheetFoundItem : NSObject
+
+- (id) initWithFoundItem:(const FoundItem&)_item;
+@property NSString *location;
+@property NSString *filename;
+@property (readonly) uint64_t size;
+@property (readonly) uint64_t mdate;
+@end
+
+@implementation FindFilesSheetFoundItem
+{
+    FoundItem m_Data;
+    NSString *m_Location;
+    NSString *m_Filename;
+}
+
+@synthesize location = m_Location;
+@synthesize filename = m_Filename;
+
+- (id) initWithFoundItem:(const FoundItem&)_item
+{
+    self = [super init];
+    if(self) {
+        m_Data = _item;
+        m_Location = [NSString stringWithUTF8StdStringNoCopy:m_Data.dir_path];
+        m_Filename = [NSString stringWithUTF8StdStringNoCopy:m_Data.filename];
+    }
+    return self;
+}
+
+- (uint64_t) size {
+    return m_Data.st.st_size;
+}
+
+- (uint64_t) mdate {
+    return m_Data.st.st_mtimespec.tv_sec;
+}
+
+@end
+
+@interface FindFilesSheetSizeToStringTransformer : NSValueTransformer
+@end
+@implementation FindFilesSheetSizeToStringTransformer
++ (void) initialize
+{
+    [NSValueTransformer setValueTransformer:[[self alloc] init]
+                                    forName:NSStringFromClass(self.class)];
+}
++ (Class)transformedValueClass
+{
+	return [NSString class];
+}
+- (id)transformedValue:(id)value
+{
+    return (value == nil) ? nil : FormHumanReadableSizeRepresentation6([value unsignedLongLongValue]);
+}
+@end
+
+@interface FindFilesSheetTimeToStringTransformer : NSValueTransformer
+@end
+@implementation FindFilesSheetTimeToStringTransformer
++ (void) initialize
+{
+    [NSValueTransformer setValueTransformer:[[self alloc] init]
+                                    forName:NSStringFromClass(self.class)];
+}
++ (Class)transformedValueClass
+{
+	return [NSString class];
+}
+- (id)transformedValue:(id)value
+{
+    static NSDateFormatter *formatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formatter = [NSDateFormatter new];
+        [formatter setLocale:[NSLocale currentLocale]];
+        [formatter setDateStyle:NSDateFormatterShortStyle];	// short date
+    });
+    
+    if(value == nil)
+        return nil;
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[value unsignedLongLongValue]];
+    return [formatter stringFromDate:date];
+}
+@end
+
 
 @implementation FindFilesSheetController
 {
-    NSWindow *m_ParentWindow;
-    FindFilesSheetController *m_Self;
-    shared_ptr<VFSHost>     m_Host;
-    string                  m_Path;
+    NSWindow                   *m_ParentWindow;
+    FindFilesSheetController   *m_Self;
+    shared_ptr<VFSHost>         m_Host;
+    string                      m_Path;
+    unique_ptr<FileSearch>      m_FileSearch;
+    NSDateFormatter            *m_DateFormatter;
     
-    shared_ptr<FileSearch>  m_FileSearch;
+    NSMutableArray             *m_FoundItems;
     
-    deque<FoundItem>        m_FoundItems;
-    
-    NSDateFormatter         *m_DateFormatter;
+    NSMutableArray             *m_FoundItemsBatch;
+    NSTimer                    *m_BatchDrainTimer;
+    SerialQueue                 m_BatchQueue;
 }
+
+@synthesize FoundItems = m_FoundItems;
 
 - (id) init
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if(self){
-        m_FileSearch = make_shared<FileSearch>();
-        
-        m_DateFormatter = [NSDateFormatter new];
-        [m_DateFormatter setLocale:[NSLocale currentLocale]];
-        [m_DateFormatter setDateStyle:NSDateFormatterShortStyle];	// short date
-        
+        m_FileSearch.reset(new FileSearch);
+        m_FoundItems = [NSMutableArray new];
+        m_FoundItemsBatch = [NSMutableArray new];
+        m_BatchQueue = SerialQueueT::Make();
     }
     return self;
 }
 
-
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    self.TableView.ColumnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
+    [self.TableView sizeToFit];
     
-    self.TableView.delegate = self;
-    self.TableView.dataSource = self;
+    self.ArrayController.SortDescriptors = @[
+                                             [[NSSortDescriptor alloc] initWithKey:@"location" ascending:YES],
+                                             [[NSSortDescriptor alloc] initWithKey:@"filename" ascending:YES],
+                                             [[NSSortDescriptor alloc] initWithKey:@"size" ascending:YES],
+                                             [[NSSortDescriptor alloc] initWithKey:@"mdate" ascending:YES]
+                                             ];
 }
 
 - (void)ShowSheet:(NSWindow *)_window
@@ -83,14 +185,32 @@ struct FoundItem
 
 - (IBAction)OnClose:(id)sender
 {
-    // TODO: stop searching here and wait until search actually flushes it's backgroun thread
     m_FileSearch->Stop();
     m_FileSearch->Wait();
     [NSApp endSheet:[self window] returnCode:0];
 }
 
+- (void) OnFinishedSearch
+{
+    dispatch_to_main_queue(^{
+        self.SearchButton.state = NSOffState;
+
+        [self UpdateByTimer:m_BatchDrainTimer];
+        [m_BatchDrainTimer invalidate];
+        m_BatchDrainTimer = nil;
+    });
+}
+
 - (IBAction)OnSearch:(id)sender
-{    
+{
+    if(m_FileSearch->IsRunning()) {
+        m_FileSearch->Stop();
+        return;
+    }
+
+    NSRange range_all = NSMakeRange(0, [self.ArrayController.arrangedObjects count]);
+    [self.ArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
+    
     if([self.MaskTextField.stringValue isEqualToString:@""] == false &&
        [self.MaskTextField.stringValue isEqualToString:@"*"] == false)
     {
@@ -106,77 +226,93 @@ struct FoundItem
         FileSearch::FilterContent filter_content;
         filter_content.text = self.ContainingTextField.stringValue;
         filter_content.encoding = ENCODING_UTF8;
+        filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
+        filter_content.whole_phrase = self.WholePhraseButton.intValue;
         m_FileSearch->SetFilterContent(&filter_content);
     }
     else
         m_FileSearch->SetFilterContent(nullptr);
+    
+    if([self.SizeTextField.stringValue isEqualToString:@""] == false)
+    {
+        uint64_t value = self.SizeTextField.integerValue;
+        switch (self.SizeMetricPopUp.selectedTag) {
+            case 1: value *= 1024; break;
+            case 2: value *= 1024*1024; break;
+            case 3: value *= 1024*1024*1024; break;
+            default: break;
+        }
+        FileSearch::FilterSize filter_size;
+        if(self.SizeRelationPopUp.selectedTag == 0) // "≥"
+            filter_size.min = value;
+        else if(self.SizeRelationPopUp.selectedTag == 2) // "≤"
+            filter_size.max = value;
+        else if(self.SizeRelationPopUp.selectedTag == 1) // "="
+            filter_size.min = filter_size.max = value;
+        
+        m_FileSearch->SetFilterSize(&filter_size);        
+    }
+        else m_FileSearch->SetFilterSize(nullptr);
+    
         
     
-    m_FileSearch->Go(m_Path.c_str(),
-                     m_Host,
-                     FileSearch::Options::GoIntoSubDirs,
-                     ^bool(const char *_filename, const char *_in_path){
-                         FoundItem it;
-                         it.filename = _filename;
-                         it.dir_path = _in_path;
-                         memset(&it.st, 0, sizeof(it.st));
+    bool r = m_FileSearch->Go(m_Path.c_str(),
+                              m_Host,
+                              FileSearch::Options::GoIntoSubDirs,
+                              ^(const char *_filename, const char *_in_path){
+                                  FoundItem it;
+                                  it.filename = _filename;
+                                  it.dir_path = _in_path;
+                                  it.full_filename = it.dir_path;
+                                  if(it.full_filename.back() != '/') it.full_filename += '/';
+                                  it.full_filename += it.filename;
+                                  if(it.dir_path != "/" && it.dir_path.back() == '/') it.dir_path.pop_back();
+                                  
+                                  memset(&it.st, 0, sizeof(it.st));
                          
-                         // sync op - bad. better move it off the searching thread
-                         m_Host->Stat((it.dir_path + "/" + it.filename).c_str(),
-                                      it.st, 0, 0);
-                         
-                         m_FoundItems.emplace_back(it);
-                         
-
-                         NSIndexSet *rows = [NSIndexSet indexSetWithIndex:m_FoundItems.size()-1];
-                         
-                         dispatch_to_main_queue(^{
-                            [self.TableView insertRowsAtIndexes:rows
-                                                  withAnimation:NSTableViewAnimationEffectNone];
-                            });
-                         return true;
-                     },
-                     ^{}
-                     );
+                                  // sync op - bad. better move it off the searching thread
+                                  m_Host->Stat(it.full_filename.c_str(), it.st, 0, 0);
+                                  
+                                  FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:it];
+                                  
+                                  m_BatchQueue->Run(^{
+                                      [m_FoundItemsBatch addObject:item];
+                                    });
+                                  
+                                  if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
+                                      m_FileSearch->Stop(); // gorshochek, ne vari!!!
+                              },
+                              ^{
+                                  [self OnFinishedSearch];
+                              }
+                              );
+    if(r) {
+        self.SearchButton.state = NSOnState;
+        m_BatchDrainTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 // 0.2 sec update
+                                                             target:self
+                                                           selector:@selector(UpdateByTimer:)
+                                                           userInfo:nil
+                                                            repeats:YES];
+        [m_BatchDrainTimer SetSafeTolerance];
+    }
+    else {
+        self.SearchButton.state = NSOffState;
+    }
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (void) UpdateByTimer:(NSTimer*)theTimer
 {
-    return m_FoundItems.size();
+    m_BatchQueue->Run(^{
+        if(m_FoundItemsBatch.count == 0)
+            return;
+        
+        NSArray *temp = m_FoundItemsBatch;
+        m_FoundItemsBatch = [NSMutableArray new];
+        
+        dispatch_to_main_queue(^{
+            [self.ArrayController addObjects:temp];
+        });
+    });
 }
 
-- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
-{
-    if([tableColumn.identifier isEqualToString:@"ColName"]) {
-        NSTableCellView *result = [tableView makeViewWithIdentifier:@"ColName" owner:self];
-        result.textField.stringValue = [NSString stringWithUTF8String:m_FoundItems[row].filename.c_str()];
-        return result;
-    }
-    else if([tableColumn.identifier isEqualToString:@"ColPath"]) {
-        NSTableCellView *result = [tableView makeViewWithIdentifier:@"ColPath" owner:self];
-        result.textField.stringValue = [NSString stringWithUTF8String:m_FoundItems[row].dir_path.c_str()];
-        return result;
-    }
-    else if([tableColumn.identifier isEqualToString:@"ColSize"]) {
-        NSTableCellView *result = [tableView makeViewWithIdentifier:@"ColSize" owner:self];
-        result.textField.stringValue = FormHumanReadableSizeRepresentation6(m_FoundItems[row].st.st_size);
-        result.textField.alignment = NSRightTextAlignment;
-        return result;
-    }
-    else if([tableColumn.identifier isEqualToString:@"ColModif"]) {
-        NSTableCellView *result = [tableView makeViewWithIdentifier:@"ColModif" owner:self];
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:m_FoundItems[row].st.st_mtimespec.tv_sec];
-        result.textField.stringValue = [m_DateFormatter stringFromDate:date];
-        result.textField.alignment = NSCenterTextAlignment;
-        return result;
-    }
-    
-    return nil;
-}
-
-
-- (IBAction)OnStop:(id)sender
-{
-    m_FileSearch->Stop();    
-}
 @end

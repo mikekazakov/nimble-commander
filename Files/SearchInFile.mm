@@ -65,7 +65,7 @@ void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
 {
     if(m_RequestedTextSearch != 0)
         CFRelease(m_RequestedTextSearch);
-    m_RequestedTextSearch = _string;
+    m_RequestedTextSearch = CFStringCreateCopy(0, _string);
     m_TextSearchEncoding = _encoding;
     
     m_WorkMode = WorkMode::Text;

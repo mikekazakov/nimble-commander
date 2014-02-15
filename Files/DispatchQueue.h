@@ -69,6 +69,11 @@ public:
      */
     void OnChange( void (^_block)() );
     
+    /**
+     * Actually make_shared<SerialQueueT>().
+     */
+    inline static shared_ptr<SerialQueueT> Make() { return make_shared<SerialQueueT>(); };
+    
 private:
     SerialQueueT(const SerialQueueT&) = delete;
     void operator=(const SerialQueueT&) = delete;

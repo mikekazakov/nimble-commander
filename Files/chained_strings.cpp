@@ -49,7 +49,7 @@ chained_strings::~chained_strings()
         auto next = curr->next;
         for(int i = 0; i < curr->amount; ++i)
             if(curr->strings[i].len >= buffer_length)
-                free( *(char**)(&curr->strings[i].buf[0]) );
+                free(curr->strings[i].buf_ptr);
         free(curr);
         curr = next;
     }
@@ -94,7 +94,7 @@ void chained_strings::insert_into(block *_to, const char *_str, unsigned _len, c
     else {
         char *news = (char*)malloc(_len+1);
         memcpy(news, _str, _len+1);
-        *(char**)(&node.buf[0]) = news;
+        node.buf_ptr = news;
     }
     _to->amount++;
 }

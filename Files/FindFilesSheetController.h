@@ -19,13 +19,19 @@
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnSearch:(id)sender;
-- (IBAction)OnStop:(id)sender;
 
 @property (strong) IBOutlet NSButton *CloseButton;
 @property (strong) IBOutlet NSButton *SearchButton;
 @property (strong) IBOutlet NSTextField *MaskTextField;
 @property (strong) IBOutlet NSTextField *ContainingTextField;
 @property (strong) IBOutlet NSTableView *TableView;
+@property (strong) IBOutlet NSButton *CaseSensitiveButton;
+@property (strong) IBOutlet NSButton *WholePhraseButton;
 
+@property NSMutableArray *FoundItems;
+@property (strong) IBOutlet NSArrayController *ArrayController;
+@property (strong) IBOutlet NSPopUpButton *SizeRelationPopUp;
+@property (strong) IBOutlet NSTextField *SizeTextField;
+@property (strong) IBOutlet NSPopUpButton *SizeMetricPopUp;
 
 @end

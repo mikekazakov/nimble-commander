@@ -106,6 +106,9 @@ void FileSearch::AsyncProc(const char *_from_path, VFSHost *_in_host)
         _in_host->IterateDirectoryListing(path.c_str(),
                                       ^(const VFSDirEnt &_dirent)
                                       {
+                                          if(m_Queue->IsStopped())
+                                              return false;
+                                          
                                           string full_path = path;
                                           if(full_path.back() != '/') full_path += '/';
                                           full_path += _dirent.name;
@@ -127,6 +130,12 @@ void FileSearch::ProcessDirent(const char* _full_path,
                                )
 {
     bool failed_filtering = false;
+    
+    // Filter by being a directory
+    if(failed_filtering == false &&
+       _dirent.type == VFSDirEnt::Dir &&
+       (m_SearchOptions & Options::SearchForDirs) == 0 )
+        failed_filtering = true;
     
     // Filter by filename
     if(failed_filtering == false &&

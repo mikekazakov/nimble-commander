@@ -14,31 +14,21 @@
 #import "Common.h"
 
 static const int g_MaximumSearchResults = 16384;
-
-namespace {
     
-struct FoundItem
-{
-    string filename = "!";
-    string dir_path = "!!";
-    string full_filename;
-    struct stat st;
-};
-    
-}
-
 @interface FindFilesSheetFoundItem : NSObject
 
-- (id) initWithFoundItem:(const FoundItem&)_item;
+- (id) initWithFoundItem:(const FindFilesSheetControllerFoundItem&)_item;
+- (FindFilesSheetControllerFoundItem*) data;
 @property NSString *location;
 @property NSString *filename;
 @property (readonly) uint64_t size;
 @property (readonly) uint64_t mdate;
+
 @end
 
 @implementation FindFilesSheetFoundItem
 {
-    FoundItem m_Data;
+    FindFilesSheetControllerFoundItem m_Data;
     NSString *m_Location;
     NSString *m_Filename;
 }
@@ -46,7 +36,7 @@ struct FoundItem
 @synthesize location = m_Location;
 @synthesize filename = m_Filename;
 
-- (id) initWithFoundItem:(const FoundItem&)_item
+- (id) initWithFoundItem:(const FindFilesSheetControllerFoundItem&)_item
 {
     self = [super init];
     if(self) {
@@ -63,6 +53,10 @@ struct FoundItem
 
 - (uint64_t) mdate {
     return m_Data.st.st_mtimespec.tv_sec;
+}
+
+- (FindFilesSheetControllerFoundItem*) data {
+    return &m_Data;
 }
 
 @end
@@ -129,6 +123,9 @@ struct FoundItem
     NSMutableArray             *m_FoundItemsBatch;
     NSTimer                    *m_BatchDrainTimer;
     SerialQueue                 m_BatchQueue;
+    
+    FindFilesSheetFoundItem    *m_DoubleClickedItem;
+    void                        (^m_Handler)();
 }
 
 @synthesize FoundItems = m_FoundItems;
@@ -150,6 +147,8 @@ struct FoundItem
     [super windowDidLoad];
     self.TableView.ColumnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];
+    self.TableView.Target = self;
+    self.TableView.DoubleAction = @selector(doubleClick:);
     
     self.ArrayController.SortDescriptors = @[
                                              [[NSSortDescriptor alloc] initWithKey:@"location" ascending:YES],
@@ -157,23 +156,35 @@ struct FoundItem
                                              [[NSSortDescriptor alloc] initWithKey:@"size" ascending:YES],
                                              [[NSSortDescriptor alloc] initWithKey:@"mdate" ascending:YES]
                                              ];
+    
+    for(const auto &i: encodings::LiteralEncodingsList())
+    {
+        NSMenuItem *item = [NSMenuItem new];
+        item.Title = (__bridge NSString*)i.second;
+        item.tag = i.first;
+        [self.EncodingsPopUp.menu addItem:item];
+    }
+    [self.EncodingsPopUp selectItemWithTag:ENCODING_UTF8];
+    
+
+
 }
 
 - (void)ShowSheet:(NSWindow *)_window
           withVFS:(shared_ptr<VFSHost>) _host
-         fromPath:(string) _path;
+         fromPath:(string) _path
+          handler:(void(^)())_handler
 {
     m_ParentWindow = _window;
     m_Host = _host;
     m_Path = _path;
-    
+    m_Handler = _handler;
     m_Self = self;
-    [NSApp beginSheet: [self window]
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo: nil];
-    
+    [NSApp beginSheet:[self window]
+       modalForWindow:_window
+        modalDelegate:self
+       didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)
+          contextInfo:nil];
 }
 
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
@@ -188,6 +199,7 @@ struct FoundItem
     m_FileSearch->Stop();
     m_FileSearch->Wait();
     [NSApp endSheet:[self window] returnCode:0];
+    m_Handler();
 }
 
 - (void) OnFinishedSearch
@@ -225,7 +237,7 @@ struct FoundItem
     {
         FileSearch::FilterContent filter_content;
         filter_content.text = self.ContainingTextField.stringValue;
-        filter_content.encoding = ENCODING_UTF8;
+        filter_content.encoding = (int)self.EncodingsPopUp.selectedTag;
         filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
         filter_content.whole_phrase = self.WholePhraseButton.intValue;
         m_FileSearch->SetFilterContent(&filter_content);
@@ -255,12 +267,17 @@ struct FoundItem
         else m_FileSearch->SetFilterSize(nullptr);
     
         
+    int search_options = 0;
+    if(self.SearchInSubDirsButton.intValue)
+        search_options |= FileSearch::Options::GoIntoSubDirs;
+    if(self.SearchForDirsButton.intValue)
+        search_options |= FileSearch::Options::SearchForDirs;
     
     bool r = m_FileSearch->Go(m_Path.c_str(),
                               m_Host,
-                              FileSearch::Options::GoIntoSubDirs,
+                              search_options,
                               ^(const char *_filename, const char *_in_path){
-                                  FoundItem it;
+                                  FindFilesSheetControllerFoundItem it;
                                   it.filename = _filename;
                                   it.dir_path = _in_path;
                                   it.full_filename = it.dir_path;
@@ -313,6 +330,21 @@ struct FoundItem
             [self.ArrayController addObjects:temp];
         });
     });
+}
+
+- (FindFilesSheetControllerFoundItem*) SelectedItem
+{
+    if(m_DoubleClickedItem == nil)
+        return nullptr;
+    return m_DoubleClickedItem.data;
+}
+
+- (void)doubleClick:(id)table
+{
+    NSInteger row = [self.TableView clickedRow];
+    FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
+    m_DoubleClickedItem = item;
+    [self OnClose:self];
 }
 
 @end

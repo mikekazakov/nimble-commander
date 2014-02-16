@@ -90,6 +90,9 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
     if(m_File->FileSize() == 0)
         return Result::NotFound; // for singular case
     
+    if(m_File->FileSize() < encodings::BytesForCodeUnit(m_TextSearchEncoding))
+        return Result::NotFound; // for singular case
+    
     if(m_Position >= m_File->FileSize())
         return Result::EndOfFile; // when finished searching
     

@@ -146,6 +146,7 @@ namespace panel
 - (void) HandleFileView;            // F3
 - (void) HandleCalculateSizes;      // alt+shift+return
 - (void) HandleBriefSystemOverview; // cmd+L
+- (void) HandleFileSearch;
 
 - (void) ToggleSortingByName; // user pressed ctrl+F3 by default
 - (void) ToggleSortingByExt; // user pressed ctrl+F4 by default

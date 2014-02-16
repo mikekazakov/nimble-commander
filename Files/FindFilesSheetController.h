@@ -7,15 +7,24 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import <sys/stat.h>
 #import "VFS.h"
+
+struct FindFilesSheetControllerFoundItem
+{
+    string filename;
+    string dir_path;
+    string full_filename;
+    struct stat st;
+};
 
 @interface FindFilesSheetController : NSWindowController<NSTableViewDataSource, NSTableViewDelegate>
 
 
 - (void)ShowSheet:(NSWindow *) _window
           withVFS:(shared_ptr<VFSHost>) _host
-         fromPath:(string) _path;
+         fromPath:(string) _path
+          handler:(void(^)())_handler;
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnSearch:(id)sender;
@@ -33,5 +42,10 @@
 @property (strong) IBOutlet NSPopUpButton *SizeRelationPopUp;
 @property (strong) IBOutlet NSTextField *SizeTextField;
 @property (strong) IBOutlet NSPopUpButton *SizeMetricPopUp;
+@property (strong) IBOutlet NSButton *SearchForDirsButton;
+@property (strong) IBOutlet NSButton *SearchInSubDirsButton;
+@property (strong) IBOutlet NSPopUpButton *EncodingsPopUp;
+
+- (FindFilesSheetControllerFoundItem*) SelectedItem; // may be nullptr
 
 @end

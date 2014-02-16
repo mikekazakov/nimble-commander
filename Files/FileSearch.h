@@ -21,9 +21,8 @@ class FileSearch
 public:
     struct Options {
         enum {
-            GoIntoSubDirs = 0x0001
-            
-            
+            GoIntoSubDirs = 0x0001,
+            SearchForDirs = 0x0002  
         };
     };
     

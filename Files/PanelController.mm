@@ -772,19 +772,6 @@ void panel::GenericCursorPersistance::Restore()
         }
     }
     
-    if(keycode == 3 ) { // 'F' button
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
-        {
-            FindFilesSheetController *sheet = [FindFilesSheetController new];
-            [sheet ShowSheet:self.state.window
-                     withVFS:self.GetCurrentVFSHost
-                    fromPath:self.GetCurrentDirectoryPathRelativeToHost
-             ];
-        }
-    }
-
-    
-    
     // handle RETURN manually, to prevent annoying by menu highlighting by hotkey
     if(unicode == NSCarriageReturnCharacter) {
         NSUInteger modif = [event modifierFlags] & NSDeviceIndependentModifierFlagsMask;
@@ -1058,6 +1045,23 @@ void panel::GenericCursorPersistance::Restore()
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos
 {
     [self HandleReturnButton];
+}
+
+- (void) HandleFileSearch
+{
+    FindFilesSheetController *sheet = [FindFilesSheetController new];
+    [sheet ShowSheet:((MainWindowFilePanelState*)self.state).window
+             withVFS:self.GetCurrentVFSHost
+            fromPath:self.GetCurrentDirectoryPathRelativeToHost
+             handler:^{
+                 if(sheet.SelectedItem != nullptr)
+                 {
+                     auto item = sheet.SelectedItem;
+                     [self GoToRelativeToHostAsync:item->dir_path.c_str()
+                                      select_entry:item->filename.c_str()];
+                 }
+             }
+     ];
 }
 
 @end

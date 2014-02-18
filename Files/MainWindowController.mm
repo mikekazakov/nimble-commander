@@ -112,14 +112,6 @@
             [i DidBecomeKeyWindow];
 }
 
-- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
-{
-    if([m_WindowState.back() respondsToSelector:@selector(window:willPositionSheet:usingRect:)])
-        return [m_WindowState.back() window:window willPositionSheet:sheet usingRect:rect];
-        
-    return rect;
-}
-
 - (void)windowWillBeginSheet:(NSNotification *)notification
 {
     for(auto i: m_WindowState)

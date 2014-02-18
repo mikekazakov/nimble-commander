@@ -141,4 +141,12 @@
     [self.ActivePanelController HandleFileSearch];
 }
 
+- (IBAction)OnEjectVolume:(id)sender
+{
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
+    
+    [self.ActivePanelController HandleEjectVolume];    
+}
+
 @end

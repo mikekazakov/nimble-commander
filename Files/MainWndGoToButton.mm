@@ -110,6 +110,8 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     vector<AdditionalPath> m_OtherPanelsPaths;
     
     NSString *m_CurrentPath;
+    NSPoint   m_AnchorPoint;
+    bool      m_IsRight;
 
     __weak MainWindowFilePanelState *m_Owner;
 }
@@ -319,6 +321,32 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
 {
     for(NSMenuItem* i in [[self menu] itemArray])
         [i setKeyEquivalent:@""];
+}
+
+- (NSRect)confinementRectForMenu:(NSMenu *)menu onScreen:(NSScreen *)screen
+{
+    if(self.window != nil)
+        return NSZeroRect;
+    
+    NSSize sz = self.menu.size;
+    
+    if([(MainWindowFilePanelState*)m_Owner window].styleMask & NSFullScreenWindowMask)
+        sz.height += 4; // some extra room to ensure that there will be no scrolling
+    
+    NSRect rc = NSMakeRect(m_AnchorPoint.x,
+                           m_AnchorPoint.y - sz.height,
+                           sz.width,
+                           sz.height);
+    if(m_IsRight)
+        rc.origin.x -= sz.width;
+    
+    return rc;
+}
+
+- (void) SetAnchorPoint: (NSPoint)_point IsRight:(bool) _is_right
+{
+    m_AnchorPoint = _point;
+    m_IsRight = _is_right;
 }
 
 @end

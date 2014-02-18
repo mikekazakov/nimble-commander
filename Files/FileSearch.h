@@ -32,8 +32,8 @@ public:
     
     struct FilterContent {
         NSString *text;
-        int encoding = ENCODING_UTF8;
-        bool whole_phrase = false; // search for a phrase, not a part of something
+        int encoding        = ENCODING_UTF8;
+        bool whole_phrase   = false; // search for a phrase, not a part of something
         bool case_sensitive = false;
     };
     
@@ -63,7 +63,7 @@ public:
     void SetFilterSize(FilterSize *_filter);
     
     /**
-     * Returns immediately, run in background thread
+     * Returns immediately, run in background thread. Options is a bitfield with bits from Options:: enum.
      */
     bool Go(string _from_path,
             shared_ptr<VFSHost> _in_host,
@@ -71,9 +71,22 @@ public:
             FoundCallBack _found_callback,
             FinishCallBack _finish_callback
             );
+    
+    /**
+     * Singals to a working thread that it should stop. Returns immediately.
+     */
     void Stop();
+    
+    /**
+     *
+     */
     void Wait();
+    
+    /**
+     * Shows if search for files is currently performing by this object.
+     */
     bool IsRunning() const;
+    
 private:
     void AsyncProcPrologue(string _from_path, shared_ptr<VFSHost> _in_host);
     void AsyncProc(const char* _from_path, VFSHost *_in_host);

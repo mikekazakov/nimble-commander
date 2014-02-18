@@ -33,7 +33,6 @@
 #import "FileLinkAlterSymlinkSheetController.h"
 #import "FileLinkNewHardlinkSheetController.h"
 #import "FileLinkOperation.h"
-#import "StackOfDisappearingWidgets.h"
 #import "SelectionWithMaskSheetController.h"
 #import "VFS.h"
 #import "FilePanelMainSplitView.h"
@@ -69,14 +68,13 @@
     m_RightPanelController = [PanelController new];
     
     [self CreateControls];
-    [m_OpSummaryController AddViewTo:m_OpSummaryBox];
     
     // panel creation and preparation
     m_LeftPanelController.state = self;
-    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton share:m_LeftPanelShareButton];
+    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
 
     m_RightPanelController.state = self;
-    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton share:m_RightPanelShareButton];
+    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
 
     m_Skin = ((AppDelegate*)[NSApplication sharedApplication].delegate).Skin;
     if (m_Skin == ApplicationSkin::Modern)
@@ -118,120 +116,62 @@
     m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
     [m_MainSplitView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_MainSplitView SetBasicViews:m_LeftPanelController.View second:m_RightPanelController.View];
-    [self addSubview:m_MainSplitView];    
+    [self addSubview:m_MainSplitView];
     
-    m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 23)];
     [m_LeftPanelGoToButton setTarget:self];
     [m_LeftPanelGoToButton setAction:@selector(LeftPanelGoToButtonAction:)];
-    [m_LeftPanelGoToButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_LeftPanelGoToButton SetOwner:self];
-    [self addSubview:m_LeftPanelGoToButton];
-
-    m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    
+    m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 23)];
     [m_RightPanelGoToButton setTarget:self];
     [m_RightPanelGoToButton setAction:@selector(RightPanelGoToButtonAction:)];
-    [m_RightPanelGoToButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_RightPanelGoToButton SetOwner:self];
-    [self addSubview:m_RightPanelGoToButton];
-
-    m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    [m_LeftPanelSpinningIndicator setIndeterminate:YES];
-    [m_LeftPanelSpinningIndicator setStyle:NSProgressIndicatorSpinningStyle];
-    [m_LeftPanelSpinningIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_LeftPanelSpinningIndicator setControlSize:NSSmallControlSize];
-    [m_LeftPanelSpinningIndicator setDisplayedWhenStopped:NO];
-    [self addSubview:m_LeftPanelSpinningIndicator];
-
-    m_RightPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    [m_RightPanelSpinningIndicator setIndeterminate:YES];
-    [m_RightPanelSpinningIndicator setStyle:NSProgressIndicatorSpinningStyle];
-    [m_RightPanelSpinningIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_RightPanelSpinningIndicator setControlSize:NSSmallControlSize];
-    [m_RightPanelSpinningIndicator setDisplayedWhenStopped:NO];
-    [self addSubview:m_RightPanelSpinningIndicator];
-    
-    NSImage *eject_icon = [NSImage imageNamed:@"eject_icon.png"];
-    [eject_icon setTemplate:true];
-    
-    m_LeftPanelEjectButton = [[NSButton alloc] initWithFrame:NSRect()];
-    [m_LeftPanelEjectButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_LeftPanelEjectButton setImagePosition:NSImageOnly];
-    [m_LeftPanelEjectButton setImage:eject_icon];
-    [m_LeftPanelEjectButton setShowsBorderOnlyWhileMouseInside:YES];
-    [m_LeftPanelEjectButton setBezelStyle:NSRecessedBezelStyle];
-    [self addSubview:m_LeftPanelEjectButton];
-
-    m_RightPanelEjectButton = [[NSButton alloc] initWithFrame:NSRect()];
-    [m_RightPanelEjectButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_RightPanelEjectButton setImagePosition:NSImageOnly];
-    [m_RightPanelEjectButton setImage:eject_icon];
-    [m_RightPanelEjectButton setShowsBorderOnlyWhileMouseInside:YES];
-    [m_RightPanelEjectButton setBezelStyle:NSRecessedBezelStyle];
-    [self addSubview:m_RightPanelEjectButton];
     
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
     {
-        m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSRect()];
-        [m_LeftPanelShareButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+        m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
         [m_LeftPanelShareButton setBezelStyle:NSTexturedRoundedBezelStyle];
         [m_LeftPanelShareButton setImage:[NSImage imageNamed:NSImageNameShareTemplate]];
         [m_LeftPanelShareButton sendActionOn:NSLeftMouseDownMask];
-        [self addSubview:m_LeftPanelShareButton];
-
-        m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSRect()];
-        [m_RightPanelShareButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+        m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
         [m_RightPanelShareButton setBezelStyle:NSTexturedRoundedBezelStyle];
         [m_RightPanelShareButton setImage:[NSImage imageNamed:NSImageNameShareTemplate]];
         [m_RightPanelShareButton sendActionOn:NSLeftMouseDownMask];
-        [self addSubview:m_RightPanelShareButton];
     }
     
+    m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
+    [m_LeftPanelSpinningIndicator setIndeterminate:YES];
+    [m_LeftPanelSpinningIndicator setStyle:NSProgressIndicatorSpinningStyle];
+    [m_LeftPanelSpinningIndicator setControlSize:NSSmallControlSize];
+    [m_LeftPanelSpinningIndicator setDisplayedWhenStopped:NO];
+    
+    m_RightPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
+    [m_RightPanelSpinningIndicator setIndeterminate:YES];
+    [m_RightPanelSpinningIndicator setStyle:NSProgressIndicatorSpinningStyle];
+    [m_RightPanelSpinningIndicator setControlSize:NSSmallControlSize];
+    [m_RightPanelSpinningIndicator setDisplayedWhenStopped:NO];
+    
     m_OpSummaryBox = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 350, 40)];
-    [m_OpSummaryBox setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self addSubview:m_OpSummaryBox];
+    [m_OpSummaryController AddViewTo:m_OpSummaryBox];    
     
-    m_SheetAnchorLine = [[NSBox alloc] initWithFrame:NSRect()];
-    [m_SheetAnchorLine setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_SheetAnchorLine setBoxType:NSBoxSeparator];
-    [self addSubview:m_SheetAnchorLine];
+    NSBox *line = [[NSBox alloc] initWithFrame:NSRect()];
+    [line setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [line setBoxType:NSBoxSeparator];
+    [self addSubview:line];
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_LeftPanelGoToButton, m_RightPanelGoToButton, m_OpSummaryBox, m_SheetAnchorLine, m_MainSplitView);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(45)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
+    NSDictionary *views = NSDictionaryOfVariableBindings(/*m_LeftPanelGoToButton, m_RightPanelGoToButton, m_OpSummaryBox, */line, m_MainSplitView);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(1)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SheetAnchorLine]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==44)-[m_SheetAnchorLine(<=1)]" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(10)-[m_LeftPanelGoToButton(61)]" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(10)-[m_LeftPanelGoToButton(22)]" options:0 metrics:nil views:views]];
-
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_RightPanelGoToButton(61)]-(10)-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(10)-[m_RightPanelGoToButton(22)]" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[line]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[line(<=1)]" options:0 metrics:nil views:views]];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_OpSummaryBox(40)]" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_OpSummaryBox(350)]" options:0 metrics:nil views:views]];    
-    [self addConstraint: [NSLayoutConstraint constraintWithItem:m_OpSummaryBox
-                                                      attribute:NSLayoutAttributeCenterX
-                                                      relatedBy:NSLayoutRelationEqual
-                                                         toItem:m_OpSummaryBox.superview
-                                                      attribute:NSLayoutAttributeCenterX
-                                                     multiplier:1.f constant:0.f]];
-    
-    m_LeftStack = [[StackOfDisappearingWidgets alloc] initWithOrientation:StackOfDisappearingWidgetsOrientation::LeftToRight
-                                                               AnchorView:m_LeftPanelGoToButton
-                                                                SuperView:self];
-    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
-        [m_LeftStack AddWidget:m_LeftPanelShareButton];
-    [m_LeftStack AddWidget:m_LeftPanelEjectButton];
-    [m_LeftStack AddWidget:m_LeftPanelSpinningIndicator];
-    [m_LeftStack Done];
-    
-    m_RightStack = [[StackOfDisappearingWidgets alloc] initWithOrientation:StackOfDisappearingWidgetsOrientation::RightToLeft
-                                                               AnchorView:m_RightPanelGoToButton
-                                                                SuperView:self];
-    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
-        [m_RightStack AddWidget:m_RightPanelShareButton];
-    [m_RightStack AddWidget:m_RightPanelEjectButton];
-    [m_RightStack AddWidget:m_RightPanelSpinningIndicator];
-    [m_RightStack Done];
+    m_Toolbar = [[NSToolbar alloc] initWithIdentifier:@"filepanels_toolbar"];
+    m_Toolbar.delegate = self;
+    m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
+    m_Toolbar.autosavesConfiguration = true;
+    m_Toolbar.showsBaselineSeparator = false;
 }
 
 - (NSView*) ContentView
@@ -241,6 +181,8 @@
 
 - (void) Assigned
 {
+    self.window.Toolbar = m_Toolbar;
+
     [self UpdateTitle];
     [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]
                              returnTypes:[NSArray arrayWithObjects:nil]];
@@ -294,9 +236,6 @@
 
 - (void) Resigned
 {
-    // to cut reference cycle
-    m_LeftStack = nil;
-    m_RightStack = nil;
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{
@@ -310,10 +249,18 @@
 }
 
 - (IBAction)LeftPanelGoto:(id)sender{
+    NSPoint p = NSMakePoint(0, self.frame.size.height);
+    p = [self convertPoint:p toView:nil];
+    p = [self.window convertBaseToScreen:p];
+    [m_LeftPanelGoToButton SetAnchorPoint:p IsRight:false];
     [m_LeftPanelGoToButton performClick:self];
 }
 
 - (IBAction)RightPanelGoto:(id)sender{
+    NSPoint p = NSMakePoint(self.frame.size.width, self.frame.size.height);
+    p = [self convertPoint:p toView:nil];
+    p = [self.window convertBaseToScreen:p];
+    [m_RightPanelGoToButton SetAnchorPoint:p IsRight:true];
     [m_RightPanelGoToButton performClick:self];
 }
 
@@ -585,8 +532,8 @@
     else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
     [m_MainSplitView SwapViews];
     
-    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator eject:m_LeftPanelEjectButton share:m_LeftPanelShareButton];
-    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator eject:m_RightPanelEjectButton share:m_RightPanelShareButton];
+    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
     
     [self SavePanelsSettings];
 }
@@ -1091,15 +1038,6 @@
 - (void)WindowDidEndSheet
 {
     [m_OpSummaryController OnWindowEndSheet];
-}
-
-- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
-{
-    // TODO: refactor me (?)
-    NSRect field_rect = [m_SheetAnchorLine frame];
-    field_rect.origin.y += 2;
-    field_rect.size.height = 0;
-    return field_rect;
 }
 
 - (void)OnApplicationWillTerminate

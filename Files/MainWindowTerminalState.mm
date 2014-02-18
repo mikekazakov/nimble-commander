@@ -81,6 +81,8 @@
 
 - (void) Assigned
 {
+    self.window.Toolbar = nil;
+    
     // need right CWD here
     if(m_Task->State() == TermTask::StateInactive)
         m_Task->Launch(m_InitalWD, m_Screen->Width(), m_Screen->Height());

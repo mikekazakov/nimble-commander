@@ -100,7 +100,6 @@ namespace panel
     // BriefSystemOverview support
     __weak BriefSystemOverview* m_BriefSystemOverview;
     
-    NSButton            *m_EjectButton;
     NSButton            *m_ShareButton;
     
     // delayed entry selection support
@@ -127,7 +126,6 @@ namespace panel
 
 // CONFIGURATION METHODS /////////////////////////////////////////////
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
-                    eject:(NSButton*)_eject
                     share:(NSButton*)_share;
 //////////////////////////////////////////////////////////////////////
 
@@ -147,6 +145,7 @@ namespace panel
 - (void) HandleCalculateSizes;      // alt+shift+return
 - (void) HandleBriefSystemOverview; // cmd+L
 - (void) HandleFileSearch;
+- (void) HandleEjectVolume;
 
 - (void) ToggleSortingByName; // user pressed ctrl+F3 by default
 - (void) ToggleSortingByExt; // user pressed ctrl+F4 by default

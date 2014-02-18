@@ -31,28 +31,23 @@ static int FileWindowSize()
 
 @implementation MainWindowBigFileViewState
 {
-    FileWindow  *m_FileWindow;
-    FileWindow  *m_SearchFileWindow;
-    SearchInFile *m_SearchInFile;
+    unique_ptr<FileWindow> m_FileWindow;
+    unique_ptr<FileWindow> m_SearchFileWindow;
+    unique_ptr<SearchInFile> m_SearchInFile;
     SerialQueue m_SearchInFileQueue;
     
     BigFileView *m_View;
     NSPopUpButton *m_EncodingSelect;
     NSButton    *m_WordWrap;
     NSPopUpButton *m_ModeSelect;
-    NSTextField *m_FileSize;
     NSTextField *m_ScrollPosition;
 
     NSSearchField *m_SearchField;
     NSProgressIndicator *m_SearchIndicator;
     NSTextField   *m_SearchResult;
-    bool           m_IsStopSearching;
-    bool           m_IsSearchRunning;
 
     char        m_FilePath[MAXPATHLEN];
     char        m_GlobalFilePath[MAXPATHLEN*8];
-    
-
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -60,8 +55,6 @@ static int FileWindowSize()
     self = [super initWithFrame:frameRect];
     if(self)
     {        
-        m_IsStopSearching = false;
-        m_IsSearchRunning = false;
         m_SearchInFileQueue = make_shared<SerialQueueT>();
         [self CreateControls];
     }
@@ -70,24 +63,10 @@ static int FileWindowSize()
 
 - (void) dealloc
 {
-    if(m_SearchInFile != 0)
-    {
-        delete m_SearchInFile;
-    }    
-    if(m_FileWindow != 0)
-    {
-        if(m_FileWindow->FileOpened())
-            m_FileWindow->CloseFile();
-        delete m_FileWindow;
-        m_FileWindow = 0;
-    }
-    if(m_SearchFileWindow != 0)
-    {
-        if(m_SearchFileWindow->FileOpened())
-            m_SearchFileWindow->CloseFile();
-        delete m_SearchFileWindow;
-        m_SearchFileWindow = 0;
-    }
+    if(m_FileWindow && m_FileWindow->FileOpened())
+        m_FileWindow->CloseFile();
+    if(m_SearchFileWindow && m_SearchFileWindow->FileOpened())
+        m_SearchFileWindow->CloseFile();
 }
 
 - (NSView*) ContentView
@@ -97,6 +76,18 @@ static int FileWindowSize()
 
 - (void) Assigned
 {
+    NSToolbar *old_toolbar = self.window.toolbar;
+    
+    NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"bigfileview_toolbar"];
+    toolbar.delegate = self;
+    toolbar.displayMode = NSToolbarDisplayModeIconOnly;
+    toolbar.autosavesConfiguration = true;
+    toolbar.showsBaselineSeparator = true;
+    if(old_toolbar != nil)
+        toolbar.Visible = old_toolbar.isVisible;
+    
+    self.window.Toolbar = toolbar;
+    
     [self.window makeFirstResponder:m_View];
     [self UpdateTitle];    
 }
@@ -107,8 +98,76 @@ static int FileWindowSize()
     
     [m_View SetDelegate:nil];
     [m_View DoClose];
-    m_IsStopSearching = true;
+    m_SearchInFileQueue->Stop();
+    m_SearchInFileQueue->Wait();
 }
+
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
+     itemForItemIdentifier:(NSString *)itemIdentifier
+ willBeInsertedIntoToolbar:(BOOL)flag
+{
+    if([itemIdentifier isEqualToString:@"bigfileview_encoding"]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        item.view = m_EncodingSelect;
+        return item;
+    }
+    
+    if([itemIdentifier isEqualToString:@"bigfileview_texthex"]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        item.view = m_ModeSelect;
+        return item;
+    }
+    
+    if([itemIdentifier isEqualToString:@"bigfileview_wordwrap"]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        item.view = m_WordWrap;
+        return item;
+    }
+    
+    if([itemIdentifier isEqualToString:@"bigfileview_filepos"]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        item.view = m_ScrollPosition;
+        return item;
+    }
+    
+    if([itemIdentifier isEqualToString:@"bigfileview_search"]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        item.view = m_SearchField;
+        return item;
+    }
+    
+    if([itemIdentifier isEqualToString:@"bigfileview_search_indicator"]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        item.view = m_SearchIndicator;
+        return item;
+    }
+
+    if([itemIdentifier isEqualToString:@"bigfileview_search_result"]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        item.view = m_SearchResult;
+        return item;
+    }
+    
+    return nil;
+}
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
+{
+    return [self toolbarAllowedItemIdentifiers:toolbar];
+}
+
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
+{
+    return @[ @"bigfileview_encoding",
+                  @"bigfileview_texthex",
+                  @"bigfileview_wordwrap",
+                  @"bigfileview_filepos",
+                  NSToolbarFlexibleSpaceItemIdentifier,
+                  @"bigfileview_search_result",
+                  @"bigfileview_search_indicator",
+                  @"bigfileview_search"];
+}
+
 
 - (void) UpdateTitle
 {
@@ -158,18 +217,15 @@ static int FileWindowSize()
         {
             if(m_FileWindow->FileOpened())
                 m_FileWindow->CloseFile();
-            delete m_FileWindow;
-            m_FileWindow = 0;
         }
         
-        m_FileWindow = fw;
-        m_SearchFileWindow = new FileWindow;
+        m_FileWindow.reset(fw);
+        m_SearchFileWindow.reset(new FileWindow);
         m_SearchFileWindow->OpenFile(vfsfile);
-        m_SearchInFile = new SearchInFile(m_SearchFileWindow);
+        m_SearchInFile.reset(new SearchInFile(m_SearchFileWindow.get()));
         m_SearchInFile->SetSearchOptions(
                                          ([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewCaseSensitiveSearch"] ? SearchInFile::OptionCaseSensitive : 0) |
                                          ([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewWholePhraseSearch"]   ? SearchInFile::OptionFindWholePhrase : 0) );
-        
         
         strcpy(m_FilePath, _fn);
         vfsfile->ComposeFullHostsPath(m_GlobalFilePath);
@@ -180,9 +236,9 @@ static int FileWindowSize()
         {
             BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
             if(options.encoding && options.mode)
-                [m_View SetKnownFile:m_FileWindow encoding:info->encoding mode:info->view_mode];
+                [m_View SetKnownFile:m_FileWindow.get() encoding:info->encoding mode:info->view_mode];
             else {
-                [m_View SetFile:m_FileWindow];
+                [m_View SetFile:m_FileWindow.get()];
                 if(options.encoding) [m_View SetEncoding:info->encoding];
                 if(options.mode) [m_View SetMode:info->view_mode];
             }
@@ -192,7 +248,7 @@ static int FileWindowSize()
             if(options.selection)[m_View SetSelectionInFile:info->selection];
         }
         else
-            [m_View SetFile:m_FileWindow];
+            [m_View SetFile:m_FileWindow.get()];
         
         // update UI
         [self SelectEncodingFromView];
@@ -218,16 +274,13 @@ static int FileWindowSize()
     [m_View SetDelegate:self];
     [self addSubview:m_View];
     
-    m_EncodingSelect = [[NSPopUpButton alloc] initWithFrame:NSRect()];
-    [m_EncodingSelect setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_EncodingSelect = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 120, 20)];
     [(NSPopUpButtonCell*)[m_EncodingSelect cell] setControlSize:NSSmallControlSize];
     [m_EncodingSelect setTarget:self];
     [m_EncodingSelect setAction:@selector(SelectedEncoding:)];
     [m_EncodingSelect setFont:[NSFont menuFontOfSize:10]];
-    [self addSubview:m_EncodingSelect];
     
-    m_ModeSelect = [[NSPopUpButton alloc] initWithFrame:NSRect()];
-    [m_ModeSelect setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_ModeSelect = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 20)];
     [(NSPopUpButtonCell*)[m_ModeSelect cell] setControlSize:NSSmallControlSize];
     [m_ModeSelect setTarget:self];
     [m_ModeSelect setAction:@selector(SelectMode:)];
@@ -236,24 +289,21 @@ static int FileWindowSize()
     [m_ModeSelect setFont:[NSFont menuFontOfSize:10]];
     [self addSubview:m_ModeSelect];
     
-    m_WordWrap = [[NSButton alloc] initWithFrame:NSRect()];
-    [m_WordWrap setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_WordWrap = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 80, 20)];
     [[m_WordWrap cell] setControlSize:NSSmallControlSize];
     [m_WordWrap setButtonType:NSSwitchButton];
     [m_WordWrap setTitle:@"Word wrap"];
     [m_WordWrap setTarget:self];
     [m_WordWrap setAction:@selector(WordWrapChanged:)];
-    [self addSubview:m_WordWrap];
+    [m_WordWrap setFont:[NSFont menuFontOfSize:10]];
     
-    m_ScrollPosition = [[NSTextField alloc] initWithFrame:NSRect()];
-    [m_ScrollPosition setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_ScrollPosition = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 80, 12)];
     [m_ScrollPosition setEditable:false];
     [m_ScrollPosition setBordered:false];
     [m_ScrollPosition setDrawsBackground:false];
-    [self addSubview:m_ScrollPosition];
+    [m_ScrollPosition setFont:[NSFont menuFontOfSize:10]];
     
-    m_SearchField = [[NSSearchField alloc]initWithFrame:NSRect()];
-    [m_SearchField setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_SearchField = [[NSSearchField alloc]initWithFrame:NSMakeRect(0, 0, 200, 20)];
     [m_SearchField setTarget:self];
     [m_SearchField setAction:@selector(UpdateSearchFilter:)];
     [[m_SearchField cell] setPlaceholderString:@"Search in file"];
@@ -261,41 +311,22 @@ static int FileWindowSize()
     [[m_SearchField cell] setRecentsAutosaveName:@"BigFileViewRecentSearches"];
     [[m_SearchField cell] setMaximumRecents:20];
     [[m_SearchField cell] setSearchMenuTemplate:[self BuildSearchMenu]];
-    [self addSubview:m_SearchField];
     
-    m_SearchIndicator = [[NSProgressIndicator alloc] initWithFrame:NSRect()];
+    m_SearchIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
     [m_SearchIndicator setIndeterminate:YES];
     [m_SearchIndicator setStyle:NSProgressIndicatorSpinningStyle];
-    [m_SearchIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_SearchIndicator setControlSize:NSSmallControlSize];
     [m_SearchIndicator setDisplayedWhenStopped:NO];
-    [self addSubview:m_SearchIndicator];
     
-    m_SearchResult = [[NSTextField alloc] initWithFrame:NSRect()];
-    [m_SearchResult setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_SearchResult = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 80, 20)];
     [m_SearchResult setEditable:false];
     [m_SearchResult setBordered:false];
     [m_SearchResult setDrawsBackground:false];
     [m_SearchResult setStringValue:@""];
-    [self addSubview:m_SearchResult];
-        
-    NSBox *line = [[NSBox alloc] initWithFrame:NSRect()];
-    [line setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [line setBoxType:NSBoxSeparator];
-    [self addSubview:line];
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_EncodingSelect, m_WordWrap, m_ModeSelect, m_ScrollPosition, m_SearchField, m_SearchIndicator, m_SearchResult, line);
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_View);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[line]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                          @"|-[m_EncodingSelect]-[m_ModeSelect]-[m_WordWrap]-[m_ScrollPosition]"
-                                                                 options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchIndicator]-[m_SearchField(200)]-|"
-                                                                 options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_SearchResult]-[m_SearchField]"
-                                                                 options:NSLayoutFormatAlignAllCenterY metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_SearchField]" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[m_EncodingSelect(18)]-[line(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
     
     for(const auto &i: encodings::LiteralEncodingsList())
         [m_EncodingSelect addItemWithTitle: (__bridge NSString*)i.second];
@@ -356,15 +387,15 @@ static int FileWindowSize()
 
 - (void) BigFileViewScrolled
 {
-    NSString *s = [NSString stringWithFormat:@"%zub %.0f%%",
-                   m_FileWindow->FileSize(),
+    NSString *s = [NSString stringWithFormat:@"%@  %.0f%%",
+                   FormHumanReadableSizeRepresentation6(m_FileWindow->FileSize()),
                    [m_View VerticalScrollPosition]*100.];
     [m_ScrollPosition setStringValue:s];
 }
 
 - (void) BigFileViewScrolledByUser
 {
-    m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);     
+    m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);
 }
 
 - (void)UpdateSearchFilter:sender
@@ -372,7 +403,7 @@ static int FileWindowSize()
     NSString *str = [m_SearchField stringValue];
     if([str length] == 0)
     {
-        m_IsStopSearching = true; // we should stop current search if any
+        m_SearchInFileQueue->Stop(); // we should stop current search if any
         [m_SearchResult setStringValue:@""];
         [m_View SetSelectionInFile:CFRangeMake(-1, 0)];
         return;
@@ -388,30 +419,28 @@ static int FileWindowSize()
         uint64_t view_offset = [m_View VerticalPositionInBytes];
         int encoding = [m_View Enconding];
         
-        m_IsStopSearching = true; // we should stop current search if any
+        m_SearchInFileQueue->Stop(); // we should stop current search if any
+        m_SearchInFileQueue->Wait();
         m_SearchInFileQueue->Run(^{
-            m_IsStopSearching = false;
-            
             m_SearchInFile->MoveCurrentPosition(view_offset);
             m_SearchInFile->ToggleTextSearch((__bridge CFStringRef)str, encoding);
         });
     }
     else
     { // request is the same
-        if(m_IsSearchRunning)
+        if(!m_SearchInFileQueue->Empty())
             return; // we're already performing this request now, nothing to do
     }
     
     m_SearchInFileQueue->Run(^{
-        m_IsStopSearching = false;
         uint64_t offset, len;
         
         if(m_SearchInFile->IsEOF())
             m_SearchInFile->MoveCurrentPosition(0);
         
-        dispatch_to_main_queue( ^{[self NotifySearching:true];});
-        auto result = m_SearchInFile->Search(&offset, &len, ^{return m_IsStopSearching;});
-        dispatch_to_main_queue( ^{[self NotifySearching:false];});
+        dispatch_to_main_queue( ^{[self NotifySearching];});
+        auto result = m_SearchInFile->Search(&offset, &len, ^{return m_SearchInFileQueue->IsStopped();});
+        dispatch_to_main_queue( ^{[self NotifySearching];});
         
         if(result == SearchInFile::Result::Found)
             dispatch_to_main_queue( ^{
@@ -426,16 +455,13 @@ static int FileWindowSize()
     });
 }
 
-- (void)NotifySearching: (bool) _is_running
+- (void)NotifySearching
 {
-    if(m_IsSearchRunning == _is_running)
-        return;
-    m_IsSearchRunning = _is_running;
     const auto visual_spinning_delay = 100ull; // should be 100 ms of workload before user will get spinning indicator
     
-    if(m_IsSearchRunning)
+    if(!m_SearchInFileQueue->Empty())
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, visual_spinning_delay * USEC_PER_SEC), dispatch_get_main_queue(), ^{
-                           if(m_IsSearchRunning) // need to check if task was already done
+                           if(!m_SearchInFileQueue->Empty()) // need to check if task was already done
                                [m_SearchIndicator startAnimation:self];
                        });
     else

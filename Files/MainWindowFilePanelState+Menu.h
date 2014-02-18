@@ -28,5 +28,5 @@
 
 // Operations
 - (IBAction)OnMoveToTrash:(id)sender;
-
+- (IBAction)OnEjectVolume:(id)sender;
 @end

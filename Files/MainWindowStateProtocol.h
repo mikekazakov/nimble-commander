@@ -28,7 +28,6 @@
 - (bool)WindowShouldClose:(MainWindowController*)sender;
 - (void)SkinSettingsChanged;
 - (void)ApplySkin:(ApplicationSkin)_skin;
-- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect;
 - (void)OnApplicationWillTerminate;
 
 @end

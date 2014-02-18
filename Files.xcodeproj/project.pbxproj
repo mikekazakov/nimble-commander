@@ -58,6 +58,7 @@
 		CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */; };
 		CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
 		CF1648B117D57BDA00D0B17E /* VFSArchiveListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */; };
+		CF18345C18B0B58000EE6BB5 /* MainWindowFilePanelState+Toolbar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18345B18B0B58000EE6BB5 /* MainWindowFilePanelState+Toolbar.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB54179B959300FE639F /* EncodingsList.mm */; };
 		CF27414917FF04EF006D6687 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
@@ -389,6 +390,8 @@
 		CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileLinkNewHardlinkSheetController.xib; sourceTree = "<group>"; };
 		CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveListing.mm; sourceTree = "<group>"; };
 		CF1648B017D57BDA00D0B17E /* VFSArchiveListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveListing.h; sourceTree = "<group>"; };
+		CF18345A18B0B58000EE6BB5 /* MainWindowFilePanelState+Toolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Toolbar.h"; sourceTree = "<group>"; };
+		CF18345B18B0B58000EE6BB5 /* MainWindowFilePanelState+Toolbar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Toolbar.mm"; sourceTree = "<group>"; };
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
 		CF1FBB54179B959300FE639F /* EncodingsList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EncodingsList.mm; sourceTree = "<group>"; };
@@ -1004,13 +1007,13 @@
 			children = (
 				CF27414D1803E60D006D6687 /* Views */,
 				B52D9A81173D324600EC7154 /* Presentation */,
-				CFC5123416C5284800D247EE /* PanelData.mm */,
 				CFC5123516C5284800D247EE /* PanelData.h */,
+				CFC5123416C5284800D247EE /* PanelData.mm */,
 				B52D9A82173D329F00EC7154 /* PanelViewTypes.h */,
-				CFC5123816C5287B00D247EE /* PanelView.mm */,
 				CFC5123716C5287B00D247EE /* PanelView.h */,
-				CF3C88D616D73A23006346CD /* PanelController.mm */,
+				CFC5123816C5287B00D247EE /* PanelView.mm */,
 				CF3C88D516D73A23006346CD /* PanelController.h */,
+				CF3C88D616D73A23006346CD /* PanelController.mm */,
 				CFA0B23018653FF300501C35 /* PanelController+Navigation.h */,
 				CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */,
 				CFD712D417EED43800DA15EF /* PanelController+DataAccess.h */,
@@ -1021,16 +1024,18 @@
 				CFCF862618939589000552CD /* PanelController+QuickSearch.mm */,
 				CFCF862B18961393000552CD /* PanelController+DragAndDrop.h */,
 				CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */,
-				CFA0B22D18648F9A00501C35 /* PanelHistory.mm */,
 				CFA0B22E18648F9A00501C35 /* PanelHistory.h */,
-				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
+				CFA0B22D18648F9A00501C35 /* PanelHistory.mm */,
 				CF0519DA17E9C98A00590C74 /* PanelAux.h */,
-				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
+				CF0519DB17E9C98A00590C74 /* PanelAux.mm */,
 				CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */,
+				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
 				CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */,
 				CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */,
-				CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */,
 				CFDA4CCE182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.h */,
+				CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */,
+				CF18345A18B0B58000EE6BB5 /* MainWindowFilePanelState+Toolbar.h */,
+				CF18345B18B0B58000EE6BB5 /* MainWindowFilePanelState+Toolbar.mm */,
 				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
 				CF29312E17D79BA100648A90 /* IconsGenerator.mm */,
 				CF27414717FF04EF006D6687 /* SharingService.h */,
@@ -1867,6 +1872,7 @@
 				CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */,
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
 				CF9D0EDC17CC961100CB8146 /* filter_fork_windows.c in Sources */,
+				CF18345C18B0B58000EE6BB5 /* MainWindowFilePanelState+Toolbar.mm in Sources */,
 				CF9D0E9717CC961100CB8146 /* archive_read_support_filter_grzip.c in Sources */,
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
 				CFB3E4831844ACD700D375E2 /* TermTask.mm in Sources */,

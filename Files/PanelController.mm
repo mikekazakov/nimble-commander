@@ -838,19 +838,14 @@ void panel::GenericCursorPersistance::Restore()
         [self QuickSearchClearFiltering];
 }
 
-- (void) AttachToControls:(NSProgressIndicator*)_indicator eject:(NSButton*)_eject share:(NSButton*)_share
+- (void) AttachToControls:(NSProgressIndicator*)_indicator share:(NSButton*)_share
 {
     m_SpinningIndicator = _indicator;
-    m_EjectButton = _eject;
     m_ShareButton = _share;
     
     m_IsAnythingWorksInBackground = false;
     [m_SpinningIndicator stopAnimation:nil];
     [self UpdateSpinningIndicator];
-    [self UpdateEjectButton];
-    
-    [m_EjectButton setTarget:self];
-    [m_EjectButton setAction:@selector(OnEjectButton:)];
     
     [m_ShareButton setTarget:self];
     [m_ShareButton setAction:@selector(OnShareButton:)];
@@ -895,15 +890,6 @@ void panel::GenericCursorPersistance::Restore()
     m_IsAnythingWorksInBackground = is_anything_working;
 }
 
-- (void) UpdateEjectButton
-{
-    string path = m_Data.DirectoryPathWithoutTrailingSlash();
-    bool should_be_hidden = !IsVolumeContainingPathEjectable(path.c_str());
-    
-    if([m_EjectButton isHidden] != should_be_hidden)
-        [m_EjectButton setHidden:should_be_hidden];
-}
-
 - (PanelViewType) GetViewType
 {
     return [m_View GetCurrentViewType];
@@ -941,7 +927,6 @@ void panel::GenericCursorPersistance::Restore()
     [self ClearSelectionRequest];
     [self QuickSearchClearFiltering];
     [(MainWindowFilePanelState*)self.state PanelPathChanged:self];
-    [self UpdateEjectButton];
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
     
@@ -1062,6 +1047,16 @@ void panel::GenericCursorPersistance::Restore()
                  }
              }
      ];
+}
+
+- (void) HandleEjectVolume
+{
+    if(!self.GetCurrentVFSHost->IsNativeFS())
+        return;
+    
+    string path = m_Data.DirectoryPathWithoutTrailingSlash();
+    if(IsVolumeContainingPathEjectable(path.c_str()))
+        EjectVolumeContainingPath(path);
 }
 
 @end

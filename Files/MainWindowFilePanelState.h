@@ -23,7 +23,6 @@ class PanelData;
 @class BriefSystemOverview;
 @class FilePanelMainSplitView;
 @class MainWndGoToButton;
-@class StackOfDisappearingWidgets;
 @class OperationsSummaryViewController;
 
 enum ActiveState
@@ -33,7 +32,7 @@ enum ActiveState
     // many more will be here
 };
 
-@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol>
+@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate>
 {
     ApplicationSkin m_Skin;
 
@@ -49,20 +48,14 @@ enum ActiveState
     
     NSProgressIndicator *m_LeftPanelSpinningIndicator;
     NSProgressIndicator *m_RightPanelSpinningIndicator;
-    NSButton            *m_LeftPanelEjectButton;
-    NSButton            *m_RightPanelEjectButton;
     NSButton            *m_LeftPanelShareButton;
     NSButton            *m_RightPanelShareButton;
-    
-    StackOfDisappearingWidgets *m_LeftStack;
-    StackOfDisappearingWidgets *m_RightStack;
-    
-    NSBox               *m_SheetAnchorLine;
     
     NSView               *m_OpSummaryBox;
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
     
+    NSToolbar            *m_Toolbar;
 }
 
 
@@ -88,8 +81,8 @@ enum ActiveState
 - (PanelData*) ActivePanelData;
 - (PanelController*) ActivePanelController;
 - (PanelView*) ActivePanelView;
-
 @end
 
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "MainWindowFilePanelState+Menu.h"
+#import "MainWindowFilePanelState+Toolbar.h"

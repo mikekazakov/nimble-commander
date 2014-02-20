@@ -141,7 +141,7 @@ bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
         strcpy(arc_pref, m_InitialItems.front().c_str());
     
     sprintf(fn, "%s%s.zip", m_DstRoot, arc_pref);
-    struct stat st;
+    VFSStat st;
     if(m_DstVFS->Stat(fn, st, VFSHost::F_NoFollow, 0) != 0)
     {
         strcpy(_full_filename, fn);
@@ -177,23 +177,23 @@ void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_sho
     strcpy(fullpath, m_SrcRoot);
     strcat(fullpath, _full_path);
     
-    struct stat stat_buffer;
+    VFSStat stat_buffer;
     
 retry_stat:
     int stat_ret = m_SrcVFS->Stat(fullpath, stat_buffer, VFSHost::F_NoFollow, 0); // no symlinks support currently
     if(stat_ret == VFSError::Ok) {
-        if(S_ISREG(stat_buffer.st_mode))
+        if(S_ISREG(stat_buffer.mode))
         {
-            if(stat_buffer.st_size < 0xFFFFFFFFul)
+            if(stat_buffer.size < 0xFFFFFFFFul)
             { // currently we don't support Zip64 so maximum file size we can handle is 4Gb
                 m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
                 m_ScannedItems.push_back(_short_path, _prefix);
-                m_SourceTotalBytes += stat_buffer.st_size;
+                m_SourceTotalBytes += stat_buffer.size;
             }
             else
                 [m_Operation SayAbout4Gb:fullpath];
         }
-        else if(S_ISDIR(stat_buffer.st_mode))
+        else if(S_ISDIR(stat_buffer.mode))
         {
             char dirpath[MAXPATHLEN];
             sprintf(dirpath, "%s/", _short_path);
@@ -255,7 +255,8 @@ void FileCompressOperationJob::ProcessItems()
 
 void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, int _number)
 {
-    struct stat st;
+    VFSStat st;
+    struct stat sst;
     char itemname[MAXPATHLEN];
     char sourcepath[MAXPATHLEN];
     struct archive_entry *entry = 0;
@@ -273,7 +274,8 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
         if((stat_ret = m_SrcVFS->Stat(sourcepath, st, 0, 0)) == 0) {
             entry = archive_entry_new();
             archive_entry_set_pathname(entry, itemname);
-            archive_entry_copy_stat(entry, &st);
+            VFSStat::ToSysStat(st, sst);
+            archive_entry_copy_stat(entry, &sst);
             archive_write_header(m_Archive, entry);
             archive_entry_free(entry);
             entry = 0;
@@ -307,7 +309,8 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
             if( (open_file_ret = src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock)) == 0) {
                 entry = archive_entry_new();
                 archive_entry_set_pathname(entry, itemname);
-                archive_entry_copy_stat(entry, &st);
+                VFSStat::ToSysStat(st, sst);
+                archive_entry_copy_stat(entry, &sst);
                 archive_write_header(m_Archive, entry);
             
                 int buf_sz = 256*1024;

@@ -93,10 +93,10 @@ static atomic<int> g_IsCurrentlySharing(0);
             for(auto &i:entries)
             {
                 string path = _dir + i.c_str();
-                struct stat st;
+                VFSStat st;
                 if(_host->IsDirectory(path.c_str(), 0, 0)) continue; // will skip any directories here
                 if(_host->Stat(path.c_str(), st, 0, 0) < 0) continue;
-                if(st.st_size > g_MaxFileSizeForVFSShare) continue;
+                if(st.size > g_MaxFileSizeForVFSShare) continue;
                 
                 char native_path[MAXPATHLEN];
                 if(TemporaryNativeFileStorage::Instance().CopySingleFile(path.c_str(), _host, native_path))

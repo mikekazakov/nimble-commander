@@ -23,7 +23,7 @@ public:
     
     virtual int StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)()) override;    
     
-    virtual int Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)()) override;
+    virtual int Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)()) override;
     
     virtual bool FindLastValidItem(const char *_orig_path,
                                    char *_valid_path,

@@ -348,7 +348,7 @@ bool VFSArchiveHost::IsDirectory(const char *_path,
     return it != m_PathToDir.end();
 }
 
-int VFSArchiveHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
+int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
 {
     // currenty do not support symlinks in archives, so ignore NoFollow flag
     assert(_path != 0);
@@ -364,7 +364,7 @@ int VFSArchiveHost::Stat(const char *_path, struct stat &_st, int _flags, bool (
     auto it = FindEntry(_path);
     if(it)
     {
-        _st = it->st;
+        VFSStat::FromSysStat(it->st, _st);
         return VFSError::Ok;
     }
     return VFSError::NotFound;

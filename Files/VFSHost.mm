@@ -9,6 +9,44 @@
 #import <sys/stat.h>
 #import "VFSHost.h"
 
+void VFSStat::FromSysStat(const struct stat &_from, VFSStat &_to)
+{
+    _to.dev     = _from.st_dev;
+    _to.rdev    = _from.st_rdev;
+    _to.inode   = _from.st_ino;
+    _to.mode    = _from.st_mode;
+    _to.nlink   = _from.st_nlink;
+    _to.uid     = _from.st_uid;
+    _to.gid     = _from.st_gid;
+    _to.size    = _from.st_size;
+    _to.blocks  = _from.st_blocks;
+    _to.blksize = _from.st_blksize;
+    _to.flags   = _from.st_flags;
+    _to.atime   = _from.st_atimespec;
+    _to.mtime   = _from.st_mtimespec;
+    _to.ctime   = _from.st_ctimespec;
+    _to.btime   = _from.st_birthtimespec;
+}
+
+void VFSStat::ToSysStat(const VFSStat &_from, struct stat &_to)
+{
+    memset(&_to, 0, sizeof(_to));
+    _to.st_dev              = _from.dev;
+    _to.st_rdev             = _from.rdev;
+    _to.st_ino              = _from.inode;
+    _to.st_mode             = _from.mode;
+    _to.st_nlink            = _from.nlink;
+    _to.st_uid              = _from.uid;
+    _to.st_gid              = _from.gid;
+    _to.st_size             = _from.size;
+    _to.st_blocks           = _from.blocks;
+    _to.st_blksize          = _from.blksize;
+    _to.st_flags            = _from.flags;
+    _to.st_atimespec        = _from.atime;
+    _to.st_mtimespec        = _from.mtime;
+    _to.st_ctimespec        = _from.ctime;
+    _to.st_birthtimespec    = _from.btime;
+}
 
 VFSHost::VFSHost(const char *_junction_path,
                  shared_ptr<VFSHost> _parent):
@@ -67,11 +105,11 @@ bool VFSHost::IsDirectory(const char *_path,
                           int _flags,
                           bool (^_cancel_checker)())
 {
-    struct stat st;
+    VFSStat st;
     if(Stat(_path, st, _flags, _cancel_checker) < 0)
         return false;
     
-    return (st.st_mode & S_IFMT) == S_IFDIR;
+    return (st.mode & S_IFMT) == S_IFDIR;
 }
 
 bool VFSHost::FindLastValidItem(const char *_orig_path,
@@ -101,7 +139,7 @@ void VFSHost::StopDirChangeObserving(unsigned long _ticket)
 {
 }
 
-int VFSHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
+int VFSHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
 {
     return VFSError::NotSupported;
 }

@@ -640,7 +640,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         strcat(target, ext);
     }
     
-    struct stat st;
+    VFSStat st;
     if(m_Host->Stat(target, st, VFSHost::F_NoFollow, 0) == 0)
     { // this file already exists, will try another ones
         for(int i = 2; i < 100; ++i) {

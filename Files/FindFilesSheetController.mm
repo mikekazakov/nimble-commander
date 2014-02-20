@@ -7,7 +7,6 @@
 //
 
 #import <deque>
-#import <sys/stat.h>
 #import "FindFilesSheetController.h"
 #import "Encodings.h"
 #import "FileSearch.h"
@@ -48,11 +47,11 @@ static const int g_MaximumSearchResults = 16384;
 }
 
 - (uint64_t) size {
-    return m_Data.st.st_size;
+    return m_Data.st.size;
 }
 
 - (uint64_t) mdate {
-    return m_Data.st.st_mtimespec.tv_sec;
+    return m_Data.st.mtime.tv_sec;
 }
 
 - (FindFilesSheetControllerFoundItem*) data {

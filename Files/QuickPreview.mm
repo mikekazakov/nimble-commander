@@ -78,13 +78,13 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
                 dispatch_to_main_queue( ^{ self.previewItem = nil; });
                 return;
             }
-            struct stat st;
+            VFSStat st;
             if(_host->Stat(path.c_str(), st, 0, 0) < 0)
             {
                 dispatch_to_main_queue( ^{ self.previewItem = nil; });
                 return;
             }
-            if(st.st_size > g_MaxFileSizeForVFSQL)
+            if(st.size > g_MaxFileSizeForVFSQL)
             {
                 dispatch_to_main_queue( ^{ self.previewItem = nil; });                
                 return;

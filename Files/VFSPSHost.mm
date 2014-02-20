@@ -305,7 +305,7 @@ int VFSPSHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-int VFSPSHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
+int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
 {
     lock_guard<mutex> lock(m_Lock);
     
@@ -318,12 +318,12 @@ int VFSPSHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_can
         return VFSError::NotFound;
     
     memset(&_st, 0, sizeof(_st));
-    _st.st_size = m_Data->files[index].length();
-    _st.st_mode = S_IFREG | S_IRUSR | S_IRGRP;
-    _st.st_mtimespec.tv_sec = m_Data->taken_time;
-    _st.st_atimespec.tv_sec = m_Data->taken_time;
-    _st.st_ctimespec.tv_sec = m_Data->taken_time;
-    _st.st_birthtimespec.tv_sec = m_Data->taken_time;
+    _st.size = m_Data->files[index].length();
+    _st.mode = S_IFREG | S_IRUSR | S_IRGRP;
+    _st.mtime.tv_sec = m_Data->taken_time;
+    _st.atime.tv_sec = m_Data->taken_time;
+    _st.ctime.tv_sec = m_Data->taken_time;
+    _st.btime.tv_sec = m_Data->taken_time;
 
     return VFSError::Ok;
 }

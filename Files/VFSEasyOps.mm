@@ -29,17 +29,17 @@ static int CopyNodeAttrs(const char *_src_full_path,
      here. LOL!
      */
     
-    struct stat st;
+    VFSStat st;
     int result = _src_host->Stat(_src_full_path, st, VFSHost::F_NoFollow, 0);
     if(result < 0)
         return result;
 
     _dst_host->SetTimes(_dst_full_path,
                         VFSHost::F_NoFollow,
-                        &st.st_birthtimespec,
-                        &st.st_mtimespec,
-                        &st.st_ctimespec,
-                        &st.st_atimespec,
+                        &st.btime,
+                        &st.mtime,
+                        &st.ctime,
+                        &st.atime,
                         0);
     
     return 0;
@@ -293,14 +293,14 @@ int VFSEasyCopyNode(const char *_src_full_path,
        )
         return VFSError::InvalidCall;
     
-    struct stat st;
+    VFSStat st;
     int result;
     
     result = _src_host->Stat(_src_full_path, st, VFSHost::F_NoFollow, 0);
     if(result < 0)
         return result;
     
-    switch (st.st_mode & S_IFMT){
+    switch (st.mode & S_IFMT){
         case S_IFDIR:
             return VFSEasyCopyDirectory(_src_full_path, _src_host, _dst_full_path, _dst_host);
             

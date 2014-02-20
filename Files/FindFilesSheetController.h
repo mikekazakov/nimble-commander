@@ -7,7 +7,6 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <sys/stat.h>
 #import "VFS.h"
 
 struct FindFilesSheetControllerFoundItem
@@ -15,7 +14,7 @@ struct FindFilesSheetControllerFoundItem
     string filename;
     string dir_path;
     string full_filename;
-    struct stat st;
+    VFSStat st;
 };
 
 @interface FindFilesSheetController : NSWindowController<NSTableViewDataSource, NSTableViewDelegate>

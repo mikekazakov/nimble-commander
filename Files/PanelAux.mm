@@ -50,11 +50,11 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
         if(_host->IsDirectory(_filename.c_str(), 0, 0))
             return;
         
-        struct stat st;
+        VFSStat st;
         if(_host->Stat(_filename.c_str(), st, 0, 0) < 0)
             return;
         
-        if(st.st_size > g_MaxFileSizeForVFSOpen)
+        if(st.size > g_MaxFileSizeForVFSOpen)
             return;
         
         char tmp[MAXPATHLEN];
@@ -109,11 +109,11 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
             if(_host->IsDirectory(i.c_str(), 0, 0))
                 continue;
             
-            struct stat st;
+            VFSStat st;
             if(_host->Stat(i.c_str(), st, 0, 0) < 0)
                 continue;
             
-            if(st.st_size > g_MaxFileSizeForVFSOpen)
+            if(st.size > g_MaxFileSizeForVFSOpen)
                 continue;
             
             char tmp[MAXPATHLEN];

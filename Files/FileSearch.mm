@@ -147,10 +147,10 @@ void FileSearch::ProcessDirent(const char* _full_path,
     // Filter by filesize
     if(failed_filtering == false && m_FilterSize) {
         if(_dirent.type == VFSDirEnt::Reg) {
-            struct stat st;
+            VFSStat st;
             if(_in_host->Stat(_full_path, st, 0, 0) == 0) {
-                if(st.st_size < m_FilterSize->min ||
-                   st.st_size > m_FilterSize->max )
+                if(st.size < m_FilterSize->min ||
+                   st.size > m_FilterSize->max )
                     failed_filtering = true;
             }
             else

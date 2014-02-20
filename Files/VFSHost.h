@@ -7,6 +7,7 @@
 //
 
 #pragma once
+#import <sys/stat.h>
 #import <string>
 #import <memory>
 #import "VFSError.h"
@@ -44,7 +45,26 @@ struct VFSDirEnt
     char        name[1024];
 };
 
-// TODO: struct VFSStat {...}
+struct VFSStat
+{
+    uint64_t    size;   /* File size, in bytes */
+    uint64_t    blocks; /* blocks allocated for file */
+    uint64_t    inode;  /* File serial number */
+    int32_t     dev;    /* ID of device containing file */
+    int32_t     rdev;   /* Device ID (if special file) */
+    uint32_t    uid;    /* User ID of the file */
+    uint32_t    gid;    /* Group ID of the file */
+    int32_t     blksize;/* Optimal blocksize for I/O */
+    uint32_t	flags;  /* User defined flags for file */
+    uint16_t    mode;   /* Mode of file */
+    uint16_t    nlink;  /* Number of hard links */
+	timespec    atime;  /* Time of last access */
+	timespec    mtime;	/* Time of last data modification */
+	timespec    ctime;	/* Time of last status change */
+	timespec    btime;	/* Time of file creation(birth) */
+    static void FromSysStat(const struct stat &_from, VFSStat &_to);
+    static void ToSysStat(const VFSStat &_from, struct stat &_to);
+};
 
 class VFSHost : public enable_shared_from_this<VFSHost>
 {
@@ -121,7 +141,7 @@ public:
                                         void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size));
     
     virtual int Stat(const char *_path,
-                     struct stat &_st,
+                     VFSStat &_st,
                      int _flags,
                      bool (^_cancel_checker)());
     

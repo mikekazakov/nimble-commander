@@ -16,23 +16,23 @@
 #define BUFFER_SIZE (512*1024) // 512kb
 #define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
 
-static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
+static void AdjustFileTimes(int _target_fd, VFSStat *_with_times)
 {
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
     attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
     
     attrs.commonattr = ATTR_CMN_MODTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times->st_mtimespec, sizeof(struct timespec), 0);
+    fsetattrlist(_target_fd, &attrs, &_with_times->mtime, sizeof(struct timespec), 0);
     
     attrs.commonattr = ATTR_CMN_CRTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times->st_birthtimespec, sizeof(struct timespec), 0);
+    fsetattrlist(_target_fd, &attrs, &_with_times->btime, sizeof(struct timespec), 0);
     
     attrs.commonattr = ATTR_CMN_ACCTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times->st_atimespec, sizeof(struct timespec), 0);
+    fsetattrlist(_target_fd, &attrs, &_with_times->atime, sizeof(struct timespec), 0);
     
     attrs.commonattr = ATTR_CMN_CHGTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times->st_ctimespec, sizeof(struct timespec), 0);
+    fsetattrlist(_target_fd, &attrs, &_with_times->ctime, sizeof(struct timespec), 0);
 }
 
 FileCopyOperationJobFromGeneric::FileCopyOperationJobFromGeneric()
@@ -127,21 +127,21 @@ void FileCopyOperationJobFromGeneric::ScanItem(const char *_full_path, const cha
     strcpy(fullpath, m_SrcDir);
     strcat(fullpath, _full_path);
     
-    struct stat stat_buffer;
+    VFSStat stat_buffer;
     
 retry_stat:
     int stat_ret = m_SrcHost->Stat(fullpath, stat_buffer, 0, 0); // no symlinks support currently
     
     if(stat_ret == VFSError::Ok)
     {        
-        if(S_ISREG(stat_buffer.st_mode))
+        if(S_ISREG(stat_buffer.mode))
         {
             m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
             m_ScannedItems.push_back(_short_path, _prefix);
             m_SourceNumberOfFiles++;
-            m_SourceTotalBytes += stat_buffer.st_size;
+            m_SourceTotalBytes += stat_buffer.size;
         }
-        else if(S_ISDIR(stat_buffer.st_mode))
+        else if(S_ISDIR(stat_buffer.mode))
         {
 //            m_IsSingleFileCopy = false;
             char dirpath[MAXPATHLEN];
@@ -238,12 +238,12 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     // TODO: existance checking, attributes, error handling and other stuff
     mkdir(_dest, 0777);
     
-    struct stat src_stat_buffer;
+    VFSStat src_stat_buffer;
     if(m_SrcHost->Stat(_src, src_stat_buffer, 0, 0) < 0)
         return false;
     
     // change unix mode
-    mode_t mode = src_stat_buffer.st_mode;
+    mode_t mode = src_stat_buffer.mode;
     if((mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0)
     { // guard against malformed(?) archives
         mode |= S_IRWXU | S_IRGRP | S_IXGRP;
@@ -251,7 +251,7 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     chmod(_dest, mode);
     
     // change flags
-    chflags(_dest, src_stat_buffer.st_flags);
+    chflags(_dest, src_stat_buffer.flags);
     
     // xattr processing
     if(m_Options.copy_xattrs)
@@ -312,7 +312,8 @@ bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_
 {
     int ret, oldumask, destinationfd = -1, dstopenflags=0;
     shared_ptr<VFSFile> src_file;
-    struct stat src_stat_buffer, dst_stat_buffer;
+    VFSStat src_stat_buffer;
+    struct stat dst_stat_buffer;
     bool remember_choice = false, was_successful = false, unlink_on_stop = false, adjust_dst_time = true, erase_xattrs = false;
     unsigned long dest_sz_on_stop = 0, startwriteoff = 0;
     int64_t preallocate_delta = 0;
@@ -356,7 +357,7 @@ opensource:
         if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
-    totaldestsize = src_stat_buffer.st_size;
+    totaldestsize = src_stat_buffer.size;
     if(stat(_dest, &dst_stat_buffer) != -1) { // file already exist. what should we do now?
         int result;
         if(m_SkipAll) goto cleanup;
@@ -364,8 +365,8 @@ opensource:
         if(m_AppendAll) goto decappend;
         
         result = [[m_Operation OnFileExist:_dest
-                                   newsize:src_stat_buffer.st_size
-                                   newtime:src_stat_buffer.st_mtimespec.tv_sec
+                                   newsize:src_stat_buffer.size
+                                   newtime:src_stat_buffer.mtime.tv_sec
                                    exisize:dst_stat_buffer.st_size
                                    exitime:dst_stat_buffer.st_mtimespec.tv_sec
                                   remember:&remember_choice] WaitForResult];
@@ -380,7 +381,7 @@ opensource:
         erase_xattrs = true;
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
-        preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size;
+        preallocate_delta = src_stat_buffer.size - dst_stat_buffer.st_size;
         goto decend;
     decappend:
         dstopenflags = O_WRONLY;
@@ -390,7 +391,7 @@ opensource:
         adjust_dst_time = false;
 //        copy_xattrs = false;
         unlink_on_stop = false;
-        preallocate_delta = src_stat_buffer.st_size;
+        preallocate_delta = src_stat_buffer.size;
         goto decend;
     decend:;
     }
@@ -398,13 +399,13 @@ opensource:
         dstopenflags = O_WRONLY|O_CREAT;
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
-        preallocate_delta = src_stat_buffer.st_size;
+        preallocate_delta = src_stat_buffer.size;
     }
     
 opendest: // open file descriptor for destination
     oldumask = umask(0);
     if(m_Options.copy_unix_flags) // we want to copy src permissions
-        destinationfd = open(_dest, dstopenflags, src_stat_buffer.st_mode);
+        destinationfd = open(_dest, dstopenflags, src_stat_buffer.mode);
     else // open file with default permissions
         destinationfd = open(_dest, dstopenflags, S_IRUSR | S_IWUSR | S_IRGRP);
     umask(oldumask);
@@ -524,11 +525,11 @@ dolseek: // find right position in destination file
     
     // change ownage
     if(m_Options.copy_unix_owners)
-        fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+        fchown(destinationfd, src_stat_buffer.uid, src_stat_buffer.gid);
     
     // change flags
     if(m_Options.copy_unix_flags)
-        fchflags(destinationfd, src_stat_buffer.st_flags);
+        fchflags(destinationfd, src_stat_buffer.flags);
     
     // adjust destination time as source
     if(m_Options.copy_file_times && adjust_dst_time)

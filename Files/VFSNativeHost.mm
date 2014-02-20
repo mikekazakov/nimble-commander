@@ -268,14 +268,19 @@ void VFSNativeHost::StopDirChangeObserving(unsigned long _ticket)
     FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(_ticket);
 }
 
-int VFSNativeHost::Stat(const char *_path, struct stat &_st, int _flags, bool (^_cancel_checker)())
+int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
 {
     memset(&_st, 0, sizeof(_st));
     
-    int ret = (_flags & F_NoFollow) ? lstat(_path, &_st) : stat(_path, &_st);
+    struct stat st;
+    
+    int ret = (_flags & F_NoFollow) ? lstat(_path, &st) : stat(_path, &st);
     
     if(ret == 0)
+    {
+        VFSStat::FromSysStat(st, _st);
         return VFSError::Ok;
+    }
     
     return VFSError::FromErrno(errno);
 }

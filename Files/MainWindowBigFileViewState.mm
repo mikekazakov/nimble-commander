@@ -36,18 +36,17 @@ static int FileWindowSize()
     unique_ptr<SearchInFile> m_SearchInFile;
     SerialQueue m_SearchInFileQueue;
     
-    BigFileView *m_View;
-    NSPopUpButton *m_EncodingSelect;
-    NSButton    *m_WordWrap;
-    NSPopUpButton *m_ModeSelect;
-    NSTextField *m_ScrollPosition;
-
-    NSSearchField *m_SearchField;
+    BigFileView         *m_View;
+    NSPopUpButton       *m_EncodingSelect;
+    NSButton            *m_WordWrap;
+    NSPopUpButton       *m_ModeSelect;
+    NSTextField         *m_ScrollPosition;
+    NSSearchField       *m_SearchField;
     NSProgressIndicator *m_SearchIndicator;
-    NSTextField   *m_SearchResult;
+    NSToolbar           *m_Toolbar;
 
-    char        m_FilePath[MAXPATHLEN];
-    char        m_GlobalFilePath[MAXPATHLEN*8];
+    string              m_FilePath;
+    string              m_GlobalFilePath;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -76,17 +75,9 @@ static int FileWindowSize()
 
 - (void) Assigned
 {
-    NSToolbar *old_toolbar = self.window.toolbar;
-    
-    NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"bigfileview_toolbar"];
-    toolbar.delegate = self;
-    toolbar.displayMode = NSToolbarDisplayModeIconOnly;
-    toolbar.autosavesConfiguration = true;
-    toolbar.showsBaselineSeparator = true;
-    if(old_toolbar != nil)
-        toolbar.Visible = old_toolbar.isVisible;
-    
-    self.window.Toolbar = toolbar;
+    if(self.window.toolbar != nil)
+        m_Toolbar.Visible = self.window.toolbar.isVisible;
+    self.window.Toolbar = m_Toolbar;
     
     [self.window makeFirstResponder:m_View];
     [self UpdateTitle];    
@@ -141,12 +132,6 @@ static int FileWindowSize()
         item.view = m_SearchIndicator;
         return item;
     }
-
-    if([itemIdentifier isEqualToString:@"bigfileview_search_result"]) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_SearchResult;
-        return item;
-    }
     
     return nil;
 }
@@ -163,15 +148,13 @@ static int FileWindowSize()
                   @"bigfileview_wordwrap",
                   @"bigfileview_filepos",
                   NSToolbarFlexibleSpaceItemIdentifier,
-                  @"bigfileview_search_result",
                   @"bigfileview_search_indicator",
                   @"bigfileview_search"];
 }
 
-
 - (void) UpdateTitle
 {
-    NSString *path = [NSString stringWithUTF8String:m_GlobalFilePath];
+    NSString *path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
     if(path == nil) path = @"...";
     NSString *title = [NSString stringWithFormat:@"File View: %@", path];
     
@@ -209,7 +192,7 @@ static int FileWindowSize()
         vfsfile->Open(VFSFile::OF_Read);
     }
     
-    FileWindow *fw = new FileWindow;
+    unique_ptr<FileWindow> fw(new FileWindow);
     
     if(fw->OpenFile(vfsfile, FileWindowSize()) == 0)
     {
@@ -219,7 +202,7 @@ static int FileWindowSize()
                 m_FileWindow->CloseFile();
         }
         
-        m_FileWindow.reset(fw);
+        m_FileWindow.swap(fw);
         m_SearchFileWindow.reset(new FileWindow);
         m_SearchFileWindow->OpenFile(vfsfile);
         m_SearchInFile.reset(new SearchInFile(m_SearchFileWindow.get()));
@@ -227,12 +210,14 @@ static int FileWindowSize()
                                          ([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewCaseSensitiveSearch"] ? SearchInFile::OptionCaseSensitive : 0) |
                                          ([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewWholePhraseSearch"]   ? SearchInFile::OptionFindWholePhrase : 0) );
         
-        strcpy(m_FilePath, _fn);
-        vfsfile->ComposeFullHostsPath(m_GlobalFilePath);
+        m_FilePath = _fn;
+        char tmp[MAXPATHLEN*8]; // danger!
+        vfsfile->ComposeFullHostsPath(tmp);
+        m_GlobalFilePath = tmp;
         
         // try to load a saved info if any
         if(BigFileViewHistoryEntry *info =
-           [[BigFileViewHistory sharedHistory] FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath]])
+           [[BigFileViewHistory sharedHistory] FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath.c_str()]])
         {
             BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
             if(options.encoding && options.mode)
@@ -262,7 +247,6 @@ static int FileWindowSize()
     {
         if(fw->FileOpened())
             fw->CloseFile();
-        delete fw;
         return false;
     }
 }
@@ -317,12 +301,6 @@ static int FileWindowSize()
     [m_SearchIndicator setStyle:NSProgressIndicatorSpinningStyle];
     [m_SearchIndicator setControlSize:NSSmallControlSize];
     [m_SearchIndicator setDisplayedWhenStopped:NO];
-    
-    m_SearchResult = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 80, 20)];
-    [m_SearchResult setEditable:false];
-    [m_SearchResult setBordered:false];
-    [m_SearchResult setDrawsBackground:false];
-    [m_SearchResult setStringValue:@""];
 
     NSDictionary *views = NSDictionaryOfVariableBindings(m_View);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
@@ -330,7 +308,12 @@ static int FileWindowSize()
     
     for(const auto &i: encodings::LiteralEncodingsList())
         [m_EncodingSelect addItemWithTitle: (__bridge NSString*)i.second];
-
+    
+    m_Toolbar = [[NSToolbar alloc] initWithIdentifier:@"bigfileview_toolbar"];
+    m_Toolbar.delegate = self;
+    m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
+    m_Toolbar.autosavesConfiguration = true;
+    m_Toolbar.showsBaselineSeparator = true;
 }
 
 - (void) SelectEncodingFromView
@@ -404,7 +387,6 @@ static int FileWindowSize()
     if([str length] == 0)
     {
         m_SearchInFileQueue->Stop(); // we should stop current search if any
-        [m_SearchResult setStringValue:@""];
         [m_View SetSelectionInFile:CFRangeMake(-1, 0)];
         return;
     }
@@ -413,7 +395,6 @@ static int FileWindowSize()
        [str compare:(__bridge NSString*) m_SearchInFile->TextSearchString()] != NSOrderedSame ||
        m_SearchInFile->TextSearchEncoding() != [m_View Enconding] )
     { // user did some changes in search request
-        [m_SearchResult setStringValue:@""];
         [m_View SetSelectionInFile:CFRangeMake(-1, 0)]; // remove current selection
 
         uint64_t view_offset = [m_View VerticalPositionInBytes];
@@ -444,13 +425,8 @@ static int FileWindowSize()
         
         if(result == SearchInFile::Result::Found)
             dispatch_to_main_queue( ^{
-                [m_SearchResult setStringValue:@""];
                 [m_View SetSelectionInFile:CFRangeMake(offset, len)];
                 [m_View ScrollToSelection];
-            });
-        else if(result == SearchInFile::Result::NotFound)
-            dispatch_to_main_queue( ^{
-                [m_SearchResult setStringValue:@"Not found"];
             });
     });
 }
@@ -470,6 +446,9 @@ static int FileWindowSize()
 
 - (IBAction)performFindPanelAction:(id)sender
 {
+    if(m_Toolbar.isVisible == false)
+        m_Toolbar.Visible = true;
+    
     [self.window makeFirstResponder:m_SearchField];
 }
 
@@ -485,7 +464,7 @@ static int FileWindowSize()
     
     // do our state persistance stuff
     BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
-    info->path = [NSString stringWithUTF8String:m_GlobalFilePath];
+    info->path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
     info->last_viewed = [NSDate date];    
     info->position = [m_View VerticalPositionInBytes];
     info->wrapping = [m_View WordWrap];

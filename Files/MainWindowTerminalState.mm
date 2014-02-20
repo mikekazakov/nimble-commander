@@ -19,9 +19,9 @@
 
 @implementation MainWindowTerminalState
 {
-    TermTask        *m_Task;
-    TermScreen      *m_Screen;
-    TermParser      *m_Parser;
+    unique_ptr<TermTask>    m_Task;
+    unique_ptr<TermScreen>  m_Screen;
+    unique_ptr<TermParser>  m_Parser;
     TermView        *m_View;
     char            m_InitalWD[MAXPATHLEN];
 }
@@ -44,12 +44,12 @@
         [[self contentView] setCanDrawConcurrently:NO];
         [[self contentView] setDrawsBackground:NO];
         
-        m_Task = new TermTask;
-        m_Screen = new TermScreen(floor(frameRect.size.width / [m_View FontCache]->Width()),
-                                  floor(frameRect.size.height / [m_View FontCache]->Height()));
-        m_Parser = new TermParser(m_Screen, m_Task);
-        [m_View AttachToScreen:m_Screen];
-        [m_View AttachToParser:m_Parser];
+        m_Task.reset(new TermTask);
+        m_Screen.reset(new TermScreen(floor(frameRect.size.width / [m_View FontCache]->Width()),
+                                      floor(frameRect.size.height / [m_View FontCache]->Height())));
+        m_Parser.reset(new TermParser(m_Screen.get(), m_Task.get()));
+        [m_View AttachToScreen:m_Screen.get()];
+        [m_View AttachToParser:m_Parser.get()];
         
         
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -63,9 +63,6 @@
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    delete m_Parser;
-    delete m_Screen;
-    delete m_Task;
 }
 
 - (NSView*) ContentView

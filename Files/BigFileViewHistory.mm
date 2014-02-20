@@ -9,6 +9,7 @@
 #import "BigFileViewHistory.h"
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "Encodings.h"
+#import "DispatchQueue.h"
 
 static NSString *g_FileName = @"/bigfileviewhistory.bplist"; // bplist file name
 static NSString *g_PathArchiveKey = @"path";
@@ -91,7 +92,7 @@ static BigFileViewHistory *g_SharedInstance = nil;
 {
     NSMutableArray *m_History;
     bool            m_IsDirty;
-    dispatch_queue_t m_Queue;
+    SerialQueue     m_Queue;
 }
 
 + (NSString*) StorageFileName
@@ -105,6 +106,8 @@ static BigFileViewHistory *g_SharedInstance = nil;
     if(self == nil)
         return self;
     
+    m_Queue = SerialQueueT::Make();
+    
     // try to load history from file
     m_History = [NSKeyedUnarchiver unarchiveObjectWithFile:[BigFileViewHistory StorageFileName]];
         
@@ -112,7 +115,6 @@ static BigFileViewHistory *g_SharedInstance = nil;
         m_History = [NSMutableArray new]; // failed to load it - ok, just create a new one
     
     m_IsDirty = false;
-    m_Queue = dispatch_queue_create("info.filesmanager.Files.BigFileViewHistory.queue", NULL);
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(OnTerminate:)
@@ -139,7 +141,7 @@ static BigFileViewHistory *g_SharedInstance = nil;
 
 - (void)OnTerminate:(NSNotification *)note
 {
-    dispatch_sync(m_Queue, ^{});
+    m_Queue->Wait();
     if(m_IsDirty)
         [NSKeyedArchiver archiveRootObject:m_History toFile:[BigFileViewHistory StorageFileName]];
 }
@@ -154,7 +156,7 @@ static BigFileViewHistory *g_SharedInstance = nil;
 
 - (void) InsertEntry:(BigFileViewHistoryEntry*) _entry
 {
-    dispatch_async(m_Queue, ^{
+    m_Queue->Run(^{
         m_IsDirty = true;
         for(BigFileViewHistoryEntry *e in m_History)
             if([e->path compare:_entry->path] == NSOrderedSame)
@@ -187,7 +189,7 @@ static BigFileViewHistory *g_SharedInstance = nil;
 + (bool) DeleteHistory
 {
     if(g_SharedInstance != nil)
-        dispatch_async(g_SharedInstance->m_Queue, ^{
+        g_SharedInstance->m_Queue->Run(^{
             g_SharedInstance->m_History = [NSMutableArray new];
             g_SharedInstance->m_IsDirty = false;
         });

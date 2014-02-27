@@ -271,7 +271,6 @@ static int FileWindowSize()
     [m_ModeSelect addItemWithTitle:@"Text"];
     [m_ModeSelect addItemWithTitle:@"Hex"];
     [m_ModeSelect setFont:[NSFont menuFontOfSize:10]];
-    [self addSubview:m_ModeSelect];
     
     m_WordWrap = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 80, 20)];
     [[m_WordWrap cell] setControlSize:NSSmallControlSize];

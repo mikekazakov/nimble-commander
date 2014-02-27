@@ -47,7 +47,8 @@
     [super windowDidLoad];
     [[self window] setDelegate:self];
     
-    m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame: [[[self window] contentView] frame]];
+    m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[[[self window] contentView] frame]
+                                                            Window:self.window];
     [self PushNewWindowState:m_PanelState];
     
     [[NSNotificationCenter defaultCenter] addObserver:self

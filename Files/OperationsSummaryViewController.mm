@@ -28,6 +28,7 @@
 
 @implementation OperationsSummaryViewController
 {
+    __unsafe_unretained NSWindow *m_Window;
     OperationsController *m_OperationsController;
     
     BOOL m_ListVisible;
@@ -35,9 +36,36 @@
 }
 @synthesize OperationsController = m_OperationsController;
 
+- (id)initWithController:(OperationsController *)_controller
+                  window:(NSWindow*)_wnd
+{
+    self = [super initWithNibName:@"OperationsSummaryViewController" bundle:nil];
+    if (self)
+    {
+        m_Window = _wnd;
+        m_OperationsController = _controller;
+        m_ListVisible = NO;
+        [m_OperationsController addObserver:self
+                                 forKeyPath:@"OperationsCount"
+                                    options:0
+                                    context:nil];
+        
+        [m_OperationsController addObserver:self
+                                 forKeyPath:@"OperationsWithDialogsCount"
+                                    options:0
+                                    context:nil];
+
+        [self loadView];
+        [self InitView];
+    }
+    
+    return self;
+}
+
 - (void)dealloc
 {
     [m_OperationsController removeObserver:self forKeyPath:@"OperationsCount"];
+    [m_OperationsController removeObserver:self forKeyPath:@"OperationsWithDialogsCount"];
 }
 
 - (void)InitView
@@ -119,9 +147,19 @@
             const NSUInteger max_height_in_items = 5;
             if (m_ListVisible && m_OperationsController.Operations.count < max_height_in_items)
                 [self ShowList];
-            
         }
         
+        return;
+    }
+    
+    if (_object == m_OperationsController && [_keypath isEqualToString:@"OperationsWithDialogsCount"])
+    {
+        // show toolbar if it's hidden
+        if(m_OperationsController.OperationsWithDialogsCount > 0 &&
+           m_Window != nil &&
+           m_Window.toolbar != nil &&
+           m_Window.toolbar.isVisible == false)
+            m_Window.toolbar.Visible = true;
         return;
     }
     
@@ -137,25 +175,6 @@
     {
         [self ShowList];
     }
-}
-
-- (id)initWthController:(OperationsController *)_controller
-{
-    self = [super initWithNibName:@"OperationsSummaryViewController" bundle:nil];
-    if (self)
-    {
-        m_OperationsController = _controller;
-        m_ListVisible = NO;
-        [m_OperationsController addObserver:self
-                                 forKeyPath:@"OperationsCount"
-                                    options:NSKeyValueObservingOptionNew
-                                    context:nil];
-        
-        [self loadView];
-        [self InitView];
-    }
-    
-    return self;
 }
 
 - (void)AddViewTo:(NSView *)_parent

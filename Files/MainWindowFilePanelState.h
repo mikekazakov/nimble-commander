@@ -61,6 +61,7 @@ enum ActiveState
 
 @property OperationsController *OperationsController;
 
+- (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
 - (void)ActivatePanelByController:(PanelController *)controller;
 
 - (void)PanelPathChanged:(PanelController*)_panel;

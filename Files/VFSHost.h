@@ -106,12 +106,7 @@ public:
     virtual bool IsDirectory(const char *_path,
                              int _flags,
                              bool (^_cancel_checker)());
-    
-    virtual bool FindLastValidItem(const char *_orig_path,
-                                   char *_valid_path,
-                                   int _flags,
-                                   bool (^_cancel_checker)());
-    
+
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> *_target,
                                       int _flags,
@@ -181,6 +176,11 @@ public:
     // return value 0 means error or unsupported for this VFS
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());
     virtual void StopDirChangeObserving(unsigned long _ticket);
+    
+    virtual bool FindLastValidItem(const char *_orig_path,
+                                   char *_valid_path,
+                                   int _flags,
+                                   bool (^_cancel_checker)());
     
     inline shared_ptr<VFSHost> SharedPtr() { return shared_from_this(); }
     inline shared_ptr<const VFSHost> SharedPtr() const { return shared_from_this(); }

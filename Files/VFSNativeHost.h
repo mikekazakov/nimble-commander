@@ -25,11 +25,6 @@ public:
     
     virtual int Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)()) override;
     
-    virtual bool FindLastValidItem(const char *_orig_path,
-                                   char *_valid_path,
-                                   int _flags,
-                                   bool (^_cancel_checker)()) override;
-    
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> *_target,
                                       int _flags,                                      

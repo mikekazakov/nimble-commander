@@ -33,26 +33,6 @@ struct DialogResult
     };
 };
 
-struct MenuTags
-{
-    enum
-    {
-        PanelViewShortMode  = 1000,
-        PanelViewMediumMode = 1001,
-        PanelViewFullMode   = 1002,
-        PanelViewWideMode   = 1003,
-        PanelSortByName     = 1010,
-        PanelSortByExt      = 1011,
-        PanelSortByMTime    = 1012,
-        PanelSortBySize     = 1013,
-        PanelSortByBTime    = 1014,
-        PanelSortViewHidden = 1020,
-        PanelSortSepDirs    = 1021,
-        PanelSortCaseSensitive = 1022,
-        PanelSortNumeric    = 1023
-    };
-};
-
 // fs directory handling stuff
 bool GetRealPath(const char *_path_in, char *_path_out);
 bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size); // get last directory from path

@@ -40,75 +40,74 @@
 #import "sysinfo.h"
 #import "FileCompressOperation.h"
 #import "LSUrls.h"
+#import "ActionsShortcutsManager.h"
 
 @implementation MainWindowFilePanelState
 
 @synthesize OperationsController = m_OperationsController;
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
 {
     self = [super initWithFrame:frameRect];
     if(self)
-        [self Init];
+    {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        
+        m_OperationsController = [[OperationsController alloc] init];
+        m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController
+                                                                                     window:_wnd];
+        
+        m_LeftPanelController = [PanelController new];
+        m_RightPanelController = [PanelController new];
+        
+        [self CreateControls];
+        
+        // panel creation and preparation
+        m_LeftPanelController.state = self;
+        [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+        
+        m_RightPanelController.state = self;
+        [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
+        
+        m_Skin = ((AppDelegate*)[NSApplication sharedApplication].delegate).Skin;
+        if (m_Skin == ApplicationSkin::Modern)
+        {
+            [m_LeftPanelController.View SetPresentation:new ModernPanelViewPresentation];
+            [m_RightPanelController.View SetPresentation:new ModernPanelViewPresentation];
+        }
+        else if (m_Skin == ApplicationSkin::Classic)
+        {
+            [m_LeftPanelController.View SetPresentation:new ClassicPanelViewPresentation];
+            [m_RightPanelController.View SetPresentation:new ClassicPanelViewPresentation];
+        }
+        
+        [self LoadPanelsSettings];
+        
+        // now load data into panels
+        if([m_LeftPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]] < 0)
+        { // if saved dir is invalid - try home directory
+            char path[MAXPATHLEN];
+            if(!GetUserHomeDirectoryPath(path) || [m_LeftPanelController GoToGlobalHostsPathSync:path] < 0)
+            {
+                int ret = [m_LeftPanelController GoToRelativeToHostSync:"/"]; // if home directory is invalid too (lolwhat?) - go to root
+                assert(ret == VFSError::Ok);
+            }
+        }
+        
+        if([m_RightPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]] < 0)
+        {
+            int ret = [m_RightPanelController GoToGlobalHostsPathSync:"/"];
+            assert(ret == VFSError::Ok);
+        }
+        
+        m_ActiveState = StateLeftPanel;
+        [m_LeftPanelController.View Activate];
+    }
     return self;
 }
 
 - (BOOL)acceptsFirstResponder {
     return YES;
-}
-
-- (void) Init
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    m_OperationsController = [[OperationsController alloc] init];
-    m_OpSummaryController = [[OperationsSummaryViewController alloc] initWthController:m_OperationsController];
-    
-    m_LeftPanelController = [PanelController new];
-    m_RightPanelController = [PanelController new];
-    
-    [self CreateControls];
-    
-    // panel creation and preparation
-    m_LeftPanelController.state = self;
-    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
-
-    m_RightPanelController.state = self;
-    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
-
-    m_Skin = ((AppDelegate*)[NSApplication sharedApplication].delegate).Skin;
-    if (m_Skin == ApplicationSkin::Modern)
-    {
-        [m_LeftPanelController.View SetPresentation:new ModernPanelViewPresentation];
-        [m_RightPanelController.View SetPresentation:new ModernPanelViewPresentation];
-    }
-    else if (m_Skin == ApplicationSkin::Classic)
-    {
-        [m_LeftPanelController.View SetPresentation:new ClassicPanelViewPresentation];
-        [m_RightPanelController.View SetPresentation:new ClassicPanelViewPresentation];
-    }
-    
-    [self LoadPanelsSettings];
-    
-    // now load data into panels
-    if([m_LeftPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]] < 0)
-    { // if saved dir is invalid - try home directory
-        char path[MAXPATHLEN];
-        if(!GetUserHomeDirectoryPath(path) || [m_LeftPanelController GoToGlobalHostsPathSync:path] < 0)
-        {
-            int ret = [m_LeftPanelController GoToRelativeToHostSync:"/"]; // if home directory is invalid too (lolwhat?) - go to root
-            assert(ret == VFSError::Ok);
-        }
-    }
-    
-    if([m_RightPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]] < 0)
-    {
-        int ret = [m_RightPanelController GoToGlobalHostsPathSync:"/"];
-        assert(ret == VFSError::Ok);
-    }
-        
-    m_ActiveState = StateLeftPanel;
-    [m_LeftPanelController.View Activate];
 }
 
 - (void) CreateControls
@@ -637,24 +636,35 @@
         }
     };
     
+    static const int tag_short_mode =         ActionsShortcutsManager::Instance().TagFromAction("menu.view.toggle_short_mode");
+    static const int tag_medium_mode =        ActionsShortcutsManager::Instance().TagFromAction("menu.view.toggle_medium_mode");
+    static const int tag_full_mode =          ActionsShortcutsManager::Instance().TagFromAction("menu.view.toggle_full_mode");
+    static const int tag_wide_mode =          ActionsShortcutsManager::Instance().TagFromAction("menu.view.toggle_wide_mode");
+    static const int tag_sort_name =          ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_name");
+    static const int tag_sort_ext =           ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_extension");
+    static const int tag_sort_mod =           ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_modify_time");
+    static const int tag_sort_size =          ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_size");
+    static const int tag_sort_creat =         ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_creation_time");
+    static const int tag_sort_viewhidden =    ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_view_hidden");
+    static const int tag_sort_sepfolders =    ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_separate_folders");
+    static const int tag_sort_casesens =      ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_case_sensitive");
+    static const int tag_sort_numeric =       ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_numeric_comparison");
+    
     NSInteger tag = [item tag];
     auto *contr = [self ActivePanelController];
-    switch (tag)
-    {
-        case MenuTags::PanelViewShortMode: [item setState:[contr GetViewType] == PanelViewType::ViewShort  ? NSOnState : NSOffState]; break;
-        case MenuTags::PanelViewMediumMode:[item setState:[contr GetViewType] == PanelViewType::ViewMedium ? NSOnState : NSOffState]; break;
-        case MenuTags::PanelViewFullMode:  [item setState:[contr GetViewType] == PanelViewType::ViewFull   ? NSOnState : NSOffState]; break;
-        case MenuTags::PanelViewWideMode:  [item setState:[contr GetViewType] == PanelViewType::ViewWide   ? NSOnState : NSOffState]; break;
-        case MenuTags::PanelSortByName:  upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByNameMask); break;
-        case MenuTags::PanelSortByExt:   upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByExtMask); break;
-        case MenuTags::PanelSortByMTime: upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByMTimeMask); break;
-        case MenuTags::PanelSortBySize:  upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortBySizeMask); break;
-        case MenuTags::PanelSortByBTime: upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByBTimeMask); break;
-        case MenuTags::PanelSortViewHidden: [item setState:[contr GetUserHardFiltering].show_hidden ? NSOnState : NSOffState]; break;            
-        case MenuTags::PanelSortSepDirs:    [item setState:[contr GetUserSortMode].sep_dirs    ? NSOnState : NSOffState]; break;
-        case MenuTags::PanelSortCaseSensitive:[item setState:[contr GetUserSortMode].case_sens ? NSOnState : NSOffState]; break;
-        case MenuTags::PanelSortNumeric:    [item setState:[contr GetUserSortMode].numeric_sort ? NSOnState : NSOffState]; break;
-    }
+    if(tag == tag_short_mode)       item.State = [contr GetViewType] == PanelViewType::ViewShort;
+    else if(tag == tag_medium_mode) item.State = [contr GetViewType] == PanelViewType::ViewMedium;
+    else if(tag == tag_full_mode)   item.State = [contr GetViewType] == PanelViewType::ViewFull;
+    else if(tag == tag_wide_mode)   item.State = [contr GetViewType] == PanelViewType::ViewWide;
+    else if(tag == tag_sort_viewhidden) item.State = [contr GetUserHardFiltering].show_hidden;
+    else if(tag == tag_sort_sepfolders) item.State = [contr GetUserSortMode].sep_dirs;
+    else if(tag == tag_sort_casesens)   item.State = [contr GetUserSortMode].case_sens;
+    else if(tag == tag_sort_numeric)    item.State = [contr GetUserSortMode].numeric_sort;
+    else if(tag == tag_sort_name)   upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByNameMask);
+    else if(tag == tag_sort_ext)    upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByExtMask);
+    else if(tag == tag_sort_mod)    upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByMTimeMask);
+    else if(tag == tag_sort_size)   upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortBySizeMask);
+    else if(tag == tag_sort_creat)  upd_for_sort(item, [contr GetUserSortMode], PanelSortMode::SortByBTimeMask);
     
     return true; // will disable some items in the future
 }

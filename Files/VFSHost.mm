@@ -8,6 +8,7 @@
 
 #import <sys/stat.h>
 #import "VFSHost.h"
+#import "path_manip.h"
 
 void VFSStat::FromSysStat(const struct stat &_from, VFSStat &_to)
 {
@@ -117,6 +118,33 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
                                int _flags,
                                bool (^_cancel_checker)())
 {
+    // TODO: maybe it's better to go left-to-right than right-to-left
+    if(_orig_path[0] != '/') return false;
+    
+    char tmp[MAXPATHLEN*8];
+    strcpy(tmp, _orig_path);
+    if(IsPathWithTrailingSlash(tmp))
+        tmp[strlen(tmp)-1] = 0; // cut trailing slash if any
+
+    VFSStat st;
+    while(true)
+    {
+        if(_cancel_checker && _cancel_checker())
+            return false;
+  
+        int ret = Stat(tmp, st, _flags, _cancel_checker);
+        if(ret == 0)
+        {
+            strcpy(_valid_path, tmp);
+            return true;
+        }
+            
+        char *sl = strrchr(tmp, '/');
+        assert(sl != 0);
+        if(sl == tmp) return false;
+        *sl = 0;
+    }
+
     return false;
 }
 

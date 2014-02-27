@@ -24,7 +24,8 @@
 // Operation that is displayed in the summary view.
 @property Operation *CurrentOperation;
 
-- (id)initWthController:(OperationsController *)_controller;
+- (id)initWithController:(OperationsController *)_controller
+                  window:(NSWindow*)_wnd;
 - (void)AddViewTo:(NSView *)_parent;
 
 - (void)OnWindowResize;

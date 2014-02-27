@@ -21,6 +21,7 @@
 #import "NewVersionChecker.h"
 #import "MainWindowTerminalState.h"
 #import "NativeFSManager.h"
+#import "ActionsShortcutsManager.h"
 
 @implementation AppDelegate
 {
@@ -47,6 +48,9 @@
     TemporaryNativeFileStorage::StartBackgroundPurging();
     NewVersionChecker::Go();
     NativeFSManager::Instance();
+    
+    ActionsShortcutsManager::Instance().DoInit();
+    ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults addObserver:self

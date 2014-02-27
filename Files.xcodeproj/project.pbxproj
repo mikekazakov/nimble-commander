@@ -98,6 +98,8 @@
 		CF76B319170146240066A49F /* TimedDummyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B312170146240066A49F /* TimedDummyOperationJob.mm */; };
 		CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
+		CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
+		CF7AB36118BEE93E00D71B0D /* Shortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF7AB36018BEE93E00D71B0D /* Shortcuts.plist */; };
 		CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
@@ -464,6 +466,9 @@
 		CF76B31A170148FF0066A49F /* FileSysEntryAttrSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysEntryAttrSheetController.h; sourceTree = "<group>"; };
 		CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileSysEntryAttrSheetController.xib; sourceTree = "<group>"; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
+		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
+		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
+		CF7AB36018BEE93E00D71B0D /* Shortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Shortcuts.plist; sourceTree = "<group>"; };
 		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailedVolumeInformationSheetController.h; sourceTree = "<group>"; };
@@ -1358,6 +1363,8 @@
 				CF47F6971830CDB30060D474 /* NewVersionChecker.mm */,
 				CFA0B22A186412BD00501C35 /* DispatchQueue.mm */,
 				CFA0B22B186412BD00501C35 /* DispatchQueue.h */,
+				CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */,
+				CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -1516,6 +1523,7 @@
 				CFC5122216C4BD3D00D247EE /* Files-Prefix.pch */,
 				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
 				B52EB79217228B73004ABC2E /* Defaults.plist */,
+				CF7AB36018BEE93E00D71B0D /* Shortcuts.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1643,6 +1651,7 @@
 			files = (
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
+				CF7AB36118BEE93E00D71B0D /* Shortcuts.plist in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */,
 				CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */,
@@ -1719,6 +1728,7 @@
 				CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */,
 				CF9D0E9517CC961100CB8146 /* archive_read_support_filter_bzip2.c in Sources */,
 				CFC5123616C5284800D247EE /* PanelData.mm in Sources */,
+				CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */,
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
 				CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */,
 				CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */,

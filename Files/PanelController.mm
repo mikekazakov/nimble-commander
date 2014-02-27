@@ -14,6 +14,7 @@
 #import "PanelAux.h"
 #import "SharingService.h"
 #import "BriefSystemOverview.h"
+#import "ActionsShortcutsManager.h"
 
 // todo: remove me
 #import "FindFilesSheetController.h"
@@ -770,15 +771,20 @@ void panel::GenericCursorPersistance::Restore()
             [self AsyncGoToVFSPathStack:path withFlags:0 andFocus:""];
             return true;
         }
-    }
+    }    
     
-    // handle RETURN manually, to prevent annoying by menu highlighting by hotkey
-    if(unicode == NSCarriageReturnCharacter) {
-        NSUInteger modif = [event modifierFlags] & NSDeviceIndependentModifierFlagsMask;
-        modif &= ~NSAlphaShiftKeyMask; // exclude CapsLock from our decision process
-        if( modif == 0              ) [self HandleReturnButton];
-        if( modif == NSShiftKeyMask ) [self HandleShiftReturnButton];
-        if( modif == (NSShiftKeyMask|NSAlternateKeyMask)) [self HandleCalculateSizes];
+    // handle some actions manually, to prevent annoying by menu highlighting by hotkey
+    auto &shortcuts = ActionsShortcutsManager::Instance();
+    if(shortcuts.ShortCutFromAction("menu.file.open")->IsKeyDown(unicode, keycode, modif)) {
+        [self HandleReturnButton];
+        return true;
+    }
+    if(shortcuts.ShortCutFromAction("menu.file.open_native")->IsKeyDown(unicode, keycode, modif)) {
+        [self HandleShiftReturnButton];
+        return true;
+    }
+    if(shortcuts.ShortCutFromAction("menu.file.calculate_sizes")->IsKeyDown(unicode, keycode, modif)) {
+        [self HandleCalculateSizes];
         return true;
     }
     

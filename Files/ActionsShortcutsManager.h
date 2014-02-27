@@ -28,28 +28,36 @@ public:
     /**
      * return -1 on error
      */
-    int TagFromAction(string _action) const;
+    int TagFromAction(const string &_action) const;
 
     /**
      * return "" on error
      */
     string ActionFromTag(int _tag) const;
     
-    
     struct ShortCut
     {
-        unsigned modifiers;
+        unsigned long modifiers;
         NSString *key;
+        unichar  unic; // same as [key characterAtIndex:0], for perfomance purposes
 
         NSString *ToString() const;
         bool FromString(NSString *_from);
+        bool IsKeyDown(unichar _unicode, unsigned short _keycode, unsigned long _modifiers) const;
     };
+    
+    /**
+     * Return nullptr if can't found.
+     * Overrides has priority over defaults.
+     */
+    const ShortCut *ShortCutFromAction(const string &_action) const;
     
     void DoInit();
     void SetMenuShortCuts(NSMenu *_menu) const;
     
 private:
     ActionsShortcutsManager();
+    ActionsShortcutsManager(const ActionsShortcutsManager&) = delete;
     
     void ReadDefaults(NSDictionary *_dict);
     void WriteDefaults(NSMutableDictionary *_dict) const;

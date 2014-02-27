@@ -37,6 +37,7 @@ bool ActionsShortcutsManager::ShortCut::FromString(NSString *_from)
     {
         modifiers = 0;
         key = @"";
+        unic = 0;
         return true;
     }
     
@@ -75,8 +76,19 @@ bool ActionsShortcutsManager::ShortCut::FromString(NSString *_from)
     
     modifiers = mod_;
     key = key_;
-
+    unic = [key characterAtIndex:0];
+    
     return true;
+}
+
+bool ActionsShortcutsManager::ShortCut::IsKeyDown(unichar _unicode, unsigned short _keycode, unsigned long _modifiers) const
+{
+    // exclude CapsLock from our decision process
+    unsigned long clean_modif = _modifiers &
+        (NSDeviceIndependentModifierFlagsMask & ~NSAlphaShiftKeyMask);
+    
+    return modifiers == clean_modif &&
+                unic == _unicode;
 }
 
 ActionsShortcutsManager::ActionsShortcutsManager()
@@ -98,7 +110,7 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
     return *manager;
 }
 
-int ActionsShortcutsManager::TagFromAction(string _action) const
+int ActionsShortcutsManager::TagFromAction(const string &_action) const
 {
     for(auto &i: m_ActionsTags)
         if(i.first == _action)
@@ -257,4 +269,20 @@ void ActionsShortcutsManager::DoInit()
         WriteOverrides(new_overrides);
         [new_overrides writeToFile:overrides_fn atomically:true];
     }
+}
+
+const ActionsShortcutsManager::ShortCut *ActionsShortcutsManager::ShortCutFromAction(const string &_action) const
+{
+    int tag = TagFromAction(_action);
+    if(tag <= 0)
+        return nullptr;
+    auto sc_override = m_ShortCutsOverrides.find(tag);
+    if(sc_override != m_ShortCutsOverrides.end())
+        return &sc_override->second;
+    
+    auto sc_default = m_ShortCutsDefaults.find(tag);
+    if(sc_default != m_ShortCutsDefaults.end())
+        return &sc_default->second;
+    
+    return nullptr;
 }

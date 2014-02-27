@@ -59,8 +59,8 @@ private:
     ActionsShortcutsManager();
     ActionsShortcutsManager(const ActionsShortcutsManager&) = delete;
     
-    void ReadDefaults(NSDictionary *_dict);
-    void WriteDefaults(NSMutableDictionary *_dict) const;
+    void ReadDefaults(NSArray *_dict);
+    void WriteDefaults(NSMutableArray *_dict) const;
     
     void ReadOverrides(NSArray *_dict);
     void WriteOverrides(NSMutableArray *_dict) const;

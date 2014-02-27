@@ -23,11 +23,15 @@ NSString *ActionsShortcutsManager::ShortCut::ToString() const
     if(modifiers & NSCommandKeyMask)
         result = [result stringByAppendingString:@"⌘"];
 
-    NSString *str = key;
-    if([str isEqualToString:@"\r"])
-        str = @"\\r";
+    if(key != nil)
+    {
+        NSString *str = key;
+        if([str isEqualToString:@"\r"])
+            str = @"\\r";
     
-    result = [result stringByAppendingString:str];
+        result = [result stringByAppendingString:str];
+    }
+    
     return result;
 }
 
@@ -126,36 +130,40 @@ string ActionsShortcutsManager::ActionFromTag(int _tag) const
     return "";
 }
 
-void ActionsShortcutsManager::ReadDefaults(NSDictionary *_dict)
+void ActionsShortcutsManager::ReadDefaults(NSArray *_dict)
 {
     m_ShortCutsDefaults.clear();
-    [_dict enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *stop){
+    if(_dict.count % 2 != 0)
+        return;
+
+    for(int ind = 0; ind < _dict.count; ind += 2)
+    {
+        NSString *key = [_dict objectAtIndex:ind];
+        NSString *obj = [_dict objectAtIndex:ind+1];
+        
         auto i = m_ActionToTag.find(key.UTF8String);
         if(i == m_ActionToTag.end())
-            return;
+            continue;
         
         ShortCut sc;
         if(sc.FromString(obj))
             m_ShortCutsDefaults[i->second] = sc;
-    }];
+    }
 }
 
-void ActionsShortcutsManager::WriteDefaults(NSMutableDictionary *_dict) const
+void ActionsShortcutsManager::WriteDefaults(NSMutableArray *_dict) const
 {
     for(auto &i: m_ActionsTags)
     {
+        [_dict addObject:[NSString stringWithUTF8String:i.first.c_str()]];
+        
         int tag = i.second;
+        
         auto sc = m_ShortCutsDefaults.find(tag);
         if(sc != m_ShortCutsDefaults.end())
-        {
-            [_dict setObject:sc->second.ToString()
-                      forKey:[NSString stringWithUTF8String:i.first.c_str()]];
-        }
+            [_dict addObject:sc->second.ToString()];
         else
-        {
-            [_dict setObject:@""
-                      forKey:[NSString stringWithUTF8String:i.first.c_str()]];
-        }
+            [_dict addObject:@""];
     }
 }
 
@@ -198,6 +206,8 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
 
 void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
 {
+    if(_dict.count % 2 != 0)
+        return;
     int total_actions_read = 0;
     m_ShortCutsOverrides.clear();
     for(int ind = 0; ind < _dict.count; ind += 2)
@@ -259,7 +269,7 @@ void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
 void ActionsShortcutsManager::DoInit()
 {
     NSString *defaults_fn = [[NSBundle mainBundle] pathForResource:@"Shortcuts" ofType:@"plist"];
-    ReadDefaults([NSDictionary dictionaryWithContentsOfFile:defaults_fn]);
+    ReadDefaults([NSArray arrayWithContentsOfFile:defaults_fn]);
     
     NSString *overrides_fn = [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilename];
     ReadOverrides([NSArray arrayWithContentsOfFile:overrides_fn]);

@@ -26,12 +26,12 @@ public:
     static ActionsShortcutsManager &Instance();
     
     /**
-     * return -1 on error
+     * Return -1 on if tag corresponing _action wasn't found.
      */
     int TagFromAction(const string &_action) const;
 
     /**
-     * return "" on error
+     * return "" on if action corresponing _tag wasn't found.
      */
     string ActionFromTag(int _tag) const;
     
@@ -51,6 +51,12 @@ public:
      * Overrides has priority over defaults.
      */
     const ShortCut *ShortCutFromAction(const string &_action) const;
+
+    /**
+     * Return nullptr if can't found.
+     * Overrides has priority over defaults.
+     */
+    const ShortCut *ShortCutFromTag(int _tag) const;
     
     void DoInit();
     void SetMenuShortCuts(NSMenu *_menu) const;
@@ -152,5 +158,5 @@ private:
     
     map<int, ShortCut>      m_ShortCutsDefaults;
     map<int, ShortCut>      m_ShortCutsOverrides;
-    mutable bool            m_OutDatedOverrides = false;
+    mutable bool            m_OutdatedOverrides = false;
 };

@@ -234,12 +234,12 @@ void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
     }
     
     if(total_actions_read < m_ActionsTags.size())
-        m_OutDatedOverrides = true;
+        m_OutdatedOverrides = true;
 }
 
 bool ActionsShortcutsManager::NeedToUpdateOverrides() const
 {
-    return m_OutDatedOverrides;
+    return m_OutdatedOverrides;
 }
 
 void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
@@ -257,18 +257,15 @@ void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
         }
         else
         {
-            auto scdef = m_ShortCutsDefaults.find(tag);
-            if(scdef != m_ShortCutsDefaults.end())
-                [_dict addObject:scdef->second.ToString()];
-            else
-                [_dict addObject:@"default"];
+            [_dict addObject:@"default"];
         }
     }
+    m_OutdatedOverrides = false;
 }
 
 void ActionsShortcutsManager::DoInit()
 {
-    NSString *defaults_fn = [[NSBundle mainBundle] pathForResource:@"Shortcuts" ofType:@"plist"];
+    NSString *defaults_fn = [[NSBundle mainBundle] pathForResource:@"ShortcutsDefaults" ofType:@"plist"];
     ReadDefaults([NSArray arrayWithContentsOfFile:defaults_fn]);
     
     NSString *overrides_fn = [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilename];
@@ -291,6 +288,19 @@ const ActionsShortcutsManager::ShortCut *ActionsShortcutsManager::ShortCutFromAc
         return &sc_override->second;
     
     auto sc_default = m_ShortCutsDefaults.find(tag);
+    if(sc_default != m_ShortCutsDefaults.end())
+        return &sc_default->second;
+    
+    return nullptr;
+}
+
+const ActionsShortcutsManager::ShortCut *ActionsShortcutsManager::ShortCutFromTag(int _tag) const
+{
+    auto sc_override = m_ShortCutsOverrides.find(_tag);
+    if(sc_override != m_ShortCutsOverrides.end())
+        return &sc_override->second;
+    
+    auto sc_default = m_ShortCutsDefaults.find(_tag);
     if(sc_default != m_ShortCutsDefaults.end())
         return &sc_default->second;
     

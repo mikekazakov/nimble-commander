@@ -338,7 +338,11 @@ DQ
                                     <action selector="OnGoToUpperDirectory:" target="-1" id="wyJ-vy-YiN"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Into Folder" tag="14030" keyEquivalent="" id="sQI-qY-v5c"/>
+                            <menuItem title="Into Folder" tag="14030" keyEquivalent="" id="sQI-qY-v5c">
+                                <connections>
+                                    <action selector="OnGoIntoDirectory:" target="-1" id="6j6-hV-dHr"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="qMe-Z3-B2I"/>
                             <menuItem title="Documents" tag="14040" keyEquivalent="O" id="jYE-RA-K1O">
                                 <connections>

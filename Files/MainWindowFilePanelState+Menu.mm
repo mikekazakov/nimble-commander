@@ -20,12 +20,12 @@
 
 - (IBAction)OnOpen:(id)sender
 {
-    [[self ActivePanelController] HandleReturnButton];
+    [[self ActivePanelController] HandleGoIntoDirOrOpenInSystem];
 }
 
 - (IBAction)OnOpenNatively:(id)sender
 {
-    [[self ActivePanelController] HandleShiftReturnButton];
+    [[self ActivePanelController] HandleOpenInSystem];
 }
 
 - (IBAction)OnGoToHome:(id)sender
@@ -147,6 +147,22 @@
         return;
     
     [self.ActivePanelController HandleEjectVolume];    
+}
+
+- (IBAction)OnGoToUpperDirectory:(id)sender
+{
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
+    [[self ActivePanelController] GoToUpperDirectoryAsync];
+}
+
+- (IBAction)OnGoIntoDirectory:(id)sender
+{
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
+    auto item = self.ActivePanelView.CurrentItem;
+    if(item != nullptr && item->IsDotDot() == false)
+        [[self ActivePanelController] HandleGoIntoDir];
 }
 
 @end

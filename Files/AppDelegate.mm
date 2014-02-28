@@ -126,7 +126,7 @@
 
 - (MainWindowController*)AllocateNewMainWindow
 {
-    MainWindowController *mwc = [[MainWindowController alloc] init];
+    MainWindowController *mwc = [MainWindowController new];
     mwc.window.restorable = YES;
     mwc.window.restorationClass = self.class;
     mwc.window.identifier = @"mainwindow";

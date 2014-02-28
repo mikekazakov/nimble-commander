@@ -216,7 +216,7 @@ void panel::GenericCursorPersistance::Restore()
     return [(MainWindowFilePanelState*)self.state ActivePanelController] == self;
 }
 
-- (void) HandleShiftReturnButton
+- (void) HandleOpenInSystem
 {
     if(auto *item = [m_View CurrentItem])
     {
@@ -624,15 +624,17 @@ void panel::GenericCursorPersistance::Restore()
         [self GoToGlobalHostsPathAsync:path select_entry:last_path_entry];
 }
 
-- (void) HandleReturnButton
+- (bool) HandleGoIntoDir
 {
     const auto entry = [m_View CurrentItem];
     if(entry == nullptr)
-        return;
+        return false;
     
     // Handle directories.
     if(entry->IsDir())
     {
+        // TODO: make this use .GoToUpperDirectoryAsync method somehow
+        
         if(!entry->IsDotDot() ||
            strcmp(m_Data.Listing()->RelativePath(), "/"))
         {
@@ -646,7 +648,7 @@ void panel::GenericCursorPersistance::Restore()
                           WithHosts:make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack)
                         SelectEntry:curdirname.c_str()
              ];
-            return;
+            return true;
         }
         else
         { // dot-dot entry on some root dir - therefore it's some VFS like archive
@@ -665,7 +667,7 @@ void panel::GenericCursorPersistance::Restore()
             
             [self GoToRelativeAsync:directory_path WithHosts:hosts SelectEntry:junct];
             
-            return;
+            return true;
         }
     }
     else
@@ -676,9 +678,21 @@ void panel::GenericCursorPersistance::Restore()
         {
             m_HostsStack.push_back(arhost);
             [self GoToRelativeToHostAsync:"/" select_entry:0];
-            return;
+            return true;
         }
     }
+    
+    return false;
+}
+
+- (void) HandleGoIntoDirOrOpenInSystem
+{
+    if([self HandleGoIntoDir])
+        return;
+    
+    const auto entry = [m_View CurrentItem];
+    if(entry == nullptr)
+        return;
     
     // need more sophisticated executable handling here
     if([self GetCurrentVFSHost]->IsNativeFS() && IsEligbleToTryToExecuteInConsole(*entry))
@@ -691,7 +705,7 @@ void panel::GenericCursorPersistance::Restore()
     
     // If previous code didn't handle current item,
     // open item with the default associated application.
-    [self HandleShiftReturnButton];
+    [self HandleOpenInSystem];
 }
 
 - (void) RefreshDirectory
@@ -776,11 +790,11 @@ void panel::GenericCursorPersistance::Restore()
     // handle some actions manually, to prevent annoying by menu highlighting by hotkey
     auto &shortcuts = ActionsShortcutsManager::Instance();
     if(shortcuts.ShortCutFromAction("menu.file.open")->IsKeyDown(unicode, keycode, modif)) {
-        [self HandleReturnButton];
+        [self HandleGoIntoDirOrOpenInSystem];
         return true;
     }
     if(shortcuts.ShortCutFromAction("menu.file.open_native")->IsKeyDown(unicode, keycode, modif)) {
-        [self HandleShiftReturnButton];
+        [self HandleOpenInSystem];
         return true;
     }
     if(shortcuts.ShortCutFromAction("menu.file.calculate_sizes")->IsKeyDown(unicode, keycode, modif)) {
@@ -1035,7 +1049,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos
 {
-    [self HandleReturnButton];
+    [self HandleGoIntoDirOrOpenInSystem];
 }
 
 - (void) HandleFileSearch

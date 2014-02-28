@@ -26,6 +26,9 @@
 - (IBAction)OnGoToUtilities:(id)sender;
 - (IBAction)OnGoToFolder:(id)sender;
 
+- (IBAction)OnGoToUpperDirectory:(id)sender;
+- (IBAction)OnGoIntoDirectory:(id)sender;
+
 // Operations
 - (IBAction)OnMoveToTrash:(id)sender;
 - (IBAction)OnEjectVolume:(id)sender;

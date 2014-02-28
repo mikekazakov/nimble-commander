@@ -139,8 +139,10 @@ namespace panel
 - (bool) IsActivePanel;
 
 
-- (void) HandleReturnButton;        // 'Open' menu item
-- (void) HandleShiftReturnButton;   // 'Open Natively' menu item
+- (void) HandleGoIntoDirOrOpenInSystem;        // 'Open' menu item
+- (void) HandleOpenInSystem;                   // 'Open Natively' menu item
+- (bool) HandleGoIntoDir;                      // basically cmd+down_arrow
+
 - (void) HandleFileView;            // F3
 - (void) HandleCalculateSizes;      // alt+shift+return
 - (void) HandleBriefSystemOverview; // cmd+L

@@ -104,7 +104,6 @@
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
 		CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
-		CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF9A17CC186D9FCC00160CDB /* VFSPSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */; };
@@ -475,7 +474,6 @@
 		CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DetailedVolumeInformationSheetController.mm; sourceTree = "<group>"; };
 		CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
 		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelData_Tests.mm; sourceTree = "<group>"; };
-		CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
 		CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeFSManager.mm; sourceTree = "<group>"; };
@@ -1064,7 +1062,6 @@
 			children = (
 				CFE1A4F216C632F700EFBA3C /* MainWindowController.h */,
 				CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */,
-				CF8B09C816ECDC900013B6A8 /* MainWindowController.xib */,
 				CF07DE36175D971E00757DE1 /* MainWindowStateProtocol.h */,
 			);
 			name = MainWindow;
@@ -1654,7 +1651,6 @@
 				CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */,
-				CF8B09C916ECDC900013B6A8 /* MainWindowController.xib in Resources */,
 				CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */,
 				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,

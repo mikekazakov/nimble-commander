@@ -1214,14 +1214,6 @@
              }];
 }
 
-- (IBAction)OnGoToUpperDirectory:(id)sender
-{
-    assert([self IsPanelActive]);
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    [[self ActivePanelController] GoToUpperDirectoryAsync];    
-}
-
 - (IBAction)OnCopyCurrentFileName:(id)sender
 {
     auto focus = [self.ActivePanelController GetCurrentFocusedEntryFilename];

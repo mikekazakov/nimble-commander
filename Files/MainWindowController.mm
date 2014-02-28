@@ -25,11 +25,27 @@
 }
 
 - (id)init {
-    self = [super initWithWindowNibName:@"MainWindowController"];
-    
-    if (self) {
-        [self setShouldCascadeWindows:NO];
-        [self window]; // Force window to load.
+    NSWindow* window = [[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
+                                                   styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask
+                                                     backing:NSBackingStoreBuffered
+                                                       defer:false];
+    window.minSize = NSMakeSize(660, 480);
+    window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
+    [window setFrameUsingName:@"MainWindow"];
+
+    if(self = [super initWithWindow:window]) {
+        self.ShouldCascadeWindows = NO;
+        window.title = @"Files αλφα ver.";
+        window.Delegate = self;
+        
+        m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[self.window.contentView frame]
+                                                                Window:self.window];
+        [self PushNewWindowState:m_PanelState];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(DidBecomeKeyWindow)
+                                                     name:NSWindowDidBecomeKeyNotification
+                                                   object:self.window];
     }
     
     return self;
@@ -38,23 +54,7 @@
 -(void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    // TODO: data, controllers and view deletion. leaks now
     assert(m_WindowState.empty());
-}
-
-- (void)windowDidLoad
-{
-    [super windowDidLoad];
-    [[self window] setDelegate:self];
-    
-    m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[[[self window] contentView] frame]
-                                                            Window:self.window];
-    [self PushNewWindowState:m_PanelState];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(DidBecomeKeyWindow)
-                                                 name:NSWindowDidBecomeKeyNotification
-                                               object:[self window]];
 }
 
 - (void)windowDidResize:(NSNotification *)notification {
@@ -72,8 +72,8 @@
         if([i respondsToSelector:@selector(WindowWillClose)])
             [i WindowWillClose];
 
-    [[self window] setContentView:nil];
-    [[self window] makeFirstResponder:nil];
+    [self.window setContentView:nil];
+    [self.window makeFirstResponder:nil];
     
     while(!m_WindowState.empty())
     {

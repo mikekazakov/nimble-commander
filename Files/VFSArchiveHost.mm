@@ -22,10 +22,7 @@ VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
                                shared_ptr<VFSHost> _parent):
     VFSHost(_junction_path, _parent),
     m_Arc(0),
-    m_SeekCacheControl(dispatch_queue_create("info.filesmanager.Files.VFSArchiveHost.sc_control_queue", DISPATCH_QUEUE_SERIAL)),
-    m_LastItemUID(0),
-    m_ArchivedFilesTotalSize(0),
-    m_ArchiveFileSize(0)
+    m_SeekCacheControl(dispatch_queue_create("info.filesmanager.Files.VFSArchiveHost.sc_control_queue", DISPATCH_QUEUE_SERIAL))
 {
 }
 
@@ -195,6 +192,8 @@ VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
     auto parent_dir = FindOrBuildDir(parent_path);
 
 //    printf("FindOrBuildDir: adding new dir %s\n", _path_with_tr_sl);
+    
+    // TODO: need to check presense of entry_name in parent_dir
     
     InsertDummyDirInto(parent_dir, entry_name);
     VFSArchiveDir *entry = new VFSArchiveDir;

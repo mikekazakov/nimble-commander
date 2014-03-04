@@ -75,21 +75,6 @@ VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_pat
                                                      false,
                                                      kCFAllocatorNull);
     }
-    
-/*    if(need_to_add_dot_dot)
-    {
-        // ?? do we need to handle properly the usual ".." appearance, since we have a fix-up way anyhow?
-        // add ".." entry by hand
-        VFSNativeListingItem current = {};
-        //        memset(&current, 0, sizeof(DirectoryEntryInformation));
-        current.unix_type = DT_DIR;
-        current.inode  = 0;
-        current.namelen = 2;
-        memcpy(&current.namebuf[0], "..", current.namelen+1);
-        current.size = VFSListingItem::InvalidSize;
-        m_Items.insert(m_Items.begin(), current); // this can be looong on biiiiiig directories
-    }*/
-
 }
 
 VFSArchiveListing::~VFSArchiveListing()

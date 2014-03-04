@@ -84,6 +84,9 @@
 		CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
+		CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */; };
+		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
+		CF653E0418C5AB2000502920 /* VFSArchiveUnRARListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */; };
 		CF6617EF17E48B5100593225 /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6617EE17E48B5100593225 /* VFSError.mm */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6C5AD117BC70DE0007B648 /* pref_viewer_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */; };
@@ -300,6 +303,13 @@
 			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
 			remoteInfo = Files;
 		};
+		CF653C5518C3934200502920 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF653C4A18C3934100502920;
+			remoteInfo = UnRAR_LIB;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -442,6 +452,12 @@
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
+		CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveUnRARHost.mm; sourceTree = "<group>"; };
+		CF653C3C18C38D0900502920 /* VFSArchiveUnRARHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveUnRARHost.h; sourceTree = "<group>"; };
+		CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnRAR_LIB.xcodeproj; path = 3rd_party/unrar/UnRAR_LIB/UnRAR_LIB.xcodeproj; sourceTree = "<group>"; };
+		CF653DFF18C45A2900502920 /* VFSArchiveUnRARInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSArchiveUnRARInternals.h; sourceTree = "<group>"; };
+		CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveUnRARListing.mm; sourceTree = "<group>"; };
+		CF653E0318C5AB2000502920 /* VFSArchiveUnRARListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveUnRARListing.h; sourceTree = "<group>"; };
 		CF6617EE17E48B5100593225 /* VFSError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSError.mm; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
 		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
@@ -775,6 +791,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
 				CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */,
 				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
 				CF033A6D1805A50D0088CAB4 /* IOKit.framework in Frameworks */,
@@ -1047,6 +1064,58 @@
 			name = PanelMainWindowState;
 			sourceTree = "<group>";
 		};
+		CF653C3A18C38CD700502920 /* UnRAR */ = {
+			isa = PBXGroup;
+			children = (
+				CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */,
+				CF653C3C18C38D0900502920 /* VFSArchiveUnRARHost.h */,
+				CF653DFF18C45A2900502920 /* VFSArchiveUnRARInternals.h */,
+				CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */,
+				CF653E0318C5AB2000502920 /* VFSArchiveUnRARListing.h */,
+			);
+			name = UnRAR;
+			sourceTree = "<group>";
+		};
+		CF653C3F18C38DBA00502920 /* libarchive */ = {
+			isa = PBXGroup;
+			children = (
+				CF9D0B6217CC5FB800CB8146 /* VFSArchiveHost.mm */,
+				CF9D0B6317CC5FB800CB8146 /* VFSArchiveHost.h */,
+				CF9D0B6517CC910100CB8146 /* VFSArchiveInternal.mm */,
+				CF9D0B6617CC910100CB8146 /* VFSArchiveInternal.h */,
+				CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */,
+				CF1648B017D57BDA00D0B17E /* VFSArchiveListing.h */,
+				CF9D0EDD17CCC51C00CB8146 /* VFSArchiveFile.mm */,
+				CF9D0EDE17CCC51C00CB8146 /* VFSArchiveFile.h */,
+			);
+			name = libarchive;
+			sourceTree = "<group>";
+		};
+		CF653C4018C38DD400502920 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				CFB8F22C17CA3C80004574FE /* VFSHost.mm */,
+				CFB8F22D17CA3C80004574FE /* VFSHost.h */,
+				CFB8F22F17CA4175004574FE /* VFSListing.mm */,
+				CFB8F23017CA4175004574FE /* VFSListing.h */,
+				CF9D060317CB2DC900CB8146 /* VFSFile.mm */,
+				CF9D060417CB2DC900CB8146 /* VFSFile.h */,
+				CFA0B2271864064700501C35 /* VFSPath.mm */,
+				CFA0B2281864064700501C35 /* VFSPath.h */,
+				CF6617EE17E48B5100593225 /* VFSError.mm */,
+				CFB8F23317CAF4EC004574FE /* VFSError.h */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		CF653C5218C3934100502920 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF653C5618C3934200502920 /* libUnRAR_LIB.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */ = {
 			isa = PBXGroup;
 			children = (
@@ -1070,14 +1139,8 @@
 		CF9D0B6117CC5F9D00CB8146 /* Archive */ = {
 			isa = PBXGroup;
 			children = (
-				CF9D0B6217CC5FB800CB8146 /* VFSArchiveHost.mm */,
-				CF9D0B6317CC5FB800CB8146 /* VFSArchiveHost.h */,
-				CF9D0B6517CC910100CB8146 /* VFSArchiveInternal.mm */,
-				CF9D0B6617CC910100CB8146 /* VFSArchiveInternal.h */,
-				CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */,
-				CF1648B017D57BDA00D0B17E /* VFSArchiveListing.h */,
-				CF9D0EDD17CCC51C00CB8146 /* VFSArchiveFile.mm */,
-				CF9D0EDE17CCC51C00CB8146 /* VFSArchiveFile.h */,
+				CF653C3F18C38DBA00502920 /* libarchive */,
+				CF653C3A18C38CD700502920 /* UnRAR */,
 			);
 			name = Archive;
 			sourceTree = "<group>";
@@ -1386,20 +1449,11 @@
 		CFB8F22B17CA3C65004574FE /* VFS */ = {
 			isa = PBXGroup;
 			children = (
+				CF653C4018C38DD400502920 /* Core */,
 				CFA0B23B186BE36F00501C35 /* PS */,
 				CF9D0B6117CC5F9D00CB8146 /* Archive */,
 				CFB8F23217CA5373004574FE /* Native */,
 				CF9D0EE017CE11A000CB8146 /* Wrapping */,
-				CFB8F22C17CA3C80004574FE /* VFSHost.mm */,
-				CFB8F22D17CA3C80004574FE /* VFSHost.h */,
-				CFB8F22F17CA4175004574FE /* VFSListing.mm */,
-				CFB8F23017CA4175004574FE /* VFSListing.h */,
-				CF9D060317CB2DC900CB8146 /* VFSFile.mm */,
-				CF9D060417CB2DC900CB8146 /* VFSFile.h */,
-				CFA0B2271864064700501C35 /* VFSPath.mm */,
-				CFA0B2281864064700501C35 /* VFSPath.h */,
-				CF6617EE17E48B5100593225 /* VFSError.mm */,
-				CFB8F23317CAF4EC004574FE /* VFSError.h */,
 				CF435FFB17CF1C5C004BA507 /* VFS.h */,
 			);
 			name = VFS;
@@ -1539,6 +1593,7 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
+				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
 				CFDA4CD1182CBA51006EC35C /* sparkle */,
 				CF29313117D9914700648A90 /* rdrand */,
 				CF9D0CEE17CC957700CB8146 /* archivelib */,
@@ -1625,6 +1680,12 @@
 			mainGroup = CFC5120816C4BD3D00D247EE;
 			productRefGroup = CFC5121216C4BD3D00D247EE /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = CF653C5218C3934100502920 /* Products */;
+					ProjectRef = CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				CFC5121016C4BD3D00D247EE /* Files */,
@@ -1632,6 +1693,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		CF653C5618C3934200502920 /* libUnRAR_LIB.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUnRAR_LIB.a;
+			remoteRef = CF653C5518C3934200502920 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CF47A97E186C607B00745C4C /* Resources */ = {
@@ -1929,6 +2000,7 @@
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
 				CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */,
 				CF9D0EC417CC961100CB8146 /* archive_write_disk_set_standard_lookup.c in Sources */,
+				CF653E0418C5AB2000502920 /* VFSArchiveUnRARListing.mm in Sources */,
 				CF9D0EBB17CC961100CB8146 /* archive_write_add_filter_lrzip.c in Sources */,
 				CF9D0ED017CC961100CB8146 /* archive_write_set_format_iso9660.c in Sources */,
 				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
@@ -1946,6 +2018,7 @@
 				CF9D0ED117CC961100CB8146 /* archive_write_set_format_mtree.c in Sources */,
 				CF9D0EA917CC961100CB8146 /* archive_read_support_format_mtree.c in Sources */,
 				CFBE65AB17B607BE00451AE7 /* PanelFastSearchPopupViewController.mm in Sources */,
+				CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */,
 				CF9D0E8017CC961100CB8146 /* archive_entry.c in Sources */,
 				CF27414917FF04EF006D6687 /* SharingService.mm in Sources */,
 				CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */,

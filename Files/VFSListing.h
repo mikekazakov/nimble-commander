@@ -7,7 +7,7 @@
 //
 
 #pragma once
-
+#include <dirent.h>
 #include <string>
 #include <memory>
 
@@ -108,6 +108,69 @@ private:
     unsigned int   cflags = 0;
     unsigned short cicon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
 }; // 8 + 4 + 2 bytes = 14 total
+
+
+/**
+ * Wrapper around VFSListingItem interface, holding trivial data and providing it via inherited api.
+ * Has no implicit behaviour nor construction or descruction, only trivital zero initialization.
+ * It provided not best performance in layout and memory terms, it's more about architectural simplicity.
+ */
+struct VFSGenericListingItem : public VFSListingItem
+{
+    virtual const char     *Name()      const override { return m_Name;     }
+    virtual size_t          NameLen()   const override { return m_NameLen;  }
+    virtual CFStringRef     CFName()    const override { return m_CFName;   }
+    virtual uint64_t        Size()      const override { return m_Size;     }
+    virtual uint64_t        Inode()     const override { return m_Inode;    }
+    virtual time_t          ATime()     const override { return m_ATime;    }
+    virtual time_t          MTime()     const override { return m_MTime;    }
+    virtual time_t          CTime()     const override { return m_CTime;    }
+    virtual time_t          BTime()     const override { return m_BTime;    }
+    virtual mode_t          UnixMode()  const override { return m_Mode;     }
+    virtual uint32_t        UnixFlags() const override { return m_Flags;    }
+    virtual uid_t           UnixUID()   const override { return m_UID;      }
+    virtual gid_t           UnixGID()   const override { return m_GID;      }
+    virtual uint8_t         UnixType()  const override { return m_Type;     }
+    virtual const char     *Symlink()   const override { return m_Symlink;  }
+    virtual bool            IsDir()     const override { return (m_Mode & S_IFMT) == S_IFDIR;   }
+    virtual bool            IsReg()     const override { return (m_Mode & S_IFMT) == S_IFREG;   }
+    virtual bool            IsSymlink() const override { return m_Type == DT_LNK;               }
+    virtual bool            HasExtension()      const override { return m_ExtOff > 0;           }
+    virtual unsigned short  ExtensionOffset()   const override { return m_ExtOff;               }
+    virtual const char*     Extension()         const override { return m_Name + m_ExtOff;      }
+    virtual void            SetSize(uint64_t _size)   override { m_Size = _size;                };
+    const char     *m_Name      = 0;
+    size_t          m_NameLen   = 0;
+    CFStringRef     m_CFName    = 0;
+    uint64_t        m_Size      = 0;
+    uint64_t        m_Inode     = 0;
+    time_t          m_ATime     = 0;
+    time_t          m_MTime     = 0;
+    time_t          m_CTime     = 0;
+    time_t          m_BTime     = 0;
+    mode_t          m_Mode      = 0;
+    uint32_t        m_Flags     = 0;
+    uid_t           m_UID       = 0;
+    gid_t           m_GID       = 0;
+    uint8_t         m_Type      = 0;
+    const char     *m_Symlink   = 0;
+    uint16_t        m_ExtOff    = 0;
+
+    // helper methods
+    void FindExtension()
+    {
+        m_ExtOff = 0;
+        for(int i = (int)m_NameLen - 1; i >= 0; --i)
+            if(m_Name[i] == '.')
+            {
+                if(i == m_NameLen - 1 || i == 0)
+                    break; // degenerate case, lets think that there's no extension at all
+                m_ExtOff = i+1;
+                break;
+            }
+    }
+
+};
 
 // hold an items listing
 // perform access operations

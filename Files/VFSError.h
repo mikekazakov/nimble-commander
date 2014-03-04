@@ -36,6 +36,8 @@ struct VFSError
         ArclibFileFormat    = -2000, // Unrecognized or invalid file format.
         ArclibProgError     = -2001, // Illegal usage of the library.
         ArclibMiscError     = -2002, // Unknown or unclassified error.
+        
+        UnRARFailedToOpenArchive = -2100
     };
     
     static int FromErrno(int _errno);

@@ -673,7 +673,18 @@ void panel::GenericCursorPersistance::Restore()
     else
     { // VFS stuff here
         string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex([m_View GetCursorPosition]));
-        shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(path.c_str(), m_HostsStack.back());
+        
+        if(entry->HasExtension() && string("rar") == entry->Extension())
+        {
+            auto host = make_shared<VFSArchiveUnRARHost>(path.c_str());
+            if(host->Open() == 0) {
+                m_HostsStack.push_back(host);
+                [self GoToRelativeToHostAsync:"/" select_entry:0];
+                return true;
+            }
+        }
+        
+        auto arhost = make_shared<VFSArchiveHost>(path.c_str(), m_HostsStack.back());
         if(arhost->Open() >= 0)
         {
             m_HostsStack.push_back(arhost);

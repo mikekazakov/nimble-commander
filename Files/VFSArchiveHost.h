@@ -87,10 +87,13 @@ private:
     shared_ptr<VFSFile>                m_ArFile;
     shared_ptr<VFSArchiveMediator>     m_Mediator;
     struct archive                         *m_Arc;
+    
+    
+// TODO: change this to map<string, VFSArchiveDir>
     map<string, VFSArchiveDir*>   m_PathToDir;
-    uint64_t                                m_ArchiveFileSize;
-    uint64_t                                m_ArchivedFilesTotalSize;
-    uint32_t                                m_LastItemUID;
+    uint64_t                                m_ArchiveFileSize = 0;
+    uint64_t                                m_ArchivedFilesTotalSize = 0;
+    uint32_t                                m_LastItemUID = 0;
     
     list<shared_ptr<VFSArchiveSeekCache>> m_SeekCaches;
     

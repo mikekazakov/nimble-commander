@@ -7,28 +7,26 @@
 //
 
 #pragma once
-
+#include "3rd_party/unrar/unrar-5.0.14/raros.hpp"
+#include "3rd_party/unrar/unrar-5.0.14/dll.hpp"
 #import <string>
 #import <deque>
 
 using namespace std;
 
+
+
 struct VFSArchiveUnRAREntry
 {
-    string      rar_name; // original name in rar archive, for search and comparisons
-    string      name;     // utf-8
-    CFStringRef cfname;   // no allocations, pointing at name
+    string      rar_name;       // original full name in rar archive, for search and comparisons
+    string      name;           // utf-8
+    CFStringRef cfname = 0;     // no allocations, pointing at name
+    uint64_t    unpacked_size = 0;
+    time_t      time = 0;
+    uint32_t    uuid = 0;
+    bool        isdir = false;
     
-    uint64_t    unpacked_size;
-    time_t      time;
-    uint32_t    uuid;
-    bool        isdir;
-    
-
-    VFSArchiveUnRAREntry():
-        cfname(NULL)
-    {
-    }
+    VFSArchiveUnRAREntry() {}
     
     ~VFSArchiveUnRAREntry()
     {
@@ -46,13 +44,22 @@ struct VFSArchiveUnRAREntry
     void operator=(const VFSArchiveUnRAREntry&) = delete;
 };
 
-
 struct VFSArchiveUnRARDirectory
 {
     string full_path; // full path to directory including trailing slash
-    time_t      time = 0;
-//    string short_path;
-    
+    time_t time = 0;
     
     deque<VFSArchiveUnRAREntry> entries;
+};
+
+struct VFSArchiveUnRARSeekCache
+{
+    ~VFSArchiveUnRARSeekCache()
+    {
+        if(rar_handle)
+            RARCloseArchive(rar_handle);
+    }
+    
+    void    *rar_handle = 0;
+    uint32_t uid = 0; // uid of a last read item. if client want to use such cache, their's uid should be bigger than uid
 };

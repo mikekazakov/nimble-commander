@@ -7,13 +7,12 @@
 //
 
 #include <string.h>
-#include "3rd_party/unrar/unrar-5.0.14/raros.hpp"
-#include "3rd_party/unrar/unrar-5.0.14/dll.hpp"
+#include "Common.h"
 #include "VFSNativeHost.h"
 #include "VFSArchiveUnRARHost.h"
 #include "VFSArchiveUnRARInternals.h"
 #include "VFSArchiveUnRARListing.h"
-#include "Common.h"
+#include "VFSArchiveUnRARFile.h"
 
 /*enum UNRARCALLBACK_MESSAGES {
     UCM_CHANGEVOLUME,UCM_PROCESSDATA,UCM_NEEDPASSWORD,UCM_CHANGEVOLUMEW,
@@ -68,12 +67,15 @@ static int CALLBACK CallbackProc(UINT msg, long UserData, long P1, long P2) {
 const char *VFSArchiveUnRARHost::Tag = "archive_unrar";
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const char *_junction_path):
-    VFSHost(_junction_path, VFSNativeHost::SharedHost())
+    VFSHost(_junction_path, VFSNativeHost::SharedHost()),
+    m_SeekCacheControl(dispatch_queue_create(NULL, NULL))
 {
 }
 
 VFSArchiveUnRARHost::~VFSArchiveUnRARHost()
 {
+    dispatch_sync(m_SeekCacheControl, ^{});
+    dispatch_release(m_SeekCacheControl);
 }
 
 const char *VFSArchiveUnRARHost::FSTag() const
@@ -251,7 +253,7 @@ int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, bool 
     {
         memset(&_st, 0, sizeof(_st));
         _st.size = it->unpacked_size;
-        _st.mode = S_IRUSR | S_IWUSR | (it->isdir ? S_IFDIR : 0);
+        _st.mode = S_IRUSR | S_IWUSR | (it->isdir ? S_IFDIR : S_IFREG);
         _st.atime.tv_sec = it->time;
         _st.mtime.tv_sec = it->time;
         _st.ctime.tv_sec = it->time;
@@ -262,7 +264,7 @@ int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, bool 
     return VFSError::NotFound;
 }
 
-const VFSArchiveUnRAREntry *VFSArchiveUnRARHost::FindEntry(const string &_full_path)
+const VFSArchiveUnRAREntry *VFSArchiveUnRARHost::FindEntry(const string &_full_path) const
 {
     if(_full_path.empty())
         return nullptr;
@@ -289,4 +291,72 @@ const VFSArchiveUnRAREntry *VFSArchiveUnRARHost::FindEntry(const string &_full_p
             return &it;
 
     return nullptr;
+}
+
+uint32_t VFSArchiveUnRARHost::ItemUUID(const string& _filename) const
+{
+    if(auto entry = FindEntry(_filename))
+        return entry->uuid;
+    return 0;
+}
+
+unique_ptr<VFSArchiveUnRARSeekCache> VFSArchiveUnRARHost::SeekCache(uint32_t _requested_item)
+{
+    if(_requested_item == 0)
+        return 0;
+    
+    __block unique_ptr<VFSArchiveUnRARSeekCache> res;
+    
+    dispatch_sync(m_SeekCacheControl, ^{
+        // choose the closest cached archive handle if any
+        uint32_t best_delta = -1;
+        auto best = m_SeekCaches.end();
+        for(auto i = m_SeekCaches.begin(); i != m_SeekCaches.end(); ++i)
+        {
+            if((*i)->uid < _requested_item)
+            {
+                uint32_t delta = _requested_item - (*i)->uid;
+                if(delta < best_delta)
+                {
+                    best_delta = delta;
+                    best = i;
+                    if(delta == 1) // the closest one is found, no need to search further
+                        break;
+                }
+            }
+        }
+        if(best != m_SeekCaches.end())
+        {
+            res = move(*best);
+            m_SeekCaches.erase(best);
+            return;
+        }
+        
+        // open a new archive handle
+        HANDLE rar_file;
+        RAROpenArchiveDataEx flags;
+        memset(&flags, 0, sizeof(flags));
+        flags.ArcName = (char*)JunctionPath();
+        flags.OpenMode = RAR_OM_EXTRACT;
+        
+        rar_file = RAROpenArchiveEx(&flags);
+        if(rar_file == 0)
+            return;
+        
+        res = unique_ptr<VFSArchiveUnRARSeekCache>(new VFSArchiveUnRARSeekCache);
+        res->rar_handle = rar_file;
+    });
+    
+    return move(res);
+}
+
+int VFSArchiveUnRARHost::CreateFile(const char* _path,
+                                    shared_ptr<VFSFile> *_target,
+                                    bool (^_cancel_checker)())
+{
+    auto file = make_shared<VFSArchiveUnRARFile>(_path, SharedPtr());
+    if(_cancel_checker && _cancel_checker())
+        return VFSError::Cancelled;
+    *_target = file;
+    return VFSError::Ok;
 }

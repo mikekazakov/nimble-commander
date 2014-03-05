@@ -203,7 +203,7 @@ bool VFSArchiveFile::Eof() const
 
 ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
 {
-    if(m_Arc < 0) return SetLastError(VFSError::InvalidCall);
+    if(m_Arc == 0) return SetLastError(VFSError::InvalidCall);
     if(Eof())     return 0;
     
     assert(_buf != 0);

@@ -12,9 +12,11 @@
 #import <list>
 #import "VFSHost.h"
 #import "VFSFile.h"
+#import "DispatchQueue.h"
 
 struct VFSArchiveUnRAREntry;
 struct VFSArchiveUnRARDirectory;
+struct VFSArchiveUnRARSeekCache;
 
 class VFSArchiveUnRARHost : public VFSHost
 {
@@ -35,18 +37,54 @@ public:
                                       int _flags,
                                       bool (^_cancel_checker)()) override;
     
-    virtual int Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)()) override;    
+    virtual int Stat(const char *_path,
+                     VFSStat &_st,
+                     int _flags,
+                     bool (^_cancel_checker)()) override;
 
+    virtual int CreateFile(const char* _path,
+                           shared_ptr<VFSFile> *_target,
+                           bool (^_cancel_checker)()) override;
     
     
+    
+    
+    /**
+     * Return zero on not found.
+     */
+    uint32_t ItemUUID(const string& _filename) const;
+
+    /**
+     * Return nullptr on not found.
+     */
+    const VFSArchiveUnRAREntry *FindEntry(const string &_full_path) const;
+    
+    /**
+     * Destructive call - will override currently stored one
+     */
+//    void CommitSeekCache(shared_ptr<VFSArchiveSeekCache> _sc);
+    
+    /**
+     * if there're no appropriate caches, host will try to open a new RAR handle.
+     * If can't satisfy this call - zero ptr is returned.
+     */
+    unique_ptr<VFSArchiveUnRARSeekCache> SeekCache(uint32_t _requested_item);
+    
+    shared_ptr<const VFSArchiveUnRARHost> SharedPtr() const {return static_pointer_cast<const VFSArchiveUnRARHost>(VFSHost::SharedPtr());}
+    shared_ptr<VFSArchiveUnRARHost> SharedPtr() {return static_pointer_cast<VFSArchiveUnRARHost>(VFSHost::SharedPtr());}
 private:
     
     int InitialReadFileList(void *_rar_handle);
 
     VFSArchiveUnRARDirectory *FindOrBuildDirectory(const string& _path_with_tr_sl);
     
-    const VFSArchiveUnRAREntry *FindEntry(const string &_full_path);
+
     
     map<string, VFSArchiveUnRARDirectory>   m_PathToDir; // path to dir with trailing slash -> directory contents
     uint32_t                                m_LastItemUID = 0;
+    list<unique_ptr<VFSArchiveUnRARSeekCache>> m_SeekCaches;
+    dispatch_queue_t                           m_SeekCacheControl;
+
+    
+    // TODO: int m_FD for exclusive lock?
 };

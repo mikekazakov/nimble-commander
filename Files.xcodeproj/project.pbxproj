@@ -87,6 +87,7 @@
 		CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF653E0418C5AB2000502920 /* VFSArchiveUnRARListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */; };
+		CF653E0818C619EE00502920 /* VFSArchiveUnRARFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653E0618C619EE00502920 /* VFSArchiveUnRARFile.mm */; };
 		CF6617EF17E48B5100593225 /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6617EE17E48B5100593225 /* VFSError.mm */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6C5AD117BC70DE0007B648 /* pref_viewer_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */; };
@@ -458,6 +459,8 @@
 		CF653DFF18C45A2900502920 /* VFSArchiveUnRARInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSArchiveUnRARInternals.h; sourceTree = "<group>"; };
 		CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveUnRARListing.mm; sourceTree = "<group>"; };
 		CF653E0318C5AB2000502920 /* VFSArchiveUnRARListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveUnRARListing.h; sourceTree = "<group>"; };
+		CF653E0618C619EE00502920 /* VFSArchiveUnRARFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveUnRARFile.mm; sourceTree = "<group>"; };
+		CF653E0718C619EE00502920 /* VFSArchiveUnRARFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveUnRARFile.h; sourceTree = "<group>"; };
 		CF6617EE17E48B5100593225 /* VFSError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSError.mm; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
 		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
@@ -1072,6 +1075,8 @@
 				CF653DFF18C45A2900502920 /* VFSArchiveUnRARInternals.h */,
 				CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */,
 				CF653E0318C5AB2000502920 /* VFSArchiveUnRARListing.h */,
+				CF653E0618C619EE00502920 /* VFSArchiveUnRARFile.mm */,
+				CF653E0718C619EE00502920 /* VFSArchiveUnRARFile.h */,
 			);
 			name = UnRAR;
 			sourceTree = "<group>";
@@ -1964,6 +1969,7 @@
 				CF9D0E7C17CC961100CB8146 /* archive_entry_sparse.c in Sources */,
 				CF9D0ED317CC961100CB8146 /* archive_write_set_format_shar.c in Sources */,
 				CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */,
+				CF653E0818C619EE00502920 /* VFSArchiveUnRARFile.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */,
 				CF9D0EB917CC961100CB8146 /* archive_write_add_filter_grzip.c in Sources */,

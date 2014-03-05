@@ -23,7 +23,7 @@ public:
     VFSArchiveUnRARFile(const char* _relative_path, shared_ptr<VFSArchiveUnRARHost> _host);
     ~VFSArchiveUnRARFile();
     
-    virtual int Open(int _open_flags) override;
+    virtual int Open(int _open_flags, bool (^_cancel_checker)()) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;
 
@@ -32,7 +32,6 @@ public:
     virtual ssize_t Pos() const override;
     virtual ssize_t Size() const override;
     virtual bool Eof() const override;
-    
     
 private:
     static int ProcessRAR(unsigned int _msg, long _user_data, long _p1, long _p2);
@@ -44,11 +43,12 @@ private:
     unsigned                                m_UnpackBufferCapacity = 0;
     
     const VFSArchiveUnRAREntry *m_Entry = 0;
-    ssize_t m_Position = 0;
-    dispatch_queue_t        m_UnpackThread;
-    
-    dispatch_semaphore_t    m_UnpackSemaphore = 0;
-    dispatch_semaphore_t    m_ConsumeSemaphore = 0;
-    dispatch_semaphore_t    m_FinishUnpackSemaphore = 0;
-    bool                    m_ExitUnpacking = false;
+    ssize_t                     m_Position = 0;
+    ssize_t                     m_TotalExtracted = 0;
+    dispatch_queue_t            m_UnpackThread;
+    dispatch_semaphore_t        m_UnpackSemaphore = 0;
+    dispatch_semaphore_t        m_ConsumeSemaphore = 0;
+    dispatch_semaphore_t        m_FinishUnpackSemaphore = 0;
+    bool                        m_ExtractionRunning = false;
+    bool                        m_ExitUnpacking = false;
 };

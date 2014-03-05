@@ -28,7 +28,7 @@ VFSArchiveFile::~VFSArchiveFile()
     Close();
 }
 
-int VFSArchiveFile::Open(int _open_flags)
+int VFSArchiveFile::Open(int _open_flags, bool (^_cancel_checker)())
 {
     if( strlen(RelativePath()) < 2 || RelativePath()[0] != '/' )
         return SetLastError(VFSError::NotFound);

@@ -21,6 +21,7 @@ struct VFSArchiveUnRAREntry
     string      rar_name;       // original full name in rar archive, for search and comparisons
     string      name;           // utf-8
     CFStringRef cfname = 0;     // no allocations, pointing at name
+    uint64_t    packed_size = 0;
     uint64_t    unpacked_size = 0;
     time_t      time = 0;
     uint32_t    uuid = 0;

@@ -22,7 +22,7 @@ VFSSeqToRandomROWrapperFile::~VFSSeqToRandomROWrapperFile()
     Close();
 }
 
-int VFSSeqToRandomROWrapperFile::Open(int _flags)
+int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
 {
     if(m_SeqFile.get() == 0)
         return VFSError::InvalidCall;

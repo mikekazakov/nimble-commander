@@ -23,7 +23,7 @@ VFSArchiveUnRARFile::~VFSArchiveUnRARFile()
     Close();
 }
 
-int VFSArchiveUnRARFile::Open(int _open_flags)
+int VFSArchiveUnRARFile::Open(int _open_flags, bool (^_cancel_checker)())
 {
     if( strlen(RelativePath()) < 2 || RelativePath()[0] != '/' )
         return SetLastError(VFSError::NotFound);
@@ -31,14 +31,13 @@ int VFSArchiveUnRARFile::Open(int _open_flags)
     if(_open_flags & VFSFile::OF_Write)
         return SetLastError(VFSError::NotSupported); // UnRAR is Read-Only
     
-    auto host = dynamic_pointer_cast<VFSArchiveUnRARHost>(Host());
-
-    auto entry = host->FindEntry(RelativePath());
+    auto rar_host = dynamic_pointer_cast<VFSArchiveUnRARHost>(Host());
+    auto entry = rar_host->FindEntry(RelativePath());
     if(entry == 0)
         return SetLastError(VFSError::NotFound);
 
     m_Entry = entry;
-    m_Archive = host->SeekCache(entry->uuid);
+    m_Archive = rar_host->SeekCache(entry->uuid);
     
     if(!m_Archive)
         return SetLastError(VFSError::GenericError);
@@ -63,7 +62,6 @@ int VFSArchiveUnRARFile::Open(int _open_flags)
     if(skip_file_ret != 0)
         return SetLastError(VFSError::NotFound); // bad data?
     
-    
     m_ConsumeSemaphore = dispatch_semaphore_create(0);
     m_FinishUnpackSemaphore = dispatch_semaphore_create(0);
     m_UnpackSemaphore = dispatch_semaphore_create(0);
@@ -71,9 +69,15 @@ int VFSArchiveUnRARFile::Open(int _open_flags)
     auto shared_this = static_pointer_cast<VFSArchiveUnRARFile>(shared_from_this());
     dispatch_async(m_UnpackThread, ^{
         // hold shared_this in this block.
+        
+        shared_this->m_ExtractionRunning = true;
         RARSetCallback(shared_this->m_Archive->rar_handle, ProcessRAR, (long)shared_this.get());
-        RARProcessFile(shared_this->m_Archive->rar_handle, RAR_EXTRACT, NULL, NULL);
+        int ret = RARProcessFile(shared_this->m_Archive->rar_handle, RAR_EXTRACT, NULL, NULL);
+        if(ret != 0)
+            NSLog(@"RARProcessFile returned %d", ret);
+        
         dispatch_semaphore_signal(shared_this->m_FinishUnpackSemaphore);
+        shared_this->m_ExtractionRunning = false;
     });
     
     return 0;
@@ -129,7 +133,7 @@ int VFSArchiveUnRARFile::ProcessRAR(unsigned int _msg, long _user_data, long _p1
             
             if(_this->m_UnpackBufferSize + _p2 > _this->m_UnpackBufferCapacity)
             {
-                // grow buffer
+                // grow buffer accordingly
                 unsigned new_capacity = _this->m_UnpackBufferSize + (unsigned)_p2;
                 unique_ptr<uint8_t[]> buf(new uint8_t[new_capacity]);
                 memcpy(buf.get(),
@@ -145,6 +149,7 @@ int VFSArchiveUnRARFile::ProcessRAR(unsigned int _msg, long _user_data, long _p1
                    _p2
                    );
             _this->m_UnpackBufferSize += _p2;
+            _this->m_TotalExtracted += _p2;
             
             dispatch_semaphore_signal(_this->m_ConsumeSemaphore);
             
@@ -167,6 +172,7 @@ ssize_t VFSArchiveUnRARFile::Read(void *_buf, size_t _size)
     if(m_UnpackBufferSize == 0)
     {
         // if we don't have any data unpacked - ask for it
+//        assert(m_ExtractionRunning);
         dispatch_semaphore_signal(m_UnpackSemaphore);
         dispatch_semaphore_wait(m_ConsumeSemaphore, DISPATCH_TIME_FOREVER);
     }

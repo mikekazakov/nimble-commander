@@ -61,7 +61,8 @@ public:
         OF_ShLock   = 0b00010000, // not yet implemented
         OF_ExLock   = 0b00100000  // not yet implemented
     };
-    virtual int     Open(int _open_flags);
+    virtual int     Open(int _open_flags,
+                         bool (^_cancel_checker)() = 0);
     virtual bool    IsOpened() const;
     virtual int     Close();
 

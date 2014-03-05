@@ -117,11 +117,18 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
     root_dir.first->second.full_path = "/";
     
     uint32_t uuid = 1;
+    unsigned solid_items = 0;
+    m_UnpackedItemsSize = 0;
+    m_PackedItemsSize   = 0;
+    
     RARHeaderDataEx header;
     
     int read_head_ret, proc_file_ret;
     while((read_head_ret = RARReadHeaderEx(_rar_handle, &header)) == 0)
     {
+        if((header.Flags & RHDF_SOLID) != 0)
+            solid_items++;
+        
         // doing UTF32LE->UTF8 to be sure about single-byte RAR encoding
         CFStringRef utf32le = CFStringCreateWithBytesNoCopy(NULL,
                                                             (UInt8*)header.FileNameW,
@@ -163,6 +170,7 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
         entry->cfname       = CFStringCreateWithUTF8StdStringNoCopy(entry->name);
         entry->rar_name     = header.FileName;
         entry->isdir        = is_directory;
+        entry->packed_size  = uint64_t(header.PackSize) | ( uint64_t(header.PackSizeHigh) << 32 );
         entry->unpacked_size= uint64_t(header.UnpSize) | ( uint64_t(header.UnpSizeHigh) << 32 );
         entry->time         = DosTimeToUnixTime(header.FileTime);
         entry->uuid         = uuid++;
@@ -170,6 +178,10 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
         mode_t mode = header.FileAttr;
          // No using now. need to do some test about real POSIX mode data here, not only read-for-owner access.
          */
+
+        m_UnpackedItemsSize +=  entry->unpacked_size;
+        m_PackedItemsSize   += entry->packed_size;
+        
         
         if(is_directory)
             FindOrBuildDirectory(string(utf8buf) + '/')->time = entry->time;
@@ -179,6 +191,7 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
 	}
     
     m_LastItemUID = uuid - 1;
+    m_IsSolidArchive = solid_items > 0;
     
     return 0;
 }
@@ -214,15 +227,11 @@ int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
                                                int _flags,
                                                bool (^_cancel_checker)())
 {
-    string path = _path;
-    if(path.back() != '/')
-        path += '/';
-    
-    auto i = m_PathToDir.find(path);
-    if(i == m_PathToDir.end())
+    auto dir = FindDirectory(_path);
+    if(!dir)
         return VFSError::NotFound;
-    
-    auto listing = make_shared<VFSArchiveUnRARListing>(i->second, path.c_str(), _flags, SharedPtr());
+
+    auto listing = make_shared<VFSArchiveUnRARListing>(*dir, _path, _flags, SharedPtr());
     
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
@@ -230,6 +239,40 @@ int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
     *_target = listing;
     
     return VFSError::Ok;
+}
+
+int VFSArchiveUnRARHost::IterateDirectoryListing(const char *_path,
+                                                 bool (^_handler)(const VFSDirEnt &_dirent))
+{
+    auto dir = FindDirectory(_path);
+    if(!dir)
+        return VFSError::NotFound;
+
+    VFSDirEnt dirent;
+    for(auto &it: dir->entries)
+    {
+        strcpy(dirent.name, it.name.c_str());
+        dirent.name_len = it.name.length();
+        dirent.type = it.isdir ? VFSDirEnt::Dir : VFSDirEnt::Reg;
+
+        if(!_handler(dirent))
+            break;
+    }
+    
+    return 0;
+}
+
+const VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindDirectory(const string& _path) const
+{
+    string path = _path;
+    if(path.back() != '/')
+        path += '/';
+
+    auto i = m_PathToDir.find(path);
+    if(i == m_PathToDir.end())
+        return nullptr;
+    
+    return &i->second;
 }
 
 int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
@@ -253,7 +296,7 @@ int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, bool 
     {
         memset(&_st, 0, sizeof(_st));
         _st.size = it->unpacked_size;
-        _st.mode = S_IRUSR | S_IWUSR | (it->isdir ? S_IFDIR : S_IFREG);
+        _st.mode = S_IRUSR | S_IWUSR | (it->isdir ? (S_IXUSR|S_IFDIR) : S_IFREG);
         _st.atime.tv_sec = it->time;
         _st.mtime.tv_sec = it->time;
         _st.ctime.tv_sec = it->time;
@@ -359,4 +402,11 @@ int VFSArchiveUnRARHost::CreateFile(const char* _path,
         return VFSError::Cancelled;
     *_target = file;
     return VFSError::Ok;
+}
+
+bool VFSArchiveUnRARHost::ShouldProduceThumbnails()
+{
+    if(m_IsSolidArchive && m_PackedItemsSize > 64*1024*1024)
+        return false;
+    return true;
 }

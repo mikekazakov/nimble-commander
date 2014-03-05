@@ -181,8 +181,16 @@ static NSImageRep *ProduceBundleThumbnailForVFS(const char *_path,
     return [image bestRepresentationForRect:_rc context:nil hints:nil];
 }
 
+static unsigned MaximumConcurrentRunnersForVFS(VFSHost *_host)
+{
+    if(_host->IsNativeFS())
+        return 32;
+    else
+        return 6;
+}
+
 IconsGenerator::IconsGenerator():
-    m_WorkGroup(DispatchGroup::Low)
+    m_WorkGroup(DispatchGroup::Background)
 {
     m_ControlQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
     m_IconsCacheQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);
@@ -244,7 +252,8 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     // no icon - first request for this entry
     // need to collect the appropriate info and put request into generating queue
     
-    if(m_LastIconID == MaxIcons)
+    if(m_LastIconID == MaxIcons ||
+       m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_listing.Host().get()) )
         return entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
 
     unsigned short meta_no = m_LastIconID++;
@@ -365,12 +374,13 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
                m_UpdateCallback();
         }
         
-        if(/*false &&*/
+        if(// false &&
            _meta->thumbnail == 0 &&
            m_IconsMode == IconModeFileIconsThumbnails &&
            (_meta->unix_mode & S_IFMT) != S_IFDIR &&
            _meta->file_size > 0 &&
            _meta->file_size <= MaxFileSizeForThumbnailNonNative &&
+           _meta->host->ShouldProduceThumbnails() &&
            !_meta->extension.empty()
            )
         {

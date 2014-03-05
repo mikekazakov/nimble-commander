@@ -114,11 +114,17 @@ public:
      */
     void Wait();
     
+    /**
+     * Returnes amount of blocks currently running in this group.
+     */
+    unsigned Count() const;
+    
 private:
     DispatchGroup(const DispatchGroup&) = delete;
     void operator=(const DispatchGroup&) = delete;
     dispatch_queue_t m_Queue;
     dispatch_group_t m_Group;
+    atomic<unsigned> m_Count;
 };
 
 

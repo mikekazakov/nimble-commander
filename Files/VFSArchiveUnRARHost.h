@@ -37,6 +37,9 @@ public:
                                       int _flags,
                                       bool (^_cancel_checker)()) override;
     
+    virtual int IterateDirectoryListing(const char *_path,
+                                        bool (^_handler)(const VFSDirEnt &_dirent)) override;
+    
     virtual int Stat(const char *_path,
                      VFSStat &_st,
                      int _flags,
@@ -47,7 +50,10 @@ public:
                            bool (^_cancel_checker)()) override;
     
     
+    virtual bool ShouldProduceThumbnails() override;    
     
+    
+    // internal UnRAR stuff
     
     /**
      * Return zero on not found.
@@ -72,19 +78,21 @@ public:
     
     shared_ptr<const VFSArchiveUnRARHost> SharedPtr() const {return static_pointer_cast<const VFSArchiveUnRARHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSArchiveUnRARHost> SharedPtr() {return static_pointer_cast<VFSArchiveUnRARHost>(VFSHost::SharedPtr());}
+
 private:
     
     int InitialReadFileList(void *_rar_handle);
 
     VFSArchiveUnRARDirectory *FindOrBuildDirectory(const string& _path_with_tr_sl);
-    
-
+    const VFSArchiveUnRARDirectory *FindDirectory(const string& _path) const;
     
     map<string, VFSArchiveUnRARDirectory>   m_PathToDir; // path to dir with trailing slash -> directory contents
     uint32_t                                m_LastItemUID = 0;
     list<unique_ptr<VFSArchiveUnRARSeekCache>> m_SeekCaches;
     dispatch_queue_t                           m_SeekCacheControl;
+    uint64_t                                m_PackedItemsSize = 0;
+    uint64_t                                m_UnpackedItemsSize = 0;
+    bool                                    m_IsSolidArchive;
 
-    
     // TODO: int m_FD for exclusive lock?
 };

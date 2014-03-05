@@ -125,6 +125,7 @@ DispatchGroup::DispatchGroup(Priority _priority):
 {
     assert(m_Queue != 0);
     assert(m_Group != 0);
+    m_Count.store(0);
 }
 
 DispatchGroup::~DispatchGroup()
@@ -134,10 +135,19 @@ DispatchGroup::~DispatchGroup()
 
 void DispatchGroup::Run( void (^_block)() )
 {
-    dispatch_group_async(m_Group, m_Queue, _block);
+    dispatch_group_async(m_Group, m_Queue, ^{
+        m_Count++;
+        _block();
+        m_Count--;
+    });
 }
 
 void DispatchGroup::Wait()
 {
     dispatch_group_wait(m_Group, DISPATCH_TIME_FOREVER);
+}
+
+unsigned DispatchGroup::Count() const
+{
+    return m_Count;
 }

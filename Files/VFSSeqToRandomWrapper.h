@@ -17,7 +17,7 @@ public:
     VFSSeqToRandomROWrapperFile(shared_ptr<VFSFile> _file_to_wrap);
     ~VFSSeqToRandomROWrapperFile();
     
-    virtual int Open(int _flags) override;
+    virtual int Open(int _flags, bool (^_cancel_checker)()) override;
     virtual int Close() override;
     
     enum {

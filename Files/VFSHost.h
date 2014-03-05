@@ -84,7 +84,7 @@ public:
     virtual bool IsWriteableAtPath(const char *_dir) const;
     
     virtual const char *FSTag() const;
-    inline bool IsNativeFS() const { return strcmp(FSTag(), "native") == 0; }
+    virtual bool IsNativeFS() const { return false; }
     /**
      * Returns a path of a filesystem root.
      * It may be a filepath for archive or network address for remote filesystem
@@ -176,6 +176,8 @@ public:
     // return value 0 means error or unsupported for this VFS
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());
     virtual void StopDirChangeObserving(unsigned long _ticket);
+    
+    virtual bool ShouldProduceThumbnails();
     
     virtual bool FindLastValidItem(const char *_orig_path,
                                    char *_valid_path,

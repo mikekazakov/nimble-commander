@@ -26,7 +26,7 @@ VFSNativeFile::~VFSNativeFile()
     Close();
 }
 
-int VFSNativeFile::Open(int _open_flags)
+int VFSNativeFile::Open(int _open_flags, bool (^_cancel_checker)())
 {
     int openflags = O_SHLOCK|O_NONBLOCK;
     if( (_open_flags & (VFSFile::OF_Read | VFSFile::OF_Write)) == (VFSFile::OF_Read | VFSFile::OF_Write) )

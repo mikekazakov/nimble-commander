@@ -61,12 +61,12 @@ bool VFSFile::IsOpened() const
     return false;
 }
 
-int     VFSFile::Open(int)          { return SetLastError(VFSError::NotSupported); }
-int     VFSFile::Close()            { return SetLastError(VFSError::NotSupported); }
-off_t   VFSFile::Seek(off_t, int)   { return SetLastError(VFSError::NotSupported); }
-ssize_t VFSFile::Pos() const        { return SetLastError(VFSError::NotSupported); }
-ssize_t VFSFile::Size() const       { return SetLastError(VFSError::NotSupported); }
-bool    VFSFile::Eof() const        { return true; }
+int     VFSFile::Open(int, bool(^)()){ return SetLastError(VFSError::NotSupported); }
+int     VFSFile::Close()             { return SetLastError(VFSError::NotSupported); }
+off_t   VFSFile::Seek(off_t, int)    { return SetLastError(VFSError::NotSupported); }
+ssize_t VFSFile::Pos() const         { return SetLastError(VFSError::NotSupported); }
+ssize_t VFSFile::Size() const        { return SetLastError(VFSError::NotSupported); }
+bool    VFSFile::Eof() const         { return true; }
 shared_ptr<VFSFile> VFSFile::Clone() const { return 0; }
 
 void VFSFile::ComposeFullHostsPath(char *_buf) const

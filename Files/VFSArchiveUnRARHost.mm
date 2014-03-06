@@ -14,9 +14,9 @@
 #include "VFSArchiveUnRARListing.h"
 #include "VFSArchiveUnRARFile.h"
 
-static time_t DosTimeToUnixTime(unsigned int _dos_time)
+static time_t DosTimeToUnixTime(uint32_t _dos_time)
 {
-    unsigned int l = _dos_time; // a dosdate
+    uint32_t l = _dos_time; // a dosdate
     
     int year    =  ((l>>25)&127) + 1980;// 7 bits
     int month   =   (l>>21)&15;         // 4 bits
@@ -157,6 +157,9 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
 		if ((proc_file_ret = RARProcessFile(_rar_handle, RAR_SKIP, NULL, NULL)) != 0)
             return VFSError::GenericError; // TODO: need an adequate error code here
 	}
+    
+    if(read_head_ret == ERAR_MISSING_PASSWORD)
+        return VFSArchiveUnRARErrorToVFSError(read_head_ret);
     
     m_LastItemUID = uuid - 1;
     m_IsSolidArchive = solid_items > 0;
@@ -390,3 +393,8 @@ bool VFSArchiveUnRARHost::ShouldProduceThumbnails()
 //    return true;
     return false;
 }
+
+uint32_t VFSArchiveUnRARHost::LastItemUUID() const
+{
+    return m_LastItemUID;
+};

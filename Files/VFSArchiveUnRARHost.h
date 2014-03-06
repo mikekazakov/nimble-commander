@@ -60,7 +60,10 @@ public:
      */
     uint32_t ItemUUID(const string& _filename) const;
 
-    uint32_t LastItemUUID() const { return m_LastItemUID; };
+    /**
+     * Returns UUID of a last item in archive.
+     */
+    uint32_t LastItemUUID() const;
 
     /**
      * Return nullptr on not found.

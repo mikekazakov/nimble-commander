@@ -71,9 +71,9 @@ int VFSArchiveUnRARFile::Open(int _open_flags, bool (^_cancel_checker)())
     dispatch_async(m_UnpackThread, ^{
         // hold shared_this in this block.
          RARSetCallback(m_Archive->rar_handle, ProcessRAR, (long)this);
-         int ret = RARProcessFile(m_Archive->rar_handle, RAR_EXTRACT, NULL, NULL);
-         if(ret != 0)
-             NSLog(@"RARProcessFile returned %d", ret);
+         m_RarError = RARProcessFile(m_Archive->rar_handle, RAR_EXTRACT, NULL, NULL);
+         if(m_RarError != 0)
+             NSLog(@"RARProcessFile returned %d", m_RarError);
 
          m_ExtractionRunning = false;
          dispatch_semaphore_signal(m_FinishUnpackSemaphore);
@@ -200,7 +200,7 @@ ssize_t VFSArchiveUnRARFile::Read(void *_buf, size_t _size)
     {
         // if we don't have any data unpacked - ask for it
         if( m_ExtractionRunning == false )
-            return SetLastError(VFSError::GenericError);
+            return SetLastError(VFSArchiveUnRARErrorToVFSError(m_RarError));
         
         dispatch_semaphore_signal(m_UnpackSemaphore);
         dispatch_semaphore_wait(m_ConsumeSemaphore, DISPATCH_TIME_FOREVER);

@@ -14,10 +14,14 @@
 
 using namespace std;
 
-
-
 struct VFSArchiveUnRAREntry
 {
+    VFSArchiveUnRAREntry();
+    ~VFSArchiveUnRAREntry();
+    VFSArchiveUnRAREntry(const VFSArchiveUnRAREntry&) = delete;
+    VFSArchiveUnRAREntry(const VFSArchiveUnRAREntry&&) = delete;
+    void operator=(const VFSArchiveUnRAREntry&) = delete;
+    
     string      rar_name;       // original full name in rar archive, for search and comparisons
     string      name;           // utf-8
     CFStringRef cfname = 0;     // no allocations, pointing at name
@@ -26,41 +30,21 @@ struct VFSArchiveUnRAREntry
     time_t      time = 0;
     uint32_t    uuid = 0;
     bool        isdir = false;
-    
-    VFSArchiveUnRAREntry() {}
-    
-    ~VFSArchiveUnRAREntry()
-    {
-        if(cfname != 0)
-        {
-//            auto a = CFGetRetainCount(cfname);
-///            assert(CFGetRetainCount(cfname) == 1); // ??????
-            CFRelease(cfname);
-            cfname = 0;
-        }
-    }
-    
-    VFSArchiveUnRAREntry(const VFSArchiveUnRAREntry&) = delete;
-    VFSArchiveUnRAREntry(const VFSArchiveUnRAREntry&&) = delete;
-    void operator=(const VFSArchiveUnRAREntry&) = delete;
 };
 
 struct VFSArchiveUnRARDirectory
 {
     string full_path; // full path to directory including trailing slash
     time_t time = 0;
-    
     deque<VFSArchiveUnRAREntry> entries;
 };
 
 struct VFSArchiveUnRARSeekCache
 {
-    ~VFSArchiveUnRARSeekCache()
-    {
-        if(rar_handle)
-            RARCloseArchive(rar_handle);
-    }
+    ~VFSArchiveUnRARSeekCache();
     
     void    *rar_handle = 0;
     uint32_t uid = 0; // uid of a last read item. if client want to use such cache, their's uid should be bigger than uid
 };
+
+int VFSArchiveUnRARErrorToVFSError(int _rar_error);

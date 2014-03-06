@@ -12,13 +12,16 @@
 
 static NSString *const g_Domain = @"info.filesmanager.files.vfs";
 
-int VFSError::FromErrno(int _errno)
+namespace VFSError 
+{
+
+int FromErrno(int _errno)
 {
     assert(_errno >= 1 && _errno < 200); // actually 106 was max
     return -(1001 + _errno);
 }
 
-int VFSError::FromLibarchive(int _errno)
+int FromLibarchive(int _errno)
 {
     if(_errno == ARCHIVE_ERRNO_FILE_FORMAT)
         return VFSError::ArclibFileFormat;
@@ -34,21 +37,27 @@ static NSString *TextForCode(int _code)
 {
     // TODO later: localization
     switch (_code) {
-        case VFSError::Ok:                  return @"No error";
-        case VFSError::Cancelled:           return @"Operation was cancelled";
-        case VFSError::NotSupported:        return @"Operation is not supported";
-        case VFSError::InvalidCall:         return @"Invalid call";
-        case VFSError::GenericError:        return @"Generic error";
-        case VFSError::NotFound:            return @"Item not found";
-        case VFSError::UnexpectedEOF:       return @"An unexpected end of file occured";
-        case VFSError::ArclibFileFormat:    return @"Unrecognized or invalid archive file format";
-        case VFSError::ArclibProgError:     return @"Internal archive module error";
-        case VFSError::ArclibMiscError:     return @"Unknown or unclassified archive error";
+        case Ok:                  return @"No error";
+        case Cancelled:           return @"Operation was cancelled";
+        case NotSupported:        return @"Operation is not supported";
+        case InvalidCall:         return @"Invalid call";
+        case GenericError:        return @"Generic error";
+        case NotFound:            return @"Item not found";
+        case UnexpectedEOF:       return @"An unexpected end of file occured";
+        case ArclibFileFormat:    return @"Unrecognized or invalid archive file format";
+        case ArclibProgError:     return @"Internal archive module error";
+        case ArclibMiscError:     return @"Unknown or unclassified archive error";
+        case UnRARFailedToOpenArchive: return @"Failed to open RAR archive";
+        case UnRARBadData:          return @"Bad RAR data";
+        case UnRARBadArchive:       return @"Bad RAR archive";
+        case UnRARUnknownFormat:    return @"Unknown RAR format";
+        case UnRARMissingPassword:  return @"Missing RAR password";
+        case UnRARBadPassword:      return @"Bad RAR password";
     }
-    return @"Unknown error";
+    return [NSString stringWithFormat:@"Error code %d", _code];
 }
 
-NSError* VFSError::ToNSError(int _code)
+NSError* ToNSError(int _code)
 {
     if(_code <= -1001 && _code >= -1200)
         // unix error codes section
@@ -59,4 +68,6 @@ NSError* VFSError::ToNSError(int _code)
                                code:_code
                            userInfo:@{ NSLocalizedDescriptionKey : TextForCode(_code) }
             ];
+}
+
 }

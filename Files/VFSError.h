@@ -12,7 +12,7 @@
 @class NSError;
 #endif
 
-struct VFSError
+namespace VFSError
 {
     enum {
         // general error codes
@@ -37,14 +37,20 @@ struct VFSError
         ArclibProgError     = -2001, // Illegal usage of the library.
         ArclibMiscError     = -2002, // Unknown or unclassified error.
         
-        UnRARFailedToOpenArchive = -2100
+        // UnRAR error codes convert:
+        UnRARFailedToOpenArchive = -2100,
+        UnRARBadData             = -2101,
+        UnRARBadArchive          = -2102,
+        UnRARUnknownFormat       = -2103,
+        UnRARMissingPassword     = -2104,
+        UnRARBadPassword         = -2105
     };
     
-    static int FromErrno(int _errno);
-    static int FromLibarchive(int _errno);
+    int FromErrno(int _errno);
+    int FromLibarchive(int _errno);
 
 #ifdef __OBJC__
-    static NSError* ToNSError(int _code);
+    NSError* ToNSError(int _code);
 #endif
 };
 

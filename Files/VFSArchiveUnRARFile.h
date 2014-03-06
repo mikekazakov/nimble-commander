@@ -46,10 +46,11 @@ private:
     const VFSArchiveUnRAREntry *m_Entry = 0;
     ssize_t                     m_Position = 0;
     ssize_t                     m_TotalExtracted = 0;
-    dispatch_queue_t            m_UnpackThread;
+    dispatch_queue_t            m_UnpackThread = 0;
     dispatch_semaphore_t        m_UnpackSemaphore = 0;
     dispatch_semaphore_t        m_ConsumeSemaphore = 0;
     dispatch_semaphore_t        m_FinishUnpackSemaphore = 0;
+    int                         m_RarError = 0;
     bool                        m_ExtractionRunning = false;
     bool                        m_ExitUnpacking = false;
 };

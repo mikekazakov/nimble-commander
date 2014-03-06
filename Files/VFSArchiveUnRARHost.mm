@@ -14,15 +14,6 @@
 #include "VFSArchiveUnRARListing.h"
 #include "VFSArchiveUnRARFile.h"
 
-/*enum UNRARCALLBACK_MESSAGES {
-    UCM_CHANGEVOLUME,UCM_PROCESSDATA,UCM_NEEDPASSWORD,UCM_CHANGEVOLUMEW,
-    UCM_NEEDPASSWORDW
-};*/
-
-/*
-
- */
-
 static time_t DosTimeToUnixTime(unsigned int _dos_time)
 {
     unsigned int l = _dos_time; // a dosdate
@@ -43,25 +34,6 @@ static time_t DosTimeToUnixTime(unsigned int _dos_time)
     timeinfo.tm_sec     = second;
     
     return timegm(&timeinfo);
-}
-
-static int CALLBACK CallbackProc(UINT msg, long UserData, long P1, long P2) {
-	UInt8 **buffer;
-	
-	switch(msg) {
-			
-		case UCM_CHANGEVOLUME:
-			break;
-		case UCM_PROCESSDATA:
-/*			buffer = (UInt8 **) UserData;
-			memcpy(*buffer, (UInt8 *)P1, P2);
-			// advance the buffer ptr, original m_buffer ptr is untouched
-			*buffer += P2;*/
-			break;
-		case UCM_NEEDPASSWORD:
-			break;
-	}
-	return(0);
 }
 
 const char *VFSArchiveUnRARHost::Tag = "archive_unrar";
@@ -91,12 +63,8 @@ int VFSArchiveUnRARHost::Open()
 	HANDLE rar_file;
     RAROpenArchiveDataEx flags;
     memset(&flags, 0, sizeof(flags));
-    
-//    const char *filenameData = (const char *) [rarFile UTF8String];
 	flags.ArcName = (char*)JunctionPath();
-//	strcpy(flags->ArcName, filenameData);
 	flags.OpenMode = RAR_OM_LIST;
-//    flags.Callback = CallbackProc;
     
 	rar_file = RAROpenArchiveEx(&flags);
     if(rar_file == 0)
@@ -372,6 +340,7 @@ unique_ptr<VFSArchiveUnRARSeekCache> VFSArchiveUnRARHost::SeekCache(uint32_t _re
         {
             res = move(*best);
             m_SeekCaches.erase(best);
+//            NSLog(@"found cached");
             return;
         }
         
@@ -386,11 +355,21 @@ unique_ptr<VFSArchiveUnRARSeekCache> VFSArchiveUnRARHost::SeekCache(uint32_t _re
         if(rar_file == 0)
             return;
         
+//        NSLog(@"spawned new");
         res = unique_ptr<VFSArchiveUnRARSeekCache>(new VFSArchiveUnRARSeekCache);
         res->rar_handle = rar_file;
     });
     
     return move(res);
+}
+
+void VFSArchiveUnRARHost::CommitSeekCache(unique_ptr<VFSArchiveUnRARSeekCache> _sc)
+{
+    assert(_sc->uid < m_LastItemUID);
+    __block unique_ptr<VFSArchiveUnRARSeekCache> sc(move(_sc));
+    dispatch_sync(m_SeekCacheControl, ^{
+        m_SeekCaches.push_back(move(sc));
+    });
 }
 
 int VFSArchiveUnRARHost::CreateFile(const char* _path,
@@ -406,7 +385,8 @@ int VFSArchiveUnRARHost::CreateFile(const char* _path,
 
 bool VFSArchiveUnRARHost::ShouldProduceThumbnails()
 {
-    if(m_IsSolidArchive && m_PackedItemsSize > 64*1024*1024)
-        return false;
-    return true;
+//    if(m_IsSolidArchive && m_PackedItemsSize > 64*1024*1024)
+//        return false;
+//    return true;
+    return false;
 }

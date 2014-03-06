@@ -60,15 +60,17 @@ public:
      */
     uint32_t ItemUUID(const string& _filename) const;
 
+    uint32_t LastItemUUID() const { return m_LastItemUID; };
+
     /**
      * Return nullptr on not found.
      */
     const VFSArchiveUnRAREntry *FindEntry(const string &_full_path) const;
     
     /**
-     * Destructive call - will override currently stored one
+     * Inserts opened rar handle into host's seek cache.
      */
-//    void CommitSeekCache(shared_ptr<VFSArchiveSeekCache> _sc);
+    void CommitSeekCache(unique_ptr<VFSArchiveUnRARSeekCache> _sc);
     
     /**
      * if there're no appropriate caches, host will try to open a new RAR handle.
@@ -92,7 +94,7 @@ private:
     dispatch_queue_t                           m_SeekCacheControl;
     uint64_t                                m_PackedItemsSize = 0;
     uint64_t                                m_UnpackedItemsSize = 0;
-    bool                                    m_IsSolidArchive;
+    bool                                    m_IsSolidArchive = false;
 
     // TODO: int m_FD for exclusive lock?
 };

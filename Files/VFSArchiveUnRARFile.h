@@ -35,6 +35,7 @@ public:
     
 private:
     static int ProcessRAR(unsigned int _msg, long _user_data, long _p1, long _p2);
+    static int ProcessRARDummy(unsigned int _msg, long _user_data, long _p1, long _p2);
     
     unique_ptr<VFSArchiveUnRARSeekCache>    m_Archive;
     unique_ptr<uint8_t[]>                   m_UnpackBuffer;

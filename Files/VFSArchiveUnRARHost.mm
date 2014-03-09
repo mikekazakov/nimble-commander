@@ -55,10 +55,41 @@ const char *VFSArchiveUnRARHost::FSTag() const
     return Tag;
 }
 
+bool VFSArchiveUnRARHost::IsRarArchive(const char *_archive_native_path)
+{
+    if(_archive_native_path == nullptr ||
+       _archive_native_path[0] != '/')
+        return false;
+
+    // check extension
+    char ext[MAXPATHLEN];
+    if(!GetExtensionFromPath(_archive_native_path, ext))
+        return false;
+    string sext(ext);
+    transform(begin(sext), end(sext), begin(sext), tolower);
+    if(sext != "rar")
+        return false;
+    
+	HANDLE rar_file;
+    RAROpenArchiveDataEx flags;
+    memset(&flags, 0, sizeof(flags));
+	flags.ArcName = (char*)_archive_native_path;
+	flags.OpenMode = RAR_OM_LIST;
+    
+	rar_file = RAROpenArchiveEx(&flags);
+    bool result = rar_file != 0;
+    RARCloseArchive(rar_file);
+    
+    return result;
+}
+
 int VFSArchiveUnRARHost::Open()
 {
     if(!Parent() || Parent()->IsNativeFS() == false)
         return VFSError::NotSupported;
+    
+    if(stat(JunctionPath(), &m_ArchiveFileStat) != 0)
+        return VFSError::FromErrno(EIO);
     
 	HANDLE rar_file;
     RAROpenArchiveDataEx flags;
@@ -83,6 +114,7 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
 {
     auto root_dir = m_PathToDir.emplace("/");
     root_dir.first->second.full_path = "/";
+    root_dir.first->second.time = m_ArchiveFileStat.st_mtimespec.tv_sec;
     
     uint32_t uuid = 1;
     unsigned solid_items = 0;

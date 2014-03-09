@@ -65,9 +65,18 @@ int VFSArchiveHost::Open()
     m_Mediator->file = m_ArFile;
     
     m_Arc = archive_read_new();
-//    archive_read_support_compression_all(m_Arc);
     archive_read_support_filter_all(m_Arc);
-    archive_read_support_format_all(m_Arc);
+	archive_read_support_format_ar(m_Arc);
+	archive_read_support_format_cpio(m_Arc);
+	archive_read_support_format_empty(m_Arc);
+	archive_read_support_format_lha(m_Arc);
+	archive_read_support_format_mtree(m_Arc);
+	archive_read_support_format_tar(m_Arc);
+	archive_read_support_format_xar(m_Arc);
+	archive_read_support_format_7zip(m_Arc);
+	archive_read_support_format_cab(m_Arc);
+	archive_read_support_format_iso9660(m_Arc);
+	archive_read_support_format_zip(m_Arc);
     
     archive_read_set_callback_data(m_Arc, m_Mediator.get());
     archive_read_set_read_callback(m_Arc, VFSArchiveMediator::myread);

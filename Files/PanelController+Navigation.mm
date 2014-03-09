@@ -47,7 +47,18 @@
                 hosts_stack.push_back(make_shared<VFSPSHost>());
             else if(part.fs_tag == VFSArchiveHost::Tag)
             {
-                shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(path[pp-1].path.c_str(), hosts_stack.back());
+                auto arhost = make_shared<VFSArchiveHost>(path[pp-1].path.c_str(), hosts_stack.back());
+                if(arhost->Open() >= 0) {
+                    hosts_stack.push_back(arhost);
+                }
+                else {
+                    break;
+                }
+            }
+            else if(part.fs_tag == VFSArchiveUnRARHost::Tag &&
+                    hosts_stack.back()->IsNativeFS() )
+            {
+                auto arhost = make_shared<VFSArchiveUnRARHost>(path[pp-1].path.c_str());
                 if(arhost->Open() >= 0) {
                     hosts_stack.push_back(arhost);
                 }
@@ -73,9 +84,7 @@
             }
         }
     });
-    
 }
-
 
 - (void) OnGoBack
 {

@@ -20,3 +20,4 @@
 #import "VFSArchiveUnRARHost.h"
 #import "VFSPSHost.h"
 #import "VFSEasyOps.h"
+#import "VFSArchiveProxy.h"

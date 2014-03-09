@@ -384,9 +384,8 @@ void panel::GenericCursorPersistance::Restore()
             // currently we support only VFS which uses a file as a junction point
             if(!_hosts->back()->IsDirectory(valid_path, 0, 0))
             {
-                // TODO: support for different VFS
-                shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(valid_path, _hosts->back());
-                if(arhost->Open() >= 0)
+                auto arhost = VFSArchiveProxy::OpenFileAsArchive(valid_path, _hosts->back());
+                if(arhost)
                 {
                     strcpy(path_buf, path_buf + strlen(valid_path));
                     if(arhost->IsDirectory(path_buf, 0, 0))
@@ -469,9 +468,8 @@ void panel::GenericCursorPersistance::Restore()
                 // currently we support only VFS which uses a file as a junction point
                 if(!_hosts->back()->IsDirectory(valid_path, 0, 0))
                 {
-                    // TODO: support for different VFS
-                    shared_ptr<VFSArchiveHost> arhost = make_shared<VFSArchiveHost>(valid_path, _hosts->back());
-                    if(arhost->Open() >= 0)
+                    auto arhost = VFSArchiveProxy::OpenFileAsArchive(valid_path, _hosts->back());
+                    if(arhost)
                     {
                         strcpy(path_buf, path_buf + strlen(valid_path));
                         if(arhost->IsDirectory(path_buf, 0, 0))
@@ -673,19 +671,8 @@ void panel::GenericCursorPersistance::Restore()
     else
     { // VFS stuff here
         string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex([m_View GetCursorPosition]));
-        
-        if(entry->HasExtension() && string("rar") == entry->Extension())
-        {
-            auto host = make_shared<VFSArchiveUnRARHost>(path.c_str());
-            if(host->Open() == 0) {
-                m_HostsStack.push_back(host);
-                [self GoToRelativeToHostAsync:"/" select_entry:0];
-                return true;
-            }
-        }
-        
-        auto arhost = make_shared<VFSArchiveHost>(path.c_str(), m_HostsStack.back());
-        if(arhost->Open() >= 0)
+        auto arhost = VFSArchiveProxy::OpenFileAsArchive(path.c_str(), m_HostsStack.back());
+        if(arhost)
         {
             m_HostsStack.push_back(arhost);
             [self GoToRelativeToHostAsync:"/" select_entry:0];

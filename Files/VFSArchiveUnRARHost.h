@@ -28,6 +28,7 @@ public:
     virtual const char *FSTag() const override;
     
 
+    static bool IsRarArchive(const char *_archive_native_path);
     int Open(); // flags will be added later
     
     
@@ -98,6 +99,7 @@ private:
     uint64_t                                m_PackedItemsSize = 0;
     uint64_t                                m_UnpackedItemsSize = 0;
     bool                                    m_IsSolidArchive = false;
+    struct stat                             m_ArchiveFileStat;
 
     // TODO: int m_FD for exclusive lock?
 };

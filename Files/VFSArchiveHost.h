@@ -51,12 +51,6 @@ public:
     
     virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
     
-    virtual int CalculateDirectoriesSizes(
-                                          chained_strings _dirs,
-                                          const string &_root_path, // relative to current host path
-                                          bool (^_cancel_checker)(),
-                                          void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
-                                          ) override;
     
     // Caching section - to reduce seeking overhead:
     

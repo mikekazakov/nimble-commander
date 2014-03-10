@@ -131,7 +131,7 @@ public:
     
     virtual int CalculateDirectoriesSizes(
                                         chained_strings _dirs,
-                                        const string &_root_path, // relative to current host path
+                                        const char* _root_path,
                                         bool (^_cancel_checker)(),
                                         void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size));
     

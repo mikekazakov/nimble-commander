@@ -842,7 +842,7 @@ void panel::GenericCursorPersistance::Restore()
     __block auto sub_dir_names = self.GetSelectedEntriesOrFocusedEntryWithDotDot;
     m_DirectorySizeCountingQ->Run( ^(SerialQueue _q){
         m_HostsStack.back()->CalculateDirectoriesSizes(move(sub_dir_names),
-                                                       current_dir,
+                                                       current_dir.c_str(),
                                                        ^bool { return _q->IsStopped(); },
                                                        complet);
     });

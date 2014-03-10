@@ -160,7 +160,7 @@ cleanup:
 
 int VFSNativeHost::CalculateDirectoriesSizes(
                                       chained_strings _dirs,
-                                      const string &_root_path, // relative to current host path
+                                      const char *_root_path, // relative to current host path
                                       bool (^_cancel_checker)(),
                                       void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
                                       )
@@ -171,10 +171,14 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     if(_dirs.empty())
         return VFSError::Ok;
     
+    if(_root_path == 0 ||
+       _root_path[0] != '/')
+        return VFSError::InvalidCall;
+    
     bool iscancelling = false;
     char path[MAXPATHLEN];
-    strcpy(path, _root_path.c_str());
-    if(path[_root_path.length()-1] != '/') strcat(path, "/");
+    strcpy(path, _root_path);
+    if(path[strlen(path)-1] != '/') strcat(path, "/");
     char *var = path + strlen(path);
     
     dispatch_queue_t stat_queue = dispatch_queue_create("info.filesmanager.Files.VFSNativeHost.CalculateDirectoriesSizes", 0);

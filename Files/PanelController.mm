@@ -833,8 +833,13 @@ void panel::GenericCursorPersistance::Restore()
     auto complet = ^(const char* _sub_dir, uint64_t _size) {
         string sub_dir = _sub_dir;
         dispatch_to_main_queue(^{
+            panel::GenericCursorPersistance pers(m_View, m_Data);
+            // may cause re-sorting if current sorting is by size
             if(m_Data.SetCalculatedSizeForDirectory(sub_dir.c_str(), _size))
+            {
                 [m_View setNeedsDisplay];
+                pers.Restore();
+            }
         });
     };
     

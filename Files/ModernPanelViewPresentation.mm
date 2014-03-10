@@ -550,7 +550,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                   attributes:footer_text_attr];
             
             [SizeToString6(*current_entry)
-                drawWithRect:NSMakeRect(m_ItemsArea.size.width - footer_x_offset - m_DateTimeFooterWidth - m_SizeColumWidth,
+                drawWithRect:NSMakeRect(m_ItemsArea.size.width - footer_x_offset - m_DateTimeFooterWidth - m_SizeColumWidth - g_TextInsetsInLine[1],
                                         footer_y + g_TextInsetsInLine[1] + m_FontAscent,
                                         m_SizeColumWidth,
                                         m_FontHeight)

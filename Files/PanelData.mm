@@ -486,6 +486,9 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size
         auto &i = (*m_Listing)[n];
         if(i.IsDir())
         {
+            if(i.Size() == _size)
+                return true;
+            
             if(i.CFIsSelected())
             { // need to adjust our selected bytes statistic
                 if(i.Size() != VFSListingItem::InvalidSize)
@@ -498,6 +501,15 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size
 
             i.SetSize(_size);
 
+            if(m_CustomSortMode.sort & m_CustomSortMode.SortBySizeMask)
+            {
+                // double-check me
+                DoSortWithHardFiltering();
+                ClearSelectedFlagsFromHiddenElements();
+                BuildSoftFilteringIndeces();
+                UpdateStatictics();
+            }            
+            
             return true;
         }
     }
@@ -640,6 +652,7 @@ void PanelData::DoSortWithHardFiltering()
         return;
 
     m_EntriesByCustomSort.reserve(size);
+    m_EntriesShownFlags.clear();
     m_EntriesShownFlags.resize(size, true);
   
     if(m_HardFiltering.IsFiltering())

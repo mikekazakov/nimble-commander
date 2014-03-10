@@ -233,6 +233,18 @@ struct PanelViewStateStorage
     [self OnCursorPositionChanged];
 }
 
+- (void) HandleInsert
+{
+    int origpos = m_State.CursorPos;
+    m_Presentation->MoveCursorToNextItem();
+    
+    auto entry = m_State.Data->EntryAtRawPosition(m_State.Data->RawIndexForSortIndex(origpos));
+    bool sel_now = entry->CFIsSelected();
+    [self SelectUnselectInRange:origpos last_included:origpos select:!sel_now];
+    
+    [self OnCursorPositionChanged];
+}
+
 - (void) SetCursorPosition:(int)_pos
 {
 //    assert(_pos >= 0 && _pos < m_State.Data->SortedDirectoryEntries().size());

@@ -766,6 +766,7 @@ void panel::GenericCursorPersistance::Restore()
         case NSRightArrowFunctionKey: [m_View HandleNextColumn];    return true;
         case NSUpArrowFunctionKey:    [m_View HandlePrevFile];      return true;
         case NSDownArrowFunctionKey:  [m_View HandleNextFile];      return true;
+        case 0x03:                    [m_View HandleInsert];        return true;
     }
     
     if(keycode == 53) { // Esc button

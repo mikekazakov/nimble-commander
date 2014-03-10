@@ -49,6 +49,7 @@ class PanelViewPresentation;
 - (void) HandleNextColumn;   // right
 - (void) HandleFirstFile;    // home (fn+left)
 - (void) HandleLastFile;     // end (fn+right)
+- (void) HandleInsert;       // insert
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
 //- (void) mouseDown:(NSEvent *)_event;

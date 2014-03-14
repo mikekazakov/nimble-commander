@@ -152,9 +152,6 @@
     [m_RightPanelSpinningIndicator setControlSize:NSSmallControlSize];
     [m_RightPanelSpinningIndicator setDisplayedWhenStopped:NO];
     
-    m_OpSummaryBox = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 350, 40)];
-    [m_OpSummaryController AddViewTo:m_OpSummaryBox];    
-    
     NSBox *line = [[NSBox alloc] initWithFrame:NSRect()];
     [line setTranslatesAutoresizingMaskIntoConstraints:NO];
     [line setBoxType:NSBoxSeparator];
@@ -962,7 +959,6 @@
 
 - (void)WindowDidResize
 {
-    [m_OpSummaryController OnWindowResize];
     [self UpdateTitle];
 }
 
@@ -1038,16 +1034,6 @@
         
         [[self ActivePanelView] setNeedsDisplay:true];
     }
-}
-
-- (void)WindowWillBeginSheet
-{
-    [m_OpSummaryController OnWindowBeginSheet];
-}
-
-- (void)WindowDidEndSheet
-{
-    [m_OpSummaryController OnWindowEndSheet];
 }
 
 - (void)OnApplicationWillTerminate

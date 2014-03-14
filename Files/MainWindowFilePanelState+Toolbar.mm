@@ -8,7 +8,7 @@
 
 #import "MainWindowFilePanelState+Toolbar.h"
 //#import "OperationsController.h"
-//#import "OperationsSummaryViewController.h"
+#import "OperationsSummaryViewController.h"
 #import "MainWndGoToButton.h"
 #import "sysinfo.h"
 
@@ -56,7 +56,7 @@
     
     if([itemIdentifier isEqualToString:@"filepanels_operations_box"]) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_OpSummaryBox;
+        item.view = m_OpSummaryController.view;
         return item;
     }
     

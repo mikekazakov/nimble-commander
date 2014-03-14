@@ -80,6 +80,9 @@ const int MaxDialogs = 2;
 
 - (void)setIsPaused:(BOOL)IsPaused
 {
+    if(_IsPaused == IsPaused)
+        return;
+
     _IsPaused = IsPaused;
     if (IsPaused)
         m_Job->Pause();

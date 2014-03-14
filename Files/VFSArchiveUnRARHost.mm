@@ -112,7 +112,7 @@ int VFSArchiveUnRARHost::Open()
 
 int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
 {
-    auto root_dir = m_PathToDir.emplace("/");
+    auto root_dir = m_PathToDir.emplace("/", VFSArchiveUnRARDirectory());
     root_dir.first->second.full_path = "/";
     root_dir.first->second.time = m_ArchiveFileStat.st_mtimespec.tv_sec;
     
@@ -220,7 +220,7 @@ VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindOrBuildDirectory(const string
         parent_dir->entries.back().name = short_name;
     }
     
-    auto dir = m_PathToDir.emplace(_path_with_tr_sl);
+    auto dir = m_PathToDir.emplace(_path_with_tr_sl, VFSArchiveUnRARDirectory());
     dir.first->second.full_path = _path_with_tr_sl;
     return &dir.first->second;
 }

@@ -12,6 +12,7 @@
 #import <stdlib.h>
 #import "VFSNativeFile.h"
 #import "VFSNativeHost.h"
+#import "NativeFSManager.h"
 
 VFSNativeFile::VFSNativeFile(const char* _relative_path, shared_ptr<VFSNativeHost> _host):
     VFSFile(_relative_path, _host),
@@ -28,7 +29,12 @@ VFSNativeFile::~VFSNativeFile()
 
 int VFSNativeFile::Open(int _open_flags, bool (^_cancel_checker)())
 {
-    int openflags = O_SHLOCK|O_NONBLOCK;
+    auto fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath());
+    
+    int openflags = O_NONBLOCK;
+    
+    if(fs_info && fs_info->interfaces.file_lock)
+        openflags |= O_SHLOCK;
     if( (_open_flags & (VFSFile::OF_Read | VFSFile::OF_Write)) == (VFSFile::OF_Read | VFSFile::OF_Write) )
         openflags |= O_RDWR;
     else if((_open_flags & VFSFile::OF_Read) != 0) openflags |= O_RDONLY;

@@ -85,6 +85,8 @@
 		CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
+		CF649C3A18D2C0C200055595 /* show_oplist_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF649C3918D2C0C200055595 /* show_oplist_icon.png */; };
+		CF649C3D18D2D31600055595 /* show_oplist_hl_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF649C3C18D2D31600055595 /* show_oplist_hl_icon.png */; };
 		CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF653E0418C5AB2000502920 /* VFSArchiveUnRARListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */; };
@@ -457,6 +459,8 @@
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
+		CF649C3918D2C0C200055595 /* show_oplist_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = show_oplist_icon.png; sourceTree = "<group>"; };
+		CF649C3C18D2D31600055595 /* show_oplist_hl_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = show_oplist_hl_icon.png; sourceTree = "<group>"; };
 		CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveUnRARHost.mm; sourceTree = "<group>"; };
 		CF653C3C18C38D0900502920 /* VFSArchiveUnRARHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveUnRARHost.h; sourceTree = "<group>"; };
 		CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnRAR_LIB.xcodeproj; path = 3rd_party/unrar/UnRAR_LIB/UnRAR_LIB.xcodeproj; sourceTree = "<group>"; };
@@ -820,6 +824,8 @@
 		B51014CF170721340023FF24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CF649C3C18D2D31600055595 /* show_oplist_hl_icon.png */,
+				CF649C3918D2C0C200055595 /* show_oplist_icon.png */,
 				CFEB07801886ECAA00E5CC0D /* linkarrow_icon.png */,
 				CF6C5AD217BC71500007B648 /* pref_general_icon.png */,
 				CF6C5AD017BC70DE0007B648 /* pref_viewer_icon.png */,
@@ -1732,6 +1738,7 @@
 			files = (
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
+				CF649C3D18D2D31600055595 /* show_oplist_hl_icon.png in Resources */,
 				CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */,
@@ -1747,6 +1754,7 @@
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
 				CFEB07811886ECAA00E5CC0D /* linkarrow_icon.png in Resources */,
 				CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */,
+				CF649C3A18D2C0C200055595 /* show_oplist_icon.png in Resources */,
 				CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */,
 				CF12888017800724002816C2 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,

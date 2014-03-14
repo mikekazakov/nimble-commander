@@ -979,8 +979,15 @@ bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
     
     m_Stats.SetCurrentItem(_src);
     
+    // getting fs_info for every single file is suboptimal. need to optimize it.
+    auto fs_info = NativeFSManager::Instance().VolumeFromPath(_src);
+    
 opensource:
-    if((sourcefd = open(_src, O_RDONLY|O_SHLOCK|O_NONBLOCK)) == -1)
+    int src_open_flags = O_RDONLY|O_NONBLOCK;
+    if(fs_info && fs_info->interfaces.file_lock)
+        src_open_flags |= O_SHLOCK;
+    
+    if((sourcefd = open(_src, src_open_flags)) == -1)
     {  // failed to open source file
         if(m_SkipAll) goto cleanup;
         int result = [[m_Operation OnCopyCantAccessSrcFile:ErrnoToNSError() ForFile:_src] WaitForResult];

@@ -50,8 +50,6 @@ enum ActiveState
     NSProgressIndicator *m_RightPanelSpinningIndicator;
     NSButton            *m_LeftPanelShareButton;
     NSButton            *m_RightPanelShareButton;
-    
-    NSView               *m_OpSummaryBox;
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
     

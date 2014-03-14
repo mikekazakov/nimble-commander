@@ -8,12 +8,6 @@
 
 #import "GenericOperationView.h"
 
-@interface GenericOperationView ()
-
-- (void)ToggleButtonsVisiblity:(BOOL)_visible;
-
-@end
-
 @implementation GenericOperationView
 {
     NSButton *m_PauseButton;
@@ -31,17 +25,8 @@
 
 - (void)ToggleButtonsVisiblity:(BOOL)_visible
 {
-    [m_PauseButton setHidden:!_visible];
-    [m_StopButton setHidden:!_visible];
-}
-
-- (id)initWithFrame:(NSRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self)
-    {
-    }
-    return self;
+    m_PauseButton.hidden = !_visible;
+    m_StopButton.hidden = !_visible;
 }
 
 - (void)viewWillMoveToSuperview:(NSView *)_view
@@ -63,13 +48,9 @@
         }
     }
     
-    [m_DialogButton setHidden:YES];
-    
-    [m_PauseButton setHidden:YES];
-    [m_StopButton setHidden:YES];
-    
-    [m_PauseButton setAlphaValue:0.6f];
-    [m_StopButton setAlphaValue:0.6f];
+    m_DialogButton.hidden = true;
+    m_PauseButton.hidden = true;
+    m_StopButton.hidden = true;
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent

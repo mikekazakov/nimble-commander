@@ -57,6 +57,11 @@ struct PanelViewStateStorage
     return YES;
 }
 
+- (BOOL)wantsDefaultClipping
+{
+    return NO;
+}
+
 - (void) Activate
 {
     if(m_State.Active == false)

@@ -154,10 +154,10 @@ int VFSEasyCopyFile(const char *_src_full_path,
 {
     if(_src_full_path == nullptr    ||
        _src_full_path[0] != '/'     ||
-       _src_host == false           ||
+       !_src_host                   ||
        _dst_full_path == nullptr    ||
        _dst_full_path[0] != '/'     ||
-       _dst_host == false
+       !_dst_host
        )
         return VFSError::InvalidCall;
     
@@ -201,10 +201,10 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     int result = 0;
     if(_src_full_path == nullptr    ||
        _src_full_path[0] != '/'     ||
-       _src_host == false           ||
+       !_src_host                   ||
        _dst_full_path == nullptr    ||
        _dst_full_path[0] != '/'     ||
-       _dst_host == false
+       !_dst_host
        )
         return VFSError::InvalidCall;
 
@@ -253,10 +253,10 @@ int VFSEasyCopySymlink(const char *_src_full_path,
     int result = 0;
     if(_src_full_path == nullptr    ||
        _src_full_path[0] != '/'     ||
-       _src_host == false           ||
+       !_src_host                   ||
        _dst_full_path == nullptr    ||
        _dst_full_path[0] != '/'     ||
-       _dst_host == false
+       !_dst_host
        )
         return VFSError::InvalidCall;
     
@@ -286,10 +286,10 @@ int VFSEasyCopyNode(const char *_src_full_path,
 {
     if(_src_full_path == nullptr    ||
        _src_full_path[0] != '/'     ||
-       _src_host == false           ||
+       !_src_host                   ||
        _dst_full_path == nullptr    ||
        _dst_full_path[0] != '/'     ||
-       _dst_host == false
+       !_dst_host
        )
         return VFSError::InvalidCall;
     

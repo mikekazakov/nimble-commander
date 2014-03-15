@@ -454,3 +454,8 @@ int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_c
     
     return 0;
 }
+
+bool VFSArchiveHost::ShouldProduceThumbnails()
+{
+    return false;
+}

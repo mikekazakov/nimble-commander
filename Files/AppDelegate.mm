@@ -26,7 +26,10 @@
 @implementation AppDelegate
 {
     vector<MainWindowController *> m_MainWindows;
-    RHPreferencesWindowController *m_PreferencesController;    
+    RHPreferencesWindowController *m_PreferencesController;
+    
+    NSProgressIndicator *m_ProgressIndicator;
+    NSDockTile          *m_DockTile;
 }
 
 + (void)initialize
@@ -68,6 +71,35 @@
     
     [NSApp setServicesProvider:self];
     NSUpdateDynamicServices();
+    
+    // init app dock progress bar
+    m_DockTile = [[NSApplication sharedApplication] dockTile];
+    NSImageView *iv = [[NSImageView alloc] init];
+    [iv setImage:[[NSApplication sharedApplication] applicationIconImage]];
+    [m_DockTile setContentView:iv];
+    m_ProgressIndicator = [[NSProgressIndicator alloc]
+                         initWithFrame:NSMakeRect(0.0f, 2.0f, m_DockTile.size.width, 18.)];
+    m_ProgressIndicator.Style = NSProgressIndicatorBarStyle;
+    m_ProgressIndicator.Indeterminate = NO;
+    m_ProgressIndicator.Bezeled = true;
+    m_ProgressIndicator.MinValue = 0;
+    m_ProgressIndicator.MaxValue = 1;
+    
+    [iv addSubview:m_ProgressIndicator];
+    [self InformAppProgress:-1];
+}
+
+- (void)InformAppProgress:(double)_value
+{
+    if ( _value >= 0.0 && _value <= 1.0) {
+        m_ProgressIndicator.doubleValue = _value;
+        m_ProgressIndicator.hidden = false;
+    }
+    else {
+        m_ProgressIndicator.hidden = true;
+    }
+    
+    [m_DockTile display];
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification

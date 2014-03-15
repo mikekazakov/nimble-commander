@@ -161,7 +161,6 @@
         quest_button.imagePosition = NSImageOnly;
         quest_button.buttonType = NSMomentaryChangeButton;
         quest_button.bordered = false;
-        ((NSButtonCell*)abort_button.cell).imageScaling = NSImageScaleProportionallyUpOrDown;
         [quest_button bind:@"target" toObject:self withKeyPath:@"CurrentOperation" options:@{NSSelectorNameBindingOption:@"ShowDialog"}];
         [quest_button bind:@"hidden" toObject:self withKeyPath:@"CurrentOperation" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
         [quest_button bind:@"hidden2" toObject:self withKeyPath:@"CurrentOperation.DialogsCount" options:@{NSValueTransformerNameBindingOption:NSNegateBooleanTransformerName}];
@@ -195,19 +194,8 @@
     [m_OperationsController removeObserver:self forKeyPath:@"OperationsWithDialogsCount"];
 }
 
-
 - (void)ShowList
 {
-//    [_parent.superview addSubview:self.ScrollView];
-/*    if(self.ScrollView.superview == nil)
-    {
-//        [self.view.superview.superview addSubview:self.ScrollView];
-        [self.view.window.contentView addSubview:self.ScrollView];
-    }
-    
-    
-    */
-    
     if(m_Popover.shown)
         return;
 
@@ -217,52 +205,17 @@
     m_Popover.contentViewController = self.ScrollViewController;
     m_Popover.behavior = NSPopoverBehaviorTransient;
     
-    
-    const auto max_height_in_items = 5;
-    
     // Calculate height of the expanded list.
     auto item_width  = collection.itemPrototype.view.frame.size.width;
     auto item_height = collection.itemPrototype.view.frame.size.height;
     auto count = self.OperationsController.OperationsCount;
-    if(count > max_height_in_items)
-        count = max_height_in_items;
-//    NSUInteger window_height_in_items = self.view.window.frame.size.height / item_height;
-//    NSUInteger height_in_items = max_height_in_items;
-//    if (height_in_items > count) height_in_items = count;
-//    if (height_in_items > window_height_in_items) height_in_items = window_height_in_items;
+    if(count > 6)
+        count = 6;
     
-    CGFloat width = item_width;
-    CGFloat height = count * item_height + 2;
-    
-    // Apply new height.
-//    [self.ScrollView setFrameSize:NSMakeSize(width, height)];
-//    [self UpdateListPosition];
-//    [self.ScrollView setHidden:NO];
-//    m_ListVisible = YES;
-    
-//    [self.ScrollView setFrameOrigin:origin];
-//    m_Popover.contentViewController = self.ScrollViewController;
-    
-//    [m_Popover.contentViewController.view setFrameOrigin:NSMakePoint(0, 0)];
-
-    
-//    m_Popover.contentViewController = self.ScrollViewController;
-//    [m_Popover.contentViewController.view setFrameSize:NSMakeSize(500, 100)];
-    [m_Popover.contentViewController.view setFrameSize:NSMakeSize(width, height)];
-/*    [m_Popover showRelativeToRect:self.view.frame
-                           ofView:self.view
-                    preferredEdge:NSMinYEdge];*/
+    [m_Popover.contentViewController.view setFrameSize:NSMakeSize(item_width, count * item_height + 2)];
     [m_Popover showRelativeToRect:m_ListButton.frame
                            ofView:m_ListButton
                     preferredEdge:NSMinYEdge];
-}
-
-- (void)HideList
-{
-    if(m_Popover.shown)
-        [m_Popover close];
-//    [_ScrollView setHidden:YES];
-//    m_ListVisible = NO;
 }
 
 - (void)observeValueForKeyPath:(NSString *)_keypath ofObject:(id)_object
@@ -271,11 +224,12 @@
     if (_object == m_OperationsController && [_keypath isEqualToString:@"OperationsCount"])
     {
         // Count of operations is chaged. Update current operation.
-        if (m_OperationsController.Operations.count == 0)
+        auto count = m_OperationsController.Operations.count;
+        if (count == 0)
         {
             self.CurrentOperation = nil;
             if (m_Popover.shown)
-                [self HideList];
+                [m_Popover close];
         }
         else
         {
@@ -283,18 +237,7 @@
             if (self.CurrentOperation != first_op)
                 self.CurrentOperation = first_op;
             
-            // TODO: refactor
-            const NSUInteger max_height_in_items = 5;
-            if (//m_ListVisible &&
-                m_Popover.shown &&
-                m_OperationsController.Operations.count < max_height_in_items)
-                [self ShowList];
-            
-            
-            if(m_OperationsController.Operations.count > 1)
-                m_ListButton.image = [NSImage imageNamed:@"show_oplist_hl_icon"];
-            else
-                m_ListButton.image = [NSImage imageNamed:@"show_oplist_icon"];
+            m_ListButton.image = [NSImage imageNamed:count > 1 ? @"show_oplist_hl_icon" : @"show_oplist_icon"];
         }
         
         return;
@@ -318,43 +261,9 @@
 - (IBAction)ShowOpListButtonAction:(NSButton *)sender
 {
     if (m_Popover.shown)
-        [self HideList];
+        [m_Popover close];
     else if (m_OperationsController.OperationsCount > 0)
-    {
         [self ShowList];
-    }
-    
 }
 
-//- (void)AddViewTo:(NSView *)_parent
-//{
-//    [_parent addSubview:self.view];
-//    [_parent.superview addSubview:self.ScrollView];
-//    32131231231231313
-//    _parent.superview = nil;
-//}
-/*
-- (void)OnWindowResize
-{
-//    if (m_Popover.shown) [self UpdateListPosition];
-}
-*/
-/*
-- (void)OnWindowBeginSheet
-{
-    if (m_Popover.shown)
-    {
-        m_ListTemporarilyHidden = YES;
-        [self HideList];
-    }
-}
-
-- (void)OnWindowEndSheet
-{
-    if (!m_Popover.shown && m_ListTemporarilyHidden)
-        [self ShowList];
-    
-    m_ListTemporarilyHidden = NO;
-}
-*/
 @end

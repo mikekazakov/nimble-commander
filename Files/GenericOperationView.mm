@@ -48,9 +48,7 @@
         }
     }
     
-    m_DialogButton.hidden = true;
-    m_PauseButton.hidden = true;
-    m_StopButton.hidden = true;
+    [self ToggleButtonsVisiblity:NO];
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent

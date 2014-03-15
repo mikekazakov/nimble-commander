@@ -85,6 +85,7 @@ private:
         {"menu.file.open",                      11010},
         {"menu.file.open_native",               11020},
         {"menu.file.calculate_sizes",           11030},
+        {"menu.file.calculate_all_sizes",       11031},
         {"menu.file.close",                     11040},
         {"menu.file.find",                      11050},
         {"menu.file.page_setup",                11060},

@@ -145,6 +145,7 @@ namespace panel
 
 - (void) HandleFileView;            // F3
 - (void) HandleCalculateSizes;      // alt+shift+return
+- (void) HandleCalculateAllSizes;   // alt+ctrl+shift+return
 - (void) HandleBriefSystemOverview; // cmd+L
 - (void) HandleFileSearch;
 - (void) HandleEjectVolume;

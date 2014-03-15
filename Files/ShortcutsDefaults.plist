@@ -22,6 +22,8 @@
 	<string>⇧\r</string>
 	<string>menu.file.calculate_sizes</string>
 	<string>⇧⌥\r</string>
+	<string>menu.file.calculate_all_sizes</string>
+	<string>⇧^\r</string>
 	<string>menu.file.close</string>
 	<string>⌘w</string>
 	<string>menu.file.find</string>

@@ -800,7 +800,11 @@ void panel::GenericCursorPersistance::Restore()
         [self HandleCalculateSizes];
         return true;
     }
-    
+    if(shortcuts.ShortCutFromAction("menu.file.calculate_all_sizes")->IsKeyDown(unicode, keycode, modif)) {
+        [self HandleCalculateAllSizes];
+        return true;
+    }
+
     return false;
 }
 
@@ -829,7 +833,7 @@ void panel::GenericCursorPersistance::Restore()
     [self OnCursorChanged];
 }
 
-- (void) HandleCalculateSizes
+- (void) CalculateSizesWithNames:(chained_strings) _filenames
 {
     auto complet = ^(const char* _sub_dir, uint64_t _size) {
         string sub_dir = _sub_dir;
@@ -845,13 +849,31 @@ void panel::GenericCursorPersistance::Restore()
     };
     
     string current_dir = m_Data.DirectoryPathWithTrailingSlash();
-    __block auto sub_dir_names = self.GetSelectedEntriesOrFocusedEntryWithDotDot;
+    __block auto dir_names = move(_filenames);
     m_DirectorySizeCountingQ->Run( ^(SerialQueue _q){
-        m_HostsStack.back()->CalculateDirectoriesSizes(move(sub_dir_names),
+        m_HostsStack.back()->CalculateDirectoriesSizes(move(dir_names),
                                                        current_dir.c_str(),
-                                                       ^bool { return _q->IsStopped(); },
+                                                       ^bool {
+                                                           return _q->IsStopped();
+                                                       },
                                                        complet);
     });
+}
+
+- (void) HandleCalculateSizes
+{
+    // suboptimal - may have regular files inside (not dirs)
+    [self CalculateSizesWithNames:self.GetSelectedEntriesOrFocusedEntryWithDotDot];
+}
+
+- (void) HandleCalculateAllSizes
+{
+    chained_strings filenames;
+    for(auto &i: *m_Data.Listing())
+        if(i.IsDir() && !i.IsDotDot())
+            filenames.push_back(i.Name(), nullptr);
+    
+    [self CalculateSizesWithNames:move(filenames)];
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed

@@ -115,6 +115,11 @@
     [[self ActivePanelController] HandleCalculateSizes];
 }
 
+- (IBAction)OnCalculateAllSizes:(id)sender
+{
+    [[self ActivePanelController] HandleCalculateAllSizes];
+}
+
 - (IBAction)OnMoveToTrash:(id)sender
 {
     if(![self ActivePanelData]->Host()->IsNativeFS())

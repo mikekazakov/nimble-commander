@@ -13,15 +13,18 @@
 
 @interface OperationsSummaryViewController : NSViewController
 
-// Outlets and actions.
-@property (weak) IBOutlet NSCollectionView *CollectionView;
-@property (strong) IBOutlet NSArrayController *OperationsArrayController;
-@property (readonly) OperationsController *OperationsController;
-// Operation that is displayed in the summary view.
-@property Operation *CurrentOperation;
-
 - (id)initWithController:(OperationsController *)_controller
                   window:(NSWindow*)_wnd;
+
+// Outlets and actions.
+@property (strong) IBOutlet NSCollectionView *CollectionView;
+@property (strong) IBOutlet NSArrayController *OperationsArrayController;
 @property (strong) IBOutlet NSViewController *ScrollViewController;
+@property (readonly) OperationsController *OperationsController;
+
+/**
+ * Operation that is displayed in the summary view.
+ */
+@property Operation *CurrentOperation;
 
 @end

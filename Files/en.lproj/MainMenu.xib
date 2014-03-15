@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4511" systemVersion="13B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4511"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -99,13 +99,16 @@ DQ
                                     <action selector="OnOpenNatively:" target="-1" id="YXv-PR-7Uo"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Calculate Sizes" tag="11030" id="GcS-df-Z23">
-                                <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                                <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES"/>
+                            <menuItem title="Calculate Folders Sizes" tag="11030" id="GcS-df-Z23">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnCalculateSizes:" target="-1" id="GjP-If-Zpd"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Calculate All Folders Sizes" tag="11031" id="Pq6-25-hPh">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnCalculateAllSizes:" target="-1" id="c5x-U6-Pr8"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="79">

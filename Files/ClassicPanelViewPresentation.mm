@@ -438,7 +438,8 @@ int ClassicPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
     int row = point_in_chars.y - rows_start;
     if (row >= entries_in_column) row = entries_in_column - 1;
     int file_number =  row + column*entries_in_column;
-    if (file_number >= visible_files) file_number = visible_files - 1;
+    if (file_number >= visible_files)
+        return -1;
     
     return m_State->ItemsDisplayOffset + file_number;
 }

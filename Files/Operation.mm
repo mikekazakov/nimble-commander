@@ -8,10 +8,13 @@
 
 #import <algorithm>
 #import <vector>
+#import <mutex>
 #import "Operation.h"
 #import "OperationJob.h"
 #import "OperationDialogController.h"
 #import "Common.h"
+
+#import "AppDelegate.h"
 
 using namespace std;
 
@@ -71,6 +74,35 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
 
 const int MaxDialogs = 2;
 
+// informing AppDelegate about frontmost operation's progress
+static vector<void*> g_AllOperations;
+static mutex         g_AllOperationsMutex;
+
+static inline bool IsFrontmostOperation(void* _op) {
+    assert(!g_AllOperations.empty());
+    return g_AllOperations.front() == _op;
+}
+
+static void AddOperation(void* _op) {
+    lock_guard<mutex> guard(g_AllOperationsMutex);
+    g_AllOperations.emplace_back(_op);
+}
+
+static void RemoveOperation(void* _op) {
+    if(IsFrontmostOperation(_op))
+        [((AppDelegate*)[NSApplication.sharedApplication delegate]) InformAppProgress:-1];
+    
+    lock_guard<mutex> guard(g_AllOperationsMutex);
+    g_AllOperations.erase(find(begin(g_AllOperations),
+                               end(g_AllOperations),
+                               _op));
+}
+
+static void ReportProgress(void* _op, double _progress) {
+    if(IsFrontmostOperation(_op))
+        [((AppDelegate*)[NSApplication.sharedApplication delegate]) InformAppProgress:_progress];
+}
+
 @implementation Operation
 {
     OperationJob *m_Job;
@@ -104,8 +136,15 @@ const int MaxDialogs = 2;
         for (int i = 0; i < MaxDialogs; ++i) m_Dialogs[i] = nil;
         
         _job->SetBaseOperation(self);
+        
+        AddOperation((__bridge void*)self);
     }
     return self;
+}
+
+- (void)dealloc
+{
+    RemoveOperation((__bridge void*)self);
 }
 
 - (void)Update
@@ -252,6 +291,8 @@ const int MaxDialogs = 2;
 
 - (void) setProgress:(float)Progress
 {
+    ReportProgress((__bridge void*)self, Progress);
+    
     _Progress = Progress;
     if(_IsIndeterminate == true && Progress > 0.0001f)
         self.IsIndeterminate = false;

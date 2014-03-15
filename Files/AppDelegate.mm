@@ -73,12 +73,11 @@
     NSUpdateDynamicServices();
     
     // init app dock progress bar
-    m_DockTile = [[NSApplication sharedApplication] dockTile];
-    NSImageView *iv = [[NSImageView alloc] init];
-    [iv setImage:[[NSApplication sharedApplication] applicationIconImage]];
-    [m_DockTile setContentView:iv];
-    m_ProgressIndicator = [[NSProgressIndicator alloc]
-                         initWithFrame:NSMakeRect(0.0f, 2.0f, m_DockTile.size.width, 18.)];
+    m_DockTile = NSApplication.sharedApplication.dockTile;
+    NSImageView *iv = [NSImageView new];
+    iv.image = NSApplication.sharedApplication.applicationIconImage;
+    m_DockTile.contentView = iv;
+    m_ProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 2, m_DockTile.size.width, 18)];
     m_ProgressIndicator.Style = NSProgressIndicatorBarStyle;
     m_ProgressIndicator.Indeterminate = NO;
     m_ProgressIndicator.Bezeled = true;

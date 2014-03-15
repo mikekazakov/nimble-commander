@@ -75,7 +75,7 @@
 	<string>menu.view.sorting_numeric_comparison</string>
 	<string></string>
 	<string>menu.view.show_toolbar</string>
-	<string></string>
+	<string>⌥⌘t</string>
 	<string>menu.view.show_terminal</string>
 	<string>⌥⌘o</string>
 	<string>menu.go.back</string>

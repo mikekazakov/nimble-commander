@@ -346,7 +346,7 @@ createsource:
     }
     
 opensource:
-    ret = src_file->Open(VFSFile::OF_Read || VFSFile::OF_ShLock);
+    ret = src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock | VFSFile::OF_NoCache);
     if(ret < 0)
     { // failed to open source file
         if(m_SkipAll) goto cleanup;

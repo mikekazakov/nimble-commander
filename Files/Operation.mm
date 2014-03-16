@@ -228,7 +228,10 @@ static void ReportProgress(void* _op, double _progress) {
     dispatch_to_main_queue( ^(){
         // Enqueue dialog.
         [_dialog OnDialogEnqueued:self];
+
+        [self willChangeValueForKey:@"DialogsCount"];
         m_Dialogs.emplace_back(_dialog);
+        [self didChangeValueForKey:@"DialogsCount"];        
         
         // If operation is in process of stoppping, close the dialog.
         if (m_Job->IsStopRequested())
@@ -254,6 +257,7 @@ static void ReportProgress(void* _op, double _progress) {
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog
 {
     // Remove dialog from the queue and shift other dialogs to the left.
+    [self willChangeValueForKey:@"DialogsCount"];
     m_Dialogs.erase(remove_if(begin(m_Dialogs),
                               end(m_Dialogs),
                               [=](auto _t) {
@@ -261,6 +265,7 @@ static void ReportProgress(void* _op, double _progress) {
                               }),
                     end(m_Dialogs)
                     );
+    [self didChangeValueForKey:@"DialogsCount"];
     
     m_Job->GetStats().ResumeTimeTracking();
     

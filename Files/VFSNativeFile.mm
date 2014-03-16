@@ -50,6 +50,9 @@ int VFSNativeFile::Open(int _open_flags, bool (^_cancel_checker)())
     }
     
     fcntl(m_FD, F_SETFL, fcntl(m_FD, F_GETFL) & ~O_NONBLOCK);
+
+    if(_open_flags & VFSFile::OF_NoCache)
+        fcntl(m_FD, F_NOCACHE, 1);
     
     m_Position = 0;
     m_OpenFlags = _open_flags;

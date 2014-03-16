@@ -2187,6 +2187,10 @@
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1y",
+				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -2224,6 +2228,10 @@
 				HEADER_SEARCH_PATHS = Files/3rd_party/built/include/;
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1y",
+				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "";

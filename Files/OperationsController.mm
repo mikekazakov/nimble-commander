@@ -10,7 +10,7 @@
 #import "OperationsController.h"
 #import "Common.h"
 
-static const uint64_t g_DialogAutoTriggeringTreshMS = 1000;
+static const uint64_t g_DialogAutoTriggeringTreshMS = 2000;
 
 @implementation OperationsController
 {
@@ -76,7 +76,7 @@ static const uint64_t g_DialogAutoTriggeringTreshMS = 1000;
         // 'garbage collection' in m_AutoTriggeredDialogs
         m_AutoTriggeredDialogs.erase(remove_if(begin(m_AutoTriggeredDialogs),
                                                end(m_AutoTriggeredDialogs),
-                                               [](__weak id <OperationDialogProtocol> _t) {
+                                               [](auto _t) {
                                                    return ((id <OperationDialogProtocol>)_t) == nil;
                                                 }),
                                      end(m_AutoTriggeredDialogs)

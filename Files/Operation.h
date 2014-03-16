@@ -50,7 +50,7 @@ class OperationJob;
  * Number of pending dialogs.
  *
  */
-@property (nonatomic) int DialogsCount;
+@property (nonatomic, readonly) int DialogsCount;
 
 /**
  * Panel that caused this operation, or panel that will be affected by this operation. Can be nil.

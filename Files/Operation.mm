@@ -71,9 +71,6 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     }
 }
 
-
-const int MaxDialogs = 2;
-
 // informing AppDelegate about frontmost operation's progress
 static vector<void*> g_AllOperations;
 static mutex         g_AllOperationsMutex;
@@ -106,7 +103,7 @@ static void ReportProgress(void* _op, double _progress) {
 @implementation Operation
 {
     OperationJob *m_Job;
-    id<OperationDialogProtocol> m_Dialogs[MaxDialogs];
+    vector<id<OperationDialogProtocol>> m_Dialogs;
     vector<void(^)()> m_Handlers;
 }
 
@@ -133,12 +130,9 @@ static void ReportProgress(void* _op, double _progress) {
     if (self)
     {
         m_Job = _job;
-        _DialogsCount = 0;
         _TargetPanel = nil;
         _Progress = 0;
         _IsIndeterminate = true;
-        
-        for (int i = 0; i < MaxDialogs; ++i) m_Dialogs[i] = nil;
         
         _job->SetBaseOperation(self);
         
@@ -186,10 +180,10 @@ static void ReportProgress(void* _op, double _progress) {
 {
     m_Job->RequestStop();
     
-    while (_DialogsCount)
+    while(!m_Dialogs.empty())
     {
-        if (m_Dialogs[0].Result == OperationDialogResult::None)
-            [m_Dialogs[0] CloseDialogWithResult:OperationDialogResult::Stop];
+        if (m_Dialogs.front().Result == OperationDialogResult::None)
+            [m_Dialogs.front() CloseDialogWithResult:OperationDialogResult::Stop];
     }
     
     m_Handlers.clear(); // erase all hanging (possibly strong) links to self
@@ -217,11 +211,11 @@ static void ReportProgress(void* _op, double _progress) {
 
 - (bool)DialogShown
 {
-    if(_DialogsCount == 0)
+    if(m_Dialogs.empty())
         return false;
  
-    for (int i = 0; i < _DialogsCount; ++i)
-        if(m_Dialogs[i].IsVisible)
+    for(auto i: m_Dialogs)
+        if(i.IsVisible)
             return true;
 
     return false;
@@ -234,8 +228,7 @@ static void ReportProgress(void* _op, double _progress) {
     dispatch_to_main_queue( ^(){
         // Enqueue dialog.
         [_dialog OnDialogEnqueued:self];
-        m_Dialogs[_DialogsCount] = _dialog;
-        ++self.DialogsCount;
+        m_Dialogs.emplace_back(_dialog);
         
         // If operation is in process of stoppping, close the dialog.
         if (m_Job->IsStopRequested())
@@ -245,41 +238,29 @@ static void ReportProgress(void* _op, double _progress) {
     });
 }
 
-- (void)ShowDialog;
+- (void)ShowDialog
 {
-    if (_DialogsCount)
-        [m_Dialogs[0] ShowDialogForWindow:[NSApp mainWindow]];
+    if (!m_Dialogs.empty())
+        [m_Dialogs.front() ShowDialogForWindow:[NSApp mainWindow]];
 }
 
 - (id <OperationDialogProtocol>) FrontmostDialog
 {
-    if (_DialogsCount)
-        return m_Dialogs[0];
+    if(!m_Dialogs.empty())
+        return m_Dialogs.front();
     return nil;
 }
 
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog
 {
     // Remove dialog from the queue and shift other dialogs to the left.
-    // Can't use memmove due to ARC, shift by hand.
-    bool swap = false;
-    for (int i = 0; i < _DialogsCount; ++i)
-    {
-        if (swap)
-        {
-            id <OperationDialogProtocol> tmp = m_Dialogs[i];
-            m_Dialogs[i] = m_Dialogs[i - 1];
-            m_Dialogs[i - 1] = tmp;
-        }
-        else if (m_Dialogs[i] == _dialog)
-        {
-            assert(!swap);
-            swap = true;
-        }
-    }
-    
-    assert(swap);
-    --self.DialogsCount;
+    m_Dialogs.erase(remove_if(begin(m_Dialogs),
+                              end(m_Dialogs),
+                              [=](auto _t) {
+                                  return _t == _dialog;
+                              }),
+                    end(m_Dialogs)
+                    );
     
     m_Job->GetStats().ResumeTimeTracking();
     
@@ -335,6 +316,11 @@ static void ReportProgress(void* _op, double _progress) {
 - (void)AddOnFinishHandler:(void (^)())_handler
 {
     m_Handlers.push_back(_handler);
+}
+
+- (int) DialogsCount
+{
+    return (int)m_Dialogs.size();
 }
 
 @end

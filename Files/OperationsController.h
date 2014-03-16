@@ -16,6 +16,7 @@
 @property (nonatomic) int OperationsWithDialogsCount;
 @property (nonatomic) int OperationsCount;
 @property (readonly, nonatomic) NSArray *Operations;
+@property (readonly, nonatomic) bool AnyDialogShown;
 
 // Stops all currently running operations and prevents addition of new operations.
 - (void)Stop;

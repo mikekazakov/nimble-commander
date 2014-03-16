@@ -110,6 +110,11 @@ static void ReportProgress(void* _op, double _progress) {
     vector<void(^)()> m_Handlers;
 }
 
+- (uint64_t) ElapsedTime
+{
+    return m_Job->GetStats().GetTime();
+}
+
 - (void)setIsPaused:(BOOL)IsPaused
 {
     if(_IsPaused == IsPaused)
@@ -186,6 +191,8 @@ static void ReportProgress(void* _op, double _progress) {
         if (m_Dialogs[0].Result == OperationDialogResult::None)
             [m_Dialogs[0] CloseDialogWithResult:OperationDialogResult::Stop];
     }
+    
+    m_Handlers.clear(); // erase all hanging (possibly strong) links to self
 }
 
 - (BOOL)IsStarted
@@ -206,6 +213,18 @@ static void ReportProgress(void* _op, double _progress) {
 - (BOOL)IsStopped
 {
     return m_Job->GetState() == OperationJob::StateStopped;
+}
+
+- (bool)DialogShown
+{
+    if(_DialogsCount == 0)
+        return false;
+ 
+    for (int i = 0; i < _DialogsCount; ++i)
+        if(m_Dialogs[i].IsVisible)
+            return true;
+
+    return false;
 }
 
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog
@@ -230,6 +249,13 @@ static void ReportProgress(void* _op, double _progress) {
 {
     if (_DialogsCount)
         [m_Dialogs[0] ShowDialogForWindow:[NSApp mainWindow]];
+}
+
+- (id <OperationDialogProtocol>) FrontmostDialog
+{
+    if (_DialogsCount)
+        return m_Dialogs[0];
+    return nil;
 }
 
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog
@@ -257,7 +283,8 @@ static void ReportProgress(void* _op, double _progress) {
     
     m_Job->GetStats().ResumeTimeTracking();
     
-    if (_dialog.Result == OperationDialogResult::Stop) [self Stop];
+    if (_dialog.Result == OperationDialogResult::Stop)
+        [self Stop];
 }
 
 - (NSString*) ProduceDescriptionStringForBytesProcess

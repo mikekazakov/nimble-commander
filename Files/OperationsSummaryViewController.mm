@@ -95,7 +95,7 @@
         [self loadView];
         
         [m_OperationsController addObserver:self forKeyPath:@"OperationsCount" options:0 context:nil];
-        [m_OperationsController addObserver:self forKeyPath:@"OperationsWithDialogsCount" options:0 context:nil];
+//        [m_OperationsController addObserver:self forKeyPath:@"OperationsWithDialogsCount" options:0 context:nil];
         
         NSBoxWithMouseOverProperty *box = [[NSBoxWithMouseOverProperty alloc] initWithFrame:NSMakeRect(0, 0, 300, 34)];
         box.titlePosition = NSNoTitle;
@@ -191,7 +191,7 @@
 - (void)dealloc
 {
     [m_OperationsController removeObserver:self forKeyPath:@"OperationsCount"];
-    [m_OperationsController removeObserver:self forKeyPath:@"OperationsWithDialogsCount"];
+//    [m_OperationsController removeObserver:self forKeyPath:@"OperationsWithDialogsCount"];
 }
 
 - (void)ShowList
@@ -243,7 +243,7 @@
         return;
     }
     
-    if (_object == m_OperationsController && [_keypath isEqualToString:@"OperationsWithDialogsCount"])
+/*    if (_object == m_OperationsController && [_keypath isEqualToString:@"OperationsWithDialogsCount"])
     {
         // show toolbar if it's hidden
         if(m_OperationsController.OperationsWithDialogsCount > 0 &&
@@ -252,7 +252,7 @@
            m_Window.toolbar.isVisible == false)
             m_Window.toolbar.Visible = true;
         return;
-    }
+    }*/
     
     [super observeValueForKeyPath:_keypath ofObject:_object
                            change:_change context:_context];

@@ -20,7 +20,7 @@
     time_t m_ExiTime;
     bool *m_Remember;
     bool m_Single;
-    Operation *m_Operation;    
+    __weak Operation *m_Operation;
 }
 @synthesize Result = m_Result;
 
@@ -106,7 +106,7 @@
         m_Result = _result;
         
         if (m_Result != OperationDialogResult::None)
-            [m_Operation OnDialogClosed:self];
+            [(Operation*)m_Operation OnDialogClosed:self];
     }
 }
 
@@ -134,7 +134,7 @@
     *m_Remember = [[self RememberCheck] state] == NSOnState;
 
     if (m_Result != OperationDialogResult::None)
-        [m_Operation OnDialogClosed:self];
+        [(Operation*)m_Operation OnDialogClosed:self];
 }
 
 - (IBAction)OnOverwrite:(id)sender

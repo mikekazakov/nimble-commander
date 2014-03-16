@@ -58,6 +58,12 @@ class OperationJob;
  */
 @property (nonatomic) PanelController* TargetPanel;
 
+/**
+ * Returns a time spent in operation in millisecond.
+ * Time spent on pause state is not accounted.
+ */
+@property (nonatomic, readonly) uint64 ElapsedTime;
+
 - (id)initWithJob:(OperationJob *)_job;
 
 /**
@@ -93,9 +99,25 @@ class OperationJob;
  */
 - (void)EnqueueDialog:(id <OperationDialogProtocol>)_dialog;
 
+/**
+ * Causes a first enqueued dialog to appear
+ */
 - (void)ShowDialog;
+
+/**
+ * Called by a shown dialog when it is closed (not just hidden for some time).
+ */
 - (void)OnDialogClosed:(id <OperationDialogProtocol>)_dialog;
 
+/**
+ * Returns true is any of enqueued(if any) is currently visible.
+ */
+- (bool)DialogShown;
+
+/**
+ * Returns a first enqueued dialog if any.
+ */
+- (id <OperationDialogProtocol>) FrontmostDialog;
 
 /**
  * OnFinish called by Job on SetCompleted() event.

@@ -86,6 +86,28 @@
     });
 }
 
+- (void) AsyncGoToVFSHostsStack:(vector<shared_ptr<VFSHost>>)_hosts
+                       withPath:(string)_path
+                      withFlags:(int)_flags
+                       andFocus:(string)_filename
+{
+    m_DirectoryLoadingQ->Run(^(SerialQueue _q) {
+        if(_hosts.back()->IsDirectory(_path.c_str(), 0, 0)) {
+            shared_ptr<VFSListing> listing;
+            int ret = _hosts.back()->FetchDirectoryListing(_path.c_str(), &listing, m_VFSFetchingFlags, ^{return _q->IsStopped();});
+            if(ret >= 0)
+                dispatch_to_main_queue( ^{
+                    [self CancelBackgroundOperations]; // clean running operations if any
+                    [m_View SavePathState];
+                    m_HostsStack = _hosts;
+                    m_Data.Load(listing);
+                    [m_View DirectoryChanged:_filename.c_str()];
+                    [self OnPathChanged:_flags];
+                });
+        }
+    });
+}
+
 - (void) OnGoBack
 {
     if(m_History.Length() < 2)

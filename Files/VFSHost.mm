@@ -125,7 +125,8 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
     
     char tmp[MAXPATHLEN*8];
     strcpy(tmp, _orig_path);
-    if(IsPathWithTrailingSlash(tmp))
+    if(IsPathWithTrailingSlash(tmp) &&
+       strcmp(tmp, "/") != 0 )
         tmp[strlen(tmp)-1] = 0; // cut trailing slash if any
 
     VFSStat st;

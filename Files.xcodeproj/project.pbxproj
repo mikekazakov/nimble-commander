@@ -249,6 +249,9 @@
 		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
 		CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
 		CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.mm */; };
+		CFB7099A18D6FA1800A83E61 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB7099918D6FA1800A83E61 /* libcurl.dylib */; };
+		CFB709A018D700A000A83E61 /* VFSNetFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB7099E18D700A000A83E61 /* VFSNetFTPHost.mm */; };
+		CFB709A318D7017D00A83E61 /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709A118D7017D00A83E61 /* VFSNetFTPInternals.mm */; };
 		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
@@ -695,6 +698,12 @@
 		CFB3E4801844ACD700D375E2 /* TermScreen.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermScreen.mm; sourceTree = "<group>"; };
 		CFB3E4811844ACD700D375E2 /* TermParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermParser.h; sourceTree = "<group>"; };
 		CFB3E4821844ACD700D375E2 /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermView.h; sourceTree = "<group>"; };
+		CFB7099918D6FA1800A83E61 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
+		CFB7099E18D700A000A83E61 /* VFSNetFTPHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetFTPHost.mm; sourceTree = "<group>"; };
+		CFB7099F18D700A000A83E61 /* VFSNetFTPHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNetFTPHost.h; sourceTree = "<group>"; };
+		CFB709A118D7017D00A83E61 /* VFSNetFTPInternals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetFTPInternals.mm; sourceTree = "<group>"; };
+		CFB709A218D7017D00A83E61 /* VFSNetFTPInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNetFTPInternals.h; sourceTree = "<group>"; };
+		CFB709A518D74F1400A83E61 /* VFSNetFTPInternalsForward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSNetFTPInternalsForward.h; sourceTree = "<group>"; };
 		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
 		CFB8F22D17CA3C80004574FE /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSHost.h; sourceTree = "<group>"; };
 		CFB8F22F17CA4175004574FE /* VFSListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSListing.mm; sourceTree = "<group>"; };
@@ -803,6 +812,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB7099A18D6FA1800A83E61 /* libcurl.dylib in Frameworks */,
 				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
 				CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */,
 				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
@@ -1465,6 +1475,26 @@
 			name = TerminalMainWindowState;
 			sourceTree = "<group>";
 		};
+		CFB7099C18D7007D00A83E61 /* Net */ = {
+			isa = PBXGroup;
+			children = (
+				CFB7099D18D7008900A83E61 /* FTP */,
+			);
+			name = Net;
+			sourceTree = "<group>";
+		};
+		CFB7099D18D7008900A83E61 /* FTP */ = {
+			isa = PBXGroup;
+			children = (
+				CFB7099E18D700A000A83E61 /* VFSNetFTPHost.mm */,
+				CFB7099F18D700A000A83E61 /* VFSNetFTPHost.h */,
+				CFB709A118D7017D00A83E61 /* VFSNetFTPInternals.mm */,
+				CFB709A218D7017D00A83E61 /* VFSNetFTPInternals.h */,
+				CFB709A518D74F1400A83E61 /* VFSNetFTPInternalsForward.h */,
+			);
+			name = FTP;
+			sourceTree = "<group>";
+		};
 		CFB8F22B17CA3C65004574FE /* VFS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1472,6 +1502,7 @@
 				CFA0B23B186BE36F00501C35 /* PS */,
 				CF9D0B6117CC5F9D00CB8146 /* Archive */,
 				CFB8F23217CA5373004574FE /* Native */,
+				CFB7099C18D7007D00A83E61 /* Net */,
 				CF9D0EE017CE11A000CB8146 /* Wrapping */,
 				CF435FFB17CF1C5C004BA507 /* VFS.h */,
 			);
@@ -1531,6 +1562,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFB7099918D6FA1800A83E61 /* libcurl.dylib */,
 				CF73A6221816B3C200F59016 /* libquarantine.dylib */,
 				CF73A6201816B36C00F59016 /* libSystem.dylib */,
 				CF033A6C1805A50D0088CAB4 /* IOKit.framework */,
@@ -1807,6 +1839,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB709A018D700A000A83E61 /* VFSNetFTPHost.mm in Sources */,
 				CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF9D0E7F17CC961100CB8146 /* archive_entry_xattr.c in Sources */,
 				CF9D0EDF17CCC51C00CB8146 /* VFSArchiveFile.mm in Sources */,
@@ -1825,6 +1858,7 @@
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CF9D0E9117CC961100CB8146 /* archive_read_open_memory.c in Sources */,
+				CFB709A318D7017D00A83E61 /* VFSNetFTPInternals.mm in Sources */,
 				CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */,
 				CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */,
 				CF9D0E9E17CC961100CB8146 /* archive_read_support_filter_uu.c in Sources */,

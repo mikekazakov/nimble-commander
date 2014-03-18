@@ -14,6 +14,12 @@
                      withFlags:(int)_flags
                       andFocus:(string)_filename;
 
+- (void) AsyncGoToVFSHostsStack:(vector<shared_ptr<VFSHost>>)_hosts
+                       withPath:(string)_path
+                      withFlags:(int)_flags
+                       andFocus:(string)_filename;
+
+
 - (void) OnGoBack;
 - (void) OnGoForward;
 

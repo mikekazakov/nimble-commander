@@ -183,9 +183,13 @@ public:
                                    char *_valid_path,
                                    int _flags,
                                    bool (^_cancel_checker)());
-    
+
     inline shared_ptr<VFSHost> SharedPtr() { return shared_from_this(); }
     inline shared_ptr<const VFSHost> SharedPtr() const { return shared_from_this(); }
+#define VFS_DECLARE_SHARED_PTR(_cl)\
+    shared_ptr<const _cl> SharedPtr() const {return static_pointer_cast<const _cl>(VFSHost::SharedPtr());}\
+    shared_ptr<_cl> SharedPtr() {return static_pointer_cast<_cl>(VFSHost::SharedPtr());}
+
 private:
     string m_JunctionPath;         // path in Parent VFS, relative to it's root
     shared_ptr<VFSHost> m_Parent;

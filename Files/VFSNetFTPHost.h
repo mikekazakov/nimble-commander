@@ -44,16 +44,19 @@ public:
                      int _flags,
                      bool (^_cancel_checker)()) override;
     
-    
-    int DownloadAndCacheListing(VFSNetFTP::CURLInstance *_inst,
-                                const char *_path,
-                                shared_ptr<VFSNetFTP::Directory> *_cached_dir);
-    
     VFS_DECLARE_SHARED_PTR(VFSNetFTPHost);
 private:
+    int DownloadAndCacheListing(VFSNetFTP::CURLInstance *_inst,
+                                const char *_path,
+                                shared_ptr<VFSNetFTP::Directory> *_cached_dir,
+                                bool (^_cancel_checker)());
+    
     unique_ptr<VFSNetFTP::CURLInstance> SpawnCURL();
     void BuildFullURL(const char *_path, char *_buffer) const;    
-    int DownloadListing(VFSNetFTP::CURLInstance *_inst, const char *_path, string &_buffer);
+    int DownloadListing(VFSNetFTP::CURLInstance *_inst,
+                        const char *_path,
+                        string &_buffer,
+                        bool (^_cancel_checker)());
     
     unique_ptr<VFSNetFTP::Cache>        m_Cache;
     unique_ptr<VFSNetFTP::CURLInstance> m_ListingInstance;

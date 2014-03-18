@@ -138,7 +138,22 @@ private:
     shared_ptr<Directory>         m_Directory; // hold a link to dir to ensure that it will be alive
 };
     
-shared_ptr<Directory> ParseListing(const char *_str);
+    
+//int function(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+    
+/**
+ * User data should be a pointer to block of type (bool(^)()), may be nullptr.
+ * Like this: ((__bridge void *)_cancel_checher).
+ */
+int RequestCancelCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+void SetupRequestCancelCallback(CURL *_curl, bool (^_cancel_checker)());
+void ClearRequestCancelCallback(CURL *_curl);
+    
+/**
+ * User data should be a pointer to std::string
+ */
 size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp);
+ 
+shared_ptr<Directory> ParseListing(const char *_str);
     
 }

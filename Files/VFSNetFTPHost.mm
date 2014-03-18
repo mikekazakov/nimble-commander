@@ -58,7 +58,7 @@ int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions *_opti
 {
     auto instance = SpawnCURL();
     
-    int result = DownloadAndCacheListing(instance.get(), _starting_dir, nullptr);
+    int result = DownloadAndCacheListing(instance.get(), _starting_dir, nullptr, nullptr);
     if(result == 0)
     {
         m_ListingInstance = move(instance);
@@ -70,13 +70,14 @@ int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions *_opti
 
 int VFSNetFTPHost::DownloadAndCacheListing(CURLInstance *_inst,
                                            const char *_path,
-                                           shared_ptr<Directory> *_cached_dir)
+                                           shared_ptr<Directory> *_cached_dir,
+                                           bool (^_cancel_checker)())
 {
     if(_inst == nullptr || _path == nullptr)
         return VFSError::InvalidCall;
     
     string listing_data;
-    int result = DownloadListing(_inst, _path, listing_data);
+    int result = DownloadListing(_inst, _path, listing_data, _cancel_checker);
     if( result != 0 )
         return result;
     
@@ -89,7 +90,10 @@ int VFSNetFTPHost::DownloadAndCacheListing(CURLInstance *_inst,
     return 0;
 }
 
-int VFSNetFTPHost::DownloadListing(CURLInstance *_inst, const char *_path, string &_buffer)
+int VFSNetFTPHost::DownloadListing(CURLInstance *_inst,
+                                   const char *_path,
+                                   string &_buffer,
+                                   bool (^_cancel_checker)())
 {
     if(_path == nullptr ||
        _path[0] != '/')
@@ -110,7 +114,9 @@ int VFSNetFTPHost::DownloadListing(CURLInstance *_inst, const char *_path, strin
     curl_easy_setopt(_inst->curl, CURLOPT_URL, request);
     curl_easy_setopt(_inst->curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(_inst->curl, CURLOPT_WRITEDATA, &response);
+    SetupRequestCancelCallback(_inst->curl, _cancel_checker);
     int result = curl_easy_perform(_inst->curl);
+    ClearRequestCancelCallback(_inst->curl);
     _inst->call_lock.unlock();
     
 //    NSLog(@"%s", response.c_str());
@@ -156,6 +162,7 @@ int VFSNetFTPHost::Stat(const char *_path,
         // special case for root path
         memset(&_st, 0, sizeof(_st));
         _st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
+        _st.atime.tv_sec = _st.mtime.tv_sec = _st.btime.tv_sec = _st.ctime.tv_sec = time(0);
         return 0;
     }
     
@@ -180,8 +187,8 @@ int VFSNetFTPHost::Stat(const char *_path,
         }
     }
 
-    // download new listing
-    int result = DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir);
+    // download new listing, sync I/O
+    int result = DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir, _cancel_checker);
     if(result != 0)
         return result;
     
@@ -206,29 +213,18 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
     auto dir = m_Cache->FindDirectory(_path);
     if(dir && !dir->IsOutdated())
     {
-/*        auto *entry = dir->EntryByName(filename);
-        if(entry)
-        {
-            entry->ToStat(_st);
-            return 0;
-        }*/
         auto listing = make_shared<Listing>(dir, _path, _flags, SharedPtr());
         *_target = listing;
         return 0;
     }
     
-    int result = DownloadAndCacheListing(m_ListingInstance.get(), _path, &dir); // sync I/O here
+    // download listing, sync I/O
+    int result = DownloadAndCacheListing(m_ListingInstance.get(), _path, &dir, _cancel_checker); // sync I/O here
     if(result != 0)
         return result;
     
     assert(dir);
-/*    auto *entry = dir->EntryByName(filename);
-    if(entry)
-    {
-        entry->ToStat(_st);
-        return 0;
-    }
-    return VFSError::NotFound;*/
+    
     auto listing = make_shared<Listing>(dir, _path, _flags, SharedPtr());
     *_target = listing;
     return 0;

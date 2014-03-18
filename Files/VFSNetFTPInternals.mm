@@ -154,6 +154,7 @@ shared_ptr<Directory> ParseListing(const char *_str)
         current_line[line_end - line_start] = 0;
         
         struct stat st;
+        memset(&st, 0, sizeof(st));
         char filename[MAXPATHLEN];
         char link[MAXPATHLEN];
         if(parse_dir_unix(current_line, &st, filename, link))
@@ -243,6 +244,9 @@ Listing::Listing(shared_ptr<Directory> _dir,
     m_Directory(_dir)
 {
     size_t shift = (_flags & VFSHost::F_NoDotDot) ? 0 : 1;
+    if(strcmp(_path, "/") == 0)
+        shift = 0; // no dot-dot dir for root dir
+        
     size_t i = 0, e = _dir->entries.size();
     m_Items.resize(_dir->entries.size() + shift);
     for(;i!=e;++i)
@@ -271,11 +275,44 @@ Listing::Listing(shared_ptr<Directory> _dir,
         dest.m_Mode = S_IRUSR | S_IWUSR | S_IFDIR;
         dest.m_CFName = CFSTR("..");
         dest.m_Size = VFSListingItem::InvalidSize;
-/*        dest.m_ATime = _dir.time;
-        dest.m_MTime = _dir.time;
-        dest.m_CTime = _dir.time;
-        dest.m_BTime = _dir.time;*/
+        
+        auto curtime = time(0);
+        dest.m_ATime = curtime;
+        dest.m_MTime = curtime;
+        dest.m_CTime = curtime;
+        dest.m_BTime = curtime;
     }
 }
 
+int RequestCancelCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
+{
+    if(clientp == nullptr)
+        return 0;
+    bool (^checker)() = (__bridge bool(^)()) clientp;
+    bool res = checker();
+    return res ? 1 : 0;
+}
+
+void SetupRequestCancelCallback(CURL *_curl, bool (^_cancel_checker)())
+{
+    if(_cancel_checker)
+    {
+        curl_easy_setopt(_curl, CURLOPT_PROGRESSFUNCTION, RequestCancelCallback);
+        curl_easy_setopt(_curl, CURLOPT_PROGRESSDATA, (__bridge void *)_cancel_checker);
+        curl_easy_setopt(_curl, CURLOPT_NOPROGRESS, 0);
+    }
+    else
+    {
+        ClearRequestCancelCallback(_curl);
+    }
+}
+
+void ClearRequestCancelCallback(CURL *_curl)
+{
+    curl_easy_setopt(_curl, CURLOPT_PROGRESSFUNCTION, nullptr);
+    curl_easy_setopt(_curl, CURLOPT_PROGRESSDATA, nullptr);
+    curl_easy_setopt(_curl, CURLOPT_NOPROGRESS, 1);
+}
+
+    
 }

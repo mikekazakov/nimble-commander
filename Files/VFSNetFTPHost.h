@@ -43,6 +43,17 @@ public:
                      VFSStat &_st,
                      int _flags,
                      bool (^_cancel_checker)()) override;
+
+    virtual int CreateFile(const char* _path,
+                           shared_ptr<VFSFile> *_target,
+                           bool (^_cancel_checker)()) override;
+    
+    virtual bool ShouldProduceThumbnails() override;    
+    
+    // internal stuff below:
+    void BuildFullURL(const char *_path, char *_buffer) const;
+    
+    unique_ptr<VFSNetFTP::CURLInstance> InstanceForIO();
     
     VFS_DECLARE_SHARED_PTR(VFSNetFTPHost);
 private:
@@ -52,7 +63,7 @@ private:
                                 bool (^_cancel_checker)());
     
     unique_ptr<VFSNetFTP::CURLInstance> SpawnCURL();
-    void BuildFullURL(const char *_path, char *_buffer) const;    
+    
     int DownloadListing(VFSNetFTP::CURLInstance *_inst,
                         const char *_path,
                         string &_buffer,

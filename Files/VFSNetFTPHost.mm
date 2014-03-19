@@ -8,6 +8,7 @@
 
 #import "VFSNetFTPHost.h"
 #import "VFSNetFTPInternals.h"
+#import "VFSNetFTPFile.h"
 
 using namespace VFSNetFTP;
 
@@ -140,7 +141,7 @@ void VFSNetFTPHost::BuildFullURL(const char *_path, char *_buffer) const
 
 unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()
 {
-    unique_ptr<CURLInstance> inst(new CURLInstance);
+    auto inst = make_unique<CURLInstance>();
     inst->curl = curl_easy_init();
     // ... set a lot of stuff like connection options/logins/etc here...
     
@@ -228,4 +229,25 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
     auto listing = make_shared<Listing>(dir, _path, _flags, SharedPtr());
     *_target = listing;
     return 0;
+}
+
+unique_ptr<VFSNetFTP::CURLInstance> VFSNetFTPHost::InstanceForIO()
+{
+    return SpawnCURL();
+}
+
+int VFSNetFTPHost::CreateFile(const char* _path,
+                              shared_ptr<VFSFile> *_target,
+                              bool (^_cancel_checker)())
+{
+    auto file = make_shared<VFSNetFTPFile>(_path, SharedPtr());
+    if(_cancel_checker && _cancel_checker())
+        return VFSError::Cancelled;
+    *_target = file;
+    return VFSError::Ok;
+}
+
+bool VFSNetFTPHost::ShouldProduceThumbnails()
+{
+    return false;
 }

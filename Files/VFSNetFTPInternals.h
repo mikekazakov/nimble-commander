@@ -43,6 +43,90 @@ struct CURLInstance
     mutex call_lock;
 };
 
+struct CURLMInstance
+{
+    CURLMInstance():
+        curlm(curl_multi_init())
+    {
+    }
+    ~CURLMInstance()
+    {
+        curl_multi_cleanup(curlm);
+    }
+    CURLMInstance(const CURLMInstance&) = delete;
+    CURLMInstance(const CURLMInstance&&) = delete;
+    void operator=(const CURLMInstance&) = delete;
+
+  
+    int RunningHandles()
+    {
+        int running_handles = 0;
+        call_lock.lock();
+        curl_multi_perform(curlm, &running_handles);
+        call_lock.unlock();
+        return running_handles;
+    }
+
+    CURLM *curlm;
+    mutex call_lock;
+};
+    
+struct Buffer
+{
+    Buffer()
+    {
+        grow(default_capacity);
+    }
+    ~Buffer()
+    {
+        free(buf);
+    }
+    Buffer(const Buffer&) = delete;
+    Buffer(const Buffer&&) = delete;
+    void operator=(const Buffer&) = delete;
+    
+    void clear()
+    {
+        size = 0;
+    }
+    
+    void add(const void *_mem, size_t _size)
+    {
+        if(capacity < size + _size)
+            grow(size + (uint32_t)_size);
+        
+        memcpy(buf + size, _mem, _size);
+        size += _size;
+    }
+    
+    void grow(uint32_t _new_size)
+    {
+        buf = (uint8_t*) realloc(buf, capacity = (uint32_t)_new_size);
+    }
+    
+    static size_t write_here_function(void *buffer, size_t size, size_t nmemb, void *userp)
+    {
+        Buffer *buf = (Buffer*) userp;
+        buf->add(buffer, size*nmemb);
+        return size*nmemb;
+    }
+    
+    void discard(size_t _sz)
+    {
+        assert(_sz <= size);
+        memmove(buf,
+                buf + _sz,
+                size - _sz);
+        size = size - (uint32_t)_sz;
+    }
+    
+    uint8_t              *buf = 0;
+    static const uint32_t default_capacity = 32768;
+    uint32_t              size = 0;
+    uint32_t              capacity = 0;
+    uint64_t              file_offset = 0; // buffer itself don't operate file_offset, it's placed here for convenience
+};
+    
 struct Entry
 {
     Entry(){}

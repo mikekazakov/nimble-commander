@@ -8,10 +8,15 @@
 
 #pragma once
 
+class VFSNetFTPHost;
+class VFSNetFTPFile;
+
 namespace VFSNetFTP
 {
     struct CURLInstance;
+    struct CURLMInstance;
     struct Entry;
     struct Directory;
+    struct Buffer;
     class Cache;
 }

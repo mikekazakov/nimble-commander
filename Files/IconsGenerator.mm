@@ -364,7 +364,8 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
     {
         // special case for for bundles
         if(m_IconsMode == IconModeFileIconsThumbnails &&
-           _meta->extension == "app")
+           _meta->extension == "app" &&
+           _meta->host->ShouldProduceThumbnails())
         {
             _meta->thumbnail = ProduceBundleThumbnailForVFS(_meta->relative_path.c_str(),
                                                             _meta->extension.c_str(),

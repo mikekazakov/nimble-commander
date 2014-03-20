@@ -37,6 +37,7 @@ static const char* g_Ftp_Mozilla_Org_Readme ="\n\
     XCTAssert( stat.size == strlen(g_Ftp_Mozilla_Org_Readme) );
 
     VFSFilePtr file;
+    // basic checks
     XCTAssert( host->CreateFile("/README", &file, 0) == 0 );
     XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
     XCTAssert( file->Size() == strlen(g_Ftp_Mozilla_Org_Readme) );
@@ -48,8 +49,28 @@ static const char* g_Ftp_Mozilla_Org_Readme ="\n\
     
     XCTAssert( file->Close() == 0 );
     XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
+    
+    // check over-reading
     char buf[4096];
     XCTAssert( file->Read(buf, 4096) == strlen(g_Ftp_Mozilla_Org_Readme) );
+    
+    // check seeking
+    XCTAssert( file->Seek(0x150, VFSFile::Seek_Set) == 0x150 );
+    XCTAssert( file->Read(buf, 16) == 16 );
+    XCTAssert( memcmp(buf, "a public release", 16) == 0 );
+    XCTAssert( file->Seek(0, VFSFile::Seek_Set) == 0 );
+    XCTAssert( file->Read(buf, 16) == 16 );
+    XCTAssert( memcmp(buf, "\n   ftp.mozilla.", 16) == 0 );
+    XCTAssert( file->Seek(0xFFFFFFF, VFSFile::Seek_Set) == strlen(g_Ftp_Mozilla_Org_Readme) );
+    XCTAssert( file->Eof() );
+    XCTAssert( file->Read(buf, 16) == 0 );
+    
+    // check seeking at big distance and reading an arbitrary selected known data block
+    XCTAssert( host->CreateFile("/pub/firefox/releases/28.0b9/source/firefox-28.0b9.bundle", &file, 0) == 0 );
+    XCTAssert( file->Open(VFSFile::OF_Read) == 0 );    
+    XCTAssert( file->Seek(0x23B0A820, VFSFile::Seek_Set) == 0x23B0A820 );
+    XCTAssert( file->Read(buf, 16) == 16 );
+    XCTAssert( memcmp(buf, "\x84\x62\x9d\xc0\x90\x38\xbb\x53\x23\xf1\xce\x45\x91\x74\x32\x2c", 16) == 0 );
     
     // check reaction on invalid requests
     XCTAssert( host->CreateFile("/iwuhdowgfuiwygfuiwgfuiwef", &file, 0) == 0 );

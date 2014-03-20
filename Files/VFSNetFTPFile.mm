@@ -225,6 +225,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
     {
         // can't satisfy request from memory buffer, need to perform I/O
 
+        // check for dead connection
         // check for big offset changes so we need to restart connection
         if(_file_offset < m_Buf->file_offset ||
            _file_offset > m_Buf->file_offset + m_Buf->size ||
@@ -279,7 +280,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
                 if(_cancel_checker && _cancel_checker())
                     return VFSError::Cancelled;
         }
-        
+
         // check for error codes here
         if (running_handles == 0) {
             int msgs_left = 1;
@@ -345,9 +346,35 @@ ssize_t VFSNetFTPFile::Size() const
 
 bool VFSNetFTPFile::Eof() const
 {
-//    if(!m_Archive)
-//        return true;
+    if(!IsOpened())
+        return true;
     return m_FilePos >= m_FileSize;
+}
+
+off_t VFSNetFTPFile::Seek(off_t _off, int _basis)
+{
+    if(!IsOpened())
+        return VFSError::InvalidCall;
+    
+    // we can only deal with cache buffer now, need another branch later
+    off_t req_pos = 0;
+    if(_basis == VFSFile::Seek_Set)
+        req_pos = _off;
+    else if(_basis == VFSFile::Seek_End)
+        req_pos = m_FileSize + _off;
+    else if(_basis == VFSFile::Seek_Cur)
+        req_pos = m_FileSize + _off;
+    else
+        return VFSError::InvalidCall;
+    
+    if(req_pos < 0)
+        return VFSError::InvalidCall;
+    if(req_pos > m_FileSize)
+        req_pos = m_FileSize;
+
+    m_FilePos = req_pos;
+    
+    return m_FilePos;
 }
 
 

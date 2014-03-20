@@ -784,7 +784,24 @@ void panel::GenericCursorPersistance::Restore()
             [self AsyncGoToVFSPathStack:path withFlags:0 andFocus:""];
             return true;
         }
-    }    
+    }
+    
+    if(keycode == 3 ) { // 'F' button
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
+        {
+            auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+//            auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
+            host->Open("/", nullptr);
+            vector<shared_ptr<VFSHost>> hosts;
+            hosts.emplace_back(host);
+            
+            [self AsyncGoToVFSHostsStack:hosts
+                                withPath:"/"
+                               withFlags:0
+                                andFocus:""];
+            return true;
+        }
+    }
     
     // handle some actions manually, to prevent annoying by menu highlighting by hotkey
     auto &shortcuts = ActionsShortcutsManager::Instance();

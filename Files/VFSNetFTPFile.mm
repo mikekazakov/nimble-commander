@@ -195,79 +195,96 @@ ssize_t VFSNetFTPFile::ReadChunk(
                                  bool (^_cancel_checker)()
                                  )
 {
-    // TODO: incorporate _cancel_checker
-    
-/*    if (ftpfs.current_fh != fh ||
-        offset < fh->buf.begin_offset ||
-        offset > fh->buf.begin_offset + fh->buf.len ||
-        !check_running()) {*/
+    // TODO: mutex lock
+    bool error = false;
     
     if ((m_Buf->size < _read_size + _file_offset - m_Buf->file_offset) ||
         _file_offset < m_Buf->file_offset ||
         _file_offset > m_Buf->file_offset + m_Buf->size)
     {
         // can't satisfy request from memory buffer, need to perform I/O
-    
-        if(m_CURLM->RunningHandles() == 0)
-//          && check for big offset changes so we need to restart connection
+
+        // check for big offset changes so we need to restart connection
+        if(_file_offset < m_Buf->file_offset ||
+           _file_offset > m_Buf->file_offset + m_Buf->size ||
+           m_CURLM->RunningHandles() == 0)
+
         { // (re)connect
             m_Buf->clear();
+            curl_multi_remove_handle(m_CURLM->curlm, m_CURL->curl);
             curl_easy_setopt(m_CURL->curl, CURLOPT_URL, m_URLRequest.c_str());
             curl_easy_setopt(m_CURL->curl, CURLOPT_WRITEFUNCTION, Buffer::write_here_function);
             curl_easy_setopt(m_CURL->curl, CURLOPT_WRITEDATA, m_Buf.get());
+            curl_easy_setopt(m_CURL->curl, CURLOPT_LOW_SPEED_LIMIT, 1);
+            curl_easy_setopt(m_CURL->curl, CURLOPT_LOW_SPEED_TIME, 60);
+            
             // set offsets
-/*        if (offset) {
-            char range[15];
-            snprintf(range, 15, "%lld-", (long long) offset);
-            curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_RANGE, range);
-        }*/
+            if (_file_offset) {
+                char range[16];
+                snprintf(range, 16, "%lld-", _file_offset);
+                curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, range);
+            }
         
             CURLMcode curlMCode =  curl_multi_add_handle(m_CURLM->curlm, m_CURL->curl);
-//            int a = 10;
+            assert(curlMCode == CURLM_OK);
         }
     
         int running_handles = 0;
-    
+        
         while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles)); // ???
-    
+
+        curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, NULL);
+        
         while( (m_Buf->size < _read_size + _file_offset - m_Buf->file_offset) && running_handles)
         {
-            struct timeval timeout;
-        
+            struct timeval timeout = {1, 0};
+            
             fd_set fdread, fdwrite, fdexcep;
             int maxfd;
         
             FD_ZERO(&fdread);
             FD_ZERO(&fdwrite);
             FD_ZERO(&fdexcep);
-        
-            /* set a suitable timeout to play around with */
-            timeout.tv_sec = 1;
-            timeout.tv_usec = 0;
-        
-            /* get file descriptors from the transfers */
             curl_multi_fdset(m_CURLM->curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
         
             if (select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout) == -1) {
-//              err = 1;
-                assert(0);
+                NSLog(@"!!");
+                error = true;
                 break;
             }
         
-            while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles));
+            while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles))
+                if(_cancel_checker && _cancel_checker())
+                    return VFSError::Cancelled;
         }
         
         // check for error codes here
+        if (running_handles == 0) {
+            int msgs_left = 1;
+            while (msgs_left)
+            {
+                CURLMsg* msg = curl_multi_info_read(m_CURLM->curlm, &msgs_left);
+                if (msg == NULL ||
+                    msg->msg != CURLMSG_DONE ||
+                    msg->data.result != CURLE_OK) {
+//                    DEBUG(1, "error: curl_multi_info %d\n", msg->msg);
+//                    err = 1;
+                    NSLog(@"!!!");
+                    error = true;
+                }
+            }
+        }
     }
     
-//    assert(m_Buf->file_offset <= )
-    
+
+    if(error)
+        return VFSError::FromErrno(EIO);
+
+    assert(m_Buf->file_offset >= _file_offset);
     size_t to_copy = m_Buf->size + m_Buf->file_offset - _file_offset;
     size_t size = _read_size > to_copy ? to_copy : _read_size;
-//    clip(size, <#const T__ &lower#>, <#const T__ &upper#>)
-//    if(_read_size > to_copy) _read_size = to_copy;
-    
-    if (_read_to)
+  
+    if(_read_to != nullptr)
     {
         memcpy(_read_to, m_Buf->buf + _file_offset - m_Buf->file_offset, size);
         m_Buf->discard( _file_offset - m_Buf->file_offset + size );
@@ -282,45 +299,12 @@ ssize_t VFSNetFTPFile::Read(void *_buf, size_t _size)
     if(Eof())
         return 0;
     
-/*    ssize_t VFSNetFTPFile::ReadChunk(
-                                     void *_read_to,
-                                     uint64_t _read_size,
-                                     uint64_t _file_offset,
-                                     bool (^_cancel_checker)()
-                                     )*/
-    
     ssize_t ret = ReadChunk(_buf, _size, m_FilePos, 0);
     if(ret < 0)
         return ret;
 
     m_FilePos += ret;
     return ret;
-    
-    
-/*    if(m_UnpackBufferSize == 0)
-    {
-        // if we don't have any data unpacked - ask for it
-        if( m_ExtractionRunning == false )
-            return SetLastError(VFSArchiveUnRARErrorToVFSError(m_RarError));
-        
-        dispatch_semaphore_signal(m_UnpackSemaphore);
-        dispatch_semaphore_wait(m_ConsumeSemaphore, DISPATCH_TIME_FOREVER);
-    }
-    
-    // just give unpacked data away, don't unpack any more now
-    ssize_t sz = min(ssize_t(_size), ssize_t(m_UnpackBufferSize));
-    assert(sz + m_Position <= m_Entry->unpacked_size);
-    
-    memcpy(_buf,
-           m_UnpackBuffer.get(),
-           sz);
-    memmove(m_UnpackBuffer.get(),
-            m_UnpackBuffer.get() + sz,
-            m_UnpackBufferSize - sz);
-    m_UnpackBufferSize -= sz;
-    m_Position += sz;
-    return sz;
-    */
 }
 
 VFSFile::ReadParadigm VFSNetFTPFile::GetReadParadigm() const

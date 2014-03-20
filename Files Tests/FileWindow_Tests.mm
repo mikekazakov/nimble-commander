@@ -22,7 +22,7 @@ public:
                               ReadParadigm _behave_as);
     
     
-    virtual int     Open(int _open_flags) override;
+    virtual int     Open(int _open_flags, bool (^_cancel_checker)()) override;
     virtual bool    IsOpened() const override {return m_Opened;}
     virtual int     Close() override;
     
@@ -146,7 +146,7 @@ bool TestGenericMemReadOnlyFile::Eof() const
     return m_Pos == m_Size;
 }
 
-int TestGenericMemReadOnlyFile::Open(int _open_flags)
+int TestGenericMemReadOnlyFile::Open(int _open_flags, bool (^_cancel_checker)())
 {
     m_Opened = true;
     return 0;
@@ -175,7 +175,7 @@ int TestGenericMemReadOnlyFile::Close()
     auto vfs_file = make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,
                                                             VFSFile::ReadParadigm::Random);
-    vfs_file->Open(0);
+    vfs_file->Open(0, 0);
     
     FileWindow fw;
     int ret = fw.OpenFile(vfs_file);
@@ -205,7 +205,7 @@ int TestGenericMemReadOnlyFile::Close()
     auto vfs_file = make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,
                                                             VFSFile::ReadParadigm::Sequential);
-    vfs_file->Open(0);
+    vfs_file->Open(0, 0);
     
     FileWindow fw;
     int ret = fw.OpenFile(vfs_file);
@@ -239,7 +239,7 @@ int TestGenericMemReadOnlyFile::Close()
     auto vfs_file = make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,
                                                             VFSFile::ReadParadigm::Seek);
-    vfs_file->Open(0);
+    vfs_file->Open(0, 0);
     
     FileWindow fw;
     int ret = fw.OpenFile(vfs_file);

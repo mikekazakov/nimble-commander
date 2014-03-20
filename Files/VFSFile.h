@@ -183,6 +183,8 @@ private:
     void operator=(const VFSFile&) = delete;
 };
 
+typedef shared_ptr<VFSFile> VFSFilePtr;
+
 inline int VFSFile::SetLastError(int _error) const
 {
     return m_LastError = _error;

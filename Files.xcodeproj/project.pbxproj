@@ -253,6 +253,7 @@
 		CFB709A018D700A000A83E61 /* VFSNetFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB7099E18D700A000A83E61 /* VFSNetFTPHost.mm */; };
 		CFB709A318D7017D00A83E61 /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709A118D7017D00A83E61 /* VFSNetFTPInternals.mm */; };
 		CFB709AB18D962E600A83E61 /* VFSNetFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709A918D962E600A83E61 /* VFSNetFTPFile.mm */; };
+		CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */; };
 		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
@@ -707,6 +708,7 @@
 		CFB709A518D74F1400A83E61 /* VFSNetFTPInternalsForward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSNetFTPInternalsForward.h; sourceTree = "<group>"; };
 		CFB709A918D962E600A83E61 /* VFSNetFTPFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetFTPFile.mm; sourceTree = "<group>"; };
 		CFB709AA18D962E600A83E61 /* VFSNetFTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNetFTPFile.h; sourceTree = "<group>"; };
+		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
 		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
 		CFB8F22D17CA3C80004574FE /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSHost.h; sourceTree = "<group>"; };
 		CFB8F22F17CA4175004574FE /* VFSListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSListing.mm; sourceTree = "<group>"; };
@@ -1031,6 +1033,7 @@
 			children = (
 				CF47A994186C663000745C4C /* tests_common.h */,
 				CF47A996186C743A00745C4C /* VFSPS_Tests.mm */,
+				CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */,
 				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
@@ -1835,6 +1838,7 @@
 			files = (
 				CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */,
 				CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */,
+				CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */,
 				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
 				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
 			);

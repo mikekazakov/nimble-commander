@@ -148,11 +148,27 @@ VFSNetFTPFile::VFSNetFTPFile(const char* _relative_path,
 
 VFSNetFTPFile::~VFSNetFTPFile()
 {
-    if(m_CURLM)
-    {
-        if(m_CURL)
-            curl_multi_remove_handle(m_CURLM->curlm, m_CURL->curl);
-    }
+    Close();
+}
+
+bool VFSNetFTPFile::IsOpened() const
+{
+    return m_IsOpened;
+}
+
+int VFSNetFTPFile::Close()
+{
+    if(m_CURLM && m_CURL)
+        curl_multi_remove_handle(m_CURLM->curlm, m_CURL->curl);
+    m_FilePos = 0;
+    m_FileSize = 0;
+    m_IsOpened = false;
+    m_Buf->clear();
+    m_Buf->file_offset = 0;
+    m_CURL.reset(); // TODO: should give this handle back to FTPHost.
+    m_CURLM.reset();
+    m_URLRequest.clear();
+    return 0;
 }
 
 int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
@@ -170,19 +186,24 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         ftp_host->BuildFullURL(RelativePath(), request);
         m_URLRequest = request;
 
-        m_CURL  = ftp_host->InstanceForIO();
+        m_CURL  = ftp_host->InstanceForIO(); // TODO: Host should have some kind of handles cache and use the closes (cwd) available
         m_CURLM = make_unique<CURLMInstance>();
         m_FileSize = stat.size;
         
-        
-        if(m_FileSize > 0)
+        if(m_FileSize == 0)
         {
-            if(ReadChunk(nullptr, 1, 0, _cancel_checker) == 1)
-                return 0;
+            m_IsOpened = true;
+            return 0;
         }
         
-
-//        curl_multi_perform
+        if(ReadChunk(nullptr, 1, 0, _cancel_checker) == 1)
+        {
+            m_IsOpened = true;
+            return 0;
+        }
+        
+        Close();
+        
         return VFSError::GenericError;
     }
     return VFSError::NotSupported;
@@ -211,6 +232,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
 
         { // (re)connect
             m_Buf->clear();
+            m_Buf->file_offset = _file_offset;
             curl_multi_remove_handle(m_CURLM->curlm, m_CURL->curl);
             curl_easy_setopt(m_CURL->curl, CURLOPT_URL, m_URLRequest.c_str());
             curl_easy_setopt(m_CURL->curl, CURLOPT_WRITEFUNCTION, Buffer::write_here_function);
@@ -224,14 +246,14 @@ ssize_t VFSNetFTPFile::ReadChunk(
                 snprintf(range, 16, "%lld-", _file_offset);
                 curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, range);
             }
-        
+
             CURLMcode curlMCode =  curl_multi_add_handle(m_CURLM->curlm, m_CURL->curl);
             assert(curlMCode == CURLM_OK);
         }
     
         int running_handles = 0;
         
-        while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles)); // ???
+        while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles));
 
         curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, NULL);
         
@@ -276,7 +298,6 @@ ssize_t VFSNetFTPFile::ReadChunk(
         }
     }
     
-
     if(error)
         return VFSError::FromErrno(EIO);
 
@@ -309,7 +330,7 @@ ssize_t VFSNetFTPFile::Read(void *_buf, size_t _size)
 
 VFSFile::ReadParadigm VFSNetFTPFile::GetReadParadigm() const
 {
-    return VFSFile::ReadParadigm::Sequential;
+    return VFSFile::ReadParadigm::Seek;
 }
 
 ssize_t VFSNetFTPFile::Pos() const

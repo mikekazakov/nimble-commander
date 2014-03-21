@@ -122,7 +122,7 @@ public:
                                     );
     
     virtual int CreateFile(const char* _path,
-                           shared_ptr<VFSFile> *_target,
+                           shared_ptr<VFSFile> &_target,
                            bool (^_cancel_checker)());
     
     virtual int CreateDirectory(const char* _path,

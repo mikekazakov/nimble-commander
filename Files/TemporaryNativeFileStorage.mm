@@ -107,8 +107,8 @@ bool TemporaryNativeFileStorage::CopySingleFile(const char* _vfs_filename,
                                                 char *_tmp_filename
                                                 )
 {
-    shared_ptr<VFSFile> vfs_file;
-    if(_host->CreateFile(_vfs_filename, &vfs_file, 0) < 0)
+    VFSFilePtr vfs_file;
+    if(_host->CreateFile(_vfs_filename, vfs_file, 0) < 0)
         return false;
 
     if(vfs_file->Open(VFSFile::OF_Read) < 0)

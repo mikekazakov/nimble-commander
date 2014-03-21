@@ -14,127 +14,262 @@
 
 //CURLOPT_VERBOSE
 #if 0
-static size_t ftpfs_read_chunk(const char* full_path, char* rbuf,
-                               size_t size, off_t offset,
-                               struct fuse_file_info* fi,
-                               int update_offset) {
-    int running_handles = 0;
-    int err = 0;
-    struct ftpfs_file* fh = get_ftpfs_file(fi);
+
+static int ftpfs_write(const char *path, const char *wbuf, size_t size,
+                       off_t offset, struct fuse_file_info *fi) {
+    (void) path;
+    struct ftpfs_file *fh = get_ftpfs_file(fi);
     
-    DEBUG(2, "ftpfs_read_chunk: %s %p %zu %lld %p %p\n",
-          full_path, rbuf, size, offset, fi, fh);
+    DEBUG(1, "ftpfs_write: %s size=%zu offset=%lld has_write_conn=%d pos=%lld\n", path, size, (long long) offset, fh->write_conn!=0, fh->pos);
     
-    pthread_mutex_lock(&ftpfs.lock);
+    if (fh->write_fail_cause != CURLE_OK)
+    {
+        DEBUG(1, "previous write failed. cause=%d\n", fh->write_fail_cause);
+        return -EIO;
+    }
     
-    DEBUG(2, "buffer size: %zu %lld\n", fh->buf.len, fh->buf.begin_offset);
-    
-    if ((fh->buf.len < size + offset - fh->buf.begin_offset) ||
-        offset < fh->buf.begin_offset ||
-        offset > fh->buf.begin_offset + fh->buf.len) {
-        // We can't answer this from cache
-        if (ftpfs.current_fh != fh ||
-            offset < fh->buf.begin_offset ||
-            offset > fh->buf.begin_offset + fh->buf.len ||
-            !check_running()) {
-            DEBUG(1, "We need to restart the connection %p\n", ftpfs.connection);
-            DEBUG(2, "current_fh=%p fh=%p\n", ftpfs.current_fh, fh);
-            DEBUG(2, "buf.begin_offset=%lld offset=%lld\n", fh->buf.begin_offset, offset);
-            
-            buf_clear(&fh->buf);
-            fh->buf.begin_offset = offset;
-            ftpfs.current_fh = fh;
-            
-            cancel_previous_multi();
-            
-            curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_URL, full_path);
-            curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_WRITEDATA, &fh->buf);
-            if (offset) {
-                char range[15];
-                snprintf(range, 15, "%lld-", (long long) offset);
-                curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_RANGE, range);
-            }
-            
-            CURLMcode curlMCode =  curl_multi_add_handle(ftpfs.multi, ftpfs.connection);
-            if (curlMCode != CURLE_OK)
+    if (!fh->write_conn && fh->pos == 0 && offset == 0)
+    {
+        DEBUG(1, "ftpfs_write: starting a streaming write at pos=%lld\n", fh->pos);
+        
+        /* check if the file has been truncated to zero or has been newly created */
+        if (!fh->write_may_start)
+        {
+            long long size = (long long int)test_size(path);
+            if (size != 0)
             {
-                fprintf(stderr, "curl_multi_add_handle problem: %d\n", curlMCode);
-                exit(1);
-            }
-            ftpfs.attached_to_multi = 1;
-        }
-        
-        while(CURLM_CALL_MULTI_PERFORM ==
-              curl_multi_perform(ftpfs.multi, &running_handles));
-        
-        curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_RANGE, NULL);
-        
-        while ((fh->buf.len < size + offset - fh->buf.begin_offset) &&
-               running_handles) {
-            struct timeval timeout;
-            int rc; /* select() return code */
-            
-            fd_set fdread;
-            fd_set fdwrite;
-            fd_set fdexcep;
-            int maxfd;
-            
-            FD_ZERO(&fdread);
-            FD_ZERO(&fdwrite);
-            FD_ZERO(&fdexcep);
-            
-            /* set a suitable timeout to play around with */
-            timeout.tv_sec = 1;
-            timeout.tv_usec = 0;
-            
-            /* get file descriptors from the transfers */
-            curl_multi_fdset(ftpfs.multi, &fdread, &fdwrite, &fdexcep, &maxfd);
-            
-            rc = select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout);
-            if (rc == -1) {
-                err = 1;
-                break;
-            }
-            while(CURLM_CALL_MULTI_PERFORM ==
-                  curl_multi_perform(ftpfs.multi, &running_handles));
-        }
-        
-        if (running_handles == 0) {
-            int msgs_left = 1;
-            while (msgs_left) {
-                CURLMsg* msg = curl_multi_info_read(ftpfs.multi, &msgs_left);
-                if (msg == NULL ||
-                    msg->msg != CURLMSG_DONE ||
-                    msg->data.result != CURLE_OK) {
-                    DEBUG(1, "error: curl_multi_info %d\n", msg->msg);
-                    err = 1;
-                }
+                fprintf(stderr, "ftpfs_write: start writing with no previous truncate not allowed! size check rval=%lld\n", size);
+                return op_return(-EIO, "ftpfs_write");
             }
         }
+        
+        int success = start_write_thread(fh);
+        if (!success)
+        {
+            return op_return(-EIO, "ftpfs_write");
+        }
+        sem_wait(&fh->ready);
+        sem_post(&fh->data_need);
     }
     
-    size_t to_copy = fh->buf.len + fh->buf.begin_offset - offset;
-    size = size > to_copy ? to_copy : size;
-    if (rbuf) {
-        memcpy(rbuf, fh->buf.p + offset - fh->buf.begin_offset, size);
+    if (!fh->write_conn && fh->pos >0 && offset == fh->pos)
+    {
+        /* resume a streaming write */
+        DEBUG(1, "ftpfs_write: resuming a streaming write at pos=%lld\n", fh->pos);
+        
+        int success = start_write_thread(fh);
+        if (!success)
+        {
+            return op_return(-EIO, "ftpfs_write");
+        }
+        sem_wait(&fh->ready);
+        sem_post(&fh->data_need);
     }
     
-    // Check if the buffer is growing and we can delete a part of it
-    if (fh->can_shrink && fh->buf.len > MAX_BUFFER_LEN) {
-        DEBUG(2, "Shrinking buffer from %zu to %zu bytes\n",
-              fh->buf.len, to_copy - size);
-        memmove(fh->buf.p,
-                fh->buf.p + offset - fh->buf.begin_offset + size,
-                to_copy - size);
-        fh->buf.len = to_copy - size;
-        fh->buf.begin_offset = offset + size;
+    if (fh->write_conn) {
+        sem_wait(&fh->data_need);
+        
+        if (offset != fh->pos) {
+            DEBUG(1, "non-sequential write detected -> fail\n");
+            
+            sem_post(&fh->data_avail);
+            finish_write_thread(fh);
+            return op_return(-EIO, "ftpfs_write");
+            
+            
+        } else {
+            if (buf_add_mem(&fh->stream_buf, wbuf, size) == -1) {
+                sem_post(&fh->data_need);
+                return op_return(-ENOMEM, "ftpfs_write");
+            }
+            fh->pos += size;
+            /* wake up write_data_bg */
+            sem_post(&fh->data_avail);
+            /* wait until libcurl has completely written the current chunk or finished/failed */
+            sem_wait(&fh->data_written);
+            fh->written_flag = 0;
+            
+            if (fh->write_fail_cause != CURLE_OK)
+            {
+                /* TODO: on error we should problably unlink the target file  */ 
+                DEBUG(1, "writing failed. cause=%d\n", fh->write_fail_cause);
+                return op_return(-EIO, "ftpfs_write");
+            }    
+        }
     }
-    
-    pthread_mutex_unlock(&ftpfs.lock);
-    
-    if (err) return CURLFTPFS_BAD_READ;
     return size;
 }
+
+static size_t write_data_bg(void *ptr, size_t size, size_t nmemb, void *data) {
+  struct ftpfs_file *fh = data;
+  unsigned to_copy = size * nmemb;
+
+  if (!fh->isready) {
+    sem_post(&fh->ready);
+    fh->isready = 1;
+  }
+
+  if (fh->stream_buf.len == 0 && fh->written_flag) {
+    sem_post(&fh->data_written); /* ftpfs_write can return */
+  }
+  
+  sem_wait(&fh->data_avail); 
+  
+  DEBUG(2, "write_data_bg: data_avail eof=%d\n", fh->eof);
+  
+  if (fh->eof)
+    return 0;
+
+  DEBUG(2, "write_data_bg: %d %zd\n", to_copy, fh->stream_buf.len);
+  if (to_copy > fh->stream_buf.len)
+    to_copy = fh->stream_buf.len;
+
+  memcpy(ptr, fh->stream_buf.p, to_copy);
+  if (fh->stream_buf.len > to_copy) {
+    size_t newlen = fh->stream_buf.len - to_copy;
+    memmove(fh->stream_buf.p, fh->stream_buf.p + to_copy, newlen);
+    fh->stream_buf.len = newlen;
+    sem_post(&fh->data_avail);
+    DEBUG(2, "write_data_bg: data_avail\n");    
+    
+  } else {
+    fh->stream_buf.len = 0;
+    fh->written_flag = 1;
+    sem_post(&fh->data_need);
+    DEBUG(2, "write_data_bg: data_need\n");
+  }
+
+  return to_copy;
+}
+
+static void *ftpfs_write_thread(void *data) {
+  struct ftpfs_file *fh = data;
+  char range[15];
+  
+  DEBUG(2, "enter streaming write thread #%d path=%s pos=%lld\n", ++write_thread_ctr, fh->full_path, fh->pos);
+  
+  
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_URL, fh->full_path);
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_UPLOAD, 1);
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_INFILESIZE, -1);
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_READFUNCTION, write_data_bg);
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_READDATA, fh);
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_LOW_SPEED_LIMIT, 1);
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_LOW_SPEED_TIME, 60);
+  
+  fh->curl_error_buffer[0] = '\0';
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_ERRORBUFFER, fh->curl_error_buffer);
+
+  if (fh->pos > 0) {
+    /* resuming a streaming write */
+    //snprintf(range, 15, "%lld-", (long long) fh->pos);
+    //curl_easy_setopt_or_die(fh->write_conn, CURLOPT_RANGE, range);
+	  
+	curl_easy_setopt_or_die(fh->write_conn, CURLOPT_APPEND, 1);
+	  
+	//curl_easy_setopt_or_die(fh->write_conn, CURLOPT_RESUME_FROM_LARGE, (curl_off_t)fh->pos);
+  }   
+  
+  CURLcode curl_res = curl_easy_perform(fh->write_conn);
+  
+  curl_easy_setopt_or_die(fh->write_conn, CURLOPT_UPLOAD, 0);
+
+  if (!fh->isready)
+    sem_post(&fh->ready);
+
+  if (curl_res != CURLE_OK)
+  {  
+	  DEBUG(1, "write problem: %d(%s) text=%s\n", curl_res, curl_easy_strerror(curl_res), fh->curl_error_buffer);
+	  fh->write_fail_cause = curl_res;
+	  /* problem - let ftpfs_write continue to avoid hang */ 
+	  sem_post(&fh->data_need);
+  }
+  
+  DEBUG(2, "leaving streaming write thread #%d curl_res=%d\n", write_thread_ctr--, curl_res);
+  
+  sem_post(&fh->data_written); /* ftpfs_write may return */
+
+  return NULL;
+}
+
+static int start_write_thread(struct ftpfs_file *fh)
+{
+	if (fh->write_conn != NULL)
+	{
+		fprintf(stderr, "assert fh->write_conn == NULL failed!\n");
+		exit(1);
+	}
+	
+	fh->written_flag=0;
+	fh->isready=0;
+	fh->eof=0;
+	sem_init(&fh->data_avail, 0, 0);
+	sem_init(&fh->data_need, 0, 0);
+	sem_init(&fh->data_written, 0, 0);
+	sem_init(&fh->ready, 0, 0);	
+	
+    fh->write_conn = curl_easy_init();
+    if (fh->write_conn == NULL) {
+      fprintf(stderr, "Error initializing libcurl\n");
+      return 0;
+    } else {
+      int err;
+      set_common_curl_stuff(fh->write_conn);
+      err = pthread_create(&fh->thread_id, NULL, ftpfs_write_thread, fh);
+      if (err) {
+        fprintf(stderr, "failed to create thread: %s\n", strerror(err));
+        /* FIXME: destroy curl_easy */
+        return 0;	
+      }
+    }
+	return 1;
+}
+
+static int finish_write_thread(struct ftpfs_file *fh)
+{
+    if (fh->write_fail_cause == CURLE_OK)
+    {
+      sem_wait(&fh->data_need);  /* only wait when there has been no error */
+    }
+    sem_post(&fh->data_avail);
+    fh->eof = 1;
+    
+    pthread_join(fh->thread_id, NULL);
+    DEBUG(2, "finish_write_thread after pthread_join. write_fail_cause=%d\n", fh->write_fail_cause);
+
+    curl_easy_cleanup(fh->write_conn);    
+    fh->write_conn = NULL;
+    
+    sem_destroy(&fh->data_avail);
+    sem_destroy(&fh->data_need);
+    sem_destroy(&fh->data_written);
+    sem_destroy(&fh->ready);    
+    
+    if (fh->write_fail_cause != CURLE_OK)
+    {
+      return -EIO;
+    }	
+    return 0;
+}
+
+static int buffer_file(struct ftpfs_file *fh) {
+  // If we want to write to the file, we have to load it all at once,
+  // modify it in memory and then upload it as a whole as most FTP servers
+  // don't support resume for uploads.
+  pthread_mutex_lock(&ftpfs.lock);
+  cancel_previous_multi();
+  curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_URL, fh->full_path);
+  curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_WRITEDATA, &fh->buf);
+  CURLcode curl_res = curl_easy_perform(ftpfs.connection);
+  pthread_mutex_unlock(&ftpfs.lock);
+
+  if (curl_res != 0) {
+    return -EACCES;
+  }
+
+  return 0;
+}
+
 #endif
 
 using namespace VFSNetFTP;
@@ -142,7 +277,8 @@ using namespace VFSNetFTP;
 VFSNetFTPFile::VFSNetFTPFile(const char* _relative_path,
                              shared_ptr<VFSNetFTPHost> _host):
     VFSFile(_relative_path, _host),
-    m_Buf(make_unique<Buffer>())
+    m_Buf(make_unique<Buffer>()),
+    m_WriteBuf(make_unique<WriteBuffer>())
 {
 }
 
@@ -164,7 +300,7 @@ int VFSNetFTPFile::Close()
     m_FileSize = 0;
     m_IsOpened = false;
     m_Buf->clear();
-    m_Buf->file_offset = 0;
+    m_BufFileOffset = 0;
     m_CURL.reset(); // TODO: should give this handle back to FTPHost.
     m_CURLM.reset();
     m_URLRequest.clear();
@@ -206,6 +342,25 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         
         return VFSError::GenericError;
     }
+    else if( stat_ret != 0 &&
+            (_open_flags & VFSFile::OF_Read) == 0 &&
+            (_open_flags & VFSFile::OF_Write) != 0 )
+    {
+        char request[MAXPATHLEN*2];
+        ftp_host->BuildFullURL(RelativePath(), request);
+        m_URLRequest = request;
+        
+        m_CURL  = ftp_host->InstanceForIO(); // TODO: Host should have some kind of handles cache and use the closes (cwd) available
+        m_CURLM = make_unique<CURLMInstance>();
+        curl_easy_setopt(m_CURL->curl, CURLOPT_URL, m_URLRequest.c_str());
+        curl_easy_setopt(m_CURL->curl, CURLOPT_UPLOAD, 1);
+        curl_easy_setopt(m_CURL->curl, CURLOPT_INFILESIZE, -1);
+        curl_easy_setopt(m_CURL->curl, CURLOPT_READFUNCTION, WriteBuffer::read_from_function);
+        curl_easy_setopt(m_CURL->curl, CURLOPT_READDATA, m_WriteBuf.get());
+        curl_multi_add_handle(m_CURLM->curlm, m_CURL->curl);
+        return 0;
+    }
+    
     return VFSError::NotSupported;
 }
 
@@ -219,21 +374,21 @@ ssize_t VFSNetFTPFile::ReadChunk(
     // TODO: mutex lock
     bool error = false;
     
-    if ((m_Buf->size < _read_size + _file_offset - m_Buf->file_offset) ||
-        _file_offset < m_Buf->file_offset ||
-        _file_offset > m_Buf->file_offset + m_Buf->size)
+    if ((m_Buf->size < _read_size + _file_offset - m_BufFileOffset) ||
+        _file_offset < m_BufFileOffset ||
+        _file_offset > m_BufFileOffset + m_Buf->size)
     {
         // can't satisfy request from memory buffer, need to perform I/O
 
         // check for dead connection
         // check for big offset changes so we need to restart connection
-        if(_file_offset < m_Buf->file_offset ||
-           _file_offset > m_Buf->file_offset + m_Buf->size ||
+        if(_file_offset < m_BufFileOffset ||
+           _file_offset > m_BufFileOffset + m_Buf->size ||
            m_CURLM->RunningHandles() == 0)
 
         { // (re)connect
             m_Buf->clear();
-            m_Buf->file_offset = _file_offset;
+            m_BufFileOffset = _file_offset;
             curl_multi_remove_handle(m_CURLM->curlm, m_CURL->curl);
             curl_easy_setopt(m_CURL->curl, CURLOPT_URL, m_URLRequest.c_str());
             curl_easy_setopt(m_CURL->curl, CURLOPT_WRITEFUNCTION, Buffer::write_here_function);
@@ -258,7 +413,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
 
         curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, NULL);
         
-        while( (m_Buf->size < _read_size + _file_offset - m_Buf->file_offset) && running_handles)
+        while( (m_Buf->size < _read_size + _file_offset - m_BufFileOffset) && running_handles)
         {
             struct timeval timeout = {1, 0};
             
@@ -302,15 +457,15 @@ ssize_t VFSNetFTPFile::ReadChunk(
     if(error)
         return VFSError::FromErrno(EIO);
 
-    assert(m_Buf->file_offset >= _file_offset);
-    size_t to_copy = m_Buf->size + m_Buf->file_offset - _file_offset;
+    assert(m_BufFileOffset >= _file_offset);
+    size_t to_copy = m_Buf->size + m_BufFileOffset - _file_offset;
     size_t size = _read_size > to_copy ? to_copy : _read_size;
   
     if(_read_to != nullptr)
     {
-        memcpy(_read_to, m_Buf->buf + _file_offset - m_Buf->file_offset, size);
-        m_Buf->discard( _file_offset - m_Buf->file_offset + size );
-        m_Buf->file_offset = _file_offset + size;
+        memcpy(_read_to, m_Buf->buf + _file_offset - m_BufFileOffset, size);
+        m_Buf->discard( _file_offset - m_BufFileOffset + size );
+        m_BufFileOffset = _file_offset + size;
     }
     
     return size;
@@ -329,9 +484,70 @@ ssize_t VFSNetFTPFile::Read(void *_buf, size_t _size)
     return ret;
 }
 
+ssize_t VFSNetFTPFile::Write(const void *_buf, size_t _size)
+{
+    assert(m_WriteBuf->feed_size == 0);
+    m_WriteBuf->add(_buf, _size);
+    
+    bool error = false;
+    
+    int running_handles = 0;
+    while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles));
+    
+    while( m_WriteBuf->feed_size < m_WriteBuf->size && running_handles )
+    {
+        struct timeval timeout = {1, 0};
+        
+        fd_set fdread, fdwrite, fdexcep;
+        int maxfd;
+        
+        FD_ZERO(&fdread);
+        FD_ZERO(&fdwrite);
+        FD_ZERO(&fdexcep);
+        curl_multi_fdset(m_CURLM->curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
+        
+        if (select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout) == -1) {
+            NSLog(@"!!");
+            error = true;
+            break;
+        }
+        
+        while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles));
+    }
+    
+    // check for error codes here
+    if (running_handles == 0) {
+        NSLog(@"running_handles == 0");
+        int msgs_left = 1;
+        while (msgs_left)
+        {
+            CURLMsg* msg = curl_multi_info_read(m_CURLM->curlm, &msgs_left);
+            if (msg == NULL ||
+                msg->msg != CURLMSG_DONE ||
+                msg->data.result != CURLE_OK) {
+                NSLog(@"!!!");
+                error = true;
+            }
+        }
+    }
+
+    if(error == true)
+        return VFSError::FromErrno(EIO);
+    
+    m_WriteBuf->discard(m_WriteBuf->feed_size);
+    m_WriteBuf->feed_size = 0;
+    
+    return _size;
+}
+
 VFSFile::ReadParadigm VFSNetFTPFile::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Seek;
+}
+
+VFSFile::WriteParadigm VFSNetFTPFile::GetWriteParadigm() const
+{
+    return VFSFile::WriteParadigm::Sequential;
 }
 
 ssize_t VFSNetFTPFile::Pos() const
@@ -350,6 +566,7 @@ bool VFSNetFTPFile::Eof() const
         return true;
     return m_FilePos >= m_FileSize;
 }
+
 
 off_t VFSNetFTPFile::Seek(off_t _off, int _basis)
 {

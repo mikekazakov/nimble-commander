@@ -181,8 +181,8 @@ void FileSearch::ProcessDirent(const char* _full_path,
 
 bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host)
 {
-    shared_ptr<VFSFile> file;
-    if(_in_host->CreateFile(_full_path, &file, 0) != 0)
+    VFSFilePtr file;
+    if(_in_host->CreateFile(_full_path, file, 0) != 0)
         return false;
     
     if(file->Open(VFSFile::OF_Read) != 0)

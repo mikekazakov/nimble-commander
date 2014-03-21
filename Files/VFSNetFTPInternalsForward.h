@@ -18,5 +18,6 @@ namespace VFSNetFTP
     struct Entry;
     struct Directory;
     struct Buffer;
+    struct WriteBuffer;
     class Cache;
 }

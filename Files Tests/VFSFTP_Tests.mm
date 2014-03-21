@@ -9,7 +9,16 @@
 #import "tests_common.h"
 #import "VFS.h"
 
-static const char* g_Ftp_Mozilla_Org_Readme ="\n\
+
+
+@interface VFSFTP_Tests : XCTestCase
+@end
+
+@implementation VFSFTP_Tests
+
+- (void)testFtpMozillaOrg
+{
+static const char* readme ="\n\
    ftp.mozilla.org / archive.mozilla.org - files are in /pub/mozilla.org\n\
 \n\
    Notice: This server is the only place to obtain nightly builds and needs to\n\
@@ -21,38 +30,31 @@ static const char* g_Ftp_Mozilla_Org_Readme ="\n\
    Attempts to download high traffic release files from this server will get a\n\
    \"550 Permission denied.\" response.\n\
 ";
-
-@interface VFSFTP_Tests : XCTestCase
-@end
-
-@implementation VFSFTP_Tests
-
-- (void)testFtpMozillaOrg
-{
+    
     auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
     XCTAssert( host->Open("/", nullptr) == 0 );
     
     VFSStat stat;
     XCTAssert( host->Stat("/README", stat, 0, 0) == 0 );
-    XCTAssert( stat.size == strlen(g_Ftp_Mozilla_Org_Readme) );
+    XCTAssert( stat.size == strlen(readme) );
 
     VFSFilePtr file;
     // basic checks
     XCTAssert( host->CreateFile("/README", &file, 0) == 0 );
     XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
-    XCTAssert( file->Size() == strlen(g_Ftp_Mozilla_Org_Readme) );
-    NSData *data = file->ReadFile();
+    XCTAssert( file->Size() == strlen(readme) );
+    auto data = file->ReadFile();
     XCTAssert( file->Eof() );
-    XCTAssert( data != nil );
-    XCTAssert( data.length == strlen(g_Ftp_Mozilla_Org_Readme) );
-    XCTAssert( memcmp(data.bytes, g_Ftp_Mozilla_Org_Readme, data.length) == 0 );
+    XCTAssert( data != nullptr );
+    XCTAssert( data->size() == strlen(readme) );
+    XCTAssert( memcmp(data->data(), readme, data->size()) == 0 );
     
     XCTAssert( file->Close() == 0 );
     XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
     
     // check over-reading
     char buf[4096];
-    XCTAssert( file->Read(buf, 4096) == strlen(g_Ftp_Mozilla_Org_Readme) );
+    XCTAssert( file->Read(buf, 4096) == strlen(readme) );
     
     // check seeking
     XCTAssert( file->Seek(0x150, VFSFile::Seek_Set) == 0x150 );
@@ -61,7 +63,7 @@ static const char* g_Ftp_Mozilla_Org_Readme ="\n\
     XCTAssert( file->Seek(0, VFSFile::Seek_Set) == 0 );
     XCTAssert( file->Read(buf, 16) == 16 );
     XCTAssert( memcmp(buf, "\n   ftp.mozilla.", 16) == 0 );
-    XCTAssert( file->Seek(0xFFFFFFF, VFSFile::Seek_Set) == strlen(g_Ftp_Mozilla_Org_Readme) );
+    XCTAssert( file->Seek(0xFFFFFFF, VFSFile::Seek_Set) == strlen(readme) );
     XCTAssert( file->Eof() );
     XCTAssert( file->Read(buf, 16) == 0 );
     
@@ -83,6 +85,21 @@ static const char* g_Ftp_Mozilla_Org_Readme ="\n\
     XCTAssert( file->Open(VFSFile::OF_Read) != 0 );
 }
 
+- (void)test192_168_2_5
+{
+    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+    host->Open("/", nullptr);
+    const char *fn1 = "/mach_kernel",
+               *fn2 = "/Public/!FilesTesting/mach_kernel";
+    
+    XCTAssert( VFSEasyCopyFile(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
+    int compare;
+    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
+    XCTAssert( compare == 0);
+    
+    
+    
+}
 
 @end
 

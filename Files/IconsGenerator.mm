@@ -48,9 +48,9 @@ static NSImageRep *ProduceThumbnailForVFS(const char *_path,
                                    CGSize _sz)
 {
     NSImageRep *result = 0;
-    shared_ptr<VFSFile> vfs_file;
+    VFSFilePtr vfs_file;
     string filename_ext;
-    if(_host->CreateFile(_path, &vfs_file, 0) < 0)
+    if(_host->CreateFile(_path, vfs_file, 0) < 0)
         return 0;
         
     if(vfs_file->Open(VFSFile::OF_Read) < 0)
@@ -119,12 +119,12 @@ cleanup:
 
 static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, shared_ptr<VFSHost> _host)
 {
-    shared_ptr<VFSFile> vfs_file;
-    if(_host->CreateFile(_path, &vfs_file, 0) < 0)
+    VFSFilePtr vfs_file;
+    if(_host->CreateFile(_path, vfs_file, 0) < 0)
         return 0;
     if(vfs_file->Open(VFSFile::OF_Read) < 0)
         return 0;
-    NSData *data = vfs_file->ReadFile();
+    NSData *data = vfs_file->ReadFileToNSData();
     vfs_file.reset();
     if(data == 0)
         return 0;
@@ -137,12 +137,12 @@ static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, shared_ptr<VFS
 
 static NSImage *ReadImageFromVFSFile(const char *_path, shared_ptr<VFSHost> _host)
 {
-    shared_ptr<VFSFile> vfs_file;
-    if(_host->CreateFile(_path, &vfs_file, 0) < 0)
+    VFSFilePtr vfs_file;
+    if(_host->CreateFile(_path, vfs_file, 0) < 0)
         return 0;
     if(vfs_file->Open(VFSFile::OF_Read) < 0)
         return 0;
-    NSData *data = vfs_file->ReadFile();
+    NSData *data = vfs_file->ReadFileToNSData();
     vfs_file.reset();
     if(data == 0)
         return 0;

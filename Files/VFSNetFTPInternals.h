@@ -111,6 +111,8 @@ struct Buffer
         return size*nmemb;
     }
     
+//    static size_t write_data_bg(void *ptr, size_t size, size_t nmemb, void *data) {
+    
     void discard(size_t _sz)
     {
         assert(_sz <= size);
@@ -124,7 +126,74 @@ struct Buffer
     static const uint32_t default_capacity = 32768;
     uint32_t              size = 0;
     uint32_t              capacity = 0;
-    uint64_t              file_offset = 0; // buffer itself don't operate file_offset, it's placed here for convenience
+};
+    
+struct WriteBuffer
+{
+    WriteBuffer()
+    {
+        grow(default_capacity);
+    }
+    ~WriteBuffer()
+    {
+        free(buf);
+    }
+    WriteBuffer(const WriteBuffer&) = delete;
+    WriteBuffer(const WriteBuffer&&) = delete;
+    void operator=(const WriteBuffer&) = delete;
+    
+    void clear()
+    {
+        size = 0;
+    }
+    
+    void add(const void *_mem, size_t _size)
+    {
+        if(capacity < size + _size)
+            grow(size + (uint32_t)_size);
+        
+        memcpy(buf + size, _mem, _size);
+        size += _size;
+    }
+    
+    void grow(uint32_t _new_size)
+    {
+        buf = (uint8_t*) realloc(buf, capacity = (uint32_t)_new_size);
+    }
+    
+    static size_t read_from_function(void *ptr, size_t size, size_t nmemb, void *data)
+    {
+        WriteBuffer *buf = (WriteBuffer*) data;
+        
+        assert(buf->feed_size <= buf->size);
+        
+        size_t feed = size * nmemb;
+        if(feed > buf->size - buf->feed_size)
+            feed = buf->size - buf->feed_size;
+        memcpy(ptr, buf->buf + buf->feed_size, feed);
+        buf->feed_size += feed;
+        
+        NSLog(@"Read request %lu, feed with %lu bytes", size*nmemb, feed);
+        
+        return feed;
+    }
+    
+//    static size_t write_data_bg(void *ptr, size_t size, size_t nmemb, void *data) {
+    
+    void discard(size_t _sz)
+    {
+        assert(_sz <= size);
+        memmove(buf,
+                buf + _sz,
+                size - _sz);
+        size = size - (uint32_t)_sz;
+    }
+    
+    uint8_t              *buf = 0;
+    static const uint32_t default_capacity = 32768;
+    uint32_t              size = 0;
+    uint32_t              capacity = 0;
+    uint32_t              feed_size = 0; // amount of bytes fed to CURL
 };
     
 struct Entry

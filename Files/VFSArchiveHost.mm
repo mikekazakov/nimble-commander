@@ -47,7 +47,7 @@ int VFSArchiveHost::Open()
 {
     assert(m_Arc == 0);
 
-    int res = Parent()->CreateFile(JunctionPath(), &m_ArFile, nil);
+    int res = Parent()->CreateFile(JunctionPath(), m_ArFile, nil);
     if(res < 0)
         return res;
     
@@ -232,13 +232,13 @@ shared_ptr<VFSFile> VFSArchiveHost::ArFile() const
 }
 
 int VFSArchiveHost::CreateFile(const char* _path,
-                       shared_ptr<VFSFile> *_target,
+                       shared_ptr<VFSFile> &_target,
                        bool (^_cancel_checker)())
 {
     auto file = make_shared<VFSArchiveFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
-    *_target = file;
+    _target = file;
     return VFSError::Ok;
 }
 

@@ -10,6 +10,7 @@
 
 #import <string>
 #import <memory>
+#import <vector>
 #import "VFSError.h"
 
 using namespace std;
@@ -47,6 +48,7 @@ public:
         Random      = 3,
         Seek        = 2,
         Sequential  = 1,
+        /* Upload - for fixed-length files upload to network servers with some protocols/APIs */
         NoWrite     = 0
     };
     
@@ -73,6 +75,11 @@ public:
     virtual ReadParadigm  GetReadParadigm() const;
     virtual WriteParadigm GetWriteParadigm() const;
     virtual ssize_t Read(void *_buf, size_t _size);
+    
+    /**
+     * Writes _size bytes from _buf to a file in blocking mode.
+     * Returnes amount of bytes written or negative value for errors.
+     */
     virtual ssize_t Write(const void *_buf, size_t _size);
 
     virtual ssize_t Skip(size_t _size);
@@ -151,12 +158,17 @@ public:
      */
     void ComposeFullHostsPath(char *_buf) const;
     
+    /**
+     * ReadFile() return full file content in vector<uint8_t> or nullptr.
+     */
+    unique_ptr<vector<uint8_t>> ReadFile();
+    
     // sugar wrappers for Cocoa APIs
 #ifdef __OBJC__
     /**
-     * ReadFile() return full file content in NSData object or nil
+     * ReadFileToNSData() return full file content in NSData object or nil.
      */
-    NSData *ReadFile();
+    NSData *ReadFileToNSData();
 #endif
     
     inline shared_ptr<VFSFile> SharedPtr() { return shared_from_this(); }

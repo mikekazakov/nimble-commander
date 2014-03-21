@@ -106,7 +106,34 @@ void VFSFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name) ) con
 {
 }
 
-NSData *VFSFile::ReadFile()
+unique_ptr<vector<uint8_t>> VFSFile::ReadFile()
+{
+    if(!IsOpened())
+        return 0;
+    
+    if(GetReadParadigm() < ReadParadigm::Seek && Pos() != 0)
+        return 0;
+    
+    if(Pos() != 0 && Seek(Seek_Set, 0) < 0)
+        return 0; // can't rewind file
+    
+    uint64_t sz = Size();
+    auto buf = make_unique<vector<uint8_t>>(sz);
+    
+    uint8_t *buftmp = buf->data();
+    uint64_t szleft = sz;
+    while(szleft) {
+        ssize_t r = Read(buftmp, szleft);
+        if(r < 0)
+            return nullptr;
+        szleft -= r;
+        buftmp += r;
+    }
+    
+    return buf;
+}
+
+NSData *VFSFile::ReadFileToNSData()
 {
     if(!IsOpened())
         return 0;

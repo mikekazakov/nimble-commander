@@ -33,7 +33,7 @@ public:
     virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
 
     virtual int CreateFile(const char* _path,
-                           shared_ptr<VFSFile> *_target,
+                           shared_ptr<VFSFile> &_target,
                            bool (^_cancel_checker)()) override;
     
     virtual int CreateDirectory(const char* _path,

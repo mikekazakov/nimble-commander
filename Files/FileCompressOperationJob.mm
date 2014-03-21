@@ -95,7 +95,7 @@ void FileCompressOperationJob::Do()
 
         m_Stats.SetMaxValue(m_SourceTotalBytes);
         
-        m_DstVFS->CreateFile(m_TargetFileName, &m_TargetFile, 0);
+        m_DstVFS->CreateFile(m_TargetFileName, m_TargetFile, 0);
         if(m_TargetFile->Open(VFSFile::OF_Write | VFSFile::OF_Create) == 0)
         {
             m_Archive = archive_write_new();
@@ -281,8 +281,8 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
             entry = 0;
             
             // metadata
-            shared_ptr<VFSFile> src_file;
-            m_SrcVFS->CreateFile(sourcepath, &src_file, 0);
+            VFSFilePtr src_file;
+            m_SrcVFS->CreateFile(sourcepath, src_file, 0);
             if(src_file->Open(VFSFile::OF_Read) >= 0) {
                 itemname[strlen(itemname)-1] = 0; // our paths extracting routine don't works with paths like /Dir/
                 WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
@@ -303,8 +303,8 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
         retry_stat_file:;
         if((stat_ret = m_SrcVFS->Stat(sourcepath, st, 0, 0)) == 0) {
             
-            shared_ptr<VFSFile> src_file;
-            m_SrcVFS->CreateFile(sourcepath, &src_file, 0);
+            VFSFilePtr src_file;
+            m_SrcVFS->CreateFile(sourcepath, src_file, 0);
             retry_open_file:;
             if( (open_file_ret = src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock)) == 0) {
                 entry = archive_entry_new();

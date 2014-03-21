@@ -257,7 +257,7 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     if(m_Options.copy_xattrs)
     {
         shared_ptr<VFSFile> src_file;
-        if(m_SrcHost->CreateFile(_src, &src_file, 0) >= 0)
+        if(m_SrcHost->CreateFile(_src, src_file, 0) >= 0)
             if(src_file->Open(VFSFile::OF_Read || VFSFile::OF_ShLock) >= 0)
                 if(src_file->XAttrCount() > 0)
                     CopyXattrsFn(src_file, _dest);
@@ -334,7 +334,7 @@ statsource:
     }
     
 createsource:
-    ret = m_SrcHost->CreateFile(_src, &src_file, 0);
+    ret = m_SrcHost->CreateFile(_src, src_file, 0);
     if(ret < 0)
     { // failed to create source file
         if(m_SkipAll) goto cleanup;

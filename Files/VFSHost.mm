@@ -98,7 +98,7 @@ int VFSHost::FetchDirectoryListing(
 }
 
 int VFSHost::CreateFile(const char* _path,
-                       shared_ptr<VFSFile> *_target,
+                       shared_ptr<VFSFile> &_target,
                        bool (^_cancel_checker)())
 {
     return VFSError::NotSupported;

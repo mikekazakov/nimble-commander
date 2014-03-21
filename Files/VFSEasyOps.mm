@@ -163,8 +163,8 @@ int VFSEasyCopyFile(const char *_src_full_path,
     
     int result = 0;
     
-    shared_ptr<VFSFile> source_file, dest_file;
-    result = _src_host->CreateFile(_src_full_path, &source_file, 0);
+    VFSFilePtr source_file, dest_file;
+    result = _src_host->CreateFile(_src_full_path, source_file, 0);
     if(result != 0)
         return result;
     
@@ -172,7 +172,7 @@ int VFSEasyCopyFile(const char *_src_full_path,
     if(result != 0)
         return result;
     
-    result = _dst_host->CreateFile(_dst_full_path, &dest_file, 0);
+    result = _dst_host->CreateFile(_dst_full_path, dest_file, 0);
     if(result != 0)
         return result;
     
@@ -312,4 +312,53 @@ int VFSEasyCopyNode(const char *_src_full_path,
     }
     
     return VFSError::GenericError;
+}
+
+int VFSEasyCompareFiles(const char *_file1_full_path,
+                        shared_ptr<VFSHost> _file1_host,
+                        const char *_file2_full_path,
+                        shared_ptr<VFSHost> _file2_host,
+                        int &_result
+                        )
+{
+    if(_file1_full_path == nullptr    ||
+       _file1_full_path[0] != '/'     ||
+       !_file1_host                   ||
+       _file2_full_path == nullptr    ||
+       _file2_full_path[0] != '/'     ||
+       !_file2_host
+       )
+        return VFSError::InvalidCall;
+    
+    int ret;
+    VFSFilePtr file1, file2;
+    unique_ptr<vector<uint8_t>> data1, data2;
+    
+    if( (ret = _file1_host->CreateFile(_file1_full_path, file1, 0)) != 0 )
+        return ret;
+    if( (ret = file1->Open(VFSFile::OF_Read)) != 0 )
+        return ret;
+    if( (data1 = file1->ReadFile()) == nullptr )
+        return file1->LastError();
+    
+    if( (ret = _file2_host->CreateFile(_file2_full_path, file2, 0)) != 0 )
+        return ret;
+    if( (ret = file2->Open(VFSFile::OF_Read)) != 0 )
+        return ret;
+    if( (data2 = file2->ReadFile()) == nullptr )
+        return file2->LastError();
+    
+    if( data1->size() < data2->size() )
+    {
+        _result = -1;
+        return 0;
+    }
+    if( data1->size() > data2->size() )
+    {
+        _result = 1;
+        return 0;
+    }
+    
+    _result = memcmp( data1->data(), data2->data(), data1->size() );
+    return 0;
 }

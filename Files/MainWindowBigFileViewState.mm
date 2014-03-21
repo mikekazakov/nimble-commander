@@ -180,8 +180,8 @@ static int FileWindowSize()
 
 - (bool) OpenFile: (const char*) _fn with_fs:(shared_ptr<VFSHost>) _host
 {
-    shared_ptr<VFSFile> vfsfile;
-    if(_host->CreateFile(_fn, &vfsfile, 0) < 0)
+    VFSFilePtr vfsfile;
+    if(_host->CreateFile(_fn, vfsfile, 0) < 0)
         return false;
 
     if(vfsfile->Open(VFSFile::OF_Read) < 0)

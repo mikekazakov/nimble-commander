@@ -285,7 +285,7 @@ bool VFSPSHost::IsDirectory(const char *_path,
 }
 
 int VFSPSHost::CreateFile(const char* _path,
-                       shared_ptr<VFSFile> *_target,
+                       shared_ptr<VFSFile> &_target,
                        bool (^_cancel_checker)())
 {
     lock_guard<mutex> lock(m_Lock);
@@ -301,7 +301,7 @@ int VFSPSHost::CreateFile(const char* _path,
     auto file = make_shared<VFSPSFile>(_path, SharedPtr(), m_Data->files[index]);
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
-    *_target = file;
+    _target = file;
     return VFSError::Ok;
 }
 

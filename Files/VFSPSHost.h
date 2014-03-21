@@ -30,7 +30,7 @@ public:
     virtual const char *FSTag() const override;
     
     virtual int CreateFile(const char* _path,
-                           shared_ptr<VFSFile> *_target,
+                           shared_ptr<VFSFile> &_target,
                            bool (^_cancel_checker)()) override;    
     
     virtual bool IsDirectory(const char *_path,

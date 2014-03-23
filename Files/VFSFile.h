@@ -62,7 +62,9 @@ public:
         OF_NoExist  = 0b00001000, // POSIX O_EXCL actucally, for clarity
         OF_ShLock   = 0b00010000, // not yet implemented
         OF_ExLock   = 0b00100000, // not yet implemented
-        OF_NoCache  = 0b01000000  // turns off caching if supported
+        OF_NoCache  = 0b01000000, // turns off caching if supported
+        OF_Append   = 0b10000000,  // appends file on writing
+        OF_Truncate = 0b100000000 // truncates files upon opening
     };
     virtual int     Open(int _open_flags,
                          bool (^_cancel_checker)() = 0);

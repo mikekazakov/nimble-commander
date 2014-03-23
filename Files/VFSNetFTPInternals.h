@@ -216,6 +216,7 @@ struct Entry
     uint64_t    size   = 0;
     time_t      time   = 0;
     mode_t      mode   = 0;
+    mutable bool dirty = false; // true when this entry was explicitly set as outdated
     // links support in the future
     
     void ToStat(VFSStat &_stat) const
@@ -235,6 +236,7 @@ struct Directory
     deque<Entry>            entries;
     shared_ptr<Directory>   parent_dir;
     uint64_t                snapshot_time = 0;
+//    bool                    dirty; // ??
     
     
     inline bool IsOutdated() const
@@ -252,7 +254,6 @@ struct Directory
 class Cache
 {
 public:
-    
     
     /**
      * Return nullptr if was not able to find directory.

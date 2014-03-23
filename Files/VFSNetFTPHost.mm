@@ -9,6 +9,7 @@
 #import "VFSNetFTPHost.h"
 #import "VFSNetFTPInternals.h"
 #import "VFSNetFTPFile.h"
+#import "path_manip.h"
 
 using namespace VFSNetFTP;
 
@@ -180,26 +181,30 @@ int VFSNetFTPHost::Stat(const char *_path,
     auto dir = m_Cache->FindDirectory(parent_dir);
     if(dir && !dir->IsOutdated())
     {
-        auto *entry = dir->EntryByName(filename);
-        if(entry)
+        auto entry = dir->EntryByName(filename);
+        if(entry && !entry->dirty)
         {
             entry->ToStat(_st);
             return 0;
         }
     }
 
+    // assume that file is freshly created and thus we don't have it in current cache state
     // download new listing, sync I/O
     int result = DownloadAndCacheListing(m_ListingInstance.get(), parent_dir.c_str(), &dir, _cancel_checker);
     if(result != 0)
+    {
+//        NSLog(@"VFSNetFTPHost::Stat failed to download listing");
         return result;
+    }
     
     assert(dir);
-    auto *entry = dir->EntryByName(filename);
-    if(entry)
+    if(auto entry = dir->EntryByName(filename))
     {
         entry->ToStat(_st);
         return 0;
     }
+//    NSLog(@"VFSNetFTPHost::Stat failed to found item");
     return VFSError::NotFound;
 }
 
@@ -250,4 +255,76 @@ int VFSNetFTPHost::CreateFile(const char* _path,
 bool VFSNetFTPHost::ShouldProduceThumbnails()
 {
     return false;
+}
+
+int VFSNetFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
+{
+    // need to check what file type _path is, and decide between RMD and DELE
+    
+    char filename[MAXPATHLEN],
+         directory[MAXPATHLEN],
+         cmd[MAXPATHLEN],
+         url[MAXPATHLEN];
+
+    if(IsPathWithTrailingSlash(_path))
+        return VFSError::InvalidCall;
+
+    if(!GetFilenameFromPath(_path, filename))
+        return VFSError::InvalidCall;
+    
+    if(!GetDirectoryContainingItemFromPath(_path, directory))
+        return VFSError::InvalidCall;
+
+    sprintf(cmd, "DELE %s", filename);
+    BuildFullURL(directory, url);
+    
+    auto curl = SpawnCURL(); // TODO: need to somehow get this handle from cache pool
+    
+    struct curl_slist* header = NULL;
+    header = curl_slist_append(header, cmd);
+    
+    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, header);
+    curl_easy_setopt(curl->curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl->curl, CURLOPT_WRITEFUNCTION, 0);
+    curl_easy_setopt(curl->curl, CURLOPT_WRITEDATA, 0);
+    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 1);
+    CURLcode curl_res = curl_easy_perform(curl->curl);
+    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, NULL);
+    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 0);
+    curl_slist_free_all(header);
+    
+    if(curl_res == CURLE_OK)
+        MakeEntryDirty(_path);
+    
+    return curl_res == CURLE_OK ?
+            VFSError::Ok :
+            VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
+}
+
+void VFSNetFTPHost::MakeEntryDirty(const char *_path)
+{
+    if(_path == nullptr ||
+       _path[0] != '/'  ||
+       _path[1] == 0     )
+        return;
+    
+    string path = _path;
+    
+    if(path.back() == '/')
+        path.pop_back();
+    
+    auto last_sl = path.rfind('/');
+    assert(last_sl != string::npos);
+    string parent_dir(path, 0, last_sl + 1);
+    string filename(path, last_sl + 1);
+    
+    if(auto dir = m_Cache->FindDirectory(parent_dir))
+        if(auto entry = dir->EntryByName(filename))
+            entry->dirty = true;
+}
+
+void VFSNetFTPHost::MakeDirectoryDirty(const char *_path)
+{
+    
+    
 }

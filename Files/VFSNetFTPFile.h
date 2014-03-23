@@ -18,6 +18,7 @@ public:
                   shared_ptr<VFSNetFTPHost> _host);
     ~VFSNetFTPFile();
     
+//        OF_Truncate is implicitly added to VFSFile when OF_Append is not used - FTP specific
     virtual int Open(int _open_flags, bool (^_cancel_checker)()) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;    
@@ -31,6 +32,12 @@ public:
     virtual bool Eof() const override;
     
 private:
+    enum class Mode
+    {
+        Closed = 0,
+        Read,
+        Write
+    };
     
     ssize_t ReadChunk(
                       void *_read_to,
@@ -45,8 +52,11 @@ private:
     uint64_t                             m_BufFileOffset = 0;
     unique_ptr<VFSNetFTP::WriteBuffer>   m_WriteBuf;    
 //    bool                                 m_IOAttached = false;
-    bool                                 m_IsOpened = false;
+//    bool                                 m_IsOpened = false;
+    Mode                                 m_Mode = Mode::Closed;;
     string                               m_URLRequest;
     uint64_t                             m_FileSize = 0;
     uint64_t                             m_FilePos = 0;
+    
+//    uint64_t                             m_BytesWritten = 0;
 };

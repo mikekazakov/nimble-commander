@@ -183,6 +183,9 @@ int VFSEasyCopyFile(const char *_src_full_path,
     result = CopyFileContents(source_file, dest_file);
     if(result < 0)
         return result;
+
+    source_file.reset();
+    dest_file.reset();
     
     result = CopyNodeAttrs(_src_full_path, _src_host,
                            _dst_full_path, _dst_host);

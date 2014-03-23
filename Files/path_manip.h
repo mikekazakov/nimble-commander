@@ -15,6 +15,13 @@ extern "C" {
 #endif
 
 /**
+ * Converts path like "/Dir/Abra/" to "/Dir/Abra".
+ * Will preserve "/" as "/".
+ * Will return false on NULL and on empty paths and on paths not starting with slash.
+ */
+bool EliminateTrailingSlashInPath(char *_path);
+    
+/**
  * GetFilenameFromPath assumes that _path is absolute and there's a leading slash in it.
  * Also assume, that it is not a directory path, like /Dir/, it will return false on such case.
  */
@@ -22,7 +29,7 @@ bool GetFilenameFromPath(const char* _path, char *_buf);
 
 /**
  * GetDirectoryContainingItemFromPath will parse path like /Dir/wtf and return /Dir/.
- * Will return false on relative paths
+ * Will return false on relative paths.
  */
 bool GetDirectoryContainingItemFromPath(const char* _path, char *_buf);
     
@@ -50,7 +57,8 @@ bool GetExtensionFromPath(const char* _path, char *_buf);
 bool GetExtensionFromRelPath(const char* _path, char *_buf);
     
 /**
- * IsPathWithTrailingSlash actually does _path[strlen(_path)-1] == '/' and some prior checking
+ * IsPathWithTrailingSlash actually does _path[strlen(_path)-1] == '/' and some prior checking.
+ * Will return true on "/" path.
  */
 inline bool IsPathWithTrailingSlash(const char* _path)
 {

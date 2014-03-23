@@ -157,9 +157,13 @@ public:
     
     /**
      * Unlinkes(deletes) a file. Dont follow last symlink, in case of.
+     * Don't delete a directories, similar to POSIX.
      */
     virtual int Unlink(const char *_path, bool (^_cancel_checker)());
 
+    // RemoveDir
+    // MakeDir
+    
     /**
      * Adjust file node times. Any of timespec time pointers can be NULL, so they will be ignored.
      * NoFollow flag can be specified to alter symlink node itself.

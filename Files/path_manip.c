@@ -10,8 +10,29 @@
 #include <stdlib.h>
 #include "path_manip.h"
 
+bool EliminateTrailingSlashInPath(char *_path)
+{
+    if(_path == 0)
+        return false;
+    
+    size_t len = strlen(_path);
+    if(len == 0 ||
+       _path[0] != '/')
+        return false;
+    
+    if(len == 1)
+        return true;
+    
+    if(_path[len-1] == '/')
+        _path[len-1] = 0;
+    
+    return true;
+}
+
 bool GetFilenameFromPath(const char* _path, char *_buf)
 {
+    if(_path[0] != '/')
+        return false;
     const char* last_sl  = strrchr(_path, '/');
     if(!last_sl)
         return false;
@@ -23,9 +44,9 @@ bool GetFilenameFromPath(const char* _path, char *_buf)
 
 bool GetDirectoryContainingItemFromPath(const char* _path, char *_buf)
 {
-    const char* last_sl = strrchr(_path, '/');
-    if(!last_sl) // don't handle paths like /foo/bar/
+    if(_path[0] != '/')
         return false;
+    const char* last_sl = strrchr(_path, '/');
     memcpy(_buf, _path, last_sl - _path + 1);
     _buf[last_sl - _path + 1] = 0;
     return true;

@@ -48,10 +48,18 @@ public:
                            shared_ptr<VFSFile> &_target,
                            bool (^_cancel_checker)()) override;
     
+    virtual int Unlink(const char *_path, bool (^_cancel_checker)());
+    
     virtual bool ShouldProduceThumbnails() override;    
     
     // internal stuff below:
     void BuildFullURL(const char *_path, char *_buffer) const;
+
+    /**
+     * Mark stat cache entry invalid, if any.
+     */
+    void MakeEntryDirty(const char *_path);
+    void MakeDirectoryDirty(const char *_path);
     
     unique_ptr<VFSNetFTP::CURLInstance> InstanceForIO();
     

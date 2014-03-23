@@ -289,18 +289,62 @@ VFSNetFTPFile::~VFSNetFTPFile()
 
 bool VFSNetFTPFile::IsOpened() const
 {
-    return m_IsOpened;
+    return m_Mode != Mode::Closed;
 }
 
 int VFSNetFTPFile::Close()
 {
     if(m_CURLM && m_CURL)
+    {
+        if( // && CREATE
+           m_Mode == Mode::Write &&
+//           m_BytesWritten == 0 &&
+           m_CURLM->RunningHandles() > 0
+           )
+        {
+            // tell curl that data is over
+            m_WriteBuf->discard(m_WriteBuf->size);
+            int running_handles = 0;
+            while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles));
+            while(running_handles)
+            {
+                struct timeval timeout = {1, 0};
+                
+                fd_set fdread, fdwrite, fdexcep;
+                int maxfd;
+                
+                FD_ZERO(&fdread);
+                FD_ZERO(&fdwrite);
+                FD_ZERO(&fdexcep);
+                curl_multi_fdset(m_CURLM->curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
+                
+                if (select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout) == -1)
+                    break;
+                
+                while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURLM->curlm, &running_handles));
+            }
+            
+            
+
+            
+        }
+        
+ 
+        
         curl_multi_remove_handle(m_CURLM->curlm, m_CURL->curl);
+        
+        if(m_Mode == Mode::Write)
+        {
+            auto ftp_host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
+            ftp_host->MakeEntryDirty(RelativePath());
+        }
+    }
     m_FilePos = 0;
     m_FileSize = 0;
-    m_IsOpened = false;
+    m_Mode = Mode::Closed;
     m_Buf->clear();
     m_BufFileOffset = 0;
+//    m_BytesWritten = 0;
     m_CURL.reset(); // TODO: should give this handle back to FTPHost.
     m_CURLM.reset();
     m_URLRequest.clear();
@@ -328,13 +372,13 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         
         if(m_FileSize == 0)
         {
-            m_IsOpened = true;
+            m_Mode = Mode::Read;
             return 0;
         }
         
         if(ReadChunk(nullptr, 1, 0, _cancel_checker) == 1)
         {
-            m_IsOpened = true;
+            m_Mode = Mode::Read;
             return 0;
         }
         
@@ -342,10 +386,12 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         
         return VFSError::GenericError;
     }
-    else if( stat_ret != 0 &&
-            (_open_flags & VFSFile::OF_Read) == 0 &&
+    else if(
+            (!(_open_flags & OF_NoExist) || stat_ret != 0) &&
+            (_open_flags & VFSFile::OF_Read)  == 0 &&
             (_open_flags & VFSFile::OF_Write) != 0 )
     {
+        
         char request[MAXPATHLEN*2];
         ftp_host->BuildFullURL(RelativePath(), request);
         m_URLRequest = request;
@@ -357,7 +403,23 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         curl_easy_setopt(m_CURL->curl, CURLOPT_INFILESIZE, -1);
         curl_easy_setopt(m_CURL->curl, CURLOPT_READFUNCTION, WriteBuffer::read_from_function);
         curl_easy_setopt(m_CURL->curl, CURLOPT_READDATA, m_WriteBuf.get());
+
+        m_FilePos = 0;
+        m_FileSize = 0;
+        if(_open_flags & VFSFile::OF_Append)
+        {
+            curl_easy_setopt(m_CURL->curl, CURLOPT_APPEND, 1);
+  
+            if(stat_ret == 0)
+            {
+                m_FilePos = stat.size;
+                m_FileSize = stat.size;
+            }
+        }
+
         curl_multi_add_handle(m_CURLM->curlm, m_CURL->curl);
+        
+        m_Mode = Mode::Write;
         return 0;
     }
     
@@ -486,6 +548,9 @@ ssize_t VFSNetFTPFile::Read(void *_buf, size_t _size)
 
 ssize_t VFSNetFTPFile::Write(const void *_buf, size_t _size)
 {
+    if(!IsOpened())
+        return VFSError::InvalidCall;
+    
     assert(m_WriteBuf->feed_size == 0);
     m_WriteBuf->add(_buf, _size);
     
@@ -533,10 +598,13 @@ ssize_t VFSNetFTPFile::Write(const void *_buf, size_t _size)
 
     if(error == true)
         return VFSError::FromErrno(EIO);
+
+    m_FilePos += m_WriteBuf->feed_size;
+    m_FileSize += m_WriteBuf->feed_size;
     
     m_WriteBuf->discard(m_WriteBuf->feed_size);
     m_WriteBuf->feed_size = 0;
-    
+
     return _size;
 }
 
@@ -567,11 +635,13 @@ bool VFSNetFTPFile::Eof() const
     return m_FilePos >= m_FileSize;
 }
 
-
 off_t VFSNetFTPFile::Seek(off_t _off, int _basis)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
+    
+    if(m_Mode != Mode::Read)
+        return VFSError::InvalidCall;;
     
     // we can only deal with cache buffer now, need another branch later
     off_t req_pos = 0;
@@ -593,5 +663,4 @@ off_t VFSNetFTPFile::Seek(off_t _off, int _basis)
     
     return m_FilePos;
 }
-
 

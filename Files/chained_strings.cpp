@@ -44,6 +44,11 @@ chained_strings::chained_strings(chained_strings&& _rhs):
 
 chained_strings::~chained_strings()
 {
+    destroy();
+}
+
+void chained_strings::destroy()
+{
     auto curr = m_Begin;
     while(curr != nullptr) {
         auto next = curr->next;
@@ -53,6 +58,7 @@ chained_strings::~chained_strings()
         free(curr);
         curr = next;
     }
+    m_Begin = m_Last = nullptr;
 }
 
 void chained_strings::push_back(const char *_str, unsigned _len, const node *_prefix)
@@ -159,6 +165,25 @@ void chained_strings::node::str_with_pref(char *_buf) const
     _buf[bufsz] = 0;
 }
 
+string chained_strings::node::to_str_with_pref() const
+{
+    const node *nodes[max_depth], *n = this;
+    int bufsz = 0, nodes_n = 0;
+    do
+    {
+        bufsz += n->len;
+        nodes[nodes_n++] = n;
+        assert(nodes_n < max_depth);
+    } while( (n = n->prefix) != 0 );
+    
+    string res;
+    res.reserve(bufsz);
+    for(int i = nodes_n-1; i >= 0; --i)
+        res.append(nodes[i]->c_str(), nodes[i]->len);
+
+    return move(res);
+}
+
 bool chained_strings::empty() const
 {
     return m_Begin == nullptr;
@@ -191,4 +216,14 @@ void chained_strings::swap(chained_strings &&_rhs)
 {
     ::swap(m_Begin, _rhs.m_Begin);
     ::swap(m_Last, _rhs.m_Last);    
+}
+
+const chained_strings& chained_strings::operator=(chained_strings&& _rhs)
+{
+    destroy();
+    m_Begin = _rhs.m_Begin;
+    m_Last = _rhs.m_Last;
+    _rhs.m_Begin = nullptr;
+    _rhs.m_Last = nullptr;
+    return *this;
 }

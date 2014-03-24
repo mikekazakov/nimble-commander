@@ -9,6 +9,7 @@
 #import "VFSNetFTPFile.h"
 #import "VFSNetFTPHost.h"
 #import "VFSNetFTPInternals.h"
+#import "path_manip.h"
 
 // implementation highly inspired by curlftpfs.
 
@@ -334,10 +335,7 @@ int VFSNetFTPFile::Close()
         curl_multi_remove_handle(m_CURLM->curlm, m_CURL->curl);
         
         if(m_Mode == Mode::Write)
-        {
-            auto ftp_host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
-            ftp_host->MakeEntryDirty(RelativePath());
-        }
+            dynamic_pointer_cast<VFSNetFTPHost>(Host())->MakeEntryAndDirectoryDirty(RelativePath());
     }
     m_FilePos = 0;
     m_FileSize = 0;
@@ -548,6 +546,8 @@ ssize_t VFSNetFTPFile::Read(void *_buf, size_t _size)
 
 ssize_t VFSNetFTPFile::Write(const void *_buf, size_t _size)
 {
+    // TODO: reconnecting support
+    
     if(!IsOpened())
         return VFSError::InvalidCall;
     

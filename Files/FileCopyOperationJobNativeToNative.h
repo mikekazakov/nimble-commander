@@ -14,11 +14,11 @@
 #import "DispatchQueue.h"
 #import <vector>
 
-class FileCopyOperationJob : public OperationJob
+class FileCopyOperationJobNativeToNative : public OperationJob
 {
 public:
-    FileCopyOperationJob();
-    ~FileCopyOperationJob();
+    FileCopyOperationJobNativeToNative();
+    ~FileCopyOperationJobNativeToNative();
 
     void Init(chained_strings _files,
                              const char *_root,               // dir in where files are located

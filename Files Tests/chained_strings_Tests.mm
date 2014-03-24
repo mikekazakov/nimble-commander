@@ -94,6 +94,7 @@
     strings.back().str_with_pref(buffer);
     
     XCTAssert( predicted_string == buffer);
+    XCTAssert( predicted_string == strings.back().to_str_with_pref());
 }
 
 - (void)testRegressions

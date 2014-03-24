@@ -323,8 +323,71 @@ void VFSNetFTPHost::MakeEntryDirty(const char *_path)
             entry->dirty = true;
 }
 
+void VFSNetFTPHost::MakeEntryAndDirectoryDirty(const char *_path)
+{
+    if(_path == nullptr ||
+       _path[0] != '/'  ||
+       _path[1] == 0     )
+        return;
+    
+    string path = _path;
+    
+    if(path.back() == '/')
+        path.pop_back();
+    
+    auto last_sl = path.rfind('/');
+    assert(last_sl != string::npos);
+    string parent_dir(path, 0, last_sl + 1);
+    string filename(path, last_sl + 1);
+    
+    if(auto dir = m_Cache->FindDirectory(parent_dir))
+    {
+        dir->dirty = true;
+        InformDirectoryChanged(dir->path);
+        if(auto entry = dir->EntryByName(filename))
+            entry->dirty = true;
+    }
+}
+
 void VFSNetFTPHost::MakeDirectoryDirty(const char *_path)
 {
+    if(auto dir = m_Cache->FindDirectory(_path))
+    {
+        InformDirectoryChanged(dir->path);
+        dir->dirty = true;
+    }
+}
+
+unsigned long VFSNetFTPHost::DirChangeObserve(const char *_path, void (^_handler)())
+{
+    if(_path == 0 || _path[0] != '/')
+        return 0;
+
+    lock_guard<mutex> lock(m_UpdateHandlersLock);
     
+    m_UpdateHandlers.emplace_back();
+    auto &h = m_UpdateHandlers.back();
+    h.ticket = m_LastUpdateTicket++;
+    h.path = _path;
+    if(h.path.back() != '/') h.path += '/';
+    h.handler = _handler;
     
+    return h.ticket;
+}
+
+void VFSNetFTPHost::StopDirChangeObserving(unsigned long _ticket)
+{
+    lock_guard<mutex> lock(m_UpdateHandlersLock);
+    m_UpdateHandlers.erase(remove_if(begin(m_UpdateHandlers),
+                                     end(m_UpdateHandlers),
+                                     [=](auto &_h) {return _h.ticket == _ticket;}),
+                           m_UpdateHandlers.end());
+}
+
+void VFSNetFTPHost::InformDirectoryChanged(const string &_dir_wth_sl)
+{
+    lock_guard<mutex> lock(m_UpdateHandlersLock);
+    for(auto &i: m_UpdateHandlers)
+        if(i.path == _dir_wth_sl)
+            i.handler();
 }

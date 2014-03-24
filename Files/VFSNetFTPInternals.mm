@@ -227,6 +227,8 @@ void Cache::InsertDirectory(const char *_path, shared_ptr<Directory> _directory)
     if(dir.back() != '/')
         dir.push_back('/');
     
+    _directory->path = dir;
+    
     lock_guard<mutex> lock(m_CacheLock);
     
     auto i = m_Directories.find(dir);

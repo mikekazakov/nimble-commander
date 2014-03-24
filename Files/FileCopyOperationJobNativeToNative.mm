@@ -1,12 +1,12 @@
 //
-//  FileCopyOperationJob.cpp
+//  FileCopyOperationJobNativeToNative.cpp
 //  Directories
 //
 //  Created by Michael G. Kazakov on 09.04.13.
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileCopyOperationJob.h"
+#import "FileCopyOperationJobNativeToNative.h"
 #import "filesysinfo.h"
 #import "NativeFSManager.h"
 #import <algorithm>
@@ -110,7 +110,7 @@ static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
     fsetattrlist(_target_fd, &attrs, &_with_times->st_ctimespec, sizeof(struct timespec), 0);
 }
 
-FileCopyOperationJob::FileCopyOperationJob():
+FileCopyOperationJobNativeToNative::FileCopyOperationJobNativeToNative():
     m_Operation(0),
     m_SourceNumberOfFiles(0),
     m_SourceNumberOfDirectories(0),
@@ -134,13 +134,13 @@ FileCopyOperationJob::FileCopyOperationJob():
     assert( BUFFER_SIZE >= 128 * 1024 ); // should be enough to hold any xattr value
 }
 
-FileCopyOperationJob::~FileCopyOperationJob()
+FileCopyOperationJobNativeToNative::~FileCopyOperationJobNativeToNative()
 {
     if(m_Buffer1) { free(m_Buffer1); m_Buffer1 = 0; }
     if(m_Buffer2) { free(m_Buffer2); m_Buffer2 = 0; }
 }
 
-void FileCopyOperationJob::Init(chained_strings _files, // passing ownage to Job
+void FileCopyOperationJobNativeToNative::Init(chained_strings _files, // passing ownage to Job
                          const char *_root,               // dir in where files are located
                          const char *_dest,                // where to copy
                          FileCopyOperationOptions* _opts,
@@ -154,7 +154,7 @@ void FileCopyOperationJob::Init(chained_strings _files, // passing ownage to Job
     strcpy(m_SourceDirectory, _root);
 }
 
-void FileCopyOperationJob::Do()
+void FileCopyOperationJobNativeToNative::Do()
 {
     m_IsSingleEntryCopy = m_InitialItems.size() == 1;
     
@@ -197,12 +197,12 @@ void FileCopyOperationJob::Do()
     m_Operation = nil;
 }
 
-bool FileCopyOperationJob::IsSingleFileCopy() const
+bool FileCopyOperationJobNativeToNative::IsSingleFileCopy() const
 {
     return m_IsSingleFileCopy;    
 }
 
-FileCopyOperationJob::StatValueType FileCopyOperationJob::GetStatValueType() const
+FileCopyOperationJobNativeToNative::StatValueType FileCopyOperationJobNativeToNative::GetStatValueType() const
 {
     if(m_WorkMode == CopyToFixedPath || m_WorkMode == CopyToPathPreffix || m_WorkMode == MoveToFixedPath || m_WorkMode == MoveToPathPreffix)
     {
@@ -216,7 +216,7 @@ FileCopyOperationJob::StatValueType FileCopyOperationJob::GetStatValueType() con
     return StatValueUnknown;
 }
 
-void FileCopyOperationJob::ScanDestination()
+void FileCopyOperationJobNativeToNative::ScanDestination()
 {
     struct stat stat_buffer;
     char destpath[MAXPATHLEN];    
@@ -339,7 +339,7 @@ void FileCopyOperationJob::ScanDestination()
     }
 }
 
-void FileCopyOperationJob::BuildDestinationDirectory(const char* _path)
+void FileCopyOperationJobNativeToNative::BuildDestinationDirectory(const char* _path)
 {
     // TODO: not very efficient implementation, it does many redundant stat calls
     // this algorithm iterates from left to right, but it's better to iterate right-left and then left-right
@@ -369,7 +369,7 @@ domkdir:    if(mkdir(destpath, 0777) == -1)
     } while(leftmost != 0);
 }
 
-void FileCopyOperationJob::ScanItems()
+void FileCopyOperationJobNativeToNative::ScanItems()
 {
     if(m_InitialItems.size() > 1)
         m_IsSingleFileCopy = false;
@@ -383,7 +383,7 @@ void FileCopyOperationJob::ScanItems()
     }
 }
 
-void FileCopyOperationJob::ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix)
+void FileCopyOperationJobNativeToNative::ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix)
 {
     // TODO: optimize it ALL!
     // TODO: this path composing can be optimized
@@ -481,7 +481,7 @@ retry_stat:
     }
 }
 
-void FileCopyOperationJob::ProcessItems()
+void FileCopyOperationJobNativeToNative::ProcessItems()
 {
     m_Stats.StartTimeTracking();
     
@@ -503,7 +503,7 @@ void FileCopyOperationJob::ProcessItems()
         ProcessFoldersRemoval();
 }
 
-void FileCopyOperationJob::ProcessItem(const chained_strings::node *_node, int _number)
+void FileCopyOperationJobNativeToNative::ProcessItem(const chained_strings::node *_node, int _number)
 {
     assert(_node->size() != 0);
     
@@ -519,7 +519,7 @@ void FileCopyOperationJob::ProcessItem(const chained_strings::node *_node, int _
     else assert(0); // sanity guard
 }
 
-void FileCopyOperationJob::ProcessFilesRemoval()
+void FileCopyOperationJobNativeToNative::ProcessFilesRemoval()
 {
     for(auto i: m_FilesToDelete)
     {
@@ -533,7 +533,7 @@ void FileCopyOperationJob::ProcessFilesRemoval()
     }
 }
 
-void FileCopyOperationJob::ProcessFoldersRemoval()
+void FileCopyOperationJobNativeToNative::ProcessFoldersRemoval()
 {
     for(auto i = m_DirsToDelete.rbegin(); i != m_DirsToDelete.rend(); ++i)
     {
@@ -548,7 +548,7 @@ void FileCopyOperationJob::ProcessFoldersRemoval()
     }
 }
 
-void FileCopyOperationJob::ProcessCopyToPathPreffix(const char *_path, int _number)
+void FileCopyOperationJobNativeToNative::ProcessCopyToPathPreffix(const char *_path, int _number)
 {
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];    
     if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir)
@@ -587,7 +587,7 @@ void FileCopyOperationJob::ProcessCopyToPathPreffix(const char *_path, int _numb
     }
 }
 
-void FileCopyOperationJob::ProcessCopyToFixedPath(const char *_path, int _number)
+void FileCopyOperationJobNativeToNative::ProcessCopyToFixedPath(const char *_path, int _number)
 {
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
     if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir)
@@ -645,7 +645,7 @@ void FileCopyOperationJob::ProcessCopyToFixedPath(const char *_path, int _number
     }
 }
 
-void FileCopyOperationJob::ProcessMoveToFixedPath(const char *_path, int _number)
+void FileCopyOperationJobNativeToNative::ProcessMoveToFixedPath(const char *_path, int _number)
 {
     // m_Destination is a file name
     char sourcepath[MAXPATHLEN];
@@ -678,7 +678,7 @@ void FileCopyOperationJob::ProcessMoveToFixedPath(const char *_path, int _number
     }
 }
 
-void FileCopyOperationJob::ProcessMoveToPathPreffix(const char *_path, int _number)
+void FileCopyOperationJobNativeToNative::ProcessMoveToPathPreffix(const char *_path, int _number)
 {
     // m_Destination is a directory path
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
@@ -722,7 +722,7 @@ void FileCopyOperationJob::ProcessMoveToPathPreffix(const char *_path, int _numb
     }
 }
 
-void FileCopyOperationJob::ProcessRenameToFixedPath(const char *_path, int _number)
+void FileCopyOperationJobNativeToNative::ProcessRenameToFixedPath(const char *_path, int _number)
 {
     m_Stats.SetCurrentItem(_path);
     
@@ -771,7 +771,7 @@ retry_rename:
     m_Stats.AddValue(1);
 }
 
-void FileCopyOperationJob::ProcessRenameToPathPreffix(const char *_path, int _number)
+void FileCopyOperationJobNativeToNative::ProcessRenameToPathPreffix(const char *_path, int _number)
 {
     m_Stats.SetCurrentItem(_path);
     
@@ -821,7 +821,7 @@ retry_rename:
     m_Stats.AddValue(1);
 }
 
-bool FileCopyOperationJob::CreateSymlinkTo(const char *_source_symlink, const char* _tagret_symlink)
+bool FileCopyOperationJobNativeToNative::CreateSymlinkTo(const char *_source_symlink, const char* _tagret_symlink)
 {
     char linkpath[MAXPATHLEN];
     int result;
@@ -860,7 +860,7 @@ cleanup:
     return was_succesful;
 }
 
-void FileCopyOperationJob::EraseXattrs(int _fd_in)
+void FileCopyOperationJobNativeToNative::EraseXattrs(int _fd_in)
 {
     assert(m_Buffer1);
     char *xnames = (char*) m_Buffer1;
@@ -876,7 +876,7 @@ void FileCopyOperationJob::EraseXattrs(int _fd_in)
     }
 }
 
-void FileCopyOperationJob::CopyXattrs(int _fd_from, int _fd_to)
+void FileCopyOperationJobNativeToNative::CopyXattrs(int _fd_from, int _fd_to)
 {
     char *xnames;
     ssize_t xnamesizes;
@@ -897,7 +897,7 @@ void FileCopyOperationJob::CopyXattrs(int _fd_from, int _fd_to)
     }
 }
 
-bool FileCopyOperationJob::CopyDirectoryTo(const char *_src, const char *_dest)
+bool FileCopyOperationJobNativeToNative::CopyDirectoryTo(const char *_src, const char *_dest)
 {
     // TODO: need to handle errors on attributes somehow. but I don't know how.
     struct stat src_stat, dst_stat;
@@ -960,7 +960,7 @@ end:
     return opres;
 }
 
-bool FileCopyOperationJob::CopyFileTo(const char *_src, const char *_dest)
+bool FileCopyOperationJobNativeToNative::CopyFileTo(const char *_src, const char *_dest)
 {
     assert(m_WorkMode != RenameToFixedPath && m_WorkMode != RenameToPathPreffix); // sanity check
     

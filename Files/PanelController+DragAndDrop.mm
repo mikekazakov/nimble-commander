@@ -364,8 +364,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             assert(source_controller != self);
             
             // currently we accept only copying to native fs
-            if(!m_HostsStack.back()->IsNativeFS())
-                return false;
+//            if(!m_HostsStack.back()->IsNativeFS())
+//                return false;
             
             chained_strings files;
             for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[[PanelDraggingItem class]]
@@ -375,6 +375,26 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if(files.empty())
                 return false;
             
+            
+            if(!m_HostsStack.back()->IsNativeFS()
+               /*&& is_writeable && is_writeable_at_path */)
+            {
+                if(sender.draggingSourceOperationMask != NSDragOperationCopy)
+                    return false;
+                
+                string destination = self.GetCurrentDirectoryPathRelativeToHost;
+                FileCopyOperationOptions opts;
+                FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(files)
+                                                                            root:source_broker.root_path.c_str()
+                                                                         srcvfs:source_broker.vfs
+                                                                            dest:destination.c_str()
+                                                                          stdvfs:m_HostsStack.back()
+                                                                         options:&opts];
+
+                [filepanel_state.OperationsController AddOperation:op];
+                return true;
+            }
+
             if(sender.draggingSourceOperationMask == NSDragOperationCopy) {
                 string destination = self.GetCurrentDirectoryPathRelativeToHost;
                 FileCopyOperationOptions opts;

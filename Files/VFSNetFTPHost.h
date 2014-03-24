@@ -7,6 +7,8 @@
 //
 
 #pragma once
+#import <vector>
+#import <mutex>
 #import "VFSHost.h"
 #import "VFSNetFTPInternalsForward.h"
 
@@ -50,7 +52,10 @@ public:
     
     virtual int Unlink(const char *_path, bool (^_cancel_checker)());
     
-    virtual bool ShouldProduceThumbnails() override;    
+    virtual bool ShouldProduceThumbnails() override;
+    
+    virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
+    virtual void StopDirChangeObserving(unsigned long _ticket) override;    
     
     // internal stuff below:
     void BuildFullURL(const char *_path, char *_buffer) const;
@@ -59,6 +64,7 @@ public:
      * Mark stat cache entry invalid, if any.
      */
     void MakeEntryDirty(const char *_path);
+    void MakeEntryAndDirectoryDirty(const char *_path);
     void MakeDirectoryDirty(const char *_path);
     
     unique_ptr<VFSNetFTP::CURLInstance> InstanceForIO();
@@ -77,6 +83,19 @@ private:
                         string &_buffer,
                         bool (^_cancel_checker)());
     
+    void InformDirectoryChanged(const string &_dir_wth_sl);
+    
     unique_ptr<VFSNetFTP::Cache>        m_Cache;
     unique_ptr<VFSNetFTP::CURLInstance> m_ListingInstance;
+    
+    struct UpdateHandler
+    {
+        unsigned long ticket;
+        void        (^handler)();
+        string        path; // path with trailing slash
+    };
+
+    vector<UpdateHandler> m_UpdateHandlers;
+    mutex                 m_UpdateHandlersLock;
+    unsigned long         m_LastUpdateTicket = 1;
 };

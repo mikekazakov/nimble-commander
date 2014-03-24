@@ -173,7 +173,7 @@ struct WriteBuffer
         memcpy(ptr, buf->buf + buf->feed_size, feed);
         buf->feed_size += feed;
         
-        NSLog(@"Read request %lu, feed with %lu bytes", size*nmemb, feed);
+//        NSLog(@"Read request %lu, feed with %lu bytes", size*nmemb, feed);
         
         return feed;
     }
@@ -235,13 +235,13 @@ struct Directory
 {
     deque<Entry>            entries;
     shared_ptr<Directory>   parent_dir;
+    string                  path; // with trailing slash
     uint64_t                snapshot_time = 0;
-//    bool                    dirty; // ??
-    
+    mutable bool dirty = false; // true when this directory was explicitly set as outdated, regardless of snapshot time    
     
     inline bool IsOutdated() const
     {
-        return GetTimeInNanoseconds() > snapshot_time + g_ListingOutdateLimit;
+        return dirty || (GetTimeInNanoseconds() > snapshot_time + g_ListingOutdateLimit);
     }
     
     inline const Entry* EntryByName(string _name) const

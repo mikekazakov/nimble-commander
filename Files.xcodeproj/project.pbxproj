@@ -241,7 +241,7 @@
 		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
 		CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */; };
-		CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */; };
+		CFAC50D31714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm */; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
 		CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */; };
@@ -254,6 +254,7 @@
 		CFB709A318D7017D00A83E61 /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709A118D7017D00A83E61 /* VFSNetFTPInternals.mm */; };
 		CFB709AB18D962E600A83E61 /* VFSNetFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709A918D962E600A83E61 /* VFSNetFTPFile.mm */; };
 		CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */; };
+		CFB709B518DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */; };
 		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
@@ -685,8 +686,8 @@
 		CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockAnalysis.h; sourceTree = "<group>"; };
 		CFAC50CE1714018C00A3E5C5 /* FileCopyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperation.h; sourceTree = "<group>"; };
 		CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperation.mm; sourceTree = "<group>"; };
-		CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJob.mm; sourceTree = "<group>"; };
-		CFAC50D21714027F00A3E5C5 /* FileCopyOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJob.h; sourceTree = "<group>"; };
+		CFAC50D11714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJobNativeToNative.mm; sourceTree = "<group>"; };
+		CFAC50D21714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJobNativeToNative.h; sourceTree = "<group>"; };
 		CFB060DC172E6AC4001F6949 /* Common.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Common.mm; sourceTree = "<group>"; };
 		CFB190D717A3B1FA005B8B15 /* ObjcToCppObservingBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcToCppObservingBridge.h; sourceTree = "<group>"; };
 		CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
@@ -709,6 +710,8 @@
 		CFB709A918D962E600A83E61 /* VFSNetFTPFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetFTPFile.mm; sourceTree = "<group>"; };
 		CFB709AA18D962E600A83E61 /* VFSNetFTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNetFTPFile.h; sourceTree = "<group>"; };
 		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
+		CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJobGenericToGeneric.mm; sourceTree = "<group>"; };
+		CFB709B418DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJobGenericToGeneric.h; sourceTree = "<group>"; };
 		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
 		CFB8F22D17CA3C80004574FE /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSHost.h; sourceTree = "<group>"; };
 		CFB8F22F17CA4175004574FE /* VFSListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSListing.mm; sourceTree = "<group>"; };
@@ -1383,10 +1386,12 @@
 				CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */,
 				CFAC50CE1714018C00A3E5C5 /* FileCopyOperation.h */,
 				CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */,
-				CFAC50D21714027F00A3E5C5 /* FileCopyOperationJob.h */,
-				CFAC50D11714027F00A3E5C5 /* FileCopyOperationJob.mm */,
+				CFAC50D21714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.h */,
+				CFAC50D11714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm */,
 				CF09827017DEDC3700F0871C /* FileCopyOperationJobFromGeneric.h */,
 				CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */,
+				CFB709B418DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.h */,
+				CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */,
 			);
 			name = FileCopyOperation;
 			sourceTree = "<group>";
@@ -1956,7 +1961,7 @@
 				CF9D0E8C17CC961100CB8146 /* archive_read_disk_windows.c in Sources */,
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,
 				CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */,
-				CFAC50D31714027F00A3E5C5 /* FileCopyOperationJob.mm in Sources */,
+				CFAC50D31714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm in Sources */,
 				CF9D0EB717CC961100CB8146 /* archive_write_add_filter_bzip2.c in Sources */,
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
 				CFCF86301896B42E000552CD /* VFSEasyOps.mm in Sources */,
@@ -2070,6 +2075,7 @@
 				CF9D0EC417CC961100CB8146 /* archive_write_disk_set_standard_lookup.c in Sources */,
 				CF653E0418C5AB2000502920 /* VFSArchiveUnRARListing.mm in Sources */,
 				CF9D0EBB17CC961100CB8146 /* archive_write_add_filter_lrzip.c in Sources */,
+				CFB709B518DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm in Sources */,
 				CF9D0ED017CC961100CB8146 /* archive_write_set_format_iso9660.c in Sources */,
 				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
 				CF9D0E7A17CC961100CB8146 /* archive_entry_copy_stat.c in Sources */,

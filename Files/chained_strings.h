@@ -47,6 +47,7 @@ public:
         const char* c_str() const;
         unsigned short size() const;
         void str_with_pref(char *_buf) const;
+        string to_str_with_pref() const;
     }; // 24 bytes long
 #pragma pack()
 
@@ -130,9 +131,12 @@ public:
     
     void swap(chained_strings &_rhs);
     void swap(chained_strings &&_rhs);
+    const chained_strings& operator=(chained_strings&&);
+    
 private:
     void insert_into(block *_to, const char *_str, unsigned _len, const node *_prefix);
     void construct();
+    void destroy();
     void grow();
     chained_strings(const chained_strings&) = delete;
     void operator=(const chained_strings&) = delete;

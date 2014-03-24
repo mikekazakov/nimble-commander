@@ -23,21 +23,12 @@ enum
 
 struct FileCopyOperationOptions
 {
-    bool docopy; // it it false then operation will do renaming/moving
-    bool preserve_symlinks;
-    bool copy_xattrs;
-    bool copy_file_times;
-    bool copy_unix_flags;
-    bool copy_unix_owners;
-    
-    FileCopyOperationOptions():
-        docopy(true),
-        preserve_symlinks(true),
-        copy_xattrs(true),
-        copy_file_times(true),
-        copy_unix_flags(true),
-        copy_unix_owners(true)
-    {};
+    bool docopy = true;      // it it false then operation will do renaming/moving
+    bool preserve_symlinks = true;
+    bool copy_xattrs = true;
+    bool copy_file_times = true;
+    bool copy_unix_flags = true;
+    bool copy_unix_owners = true;    
 };
 
 @interface FileCopyOperation : Operation
@@ -55,6 +46,15 @@ struct FileCopyOperationOptions
             rootvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts;
+
+// VFS->VFS copying
+- (id)initWithFiles:(chained_strings)_files
+               root:(const char*)_root
+             srcvfs:(shared_ptr<VFSHost>)_vfs
+               dest:(const char*)_dest
+             stdvfs:(shared_ptr<VFSHost>)_dst_vfs
+            options:(FileCopyOperationOptions*)_opts;
+
 
 - (void)Update;
 

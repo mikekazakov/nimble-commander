@@ -7,8 +7,9 @@
 //
 
 #import "FileCopyOperation.h"
-#import "FileCopyOperationJob.h"
+#import "FileCopyOperationJobNativeToNative.h"
 #import "FileCopyOperationJobFromGeneric.h"
+#import "FileCopyOperationJobGenericToGeneric.h"
 #import "Common.h"
 
 static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
@@ -67,8 +68,9 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
 @implementation FileCopyOperation
 {
 //    FileCopyOperationJob m_Job;
-    shared_ptr<FileCopyOperationJob> m_NativeToNativeJob;
-    shared_ptr<FileCopyOperationJobFromGeneric> m_GenericToNativeJob;
+    unique_ptr<FileCopyOperationJobNativeToNative> m_NativeToNativeJob;
+    unique_ptr<FileCopyOperationJobFromGeneric> m_GenericToNativeJob;
+    unique_ptr<FileCopyOperationJobGenericToGeneric> m_GenericToGenericJob;
     
     
     int m_LastInfoUpdateTime;
@@ -79,7 +81,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts
 {
-    m_NativeToNativeJob = make_shared<FileCopyOperationJob>();
+    m_NativeToNativeJob = make_unique<FileCopyOperationJobNativeToNative>();
     self = [super initWithJob:m_NativeToNativeJob.get()];
     if (self)
     {
@@ -110,7 +112,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                dest:(const char*)_dest
             options:(FileCopyOperationOptions*)_opts
 {
-    m_GenericToNativeJob = make_shared<FileCopyOperationJobFromGeneric>();
+    m_GenericToNativeJob = make_unique<FileCopyOperationJobFromGeneric>();
     self = [super initWithJob:m_GenericToNativeJob.get()];
     if (self)
     {
@@ -136,6 +138,29 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     return self;
 }
 
+- (id)initWithFiles:(chained_strings)_files
+               root:(const char*)_root
+             srcvfs:(shared_ptr<VFSHost>)_vfs
+               dest:(const char*)_dest
+             stdvfs:(shared_ptr<VFSHost>)_dst_vfs
+            options:(FileCopyOperationOptions*)_opts
+{
+    m_GenericToGenericJob = make_unique<FileCopyOperationJobGenericToGeneric>();
+    self = [super initWithJob:m_GenericToGenericJob.get()];
+    if (self)
+    {
+        m_GenericToGenericJob->Init(move(_files),
+                                    _root,
+                                    _vfs,
+                                    _dest,
+                                    _dst_vfs,
+                                    _opts,
+                                    self);
+    
+    }
+    return self;
+}
+
 - (void)Update
 {
     if(m_NativeToNativeJob.get())
@@ -151,8 +176,8 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     if (self.Progress != progress)
         self.Progress = progress;
     
-    FileCopyOperationJob::StatValueType value_type = m_NativeToNativeJob->GetStatValueType();
-    if (value_type == FileCopyOperationJob::StatValueUnknown || m_NativeToNativeJob->IsPaused()
+    FileCopyOperationJobNativeToNative::StatValueType value_type = m_NativeToNativeJob->GetStatValueType();
+    if (value_type == FileCopyOperationJobNativeToNative::StatValueUnknown || m_NativeToNativeJob->IsPaused()
         || self.DialogsCount)
     {
         return;
@@ -161,7 +186,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     int time = stats.GetTime();
     if (time - m_LastInfoUpdateTime >= 1000)
     {
-        if (value_type == FileCopyOperationJob::StatValueBytes)
+        if (value_type == FileCopyOperationJobNativeToNative::StatValueBytes)
         {
             uint64_t copy_speed = 0;
             if (time) copy_speed = stats.GetValue()*1000/time;
@@ -186,7 +211,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                                   copied, total, speed];
             }
         }
-        else if (stats.IsCurrentItemChanged() && value_type == FileCopyOperationJob::StatValueFiles)
+        else if (stats.IsCurrentItemChanged() && value_type == FileCopyOperationJobNativeToNative::StatValueFiles)
         {
             const char *file = stats.GetCurrentItem();
             if (!file)

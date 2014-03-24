@@ -23,6 +23,7 @@ struct DoubleColor
     DoubleColor(NSColor *_c):
         r(0.), g(0.), b(0.), a(1.)
     {
+        assert(_c != nil);
         [[_c colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]] getRed:&r green:&g blue:&b alpha:&a];
     }
     void Set(CGContextRef _context) const {

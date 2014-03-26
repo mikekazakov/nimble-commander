@@ -304,21 +304,6 @@ void TermScreen::DoEraseAt(int _x, int _y, int _count)
 
 void TermScreen::DoScrollDown(int _top, int _bottom, int _lines)
 {
-    /*
-     #define scrdown(foo,t,b,nr) do { \
-        unsigned int step; \
-        int scrdown_nr=nr; \
-        \
-        if (t+scrdown_nr >= b) \
-            scrdown_nr = b - t - 1; \
-        if (b > height || t >= b || scrdown_nr < 1) \
-        return; \
-        step = width * scrdown_nr; \
-        [ts ts_scrollDown: t:b  rows: scrdown_nr]; \
-        [ts ts_putChar: video_erase_char  count: step  offset: t*width]; \
-     } while (0)
-     */
-    
     if(_top < 0)
         _top = 0;
     if(_bottom > m_Height)
@@ -347,19 +332,6 @@ void TermScreen::DoScrollDown(int _top, int _bottom, int _lines)
 
 void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
 {
-    /*
-     scrup(foo,top,bottom,1,(top==0 && bottom==height)?YES:NO);
-     #define scrup(foo,t,b,nr,indirect_scroll) do { \
-        int scrup_nr=nr; \
-     \
-        if (t+scrup_nr >= b) \
-            scrup_nr = b - t - 1; \
-        if (b > height || t >= b || scrup_nr < 1) \
-            return; \
-        [ts ts_scrollUp: t:b  rows: scrup_nr  save: indirect_scroll]; \
-        [ts ts_putChar: video_erase_char  count: width*scrup_nr  offset: width*(b-scrup_nr)]; \
-     } while (0)
-     */
     if(_top < 0)
         _top = 0;
     if(_bottom > m_Height)
@@ -385,7 +357,6 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
                 else break;
             m_ScrollBack.push_back( vector<TermScreen::Space>(sz) );
             memcpy(m_ScrollBack.back().data(), src->data(), sz * sizeof(TermScreen::Space));
-//            m_ScrollBack.push_back(*src);
         }
     
     for(int i = _top; i < _bottom - _lines; ++i)

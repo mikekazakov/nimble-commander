@@ -693,6 +693,9 @@ void TermParser::CSI_DEC_PMS(bool _on)
                         m_Scr->GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
                     break;
                 case 1049:
+                    // NB!
+                    // be careful here: for some reasons some implementations use different save/restore path, not
+                    // conventional EscSave/EscRestore. may cause a side-effect.
                     if(_on) {
 //                        m_DECPMS_SavedCurX = m_Scr->CursorX();
 //                        m_DECPMS_SavedCurY = m_Scr->CursorY();

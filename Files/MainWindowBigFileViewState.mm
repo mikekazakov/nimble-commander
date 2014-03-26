@@ -29,6 +29,21 @@ static int FileWindowSize()
     return file_window_size;
 }
 
+
+@interface MainWindowBigFileViewStateSearchField : NSSearchField
+@property (nonatomic, strong) void (^OnCancelOperation)();
+@end
+
+@implementation MainWindowBigFileViewStateSearchField
+
+- (void)cancelOperation:(id)sender
+{
+    if(self.OnCancelOperation)
+        self.OnCancelOperation();
+}
+
+@end
+
 @implementation MainWindowBigFileViewState
 {
     unique_ptr<FileWindow> m_FileWindow;
@@ -41,7 +56,7 @@ static int FileWindowSize()
     NSButton            *m_WordWrap;
     NSPopUpButton       *m_ModeSelect;
     NSTextField         *m_ScrollPosition;
-    NSSearchField       *m_SearchField;
+    MainWindowBigFileViewStateSearchField *m_SearchField;
     NSProgressIndicator *m_SearchIndicator;
     NSToolbar           *m_Toolbar;
 
@@ -178,6 +193,11 @@ static int FileWindowSize()
     [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
 }
 
+- (IBAction)OnFileInternalBigViewCommand:(id)sender
+{
+    [self cancelOperation:sender];
+}
+
 - (bool) OpenFile: (const char*) _fn with_fs:(shared_ptr<VFSHost>) _host
 {
     VFSFilePtr vfsfile;
@@ -253,6 +273,8 @@ static int FileWindowSize()
 
 - (void) CreateControls
 {
+    __weak MainWindowBigFileViewState *weakself = self;
+    
     m_View = [[BigFileView alloc] initWithFrame:self.frame];
     [m_View setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_View SetDelegate:self];
@@ -286,7 +308,7 @@ static int FileWindowSize()
     [m_ScrollPosition setDrawsBackground:false];
     [m_ScrollPosition setFont:[NSFont menuFontOfSize:10]];
     
-    m_SearchField = [[NSSearchField alloc]initWithFrame:NSMakeRect(0, 0, 200, 20)];
+    m_SearchField = [[MainWindowBigFileViewStateSearchField alloc]initWithFrame:NSMakeRect(0, 0, 200, 20)];
     [m_SearchField setTarget:self];
     [m_SearchField setAction:@selector(UpdateSearchFilter:)];
     [[m_SearchField cell] setPlaceholderString:@"Search in file"];
@@ -294,6 +316,8 @@ static int FileWindowSize()
     [[m_SearchField cell] setRecentsAutosaveName:@"BigFileViewRecentSearches"];
     [[m_SearchField cell] setMaximumRecents:20];
     [[m_SearchField cell] setSearchMenuTemplate:[self BuildSearchMenu]];
+    m_SearchField.OnCancelOperation = ^{ if(MainWindowBigFileViewState *s = weakself)
+                                            [s.window makeFirstResponder:s->m_View]; };
     
     m_SearchIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
     [m_SearchIndicator setIndeterminate:YES];

@@ -321,12 +321,9 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
                     m_EscState = S_TitleSemicolon;
                     return;
                 case 'P':
-//                NSDebugLLog(@"term",@"ignore ESnonstd P");
                     m_EscState = S_Normal;
-//                    vc_state = ESpalette;
                     return;
                 case 'R':
-//                NSDebugLLog(@"term",@"ignore ESnonstd R");
                     m_EscState = S_Normal;
                 default: printf("non-std right br char: %d(\'%c\')\n", (int)c, c); return;                    
             }
@@ -362,6 +359,11 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
             }
                  
         case S_ProcParams:
+            if(c == '>') {
+                // modifier '>' is somehow related with alternative screen, don't give a fuck now
+                return;
+            }
+            
             if(c == ';' && m_ParamsCnt < m_ParamsSize - 1) {
                 m_ParamsCnt++;
                 return;
@@ -406,6 +408,8 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
                 case 'u': EscRestore(); return;
                 case 'r': CSI_n_r(); return;
                 case '@': CSI_n_At(); return;
+                case 'c': CSI_n_c(); return;
+                    
                 default: printf("unhandled: CSI %c\n", c);
             }
             return;
@@ -553,6 +557,15 @@ void TermParser::CSI_n_M()
     m_Scr->DoScrollUp(m_Scr->CursorY(), m_Bottom, n);
 }
 
+void TermParser::CSI_n_c()
+{
+    // reporting our id as VT102
+    const char *myid = "\033[?6c";
+
+    if(!m_Params[0])
+        m_Task->WriteChildInput(myid, (int)strlen(myid));
+}
+
 void TermParser::SetDefaultAttrs()
 {
     m_State[0].color = m_DefaultColor;
@@ -571,6 +584,11 @@ void TermParser::UpdateAttrs()
 
 void TermParser::CSI_n_m()
 {
+    if(m_ParamsCnt == 0) {
+        SetDefaultAttrs();
+        UpdateAttrs();
+    }
+    
     for(int i = 0; i < m_ParamsCnt; ++i)
         switch (m_Params[i]) {
             case 0:  SetDefaultAttrs(); UpdateAttrs(); break;
@@ -654,6 +672,15 @@ void TermParser::CSI_DEC_PMS(bool _on)
                     /*NOT YET IMPLEMENTED*/
                     printf("autowrap: %d\n", (int) _on);
                     break;
+                case 12:
+                    // TODO:
+                    /* Cursor on/off */
+//                    printf("CSI_DEC_PMS 12\n");
+                    break;
+                case 25:
+                    // TODO:
+//                    [SCREEN showCursor: mode];
+                    break;
 				case 47: // alternate screen buffer mode
 					if(_on) m_Scr->SaveScreen();
 					else    m_Scr->RestoreScreen();
@@ -668,13 +695,15 @@ void TermParser::CSI_DEC_PMS(bool _on)
                     break;
                 case 1049:
                     if(_on) {
-                        m_DECPMS_SavedCurX = m_Scr->CursorX();
-                        m_DECPMS_SavedCurY = m_Scr->CursorY();
+//                        m_DECPMS_SavedCurX = m_Scr->CursorX();
+//                        m_DECPMS_SavedCurY = m_Scr->CursorY();
+                        EscSave();
                         m_Scr->SaveScreen();
                         m_Scr->DoEraseScreen(2);
                     }
                     else {
-                        m_Scr->GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
+//                        m_Scr->GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
+                        EscRestore();
                         m_Scr->RestoreScreen();
                     }
                     break;

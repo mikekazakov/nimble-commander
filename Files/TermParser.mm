@@ -388,28 +388,27 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
             }
             
             switch(c) {
-                case 'A': CSI_n_A(); return;
-                case 'B': case 'e': CSI_n_B(); return;
-                case 'C': case 'a': CSI_n_C(); return;
-                case 'd': CSI_n_d(); return;
-                case 'D': CSI_n_D(); return;
-                case 'H': case 'f': CSI_n_H(); return;
-                case 'G': case '`': CSI_n_G(); return;
-                case 'J': CSI_n_J(); return;
-                case 'K': CSI_n_K(); return;
-                case 'L': CSI_n_L(); return;
-                case 'm': CSI_n_m(); return;
-                case 'M': CSI_n_M(); return;
-                case 'P': CSI_n_P(); return;
-                case 'S': CSI_n_S(); return;
-                case 'T': CSI_n_T(); return;
-                case 'X': CSI_n_X(); return;
+                case 'A': CSI_A(); return;
+                case 'B': case 'e': CSI_B(); return;
+                case 'C': case 'a': CSI_C(); return;
+                case 'd': CSI_d(); return;
+                case 'D': CSI_D(); return;
+                case 'H': case 'f': CSI_H(); return;
+                case 'G': case '`': CSI_G(); return;
+                case 'J': CSI_J(); return;
+                case 'K': CSI_K(); return;
+                case 'L': CSI_L(); return;
+                case 'm': CSI_m(); return;
+                case 'M': CSI_M(); return;
+                case 'P': CSI_P(); return;
+                case 'S': CSI_S(); return;
+                case 'T': CSI_T(); return;
+                case 'X': CSI_X(); return;
                 case 's': EscSave(); return;
                 case 'u': EscRestore(); return;
-                case 'r': CSI_n_r(); return;
-                case '@': CSI_n_At(); return;
-                case 'c': CSI_n_c(); return;
-                    
+                case 'r': CSI_r(); return;
+                case '@': CSI_At(); return;
+                case 'c': CSI_c(); return;
                 default: printf("unhandled: CSI %c\n", c);
             }
             return;
@@ -487,56 +486,56 @@ void TermParser::SetTranslate(unsigned char _charset)
     m_TranslateMap = translate_maps[_charset];
 }
 
-void TermParser::CSI_n_J()
+void TermParser::CSI_J()
 {
     m_Scr->DoEraseScreen(m_Params[0]);
 }
 
-void TermParser::CSI_n_A()
+void TermParser::CSI_A()
 {
     m_Scr->DoCursorUp( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
 }
 
-void TermParser::CSI_n_B()
+void TermParser::CSI_B()
 {
     m_Scr->DoCursorDown( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
 }
 
-void TermParser::CSI_n_C()
+void TermParser::CSI_C()
 {
     m_Scr->DoCursorRight( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
 }
 
-void TermParser::CSI_n_D()
+void TermParser::CSI_D()
 {
     m_Scr->DoCursorLeft( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
 }
 
-void TermParser::CSI_n_G()
+void TermParser::CSI_G()
 {
     m_Params[0]--;
     m_Scr->GoTo(m_Params[0], m_Scr->CursorY());
 }
 
-void TermParser::CSI_n_d()
+void TermParser::CSI_d()
 {
     m_Params[0]--;
     DoGoTo(m_Scr->CursorX(), m_Params[0]);
 }
 
-void TermParser::CSI_n_H()
+void TermParser::CSI_H()
 {
     m_Params[0]--;
     m_Params[1]--;
     DoGoTo(m_Params[1], m_Params[0]);
 }
 
-void TermParser::CSI_n_K()
+void TermParser::CSI_K()
 {
     m_Scr->DoEraseInLine(m_Params[0]);
 }
 
-void TermParser::CSI_n_X()
+void TermParser::CSI_X()
 {
     if(m_Params[0] == 0)
         m_Params[0]++;
@@ -547,7 +546,7 @@ void TermParser::CSI_n_X()
                              );
 }
 
-void TermParser::CSI_n_M()
+void TermParser::CSI_M()
 {
     unsigned n = m_Params[0];
     if(n > m_Scr->Height() - m_Scr->CursorY())
@@ -557,7 +556,7 @@ void TermParser::CSI_n_M()
     m_Scr->DoScrollUp(m_Scr->CursorY(), m_Bottom, n);
 }
 
-void TermParser::CSI_n_c()
+void TermParser::CSI_c()
 {
     // reporting our id as VT102
     const char *myid = "\033[?6c";
@@ -582,7 +581,7 @@ void TermParser::UpdateAttrs()
     m_Scr->SetReverse(m_State[0].reverse);
 }
 
-void TermParser::CSI_n_m()
+void TermParser::CSI_m()
 {
     if(m_ParamsCnt == 0) {
         SetDefaultAttrs();
@@ -846,7 +845,7 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
 //    m_Task->WriteChildInput(&c, 1);
 }
 
-void TermParser::CSI_n_P()
+void TermParser::CSI_P()
 {
     int p = m_Params[0];
     if(p > m_Scr->Width() - m_Scr->CursorX())
@@ -871,7 +870,7 @@ void TermParser::EscRestore()
     UpdateAttrs();
 }
 
-void TermParser::CSI_n_r()
+void TermParser::CSI_r()
 {
 //Esc[Line;Liner	Set top and bottom lines of a window	DECSTBM
 //    int a  =10;
@@ -887,7 +886,7 @@ void TermParser::CSI_n_r()
     }
 }
 
-void TermParser::CSI_n_L()
+void TermParser::CSI_L()
 {
     int p = m_Params[0];
     if(p > m_Scr->Height() - m_Scr->CursorY())
@@ -897,7 +896,7 @@ void TermParser::CSI_n_L()
     m_Scr->DoScrollDown(m_Scr->CursorY(), m_Bottom, p);
 }
 
-void TermParser::CSI_n_At()
+void TermParser::CSI_At()
 {
     int p = m_Params[0];
     if(p > m_Scr->Width() - m_Scr->CursorX())
@@ -967,13 +966,13 @@ void TermParser::Resized()
     // any manipulations on cursor pos here?
 }
 
-void TermParser::CSI_n_T()
+void TermParser::CSI_T()
 {
     int p = m_Params[0] ? m_Params[0] : 1;
     while(p--) m_Scr->DoScrollDown(m_Top, m_Bottom, 1);
 }
 
-void TermParser::CSI_n_S()
+void TermParser::CSI_S()
 {
     int p = m_Params[0] ? m_Params[0] : 1;
     while(p--) m_Scr->DoScrollUp(m_Top, m_Bottom, 1);

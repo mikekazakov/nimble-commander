@@ -64,9 +64,6 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
     char locenc[256];
     sprintf(locenc, "%s.UTF-8", [[NSLocale currentLocale] localeIdentifier].UTF8String);
     
-    // Silently (and portably) reap children.
-    signal(SIGCHLD, SIG_IGN);
-    
     m_MasterFD = posix_openpt(O_RDWR);
     assert(m_MasterFD >= 0);
     
@@ -321,7 +318,15 @@ void TermTask::CleanUp()
         int pid = m_ShellPID;
         m_ShellPID = -1;
         kill(pid, SIGKILL);
-        // waitpid(pid, 0, 0);
+        
+        // possible and very bad workaround for sometimes appearing ZOMBIE BASHes
+        struct timespec tm, tm2;
+        tm.tv_sec  = 0;
+        tm.tv_nsec = 10000000L; // 10 ms
+        nanosleep(&tm, &tm2);
+        
+        int status;
+        waitpid(pid, &status, 0);
     }
     
     if(m_MasterFD >= 0)

@@ -204,6 +204,11 @@
     [self BuildLayout];    
 }
 
+- (MyToolbar*)Toolbar
+{
+    return m_Toolbar;
+}
+
 - (NSView*) ContentView
 {
     return self;

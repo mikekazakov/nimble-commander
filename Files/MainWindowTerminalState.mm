@@ -141,8 +141,12 @@
     if(title == 0)
     {
         m_Task->Lock();
-        title = [NSString stringWithUTF8String:m_Task->CWD()];
+        string cwd = m_Task->CWD();
         m_Task->Unlock();
+        
+        if(!cwd.empty() && cwd.back() != '/')
+            cwd += '/';
+        title = [NSString stringWithUTF8String:cwd.c_str()];
     }
 
     self.window.title = title;

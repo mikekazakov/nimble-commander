@@ -11,6 +11,7 @@
 
 
 @class MainWindowController;
+@class MyToolbar;
 
 @protocol MainWindowStateProtocol <NSObject>
 
@@ -29,5 +30,6 @@
 - (void)SkinSettingsChanged;
 - (void)ApplySkin:(ApplicationSkin)_skin;
 - (void)OnApplicationWillTerminate;
+- (MyToolbar*)Toolbar;
 
 @end

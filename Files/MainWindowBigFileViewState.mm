@@ -313,6 +313,11 @@ static int FileWindowSize()
     [self BuildLayout];
 }
 
+- (MyToolbar*)Toolbar
+{
+    return m_Toolbar;
+}
+
 - (void) SelectEncodingFromView
 {
     int current_encoding = [m_View Enconding];

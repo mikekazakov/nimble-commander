@@ -16,6 +16,7 @@
 #import "MainWindowFilePanelState.h"
 #import "MainWindowTerminalState.h"
 #import "PanelController.h"
+#import "MyToolbar.h"
 
 @implementation MainWindowController
 {
@@ -125,6 +126,32 @@
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(WindowDidEndSheet)])
             [i WindowDidEndSheet];
+}
+
+- (float) titleBarHeight
+{
+    NSRect frame = NSMakeRect (0, 0, 100, 100);
+    
+    NSRect contentRect;
+    contentRect = [NSWindow contentRectForFrameRect: frame
+                                          styleMask: NSTitledWindowMask];
+    
+    return (frame.size.height - contentRect.size.height);
+    
+}
+
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
+{
+    if([m_WindowState.back() respondsToSelector:@selector(Toolbar)])
+    {
+        MyToolbar *tb = m_WindowState.back().Toolbar;
+        if(tb != nil && !tb.isHidden)
+            rect.origin.y = NSHeight(window.frame) -
+                            m_WindowState.back().Toolbar.bounds.size.height -
+                            self.titleBarHeight;
+    }
+    
+	return rect;
 }
 
 - (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path {

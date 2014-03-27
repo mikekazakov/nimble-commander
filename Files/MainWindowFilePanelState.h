@@ -24,6 +24,7 @@ class PanelData;
 @class FilePanelMainSplitView;
 @class MainWndGoToButton;
 @class OperationsSummaryViewController;
+@class MyToolbar;
 
 enum ActiveState
 {
@@ -32,7 +33,7 @@ enum ActiveState
     // many more will be here
 };
 
-@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate>
+@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol>
 {
     ApplicationSkin m_Skin;
 
@@ -53,7 +54,8 @@ enum ActiveState
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
     
-    NSToolbar            *m_Toolbar;
+    NSBox                *m_SeparatorLine;
+    MyToolbar            *m_Toolbar;
 }
 
 
@@ -84,4 +86,3 @@ enum ActiveState
 
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "MainWindowFilePanelState+Menu.h"
-#import "MainWindowFilePanelState+Toolbar.h"

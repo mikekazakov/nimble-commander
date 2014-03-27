@@ -26,7 +26,7 @@
 
 - (id)init {
     NSWindow* window = [[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
-                                                   styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask
+                                                   styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask
                                                      backing:NSBackingStoreBuffered
                                                        defer:false];
     window.minSize = NSMakeSize(660, 480);

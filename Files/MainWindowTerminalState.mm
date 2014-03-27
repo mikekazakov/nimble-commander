@@ -78,8 +78,6 @@
 
 - (void) Assigned
 {
-    self.window.Toolbar = nil;
-    
     // need right CWD here
     if(m_Task->State() == TermTask::StateInactive)
         m_Task->Launch(m_InitalWD, m_Screen->Width(), m_Screen->Height());
@@ -152,8 +150,6 @@
 
 - (void) Resigned
 {
-    
-    
     // remove handlers with references to self
     m_Task->SetOnChildOutput(0);
     m_Task->SetOnBashPrompt(0);
@@ -207,30 +203,13 @@
     [dialog setInformativeText:cap];
     [dialog addButtonWithTitle:@"Terminate And Close"];
     [dialog addButtonWithTitle:@"Cancel"];
-    
-//    NSWindow *wnd = self.windo
-//    __weak MainWindowTerminalState *weakself = self;
     [dialog ShowSheetWithHandler:self.window handler:^(int result) {
         if (result == NSAlertFirstButtonReturn)
         {
-//            NSLog(@"3! %ld", CFGetRetainCount((__bridge CFTypeRef)wself));
             [dialog.window orderOut:nil];
-//            [wnd close];
             [sender.window close];
         }
     }];
- 
-
-/*    NSLog(@"!! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
-    __weak MainWindowTerminalState *wself = self;
-    NSLog(@"!!! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
-    
-    NSWindow *w = self.window;
-    dispatch_to_main_queue( ^{
-        [w close];
-    });*/
-    
-//    NSLog(@"2! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
     
     return false;
 }

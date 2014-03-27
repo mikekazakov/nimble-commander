@@ -460,6 +460,8 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         
         free(old);
     }
-        
+    
+    GoTo(CursorX(), CursorY()); // will clip if necessary
+    
     Unlock();
 }

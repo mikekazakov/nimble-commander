@@ -325,7 +325,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
 
 - (NSRect)confinementRectForMenu:(NSMenu *)menu onScreen:(NSScreen *)screen
 {
-    if(self.window != nil)
+    if(![self isHiddenOrHasHiddenAncestor])
         return NSZeroRect;
     
     NSSize sz = self.menu.size;

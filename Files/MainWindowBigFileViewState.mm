@@ -14,7 +14,7 @@
 #import "SearchInFile.h"
 #import "BigFileViewHistory.h"
 #import "DispatchQueue.h"
-
+#import "MyToolbar.h"
 #import "VFSFile.h"
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"
@@ -58,7 +58,8 @@ static int FileWindowSize()
     NSTextField         *m_ScrollPosition;
     MainWindowBigFileViewStateSearchField *m_SearchField;
     NSProgressIndicator *m_SearchIndicator;
-    NSToolbar           *m_Toolbar;
+    MyToolbar           *m_Toolbar;
+    NSBox               *m_SeparatorLine;    
 
     string              m_FilePath;
     string              m_GlobalFilePath;
@@ -90,10 +91,6 @@ static int FileWindowSize()
 
 - (void) Assigned
 {
-    if(self.window.toolbar != nil)
-        m_Toolbar.Visible = self.window.toolbar.isVisible;
-    self.window.Toolbar = m_Toolbar;
-    
     [self.window makeFirstResponder:m_View];
     [self UpdateTitle];    
 }
@@ -106,65 +103,6 @@ static int FileWindowSize()
     [m_View DoClose];
     m_SearchInFileQueue->Stop();
     m_SearchInFileQueue->Wait();
-}
-
-- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
-     itemForItemIdentifier:(NSString *)itemIdentifier
- willBeInsertedIntoToolbar:(BOOL)flag
-{
-    if([itemIdentifier isEqualToString:@"bigfileview_encoding"]) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_EncodingSelect;
-        return item;
-    }
-    
-    if([itemIdentifier isEqualToString:@"bigfileview_texthex"]) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_ModeSelect;
-        return item;
-    }
-    
-    if([itemIdentifier isEqualToString:@"bigfileview_wordwrap"]) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_WordWrap;
-        return item;
-    }
-    
-    if([itemIdentifier isEqualToString:@"bigfileview_filepos"]) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_ScrollPosition;
-        return item;
-    }
-    
-    if([itemIdentifier isEqualToString:@"bigfileview_search"]) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_SearchField;
-        return item;
-    }
-    
-    if([itemIdentifier isEqualToString:@"bigfileview_search_indicator"]) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_SearchIndicator;
-        return item;
-    }
-    
-    return nil;
-}
-
-- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
-{
-    return [self toolbarAllowedItemIdentifiers:toolbar];
-}
-
-- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
-{
-    return @[ @"bigfileview_encoding",
-                  @"bigfileview_texthex",
-                  @"bigfileview_wordwrap",
-                  @"bigfileview_filepos",
-                  NSToolbarFlexibleSpaceItemIdentifier,
-                  @"bigfileview_search_indicator",
-                  @"bigfileview_search"];
 }
 
 - (void) UpdateTitle
@@ -275,10 +213,19 @@ static int FileWindowSize()
 {
     __weak MainWindowBigFileViewState *weakself = self;
     
+    m_Toolbar = [[MyToolbar alloc] initWithFrame:NSRect()];
+    [m_Toolbar setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self addSubview:m_Toolbar];
+    
     m_View = [[BigFileView alloc] initWithFrame:self.frame];
     [m_View setTranslatesAutoresizingMaskIntoConstraints:NO];
     [m_View SetDelegate:self];
     [self addSubview:m_View];
+    
+    m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
+    [m_SeparatorLine setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [m_SeparatorLine setBoxType:NSBoxSeparator];
+    [self addSubview:m_SeparatorLine];    
     
     m_EncodingSelect = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 120, 20)];
     [(NSPopUpButtonCell*)[m_EncodingSelect cell] setControlSize:NSSmallControlSize];
@@ -325,18 +272,45 @@ static int FileWindowSize()
     [m_SearchIndicator setControlSize:NSSmallControlSize];
     [m_SearchIndicator setDisplayedWhenStopped:NO];
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_View);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+    [m_Toolbar InsertView:m_EncodingSelect];
+    [m_Toolbar InsertView:m_ModeSelect];
+    [m_Toolbar InsertView:m_WordWrap];
+    [m_Toolbar InsertView:m_ScrollPosition];
+    [m_Toolbar InsertFlexSpace];
+    [m_Toolbar InsertView:m_SearchIndicator];
+    [m_Toolbar InsertView:m_SearchField];
     
     for(const auto &i: encodings::LiteralEncodingsList())
         [m_EncodingSelect addItemWithTitle: (__bridge NSString*)i.second];
     
-    m_Toolbar = [[NSToolbar alloc] initWithIdentifier:@"bigfileview_toolbar"];
-    m_Toolbar.delegate = self;
-    m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
-    m_Toolbar.autosavesConfiguration = true;
-    m_Toolbar.showsBaselineSeparator = true;
+    [self BuildLayout];
+}
+
+- (void) BuildLayout
+{
+    [self removeConstraints:self.constraints];
+
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_Toolbar, m_SeparatorLine);
+    
+    if(m_Toolbar.isHidden == false)
+    {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_Toolbar]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_Toolbar(==36)]-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
+    }
+    else
+    {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
+    }
+}
+
+- (void)toggleToolbarShown:(id)sender
+{
+    m_Toolbar.Hidden = !m_Toolbar.isHidden;
+    [self BuildLayout];
 }
 
 - (void) SelectEncodingFromView
@@ -469,8 +443,8 @@ static int FileWindowSize()
 
 - (IBAction)performFindPanelAction:(id)sender
 {
-    if(m_Toolbar.isVisible == false)
-        m_Toolbar.Visible = true;
+    if(m_Toolbar.isHidden)
+        [self toggleToolbarShown:self];
     
     [self.window makeFirstResponder:m_SearchField];
 }

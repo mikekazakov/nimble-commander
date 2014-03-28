@@ -116,7 +116,7 @@ int VFSArchiveUnRARFile::Close()
             else
             {
                 RARSetCallback(m_Archive->rar_handle, ProcessRARDummy, 0);
-                if(RARProcessFile(m_Archive->rar_handle, RAR_EXTRACT, NULL, NULL) == 0)
+                if(RARProcessFile(m_Archive->rar_handle, RAR_TEST, NULL, NULL) == 0)
                 {
                     rar_host->CommitSeekCache(move(m_Archive));
                 }

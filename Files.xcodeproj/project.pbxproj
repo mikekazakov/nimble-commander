@@ -256,6 +256,8 @@
 		CFB709B518DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */; };
 		CFB709B918E3CB3600A83E61 /* MyToolbar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B818E3CB3600A83E61 /* MyToolbar.mm */; };
 		CFB709BC18E4760D00A83E61 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BB18E4760D00A83E61 /* Help.pdf */; };
+		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
+		CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */; };
 		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
@@ -714,6 +716,9 @@
 		CFB709B718E3CB3600A83E61 /* MyToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyToolbar.h; sourceTree = "<group>"; };
 		CFB709B818E3CB3600A83E61 /* MyToolbar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyToolbar.mm; sourceTree = "<group>"; };
 		CFB709BB18E4760D00A83E61 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Help.pdf; sourceTree = "<group>"; };
+		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSheetController.h; sourceTree = "<group>"; };
+		CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSheetController.mm; sourceTree = "<group>"; };
+		CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProcessSheetController.xib; sourceTree = "<group>"; };
 		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
 		CFB8F22D17CA3C80004574FE /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSHost.h; sourceTree = "<group>"; };
 		CFB8F22F17CA4175004574FE /* VFSListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSListing.mm; sourceTree = "<group>"; };
@@ -918,6 +923,9 @@
 				CF039E96179041CE00DC85D6 /* StackOfDisappearingWidgets.mm */,
 				CFB709B718E3CB3600A83E61 /* MyToolbar.h */,
 				CFB709B818E3CB3600A83E61 /* MyToolbar.mm */,
+				CFB709BD18E561F200A83E61 /* ProcessSheetController.h */,
+				CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */,
+				CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */,
 			);
 			name = Controls;
 			sourceTree = "<group>";
@@ -1815,6 +1823,7 @@
 				CF039EBF1795AE9F00DC85D6 /* eject_icon.png in Resources */,
 				CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */,
 				CFBE65AC17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib in Resources */,
+				CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */,
 				CF9B9BCF17BA7C68002A863A /* pref_panels_icon.png in Resources */,
 				CF6C5AD117BC70DE0007B648 /* pref_viewer_icon.png in Resources */,
 				CFA0B23718693F1100501C35 /* GoToFolderSheetController.xib in Resources */,
@@ -2004,6 +2013,7 @@
 				B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */,
 				CF9D0B6417CC5FB800CB8146 /* VFSArchiveHost.mm in Sources */,
 				CF9D0ECB17CC961100CB8146 /* archive_write_set_format_ar.c in Sources */,
+				CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */,
 				CF9D0E8617CC961100CB8146 /* archive_rb.c in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
 				CF9D0E9F17CC961100CB8146 /* archive_read_support_filter_xz.c in Sources */,

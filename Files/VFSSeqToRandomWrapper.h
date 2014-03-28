@@ -18,6 +18,9 @@ public:
     ~VFSSeqToRandomROWrapperFile();
     
     virtual int Open(int _flags, bool (^_cancel_checker)()) override;
+    int Open(int _flags,
+            bool (^_cancel_checker)(),
+            void (^_progress)(uint64_t _bytes_proc, uint64_t _bytes_total));
     virtual int Close() override;
     
     enum {

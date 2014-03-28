@@ -19,6 +19,7 @@
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"
 #import "VFSSeqToRandomWrapper.h"
+#import "ProcessSheetController.h"
 
 static int FileWindowSize()
 {
@@ -142,15 +143,36 @@ static int FileWindowSize()
     if(_host->CreateFile(_fn, vfsfile, 0) < 0)
         return false;
 
-    if(vfsfile->Open(VFSFile::OF_Read) < 0)
-        return false;
     if(vfsfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
     {
-        vfsfile = make_shared<VFSSeqToRandomROWrapperFile>(vfsfile);
-        vfsfile->Open(VFSFile::OF_Read);
+        ProcessSheetController *proc = [ProcessSheetController new];
+        proc.window.title = @"Opening file...";
+        [proc Show];
+        
+        if(vfsfile->Open(VFSFile::OF_Read) < 0)
+        {
+            [proc Close];
+            return false;
+        }
+
+        auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(vfsfile);
+        vfsfile = wrapper;
+        int res = wrapper->Open(VFSFile::OF_Read,
+                                ^{ return proc.UserCancelled; },
+                                ^(uint64_t _bytes, uint64_t _total) {
+                                    proc.Progress.doubleValue = double(_bytes) / double(_total);
+                                });
+        [proc Close];
+        if(res != 0)
+            return false;
+    }
+    else
+    {
+        if(vfsfile->Open(VFSFile::OF_Read) < 0)
+            return false;
     }
     
-    unique_ptr<FileWindow> fw(new FileWindow);
+    auto fw = make_unique<FileWindow>();
     
     if(fw->OpenFile(vfsfile, FileWindowSize()) == 0)
     {

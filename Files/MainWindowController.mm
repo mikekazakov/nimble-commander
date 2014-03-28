@@ -17,6 +17,7 @@
 #import "MainWindowTerminalState.h"
 #import "PanelController.h"
 #import "MyToolbar.h"
+#import "Common.h"
 
 @implementation MainWindowController
 {
@@ -201,11 +202,15 @@
     return m_PanelState.OperationsController;
 }
 
-- (void) RequestBigFileView:(const char*) _filepath with_fs:(shared_ptr<VFSHost>) _host
+- (void) RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host
 {
-    MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:[[[self window] contentView] frame]];
-    if([state OpenFile:_filepath with_fs:_host])
-        [self PushNewWindowState:state];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:[self.window.contentView frame]];
+        if([state OpenFile:_filepath.c_str() with_fs:_host])
+            dispatch_to_main_queue(^{
+                [self PushNewWindowState:state];
+            });
+    });
 }
 
 - (void)OnApplicationWillTerminate

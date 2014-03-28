@@ -22,7 +22,9 @@ VFSSeqToRandomROWrapperFile::~VFSSeqToRandomROWrapperFile()
     Close();
 }
 
-int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
+int VFSSeqToRandomROWrapperFile::Open(int _flags,
+                                      bool (^_cancel_checker)(),
+                                      void (^_progress)(uint64_t _bytes_proc, uint64_t _bytes_total))
 {
     if(m_SeqFile.get() == 0)
         return VFSError::InvalidCall;
@@ -48,11 +50,28 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
         m_Size = m_SeqFile->Size();
         m_DataBuf.reset(new uint8_t[m_Size]);
         
+        const size_t max_io = 256*1024;
         uint8_t *d = &m_DataBuf[0];
         uint8_t *e = d + m_Size;
         ssize_t res;
-        while( ( res = m_SeqFile->Read(d, e-d) ) > 0)
+        while( ( res = m_SeqFile->Read(d, MIN(e-d, max_io)) ) > 0)
+        {
             d += res;
+
+            if(_cancel_checker && _cancel_checker()) {
+                m_SeqFile.reset();
+                return VFSError::Cancelled;
+            }
+
+            if(_progress)
+                _progress(d - &m_DataBuf[0], m_Size);
+        }
+        
+        if(_cancel_checker && _cancel_checker())
+        {
+            m_SeqFile.reset();
+            return VFSError::Cancelled;
+        }
         
         if(res < 0)
             return (int)res;
@@ -76,7 +95,9 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
         if(fd < 0)
             return VFSError::FromErrno(errno);
 
-        unlink(pattern_buf); // preemtive unlink - OS will remove inode upon last descriptor closing        
+        unlink(pattern_buf); // preemtive unlink - OS will remove inode upon last descriptor closing
+        
+        fcntl(fd, F_NOCACHE, 1); // don't need to cache this temporaral stuff
         
         m_FD = fd;
 
@@ -91,6 +112,9 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
         
         while ( (res_read = m_SeqFile->Read(buf, MIN(bufsz, left_read))) > 0 )
         {
+            if(_cancel_checker && _cancel_checker())
+                return VFSError::Cancelled;
+            
             ssize_t res_write;
             while(res_read > 0)
             {
@@ -99,6 +123,9 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
                 {
                     res_read -= res_write;
                     total_wrote += res_write;
+                    
+                    if(_progress)
+                        _progress(total_wrote, m_Size);
                 }
                 else
                     return VFSError::FromErrno(errno);
@@ -118,6 +145,11 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
     }
     
     return VFSError::Ok;
+}
+
+int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
+{
+    return Open(_flags, _cancel_checker, nil);
 }
 
 int VFSSeqToRandomROWrapperFile::Close()

@@ -1045,12 +1045,13 @@
         return;
     if([self IsPanelActive])
     {
-        auto *i = [[self ActivePanelView] CurrentItem];
-        if(i)
+        auto i = [[self ActivePanelView] CurrentItem];
+        if(i && !i->IsDir())
         {
-            string tmp = [self ActivePanelData]->DirectoryPathWithTrailingSlash() + i->Name();
-            [(MainWindowController*)[[self window] delegate] RequestBigFileView:tmp.c_str()
-             with_fs:[self ActivePanelData]->DirectoryEntries().Host()];
+            string path = [self ActivePanelData]->DirectoryPathWithTrailingSlash() + i->Name();
+            auto host = [self ActivePanelData]->DirectoryEntries().Host();
+            [(MainWindowController*)self.window.delegate RequestBigFileView:path
+                                                                    with_fs:host];
         }
     }
 }

@@ -36,6 +36,9 @@ int VFSArchiveUnRARFile::Open(int _open_flags, bool (^_cancel_checker)())
     auto entry = rar_host->FindEntry(RelativePath());
     if(entry == 0)
         return SetLastError(VFSError::NotFound);
+    
+    if(entry->isdir)
+        return SetLastError(VFSError::FromErrno(EISDIR));
 
     m_Entry = entry;
     m_Archive = rar_host->SeekCache(entry->uuid);

@@ -53,6 +53,7 @@ public:
     virtual int Unlink(const char *_path, bool (^_cancel_checker)());
     
     virtual bool ShouldProduceThumbnails() override;
+    virtual bool IsWriteable() const override;
     
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    

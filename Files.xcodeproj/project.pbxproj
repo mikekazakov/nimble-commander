@@ -255,6 +255,7 @@
 		CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */; };
 		CFB709B518DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */; };
 		CFB709B918E3CB3600A83E61 /* MyToolbar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B818E3CB3600A83E61 /* MyToolbar.mm */; };
+		CFB709BC18E4760D00A83E61 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BB18E4760D00A83E61 /* Help.pdf */; };
 		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
@@ -712,6 +713,7 @@
 		CFB709B418DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJobGenericToGeneric.h; sourceTree = "<group>"; };
 		CFB709B718E3CB3600A83E61 /* MyToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyToolbar.h; sourceTree = "<group>"; };
 		CFB709B818E3CB3600A83E61 /* MyToolbar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyToolbar.mm; sourceTree = "<group>"; };
+		CFB709BB18E4760D00A83E61 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Help.pdf; sourceTree = "<group>"; };
 		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
 		CFB8F22D17CA3C80004574FE /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSHost.h; sourceTree = "<group>"; };
 		CFB8F22F17CA4175004574FE /* VFSListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSListing.mm; sourceTree = "<group>"; };
@@ -1632,6 +1634,7 @@
 		CFC5121B16C4BD3D00D247EE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CFB709BB18E4760D00A83E61 /* Help.pdf */,
 				CFC5121C16C4BD3D00D247EE /* Files-Info.plist */,
 				CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */,
 				CFC5122016C4BD3D00D247EE /* main.m */,
@@ -1781,6 +1784,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB709BC18E4760D00A83E61 /* Help.pdf in Resources */,
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
 				CF649C3D18D2D31600055595 /* show_oplist_hl_icon.png in Resources */,

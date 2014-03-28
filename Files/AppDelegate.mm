@@ -383,4 +383,11 @@
     return m_MainWindows;
 }
 
+- (IBAction)OnShowHelp:(id)sender
+{
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"Help" ofType:@"pdf"];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    [[NSWorkspace sharedWorkspace] openURL:url];
+}
+
 @end

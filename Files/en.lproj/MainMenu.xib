@@ -308,7 +308,7 @@ DQ
                                 </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="t5L-ik-2nt"/>
-                            <menuItem title="Show Toolbar" tag="13180" id="I1T-dz-dM2">
+                            <menuItem title="Show/Hide Toolbar" tag="13180" id="I1T-dz-dM2">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleToolbarShown:" target="-1" id="rXv-kQ-QFb"/>
@@ -574,7 +574,7 @@ CA
                         <items>
                             <menuItem title="Files Help" keyEquivalent="?" id="iBP-LD-aNS">
                                 <connections>
-                                    <action selector="showHelp:" target="-1" id="kD5-TK-crO"/>
+                                    <action selector="OnShowHelp:" target="-1" id="mbF-jF-ZMK"/>
                                 </connections>
                             </menuItem>
                         </items>

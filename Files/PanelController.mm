@@ -791,7 +791,9 @@ void panel::GenericCursorPersistance::Restore()
         {
             auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
 //            auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
-            host->Open("/", nullptr);
+            if(host->Open("/", nullptr) != 0)
+                return true;
+
             vector<shared_ptr<VFSHost>> hosts;
             hosts.emplace_back(host);
             

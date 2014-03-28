@@ -391,3 +391,8 @@ void VFSNetFTPHost::InformDirectoryChanged(const string &_dir_wth_sl)
         if(i.path == _dir_wth_sl)
             i.handler();
 }
+
+bool VFSNetFTPHost::IsWriteable() const
+{
+    return false;
+}

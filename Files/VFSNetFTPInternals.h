@@ -217,6 +217,9 @@ struct Entry
     time_t      time   = 0;
     mode_t      mode   = 0;
     mutable bool dirty = false; // true when this entry was explicitly set as outdated
+                                // redundant? directory containting entry can also be dirty
+    
+    
     // links support in the future
     
     void ToStat(VFSStat &_stat) const

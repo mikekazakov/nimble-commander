@@ -376,8 +376,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 return false;
             
             
-            if(!m_HostsStack.back()->IsNativeFS()
-               /*&& is_writeable && is_writeable_at_path */)
+            if(!m_HostsStack.back()->IsNativeFS() &&
+               m_HostsStack.back()->IsWriteable() )
             {
                 if(sender.draggingSourceOperationMask != NSDragOperationCopy)
                     return false;

@@ -88,7 +88,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
 @implementation BigFileViewHex
 {
     // basic stuff
-    BigFileView    *m_View;
+    __unsafe_unretained BigFileView *m_View;
     BigFileViewDataBackend *m_Data;
     unique_ptr<UniChar[]> m_FixupWindow;
     

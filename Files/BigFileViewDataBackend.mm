@@ -12,10 +12,8 @@
 BigFileViewDataBackend::BigFileViewDataBackend(FileWindow *_fw, int _encoding):
     m_FileWindow(_fw),
     m_Encoding(_encoding),
-    m_OnDecoded(0),
-    m_DecodedBufferSize(0),
-    m_DecodeBuffer(m_FileWindow->WindowSize()),
-    m_DecodeBufferIndx(m_FileWindow->WindowSize())
+    m_DecodeBuffer(new UniChar[m_FileWindow->WindowSize()]),
+    m_DecodeBufferIndx(new uint32_t[m_FileWindow->WindowSize()])
 {
     assert(encodings::IsValidEncoding(_encoding));
     DecodeBuffer();
@@ -28,8 +26,8 @@ void BigFileViewDataBackend::DecodeBuffer()
     encodings::InterpretAsUnichar(m_Encoding,
                                   (unsigned char*)m_FileWindow->Window() + (odd ? 1 : 0),
                                   m_FileWindow->WindowSize() - (odd ? 1 : 0),
-                                  m_DecodeBuffer.data(),
-                                  m_DecodeBufferIndx.data(),
+                                  m_DecodeBuffer.get(),
+                                  m_DecodeBufferIndx.get(),
                                   &m_DecodedBufferSize);
     if(m_OnDecoded)
         m_OnDecoded();

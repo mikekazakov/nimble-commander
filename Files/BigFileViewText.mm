@@ -155,7 +155,7 @@ struct TextLine
 @implementation BigFileViewText
 {
     // basic stuff
-    BigFileView             *m_View;
+    __unsafe_unretained BigFileView      *m_View;
     BigFileViewDataBackend  *m_Data;
 
     // data stuff

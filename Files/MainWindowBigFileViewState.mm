@@ -77,14 +77,6 @@ static int FileWindowSize()
     return self;
 }
 
-- (void) dealloc
-{
-    if(m_FileWindow && m_FileWindow->FileOpened())
-        m_FileWindow->CloseFile();
-    if(m_SearchFileWindow && m_SearchFileWindow->FileOpened())
-        m_SearchFileWindow->CloseFile();
-}
-
 - (NSView*) ContentView
 {
     return self;
@@ -99,9 +91,6 @@ static int FileWindowSize()
 - (void) Resigned
 {
     [self SaveFileState];
-    
-    [m_View SetDelegate:nil];
-    [m_View DoClose];
     m_SearchInFileQueue->Stop();
     m_SearchInFileQueue->Wait();
 }
@@ -137,14 +126,14 @@ static int FileWindowSize()
     [self cancelOperation:sender];
 }
 
-- (bool) OpenFile: (const char*) _fn with_fs:(shared_ptr<VFSHost>) _host
+- (bool)OpenFile:(const char*)_fn with_fs:(shared_ptr<VFSHost>)_host
 {
     VFSFilePtr vfsfile;
     if(_host->CreateFile(_fn, vfsfile, 0) < 0)
         return false;
 
     if(vfsfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
-    {
+    { // we need to read a file into temporary mem/file storage to access it randomly
         ProcessSheetController *proc = [ProcessSheetController new];
         proc.window.title = @"Opening file...";
         [proc Show];
@@ -156,7 +145,6 @@ static int FileWindowSize()
         }
 
         auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(vfsfile);
-        vfsfile = wrapper;
         int res = wrapper->Open(VFSFile::OF_Read,
                                 ^{ return proc.UserCancelled; },
                                 ^(uint64_t _bytes, uint64_t _total) {
@@ -165,70 +153,61 @@ static int FileWindowSize()
         [proc Close];
         if(res != 0)
             return false;
+        
+        vfsfile = wrapper;
     }
     else
-    {
+    { // just open input file
         if(vfsfile->Open(VFSFile::OF_Read) < 0)
             return false;
     }
     
     auto fw = make_unique<FileWindow>();
+    if(fw->OpenFile(vfsfile, FileWindowSize()) != 0)
+        return false;;
     
-    if(fw->OpenFile(vfsfile, FileWindowSize()) == 0)
+    m_FileWindow = move(fw);
+    m_SearchFileWindow = make_unique<FileWindow>();
+    if(m_SearchFileWindow->OpenFile(vfsfile) != 0)
+        return false;
+    
+    m_SearchInFile = make_unique<SearchInFile>(m_SearchFileWindow.get());
+    m_SearchInFile->SetSearchOptions(
+                                     ([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewCaseSensitiveSearch"] ? SearchInFile::OptionCaseSensitive : 0) |
+                                     ([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewWholePhraseSearch"]   ? SearchInFile::OptionFindWholePhrase : 0) );
+    
+    m_FilePath = _fn;
+    char tmp[MAXPATHLEN*8]; // danger!
+    vfsfile->ComposeFullHostsPath(tmp);
+    m_GlobalFilePath = tmp;
+        
+    // try to load a saved info if any
+    if(BigFileViewHistoryEntry *info =
+        [BigFileViewHistory.sharedHistory FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath.c_str()]])
     {
-        if(m_FileWindow != 0)
-        {
-            if(m_FileWindow->FileOpened())
-                m_FileWindow->CloseFile();
-        }
-        
-        m_FileWindow.swap(fw);
-        m_SearchFileWindow.reset(new FileWindow);
-        m_SearchFileWindow->OpenFile(vfsfile);
-        m_SearchInFile.reset(new SearchInFile(m_SearchFileWindow.get()));
-        m_SearchInFile->SetSearchOptions(
-                                         ([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewCaseSensitiveSearch"] ? SearchInFile::OptionCaseSensitive : 0) |
-                                         ([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewWholePhraseSearch"]   ? SearchInFile::OptionFindWholePhrase : 0) );
-        
-        m_FilePath = _fn;
-        char tmp[MAXPATHLEN*8]; // danger!
-        vfsfile->ComposeFullHostsPath(tmp);
-        m_GlobalFilePath = tmp;
-        
-        // try to load a saved info if any
-        if(BigFileViewHistoryEntry *info =
-           [[BigFileViewHistory sharedHistory] FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath.c_str()]])
-        {
-            BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
-            if(options.encoding && options.mode)
-                [m_View SetKnownFile:m_FileWindow.get() encoding:info->encoding mode:info->view_mode];
-            else {
-                [m_View SetFile:m_FileWindow.get()];
-                if(options.encoding) [m_View SetEncoding:info->encoding];
-                if(options.mode) [m_View SetMode:info->view_mode];
-            }
-            // a bit suboptimal no - may re-layout after first one
-            if(options.wrapping) [m_View SetWordWrap:info->wrapping];
-            if(options.position) [m_View SetVerticalPositionInBytes:info->position];
-            if(options.selection)[m_View SetSelectionInFile:info->selection];
-        }
-        else
+        BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
+        if(options.encoding && options.mode)
+            [m_View SetKnownFile:m_FileWindow.get() encoding:info->encoding mode:info->view_mode];
+        else {
             [m_View SetFile:m_FileWindow.get()];
-        
-        // update UI
-        [self SelectEncodingFromView];
-        [self SelectModeFromView];
-        [self UpdateWordWrap];
-        [self BigFileViewScrolled];
-        
-        return true;
+            if(options.encoding)    m_View.encoding = info->encoding;
+            if(options.mode)        m_View.mode = info->view_mode;
+        }
+        // a bit suboptimal no - may re-layout after first one
+        if(options.wrapping) m_View.wordWrap = info->wrapping;
+        if(options.position) [m_View SetVerticalPositionInBytes:info->position];
+        if(options.selection)[m_View SetSelectionInFile:info->selection];
     }
     else
-    {
-        if(fw->FileOpened())
-            fw->CloseFile();
-        return false;
-    }
+        [m_View SetFile:m_FileWindow.get()];
+        
+    // update UI
+    [self SelectEncodingFromView];
+    [self SelectModeFromView];
+    [self UpdateWordWrap];
+    [self BigFileViewScrolled];
+        
+    return true;
 }
 
 - (void) CreateControls
@@ -241,7 +220,7 @@ static int FileWindowSize()
     
     m_View = [[BigFileView alloc] initWithFrame:self.frame];
     [m_View setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_View SetDelegate:self];
+    m_View.delegate = self;
     [self addSubview:m_View];
     
     m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
@@ -354,9 +333,9 @@ static int FileWindowSize()
 - (void) SelectedEncoding:(id)sender
 {
     for(const auto &i: encodings::LiteralEncodingsList())
-        if([(__bridge NSString*)i.second isEqualToString:[[m_EncodingSelect selectedItem] title]])
+        if([(__bridge NSString*)i.second isEqualToString:m_EncodingSelect.selectedItem.title])
         {
-            [m_View SetEncoding:i.first];
+            m_View.encoding = i.first;
             [self UpdateSearchFilter:self];
             break;
         }
@@ -364,20 +343,20 @@ static int FileWindowSize()
 
 - (void) UpdateWordWrap
 {
-    [m_WordWrap setState:[m_View WordWrap] ? NSOnState : NSOffState];
-    [m_WordWrap setEnabled:[m_View Mode] == BigFileViewModes::Text];
+    m_WordWrap.state = m_View.WordWrap ? NSOnState : NSOffState;
+    m_WordWrap.enabled = m_View.Mode == BigFileViewModes::Text;
 }
 
 - (void) WordWrapChanged:(id)sender
 {
-    [m_View SetWordWrap: [m_WordWrap state]==NSOnState];
+    m_View.wordWrap = m_WordWrap.state == NSOnState;
 }
 
 - (void) SelectModeFromView
 {
-    if([m_View Mode] == BigFileViewModes::Text)
+    if(m_View.Mode == BigFileViewModes::Text)
         [m_ModeSelect selectItemAtIndex:0];
-    else if([m_View Mode] == BigFileViewModes::Hex)
+    else if(m_View.Mode == BigFileViewModes::Hex)
         [m_ModeSelect selectItemAtIndex:1];
     else
         assert(0);
@@ -385,10 +364,10 @@ static int FileWindowSize()
 
 - (void) SelectMode:(id)sender
 {
-    if([m_ModeSelect indexOfSelectedItem] == 0)
-        [m_View SetMode:BigFileViewModes::Text];
-    else if([m_ModeSelect indexOfSelectedItem] == 1)
-        [m_View SetMode:BigFileViewModes::Hex];
+    if(m_ModeSelect.indexOfSelectedItem == 0)
+        m_View.mode = BigFileViewModes::Text;
+    else if(m_ModeSelect.indexOfSelectedItem == 1)
+        m_View.mode = BigFileViewModes::Hex;
     [self UpdateWordWrap];
 }
 
@@ -402,7 +381,7 @@ static int FileWindowSize()
 
 - (void) BigFileViewScrolledByUser
 {
-    m_SearchInFile->MoveCurrentPosition([m_View VerticalPositionInBytes]);
+    m_SearchInFile->MoveCurrentPosition(m_View.VerticalPositionInBytes);
 }
 
 - (void)UpdateSearchFilter:sender

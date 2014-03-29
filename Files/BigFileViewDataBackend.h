@@ -8,12 +8,14 @@
 
 #pragma once
 #import "FileWindow.h"
-#import <vector>
+#import <memory>
 
 using namespace std;
 
-// this class encapsulates working with file windows and decoding raw data into UniChars
-// BigFileViewDataBackend has no ownership on FileWindow, it should be released by caller's code
+/**
+ * this class encapsulates working with file windows and decoding raw data into UniChars
+ * BigFileViewDataBackend has no ownership on FileWindow, it should be released by caller's code
+ */
 class BigFileViewDataBackend
 {
 public:
@@ -51,20 +53,16 @@ private:
     
     FileWindow *m_FileWindow;
     int         m_Encoding;
-    void        (^m_OnDecoded)();
+    void        (^m_OnDecoded)() = nullptr;
 
-    vector<UniChar>  m_DecodeBuffer;
-                                            // decoded buffer with unichars
+    unique_ptr<UniChar[]> m_DecodeBuffer;   // decoded buffer with unichars
                                             // useful size of m_DecodedBufferSize
 
-    vector<uint32_t> m_DecodeBufferIndx;    // array indexing every m_DecodeBuffer unicode character into a
+    unique_ptr<uint32_t[]> m_DecodeBufferIndx;    // array indexing every m_DecodeBuffer unicode character into a
                                             // byte offset within original file window
                                             // useful size of m_DecodedBufferSize
     
-    size_t          m_DecodedBufferSize;    // amount of unichars
-    
-    BigFileViewDataBackend(const BigFileViewDataBackend&) = delete;
-    void operator=(const BigFileViewDataBackend&) = delete;
+    size_t          m_DecodedBufferSize = 0;// amount of unichars
 };
 
 
@@ -90,12 +88,12 @@ inline uint64_t BigFileViewDataBackend::RawSize() const
 
 inline const UniChar *BigFileViewDataBackend::UniChars() const
 {
-    return m_DecodeBuffer.data();
+    return m_DecodeBuffer.get();
 }
 
 inline const uint32_t *BigFileViewDataBackend::UniCharToByteIndeces() const
 {
-    return m_DecodeBufferIndx.data();
+    return m_DecodeBufferIndx.get();
 }
 
 inline uint32_t BigFileViewDataBackend::UniCharsSize() const

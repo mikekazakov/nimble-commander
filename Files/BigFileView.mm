@@ -28,7 +28,7 @@ static NSArray *MyDefaultsKeys()
 @implementation BigFileView
 {
     FileWindow     *m_File;
-    shared_ptr<BigFileViewDataBackend> m_Data;
+    unique_ptr<BigFileViewDataBackend> m_Data;
 
     CTFontRef       m_Font;
     CGColorRef      m_ForegroundColor;
@@ -41,7 +41,7 @@ static NSArray *MyDefaultsKeys()
     bool            m_WrapWords;
     
     __strong id<BigFileViewProtocol>      m_ViewImpl;
-    __strong id<BigFileViewDelegateProtocol> m_Delegate;
+    __weak  id<BigFileViewDelegateProtocol> m_Delegate;
     
     NSScroller      *m_VerticalScroller;
     CFRange         m_SelectionInFile;  // in bytes, raw position within whole file
@@ -51,17 +51,41 @@ static NSArray *MyDefaultsKeys()
                                                  // updated when windows moves, regarding current selection in bytes
 }
 
-- (void)awakeFromNib
-{
-    [self DoInit];
-}
+//@property (nonatomic, weak) id<BigFileViewDelegateProtocol> delegate;
+@synthesize delegate = m_Delegate;
 
 - (id)initWithFrame:(NSRect)frame
 {
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self DoInit];
-        // Initialization code here.
+    if (self = [super initWithFrame:frame]) {
+        m_WrapWords = true;
+        m_SelectionInFile = CFRangeMake(-1, 0);
+        m_SelectionInWindow = CFRangeMake(-1, 0);
+        m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
+        
+        if( [(AppDelegate*)NSApplication.sharedApplication.delegate Skin] == ApplicationSkin::Modern)
+            [self InitAppearanceForModernPresentation];
+        else
+            [self InitAppearanceForClassicPresentation];
+        
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(frameDidChange)
+                                                   name:NSViewFrameDidChangeNotification
+                                                 object:self];
+        
+        m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+        m_VerticalScroller.enabled = true;
+        m_VerticalScroller.target = self;
+        m_VerticalScroller.action = @selector(VerticalScroll:);
+        m_VerticalScroller.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_VerticalScroller];
+        
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_VerticalScroller(15)]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_VerticalScroller]-(==0)-|" options:0 metrics:nil views:views]];
+        
+        [self frameDidChange];
+        
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:MyDefaultsKeys() options:0 context:0];
     }
     
     return self;
@@ -69,43 +93,10 @@ static NSArray *MyDefaultsKeys()
 
 - (void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPaths:MyDefaultsKeys()];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:MyDefaultsKeys()];
     CFRelease(m_ForegroundColor);
     CFRelease(m_Font);
-}
-
-- (void) DoInit
-{
-    m_WrapWords = true;
-    m_SelectionInFile = CFRangeMake(-1, 0);
-    m_SelectionInWindow = CFRangeMake(-1, 0);
-    m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
-
-    if( [(AppDelegate*)[NSApplication sharedApplication].delegate Skin] == ApplicationSkin::Modern)
-        [self InitAppearanceForModernPresentation];
-    else
-        [self InitAppearanceForClassicPresentation];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(frameDidChange)
-                                                 name:NSViewFrameDidChangeNotification
-                                               object:self];
-    
-    m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    [m_VerticalScroller setEnabled:YES];
-    [m_VerticalScroller setTarget:self];
-    [m_VerticalScroller setAction:@selector(VerticalScroll:)];
-    [m_VerticalScroller setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self addSubview:m_VerticalScroller];
-
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_VerticalScroller(15)]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_VerticalScroller]-(==0)-|" options:0 metrics:nil views:views]];
-    
-    [self frameDidChange];
-    
-    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPaths:MyDefaultsKeys() options:0 context:0];
 }
 
 - (void) InitAppearanceForModernPresentation
@@ -132,8 +123,8 @@ static NSArray *MyDefaultsKeys()
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
-    auto skin = [(AppDelegate*)[NSApplication sharedApplication].delegate Skin];
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    auto skin = [(AppDelegate*)NSApplication.sharedApplication.delegate Skin];
 
     if(skin == ApplicationSkin::Modern) {
         if([keyPath isEqualToString:@"BigFileViewModernBackgroundColor"])
@@ -191,25 +182,25 @@ static NSArray *MyDefaultsKeys()
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    [m_ViewImpl DoDraw:context dirty:dirtyRect]; // m_ViewImpl can be nil
+    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    [m_ViewImpl DoDraw:context dirty:dirtyRect];
 }
 
 - (void)resetCursorRects
 {
-    [self addCursorRect:self.frame cursor:[NSCursor IBeamCursor]];
+    [self addCursorRect:self.frame cursor:NSCursor.IBeamCursor];
 }
 
 - (void) SetFile:(FileWindow*) _file
 {
     int encoding = encodings::EncodingFromName(
-        [[[NSUserDefaults standardUserDefaults] stringForKey:@"BigFileViewDefaultEncoding"] UTF8String]);
+        [NSUserDefaults.standardUserDefaults stringForKey:@"BigFileViewDefaultEncoding"].UTF8String);
     if(encoding == ENCODING_INVALID)
         encoding = ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
     StaticDataBlockAnalysis stat;
     DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
-    if([[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewEncodingAutoDetect"])
+    if([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewEncodingAutoDetect"])
     {
         if(stat.likely_utf16_le)        encoding = ENCODING_UTF16LE;
         else if(stat.likely_utf16_be)   encoding = ENCODING_UTF16BE;
@@ -226,14 +217,13 @@ static NSArray *MyDefaultsKeys()
     assert(_encoding != ENCODING_INVALID);
     
     m_File = _file;
-    m_Data = make_shared<BigFileViewDataBackend>(m_File, _encoding);
+    m_Data = make_unique<BigFileViewDataBackend>(m_File, _encoding);
     BigFileView* __weak weak_self = self;
     m_Data->SetOnDecoded(^{
-        if(weak_self) {
-            BigFileView *__strong strong_self = weak_self;
-            [strong_self UpdateSelectionRange];
-            if(strong_self->m_ViewImpl)
-                [strong_self->m_ViewImpl OnBufferDecoded];
+        if(BigFileView *sself = weak_self) {
+            [sself UpdateSelectionRange];
+            if(sself->m_ViewImpl)
+                [sself->m_ViewImpl OnBufferDecoded];
         }
     });
     
@@ -251,52 +241,58 @@ static NSArray *MyDefaultsKeys()
         default: [super keyDown:event]; return;
     }
     if(was_vert_pos != [self VerticalPositionInBytes])
-        [m_Delegate BigFileViewScrolledByUser];
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveUp:(id)sender{
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
     [m_ViewImpl OnUpArrow];
-    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveDown:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
     [m_ViewImpl OnDownArrow];
-    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveLeft:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
     if([m_ViewImpl respondsToSelector:@selector(OnLeftArrow)]) [m_ViewImpl OnLeftArrow];
-    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveRight:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
     if([m_ViewImpl respondsToSelector:@selector(OnRightArrow)]) [m_ViewImpl OnRightArrow];
-    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)pageDown:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];    
     [m_ViewImpl OnPageDown];
-    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void) pageUp:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
     [m_ViewImpl OnPageUp];
-    if(was_vert_pos != [self VerticalPositionInBytes]) [m_Delegate BigFileViewScrolledByUser];
+    if(was_vert_pos != [self VerticalPositionInBytes])
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (int) Enconding
 {
-    if(m_Data.get()) return m_Data->Encoding();
+    if(m_Data) return m_Data->Encoding();
     return ENCODING_UTF8; // ??
 }
 
-- (void) SetEncoding:(int)_encoding
+- (void) setEncoding:(int)_encoding
 {
     m_Data->SetEncoding(_encoding);
 }
@@ -335,19 +331,12 @@ static NSArray *MyDefaultsKeys()
     m_Data->MoveWindowSync(_pos);
 }
 
-- (void) DoClose
-{    
-    [self removeFromSuperview];
-
-    m_ViewImpl = nil;
-}
-
 - (void) UpdateVerticalScroll: (double) _pos prop:(double)prop
 {
     [m_VerticalScroller setKnobProportion:prop];
     [m_VerticalScroller setDoubleValue:_pos];
 
-    [m_Delegate BigFileViewScrolled];
+    [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolled];
 }
 
 - (void)VerticalScroll:(id)sender
@@ -378,7 +367,7 @@ static NSArray *MyDefaultsKeys()
             break;
     }
     if(was_vert_pos != [self VerticalPositionInBytes])
-        [m_Delegate BigFileViewScrolledByUser];
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
@@ -386,7 +375,7 @@ static NSArray *MyDefaultsKeys()
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
     [m_ViewImpl OnScrollWheel:theEvent];
     if(was_vert_pos != [self VerticalPositionInBytes])
-        [m_Delegate BigFileViewScrolledByUser];
+        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (bool)WordWrap
@@ -394,7 +383,7 @@ static NSArray *MyDefaultsKeys()
     return m_WrapWords;
 }
 
-- (void)SetWordWrap:(bool)_wrapping
+- (void)setWordWrap:(bool)_wrapping
 {
     if(m_WrapWords != _wrapping)
     {
@@ -414,7 +403,7 @@ static NSArray *MyDefaultsKeys()
         assert(0);
 }
 
-- (void) SetMode: (BigFileViewModes) _mode
+- (void) setMode: (BigFileViewModes) _mode
 {
     if(_mode == [self Mode])
         return;
@@ -435,11 +424,6 @@ static NSArray *MyDefaultsKeys()
 
     [m_ViewImpl InitWithData:m_Data.get() parent:self];
     [m_ViewImpl MoveOffsetWithinWindow:current_offset];
-}
-
-- (void) SetDelegate:(id<BigFileViewDelegateProtocol>) _delegate
-{
-    m_Delegate = _delegate;
 }
 
 - (double) VerticalScrollPosition

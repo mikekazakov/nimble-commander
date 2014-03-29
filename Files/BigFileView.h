@@ -28,8 +28,6 @@ enum class BigFileViewModes
 
 - (void) SetFile:(FileWindow*) _file;
 - (void) SetKnownFile:(FileWindow*) _file encoding:(int)_encoding mode:(BigFileViewModes)_mode;
-- (void) SetDelegate:(id<BigFileViewDelegateProtocol>) _delegate;
-- (void) DoClose;
 
 - (void) RequestWindowMovementAt: (uint64_t) _pos;
 - (void) UpdateVerticalScroll: (double) _pos prop:(double)prop;
@@ -44,13 +42,13 @@ enum class BigFileViewModes
 
 // Frontend section
 - (int)         Enconding;
-- (void)        SetEncoding:(int)_encoding;
+- (void)        setEncoding:(int)_encoding;
 
 - (bool)        WordWrap;
-- (void)        SetWordWrap:(bool)_wrapping;
+- (void)        setWordWrap:(bool)_wrapping;
 
 - (BigFileViewModes) Mode;
-- (void)        SetMode: (BigFileViewModes) _mode;
+- (void)        setMode: (BigFileViewModes) _mode;
 
 - (double)      VerticalScrollPosition;
 - (uint64_t)    VerticalPositionInBytes; // whithin all file, now in a window
@@ -63,5 +61,5 @@ enum class BigFileViewModes
 - (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window
 - (CFRange)     SelectionWithinWindowUnichars;              // unichars within a decoded window
 
-
+@property (nonatomic, weak) id<BigFileViewDelegateProtocol> delegate;
 @end

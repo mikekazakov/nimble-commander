@@ -9,12 +9,16 @@
 #import "ProcessSheetController.h"
 #import "Common.h"
 
+static const auto g_ShowDelaySec = 0.15;
+
 @implementation ProcessSheetController
 {
     bool m_Running;
     bool m_UserCancelled;
     bool m_ClientClosed;
 }
+
+@synthesize UserCancelled = m_UserCancelled;
 
 - (id)init
 {
@@ -42,8 +46,8 @@
     
     if(m_Running == true)
         return;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if(m_UserCancelled)
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(g_ShowDelaySec * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if(m_ClientClosed)
             return;
         [self showWindow:self];
         m_Running = true;
@@ -52,7 +56,7 @@
 
 - (void)Close
 {
-    m_UserCancelled = true;
+    m_ClientClosed = true;
     [self Discard];
 }
 
@@ -61,16 +65,8 @@
     if(m_Running == false)
         return;
     
-    if(dispatch_is_main_queue())
-        [self.window close];
-    else
-        dispatch_to_main_queue(^{[self.window close];});
+    dispatch_to_main_queue(^{ [self.window close]; });
     m_Running = false;
-}
-
-- (bool) UserCancelled
-{
-    return m_UserCancelled;
 }
 
 @end

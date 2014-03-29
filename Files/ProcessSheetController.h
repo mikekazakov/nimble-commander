@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface ProcessSheetController : NSWindowController
-- (IBAction)OnCancel:(id)sender;
+
 - (void)Show;
 - (void)Close;
 

@@ -730,6 +730,7 @@ void panel::GenericCursorPersistance::Restore()
                 if(![self CheckAgainstRequestedSelection])
                     pers.Restore();
 
+                [self OnCursorChanged];
                 [m_View setNeedsDisplay:true];
             });
         }
@@ -789,8 +790,8 @@ void panel::GenericCursorPersistance::Restore()
     if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
-            auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-//            auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
+//            auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+            auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
             if(host->Open("/", nullptr) != 0)
                 return true;
 
@@ -1004,25 +1005,16 @@ void panel::GenericCursorPersistance::Restore()
 - (void) OnCursorChanged
 {
     // need to update some UI here
-    auto const *item = [m_View CurrentItem];
-    if(item)
-    {
-        if(item->IsDotDot())
-            [m_ShareButton setEnabled:m_Data.Stats().selected_entries_amount > 0];
-        else
-        {
-            if(m_HostsStack.back()->IsNativeFS())
-                [m_ShareButton setEnabled:true];
-            else
-                [m_ShareButton setEnabled:!item->IsDir() && item->Size() < [SharingService MaximumFileSizeForVFSShare]];
-        }
-    }
-    else
-        [m_ShareButton setEnabled:false];
+    auto item = [m_View CurrentItem];
+    auto host = m_HostsStack.back();
+  
+    // update share button regaring current state
+    m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
+                            [SharingService SharingEnabledForItem:item VFS:host];
     
     // update QuickLook if any
     [(QuickLookView *)m_QuickLook PreviewItem:[self GetCurrentFocusedEntryFilePathRelativeToHost]
-                                          vfs:m_HostsStack.back()];
+                                          vfs:host];
 }
 
 - (void)OnEjectButton:(id)sender

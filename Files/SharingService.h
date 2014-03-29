@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "chained_strings.h"
 #import "VFS.h"
+
 @interface SharingService : NSObject<NSSharingServicePickerDelegate>
 
 - (void) ShowItems:(chained_strings)_entries
@@ -18,7 +19,7 @@
             OfView:(NSView*)_view
      PreferredEdge:(NSRectEdge)_preferredEdge;
 
-+ (uint64_t) MaximumFileSizeForVFSShare;
 + (bool) IsCurrentlySharing; // use this to prohibit parallel sharing - this can cause significal system overload
++ (bool) SharingEnabledForItem:(const VFSListingItem*)_item VFS:(shared_ptr<VFSHost>)_host;
 
 @end

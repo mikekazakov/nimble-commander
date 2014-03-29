@@ -44,9 +44,22 @@ static atomic<int> g_IsCurrentlySharing(0);
     }
 }
 
-+ (uint64_t) MaximumFileSizeForVFSShare
++ (bool) SharingEnabledForItem:(const VFSListingItem*)_item VFS:(shared_ptr<VFSHost>)_host
 {
-    return g_MaxFileSizeForVFSShare;
+    if(_item == nullptr || _host == nullptr)
+        return false;
+    
+    if(_item->IsDotDot())
+        return false;
+    
+    if(_host->IsNativeFS())
+        return true;
+    
+    if(_item->IsDir() == false &&
+       _item->Size() < g_MaxFileSizeForVFSShare)
+        return true;
+    
+    return false;
 }
 
 + (bool) IsCurrentlySharing

@@ -40,7 +40,7 @@ static NSArray *MyDefaultsKeys()
     // layout
     bool            m_WrapWords;
     
-    __strong id<BigFileViewProtocol>      m_ViewImpl;
+    unique_ptr<BigFileViewImpl> m_ViewImpl;
     __weak  id<BigFileViewDelegateProtocol> m_Delegate;
     
     NSScroller      *m_VerticalScroller;
@@ -61,6 +61,7 @@ static NSArray *MyDefaultsKeys()
         m_SelectionInFile = CFRangeMake(-1, 0);
         m_SelectionInWindow = CFRangeMake(-1, 0);
         m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
+        m_ViewImpl = make_unique<BigFileViewImpl>(); // dummy for initialization process
         
         if( [(AppDelegate*)NSApplication.sharedApplication.delegate Skin] == ApplicationSkin::Modern)
             [self InitAppearanceForModernPresentation];
@@ -138,12 +139,12 @@ static NSArray *MyDefaultsKeys()
         else if([keyPath isEqualToString:@"BigFileViewModernTextColor"]) {
             CFRelease(m_ForegroundColor);
             m_ForegroundColor = [[defaults colorForKey:@"BigFileViewModernTextColor"] SafeCGColorRef];
-            [m_ViewImpl OnFontSettingsChanged];
+            m_ViewImpl->OnFontSettingsChanged();
         }
         else if([keyPath isEqualToString:@"BigFileViewModernFont"]) {
             CFRelease(m_Font);
             m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewModernFont"]);
-            [m_ViewImpl OnFontSettingsChanged];
+            m_ViewImpl->OnFontSettingsChanged();
         }
     }
     else if(skin == ApplicationSkin::Classic) {
@@ -158,12 +159,12 @@ static NSArray *MyDefaultsKeys()
         else if([keyPath isEqualToString:@"BigFileViewClassicTextColor"]) {
             CFRelease(m_ForegroundColor);
             m_ForegroundColor = [[defaults colorForKey:@"BigFileViewClassicTextColor"] SafeCGColorRef];
-            [m_ViewImpl OnFontSettingsChanged];
+            m_ViewImpl->OnFontSettingsChanged();
         }
         else if([keyPath isEqualToString:@"BigFileViewClassicFont"]) {
             CFRelease(m_Font);
             m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewClassicFont"]);
-            [m_ViewImpl OnFontSettingsChanged];
+            m_ViewImpl->OnFontSettingsChanged();
         }
     }
     
@@ -183,7 +184,7 @@ static NSArray *MyDefaultsKeys()
 - (void)drawRect:(NSRect)dirtyRect
 {
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
-    [m_ViewImpl DoDraw:context dirty:dirtyRect];
+    m_ViewImpl->DoDraw(context, dirtyRect);
 }
 
 - (void)resetCursorRects
@@ -222,13 +223,19 @@ static NSArray *MyDefaultsKeys()
     m_Data->SetOnDecoded(^{
         if(BigFileView *sself = weak_self) {
             [sself UpdateSelectionRange];
-            if(sself->m_ViewImpl)
-                [sself->m_ViewImpl OnBufferDecoded];
+            sself->m_ViewImpl->OnBufferDecoded();
         }
     });
     
-    m_ViewImpl = _mode == BigFileViewModes::Hex ? [BigFileViewHex alloc] : [BigFileViewText alloc];    
-    [m_ViewImpl InitWithData:m_Data.get() parent:self];
+//    m_ViewImpl = _mode == BigFileViewModes::Hex ? [BigFileViewHex alloc] : [BigFileViewText alloc];
+//    [m_ViewImpl InitWithData:m_Data.get() parent:self];
+//    m_ViewImpl = _mode == BigFileViewModes::Hex ?
+//        make_unique<BigFileViewHex>(m_Data.get(), self) :
+//        make_unique<BigFileViewText>(m_Data.get(), self);
+    if(_mode == BigFileViewModes::Hex)
+        m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self);
+    else if(_mode == BigFileViewModes::Text)
+        m_ViewImpl = make_unique<BigFileViewText>(m_Data.get(), self);
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -236,8 +243,8 @@ static NSArray *MyDefaultsKeys()
     if([[event charactersIgnoringModifiers] length] != 1) return;
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
     switch ([[event charactersIgnoringModifiers] characterAtIndex:0]) {
-        case NSHomeFunctionKey: [m_ViewImpl HandleVerticalScroll:0.0]; break;
-        case NSEndFunctionKey:  [m_ViewImpl HandleVerticalScroll:1.0]; break;
+        case NSHomeFunctionKey: m_ViewImpl->HandleVerticalScroll(0.0); break;
+        case NSEndFunctionKey:  m_ViewImpl->HandleVerticalScroll(1.0); break;
         default: [super keyDown:event]; return;
     }
     if(was_vert_pos != [self VerticalPositionInBytes])
@@ -246,42 +253,42 @@ static NSArray *MyDefaultsKeys()
 
 - (void)moveUp:(id)sender{
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
-    [m_ViewImpl OnUpArrow];
+    m_ViewImpl->OnUpArrow();
     if(was_vert_pos != [self VerticalPositionInBytes])
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveDown:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
-    [m_ViewImpl OnDownArrow];
+    m_ViewImpl->OnDownArrow();
     if(was_vert_pos != [self VerticalPositionInBytes])
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveLeft:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
-    if([m_ViewImpl respondsToSelector:@selector(OnLeftArrow)]) [m_ViewImpl OnLeftArrow];
+    m_ViewImpl->OnLeftArrow();
     if(was_vert_pos != [self VerticalPositionInBytes])
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveRight:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
-    if([m_ViewImpl respondsToSelector:@selector(OnRightArrow)]) [m_ViewImpl OnRightArrow];
+    m_ViewImpl->OnRightArrow();
     if(was_vert_pos != [self VerticalPositionInBytes])
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)pageDown:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];    
-    [m_ViewImpl OnPageDown];
+    m_ViewImpl->OnPageDown();
     if(was_vert_pos != [self VerticalPositionInBytes])
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void) pageUp:(id)sender {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
-    [m_ViewImpl OnPageUp];
+    m_ViewImpl->OnPageUp();
     if(was_vert_pos != [self VerticalPositionInBytes])
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
@@ -299,7 +306,7 @@ static NSArray *MyDefaultsKeys()
 
 - (void)frameDidChange
 {
-    [m_ViewImpl OnFrameChanged];
+    m_ViewImpl->OnFrameChanged();
 }
 
 - (CTFontRef) TextFont{
@@ -345,23 +352,23 @@ static NSArray *MyDefaultsKeys()
     switch ([m_VerticalScroller hitPart])
     {
         case NSScrollerIncrementLine:
-            [m_ViewImpl OnDownArrow];
+            m_ViewImpl->OnDownArrow();
             break;
         case NSScrollerIncrementPage:
             // Include code here for the case where CTRL + down arrow is pressed, or the space the scroll knob moves in is pressed
-            [m_ViewImpl OnPageDown];
+            m_ViewImpl->OnPageDown();
             break;
         case NSScrollerDecrementLine:
             // Include code here for the case where the up arrow is pressed
-            [m_ViewImpl OnUpArrow];            
+            m_ViewImpl->OnUpArrow();
             break;
         case NSScrollerDecrementPage:
             // Include code here for the case where CTRL + up arrow is pressed, or the space the scroll knob moves in is pressed
-            [m_ViewImpl OnPageUp];
+            m_ViewImpl->OnPageUp();
             break;
         case NSScrollerKnob:
             // This case is when the knob itself is pressed
-                [m_ViewImpl HandleVerticalScroll:[m_VerticalScroller doubleValue]];
+            m_ViewImpl->HandleVerticalScroll(m_VerticalScroller.doubleValue);
             break;
         default:
             break;
@@ -373,7 +380,7 @@ static NSArray *MyDefaultsKeys()
 - (void)scrollWheel:(NSEvent *)theEvent
 {
     uint64_t was_vert_pos = [self VerticalPositionInBytes];
-    [m_ViewImpl OnScrollWheel:theEvent];
+    m_ViewImpl->OnScrollWheel(theEvent);
     if(was_vert_pos != [self VerticalPositionInBytes])
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
@@ -388,16 +395,16 @@ static NSArray *MyDefaultsKeys()
     if(m_WrapWords != _wrapping)
     {
         m_WrapWords = _wrapping;
-        if([m_ViewImpl respondsToSelector:@selector(OnWordWrappingChanged)])
-            [m_ViewImpl OnWordWrappingChanged];
+        m_ViewImpl->OnWordWrappingChanged();
     }
 }
 
 - (BigFileViewModes) Mode
 {
-    if( [m_ViewImpl isKindOfClass: [BigFileViewText class]])
+//    if( [m_ViewImpl isKindOfClass: [BigFileViewText class]])
+    if(dynamic_cast<BigFileViewText*>(m_ViewImpl.get()))
         return BigFileViewModes::Text;
-    else if( [m_ViewImpl isKindOfClass: [BigFileViewHex class]])
+    else if(dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
         return BigFileViewModes::Hex;
     else
         assert(0);
@@ -405,25 +412,25 @@ static NSArray *MyDefaultsKeys()
 
 - (void) setMode: (BigFileViewModes) _mode
 {
-    if(_mode == [self Mode])
+    if(_mode == self.Mode)
         return;
     
-    uint32_t current_offset = [m_ViewImpl GetOffsetWithinWindow];
+    uint32_t current_offset = m_ViewImpl->GetOffsetWithinWindow();
     
     switch (_mode)
     {
         case BigFileViewModes::Text:
-            m_ViewImpl = [BigFileViewText alloc];
+            m_ViewImpl = make_unique<BigFileViewText>(m_Data.get(), self);
             break;
         case BigFileViewModes::Hex:
-            m_ViewImpl = [BigFileViewHex alloc];
+            m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self);
             break;
         default:
             assert(0);
     }
 
-    [m_ViewImpl InitWithData:m_Data.get() parent:self];
-    [m_ViewImpl MoveOffsetWithinWindow:current_offset];
+    m_ViewImpl->MoveOffsetWithinWindow(current_offset);
+    [self setNeedsDisplay:true];
 }
 
 - (double) VerticalScrollPosition
@@ -456,19 +463,19 @@ static NSArray *MyDefaultsKeys()
 {
     if(m_SelectionInFile.location >= 0)
     {
-        [m_ViewImpl ScrollToByteOffset:m_SelectionInFile.location];
+        m_ViewImpl->ScrollToByteOffset(m_SelectionInFile.location);
         [self UpdateSelectionRange];
     }
 }
 
 - (uint64_t) VerticalPositionInBytes
 {
-    return uint64_t([m_ViewImpl GetOffsetWithinWindow]) + m_File->WindowPos();
+    return uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
 }
 
 - (void) SetVerticalPositionInBytes:(uint64_t) _pos
 {
-    [m_ViewImpl ScrollToByteOffset:_pos];    
+    m_ViewImpl->ScrollToByteOffset(_pos);
 }
 
 // searching for selected UniChars in file window if there's any overlapping of
@@ -534,8 +541,7 @@ static NSArray *MyDefaultsKeys()
 
 - (void) mouseDown:(NSEvent *)_event
 {
-    if([m_ViewImpl respondsToSelector:@selector(OnMouseDown:)])
-        [m_ViewImpl OnMouseDown:_event];
+    m_ViewImpl->OnMouseDown(_event);
 }
 
  - (void)copy:(id)sender

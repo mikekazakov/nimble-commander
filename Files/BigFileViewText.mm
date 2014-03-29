@@ -143,47 +143,7 @@ static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
     }
 }
 
-struct TextLine
-{
-    uint32_t    unichar_no;      // index of a first unichar whitin a window
-    uint32_t    unichar_len;
-    uint32_t    byte_no;         // offset within file window of a current text line
-    uint32_t    bytes_len;
-    CTLineRef   line;
-};
-
-@implementation BigFileViewText
-{
-    // basic stuff
-    __unsafe_unretained BigFileView      *m_View;
-    BigFileViewDataBackend  *m_Data;
-
-    // data stuff
-    unique_ptr<UniChar[]> m_FixupWindow;
-    CFStringRef     m_StringBuffer;
-    size_t          m_StringBufferSize; // should be equal to m_WindowSize
-        
-    // layout stuff
-    double                      m_FontHeight;
-    double                      m_FontAscent;
-    double                      m_FontDescent;
-    double                      m_FontLeading;
-    double                      m_FontWidth;
-    double                      m_LeftInset;
-    CFMutableAttributedStringRef m_AttrString;
-    vector<TextLine>        m_Lines;
-    unsigned                     m_VerticalOffset; // offset in lines number within text lines
-    unsigned                     m_HorizontalOffset; // offset in characters from the left window edge
-    
-    int                          m_FrameLines; // amount of lines in our frame size ( +1 to fit cutted line also)
-    
-    CGSize                       m_FrameSize;
-    bool                         m_SmoothScroll; // turned on when we can view all file in file window without movements
-    CGPoint                      m_SmoothOffset;
-}
-
-- (id) InitWithData:(BigFileViewDataBackend*) _data
-             parent:(BigFileView*) _view;
+BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _view)
 {
     m_View = _view;
     m_Data = _data;
@@ -197,28 +157,28 @@ struct TextLine
     else
         m_FixupWindow.reset(new UniChar[m_Data->UniCharsSize()]);
     
-    [self GrabFontGeometry];
-    [self OnFrameChanged];
-    [self OnBufferDecoded];
+    GrabFontGeometry();
+//    OnBufferDecoded();
+    OnFrameChanged();
+    OnBufferDecoded();
     
     [m_View setNeedsDisplay:true];
-    return self;
 }
 
-- (void) dealloc
+BigFileViewText::~BigFileViewText()
 {
-    [self ClearLayout];
+    ClearLayout();
     if(m_StringBuffer)
         CFRelease(m_StringBuffer);
 }
 
-- (void) GrabFontGeometry
+void BigFileViewText::GrabFontGeometry()
 {
     m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
 }
 
-- (void) OnBufferDecoded
+void BigFileViewText::OnBufferDecoded()
 {
     if(m_StringBuffer)
         CFRelease(m_StringBuffer);
@@ -229,12 +189,12 @@ struct TextLine
     m_StringBuffer = CFStringCreateWithCharactersNoCopy(0, &m_FixupWindow[0], m_Data->UniCharsSize(), kCFAllocatorNull);
     m_StringBufferSize = CFStringGetLength(m_StringBuffer);
 
-    [self BuildLayout];
+    BuildLayout();
 }
 
-- (void) BuildLayout
+void BigFileViewText::BuildLayout()
 {
-    [self ClearLayout];
+    ClearLayout();
     if(!m_StringBuffer)
         return;
     
@@ -300,7 +260,7 @@ struct TextLine
     [m_View setNeedsDisplay:true];
 }
 
-- (void) ClearLayout
+void BigFileViewText::ClearLayout()
 {
     if(m_AttrString)
     {
@@ -314,7 +274,7 @@ struct TextLine
     m_Lines.clear();
 }
 
-- (CGPoint) TextAnchor
+CGPoint BigFileViewText::TextAnchor()
 {
      NSRect v = [m_View visibleRect];
     CGPoint textPosition;
@@ -323,9 +283,9 @@ struct TextLine
     return textPosition;
 }
 
-- (int) CharIndexFromPoint: (CGPoint) _point
+int BigFileViewText::CharIndexFromPoint(CGPoint _point)
 {
-    CGPoint left_upper = [self TextAnchor];
+    CGPoint left_upper = TextAnchor();
     
     int y_off = ceil((left_upper.y - _point.y) / m_FontHeight);
     int line_no = y_off + m_VerticalOffset;
@@ -346,7 +306,7 @@ struct TextLine
     return ind;
 }
 
-- (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
+void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
 {
     [m_View BackgroundFillColor].Set(_context);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
@@ -357,7 +317,7 @@ struct TextLine
     
     if(!m_StringBuffer) return;
     
-    CGPoint textPosition = [self TextAnchor];
+    CGPoint textPosition = TextAnchor();
     
     CGFloat view_width = [m_View visibleRect].size.width;
     
@@ -418,10 +378,10 @@ struct TextLine
              break;
      }
 
-    [self UpdateVerticalScrollBar];
+    UpdateVerticalScrollBar();
 }
 
-- (void) UpdateVerticalScrollBar
+void BigFileViewText::UpdateVerticalScrollBar()
 {
     if(!m_SmoothScroll)
     {
@@ -451,7 +411,7 @@ struct TextLine
     }
 }
 
-- (void) OnUpArrow
+void BigFileViewText::OnUpArrow()
 {
     if(m_Lines.empty()) return;
     assert(m_VerticalOffset < m_Lines.size());
@@ -481,9 +441,7 @@ struct TextLine
             else
                 desired_window_offset = 0;
             
-            [self MoveFileWindowTo:desired_window_offset
-                        WithAnchor:anchor_glob_offset
-                          AtLineNo:1];
+            MoveFileWindowTo(desired_window_offset, anchor_glob_offset, 1);
         }
         else
         {
@@ -496,7 +454,7 @@ struct TextLine
     }
 }
 
-- (void) OnDownArrow
+void BigFileViewText::OnDownArrow()
 {
     if(m_Lines.empty()) return;
     assert(m_VerticalOffset < m_Lines.size());
@@ -527,14 +485,12 @@ struct TextLine
             if(desired_window_offset + window_size > file_size) // we'll reach a file's end
                 desired_window_offset = file_size - window_size;
             
-            [self MoveFileWindowTo:desired_window_offset
-                        WithAnchor:anchor_glob_offset
-                          AtLineNo:-1];
+            MoveFileWindowTo(desired_window_offset, anchor_glob_offset, -1);
         }
     }
 }
 
-- (void) OnPageDown
+void BigFileViewText::OnPageDown()
 {
     if(m_Lines.empty()) return;
     assert(m_VerticalOffset < m_Lines.size());
@@ -566,9 +522,7 @@ struct TextLine
             if(desired_window_offset + window_size > file_size) // we'll reach a file's end
                 desired_window_offset = file_size - window_size;
             
-            [self MoveFileWindowTo:desired_window_offset
-                        WithAnchor:anchor_glob_offset
-                          AtLineNo:-1];
+            MoveFileWindowTo(desired_window_offset, anchor_glob_offset, -1);
         }
         else
         {
@@ -582,7 +536,7 @@ struct TextLine
     }
 }
 
-- (void) OnPageUp
+void BigFileViewText::OnPageUp()
 {
     if(m_Lines.empty()) return;
     assert(m_VerticalOffset < m_Lines.size());
@@ -611,9 +565,7 @@ struct TextLine
             else
                 desired_window_offset = 0;
             
-            [self MoveFileWindowTo:desired_window_offset
-                        WithAnchor:anchor_glob_offset
-                          AtLineNo:int(m_FrameLines)];
+            MoveFileWindowTo(desired_window_offset, anchor_glob_offset, m_FrameLines);
         }
         else
         {
@@ -626,7 +578,8 @@ struct TextLine
     }
 }
 
-- (void) MoveFileWindowTo:(uint64_t)_pos WithAnchor:(uint64_t)_byte_no AtLineNo:(int)_line
+void BigFileViewText::MoveFileWindowTo(uint64_t _pos, uint64_t _anchor_byte_no, int _anchor_line_no)
+//- (void) MoveFileWindowTo:(uint64_t)_pos WithAnchor:(uint64_t)_byte_no AtLineNo:(int)_line
 {
     // now move our file window
     [m_View RequestWindowMovementAt:_pos];
@@ -642,11 +595,11 @@ struct TextLine
     for(size_t i = 0; i < m_Lines.size(); ++i)
     {
         uint64_t pos = (uint64_t)m_Lines[i].byte_no + window_pos;
-        if( pos == _byte_no)
+        if( pos == _anchor_byte_no)
         {
             found = true;
-            if((int)i - _line >= 0)
-                m_VerticalOffset = (int)i - _line;
+            if((int)i - _anchor_line_no >= 0)
+                m_VerticalOffset = (int)i - _anchor_line_no;
             else
                 m_VerticalOffset = 0; // edge case - we can't satisfy request, since whole file window is less than one page(?)
             if(m_VerticalOffset >= m_Lines.size())
@@ -658,10 +611,10 @@ struct TextLine
         }
         else
         {
-            if(pos > _byte_no)
+            if(pos > _anchor_byte_no)
                 break; // ?
             
-            uint64_t d = pos < _byte_no ? _byte_no - pos : pos - _byte_no;
+            uint64_t d = pos < _anchor_byte_no ? _anchor_byte_no - pos : pos - _anchor_line_no;
             if(d < closest_dist)
             {
                 closest_dist = d;
@@ -672,8 +625,8 @@ struct TextLine
     
     if(!found) // choose closest line as a new anchor
     {
-        if((int)closest_ind - _line >= 0)
-            m_VerticalOffset = (int)closest_ind - _line;
+        if((int)closest_ind - _anchor_line_no >= 0)
+            m_VerticalOffset = (int)closest_ind - _anchor_line_no;
         else
             m_VerticalOffset = 0; // edge case - we can't satisfy request, since whole file window is less than one page(?)
     }
@@ -682,7 +635,7 @@ struct TextLine
     [m_View setNeedsDisplay:true];
 }
 
-- (uint32_t) GetOffsetWithinWindow
+uint32_t BigFileViewText::GetOffsetWithinWindow()
 {
     if(!m_Lines.empty())
     {
@@ -696,7 +649,7 @@ struct TextLine
     }
 }
 
-- (void) MoveOffsetWithinWindow: (uint32_t)_offset
+void BigFileViewText::MoveOffsetWithinWindow(uint32_t _offset)
 {
     uint32_t min_dist = 1000000;
     size_t closest = 0;
@@ -723,7 +676,7 @@ struct TextLine
            m_VerticalOffset < m_Lines.size());
 }
 
-- (void) ScrollToByteOffset: (uint64_t)_offset
+void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
 {
     uint64_t window_pos = m_Data->FilePos();
     uint64_t window_size = m_Data->RawSize();
@@ -776,18 +729,18 @@ struct TextLine
     if(desired_wnd_pos + window_size >= file_size)
         desired_wnd_pos = file_size - window_size;
     
-    [self MoveFileWindowTo:desired_wnd_pos WithAnchor:_offset AtLineNo:0];
+    MoveFileWindowTo(desired_wnd_pos, _offset, 0);
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
     m_SmoothOffset.y = 0;
 }
 
-- (void) HandleVerticalScroll: (double) _pos
+void BigFileViewText::HandleVerticalScroll(double _pos)
 {
     if(!m_SmoothScroll)
     { // scrolling by bytes offset
         uint64_t file_size = m_Data->FileSize();
         uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
-        [self ScrollToByteOffset: bytepos];
+        ScrollToByteOffset(bytepos);
         
         if(m_Lines.size() - m_VerticalOffset < m_FrameLines )
             m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
@@ -805,7 +758,7 @@ struct TextLine
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
 
-- (void) OnScrollWheel:(NSEvent *)theEvent
+void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
 {
     double delta_y = [theEvent scrollingDeltaY];
     double delta_x = [theEvent scrollingDeltaX];
@@ -827,11 +780,11 @@ struct TextLine
             m_SmoothOffset.y -= delta_y;
         
             while(m_SmoothOffset.y < -m_FontHeight) {
-                [self OnUpArrow];
+                OnUpArrow();
                 m_SmoothOffset.y += m_FontHeight;
             }
             while(m_SmoothOffset.y > m_FontHeight) {
-                [self OnDownArrow];
+                OnDownArrow();
                 m_SmoothOffset.y -= m_FontHeight;
             }
         }
@@ -895,19 +848,19 @@ struct TextLine
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
 
-- (void) OnFrameChanged
+void BigFileViewText::OnFrameChanged()
 {
     NSRect fr = [m_View frame];
     m_FrameLines = fr.size.height / m_FontHeight;
 
     if(m_FrameSize.width != fr.size.width)
-        [self BuildLayout];
+        BuildLayout();
     m_FrameSize = fr.size;
 }
 
-- (void) OnWordWrappingChanged
+void BigFileViewText::OnWordWrappingChanged()
 {
-    [self BuildLayout];
+    BuildLayout();
     if(m_VerticalOffset >= m_Lines.size())
     {
         if(m_Lines.size() >= m_FrameLines)
@@ -919,14 +872,14 @@ struct TextLine
     m_SmoothOffset.x = 0;
 }
 
-- (void) OnFontSettingsChanged
+void BigFileViewText::OnFontSettingsChanged()
 {
-    [self GrabFontGeometry];
-    [self OnFrameChanged];
-    [self BuildLayout];
+    GrabFontGeometry();
+    OnFrameChanged();
+    BuildLayout();
 }
 
-- (void) OnLeftArrow
+void BigFileViewText::OnLeftArrow()
 {
     if(![m_View WordWrap] && m_HorizontalOffset > 0)
     {
@@ -935,7 +888,7 @@ struct TextLine
     }
 }
 
-- (void) OnRightArrow
+void BigFileViewText::OnRightArrow()
 {
     if(![m_View WordWrap])
     {
@@ -944,20 +897,20 @@ struct TextLine
     }
 }
 
-- (void) OnMouseDown:(NSEvent *)event
+void BigFileViewText::OnMouseDown(NSEvent *event)
 {
     if([event clickCount] > 2)
-        [self HandleSelectionWithTripleClick:event];
+        HandleSelectionWithTripleClick(event);
     else if ([event clickCount] == 2)
-        [self HandleSelectionWithDoubleClick:event];
+        HandleSelectionWithDoubleClick(event);
     else
-        [self HandleSelectionWithMouseDragging:event];
+        HandleSelectionWithMouseDragging(event);
 }
 
-- (void) HandleSelectionWithTripleClick: (NSEvent*) event
+void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
 {
     NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int uc_index = clip([self CharIndexFromPoint:pt], 0, (int)m_StringBufferSize);
+    int uc_index = clip(CharIndexFromPoint(pt), 0, (int)m_StringBufferSize);
 
     for(const auto &i: m_Lines)
         if(i.unichar_no <= uc_index && i.unichar_no + i.unichar_len > uc_index)
@@ -971,10 +924,10 @@ struct TextLine
         }
 }
 
-- (void) HandleSelectionWithDoubleClick: (NSEvent*) event
+void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
 {
     NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int uc_index = clip([self CharIndexFromPoint:pt], 0, (int)m_StringBufferSize);
+    int uc_index = clip(CharIndexFromPoint(pt), 0, (int)m_StringBufferSize);
 
     __block int sel_start = 0, sel_end = 0;
     
@@ -1009,19 +962,19 @@ struct TextLine
     [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
 }
 
-- (void) HandleSelectionWithMouseDragging: (NSEvent*) event
+void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
 {
     bool modifying_existing_selection = ([event modifierFlags] & NSShiftKeyMask) ? true : false;
     
     NSPoint first_down = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int first_ind = clip([self CharIndexFromPoint:first_down], 0, (int)m_StringBufferSize);
+    int first_ind = clip(CharIndexFromPoint(first_down), 0, (int)m_StringBufferSize);
     
     CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
     
     while ([event type]!=NSLeftMouseUp)
     {
         NSPoint curr_loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-        int curr_ind = clip([self CharIndexFromPoint:curr_loc], 0, (int)m_StringBufferSize);
+        int curr_ind = clip(CharIndexFromPoint(curr_loc), 0, (int)m_StringBufferSize);
         
         int base_ind = first_ind;
         if(modifying_existing_selection && orig_sel.length > 0)
@@ -1051,5 +1004,3 @@ struct TextLine
         event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
     }
 }
-
-@end

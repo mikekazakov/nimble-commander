@@ -14,11 +14,11 @@
 #import "FontExtras.h"
 
 static const unsigned g_BytesPerHexLine = 16;
-static const unsigned g_HexColumns = 2;
 static const unsigned g_RowOffsetSymbs = 10;
 static const unsigned g_GapBetweenColumns = 2;
 static const unsigned g_SymbsPerBytes = 2;
 static const unsigned g_GapBetweenBytes = 1;
+static const unsigned g_HexColumns = 2;
 
 // return monospace char index before the specified _byte byte.
 // includes spaces (2 space) between columns and spaces (1 space) between bytes
@@ -55,87 +55,55 @@ static int Hex_ByteFromCharPos(int _char)
     return byte_in_col + col_num * byte_per_col;
 }
 
-enum class HitPart
-{
-    RowOffset,
-    DataDump,
-    Text
+static const unsigned char g_4Bits_To_Char[16] = {
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
 
-namespace
-{
-
-struct TextLine
+struct BigFileViewHex::TextLine
 {
     uint32_t char_start;        // unicode character index in window
     uint32_t chars_num;         // amount of unicode characters in line
     uint32_t string_byte_start; // byte information about string
     uint32_t string_bytes_num;
-    uint32_t row_byte_start;    // offset within file window corresponding to the current row start 
+    uint32_t row_byte_start;    // offset within file window corresponding to the current row start
     uint32_t row_bytes_num;
-
+    
     CTLineRef   text_ctline;
     CFStringRef hex[g_HexColumns];
     CFStringRef row;
 };
-    
-}
 
-static const unsigned char g_4Bits_To_Char[16] = {
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-};
-
-@implementation BigFileViewHex
-{
-    // basic stuff
-    __unsafe_unretained BigFileView *m_View;
-    BigFileViewDataBackend *m_Data;
-    unique_ptr<UniChar[]> m_FixupWindow;
-    
-    unsigned              m_RowsOffset;
-    CGPoint               m_SmoothOffset;
-    int                   m_FrameLines; // amount of lines in our frame size ( +1 to fit cutted line also)    
-    double                m_FontHeight;
-    double                m_FontWidth;
-    double                m_FontAscent;
-    double                m_FontDescent;
-    double                m_FontLeading;
-    double                m_LeftInset;
-    vector<TextLine> m_Lines;
-}
-- (id) InitWithData:(BigFileViewDataBackend*) _data
-             parent:(BigFileView*) _view;
+BigFileViewHex::BigFileViewHex(BigFileViewDataBackend* _data, BigFileView* _view)
 {
     m_View = _view;
     m_Data = _data;
     m_FixupWindow.reset(new UniChar[m_Data->RawSize()]);
     m_LeftInset = 5;
     
-    [self GrabFontGeometry];
-    [self OnBufferDecoded];
+    GrabFontGeometry();
+    OnBufferDecoded();
     
     m_RowsOffset = 0;
     
     [m_View setNeedsDisplay:true];
-    assert(m_FrameLines >= 0);    
-    return self;
+    assert(m_FrameLines >= 0);
 }
 
-- (void) dealloc
+BigFileViewHex::~BigFileViewHex()
 {
-    [self ClearLayout];
+    ClearLayout();
 }
 
-- (void) GrabFontGeometry
+void BigFileViewHex::GrabFontGeometry()
 {
     m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
     m_FrameLines = floor([m_View frame].size.height / m_FontHeight);    
 }
 
-- (void) OnBufferDecoded
+void BigFileViewHex::OnBufferDecoded()
 {
-    [self ClearLayout];
+    ClearLayout();
     
     // fix our decoded window - clear control characters
     auto uni_window = m_Data->UniChars();
@@ -263,13 +231,13 @@ static const unsigned char g_4Bits_To_Char[16] = {
     [m_View setNeedsDisplay:true];
 }
 
-- (void) OnFontSettingsChanged
+void BigFileViewHex::OnFontSettingsChanged()
 {
-    [self GrabFontGeometry];
-    [self OnBufferDecoded];
+    GrabFontGeometry();
+    OnBufferDecoded();
 }
 
-- (void) ClearLayout
+void BigFileViewHex::ClearLayout()
 {
     for(auto &i: m_Lines)
     {
@@ -282,7 +250,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_Lines.clear();
 }
 
-- (CGPoint) TextAnchor
+CGPoint BigFileViewHex::TextAnchor()
 {
     NSRect v = [m_View visibleRect];
     CGPoint textPosition;
@@ -291,9 +259,9 @@ static const unsigned char g_4Bits_To_Char[16] = {
     return textPosition;
 }
 
-- (HitPart) PartHitTest: (CGPoint) _p
+BigFileViewHex::HitPart BigFileViewHex::PartHitTest(CGPoint _p)
 {
-    CGPoint text_pos = [self TextAnchor];
+    CGPoint text_pos = TextAnchor();
     if(_p.x < text_pos.x + m_FontWidth * (g_RowOffsetSymbs + 3))
         return HitPart::RowOffset;
     
@@ -305,9 +273,9 @@ static const unsigned char g_4Bits_To_Char[16] = {
 }
 
 // should be called when Part is DataDump
-- (int) ByteIndexFromHitTest: (CGPoint) _p
+int BigFileViewHex::ByteIndexFromHitTest(CGPoint _p)
 {
-    CGPoint left_upper = [self TextAnchor];
+    CGPoint left_upper = TextAnchor();
     
     int y_off = ceil((left_upper.y - _p.y) / m_FontHeight);
     int row_no = y_off + m_RowsOffset;
@@ -324,9 +292,9 @@ static const unsigned char g_4Bits_To_Char[16] = {
 }
 
 // shold be called when Part is Text
-- (int) CharIndexFromHitTest: (CGPoint) _p
+int BigFileViewHex::CharIndexFromHitTest(CGPoint _p)
 {
-    CGPoint left_upper = [self TextAnchor];
+    CGPoint left_upper = TextAnchor();
     
     int y_off = ceil((left_upper.y - _p.y) / m_FontHeight);
     int row_no = y_off + m_RowsOffset;
@@ -347,7 +315,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     return m_Lines[row_no].char_start;    
 }
 
-- (void) DoDraw:(CGContextRef) _context dirty:(NSRect)_dirty_rect
+void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
 {
     [m_View BackgroundFillColor].Set(_context);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
@@ -359,7 +327,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     CFRange selection = [m_View SelectionWithinWindowUnichars];
     CFRange bselection = [m_View SelectionWithinWindow];
 
-    CGPoint text_pos = [self TextAnchor];
+    CGPoint text_pos = TextAnchor();
     
     NSDictionary *text_attr =@{NSFontAttributeName:(NSFont*)[m_View TextFont],
                                NSForegroundColorAttributeName:[NSColor colorWithCGColorSafe:[m_View TextForegroundColor]]};
@@ -458,7 +426,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     [m_View UpdateVerticalScroll:pos prop:prop];
 }
 
-- (void) OnUpArrow
+void BigFileViewHex::OnUpArrow()
 {
     if(m_Lines.empty()) return;    
     assert(m_RowsOffset < m_Lines.size());
@@ -503,7 +471,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
 }
 
-- (void) OnDownArrow
+void BigFileViewHex::OnDownArrow()
 {
     if(m_Lines.empty()) return;
     assert(m_RowsOffset < m_Lines.size());
@@ -540,7 +508,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
 }
 
-- (void) OnPageDown
+void BigFileViewHex::OnPageDown()
 {
     if(m_Lines.empty()) return;    
     assert(m_RowsOffset < m_Lines.size());
@@ -587,7 +555,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
 }
 
-- (void) OnPageUp
+void BigFileViewHex::OnPageUp()
 {
     if(m_Lines.empty()) return;    
     assert(m_RowsOffset < m_Lines.size());
@@ -633,7 +601,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
 }
 
-- (uint32_t) GetOffsetWithinWindow
+uint32_t BigFileViewHex::GetOffsetWithinWindow()
 {
     if(m_Lines.empty())
         return 0;
@@ -641,7 +609,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     return m_Lines[m_RowsOffset].row_byte_start;
 }
 
-- (void) MoveOffsetWithinWindow: (uint32_t)_offset
+void BigFileViewHex::MoveOffsetWithinWindow(uint32_t _offset)
 {
     // A VERY BAD IMPLEMENTATION!!!!
     // TODO: optimize me
@@ -669,22 +637,22 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_SmoothOffset.y = 0;
 }
 
-- (void) HandleVerticalScroll: (double) _pos
+void BigFileViewHex::HandleVerticalScroll(double _pos)
 {
     if(m_Data->FileSize() < g_BytesPerHexLine * m_FrameLines)
         return;
 
     uint64_t file_size = m_Data->FileSize();
     uint64_t bytepos = uint64_t( _pos * double(file_size - g_BytesPerHexLine * m_FrameLines) );
-    [self ScrollToByteOffset:bytepos];
+    ScrollToByteOffset(bytepos);
 }
 
-- (void) OnFrameChanged
+void BigFileViewHex::OnFrameChanged()
 {
     m_FrameLines = floor([m_View frame].size.height / m_FontHeight);    
 }
 
-- (void) ScrollToByteOffset: (uint64_t)_offset
+void BigFileViewHex::ScrollToByteOffset(uint64_t _offset)
 {
     uint64_t window_pos = m_Data->FilePos();
     uint64_t window_size = m_Data->RawSize();
@@ -735,27 +703,27 @@ static const unsigned char g_4Bits_To_Char[16] = {
     m_SmoothOffset.y = 0;
 }
 
-- (void) OnMouseDown:(NSEvent *)event
+void BigFileViewHex::OnMouseDown(NSEvent *event)
 {
-    [self HandleSelectionWithMouseDragging:event];
+    HandleSelectionWithMouseDragging(event);
 }
 
-- (void) HandleSelectionWithMouseDragging: (NSEvent*) event
+void BigFileViewHex::HandleSelectionWithMouseDragging(NSEvent* event)
 {
     bool modifying_existing_selection = ([event modifierFlags] & NSShiftKeyMask) ? true : false;
     NSPoint first_down = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    HitPart hit_part = [self PartHitTest:first_down];
+    HitPart hit_part = PartHitTest(first_down);
     
     if(hit_part == HitPart::DataDump)
     {
         CFRange orig_sel = [m_View SelectionWithinWindow];        
         uint64_t window_size = m_Data->RawSize();
-        int first_byte = clip([self ByteIndexFromHitTest:first_down], 0, (int)window_size);
+        int first_byte = clip(ByteIndexFromHitTest(first_down), 0, (int)window_size);
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_byte = clip([self ByteIndexFromHitTest:loc], 0, (int)window_size);
+            int curr_byte = clip(ByteIndexFromHitTest(loc), 0, (int)window_size);
 
             int base_byte = first_byte;
             if(modifying_existing_selection && orig_sel.length > 0)
@@ -784,12 +752,12 @@ static const unsigned char g_4Bits_To_Char[16] = {
     else if(hit_part == HitPart::Text)
     {
         CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
-        int first_char = clip([self CharIndexFromHitTest:first_down], 0, (int)m_Data->UniCharsSize());
+        int first_char = clip(CharIndexFromHitTest(first_down), 0, (int)m_Data->UniCharsSize());
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_char = clip([self CharIndexFromHitTest:loc], 0, (int)m_Data->UniCharsSize());
+            int curr_char = clip(CharIndexFromHitTest(loc), 0, (int)m_Data->UniCharsSize());
             
             int base_char = first_char;
             if(modifying_existing_selection && orig_sel.length > 0)
@@ -820,7 +788,7 @@ static const unsigned char g_4Bits_To_Char[16] = {
     }
 }
 
-- (void) OnScrollWheel:(NSEvent *)theEvent
+void BigFileViewHex::OnScrollWheel(NSEvent *theEvent)
 {
     double delta_y = [theEvent scrollingDeltaY];
     if(![theEvent hasPreciseScrollingDeltas])
@@ -835,11 +803,11 @@ static const unsigned char g_4Bits_To_Char[16] = {
         m_SmoothOffset.y -= delta_y;
             
         while(m_SmoothOffset.y < -m_FontHeight) {
-            [self OnUpArrow];
+            OnUpArrow();
             m_SmoothOffset.y += m_FontHeight;
         }
         while(m_SmoothOffset.y > m_FontHeight) {
-            [self OnDownArrow];
+            OnDownArrow();
             m_SmoothOffset.y -= m_FontHeight;
         }
         [m_View setNeedsDisplay:true];
@@ -856,7 +824,6 @@ static const unsigned char g_4Bits_To_Char[16] = {
         m_SmoothOffset.y = 0;
 }
 
-@end
 
 
 

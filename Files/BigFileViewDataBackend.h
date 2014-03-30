@@ -13,8 +13,8 @@
 using namespace std;
 
 /**
- * this class encapsulates working with file windows and decoding raw data into UniChars
- * BigFileViewDataBackend has no ownership on FileWindow, it should be released by caller's code
+ * This class encapsulates working with file windows and decoding raw data into UniChars.
+ * BigFileViewDataBackend has no ownership on FileWindow, it should be released by caller's code.
  */
 class BigFileViewDataBackend
 {
@@ -50,7 +50,11 @@ public:
     uint64_t    FilePos()  const;
     
     const void *Raw() const;            // data of current file window
-    uint64_t    RawSize() const;        // file window size. it will not change with this object lives
+    
+    /**
+     * File window size. It will not change while this object lives
+     */
+    uint64_t    RawSize() const;
     
     const UniChar     *UniChars() const;      // decoded buffer
     const uint32_t    *UniCharToByteIndeces() const;  // byte indeces within file window of decoded unichars

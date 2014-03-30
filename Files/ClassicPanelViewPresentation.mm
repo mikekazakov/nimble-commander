@@ -21,6 +21,34 @@
 // Helper functions and constants.
 /////////////////////////////////////////////////////////////////////////////////////////
 
+static bool TimeFormatIsDayFirst()
+{
+    static bool day_first = true; // month is first overwise
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // a very-very nasty code here - trying to parse Unicode Technical Standard #35 stuff in a quite naive way
+        NSDateFormatter *dateFormatter = [NSDateFormatter new];
+        dateFormatter.dateStyle = NSDateFormatterShortStyle;
+        
+        NSString *format = dateFormatter.dateFormat;
+        const char *s = format.UTF8String;
+        
+        const char *m = strstr(s, "MM");
+        if(m == nullptr)
+            m = strstr(s, "M");
+        
+        const char *d = strstr(s, "dd");
+        if(d == nullptr)
+            d = strstr(s, "d");
+        
+        if(m < d)
+            day_first = false;
+    });
+    
+    return day_first;
+}
+
 // _out will be _not_ null-terminated, just a raw buffer
 static void FormHumanReadableTimeRepresentation14(time_t _in, UniChar _out[14])
 {
@@ -28,16 +56,27 @@ static void FormHumanReadableTimeRepresentation14(time_t _in, UniChar _out[14])
     localtime_r(&_in, &tt);
     
     char buf[32];
-    sprintf(buf, "%2.2d.%2.2d.%2.2d %2.2d:%2.2d",
-            tt.tm_mday,
-            tt.tm_mon + 1,
-            tt.tm_year % 100,
-            tt.tm_hour,
-            tt.tm_min
-            );
+    if(TimeFormatIsDayFirst())
+        sprintf(buf, "%2.2d.%2.2d.%2.2d %2.2d:%2.2d",
+                tt.tm_mday,
+                tt.tm_mon + 1,
+                tt.tm_year % 100,
+                tt.tm_hour,
+                tt.tm_min
+                );
+    else
+        sprintf(buf, "%2.2d.%2.2d.%2.2d %2.2d:%2.2d",
+                tt.tm_mon + 1,
+                tt.tm_mday,
+                tt.tm_year % 100,
+                tt.tm_hour,
+                tt.tm_min
+                );
     
     for(int i = 0; i < 14; ++i) _out[i] = buf[i];
 }
+
+
 
 static void FormHumanReadableDateRepresentation8(time_t _in, UniChar _out[8])
 {
@@ -45,11 +84,18 @@ static void FormHumanReadableDateRepresentation8(time_t _in, UniChar _out[8])
     localtime_r(&_in, &tt);
     
     char buf[32];
-    sprintf(buf, "%2.2d.%2.2d.%2.2d",
-            tt.tm_mday,
-            tt.tm_mon + 1,
-            tt.tm_year % 100
-            );
+    if(TimeFormatIsDayFirst())
+        sprintf(buf, "%2.2d.%2.2d.%2.2d",
+                tt.tm_mday,
+                tt.tm_mon + 1,
+                tt.tm_year % 100
+                );
+    else
+        sprintf(buf, "%2.2d.%2.2d.%2.2d",
+                tt.tm_mon + 1,
+                tt.tm_mday,
+                tt.tm_year % 100
+                );
     for(int i = 0; i < 8; ++i) _out[i] = buf[i];
 }
 

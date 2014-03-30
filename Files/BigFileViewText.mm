@@ -138,7 +138,7 @@ static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
             _s[i] = ' ';
         }
         
-        if(c == 0x000D && i + 1< _n && _s[i+1] == 0x000A)
+        if(c == 0x000D && i + 1 < _n && _s[i+1] == 0x000A)
             _s[i] = ' '; // fix windows-like CR+LF newline to native LF
     }
 }
@@ -196,24 +196,16 @@ struct BigFileViewText::TextLine
     void operator=(const TextLine&) = delete;
 };
 
-BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _view)
+BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _view):
+    m_FixupWindow(make_unique<UniChar[]>(m_Data->RawSize())), // unichar for every byte in raw window - should be ok in all cases
+    m_View(_view),
+    m_Data(_data),
+    m_FrameSize(CGSizeMake(0, 0)),
+    m_SmoothScroll(_data->IsFullCoverage())
 {
-    m_View = _view;
-    m_Data = _data;
-    m_FrameSize = CGSizeMake(0, 0);
-    m_LeftInset = 5;
-    m_HorizontalOffset = 0;
-    m_SmoothScroll = _data->IsFullCoverage();
-
-    if(!_data->IsFullCoverage())
-        m_FixupWindow.reset(new UniChar[m_Data->RawSize()]); // unichar for every byte in raw window - should be ok in all cases
-    else
-        m_FixupWindow.reset(new UniChar[m_Data->UniCharsSize()]);
-    
     GrabFontGeometry();
     OnFrameChanged();
     OnBufferDecoded();
-    
     [m_View setNeedsDisplay:true];
 }
 

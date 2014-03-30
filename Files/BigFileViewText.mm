@@ -143,6 +143,59 @@ static void CleanUnicodeControlSymbols(UniChar *_s, size_t _n)
     }
 }
 
+struct BigFileViewText::TextLine
+{
+    TextLine()
+    {
+    }
+    TextLine(TextLine &&_r)
+    {
+        unichar_no = _r.unichar_no;
+        unichar_len = _r.unichar_len;
+        byte_no = _r.byte_no;
+        bytes_len = _r.bytes_len;
+        line = _r.line;
+        memset(&_r, 0, sizeof(TextLine));
+    }
+    ~TextLine()
+    {
+        if(line != 0)
+        {
+            CFRelease(line);
+            line = 0;
+        }
+    }
+    
+    /**
+     * index of a first unichar of this line whithin a window
+     */
+    uint32_t    unichar_no  = 0;
+    
+    /**
+     * amount of unichars in this line
+     */
+    uint32_t    unichar_len = 0;
+    
+    /**
+     * offset within file window of a current text line (offset of a first unichar of this line)
+     */
+    uint32_t    byte_no     = 0;
+    
+    
+    uint32_t    bytes_len   = 0;
+    CTLineRef   line        = 0;
+  
+    // helper functions
+    inline bool uni_in(uint32_t _uni_ind) const
+    {
+        return _uni_ind >= unichar_no &&
+               _uni_ind < unichar_no + unichar_len;
+    }
+    
+    TextLine(const TextLine&) = delete;
+    void operator=(const TextLine&) = delete;
+};
+
 BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _view)
 {
     m_View = _view;
@@ -158,7 +211,6 @@ BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _vi
         m_FixupWindow.reset(new UniChar[m_Data->UniCharsSize()]);
     
     GrabFontGeometry();
-//    OnBufferDecoded();
     OnFrameChanged();
     OnBufferDecoded();
     
@@ -236,13 +288,13 @@ void BigFileViewText::BuildLayout()
             count -= tail_spaces_cut;
         }
         
-        // Use the returned character count (to the break) to create the line.                
-        TextLine l;
+        // Use the returned character count (to the break) to create the line.
+        m_Lines.emplace_back();
+        TextLine &l = m_Lines.back();
         l.unichar_no = (uint32_t)start;
         l.unichar_len = (uint32_t)count;
         l.byte_no = m_Data->UniCharToByteIndeces()[start];
         l.bytes_len = m_Data->UniCharToByteIndeces()[start + count - 1] - l.byte_no;
-        m_Lines.push_back(l);
         
         start += count;
     }
@@ -268,27 +320,26 @@ void BigFileViewText::ClearLayout()
         m_AttrString = 0;
     }
     
-    for(auto &i: m_Lines)
-        CFRelease(i.line);
-    
     m_Lines.clear();
 }
 
 CGPoint BigFileViewText::TextAnchor()
 {
-     NSRect v = [m_View visibleRect];
-    CGPoint textPosition;
-    textPosition.x = ceil((m_LeftInset - m_HorizontalOffset * m_FontWidth)) - m_SmoothOffset.x;
-    textPosition.y = floor(v.size.height - m_FontHeight + m_FontDescent) + m_SmoothOffset.y;
-    return textPosition;
+    return NSMakePoint(ceil((m_LeftInset - m_HorizontalOffset * m_FontWidth)) - m_SmoothOffset.x,
+                       floor(m_View.bounds.size.height - m_FontHeight + m_FontDescent) + m_SmoothOffset.y);
+}
+
+int BigFileViewText::LineIndexFromYPos(double _y)
+{
+    CGPoint left_upper = TextAnchor();
+    int y_off = ceil((left_upper.y - _y) / m_FontHeight);
+    int line_no = y_off + m_VerticalOffset;
+    return line_no;
 }
 
 int BigFileViewText::CharIndexFromPoint(CGPoint _point)
 {
-    CGPoint left_upper = TextAnchor();
-    
-    int y_off = ceil((left_upper.y - _point.y) / m_FontHeight);
-    int line_no = y_off + m_VerticalOffset;
+    int line_no = LineIndexFromYPos(_point.y);
     if(line_no < 0)
         return -1;
     if(line_no >= m_Lines.size())
@@ -296,12 +347,11 @@ int BigFileViewText::CharIndexFromPoint(CGPoint _point)
     
     const auto &line = m_Lines[line_no];
 
-    int ind = (int)CTLineGetStringIndexForPosition(line.line, CGPointMake(_point.x - left_upper.x, 0));
-    if(ind == kCFNotFound)
+    int ind = (int)CTLineGetStringIndexForPosition(line.line, CGPointMake(_point.x - TextAnchor().x, 0));
+    if(ind < 0)
         return -1;
 
-    if(ind >= line.unichar_no + line.unichar_len) // TODO: check if this is right
-        ind = line.unichar_no + line.unichar_len - 1;
+    ind = clip(ind, 0, (int)line.unichar_no + (int)line.unichar_len - 1); // TODO: check if this is right
     
     return ind;
 }
@@ -317,46 +367,48 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
     
     if(!m_StringBuffer) return;
     
-    CGPoint textPosition = TextAnchor();
+    CGPoint pos = TextAnchor();
     
-    CGFloat view_width = [m_View visibleRect].size.width;
+    double view_width = m_View.bounds.size.width;
     
     size_t first_string = m_VerticalOffset;
     if(m_SmoothOffset.y < 0 && first_string > 0)
     {
         --first_string; // to be sure that we can see bottom-clipped lines
-        textPosition.y += m_FontHeight;        
+        pos.y += m_FontHeight;
     }
     
     CFRange selection = [m_View SelectionWithinWindowUnichars];
     
-     for(size_t i = first_string; i < m_Lines.size(); ++i)
+     for(size_t i = first_string;
+         i < m_Lines.size() && pos.y >= 0 - m_FontHeight;
+         ++i, pos.y -= m_FontHeight)
      {
-         CTLineRef line = m_Lines[i].line;
+         auto &line = m_Lines[i];
          
          if(selection.location >= 0) // draw a selection background here
          {
              CGFloat x1 = 0, x2 = -1;
-             if(m_Lines[i].unichar_no <= selection.location &&
-                m_Lines[i].unichar_no + m_Lines[i].unichar_len > selection.location)
+             if(line.unichar_no <= selection.location &&
+                line.unichar_no + line.unichar_len > selection.location)
              {
-                 x1 = textPosition.x + CTLineGetOffsetForStringIndex(line, selection.location, 0);
-                 x2 = ((selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len) ?
-                 textPosition.x + CTLineGetOffsetForStringIndex(line,
-                                                    (selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len) ?
-                                                    selection.location + selection.length : m_Lines[i].unichar_no + m_Lines[i].unichar_len,
+                 x1 = pos.x + CTLineGetOffsetForStringIndex(line.line, selection.location, 0);
+                 x2 = ((selection.location + selection.length <= line.unichar_no + line.unichar_len) ?
+                       pos.x + CTLineGetOffsetForStringIndex(line.line,
+                                                    (selection.location + selection.length <= line.unichar_no + line.unichar_len) ?
+                                                    selection.location + selection.length : line.unichar_no + line.unichar_len,
                                                0) : view_width);
              }
-             else if(selection.location + selection.length > m_Lines[i].unichar_no &&
-                     selection.location + selection.length <= m_Lines[i].unichar_no + m_Lines[i].unichar_len )
+             else if(selection.location + selection.length > line.unichar_no &&
+                     selection.location + selection.length <= line.unichar_no + line.unichar_len )
              {
-                 x1 = textPosition.x;
-                 x2 = textPosition.x + CTLineGetOffsetForStringIndex(line, selection.location + selection.length, 0);
+                 x1 = pos.x;
+                 x2 = pos.x + CTLineGetOffsetForStringIndex(line.line, selection.location + selection.length, 0);
              }
-             else if(selection.location < m_Lines[i].unichar_no &&
-                     selection.location + selection.length > m_Lines[i].unichar_no + m_Lines[i].unichar_len)
+             else if(selection.location < line.unichar_no &&
+                     selection.location + selection.length > line.unichar_no + line.unichar_len)
              {
-                 x1 = textPosition.x;
+                 x1 = pos.x;
                  x2 = view_width;
              }
 
@@ -364,18 +416,14 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
              {
                  CGContextSaveGState(_context);
                  CGContextSetShouldAntialias(_context, false);
-                 [m_View SelectionBkFillColor].Set(_context);
-                 CGContextFillRect(_context, CGRectMake(x1, textPosition.y - m_FontDescent, x2 - x1, m_FontHeight));
+                 m_View.SelectionBkFillColor.Set(_context);
+                 CGContextFillRect(_context, CGRectMake(x1, pos.y - m_FontDescent, x2 - x1, m_FontHeight));
                  CGContextRestoreGState(_context);
              }
          }
          
-         CGContextSetTextPosition(_context, textPosition.x, textPosition.y);
-         CTLineDraw(line, _context);
-         
-         textPosition.y -= m_FontHeight;
-         if(textPosition.y < 0 - m_FontHeight)
-             break;
+         CGContextSetTextPosition(_context, pos.x, pos.y);
+         CTLineDraw(line.line, _context);
      }
 
     UpdateVerticalScrollBar();
@@ -411,228 +459,151 @@ void BigFileViewText::UpdateVerticalScrollBar()
     }
 }
 
-void BigFileViewText::OnUpArrow()
+void BigFileViewText::MoveLinesDelta(int _delta)
 {
-    if(m_Lines.empty()) return;
+    if(m_Lines.empty())
+        return;
+    
     assert(m_VerticalOffset < m_Lines.size());
     
-    // check if we still can be within current file window position
-    if( m_VerticalOffset > 1)
-    {
-        // ok, just scroll within current window
-        m_VerticalOffset--;
-        [m_View setNeedsDisplay:true];
-    }
-    else
-    {
-        // nope, we need to move file window if it is possible
-        uint64_t window_pos = m_Data->FilePos();
-        uint64_t window_size = m_Data->RawSize();
-        if(window_pos > 0)
+    const uint64_t window_pos = m_Data->FilePos();
+    const uint64_t window_size = m_Data->RawSize();
+    const uint64_t file_size = m_Data->FileSize();
+    
+    if(_delta < 0)
+    { // we're moving up
+        // check if we can satisfy request within our current window position, without moving it
+        if((int)m_VerticalOffset + _delta >= 0)
         {
-            size_t anchor_index = m_VerticalOffset + 1;
-            if(anchor_index >= m_Lines.size()) anchor_index = m_Lines.size() - 1;
-            
-            uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
-            
-            uint64_t desired_window_offset = anchor_glob_offset;
-            if( desired_window_offset > 3*window_size/4 )// TODO: need something more intelligent here
-                desired_window_offset -= 3*window_size/4;
-            else
-                desired_window_offset = 0;
-            
-            MoveFileWindowTo(desired_window_offset, anchor_glob_offset, 1);
+            // ok, just scroll within current window
+            m_VerticalOffset += _delta;
         }
         else
         {
-            if(m_VerticalOffset > 0)
-            {
-                m_VerticalOffset--;
-                [m_View setNeedsDisplay:true];
+            // nope, we need to move file window if it is possible
+            if(window_pos > 0)
+            { // ok, can move - there's a space
+                uint64_t anchor_glob_offset = m_Lines[m_VerticalOffset].byte_no + window_pos;
+                int anchor_pos_on_screen = -_delta;
+                
+                // TODO: need something more intelligent here
+                uint64_t desired_window_offset = anchor_glob_offset > 3*window_size/4 ?
+                                                    anchor_glob_offset - 3*window_size/4 :
+                                                    0;
+                MoveFileWindowTo(desired_window_offset, anchor_glob_offset, anchor_pos_on_screen);
+            }
+            else
+            { // window is already at the top, need to move scroll within window
+                m_SmoothOffset.y = 0;
+                m_VerticalOffset = 0;
             }
         }
+        [m_View setNeedsDisplay:true];
     }
+    else if(_delta > 0)
+    { // we're moving down
+        if(m_VerticalOffset + _delta + m_FrameLines < m_Lines.size() )
+        { // ok, just scroll within current window
+            m_VerticalOffset += _delta;
+        }
+        else
+        { // nope, we need to move file window if it is possible
+            if(window_pos + window_size < file_size)
+            { // ok, can move - there's a space
+                size_t anchor_index = MIN(m_VerticalOffset + _delta - 1, m_Lines.size() - 1);
+                int anchor_pos_on_screen = -1;
+                
+                uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
+
+                assert(anchor_glob_offset > window_size/4); // internal logic check
+                // TODO: need something more intelligent here
+                uint64_t desired_window_offset = anchor_glob_offset - window_size/4;
+                desired_window_offset = clip(desired_window_offset, 0ull, file_size - window_size);
+                
+                MoveFileWindowTo(desired_window_offset, anchor_glob_offset, anchor_pos_on_screen);
+            }
+            else
+            { // just move offset to the end within our window
+                if(m_VerticalOffset + m_FrameLines < m_Lines.size())
+                    m_VerticalOffset = (unsigned)m_Lines.size() - m_FrameLines;
+            }
+        }
+        [m_View setNeedsDisplay:true];
+    }
+}
+
+void BigFileViewText::OnUpArrow()
+{
+    MoveLinesDelta(-1);
 }
 
 void BigFileViewText::OnDownArrow()
 {
-    if(m_Lines.empty()) return;
-    assert(m_VerticalOffset < m_Lines.size());
-    
-    // check if we still can be within current file window position
-    if( m_VerticalOffset + m_FrameLines < m_Lines.size() )
-    {
-        // ok, just scroll within current window
-        m_VerticalOffset ++;
-        [m_View setNeedsDisplay:true];
-    }
-    else
-    {
-        // nope, we need to move file window if it is possible
-        uint64_t window_pos = m_Data->FilePos();
-        uint64_t window_size = m_Data->RawSize();
-        uint64_t file_size = m_Data->FileSize();
-        if(window_pos + window_size < file_size)
-        {
-            // remember last line offset so we can find it in a new window and layout breakdown
-            uint64_t anchor_glob_offset = m_Lines[m_VerticalOffset].byte_no + window_pos;
-            
-            uint64_t desired_window_offset = anchor_glob_offset;
-//            assert(desired_window_offset > window_size/4);
-            if(desired_window_offset >= window_size/4)
-                desired_window_offset -= window_size/4; // TODO: need something more intelligent here
-            
-            if(desired_window_offset + window_size > file_size) // we'll reach a file's end
-                desired_window_offset = file_size - window_size;
-            
-            MoveFileWindowTo(desired_window_offset, anchor_glob_offset, -1);
-        }
-    }
+    MoveLinesDelta(1);
 }
 
 void BigFileViewText::OnPageDown()
 {
-    if(m_Lines.empty()) return;
-    assert(m_VerticalOffset < m_Lines.size());
-    
-    // check if we can just move our visual offset
-    if( m_VerticalOffset + m_FrameLines*2 < m_Lines.size())
-    {
-        // ok, just move our offset
-        m_VerticalOffset += m_FrameLines;
-        [m_View setNeedsDisplay:true];
-    }
-    else
-    {
-        // nope, we need to move file window if it is possible
-        uint64_t window_pos = m_Data->FilePos();
-        uint64_t window_size = m_Data->RawSize();
-        uint64_t file_size = m_Data->FileSize();
-        if(window_pos + window_size < file_size)
-        {
-            size_t anchor_index = m_VerticalOffset + m_FrameLines - 1;
-            if(anchor_index >= m_Lines.size()) anchor_index = m_Lines.size() - 1;
-            
-            uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
-            
-            uint64_t desired_window_offset = anchor_glob_offset;
-            assert(desired_window_offset > window_size/4); // internal logic check
-            desired_window_offset -= window_size/4; // TODO: need something more intelligent here
-            
-            if(desired_window_offset + window_size > file_size) // we'll reach a file's end
-                desired_window_offset = file_size - window_size;
-            
-            MoveFileWindowTo(desired_window_offset, anchor_glob_offset, -1);
-        }
-        else
-        {
-            // just move offset to the end within our window
-            if(m_VerticalOffset + m_FrameLines < m_Lines.size())
-            {
-                m_VerticalOffset = (unsigned)m_Lines.size() - m_FrameLines;
-                [m_View setNeedsDisplay:true];
-            }
-        }
-    }
+    MoveLinesDelta(m_FrameLines);
 }
 
 void BigFileViewText::OnPageUp()
 {
-    if(m_Lines.empty()) return;
-    assert(m_VerticalOffset < m_Lines.size());
-    
-    // check if we can just move our visual offset
-    if( m_VerticalOffset > m_FrameLines + 1)
-    {
-        // ok, just move our offset
-        m_VerticalOffset -= m_FrameLines;
-        [m_View setNeedsDisplay:true];
-    }
-    else
-    {
-        // nope, we need to move file window if it is possible
-        uint64_t window_pos = m_Data->FilePos();
-        uint64_t window_size = m_Data->RawSize();
-        if(window_pos > 0)
-        {
-            size_t anchor_index = m_VerticalOffset;
-            
-            uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
-            
-            uint64_t desired_window_offset = anchor_glob_offset;
-            if( desired_window_offset > 3*window_size/4 ) // TODO: need something more intelligent here
-                desired_window_offset -= 3*window_size/4;
-            else
-                desired_window_offset = 0;
-            
-            MoveFileWindowTo(desired_window_offset, anchor_glob_offset, m_FrameLines);
-        }
-        else
-        {
-            if(m_VerticalOffset > 0)
-            {
-                m_VerticalOffset=0;
-                [m_View setNeedsDisplay:true];
-            }
-        }
-    }
+    MoveLinesDelta(-m_FrameLines);
 }
 
 void BigFileViewText::MoveFileWindowTo(uint64_t _pos, uint64_t _anchor_byte_no, int _anchor_line_no)
-//- (void) MoveFileWindowTo:(uint64_t)_pos WithAnchor:(uint64_t)_byte_no AtLineNo:(int)_line
 {
     // now move our file window
+    // data updating and layout stuff are called implicitly after that call
     [m_View RequestWindowMovementAt:_pos];
     
-    // update data and layout stuff
-//    [self BuildLayout];   <<-- this will be called implicitly
-    
     // now we need to find a line which is at last_top_line_glob_offset position
-    bool found = false;
-    size_t closest_ind = 0;
-    uint64_t closest_dist = 1000000;
-    uint64_t window_pos = m_Data->FilePos();
-    for(size_t i = 0; i < m_Lines.size(); ++i)
+    if(m_Lines.empty())
     {
-        uint64_t pos = (uint64_t)m_Lines[i].byte_no + window_pos;
-        if( pos == _anchor_byte_no)
-        {
-            found = true;
-            if((int)i - _anchor_line_no >= 0)
-                m_VerticalOffset = (int)i - _anchor_line_no;
-            else
-                m_VerticalOffset = 0; // edge case - we can't satisfy request, since whole file window is less than one page(?)
-            if(m_VerticalOffset >= m_Lines.size())
-            {
-                m_VerticalOffset = (unsigned)m_Lines.size()-1; // TODO: write more intelligent adjustment
-            }
-            
-            break;
-        }
-        else
-        {
-            if(pos > _anchor_byte_no)
-                break; // ?
-            
-            uint64_t d = pos < _anchor_byte_no ? _anchor_byte_no - pos : pos - _anchor_line_no;
-            if(d < closest_dist)
-            {
-                closest_dist = d;
-                closest_ind = i;
-            }
-        }
+        m_VerticalOffset = 0;
+        return;
     }
+        
+    int closest_ind = FindClosestLineInd(_anchor_byte_no);
     
-    if(!found) // choose closest line as a new anchor
-    {
-        if((int)closest_ind - _anchor_line_no >= 0)
-            m_VerticalOffset = (int)closest_ind - _anchor_line_no;
-        else
-            m_VerticalOffset = 0; // edge case - we can't satisfy request, since whole file window is less than one page(?)
-    }
+    m_VerticalOffset = max(closest_ind - _anchor_line_no, 0);
     
     assert(m_VerticalOffset < m_Lines.size());
     [m_View setNeedsDisplay:true];
+}
+
+int BigFileViewText::FindClosestLineInd(uint64_t _glob_offset) const
+{
+    if(m_Lines.empty())
+        return -1;
+
+    const uint64_t window_pos = m_Data->FilePos();
+    
+    auto lower = lower_bound(begin(m_Lines), end(m_Lines), _glob_offset, [=](auto &l, auto r){
+        return (uint64_t)l.byte_no + window_pos < r;
+    });
+
+    size_t closest_ind = 0;
+    
+    if(lower == end(m_Lines))
+        closest_ind = m_Lines.size() - 1;
+    else if(lower == begin(m_Lines))
+        closest_ind = 0;
+    else {
+        closest_ind = lower - begin(m_Lines);
+        
+        // if didn't found exactly requested line
+        uint64_t d1 = (uint64_t)lower->byte_no + window_pos - _glob_offset;
+        if(d1 != 0)
+        { // then compare with prev element
+            auto prev = lower - 1;
+            if(_glob_offset - (uint64_t)prev->byte_no - window_pos < d1)
+                closest_ind = prev - begin(m_Lines);
+        }
+    }
+    
+    return (int)closest_ind;
 }
 
 uint32_t BigFileViewText::GetOffsetWithinWindow()
@@ -651,87 +622,46 @@ uint32_t BigFileViewText::GetOffsetWithinWindow()
 
 void BigFileViewText::MoveOffsetWithinWindow(uint32_t _offset)
 {
-    uint32_t min_dist = 1000000;
-    size_t closest = 0;
-    for(size_t i = 0; i < m_Lines.size(); ++i)
-    {
-        if(m_Lines[i].byte_no == _offset)
-        {
-            closest = i;
-            break;
-        }
-        else
-        {
-            uint32_t dist = m_Lines[i].byte_no > _offset ? m_Lines[i].byte_no - _offset : _offset - m_Lines[i].byte_no;
-            if(dist < min_dist)
-            {
-                min_dist = dist;
-                closest = i;
-            }
-        }
-    }
-    
-    m_VerticalOffset = (unsigned)closest;
-    assert(m_Lines.empty() ||
-           m_VerticalOffset < m_Lines.size());
+    m_VerticalOffset = max(FindClosestLineInd(_offset + m_Data->FilePos()), 0);
+    assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
 
 void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
 {
-    uint64_t window_pos = m_Data->FilePos();
-    uint64_t window_size = m_Data->RawSize();
-    uint64_t file_size = m_Data->FileSize();
+    const uint64_t window_pos = m_Data->FilePos();
+    const uint64_t window_size = m_Data->RawSize();
+    const uint64_t file_size = m_Data->FileSize();
     
-    if(_offset >= window_pos && _offset < window_pos + window_size)
+    m_SmoothOffset.y = 0; // reset vertical smoothing on any scrolling-to-line
+    
+    if((_offset >= window_pos && _offset < window_pos + window_size) ||
+       (_offset == file_size && window_pos + window_size == file_size) )
     {
-        uint32_t offset_in_wnd = uint32_t(_offset - window_pos);
-        
-        uint32_t min_dist = 1000000;
-        size_t closest = 0;
-        for(size_t i = 0; i < m_Lines.size(); ++i)
-        {
-            if(m_Lines[i].byte_no == offset_in_wnd)
-            {
-                closest = i;
-                break;
-            }
-            else
-            {
-                if(m_Lines[i].byte_no > offset_in_wnd)
-                    break; // ?
-                
-                uint32_t dist = m_Lines[i].byte_no > offset_in_wnd ?
-                m_Lines[i].byte_no - offset_in_wnd :
-                offset_in_wnd - m_Lines[i].byte_no;
-                if(dist < min_dist)
-                {
-                    min_dist = dist;
-                    closest = i;
-                }
-            }
-        }
-        
+        // seems that we can satisfy this request immediately, without I/O
+        int closest = FindClosestLineInd(_offset);
         if((unsigned)closest + m_FrameLines < m_Lines.size())
         { // check that we will fill whole screen after scrolling
             m_VerticalOffset = (unsigned)closest;
-            m_SmoothOffset.y = 0;
+            [m_View setNeedsDisplay:true];
+            return;
+        }
+        else if(window_pos + window_size == file_size)
+        { // trying to scroll below bottom
+            m_VerticalOffset = clip((int)m_Lines.size()-m_FrameLines, 0, (int)m_Lines.size()-1);
             [m_View setNeedsDisplay:true];
             return;
         }
     }
-    
-    uint64_t desired_wnd_pos = 0;
-    if(_offset > window_size / 2)
-        desired_wnd_pos = _offset - window_size / 2;
-    else
-        desired_wnd_pos = 0;
-    
-    if(desired_wnd_pos + window_size >= file_size)
-        desired_wnd_pos = file_size - window_size;
+
+    // nope, we need to perform I/O - to move file window
+    uint64_t desired_wnd_pos = _offset > window_size / 2 ?
+                                _offset - window_size / 2 :
+                                0;
+    desired_wnd_pos = clip(desired_wnd_pos, 0ull, file_size - window_size);
     
     MoveFileWindowTo(desired_wnd_pos, _offset, 0);
+    
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
-    m_SmoothOffset.y = 0;
 }
 
 void BigFileViewText::HandleVerticalScroll(double _pos)
@@ -760,9 +690,9 @@ void BigFileViewText::HandleVerticalScroll(double _pos)
 
 void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
 {
-    double delta_y = [theEvent scrollingDeltaY];
-    double delta_x = [theEvent scrollingDeltaX];
-    if(![theEvent hasPreciseScrollingDeltas])
+    double delta_y = theEvent.scrollingDeltaY;
+    double delta_x = theEvent.scrollingDeltaX;
+    if(!theEvent.hasPreciseScrollingDeltas)
     {
         delta_y *= m_FontHeight;
         delta_x *= m_FontWidth;
@@ -881,27 +811,27 @@ void BigFileViewText::OnFontSettingsChanged()
 
 void BigFileViewText::OnLeftArrow()
 {
-    if(![m_View WordWrap] && m_HorizontalOffset > 0)
-    {
-        m_HorizontalOffset--;
-        [m_View setNeedsDisplay:true];
-    }
+    if(m_View.WordWrap)
+        return;
+    
+    m_HorizontalOffset -= m_HorizontalOffset > 0 ? 1 : 0;
+    [m_View setNeedsDisplay:true];
 }
 
 void BigFileViewText::OnRightArrow()
 {
-    if(![m_View WordWrap])
-    {
-        m_HorizontalOffset++;
-        [m_View setNeedsDisplay:true];
-    }
+    if(m_View.WordWrap)
+        return;
+    
+    m_HorizontalOffset++;
+    [m_View setNeedsDisplay:true];
 }
 
 void BigFileViewText::OnMouseDown(NSEvent *event)
 {
-    if([event clickCount] > 2)
+    if(event.clickCount > 2)
         HandleSelectionWithTripleClick(event);
-    else if ([event clickCount] == 2)
+    else if (event.clickCount == 2)
         HandleSelectionWithDoubleClick(event);
     else
         HandleSelectionWithMouseDragging(event);
@@ -909,19 +839,16 @@ void BigFileViewText::OnMouseDown(NSEvent *event)
 
 void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
 {
-    NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int uc_index = clip(CharIndexFromPoint(pt), 0, (int)m_StringBufferSize);
-
-    for(const auto &i: m_Lines)
-        if(i.unichar_no <= uc_index && i.unichar_no + i.unichar_len > uc_index)
-        {
-            int sel_start = i.unichar_no;
-            int sel_end = i.unichar_no + i.unichar_len;
-            int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
-            int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
-            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
-            break;
-        }
+    int line_no = LineIndexFromPos([m_View convertPoint:event.locationInWindow fromView:nil]);
+    if(line_no < 0 || line_no >= m_Lines.size())
+        return;
+    
+    auto &i = m_Lines[line_no];
+    int sel_start = i.unichar_no;
+    int sel_end = i.unichar_no + i.unichar_len;
+    int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
+    int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
+    [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
 }
 
 void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
@@ -964,16 +891,16 @@ void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
 
 void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
 {
-    bool modifying_existing_selection = ([event modifierFlags] & NSShiftKeyMask) ? true : false;
+    bool modifying_existing_selection = (event.modifierFlags & NSShiftKeyMask) ? true : false;
     
-    NSPoint first_down = [m_View convertPoint:[event locationInWindow] fromView:nil];
+    NSPoint first_down = [m_View convertPoint:event.locationInWindow fromView:nil];
     int first_ind = clip(CharIndexFromPoint(first_down), 0, (int)m_StringBufferSize);
     
     CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
     
-    while ([event type]!=NSLeftMouseUp)
+    while (event.type != NSLeftMouseUp)
     {
-        NSPoint curr_loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
+        NSPoint curr_loc = [m_View convertPoint:event.locationInWindow fromView:nil];
         int curr_ind = clip(CharIndexFromPoint(curr_loc), 0, (int)m_StringBufferSize);
         
         int base_ind = first_ind;
@@ -1001,6 +928,6 @@ void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
         else
             [m_View SetSelectionInFile:CFRangeMake(-1,0)];
         
-        event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+        event = [m_View.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
     }
 }

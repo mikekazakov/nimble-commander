@@ -24,6 +24,7 @@
     vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_PanelState;
     MainWindowTerminalState     *m_Terminal;
+    SerialQueue                  m_BigFileViewLoadingQ;
 }
 
 - (id)init {
@@ -36,6 +37,9 @@
     [window setFrameUsingName:@"MainWindow"];
 
     if(self = [super initWithWindow:window]) {
+        m_BigFileViewLoadingQ = SerialQueueT::Make("info.filesmanager.bigfileviewloading");
+        
+        
         self.ShouldCascadeWindows = NO;
         window.title = @"Files αλφα ver.";
         window.Delegate = self;
@@ -204,8 +208,13 @@
 
 - (void) RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host
 {
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:[self.window.contentView frame]];
+    if(!m_BigFileViewLoadingQ->Empty())
+        return;
+    
+    m_BigFileViewLoadingQ->Run(^{
+        auto frame = [self.window.contentView frame];
+        MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:frame];
+        
         if([state OpenFile:_filepath.c_str() with_fs:_host])
             dispatch_to_main_queue(^{
                 [self PushNewWindowState:state];

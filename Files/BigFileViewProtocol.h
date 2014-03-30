@@ -29,7 +29,7 @@ public:
     virtual void OnFontSettingsChanged(){} // may need to rebuild layout here
     
     virtual void MoveOffsetWithinWindow(uint32_t _offset){} // request to move visual offset to an approximate amount
-                                                             // now moving window itself
+
     
     virtual void ScrollToByteOffset(uint64_t _offset){}     // scroll to specified offset, moving window if needed
     

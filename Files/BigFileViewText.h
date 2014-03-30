@@ -37,22 +37,37 @@ private:
     void GrabFontGeometry();
     void ClearLayout();
     void BuildLayout();
+    
+    /**
+     * returns a offset for a left-top symbol of a text in a file window.
+     * not accounting scrolling, only visual smoothing position and font config.
+     */
     CGPoint TextAnchor();
+    
+    int LineIndexFromYPos(double _y);
+    inline int LineIndexFromPos(CGPoint _point) { return LineIndexFromYPos(_point.y); };
     int CharIndexFromPoint(CGPoint _point);
     void UpdateVerticalScrollBar();
+    
+    /**
+     * move our file window to '_pos' global offset,
+     * making line starting with '_anchor_byte_no' global byte offset
+     * positioned at '_anchor_line_no' offset from the top of screen
+     */
     void MoveFileWindowTo(uint64_t _pos, uint64_t _anchor_byte_no, int _anchor_line_no);
+    
     void HandleSelectionWithTripleClick(NSEvent* event);
     void HandleSelectionWithDoubleClick(NSEvent* event);
     void HandleSelectionWithMouseDragging(NSEvent* event);
+    void MoveLinesDelta(int _delta);
     
-    struct TextLine
-    {
-        uint32_t    unichar_no;      // index of a first unichar whitin a window
-        uint32_t    unichar_len;
-        uint32_t    byte_no;         // offset within file window of a current text line
-        uint32_t    bytes_len;
-        CTLineRef   line;
-    };
+    /**
+     * will return -1 on empty lines container, valid index otherwise.
+     * O( log2(N) ) complexity.
+     */
+    int FindClosestLineInd(uint64_t _glob_offset) const;
+    
+    struct TextLine;
 
     // basic stuff
     __unsafe_unretained BigFileView      *m_View;

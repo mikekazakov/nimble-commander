@@ -72,7 +72,7 @@ public:
     /**
      * Actually make_shared<SerialQueueT>().
      */
-    inline static shared_ptr<SerialQueueT> Make() { return make_shared<SerialQueueT>(); };
+    inline static shared_ptr<SerialQueueT> Make(const char *_label = NULL) { return make_shared<SerialQueueT>(_label); };
     
 private:
     SerialQueueT(const SerialQueueT&) = delete;

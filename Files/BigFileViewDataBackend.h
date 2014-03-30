@@ -32,11 +32,22 @@ public:
     
     ////////////////////////////////////////////////////////////////////////////////////////////
     // data access
-    bool        IsFullCoverage() const; // returns true if FileWindow is buffering whole file contents
-                                        // thus no window movements is needed (and cannot be done)
     
-    uint64_t    FileSize() const;       // whole file size
-    uint64_t    FilePos()  const;       // position of a file window (offset of it's first byte from the beginning of a file)
+    /**
+     * Returns true if FileWindow is buffering whole file contents.
+     * Thus no window movements is needed (and cannot be done).
+     */
+    bool        IsFullCoverage() const;
+    
+    /**
+     * Whole file size.
+     */
+    uint64_t    FileSize() const;
+
+    /**
+     * Position of a file window (offset of it's first byte from the beginning of a file).
+     */
+    uint64_t    FilePos()  const;
     
     const void *Raw() const;            // data of current file window
     uint64_t    RawSize() const;        // file window size. it will not change with this object lives

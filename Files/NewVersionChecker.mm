@@ -30,30 +30,30 @@ static NSString *g_DefKey = @"CommonNewVersionCheckNextDate";
 static void GotNewVersion()
 {
     // say to user about new version
-    NSAlert *alert = [[NSAlert alloc] init];
-    [alert setMessageText:@"A new version of Files is available!"];
-    [alert setInformativeText:@"Would you like to visit a website?"];
-    [alert setAlertStyle:NSInformationalAlertStyle];
+    NSAlert *alert = [NSAlert new];
+    alert.messageText = @"A new version of Files is available!";
+    alert.informativeText = @"Would you like to visit a website?";
+    alert.alertStyle = NSInformationalAlertStyle;
     [alert addButtonWithTitle:@"OK"];
     [alert addButtonWithTitle:@"No"];
-    [[[alert buttons] objectAtIndex:1] setKeyEquivalent:@"\E"];
+    [[alert.buttons objectAtIndex:1] setKeyEquivalent:@"\E"];
     dispatch_sync(dispatch_get_main_queue(), ^{
-        if([alert runModal] == NSAlertFirstButtonReturn)
+        if(alert.runModal == NSAlertFirstButtonReturn)
         {
             // go to website
-            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:g_URLSiteString]];
+            [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:g_URLSiteString]];
         }
         else
         {
             // user don't want to go to website - set next check time to +1 week
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
             NSDate *next_check = [NSDate dateWithTimeIntervalSinceNow:60*60*24*7];
             [defaults setObject:[NSArchiver archivedDataWithRootObject:next_check] forKey:g_DefKey];
         }
     });
 }
 
-static void GoAsync()
+static void CheckForNewVersion()
 {
     NSURL *url = [NSURL URLWithString:g_URLCheckString];
     if(!url)
@@ -66,31 +66,31 @@ static void GoAsync()
         return;
     
     id obj = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:0 error:0];
-    if([obj isKindOfClass:[NSDictionary class]])
+    if([obj isKindOfClass:NSDictionary.class])
     {
         NSDictionary *dict = obj;
         id version_id = [dict objectForKey:@"Version"];
         id build_id = [dict objectForKey:@"Build"];
         if(version_id != nil &&
            build_id != nil &&
-           [version_id isKindOfClass:[NSString class]] &&
-           [build_id isKindOfClass:[NSString class]] )
+           [version_id isKindOfClass:NSString.class] &&
+           [build_id isKindOfClass:NSString.class] )
         {
             NSString *version_str = version_id;
             NSString *build_str = build_id;
-            NSString *current_build = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
-            NSString *current_ver = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+            NSString *current_build = [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"];
+            NSString *current_ver = [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"];
             if(current_build && current_ver)
             {
                 NSNumberFormatter *f = [NSNumberFormatter new];
-                [f setNumberStyle:NSNumberFormatterDecimalStyle];
+                f.numberStyle = NSNumberFormatterDecimalStyle;
                 NSNumber *current_build_num = [f numberFromString:current_build];
                 NSNumber *build_num = [f numberFromString:build_str];
                 if(current_build_num && build_num)
                 {
                     if([build_num compare:current_build_num] == NSOrderedDescending ||
-                       [[SUStandardVersionComparator defaultComparator] compareVersion:version_str
-                                                                             toVersion:current_ver] == NSOrderedDescending
+                       [SUStandardVersionComparator.defaultComparator compareVersion:version_str
+                                                                           toVersion:current_ver] == NSOrderedDescending
                        )
                     {
                         GotNewVersion();
@@ -103,26 +103,26 @@ static void GoAsync()
 
 void NewVersionChecker::Go()
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSData *d = [defaults dataForKey:g_DefKey];
-    if(d == nil)
-    {
-        // if there's no check date - set current date as check data and quit
-        [defaults setObject:[NSArchiver archivedDataWithRootObject:[NSDate date]] forKey:g_DefKey];
-    }
-    else
-    {
-        // if check date is less than current date - GoAsync and set next check date to tomorrow
-        NSDate *check_date = (NSDate*)[NSUnarchiver unarchiveObjectWithData:d];
-        if([check_date compare:[NSDate date]] == NSOrderedAscending)
+    // go background async immediately, so don't pause startup process for any milliseconds
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+        if(NSData *d = [defaults dataForKey:g_DefKey])
         {
-            NSDate *next_check = [NSDate dateWithTimeIntervalSinceNow:60*60*24]; // current date + 1 day
-            [defaults setObject:[NSArchiver archivedDataWithRootObject:next_check] forKey:g_DefKey];
+            // if check date is less than current date - GoAsync and set next check date to tomorrow
+            NSDate *check_date = (NSDate*)[NSUnarchiver unarchiveObjectWithData:d];
+            if([check_date compare:NSDate.date] == NSOrderedAscending)
+            {
+                NSDate *next_check = [NSDate dateWithTimeIntervalSinceNow:60*60*24]; // current date + 1 day
+                [defaults setObject:[NSArchiver archivedDataWithRootObject:next_check] forKey:g_DefKey];
             
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-                GoAsync();
-            });         
+                // actual I/O goes here
+                CheckForNewVersion();
+            }
         }
-    }
+        else
+        {
+            // if there's no check date - set current date as check data and quit
+            [defaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:g_DefKey];
+        }
+    });
 }
-

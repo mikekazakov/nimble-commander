@@ -10,6 +10,7 @@
 #import <libproc.h>
 #import <sys/sysctl.h>
 #import <sys/resource.h>
+#import <sys/proc_info.h>
 #import <pwd.h>
 #import <stdio.h>
 #import <stdlib.h>
@@ -79,13 +80,169 @@ static cpu_type_t ArchTypeFromPID(pid_t _pid)
 
 static const string& ArchType(int _type)
 {
-    static string x86 = "x86";
-    static string x86_64 = "x86-64";
-    static string na = "N/A";
+    static const string x86 = "x86";
+    static const string x86_64 = "x86-64";
+    static const string na = "N/A";
     
     if(_type == CPU_TYPE_X86_64)    return x86_64;
     else if(_type == CPU_TYPE_X86)  return x86;
     else                            return na;
+}
+
+// from https://gist.github.com/nonowarn/770696
+static void print_argv_of_pid(int pid, string &_out)
+{
+    int    mib[3], argmax, nargs, c = 0;
+    size_t    size;
+    char    *procargs, *sp, *np, *cp;
+    int show_args = 1;
+    
+//    fprintf(stderr, "Getting argv of PID %d\n", pid);
+    
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_ARGMAX;
+    
+    size = sizeof(argmax);
+    if (sysctl(mib, 2, &argmax, &size, NULL, 0) == -1) {
+        goto ERROR_A;
+    }
+    
+    /* Allocate space for the arguments. */
+    procargs = (char *)malloc(argmax);
+    if (procargs == NULL) {
+        goto ERROR_A;
+    }
+    
+    
+    /*
+     * Make a sysctl() call to get the raw argument space of the process.
+     * The layout is documented in start.s, which is part of the Csu
+     * project.  In summary, it looks like:
+     *
+     * /---------------\ 0x00000000
+     * :               :
+     * :               :
+     * |---------------|
+     * | argc          |
+     * |---------------|
+     * | arg[0]        |
+     * |---------------|
+     * :               :
+     * :               :
+     * |---------------|
+     * | arg[argc - 1] |
+     * |---------------|
+     * | 0             |
+     * |---------------|
+     * | env[0]        |
+     * |---------------|
+     * :               :
+     * :               :
+     * |---------------|
+     * | env[n]        |
+     * |---------------|
+     * | 0             |
+     * |---------------| <-- Beginning of data returned by sysctl() is here.
+     * | argc          |
+     * |---------------|
+     * | exec_path     |
+     * |:::::::::::::::|
+     * |               |
+     * | String area.  |
+     * |               |
+     * |---------------| <-- Top of stack.
+     * :               :
+     * :               :
+     * \---------------/ 0xffffffff
+     */
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_PROCARGS2;
+    mib[2] = pid;
+    
+    
+    size = (size_t)argmax;
+    if (sysctl(mib, 3, procargs, &size, NULL, 0) == -1) {
+        goto ERROR_B;
+    }
+    
+    memcpy(&nargs, procargs, sizeof(nargs));
+    cp = procargs + sizeof(nargs);
+    
+    /* Skip the saved exec_path. */
+    for (; cp < &procargs[size]; cp++) {
+        if (*cp == '\0') {
+            /* End of exec_path reached. */
+            break;
+        }
+    }
+    if (cp == &procargs[size]) {
+        goto ERROR_B;
+    }
+    
+    /* Skip trailing '\0' characters. */
+    for (; cp < &procargs[size]; cp++) {
+        if (*cp != '\0') {
+            /* Beginning of first argument reached. */
+            break;
+        }
+    }
+    if (cp == &procargs[size]) {
+        goto ERROR_B;
+    }
+    /* Save where the argv[0] string starts. */
+    sp = cp;
+    
+    /*
+     * Iterate through the '\0'-terminated strings and convert '\0' to ' '
+     * until a string is found that has a '=' character in it (or there are
+     * no more strings in procargs).  There is no way to deterministically
+     * know where the command arguments end and the environment strings
+     * start, which is why the '=' character is searched for as a heuristic.
+     */
+    for (np = NULL; c < nargs && cp < &procargs[size]; cp++) {
+        if (*cp == '\0') {
+            c++;
+            if (np != NULL) {
+                /* Convert previous '\0'. */
+                *np = ' ';
+            } else {
+                /* *argv0len = cp - sp; */
+            }
+            /* Note location of current '\0'. */
+            np = cp;
+            
+            if (!show_args) {
+                /*
+                 * Don't convert '\0' characters to ' '.
+                 * However, we needed to know that the
+                 * command name was terminated, which we
+                 * now know.
+                 */
+                break;
+            }
+        }
+    }
+    
+    /*
+     * sp points to the beginning of the arguments/environment string, and
+     * np should point to the '\0' terminator for the string.
+     */
+    if (np == NULL || np == sp) {
+        /* Empty or unterminated string. */
+        goto ERROR_B;
+    }
+    
+    /* Make a copy of the string. */
+//    printf("%s\n", sp);
+    _out = sp;
+    
+    /* Clean up. */
+    free(procargs);
+    return;
+    
+ERROR_B:
+    free(procargs);
+ERROR_A:;
 }
 
 VFSPSHost::VFSPSHost():
@@ -145,6 +302,8 @@ vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
             curr.name = s+1;
         else
             curr.name = kip.kp_proc.p_comm;
+        
+        print_argv_of_pid(curr.pid, curr.arguments);
         
         procs[kip_i] = curr;
     }
@@ -240,7 +399,8 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
     result += string("Status: ") + ProcStatus(_info.status) + "\n";
     result += string("Architecture: ") + ArchType(_info.cpu_type) + "\n";
     result += string("Image file: ") + (_info.bin_path.empty() ? "N/A" : _info.bin_path) + "\n";
-
+    result += string("Arguments: ") + (_info.arguments.empty() ? "N/A" : _info.arguments) + "\n";
+    
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9 &&
        _info.rusage_avail)
     {

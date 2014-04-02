@@ -32,6 +32,9 @@ struct VFSPSHost::ProcInfo
     // path to running binary
     string bin_path;
     
+    // arguments to binary if available
+    string arguments;
+    
     time_t start_time;
     
     int    status;

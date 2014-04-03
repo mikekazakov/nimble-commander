@@ -1,5 +1,5 @@
 //
-//  TermTask.h
+//  TermShellTask.h
 //  TermPlays
 //
 //  Created by Michael G. Kazakov on 15.11.13.
@@ -13,11 +13,11 @@
 
 using namespace std;
 
-class TermTask
+class TermShellTask
 {
 public:
-    TermTask();
-    ~TermTask();
+    TermShellTask();
+    ~TermShellTask();
     
     enum TermState {
 
@@ -44,7 +44,15 @@ public:
     void Launch(const char *_work_dir, int _sx, int _sy);
     void Terminate();
     void ChDir(const char *_new_cwd);
-    void Execute(const char *_short_fn, const char *_at); // _at can be NULL. if it is the same as CWD - then ignored
+    
+    /**
+     * _at can be NULL. if it is the same as CWD - then ignored.
+     * _parameters can be NULL. if they are not NULL - this string should be escaped in advance - this function doesn't convert is anyhow.
+     */
+    void Execute(const char *_short_fn, const char *_at, const char *_parameters);
+    
+    void ExecuteWithFullPath(const char *_path, const char *_parameters);
+    
     void ResizeWindow(int _sx, int _sy);
     
     
@@ -60,6 +68,15 @@ public:
     
     inline void Lock()      { m_Lock.lock();   }
     inline void Unlock()    { m_Lock.unlock(); }
+    
+    /**
+     * Returns number of characters filled in _escaped.
+     * If returned values equals to _buf_sz - then buffer was exhausted.
+     * Returns -1 on any other errors.
+     */
+    static int EscapeShellFeed(const char *_feed, char *_escaped, size_t _buf_sz);
+    
+    
 private:
     void ProcessBashPrompt(const void *_d, int _sz);
     void SetState(TermState _new_state);

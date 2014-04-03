@@ -18,7 +18,7 @@
 #include <termios.h>
 #include <string.h>
 #include <libproc.h>
-#include "TermTask.h"
+#include "TermShellTask.h"
 #include "Common.h"
 #include "sysinfo.h"
 
@@ -36,7 +36,7 @@ static bool HasHigh(const char *_s)
     return false;
 }
 
-TermTask::TermTask():
+TermShellTask::TermShellTask():
     m_MasterFD(-1),
     m_OnChildOutput(0),
     m_State(StateInactive),
@@ -50,12 +50,12 @@ TermTask::TermTask():
     m_CWD[0] = 0;
 }
 
-TermTask::~TermTask()
+TermShellTask::~TermShellTask()
 {
     CleanUp();
 }
 
-void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
+void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
 {
     m_TermSX = _sx;
     m_TermSY = _sy;
@@ -171,7 +171,7 @@ void TermTask::Launch(const char *_work_dir, int _sx, int _sy)
     }
 }
 
-void TermTask::ReadChildOutput()
+void TermShellTask::ReadChildOutput()
 {
     int rc;
     fd_set fd_in, fd_err;
@@ -247,7 +247,7 @@ end_of_all:
     ;
 }
 
-void TermTask::ProcessBashPrompt(const void *_d, int _sz)
+void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
 {
     m_Lock.lock();
     
@@ -284,7 +284,7 @@ void TermTask::ProcessBashPrompt(const void *_d, int _sz)
     m_Lock.unlock();
 }
 
-void TermTask::WriteChildInput(const void *_d, int _sz)
+void TermShellTask::WriteChildInput(const void *_d, int _sz)
 {
     if(m_State == StateInactive ||
        m_State == StateDead )
@@ -309,7 +309,7 @@ void TermTask::WriteChildInput(const void *_d, int _sz)
     m_Lock.unlock();
 }
 
-void TermTask::CleanUp()
+void TermShellTask::CleanUp()
 {
     m_Lock.lock();
     
@@ -350,7 +350,7 @@ void TermTask::CleanUp()
     m_Lock.unlock();
 }
 
-void TermTask::ShellDied()
+void TermShellTask::ShellDied()
 {
     if(m_ShellPID > 0) // no need to call it if PID is already set to invalid - we're in closing state
     {
@@ -359,7 +359,7 @@ void TermTask::ShellDied()
     }
 }
 
-void TermTask::SetState(TermTask::TermState _new_state)
+void TermShellTask::SetState(TermShellTask::TermState _new_state)
 {
     m_State = _new_state;
   
@@ -368,7 +368,7 @@ void TermTask::SetState(TermTask::TermState _new_state)
 //    printf("TermTask state changed to %d\n", _new_state);
 }
 
-void TermTask::ChDir(const char *_new_cwd)
+void TermShellTask::ChDir(const char *_new_cwd)
 {
     if(m_State != StateShell)
         return;
@@ -392,35 +392,13 @@ void TermTask::ChDir(const char *_new_cwd)
     WriteChildInput("'\n", 2);
 }
 
-void TermTask::Execute(const char *_short_fn, const char *_at)
+void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *_parameters)
 {
     if(m_State != StateShell)
         return;
     
-    // TODO: OPTIMIZE!
-    NSString *orig = [NSString stringWithUTF8String:_short_fn];
-    if(!orig) return;
-    
-    // TODO: rewrite this NS-style shit with plain C-strings manipulations
-    NSMutableString *destString = [@"" mutableCopy];
-    NSCharacterSet *escapeCharsSet = [NSCharacterSet characterSetWithCharactersInString:@" ()\\!"];
-    NSScanner *scanner = [NSScanner scannerWithString:orig];
-    while (![scanner isAtEnd]) {
-        NSString *tempString;
-        [scanner scanUpToCharactersFromSet:escapeCharsSet intoString:&tempString];
-        if([scanner isAtEnd]){
-            [destString appendString:tempString];
-        }
-        else {
-            if(tempString != nil)
-                [destString appendFormat:@"%@\\%@", tempString, [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
-            else
-                [destString appendFormat:@"\\%@", [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
-            [scanner setScanLocation:[scanner scanLocation]+1];
-        }
-    }
-    
-    const char *cmd = [destString UTF8String];
+    char cmd[MAXPATHLEN];
+    EscapeShellFeed(_short_fn, cmd, MAXPATHLEN); // black magic inside
     
     // process cwd stuff if any
     char cwd[MAXPATHLEN];
@@ -444,15 +422,88 @@ void TermTask::Execute(const char *_short_fn, const char *_at)
     
     
     char input[2048];
-    if(cwd[0] != 0) sprintf(input, "cd '%s'; ./%s\n", cwd, cmd);
-    else            sprintf(input, "./%s\n", cmd);
-    
+    if(cwd[0] != 0)
+        sprintf(input, "cd '%s'; ./%s%s%s\n",
+                cwd,
+                cmd,
+                _parameters != nullptr ? " " : "",
+                _parameters != nullptr ? _parameters : ""
+                );
+    else
+        sprintf(input, "./%s%s%s\n",
+                cmd,
+                _parameters != nullptr ? " " : "",
+                _parameters != nullptr ? _parameters : ""
+                );
     
     SetState(StateProgramExternal);
     WriteChildInput(input, (int)strlen(input));
 }
 
-bool TermTask::GetChildrenList(vector<string> &_children)
+void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
+{
+    if(m_State != StateShell)
+        return;
+    
+    char cmd[MAXPATHLEN];
+    EscapeShellFeed(_path, cmd, MAXPATHLEN); // black magic inside
+    
+    char input[2048];
+    sprintf(input, "%s%s%s\n",
+            cmd,
+            _parameters != nullptr ? " " : "",
+            _parameters != nullptr ? _parameters : ""
+            );
+
+    SetState(StateProgramExternal);
+    WriteChildInput(input, (int)strlen(input));
+}
+
+int TermShellTask::EscapeShellFeed(const char *_feed, char *_escaped, size_t _buf_sz)
+{
+    if(_feed == nullptr)
+        return -1;
+    
+    // TODO: OPTIMIZE!
+    NSString *orig = [NSString stringWithUTF8String:_feed];
+    if(!orig)
+        return -1;
+    
+    // TODO: rewrite this NS-style shit with plain C-strings manipulations
+    static NSCharacterSet *escapeCharsSet = [NSCharacterSet characterSetWithCharactersInString:@" ()\\!"];
+    
+    NSMutableString *destString = [@"" mutableCopy];
+    NSScanner *scanner = [NSScanner scannerWithString:orig];
+    scanner.charactersToBeSkipped = nil;
+    while (![scanner isAtEnd]) {
+        NSString *tempString;
+        [scanner scanUpToCharactersFromSet:escapeCharsSet intoString:&tempString];
+        if([scanner isAtEnd]){
+            [destString appendString:tempString];
+        }
+        else {
+            if(tempString != nil)
+                [destString appendFormat:@"%@\\%@", tempString, [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
+            else
+                [destString appendFormat:@"\\%@", [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
+            [scanner setScanLocation:[scanner scanLocation]+1];
+        }
+    }
+    
+    const char *res = destString.UTF8String;
+    size_t res_sz = destString.length;
+    
+    if(res_sz >= _buf_sz)
+    {
+        strncpy(_escaped, res, _buf_sz-1);
+        _escaped[_buf_sz-1] = 0;
+        return (int)_buf_sz;
+    }
+    strcpy(_escaped, res);
+    return (int)res_sz;
+}
+
+bool TermShellTask::GetChildrenList(vector<string> &_children)
 {
     if(m_State == StateInactive || m_State == StateDead || m_ShellPID < 0)
         return false;
@@ -486,7 +537,7 @@ again:  if(ppid == m_ShellPID)
     return true;
 }
 
-void TermTask::ResizeWindow(int _sx, int _sy)
+void TermShellTask::ResizeWindow(int _sx, int _sy)
 {
     if(m_TermSX == _sx && m_TermSY == _sy)
         return;
@@ -505,7 +556,7 @@ void TermTask::ResizeWindow(int _sx, int _sy)
     }
 }
 
-void TermTask::Terminate()
+void TermShellTask::Terminate()
 {
     CleanUp();
 }

@@ -244,7 +244,7 @@
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
 		CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */; };
-		CFB3E4831844ACD700D375E2 /* TermTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermTask.mm */; };
+		CFB3E4831844ACD700D375E2 /* TermShellTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */; };
 		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
 		CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
 		CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.mm */; };
@@ -258,6 +258,7 @@
 		CFB709BC18E4760D00A83E61 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BB18E4760D00A83E61 /* Help.pdf */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */; };
+		CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */; };
 		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
@@ -694,8 +695,8 @@
 		CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
 		CFB3E4781844AC8A00D375E2 /* MainWindowTerminalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowTerminalState.h; sourceTree = "<group>"; };
 		CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowTerminalState.mm; sourceTree = "<group>"; };
-		CFB3E47B1844ACD700D375E2 /* TermTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermTask.mm; sourceTree = "<group>"; };
-		CFB3E47C1844ACD700D375E2 /* TermTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermTask.h; sourceTree = "<group>"; };
+		CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermShellTask.mm; sourceTree = "<group>"; };
+		CFB3E47C1844ACD700D375E2 /* TermShellTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermShellTask.h; sourceTree = "<group>"; };
 		CFB3E47D1844ACD700D375E2 /* TermParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermParser.mm; sourceTree = "<group>"; };
 		CFB3E47E1844ACD700D375E2 /* TermView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermView.mm; sourceTree = "<group>"; };
 		CFB3E47F1844ACD700D375E2 /* TermScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermScreen.h; sourceTree = "<group>"; };
@@ -719,6 +720,8 @@
 		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSheetController.h; sourceTree = "<group>"; };
 		CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSheetController.mm; sourceTree = "<group>"; };
 		CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProcessSheetController.xib; sourceTree = "<group>"; };
+		CFB709C618E99B7100A83E61 /* ExternalEditorInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalEditorInfo.h; sourceTree = "<group>"; };
+		CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalEditorInfo.mm; sourceTree = "<group>"; };
 		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
 		CFB8F22D17CA3C80004574FE /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSHost.h; sourceTree = "<group>"; };
 		CFB8F22F17CA4175004574FE /* VFSListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSListing.mm; sourceTree = "<group>"; };
@@ -1482,8 +1485,8 @@
 		CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
-				CFB3E47C1844ACD700D375E2 /* TermTask.h */,
-				CFB3E47B1844ACD700D375E2 /* TermTask.mm */,
+				CFB3E47C1844ACD700D375E2 /* TermShellTask.h */,
+				CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */,
 				CFB3E4811844ACD700D375E2 /* TermParser.h */,
 				CFB3E47D1844ACD700D375E2 /* TermParser.mm */,
 				CFB3E47F1844ACD700D375E2 /* TermScreen.h */,
@@ -1516,6 +1519,15 @@
 				CFB709AA18D962E600A83E61 /* VFSNetFTPFile.h */,
 			);
 			name = FTP;
+			sourceTree = "<group>";
+		};
+		CFB709C418E99AC100A83E61 /* ExternalEditors */ = {
+			isa = PBXGroup;
+			children = (
+				CFB709C618E99B7100A83E61 /* ExternalEditorInfo.h */,
+				CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */,
+			);
+			name = ExternalEditors;
 			sourceTree = "<group>";
 		};
 		CFB8F22B17CA3C65004574FE /* VFS */ = {
@@ -1622,6 +1634,7 @@
 				CFAC50D5171557E100A3E5C5 /* Core */,
 				CFB8F22B17CA3C65004574FE /* VFS */,
 				B528011916FCF347004E260D /* Operation */,
+				CFB709C418E99AC100A83E61 /* ExternalEditors */,
 				CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */,
 				CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */,
 				CF536C0D16C92EA200F37203 /* PanelMainWindowState */,
@@ -1921,6 +1934,7 @@
 				CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */,
 				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,
 				CF9D0E7917CC961100CB8146 /* archive_entry_copy_bhfi.c in Sources */,
+				CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */,
 				CF9D0EBF17CC961100CB8146 /* archive_write_add_filter_uuencode.c in Sources */,
 				CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
@@ -2035,7 +2049,7 @@
 				CF9D0EDC17CC961100CB8146 /* filter_fork_windows.c in Sources */,
 				CF9D0E9717CC961100CB8146 /* archive_read_support_filter_grzip.c in Sources */,
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
-				CFB3E4831844ACD700D375E2 /* TermTask.mm in Sources */,
+				CFB3E4831844ACD700D375E2 /* TermShellTask.mm in Sources */,
 				CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */,
 				CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */,
 				CF9D0E9917CC961100CB8146 /* archive_read_support_filter_lrzip.c in Sources */,

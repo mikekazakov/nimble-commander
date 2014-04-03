@@ -16,6 +16,7 @@ FileMask::FileMask(NSString *_mask):
     NSString *mask = [_mask decomposedStringWithCanonicalMapping];
 
     // guarding againts regexps operators
+    // suboptimal, optimize later:
 //    Quotes the following character. Characters that must be quoted to be treated as literals
 //    are * ? + [ ( ) { } ^ $ | \ . /
     mask = [mask stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"]; // not sure if this is nesessary
@@ -67,4 +68,10 @@ bool FileMask::MatchName(NSString *_name) const
             return true;
     }
     return false;
+}
+
+bool FileMask::MatchName(const char *_name) const
+{
+    // suboptimal, optimize later:
+    return MatchName([NSString stringWithUTF8String:_name]);
 }

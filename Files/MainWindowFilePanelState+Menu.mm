@@ -15,6 +15,10 @@
 #import "OperationsController.h"
 #import "Common.h"
 #import "common_paths.h"
+#import "ExternalEditorInfo.h"
+#import "MainWindowController.h"
+
+#import "TermShellTask.h"
 
 @implementation MainWindowFilePanelState (Menu)
 
@@ -168,6 +172,40 @@
     auto item = self.ActivePanelView.CurrentItem;
     if(item != nullptr && item->IsDotDot() == false)
         [[self ActivePanelController] HandleGoIntoDir];
+}
+
+- (IBAction)OnOpenWithExternalEditor:(id)sender
+{
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
+    
+    if(self.ActivePanelController.GetCurrentVFSHost->IsNativeFS() == false)
+        return;
+    
+    auto item = self.ActivePanelView.CurrentItem;
+    if(item != nullptr && item->IsDotDot() == false)
+    {
+        ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];
+        if(ed == nil)
+            return;
+
+        string fn_path = self.ActivePanelController.GetCurrentDirectoryPathRelativeToHost + item->Name();
+        if(ed.terminal == false)
+        {
+            if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8String:fn_path.c_str()]
+                                       withApplication:ed.path
+                                         andDeactivate:true])
+                NSBeep();
+        }
+        else
+        {
+            // dummy parameters processing
+            char escaped_fn[MAXPATHLEN];
+            TermShellTask::EscapeShellFeed(fn_path.c_str(), escaped_fn, MAXPATHLEN);
+            [(MainWindowController*)self.window.delegate RequestTerminalExecution:ed.path.UTF8String
+                                                                           params:escaped_fn];
+        }
+    }
 }
 
 @end

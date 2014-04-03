@@ -9,8 +9,6 @@
 #pragma once
 
 class TermScreen;
-class TermTask;
-
 
 // http://ascii-table.com/ansi-escape-sequences.php
 // http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -24,7 +22,9 @@ public:
     
     
     
-    TermParser(TermScreen *_scr, TermTask *_task);
+    TermParser(TermScreen *_scr, void (^_task_input)(const void* _d, int _sz));
+    
+//    inline void SetOnChildOutput(void (^_)(const void* _d, int _sz)) { m_OnChildOutput = _; };
     
     void EatByte(unsigned char _byte, int &_result_flags);
     void Flush();
@@ -54,7 +54,7 @@ private:
     
     // data and linked objects
     TermScreen             *m_Scr;
-    TermTask               *m_Task;
+    void                  (^m_TaskInput)(const void* _d, int _sz);
     int                     m_EscState;
     int                     m_Params[m_ParamsSize];
     int                     m_ParamsCnt;

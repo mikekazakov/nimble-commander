@@ -22,6 +22,11 @@ static NSString *g_SelPosArchiveKey = @"sel_position";
 static NSString *g_SelLenArchiveKey = @"sel_length";
 static BigFileViewHistory *g_SharedInstance = nil;
 
+static NSString* StorageFileName()
+{
+    return [NSFileManager.defaultManager.applicationSupportDirectory stringByAppendingString:g_FileName];
+}
+
 @implementation BigFileViewHistoryEntry
 
 - (id)initWithCoder:(NSCoder *)decoder {
@@ -95,11 +100,6 @@ static BigFileViewHistory *g_SharedInstance = nil;
     SerialQueue     m_Queue;
 }
 
-+ (NSString*) StorageFileName
-{
-    return [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_FileName];
-}
-
 - (id) init
 {
     self = [super init];
@@ -109,7 +109,7 @@ static BigFileViewHistory *g_SharedInstance = nil;
     m_Queue = SerialQueueT::Make();
     
     // try to load history from file
-    m_History = [NSKeyedUnarchiver unarchiveObjectWithFile:[BigFileViewHistory StorageFileName]];
+    m_History = [NSKeyedUnarchiver unarchiveObjectWithFile:StorageFileName()];
         
     if(!m_History)
         m_History = [NSMutableArray new]; // failed to load it - ok, just create a new one
@@ -143,7 +143,7 @@ static BigFileViewHistory *g_SharedInstance = nil;
 {
     m_Queue->Wait();
     if(m_IsDirty)
-        [NSKeyedArchiver archiveRootObject:m_History toFile:[BigFileViewHistory StorageFileName]];
+        [NSKeyedArchiver archiveRootObject:m_History toFile:StorageFileName()];
 }
 
 - (BigFileViewHistoryEntry*) FindEntryByPath: (NSString *)_path
@@ -194,8 +194,7 @@ static BigFileViewHistory *g_SharedInstance = nil;
             g_SharedInstance->m_IsDirty = false;
         });
     
-    NSString *path = [BigFileViewHistory StorageFileName];
-    bool result = [[NSFileManager defaultManager] removeItemAtPath:path error:nil];;
+    bool result = [[NSFileManager defaultManager] removeItemAtPath:StorageFileName() error:nil];;
     return result;
 }
 

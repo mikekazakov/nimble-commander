@@ -447,6 +447,12 @@ DQ
                                     <action selector="OnFileInternalBigViewCommand:" target="-1" id="907"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="External Editor" keyEquivalent="" id="IBo-yJ-DeD">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnOpenWithExternalEditor:" target="-1" id="a7j-oE-Sfm"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="918"/>
                             <menuItem title="Eject Volume" tag="15090" id="QWh-Qx-Rx6">
                                 <modifierMask key="keyEquivalentModifierMask"/>

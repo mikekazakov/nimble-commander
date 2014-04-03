@@ -8,7 +8,6 @@
 
 #include "TermParser.h"
 #include "TermScreen.h"
-#include "TermTask.h"
 #include "Common.h"
 #include "OrthodoxMonospace.h"
 #include "FontCache.h"
@@ -163,10 +162,11 @@ static const unichar translate_maps[4][256]={
 };
 
 
-TermParser::TermParser(TermScreen *_scr, TermTask *_task):
+TermParser::TermParser(TermScreen *_scr, void (^_task_input)(const void* _d, int _sz)):
     m_Scr(_scr),
-    m_Task(_task)
+    m_TaskInput(_task_input)
 {
+    assert(_task_input);
     Reset();
 }
 
@@ -562,7 +562,7 @@ void TermParser::CSI_c()
     const char *myid = "\033[?6c";
 
     if(!m_Params[0])
-        m_Task->WriteChildInput(myid, (int)strlen(myid));
+        m_TaskInput(myid, (int)strlen(myid));
 }
 
 void TermParser::SetDefaultAttrs()
@@ -822,7 +822,7 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
     }
     
     if(seq_resp != 0) {
-        m_Task->WriteChildInput(seq_resp, (int)strlen(seq_resp));
+        m_TaskInput(seq_resp, (int)strlen(seq_resp));
         return;
         
     }
@@ -837,12 +837,12 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         else if (unicode == ']')                                        cc = 29;
         else if (unicode == '^' || unicode == '6')                      cc = 30;
         else if (unicode == '-' || unicode == '_')                      cc = 31;
-        m_Task->WriteChildInput(&cc, 1);
+        m_TaskInput(&cc, 1);
         return;
     }
 
     const char* utf8 = [character UTF8String];
-    m_Task->WriteChildInput(utf8, (int)strlen(utf8));
+    m_TaskInput(utf8, (int)strlen(utf8));
     
 //    unsigned char c = unicode;
 //    m_Task->WriteChildInput(&c, 1);

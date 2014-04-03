@@ -7,7 +7,7 @@
 //
 
 #import "MainWindowTerminalState.h"
-#import "TermTask.h"
+#import "TermShellTask.h"
 #import "TermScreen.h"
 #import "TermParser.h"
 #import "TermView.h"
@@ -19,7 +19,7 @@
 
 @implementation MainWindowTerminalState
 {
-    unique_ptr<TermTask>    m_Task;
+    unique_ptr<TermShellTask>    m_Task;
     unique_ptr<TermScreen>  m_Screen;
     unique_ptr<TermParser>  m_Parser;
     TermView        *m_View;
@@ -35,34 +35,37 @@
         GetUserHomeDirectoryPath(m_InitalWD);
         
         m_View = [[TermView alloc] initWithFrame:self.frame];
-        [self setDocumentView:m_View];
-        [self setHasVerticalScroller:YES];
-        [self setBorderType:NSNoBorder];
-        [self setVerticalScrollElasticity:NSScrollElasticityNone];
-        [self setScrollsDynamically:YES];
-        [[self contentView] setCopiesOnScroll:NO];
-        [[self contentView] setCanDrawConcurrently:NO];
-        [[self contentView] setDrawsBackground:NO];
+        self.documentView = m_View;
+        self.hasVerticalScroller = true;
+        self.borderType = NSNoBorder;
+        self.verticalScrollElasticity = NSScrollElasticityNone;
+        self.scrollsDynamically = true;
+        self.contentView.copiesOnScroll = false;
+        self.contentView.canDrawConcurrently = false;
+        self.contentView.drawsBackground = false;
         
-        m_Task.reset(new TermTask);
+        m_Task.reset(new TermShellTask);
         m_Screen.reset(new TermScreen(floor(frameRect.size.width / [m_View FontCache]->Width()),
                                       floor(frameRect.size.height / [m_View FontCache]->Height())));
-        m_Parser.reset(new TermParser(m_Screen.get(), m_Task.get()));
+        m_Parser = make_unique<TermParser>(m_Screen.get(),
+                                           ^(const void* _d, int _sz){
+                                               m_Task->WriteChildInput(_d, _sz);
+                                           });
         [m_View AttachToScreen:m_Screen.get()];
         [m_View AttachToParser:m_Parser.get()];
         
         
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(frameDidChange)
-                                                     name:NSViewFrameDidChangeNotification
-                                                   object:self];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(frameDidChange)
+                                                   name:NSViewFrameDidChangeNotification
+                                                 object:self];
     }
     return self;
 }
 
 - (void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (NSView*) ContentView
@@ -79,17 +82,14 @@
 - (void) Assigned
 {
     // need right CWD here
-    if(m_Task->State() == TermTask::StateInactive)
+    if(m_Task->State() == TermShellTask::StateInactive)
         m_Task->Launch(m_InitalWD, m_Screen->Width(), m_Screen->Height());
     
     __weak MainWindowTerminalState *weakself = self;
     
     m_Task->SetOnChildOutput(^(const void* _d, int _sz){
-        //            MachTimeBenchmark tmb;
-        if(weakself != nil)
+        if(MainWindowTerminalState *strongself = weakself)
         {
-            __strong MainWindowTerminalState *strongself = weakself;
-            
             bool newtitle = false;
             strongself->m_Screen->Lock();
             for(int i = 0; i < _sz; ++i)
@@ -116,9 +116,8 @@
     });
     
     m_Task->SetOnBashPrompt(^(const char *_cwd){
-        if(weakself != nil)
+        if(MainWindowTerminalState *strongself = weakself)
         {
-            __strong MainWindowTerminalState *strongself = weakself;
             strongself->m_Screen->SetTitle("");
             [strongself UpdateTitle];
         }
@@ -168,24 +167,34 @@
 
 - (void) Execute:(const char *)_short_fn at:(const char*)_at
 {
-    m_Task->Execute(_short_fn, _at);
+    m_Task->Execute(_short_fn, _at, nullptr);
+}
+
+- (void) Execute:(const char *)_short_fn at:(const char*)_at with_parameters:(const char*)_params
+{
+    m_Task->Execute(_short_fn, _at, _params);
+}
+
+- (void) Execute:(const char *)_full_fn with_parameters:(const char*)_params
+{
+    m_Task->ExecuteWithFullPath(_full_fn, _params);    
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
-    scrollRect.origin.y -= [theEvent deltaY] * [self verticalLineScroll];
-    [[self documentView] scrollRectToVisible: scrollRect];
+    scrollRect.origin.y -= theEvent.deltaY * self.verticalLineScroll;
+    [self.documentView scrollRectToVisible:scrollRect];
 }
 
 - (bool)WindowShouldClose:(MainWindowController*)sender
 {
 //    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
     
-    if(m_Task->State() == TermTask::StateDead ||
-       m_Task->State() == TermTask::StateInactive ||
-       m_Task->State() == TermTask::StateShell)
+    if(m_Task->State() == TermShellTask::StateDead ||
+       m_Task->State() == TermShellTask::StateInactive ||
+       m_Task->State() == TermShellTask::StateShell)
         return true;
     
     vector<string> children;
@@ -194,7 +203,7 @@
         return true;
 
     MessageBox *dialog = [[MessageBox alloc] init];
-    [dialog setMessageText:@"Do you want to close this window?"];
+    dialog.messageText = @"Do you want to close this window?";
     NSMutableString *cap = [NSMutableString new];
     [cap appendString:@"Closing this window will terminate the running processes: "];
     for(int i = 0; i < children.size(); ++i)
@@ -204,7 +213,7 @@
             [cap appendString:@", "];
     }
     [cap appendString:@"."];
-    [dialog setInformativeText:cap];
+    dialog.informativeText = cap;
     [dialog addButtonWithTitle:@"Terminate And Close"];
     [dialog addButtonWithTitle:@"Cancel"];
     [dialog ShowSheetWithHandler:self.window handler:^(int result) {
@@ -239,8 +248,8 @@
 
 - (IBAction)paste:(id)sender
 {
-    if(m_Task->State() == TermTask::StateDead ||
-       m_Task->State() == TermTask::StateInactive )
+    if(m_Task->State() == TermShellTask::StateDead ||
+       m_Task->State() == TermShellTask::StateInactive )
         return;
 
     NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
@@ -258,8 +267,8 @@
 
 - (bool) IsAnythingRunning
 {
-    return m_Task->State() == TermTask::StateProgramExternal ||
-           m_Task->State() == TermTask::StateProgramInternal;
+    auto state = m_Task->State();
+    return state == TermShellTask::StateProgramExternal || state == TermShellTask::StateProgramInternal;
 }
 
 - (void) Terminate
@@ -269,8 +278,8 @@
 
 - (bool) GetCWD:(char *)_cwd
 {
-    if(m_Task->State() == TermTask::StateInactive ||
-       m_Task->State() == TermTask::StateDead)
+    if(m_Task->State() == TermShellTask::StateInactive ||
+       m_Task->State() == TermShellTask::StateDead)
         return false;
     
     if(strlen(m_Task->CWD()) == 0)
@@ -282,7 +291,7 @@
 
 - (IBAction)OnShowTerminal:(id)sender
 {
-    [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
+    [(MainWindowController*)self.window.delegate ResignAsWindowState:self];
 }
 
 @end

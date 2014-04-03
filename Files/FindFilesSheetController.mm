@@ -18,11 +18,10 @@ static const int g_MaximumSearchResults = 16384;
 
 - (id) initWithFoundItem:(const FindFilesSheetControllerFoundItem&)_item;
 - (FindFilesSheetControllerFoundItem*) data;
-@property NSString *location;
-@property NSString *filename;
-@property (readonly) uint64_t size;
-@property (readonly) uint64_t mdate;
-
+@property (nonatomic, readonly) NSString *location;
+@property (nonatomic, readonly) NSString *filename;
+@property (nonatomic, readonly) uint64_t size;
+@property (nonatomic, readonly) uint64_t mdate;
 @end
 
 @implementation FindFilesSheetFoundItem

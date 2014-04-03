@@ -13,6 +13,7 @@ class FileMask
 public:
     FileMask(NSString *_mask);
     bool MatchName(NSString *_name) const;
+    bool MatchName(const char *_name) const;
     
 private:
     NSMutableArray *m_RegExps;

@@ -19,6 +19,7 @@
 #include <string.h>
 #include <libproc.h>
 #include "TermShellTask.h"
+#include "TermTaskCommon.h"
 #include "Common.h"
 #include "sysinfo.h"
 
@@ -26,15 +27,6 @@ static const char *g_ShellProg     = "/bin/bash";
 static       char *g_ShellParam[2] = {(char*)"-L", 0};
 static const int   g_PromptPipe    = 20;
 static const char *g_PromptStringPID  = "a=$$; b=%d; if [ $a -eq $b ]; then /bin/pwd>&20; fi";
-
-static bool HasHigh(const char *_s)
-{
-    int len = (int)strlen(_s);
-    for(int i = 0; i < len; ++i)
-        if(((unsigned char*)_s)[i] > 127)
-            return true;
-    return false;
-}
 
 TermShellTask::TermShellTask():
     m_MasterFD(-1),
@@ -92,26 +84,8 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
     }
     else
     { // slave/child
-        struct termios term_sett; // Saved terminal settings
-        
-        // Save the defaults parameters of the slave side of the PTY
-        tcgetattr(slave_fd, &term_sett);
-        term_sett.c_iflag = ICRNL | IXON | IXANY | IMAXBEL | BRKINT;
-        term_sett.c_oflag = OPOST | ONLCR;
-        term_sett.c_cflag = CREAD | CS8 | HUPCL;
-        term_sett.c_lflag = ICANON | ISIG | IEXTEN | ECHO | ECHOE | ECHOK | ECHOKE | ECHOCTL;
-        term_sett.c_ispeed = /*B38400*/ B230400;
-        term_sett.c_ospeed = /*B38400*/ B230400;
-        term_sett.c_cc [VINTR] = 3;   /* CTRL+C */
-        term_sett.c_cc [VEOF] = 4;    /* CTRL+D */
-        tcsetattr (slave_fd, /*TCSADRAIN*/TCSANOW, &term_sett);
-        
-        struct winsize winsize;
-        winsize.ws_col = _sx;
-        winsize.ws_row = _sy;
-        winsize.ws_xpixel = 0;
-        winsize.ws_ypixel = 0;
-        ioctl(slave_fd, TIOCSWINSZ, (char *)&winsize);
+        TermTask::SetupTermios(slave_fd);
+        TermTask::SetTermWindow(slave_fd, _sx, _sy);
         
         // The slave side of the PTY becomes the standard input and outputs of the child process
         close(0); // Close standard input (current terminal)
@@ -546,14 +520,7 @@ void TermShellTask::ResizeWindow(int _sx, int _sy)
     m_TermSY = _sy;
     
     if(m_State != StateInactive && m_State != StateDead)
-    {
-        struct winsize winsize;
-        winsize.ws_col = _sx;
-        winsize.ws_row = _sy;
-        winsize.ws_xpixel = 0;
-        winsize.ws_ypixel = 0;
-        ioctl(m_MasterFD, TIOCSWINSZ, (char *)&winsize);
-    }
+        TermTask::SetTermWindow(m_MasterFD, _sx, _sy);
 }
 
 void TermShellTask::Terminate()

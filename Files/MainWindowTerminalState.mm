@@ -45,11 +45,12 @@
         self.contentView.drawsBackground = false;
         
         m_Task.reset(new TermShellTask);
+        auto task_ptr = m_Task.get();
         m_Screen.reset(new TermScreen(floor(frameRect.size.width / [m_View FontCache]->Width()),
                                       floor(frameRect.size.height / [m_View FontCache]->Height())));
         m_Parser = make_unique<TermParser>(m_Screen.get(),
                                            ^(const void* _d, int _sz){
-                                               m_Task->WriteChildInput(_d, _sz);
+                                               task_ptr->WriteChildInput(_d, _sz);
                                            });
         [m_View AttachToScreen:m_Screen.get()];
         [m_View AttachToParser:m_Parser.get()];
@@ -149,15 +150,6 @@
     }
 
     self.window.title = title;
-}
-
-- (void) Resigned
-{
-    // remove handlers with references to self
-    m_Task->SetOnChildOutput(0);
-    m_Task->SetOnBashPrompt(0);
-    
-//    NSLog(@"%ld", CFGetRetainCount((__bridge CFTypeRef)self));
 }
 
 - (void) ChDir:(const char*)_new_dir

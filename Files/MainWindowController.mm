@@ -15,6 +15,7 @@
 #import "MainWindowBigFileViewState.h"
 #import "MainWindowFilePanelState.h"
 #import "MainWindowTerminalState.h"
+#import "MainWindowExternalTerminalEditorState.h"
 #import "PanelController.h"
 #import "MyToolbar.h"
 #import "Common.h"
@@ -266,19 +267,14 @@
     [m_Terminal Execute:_filename at:_cwd];
 }
 
-- (void)RequestTerminalExecution:(const char*)_full_app_path params:(const char*)_params
+- (void)RequestTerminalExecution:(string)_full_app_path params:(string)_params
 {
-    if(m_Terminal == nil)
-    {
-        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[self.window.contentView frame]];
-        [self PushNewWindowState:state];
-        m_Terminal = state;
-    }
-    else
-    {
-        [self PushNewWindowState:m_Terminal];
-    }
-    [m_Terminal Execute:_full_app_path with_parameters:_params];    
+    auto frame = [self.window.contentView frame];
+    MainWindowExternalTerminalEditorState *state = [MainWindowExternalTerminalEditorState alloc];
+    state = [state initWithFrameAndParams:frame
+                                   binary:_full_app_path
+                                   params:_params];
+    [self PushNewWindowState:state];
 }
 
 - (MainWindowTerminalState*) TerminalState

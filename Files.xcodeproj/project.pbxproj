@@ -48,6 +48,9 @@
 		CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
 		CF07DE41176985EF00757DE1 /* EncodingsAdditions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */; };
 		CF09827117DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */; };
+		CF09856A18EDBFB0006E6410 /* TermTaskCommon.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09856818EDBFB0006E6410 /* TermTaskCommon.mm */; };
+		CF09857018EEA8CF006E6410 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09856E18EEA8CF006E6410 /* TermSingleTask.mm */; };
+		CF09857418EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857318EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
 		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
@@ -400,6 +403,12 @@
 		CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodingsAdditions.cpp; sourceTree = "<group>"; };
 		CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJobFromGeneric.mm; sourceTree = "<group>"; };
 		CF09827017DEDC3700F0871C /* FileCopyOperationJobFromGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJobFromGeneric.h; sourceTree = "<group>"; };
+		CF09856818EDBFB0006E6410 /* TermTaskCommon.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermTaskCommon.mm; sourceTree = "<group>"; };
+		CF09856918EDBFB0006E6410 /* TermTaskCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermTaskCommon.h; sourceTree = "<group>"; };
+		CF09856E18EEA8CF006E6410 /* TermSingleTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermSingleTask.mm; sourceTree = "<group>"; };
+		CF09856F18EEA8CF006E6410 /* TermSingleTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermSingleTask.h; sourceTree = "<group>"; };
+		CF09857218EEB031006E6410 /* MainWindowExternalTerminalEditorState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowExternalTerminalEditorState.h; sourceTree = "<group>"; };
+		CF09857318EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowExternalTerminalEditorState.mm; sourceTree = "<group>"; };
 		CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
 		CF128876177FF9D3002816C2 /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkOperation.h; sourceTree = "<group>"; };
 		CF128877177FF9D3002816C2 /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperation.mm; sourceTree = "<group>"; };
@@ -1485,6 +1494,8 @@
 		CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
+				CF09856918EDBFB0006E6410 /* TermTaskCommon.h */,
+				CF09856818EDBFB0006E6410 /* TermTaskCommon.mm */,
 				CFB3E47C1844ACD700D375E2 /* TermShellTask.h */,
 				CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */,
 				CFB3E4811844ACD700D375E2 /* TermParser.h */,
@@ -1526,6 +1537,10 @@
 			children = (
 				CFB709C618E99B7100A83E61 /* ExternalEditorInfo.h */,
 				CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */,
+				CF09856F18EEA8CF006E6410 /* TermSingleTask.h */,
+				CF09856E18EEA8CF006E6410 /* TermSingleTask.mm */,
+				CF09857218EEB031006E6410 /* MainWindowExternalTerminalEditorState.h */,
+				CF09857318EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm */,
 			);
 			name = ExternalEditors;
 			sourceTree = "<group>";
@@ -1892,6 +1907,7 @@
 				CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */,
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
 				CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */,
+				CF09856A18EDBFB0006E6410 /* TermTaskCommon.mm in Sources */,
 				CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */,
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */,
@@ -2068,6 +2084,7 @@
 				CF9D0E7717CC961100CB8146 /* archive_cmdline.c in Sources */,
 				CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */,
 				CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */,
+				CF09857418EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CF9D0EA417CC961100CB8146 /* archive_read_support_format_cab.c in Sources */,
 				CF3B602A18CCA3A20005816A /* VFSArchiveProxy.mm in Sources */,
 				CF9D0E9C17CC961100CB8146 /* archive_read_support_filter_program.c in Sources */,
@@ -2124,6 +2141,7 @@
 				CF9D0E8017CC961100CB8146 /* archive_entry.c in Sources */,
 				CF27414917FF04EF006D6687 /* SharingService.mm in Sources */,
 				CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */,
+				CF09857018EEA8CF006E6410 /* TermSingleTask.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,6 +22,7 @@
     unique_ptr<TermScreen>      m_Screen;
     unique_ptr<TermParser>      m_Parser;
     TermView                   *m_View;
+    NSScrollView               *m_ScrollView;
     string                      m_BinaryPath;
     string                      m_Params;
 }
@@ -34,15 +35,22 @@
     if (self) {
         m_BinaryPath = _binary_path;
         m_Params = _params;
+        
+        m_ScrollView = [[NSScrollView alloc] initWithFrame:self.bounds];
+        [m_ScrollView setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self addSubview:m_ScrollView];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_ScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_ScrollView)]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_ScrollView)]];
+        
         m_View = [[TermView alloc] initWithFrame:self.frame];
-        self.documentView = m_View;
-/*        self.hasVerticalScroller = true;
-        self.borderType = NSNoBorder;
-        self.verticalScrollElasticity = NSScrollElasticityNone;
-        self.scrollsDynamically = true;
-        self.contentView.copiesOnScroll = false;
-        self.contentView.canDrawConcurrently = false;
-        self.contentView.drawsBackground = false;
+        m_ScrollView.documentView = m_View;
+        m_ScrollView.hasVerticalScroller = true;
+        m_ScrollView.borderType = NSNoBorder;
+        m_ScrollView.verticalScrollElasticity = NSScrollElasticityNone;
+        m_ScrollView.scrollsDynamically = true;
+        m_ScrollView.contentView.copiesOnScroll = false;
+        m_ScrollView.contentView.canDrawConcurrently = false;
+        m_ScrollView.contentView.drawsBackground = false;
         
         __weak MainWindowExternalTerminalEditorState *weakself = self;
         
@@ -96,7 +104,7 @@
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
- */
+
     }
     return self;
 }
@@ -113,9 +121,8 @@
 
 - (void) Assigned
 {
-//    m_Task->Launch(m_BinaryPath.c_str(), m_Params.c_str(), m_Screen->Width(), m_Screen->Height());
+    m_Task->Launch(m_BinaryPath.c_str(), m_Params.c_str(), m_Screen->Width(), m_Screen->Height());
     [self.window makeFirstResponder:m_View];
-//    [self UpdateTitle];
 }
 
 - (void)frameDidChange
@@ -135,11 +142,6 @@
     m_Parser->Resized();
     
     [m_View adjustSizes:true];
-}
-
-- (IBAction)OnShowTerminal:(id)sender
-{
-    [(MainWindowController*)self.window.delegate ResignAsWindowState:self];
 }
 
 @end

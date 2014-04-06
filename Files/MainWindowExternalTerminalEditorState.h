@@ -10,7 +10,7 @@
 
 #import "MainWindowStateProtocol.h"
 
-@interface MainWindowExternalTerminalEditorState : NSScrollView<MainWindowStateProtocol>
+@interface MainWindowExternalTerminalEditorState : NSView<MainWindowStateProtocol>
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
                       binary:(string)_binary_path

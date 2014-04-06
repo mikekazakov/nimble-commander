@@ -36,7 +36,9 @@
     window.minSize = NSMakeSize(660, 480);
     window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     [window setFrameUsingName:@"MainWindow"];
-
+    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
+    [window setContentBorderThickness:36 forEdge:NSMaxYEdge];
+    
     if(self = [super initWithWindow:window]) {
         m_BigFileViewLoadingQ = SerialQueueT::Make("info.filesmanager.bigfileviewloading");
         
@@ -176,8 +178,8 @@
         [m_WindowState.back() Resigned];
     m_WindowState.pop_back();
     
-    [[self window] setContentView:[m_WindowState.back() ContentView]];
-    [[self window] makeFirstResponder: [[self window] contentView]];
+    self.window.contentView = [m_WindowState.back() ContentView];
+    [self.window makeFirstResponder:self.window.contentView];
     
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
         [m_WindowState.back() Assigned];
@@ -194,9 +196,8 @@
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
 {
     m_WindowState.push_back(_state);
-    [[self window] setContentView:[m_WindowState.back() ContentView]];
-    [[self window] makeFirstResponder: [[self window] contentView]];
-    
+    self.window.contentView = [m_WindowState.back() ContentView];
+    [self.window makeFirstResponder:self.window.contentView];
     
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
         [m_WindowState.back() Assigned];

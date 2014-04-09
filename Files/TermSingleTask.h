@@ -8,6 +8,7 @@
 
 #pragma once
 #include <mutex>
+#include <string>
 
 using namespace std;
 
@@ -29,14 +30,16 @@ public:
     void ResizeWindow(int _sx, int _sy);
     
     static void EscapeSpaces(char *_buf);
+    inline const char *TaskBinaryName() const { return m_TaskBinaryName.c_str(); }
     
 private:
     void ReadChildOutput();
     void (^m_OnChildOutput)(const void* _d, int _sz);
     void (^m_OnChildDied)();
     recursive_mutex m_Lock;         // will lock on WriteChildInput or on cleanup process
-    volatile int             m_MasterFD = -1;
-    volatile int             m_TaskPID  = -1;
+    volatile int    m_MasterFD = -1;
+    volatile int    m_TaskPID  = -1;
     int             m_TermSX   = 0;
     int             m_TermSY   = 0;
+    string          m_TaskBinaryName;
 };

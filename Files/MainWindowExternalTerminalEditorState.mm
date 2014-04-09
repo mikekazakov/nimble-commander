@@ -37,7 +37,7 @@
         m_Params = _params;
         
         m_ScrollView = [[NSScrollView alloc] initWithFrame:self.bounds];
-        [m_ScrollView setTranslatesAutoresizingMaskIntoConstraints:NO];
+        m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_ScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_ScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_ScrollView)]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_ScrollView)]];
@@ -68,7 +68,7 @@
         m_Task->SetOnChildOutput(^(const void* _d, int _sz){
             if(MainWindowExternalTerminalEditorState *strongself = weakself)
             {
-                //            bool newtitle = false;
+                bool newtitle = false;
                 strongself->m_Screen->Lock();
                 for(int i = 0; i < _sz; ++i)
                 {
@@ -76,8 +76,8 @@
                     
                     strongself->m_Parser->EatByte(((const char*)_d)[i], flags);
                     
-                    //                if(flags & TermParser::Result_ChangedTitle)
-                    //                    newtitle = true;
+                    if(flags & TermParser::Result_ChangedTitle)
+                        newtitle = true;
                 }
                 
                 strongself->m_Parser->Flush();
@@ -87,8 +87,8 @@
                 dispatch_to_main_queue( ^{
                     [strongself->m_View adjustSizes:false];
                     [strongself->m_View setNeedsDisplay:true];
-                    //                if(newtitle)
-                    //                    [strongself UpdateTitle];
+                    if(newtitle)
+                        [strongself updateTitle];
                 });
             }
         });
@@ -123,6 +123,7 @@
 {
     m_Task->Launch(m_BinaryPath.c_str(), m_Params.c_str(), m_Screen->Width(), m_Screen->Height());
     [self.window makeFirstResponder:m_View];
+    [self updateTitle];
 }
 
 - (void)frameDidChange
@@ -142,6 +143,25 @@
     m_Parser->Resized();
     
     [m_View adjustSizes:true];
+}
+
+
+- (void) updateTitle
+{
+    NSString *title = 0;
+    
+    m_Screen->Lock();
+    if(strlen(m_Screen->Title()) > 0)
+        title = [NSString stringWithUTF8String:m_Screen->Title()];
+    m_Screen->Unlock();
+    
+    if(title == 0)
+    {
+        // TODO: need a filename here also
+        title = [NSString stringWithUTF8String:m_Task->TaskBinaryName()];
+    }
+    
+    self.window.title = title;
 }
 
 @end

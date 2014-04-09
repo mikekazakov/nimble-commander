@@ -60,18 +60,33 @@ static vector<string> SplitArgs(const char *_args)
     return vec;
 }
 
+static const char *ImgNameFromPath(const char *_path)
+{
+    const char *img_name = strrchr(_path, '/');
+    if(img_name)
+        img_name++;
+    else
+        img_name = _path;
+    return img_name;
+}
+
 TermSingleTask::TermSingleTask()
 {
 }
 
 TermSingleTask::~TermSingleTask()
 {
+    // todo: waitpid
 }
 
 void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, int _sx, int _sy)
 {
     m_TermSX = _sx;
     m_TermSY = _sy;
+    
+    // find out binary name to put as argv[0]
+    const char *img_name = ImgNameFromPath(_full_binary_path);
+    m_TaskBinaryName = img_name;
     
     // remember current locale and encoding
     char locenc[256];
@@ -158,13 +173,6 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
         int max_fd = (int)sysconf(_SC_OPEN_MAX);
         for(int fd = 3; fd < max_fd; fd++)
             close(fd);
-
-        // find out binary name to put as argv[0]
-        const char *img_name = strrchr(_full_binary_path, '/');
-        if(img_name)
-            img_name++;
-        else
-            img_name = _full_binary_path;
         
         // split _params into an array of argv[1], argv[2] etc
         vector<string> args = SplitArgs(_params);

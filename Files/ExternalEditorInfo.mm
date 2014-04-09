@@ -64,6 +64,19 @@ static NSString* StorageFileName()
     return self;
 }
 
+-(id)copyWithZone:(NSZone *)zone
+{
+    ExternalEditorInfo *copy = [[ExternalEditorInfo alloc] init];
+    copy.name = [self.name copyWithZone:zone];
+    copy.path = [self.path copyWithZone:zone];
+    copy.arguments = [self.arguments copyWithZone:zone];
+    copy.mask = [self.mask copyWithZone:zone];
+    copy.only_files = self.only_files;
+    copy.max_size = self.max_size;
+    copy.terminal = self.terminal;
+    return copy;
+}
+
 - (id) initWithCoder:(NSCoder *)decoder
 {
     if(self = [super init])
@@ -109,11 +122,11 @@ static NSString* StorageFileName()
 
 - (bool) isValidItem:(const VFSListingItem&)_it
 {
-    if(m_FileMask)
-    {
-        if(m_FileMask->MatchName((__bridge NSString*)_it.CFName()) == false)
-            return false;
-    }
+    if(m_FileMask == nullptr)
+        return false;
+    
+    if(m_FileMask->MatchName((__bridge NSString*)_it.CFName()) == false)
+        return false;
     
     if(m_OnlyFiles == true && _it.IsReg() == false)
         return false;
@@ -178,6 +191,8 @@ static NSString* StorageFileName()
             [m_Editors addObject:dummy];
             m_IsDirty = true;
         }
+        else
+            m_Editors = m_Editors.mutableCopy; // convert into NSMutableArray
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(OnTerminate:)
@@ -190,6 +205,18 @@ static NSString* StorageFileName()
 - (void) dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+- (NSMutableArray*) Editors
+{
+    m_IsDirty = true; // badly approach
+    return m_Editors;
+}
+
+- (void) setEditors:(NSMutableArray*)_editors
+{
+    m_IsDirty = true;
+    m_Editors = _editors;
 }
 
 + (ExternalEditorsList*) sharedList

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "VFS.h"
 
-@interface ExternalEditorInfo : NSObject<NSCoding>
+@interface ExternalEditorInfo : NSObject<NSCoding, NSCopying>
 
 @property (nonatomic) NSString *name;
 @property (nonatomic) NSString *path;
@@ -30,6 +30,8 @@
 + (ExternalEditorsList*) sharedList;
 
 - (ExternalEditorInfo*) FindViableEditorForItem:(const VFSListingItem&)_item;
+- (NSMutableArray*) Editors;
+- (void) setEditors:(NSMutableArray*)_editors;
 
 @end
 

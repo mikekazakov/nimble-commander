@@ -53,12 +53,12 @@ count_if_pair (InputIterator first, InputIterator last, BinaryPredicate pred)
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code here.
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(frameDidChange)
-                                                     name:NSViewFrameDidChangeNotification
-                                                   object:self];
+    if (self)
+    {
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(frameDidChange)
+                                                   name:NSViewFrameDidChangeNotification
+                                                 object:self];
         [self UpdateVisibility];
     }
     return self;
@@ -66,10 +66,11 @@ count_if_pair (InputIterator first, InputIterator last, BinaryPredicate pred)
 
 - (void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (void)drawRect:(NSRect)rect {
+- (void)drawRect:(NSRect)rect
+{
     NSDrawWindowBackground(rect);
 }
 
@@ -127,7 +128,7 @@ count_if_pair (InputIterator first, InputIterator last, BinaryPredicate pred)
             if(last >= 0)
                 offset += g_Gap; // prev entry was a view
             NSView *v = m_Views[i];
-            v.frameOrigin = NSMakePoint(offset, (self.bounds.size.height - v.bounds.size.height) / 2);
+            v.frameOrigin = NSMakePoint(offset, floor(((self.bounds.size.height - v.bounds.size.height) / 2.) + 0.5));
             offset += v.bounds.size.width;
         }
         else if(i == g_FlexInd)

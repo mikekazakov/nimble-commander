@@ -17,6 +17,7 @@
 #import "PreferencesWindowGeneralTab.h"
 #import "PreferencesWindowPanelsTab.h"
 #import "PreferencesWindowViewerTab.h"
+#import "PreferencesWindowExternalEditorsTab.h"
 #import "TemporaryNativeFileStorage.h"
 #import "NewVersionChecker.h"
 #import "MainWindowTerminalState.h"
@@ -366,11 +367,11 @@
 {
     if(!m_PreferencesController)
     {
-        PreferencesWindowGeneralTab *general = [[PreferencesWindowGeneralTab alloc] init];
-        PreferencesWindowPanelsTab *panels = [[PreferencesWindowPanelsTab alloc] init];
-        PreferencesWindowViewerTab *viewer = [[PreferencesWindowViewerTab alloc] init];
-        NSArray *controllers = [NSArray arrayWithObjects:general, panels, viewer, nil];
-        
+        NSArray *controllers = [NSArray arrayWithObjects:[PreferencesWindowGeneralTab new],
+                                                         [PreferencesWindowPanelsTab new],
+                                                         [PreferencesWindowViewerTab new],
+                                                         [PreferencesWindowExternalEditorsTab new],
+                                                         nil];
         m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
                                                                                         andTitle:@"Preferences"];
     }

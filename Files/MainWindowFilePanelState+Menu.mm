@@ -187,7 +187,10 @@
     {
         ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];
         if(ed == nil)
+        {
+            NSBeep();
             return;
+        }
 
         string fn_path = self.ActivePanelController.GetCurrentDirectoryPathRelativeToHost + item->Name();
         if(ed.terminal == false)
@@ -202,7 +205,7 @@
             // dummy parameters processing
             char escaped_fn[MAXPATHLEN];
             TermShellTask::EscapeShellFeed(fn_path.c_str(), escaped_fn, MAXPATHLEN);
-            [(MainWindowController*)self.window.delegate RequestTerminalExecution:ed.path.UTF8String
+            [(MainWindowController*)self.window.delegate RequestTerminalExecution:ed.path.fileSystemRepresentation
                                                                            params:escaped_fn];
         }
     }

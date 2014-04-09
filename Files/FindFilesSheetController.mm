@@ -190,6 +190,7 @@ static const int g_MaximumSearchResults = 16384;
     [[self window] orderOut:self];
     m_ParentWindow = nil;
     m_Self = nil;
+    m_Handler = nil;
 }
 
 - (IBAction)OnClose:(id)sender

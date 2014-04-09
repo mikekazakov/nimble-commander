@@ -9,14 +9,12 @@
 #import <Cocoa/Cocoa.h>
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 
-@interface PreferencesWindowExternalEditorsTab : NSViewController<RHPreferencesViewControllerProtocol>
+@interface PreferencesWindowExternalEditorsTab : NSViewController<RHPreferencesViewControllerProtocol, NSTableViewDataSource>
 
 @property (nonatomic) NSMutableArray *ExtEditors;
 @property (strong) IBOutlet NSArrayController *ExtEditorsController;
 @property (strong) IBOutlet NSTableView *TableView;
 
 - (IBAction)OnNewEditor:(id)sender;
-- (IBAction)OnRemoveEditor:(id)sender;
-
 
 @end

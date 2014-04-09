@@ -10,6 +10,7 @@
 #import "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #import "PreferencesWindowExternalEditorsTab.h"
 
+#define MyPrivateTableViewDataType @"PreferencesWindowExternalEditorsTabPrivateTableViewDataType"
 
 @implementation PreferencesWindowExternalEditorsTab
 
@@ -28,6 +29,8 @@
     
     self.TableView.Target = self;
     self.TableView.DoubleAction = @selector(OnTableDoubleClick:);
+    self.TableView.dataSource = self;
+    [self.TableView registerForDraggedTypes:@[MyPrivateTableViewDataType]];
 }
 
 -(NSString*)identifier{
@@ -61,9 +64,6 @@
      ];
 }
 
-- (IBAction)OnRemoveEditor:(id)sender {
-}
-
 - (void)OnTableDoubleClick:(id)table
 {
     NSInteger row = [self.TableView clickedRow];
@@ -79,6 +79,43 @@
               [self.ExtEditorsController insertObject:sheet.Info atArrangedObjectIndex:row];
           }
      ];
+}
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
+    return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
+{
+    [pboard declareTypes:@[MyPrivateTableViewDataType]
+                   owner:self];
+    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes]
+            forType:MyPrivateTableViewDataType];
+    return true;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView
+       acceptDrop:(id<NSDraggingInfo>)info
+              row:(NSInteger)drag_to
+    dropOperation:(NSTableViewDropOperation)operation
+{
+    NSData* data = [info.draggingPasteboard dataForType:MyPrivateTableViewDataType];
+    NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSInteger drag_from = inds.firstIndex;
+  
+    if(drag_to == drag_from || // same index, above
+       drag_to == drag_from + 1) // same index, below
+        return false;
+    
+    assert(drag_from < [self.ExtEditorsController.arrangedObjects count]);
+    if(drag_from < drag_to)
+        drag_to--;
+    
+    ExternalEditorInfo *item = [self.ExtEditorsController.arrangedObjects objectAtIndex:drag_from];
+    [self.ExtEditorsController removeObject:item];
+    [self.ExtEditorsController insertObject:item atArrangedObjectIndex:drag_to];
+    return true;
 }
 
 @end

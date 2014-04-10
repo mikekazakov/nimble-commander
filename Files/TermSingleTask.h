@@ -25,7 +25,7 @@ public:
     
     inline void SetOnChildOutput(void (^_)(const void* _d, int _sz)) { m_OnChildOutput = _; };
     inline void SetOnChildDied(void (^_)()) { m_OnChildDied = _; };
-    void WriteChildInput(const void *_d, int _sz);
+    void WriteChildInput(const void *_d, size_t _sz);
     
     void ResizeWindow(int _sx, int _sy);
     
@@ -33,6 +33,7 @@ public:
     inline const char *TaskBinaryName() const { return m_TaskBinaryName.c_str(); }
     
 private:
+    void CleanUp();    
     void ReadChildOutput();
     void (^m_OnChildOutput)(const void* _d, int _sz);
     void (^m_OnChildDied)();

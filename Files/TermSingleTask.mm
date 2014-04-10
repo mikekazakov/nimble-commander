@@ -76,7 +76,7 @@ TermSingleTask::TermSingleTask()
 
 TermSingleTask::~TermSingleTask()
 {
-    // todo: waitpid
+    CleanUp();
 }
 
 void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, int _sx, int _sy)
@@ -107,11 +107,8 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
     { // master
         m_TaskPID = rc;
         close(slave_fd);
-//        close(m_CwdPipe[1]);
         
-//        SetState(StateShell);
-        
-        // TODO: consider using thread here, not a queue (mind maximum running queues issue)
+        // TODO: consider using single shared thread here, not a queue (mind maximum running queues issue)
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             ReadChildOutput();
         });
@@ -188,18 +185,15 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
         // we never get here in normal condition
         exit(1);
     }
-    
-    
 }
 
-void TermSingleTask::WriteChildInput(const void *_d, int _sz)
+void TermSingleTask::WriteChildInput(const void *_d, size_t _sz)
 {
-    if(_sz <= 0)
+    if(m_MasterFD < 0 || m_TaskPID < 0 || _sz == 0)
         return;
     
-    m_Lock.lock();
+    lock_guard<recursive_mutex> lock(m_Lock);
     write(m_MasterFD, _d, _sz);
-    m_Lock.unlock();
 }
 
 void TermSingleTask::ReadChildOutput()
@@ -210,7 +204,7 @@ void TermSingleTask::ReadChildOutput()
     static const int input_sz = 65536;
     char input[65536];
     
-    while (1)
+    while(1)
     {
         // Wait for data from standard input and master side of PTY
         FD_ZERO(&fd_in);
@@ -223,68 +217,37 @@ void TermSingleTask::ReadChildOutput()
         
         rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
         if(rc < 0 || m_TaskPID < 0)
-        {
-            // error on select(), let's think that shell has died
-            // mb call ShellDied() here?
-            goto end_of_all;
-        }
-        
+            goto end_of_all; // error on select(), let's think that task has died
+
         // If data on master side of PTY (some child's output)
         if(FD_ISSET(m_MasterFD, &fd_in))
         {
             rc = (int)read(m_MasterFD, input, input_sz);
             if (rc > 0)
             {
-                //                printf("has output\n");
-                if(m_OnChildOutput/* && !m_TemporarySuppressed*/)
+                if(m_OnChildOutput)
                     m_OnChildOutput(input, rc);
             }
-            else
+            else if(rc < 0)
             {
-                if (rc < 0)
-                {
-                    fprintf(stderr, "Error %d on read master PTY\n", errno);
-                    exit(1);
-                }
+                NSLog(@"Error %d on read master PTY", errno);
+                goto end_of_all;
             }
-            /*
-             if(bytesread < 0 && !(errno == EAGAIN || errno == EINTR)) {
-             [self brokenPipe];
-             return;
-             }
-             */
-            //                    continue;
         }
         
         // check if child process died
         if(FD_ISSET(m_MasterFD, &fd_err))
         {
-/*            rc = (int)read(m_MasterFD, input, input_sz);
-            if(rc > 0)
-            {
-                int a = 10;
-                
-                
-            }*/
-//            ShellDied();
-            rc = (int)read(m_MasterFD, input, input_sz);
-//            rc = (int)read(m_MasterFD, tmp, 255);
-/*            if(rc >= 0)
-            {
-                tmp[rc] = 0;
-                printf("%s\n", tmp);
-            }*/
-            
-            
-            
+            // is that right - that we treat any err output as signal that task is dead?
+            read(m_MasterFD, input, input_sz);
             goto end_of_all;
         }
-    } // End while
+    }
 end_of_all:
-//    NSLog(@"died.\n");
 
     if(m_OnChildDied)
         m_OnChildDied();
+    CleanUp();
 }
 
 void TermSingleTask::EscapeSpaces(char *_buf)
@@ -302,12 +265,43 @@ void TermSingleTask::EscapeSpaces(char *_buf)
 
 void TermSingleTask::ResizeWindow(int _sx, int _sy)
 {
+    if(m_MasterFD < 0 || m_TaskPID < 0)
+        return;
+    
     if(m_TermSX == _sx && m_TermSY == _sy)
         return;
+    
+    lock_guard<recursive_mutex> lock(m_Lock);
     
     m_TermSX = _sx;
     m_TermSY = _sy;
     
-//    if(m_State != StateInactive && m_State != StateDead)
     TermTask::SetTermWindow(m_MasterFD, _sx, _sy);
+}
+
+void TermSingleTask::CleanUp()
+{
+    lock_guard<recursive_mutex> lock(m_Lock);
+    
+    if(m_TaskPID > 0)
+    {
+        int pid = m_TaskPID;
+        m_TaskPID = -1;
+        kill(pid, SIGKILL);
+        
+        // possible and very bad workaround for sometimes appearing ZOMBIE BASHes
+        struct timespec tm, tm2;
+        tm.tv_sec  = 0;
+        tm.tv_nsec = 10000000L; // 10 ms
+        nanosleep(&tm, &tm2);
+        
+        int status;
+        waitpid(pid, &status, 0);
+    }
+    
+    if(m_MasterFD >= 0)
+    {
+        close(m_MasterFD);
+        m_MasterFD = -1;
+    }
 }

@@ -15,12 +15,12 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="393" height="245"/>
+            <rect key="contentRect" x="196" y="240" width="393" height="298"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
-            <value key="minSize" type="size" width="347" height="245"/>
-            <value key="maxSize" type="size" width="600" height="245"/>
+            <value key="minSize" type="size" width="347" height="298"/>
+            <value key="maxSize" type="size" width="600" height="298"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="393" height="245"/>
+                <rect key="frame" x="0.0" y="0.0" width="393" height="298"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IIA-V6-HXq">
@@ -52,15 +52,6 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="OnOK:" target="-2" id="LUv-sB-B46"/>
-                            <binding destination="-2" name="enabled2" keyPath="self.Info.path" previousBinding="Fgq-bU-m9n" id="6bH-6p-Wud">
-                                <dictionary key="options">
-                                    <integer key="NSMultipleValuesPlaceholder" value="-1"/>
-                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
-                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
-                                    <integer key="NSNullPlaceholder" value="-1"/>
-                                    <string key="NSValueTransformerName">PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty</string>
-                                </dictionary>
-                            </binding>
                             <binding destination="-2" name="enabled3" keyPath="self.Info.mask" previousBinding="6bH-6p-Wud" id="bi2-mc-lvv">
                                 <dictionary key="options">
                                     <integer key="NSMultipleValuesPlaceholder" value="-1"/>
@@ -75,10 +66,19 @@ DQ
                                     <string key="NSValueTransformerName">PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty</string>
                                 </dictionary>
                             </binding>
+                            <binding destination="-2" name="enabled2" keyPath="self.Info.path" previousBinding="Fgq-bU-m9n" id="6bH-6p-Wud">
+                                <dictionary key="options">
+                                    <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                    <integer key="NSNullPlaceholder" value="-1"/>
+                                    <string key="NSValueTransformerName">PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty</string>
+                                </dictionary>
+                            </binding>
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hAa-Xt-jRl">
-                        <rect key="frame" x="137" y="200" width="236" height="22"/>
+                        <rect key="frame" x="137" y="253" width="236" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="7iW-Vd-M6d">
                             <font key="font" metaFont="system"/>
@@ -94,7 +94,7 @@ DQ
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="I2r-tw-ho5">
-                        <rect key="frame" x="36" y="203" width="94" height="17"/>
+                        <rect key="frame" x="36" y="256" width="94" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Name:" id="J19-J3-pgq">
                             <font key="font" metaFont="system"/>
@@ -103,7 +103,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bHA-ya-5BQ">
-                        <rect key="frame" x="137" y="168" width="206" height="22"/>
+                        <rect key="frame" x="137" y="221" width="206" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="E1T-KL-XrB">
                             <font key="font" metaFont="system"/>
@@ -119,7 +119,7 @@ DQ
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9eM-Ci-zGt">
-                        <rect key="frame" x="18" y="171" width="112" height="17"/>
+                        <rect key="frame" x="18" y="224" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Application path:" id="xCy-eR-Fzk">
                             <font key="font" metaFont="system"/>
@@ -128,7 +128,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WB8-tj-hJt">
-                        <rect key="frame" x="18" y="139" width="112" height="17"/>
+                        <rect key="frame" x="18" y="192" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="File mask:" id="eP4-pl-vw3">
                             <font key="font" metaFont="system"/>
@@ -137,7 +137,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bgZ-NO-njw">
-                        <rect key="frame" x="137" y="136" width="236" height="22"/>
+                        <rect key="frame" x="137" y="189" width="236" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="aD2-eV-2mr">
                             <font key="font" metaFont="system"/>
@@ -145,15 +145,19 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.Info.mask" id="tiv-Lc-bfX">
+                            <binding destination="-2" name="value" keyPath="self.Info.mask" id="Ufz-S2-hoX">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                    <string key="NSMultipleValuesPlaceholder">*, *.*, *.cpp, *.*m etc</string>
+                                    <string key="NSNoSelectionPlaceholder">*, *.*, *.cpp, *.*m etc</string>
+                                    <string key="NSNotApplicablePlaceholder">*, *.*, *.cpp, *.*m etc</string>
+                                    <string key="NSNullPlaceholder">*, *.*, *.cpp, *.*m etc</string>
                                 </dictionary>
                             </binding>
                         </connections>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="xwx-gm-vL9">
-                        <rect key="frame" x="135" y="112" width="205" height="18"/>
+                        <rect key="frame" x="135" y="165" width="205" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Files only" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="9X5-ZX-4rg">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -164,7 +168,7 @@ DQ
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="llL-Y6-Ifk">
-                        <rect key="frame" x="135" y="92" width="205" height="18"/>
+                        <rect key="frame" x="135" y="145" width="205" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Run in terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="eTL-Fa-DVU">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -175,24 +179,28 @@ DQ
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="l8l-3t-hxh">
-                        <rect key="frame" x="137" y="64" width="236" height="22"/>
+                        <rect key="frame" x="137" y="117" width="236" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="gXQ-wq-icQ">
-                            <font key="font" metaFont="system"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="" drawsBackground="YES" usesSingleLineMode="YES" id="gXQ-wq-icQ">
+                            <font key="font" size="13" name="LucidaGrande"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
                             <binding destination="-2" name="enabled" keyPath="self.Info.terminal" id="Q0F-UZ-Qg1"/>
-                            <binding destination="-2" name="value" keyPath="self.Info.arguments" id="64G-1f-iSg">
+                            <binding destination="-2" name="value" keyPath="self.Info.arguments" id="eqL-Z3-EpY">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                    <string key="NSMultipleValuesPlaceholder">%%</string>
+                                    <string key="NSNoSelectionPlaceholder">%%</string>
+                                    <string key="NSNotApplicablePlaceholder">%%</string>
+                                    <string key="NSNullPlaceholder">%%</string>
                                 </dictionary>
                             </binding>
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Kt9-Gh-sCD">
-                        <rect key="frame" x="18" y="67" width="112" height="17"/>
+                        <rect key="frame" x="18" y="120" width="112" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Arguments:" id="84y-na-X1l">
                             <font key="font" metaFont="system"/>
@@ -201,7 +209,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dKg-xY-uu2">
-                        <rect key="frame" x="340" y="162" width="39" height="32"/>
+                        <rect key="frame" x="340" y="215" width="39" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="27" id="paM-HY-dcC"/>
@@ -214,6 +222,16 @@ DQ
                             <action selector="OnChoosePath:" target="-2" id="kdt-qq-Oyw"/>
                         </connections>
                     </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tZU-6F-gVX">
+                        <rect key="frame" x="137" y="49" width="238" height="60"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" id="wWC-fX-UjM">
+                            <font key="font" size="10" name="LucidaGrande"/>
+                            <string key="title">Any occurrences of %% will be replaced with file path. You can use backward slashes to escape spaces from being interpreted as parameters dividers.</string>
+                            <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
                 <constraints>
                     <constraint firstItem="bgZ-NO-njw" firstAttribute="leading" secondItem="bHA-ya-5BQ" secondAttribute="leading" id="0xh-0d-daR"/>

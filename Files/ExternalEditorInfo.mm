@@ -9,9 +9,9 @@
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "ExternalEditorInfo.h"
 #import "FileMask.h"
+#import "TermSingleTask.h"
 
 static NSString *g_FileName = @"/externaleditors.bplist"; // bplist file name
-static ExternalEditorsList* g_SharedList = nil;
 
 static NSString* StorageFileName()
 {
@@ -154,6 +154,25 @@ static NSString* StorageFileName()
         m_FileMask = make_unique<FileMask>(m_Mask);
 }
 
+- (string) substituteFileName:(const string &)_path
+{
+    char esc_buf[MAXPATHLEN];
+    strcpy(esc_buf, _path.c_str());
+    TermSingleTask::EscapeSpaces(esc_buf);
+    
+    if(m_Arguments.length == 0)
+        return esc_buf; // just return escaped file path
+    
+    string args = m_Arguments.fileSystemRepresentation;
+    string path = string(" ") + esc_buf + " ";
+
+    size_t start_pos;
+    if((start_pos = args.find("%%")) != std::string::npos)
+        args.replace(start_pos, 2, path);
+
+    return args;
+}
+
 @end
 
 
@@ -175,18 +194,12 @@ static NSString* StorageFileName()
         {
             m_Editors = [NSMutableArray new];
             
-            
             ExternalEditorInfo *dummy = [ExternalEditorInfo new];
             dummy.name = @"vi";
             dummy.path = @"/usr/bin/vi";
             dummy.arguments = @"%%";
             dummy.mask = @"*";
             dummy.terminal = true;
-
-/*            dummy.name = @"TextEdit";
-            dummy.path = @"/Applications/TextEdit.app";
-            dummy.mask = @"*";
-             dummy.terminal = false;*/
             
             [m_Editors addObject:dummy];
             m_IsDirty = true;
@@ -222,11 +235,12 @@ static NSString* StorageFileName()
 + (ExternalEditorsList*) sharedList
 {
     static dispatch_once_t once;
+    static ExternalEditorsList* list = nil;
     dispatch_once(&once, ^{
-        g_SharedList = [ExternalEditorsList new];
+        list = [ExternalEditorsList new];
     });
     
-    return g_SharedList;
+    return list;
 }
 
 - (void)OnTerminate:(NSNotification *)note

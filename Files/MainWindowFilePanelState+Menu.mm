@@ -18,8 +18,6 @@
 #import "ExternalEditorInfo.h"
 #import "MainWindowController.h"
 
-#import "TermShellTask.h"
-
 @implementation MainWindowFilePanelState (Menu)
 
 - (IBAction)OnOpen:(id)sender
@@ -202,11 +200,8 @@
         }
         else
         {
-            // dummy parameters processing
-            char escaped_fn[MAXPATHLEN];
-            TermShellTask::EscapeShellFeed(fn_path.c_str(), escaped_fn, MAXPATHLEN);
             [(MainWindowController*)self.window.delegate RequestTerminalExecution:ed.path.fileSystemRepresentation
-                                                                           params:escaped_fn];
+                                                                           params:[ed substituteFileName:fn_path]];
         }
     }
 }

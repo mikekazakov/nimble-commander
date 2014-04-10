@@ -201,6 +201,9 @@ void TermSingleTask::ReadChildOutput()
     int rc;
     fd_set fd_in, fd_err;
     
+    // just for cases when select() don't catch child death - we force to ask it for every 2 seconds
+    struct timeval timeout = {2, 0};
+    
     static const int input_sz = 65536;
     char input[65536];
     
@@ -215,7 +218,7 @@ void TermSingleTask::ReadChildOutput()
         
         int max_fd = m_MasterFD;
         
-        rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
+        rc = select(max_fd + 1, &fd_in, NULL, &fd_err, &timeout);
         if(rc < 0 || m_TaskPID < 0)
             goto end_of_all; // error on select(), let's think that task has died
 

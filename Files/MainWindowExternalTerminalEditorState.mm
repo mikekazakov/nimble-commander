@@ -15,6 +15,13 @@
 #import "MainWindowController.h"
 #import "MainWindowExternalTerminalEditorState.h"
 
+static const char *FileNameFromFilePath(const string &_fn)
+{
+    auto i = _fn.find_last_of('/');
+    if(i == string::npos)
+        return "";
+    return _fn.c_str() + i + 1;
+}
 
 @implementation MainWindowExternalTerminalEditorState
 {
@@ -25,16 +32,19 @@
     NSScrollView               *m_ScrollView;
     string                      m_BinaryPath;
     string                      m_Params;
+    string                      m_FilePath;
 }
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
-                      binary:(string)_binary_path
-                      params:(string)_params
+                      binary:(const string&)_binary_path
+                      params:(const string&)_params
+                        file:(const string&)_file_path
 {
     self = [super initWithFrame:frameRect];
     if (self) {
         m_BinaryPath = _binary_path;
         m_Params = _params;
+        m_FilePath = _file_path;
         
         m_ScrollView = [[NSScrollView alloc] initWithFrame:self.bounds];
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
@@ -148,18 +158,17 @@
 
 - (void) updateTitle
 {
-    NSString *title = 0;
+    NSString *title = nil;
     
     m_Screen->Lock();
     if(strlen(m_Screen->Title()) > 0)
         title = [NSString stringWithUTF8String:m_Screen->Title()];
     m_Screen->Unlock();
     
-    if(title == 0)
-    {
-        // TODO: need a filename here also
-        title = [NSString stringWithUTF8String:m_Task->TaskBinaryName()];
-    }
+    if(title == nil)
+        title = [NSString stringWithFormat:@"%@ - %@",
+                 [NSString stringWithUTF8String:m_Task->TaskBinaryName()],
+                 [NSString stringWithUTF8String:FileNameFromFilePath(m_FilePath)]];
     
     self.window.title = title;
 }

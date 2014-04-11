@@ -303,6 +303,7 @@
 		CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
 		CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
+		CFDC4B5018F834EF004E6429 /* pref_extedit_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFDC4B4F18F834EF004E6429 /* pref_extedit_icon.png */; };
 		CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
@@ -812,6 +813,7 @@
 		CFDA4CD4182CBA68006EC35C /* SUVersionComparisonProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUVersionComparisonProtocol.h; path = 3rd_party/sparkle/SUVersionComparisonProtocol.h; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
+		CFDC4B4F18F834EF004E6429 /* pref_extedit_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_extedit_icon.png; sourceTree = "<group>"; };
 		CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewDataBackend.mm; sourceTree = "<group>"; };
 		CFE0E66E17F7D16A00BCF557 /* BigFileViewDataBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewDataBackend.h; sourceTree = "<group>"; };
 		CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
@@ -871,6 +873,7 @@
 		B51014CF170721340023FF24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CFDC4B4F18F834EF004E6429 /* pref_extedit_icon.png */,
 				CF649C3C18D2D31600055595 /* show_oplist_hl_icon.png */,
 				CF649C3918D2C0C200055595 /* show_oplist_icon.png */,
 				CFEB07801886ECAA00E5CC0D /* linkarrow_icon.png */,
@@ -1852,6 +1855,7 @@
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */,
 				CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */,
+				CFDC4B5018F834EF004E6429 /* pref_extedit_icon.png in Resources */,
 				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,

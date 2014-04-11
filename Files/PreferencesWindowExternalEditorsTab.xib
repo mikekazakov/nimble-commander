@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowExternalEditorsTab">
@@ -95,7 +95,7 @@
                     <rect key="frame" x="20" y="20" width="20" height="20"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="20" id="qbb-sH-By2"/>
+                        <constraint firstAttribute="height" constant="20" id="dBw-1P-Aqj"/>
                     </constraints>
                     <buttonCell key="cell" type="square" title="+" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ink-SD-Pb6">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -108,9 +108,6 @@
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="dns-GN-ceG">
                     <rect key="frame" x="39" y="20" width="20" height="20"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="20" id="cwn-Vj-rY8"/>
-                    </constraints>
                     <buttonCell key="cell" type="square" title="-" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rUI-04-LHv">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -120,7 +117,7 @@
                         <binding destination="tw8-Qz-5OO" name="enabled" keyPath="canRemove" id="sDC-pl-Ti9"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lza-Yw-trV">
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lza-Yw-trV">
                     <rect key="frame" x="67" y="12" width="283" height="28"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When choosing which editor to start they are checked in order of appearance in this list." id="OHQ-k9-cKW">
@@ -131,16 +128,20 @@
                 </textField>
             </subviews>
             <constraints>
-                <constraint firstItem="8G6-nH-UUs" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="6ZL-CC-hzq"/>
-                <constraint firstAttribute="bottom" secondItem="l4M-t4-kzQ" secondAttribute="bottom" constant="20" symbolic="YES" id="8X2-fa-9H1"/>
-                <constraint firstItem="dns-GN-ceG" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="39" id="BbR-ph-GtK"/>
-                <constraint firstAttribute="trailing" secondItem="8G6-nH-UUs" secondAttribute="trailing" constant="20" symbolic="YES" id="CG9-cg-4bI"/>
-                <constraint firstItem="8G6-nH-UUs" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="EDd-U7-uAH"/>
-                <constraint firstItem="l4M-t4-kzQ" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="Hrn-n1-q0u"/>
-                <constraint firstItem="dns-GN-ceG" firstAttribute="baseline" secondItem="l4M-t4-kzQ" secondAttribute="baseline" id="NGV-dQ-z1X"/>
-                <constraint firstItem="dns-GN-ceG" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="trailing" constant="-1" id="PrN-l5-wCc"/>
-                <constraint firstItem="dns-GN-ceG" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="ZGH-Zu-4dP"/>
-                <constraint firstItem="8G6-nH-UUs" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="leading" id="be8-G6-M9p"/>
+                <constraint firstItem="8G6-nH-UUs" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="7qr-sY-mhM"/>
+                <constraint firstItem="Lza-Yw-trV" firstAttribute="leading" secondItem="dns-GN-ceG" secondAttribute="trailing" constant="10" id="LCc-gY-wAv"/>
+                <constraint firstItem="8G6-nH-UUs" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="Leu-SW-gDR"/>
+                <constraint firstItem="Lza-Yw-trV" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="W1u-gh-Yox"/>
+                <constraint firstItem="l4M-t4-kzQ" firstAttribute="baseline" secondItem="dns-GN-ceG" secondAttribute="baseline" id="aNQ-2F-Whx"/>
+                <constraint firstItem="l4M-t4-kzQ" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="bCR-YR-nHw"/>
+                <constraint firstAttribute="bottom" secondItem="l4M-t4-kzQ" secondAttribute="bottom" constant="20" symbolic="YES" id="hfP-BW-4FV"/>
+                <constraint firstItem="8G6-nH-UUs" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="leading" id="l98-G4-Cuc"/>
+                <constraint firstAttribute="trailing" secondItem="8G6-nH-UUs" secondAttribute="trailing" constant="20" symbolic="YES" id="me7-cb-RPP"/>
+                <constraint firstItem="Lza-Yw-trV" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="trailing" constant="29" id="mhO-lt-jhe"/>
+                <constraint firstItem="dns-GN-ceG" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="trailing" constant="-1" id="pvi-4k-amF"/>
+                <constraint firstItem="dns-GN-ceG" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="39" id="qPv-4l-M6s"/>
+                <constraint firstItem="8G6-nH-UUs" firstAttribute="trailing" secondItem="Lza-Yw-trV" secondAttribute="trailing" id="sZW-iq-cEi"/>
+                <constraint firstItem="dns-GN-ceG" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="umz-Mm-sds"/>
             </constraints>
         </customView>
         <arrayController objectClassName="ExternalEditorInfo" id="tw8-Qz-5OO">

@@ -31,7 +31,9 @@
 
 - (void)RequestTerminal:(const char*)_cwd;
 - (void)RequestTerminalExecution:(const char*)_filename at:(const char*)_cwd;
-- (void)RequestTerminalExecution:(string)_full_app_path params:(string)_params;
+- (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
+                                        params:(const string&)_params
+                                          file:(const string&)_file_path;
 
 - (MainWindowFilePanelState*) FilePanelState; // one and only one per window
 - (MainWindowTerminalState*) TerminalState;   // zero or one per window

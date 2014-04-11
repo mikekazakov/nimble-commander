@@ -37,7 +37,7 @@
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:NSImageNameAdvanced];
+    return [NSImage imageNamed:@"pref_extedit_icon"];
 }
 -(NSString*)toolbarItemLabel{
     return @"External Editors";

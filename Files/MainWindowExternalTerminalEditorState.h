@@ -13,8 +13,9 @@
 @interface MainWindowExternalTerminalEditorState : NSView<MainWindowStateProtocol>
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
-                      binary:(string)_binary_path
-                      params:(string)_params;
+                      binary:(const string&)_binary_path
+                      params:(const string&)_params
+                        file:(const string&)_file_path;
 
 @end
 

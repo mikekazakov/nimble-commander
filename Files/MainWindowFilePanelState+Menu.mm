@@ -200,8 +200,11 @@
         }
         else
         {
-            [(MainWindowController*)self.window.delegate RequestTerminalExecution:ed.path.fileSystemRepresentation
-                                                                           params:[ed substituteFileName:fn_path]];
+            MainWindowController* wnd = (MainWindowController*)self.window.delegate;
+            [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
+                                                 params:[ed substituteFileName:fn_path]
+                                                   file:fn_path
+             ];
         }
     }
 }

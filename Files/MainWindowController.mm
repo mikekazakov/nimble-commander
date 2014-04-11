@@ -268,13 +268,17 @@
     [m_Terminal Execute:_filename at:_cwd];
 }
 
-- (void)RequestTerminalExecution:(string)_full_app_path params:(string)_params
+- (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
+                                        params:(const string&)_params
+                                          file:(const string&)_file_path
 {
     auto frame = [self.window.contentView frame];
     MainWindowExternalTerminalEditorState *state = [MainWindowExternalTerminalEditorState alloc];
     state = [state initWithFrameAndParams:frame
                                    binary:_full_app_path
-                                   params:_params];
+                                   params:_params
+                                     file:_file_path
+             ];
     [self PushNewWindowState:state];
 }
 

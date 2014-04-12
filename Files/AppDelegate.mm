@@ -181,7 +181,7 @@
     if ([identifier isEqualToString:@"mainwindow"])
     {
         AppDelegate *app = (AppDelegate*)[NSApplication sharedApplication].delegate;
-        window = [[app AllocateNewMainWindow] window];
+        window = [app AllocateNewMainWindow].window;
     }
     completionHandler(window, nil);
 }
@@ -246,13 +246,13 @@
 {
     NSString *toAddress = @"feedback@filesmanager.info";
     NSString *subject = [NSString stringWithFormat: @"Feedback on Files version %@ (%@)",
-                         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"],
-                         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Write your message here.";
     NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
     NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlstring]];
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
 }
 
 - (ApplicationSkin)Skin
@@ -338,12 +338,11 @@
     }
     
     // find window to ask
-    NSArray *windows = [[NSApplication sharedApplication] orderedWindows];
     NSWindow *target_window = nil;
-    for(NSWindow *wnd in windows)
+    for(NSWindow *wnd in NSApplication.sharedApplication.orderedWindows)
         if(wnd != nil &&
-           [wnd windowController] != nil &&
-           [[wnd windowController] isKindOfClass:[MainWindowController class]])
+           wnd.windowController != nil &&
+           [wnd.windowController isKindOfClass:[MainWindowController class]])
         {
             target_window = wnd;
             break;
@@ -367,11 +366,11 @@
 {
     if(!m_PreferencesController)
     {
-        NSArray *controllers = [NSArray arrayWithObjects:[PreferencesWindowGeneralTab new],
-                                                         [PreferencesWindowPanelsTab new],
-                                                         [PreferencesWindowViewerTab new],
-                                                         [PreferencesWindowExternalEditorsTab new],
-                                                         nil];
+        auto controllers = @[[PreferencesWindowGeneralTab new],
+                             [PreferencesWindowPanelsTab new],
+                             [PreferencesWindowViewerTab new],
+                             [PreferencesWindowExternalEditorsTab new]
+                             ];
         m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
                                                                                         andTitle:@"Preferences"];
     }

@@ -122,6 +122,8 @@
 	<string></string>
 	<string>menu.command.internal_viewer</string>
 	<string>⌥</string>
+	<string>menu.command.external_editor</string>
+	<string></string>
 	<string>menu.command.eject_volume</string>
 	<string></string>
 	<string>menu.command.compress</string>

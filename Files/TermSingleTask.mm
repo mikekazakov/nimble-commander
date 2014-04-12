@@ -160,7 +160,7 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
         argvs[args.size()+1] = NULL;
         
         // execution of the program
-        execv(_full_binary_path, argvs);
+        execvp(_full_binary_path, argvs);
         
         // we never get here in normal condition
         exit(1);

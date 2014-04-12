@@ -135,6 +135,7 @@ private:
         {"menu.command.deselect_with_mask",     15060},
         {"menu.command.quick_look",             15070},
         {"menu.command.internal_viewer",        15080},
+        {"menu.command.external_editor",        15081},
         {"menu.command.eject_volume",           15090},
         {"menu.command.compress",               15100},
         {"menu.command.copy_to",                15110},

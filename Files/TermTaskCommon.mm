@@ -48,3 +48,62 @@ int TermTask::SetupTermios(int _fd)
     term_sett.c_cc [VEOF] = 4;    /* CTRL+D */
     return tcsetattr(_fd, /*TCSADRAIN*/TCSANOW, &term_sett);
 }
+
+static string GetLocale()
+{
+	// Keep a copy of the current locale setting for this process
+	char* backupLocale = setlocale(LC_CTYPE, NULL);
+    
+	// Start with the locale
+	string locale = [NSLocale.currentLocale localeIdentifier].UTF8String;
+    string encoding = "UTF-8"; // hardcoded now. but how uses non-UTF8 nowdays?
+    
+    // check if locale + encoding is valid
+    string test = locale + '.' + encoding;
+    if(NULL != setlocale(LC_CTYPE, test.c_str()))
+        locale = test;
+    
+	// Check the locale is valid
+	if(NULL == setlocale(LC_CTYPE, locale.c_str()))
+		locale = "";
+    
+    // Restore locale and return
+    setlocale(LC_CTYPE, backupLocale);
+    return locale;
+}
+
+map<string, string> TermTask::BuildEnv()
+{
+    static map<string, string> env;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^
+    {
+        // do it once per app run
+        string locale = GetLocale();
+        if(!locale.empty())
+        {
+            env.emplace("LANG", locale);
+            env.emplace("LC_COLLATE", locale);
+            env.emplace("LC_CTYPE", locale);
+            env.emplace("LC_MESSAGES", locale);
+            env.emplace("LC_MONETARY", locale);
+            env.emplace("LC_NUMERIC", locale);
+            env.emplace("LC_TIME", locale);
+        }
+        else
+        {
+            env.emplace("LC_CTYPE", "UTF-8");
+        }
+
+        env.emplace("TERM", "xterm-16color");
+        env.emplace("TERM_PROGRAM", "Files.app");
+    });
+    
+    return env;
+}
+
+void TermTask::SetEnv(const map<string, string>& _env)
+{
+    for(auto &i: _env)
+        setenv(i.first.c_str(), i.second.c_str(), 1);
+}

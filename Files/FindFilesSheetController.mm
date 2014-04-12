@@ -178,7 +178,7 @@ static const int g_MaximumSearchResults = 16384;
     m_Path = _path;
     m_Handler = _handler;
     m_Self = self;
-    [NSApp beginSheet:[self window]
+    [NSApp beginSheet:self.window
        modalForWindow:_window
         modalDelegate:self
        didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)
@@ -187,7 +187,7 @@ static const int g_MaximumSearchResults = 16384;
 
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
-    [[self window] orderOut:self];
+    [self.window orderOut:self];
     m_ParentWindow = nil;
     m_Self = nil;
     m_Handler = nil;
@@ -197,8 +197,8 @@ static const int g_MaximumSearchResults = 16384;
 {
     m_FileSearch->Stop();
     m_FileSearch->Wait();
-    [NSApp endSheet:[self window] returnCode:0];
     m_Handler();
+    [NSApp endSheet:self.window returnCode:0];
 }
 
 - (void) OnFinishedSearch

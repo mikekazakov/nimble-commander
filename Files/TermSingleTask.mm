@@ -84,13 +84,15 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
     m_TermSX = _sx;
     m_TermSY = _sy;
     
+    // user's home dir to set as cwd
+    struct passwd *pw = getpwuid(getuid());
+    
     // find out binary name to put as argv[0]
     const char *img_name = ImgNameFromPath(_full_binary_path);
     m_TaskBinaryName = img_name;
     
-    // remember current locale and encoding
-    char locenc[256];
-    sprintf(locenc, "%s.UTF-8", [[NSLocale currentLocale] localeIdentifier].UTF8String);
+    // remember current locale and stuff
+    auto env = TermTask::BuildEnv();
     
     m_MasterFD = posix_openpt(O_RDWR);
     assert(m_MasterFD >= 0);
@@ -134,34 +136,12 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
         dup(slave_fd); // PTY becomes standard output (1)
         dup(slave_fd); // PTY becomes standard error (2)
         
-        
-//        chdir(_work_dir);
-        chdir("/Users/migun/");        
-//        setenv("PWD", "/Users/migun/", 1);
-        
-        // putenv is a bit better than setenv in terms of performance(no mallocs), so try to use it wisely
-        
-        // basic terminal environment setup
-        putenv ((char *) "TERM=xterm-16color");
-        putenv ((char *) "TERM_PROGRAM=Files.app");
-        
-        // need real config here
-        setenv("LANG"  , locenc, 1);
-        setenv("LC_ALL", locenc, 1);
-        // we possibly need to also set LC_COLLATE, LC_CTYPE, LC_MESSAGES, LC_MONETARY, LC_NUMERIC and LC_TIME.
-        
-        // setup piping for CWD prompt
-        // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)
-//        rc = dup2(m_CwdPipe[1], g_PromptPipe);
-//        assert(rc == g_PromptPipe);
-        
-        // set bash prompt so it will report only when executed by original fork (to exclude execution by it's later forks)
-//        char bash_prompt[1024];
-//        sprintf(bash_prompt, g_PromptStringPID, (int)getpid());
-//        setenv("PROMPT_COMMAND", bash_prompt, 1);
-        
-        // say BASH to not put into history any command starting with space character
-//        putenv((char *)"HISTCONTROL=ignorespace");
+        // where should CWD be? let it be in home dir
+        if(pw)
+            chdir(pw->pw_dir);
+
+        // put basic environment stuff
+        TermTask::SetEnv(env);
         
         // close all file descriptors except [0], [1], [2] and [g_PromptPipe]
         // implicitly closing m_MasterFD and slave_fd

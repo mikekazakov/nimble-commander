@@ -52,9 +52,8 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
     m_TermSX = _sx;
     m_TermSY = _sy;
     
-    // remember current locale and encoding
-    char locenc[256];
-    sprintf(locenc, "%s.UTF-8", [[NSLocale currentLocale] localeIdentifier].UTF8String);
+    // remember current locale and stuff
+    auto env = TermTask::BuildEnv();
     
     m_MasterFD = posix_openpt(O_RDWR);
     assert(m_MasterFD >= 0);
@@ -104,16 +103,8 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
         ioctl(0, TIOCSCTTY, 1);
         chdir(_work_dir);
         
-        // putenv is a bit better than setenv in terms of performance(no mallocs), so try to use it wisely
-        
-        // basic terminal environment setup
-        putenv ((char *) "TERM=xterm-16color");
-        putenv ((char *) "TERM_PROGRAM=Files.app");
-        
-        // need real config here
-        setenv("LANG"  , locenc, 1);
-        setenv("LC_ALL", locenc, 1);
-        // we possibly need to also set LC_COLLATE, LC_CTYPE, LC_MESSAGES, LC_MONETARY, LC_NUMERIC and LC_TIME.
+        // put basic environment stuff
+        TermTask::SetEnv(env);
         
         // setup piping for CWD prompt
         // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)

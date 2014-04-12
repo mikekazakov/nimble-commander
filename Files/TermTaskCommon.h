@@ -8,6 +8,11 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
+using namespace std;
+
 namespace TermTask
 {
     
@@ -18,5 +23,8 @@ int SetTermWindow(int _fd,
                   unsigned short _chars_height,
                   unsigned short _pix_width = 0,
                   unsigned short _pix_height = 0);
+
+map<string, string> BuildEnv();
+void SetEnv(const map<string, string>& _env);
     
 }

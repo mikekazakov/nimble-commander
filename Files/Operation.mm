@@ -87,7 +87,7 @@ static void AddOperation(void* _op) {
 
 static void RemoveOperation(void* _op) {
     if(IsFrontmostOperation(_op))
-        [((AppDelegate*)[NSApplication.sharedApplication delegate]) InformAppProgress:-1];
+        ((AppDelegate*)[NSApplication.sharedApplication delegate]).progress = -1;
     
     lock_guard<mutex> guard(g_AllOperationsMutex);
     g_AllOperations.erase(find(begin(g_AllOperations),
@@ -97,7 +97,7 @@ static void RemoveOperation(void* _op) {
 
 static void ReportProgress(void* _op, double _progress) {
     if(IsFrontmostOperation(_op))
-        [((AppDelegate*)[NSApplication.sharedApplication delegate]) InformAppProgress:_progress];
+        ((AppDelegate*)[NSApplication.sharedApplication delegate]).progress = _progress;
 }
 
 @implementation Operation

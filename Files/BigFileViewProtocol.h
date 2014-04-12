@@ -30,8 +30,11 @@ public:
     
     virtual void MoveOffsetWithinWindow(uint32_t _offset){} // request to move visual offset to an approximate amount
 
-    
-    virtual void ScrollToByteOffset(uint64_t _offset){}     // scroll to specified offset, moving window if needed
+    /**
+     * Scroll to specified offset, moving window if needed.
+     * Line with _offset bytes should be visible after.
+     */
+    virtual void ScrollToByteOffset(uint64_t _offset){}
     
     
     virtual void HandleVerticalScroll(double _pos){} // move file window if needed

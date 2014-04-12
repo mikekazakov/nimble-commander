@@ -67,6 +67,11 @@ private:
      */
     int FindClosestLineInd(uint64_t _glob_offset) const;
     
+    /**
+     * Look at FindClosestLineInd();
+     */
+    int FindClosestNotGreaterLineInd(uint64_t _glob_offset) const;
+    
     struct TextLine;
 
     // basic stuff

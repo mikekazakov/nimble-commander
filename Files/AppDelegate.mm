@@ -31,6 +31,16 @@
     
     NSProgressIndicator *m_ProgressIndicator;
     NSDockTile          *m_DockTile;
+    double              m_AppProgress;
+}
+
+- (id) init
+{
+    self = [super init];
+    if(self) {
+        m_AppProgress = -1;
+    }
+    return self;
 }
 
 + (void)initialize
@@ -79,25 +89,34 @@
     iv.image = NSApplication.sharedApplication.applicationIconImage;
     m_DockTile.contentView = iv;
     m_ProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 2, m_DockTile.size.width, 18)];
-    m_ProgressIndicator.Style = NSProgressIndicatorBarStyle;
-    m_ProgressIndicator.Indeterminate = NO;
-    m_ProgressIndicator.Bezeled = true;
-    m_ProgressIndicator.MinValue = 0;
-    m_ProgressIndicator.MaxValue = 1;
-    
+    m_ProgressIndicator.style = NSProgressIndicatorBarStyle;
+    m_ProgressIndicator.indeterminate = NO;
+    m_ProgressIndicator.bezeled = true;
+    m_ProgressIndicator.minValue = 0;
+    m_ProgressIndicator.maxValue = 1;
+    m_ProgressIndicator.hidden = true;
     [iv addSubview:m_ProgressIndicator];
-    [self InformAppProgress:-1];
 }
 
-- (void)InformAppProgress:(double)_value
+- (double) progress
 {
-    if ( _value >= 0.0 && _value <= 1.0) {
-        m_ProgressIndicator.doubleValue = _value;
+    return m_AppProgress;
+}
+
+- (void) setProgress:(double)_progress
+{
+    if(_progress == m_AppProgress)
+        return;
+    
+    if(_progress >= 0.0 && _progress <= 1.0) {
+        m_ProgressIndicator.doubleValue = _progress;
         m_ProgressIndicator.hidden = false;
     }
     else {
         m_ProgressIndicator.hidden = true;
     }
+    
+    m_AppProgress = _progress;
     
     [m_DockTile display];
 }

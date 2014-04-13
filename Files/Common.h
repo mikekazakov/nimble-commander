@@ -81,6 +81,10 @@ struct MachTimeBenchmark
 {
     uint64_t last;
     inline MachTimeBenchmark() : last(GetTimeInNanoseconds()) {};
+    inline uint64_t Delta() const
+    {
+        return GetTimeInNanoseconds() - last;
+    }
     inline void Reset()
     {
         uint64_t now = GetTimeInNanoseconds();

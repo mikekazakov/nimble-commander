@@ -49,6 +49,8 @@ private:
     void BuildGeometry();
     void BuildAppearance();
     
+    void DrawCursor(CGContextRef _context, NSRect _rc);
+    
     NSFont *m_Font;
     double m_FontAscent;
     double m_FontHeight;
@@ -56,7 +58,6 @@ private:
     double m_SizeColumWidth;
     double m_DateColumnWidth;
     double m_TimeColumnWidth;
-//    double m_DateTimeFooterWidth;
     
     bool m_IsLeft;
     
@@ -71,9 +72,6 @@ private:
     NSDictionary *m_ActiveSelectedTimeColumnTextAttr;
     NSDictionary *m_TimeColumnTextAttr;
     
-    NSDictionary *m_ActiveSelectedItemsFooterTextAttr;
-    NSDictionary *m_SelectedItemsFooterTextAttr;    
-    
     NSColor     *m_RegularItemTextColor;
     NSColor     *m_ActiveSelectedItemTextColor;
     
@@ -84,12 +82,7 @@ private:
     CGColorRef  m_CursorFrameColor;
     CGColorRef  m_ColumnDividerColor;
     
-    CGGradientRef m_ActiveHeaderGradient;
-    NSShadow *m_ActiveHeaderTextShadow;
-    CGGradientRef m_InactiveHeaderGradient;
-    NSShadow *m_InactiveHeaderTextShadow;
-
-    NSImage *m_SymlinkArrowImage;
+    static NSImage *m_SymlinkArrowImage;
     
     ObjcToCppObservingBridge *m_GeometryObserver;
     ObjcToCppObservingBridge *m_AppearanceObserver;

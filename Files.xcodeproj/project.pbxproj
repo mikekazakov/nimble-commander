@@ -310,6 +310,7 @@
 		CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */; };
 		CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
+		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFEB07811886ECAA00E5CC0D /* linkarrow_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFEB07801886ECAA00E5CC0D /* linkarrow_icon.png */; };
 		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */; };
 		CFEE8E5117748E3D00F6A254 /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEE8E4F17748E3D00F6A254 /* FontExtras.mm */; };
@@ -825,6 +826,8 @@
 		CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetController.xib; sourceTree = "<group>"; };
 		CFE2697A16F01BA90048A393 /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chained_strings.cpp; sourceTree = "<group>"; };
 		CFE2697B16F01BAA0048A393 /* chained_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chained_strings.h; sourceTree = "<group>"; };
+		CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationHeader.mm; sourceTree = "<group>"; };
+		CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationHeader.h; sourceTree = "<group>"; };
 		CFEB07801886ECAA00E5CC0D /* linkarrow_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = linkarrow_icon.png; sourceTree = "<group>"; };
 		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TemporaryNativeFileStorage.mm; sourceTree = "<group>"; };
 		CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileStorage.h; sourceTree = "<group>"; };
@@ -914,6 +917,8 @@
 				B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */,
 				B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */,
 				B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */,
+				CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */,
+				CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */,
 				CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */,
 				CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */,
 				CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */,
@@ -2058,6 +2063,7 @@
 				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,
 				CF9D0EA017CC961100CB8146 /* archive_read_support_format_7zip.c in Sources */,
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
+				CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CF9D0EA517CC961100CB8146 /* archive_read_support_format_cpio.c in Sources */,
 				CF9D0E8917CC961100CB8146 /* archive_read_disk_entry_from_file.c in Sources */,
 				CF9D0ED417CC961100CB8146 /* archive_write_set_format_ustar.c in Sources */,

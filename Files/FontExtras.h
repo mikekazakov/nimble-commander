@@ -8,5 +8,9 @@
 
 #pragma once
 
+/**
+ * Grabs geometry information from given font and returns it's line height.
+ * Optionally returns font Ascent, Descent and Leading.
+ */
 double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent=0, CGFloat *_descent=0, CGFloat *_leading=0);
 double GetMonospaceFontCharWidth(CTFontRef _font);

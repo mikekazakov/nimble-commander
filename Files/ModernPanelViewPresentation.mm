@@ -18,6 +18,8 @@
 #import "IconsGenerator.h"
 #import <deque>
 
+#import "ModernPanelViewPresentationHeader.h"
+
 
 static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
 {
@@ -126,24 +128,6 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     return @""; // fallback case
 }
 
-static NSString *FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode)
-{
-    switch (_mode)
-    {
-        case PanelSortMode::SortByName:     return @"n";
-        case PanelSortMode::SortByNameRev:  return @"N";
-        case PanelSortMode::SortByExt:      return @"e";
-        case PanelSortMode::SortByExtRev:   return @"E";
-        case PanelSortMode::SortBySize:     return @"s";
-        case PanelSortMode::SortBySizeRev:  return @"S";
-        case PanelSortMode::SortByMTime:    return @"m";
-        case PanelSortMode::SortByMTimeRev: return @"M";
-        case PanelSortMode::SortByBTime:    return @"b";
-        case PanelSortMode::SortByBTimeRev: return @"B";
-        default:                            return @"?";
-    }
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // class ModernPanelViewPresentation
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +145,8 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     m_ActiveSelectedItemBackgroundColor(0),
     m_InactiveSelectedItemBackgroundColor(0),
     m_CursorFrameColor(0),
-    m_ColumnDividerColor(0)
+    m_ColumnDividerColor(0),
+    m_Header(make_unique<ModernPanelViewPresentationHeader>())
 {
     m_Size.width = m_Size.height = 0;
 
@@ -248,6 +233,8 @@ void ModernPanelViewPresentation::BuildGeometry()
     // build font geometry according current settings
     m_Font = [[NSUserDefaults standardUserDefaults] fontForKey:@"FilePanelsModernFont"];
     if(!m_Font) m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
+    
+    m_Header->SetFont(m_Font);
     
     // Height of a single file line calculated from the font.
     m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
@@ -396,6 +383,8 @@ void ModernPanelViewPresentation::OnAppearanceChanged(void *_obj, NSString *_key
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 {
+//    MachTimeBenchmark mtb;
+    
     if (!m_State || !m_State->Data) return;
     assert(m_State->CursorPos < (int)m_State->Data->SortedDirectoryEntries().size());
     assert(m_State->ItemsDisplayOffset >= 0);
@@ -445,52 +434,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     NSShadow *header_text_shadow = m_State->Active ? m_ActiveHeaderTextShadow : m_InactiveHeaderTextShadow;
     CGGradientRef header_gradient = m_State->Active ? m_ActiveHeaderGradient : m_InactiveHeaderGradient;
     
-    // Header gradient.
-    CGContextSaveGState(context);
-    NSRect header_rect = NSMakeRect(0, 0, m_ItemsArea.size.width, header_height - 1);
-    CGContextAddRect(context, header_rect);
-    CGContextClip(context);
-    CGContextDrawLinearGradient(context, header_gradient, header_rect.origin,
-                                NSMakePoint(header_rect.origin.x,
-                                            header_rect.origin.y + header_rect.size.height), 0);
-    CGContextRestoreGState(context);
-    
-    // Header line separator.
-    CGContextSetStrokeColorWithColor(context, header_stroke_color);
-    NSPoint header_points[2] = { {0, header_height - 0.5}, {m_ItemsArea.size.width, header_height - 0.5} };
-    CGContextStrokeLineSegments(context, header_points, 2);
-    
-    // Panel path.
     char panelpath[MAXPATHLEN*8] = {0};
     m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);
-    NSString *header_string = [NSString stringWithUTF8String:panelpath];
-    if(header_string == nil) header_string = @"...";
-    
-    static const NSParagraphStyle *header_text_pstyle = ^{
-        NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
-        p.alignment = NSCenterTextAlignment;
-        p.lineBreakMode = NSLineBreakByTruncatingHead;
-        return p.copy;
-    }();
-    
-    NSDictionary *header_text_attr =@{NSFontAttributeName: m_Font,
-                                      NSParagraphStyleAttributeName: header_text_pstyle,
-                                      NSShadowAttributeName: header_text_shadow};
-    
-    [header_string drawWithRect:NSMakeRect(20,
-                                           g_TextInsetsInLine[1] + m_FontAscent,
-                                           m_ItemsArea.size.width - 40,
-                                           m_FontHeight)
-                        options:0
-                     attributes:header_text_attr];
-    
-    [FormHumanReadableSortModeReprentation(m_State->Data->SortMode().sort)
-                    drawWithRect:NSMakeRect(0,
-                                            g_TextInsetsInLine[1] + m_FontAscent,
-                                            20,
-                                            m_FontHeight)
-                         options:0
-                      attributes:header_text_attr];
+    m_Header->Draw(panelpath, m_State->Active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
     
     // Footer
     const double footer_y = m_ItemsArea.origin.y + m_ItemsArea.size.height;
@@ -811,6 +757,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     if(full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2] > m_TimeColumnWidth)
         m_TimeColumnWidth = floor(full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2]);
+    
+//    mtb.Reset();
 }
 
 void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)

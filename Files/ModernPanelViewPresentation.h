@@ -15,6 +15,7 @@ using namespace std;
 @class ObjcToCppObservingBridge;
 class ModernPanelViewPresentationIconCache;
 class IconsGenerator;
+class ModernPanelViewPresentationHeader;
 
 class ModernPanelViewPresentation : public PanelViewPresentation
 {
@@ -90,4 +91,8 @@ private:
     ObjcToCppObservingBridge *m_AppearanceObserver;
     
     shared_ptr<IconsGenerator> m_IconCache;
+    unique_ptr<ModernPanelViewPresentationHeader> m_Header;
+
+    
+    friend class ModernPanelViewPresentationHeader;
 };

@@ -15,7 +15,6 @@ using namespace std;
 
 class ModernPanelViewPresentation;
 
-
 class ModernPanelViewPresentationHeader
 {
 public:

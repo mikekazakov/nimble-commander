@@ -106,6 +106,7 @@ void ModernPanelViewPresentationHeader::SetFont(NSFont *_font)
     m_Font = _font;
     m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
     m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
+    m_LastHeaderPath = ""; // flush cache if any
 }
 
 void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to draw

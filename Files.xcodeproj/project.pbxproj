@@ -311,6 +311,7 @@
 		CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
 		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
+		CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
 		CFEB07811886ECAA00E5CC0D /* linkarrow_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFEB07801886ECAA00E5CC0D /* linkarrow_icon.png */; };
 		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */; };
 		CFEE8E5117748E3D00F6A254 /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEE8E4F17748E3D00F6A254 /* FontExtras.mm */; };
@@ -828,6 +829,8 @@
 		CFE2697B16F01BAA0048A393 /* chained_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chained_strings.h; sourceTree = "<group>"; };
 		CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationHeader.mm; sourceTree = "<group>"; };
 		CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationHeader.h; sourceTree = "<group>"; };
+		CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationItemsFooter.mm; sourceTree = "<group>"; };
+		CFE38BA918FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationItemsFooter.h; sourceTree = "<group>"; };
 		CFEB07801886ECAA00E5CC0D /* linkarrow_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = linkarrow_icon.png; sourceTree = "<group>"; };
 		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TemporaryNativeFileStorage.mm; sourceTree = "<group>"; };
 		CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileStorage.h; sourceTree = "<group>"; };
@@ -917,6 +920,8 @@
 				B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */,
 				B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */,
 				B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */,
+				CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */,
+				CFE38BA918FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.h */,
 				CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */,
 				CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */,
 				CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */,
@@ -2124,6 +2129,7 @@
 				CF9D0EA417CC961100CB8146 /* archive_read_support_format_cab.c in Sources */,
 				CF3B602A18CCA3A20005816A /* VFSArchiveProxy.mm in Sources */,
 				CF9D0E9C17CC961100CB8146 /* archive_read_support_filter_program.c in Sources */,
+				CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF9D0ECD17CC961100CB8146 /* archive_write_set_format_cpio_newc.c in Sources */,
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,

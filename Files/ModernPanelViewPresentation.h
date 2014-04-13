@@ -16,6 +16,7 @@ using namespace std;
 class ModernPanelViewPresentationIconCache;
 class IconsGenerator;
 class ModernPanelViewPresentationHeader;
+class ModernPanelViewPresentationItemsFooter;
 
 class ModernPanelViewPresentation : public PanelViewPresentation
 {
@@ -35,6 +36,9 @@ public:
     
     double GetSingleItemHeight() override;
     
+    
+    
+    static NSString* SizeToString6(const VFSListingItem &_dirent);
 private:
     friend class ModernPanelViewPresentationIconCache;
     static void OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
@@ -52,7 +56,7 @@ private:
     double m_SizeColumWidth;
     double m_DateColumnWidth;
     double m_TimeColumnWidth;
-    double m_DateTimeFooterWidth;
+//    double m_DateTimeFooterWidth;
     
     bool m_IsLeft;
     
@@ -92,7 +96,5 @@ private:
     
     shared_ptr<IconsGenerator> m_IconCache;
     unique_ptr<ModernPanelViewPresentationHeader> m_Header;
-
-    
-    friend class ModernPanelViewPresentationHeader;
+    unique_ptr<ModernPanelViewPresentationItemsFooter> m_ItemsFooter;
 };

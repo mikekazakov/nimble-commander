@@ -171,6 +171,15 @@ struct PanelDataStatistics
     uint32_t selected_entries_amount = 0;
     uint32_t selected_reg_amount = 0;
     uint32_t selected_dirs_amount = 0;
+    
+    inline bool operator ==(const PanelDataStatistics& _r) const
+    {
+        return memcmp(this, &_r, sizeof(_r)) == 0;
+    }
+    inline bool operator !=(const PanelDataStatistics& _r) const
+    {
+        return memcmp(this, &_r, sizeof(_r)) != 0;
+    }
 };
 
 /**

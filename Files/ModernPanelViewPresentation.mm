@@ -20,6 +20,7 @@
 
 #import "ModernPanelViewPresentationHeader.h"
 #import "ModernPanelViewPresentationItemsFooter.h"
+#import "ModernPanelViewPresentationVolumeFooter.h"
 
 static NSString* FormHumanReadableShortDate(time_t _in)
 {
@@ -77,9 +78,9 @@ NSString* ModernPanelViewPresentation::SizeToString6(const VFSListingItem &_dire
 
 // Item name display insets inside the item line.
 // Order: left, top, right, bottom.
-const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
+static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 // Width of the divider between views.
-const double g_DividerWidth = 3;
+static const double g_DividerWidth = 3;
 
 NSImage *ModernPanelViewPresentation::m_SymlinkArrowImage = nil;
 
@@ -92,7 +93,8 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     m_CursorFrameColor(0),
     m_ColumnDividerColor(0),
     m_Header(make_unique<ModernPanelViewPresentationHeader>()),
-    m_ItemsFooter(make_unique<ModernPanelViewPresentationItemsFooter>())
+    m_ItemsFooter(make_unique<ModernPanelViewPresentationItemsFooter>()),
+    m_VolumeFooter(make_unique<ModernPanelViewPresentationVolumeFooter>())
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -301,13 +303,15 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         float x = m_ItemsArea.origin.x + m_ItemsArea.size.width;
         NSPoint view_divider[2] = { {x + 0.5, 0}, {x + 0.5, m_Size.height} };
         CGContextStrokeLineSegments(context, view_divider, 2);
-        CGContextFillRect(context, NSMakeRect(x + 1, 0, g_DividerWidth - 1, m_Size.height));
+//        CGContextFillRect(context, NSMakeRect(x + 1, 0, g_DividerWidth - 1, m_Size.height));
+        NSDrawWindowBackground(NSMakeRect(x + 1, 0, g_DividerWidth - 1, m_Size.height));
     }
     else
     {
         NSPoint view_divider[2] = { {g_DividerWidth - 0.5, 0}, {g_DividerWidth - 0.5, m_Size.height} };
         CGContextStrokeLineSegments(context, view_divider, 2);
-        CGContextFillRect(context, NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
+//        CGContextFillRect(context, NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
+        NSDrawWindowBackground(NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
     }
 
     // If current panel is on the right, then translate all rendering by the divider's width.
@@ -326,6 +330,16 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                         m_ItemsArea.origin.y + m_ItemsArea.size.height,
                         m_ItemsArea.size.width);
     
+    if(m_VolumeFooter)
+    {
+        UpdateStatFS();
+        m_VolumeFooter->Draw(StatFS(),
+                             m_State->Active,
+                             m_ItemsArea.origin.y + m_ItemsArea.size.height + m_ItemsFooter->Height() ,
+                             m_ItemsArea.size.width
+                             );
+    }
+    
     ///////////////////////////////////////////////////////////////////////////////
     // Draw items in columns.        
     const double icon_size = m_IconCache->IconSize();
@@ -336,7 +350,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     for (int column = 0; column < columns_count; ++column)
     {
         // Draw column.
-        double column_width = floor(floor(m_ItemsArea.size.width - (columns_count - 1))/columns_count);
+        double column_width = floor((m_ItemsArea.size.width - (columns_count - 1))/columns_count);
         // Calculate index of the first item in current column.
         int i = m_State->ItemsDisplayOffset + column*items_per_column;
         // X position of items.
@@ -485,7 +499,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             // Draw icon
             NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
             [image_rep drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0],
-                                             item_start_y + (m_LineHeight - icon_size) / 2,
+                                             item_start_y + floor((m_LineHeight - icon_size) / 2. + 0.5),
                                              icon_size,
                                              icon_size)
                          fromRect:NSZeroRect
@@ -565,6 +579,9 @@ void ModernPanelViewPresentation::CalculateLayoutFromFrame()
     m_ItemsArea.origin.x = 0;
     m_ItemsArea.origin.y = header_height;
     m_ItemsArea.size.height = floor(m_Size.height - 2*header_height);
+    if(m_VolumeFooter)
+        m_ItemsArea.size.height -= m_VolumeFooter->Height();
+    
     m_ItemsArea.size.width = floor(m_Size.width - g_DividerWidth);
     if (!m_IsLeft) m_ItemsArea.origin.x += g_DividerWidth;
     

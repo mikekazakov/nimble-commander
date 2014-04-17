@@ -38,6 +38,9 @@
     [window setFrameUsingName:@"MainWindow"];
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:36 forEdge:NSMaxYEdge];
+    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
+    [window setContentBorderThickness:0 forEdge:NSMinYEdge];
+
     
     if(self = [super initWithWindow:window]) {
         m_BigFileViewLoadingQ = SerialQueueT::Make("info.filesmanager.bigfileviewloading");
@@ -51,10 +54,10 @@
                                                                 Window:self.window];
         [self PushNewWindowState:m_PanelState];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(DidBecomeKeyWindow)
-                                                     name:NSWindowDidBecomeKeyNotification
-                                                   object:self.window];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(DidBecomeKeyWindow)
+                                                   name:NSWindowDidBecomeKeyNotification
+                                                 object:self.window];
     }
     
     return self;
@@ -62,7 +65,7 @@
 
 -(void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
     assert(m_WindowState.empty());
 }
 
@@ -81,7 +84,7 @@
         if([i respondsToSelector:@selector(WindowWillClose)])
             [i WindowWillClose];
 
-    [self.window setContentView:nil];
+    self.window.contentView = nil;
     [self.window makeFirstResponder:nil];
     
     while(!m_WindowState.empty())
@@ -178,7 +181,7 @@
         [m_WindowState.back() Resigned];
     m_WindowState.pop_back();
     
-    self.window.contentView = [m_WindowState.back() ContentView];
+    self.window.contentView = m_WindowState.back().ContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
@@ -196,7 +199,7 @@
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
 {
     m_WindowState.push_back(_state);
-    self.window.contentView = [m_WindowState.back() ContentView];
+    self.window.contentView = m_WindowState.back().ContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])

@@ -17,6 +17,7 @@ class ModernPanelViewPresentationIconCache;
 class IconsGenerator;
 class ModernPanelViewPresentationHeader;
 class ModernPanelViewPresentationItemsFooter;
+class ModernPanelViewPresentationVolumeFooter;
 
 class ModernPanelViewPresentation : public PanelViewPresentation
 {
@@ -90,4 +91,5 @@ private:
     shared_ptr<IconsGenerator> m_IconCache;
     unique_ptr<ModernPanelViewPresentationHeader> m_Header;
     unique_ptr<ModernPanelViewPresentationItemsFooter> m_ItemsFooter;
+    unique_ptr<ModernPanelViewPresentationVolumeFooter> m_VolumeFooter;
 };

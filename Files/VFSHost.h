@@ -20,10 +20,26 @@ class VFSFile;
 
 struct VFSStatFS
 {
-    uint64_t total_bytes;
-    uint64_t free_bytes;
-    uint64_t avail_bytes; // may be less than actuat free_bytes
-    string volume_name;
+    uint64_t total_bytes = 0;
+    uint64_t free_bytes  = 0;
+    uint64_t avail_bytes = 0; // may be less than actuat free_bytes
+    string   volume_name;
+    
+    inline bool operator==(const VFSStatFS& _r) const
+    {
+        return total_bytes == _r.total_bytes &&
+                free_bytes == _r.free_bytes  &&
+               avail_bytes == _r.avail_bytes &&
+               volume_name == _r.volume_name;
+    }
+    
+    inline bool operator!=(const VFSStatFS& _r) const
+    {
+        return total_bytes != _r.total_bytes ||
+                free_bytes != _r.free_bytes  ||
+               avail_bytes != _r.avail_bytes ||
+               volume_name != _r.volume_name;
+    }
 };
 
 struct VFSDirEnt
@@ -202,3 +218,5 @@ private:
     VFSHost(const VFSHost& _r) = delete;
     void operator=(const VFSHost& _r) = delete;
 };
+
+typedef shared_ptr<VFSHost> VFSHostPtr;

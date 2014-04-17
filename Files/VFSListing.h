@@ -200,7 +200,7 @@ public:
     string ComposeFullPathForEntry(size_t _entry_position) const;
     
     const char *RelativePath() const;
-    shared_ptr<VFSHost> Host() const;
+    const shared_ptr<VFSHost>& Host() const;
     
     
     

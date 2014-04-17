@@ -9,11 +9,11 @@
 #import "PanelViewPresentation.h"
 #import "PanelView.h"
 #import "PanelData.h"
+#import "Common.h"
 
-PanelViewPresentation::PanelViewPresentation()
-:   m_State(0),
-    m_View(nil)
+PanelViewPresentation::~PanelViewPresentation()
 {
+    m_StatFSQueue->Wait();
 }
 
 void PanelViewPresentation::SetState(PanelViewState *_state)
@@ -230,4 +230,35 @@ int PanelViewPresentation::GetMaxVisibleItems()
 void PanelViewPresentation::SetViewNeedsDisplay()
 {
     [m_View setNeedsDisplay:YES];
+}
+
+void PanelViewPresentation::UpdateStatFS()
+{
+    // in usual redrawings - update not more that in 5 secs
+    uint64_t now = GetTimeInNanoseconds();
+    if(m_StatFSLastUpdate + 5*NSEC_PER_SEC < now ||
+       m_StatFSLastHost != m_State->Data->Host().get() ||
+       m_StatFSLastPath != m_State->Data->Listing()->RelativePath()
+       )
+    {
+        m_StatFSLastUpdate = now;
+        m_StatFSLastHost = m_State->Data->Host().get();
+        m_StatFSLastPath = m_State->Data->Listing()->RelativePath();
+        
+        if(!m_StatFSQueue->Empty())
+            return;
+
+        auto host = m_State->Data->Host();
+        auto listing = m_State->Data->Listing();
+        m_StatFSQueue->Run(^{
+            VFSStatFS stat;
+            if(host->StatFS(listing->RelativePath(), stat, 0) == 0 &&
+               stat != m_StatFS // force redrawing only if statfs has in fact changed
+               )
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    m_StatFS = stat;
+                    SetViewNeedsDisplay();
+                });
+        });
+    }
 }

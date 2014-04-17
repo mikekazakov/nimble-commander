@@ -205,8 +205,8 @@ public:
     void Load(shared_ptr<VFSListing> _listing);
     void ReLoad(shared_ptr<VFSListing> _listing);
 
-    shared_ptr<VFSHost>     Host() const;
-    shared_ptr<VFSListing>  Listing() const;
+    const shared_ptr<VFSHost>     &Host() const;
+    const shared_ptr<VFSListing>  &Listing() const;
     
     const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;

@@ -10,7 +10,7 @@
 #import "FontExtras.h"
 #import "PanelData.h"
 
-const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
+static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 static CGColorRef g_HeaderStrokeColor = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
 
 static NSShadow* ActiveTextShadow()
@@ -139,7 +139,7 @@ void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to d
     // draw path text itself
     [m_PathStr drawWithRect:NSMakeRect(20,
                                      g_TextInsetsInLine[1] + m_FontAscent,
-                                     _width - 40,
+                                     _width - 25,
                                      m_FontHeight)
                     options:0];
     

@@ -7,14 +7,15 @@
 //
 
 #import "PanelViewTypes.h"
+#import "VFS.h"
+#import "DispatchQueue.h"
 
 @class PanelView;
 
 class PanelViewPresentation
 {
-public:    
-    PanelViewPresentation();
-    virtual ~PanelViewPresentation() {}
+public:
+    virtual ~PanelViewPresentation();
     
     void SetState(PanelViewState *_state);
     void SetView(PanelView *_view);
@@ -53,11 +54,20 @@ public:
 protected:
     void SetViewNeedsDisplay();
     
-    PanelViewState *m_State;
+    inline const VFSStatFS &StatFS() const { return m_StatFS; }
+    void UpdateStatFS();
+    
+    PanelViewState *m_State = nullptr;
     
     inline PanelView *View() { return m_View; }
 private:
     virtual void OnDirectoryChanged() {}
+
+    VFSStatFS                      m_StatFS;
+    uint64_t                       m_StatFSLastUpdate = 0;
+    SerialQueue                    m_StatFSQueue = SerialQueueT::Make();
+    VFSHost                       *m_StatFSLastHost = nullptr;
+    string                         m_StatFSLastPath;
     
-    __unsafe_unretained PanelView *m_View;
+    __unsafe_unretained PanelView *m_View = nil;
 };

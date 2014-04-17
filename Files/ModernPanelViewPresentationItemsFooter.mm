@@ -12,7 +12,7 @@
 #import "PanelData.h"
 #import "VFS.h"
 
-const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
+static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 
 static CGColorRef g_HeaderStrokeColor = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
 

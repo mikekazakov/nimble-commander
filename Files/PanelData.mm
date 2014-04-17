@@ -89,12 +89,12 @@ void PanelData::ReLoad(shared_ptr<VFSListing> _listing)
     UpdateStatictics();
 }
 
-shared_ptr<VFSHost> PanelData::Host() const
+const shared_ptr<VFSHost> &PanelData::Host() const
 {
     return m_Listing->Host();
 }
 
-shared_ptr<VFSListing> PanelData::Listing() const
+const shared_ptr<VFSListing> &PanelData::Listing() const
 {
     return m_Listing;
 }

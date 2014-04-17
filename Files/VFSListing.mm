@@ -27,7 +27,7 @@ const char *VFSListing::RelativePath() const
     return m_RelativePath.c_str();    
 }
 
-shared_ptr<VFSHost> VFSListing::Host() const
+const shared_ptr<VFSHost> &VFSListing::Host() const
 {
     return m_Host;
 }

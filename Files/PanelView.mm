@@ -307,10 +307,6 @@ struct PanelViewStateStorage
     }
 }
 
-- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
-{
-    return YES;
-}
 
 - (void) mouseDown:(NSEvent *)_event
 {

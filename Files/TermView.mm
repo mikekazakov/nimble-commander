@@ -59,7 +59,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 
 @implementation TermView
 {
-    FontCache      *m_FontCache;
+    shared_ptr<FontCache> m_FontCache;
     TermScreen     *m_Screen;
     TermParser     *m_Parser;
     
@@ -84,11 +84,6 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     return self;
 }
 
--(void) dealloc
-{
-    FontCache::ReleaseCache(m_FontCache);
-}
-
 - (BOOL)isFlipped
 {
     return YES;
@@ -111,7 +106,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 
 - (FontCache*) FontCache
 {
-    return m_FontCache;
+    return m_FontCache.get();
 }
 
 - (void) AttachToScreen:(TermScreen*)_scr
@@ -184,7 +179,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     m_Screen->Lock();
     
 //    oms::SetParamsForUserASCIIArt(context, m_FontCache);
-    oms::SetParamsForUserReadableText(context, m_FontCache);
+    oms::SetParamsForUserReadableText(context, m_FontCache.get());
     CGContextSetShouldSmoothFonts(context, true);
 
     for(int i = line_start; i < line_end; ++i)
@@ -326,12 +321,12 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
             if(should_aa != is_aa)
                 CGContextSetShouldAntialias(_context, is_aa = should_aa);
             
-            oms::DrawSingleUniCharXY(char_space.l, x, _y, _context, m_FontCache);
+            oms::DrawSingleUniCharXY(char_space.l, x, _y, _context, m_FontCache.get());
             
             if(char_space.c1 != 0)
-                oms::DrawSingleUniCharXY(char_space.c1, x, _y, _context, m_FontCache);
+                oms::DrawSingleUniCharXY(char_space.c1, x, _y, _context, m_FontCache.get());
             if(char_space.c2 != 0)
-                oms::DrawSingleUniCharXY(char_space.c2, x, _y, _context, m_FontCache);
+                oms::DrawSingleUniCharXY(char_space.c2, x, _y, _context, m_FontCache.get());
         }        
         
         if(char_space.underline)

@@ -2,10 +2,16 @@
 
 #include <CoreText/CTFont.h>
 #include <CoreGraphics/CGFont.h>
+#include <memory>
+
+using namespace std;
 
 class FontCache
 {
 public:
+    FontCache(CTFontRef _basic_font);
+    ~FontCache();
+    
     // consider using plain uint4 here for performance (?) need to check
     struct Pair
     {
@@ -28,8 +34,8 @@ public:
     
     Pair    Get(UniChar _c);
     
-    static FontCache *FontCacheFromFont(CTFontRef _basic_font);
-    static void ReleaseCache(FontCache *_cache);
+    static shared_ptr<FontCache> FontCacheFromFont(CTFontRef _basic_font);
+    
 private:
     CTFontRef   m_CTFonts[256]; // will anybody need more than 256 fallback fonts?
                                 // fallbacks start from [1]. [0] is basefont
@@ -37,7 +43,6 @@ private:
     
     Pair        m_Cache[65536];
     
-    int         m_RefCount;
     CFStringRef m_FontName;
     double      m_FontSize;
     double      m_FontHeight;
@@ -46,9 +51,7 @@ private:
     double      m_FontDescent;
     double      m_FontLeading;
     
-    FontCache(CTFontRef _basic_font);
     FontCache(const FontCache&); // forbid
-    ~FontCache();
 };
 
 extern unsigned char g_WCWidthTableFixedMin1[65536];

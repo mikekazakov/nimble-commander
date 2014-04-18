@@ -5,32 +5,35 @@
 #include <wchar.h>
 #include <math.h>
 #include <list>
+#include <vector>
 #include "FontExtras.h"
 
 using namespace std;
 
-static list<FontCache*> g_Caches;
+static vector<weak_ptr<FontCache>> g_Caches;
 
-FontCache *FontCache::FontCacheFromFont(CTFontRef _basic_font)
+shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
 {
     CFStringRef full_name = CTFontCopyFullName(_basic_font);
     double font_size = CTFontGetSize(_basic_font);
     for(auto &i:g_Caches)
-        if(!CFStringCompare(i->m_FontName, full_name, 0) && fabs(i->m_FontSize-font_size) < 0.1)
+    {
+        auto font = i.lock();
+        if(!CFStringCompare(font->m_FontName, full_name, 0) && fabs(font->m_FontSize-font_size) < 0.1)
         {
             // just return already created font cache
             CFRelease(full_name);
-            i->m_RefCount++;
-            return i;
+            return font;
         }
+    }
     
     CFRelease(full_name);
-    g_Caches.push_back(new FontCache(_basic_font));
-    return g_Caches.back();
+    auto font = make_shared<FontCache>(_basic_font);
+    g_Caches.emplace_back(font);
+    return font;
 }
 
-FontCache::FontCache(CTFontRef _basic_font):
-    m_RefCount(1)
+FontCache::FontCache(CTFontRef _basic_font)
 {
     memset(&m_Cache, 0, sizeof(m_Cache));
     memset(&m_CTFonts, 0, sizeof(m_CTFonts));
@@ -56,24 +59,15 @@ FontCache::~FontCache()
             CFRelease(i);
     for(auto i:m_CGFonts)
         if(i!=0)
-            CGFontRelease(i);            
-}
-
-void FontCache::ReleaseCache(FontCache *_cache)
-{
-    assert(_cache->m_RefCount > 0);
-    --_cache->m_RefCount;
-    if(_cache->m_RefCount == 0)
-    {
-        auto i = g_Caches.begin(), e = g_Caches.end();
-        for(;i!=e;++i)
-            if(*i == _cache)
-            {
-                g_Caches.erase(i);
-                delete _cache;
-                return;
-            }
-    }
+            CGFontRelease(i);
+    
+    g_Caches.erase(remove_if(begin(g_Caches),
+                             end(g_Caches),
+                             [](auto _t) {
+                                 return _t.lock() == nullptr;
+                             }),
+                   end(g_Caches)
+                   );
 }
 
 FontCache::Pair FontCache::Get(UniChar _c)

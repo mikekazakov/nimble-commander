@@ -8,7 +8,6 @@
 
 #import <vector>
 #import "AppDelegate.h"
-#import "FontCache.h"
 #import "MainWindowController.h"
 #import "OperationsController.h"
 #import "Common.h"

@@ -8,12 +8,11 @@
 
 #import "PanelViewPresentation.h"
 #import "OrthodoxMonospace.h"
+#import "ObjcToCppObservingBridge.h"
 #import "VFS.h"
 
 class FontCache;
 @class PanelView;
-struct DirectoryEntryInformation;
-@class ObjcToCppObservingBridge;
 
 class ClassicPanelViewPresentation : public PanelViewPresentation
 {
@@ -37,16 +36,14 @@ public:
 private:
     void BuildGeometry();
     void BuildAppearance();
-    static void OnAppearanceChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
-    static void OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
     void DrawWithShortMediumWideView(CGContextRef _context);
     void DrawWithFullView(CGContextRef _context);
     const DoubleColor& GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused);
     
     NSSize          m_FrameSize;
-    int             m_SymbWidth;
-    int             m_SymbHeight;
-    FontCache      *m_FontCache;
+    int             m_SymbWidth = 0;
+    int             m_SymbHeight = 0;
+    shared_ptr<FontCache> m_FontCache;
     DoubleColor     m_BackgroundColor;
     DoubleColor     m_CursorBackgroundColor;
     DoubleColor     m_RegularFileColor[2];
@@ -54,6 +51,6 @@ private:
     DoubleColor     m_HiddenColor[2];
     DoubleColor     m_SelectedColor[2];
     DoubleColor     m_OtherColor[2];
-    ObjcToCppObservingBridge *m_GeometryObserver;
-    ObjcToCppObservingBridge *m_AppearanceObserver;    
+    ObjcToCppObservingBlockBridge *m_GeometryObserver;
+    ObjcToCppObservingBlockBridge *m_AppearanceObserver;
 };

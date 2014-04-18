@@ -303,56 +303,59 @@ static void ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, UniChar
 /////////////////////////////////////////////////////////////////////////////////////////
 
 ClassicPanelViewPresentation::ClassicPanelViewPresentation()
-:   m_SymbWidth(0),
-    m_SymbHeight(0),
-    m_FontCache(0)
 {
     BuildGeometry();
     BuildAppearance();
 
-    m_GeometryObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnGeometryChanged object:this];
-    [m_GeometryObserver observeChangesInObject:[NSUserDefaults standardUserDefaults]
-                                     forKeyPath:@"FilePanelsClassicFont"
-                                         options:0
-                                         context:0];
-    
-    m_AppearanceObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnAppearanceChanged object:this];
-    [m_AppearanceObserver observeChangesInObject:[NSUserDefaults standardUserDefaults]
-                                     forKeyPaths:[NSArray arrayWithObjects:@"FilePanelsClassicBackgroundColor",
-                                                  @"FilePanelsClassicCursorBackgroundColor",
-                                                  @"FilePanelsClassicRegularFileColor",
-                                                  @"FilePanelsClassicFocusedRegularFileColor",
-                                                  @"FilePanelsClassicDirectoryColor",
-                                                  @"FilePanelsClassicFocusedDirectoryColor",
-                                                  @"FilePanelsClassicHiddenColor",
-                                                  @"FilePanelsClassicFocusedHiddenColor",
-                                                  @"FilePanelsClassicSelectedColor",
-                                                  @"FilePanelsClassicFocusedSelectedColor",
-                                                  @"FilePanelsClassicOtherColor",
-                                                  @"FilePanelsClassicFocusedOtherColor", nil]
-                                         options:0
-                                         context:0];
+    m_GeometryObserver = [ObjcToCppObservingBlockBridge
+                          bridgeWithObject:NSUserDefaults.standardUserDefaults
+                          forKeyPath:@"FilePanelsClassicFont"
+                          options:0
+                          block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
+                              BuildGeometry();
+                              m_SymbHeight = m_FrameSize.height / m_FontCache->Height();
+                              m_SymbWidth = m_FrameSize.width / m_FontCache->Width();
+                              EnsureCursorIsVisible();
+                              SetViewNeedsDisplay();
+                          }];
+
+    m_AppearanceObserver = [ObjcToCppObservingBlockBridge
+                            bridgeWithObject:NSUserDefaults.standardUserDefaults
+                            forKeyPaths:@[@"FilePanelsClassicBackgroundColor",
+                                          @"FilePanelsClassicCursorBackgroundColor",
+                                          @"FilePanelsClassicRegularFileColor",
+                                          @"FilePanelsClassicFocusedRegularFileColor",
+                                          @"FilePanelsClassicDirectoryColor",
+                                          @"FilePanelsClassicFocusedDirectoryColor",
+                                          @"FilePanelsClassicHiddenColor",
+                                          @"FilePanelsClassicFocusedHiddenColor",
+                                          @"FilePanelsClassicSelectedColor",
+                                          @"FilePanelsClassicFocusedSelectedColor",
+                                          @"FilePanelsClassicOtherColor",
+                                          @"FilePanelsClassicFocusedOtherColor"]
+                            options:0
+                            block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
+                                BuildAppearance();
+                                SetViewNeedsDisplay();
+                            }];
 }
 
 ClassicPanelViewPresentation::~ClassicPanelViewPresentation()
 {
-    FontCache::ReleaseCache(m_FontCache);
 }
 
 void ClassicPanelViewPresentation::BuildGeometry()
 {
-    CTFontRef font = (CTFontRef)CFBridgingRetain([[NSUserDefaults standardUserDefaults] fontForKey:@"FilePanelsClassicFont"]);
-    if(!font) font = CTFontCreateWithName( (CFStringRef) @"Menlo Regular", 15, 0);
+    CTFontRef font = (CTFontRef)CFBridgingRetain([NSUserDefaults.standardUserDefaults fontForKey:@"FilePanelsClassicFont"]);
+    if(!font) font = CTFontCreateWithName( CFSTR("Menlo Regular"), 15, 0);
     
-    if(m_FontCache) FontCache::ReleaseCache(m_FontCache);
     m_FontCache = FontCache::FontCacheFromFont(font);
     CFRelease(font);
-    
 }
 
 void ClassicPanelViewPresentation::BuildAppearance()
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
 
     m_BackgroundColor       = DoubleColor([defaults colorForKey:@"FilePanelsClassicBackgroundColor"]);
     m_CursorBackgroundColor = DoubleColor([defaults colorForKey:@"FilePanelsClassicCursorBackgroundColor"]);
@@ -366,23 +369,6 @@ void ClassicPanelViewPresentation::BuildAppearance()
     m_SelectedColor[1]      = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedSelectedColor"]);
     m_OtherColor[0]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicOtherColor"]);
     m_OtherColor[1]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedOtherColor"]);
-}
-
-void ClassicPanelViewPresentation::OnAppearanceChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context)
-{
-    ClassicPanelViewPresentation *_this = (ClassicPanelViewPresentation *)_obj;
-    _this->BuildAppearance();
-    _this->SetViewNeedsDisplay();
-}
-
-void ClassicPanelViewPresentation::OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context)
-{
-    ClassicPanelViewPresentation *_this = (ClassicPanelViewPresentation *)_obj;
-    _this->BuildGeometry();
-    _this->m_SymbHeight = _this->m_FrameSize.height / _this->m_FontCache->Height();
-    _this->m_SymbWidth = _this->m_FrameSize.width / _this->m_FontCache->Width();
-    _this->EnsureCursorIsVisible();
-    _this->SetViewNeedsDisplay();
 }
 
 const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
@@ -400,7 +386,7 @@ void ClassicPanelViewPresentation::Draw(NSRect _dirty_rect)
     assert(m_State->CursorPos < (int)m_State->Data->SortedDirectoryEntries().size());
     assert(m_State->ItemsDisplayOffset >= 0);
     
-    CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef context = (CGContextRef) NSGraphicsContext.currentContext.graphicsPort;
     
     // clear background
     m_BackgroundColor.Set(context);
@@ -543,13 +529,13 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
     int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
     int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
-    auto fontcache = m_FontCache;
+    auto fontcache = m_FontCache.get();
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
     {
         int n=0,X,Y;
-        oms::SetParamsForUserReadableText(context, m_FontCache);
+        oms::SetParamsForUserReadableText(context, fontcache);
         for(auto i = sorted_entries.begin() + m_State->ItemsDisplayOffset; i < sorted_entries.end(); ++i, ++n)
         {
             if(n >= max_files_to_show) break; // draw only visible
@@ -686,7 +672,7 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw frames
-    oms::SetParamsForUserASCIIArt(context, m_FontCache);
+    oms::SetParamsForUserASCIIArt(context, fontcache);
     oms::SetFillColor(context, m_RegularFileColor[0]);
     oms::unichars_draw_batch b;
     
@@ -744,14 +730,14 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     auto &raw_entries = m_State->Data->DirectoryEntries();
     auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
-    auto fontcache = m_FontCache;
+    auto fontcache = m_FontCache.get();
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
     {
         UniChar file_name[256], size_info[6], date_info[8], time_info[5];;
         size_t fn_size = 0;
         int n=0;
-        oms::SetParamsForUserReadableText(context, m_FontCache);
+        oms::SetParamsForUserReadableText(context, fontcache);
         for(auto i = sorted_entries.begin() + m_State->ItemsDisplayOffset; i < sorted_entries.end(); ++i, ++n)
         {
             if(n >= entries_to_show) break; // draw only visible
@@ -871,7 +857,7 @@ void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw frames
-    oms::SetParamsForUserASCIIArt(context, m_FontCache);
+    oms::SetParamsForUserASCIIArt(context, fontcache);
     oms::SetFillColor(context, m_RegularFileColor[0]);
     oms::unichars_draw_batch b;
     

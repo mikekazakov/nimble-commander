@@ -153,13 +153,12 @@
 
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
+    rect.origin.y = NSHeight(window.frame) - self.titleBarHeight - 1;
     if([m_WindowState.back() respondsToSelector:@selector(Toolbar)])
     {
         MyToolbar *tb = m_WindowState.back().Toolbar;
         if(tb != nil && !tb.isHidden)
-            rect.origin.y = NSHeight(window.frame) -
-                            m_WindowState.back().Toolbar.bounds.size.height -
-                            self.titleBarHeight;
+            rect.origin.y -= tb.bounds.size.height;
     }
     
 	return rect;

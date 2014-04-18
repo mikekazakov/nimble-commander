@@ -28,6 +28,12 @@
     return self;
 }
 
++ (instancetype) bridgeWithHanldler:(ObjcToCppObservingBridge_Handler)_handler object:(void *)_obj
+{
+    ObjcToCppObservingBridge *t = [ObjcToCppObservingBridge alloc];
+    return [t initWithHandler:_handler object:_obj];
+}
+
 - (void) dealloc
 {
     [self stopObserving];

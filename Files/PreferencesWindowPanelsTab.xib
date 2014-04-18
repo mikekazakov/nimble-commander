@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
@@ -38,7 +38,7 @@
                                         </connections>
                                     </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="770">
-                                        <rect key="frame" x="15" y="153" width="185" height="17"/>
+                                        <rect key="frame" x="15" y="129" width="185" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Delete (F8):" id="774">
                                             <font key="font" metaFont="system"/>
@@ -47,7 +47,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="771">
-                                        <rect key="frame" x="15" y="125" width="185" height="17"/>
+                                        <rect key="frame" x="15" y="101" width="185" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative Delete (Shift-F8):" id="772">
                                             <font key="font" metaFont="system"/>
@@ -56,7 +56,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="789">
-                                        <rect key="frame" x="204" y="150" width="159" height="26"/>
+                                        <rect key="frame" x="204" y="126" width="159" height="26"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="154" id="843"/>
@@ -83,7 +83,7 @@
                                         </connections>
                                     </popUpButton>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="790">
-                                        <rect key="frame" x="204" y="119" width="159" height="26"/>
+                                        <rect key="frame" x="204" y="95" width="159" height="26"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="791">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -106,7 +106,7 @@
                                             <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsShiftDeleteBehavior" id="842"/>
                                         </connections>
                                     </popUpButton>
-                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
+                                    <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
                                         <rect key="frame" x="15" y="196" width="404" height="18"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="check" title="Show other windows' paths in GoTo button menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
@@ -117,7 +117,7 @@
                                             <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu" id="TNv-P7-9uV"/>
                                         </connections>
                                     </button>
-                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
+                                    <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
                                         <rect key="frame" x="15" y="176" width="404" height="18"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="check" title="Show &quot;..&quot; entry in directory listing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tmQ-Kf-Ylo">
@@ -128,21 +128,35 @@
                                             <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowDotDotEntry" id="QwH-3H-ODO"/>
                                         </connections>
                                     </button>
+                                    <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zSi-y5-IGC">
+                                        <rect key="frame" x="15" y="156" width="404" height="18"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="check" title="Show volume information bar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="nz9-v0-Dc6">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowVolumeInformationBar" id="ean-d2-Api"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="760" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="17" id="762"/>
                                     <constraint firstItem="760" firstAttribute="top" secondItem="22" secondAttribute="top" constant="3" id="763"/>
                                     <constraint firstAttribute="trailing" secondItem="760" secondAttribute="trailing" constant="17" id="766"/>
-                                    <constraint firstItem="771" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="17" id="786"/>
                                     <constraint firstItem="770" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="17" id="788"/>
-                                    <constraint firstItem="790" firstAttribute="leading" secondItem="771" secondAttribute="trailing" constant="8" symbolic="YES" id="831"/>
                                     <constraint firstItem="790" firstAttribute="top" secondItem="789" secondAttribute="bottom" constant="10" symbolic="YES" id="836"/>
                                     <constraint firstItem="789" firstAttribute="leading" secondItem="790" secondAttribute="leading" id="837"/>
                                     <constraint firstItem="770" firstAttribute="bottom" secondItem="789" secondAttribute="bottom" id="838"/>
                                     <constraint firstItem="789" firstAttribute="leading" secondItem="770" secondAttribute="trailing" constant="8" symbolic="YES" id="839"/>
-                                    <constraint firstItem="771" firstAttribute="baseline" secondItem="790" secondAttribute="baseline" id="840"/>
                                     <constraint firstItem="790" firstAttribute="trailing" secondItem="789" secondAttribute="trailing" id="845"/>
-                                    <constraint firstItem="770" firstAttribute="top" secondItem="22" secondAttribute="top" constant="65" id="yS9-2J-5oX"/>
+                                    <constraint firstItem="771" firstAttribute="leading" secondItem="s1m-K3-6d7" secondAttribute="leading" id="7EX-F8-qTb"/>
+                                    <constraint firstItem="771" firstAttribute="leading" secondItem="zSi-y5-IGC" secondAttribute="leading" id="HN8-LT-QZe"/>
+                                    <constraint firstItem="771" firstAttribute="top" secondItem="770" secondAttribute="bottom" constant="11" id="Hso-Jm-Eh2"/>
+                                    <constraint firstItem="771" firstAttribute="leading" secondItem="770" secondAttribute="leading" id="Muv-dQ-b5e"/>
+                                    <constraint firstItem="771" firstAttribute="leading" secondItem="A0a-2e-yUq" secondAttribute="leading" id="NM1-N0-hKb"/>
+                                    <constraint firstItem="790" firstAttribute="leading" secondItem="771" secondAttribute="trailing" constant="8" symbolic="YES" id="pOP-Yg-fOx"/>
+                                    <constraint firstItem="770" firstAttribute="top" secondItem="22" secondAttribute="top" constant="89" id="yS9-2J-5oX"/>
                                 </constraints>
                             </view>
                         </tabViewItem>

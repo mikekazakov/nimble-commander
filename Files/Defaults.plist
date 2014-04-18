@@ -94,6 +94,8 @@
 	<true/>
 	<key>FilePanelsGeneralShowDotDotEntry</key>
 	<true/>
+	<key>FilePanelsGeneralShowVolumeInformationBar</key>
+	<true/>
 	<key>FilePanelsModernFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABoAAAD//kwAdQBjAGkAZABhAEcAcgBhAG4AZABlAAAAhAFmDYQBYwCYAZgAmACG</data>
 	<key>FilePanelsModernRegularTextColor</key>

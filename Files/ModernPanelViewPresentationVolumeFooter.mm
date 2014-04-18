@@ -64,11 +64,7 @@ ModernPanelViewPresentationVolumeFooter::ModernPanelViewPresentationVolumeFooter
     m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
 }
 
-void ModernPanelViewPresentationVolumeFooter::Draw(const VFSStatFS &_stat,
-                                                   bool _active,       // is panel active now?
-                                                   double _start_y,
-                                                   double _width       // panel width
-                                                    )
+void ModernPanelViewPresentationVolumeFooter::Draw(const VFSStatFS &_stat, double _start_y, double _width)
 {
     PrepareToDraw(_stat);
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
@@ -111,16 +107,14 @@ void ModernPanelViewPresentationVolumeFooter::PrepareToDraw(const VFSStatFS &_st
         par1.alignment = NSLeftTextAlignment;
         par1.lineBreakMode = NSLineBreakByTruncatingTail;
         attr1 = @{NSFontAttributeName:m_Font,
-                  NSParagraphStyleAttributeName:par1,
-                  NSShadowAttributeName:TextShadow()
+                  NSParagraphStyleAttributeName:par1
                   };
         
         NSMutableParagraphStyle *par2 = [NSMutableParagraphStyle new];
         par2.alignment = NSRightTextAlignment;
         par2.lineBreakMode = NSLineBreakByClipping;
         attr2 = @{NSFontAttributeName:m_Font,
-                  NSParagraphStyleAttributeName:par2,
-                  NSShadowAttributeName:TextShadow()
+                  NSParagraphStyleAttributeName:par2
                   };
     });
 

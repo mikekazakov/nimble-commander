@@ -16,6 +16,7 @@ typedef void (*ObjcToCppObservingBridge_Handler)(void *_cpp_object,
 
 @interface ObjcToCppObservingBridge : NSObject
 
++ (instancetype) bridgeWithHanldler:(ObjcToCppObservingBridge_Handler)_handler object:(void *)_obj;
 - (id) initWithHandler:(ObjcToCppObservingBridge_Handler)_handler object:(void *)_obj;
 
 - (void) observeChangesInObject:(NSObject*) _object

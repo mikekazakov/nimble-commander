@@ -111,10 +111,14 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     BuildGeometry();
     BuildAppearance();
     
-    m_GeometryObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnGeometryChanged object:this];
-    [m_GeometryObserver observeChangesInObject:[NSUserDefaults standardUserDefaults] forKeyPath:@"FilePanelsModernFont" options:0 context:0];
+    m_GeometryObserver = [ObjcToCppObservingBridge bridgeWithHanldler:&OnGeometryChanged object:this];
+    [m_GeometryObserver observeChangesInObject:NSUserDefaults.standardUserDefaults
+                                    forKeyPaths:@[@"FilePanelsModernFont",
+                                                  @"FilePanelsGeneralShowVolumeInformationBar"]
+                                       options:0
+                                       context:0];
     
-    m_AppearanceObserver = [[ObjcToCppObservingBridge alloc] initWithHandler:&OnAppearanceChanged object:this];
+    m_AppearanceObserver = [ObjcToCppObservingBridge bridgeWithHanldler:&OnAppearanceChanged object:this];
     [m_AppearanceObserver observeChangesInObject:NSUserDefaults.standardUserDefaults
                                      forKeyPaths:@[@"FilePanelsModernRegularTextColor",
                                                    @"FilePanelsModernActiveSelectedTextColor",
@@ -172,7 +176,13 @@ void ModernPanelViewPresentation::BuildGeometry()
             + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
         if(tw > m_TimeColumnWidth)
             m_TimeColumnWidth = tw;
-    }    
+    }
+    
+    bool need_volume_bar = [NSUserDefaults.standardUserDefaults boolForKey:@"FilePanelsGeneralShowVolumeInformationBar"];
+    if(need_volume_bar && m_VolumeFooter == nullptr)
+        m_VolumeFooter = make_unique<ModernPanelViewPresentationVolumeFooter>();
+    else if(!need_volume_bar && m_VolumeFooter != nullptr)
+        m_VolumeFooter.reset();
 }
 
 void ModernPanelViewPresentation::BuildAppearance()
@@ -294,23 +304,18 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     ///////////////////////////////////////////////////////////////////////////////
     // Divider.
     static CGColorRef divider_stroke_color = CGColorCreateGenericRGB(101/255.0, 101/255.0, 101/255.0, 1.0);
-    static CGColorRef divider_fill_color = CGColorCreateGenericRGB(174/255.0, 174/255.0, 174/255.0, 1.0);
-    
     CGContextSetStrokeColorWithColor(context, divider_stroke_color);
-    CGContextSetFillColorWithColor(context, divider_fill_color);
     if (m_IsLeft)
     {
         float x = m_ItemsArea.origin.x + m_ItemsArea.size.width;
         NSPoint view_divider[2] = { {x + 0.5, 0}, {x + 0.5, m_Size.height} };
         CGContextStrokeLineSegments(context, view_divider, 2);
-//        CGContextFillRect(context, NSMakeRect(x + 1, 0, g_DividerWidth - 1, m_Size.height));
         NSDrawWindowBackground(NSMakeRect(x + 1, 0, g_DividerWidth - 1, m_Size.height));
     }
     else
     {
         NSPoint view_divider[2] = { {g_DividerWidth - 0.5, 0}, {g_DividerWidth - 0.5, m_Size.height} };
         CGContextStrokeLineSegments(context, view_divider, 2);
-//        CGContextFillRect(context, NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
         NSDrawWindowBackground(NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
     }
 
@@ -330,12 +335,12 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                         m_ItemsArea.origin.y + m_ItemsArea.size.height,
                         m_ItemsArea.size.width);
     
+    // Volume footer if any
     if(m_VolumeFooter)
     {
         UpdateStatFS();
         m_VolumeFooter->Draw(StatFS(),
-                             m_State->Active,
-                             m_ItemsArea.origin.y + m_ItemsArea.size.height + m_ItemsFooter->Height() ,
+                             m_ItemsArea.origin.y + m_ItemsArea.size.height + m_ItemsFooter->Height(),
                              m_ItemsArea.size.width
                              );
     }

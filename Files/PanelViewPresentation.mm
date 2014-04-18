@@ -255,10 +255,13 @@ void PanelViewPresentation::UpdateStatFS()
             if(host->StatFS(listing->RelativePath(), stat, 0) == 0 &&
                stat != m_StatFS // force redrawing only if statfs has in fact changed
                )
-                dispatch_async(dispatch_get_main_queue(), ^{
+            {
+                assert(dispatch_is_main_queue() == false);
+                dispatch_sync(dispatch_get_main_queue(), ^{
                     m_StatFS = stat;
                     SetViewNeedsDisplay();
                 });
+            }
         });
     }
 }

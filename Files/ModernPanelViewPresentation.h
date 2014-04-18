@@ -8,11 +8,11 @@
 
 #import <memory>
 #import "PanelViewPresentation.h"
+#import "ObjcToCppObservingBridge.h"
 
 using namespace std;
 
 @class PanelView;
-@class ObjcToCppObservingBridge;
 class ModernPanelViewPresentationIconCache;
 class IconsGenerator;
 class ModernPanelViewPresentationHeader;
@@ -41,11 +41,7 @@ public:
     
     static NSString* SizeToString6(const VFSListingItem &_dirent);
 private:
-    friend class ModernPanelViewPresentationIconCache;
-    static void OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
-    static void OnAppearanceChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context);
     void CalculateLayoutFromFrame();
-    
     void OnDirectoryChanged() override;
     void BuildGeometry();
     void BuildAppearance();
@@ -85,8 +81,8 @@ private:
     
     static NSImage *m_SymlinkArrowImage;
     
-    ObjcToCppObservingBridge *m_GeometryObserver;
-    ObjcToCppObservingBridge *m_AppearanceObserver;
+    ObjcToCppObservingBlockBridge *m_GeometryObserver;
+    ObjcToCppObservingBlockBridge *m_AppearanceObserver;
     
     shared_ptr<IconsGenerator> m_IconCache;
     unique_ptr<ModernPanelViewPresentationHeader> m_Header;

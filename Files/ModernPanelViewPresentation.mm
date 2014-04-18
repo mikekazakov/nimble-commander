@@ -111,25 +111,36 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     BuildGeometry();
     BuildAppearance();
     
-    m_GeometryObserver = [ObjcToCppObservingBridge bridgeWithHanldler:&OnGeometryChanged object:this];
-    [m_GeometryObserver observeChangesInObject:NSUserDefaults.standardUserDefaults
-                                    forKeyPaths:@[@"FilePanelsModernFont",
-                                                  @"FilePanelsGeneralShowVolumeInformationBar"]
-                                       options:0
-                                       context:0];
+    m_GeometryObserver = [ObjcToCppObservingBlockBridge
+                          bridgeWithObject:NSUserDefaults.standardUserDefaults
+                          forKeyPaths:@[@"FilePanelsModernFont",
+                                        @"FilePanelsGeneralShowVolumeInformationBar"]
+                          options:0
+                          block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
+                              BuildGeometry();
+                              CalculateLayoutFromFrame();
+                              m_State->Data->CustomIconClearAll();
+                              BuildAppearance();
+                              SetViewNeedsDisplay();
+                          }];
     
-    m_AppearanceObserver = [ObjcToCppObservingBridge bridgeWithHanldler:&OnAppearanceChanged object:this];
-    [m_AppearanceObserver observeChangesInObject:NSUserDefaults.standardUserDefaults
-                                     forKeyPaths:@[@"FilePanelsModernRegularTextColor",
-                                                   @"FilePanelsModernActiveSelectedTextColor",
-                                                   @"FilePanelsModernBackgroundColor",
-                                                   @"FilePanelsModernAlternativeBackgroundColor",
-                                                   @"FilePanelsModernActiveSelectedBackgroundColor",
-                                                   @"FilePanelsModernInactiveSelectedBackgroundColor",
-                                                   @"FilePanelsModernCursorFrameColor",
-                                                   @"FilePanelsModernIconsMode"]
-                                         options:0
-                                         context:0];
+    m_AppearanceObserver = [ObjcToCppObservingBlockBridge
+                            bridgeWithObject:NSUserDefaults.standardUserDefaults
+                            forKeyPaths:@[@"FilePanelsModernRegularTextColor",
+                                          @"FilePanelsModernActiveSelectedTextColor",
+                                          @"FilePanelsModernBackgroundColor",
+                                          @"FilePanelsModernAlternativeBackgroundColor",
+                                          @"FilePanelsModernActiveSelectedBackgroundColor",
+                                          @"FilePanelsModernInactiveSelectedBackgroundColor",
+                                          @"FilePanelsModernCursorFrameColor",
+                                          @"FilePanelsModernIconsMode"]
+                            options:0
+                            block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
+                                BuildAppearance();
+                                if([_key_path isEqualToString:@"FilePanelsModernIconsMode"])
+                                    m_State->Data->CustomIconClearAll();
+                                SetViewNeedsDisplay();
+                            }];
 }
 
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
@@ -258,25 +269,6 @@ void ModernPanelViewPresentation::BuildAppearance()
       NSForegroundColorAttributeName: m_RegularItemTextColor,
       NSParagraphStyleAttributeName: size_col_text_pstyle
       };
-}
-
-void ModernPanelViewPresentation::OnGeometryChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context)
-{
-    ModernPanelViewPresentation *_this = (ModernPanelViewPresentation *)_obj;
-    _this->BuildGeometry();
-    _this->CalculateLayoutFromFrame();
-    _this->m_State->Data->CustomIconClearAll();    
-    _this->BuildAppearance();
-    _this->SetViewNeedsDisplay();
-}
-
-void ModernPanelViewPresentation::OnAppearanceChanged(void *_obj, NSString *_key_path, id _objc_object, NSDictionary *_changed, void *_context)
-{
-    ModernPanelViewPresentation *_this = (ModernPanelViewPresentation *)_obj;
-    _this->BuildAppearance();
-    if([_key_path isEqualToString:@"FilePanelsModernIconsMode"])
-        _this->m_State->Data->CustomIconClearAll();
-    _this->SetViewNeedsDisplay();
 }
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)

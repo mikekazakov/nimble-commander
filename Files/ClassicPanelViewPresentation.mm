@@ -340,10 +340,6 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation()
                             }];
 }
 
-ClassicPanelViewPresentation::~ClassicPanelViewPresentation()
-{
-}
-
 void ClassicPanelViewPresentation::BuildGeometry()
 {
     CTFontRef font = (CTFontRef)CFBridgingRetain([NSUserDefaults.standardUserDefaults fontForKey:@"FilePanelsClassicFont"]);
@@ -512,62 +508,60 @@ int ClassicPanelViewPresentation::Granularity()
 void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef context)
 {
     // layout preparation
-    const int columns_max = 3;
     const int columns = GetNumberOfItemColumns();
     int entries_in_column = GetMaxItemsPerColumn();
     int max_files_to_show = entries_in_column * columns;
     int column_width = (m_SymbWidth - 1) / columns;
     if(m_State->ViewType==PanelViewType::ViewWide) column_width = m_SymbWidth - 8;
     int columns_rest = m_SymbWidth - 1 - column_width*columns;
-    int columns_width[columns_max] = {column_width, column_width, column_width};
+    int columns_width[] = {column_width, column_width, column_width};
     if(m_State->ViewType==PanelViewType::ViewShort && columns_rest) { columns_width[2]++;  columns_rest--; }
     if(columns_rest) { columns_width[1]++;  columns_rest--; }
     
     auto &raw_entries = m_State->Data->DirectoryEntries();
     auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
     UniChar buff[256];
-    int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
-    int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
-    int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
+    int path_name_start_pos = 0, path_name_end_pos = 0;
+    int selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
+    int bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
     auto fontcache = m_FontCache.get();
+    
+    oms::Context omsc(context, fontcache);
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
+    omsc.SetupForText();
+    for(int n = 0, i = m_State->ItemsDisplayOffset;
+        n < max_files_to_show && i < sorted_entries.size();
+        ++n, ++i)
     {
-        int n=0,X,Y;
-        oms::SetParamsForUserReadableText(context, fontcache);
-        for(auto i = sorted_entries.begin() + m_State->ItemsDisplayOffset; i < sorted_entries.end(); ++i, ++n)
-        {
-            if(n >= max_files_to_show) break; // draw only visible
-            const auto& current = raw_entries[*i];
+        const auto& current = raw_entries[ sorted_entries[i] ];
+        
+        oms::StringBuf<MAXPATHLEN> fn;
+        fn.FromUTF8(current.Name(), current.NameLen());
+        
+        int CN = n / entries_in_column;
+        int Y = (n % entries_in_column + 1);
+        int X = 1;
+        for(int i = 0; i < CN; ++i) X += columns_width[i];
+        
+        bool focused = (i == m_State->CursorPos) && m_State->Active;
+        auto text_color = GetDirectoryEntryTextColor(current, focused);
+        
+        if(focused)
+            omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
+        
+        omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
+        
+        if(m_State->ViewType==PanelViewType::ViewWide)
+        { // draw entry size on right side, only for this mode
+            UniChar size_info[6];
+            FormHumanReadableSizeReprentationForDirEnt6(current, size_info);
             
-            size_t buf_size = 0;
+            if(focused)
+                omsc.DrawBackground(m_CursorBackgroundColor, columns_width[0]+1, Y, 6);
             
-            InterpretUTF8BufferAsUniChar( (const unsigned char*)current.Name(), current.NameLen(), buff, &buf_size, 0xFFFD);
-            
-            int CN = n / entries_in_column;
-            if(CN == 0) X = 1;
-            else if(CN == 1) X = columns_width[0] + 1;
-            else X = columns_width[0] + columns_width[1] + 1;
-            Y = (n % entries_in_column + 1);
-            
-            if((m_State->ItemsDisplayOffset + n != m_State->CursorPos) || !m_State->Active)
-                oms::DrawStringXY(buff, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
-                                  X, Y, context, fontcache, GetDirectoryEntryTextColor(current, false));
-            else // cursor
-                oms::DrawStringWithBackgroundXY(buff, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(buff, buf_size, columns_width[CN] - 1),
-                                                X, Y, context, fontcache, GetDirectoryEntryTextColor(current, true), columns_width[CN] - 1, m_CursorBackgroundColor);
-            
-            if(m_State->ViewType==PanelViewType::ViewWide)
-            { // draw entry size on right side, only for this mode
-                UniChar size_info[6];
-                FormHumanReadableSizeReprentationForDirEnt6(current, size_info);
-                
-                if((m_State->ItemsDisplayOffset + n != m_State->CursorPos) || !m_State->Active)
-                    oms::DrawStringXY(size_info, 0, 6, columns_width[0]+1, Y, context, fontcache, GetDirectoryEntryTextColor(current, false));
-                else // cursor
-                    oms::DrawStringWithBackgroundXY(size_info, 0, 6, columns_width[0]+1, Y, context, fontcache, GetDirectoryEntryTextColor(current, true), 6, m_CursorBackgroundColor);
-            }
+            omsc.DrawString(size_info, 0, 6, columns_width[0]+1, Y, text_color);
         }
     }
     
@@ -591,89 +585,84 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         
         if(m_SymbWidth > 14)
         {   // need to draw a path name
-            char panelpath[MAXPATHLEN*8];
-            UniChar panelpathuni[MAXPATHLEN];
-            UniChar panelpathtrim[256]; // may crash here on weird cases
-            size_t panelpathsz;
-            m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);
-            InterpretUTF8BufferAsUniChar( (unsigned char*)panelpath, strlen(panelpath), panelpathuni, &panelpathsz, 0xFFFD);
-            int chars_for_path_name = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(panelpathuni, panelpathsz, m_SymbWidth - 7, panelpathtrim);
+            char pathutf8[MAXPATHLEN*8];
+            m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(pathutf8);
+
+            oms::StringBuf<MAXPATHLEN*8> path;
+            path.FromUTF8(pathutf8, strlen(pathutf8));
+            path.TrimEllipsisLeft(m_SymbWidth - 7);
             
-            // add prefix and postfix - " "
-            memmove(panelpathtrim+1, panelpathtrim, sizeof(UniChar)*chars_for_path_name);
-            panelpathtrim[0] = ' ';
-            panelpathtrim[chars_for_path_name+1] = ' ';
-            chars_for_path_name += 2;
-            symbs_for_path_name = oms::CalculateSymbolsSpaceForString(panelpathtrim, chars_for_path_name);
+            int symbs_for_path_name = path.Space() + 2;
             path_name_start_pos = (m_SymbWidth-symbs_for_path_name) / 2;
-            path_name_end_pos = (m_SymbWidth-symbs_for_path_name) / 2 + symbs_for_path_name;
+            path_name_end_pos = path_name_start_pos + symbs_for_path_name;
             
             if(m_State->Active)
-                oms::DrawStringWithBackgroundXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                                context, fontcache, m_RegularFileColor[1], symbs_for_path_name, m_CursorBackgroundColor);
-            else
-                oms::DrawStringXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                  context, fontcache, m_RegularFileColor[0]);
+                omsc.DrawBackground(m_CursorBackgroundColor, path_name_start_pos, 0, symbs_for_path_name);
+                
+            omsc.DrawString(path.Chars(), 0, path.Size(), path_name_start_pos+1, 0, m_RegularFileColor[m_State->Active ? 1 : 0]);
         }
         
         // footer info
         if(current_entry && m_SymbWidth > 2 + 14 + 6)
         {   // draw current entry time info, size info and maybe filename
-            oms::DrawStringXY(time_info, 0, 14, m_SymbWidth - 15, m_SymbHeight - 2, context, fontcache, m_RegularFileColor[0]);
-            oms::DrawStringXY(size_info, 0, 6, m_SymbWidth - 15 - 7, m_SymbHeight - 2, context, fontcache, m_RegularFileColor[0]);
+            omsc.DrawString(time_info, 0, 14, m_SymbWidth - 15, m_SymbHeight - 2, m_RegularFileColor[0]);
+            omsc.DrawString(size_info, 0, 6, m_SymbWidth - 15 - 7, m_SymbHeight - 2, m_RegularFileColor[0]);
             
             int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
             if(symbs_for_name > 0)
             {
                 int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, symbs_for_name);
-                oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, fontcache, m_RegularFileColor[0]);
+                omsc.DrawString(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, m_RegularFileColor[0]);
             }
         }
         else if(current_entry && m_SymbWidth >= 2 + 6)
         {   // draw current entry size info and time info
-            oms::DrawStringXY(size_info, 0, 6, 1, m_SymbHeight - 2, context, fontcache, m_RegularFileColor[0]);
+            omsc.DrawString(size_info, 0, 6, 1, m_SymbHeight - 2, m_RegularFileColor[0]);
             int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
             if(symbs_for_name > 0)
             {
                 int symbs = oms::CalculateUniCharsAmountForSymbolsFromLeft(time_info, 14, symbs_for_name);
-                oms::DrawStringXY(time_info, 0, symbs, 8, m_SymbHeight-2, context, fontcache, m_RegularFileColor[0]);
+                omsc.DrawString(time_info, 0, symbs, 8, m_SymbHeight-2, m_RegularFileColor[0]);
             }
         }
         
         if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 12)
         { // process selection if any
-            UniChar selectionbuf[128], selectionbuftrim[128];
+            UniChar selectionbuf[MAXPATHLEN];
             size_t sz;
             FormHumanReadableBytesAndFiles128(m_State->Data->Stats().bytes_in_selected_entries, m_State->Data->Stats().selected_entries_amount, selectionbuf, sz, true);
-            int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
-            symbs_for_selected_bytes = oms::CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
+            oms::StringBuf<MAXPATHLEN> str;
+            str.FromUniChars(selectionbuf, sz);
+            str.TrimEllipsisLeft(m_SymbWidth - 2);
+            
+            int symbs_for_selected_bytes = str.Space();
             selected_bytes_start_pos = (m_SymbWidth-symbs_for_selected_bytes) / 2;
             selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
-            oms::DrawStringWithBackgroundXY(selectionbuftrim, 0, unichars,
-                                            selected_bytes_start_pos, m_SymbHeight-3,
-                                            context, fontcache, m_SelectedColor[0], symbs_for_selected_bytes, m_CursorBackgroundColor);
+            omsc.DrawBackground(m_CursorBackgroundColor, selected_bytes_start_pos, m_SymbHeight-3, symbs_for_selected_bytes);
+            omsc.DrawString(str.Chars(), 0, str.Size(), selected_bytes_start_pos, m_SymbHeight-3, m_SelectedColor[0]);
         }
         
         if(m_SymbWidth > 12)
         { // process bytes in directory
-            UniChar bytes[128], bytestrim[128];
+            UniChar bytes[128];
             size_t sz;
             FormHumanReadableBytesAndFiles128(m_State->Data->Stats().bytes_in_raw_reg_files, (int)m_State->Data->Stats().raw_reg_files_amount, bytes, sz, true);
-            int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(bytes, sz, m_SymbWidth - 2, bytestrim);
-            symbs_for_bytes_in_dir = oms::CalculateSymbolsSpaceForString(bytestrim, unichars);
+            oms::StringBuf<MAXPATHLEN> str;
+            str.FromUniChars(bytes, sz);
+            str.TrimEllipsisLeft(m_SymbWidth - 2);
+            
+            int symbs_for_bytes_in_dir = str.Space();
             bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
             bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
-            oms::DrawStringXY(bytestrim, 0, unichars,
-                              bytes_in_dir_start_pos, m_SymbHeight-1,
-                              context, fontcache, m_RegularFileColor[0]);
+            omsc.DrawString(str.Chars(), 0, str.Size(), bytes_in_dir_start_pos, m_SymbHeight-1, m_RegularFileColor[0]);
         }
         
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw frames
-    oms::SetParamsForUserASCIIArt(context, fontcache);
-    oms::SetFillColor(context, m_RegularFileColor[0]);
+    omsc.SetupForASCIIArt();
+    omsc.SetFillColor(m_RegularFileColor[0]);
     oms::unichars_draw_batch b;
     
     for(int i = 1; i < m_SymbHeight - 1; ++i)

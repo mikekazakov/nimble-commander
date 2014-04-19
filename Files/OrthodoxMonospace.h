@@ -10,6 +10,7 @@
 
 #import <Cocoa/Cocoa.h>
 #include <assert.h>
+#include "Encodings.h"
 
 class FontCache;
 
@@ -136,5 +137,81 @@ inline bool IsUnicodeCombiningCharacter(unsigned short a)
     (a >= 0x20D0 && a <= 0x20FF) ||
     (a >= 0xFE20 && a <= 0xFE2F) ;
 }
+
+template <int _buf_cap>
+class StringBuf
+{
+public:
+    enum { Capacity = _buf_cap };
+    
+    inline uint16_t Size() const { return m_Size; }
+    inline uint16_t *Chars() { return m_Buff; }    
+    inline const uint16_t *Chars() const { return m_Buff; }
+  
+    void FromUTF8(const char *_utf8, size_t _utf8_sz)
+    {
+        assert(_utf8_sz < Capacity);
+        size_t sz;
+        InterpretUTF8BufferAsUniChar( (const unsigned char*)_utf8,
+                                     _utf8_sz,
+                                     m_Buff,
+                                     &sz,
+                                     0xFFFD);
+        m_Size = sz;
+    }
+    
+    void FromUniChars(const uint16_t *_unichars, size_t _unichars_amount)
+    {
+        assert(_unichars_amount <= Capacity);
+        memcpy(m_Buff, _unichars, sizeof(uint16_t) * _unichars_amount);
+        m_Size = _unichars_amount;
+    }
+
+    unsigned Space() const
+    {
+        return CalculateSymbolsSpaceForString(m_Buff, m_Size);
+    }
+    
+    unsigned MaxForSpaceLeft(unsigned _space)
+    {
+        return CalculateUniCharsAmountForSymbolsFromLeft(m_Buff, m_Size, _space);
+    }
+    
+    void TrimEllipsisLeft(unsigned _max_space)
+    {
+        uint16_t tmp[Capacity];
+        int n = PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(m_Buff, m_Size, _max_space, tmp);
+        memcpy(m_Buff, tmp, sizeof(uint16_t) * n);
+        m_Size = n;
+    }
+
+private:
+    uint16_t m_Size = 0;
+    uint16_t m_Buff[Capacity];
+};
+
+class Context
+{
+public:
+    Context(CGContextRef _cg_context, FontCache* _font_cache);
+
+    void SetFillColor(const DoubleColor &_color);
+    void SetupForText();
+    void SetupForASCIIArt();
+    
+    void DrawString(uint16_t *_s,
+                      size_t _start,    // position of a first symbol to draw
+                      size_t _amount,   // number of symbols to draw. this means UniChar symbols, not visible symbols - result may be shorter
+                      int _x,
+                      int _y,
+                      const DoubleColor &_text_color
+                      );
+    
+    void DrawBackground(const DoubleColor &_color, int _x, int _y, int _w, int _h = 1);
+
+private:
+    CGContextRef m_CGContext;
+    FontCache   *m_FontCache;
+};
     
 }

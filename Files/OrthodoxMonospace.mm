@@ -302,4 +302,83 @@ int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const UniChar *_s, size_t 
     return ell_num + chars;
 }
     
+Context::Context(CGContextRef _cg_context, FontCache* _font_cache):
+    m_CGContext(_cg_context),
+    m_FontCache(_font_cache)
+{
+}
+
+void Context::SetFillColor(const DoubleColor &_color)
+{
+    CGContextSetRGBFillColor(m_CGContext, _color.r, _color.g, _color.b, _color.a);
+}
+
+void Context::SetupForText()
+{
+    // font settings
+    CGContextSetFont(m_CGContext, m_FontCache->BaseCGFont());
+    CGContextSetFontSize(m_CGContext, m_FontCache->Size());
+    CGContextSetTextDrawingMode(m_CGContext, kCGTextFill);
+    CGContextSetShouldSmoothFonts(m_CGContext, true);
+    CGContextSetShouldAntialias(m_CGContext, true);
+    
+    // font geometry
+    CGAffineTransform AFF;
+    AFF.a = 1;
+    AFF.b = 0;
+    AFF.c = 0;
+    AFF.d = -1;
+    AFF.tx = 0;
+    AFF.ty = 0;
+    CGContextSetTextMatrix(m_CGContext, AFF);
+}
+
+void Context::SetupForASCIIArt()
+{
+    // font settings
+    CGContextSetFont(m_CGContext, m_FontCache->BaseCGFont());
+    CGContextSetFontSize(m_CGContext, m_FontCache->Size());
+    CGContextSetTextDrawingMode(m_CGContext, kCGTextFill);
+    CGContextSetShouldSmoothFonts(m_CGContext, true);
+    CGContextSetShouldAntialias(m_CGContext, false);
+    
+    // font geometry
+    CGAffineTransform AFF;
+    AFF.a = 1;
+    AFF.b = 0;
+    AFF.c = 0;
+    AFF.d = -1;
+    AFF.tx = 0;
+    AFF.ty = 0;
+    CGContextSetTextMatrix(m_CGContext, AFF);
+}
+
+void Context::DrawString(uint16_t *_s,
+                           size_t _start,    // position of a first symbol to draw
+                           size_t _amount,   // number of symbols to draw. this means UniChar symbols, not visible symbols - result may be shorter
+                           int _x,
+                           int _y,
+                           const DoubleColor &_text_color
+                           )
+{
+    oms::DrawString(_s,
+                    _start,
+                    _amount,
+                    _x * m_FontCache->Width(),
+                    _y * m_FontCache->Height(),
+                    m_CGContext,
+                    m_FontCache,
+                    _text_color);
+}
+    
+void Context::DrawBackground(const DoubleColor &_color, int _x, int _y, int _w, int _h)
+{
+    SetFillColor(_color);
+    CGContextFillRect(m_CGContext,
+                      CGRectMake(_x * m_FontCache->Width(),
+                                 _y * m_FontCache->Height(),
+                                 _w * m_FontCache->Width(),
+                                 _h * m_FontCache->Height()));
+}
+
 }

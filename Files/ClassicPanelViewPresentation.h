@@ -18,7 +18,6 @@ class ClassicPanelViewPresentation : public PanelViewPresentation
 {
 public:
     ClassicPanelViewPresentation();
-    ~ClassicPanelViewPresentation();
     
     void Draw(NSRect _dirty_rect) override;
     void OnFrameChanged(NSRect _frame) override;

@@ -97,17 +97,12 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 @interface MainWindowFilePanelContextMenu : NSMenu<NSMenuDelegate>
 
-
 - (id) initWithData:(const vector<const VFSListingItem*>&) _items
              OnPath:(const char*)_path
                 vfs:(shared_ptr<VFSHost>) _host
-                pos:(NSPoint)_pos
-             inView:(NSView*)_in_view
             mainWnd:(MainWindowFilePanelState*)_wnd
              myCont:(PanelController*)_my_cont
             oppCont:(PanelController*)_opp_cont;
-
-- (void) PopUp;
 
 @end
 
@@ -115,8 +110,6 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 {
     string                 m_DirPath;
     shared_ptr<VFSHost>    m_Host;
-    NSPoint                     m_Pos;
-    NSView                     *m_InView;
     vector<string>    m_Items;
     vector<OpenWithHandler> m_OpenWithHandlers;
     string                 m_ItemsUTI;
@@ -124,7 +117,6 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     PanelController             *m_CurrentController;
     PanelController             *m_OppositeController;
     NSMutableArray              *m_ShareItemsURLs;
-    NSMenu                      *m_OriginalServicesMenu;
     
     int                         m_DirsCount;
     int                         m_FilesCount;
@@ -133,8 +125,6 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (id) initWithData:(const vector<const VFSListingItem*>&) _items
              OnPath:(const char*)_path
                 vfs:(shared_ptr<VFSHost>) _host
-                pos:(NSPoint)_pos
-             inView:(NSView*)_in_view
             mainWnd:(MainWindowFilePanelState*)_wnd
              myCont:(PanelController*)_my_cont
             oppCont:(PanelController*)_opp_cont
@@ -146,8 +136,6 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         assert(!_items.empty());
         m_Host = _host;
         m_DirPath = _path;
-        m_Pos = _pos;
-        m_InView = _in_view;
         m_MainWnd = _wnd;
         m_CurrentController = _my_cont;
         m_OppositeController = _opp_cont;
@@ -442,21 +430,8 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         }
         [self addItem:item];
     }
+
     [self addItem:[NSMenuItem separatorItem]];
-
-    //////////////////////////////////////////////////////////////////////
-    // Services menu. Caveat! Have a bug here - with some elements selected and context menu on non-selected element,
-    // service will work with selected elements, not on current element as other context menu handler. BUG!!!!
-    {
-        NSMenu *services_submenu = [NSMenu new];
-        NSMenuItem *services_menuitem = [NSMenuItem new];
-        [services_menuitem setTitle:@"Services"];
-        [services_menuitem setSubmenu:services_submenu];
-        [self addItem:services_menuitem];
-
-        m_OriginalServicesMenu = [NSApp servicesMenu];
-        [NSApp setServicesMenu:services_submenu];
-    }
 }
 
 - (void)OnRegularOpen:(id)sender
@@ -509,7 +484,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void)OnOpenWithOther:(id)sender
 {
     NSOpenPanel *panel = [self BuildAppChoose];
-    [panel beginSheetModalForWindow:[m_InView window]
+    [panel beginSheetModalForWindow:m_MainWnd.ContentView.window
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
                       {
@@ -523,7 +498,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void)OnAlwaysOpenWithOther:(id)sender
 {
     NSOpenPanel *panel = [self BuildAppChoose];
-    [panel beginSheetModalForWindow:[m_InView window]
+    [panel beginSheetModalForWindow:m_MainWnd.ContentView.window
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
                       {
@@ -678,33 +653,12 @@ proceed:;
     [m_MainWnd AddOperation:op];
 }
 
-- (void) PopUp
-{
-    // ensure that there will be no vertical scroll
-    NSRect vis_frame = [[[m_InView window] screen] visibleFrame];
-    NSSize mysize = [self size];
-    NSPoint windowPoint = [m_InView convertPoint:m_Pos toView:nil];
-    NSPoint screenPoint = [m_InView.window convertBaseToScreen:windowPoint];
-    if(screenPoint.y < mysize.height + vis_frame.origin.y)
-        screenPoint.y = mysize.height + vis_frame.origin.y;
-    NSPoint loc = [m_InView.window convertScreenToBase:screenPoint];
-    loc = [m_InView convertPoint:loc fromView:nil];
-    
-    [self popUpMenuPositioningItem:0 atLocation:loc inView:m_InView];
-}
-
-- (void)menuDidClose:(NSMenu *)menu
-{
-    assert(menu == self);
-    [NSApp setServicesMenu:m_OriginalServicesMenu];
-}
-
 @end
 
 
 @implementation MainWindowFilePanelState (ContextMenu)
 
-- (void) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
+- (NSMenu*) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
                          path:(const char*) _path
                           vfs:(shared_ptr<VFSHost>) _host
                        caller:(PanelController*) _caller
@@ -718,21 +672,15 @@ proceed:;
     else
         assert(0);
     
-    NSPoint mouseLoc;
-    mouseLoc = [NSEvent mouseLocation]; //get current mouse position
-    mouseLoc = [self.window convertScreenToBase:mouseLoc];
-    mouseLoc = [self convertPoint:mouseLoc fromView:nil];
     MainWindowFilePanelContextMenu *menu = [MainWindowFilePanelContextMenu alloc];
     menu = [menu initWithData:_items
                        OnPath:_path
                           vfs:_host
-                          pos:mouseLoc
-                       inView:self
                       mainWnd:self
                        myCont:current_cont
                       oppCont:opp_cont];
 
-    [menu PopUp];
+    return menu;
 }
 
 @end

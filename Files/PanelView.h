@@ -20,7 +20,7 @@ class PanelViewPresentation;
 @optional
 - (void) PanelViewCursorChanged:(PanelView*)_view;
 - (void) PanelViewRequestsActivation:(PanelView*)_view;
-- (void) PanelViewRequestsContextMenu:(PanelView*)_view;
+- (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event;
 - (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;

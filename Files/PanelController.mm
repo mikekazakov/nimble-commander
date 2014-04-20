@@ -1062,11 +1062,11 @@ void panel::GenericCursorPersistance::Restore()
     [(MainWindowFilePanelState*)self.state ActivatePanelByController:self];
 }
 
-- (void) PanelViewRequestsContextMenu:(PanelView*)_view
+- (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
 {
     const VFSListingItem* cur_focus = [m_View CurrentItem];
     if(!cur_focus || cur_focus->IsDotDot())
-        return;
+        return nil;
     
     vector<const VFSListingItem*> items;
     
@@ -1078,10 +1078,10 @@ void panel::GenericCursorPersistance::Restore()
             if(i.CFIsSelected())
                 items.push_back(&i);
     
-    [(MainWindowFilePanelState*)self.state RequestContextMenuOn:items
-                                                           path:[self GetCurrentDirectoryPathRelativeToHost].c_str()
-                                                            vfs:m_HostsStack.back()
-                                                         caller:self];
+    return [(MainWindowFilePanelState*)self.state RequestContextMenuOn:items
+                                                                  path:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+                                                                   vfs:m_HostsStack.back()
+                                                                caller:self];
 }
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos

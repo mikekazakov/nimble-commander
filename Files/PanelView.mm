@@ -350,19 +350,13 @@ struct PanelViewStateStorage
     
     [self OnCursorPositionChanged];
 
-    if ((_event.modifierFlags & NSControlKeyMask) != 0)
-        [self rightMouseDown:_event]; // emulate right-mouse down
-    else
-    {
-        m_ReadyToDrag = true;
-        m_LButtonDownPos = local_point;
-    }
+    m_ReadyToDrag = true;
+    m_LButtonDownPos = local_point;
 }
 
-- (void)rightMouseDown:(NSEvent *)_event
+- (NSMenu *)menuForEvent:(NSEvent *)_event
 {
-    if ((_event.modifierFlags & NSControlKeyMask) == 0)
-        [self mouseDown:_event]; // we'll call rightMouseDown from mouseDown with ctrl, so need to exclude cycle here
+    [self mouseDown:_event]; // interpret right mouse downs or ctrl+left mouse downs as regular mouse down
     
     NSPoint event_location = [_event locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
@@ -370,7 +364,8 @@ struct PanelViewStateStorage
     if (cursor_pos >= 0)
         if(id<PanelViewDelegate> del = self.delegate)
             if([del respondsToSelector:@selector(PanelViewRequestsContextMenu:)])
-                [del PanelViewRequestsContextMenu:self];
+                return [del PanelViewRequestsContextMenu:self];
+    return nil;
 }
 
 - (void) mouseDragged:(NSEvent *)_event

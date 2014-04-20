@@ -16,9 +16,9 @@
  * _items: temporary items info for quick decisions, will not be stored
  *
  */
-- (void) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
-                         path:(const char*) _path
-                          vfs:(shared_ptr<VFSHost>) _host
-                       caller:(PanelController*) _caller;
+- (NSMenu*) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
+                            path:(const char*) _path
+                             vfs:(shared_ptr<VFSHost>) _host
+                          caller:(PanelController*) _caller;
 
 @end

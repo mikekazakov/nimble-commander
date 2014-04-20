@@ -58,7 +58,7 @@ static double TitleBarHeight()
     window.identifier = NSStringFromClass(self.class);
     window.title = @"Files αλφα ver.";
     if(![window setFrameUsingName:NSStringFromClass(self.class)])
-        [window center];    
+        [window center];
     
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:36 forEdge:NSMaxYEdge];
@@ -91,6 +91,8 @@ static double TitleBarHeight()
 
 -(void) dealloc
 {
+    [self.window saveFrameUsingName:NSStringFromClass(self.class)];
+    
     [NSNotificationCenter.defaultCenter removeObserver:self];
     assert(m_WindowState.empty());
 }

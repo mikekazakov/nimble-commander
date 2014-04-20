@@ -38,10 +38,15 @@ private:
     void DrawWithShortMediumWideView(CGContextRef _context);
     void DrawWithFullView(CGContextRef _context);
     const DoubleColor& GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused);
+    void CalcLayout(NSSize _from_px_size);
     
     NSSize          m_FrameSize;
     int             m_SymbWidth = 0;
     int             m_SymbHeight = 0;
+    int             m_BytesInDirectoryVPos = 0;
+    int             m_EntryFooterVPos = 0;
+    int             m_SelectionVPos = 0;
+    
     shared_ptr<FontCache> m_FontCache;
     DoubleColor     m_BackgroundColor;
     DoubleColor     m_CursorBackgroundColor;
@@ -52,4 +57,5 @@ private:
     DoubleColor     m_OtherColor[2];
     ObjcToCppObservingBlockBridge *m_GeometryObserver;
     ObjcToCppObservingBlockBridge *m_AppearanceObserver;
+    bool            m_DrawVolumeInfo = true;
 };

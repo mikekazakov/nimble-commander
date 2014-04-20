@@ -16,16 +16,17 @@ class FontCache;
 
 struct DoubleColor
 {
-    double r,g,b,a;
+    double r = 0.;
+    double g = 0.;
+    double b = 0.;
+    double a = 1.;
+    DoubleColor() = default;
     DoubleColor(double _r, double _g, double _b, double _a):
-    r(_r), g(_g), b(_b), a(_a) {}
-    DoubleColor():
-    r(0.), g(0.), b(0.), a(1.) {}
-    DoubleColor(NSColor *_c):
-        r(0.), g(0.), b(0.), a(1.)
+        r(_r), g(_g), b(_b), a(_a) {}
+    DoubleColor(NSColor *_c)
     {
         assert(_c != nil);
-        [[_c colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]] getRed:&r green:&g blue:&b alpha:&a];
+        [[_c colorUsingColorSpace:NSColorSpace.genericRGBColorSpace] getRed:&r green:&g blue:&b alpha:&a];
     }
     void Set(CGContextRef _context) const {
         CGContextSetRGBFillColor(_context, r, g, b, a);
@@ -175,6 +176,11 @@ public:
     unsigned MaxForSpaceLeft(unsigned _space)
     {
         return CalculateUniCharsAmountForSymbolsFromLeft(m_Buff, m_Size, _space);
+    }
+
+    unsigned MaxForSpaceRight(unsigned _space)
+    {
+        return CalculateUniCharsAmountForSymbolsFromRight(m_Buff, m_Size, _space);
     }
     
     void TrimEllipsisLeft(unsigned _max_space)

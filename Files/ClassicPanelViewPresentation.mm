@@ -393,20 +393,9 @@ void ClassicPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     // clear background
     m_BackgroundColor.Set(context);
-    
     CGContextFillRect(context, NSRectToCGRect(_dirty_rect));
     
-    PanelViewType type = m_State->ViewType;
-    if (type == PanelViewType::ViewFull)
-        DrawWithFullView(context);
-    else
-    {
-        assert(type == PanelViewType::ViewShort
-               || type == PanelViewType::ViewMedium
-               || type == PanelViewType::ViewWide);
-        
-        DrawWithShortMediumWideView(context);
-    }
+    DoDraw(context);
 }
 
 void ClassicPanelViewPresentation::CalcLayout(NSSize _from_px_size)
@@ -516,7 +505,7 @@ int ClassicPanelViewPresentation::Granularity()
     return m_FontCache->Width();
 }
 
-void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef context)
+void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
 {
     // layout preparation
     const int columns = GetNumberOfItemColumns();
@@ -528,6 +517,12 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
     int columns_width[] = {column_width, column_width, column_width};
     if(m_State->ViewType==PanelViewType::ViewShort && columns_rest) { columns_width[2]++;  columns_rest--; }
     if(columns_rest) { columns_width[1]++;  columns_rest--; }
+    
+    int full_fn_column_width = m_SymbWidth - 23; if(full_fn_column_width < 0) full_fn_column_width = 0;
+    int full_columns_width[] = {full_fn_column_width, 6, 8, 5};
+    int full_column_fr_pos[] = {full_columns_width[0],
+        full_columns_width[0] + full_columns_width[1] + 1,
+        full_columns_width[0] + full_columns_width[1] + full_columns_width[2] + 2};
     
     auto &raw_entries = m_State->Data->DirectoryEntries();
     auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
@@ -560,20 +555,45 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         bool focused = (i == m_State->CursorPos) && m_State->Active;
         auto text_color = GetDirectoryEntryTextColor(current, focused);
         
-        if(focused)
-            omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
+        if(m_State->ViewType != PanelViewType::ViewFull)
+        {
+            if(focused)
+                omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
         
-        omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
+            omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
         
-        if(m_State->ViewType==PanelViewType::ViewWide)
-        { // draw entry size on right side, only for this mode
-            UniChar size_info[6];
+            if(m_State->ViewType==PanelViewType::ViewWide)
+            { // draw entry size on right side, only for this mode
+                UniChar size_info[6];
+                FormHumanReadableSizeReprentationForDirEnt6(current, size_info);
+            
+                if(focused)
+                    omsc.DrawBackground(m_CursorBackgroundColor, columns_width[0]+1, Y, 6);
+            
+                omsc.DrawString(size_info, 0, 6, columns_width[0]+1, Y, text_color);
+            }
+        }
+        else
+        {
+            UniChar size_info[6], date_info[8], time_info[5];;
             FormHumanReadableSizeReprentationForDirEnt6(current, size_info);
+            FormHumanReadableDateRepresentation8(current.MTime(), date_info);
+            FormHumanReadableTimeRepresentation5(current.MTime(), time_info);
             
             if(focused)
-                omsc.DrawBackground(m_CursorBackgroundColor, columns_width[0]+1, Y, 6);
+            {
+                if(full_columns_width[0] > 0)
+                    omsc.DrawBackground(m_CursorBackgroundColor, X, Y, full_columns_width[0] - 1);
+                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[0], Y, 6);
+                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[1], Y, 8);
+                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[2], Y, 5);
+            }
             
-            omsc.DrawString(size_info, 0, 6, columns_width[0]+1, Y, text_color);
+            if(full_columns_width[0] > 0)
+                omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(full_columns_width[0] - 1), X, Y, text_color);
+            omsc.DrawString(size_info, 0, 6, 1 + full_column_fr_pos[0], Y, text_color);
+            omsc.DrawString(date_info, 0, 8, 1 + full_column_fr_pos[1], Y, text_color);
+            omsc.DrawString(time_info, 0, 5, 1 + full_column_fr_pos[2], Y, text_color);
         }
     }
     
@@ -615,29 +635,37 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         }
         
         // entry footer info
-        if(current_entry && m_SymbWidth > 2 + 14 + 6)
-        {   // draw current entry time info, size info and maybe filename
-            int Y = m_EntryFooterVPos;
-            omsc.DrawString(time_info, 0, 14, m_SymbWidth - 15, Y, m_RegularFileColor[0]);
-            omsc.DrawString(size_info, 0, 6, m_SymbWidth - 15 - 7, Y, m_RegularFileColor[0]);
-            
-            int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
-            if(symbs_for_name > 0)
-            {
-                int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, symbs_for_name);
-                omsc.DrawString(buff, buf_size-symbs, symbs, 1, Y, m_RegularFileColor[0]);
+        if(current_entry && m_State->ViewType != PanelViewType::ViewFull)
+        {
+            if(m_SymbWidth > 2 + 14 + 6)
+            {   // draw current entry time info, size info and maybe filename
+                int Y = m_EntryFooterVPos;
+                omsc.DrawString(time_info, 0, 14, m_SymbWidth - 15, Y, m_RegularFileColor[0]);
+                omsc.DrawString(size_info, 0, 6, m_SymbWidth - 15 - 7, Y, m_RegularFileColor[0]);
+                
+                int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
+                if(symbs_for_name > 0)
+                {
+                    int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, symbs_for_name);
+                    omsc.DrawString(buff, buf_size-symbs, symbs, 1, Y, m_RegularFileColor[0]);
+                }
+            }
+            else if(m_SymbWidth >= 2 + 6)
+            {   // draw current entry size info and maybe time info
+                int Y = m_EntryFooterVPos;
+                omsc.DrawString(size_info, 0, 6, 1, Y, m_RegularFileColor[0]);
+                int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
+                if(symbs_for_name > 0)
+                {
+                    int symbs = oms::CalculateUniCharsAmountForSymbolsFromLeft(time_info, 14, symbs_for_name);
+                    omsc.DrawString(time_info, 0, symbs, 8, Y, m_RegularFileColor[0]);
+                }
             }
         }
-        else if(current_entry && m_SymbWidth >= 2 + 6)
-        {   // draw current entry size info and maybe time info
-            int Y = m_EntryFooterVPos;
-            omsc.DrawString(size_info, 0, 6, 1, Y, m_RegularFileColor[0]);
-            int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
-            if(symbs_for_name > 0)
-            {
-                int symbs = oms::CalculateUniCharsAmountForSymbolsFromLeft(time_info, 14, symbs_for_name);
-                omsc.DrawString(time_info, 0, symbs, 8, Y, m_RegularFileColor[0]);
-            }
+        else if(current_entry)
+        {
+            int unics = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, m_SymbWidth-2);
+            omsc.DrawString(buff, buf_size-unics, unics, 1, m_EntryFooterVPos, m_RegularFileColor[0]);
         }
         
         if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 14)
@@ -708,20 +736,32 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
     b.put(u'╚', 0, m_SymbHeight-1);
     b.put(u'╝', m_SymbWidth-1, m_SymbHeight-1);
     b.put(u'╗', m_SymbWidth-1, 0);
-    if(columns_width[0] < path_name_start_pos || columns_width[0] >= path_name_end_pos)
-        b.put(u'╤', columns_width[0], 0);
-    if(columns_width[0]+columns_width[1] < path_name_start_pos || columns_width[0]+columns_width[1] >= path_name_end_pos)
-        if(m_State->ViewType==PanelViewType::ViewShort)
-            b.put(u'╤', columns_width[0]+columns_width[1], 0);
     for(int i = 1; i < m_SelectionVPos; ++i)
     {
-        b.put(u'│', columns_width[0], i);
-        if(m_State->ViewType==PanelViewType::ViewShort)
+        if(m_State->ViewType != PanelViewType::ViewFull)
+            b.put(u'│', columns_width[0], i);
+        if(m_State->ViewType == PanelViewType::ViewShort)
             b.put(u'│', columns_width[0]+columns_width[1], i);
+        else if(m_State->ViewType == PanelViewType::ViewFull) {
+            if(full_column_fr_pos[0] > 0)
+                b.put(u'│', full_column_fr_pos[0], i);
+            if(full_column_fr_pos[1] > 0)
+                b.put(u'│', full_column_fr_pos[1], i);
+            if(full_column_fr_pos[2] > 0)
+                b.put(u'│', full_column_fr_pos[2], i);
+        }
     }
     for(int i = 1; i < m_SymbWidth - 1; ++i)
     {
-        if( (i != columns_width[0]) && (i != columns_width[0] + columns_width[1]))
+        bool is_col = false;
+        if(m_State->ViewType != PanelViewType::ViewFull &&
+           ((i == columns_width[0]) || (i == columns_width[0] + columns_width[1])))
+            is_col = true;
+        else if(m_State->ViewType == PanelViewType::ViewFull &&
+            ((i == full_column_fr_pos[0]) || (i == full_column_fr_pos[1]) || (i == full_column_fr_pos[2])))
+            is_col = true;
+        
+        if(!is_col)
         {
             if( (i!=1) && (i < path_name_start_pos || i >= path_name_end_pos))
                 b.put(u'═', i, 0);
@@ -732,197 +772,14 @@ void ClassicPanelViewPresentation::DrawWithShortMediumWideView(CGContextRef cont
         {
             if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
                 b.put(u'┴', i, m_SelectionVPos);
+            if( (i!=1) && (i < path_name_start_pos || i>= path_name_end_pos) )
+                b.put(u'╤', i, 0);
         }
         if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)
             b.put(u'═', i, m_BytesInDirectoryVPos);
         if(m_DrawVolumeInfo && (i < volume_info_start_pos || i >= volume_info_end_pos))
             b.put(u'═', i, m_SymbHeight - 1);
     }
-    oms::DrawUniCharsXY(b, context, fontcache);
-}
-
-void ClassicPanelViewPresentation::DrawWithFullView(CGContextRef context)
-{
-    const int columns_max = 4;
-    int fn_column_width = m_SymbWidth - 23; if(fn_column_width < 0) fn_column_width = 0;
-    int entries_to_show = GetMaxItemsPerColumn();
-    int columns_width[columns_max] = {fn_column_width, 6, 8, 5};
-    int column_fr_pos[columns_max-1] = {columns_width[0],
-        columns_width[0] + columns_width[1] + 1,
-        columns_width[0] + columns_width[1] + columns_width[2] + 2};
-    int symbs_for_bytes_in_dir = 0, bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
-    int symbs_for_path_name = 0, path_name_start_pos = 0, path_name_end_pos = 0;
-    int symbs_for_selected_bytes = 0, selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
-    auto &raw_entries = m_State->Data->DirectoryEntries();
-    auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
-    auto fontcache = m_FontCache.get();
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // draw file names
-    {
-        UniChar file_name[256], size_info[6], date_info[8], time_info[5];;
-        size_t fn_size = 0;
-        int n=0;
-        oms::SetParamsForUserReadableText(context, fontcache);
-        for(auto i = sorted_entries.begin() + m_State->ItemsDisplayOffset; i < sorted_entries.end(); ++i, ++n)
-        {
-            if(n >= entries_to_show) break; // draw only visible
-            const auto& current = raw_entries[*i];
-            
-            // TODO: need to render extention apart from other filename. (need ?)
-            InterpretUTF8BufferAsUniChar( (const unsigned char*)current.Name(), current.NameLen(), file_name, &fn_size, 0xFFFD);
-            FormHumanReadableSizeReprentationForDirEnt6(current, size_info);
-            FormHumanReadableDateRepresentation8(current.MTime(), date_info);
-            FormHumanReadableTimeRepresentation5(current.MTime(), time_info);
-            
-            if((m_State->ItemsDisplayOffset + n != m_State->CursorPos) || !m_State->Active)
-            {
-                auto &textcolor = GetDirectoryEntryTextColor(current, false);
-                oms::DrawStringXY(file_name, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(file_name, fn_size, columns_width[0] - 1),
-                                  1, n+1, context, fontcache, textcolor);
-                
-                oms::DrawStringXY(size_info, 0, 6, 1 + column_fr_pos[0], n+1, context, fontcache, textcolor);
-                oms::DrawStringXY(date_info, 0, 8, 1 + column_fr_pos[1], n+1, context, fontcache, textcolor);
-                oms::DrawStringXY(time_info, 0, 5, 1 + column_fr_pos[2], n+1, context, fontcache, textcolor);
-            }
-            else // cursor
-            {
-                auto &textcolor = GetDirectoryEntryTextColor(current, true);
-                auto &textbkcolor = m_CursorBackgroundColor;
-                oms::DrawStringWithBackgroundXY(file_name, 0, oms::CalculateUniCharsAmountForSymbolsFromLeft(file_name, fn_size, columns_width[0] - 1),
-                                                1, n+1, context, fontcache, textcolor, columns_width[0] - 1, textbkcolor);
-                oms::DrawStringWithBackgroundXY(size_info, 0, 6, 1 + column_fr_pos[0], n+1,
-                                                context, fontcache, textcolor, 6, textbkcolor);
-                oms::DrawStringWithBackgroundXY(date_info, 0, 8, 1 + column_fr_pos[1], n+1,
-                                                context, fontcache, textcolor, 8, textbkcolor);
-                oms::DrawStringWithBackgroundXY(time_info, 0, 5, 1 + column_fr_pos[2], n+1,
-                                                context, fontcache, textcolor, 5, textbkcolor);
-            }
-        }
-    }
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // draw directory path
-    if(m_SymbWidth > 14)
-    {   // need to draw a path name
-        char panelpath[MAXPATHLEN*8];
-        UniChar panelpathuni[MAXPATHLEN];
-        UniChar panelpathtrim[256]; // may crash here on weird cases
-        size_t panelpathsz;
-        m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);
-        InterpretUTF8BufferAsUniChar( (unsigned char*)panelpath, strlen(panelpath), panelpathuni, &panelpathsz, 0xFFFD);
-        int chars_for_path_name = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(panelpathuni, panelpathsz, m_SymbWidth - 7, panelpathtrim);
-        
-        // add prefix and postfix - " "
-        memmove(panelpathtrim+1, panelpathtrim, sizeof(UniChar)*chars_for_path_name);
-        panelpathtrim[0] = ' ';
-        panelpathtrim[chars_for_path_name+1] = ' ';
-        chars_for_path_name += 2;
-        symbs_for_path_name = oms::CalculateSymbolsSpaceForString(panelpathtrim, chars_for_path_name);
-        path_name_start_pos = (m_SymbWidth-symbs_for_path_name) / 2;
-        path_name_end_pos = (m_SymbWidth-symbs_for_path_name) / 2 + symbs_for_path_name;
-        
-        if(m_State->Active)
-            oms::DrawStringWithBackgroundXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                                            context, fontcache, m_RegularFileColor[1], symbs_for_path_name, m_CursorBackgroundColor);
-        else
-            oms::DrawStringXY(panelpathtrim, 0, chars_for_path_name, path_name_start_pos, 0,
-                              context, fontcache, m_RegularFileColor[0]);
-    }
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // draw sorting mode
-    {
-        UniChar sort_mode[1];
-        FormHumanReadableSortModeReprentation1(m_State->Data->SortMode().sort, sort_mode);
-        oms::DrawSingleUniCharXY(sort_mode[0], 1, 0, context, fontcache, m_SelectedColor[0]);
-    }
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // draw bytes in directory
-    if(m_SymbWidth > 12)
-    { // process bytes in directory
-        UniChar bytes[128], bytestrim[128];
-        size_t sz;
-        FormHumanReadableBytesAndFiles128(m_State->Data->Stats().bytes_in_raw_reg_files, (int)m_State->Data->Stats().raw_reg_files_amount, bytes, sz, true);
-        int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(bytes, sz, m_SymbWidth - 2, bytestrim);
-        symbs_for_bytes_in_dir = oms::CalculateSymbolsSpaceForString(bytestrim, unichars);
-        bytes_in_dir_start_pos = (m_SymbWidth-symbs_for_bytes_in_dir) / 2;
-        bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs_for_bytes_in_dir;
-        oms::DrawStringXY(bytestrim, 0, unichars, bytes_in_dir_start_pos, m_SymbHeight-1, context, fontcache, m_RegularFileColor[0]);
-    }
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // draw selection if any
-    if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 12)
-    {
-        UniChar selectionbuf[128], selectionbuftrim[128];
-        size_t sz;
-        FormHumanReadableBytesAndFiles128(m_State->Data->Stats().bytes_in_selected_entries, m_State->Data->Stats().selected_entries_amount, selectionbuf, sz, true);
-        int unichars = oms::PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(selectionbuf, sz, m_SymbWidth - 2, selectionbuftrim);
-        symbs_for_selected_bytes = oms::CalculateSymbolsSpaceForString(selectionbuftrim, unichars);
-        selected_bytes_start_pos = (m_SymbWidth-symbs_for_selected_bytes) / 2;
-        selected_bytes_end_pos   = selected_bytes_start_pos + symbs_for_selected_bytes;
-        oms::DrawStringWithBackgroundXY(selectionbuftrim, 0, unichars,
-                                        selected_bytes_start_pos, m_SymbHeight-3,
-                                        context, fontcache, m_SelectedColor[0], symbs_for_selected_bytes, m_CursorBackgroundColor);
-    }
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // draw footer data
-    if(m_State->CursorPos >= 0 )
-    {
-        UniChar buff[256];
-        size_t buf_size;
-        
-        const auto &current_entry = raw_entries[sorted_entries[m_State->CursorPos]];
-        ComposeFooterFileNameForEntry(current_entry, buff, buf_size);
-        int symbs = oms::CalculateUniCharsAmountForSymbolsFromRight(buff, buf_size, m_SymbWidth-2);
-        oms::DrawStringXY(buff, buf_size-symbs, symbs, 1, m_SymbHeight-2, context, fontcache, m_RegularFileColor[0]);
-    }
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // draw frames
-    oms::SetParamsForUserASCIIArt(context, fontcache);
-    oms::SetFillColor(context, m_RegularFileColor[0]);
-    oms::unichars_draw_batch b;
-    
-    b.put(u'╔', 0, 0);
-    b.put(u'╚', 0, m_SymbHeight-1);
-    b.put(u'╝', m_SymbWidth-1, m_SymbHeight-1);
-    b.put(u'╗', m_SymbWidth-1, 0);
-    for(int i = 1; i < m_SymbHeight - 3; ++i)
-    {
-        b.put(u'│', column_fr_pos[0], i);
-        b.put(u'│', column_fr_pos[1], i);
-        b.put(u'│', column_fr_pos[2], i);
-    }
-    
-    for(int i = 1; i < m_SymbHeight - 1; ++i)
-    {
-        b.put(i != m_SymbHeight - 3 ? u'║' : u'╟', 0, i);
-        b.put(i != m_SymbHeight - 3 ? u'║' : u'╢', m_SymbWidth-1, i);
-    }
-    
-    for(int i = 1; i < m_SymbWidth - 1; ++i)
-    {
-        if(i != column_fr_pos[0] && i != column_fr_pos[1] && i != column_fr_pos[2])
-        {
-            if( (i!=1) && (i < path_name_start_pos || i >= path_name_end_pos))
-                b.put(u'═', i, 0);
-            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
-                b.put(u'─', i, m_SymbHeight-3);
-        }
-        else
-        {
-            if( (i!=1) && (i < path_name_start_pos || i >= path_name_end_pos))
-                b.put(u'╤', i, 0);
-            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
-                b.put(u'┴', i, m_SymbHeight-3);
-        }
-        if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)
-            b.put(u'═', i, m_SymbHeight-1);
-    }
-    
     oms::DrawUniCharsXY(b, context, fontcache);
 }
 

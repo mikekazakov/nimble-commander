@@ -35,8 +35,7 @@ public:
 private:
     void BuildGeometry();
     void BuildAppearance();
-    void DrawWithShortMediumWideView(CGContextRef _context);
-    void DrawWithFullView(CGContextRef _context);
+    void DoDraw(CGContextRef _context);
     const DoubleColor& GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused);
     void CalcLayout(NSSize _from_px_size);
     

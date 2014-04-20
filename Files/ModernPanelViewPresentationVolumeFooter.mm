@@ -12,19 +12,6 @@
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 static CGColorRef g_HeaderStrokeColor = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
 
-static NSShadow* TextShadow()
-{
-    static dispatch_once_t onceToken;
-    static NSShadow *shadow;
-    dispatch_once(&onceToken, ^{
-        shadow = [NSShadow new];
-        shadow.shadowBlurRadius = 1;
-        shadow.shadowColor = [NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:0.8];
-        shadow.shadowOffset = NSMakeSize(0, -1);
-    });
-    return shadow;
-}
-
 enum {
     kUnitStringBinaryUnits     = 1 << 0,
     kUnitStringOSNativeUnits   = 1 << 1,

@@ -15,27 +15,26 @@
 @class MainWindowFilePanelState;
 @class MainWindowTerminalState;
 
-@interface MainWindowController : NSWindowController <NSWindowDelegate>
-
-// Window state manipulations
-- (void) ResignAsWindowState:(id)_state;
+@interface MainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
 - (OperationsController*) OperationsController;
 
 - (void)ApplySkin:(ApplicationSkin)_skin;
-- (void)OnApplicationWillTerminate;
 
+// Services integration
 - (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path;
 
+// Window state manipulations
+- (void)ResignAsWindowState:(id)_state;
 - (void)RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host;
-
 - (void)RequestTerminal:(const char*)_cwd;
 - (void)RequestTerminalExecution:(const char*)_filename at:(const char*)_cwd;
 - (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
                                         params:(const string&)_params
                                           file:(const string&)_file_path;
 
-- (MainWindowFilePanelState*) FilePanelState; // one and only one per window
-- (MainWindowTerminalState*) TerminalState;   // zero or one per window
-@end
+// Access to states
+@property (nonatomic, readonly) MainWindowFilePanelState* FilePanelState; // one and only one per window
+@property (nonatomic, readonly) MainWindowTerminalState* TerminalState;// zero or one per window
 
+@end

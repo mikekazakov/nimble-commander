@@ -8,27 +8,24 @@
 
 #import <Cocoa/Cocoa.h>
 #import <vector>
-
 #import "ApplicationSkins.h"
 
 using namespace std;
 
 @class MainWindowController;
 
-
-
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowRestoration>
+@interface AppDelegate : NSObject <NSApplicationDelegate>
 
 @property (nonatomic, readonly) ApplicationSkin Skin;
 
-+ (void)initialize;
-
 - (IBAction)NewWindow:(id)sender;
 - (void) RemoveMainWindow:(MainWindowController*) _wnd;
+- (MainWindowController*) AllocateNewMainWindow;
 
 - (IBAction)OnMenuSendFeedback:(id)sender;
 
 - (vector<MainWindowController*>) GetMainWindowControllers;
+
 
 /**
  * Will set a progress indicator at the bottom of app icon to a specified value in [0; 1].

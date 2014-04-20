@@ -38,38 +38,30 @@
     self = [super init];
     if(self) {
         m_AppProgress = -1;
+        
+        NSString *defaults_file = [NSBundle.mainBundle pathForResource:@"Defaults" ofType:@"plist"];
+        NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
+        [NSUserDefaults.standardUserDefaults registerDefaults:defaults];
+        [NSUserDefaults.standardUserDefaults addObserver:self
+                                              forKeyPath:@"Skin"
+                                                 options:NSKeyValueObservingOptionNew
+                                                 context:NULL];
     }
     return self;
 }
 
-+ (void)initialize
-{    
-    NSString *defaults_file = [[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"];
-    NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-}
-
 - (void)dealloc
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults removeObserver:self forKeyPath:@"Skin" context:NULL];
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Skin" context:NULL];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     // modules initialization
-    TemporaryNativeFileStorage::StartBackgroundPurging();
-    NewVersionChecker::Go();
     NativeFSManager::Instance();
     
     ActionsShortcutsManager::Instance().DoInit();
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
-
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults addObserver:self
-               forKeyPath:@"Skin"
-                  options:NSKeyValueObservingOptionNew
-                  context:NULL];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -95,6 +87,10 @@
     m_ProgressIndicator.maxValue = 1;
     m_ProgressIndicator.hidden = true;
     [iv addSubview:m_ProgressIndicator];
+
+    // calling modules running in background
+    TemporaryNativeFileStorage::StartBackgroundPurging();
+    NewVersionChecker::Go();
 }
 
 - (double) progress
@@ -131,12 +127,12 @@
         // check that any window is visible, otherwise bring to front last window
         bool anyvisible = false;
         for(auto c: m_MainWindows)
-            if([[c window] isVisible])
+            if(c.window.isVisible)
                 anyvisible = true;
         
         if(!anyvisible)
         {
-            NSArray *windows = [[NSApplication sharedApplication] orderedWindows];
+            NSArray *windows = NSApplication.sharedApplication.orderedWindows;
             [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
         }     
     }
@@ -149,12 +145,12 @@
         // check that any window is visible, otherwise bring to front last window
         bool anyvisible = false;
         for(auto c: m_MainWindows)
-            if([[c window] isVisible])
+            if(c.window.isVisible)
                 anyvisible = true;
         
         if(!anyvisible)
         {
-            NSArray *windows = [[NSApplication sharedApplication] orderedWindows];
+            NSArray *windows = NSApplication.sharedApplication.orderedWindows;
             [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
         }
         
@@ -177,31 +173,14 @@
 - (MainWindowController*)AllocateNewMainWindow
 {
     MainWindowController *mwc = [MainWindowController new];
-    mwc.window.restorable = YES;
-    mwc.window.restorationClass = self.class;
-    mwc.window.identifier = @"mainwindow";
-    
+    m_MainWindows.push_back(mwc);    
     [mwc showWindow:self];
-    m_MainWindows.push_back(mwc);
     return mwc;
 }
 
 - (IBAction)NewWindow:(id)sender
 {
     [self AllocateNewMainWindow];
-}
-
-+ (void)restoreWindowWithIdentifier:(NSString *)identifier
-                              state:(NSCoder *)state
-                  completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
-{
-    NSWindow *window = nil;
-    if ([identifier isEqualToString:@"mainwindow"])
-    {
-        AppDelegate *app = (AppDelegate*)[NSApplication sharedApplication].delegate;
-        window = [app AllocateNewMainWindow].window;
-    }
-    completionHandler(window, nil);
 }
 
 - (void) RemoveMainWindow:(MainWindowController*) _wnd
@@ -252,14 +231,6 @@
     return NSTerminateNow;
 }
 
-- (void)applicationWillTerminate:(NSNotification *)aNotification
-{
-    for(auto *i: m_MainWindows) // if there are any windows alive
-        [i OnApplicationWillTerminate];
-
-    m_PreferencesController = nil;
-}
-
 - (IBAction)OnMenuSendFeedback:(id)sender
 {
     NSString *toAddress = @"feedback@filesmanager.info";
@@ -275,7 +246,7 @@
 
 - (ApplicationSkin)Skin
 {
-    ApplicationSkin skin = (ApplicationSkin)[[NSUserDefaults standardUserDefaults] integerForKey:@"Skin"];
+    ApplicationSkin skin = (ApplicationSkin)[NSUserDefaults.standardUserDefaults integerForKey:@"Skin"];
     assert(skin == ApplicationSkin::Modern || skin == ApplicationSkin::Classic);
     return skin;
 }
@@ -403,9 +374,8 @@
 
 - (IBAction)OnShowHelp:(id)sender
 {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"Help" ofType:@"pdf"];
-    NSURL *url = [NSURL fileURLWithPath:path];
-    [[NSWorkspace sharedWorkspace] openURL:url];
+    NSString *path = [NSBundle.mainBundle pathForResource:@"Help" ofType:@"pdf"];
+    [NSWorkspace.sharedWorkspace openURL:[NSURL fileURLWithPath:path]];
 }
 
 @end

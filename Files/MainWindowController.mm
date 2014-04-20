@@ -20,6 +20,21 @@
 #import "MyToolbar.h"
 #import "Common.h"
 
+static double TitleBarHeight()
+{
+    static double h = 0;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSRect frame = NSMakeRect (0, 0, 100, 100);
+        NSRect contentRect;
+        contentRect = [NSWindow contentRectForFrameRect:frame
+                                              styleMask:NSTitledWindowMask];
+        
+        h = (frame.size.height - contentRect.size.height);
+    });
+    return h;
+}
+
 @implementation MainWindowController
 {
     vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
@@ -28,6 +43,9 @@
     SerialQueue                  m_BigFileViewLoadingQ;
 }
 
+@synthesize FilePanelState = m_PanelState;
+@synthesize TerminalState = m_Terminal;
+
 - (id)init {
     NSWindow* window = [[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
                                                    styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask
@@ -35,7 +53,13 @@
                                                        defer:false];
     window.minSize = NSMakeSize(660, 480);
     window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
-    [window setFrameUsingName:@"MainWindow"];
+    window.restorable = YES;
+    window.restorationClass = self.class;
+    window.identifier = NSStringFromClass(self.class);
+    window.title = @"Files αλφα ver.";
+    if(![window setFrameUsingName:NSStringFromClass(self.class)])
+        [window center];    
+    
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:36 forEdge:NSMaxYEdge];
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
@@ -44,10 +68,7 @@
     
     if(self = [super initWithWindow:window]) {
         m_BigFileViewLoadingQ = SerialQueueT::Make("info.filesmanager.bigfileviewloading");
-        
-        
         self.ShouldCascadeWindows = NO;
-        window.title = @"Files αλφα ver.";
         window.Delegate = self;
         
         m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[self.window.contentView frame]
@@ -58,6 +79,11 @@
                                                selector:@selector(DidBecomeKeyWindow)
                                                    name:NSWindowDidBecomeKeyNotification
                                                  object:self.window];
+        
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(applicationWillTerminate)
+                                                   name:NSApplicationWillTerminateNotification
+                                                 object:NSApplication.sharedApplication];
     }
     
     return self;
@@ -69,17 +95,35 @@
     assert(m_WindowState.empty());
 }
 
-- (void)windowDidResize:(NSNotification *)notification {
-    
++ (void)restoreWindowWithIdentifier:(NSString *)identifier
+                              state:(NSCoder *)state
+                  completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
+{
+    NSWindow *window = nil;
+    if ([identifier isEqualToString:NSStringFromClass(self.class)])
+    {
+        AppDelegate *app = (AppDelegate*)NSApplication.sharedApplication.delegate;
+        window = [app AllocateNewMainWindow].window;
+    }
+    completionHandler(window, nil);
+}
+
+- (void)applicationWillTerminate
+{
+    for(auto i: m_WindowState)
+        if([i respondsToSelector:@selector(OnApplicationWillTerminate)])
+            [i OnApplicationWillTerminate];
+}
+
+- (void)windowDidResize:(NSNotification *)notification
+{
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(WindowDidResize)])
             [i WindowDidResize];
 }
 
-- (void)windowWillClose:(NSNotification *)notification {
-//    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)m_Terminal));
-    
-    
+- (void)windowWillClose:(NSNotification *)notification
+{
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(WindowWillClose)])
             [i WindowWillClose];
@@ -97,7 +141,7 @@
     m_PanelState = nil;
     m_Terminal = nil;
     
-    [(AppDelegate*)[NSApplication sharedApplication].delegate RemoveMainWindow:self];
+    [(AppDelegate*)NSApplication.sharedApplication.delegate RemoveMainWindow:self];
 }
 
 - (void)ApplySkin:(ApplicationSkin)_skin {
@@ -139,21 +183,9 @@
             [i WindowDidEndSheet];
 }
 
-- (float) titleBarHeight
-{
-    NSRect frame = NSMakeRect (0, 0, 100, 100);
-    
-    NSRect contentRect;
-    contentRect = [NSWindow contentRectForFrameRect: frame
-                                          styleMask: NSTitledWindowMask];
-    
-    return (frame.size.height - contentRect.size.height);
-    
-}
-
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
-    rect.origin.y = NSHeight(window.frame) - self.titleBarHeight - 1;
+    rect.origin.y = NSHeight(window.frame) - TitleBarHeight() - 1;
     if([m_WindowState.back() respondsToSelector:@selector(Toolbar)])
     {
         MyToolbar *tb = m_WindowState.back().Toolbar;
@@ -226,18 +258,6 @@
     });
 }
 
-- (void)OnApplicationWillTerminate
-{
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(OnApplicationWillTerminate)])
-            [i OnApplicationWillTerminate];
-}
-
-- (MainWindowFilePanelState*) FilePanelState
-{
-    return m_PanelState;
-}
-
 - (void)RequestTerminal:(const char*)_cwd;
 {
     if(m_Terminal == nil)
@@ -282,11 +302,6 @@
                                      file:_file_path
              ];
     [self PushNewWindowState:state];
-}
-
-- (MainWindowTerminalState*) TerminalState
-{
-    return m_Terminal;
 }
 
 @end

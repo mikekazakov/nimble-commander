@@ -41,6 +41,8 @@ public:
     virtual int IterateDirectoryListing(const char *_path,
                                         bool (^_handler)(const VFSDirEnt &_dirent)) override;
     
+    virtual int StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)()) override;    
+    
     virtual int Stat(const char *_path,
                      VFSStat &_st,
                      int _flags,

@@ -29,6 +29,7 @@ bool GetFilenameFromPath(const char* _path, char *_buf);
 
 /**
  * GetDirectoryContainingItemFromPath will parse path like /Dir/wtf and return /Dir/.
+ * For paths like /Dir/wtf/ will return /Dir/.
  * Will return false on relative paths.
  */
 bool GetDirectoryContainingItemFromPath(const char* _path, char *_buf);

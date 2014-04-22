@@ -219,7 +219,34 @@ FileCopyOperationJobNativeToNative::StatValueType FileCopyOperationJobNativeToNa
 void FileCopyOperationJobNativeToNative::ScanDestination()
 {
     struct stat stat_buffer;
-    char destpath[MAXPATHLEN];    
+    char destpath[MAXPATHLEN];
+    
+    // check if destination begins with "../" or "~/" - then substitute it with appropriate paths
+    if(strncmp(m_Destination, "..", strlen("..")) == 0)
+    {
+        char path[MAXPATHLEN];
+        bool b = GetDirectoryContainingItemFromPath(m_SourceDirectory, path);
+        assert(b);
+        
+        if(strncmp(m_Destination, "../", strlen("../")) == 0)
+            strcat(path, m_Destination + strlen("../"));
+        else
+            strcat(path, m_Destination + strlen(".."));
+        strcpy(m_Destination, path);
+    }
+    else if(strncmp(m_Destination, "~", strlen("~")) == 0)
+    {
+        char path[MAXPATHLEN];
+        bool b = GetUserHomeDirectoryPath(path);
+        assert(b);
+        strcat(path, "/");
+        if(strncmp(m_Destination, "~/", strlen("~/")) == 0)
+            strcat(path, m_Destination + strlen("~/"));
+        else
+            strcat(path, m_Destination + strlen("~"));
+        strcpy(m_Destination, path);
+    }
+    
     if(stat(m_Destination, &stat_buffer) == 0)
     {
         CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);        

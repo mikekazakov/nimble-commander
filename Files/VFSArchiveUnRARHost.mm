@@ -430,3 +430,17 @@ uint32_t VFSArchiveUnRARHost::LastItemUUID() const
 {
     return m_LastItemUID;
 };
+
+int VFSArchiveUnRARHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+{
+    char vol_name[256];
+    if(!GetFilenameFromPath(JunctionPath(), vol_name))
+        return VFSError::InvalidCall;
+    
+    _stat.volume_name = vol_name;
+    _stat.total_bytes = m_UnpackedItemsSize;
+    _stat.free_bytes = 0;
+    _stat.avail_bytes = 0;
+    
+    return 0;
+}

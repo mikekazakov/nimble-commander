@@ -45,6 +45,7 @@ struct PanelViewStateStorage
     bool                        m_ReadyToDrag;
     NSPoint                     m_LButtonDownPos;
     bool                        m_DraggingIntoMe;
+    bool                        m_IsCurrentlyMomentumScroll;
     bool                        m_DisableCurrentMomentumScroll;
 }
 
@@ -84,6 +85,7 @@ struct PanelViewStateStorage
         m_DraggingIntoMe = false;
         m_ScrollDY = 0.0;
         m_DisableCurrentMomentumScroll = false;
+        m_IsCurrentlyMomentumScroll = false;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(frameDidChange)
@@ -420,13 +422,12 @@ struct PanelViewStateStorage
     if(m_DisableCurrentMomentumScroll == true &&
        _event.phase == NSEventPhaseNone &&
        _event.momentumPhase != NSEventPhaseNone )
-    {
-        // momentum scroll is temporary disabled due to folder change.
-        // if current momentum scroll has just ended - turn this flag off.
-        if(_event.momentumPhase == NSEventPhaseEnded)
-           m_DisableCurrentMomentumScroll = false;
-        return;
-    }
+        return; // momentum scroll is temporary disabled due to folder change.
+    m_DisableCurrentMomentumScroll = false;    
+    if(_event.momentumPhase == NSEventPhaseBegan)
+        m_IsCurrentlyMomentumScroll = true;
+    else if(_event.momentumPhase == NSEventPhaseEnded)
+        m_IsCurrentlyMomentumScroll = false;
     
     const double item_height = m_Presentation->GetSingleItemHeight();
     m_ScrollDY += _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaY : _event.deltaY * item_height;
@@ -555,7 +556,8 @@ struct PanelViewStateStorage
         [self OnCursorPositionChanged];        
     }
     
-    m_DisableCurrentMomentumScroll = true;
+    if(m_IsCurrentlyMomentumScroll)
+        m_DisableCurrentMomentumScroll = true;
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender

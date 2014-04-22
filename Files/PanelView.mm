@@ -45,6 +45,7 @@ struct PanelViewStateStorage
     bool                        m_ReadyToDrag;
     NSPoint                     m_LButtonDownPos;
     bool                        m_DraggingIntoMe;
+    bool                        m_DisableCurrentMomentumScroll;
 }
 
 - (BOOL)isFlipped
@@ -82,6 +83,7 @@ struct PanelViewStateStorage
         m_KeysModifiersFlags = 0;
         m_DraggingIntoMe = false;
         m_ScrollDY = 0.0;
+        m_DisableCurrentMomentumScroll = false;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(frameDidChange)
@@ -410,18 +412,25 @@ struct PanelViewStateStorage
     }
 }
 
-- (void)scrollWheel:(NSEvent *)theEvent
+- (void)scrollWheel:(NSEvent *)_event
 {
     if (!m_State.Active) // will react only on active panels
         return;
-#if 0
-    if(theEvent.momentumPhase != NSEventPhaseNone && theEvent.phase == NSEventPhaseNone)
-        return; // expiremental - don't handle scrolling caused by mouse momentum
-#endif
+    
+    if(m_DisableCurrentMomentumScroll == true &&
+       _event.phase == NSEventPhaseNone &&
+       _event.momentumPhase != NSEventPhaseNone )
+    {
+        // momentum scroll is temporary disabled due to folder change.
+        // if current momentum scroll has just ended - turn this flag off.
+        if(_event.momentumPhase == NSEventPhaseEnded)
+           m_DisableCurrentMomentumScroll = false;
+        return;
+    }
     
     const double item_height = m_Presentation->GetSingleItemHeight();
-    m_ScrollDY += theEvent.hasPreciseScrollingDeltas ? theEvent.scrollingDeltaY : theEvent.deltaY * item_height;
-    int idx = int([theEvent deltaX]/2.0); // less sensitive than vertical scrolling
+    m_ScrollDY += _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaY : _event.deltaY * item_height;
+    int idx = int(_event.deltaX/2.0); // less sensitive than vertical scrolling
     int old_curpos = m_State.CursorPos, old_offset = m_State.ItemsDisplayOffset;
     
     if(fabs(m_ScrollDY) >= item_height) {
@@ -545,6 +554,8 @@ struct PanelViewStateStorage
         m_Presentation->SetCursorPos(0);
         [self OnCursorPositionChanged];        
     }
+    
+    m_DisableCurrentMomentumScroll = true;
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender

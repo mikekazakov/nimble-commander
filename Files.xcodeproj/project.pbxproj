@@ -81,6 +81,9 @@
 		CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */; };
 		CF3B602A18CCA3A20005816A /* VFSArchiveProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B602818CCA3A20005816A /* VFSArchiveProxy.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
+		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
+		CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
+		CF3FCE0E190EB96000E55698 /* shared_mutex in Resources */ = {isa = PBXBuildFile; fileRef = CF3FCE0C190EB96000E55698 /* shared_mutex */; };
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
 		CF47A988186C607C00745C4C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF47A986186C607C00745C4C /* InfoPlist.strings */; };
 		CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
@@ -470,6 +473,10 @@
 		CF3B602918CCA3A20005816A /* VFSArchiveProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveProxy.h; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
+		CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLThumbnailsCache.mm; sourceTree = "<group>"; };
+		CF3FCE071908C49400E55698 /* QLThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLThumbnailsCache.h; sourceTree = "<group>"; };
+		CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/shared_mutex/shared_mutex.cpp; sourceTree = "<group>"; };
+		CF3FCE0C190EB96000E55698 /* shared_mutex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shared_mutex; path = 3rd_party/shared_mutex/shared_mutex; sourceTree = "<group>"; };
 		CF435FFB17CF1C5C004BA507 /* VFS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFS.h; sourceTree = "<group>"; };
 		CF47A980186C607C00745C4C /* Files Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Files Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -1043,10 +1050,12 @@
 				CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */,
 				CFDA4CCE182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.h */,
 				CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */,
-				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
-				CF29312E17D79BA100648A90 /* IconsGenerator.mm */,
 				CF27414717FF04EF006D6687 /* SharingService.h */,
 				CF27414817FF04EF006D6687 /* SharingService.mm */,
+				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
+				CF29312E17D79BA100648A90 /* IconsGenerator.mm */,
+				CF3FCE071908C49400E55698 /* QLThumbnailsCache.h */,
+				CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -1125,6 +1134,15 @@
 				CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */,
 			);
 			name = BigFileViewMainWindowState;
+			sourceTree = "<group>";
+		};
+		CF3FCE0A190EB93600E55698 /* shared_mutex */ = {
+			isa = PBXGroup;
+			children = (
+				CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */,
+				CF3FCE0C190EB96000E55698 /* shared_mutex */,
+			);
+			name = shared_mutex;
 			sourceTree = "<group>";
 		};
 		CF47A983186C607C00745C4C /* Files Tests */ = {
@@ -1738,6 +1756,7 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
+				CF3FCE0A190EB93600E55698 /* shared_mutex */,
 				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
 				CFDA4CD1182CBA51006EC35C /* sparkle */,
 				CF29313117D9914700648A90 /* rdrand */,
@@ -1883,6 +1902,7 @@
 				CFEB07811886ECAA00E5CC0D /* linkarrow_icon.png in Resources */,
 				CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */,
 				CF649C3A18D2C0C200055595 /* show_oplist_icon.png in Resources */,
+				CF3FCE0E190EB96000E55698 /* shared_mutex in Resources */,
 				CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */,
 				CF12888017800724002816C2 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
@@ -1987,6 +2007,7 @@
 				CF9D0ED917CC961100CB8146 /* archive_write_set_options.c in Sources */,
 				CF9D0B6717CC910100CB8146 /* VFSArchiveInternal.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
+				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */,
 				CF9D0ECA17CC961100CB8146 /* archive_write_set_format_7zip.c in Sources */,
@@ -2055,6 +2076,7 @@
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
 				CFCF86301896B42E000552CD /* VFSEasyOps.mm in Sources */,
 				CF9D0E9217CC961100CB8146 /* archive_read_set_format.c in Sources */,
+				CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */,
 				CF9D0ED217CC961100CB8146 /* archive_write_set_format_pax.c in Sources */,
 				CF9D0ED717CC961100CB8146 /* archive_write_set_format_zip.c in Sources */,
 				CF9D0E7D17CC961100CB8146 /* archive_entry_stat.c in Sources */,

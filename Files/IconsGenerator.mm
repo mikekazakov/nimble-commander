@@ -11,6 +11,7 @@
 #import <sys/types.h>
 #import <sys/dirent.h>
 #import "IconsGenerator.h"
+#import "QLThumbnailsCache.h"
 #import "Common.h"
 
 static const NSString *g_TempDir = NSTemporaryDirectory();
@@ -277,6 +278,11 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
             meta->filetype = it->second;
     }
     
+    if(m_IconsMode == IconModeFileIconsThumbnails && meta->host->IsNativeFS())
+        // check if we already have thumbnail built
+        if(NSImageRep *th = QLThumbnailsCache::Instance().ThumbnailIfHas(meta->relative_path))
+            meta->thumbnail = th;
+ 
     entry.SetCIcon(meta_no+1);
     
     auto sh_this = shared_from_this();
@@ -284,7 +290,9 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         Runner(meta, sh_this);
     });
     
-    return meta->filetype ? meta->filetype : meta->generic;
+    if(meta->thumbnail) return meta->thumbnail;
+    if(meta->filetype)  return meta->filetype;
+    return meta->generic;
 }
 
 void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _guard)
@@ -292,7 +300,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
     if(m_StopWorkQueue > 0)
         return;
     
-    assert(_meta->thumbnail == nil);
+//    assert(_meta->thumbnail == nil); // may be already set before
 //    assert(_meta->filetype  == nil); // generic may be already set using icons cache
     assert(_meta->generic   != nil);
     
@@ -326,20 +334,13 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
            CheckFileIsOK(_meta->relative_path.c_str())
            )
         {
-            CFStringRef item_path = CFStringCreateWithUTF8StdStringNoCopy(_meta->relative_path);
-            CFURLRef url = CFURLCreateWithFileSystemPath( 0, item_path, kCFURLPOSIXPathStyle, false);
-            static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-            static void *values[] = {(void*)kCFBooleanTrue};
-            static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
-            if(CGImageRef thumbnail = QLThumbnailImageCreate(0, url, m_IconSize.size, dict))
+            NSImageRep *tn = QLThumbnailsCache::Instance().ProduceThumbnail(_meta->relative_path, m_IconSize.size);
+            if(tn != nil && tn != _meta->thumbnail)
             {
-                _meta->thumbnail = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
-                CGImageRelease(thumbnail);
+                _meta->thumbnail = tn;
                 if(m_UpdateCallback)
                     m_UpdateCallback();
             }
-            CFRelease(url);
-            CFRelease(item_path);
         }
         
         if(m_StopWorkQueue > 0)

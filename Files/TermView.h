@@ -19,6 +19,7 @@ class FontCache;
 
 - (void) AttachToScreen:(TermScreen*)_scr;
 - (void) AttachToParser:(TermParser*)_par;
+- (void) setRawTaskFeed:(void(^)(const void* _d, int _sz))_feed;
 
 - (void) adjustSizes:(bool)_mandatory; // implicitly calls scrollToBottom when full height changes
 - (void) scrollToBottom;

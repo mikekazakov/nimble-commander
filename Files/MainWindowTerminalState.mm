@@ -123,6 +123,15 @@
             [strongself UpdateTitle];
         }
     });
+  
+    m_View.rawTaskFeed = ^(const void* _d, int _sz){
+        if(MainWindowTerminalState *strongself = weakself) {
+            if(strongself->m_Task->State() == TermShellTask::StateDead ||
+               strongself->m_Task->State() == TermShellTask::StateInactive )
+                return;
+            strongself->m_Task->WriteChildInput(_d, (int)_sz);
+        }
+    };
     
     [self.window makeFirstResponder:m_View];
     [self UpdateTitle];
@@ -236,25 +245,6 @@
     m_Parser->Resized();
     
     [m_View adjustSizes:true];
-}
-
-- (IBAction)paste:(id)sender
-{
-    if(m_Task->State() == TermShellTask::StateDead ||
-       m_Task->State() == TermShellTask::StateInactive )
-        return;
-
-    NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
-    NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
-    if(!best_type)
-        return;
-    
-    NSString *text = [paste_board stringForType:NSStringPboardType];
-    if(!text)
-        return;
-
-    const char* utf8str = [text UTF8String];
-    m_Task->WriteChildInput(utf8str, (int)strlen(utf8str));
 }
 
 - (bool) IsAnythingRunning

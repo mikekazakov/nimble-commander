@@ -62,6 +62,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     shared_ptr<FontCache> m_FontCache;
     TermScreen     *m_Screen;
     TermParser     *m_Parser;
+    void          (^m_RawTaskFeed)(const void* _d, int _sz);
     
     int             m_LastScreenFSY;
     
@@ -117,6 +118,11 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 - (void) AttachToParser:(TermParser*)_par
 {
     m_Parser = _par;
+}
+
+- (void) setRawTaskFeed:(void(^)(const void* _d, int _sz))_feed
+{
+    m_RawTaskFeed = _feed;
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -460,6 +466,23 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     [pasteBoard clearContents];
     [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
     [pasteBoard setString:result forType:NSStringPboardType];
+}
+
+- (IBAction)paste:(id)sender
+{    
+    NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
+    NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
+    if(!best_type)
+        return;
+    
+    NSString *text = [paste_board stringForType:NSStringPboardType];
+    if(!text)
+        return;
+    
+    const char* utf8str = [text UTF8String];
+    size_t sz = strlen(utf8str);
+    if(m_RawTaskFeed)
+        m_RawTaskFeed(utf8str, (int)sz);
 }
 
 - (void)selectAll:(id)sender

@@ -108,7 +108,11 @@ static const char *FileNameFromFilePath(const string &_fn)
                     [(MainWindowController*)strongself.window.delegate ResignAsWindowState:strongself];
             });
         });
-
+        m_View.rawTaskFeed = ^(const void* _d, int _sz){
+            if(MainWindowExternalTerminalEditorState *strongself = weakself) {
+                strongself->m_Task->WriteChildInput(_d, (int)_sz);
+            }
+        };
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)

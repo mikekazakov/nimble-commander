@@ -301,6 +301,8 @@
 		CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFCF86301896B42E000552CD /* VFSEasyOps.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862E1896B42E000552CD /* VFSEasyOps.mm */; };
 		CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
+		CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
+		CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
 		CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */; };
 		CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
@@ -812,6 +814,8 @@
 		CFCF862F1896B42E000552CD /* VFSEasyOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSEasyOps.h; sourceTree = "<group>"; };
 		CFD712D417EED43800DA15EF /* PanelController+DataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DataAccess.h"; sourceTree = "<group>"; };
 		CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DataAccess.mm"; sourceTree = "<group>"; };
+		CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = 3rd_party/built/lib/libboost_filesystem.a; sourceTree = "<group>"; };
+		CFD7E4E6190FD61E0064D249 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = 3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
 		CFDA110D177E83F8009E29F7 /* BigFileViewHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewHistory.h; sourceTree = "<group>"; };
 		CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewHistory.mm; sourceTree = "<group>"; };
 		CFDA4CCB182A17C7006EC35C /* LSUrls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSUrls.h; sourceTree = "<group>"; };
@@ -867,6 +871,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */,
+				CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */,
 				CFB7099A18D6FA1800A83E61 /* libcurl.dylib in Frameworks */,
 				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
 				CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */,
@@ -1672,6 +1678,8 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */,
+				CFD7E4E6190FD61E0064D249 /* libboost_system.a */,
 				CFB7099918D6FA1800A83E61 /* libcurl.dylib */,
 				CF73A6221816B3C200F59016 /* libquarantine.dylib */,
 				CF73A6201816B36C00F59016 /* libSystem.dylib */,
@@ -2434,6 +2442,7 @@
 					"$(inherited)",
 					Files/3rd_party/built/lib,
 					"$(SDKROOT)/usr/lib/system",
+					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = Files;
@@ -2470,6 +2479,7 @@
 					"$(inherited)",
 					Files/3rd_party/built/lib,
 					"$(SDKROOT)/usr/lib/system",
+					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = Files;

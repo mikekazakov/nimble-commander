@@ -125,8 +125,7 @@ NSImageRep *QLThumbnailsCache::ThumbnailIfHas(const string &_filename)
 NSImageRep *QLThumbnailsCache::BuildRep(const string &_filename, CGSize _size) const
 {
     NSBitmapImageRep *result = nil;
-    CFStringRef item_path = CFStringCreateWithUTF8StdStringNoCopy(_filename);
-    CFURLRef url = CFURLCreateWithFileSystemPath(0, item_path, kCFURLPOSIXPathStyle, false);
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8 *)_filename.c_str(), _filename.length(), false);
     static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
     static void *values[] = {(void*)kCFBooleanTrue};
     static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
@@ -136,7 +135,6 @@ NSImageRep *QLThumbnailsCache::BuildRep(const string &_filename, CGSize _size) c
         CGImageRelease(thumbnail);
     }
     CFRelease(url);
-    CFRelease(item_path);
     
     return result;
 }

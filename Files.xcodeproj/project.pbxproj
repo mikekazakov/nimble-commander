@@ -1946,7 +1946,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo -n ${TARGET_BUILD_DIR}/${INFOPLIST_PATH} | xargs -0 /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion `svnversion | cut -f 2 -d : | grep -o \\\"[0-9]*\\\"`\"";
+			shellScript = "#Update build number with number of git commits\nbuildNumber=$(git rev-list HEAD | wc -l | tr -d ' ')\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 

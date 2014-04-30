@@ -75,7 +75,7 @@ int VFSNativeHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-shared_ptr<VFSNativeHost> VFSNativeHost::SharedHost()
+const shared_ptr<VFSNativeHost> &VFSNativeHost::SharedHost()
 {
     static dispatch_once_t once;
     static shared_ptr<VFSNativeHost> host;

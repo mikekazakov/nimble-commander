@@ -39,7 +39,8 @@ private:
     void ProcessItems();
     void ProcessItem(const chained_strings::node *_node, int _number);
 
-    void CopyFileTo(const path &_src, const path &_dest);
+    void CopyFileTo(const path &_src_full_path, const path &_dest_full_path);
+    void CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path);
     
     enum class ItemFlags
     {
@@ -65,8 +66,7 @@ private:
     unique_ptr<uint8_t[]>                   m_Buffer = make_unique<uint8_t[]>(BUFFER_SIZE);
     
     vector<uint8_t>                         m_ItemFlags;
-    bool m_SkipAll = false;
-    bool m_OverwriteAll = false;
-    bool m_AppendAll = false;
-    
+    bool                                    m_SkipAll = false;
+    bool                                    m_OverwriteAll = false;
+    bool                                    m_AppendAll = false;
 };

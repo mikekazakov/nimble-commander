@@ -20,6 +20,49 @@ static int microsleep(int _ms)
     return _ms;
 }
 
+static int VFSCompareEntries(const path& _file1_full_path,
+                             const VFSHostPtr& _file1_host,
+                             const path& _file2_full_path,
+                             const VFSHostPtr& _file2_host,
+                             int &_result)
+{
+    // not comparing flags, perm, times, xattrs, acls etc now
+    
+    VFSStat st1, st2;
+    int ret;
+    if((ret =_file1_host->Stat(_file1_full_path.c_str(), st1, 0, 0)) != 0)
+        return ret;
+
+    if((ret =_file2_host->Stat(_file2_full_path.c_str(), st2, 0, 0)) != 0)
+        return ret;
+    
+    if((st1.mode & S_IFMT) != (st2.mode & S_IFMT))
+    {
+        _result = -1;
+        return 0;
+    }
+    
+    if( S_ISREG(st1.mode) )
+    {
+        _result = int(int64_t(st1.size) - int64_t(st2.size));
+        return 0;
+    }
+    else if ( S_ISDIR(st1.mode) )
+    {
+        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), ^bool(const VFSDirEnt &_dirent) {
+            int ret = VFSCompareEntries( _file1_full_path / _dirent.name,
+                                        _file1_host,
+                                        _file2_full_path / _dirent.name,
+                                        _file2_host,
+                                        _result);
+            if(ret != 0)
+                return false;
+            return true;
+        });
+    }
+    return 0;
+}
+
 @interface Operation_VFStoVFSCopy_Tests : XCTestCase
 
 @end
@@ -52,21 +95,9 @@ static int microsleep(int _ms)
                    options:FileCopyOperationOptions()];
     
     __block bool finished = false;
-    
-    [op AddOnFinishHandler:^{
-        finished = true;
-    }];
-    
+    [op AddOnFinishHandler:^{ finished = true; }];
     [op Start];
-    
-    int sleeped = 0, sleep_tresh = 60000;
-    while (!finished)
-    {
-        sleeped += microsleep(100);
-        XCTAssert( sleeped < sleep_tresh);
-        if(sleeped > sleep_tresh)
-            break;
-    }
+    [self waitUntilFinish:finished];
     
     int compare;
     XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
@@ -95,21 +126,9 @@ static int microsleep(int _ms)
                    options:FileCopyOperationOptions()];
     
     __block bool finished = false;
-    
-    [op AddOnFinishHandler:^{
-        finished = true;
-    }];
-    
+    [op AddOnFinishHandler:^{ finished = true; }];
     [op Start];
-    
-    int sleeped = 0, sleep_tresh = 60000;
-    while (!finished)
-    {
-        sleeped += microsleep(100);
-        XCTAssert( sleeped < sleep_tresh);
-        if(sleeped > sleep_tresh)
-            break;
-    }
+    [self waitUntilFinish:finished];
 
     for(auto &i: files)
     {
@@ -121,6 +140,49 @@ static int microsleep(int _ms)
                                        compare) == 0);
         XCTAssert( compare == 0);
         XCTAssert( host->Unlink((string("/Public/!FilesTesting/") + i).c_str(), 0) == 0);
+    }
+}
+
+- (void)testCopyGenericToGeneric______1
+{
+    char dir[MAXPATHLEN];
+    sprintf(dir, "%sinfo.filesmanager.tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+    XCTAssert( mkdtemp(dir) != nullptr );
+
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("Mail.app")
+                      root:"/Applications/"
+                    srcvfs:VFSNativeHost::SharedHost()
+                      dest:dir
+                    dstvfs:VFSNativeHost::SharedHost()
+                   options:FileCopyOperationOptions()];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries(path("/Applications") / "Mail.app",
+                                 VFSNativeHost::SharedHost(),
+                                 path(dir) / "Mail.app",
+                                 VFSNativeHost::SharedHost(),
+                                 result) == 0);
+    XCTAssert( result == 0 );
+    
+    [NSFileManager.defaultManager removeItemAtPath:[NSString stringWithUTF8String:dir]
+                                             error:nil];
+}
+
+- (void) waitUntilFinish:(volatile bool&)_finished
+{
+    int sleeped = 0, sleep_tresh = 60000;
+    while (!_finished)
+    {
+        sleeped += microsleep(100);
+        XCTAssert( sleeped < sleep_tresh);
+        if(sleeped > sleep_tresh)
+            break;
     }
 }
 

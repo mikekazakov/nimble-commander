@@ -100,11 +100,15 @@ static double TitleBarHeight()
                               state:(NSCoder *)state
                   completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
 {
+    AppDelegate *delegate = (AppDelegate*)NSApplication.sharedApplication.delegate;
+    if(delegate.isRunningTests)
+        return;
+    
     NSWindow *window = nil;
     if ([identifier isEqualToString:NSStringFromClass(self.class)])
     {
-        AppDelegate *app = (AppDelegate*)NSApplication.sharedApplication.delegate;
-        window = [app AllocateNewMainWindow].window;
+
+        window = [delegate AllocateNewMainWindow].window;
     }
     completionHandler(window, nil);
 }

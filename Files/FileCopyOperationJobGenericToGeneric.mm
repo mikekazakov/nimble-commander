@@ -8,10 +8,7 @@
 
 #include "FileCopyOperationJobGenericToGeneric.h"
 
-static const size_t BUFFER_SIZE = (512*1024); // 512kb
-
-FileCopyOperationJobGenericToGeneric::FileCopyOperationJobGenericToGeneric():
-    m_Buffer(new uint8_t[BUFFER_SIZE])
+FileCopyOperationJobGenericToGeneric::FileCopyOperationJobGenericToGeneric()
 {
 }
 
@@ -20,32 +17,30 @@ FileCopyOperationJobGenericToGeneric::~FileCopyOperationJobGenericToGeneric()
 }
 
 void FileCopyOperationJobGenericToGeneric::Init(chained_strings _src_files,
-                                                const char *_src_root,               // dir in where files are located
+                                                const path &_src_root,               // dir in where files are located
                                                 shared_ptr<VFSHost> _src_host,       // src host to deal with
-                                                const char *_dest,                   // where to copy
+                                                const path &_dest,                   // where to copy
                                                 shared_ptr<VFSHost> _dst_host,       // dst host to deal with
-                                                FileCopyOperationOptions* _opts,
+                                                FileCopyOperationOptions _opts,
                                                 FileCopyOperation *_op
                                                 )
 {
     assert(_src_host);
     assert(_dst_host);
-    assert(_src_root && _src_root[0] == '/');
-    assert(_dest && _dest[0] != 0);
+    assert(_src_root.is_absolute());
     m_Operation = _op;
     m_InitialItems = move(_src_files);
-    m_Options = *_opts;
+    m_Options = _opts;
     m_SrcHost = _src_host;
     m_SrcDir = _src_root;
-    if(m_SrcDir.back() != '/') m_SrcDir += '/';
     
-    m_Destination =  _dest;
+    m_Destination = m_OriginalDestination = _dest;
     m_DstHost = _dst_host;
 }
 
 void FileCopyOperationJobGenericToGeneric::Do()
 {
-    sleep(1);
+    sleep(1); // what for????
    // int a = 10;
     
     ScanItems();
@@ -71,7 +66,7 @@ void FileCopyOperationJobGenericToGeneric::ScanItem(const char *_full_path, cons
 //    char fullpath[MAXPATHLEN];
 //    strcpy(fullpath, m_SrcDir);
 //    strcat(fullpath, _full_path);
-    string fullpath = m_SrcDir + _full_path;
+    path fullpath = m_SrcDir / _full_path;
     
     VFSStat stat_buffer;
     
@@ -113,8 +108,8 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
 {
     // compose real src name
     string itemname = _node->to_str_with_pref();
-    string sourcepath = m_SrcDir + itemname;
-    string destinationpath = m_Destination + itemname;
+    path sourcepath = m_SrcDir / itemname;
+    path destinationpath = m_Destination / itemname;
 
     if(sourcepath == destinationpath)
         return;
@@ -131,7 +126,7 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
     }
 }
 
-void FileCopyOperationJobGenericToGeneric::CopyFileTo(const string &_src, const string &_dest)
+void FileCopyOperationJobGenericToGeneric::CopyFileTo(const path &_src, const path &_dest)
 {
     int ret;
     uint64_t total_wrote = 0;

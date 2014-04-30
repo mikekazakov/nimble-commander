@@ -38,22 +38,22 @@ struct FileCopyOperationOptions
 - (id)initWithFiles:(chained_strings)_files
                root:(const char*)_root
                dest:(const char*)_dest
-            options:(FileCopyOperationOptions*)_opts;
+            options:(const FileCopyOperationOptions&)_opts;
 
 // VFS->native copying
 - (id)initWithFiles:(chained_strings)_files
                root:(const char*)_root
             rootvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
-            options:(FileCopyOperationOptions*)_opts;
+            options:(const FileCopyOperationOptions&)_opts;
 
 // VFS->VFS copying
 - (id)initWithFiles:(chained_strings)_files
                root:(const char*)_root
              srcvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
-             stdvfs:(shared_ptr<VFSHost>)_dst_vfs
-            options:(FileCopyOperationOptions*)_opts;
+             dstvfs:(shared_ptr<VFSHost>)_dst_vfs
+            options:(const FileCopyOperationOptions&)_opts;
 
 
 - (void)Update;

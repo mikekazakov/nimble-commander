@@ -30,12 +30,16 @@
     NSProgressIndicator *m_ProgressIndicator;
     NSDockTile          *m_DockTile;
     double              m_AppProgress;
+    bool                m_IsRunningTests;
 }
+
+@synthesize isRunningTests = m_IsRunningTests;
 
 - (id) init
 {
     self = [super init];
     if(self) {
+        m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
         m_AppProgress = -1;
         
         NSString *defaults_file = [NSBundle.mainBundle pathForResource:@"Defaults" ofType:@"plist"];
@@ -67,7 +71,7 @@
 {
     // Insert code here to initialize your application
     
-    if(m_MainWindows.empty())
+    if(!m_IsRunningTests && m_MainWindows.empty())
         [self AllocateNewMainWindow]; // if there's no restored windows - we'll create a freshly new one
     
     [NSApp setServicesProvider:self];
@@ -119,7 +123,8 @@
 {
     if(m_MainWindows.empty())
     {
-        [self AllocateNewMainWindow];
+        if(!m_IsRunningTests)
+            [self AllocateNewMainWindow];
     }
     else
     {
@@ -139,6 +144,9 @@
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
 {
+    if(m_IsRunningTests)
+        return false;
+    
     if(flag)
     {
         // check that any window is visible, otherwise bring to front last window

@@ -10,11 +10,7 @@
 #import "Operation.h"
 
 OperationJob::OperationJob()
-:   m_State(StateReady),
-    m_Paused(false),
-    m_RequestStop(false)
 {
-    
 }
 
 OperationJob::~OperationJob()

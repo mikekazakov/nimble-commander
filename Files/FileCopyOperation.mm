@@ -79,7 +79,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
 - (id)initWithFiles:(chained_strings)_files
                root:(const char*)_root
                dest:(const char*)_dest
-            options:(FileCopyOperationOptions*)_opts
+            options:(const FileCopyOperationOptions&)_opts
 {
     m_NativeToNativeJob = make_unique<FileCopyOperationJobNativeToNative>();
     self = [super initWithJob:m_NativeToNativeJob.get()];
@@ -90,7 +90,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
         bool use_buff = GetDirectoryFromPath(_dest, buff, 128);
         int items_amount = _files.size();
         
-        NSString *operation = _opts->docopy ? @"Copying" : @"Moving";
+        NSString *operation = _opts.docopy ? @"Copying" : @"Moving";
         if (items_amount == 1)
             self.Caption = [NSString stringWithFormat:@"%@ \"%@\" to \"%@\"",
                             operation,
@@ -110,7 +110,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                root:(const char*)_root
             rootvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
-            options:(FileCopyOperationOptions*)_opts
+            options:(const FileCopyOperationOptions&)_opts
 {
     m_GenericToNativeJob = make_unique<FileCopyOperationJobFromGeneric>();
     self = [super initWithJob:m_GenericToNativeJob.get()];
@@ -121,7 +121,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
         bool use_buff = GetDirectoryFromPath(_dest, buff, 128);
         int items_amount = _files.size();
         
-        NSString *operation = _opts->docopy ? @"Copying" : @"Moving";
+        NSString *operation = _opts.docopy ? @"Copying" : @"Moving";
         if (items_amount == 1)
             self.Caption = [NSString stringWithFormat:@"%@ \"%@\" to \"%@\"",
                             operation,
@@ -142,8 +142,8 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                root:(const char*)_root
              srcvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
-             stdvfs:(shared_ptr<VFSHost>)_dst_vfs
-            options:(FileCopyOperationOptions*)_opts
+             dstvfs:(shared_ptr<VFSHost>)_dst_vfs
+            options:(const FileCopyOperationOptions&)_opts
 {
     m_GenericToGenericJob = make_unique<FileCopyOperationJobGenericToGeneric>();
     self = [super initWithJob:m_GenericToGenericJob.get()];

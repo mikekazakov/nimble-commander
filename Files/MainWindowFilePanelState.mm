@@ -813,7 +813,7 @@
                   op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                       root:root_path.c_str()
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                                   options:&opts];
+                                                   options:opts];
              else if(destination->Host()->IsNativeFS() &&
                      strlen([[mc.TextField stringValue] fileSystemRepresentation]) > 0 &&
                      [[mc.TextField stringValue] fileSystemRepresentation][0] == '/'
@@ -822,7 +822,17 @@
                                                       root:root_path.c_str()
                                                    rootvfs:source->Host()
                                                       dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                                   options:&opts];
+                                                   options:opts];
+             else if(
+                     strlen([[mc.TextField stringValue] fileSystemRepresentation]) > 0 &&
+                     [[mc.TextField stringValue] fileSystemRepresentation][0] == '/')
+                 op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
+                                                          root:root_path.c_str()
+                                                       srcvfs:source->Host()
+                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
+                                                        dstvfs:destination->Host()
+                                                       options:opts];
+                              
              [op AddOnFinishHandler:^{
                  dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];
@@ -863,7 +873,7 @@
              FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                                          root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                                                      options:&opts];
+                                                                      options:opts];
              [op AddOnFinishHandler:^{
                  dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];
@@ -916,7 +926,7 @@
              FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                                          root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                                                      options:&opts];
+                                                                      options:opts];
              [op AddOnFinishHandler:^{
                  dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];
@@ -959,7 +969,7 @@
              FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
                                                                          root:root_path.c_str()
                                                                          dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                                                      options:&opts];
+                                                                      options:opts];
              [op AddOnFinishHandler:^{
                  dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];
@@ -1307,7 +1317,7 @@
              [[FileCopyOperation alloc] initWithFiles:move(files)
                                                  root:i.first.c_str()
                                                  dest:destination.c_str()
-                                              options:&opts]];
+                                              options:opts]];
     }
 }
 

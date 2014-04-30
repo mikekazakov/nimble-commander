@@ -67,14 +67,14 @@ void FileCopyOperationJobFromGeneric::Init(chained_strings _src_files,
           const char *_src_root,               // dir in where files are located
           shared_ptr<VFSHost> _src_host,  // src host to deal with
           const char *_dest,                   // where to copy
-          FileCopyOperationOptions* _opts,
+          FileCopyOperationOptions _opts,
           FileCopyOperation *_op
           )
 {
     assert(_src_host.get());
     m_Operation = _op;
     m_InitialItems.swap(_src_files);
-    m_Options = *_opts;
+    m_Options = _opts;
     m_SrcHost = _src_host;
     strcpy(m_SrcDir, _src_root);
     if(m_SrcDir[strlen(m_SrcDir) - 1] != '/') strcat(m_SrcDir, "/");

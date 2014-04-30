@@ -109,6 +109,17 @@ public:
     chained_strings(const char *_allocate_with_this_string);
     chained_strings(const string &_allocate_with_this_string);
     chained_strings(chained_strings&& _rhs);
+
+    template<class T>
+    inline chained_strings(std::initializer_list<T> l):
+        m_Begin(nullptr),
+        m_Last(nullptr)
+    {
+        construct();
+        for(auto &i: l)
+            push_back(i, nullptr);
+    }
+    
     ~chained_strings();
     
     inline iterator begin() const { return {m_Begin, 0}; }

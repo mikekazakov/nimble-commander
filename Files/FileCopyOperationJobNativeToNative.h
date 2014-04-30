@@ -22,7 +22,7 @@ public:
     void Init(chained_strings _files,
                              const char *_root,               // dir in where files are located
                              const char *_dest,                // where to copy
-                             FileCopyOperationOptions* _opts,
+                             FileCopyOperationOptions _opts,
                              FileCopyOperation *_op
               
                              );

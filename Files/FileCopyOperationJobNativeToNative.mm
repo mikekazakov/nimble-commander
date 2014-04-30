@@ -142,13 +142,13 @@ FileCopyOperationJobNativeToNative::~FileCopyOperationJobNativeToNative()
 void FileCopyOperationJobNativeToNative::Init(chained_strings _files, // passing ownage to Job
                          const char *_root,               // dir in where files are located
                          const char *_dest,                // where to copy
-                         FileCopyOperationOptions* _opts,
+                         FileCopyOperationOptions _opts,
                          FileCopyOperation *_op
                          )
 {
     m_Operation = _op;
     m_InitialItems.swap(_files);
-    m_Options = *_opts;
+    m_Options = _opts;
     strcpy(m_Destination, _dest);
     strcpy(m_SourceDirectory, _root);
 }

@@ -22,11 +22,11 @@ public:
     ~FileCopyOperationJobGenericToGeneric();
     
     void Init(chained_strings _src_files,
-              const char *_src_root,               // dir in where files are located
+              const path &_src_root,               // dir in where files are located
               shared_ptr<VFSHost> _src_host,       // src host to deal with
-              const char *_dest,                   // where to copy
+              const path &_dest,                   // where to copy
               shared_ptr<VFSHost> _dst_host,       // dst host to deal with
-              FileCopyOperationOptions* _opts,
+              FileCopyOperationOptions _opts,
               FileCopyOperation *_op
               );
     
@@ -39,12 +39,16 @@ private:
     void ProcessItems();
     void ProcessItem(const chained_strings::node *_node, int _number);
 
-    void CopyFileTo(const string &_src, const string &_dest);
+    void CopyFileTo(const path &_src, const path &_dest);
     
     enum class ItemFlags
     {
         no_flags    = 0b0000,
         is_dir      = 0b0001,
+    };
+
+    enum {
+        BUFFER_SIZE = (512*1024) // 512kb
     };
     
     __unsafe_unretained FileCopyOperation  *m_Operation;
@@ -55,9 +59,10 @@ private:
     
     shared_ptr<VFSHost>                     m_SrcHost;
     shared_ptr<VFSHost>                     m_DstHost;
-    string                                  m_SrcDir;
-    string                                  m_Destination;
-    unique_ptr<uint8_t>                     m_Buffer;
+    path                                    m_SrcDir;
+    path                                    m_OriginalDestination;
+    path                                    m_Destination;
+    unique_ptr<uint8_t[]>                   m_Buffer = make_unique<uint8_t[]>(BUFFER_SIZE);
     
     vector<uint8_t>                         m_ItemFlags;
     bool m_SkipAll = false;

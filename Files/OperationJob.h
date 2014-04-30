@@ -68,15 +68,15 @@ protected:
     
 private:
     // Current state of the job.
-    volatile State m_State;
+    volatile State m_State = StateReady;
     
     // Indicates that internal thread should pause execution.
     // Internal thread only reads this variable.
-    volatile bool m_Paused;
+    volatile bool m_Paused = false;
     
     // Requests internal thread to stop execution.
     // Internal thread only reads this variable.
-    volatile bool m_RequestStop;
+    volatile bool m_RequestStop = false;
     
     __weak Operation *m_BaseOperation;
     

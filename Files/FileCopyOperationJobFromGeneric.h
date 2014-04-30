@@ -23,7 +23,7 @@ public:
               const char *_src_root,               // dir in where files are located
               shared_ptr<VFSHost> _src_host,  // src host to deal with
               const char *_dest,                   // where to copy
-              FileCopyOperationOptions* _opts,
+              FileCopyOperationOptions _opts,
               FileCopyOperation *_op
               );
     

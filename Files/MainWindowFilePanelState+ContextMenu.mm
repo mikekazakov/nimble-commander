@@ -637,7 +637,7 @@ proceed:;
     FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:chained_strings(m_Items[0])
                                                                 root:m_DirPath.c_str()
                                                                 dest:target
-                                                             options:&opts];
+                                                             options:opts];
     char target_fn[MAXPATHLEN];
     GetFilenameFromPath(target, target_fn);
     NSString *target_fns = [NSString stringWithUTF8String:target_fn];

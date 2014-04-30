@@ -388,8 +388,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                                             root:source_broker.root_path.c_str()
                                                                          srcvfs:source_broker.vfs
                                                                             dest:destination.c_str()
-                                                                          stdvfs:m_HostsStack.back()
-                                                                         options:&opts];
+                                                                          dstvfs:m_HostsStack.back()
+                                                                         options:opts];
 
                 [filepanel_state.OperationsController AddOperation:op];
                 return true;
@@ -402,7 +402,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                                             root:source_broker.root_path.c_str()
                                                                          rootvfs:source_broker.vfs
                                                                             dest:destination.c_str()
-                                                                         options:&opts];
+                                                                         options:opts];
                     
                 [filepanel_state.OperationsController AddOperation:op];
                 return true;
@@ -418,13 +418,13 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                     op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                              root:source_broker.root_path.c_str()
                                                              dest:destination.c_str()
-                                                          options:&opts];
+                                                          options:opts];
                 else // here we'll use vfs->native copy (no removing actually - not yet implemented)
                     op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                              root:source_broker.root_path.c_str()
                                                           rootvfs:source_broker.vfs
                                                              dest:destination.c_str()
-                                                          options:&opts];
+                                                          options:opts];
                 
                 [filepanel_state.OperationsController AddOperation:op];
                 return true;

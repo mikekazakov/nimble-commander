@@ -30,4 +30,10 @@
  */
 @property (nonatomic) double progress;
 
+/**
+ * Signals that applications runs in unit testing environment.
+ * Thus it should strip it's windows etc.
+ */
+@property (nonatomic, readonly) bool isRunningTests;
+
 @end

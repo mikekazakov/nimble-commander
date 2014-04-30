@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
 #import "AppDelegate.h"
 #import "MainWindowController.h"
 #import "OperationsController.h"

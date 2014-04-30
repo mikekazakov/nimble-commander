@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <stdint.h>
 #import "BriefSystemOverview.h"
 #import "sysinfo.h"
 #import "Common.h"

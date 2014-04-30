@@ -6,11 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <memory>
 #import "PanelViewPresentation.h"
 #import "ObjcToCppObservingBridge.h"
-
-using namespace std;
 
 @class PanelView;
 class ModernPanelViewPresentationIconCache;

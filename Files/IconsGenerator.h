@@ -7,11 +7,7 @@
 //
 
 #pragma once
-
-#import <memory>
-#import <map>
 #import "DispatchQueue.h"
-
 #import "VFS.h"
 
 class IconsGenerator : public enable_shared_from_this<IconsGenerator>

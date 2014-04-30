@@ -15,14 +15,6 @@
 #import "MainWindowController.h"
 #import "MainWindowExternalTerminalEditorState.h"
 
-static const char *FileNameFromFilePath(const string &_fn)
-{
-    auto i = _fn.find_last_of('/');
-    if(i == string::npos)
-        return "";
-    return _fn.c_str() + i + 1;
-}
-
 @implementation MainWindowExternalTerminalEditorState
 {
     unique_ptr<TermSingleTask>  m_Task;
@@ -30,16 +22,18 @@ static const char *FileNameFromFilePath(const string &_fn)
     unique_ptr<TermParser>      m_Parser;
     TermView                   *m_View;
     NSScrollView               *m_ScrollView;
-    string                      m_BinaryPath;
+    path                        m_BinaryPath;
     string                      m_Params;
-    string                      m_FilePath;
+    path                        m_FilePath;
 }
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
-                      binary:(const string&)_binary_path
+                      binary:(const path&)_binary_path
                       params:(const string&)_params
-                        file:(const string&)_file_path
+                        file:(const path&)_file_path
 {
+    assert(_file_path.is_absolute());
+    
     self = [super initWithFrame:frameRect];
     if (self) {
         m_BinaryPath = _binary_path;
@@ -172,7 +166,7 @@ static const char *FileNameFromFilePath(const string &_fn)
     if(title == nil)
         title = [NSString stringWithFormat:@"%@ - %@",
                  [NSString stringWithUTF8String:m_Task->TaskBinaryName()],
-                 [NSString stringWithUTF8String:FileNameFromFilePath(m_FilePath)]];
+                 [NSString stringWithUTF8String:m_FilePath.filename().c_str()]];
     
     self.window.title = title;
 }

@@ -7,7 +7,6 @@
 //
 
 #pragma once
-#include <vector>
 #include "VFSListing.h"
 #include "VFSArchiveUnRARInternals.h"
 #include "VFSArchiveUnRARHost.h"

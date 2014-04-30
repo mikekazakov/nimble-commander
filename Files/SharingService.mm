@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
-#import <string>
 #import <sys/types.h>
 #import <sys/stat.h>
 #import "SharingService.h"

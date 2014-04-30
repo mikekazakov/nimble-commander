@@ -8,7 +8,6 @@
 
 #pragma once
 
-#import <vector>
 #import "chained_strings.h"
 #import "VFS.h"
 #import "OperationJob.h"

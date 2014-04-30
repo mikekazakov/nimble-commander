@@ -8,10 +8,7 @@
 
 #pragma once
 
-#include "string"
 #include "PanelData.h"
-
-using namespace std;
 
 class ModernPanelViewPresentation;
 

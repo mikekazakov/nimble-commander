@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stddef.h>
-#include <memory>
 #include "VFSFile.h"
 
 class FileWindow

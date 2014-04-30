@@ -8,13 +8,10 @@
 
 #pragma once
 
-#include <list>
 #include "VFS.h"
 #include "DispatchQueue.h"
 #include "FileMask.h"
 #include "Encodings.h"
-
-using namespace std;
 
 class FileSearch
 {

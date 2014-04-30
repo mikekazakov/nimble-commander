@@ -8,12 +8,6 @@
 
 #pragma once
 
-#include <list>
-#include <vector>
-#include <mutex>
-
-using namespace std;
-
 struct TermScreenColors
 {
     enum {

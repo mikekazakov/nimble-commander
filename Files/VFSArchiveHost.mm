@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <assert.h>
 #import <sys/dirent.h>
 #import "3rd_party/libarchive/archive.h"
 #import "3rd_party/libarchive/archive_entry.h"

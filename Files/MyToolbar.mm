@@ -6,13 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
-#import <algorithm>
-#import <numeric>
 #import "MyToolbar.h"
-
-
-using namespace std;
 
 static const double g_Gap = 8.0;
 static const int g_FlexInd = -1;

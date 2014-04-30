@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <map>
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "SelectionWithMaskSheetController.h"
 #import "Common.h"

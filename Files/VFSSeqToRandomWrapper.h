@@ -8,7 +8,6 @@
 
 #pragma once
 
-#import <stdint.h>
 #import "VFSFile.h"
 
 class VFSSeqToRandomROWrapperFile : public VFSFile

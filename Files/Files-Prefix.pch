@@ -2,6 +2,30 @@
 // Prefix header for all source files of the 'Directories' target in the 'Directories' project
 //
 
+#include <assert.h>
+#include <stdint.h>
+#include <stddef.h>
+
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
+#endif
+
+#ifdef __cplusplus
+    #include <vector>
+    #include <string>
+    #include <list>
+    #include <deque>
+    #include <queue>
+    #include <map>
+    #include <set>
+    #include <algorithm>
+    #include <functional>
+    #include <numeric>
+    #include <memory>
+    #include <atomic>
+    #include <mutex>
+    using namespace std;
+
+    #include "3rd_party/built/include/boost/filesystem.hpp"
+    using boost::filesystem::path;
 #endif

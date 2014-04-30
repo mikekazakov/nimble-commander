@@ -7,7 +7,6 @@
 //
 
 #pragma once
-#import <map>
 #import <libproc.h>
 #import <sys/sysctl.h>
 

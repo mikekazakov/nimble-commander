@@ -24,9 +24,6 @@
 #include <util.h>
 #include <syslog.h>
 
-#include <vector>
-#include <string>
-
 #include "TermTaskCommon.h"
 #include "TermSingleTask.h"
 

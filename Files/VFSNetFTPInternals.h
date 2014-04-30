@@ -9,18 +9,9 @@
 #pragma once
 
 #import <curl/curl.h>
-#import <string>
-#import <deque>
-#import <map>
-#import <mutex>
-#import <memory>
-#import <vector>
-
 #import "Common.h"
 #import "VFSHost.h"
 #import "VFSListing.h"
-
-using namespace std;
 
 namespace VFSNetFTP
 {

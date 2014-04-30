@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>

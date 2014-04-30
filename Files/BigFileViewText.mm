@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
-#import <algorithm>
 #import "BigFileViewText.h"
 #import "BigFileView.h"
 #import "Common.h"

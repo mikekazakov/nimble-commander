@@ -8,10 +8,6 @@
 
 #pragma once
 #include <dirent.h>
-#include <string>
-#include <memory>
-
-using namespace std;
 
 class VFSHost;
 class VFSListing;

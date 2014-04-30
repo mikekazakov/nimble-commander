@@ -1,5 +1,4 @@
 #include "FileWindow.h"
-#include <assert.h>
 
 bool FileWindow::FileOpened() const
 {

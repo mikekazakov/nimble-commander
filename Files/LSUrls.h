@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
-#import <list>
 #import "VFS.h"
 
 struct LauchServicesHandlers

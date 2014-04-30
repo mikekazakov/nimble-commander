@@ -9,7 +9,6 @@
 #include <sys/param.h>
 #include <sys/ucred.h>
 #include <sys/mount.h>
-#include <algorithm>
 #include "NativeFSManager.h"
 #include "FSEventsDirUpdate.h"
 

@@ -8,9 +8,6 @@
 
 #pragma once
 
-#import <stdint.h>
-#import <memory>
-
 class FileWindow;
 
 class SearchInFile

@@ -7,10 +7,7 @@
 //
 #pragma once
 
-#include <string>
 #include "path_manip.h"
-
-using namespace std;
 
 
 struct DialogResult

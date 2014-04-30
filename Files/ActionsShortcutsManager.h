@@ -8,12 +8,6 @@
 
 #pragma once
 
-#include <vector>
-#include <string>
-#include <map>
-
-using namespace std;
-
 // ⇧ - NSShiftKeyMask
 // % - fn <- NO
 // ^ - NSControlKeyMask

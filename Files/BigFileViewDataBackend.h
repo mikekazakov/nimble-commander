@@ -8,9 +8,6 @@
 
 #pragma once
 #import "FileWindow.h"
-#import <memory>
-
-using namespace std;
 
 /**
  * This class encapsulates working with file windows and decoding raw data into UniChars.

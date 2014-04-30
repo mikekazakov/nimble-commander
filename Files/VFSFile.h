@@ -8,12 +8,7 @@
 
 #pragma once
 
-#import <string>
-#import <memory>
-#import <vector>
 #import "VFSError.h"
-
-using namespace std;
 
 class VFSHost;
 

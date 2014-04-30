@@ -7,7 +7,6 @@
 //
 
 #include "chained_strings.h"
-#include <assert.h>
 #include <stdlib.h>
 #include <memory.h>
 

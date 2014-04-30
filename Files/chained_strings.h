@@ -8,11 +8,6 @@
 
 #pragma once
 
-#include <assert.h>
-#include <string>
-
-using namespace std;
-
 class chained_strings
 {
     enum {

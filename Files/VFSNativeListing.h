@@ -14,7 +14,6 @@
 #import <sys/stat.h>
 #import <stdlib.h>
 #import <time.h>
-#import <deque>
 #import "VFSListing.h"
 
 class VFSNativeHost;

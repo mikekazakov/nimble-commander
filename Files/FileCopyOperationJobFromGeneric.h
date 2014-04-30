@@ -7,8 +7,6 @@
 //
 
 #pragma once
-#import <vector>
-
 #import "OperationJob.h"
 #import "FileCopyOperation.h"
 #import "DispatchQueue.h"

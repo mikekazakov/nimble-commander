@@ -7,10 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <vector>
 #import "ApplicationSkins.h"
-
-using namespace std;
 
 @class MainWindowController;
 

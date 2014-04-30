@@ -7,10 +7,7 @@
 //
 
 #pragma once
-#import <list>
 #import "VFS.h"
-
-using namespace std;
 
 class PanelHistory
 {

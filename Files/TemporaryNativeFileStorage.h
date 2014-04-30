@@ -9,9 +9,6 @@
 #pragma once
 
 #import "VFS.h"
-#import <list>
-#import <vector>
-
 
 // this class allows to grab a non-native VFS file, put is into temporary native dir and do something later
 // does not change original filename, using many directories to avoid collisions

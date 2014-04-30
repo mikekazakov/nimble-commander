@@ -66,7 +66,7 @@ bool VFSArchiveUnRARHost::IsRarArchive(const char *_archive_native_path)
     if(!GetExtensionFromPath(_archive_native_path, ext))
         return false;
     string sext(ext);
-    transform(begin(sext), end(sext), begin(sext), tolower);
+    transform(begin(sext), end(sext), begin(sext), ::tolower);
     if(sext != "rar")
         return false;
     

@@ -8,12 +8,6 @@
 
 #pragma once
 
-#import <string>
-#import <vector>
-#import <functional>
-
-using namespace std;
-
 class VFSListing;
 
 class VFSPathStack

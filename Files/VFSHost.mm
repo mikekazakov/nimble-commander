@@ -7,7 +7,6 @@
 //
 
 #import <sys/stat.h>
-#import <queue>
 #import "Common.h"
 #import "VFSHost.h"
 #import "path_manip.h"

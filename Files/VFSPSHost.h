@@ -8,17 +8,9 @@
 
 #pragma once
 
-#import <map>
-#import <mutex>
-#import <list>
-#import <vector>
-
 #import "VFSHost.h"
 #import "VFSFile.h"
 #import "DispatchQueue.h"
-
-using namespace std;
-
 
 class VFSPSHost : public VFSHost
 {

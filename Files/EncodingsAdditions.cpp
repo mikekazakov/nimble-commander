@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <assert.h>
 #import <stdio.h>
 #import <string.h>
 #import "Encodings.h"

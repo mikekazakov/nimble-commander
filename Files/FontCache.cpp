@@ -4,11 +4,7 @@
 #include <assert.h>
 #include <wchar.h>
 #include <math.h>
-#include <list>
-#include <vector>
 #include "FontExtras.h"
-
-using namespace std;
 
 static vector<weak_ptr<FontCache>> g_Caches;
 

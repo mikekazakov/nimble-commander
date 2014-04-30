@@ -7,7 +7,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
 #import "MainWindowController.h"
 #import "AppDelegate.h"
 #import "QuickPreview.h"

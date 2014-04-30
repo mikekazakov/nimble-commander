@@ -16,8 +16,6 @@
 #import "FontExtras.h"
 #import "ObjcToCppObservingBridge.h"
 #import "IconsGenerator.h"
-#import <deque>
-
 #import "ModernPanelViewPresentationHeader.h"
 #import "ModernPanelViewPresentationItemsFooter.h"
 #import "ModernPanelViewPresentationVolumeFooter.h"

@@ -1,11 +1,6 @@
 #pragma once
 
-#include <stddef.h>
-#include <stdint.h>
-#include <vector>
 #import <CoreFoundation/CoreFoundation.h>
-
-using namespace std;
 
 // unsigned short is just UniChar. not to let rubbish inter headers
 

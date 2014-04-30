@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <algorithm>
 #import "BigFileView.h"
 #import "BigFileViewText.h"
 #import "BigFileViewHex.h"

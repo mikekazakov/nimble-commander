@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
-#import <mach/mach_time.h>
 #import "BigFileViewHex.h"
 #import "BigFileView.h"
 #import "Common.h"

@@ -8,12 +8,8 @@
 
 #pragma once
 #import <sys/stat.h>
-#import <string>
-#import <memory>
 #import "VFSError.h"
 #import "chained_strings.h"
-
-using namespace std;
 
 class VFSListing;
 class VFSFile;

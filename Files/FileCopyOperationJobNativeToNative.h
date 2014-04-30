@@ -12,7 +12,6 @@
 #import "FileCopyOperation.h"
 #import "chained_strings.h"
 #import "DispatchQueue.h"
-#import <vector>
 
 class FileCopyOperationJobNativeToNative : public OperationJob
 {

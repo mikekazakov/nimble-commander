@@ -6,10 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <memory>
-#include <atomic>
-
-using namespace std;
+#pragma once
 
 class SerialQueueT : public enable_shared_from_this<SerialQueueT>
 {

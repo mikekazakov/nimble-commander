@@ -7,9 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <stdint.h>
 #import "BigFileViewDataBackend.h"
-
 
 @class BigFileView;
 

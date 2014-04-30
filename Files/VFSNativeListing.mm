@@ -15,7 +15,6 @@
 #import <string.h>
 #import <memory.h>
 #import <stdlib.h>
-#import <assert.h>
 
 #import "VFSNativeListing.h"
 #import "VFSNativeHost.h"

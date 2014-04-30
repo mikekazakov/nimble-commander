@@ -9,7 +9,6 @@
 #import "FileCopyOperationJobNativeToNative.h"
 #import "filesysinfo.h"
 #import "NativeFSManager.h"
-#import <algorithm>
 #import <sys/types.h>
 #import <sys/dirent.h>
 #import <sys/stat.h>

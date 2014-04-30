@@ -2,9 +2,6 @@
 
 #include <CoreText/CTFont.h>
 #include <CoreGraphics/CGFont.h>
-#include <memory>
-
-using namespace std;
 
 class FontCache
 {

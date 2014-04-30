@@ -7,12 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <vector>
-#import <string>
 #import "MainWindowStateProtocol.h"
 #import "chained_strings.h"
-
-using namespace std;
 
 class PanelData;
 @class Operation;

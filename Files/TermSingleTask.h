@@ -7,10 +7,6 @@
 //
 
 #pragma once
-#include <mutex>
-#include <string>
-
-using namespace std;
 
 class TermSingleTask
 {

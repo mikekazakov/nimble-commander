@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <assert.h>
 #import "VFSListing.h"
 #import "Common.h"
 

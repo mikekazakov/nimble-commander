@@ -1,7 +1,4 @@
 #import "PanelData.h"
-#import <algorithm>
-#import <string.h>
-#import <assert.h>
 #import <CoreFoundation/CoreFoundation.h>
 #import "Common.h"
 #import "chained_strings.h"

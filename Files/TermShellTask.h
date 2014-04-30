@@ -7,11 +7,6 @@
 //
 
 #pragma once
-#include <mutex>
-#include <vector>
-#include <string>
-
-using namespace std;
 
 class TermShellTask
 {

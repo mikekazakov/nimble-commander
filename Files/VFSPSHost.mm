@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
 #import <libproc.h>
 #import <sys/sysctl.h>
 #import <sys/resource.h>
@@ -20,8 +19,6 @@
 #import "VFSPSInternal.h"
 #import "VFSPSListing.h"
 #import "VFSPSFile.h"
-
-using namespace std;
 
 const char *VFSPSHost::Tag = "psfs";
 

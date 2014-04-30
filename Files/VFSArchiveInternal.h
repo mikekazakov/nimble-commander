@@ -8,12 +8,9 @@
 
 #pragma once
 
-#import <string>
-#import <deque>
 #import "3rd_party/libarchive/archive.h"
 #import "3rd_party/libarchive/archive_entry.h"
 #import "VFSFile.h"
-
 
 struct VFSArchiveMediator
 {

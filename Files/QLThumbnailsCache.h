@@ -8,18 +8,10 @@
 
 #pragma once
 
-#include <string>
-#include <memory>
-#include <deque>
-#include <map>
-#include <mutex>
-
 // when llvm/clang will fix c++1y libs, change this:
 #include "3rd_party/shared_mutex/shared_mutex"
 // to that:
 // #include <shared_mutex>
-
-using namespace std;
 
 class QLThumbnailsCache
 {

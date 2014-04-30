@@ -790,8 +790,8 @@ void panel::GenericCursorPersistance::Restore()
     if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
-//            auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-            auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
+            auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+//            auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
             if(host->Open("/", nullptr) != 0)
                 return true;
 

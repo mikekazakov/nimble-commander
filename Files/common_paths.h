@@ -8,10 +8,6 @@
 
 #pragma once
 
-#import <string>
-
-using namespace std;
-
 struct CommonPaths
 {
     enum Path {

@@ -6,17 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <algorithm>
-#import <vector>
-#import <mutex>
 #import "Operation.h"
 #import "OperationJob.h"
 #import "OperationDialogController.h"
 #import "Common.h"
 
 #import "AppDelegate.h"
-
-using namespace std;
 
 static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 {

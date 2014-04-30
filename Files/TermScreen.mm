@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <algorithm>
 #include <stdio.h>
 #include <assert.h>
 

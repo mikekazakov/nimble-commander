@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <deque>
 #import "FindFilesSheetController.h"
 #import "Encodings.h"
 #import "FileSearch.h"

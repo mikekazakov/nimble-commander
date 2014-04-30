@@ -9,7 +9,6 @@
 #pragma once
 
 #import <Cocoa/Cocoa.h>
-#include <assert.h>
 #include "Encodings.h"
 
 class FontCache;

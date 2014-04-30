@@ -8,11 +8,8 @@
 
 #pragma once
 
-#import <map>
-#import <list>
 #import "VFSHost.h"
 #import "VFSFile.h"
-
 
 struct VFSArchiveMediator;
 struct VFSArchiveDir;

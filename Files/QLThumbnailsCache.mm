@@ -8,7 +8,6 @@
 
 #import <Quartz/Quartz.h>
 #include <sys/stat.h>
-#include <algorithm>
 #include "Common.h"
 #include "QLThumbnailsCache.h"
 

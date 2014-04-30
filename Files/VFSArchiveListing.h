@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <vector>
+#pragma once
+
 #import <sys/stat.h>
 #import "VFSListing.h"
-
 
 class VFSArchiveHost;
 struct VFSArchiveDir;

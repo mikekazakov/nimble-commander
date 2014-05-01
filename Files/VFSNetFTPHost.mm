@@ -140,6 +140,15 @@ void VFSNetFTPHost::BuildFullURL(const char *_path, char *_buffer) const
     sprintf(_buffer, "ftp://%s%s", JunctionPath(), _path);
 }
 
+string VFSNetFTPHost::BuildFullURLString(const char *_path) const
+{
+    // naive implementation
+    string url = "ftp://";
+    url += JunctionPath();
+    url += _path;
+    return url;
+}
+
 unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()
 {
     auto inst = make_unique<CURLInstance>();
@@ -259,8 +268,6 @@ bool VFSNetFTPHost::ShouldProduceThumbnails()
 
 int VFSNetFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
 {
-    // need to check what file type _path is, and decide between RMD and DELE
-    
     char filename[MAXPATHLEN],
          directory[MAXPATHLEN],
          cmd[MAXPATHLEN],
@@ -294,11 +301,80 @@ int VFSNetFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
     curl_slist_free_all(header);
     
     if(curl_res == CURLE_OK)
-        MakeEntryDirty(_path);
+        MakeEntryDirty(_path); // need something wiser here
     
     return curl_res == CURLE_OK ?
             VFSError::Ok :
             VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
+}
+
+int VFSNetFTPHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
+{
+    path path = _path;
+    if(path.is_absolute() == false)
+        return VFSError::InvalidCall;
+
+    if(*--path.end() == ".") // remove trailing slash if any
+        path.remove_filename();
+    
+    string cmd = "MKD " + path.filename().native();
+    string url = BuildFullURLString((path.parent_path() / "/").c_str());
+    
+    auto curl = SpawnCURL(); // TODO: need to somehow get this handle from cache pool
+    
+    struct curl_slist* header = NULL;
+    header = curl_slist_append(header, cmd.c_str());
+    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, header);
+    curl_easy_setopt(curl->curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl->curl, CURLOPT_WRITEFUNCTION, 0);
+    curl_easy_setopt(curl->curl, CURLOPT_WRITEDATA, 0);
+    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 1);
+//    curl_easy_setopt(curl->curl, CURLOPT_VERBOSE, 1);
+    CURLcode curl_res = curl_easy_perform(curl->curl);
+    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, NULL);
+    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 0);
+    curl_slist_free_all(header);
+    
+    if(curl_res == CURLE_OK)
+        MakeEntryAndDirectoryDirty(_path); // need something wiser here
+    
+    return curl_res == CURLE_OK ?
+                        VFSError::Ok :
+                        VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
+}
+
+int VFSNetFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
+{
+    path path = _path;
+    if(path.is_absolute() == false)
+        return VFSError::InvalidCall;
+    
+    if(*--path.end() == ".") // remove trailing slash if any
+        path.remove_filename();
+    
+    string cmd = "RMD " + path.filename().native();
+    string url = BuildFullURLString((path.parent_path() / "/").c_str());
+    
+    auto curl = SpawnCURL(); // TODO: need to somehow get this handle from cache pool
+    
+    struct curl_slist* header = NULL;
+    header = curl_slist_append(header, cmd.c_str());
+    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, header);
+    curl_easy_setopt(curl->curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl->curl, CURLOPT_WRITEFUNCTION, 0);
+    curl_easy_setopt(curl->curl, CURLOPT_WRITEDATA, 0);
+    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 1);
+    CURLcode curl_res = curl_easy_perform(curl->curl);
+    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, NULL);
+    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 0);
+    curl_slist_free_all(header);
+    
+    if(curl_res == CURLE_OK)
+        MakeEntryAndDirectoryDirty(_path); // need something wiser here
+    
+    return curl_res == CURLE_OK ?
+                        VFSError::Ok :
+                        VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
 void VFSNetFTPHost::MakeEntryDirty(const char *_path)

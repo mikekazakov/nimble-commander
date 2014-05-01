@@ -303,3 +303,8 @@ bool VFSHost::ShouldProduceThumbnails()
 {
     return true;
 }
+
+int VFSHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}

@@ -10,6 +10,8 @@
 #import "VFSHost.h"
 #import "VFSNetFTPInternalsForward.h"
 
+// RTFM: http://www.ietf.org/rfc/rfc959.txt
+
 struct VFSNetFTPOptions
 {
     
@@ -48,7 +50,13 @@ public:
                            shared_ptr<VFSFile> &_target,
                            bool (^_cancel_checker)()) override;
     
+    virtual int CreateDirectory(const char* _path,
+                                bool (^_cancel_checker)()
+                                ) override;
+    
     virtual int Unlink(const char *_path, bool (^_cancel_checker)());
+    virtual int RemoveDirectory(const char *_path, bool (^_cancel_checker)()) override;
+    
     
     virtual bool ShouldProduceThumbnails() override;
     virtual bool IsWriteable() const override;
@@ -58,6 +66,7 @@ public:
     
     // internal stuff below:
     void BuildFullURL(const char *_path, char *_buffer) const;
+    string BuildFullURLString(const char *_path) const;
 
     /**
      * Mark stat cache entry invalid, if any.

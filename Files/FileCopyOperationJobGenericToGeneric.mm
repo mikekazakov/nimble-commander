@@ -134,9 +134,9 @@ void FileCopyOperationJobGenericToGeneric::ProcessItems()
 void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::node *_node, int _number)
 {
     // compose real src name
-    string itemname = _node->to_str_with_pref();
-    path sourcepath = m_SrcDir / itemname;
-    path destinationpath = m_Destination / itemname;
+    path entryname = _node->to_str_with_pref();
+    path sourcepath = m_SrcDir / entryname;
+    path destinationpath = m_Destination / entryname;
 
     if(sourcepath == destinationpath)
         return;
@@ -242,7 +242,8 @@ cleanup:;
 
 void FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path)
 {
-    m_DstHost->CreateDirectory(_dest_full_path.c_str(), 0);
+    int ret = m_DstHost->CreateDirectory(_dest_full_path.c_str(), 0);
+    assert(ret == 0); // handle me later
     
     // TODO: existance checking, attributes, error handling and other stuff
 

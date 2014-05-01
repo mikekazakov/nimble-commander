@@ -9,7 +9,13 @@
 #import "tests_common.h"
 #import "VFS.h"
 
+static string g_LocalFTP = "192.168.2.5";
+static string g_LocalTestPath = "/Public/!FilesTesting/";
 
+static string UUID()
+{
+    return [NSUUID.UUID UUIDString].UTF8String;
+}
 
 @interface VFSFTP_Tests : XCTestCase
 @end
@@ -183,6 +189,30 @@ static const char* readme ="\n\
     char buf[4096];
     XCTAssert( file->Read(buf, 409) == strlen(str2) );
     XCTAssert( memcmp(buf, str2, strlen(str2)) == 0 );
+}
+
+- (void) testLocal_MKD_RMD
+{
+    auto host = make_shared<VFSNetFTPHost>(g_LocalFTP.c_str());
+    XCTAssert( host->Open("/", nullptr) == 0 );
+    for(auto dir: {g_LocalTestPath + UUID(),
+                   g_LocalTestPath + string(@"В лесу родилась елочка, В лесу она росла".UTF8String),
+                   g_LocalTestPath + string(@"北京市 >≥±§ 😱".UTF8String)
+        })
+    {
+        XCTAssert( host->CreateDirectory(dir.c_str(), 0) == 0 );
+        XCTAssert( host->IsDirectory(dir.c_str(), 0, 0) == true );
+        XCTAssert( host->RemoveDirectory(dir.c_str(), 0) == 0 );
+        XCTAssert( host->IsDirectory(dir.c_str(), 0, 0) == false );
+    }
+    
+    for(auto dir: {g_LocalTestPath + "some / very / bad / filename",
+                   string("/some/another/invalid/path")
+        })
+    {
+        XCTAssert( host->CreateDirectory(dir.c_str(), 0) != 0 );
+        XCTAssert( host->IsDirectory(dir.c_str(), 0, 0) == false );
+    }
 }
 
 @end

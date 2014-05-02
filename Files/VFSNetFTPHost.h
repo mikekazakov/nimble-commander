@@ -41,6 +41,8 @@ public:
                                       int _flags,
                                       bool (^_cancel_checker)()) override;
     
+    virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
+    
     virtual int Stat(const char *_path,
                      VFSStat &_st,
                      int _flags,
@@ -77,12 +79,20 @@ public:
     
     unique_ptr<VFSNetFTP::CURLInstance> InstanceForIO();
     
+    unique_ptr<VFSNetFTP::CURLInstance> InstanceForIOAtDir(const char *_dir);
+    void CommitIOInstanceAtDir(const char *_dir, unique_ptr<VFSNetFTP::CURLInstance> _i);
+    
     VFS_DECLARE_SHARED_PTR(VFSNetFTPHost);
 private:
     int DownloadAndCacheListing(VFSNetFTP::CURLInstance *_inst,
                                 const char *_path,
                                 shared_ptr<VFSNetFTP::Directory> *_cached_dir,
                                 bool (^_cancel_checker)());
+    
+    int GetActualListing(VFSNetFTP::CURLInstance *_inst,
+                         const char *_path,
+                         shared_ptr<VFSNetFTP::Directory> *_cached_dir,
+                         bool (^_cancel_checker)());
     
     unique_ptr<VFSNetFTP::CURLInstance> SpawnCURL();
     
@@ -95,6 +105,8 @@ private:
     
     unique_ptr<VFSNetFTP::Cache>        m_Cache;
     unique_ptr<VFSNetFTP::CURLInstance> m_ListingInstance;
+    
+    map<path, unique_ptr<VFSNetFTP::CURLInstance>> m_IOIntances;
     
     struct UpdateHandler
     {

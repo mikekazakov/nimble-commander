@@ -27,9 +27,22 @@ struct CURLInstance
             curl_easy_cleanup(curl);
             curl = 0;
         }
+        
+        if(curlm)
+            curl_multi_cleanup(curlm);
     }
     
-    CURL *curl = 0;
+    int RunningHandles()
+    {
+        int running_handles = 0;
+        call_lock.lock();
+        curl_multi_perform(curlm, &running_handles);
+        call_lock.unlock();
+        return running_handles;
+    }
+    
+    CURL  *curl  = nullptr;
+    CURLM *curlm = nullptr;
 //    string last_cwd; // last path where this connection was at
     mutex call_lock;
 };
@@ -164,7 +177,7 @@ struct WriteBuffer
         memcpy(ptr, buf->buf + buf->feed_size, feed);
         buf->feed_size += feed;
         
-//        NSLog(@"Read request %lu, feed with %lu bytes", size*nmemb, feed);
+        NSLog(@"Read request %lu, feed with %lu bytes", size*nmemb, feed);
         
         return feed;
     }

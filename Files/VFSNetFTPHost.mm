@@ -59,6 +59,7 @@ const char *VFSNetFTPHost::FSTag() const
 int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions *_options)
 {
     auto instance = SpawnCURL();
+//    curl_easy_setopt(instance->curl, CURLOPT_VERBOSE, 1);
     
     int result = DownloadAndCacheListing(instance.get(), _starting_dir, nullptr, nullptr);
     if(result == 0)
@@ -154,7 +155,8 @@ unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()
     auto inst = make_unique<CURLInstance>();
     inst->curl = curl_easy_init();
     // ... set a lot of stuff like connection options/logins/etc here...
-    
+        
+//    curl_easy_setopt(inst->curl, CURLOPT_VERBOSE, 1);
     
     return inst;
 }
@@ -222,7 +224,7 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
                                          int _flags,
                                          bool (^_cancel_checker)())
 {
-    if(_path == nullptr || _path[0] != '/' )
+/*    if(_path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
     
     auto dir = m_Cache->FindDirectory(_path);
@@ -242,6 +244,41 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
     
     auto listing = make_shared<Listing>(dir, _path, _flags, SharedPtr());
     *_target = listing;
+    return 0;*/
+    shared_ptr<VFSNetFTP::Directory> dir;
+    int result = GetActualListing(m_ListingInstance.get(), _path, &dir, _cancel_checker);
+    if(result != 0)
+        return result;
+    
+    assert(dir);
+    auto listing = make_shared<Listing>(dir, _path, _flags, SharedPtr());
+    *_target = listing;
+    return 0;
+}
+
+int VFSNetFTPHost::GetActualListing(VFSNetFTP::CURLInstance *_inst,
+                     const char *_path,
+                     shared_ptr<VFSNetFTP::Directory> *_cached_dir,
+                     bool (^_cancel_checker)())
+{
+    if(_path == nullptr || _path[0] != '/' )
+        return VFSError::InvalidCall;
+    
+    auto dir = m_Cache->FindDirectory(_path);
+    if(dir && !dir->IsOutdated())
+    {
+        *_cached_dir = dir;
+        return 0;
+    }
+    
+    // download listing, sync I/O
+    int result = DownloadAndCacheListing(m_ListingInstance.get(), _path, &dir, _cancel_checker); // sync I/O here
+    if(result != 0)
+        return result;
+    
+    assert(dir);
+    
+    *_cached_dir = dir;
     return 0;
 }
 
@@ -470,5 +507,77 @@ void VFSNetFTPHost::InformDirectoryChanged(const string &_dir_wth_sl)
 
 bool VFSNetFTPHost::IsWriteable() const
 {
-    return false;
+    return true;
+}
+
+int VFSNetFTPHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
+{
+    shared_ptr<VFSNetFTP::Directory> dir;
+    int result = GetActualListing(m_ListingInstance.get(), _path, &dir, nullptr);
+    if(result != 0)
+        return result;
+    
+    for(auto &i: dir->entries)
+    {
+        VFSDirEnt e;
+        strcpy(e.name, i.name.c_str());
+        e.name_len = i.name.length();
+        e.type = IFTODT(i.mode);
+
+        if( !_handler(e) )
+            break;
+    }
+    return 0;
+}
+
+static int TalkAlot(CURL *, curl_infotype, char *s, size_t n , void *)
+{
+    string str(s, n);
+//    NSLog(@"%s", str.c_str());
+    NSLog(@"%@", [NSString stringWithUTF8String:str.c_str()]);
+    return 0;
+}
+
+unique_ptr<VFSNetFTP::CURLInstance> VFSNetFTPHost::InstanceForIOAtDir(const char *_dir)
+{
+    // try to find cached inst in exact this directory
+    auto i = m_IOIntances.find(_dir);
+    if(i != end(m_IOIntances))
+    {
+        auto r = move(i->second);
+        m_IOIntances.erase(i);
+        return r;
+    }
+    
+    // if can't find - return any cached
+    if(!m_IOIntances.empty())
+    {
+        i = m_IOIntances.begin();
+        auto r = move(i->second);
+        m_IOIntances.erase(i);
+        return r;
+    }
+    
+    // if we're empty - just create and return new inst
+    auto inst =  SpawnCURL();
+    inst->curlm = curl_multi_init();
+    curl_multi_add_handle(inst->curlm, inst->curl);
+    
+    curl_easy_setopt(inst->curl, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(inst->curl, CURLOPT_DEBUGFUNCTION, TalkAlot);
+    curl_easy_setopt(inst->curl, CURLOPT_FTP_FILEMETHOD, /*CURLFTPMETHOD_SINGLECWD*/CURLFTPMETHOD_NOCWD);
+    curl_easy_setopt(inst->curl, CURLOPT_TCP_NODELAY, 1);
+    
+    
+//
+    
+    return inst;
+}
+
+void VFSNetFTPHost::CommitIOInstanceAtDir(const char *_dir, unique_ptr<VFSNetFTP::CURLInstance> _i)
+{
+//    void curl_easy_reset(CURL *handle );
+//    curl_easy_reset(_i->curl);
+//    curl_easy_setopt(_i->curl, CURLOPT_VERBOSE, 1);
+    m_IOIntances[_dir] = move(_i);
 }

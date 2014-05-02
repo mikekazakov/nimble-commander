@@ -24,17 +24,10 @@ static string UUID()
 
 - (void)testFtpMozillaOrg
 {
-static const char* readme ="\n\
+static const char* readme = "\n\
    ftp.mozilla.org / archive.mozilla.org - files are in /pub/mozilla.org\n\
 \n\
-   Notice: This server is the only place to obtain nightly builds and needs to\n\
-   remain available to developers and testers. High bandwidth servers that\n\
-   contain the public release files are available at ftp://releases.mozilla.org/\n\
-   If you need to link to a public release, please link to the release server,\n\
-   not here. Thanks!\n\
-\n\
-   Attempts to download high traffic release files from this server will get a\n\
-   \"550 Permission denied.\" response.\n\
+   releases.mozilla.org now points to our CDN distribution network and no longer works for FTP traffic\n\
 ";
     
     auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
@@ -63,9 +56,9 @@ static const char* readme ="\n\
     XCTAssert( file->Read(buf, 4096) == strlen(readme) );
     
     // check seeking
-    XCTAssert( file->Seek(0x150, VFSFile::Seek_Set) == 0x150 );
+    XCTAssert( file->Seek(0x50, VFSFile::Seek_Set) == 0x50 );
     XCTAssert( file->Read(buf, 16) == 16 );
-    XCTAssert( memcmp(buf, "a public release", 16) == 0 );
+    XCTAssert( memcmp(buf, "leases.mozilla.o", 16) == 0 );
     XCTAssert( file->Seek(0, VFSFile::Seek_Set) == 0 );
     XCTAssert( file->Read(buf, 16) == 16 );
     XCTAssert( memcmp(buf, "\n   ftp.mozilla.", 16) == 0 );
@@ -99,8 +92,6 @@ static const char* readme ="\n\
     const char *fn1 = "/mach_kernel",
                *fn2 = "/Public/!FilesTesting/mach_kernel";
     VFSStat stat;
-
-//OF_NoExist
     
     // if there's a trash from previous runs - remove it
     if( host->Stat(fn2, stat, 0, 0) == 0)

@@ -46,8 +46,10 @@ private:
                       bool (^_cancel_checker)()
                       );
     
+    path DirName() const;
+    
     unique_ptr<VFSNetFTP::CURLInstance>  m_CURL;
-    unique_ptr<VFSNetFTP::CURLMInstance> m_CURLM;
+//    unique_ptr<VFSNetFTP::CURLMInstance> m_CURLM;
     unique_ptr<VFSNetFTP::Buffer>        m_Buf;
     uint64_t                             m_BufFileOffset = 0;
     unique_ptr<VFSNetFTP::WriteBuffer>   m_WriteBuf;    

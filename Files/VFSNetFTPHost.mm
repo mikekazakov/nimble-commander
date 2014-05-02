@@ -565,7 +565,7 @@ unique_ptr<VFSNetFTP::CURLInstance> VFSNetFTPHost::InstanceForIOAtDir(const char
     
     curl_easy_setopt(inst->curl, CURLOPT_VERBOSE, 1);
     curl_easy_setopt(inst->curl, CURLOPT_DEBUGFUNCTION, TalkAlot);
-    curl_easy_setopt(inst->curl, CURLOPT_FTP_FILEMETHOD, /*CURLFTPMETHOD_SINGLECWD*/CURLFTPMETHOD_NOCWD);
+//    curl_easy_setopt(inst->curl, CURLOPT_FTP_FILEMETHOD, /*CURLFTPMETHOD_SINGLECWD*/CURLFTPMETHOD_NOCWD);
     curl_easy_setopt(inst->curl, CURLOPT_TCP_NODELAY, 1);
     
     
@@ -577,7 +577,12 @@ unique_ptr<VFSNetFTP::CURLInstance> VFSNetFTPHost::InstanceForIOAtDir(const char
 void VFSNetFTPHost::CommitIOInstanceAtDir(const char *_dir, unique_ptr<VFSNetFTP::CURLInstance> _i)
 {
 //    void curl_easy_reset(CURL *handle );
-//    curl_easy_reset(_i->curl);
+    curl_easy_reset(_i->curl);
+    curl_easy_setopt(_i->curl, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(_i->curl, CURLOPT_DEBUGFUNCTION, TalkAlot);
+//    curl_easy_setopt(_i->curl, CURLOPT_FTP_FILEMETHOD, /*CURLFTPMETHOD_SINGLECWD*/CURLFTPMETHOD_NOCWD);
+    curl_easy_setopt(_i->curl, CURLOPT_TCP_NODELAY, 1);
+    
 //    curl_easy_setopt(_i->curl, CURLOPT_VERBOSE, 1);
     m_IOIntances[_dir] = move(_i);
 }

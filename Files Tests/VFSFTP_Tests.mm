@@ -116,6 +116,38 @@ static const char* readme = "\n\
     XCTAssert( host->Stat(fn2, stat, 0, 0) != 0);
 }
 
+- (void)test127_0_0_1
+{
+    auto host = make_shared<VFSNetFTPHost>("r2d2:r2d2@127.0.0.1");
+    XCTAssert( host->Open("/", nullptr) == 0 );
+    
+    const char *fn1 = "/mach_kernel",
+    *fn2 = "/mach_kernel";
+    VFSStat stat;
+    
+    // if there's a trash from previous runs - remove it
+    if( host->Stat(fn2, stat, 0, 0) == 0)
+        XCTAssert( host->Unlink(fn2, 0) == 0);
+    
+    // copy file to remote server
+    XCTAssert( VFSEasyCopyFile(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
+    int compare;
+    
+    // compare it with origin
+    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
+    XCTAssert( compare == 0);
+    
+    // check that it appeared in stat cache
+    XCTAssert( host->Stat(fn2, stat, 0, 0) == 0);
+    
+    // delete it
+    XCTAssert( host->Unlink(fn2, 0) == 0);
+    XCTAssert( host->Unlink("/Public/!FilesTesting/wf8g2398fg239f6g23976fg79gads", 0) != 0); // also check deleting wrong entry
+    
+    // check that it is no longer available in stat cache
+    XCTAssert( host->Stat(fn2, stat, 0, 0) != 0);
+}
+
 - (void)test192_168_2_5_EmptyFileTest
 {
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
@@ -143,9 +175,13 @@ static const char* readme = "\n\
     XCTAssert( host->Stat(fn, stat, 0, 0) != 0);
 }
 
-- (void)test192_168_2_5_AppendTest
+// thanks to QNAP weird firmware update - it's ftp server stop overwriting files and began to appending them always
+// so currently using OSX Server built-in ftp.
+- (void)test127_0_0_1_AppendTest
 {
-    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+//    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+    auto host = make_shared<VFSNetFTPHost>("r2d2:r2d2@127.0.0.1");
+    
     XCTAssert( host->Open("/", nullptr) == 0 );
     const char *fn = "/Public/!FilesTesting/append.txt";
 
@@ -170,15 +206,18 @@ static const char* readme = "\n\
     XCTAssert( host->Stat(fn, stat, 0, 0) == 0 );
     XCTAssert( stat.size == strlen(str)*2 );
     
-    XCTAssert( file->Open(VFSFile::OF_Write) == 0 );
-    XCTAssert( file->Size() == 0 ); // implicitly truncating for FTP uploads
+    XCTAssert( file->Open(VFSFile::OF_Write) == 0 ); // should implicitly truncating for FTP uploads
+    XCTAssert( file->Size() == 0 );
     XCTAssert( file->Pos() == 0 );
     XCTAssert( file->Write(str2, strlen(str2)) == strlen(str2) );
     XCTAssert( file->Close() == 0);
     
+    XCTAssert( host->Stat(fn, stat, 0, 0) == 0 );
+    XCTAssert( stat.size == strlen(str2) );
+    
     XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
     char buf[4096];
-    XCTAssert( file->Read(buf, 409) == strlen(str2) );
+    XCTAssert( file->Read(buf, 4096) == strlen(str2) );
     XCTAssert( memcmp(buf, str2, strlen(str2)) == 0 );
 }
 

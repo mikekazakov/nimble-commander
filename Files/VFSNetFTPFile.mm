@@ -415,6 +415,20 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
             (_open_flags & VFSFile::OF_Read)  == 0 &&
             (_open_flags & VFSFile::OF_Write) != 0 )
     {
+//        if()
+/*
+        manual truncate:
+        pthread_mutex_lock(&ftpfs.lock);
+        cancel_previous_multi();
+        curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_URL, full_path);
+        curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_INFILESIZE, 0);
+        curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_UPLOAD, 1);
+        curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_READDATA, NULL);
+        CURLcode curl_res = curl_easy_perform(ftpfs.connection);
+        curl_easy_setopt_or_die(ftpfs.connection, CURLOPT_UPLOAD, 0);
+        pthread_mutex_unlock(&ftpfs.lock);
+        */
+        
         
         char request[MAXPATHLEN*2];
         ftp_host->BuildFullURL(RelativePath(), request);
@@ -426,13 +440,12 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         curl_multi_remove_handle(m_CURL->curlm, m_CURL->curl);
         curl_easy_setopt(m_CURL->curl, CURLOPT_URL, m_URLRequest.c_str());
         curl_easy_setopt(m_CURL->curl, CURLOPT_UPLOAD, 1);
-        curl_easy_setopt(m_CURL->curl, CURLOPT_FTP_USE_EPSV, 0);
+//        curl_easy_setopt(m_CURL->curl, CURLOPT_FTP_USE_EPSV, 0);
 
         curl_easy_setopt(m_CURL->curl, CURLOPT_INFILESIZE, -1);
         curl_easy_setopt(m_CURL->curl, CURLOPT_READFUNCTION, WriteBuffer::read_from_function);
         curl_easy_setopt(m_CURL->curl, CURLOPT_READDATA, m_WriteBuf.get());
 //        curl_easy_setopt(m_CURL->curl, CURLOPT_BUFFERSIZE, 65536);
-        
 
         m_FilePos = 0;
         m_FileSize = 0;
@@ -466,9 +479,11 @@ ssize_t VFSNetFTPFile::ReadChunk(
     // TODO: mutex lock
     bool error = false;
     
-    if ((m_Buf->size < _read_size + _file_offset - m_BufFileOffset) ||
-        _file_offset < m_BufFileOffset ||
-        _file_offset > m_BufFileOffset + m_Buf->size)
+    if ( (m_Buf->size < _read_size + _file_offset - m_BufFileOffset ||
+          _file_offset < m_BufFileOffset ||
+          _file_offset > m_BufFileOffset + m_Buf->size) &&
+         (m_Buf->size < m_FileSize)
+        )
     {
         // can't satisfy request from memory buffer, need to perform I/O
 
@@ -477,8 +492,9 @@ ssize_t VFSNetFTPFile::ReadChunk(
         if(_file_offset < m_BufFileOffset ||
            _file_offset > m_BufFileOffset + m_Buf->size ||
            m_CURL->RunningHandles() == 0)
-
         { // (re)connect
+            
+            // create a brand new ftp request (possibly reusing exiting network connection)
             m_Buf->clear();
             m_BufFileOffset = _file_offset;
             

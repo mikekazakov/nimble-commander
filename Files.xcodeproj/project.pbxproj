@@ -56,6 +56,9 @@
 		CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CF09858118F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857F18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
+		CF1100CE1913778800E170FC /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
+		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
+		CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
 		CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
 		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
 		CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
@@ -259,7 +262,6 @@
 		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
 		CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
 		CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.mm */; };
-		CFB7099A18D6FA1800A83E61 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB7099918D6FA1800A83E61 /* libcurl.dylib */; };
 		CFB709A018D700A000A83E61 /* VFSNetFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB7099E18D700A000A83E61 /* VFSNetFTPHost.mm */; };
 		CFB709A318D7017D00A83E61 /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709A118D7017D00A83E61 /* VFSNetFTPInternals.mm */; };
 		CFB709AB18D962E600A83E61 /* VFSNetFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709A918D962E600A83E61 /* VFSNetFTPFile.mm */; };
@@ -430,6 +432,9 @@
 		CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowExternalEditorsTabNewEditorSheet.mm; sourceTree = "<group>"; };
 		CF09857F18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowExternalEditorsTabNewEditorSheet.xib; sourceTree = "<group>"; };
 		CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
+		CF1100CD1913778800E170FC /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = 3rd_party/built/lib/libcurl.a; sourceTree = "<group>"; };
+		CF1100CF1913788800E170FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CF128876177FF9D3002816C2 /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkOperation.h; sourceTree = "<group>"; };
 		CF128877177FF9D3002816C2 /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperation.mm; sourceTree = "<group>"; };
 		CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperationJob.mm; sourceTree = "<group>"; };
@@ -873,21 +878,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */,
-				CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */,
-				CFB7099A18D6FA1800A83E61 /* libcurl.dylib in Frameworks */,
-				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
+				CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */,
+				CF1100D01913788800E170FC /* Security.framework in Frameworks */,
 				CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */,
-				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
 				CF033A6D1805A50D0088CAB4 /* IOKit.framework in Frameworks */,
-				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
-				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
-				CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */,
 				CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */,
 				CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */,
 				CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */,
 				CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */,
 				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
+				CF1100CE1913778800E170FC /* libcurl.a in Frameworks */,
+				CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */,
+				CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */,
+				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
+				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
+				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
+				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
+				CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1681,6 +1688,9 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF1100D1191378BD00E170FC /* LDAP.framework */,
+				CF1100CF1913788800E170FC /* Security.framework */,
+				CF1100CD1913778800E170FC /* libcurl.a */,
 				CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */,
 				CFD7E4E6190FD61E0064D249 /* libboost_system.a */,
 				CFB7099918D6FA1800A83E61 /* libcurl.dylib */,

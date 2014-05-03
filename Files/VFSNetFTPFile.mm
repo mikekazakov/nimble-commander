@@ -311,7 +311,7 @@ int VFSNetFTPFile::Close()
             while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
             while(running_handles)
             {
-                struct timeval timeout = {1, 0};
+                struct timeval timeout = m_SelectTimeout;
                 
                 fd_set fdread, fdwrite, fdexcep;
                 int maxfd;
@@ -528,7 +528,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
         
         while( (m_Buf->size < _read_size + _file_offset - m_BufFileOffset) && running_handles)
         {
-            struct timeval timeout = {1, 0};
+            struct timeval timeout = m_SelectTimeout;
             
             fd_set fdread, fdwrite, fdexcep;
             int maxfd;
@@ -614,7 +614,7 @@ ssize_t VFSNetFTPFile::Write(const void *_buf, size_t _size)
     
     while( m_WriteBuf->feed_size < m_WriteBuf->size && running_handles )
     {
-        struct timeval timeout = {1, 0};
+        struct timeval timeout = m_SelectTimeout;
         
         fd_set fdread, fdwrite, fdexcep;
         int maxfd;

@@ -59,7 +59,8 @@ const char *VFSNetFTPHost::FSTag() const
 int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions *_options)
 {
     auto instance = SpawnCURL();
-//    curl_easy_setopt(instance->curl, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(instance->curl, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(instance->curl, CURLOPT_FTP_FILEMETHOD, g_CURLFTPMethod);
     
     int result = DownloadAndCacheListing(instance.get(), _starting_dir, nullptr, nullptr);
     if(result == 0)
@@ -193,10 +194,17 @@ int VFSNetFTPHost::Stat(const char *_path,
     if(dir && !dir->IsOutdated())
     {
         auto entry = dir->EntryByName(filename);
-        if(entry && !entry->dirty)
+        if(entry)
         {
-            entry->ToStat(_st);
-            return 0;
+            if(!entry->dirty)
+            {
+                entry->ToStat(_st);
+                return 0;
+            }
+        }
+        else
+        {
+            return VFSError::NotFound;
         }
     }
 
@@ -564,11 +572,11 @@ unique_ptr<VFSNetFTP::CURLInstance> VFSNetFTPHost::InstanceForIOAtDir(const char
     curl_multi_add_handle(inst->curlm, inst->curl);
     
     curl_easy_setopt(inst->curl, CURLOPT_VERBOSE, 1);
-    curl_easy_setopt(inst->curl, CURLOPT_DEBUGFUNCTION, TalkAlot);
-//    curl_easy_setopt(inst->curl, CURLOPT_FTP_FILEMETHOD, /*CURLFTPMETHOD_SINGLECWD*/CURLFTPMETHOD_NOCWD);
-    curl_easy_setopt(inst->curl, CURLOPT_TCP_NODELAY, 1);
+//    curl_easy_setopt(inst->curl, CURLOPT_DEBUGFUNCTION, TalkAlot);
+    curl_easy_setopt(inst->curl, CURLOPT_FTP_FILEMETHOD, g_CURLFTPMethod);
+//    curl_easy_setopt(inst->curl, CURLOPT_TCP_NODELAY, 1);
     
-    
+//    curl_easy_setopt(inst->curl, CURLOPT_NOSIGNAL, 1);
 //
     
     return inst;
@@ -579,9 +587,13 @@ void VFSNetFTPHost::CommitIOInstanceAtDir(const char *_dir, unique_ptr<VFSNetFTP
 //    void curl_easy_reset(CURL *handle );
     curl_easy_reset(_i->curl);
     curl_easy_setopt(_i->curl, CURLOPT_VERBOSE, 1);
-    curl_easy_setopt(_i->curl, CURLOPT_DEBUGFUNCTION, TalkAlot);
-//    curl_easy_setopt(_i->curl, CURLOPT_FTP_FILEMETHOD, /*CURLFTPMETHOD_SINGLECWD*/CURLFTPMETHOD_NOCWD);
-    curl_easy_setopt(_i->curl, CURLOPT_TCP_NODELAY, 1);
+//    curl_easy_setopt(_i->curl, CURLOPT_DEBUGFUNCTION, TalkAlot);
+
+//    curl_easy_setopt(_i->curl, CURLOPT_NOSIGNAL, 1);
+    
+    
+    curl_easy_setopt(_i->curl, CURLOPT_FTP_FILEMETHOD, g_CURLFTPMethod);
+//    curl_easy_setopt(_i->curl, CURLOPT_TCP_NODELAY, 1);
     
 //    curl_easy_setopt(_i->curl, CURLOPT_VERBOSE, 1);
     m_IOIntances[_dir] = move(_i);

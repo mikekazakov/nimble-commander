@@ -8,7 +8,7 @@
 
 #pragma once
 
-#import <curl/curl.h>
+#include "3rd_party/built/include/curl/curl.h"
 #import "Common.h"
 #import "VFSHost.h"
 #import "VFSListing.h"
@@ -17,6 +17,7 @@ namespace VFSNetFTP
 {
 
 static const uint64_t g_ListingOutdateLimit = 1000lu * 1000lu * 1000lu * 30lu; // 30 sec
+static const curl_ftpmethod g_CURLFTPMethod = /*CURLFTPMETHOD_DEFAULT*/ /*CURLFTPMETHOD_MULTICWD*/ CURLFTPMETHOD_SINGLECWD /*CURLFTPMETHOD_NOCWD*/;
 
 struct CURLInstance
 {
@@ -177,7 +178,7 @@ struct WriteBuffer
         memcpy(ptr, buf->buf + buf->feed_size, feed);
         buf->feed_size += feed;
         
-        NSLog(@"Read request %lu, feed with %lu bytes", size*nmemb, feed);
+//        NSLog(@"Read request %lu, feed with %lu bytes", size*nmemb, feed);
         
         return feed;
     }

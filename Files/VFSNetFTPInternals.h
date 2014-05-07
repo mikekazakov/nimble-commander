@@ -12,11 +12,11 @@
 #import "Common.h"
 #import "VFSHost.h"
 #import "VFSListing.h"
+#import "VFSNetFTPCache.h"
 
 namespace VFSNetFTP
 {
 
-static const uint64_t g_ListingOutdateLimit = 1000lu * 1000lu * 1000lu * 30lu; // 30 sec
 static const curl_ftpmethod g_CURLFTPMethod = /*CURLFTPMETHOD_DEFAULT*/ /*CURLFTPMETHOD_MULTICWD*/ CURLFTPMETHOD_SINGLECWD /*CURLFTPMETHOD_NOCWD*/;
 
 struct CURLInstance
@@ -45,34 +45,6 @@ struct CURLInstance
     CURL  *curl  = nullptr;
     CURLM *curlm = nullptr;
 //    string last_cwd; // last path where this connection was at
-    mutex call_lock;
-};
-
-struct CURLMInstance
-{
-    CURLMInstance():
-        curlm(curl_multi_init())
-    {
-    }
-    ~CURLMInstance()
-    {
-        curl_multi_cleanup(curlm);
-    }
-    CURLMInstance(const CURLMInstance&) = delete;
-    CURLMInstance(const CURLMInstance&&) = delete;
-    void operator=(const CURLMInstance&) = delete;
-
-  
-    int RunningHandles()
-    {
-        int running_handles = 0;
-        call_lock.lock();
-        curl_multi_perform(curlm, &running_handles);
-        call_lock.unlock();
-        return running_handles;
-    }
-
-    CURLM *curlm;
     mutex call_lock;
 };
     
@@ -200,88 +172,6 @@ struct WriteBuffer
     uint32_t              capacity = 0;
     uint32_t              feed_size = 0; // amount of bytes fed to CURL
 };
-    
-struct Entry
-{
-    Entry(){}
-    ~Entry()
-    {
-        if(cfname != 0)
-        {
-            CFRelease(cfname);
-            cfname = 0;
-        }
-    }
-    Entry(const Entry&) = delete;
-    Entry(const Entry&&) = delete;
-    void operator=(const Entry&) = delete;
-    
-    string      name;
-    CFStringRef cfname = 0; // no allocations, pointing at name
-    uint64_t    size   = 0;
-    time_t      time   = 0;
-    mode_t      mode   = 0;
-    mutable bool dirty = false; // true when this entry was explicitly set as outdated
-                                // redundant? directory containting entry can also be dirty
-    
-    
-    // links support in the future
-    
-    void ToStat(VFSStat &_stat) const
-    {
-        memset(&_stat, 0, sizeof(_stat));
-        _stat.size = size;
-        _stat.mode = mode;
-        _stat.mtime.tv_sec = time;
-        _stat.ctime.tv_sec = time;
-        _stat.btime.tv_sec = time;
-        _stat.atime.tv_sec = time;        
-    }
-};
-    
-struct Directory
-{
-    deque<Entry>            entries;
-    shared_ptr<Directory>   parent_dir;
-    string                  path; // with trailing slash
-    uint64_t                snapshot_time = 0;
-    mutable bool dirty = false; // true when this directory was explicitly set as outdated, regardless of snapshot time    
-    
-    inline bool IsOutdated() const
-    {
-        return dirty || (GetTimeInNanoseconds() > snapshot_time + g_ListingOutdateLimit);
-    }
-    
-    inline const Entry* EntryByName(string _name) const
-    {
-        auto i = find_if(begin(entries), end(entries), [&](auto &_e) { return _e.name == _name; });
-        return i != end(entries) ? &(*i) : nullptr;
-    }
-};
-
-class Cache
-{
-public:
-    
-    /**
-     * Return nullptr if was not able to find directory.
-     */
-    shared_ptr<Directory> FindDirectory(const char *_path) const;
-    
-    shared_ptr<Directory> FindDirectory(const string &_path) const;
-    
-    /**
-     * If directory at _path is already in cache - it will be overritten.
-     */
-    void InsertDirectory(const char *_path, shared_ptr<Directory> _dir);
-    
-    
-    
-private:
-    map<string, shared_ptr<Directory>>  m_Directories; // "/Abra/Cadabra/" -> Directory
-    mutable mutex                       m_CacheLock;
-};
-
 
 class Listing : public VFSListing
 {

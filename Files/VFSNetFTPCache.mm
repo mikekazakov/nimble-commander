@@ -1,0 +1,246 @@
+//
+//  VFSNetFTPCache.cpp
+//  Files
+//
+//  Created by Michael G. Kazakov on 07.05.14.
+//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
+//
+
+#include "VFSNetFTPCache.h"
+
+namespace VFSNetFTP
+{
+    Entry::Entry()
+    {
+    }
+    
+    Entry::Entry(const string &_name):
+        name(_name),
+        cfname(CFStringCreateWithUTF8StdStringNoCopy(name))
+    {
+    }
+    
+    Entry::Entry(const Entry& _r):
+        name(_r.name),
+        cfname(CFStringCreateWithUTF8StdStringNoCopy(name)),
+        mode(_r.mode),
+        size(_r.size),
+        time(_r.time)
+    {
+    }
+    
+    Entry::~Entry()
+    {
+        if(cfname != 0)
+        {
+            CFRelease(cfname);
+            cfname = 0;
+        }
+    }
+    
+    void Entry::ToStat(VFSStat &_stat) const
+    {
+        memset(&_stat, 0, sizeof(_stat));
+        _stat.size = size;
+        _stat.mode = mode;
+        _stat.mtime.tv_sec = time;
+        _stat.ctime.tv_sec = time;
+        _stat.btime.tv_sec = time;
+        _stat.atime.tv_sec = time;
+    }
+    
+    const Entry* Directory::EntryByName(const string &_name) const
+    {
+        auto i = find_if(begin(entries), end(entries), [&](auto &_e) { return _e.name == _name; });
+        return i != end(entries) ? &(*i) : nullptr;
+    }
+
+    shared_ptr<Directory> Cache::FindDirectory(const char *_path) const
+    {
+        if(_path == 0 ||
+           _path[0] != '/')
+            return nullptr;
+        
+        string dir = _path;
+        if(dir.back() != '/')
+            dir.push_back('/');
+        
+        lock_guard<mutex> lock(m_CacheLock);
+        
+        auto i = m_Directories.find(dir);
+        if(i != m_Directories.end())
+            return i->second;
+        
+        return nullptr;
+    }
+    
+    shared_ptr<Directory> Cache::FindDirectory(const string &_path) const
+    {
+        lock_guard<mutex> lock(m_CacheLock);
+        
+        return FindDirectoryInt(_path);
+    }
+    
+    shared_ptr<Directory> Cache::FindDirectoryInt(const string &_path) const
+    {
+        if(_path.empty() ||
+           _path.front() != '/')
+            return nullptr;
+        
+        auto i = m_Directories.find(_path.back() == '/' ? _path : _path + "/");
+        if(i != m_Directories.end())
+            return i->second;
+        
+        return nullptr;
+    }
+    
+    void Cache::InsertLISTDirectory(const char *_path, shared_ptr<Directory> _directory)
+    {
+        // TODO: also update ->parent_dir here
+        
+        if(_path == 0 ||
+           _path[0] != '/' ||
+           !_directory )
+            return;
+        
+        string dir = _path;
+        if(dir.back() != '/')
+            dir.push_back('/');
+        
+        _directory->path = dir;
+        
+        lock_guard<mutex> lock(m_CacheLock);
+        
+        auto i = m_Directories.find(dir);
+        if(i != m_Directories.end())
+            i->second = _directory;
+        else
+            m_Directories.emplace(dir, _directory);
+    }
+
+    void Cache::CommitNewFile(const string &_path)
+    {
+        path p = _path;
+        assert(p.is_absolute());
+        
+        path dir_path = p.parent_path();
+        if(dir_path != "/")
+            dir_path /= "/";
+        
+        lock_guard<mutex> lock(m_CacheLock);
+        auto dir = FindDirectoryInt(dir_path.native());
+        if(dir != nullptr)
+        {
+            if(auto entry = dir->EntryByName(p.filename().native()))
+            {
+                entry->dirty = true;
+                dir->has_dirty_items = true;
+                return;
+            }
+            
+            auto copy = make_shared<Directory>(*dir);
+            copy->entries.emplace_back(p.filename().native());
+            copy->entries.back().mode = S_IFREG;
+            copy->entries.back().dirty = true;
+            copy->has_dirty_items = true;
+            
+            m_Directories.find(dir_path.native())->second = copy;
+        }
+        
+//        dir = FindDirectoryInt(dir_path.native());
+    }
+    
+    void Cache::MakeEntryDirty(const string &_path)
+    {
+        path p = _path;
+        assert(p.is_absolute());
+        
+        path dir_path = p.parent_path();
+        if(dir_path != "/")
+            dir_path / "/";
+        
+        lock_guard<mutex> lock(m_CacheLock);
+        auto dir = FindDirectoryInt(dir_path.native());
+        if(dir)
+        {
+            auto entry = dir->EntryByName(p.filename().native());
+            if(entry)
+            {
+                entry->dirty = true;
+                dir->has_dirty_items = true;
+            }
+        }
+    }
+    
+    void Cache::CommitRMD(const string &_path)
+    {
+        EraseEntryInt(_path);
+        
+        lock_guard<mutex> lock(m_CacheLock);
+
+        path p = _path;
+        p /= "/";
+        
+        auto i = m_Directories.find(p.native());
+        if(i != m_Directories.end())
+            m_Directories.erase(i);        
+    }
+    
+    void Cache::CommitUnlink(const string &_path)
+    {
+        EraseEntryInt(_path);
+    }
+    
+    void Cache::CommitMKD(const string &_path)
+    {
+        path p = _path;
+        assert(p.is_absolute());
+        
+        path dir_path = p.parent_path();
+        if(dir_path != "/")
+            dir_path /= "/";
+        
+        lock_guard<mutex> lock(m_CacheLock);
+        auto dir = FindDirectoryInt(dir_path.native());
+        if(dir != nullptr)
+        {
+            auto copy = make_shared<Directory>(*dir);
+            copy->entries.emplace_back(p.filename().native());
+            copy->entries.back().mode = S_IFDIR;
+            copy->entries.back().dirty = true;
+            copy->has_dirty_items = true;
+            
+            m_Directories.find(dir_path.native())->second = copy;
+        }
+    }
+
+    void Cache::EraseEntryInt(const string &_path)
+    {
+        path p = _path;
+        assert(p.filename() != "."); // _path with no trailing slashes
+        assert(p.is_absolute());
+        
+        lock_guard<mutex> lock(m_CacheLock);
+        
+        // find and erase entry of this dir in parent dir if any
+        path dir_path = p.parent_path();
+        if(dir_path != "/")
+            dir_path /= "/";
+        
+        auto dir = FindDirectoryInt(dir_path.native());
+        if(dir)
+        {
+            auto copy = make_shared<Directory>();
+            copy->path = dir->path;
+            copy->snapshot_time = dir->snapshot_time;
+            copy->dirty_structure = dir->dirty_structure;
+            copy->has_dirty_items = dir->has_dirty_items;
+            
+            for(auto &i: dir->entries)
+                if(i.name != p.filename())
+                    copy->entries.emplace_back(i);
+            m_Directories.find(dir_path.native())->second = copy;
+        }
+    }
+    
+}

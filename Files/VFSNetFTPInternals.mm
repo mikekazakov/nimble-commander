@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include "Common.h"
 #include "VFSNetFTPInternals.h"
+#include "VFSNetFTPHost.h"
 
 namespace VFSNetFTP
 {
@@ -179,65 +180,7 @@ shared_ptr<Directory> ParseListing(const char *_str)
     directory->snapshot_time = GetTimeInNanoseconds();
     return directory;
 }
-    
-shared_ptr<Directory> Cache::FindDirectory(const char *_path) const
-{
-    if(_path == 0 ||
-       _path[0] != '/')
-        return nullptr;
-
-    string dir = _path;
-    if(dir.back() != '/')
-        dir.push_back('/');
-
-    lock_guard<mutex> lock(m_CacheLock);
-    
-    auto i = m_Directories.find(dir);
-    if(i != m_Directories.end())
-        return i->second;
-    
-    return nullptr;
-}
-
-shared_ptr<Directory> Cache::FindDirectory(const string &_path) const
-{
-    if(_path.empty() ||
-       _path.front() != '/')
-        return nullptr;
-    
-    lock_guard<mutex> lock(m_CacheLock);
-    
-    auto i = m_Directories.find(_path.back() == '/' ? _path : _path + "/");
-    if(i != m_Directories.end())
-        return i->second;
-    
-    return nullptr;
-}
-    
-void Cache::InsertDirectory(const char *_path, shared_ptr<Directory> _directory)
-{
-    // TODO: also update ->parent_dir here
-    
-    if(_path == 0 ||
-       _path[0] != '/' ||
-       !_directory )
-        return;
-    
-    string dir = _path;
-    if(dir.back() != '/')
-        dir.push_back('/');
-    
-    _directory->path = dir;
-    
-    lock_guard<mutex> lock(m_CacheLock);
-    
-    auto i = m_Directories.find(dir);
-    if(i != m_Directories.end())
-        i->second = _directory;
-    else
-        m_Directories.emplace(dir, _directory);
-}
-    
+        
 Listing::Listing(shared_ptr<Directory> _dir,
                  const char *_path,
                  int _flags,

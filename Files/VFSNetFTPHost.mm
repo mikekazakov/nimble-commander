@@ -8,6 +8,7 @@
 
 #import "VFSNetFTPHost.h"
 #import "VFSNetFTPInternals.h"
+#import "VFSNetFTPCache.h"
 #import "VFSNetFTPFile.h"
 #import "path_manip.h"
 
@@ -17,34 +18,8 @@ const char *VFSNetFTPHost::Tag = "net_ftp";
 
 VFSNetFTPHost::VFSNetFTPHost(const char *_serv_url):
     VFSHost(_serv_url, nullptr),
-    m_Cache(new Cache)
+    m_Cache(make_unique<VFSNetFTP::Cache>())
 {
-
-
-    /*
-    CURLInstance inst;
-    inst.curl = curl_easy_init();
-    curl_easy_setopt(inst.curl, CURLOPT_URL, "ftp://192.168.2.5/" );
-//    curl_easy_setopt(inst.curl, CURLOPT_USERPWD, usrpwd.c_str());
-//    curl_easy_setopt(inst.curl, CURLOPT_FTPLISTONLY, TRUE);
-    
-    string str;
-    curl_easy_setopt(inst.curl, CURLOPT_WRITEFUNCTION, write_data);
-    curl_easy_setopt(inst.curl, CURLOPT_WRITEDATA, &str);
-    
-    curl_easy_perform(inst.curl);
-    
-//    printf("%s", str.c_str());
-    
-//    VFSNetFTPInternals_ParseListing(str);
-    auto dir = ParseListing(str.c_str());
-    
-    m_Cache->InsertDirectory("/", dir);
-    
-//    curl_easy_setopt(inst.curl, CURLOPT_URL, "ftp://192.168.2.5/Public/" );
-//    curl_easy_perform(inst.curl);
-    
-    curl_easy_cleanup(inst.curl);*/
 }
 
 VFSNetFTPHost::~VFSNetFTPHost()
@@ -86,7 +61,7 @@ int VFSNetFTPHost::DownloadAndCacheListing(CURLInstance *_inst,
         return result;
     
     auto dir = ParseListing(listing_data.c_str());
-    m_Cache->InsertDirectory(_path, dir);
+    m_Cache->InsertLISTDirectory(_path, dir);
     
     if(_cached_dir)
         *_cached_dir = dir;
@@ -191,19 +166,20 @@ int VFSNetFTPHost::Stat(const char *_path,
     
     // try to find dir from cache
     auto dir = m_Cache->FindDirectory(parent_dir);
-    if(dir && !dir->IsOutdated())
+    if(dir)
     {
         auto entry = dir->EntryByName(filename);
         if(entry)
         {
             if(!entry->dirty)
-            {
+            { // if entry is here and it's not outdated - return it
                 entry->ToStat(_st);
                 return 0;
             }
+            // if entry is here and it is outdated - we have to fetch a new listing
         }
-        else
-        {
+        else if(!dir->IsOutdated())
+        { // if we can't find entry and dir is not outdated - return NotFound.
             return VFSError::NotFound;
         }
     }
@@ -346,7 +322,7 @@ int VFSNetFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
     curl_slist_free_all(header);
     
     if(curl_res == CURLE_OK)
-        MakeEntryDirty(_path); // need something wiser here
+        m_Cache->CommitUnlink(_path);
     
     return curl_res == CURLE_OK ?
             VFSError::Ok :
@@ -381,7 +357,7 @@ int VFSNetFTPHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
     curl_slist_free_all(header);
     
     if(curl_res == CURLE_OK)
-        MakeEntryAndDirectoryDirty(_path); // need something wiser here
+        m_Cache->CommitMKD(path.native());
     
     return curl_res == CURLE_OK ?
                         VFSError::Ok :
@@ -415,67 +391,19 @@ int VFSNetFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
     curl_slist_free_all(header);
     
     if(curl_res == CURLE_OK)
-        MakeEntryAndDirectoryDirty(_path); // need something wiser here
+        m_Cache->CommitRMD(path.native());
     
     return curl_res == CURLE_OK ?
                         VFSError::Ok :
                         VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
-void VFSNetFTPHost::MakeEntryDirty(const char *_path)
-{
-    if(_path == nullptr ||
-       _path[0] != '/'  ||
-       _path[1] == 0     )
-        return;
-    
-    string path = _path;
-    
-    if(path.back() == '/')
-        path.pop_back();
-    
-    auto last_sl = path.rfind('/');
-    assert(last_sl != string::npos);
-    string parent_dir(path, 0, last_sl + 1);
-    string filename(path, last_sl + 1);
-    
-    if(auto dir = m_Cache->FindDirectory(parent_dir))
-        if(auto entry = dir->EntryByName(filename))
-            entry->dirty = true;
-}
-
-void VFSNetFTPHost::MakeEntryAndDirectoryDirty(const char *_path)
-{
-    if(_path == nullptr ||
-       _path[0] != '/'  ||
-       _path[1] == 0     )
-        return;
-    
-    string path = _path;
-    
-    if(path.back() == '/')
-        path.pop_back();
-    
-    auto last_sl = path.rfind('/');
-    assert(last_sl != string::npos);
-    string parent_dir(path, 0, last_sl + 1);
-    string filename(path, last_sl + 1);
-    
-    if(auto dir = m_Cache->FindDirectory(parent_dir))
-    {
-        dir->dirty = true;
-        InformDirectoryChanged(dir->path);
-        if(auto entry = dir->EntryByName(filename))
-            entry->dirty = true;
-    }
-}
-
-void VFSNetFTPHost::MakeDirectoryDirty(const char *_path)
+void VFSNetFTPHost::MakeDirectoryStructureDirty(const char *_path)
 {
     if(auto dir = m_Cache->FindDirectory(_path))
     {
         InformDirectoryChanged(dir->path);
-        dir->dirty = true;
+        dir->dirty_structure = true;
     }
 }
 

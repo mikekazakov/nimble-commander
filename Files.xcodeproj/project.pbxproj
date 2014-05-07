@@ -59,6 +59,7 @@
 		CF1100CE1913778800E170FC /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
+		CF1100D6191A1EA000E170FC /* VFSNetFTPCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100D4191A1EA000E170FC /* VFSNetFTPCache.mm */; };
 		CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
 		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
 		CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
@@ -435,6 +436,8 @@
 		CF1100CD1913778800E170FC /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = 3rd_party/built/lib/libcurl.a; sourceTree = "<group>"; };
 		CF1100CF1913788800E170FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
+		CF1100D4191A1EA000E170FC /* VFSNetFTPCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetFTPCache.mm; sourceTree = "<group>"; };
+		CF1100D5191A1EA000E170FC /* VFSNetFTPCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNetFTPCache.h; sourceTree = "<group>"; };
 		CF128876177FF9D3002816C2 /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkOperation.h; sourceTree = "<group>"; };
 		CF128877177FF9D3002816C2 /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperation.mm; sourceTree = "<group>"; };
 		CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperationJob.mm; sourceTree = "<group>"; };
@@ -1604,6 +1607,8 @@
 				CFB709A518D74F1400A83E61 /* VFSNetFTPInternalsForward.h */,
 				CFB709A918D962E600A83E61 /* VFSNetFTPFile.mm */,
 				CFB709AA18D962E600A83E61 /* VFSNetFTPFile.h */,
+				CF1100D4191A1EA000E170FC /* VFSNetFTPCache.mm */,
+				CF1100D5191A1EA000E170FC /* VFSNetFTPCache.h */,
 			);
 			name = FTP;
 			sourceTree = "<group>";
@@ -2068,6 +2073,7 @@
 				CF9D0EAB17CC961100CB8146 /* archive_read_support_format_raw.c in Sources */,
 				B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */,
 				CF9D0ED617CC961100CB8146 /* archive_write_set_format_xar.c in Sources */,
+				CF1100D6191A1EA000E170FC /* VFSNetFTPCache.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */,
 				CF9D0EA217CC961100CB8146 /* archive_read_support_format_ar.c in Sources */,

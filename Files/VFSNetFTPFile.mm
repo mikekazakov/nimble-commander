@@ -9,6 +9,7 @@
 #import "VFSNetFTPFile.h"
 #import "VFSNetFTPHost.h"
 #import "VFSNetFTPInternals.h"
+#import "VFSNetFTPCache.h"
 #import "path_manip.h"
 
 // implementation highly inspired by curlftpfs.
@@ -329,7 +330,9 @@ int VFSNetFTPFile::Close()
         }
         
         if(m_Mode == Mode::Write)
-            dynamic_pointer_cast<VFSNetFTPHost>(Host())->MakeEntryAndDirectoryDirty(RelativePath());
+//            dynamic_pointer_cast<VFSNetFTPHost>(Host())->MakeEntryAndDirectoryDirty(RelativePath());
+//            dynamic_pointer_cast<VFSNetFTPHost>(Host())->MakeEntryDirty(RelativePath());
+            dynamic_pointer_cast<VFSNetFTPHost>(Host())->Cache().CommitNewFile(RelativePath());
     }
     m_FilePos = 0;
     m_FileSize = 0;

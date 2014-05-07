@@ -18,6 +18,11 @@ struct VFSNetFTPOptions
     
 };
 
+namespace VFSNetFTP
+{
+    class Cache;
+}
+
 class VFSNetFTPHost : public VFSHost
 {
 public:
@@ -70,17 +75,15 @@ public:
     void BuildFullURL(const char *_path, char *_buffer) const;
     string BuildFullURLString(const char *_path) const;
 
-    /**
-     * Mark stat cache entry invalid, if any.
-     */
-    void MakeEntryDirty(const char *_path);
-    void MakeEntryAndDirectoryDirty(const char *_path);
-    void MakeDirectoryDirty(const char *_path);
+    void MakeDirectoryStructureDirty(const char *_path);
     
     unique_ptr<VFSNetFTP::CURLInstance> InstanceForIO();
     
     unique_ptr<VFSNetFTP::CURLInstance> InstanceForIOAtDir(const char *_dir);
     void CommitIOInstanceAtDir(const char *_dir, unique_ptr<VFSNetFTP::CURLInstance> _i);
+    
+    
+    inline VFSNetFTP::Cache &Cache() const { return *m_Cache.get(); };
     
     VFS_DECLARE_SHARED_PTR(VFSNetFTPHost);
 private:

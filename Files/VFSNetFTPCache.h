@@ -52,7 +52,7 @@ namespace VFSNetFTP
         
         inline bool IsOutdated() const
         {
-            return dirty_structure || (GetTimeInNanoseconds() > snapshot_time + g_ListingOutdateLimit);
+            return dirty_structure; // || (GetTimeInNanoseconds() > snapshot_time + g_ListingOutdateLimit);
         }
         
         const Entry* EntryByName(const string &_name) const;

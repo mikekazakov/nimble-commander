@@ -10,16 +10,6 @@
 #include "VFS.h"
 #include "FileCopyOperation.h"
 
-
-static int microsleep(int _ms)
-{
-    struct timespec tm, tm2;
-    tm.tv_sec  = 0;
-    tm.tv_nsec = 1000000L * _ms;
-    nanosleep(&tm, &tm2);
-    return _ms;
-}
-
 static int VFSCompareEntries(const path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
                              const path& _file2_full_path,
@@ -73,7 +63,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSStat stat;
     if( _h->Stat(_fn.c_str(), stat, 0, 0) == 0)
-        XCTAssert( _h->Unlink(_fn.c_str(), 0) == 0);
+        XCTAssert( VFSEasyDelete(_fn.c_str(), _h) == 0);
 }
 
 - (void)testCopyToFTP_192_168_2_5_____1
@@ -143,6 +133,38 @@ static int VFSCompareEntries(const path& _file1_full_path,
     }
 }
 
+- (void)testCopyToFTP_192_168_2_5_____3
+{
+    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+    XCTAssert( host->Open("/", nullptr) == 0 );
+    
+    [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
+    
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("bin")
+                      root:"/"
+                    srcvfs:VFSNativeHost::SharedHost()
+                      dest:"/Public/!FilesTesting/"
+                    dstvfs:host
+                   options:FileCopyOperationOptions()];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/bin",
+                                 VFSNativeHost::SharedHost(),
+                                 "/Public/!FilesTesting/bin",
+                                 host,
+                                 result) == 0);
+    XCTAssert( result == 0 );
+    
+    [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
+}
+
+
 - (void)testCopyGenericToGeneric______1
 {
     char dir[MAXPATHLEN];
@@ -179,7 +201,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     int sleeped = 0, sleep_tresh = 60000;
     while (!_finished)
     {
-        sleeped += microsleep(100);
+        sleeped += usleep(100);
         XCTAssert( sleeped < sleep_tresh);
         if(sleeped > sleep_tresh)
             break;

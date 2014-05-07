@@ -92,7 +92,7 @@ private:
                                 shared_ptr<VFSNetFTP::Directory> *_cached_dir,
                                 bool (^_cancel_checker)());
     
-    int GetActualListing(VFSNetFTP::CURLInstance *_inst,
+    int GetListingForFetching(VFSNetFTP::CURLInstance *_inst,
                          const char *_path,
                          shared_ptr<VFSNetFTP::Directory> *_cached_dir,
                          bool (^_cancel_checker)());

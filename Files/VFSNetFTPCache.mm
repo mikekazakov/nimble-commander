@@ -25,7 +25,8 @@ namespace VFSNetFTP
         cfname(CFStringCreateWithUTF8StdStringNoCopy(name)),
         mode(_r.mode),
         size(_r.size),
-        time(_r.time)
+        time(_r.time),
+        dirty(_r.dirty)
     {
     }
     

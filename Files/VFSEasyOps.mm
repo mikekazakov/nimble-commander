@@ -365,3 +365,25 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
     _result = memcmp( data1->data(), data2->data(), data1->size() );
     return 0;
 }
+
+int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
+{
+    VFSStat st;
+    int result;
+    
+    result = _host->Stat(_full_path, st, VFSHost::F_NoFollow, 0);
+    if(result < 0)
+        return result;
+    
+    if((st.mode & S_IFMT) == S_IFDIR) {
+        _host->IterateDirectoryListing(_full_path, ^bool(const VFSDirEnt &_dirent) {
+            path p = _full_path;
+            p /= _dirent.name;
+            VFSEasyDelete(p.native().c_str(), _host);
+            return true;
+        });
+        return _host->RemoveDirectory(_full_path, 0);
+    }
+    else
+        return _host->Unlink(_full_path, 0);
+}

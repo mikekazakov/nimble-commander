@@ -25,6 +25,12 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
                         );
 
 /**
+ * Will delete an entry at _full_path.
+ * If entry is a dir, will recursively delete it's content.
+ */
+int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &host);
+
+/**
  * _dst_full_path - is a directory to where source directory should be copied. Top-level directory will be created,
  * an function will fail on such existing directory in destination.
  * Example params: source: /foo/bar1/my_dir, dest: /foo/bar2/my_dir

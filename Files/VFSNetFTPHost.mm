@@ -230,7 +230,7 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
     *_target = listing;
     return 0;*/
     shared_ptr<VFSNetFTP::Directory> dir;
-    int result = GetActualListing(m_ListingInstance.get(), _path, &dir, _cancel_checker);
+    int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, _cancel_checker);
     if(result != 0)
         return result;
     
@@ -240,7 +240,7 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-int VFSNetFTPHost::GetActualListing(VFSNetFTP::CURLInstance *_inst,
+int VFSNetFTPHost::GetListingForFetching(VFSNetFTP::CURLInstance *_inst,
                      const char *_path,
                      shared_ptr<VFSNetFTP::Directory> *_cached_dir,
                      bool (^_cancel_checker)())
@@ -249,7 +249,7 @@ int VFSNetFTPHost::GetActualListing(VFSNetFTP::CURLInstance *_inst,
         return VFSError::InvalidCall;
     
     auto dir = m_Cache->FindDirectory(_path);
-    if(dir && !dir->IsOutdated())
+    if(dir && !dir->IsOutdated() && !dir->has_dirty_items)
     {
         *_cached_dir = dir;
         return 0;
@@ -449,7 +449,7 @@ bool VFSNetFTPHost::IsWriteable() const
 int VFSNetFTPHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
 {
     shared_ptr<VFSNetFTP::Directory> dir;
-    int result = GetActualListing(m_ListingInstance.get(), _path, &dir, nullptr);
+    int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, nullptr);
     if(result != 0)
         return result;
     

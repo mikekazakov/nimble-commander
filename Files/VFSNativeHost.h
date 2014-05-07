@@ -40,6 +40,8 @@ public:
                                 bool (^_cancel_checker)()
                                 ) override;
     
+    virtual int RemoveDirectory(const char *_path, bool (^_cancel_checker)()) override;    
+    
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
     

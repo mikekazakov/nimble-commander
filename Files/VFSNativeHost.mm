@@ -327,6 +327,14 @@ int VFSNativeHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
     return VFSError::FromErrno(errno);
 }
 
+int VFSNativeHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
+{
+    int ret = rmdir(_path);
+    if(ret == 0)
+        return 0;
+    return VFSError::FromErrno(errno);
+}
+
 int VFSNativeHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, bool (^_cancel_checker)())
 {
     ssize_t sz = readlink(_path, _buffer, _buffer_size);

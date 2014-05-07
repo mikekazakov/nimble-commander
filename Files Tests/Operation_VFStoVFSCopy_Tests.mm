@@ -164,7 +164,6 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
 }
 
-
 - (void)testCopyGenericToGeneric______1
 {
     char dir[MAXPATHLEN];
@@ -191,9 +190,8 @@ static int VFSCompareEntries(const path& _file1_full_path,
                                  VFSNativeHost::SharedHost(),
                                  result) == 0);
     XCTAssert( result == 0 );
-    
-    [NSFileManager.defaultManager removeItemAtPath:[NSString stringWithUTF8String:dir]
-                                             error:nil];
+
+    XCTAssert( VFSEasyDelete(dir, VFSNativeHost::SharedHost()) == 0);
 }
 
 - (void) waitUntilFinish:(volatile bool&)_finished

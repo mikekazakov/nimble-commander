@@ -183,52 +183,36 @@ retry_opendir:
             // replace variable part with current item, so fn is RootPath/item_file_name now
             memcpy(fnvar, entp->d_name, entp->d_namlen+1);
             
-        retry_lstat:
-            struct stat st;
-            if(lstat(fn, &st) == 0)
+            if( entp->d_type == DT_REG )
             {
-                if((st.st_mode&S_IFMT) == S_IFREG)
-                {
-                    bool skip = false;
-                    if( m_RootHasExternalEAs && CanBeExternalEA(entp->d_name) && EAHasMainFile(fn) )
-                        skip = true;
-
-                    if(!skip)
-                        m_ItemsToDelete.push_back(entp->d_name, entp->d_namlen, _prefix);
-                }
-                else if((st.st_mode&S_IFMT) == S_IFLNK)
-                {
+                bool skip = false;
+                if( m_RootHasExternalEAs && CanBeExternalEA(entp->d_name) && EAHasMainFile(fn) )
+                    skip = true;
+                
+                if(!skip)
                     m_ItemsToDelete.push_back(entp->d_name, entp->d_namlen, _prefix);
-                }
-                else if((st.st_mode&S_IFMT) == S_IFDIR)
-                {
-                    char tmp[MAXPATHLEN];
-                    memcpy(tmp, entp->d_name, entp->d_namlen);
-                    tmp[entp->d_namlen] = '/';
-                    tmp[entp->d_namlen+1] = 0;
-                    // add new dir in our tree structure
-                    m_Directories.push_back(tmp, entp->d_namlen+1, _prefix);
-                    auto dirnode = &m_Directories.back();
-                    
-                    // add all items in directory
-                    DoScanDir(fn, dirnode);
-
-                    // add directory itself at the end, since we need it to be deleted last of all
-                    m_ItemsToDelete.push_back(tmp, entp->d_namlen+1, _prefix);
-                }
             }
-            else if (!m_SkipAll)
+            else if( entp->d_type == DT_LNK )
             {
-                int result = [[m_Operation DialogOnStatError:errno ForPath:fn] WaitForResult];
-                if (result == OperationDialogResult::Retry)
-                    goto retry_lstat;
-                else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
-                else if (result == OperationDialogResult::Stop)
-                {
-                    RequestStop();
-                    break;
-                }
+                m_ItemsToDelete.push_back(entp->d_name, entp->d_namlen, _prefix);
             }
+            else if( entp->d_type == DT_DIR )
+            {
+                char tmp[MAXPATHLEN];
+                memcpy(tmp, entp->d_name, entp->d_namlen);
+                tmp[entp->d_namlen] = '/';
+                tmp[entp->d_namlen+1] = 0;
+                // add new dir in our tree structure
+                m_Directories.push_back(tmp, entp->d_namlen+1, _prefix);
+                auto dirnode = &m_Directories.back();
+                
+                // add all items in directory
+                DoScanDir(fn, dirnode);
+                
+                // add directory itself at the end, since we need it to be deleted last of all
+                m_ItemsToDelete.push_back(tmp, entp->d_namlen+1, _prefix);
+            }
+            
         }
         closedir(dirp);
     }

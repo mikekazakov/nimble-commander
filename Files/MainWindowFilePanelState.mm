@@ -708,8 +708,6 @@
 - (void)DeleteFiles:(BOOL)_shift_behavior
 {
     assert([self IsPanelActive]);
-    if(![self ActivePanelData]->Host()->IsNativeFS())
-        return; // currently support files deletion only on native fs
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     
@@ -717,29 +715,50 @@
     if(files->empty())
         return;
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([self ActivePanelData]->Host()->IsNativeFS())
+    {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
-                                                                 ? [defaults integerForKey:@"FilePanelsShiftDeleteBehavior"]
-                                                                 : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
+        FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
+                                                                     ? [defaults integerForKey:@"FilePanelsShiftDeleteBehavior"]
+                                                                     : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
     
-    FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-    [sheet ShowSheet:self.window Files:files.get() Type:type
-             Handler:^(int result){
-                 if (result == DialogResult::Delete)
-                 {
-                     FileDeletionOperationType type = [sheet GetType];
+        FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
+        [sheet ShowSheet:self.window Files:files.get() Type:type
+                 Handler:^(int result){
+                     if (result == DialogResult::Delete)
+                     {
+                         FileDeletionOperationType type = [sheet GetType];
                      
-                     string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+                         string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
                      
-                     FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                                  initWithFiles:move(*files.get())
-                                                  type:type
-                                                  rootpath:root_path.c_str()];
-                     op.TargetPanel = [self ActivePanelController];
-                     [m_OperationsController AddOperation:op];
-                 }
+                         FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                                      initWithFiles:move(*files.get())
+                                                      type:type
+                                                      rootpath:root_path.c_str()];
+                         op.TargetPanel = [self ActivePanelController];
+                         [m_OperationsController AddOperation:op];
+                     }
              }];
+    }
+    else if([self ActivePanelData]->Host()->IsWriteable())
+    {
+        FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
+        [sheet ShowSheetForVFS:self.window
+                         Files:files.get()
+                       Handler:^(int result){
+                           if (result == DialogResult::Delete)
+                           {
+                               string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+                               FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                                            initWithFiles:move(*files.get())
+                                                            rootpath:root_path
+                                                            at:[self ActivePanelData]->Host()];
+                               op.TargetPanel = [self ActivePanelController];
+                               [m_OperationsController AddOperation:op];
+                           }
+                       }];
+    }
 }
 
 - (IBAction)OnDeleteCommand:(id)sender

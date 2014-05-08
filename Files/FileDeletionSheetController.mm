@@ -119,6 +119,26 @@
           contextInfo: nil];
 }
 
+- (void)ShowSheetForVFS:(NSWindow *)_window
+                  Files:(chained_strings *)_files
+                Handler:(FileDeletionSheetCompletionHandler)_handler
+{
+    assert(!_files->empty());
+    assert(_handler);
+    m_Files = _files;
+    m_Handler = _handler;
+
+    [self window]; // load
+    [self.DeleteButton setLabel:@"Delete Permanently" forSegment:0];
+    [self.DeleteButton setSegmentCount:1];
+    
+    [NSApp beginSheet: [self window]
+       modalForWindow: _window
+        modalDelegate: self
+       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+          contextInfo: nil];
+}
+
 - (FileDeletionOperationType)GetType
 {
     return m_ResultType;

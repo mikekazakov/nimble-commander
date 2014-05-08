@@ -25,9 +25,14 @@ typedef void (^FileDeletionSheetCompletionHandler)(int result);
 
 - (id)init;
 
-- (void)ShowSheet:(NSWindow *)_window Files:(chained_strings *)_files
+- (void)ShowSheet:(NSWindow *)_window
+            Files:(chained_strings *)_files
              Type:(FileDeletionOperationType)_type
           Handler:(FileDeletionSheetCompletionHandler)_handler;
+
+- (void)ShowSheetForVFS:(NSWindow *)_window
+                  Files:(chained_strings *)_files
+                Handler:(FileDeletionSheetCompletionHandler)_handler;
 
 - (FileDeletionOperationType)GetType;
 

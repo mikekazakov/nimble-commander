@@ -18,11 +18,6 @@ struct VFSNetFTPOptions
     
 };
 
-namespace VFSNetFTP
-{
-    class Cache;
-}
-
 class VFSNetFTPHost : public VFSHost
 {
 public:

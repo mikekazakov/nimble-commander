@@ -177,7 +177,6 @@ shared_ptr<Directory> ParseListing(const char *_str)
         line_start = line_end + 1;
     }
 
-    directory->snapshot_time = GetTimeInNanoseconds();
     return directory;
 }
         

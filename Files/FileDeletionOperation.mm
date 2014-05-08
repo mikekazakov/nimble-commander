@@ -8,22 +8,25 @@
 
 #import "FileDeletionOperation.h"
 #import "FileDeletionOperationJob.h"
+#import "FileDeletionOperationVFSJob.h"
 #import "OperationDialogAlert.h"
 #import "Common.h"
 #import "PanelController.h"
 
 @implementation FileDeletionOperation
 {
-    FileDeletionOperationJob m_Job;
-    BOOL m_SingleItem;
+    unique_ptr<FileDeletionOperationJob> m_NativeJob;
+    unique_ptr<FileDeletionOperationVFSJob> m_VFSJob;
     
+    bool m_SingleItem;
 }
 
 - (id)initWithFiles:(chained_strings)_files
                type:(FileDeletionOperationType)_type
            rootpath:(const char*)_path
 {
-    self = [super initWithJob:&m_Job];
+    m_NativeJob = make_unique<FileDeletionOperationJob>();
+    self = [super initWithJob:m_NativeJob.get()];
     if (self)
     {
         m_SingleItem = _files.size() == 1;
@@ -44,7 +47,7 @@
                             [NSString stringWithUTF8String:buff]];
         }
         
-        m_Job.Init(std::move(_files), _type, _path, self);        
+        m_NativeJob->Init(std::move(_files), _type, _path, self);
         
         [self AddOnFinishHandler:^{
             if(self.TargetPanel != nil) {
@@ -57,22 +60,40 @@
     return self;
 }   
 
+- (id)initWithFiles:(chained_strings)_files
+           rootpath:(const path&)_path
+                 at:(const VFSHostPtr&)_host
+{
+    m_VFSJob = make_unique<FileDeletionOperationVFSJob>();
+    self = [super initWithJob:m_VFSJob.get()];
+    if (self)
+    {
+        m_SingleItem = _files.size() == 1;
+        m_VFSJob->Init(move(_files), _path, _host, self);
+
+    }
+    return self;
+}
+
 - (void)Update
 {
-    OperationStats &stats = m_Job.GetStats();
-    float progress = stats.GetProgress();
-    if (self.Progress != progress)
-        self.Progress = progress;
-    
-    if (stats.IsCurrentItemChanged())
+    if(m_NativeJob)
     {
-        const char *item = stats.GetCurrentItem();
-        if (!item)
-            self.ShortInfo = @"";
-        else
+        OperationStats &stats = m_NativeJob->GetStats();
+        float progress = stats.GetProgress();
+        if (self.Progress != progress)
+            self.Progress = progress;
+    
+        if (stats.IsCurrentItemChanged())
         {
-            self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
-                              [NSString stringWithUTF8String:item]];
+            const char *item = stats.GetCurrentItem();
+            if (!item)
+                self.ShortInfo = @"";
+            else
+            {
+                self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
+                                [NSString stringWithUTF8String:item]];
+            }
         }
     }
 }
@@ -89,6 +110,20 @@
     
     [self EnqueueDialog:alert];
     
+    return alert;
+}
+
+- (OperationDialogAlert *)DialogOnVFSIterError:(int)_error ForDir:(const char *)_path
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Directory access error"];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nDirectory: %@",
+                                [VFSError::ToNSError(_error) localizedDescription],
+                               [NSString stringWithUTF8String:_path]]];
+    [self EnqueueDialog:alert];
     return alert;
 }
 
@@ -122,6 +157,20 @@
     return alert;
 }
 
+- (OperationDialogAlert *)DialogOnVFSUnlinkError:(int)_error For:(const char *)_path
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Can't delete file"];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
+                               [VFSError::ToNSError(_error) localizedDescription],
+                               [NSString stringWithUTF8String:_path]]];
+    [self EnqueueDialog:alert];
+    return alert;
+}
+
 - (OperationDialogAlert *)DialogOnRmdirError:(int)_error ForPath:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
@@ -134,6 +183,20 @@
     
     [self EnqueueDialog:alert];
     
+    return alert;
+}
+
+- (OperationDialogAlert *)DialogOnVFSRmdirError:(int)_error For:(const char *)_path
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Can't delete directory"];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
+                               [VFSError::ToNSError(_error) localizedDescription],
+                               [NSString stringWithUTF8String:_path]]];
+    [self EnqueueDialog:alert];
     return alert;
 }
 

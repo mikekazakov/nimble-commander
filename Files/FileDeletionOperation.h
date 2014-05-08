@@ -7,7 +7,8 @@
 //
 
 #import "Operation.h"
-#include "chained_strings.h"
+#import "chained_strings.h"
+#import "VFS.h"
 
 @class OperationDialogAlert;
 
@@ -33,6 +34,11 @@ enum class FileDeletionOperationType // do not change ordering, there's a raw va
                type:(FileDeletionOperationType)_type
            rootpath:(const char*)_path;
 
+// VFS deletion can be only "delete", not "moving to trash" or "secure delete"
+- (id)initWithFiles:(chained_strings)_files
+           rootpath:(const path&)_path
+                 at:(const VFSHostPtr&) _host;
+
 - (void)Update;
 
 - (OperationDialogAlert *)DialogOnOpendirError:(int)_error ForDir:(const char *)_path;
@@ -42,4 +48,7 @@ enum class FileDeletionOperationType // do not change ordering, there's a raw va
 - (OperationDialogAlert *)DialogOnTrashItemError:(NSError *)_error ForPath:(const char *)_path;
 - (OperationDialogAlert *)DialogOnSecureRewriteError:(int)_error ForPath:(const char *)_path;
 
+- (OperationDialogAlert *)DialogOnVFSIterError:(int)_error ForDir:(const char *)_path;
+- (OperationDialogAlert *)DialogOnVFSUnlinkError:(int)_error For:(const char *)_path;
+- (OperationDialogAlert *)DialogOnVFSRmdirError:(int)_error For:(const char *)_path;
 @end

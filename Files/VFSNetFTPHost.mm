@@ -20,6 +20,9 @@ VFSNetFTPHost::VFSNetFTPHost(const char *_serv_url):
     VFSHost(_serv_url, nullptr),
     m_Cache(make_unique<VFSNetFTP::Cache>())
 {
+    m_Cache->SetChangesCallback(^(const string &_at_dir) {
+        InformDirectoryChanged(_at_dir.back() == '/' ? _at_dir : _at_dir + "/" );
+    });
 }
 
 VFSNetFTPHost::~VFSNetFTPHost()
@@ -62,6 +65,8 @@ int VFSNetFTPHost::DownloadAndCacheListing(CURLInstance *_inst,
     
     auto dir = ParseListing(listing_data.c_str());
     m_Cache->InsertLISTDirectory(_path, dir);
+    string path = _path;
+    InformDirectoryChanged(path.back() == '/' ? path : path + "/");
     
     if(_cached_dir)
         *_cached_dir = dir;
@@ -208,27 +213,6 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
                                          int _flags,
                                          bool (^_cancel_checker)())
 {
-/*    if(_path == nullptr || _path[0] != '/' )
-        return VFSError::InvalidCall;
-    
-    auto dir = m_Cache->FindDirectory(_path);
-    if(dir && !dir->IsOutdated())
-    {
-        auto listing = make_shared<Listing>(dir, _path, _flags, SharedPtr());
-        *_target = listing;
-        return 0;
-    }
-    
-    // download listing, sync I/O
-    int result = DownloadAndCacheListing(m_ListingInstance.get(), _path, &dir, _cancel_checker); // sync I/O here
-    if(result != 0)
-        return result;
-    
-    assert(dir);
-    
-    auto listing = make_shared<Listing>(dir, _path, _flags, SharedPtr());
-    *_target = listing;
-    return 0;*/
     shared_ptr<VFSNetFTP::Directory> dir;
     int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, _cancel_checker);
     if(result != 0)
@@ -435,6 +419,7 @@ void VFSNetFTPHost::StopDirChangeObserving(unsigned long _ticket)
 
 void VFSNetFTPHost::InformDirectoryChanged(const string &_dir_wth_sl)
 {
+    assert(_dir_wth_sl.back() == '/');
     lock_guard<mutex> lock(m_UpdateHandlersLock);
     for(auto &i: m_UpdateHandlers)
         if(i.path == _dir_wth_sl)

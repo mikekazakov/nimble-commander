@@ -171,7 +171,7 @@ public:
     inline shared_ptr<VFSFile> SharedPtr() { return shared_from_this(); }
     inline shared_ptr<const VFSFile> SharedPtr() const { return shared_from_this(); }
     const char* RelativePath() const;
-    shared_ptr<VFSHost> Host() const;
+    const shared_ptr<VFSHost> &Host() const;
 protected:
     /**
      * Sets a new last error code and returns it for convenience.

@@ -14,9 +14,6 @@
 class FileDeletionOperationJob : public OperationJob
 {
 public:
-    FileDeletionOperationJob();
-    ~FileDeletionOperationJob();
-
     void Init(chained_strings _files, FileDeletionOperationType _type, const char* _root,
               FileDeletionOperation *_op);
     
@@ -32,13 +29,12 @@ protected:
     chained_strings m_RequestedFiles;
     chained_strings m_Directories; // this container will store directories structure in direct order
     chained_strings m_ItemsToDelete; // this container will store files and directories to direct, they will use m_Directories to link path
-    FileDeletionOperationType m_Type;
-    string m_RootPath;
-    unsigned m_ItemsCount;
-    unsigned m_CurrentItemNumber;
-    State m_State;
-    bool m_SkipAll;
-    bool m_RootHasExternalEAs;
+    FileDeletionOperationType   m_Type = FileDeletionOperationType::Invalid;
+    string                      m_RootPath;
+    unsigned                    m_ItemsCount = 0;
+    unsigned                    m_CurrentItemNumber = 0;
+    bool                        m_SkipAll = false;
+    bool                        m_RootHasExternalEAs = false;
     
-    __unsafe_unretained FileDeletionOperation *m_Operation;
+    __unsafe_unretained FileDeletionOperation *m_Operation = nil;
 };

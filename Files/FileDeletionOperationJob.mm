@@ -63,19 +63,6 @@ static inline bool EAHasMainFile(const char *_full_ea_path)
     return lstat(tmp, &st) == 0;
 }
 
-FileDeletionOperationJob::FileDeletionOperationJob():
-    m_Type(FileDeletionOperationType::Invalid),
-    m_ItemsCount(0),
-    m_SkipAll(false),
-    m_RootHasExternalEAs(false)
-{
-    
-}
-
-FileDeletionOperationJob::~FileDeletionOperationJob()
-{
-}
-
 void FileDeletionOperationJob::Init(chained_strings _files, FileDeletionOperationType _type,
                                     const char* _root, FileDeletionOperation *_op)
 {

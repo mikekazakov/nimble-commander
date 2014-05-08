@@ -60,6 +60,8 @@
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
 		CF1100D6191A1EA000E170FC /* VFSNetFTPCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100D4191A1EA000E170FC /* VFSNetFTPCache.mm */; };
+		CF1100DB191B46BD00E170FC /* FileDeletionOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100D9191B46BD00E170FC /* FileDeletionOperationVFSJob.mm */; };
+		CF1100DF191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */; };
 		CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
 		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
 		CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
@@ -438,6 +440,9 @@
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CF1100D4191A1EA000E170FC /* VFSNetFTPCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetFTPCache.mm; sourceTree = "<group>"; };
 		CF1100D5191A1EA000E170FC /* VFSNetFTPCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNetFTPCache.h; sourceTree = "<group>"; };
+		CF1100D9191B46BD00E170FC /* FileDeletionOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperationVFSJob.mm; sourceTree = "<group>"; };
+		CF1100DA191B46BD00E170FC /* FileDeletionOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperationVFSJob.h; sourceTree = "<group>"; };
+		CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFSDelete_Tests.mm; sourceTree = "<group>"; };
 		CF128876177FF9D3002816C2 /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkOperation.h; sourceTree = "<group>"; };
 		CF128877177FF9D3002816C2 /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperation.mm; sourceTree = "<group>"; };
 		CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperationJob.mm; sourceTree = "<group>"; };
@@ -1173,6 +1178,7 @@
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
 				CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */,
+				CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
 			path = "Files Tests";
@@ -1469,6 +1475,8 @@
 				CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */,
 				CFA5839B170EA40F00E508CF /* FileDeletionOperationJob.h */,
 				CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */,
+				CF1100DA191B46BD00E170FC /* FileDeletionOperationVFSJob.h */,
+				CF1100D9191B46BD00E170FC /* FileDeletionOperationVFSJob.mm */,
 				B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */,
 				B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */,
 				B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */,
@@ -1973,6 +1981,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF1100DF191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm in Sources */,
 				CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */,
 				CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */,
 				CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */,
@@ -2186,6 +2195,7 @@
 				CF3B602A18CCA3A20005816A /* VFSArchiveProxy.mm in Sources */,
 				CF9D0E9C17CC961100CB8146 /* archive_read_support_filter_program.c in Sources */,
 				CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
+				CF1100DB191B46BD00E170FC /* FileDeletionOperationVFSJob.mm in Sources */,
 				CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF9D0ECD17CC961100CB8146 /* archive_write_set_format_cpio_newc.c in Sources */,
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,

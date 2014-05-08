@@ -33,10 +33,7 @@ namespace VFSNetFTP
     Entry::~Entry()
     {
         if(cfname != 0)
-        {
             CFRelease(cfname);
-            cfname = 0;
-        }
     }
     
     void Entry::ToStat(VFSStat &_stat) const
@@ -146,9 +143,8 @@ namespace VFSNetFTP
             copy->has_dirty_items = true;
             
             m_Directories.find(dir_path.native())->second = copy;
+            m_Callback(dir_path.native());
         }
-        
-//        dir = FindDirectoryInt(dir_path.native());
     }
     
     void Cache::MakeEntryDirty(const string &_path)
@@ -175,20 +171,21 @@ namespace VFSNetFTP
     
     void Cache::CommitRMD(const string &_path)
     {
-        EraseEntryInt(_path);
-        
         lock_guard<mutex> lock(m_CacheLock);
+
+        EraseEntryInt(_path);
 
         path p = _path;
         p /= "/";
         
         auto i = m_Directories.find(p.native());
         if(i != m_Directories.end())
-            m_Directories.erase(i);        
+            m_Directories.erase(i);
     }
     
     void Cache::CommitUnlink(const string &_path)
     {
+        lock_guard<mutex> lock(m_CacheLock);
         EraseEntryInt(_path);
     }
     
@@ -213,6 +210,7 @@ namespace VFSNetFTP
             
             m_Directories.find(dir_path.native())->second = copy;
         }
+        m_Callback(dir_path.native());
     }
 
     void Cache::EraseEntryInt(const string &_path)
@@ -220,8 +218,6 @@ namespace VFSNetFTP
         path p = _path;
         assert(p.filename() != "."); // _path with no trailing slashes
         assert(p.is_absolute());
-        
-        lock_guard<mutex> lock(m_CacheLock);
         
         // find and erase entry of this dir in parent dir if any
         path dir_path = p.parent_path();
@@ -233,7 +229,6 @@ namespace VFSNetFTP
         {
             auto copy = make_shared<Directory>();
             copy->path = dir->path;
-            copy->snapshot_time = dir->snapshot_time;
             copy->dirty_structure = dir->dirty_structure;
             copy->has_dirty_items = dir->has_dirty_items;
             
@@ -242,6 +237,12 @@ namespace VFSNetFTP
                     copy->entries.emplace_back(i);
             m_Directories.find(dir_path.native())->second = copy;
         }
+        m_Callback(dir_path.native());
+    }
+
+    void Cache::SetChangesCallback(void (^_handler)(const string& _at_dir))
+    {
+        m_Callback = _handler;
     }
     
 }

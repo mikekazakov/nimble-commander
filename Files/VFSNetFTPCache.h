@@ -15,9 +15,6 @@
 
 namespace VFSNetFTP
 {
-    static const uint64_t g_ListingOutdateLimit = 1000lu * 1000lu * 1000lu * 30lu; // 30 sec
-    
-    
     struct Entry
     {
         Entry();
@@ -42,10 +39,7 @@ namespace VFSNetFTP
     struct Directory
     {
         deque<Entry>            entries;
-//        shared_ptr<Directory>   parent_dir;
         string                  path; // with trailing slash
-        uint64_t                snapshot_time = 0;
-//        mutable bool dirty = false; // true when this directory was explicitly set as outdated, regardless of snapshot time
 
         bool                    dirty_structure = false; // true when there're mismatching between this cache and ftp server
         bool                    has_dirty_items = false;
@@ -61,6 +55,8 @@ namespace VFSNetFTP
     class Cache
     {
     public:
+        void SetChangesCallback(void (^_handler)(const string& _at_dir));
+        
         /**
          * Return nullptr if was not able to find directory.
          */
@@ -112,6 +108,7 @@ namespace VFSNetFTP
         
         map<string, shared_ptr<Directory>>  m_Directories; // "/Abra/Cadabra/" -> Directory
         mutable mutex             m_CacheLock;
+        void                    (^m_Callback)(const string&);
     };
     
     

@@ -62,6 +62,7 @@ public:
     
     virtual bool ShouldProduceThumbnails() override;
     virtual bool IsWriteable() const override;
+    virtual bool IsWriteableAtPath(const char *_dir) const override;
     
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    

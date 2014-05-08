@@ -69,6 +69,7 @@ void FileDeletionOperationJob::Init(chained_strings _files, FileDeletionOperatio
     m_RequestedFiles.swap(_files);  
     m_Type = _type;
     m_RootPath = _root;
+    if(m_RootPath.back() != '/') m_RootPath += '/';
     m_Operation = _op;
 }
 

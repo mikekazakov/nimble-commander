@@ -102,6 +102,8 @@
 		CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
+		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
+		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
 		CF649C3A18D2C0C200055595 /* show_oplist_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF649C3918D2C0C200055595 /* show_oplist_icon.png */; };
 		CF649C3D18D2D31600055595 /* show_oplist_hl_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF649C3C18D2D31600055595 /* show_oplist_hl_icon.png */; };
 		CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */; };
@@ -516,6 +518,9 @@
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
+		CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationVFSJob.mm; sourceTree = "<group>"; };
+		CF5913CA191BD422003007F1 /* CreateDirectoryOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectoryOperationVFSJob.h; sourceTree = "<group>"; };
+		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
 		CF649C3918D2C0C200055595 /* show_oplist_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = show_oplist_icon.png; sourceTree = "<group>"; };
 		CF649C3C18D2D31600055595 /* show_oplist_hl_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = show_oplist_hl_icon.png; sourceTree = "<group>"; };
 		CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveUnRARHost.mm; sourceTree = "<group>"; };
@@ -1182,6 +1187,7 @@
 				CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */,
 				CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */,
 				CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */,
+				CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
 			path = "Files Tests";
@@ -1453,6 +1459,8 @@
 				CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */,
 				CF9DF217171320D40008CBAE /* CreateDirectoryOperationJob.h */,
 				CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */,
+				CF5913CA191BD422003007F1 /* CreateDirectoryOperationVFSJob.h */,
+				CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */,
 			);
 			name = CreateDirectoryOperation;
 			sourceTree = "<group>";
@@ -1992,6 +2000,7 @@
 				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
 				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
 				CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
+				CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2218,6 +2227,7 @@
 				CF9D0EA817CC961100CB8146 /* archive_read_support_format_lha.c in Sources */,
 				CF9D0EB317CC961100CB8146 /* archive_virtual.c in Sources */,
 				CF9D0E9617CC961100CB8146 /* archive_read_support_filter_compress.c in Sources */,
+				CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CF9D0EAE17CC961100CB8146 /* archive_read_support_format_zip.c in Sources */,
 				CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */,
 				CFB709AB18D962E600A83E61 /* VFSNetFTPFile.mm in Sources */,

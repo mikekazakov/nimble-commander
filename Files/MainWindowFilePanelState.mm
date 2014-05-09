@@ -773,22 +773,29 @@
 
 - (IBAction)OnCreateDirectoryCommand:(id)sender{
     assert([self IsPanelActive]);
-    PanelData *curdata = [self ActivePanelData];
-    if(!curdata->Host()->IsNativeFS())
-        return; // currently support directory creation only on native fs
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
-    
-    CreateDirectorySheetController *cd = [[CreateDirectorySheetController alloc] init];
-    [cd ShowSheet:[self window] handler:^(int _ret)
+    PanelData *curdata = [self ActivePanelData];
+    if( !curdata->Host()->IsWriteable() )
+        return;
+
+    CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
+    [cd ShowSheet:self.window handler:^(int _ret)
      {
          if(_ret == DialogResult::Create)
          {
-
              string pdir = curdata->DirectoryPathWithoutTrailingSlash();
-             CreateDirectoryOperation *op = [[CreateDirectoryOperation alloc] initWithPath:[[cd.TextField stringValue] fileSystemRepresentation]
-                                                                                  rootpath:pdir.c_str()
-                                             ];
+             
+             CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
+             if(curdata->Host()->IsNativeFS())
+                 op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
+                              rootpath:pdir.c_str()
+                       ];
+             else
+                 op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
+                              rootpath:pdir.c_str()
+                                    at:curdata->Host()
+                       ];
              op.TargetPanel = [self ActivePanelController];
              [m_OperationsController AddOperation:op];
          }
@@ -1093,9 +1100,9 @@
     if([panel GoToGlobalHostsPathSync:_path] == VFSError::Ok)
     {
         if(!_entries.empty())
-            [panel ScheduleDelayedSelectionChangeForC:_entries.front().c_str()
-                                            timeoutms:100
-                                             checknow:true];
+            [panel ScheduleDelayedSelectionChangeFor:_entries.front().c_str()
+                                           timeoutms:100
+                                            checknow:true];
         
         PanelData *data = [self ActivePanelData];
         for(auto &i: _entries)

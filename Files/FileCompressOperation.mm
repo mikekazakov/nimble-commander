@@ -162,11 +162,8 @@
     if(!m_HasTargetFn)
         [self ExtractTargetFn];
     
-    NSString *arc_name = m_ArchiveName;
+    string arc_name = m_ArchiveName.UTF8String;
     PanelController *target = self.TargetPanel;
-    
-    if(!arc_name)
-        return;
     
     dispatch_to_main_queue( ^{
         [target RefreshDirectory];

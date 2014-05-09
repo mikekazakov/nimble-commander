@@ -123,10 +123,17 @@
 
 - (IBAction)OnMoveToTrash:(id)sender
 {
-    if(![self ActivePanelData]->Host()->IsNativeFS())
-        return; // currently support files deletion only on native fs
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
+    
+    if([self ActivePanelData]->Host()->IsNativeFS() == false &&
+       [self ActivePanelData]->Host()->IsWriteable() == true )
+    {
+        // instead of trying to silently reap files on VFS like FTP (that means we'll erase it, not move to trash) -
+        // forward request as a regular F8 delete
+        [self OnDeleteCommand:self];
+        return;
+    }
     
     auto files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
     if(files.empty())

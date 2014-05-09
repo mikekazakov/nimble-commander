@@ -78,6 +78,9 @@ enum ActiveState
 - (PanelData*) ActivePanelData;
 - (PanelController*) ActivePanelController;
 - (PanelView*) ActivePanelView;
+
+
+- (IBAction)OnDeleteCommand:(id)sender;
 @end
 
 #import "MainWindowFilePanelState+ContextMenu.h"

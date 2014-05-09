@@ -13,18 +13,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-CreateDirectoryOperationJob::CreateDirectoryOperationJob()
-{
-    
-    
-}
-
-CreateDirectoryOperationJob::~CreateDirectoryOperationJob()
-{
-    
-    
-}
-
 void CreateDirectoryOperationJob::Init(const char *_path, const char *_root_path, CreateDirectoryOperation *_operation)
 {
     strcpy(m_Path, _path);

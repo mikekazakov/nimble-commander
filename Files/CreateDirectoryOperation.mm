@@ -8,25 +8,43 @@
 
 #import "CreateDirectoryOperation.h"
 #import "CreateDirectoryOperationJob.h"
+#import "CreateDirectoryOperationVFSJob.h"
 #import "PanelController.h"
 #import "Common.h"
 
 @implementation CreateDirectoryOperation
 {
-    CreateDirectoryOperationJob m_Job;
-    char m_OriginalPathRequest[MAXPATHLEN];
+    unique_ptr<CreateDirectoryOperationJob> m_NativeJob;
+    unique_ptr<CreateDirectoryOperationVFSJob> m_VFSJob;
+    string m_OriginalPathRequest;
     uint64_t m_OperationStart;
 
 }
 
 - (id)initWithPath:(const char*)_path rootpath:(const char*)_rootpath
 {
-    self = [super initWithJob:&m_Job];
+    m_NativeJob = make_unique<CreateDirectoryOperationJob>();
+    self = [super initWithJob:m_NativeJob.get()];
     if (self)
     {
-        strcpy(m_OriginalPathRequest, _path);
+        m_OriginalPathRequest = _path;
         m_OperationStart = GetTimeInNanoseconds();
-        m_Job.Init(_path, _rootpath, self);
+        m_NativeJob->Init(_path, _rootpath, self);
+        self.Caption = [NSString stringWithFormat:@"Creating directory \"%@\"",
+                        [NSString stringWithUTF8String:_path]];
+    }
+    return self;
+}
+
+- (id)initWithPath:(const char*)_path rootpath:(const char*)_rootpath at:(const VFSHostPtr&)_host
+{
+    m_VFSJob = make_unique<CreateDirectoryOperationVFSJob>();
+    self = [super initWithJob:m_VFSJob.get()];
+    if (self)
+    {
+        m_OriginalPathRequest = _path;
+        m_OperationStart = GetTimeInNanoseconds();
+        m_VFSJob->Init(_path, _rootpath, _host, self);
         self.Caption = [NSString stringWithFormat:@"Creating directory \"%@\"",
                         [NSString stringWithUTF8String:_path]];
     }
@@ -49,6 +67,23 @@
     return alert;
 }
 
+- (OperationDialogAlert *)DialogOnCrDirVFSError:(int)_error
+                                         ForDir:(const char *)_path
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
+                                   initRetrySkipSkipAllAbortHide:NO];
+    
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:@"Failed to create directory"];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
+                               VFSError::ToNSError(_error).localizedDescription,
+                               [NSString stringWithUTF8String:_path]]];
+    
+    [self EnqueueDialog:alert];
+    
+    return alert;
+}
+
 - (void) OnFinish
 {
     [super OnFinish];
@@ -57,15 +92,14 @@
         
     if(self.TargetPanel != nil && (GetTimeInNanoseconds() - m_OperationStart < op_time_thresh) )
     {
-        if(strchr(m_OriginalPathRequest, '/') == 0)
+        if(m_OriginalPathRequest.find('/') == string::npos)
         {
             // select new entry only if it was a short path
-            NSString *path = [NSString stringWithUTF8String:m_OriginalPathRequest];
             PanelController *target = self.TargetPanel;
             
             dispatch_to_main_queue( ^{
                 [target RefreshDirectory];
-                [target ScheduleDelayedSelectionChangeFor:path
+                [target ScheduleDelayedSelectionChangeFor:m_OriginalPathRequest
                                                 timeoutms:500
                                                  checknow:true];
                 });

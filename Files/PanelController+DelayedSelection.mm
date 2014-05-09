@@ -15,17 +15,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Delayed cursors movement support
 
-- (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
-{
-    [self ScheduleDelayedSelectionChangeForC:[_item_name fileSystemRepresentation]
-                                   timeoutms:_time_out_in_ms
-                                    checknow:_check_now];
-}
-
-- (void) ScheduleDelayedSelectionChangeForC:(const char*)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
+- (void) ScheduleDelayedSelectionChangeFor:(const string &)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
-    assert(_item_name);
     // we assume that _item_name will not contain any forward slashes
     
     m_DelayedSelection.isvalid = true;

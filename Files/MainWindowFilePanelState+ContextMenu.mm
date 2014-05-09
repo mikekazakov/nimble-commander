@@ -640,7 +640,7 @@ proceed:;
                                                              options:opts];
     char target_fn[MAXPATHLEN];
     GetFilenameFromPath(target, target_fn);
-    NSString *target_fns = [NSString stringWithUTF8String:target_fn];
+    string target_fns = target_fn;
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue( ^{
             [m_CurrentController ScheduleDelayedSelectionChangeFor:target_fns

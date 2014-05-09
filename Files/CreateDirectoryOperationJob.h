@@ -14,16 +14,13 @@
 class CreateDirectoryOperationJob : public OperationJob
 {
 public:
-    CreateDirectoryOperationJob();
-    ~CreateDirectoryOperationJob();
-
     void Init(const char *_path, const char *_root_path, CreateDirectoryOperation *_operation);
     
 protected:
     virtual void Do();
     
 private:
-    __unsafe_unretained CreateDirectoryOperation *m_Operation;
+    __unsafe_unretained CreateDirectoryOperation *m_Operation = nil;
     char m_Name[MAXPATHLEN];
     char m_Path[MAXPATHLEN];
     char m_RootPath[MAXPATHLEN];

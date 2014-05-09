@@ -20,16 +20,9 @@
  * If on any checking it will be found that time for request has went out - it will be removed (500ms is just ok for _time_out_in_ms).
  * Will also deselect any currenly selected items.
  */
-- (void) ScheduleDelayedSelectionChangeFor:(NSString *)_item_name
+- (void) ScheduleDelayedSelectionChangeFor:(const string &)_item_name
                                  timeoutms:(int)_time_out_in_ms
                                   checknow:(bool)_check_now;
-
-/**
- * Just the same as ScheduleDelayedSelectionChangeFor, but has plain-C _item_name parameter
- */
-- (void) ScheduleDelayedSelectionChangeForC:(const char*)_item_name
-                                  timeoutms:(int)_time_out_in_ms
-                                   checknow:(bool)_check_now;
 
 /**
  * Private PanelController method.

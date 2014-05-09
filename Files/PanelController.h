@@ -120,6 +120,8 @@ namespace panel
          */
         uint64_t    request_end;
     } m_DelayedSelection;
+    
+    __weak MainWindowFilePanelState* m_FilePanelState;
 }
 
 @property (weak) MainWindowFilePanelState* state;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13D61" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -19,14 +19,14 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="8G6-nH-UUs">
-                    <rect key="frame" x="20" y="48" width="328" height="193"/>
+                    <rect key="frame" x="20" y="50" width="328" height="191"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <clipView key="contentView" id="pjZ-Ta-3LC">
-                        <rect key="frame" x="1" y="17" width="326" height="175"/>
+                        <rect key="frame" x="1" y="17" width="326" height="173"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="9HZ-fC-91A" id="p39-Vd-dj2">
-                                <rect key="frame" x="0.0" y="0.0" width="326" height="175"/>
+                                <rect key="frame" x="0.0" y="0.0" width="326" height="173"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -92,10 +92,10 @@
                     </tableHeaderView>
                 </scrollView>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="l4M-t4-kzQ">
-                    <rect key="frame" x="20" y="20" width="20" height="20"/>
+                    <rect key="frame" x="19" y="20" width="22" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="20" id="dBw-1P-Aqj"/>
+                        <constraint firstAttribute="height" constant="22" id="dBw-1P-Aqj"/>
                     </constraints>
                     <buttonCell key="cell" type="square" title="+" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ink-SD-Pb6">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -106,9 +106,9 @@
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="dns-GN-ceG">
-                    <rect key="frame" x="39" y="20" width="20" height="20"/>
+                    <rect key="frame" x="40" y="20" width="22" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="square" title="-" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rUI-04-LHv">
+                    <buttonCell key="cell" type="square" title="-" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rUI-04-LHv">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
                     </buttonCell>
@@ -117,8 +117,8 @@
                         <binding destination="tw8-Qz-5OO" name="enabled" keyPath="canRemove" id="sDC-pl-Ti9"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lza-Yw-trV">
-                    <rect key="frame" x="67" y="12" width="283" height="28"/>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Lza-Yw-trV">
+                    <rect key="frame" x="68" y="14" width="282" height="28"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When choosing which editor to start they are checked in order of appearance in this list." id="OHQ-k9-cKW">
                         <font key="font" metaFont="smallSystem"/>
@@ -129,19 +129,19 @@
             </subviews>
             <constraints>
                 <constraint firstItem="8G6-nH-UUs" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="7qr-sY-mhM"/>
-                <constraint firstItem="Lza-Yw-trV" firstAttribute="leading" secondItem="dns-GN-ceG" secondAttribute="trailing" constant="10" id="LCc-gY-wAv"/>
                 <constraint firstItem="8G6-nH-UUs" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="Leu-SW-gDR"/>
                 <constraint firstItem="Lza-Yw-trV" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="W1u-gh-Yox"/>
-                <constraint firstItem="l4M-t4-kzQ" firstAttribute="baseline" secondItem="dns-GN-ceG" secondAttribute="baseline" id="aNQ-2F-Whx"/>
+                <constraint firstItem="dns-GN-ceG" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="40" id="YYa-yC-JsR"/>
                 <constraint firstItem="l4M-t4-kzQ" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="bCR-YR-nHw"/>
+                <constraint firstItem="Lza-Yw-trV" firstAttribute="leading" secondItem="dns-GN-ceG" secondAttribute="trailing" constant="8" id="dz7-u4-IoX"/>
+                <constraint firstItem="dns-GN-ceG" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="trailing" constant="-1" id="fmG-Vl-UdU"/>
                 <constraint firstAttribute="bottom" secondItem="l4M-t4-kzQ" secondAttribute="bottom" constant="20" symbolic="YES" id="hfP-BW-4FV"/>
-                <constraint firstItem="8G6-nH-UUs" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="leading" id="l98-G4-Cuc"/>
+                <constraint firstItem="dns-GN-ceG" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="jZT-D5-PLx"/>
+                <constraint firstItem="8G6-nH-UUs" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="leading" constant="1" id="l98-G4-Cuc"/>
                 <constraint firstAttribute="trailing" secondItem="8G6-nH-UUs" secondAttribute="trailing" constant="20" symbolic="YES" id="me7-cb-RPP"/>
                 <constraint firstItem="Lza-Yw-trV" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="trailing" constant="29" id="mhO-lt-jhe"/>
-                <constraint firstItem="dns-GN-ceG" firstAttribute="leading" secondItem="l4M-t4-kzQ" secondAttribute="trailing" constant="-1" id="pvi-4k-amF"/>
-                <constraint firstItem="dns-GN-ceG" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="39" id="qPv-4l-M6s"/>
                 <constraint firstItem="8G6-nH-UUs" firstAttribute="trailing" secondItem="Lza-Yw-trV" secondAttribute="trailing" id="sZW-iq-cEi"/>
-                <constraint firstItem="dns-GN-ceG" firstAttribute="top" secondItem="8G6-nH-UUs" secondAttribute="bottom" constant="8" symbolic="YES" id="umz-Mm-sds"/>
+                <constraint firstItem="dns-GN-ceG" firstAttribute="baseline" secondItem="l4M-t4-kzQ" secondAttribute="baseline" id="v4B-IH-Wqn"/>
             </constraints>
         </customView>
         <arrayController objectClassName="ExternalEditorInfo" id="tw8-Qz-5OO">

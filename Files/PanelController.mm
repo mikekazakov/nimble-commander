@@ -87,7 +87,7 @@ void panel::GenericCursorPersistance::Restore()
 
 @implementation PanelController
 
-@synthesize state;
+@synthesize state = m_FilePanelState;
 
 - (id) init
 {
@@ -830,26 +830,29 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) HandleBriefSystemOverview
 {
+    MainWindowFilePanelState* state = self.state;
     if(m_BriefSystemOverview)
     {
-        [(MainWindowFilePanelState*)self.state CloseOverlay:self];
+        [state CloseOverlay:self];
         m_BriefSystemOverview = nil;
         return;
     }
-    m_BriefSystemOverview = [(MainWindowFilePanelState*)self.state RequestBriefSystemOverview:self];
+    m_BriefSystemOverview = [state RequestBriefSystemOverview:self];
     [self UpdateBriefSystemOverview];
 }
 
 - (void) HandleFileView // F3
 {
+    MainWindowFilePanelState* state = self.state;
+    
     // Close quick preview, if it is open.
     if(m_QuickLook) {
-        [(MainWindowFilePanelState*)self.state CloseOverlay:self];
+        [state CloseOverlay:self];
         m_QuickLook = nil;
         return;
     }
     
-    m_QuickLook = [(MainWindowFilePanelState*)self.state RequestQuickLookView:self];
+    m_QuickLook = [state RequestQuickLookView:self];
     [self OnCursorChanged];
 }
 

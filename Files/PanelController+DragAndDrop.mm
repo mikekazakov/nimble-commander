@@ -149,14 +149,14 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 @property(weak)         PanelController    *controller;
 @property(nonatomic)    shared_ptr<VFSHost> vfs;
 @property(nonatomic)    string              root_path;
-@property(nonatomic)    int                 count;
+@property(nonatomic)    unsigned            count;
 @end
 
 @implementation PanelControllerDragSourceBroker
 {
     NSURL *m_URLPromiseTarget;
     shared_ptr<VFSHost> m_VFS;
-    int m_Count;
+    unsigned m_Count;
 }
 
 @synthesize vfs = m_VFS;
@@ -311,7 +311,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         dragPosition.y -= 16;
     }
     
-    broker.count = drag_items.count;
+    broker.count = (unsigned)drag_items.count;
     if(drag_items.count > 0)
         [_view beginDraggingSessionWithItems:drag_items event:_event source:broker];
 }

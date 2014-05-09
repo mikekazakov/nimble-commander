@@ -29,33 +29,8 @@
     self = [super initWithJob:m_NativeJob.get()];
     if (self)
     {
-        m_SingleItem = _files.size() == 1;
-        
-        // Set caption.
-        char buff[128] = {0};
-        GetDirectoryFromPath(_path, buff, 128);
-        if(_files.size() == 1)
-        {
-            self.Caption = [NSString stringWithFormat:@"Deleting \"%@\" from \"%@\"",
-                            [NSString stringWithUTF8String:_files.front().c_str()],
-                            [NSString stringWithUTF8String:buff]];
-        }
-        else
-        {
-            self.Caption = [NSString stringWithFormat:@"Deleting %i items from \"%@\"",
-                            _files.size(),
-                            [NSString stringWithUTF8String:buff]];
-        }
-        
+        [self initCommon:_files rootpath:_path];
         m_NativeJob->Init(std::move(_files), _type, _path, self);
-        
-        [self AddOnFinishHandler:^{
-            if(self.TargetPanel != nil) {
-                dispatch_to_main_queue( ^{
-                    [self.TargetPanel RefreshDirectory];
-                });
-            }
-        }];
     }
     return self;
 }   
@@ -68,32 +43,54 @@
     self = [super initWithJob:m_VFSJob.get()];
     if (self)
     {
-        m_SingleItem = _files.size() == 1;
+        [self initCommon:_files rootpath:_path];
         m_VFSJob->Init(move(_files), _path, _host, self);
-
     }
     return self;
 }
 
+- (void)initCommon:(const chained_strings&)_files rootpath:(path)_path
+{
+    m_SingleItem = _files.size() == 1;
+    
+    if(_path.filename() == ".") _path.remove_filename();
+    NSString *dirname = [NSString stringWithUTF8String:_path.filename().c_str()];
+    
+    if(m_SingleItem)
+        self.Caption = [NSString stringWithFormat:@"Deleting \"%@\" from \"%@\"",
+                        [NSString stringWithUTF8String:_files.front().c_str()],
+                        dirname];
+    else
+        self.Caption = [NSString stringWithFormat:@"Deleting %i items from \"%@\"",
+                        _files.size(),
+                        dirname];
+    
+    [self AddOnFinishHandler:^{
+        if(self.TargetPanel != nil) {
+            dispatch_to_main_queue( ^{
+                [self.TargetPanel RefreshDirectory];
+            });
+        }
+    }];
+}
+
 - (void)Update
 {
-    if(m_NativeJob)
-    {
-        OperationStats &stats = m_NativeJob->GetStats();
-        float progress = stats.GetProgress();
-        if (self.Progress != progress)
-            self.Progress = progress;
+    OperationStats &stats = m_NativeJob ? m_NativeJob->GetStats() : m_VFSJob->GetStats();
     
-        if (stats.IsCurrentItemChanged())
+    float progress = stats.GetProgress();
+    if (self.Progress != progress)
+        self.Progress = progress;
+    
+    if (stats.IsCurrentItemChanged())
+    {
+        const char *item = stats.GetCurrentItem();
+        if (!item)
+            self.ShortInfo = @"";
+        else
         {
-            const char *item = stats.GetCurrentItem();
-            if (!item)
-                self.ShortInfo = @"";
-            else
-            {
-                self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
-                                [NSString stringWithUTF8String:item]];
-            }
+            self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
+                              [NSString stringWithUTF8String:item]];
         }
     }
 }

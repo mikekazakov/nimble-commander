@@ -83,14 +83,12 @@ void FileDeletionOperationJob::Do()
 
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
-    m_ItemsCount = m_ItemsToDelete.size();
-    
     char entryfilename[MAXPATHLEN], *entryfilename_var;
     strcpy(entryfilename, m_RootPath.c_str());
     entryfilename_var = &entryfilename[0] + strlen(entryfilename);
     
     m_Stats.StartTimeTracking();
-    m_Stats.SetMaxValue(m_ItemsCount);
+    m_Stats.SetMaxValue(m_ItemsToDelete.size());
     
     for(auto &i: m_ItemsToDelete)
     {

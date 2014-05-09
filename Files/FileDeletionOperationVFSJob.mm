@@ -29,9 +29,13 @@ void FileDeletionOperationVFSJob::Do()
 {
     DoScan();
     
+    m_Stats.StartTimeTracking();
+    m_Stats.SetMaxValue(m_ItemsToDelete.size());
+        
     for(auto &i: m_ItemsToDelete)
     {
         if(CheckPauseOrStop()) { SetStopped(); return; }
+        m_Stats.SetCurrentItem(i.c_str());
         string name = i.to_str_with_pref();
         path path = m_RootPath / name;
         if(name.back() == '/')
@@ -58,7 +62,11 @@ void FileDeletionOperationVFSJob::Do()
                 else if (result == OperationDialogResult::Stop) RequestStop();
             }
         }
+        
+        m_Stats.AddValue(1);        
     }
+    
+    m_Stats.SetCurrentItem(nullptr);
     
     if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();

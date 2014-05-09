@@ -31,7 +31,6 @@ protected:
     chained_strings m_ItemsToDelete; // this container will store files and directories to direct, they will use m_Directories to link path
     FileDeletionOperationType   m_Type = FileDeletionOperationType::Invalid;
     string                      m_RootPath;
-    unsigned                    m_ItemsCount = 0;
     unsigned                    m_CurrentItemNumber = 0;
     bool                        m_SkipAll = false;
     bool                        m_RootHasExternalEAs = false;

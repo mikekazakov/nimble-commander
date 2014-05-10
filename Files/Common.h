@@ -128,6 +128,7 @@ struct MachTimeBenchmark
 
 
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
+bool IsRunningUnitTesting();
 
 NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz);
 

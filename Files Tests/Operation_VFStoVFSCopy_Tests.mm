@@ -164,17 +164,14 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
 }
 
-- (void)testCopyGenericToGeneric______1
+- (void)testCopyGenericToGeneric_Modes_CopyToPrefix
 {
-    char dir[MAXPATHLEN];
-    sprintf(dir, "%sinfo.filesmanager.tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
-    XCTAssert( mkdtemp(dir) != nullptr );
-
+    auto dir = self.makeTmpDir;
     FileCopyOperation *op = [FileCopyOperation alloc];
     op = [op initWithFiles:chained_strings("Mail.app")
                       root:"/Applications/"
                     srcvfs:VFSNativeHost::SharedHost()
-                      dest:dir
+                      dest:dir.c_str()
                     dstvfs:VFSNativeHost::SharedHost()
                    options:FileCopyOperationOptions()];
     
@@ -190,8 +187,99 @@ static int VFSCompareEntries(const path& _file1_full_path,
                                  VFSNativeHost::SharedHost(),
                                  result) == 0);
     XCTAssert( result == 0 );
+    
+    XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
+}
 
-    XCTAssert( VFSEasyDelete(dir, VFSNativeHost::SharedHost()) == 0);
+- (void)testCopyGenericToGeneric_Modes_CopyToPrefix_WithAbsentDirectoriesInPath
+{
+    // just like testCopyGenericToGeneric_Modes_CopyToPrefix but file copy operation should build a destination path
+    auto dir = self.makeTmpDir;
+    path dst_dir = path(dir) / "Some" / "Absent" / "Dir" / "Is" / "Here";
+    
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("Mail.app")
+                      root:"/Applications/"
+                    srcvfs:VFSNativeHost::SharedHost()
+                      dest:dst_dir.c_str()
+                    dstvfs:VFSNativeHost::SharedHost()
+                   options:FileCopyOperationOptions()];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries(path("/Applications") / "Mail.app",
+                                 VFSNativeHost::SharedHost(),
+                                 dst_dir / "Mail.app",
+                                 VFSNativeHost::SharedHost(),
+                                 result) == 0);
+    XCTAssert( result == 0 );
+    
+    XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
+}
+
+- (void)testCopyGenericToGeneric_Modes_CopyToPrefix_WithLocalDir
+{
+    // works on single host - In and Out same as where source files are
+    auto dir = self.makeTmpDir;
+    auto host = VFSNativeHost::SharedHost();
+    
+    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
+                               host,
+                               (path(dir) / "Mail.app").c_str(),
+                               host) == 0);
+    
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("Mail.app")
+                      root:dir.c_str()
+                    srcvfs:host
+                      dest:"SomeDirectoryName/"
+                    dstvfs:host
+                   options:FileCopyOperationOptions()];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, path(dir) / "SomeDirectoryName" / "Mail.app", host, result) == 0);
+    XCTAssert( result == 0 );
+    XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
+}
+
+- (void)testCopyGenericToGeneric_Modes_CopyToPathName_WithLocalDir
+{
+    // works on single host - In and Out same as where source files are
+    // Copies "Mail.app" to "Mail2.app" in the same dir
+    auto dir = self.makeTmpDir;
+    auto host = VFSNativeHost::SharedHost();
+    
+    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
+                               host,
+                               (path(dir) / "Mail.app").c_str(),
+                               host) == 0);
+    
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("Mail.app")
+                      root:dir.c_str()
+                    srcvfs:host
+                      dest:"Mail2.app"
+                    dstvfs:host
+                   options:FileCopyOperationOptions()];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, path(dir) / "Mail2.app", host, result) == 0);
+    XCTAssert( result == 0 );
+    XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
 
 - (void) waitUntilFinish:(volatile bool&)_finished
@@ -204,6 +292,14 @@ static int VFSCompareEntries(const path& _file1_full_path,
         if(sleeped > sleep_tresh)
             break;
     }
+}
+
+- (path)makeTmpDir
+{
+    char dir[MAXPATHLEN];
+    sprintf(dir, "%sinfo.filesmanager.tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+    XCTAssert( mkdtemp(dir) != nullptr );
+    return dir;
 }
 
 @end

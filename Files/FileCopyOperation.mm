@@ -279,15 +279,15 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     return m_NativeToNativeJob->IsSingleFileCopy();
 }
 
-- (OperationDialogAlert *)OnDestCantCreateDir:(int)_error ForDir:(const char *)_path
+- (OperationDialogAlert *)OnDestCantCreateDir:(NSError*)_error ForDir:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
                                    initRetrySkipSkipAllAbortHide:NO];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Failed to create directory"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
-                               strerror(_error), [NSString stringWithUTF8String:_path]]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
+                               _error.localizedDescription, [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     

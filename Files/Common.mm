@@ -13,6 +13,7 @@
 #import "NativeFSManager.h"
 #import "Common.h"
 #import "sysinfo.h"
+#import "AppDelegate.h"
 
 static uint64_t InitGetTimeInNanoseconds();
 uint64_t (*GetTimeInNanoseconds)() = InitGetTimeInNanoseconds;
@@ -398,4 +399,9 @@ NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz)
         return [NSString stringWithFormat:@"%4llu P", res + (_sz - res * div) / (div/2)];
     }
     return @"";
+}
+
+bool IsRunningUnitTesting()
+{
+    return ((AppDelegate*)[NSApplication.sharedApplication delegate]).isRunningTests;
 }

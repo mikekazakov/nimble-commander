@@ -34,6 +34,8 @@ public:
     
 private:
     virtual void Do();
+    void BuildDirectories(const path &_dir, const VFSHostPtr& _host);
+    void Analyze();
     void ScanItems();
     void ScanItem(const string &_full_path, const string &_short_path, const chained_strings::node *_prefix);
     void ProcessItems();
@@ -48,8 +50,43 @@ private:
         is_dir      = 0b0001,
     };
 
+    enum class WorkMode
+    {
+        /**
+         Files are copied into some "/dir/other/dir" structure and their filenames like
+         
+         "[base src path]abra/cadabra.txt"
+         
+         would be appended after this 'prefix':
+         
+         "/dir/other/dir/abra/cadabra.txt"
+         
+         @brief CopyToPathPreffix is a most used work mode - CopyTo.
+         */
+        CopyToPathPreffix,
+        
+        /**
+         Files are copied into some "Entity". For SingleEntryCopy(single root element in list - MyFiles) that will cause a files like:
+        
+         [base src path]../MyFiles/1.txt
+         
+         [base src path]../MyFiles/2.txt
+         
+         will be copied into:
+         
+         [base src path]../Entity/1.txt
+         
+         [base src path]../Entity/2.txt
+         
+         @brief CopyToPathPreffix is usually a CopyAs.
+         */
+        CopyToPathName
+    };
+    
+    
+    
     enum {
-        BUFFER_SIZE = (512*1024) // 512kb
+        m_BufferSize = (512*1024) // 512kb
     };
     
     __unsafe_unretained FileCopyOperation  *m_Operation;
@@ -57,20 +94,23 @@ private:
     chained_strings                         m_InitialItems;
     chained_strings                         m_ScannedItems;
     const chained_strings::node             *m_CurrentlyProcessingItem;
-    
+
+    shared_ptr<VFSHost>                     m_OrigSrcHost;
+    shared_ptr<VFSHost>                     m_OrigDstHost;
     shared_ptr<VFSHost>                     m_SrcHost;
     shared_ptr<VFSHost>                     m_DstHost;
     path                                    m_SrcDir;
     path                                    m_OriginalDestination;
     path                                    m_Destination;
-    unique_ptr<uint8_t[]>                   m_Buffer = make_unique<uint8_t[]>(BUFFER_SIZE);
+    unique_ptr<uint8_t[]>                   m_Buffer = make_unique<uint8_t[]>(m_BufferSize);
     
     vector<uint8_t>                         m_ItemFlags;
+    WorkMode                                m_WorkMode = WorkMode::CopyToPathPreffix;
     unsigned                                m_SourceNumberOfFiles = 0;
     unsigned                                m_SourceNumberOfDirectories = 0;
     uint64_t                                m_SourceTotalBytes = 0;
     uint64_t                                m_TotalCopied = 0;
-    
+    bool                                    m_IsSingleEntryCopy = false;
     bool                                    m_SkipAll = false;
     bool                                    m_OverwriteAll = false;
     bool                                    m_AppendAll = false;

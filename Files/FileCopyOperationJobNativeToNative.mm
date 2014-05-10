@@ -109,23 +109,7 @@ static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
     fsetattrlist(_target_fd, &attrs, &_with_times->st_ctimespec, sizeof(struct timespec), 0);
 }
 
-FileCopyOperationJobNativeToNative::FileCopyOperationJobNativeToNative():
-    m_Operation(0),
-    m_SourceNumberOfFiles(0),
-    m_SourceNumberOfDirectories(0),
-    m_SourceTotalBytes(0),
-    m_CurrentlyProcessingItem(0),
-    m_Buffer1(0),
-    m_Buffer2(0),
-    m_SkipAll(false),
-    m_OverwriteAll(false),
-    m_AppendAll(false),
-    m_TotalCopied(0),
-    m_IsSingleFileCopy(true),
-    m_SameVolume(false),
-    m_IsSingleEntryCopy(false),
-    m_SourceHasExternalEAs(false),
-    m_DestinationHasExternalEAs(false)
+FileCopyOperationJobNativeToNative::FileCopyOperationJobNativeToNative()
 {
     // in xattr operations we'll use our big Buf1 and Buf2 - they should be quite enough
     // in OS X 10.4-10.6 maximum size of xattr value was 4Kb
@@ -384,7 +368,7 @@ void FileCopyOperationJobNativeToNative::BuildDestinationDirectory(const char* _
             // absent part - need to create it
 domkdir:    if(mkdir(destpath, 0777) == -1)
             {
-                int result = [[m_Operation OnDestCantCreateDir:errno ForDir:destpath] WaitForResult];
+                int result = [[m_Operation OnDestCantCreateDir:ErrnoToNSError() ForDir:destpath] WaitForResult];
                 if (result == OperationDialogResult::Retry) goto domkdir;
                 if (result == OperationDialogResult::Stop) { RequestStop(); return; }
             }

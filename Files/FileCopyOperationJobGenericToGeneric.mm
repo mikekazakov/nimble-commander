@@ -7,6 +7,7 @@
 //
 
 #include "FileCopyOperationJobGenericToGeneric.h"
+#include "Common.h"
 
 FileCopyOperationJobGenericToGeneric::FileCopyOperationJobGenericToGeneric()
 {
@@ -27,7 +28,9 @@ void FileCopyOperationJobGenericToGeneric::Init(chained_strings _src_files,
 {
     assert(_src_host);
     assert(_dst_host);
-    assert(_dst_host->IsNativeFS() == false);
+//    if(!IsRunningUnitTesting())
+        // fo general usage this should not be used with native fs - there's a direct variant, without VFS layering
+//        assert(_dst_host->IsNativeFS() == false);
     assert(_src_root.is_absolute());
     m_Operation = _op;
     m_InitialItems = move(_src_files);
@@ -35,20 +38,115 @@ void FileCopyOperationJobGenericToGeneric::Init(chained_strings _src_files,
     m_SrcHost = _src_host;
     m_SrcDir = _src_root;
     
-    m_Destination = m_OriginalDestination = _dest;
-    m_DstHost = _dst_host;
+    /*m_Destination = */ m_OriginalDestination = _dest;
+//    m_DstHost = _dst_host;
+    
+    m_OrigSrcHost = _src_host;
+    m_OrigDstHost = _dst_host;
 }
 
 void FileCopyOperationJobGenericToGeneric::Do()
 {
-//    sleep(1); // what for????
-   // int a = 10;
+    Analyze();
+    if(CheckPauseOrStop()) { SetStopped(); return; }
+
+    // check that Analyze() done what it should.
+    assert(m_Destination.empty() == false);
+    assert(m_DstHost != nullptr);
     
     ScanItems();
-
+    if(CheckPauseOrStop()) { SetStopped(); return; }
+    
     ProcessItems();
+    if(CheckPauseOrStop()) { SetStopped(); return; }
     
     SetCompleted();
+}
+
+void FileCopyOperationJobGenericToGeneric::Analyze()
+{
+    VFSStat st;
+    m_IsSingleEntryCopy = m_InitialItems.size() == 1;
+
+    // currently assuming that this is a copying, not moving
+    
+    // lets analyze what user wants from us.
+    if(m_OriginalDestination.is_absolute() == true)
+    {
+        // seems to be fairly easy - just use this dest as a preffix
+        
+        m_WorkMode = WorkMode::CopyToPathPreffix;
+        m_Destination = m_OriginalDestination;
+        m_DstHost = m_OrigDstHost;
+        
+        // now we need to check if this path is valid and available
+        if(m_DstHost->Stat(m_Destination.c_str(), st, 0, 0) != 0)
+            BuildDirectories(m_Destination, m_DstHost);
+    }
+    else
+    {
+        // relative path: result_path = files_path / requested_path
+        if(m_OriginalDestination.filename() == "." || // check for trailing slash
+           m_IsSingleEntryCopy == false )
+        {
+            // user wants to put files into a dir m_OriginalDestination that is in m_SrcDir
+            // we work at the same host as where original files are, no need for m_OrigDstHost
+            m_WorkMode = WorkMode::CopyToPathPreffix;
+            m_Destination = m_SrcDir / m_OriginalDestination;
+            m_DstHost = m_SrcHost;
+            m_OrigDstHost.reset();
+            
+            if(m_DstHost->Stat(m_Destination.c_str(), st, 0, 0) != 0)
+                BuildDirectories(m_Destination, m_DstHost);
+        }
+        else
+        {
+            // user want to put files into a dir m_OriginalDestination that is in m_SrcDir.
+            // meanwhile, this is a name for a topmost entries.
+            // we work at the same host as where original files are, no need for m_OrigDstHost
+            m_WorkMode = WorkMode::CopyToPathName;
+            m_Destination = m_SrcDir / m_OriginalDestination;
+            m_DstHost = m_SrcHost;
+            m_OrigDstHost.reset();
+            
+            path tmp = m_Destination;
+            tmp.remove_filename();
+            if(m_DstHost->Stat(tmp.c_str(), st, 0, 0) != 0)
+                BuildDirectories(tmp, m_DstHost); // we also build a path (if need) except the last element
+        }
+        
+        
+        
+    }
+}
+
+void FileCopyOperationJobGenericToGeneric::BuildDirectories(const path &_dir, const VFSHostPtr& _host)
+{
+    vector<path> to_create;
+    
+    path tmp = _dir;
+    if(tmp.filename() == ".") tmp.remove_filename();
+    
+    while( tmp != "/" )
+    {
+        VFSStat st;
+        if(_host->Stat(tmp.c_str(), st, 0, 0) == 0)
+            break;
+        to_create.emplace_back(tmp);
+        tmp = tmp.parent_path();
+    }
+    
+    for(auto i = rbegin(to_create); i != rend(to_create); ++i)
+    {
+    mkdir:;
+        int ret = _host->CreateDirectory(i->c_str(), 0);
+        if(ret != 0)
+        {
+            int result = [[m_Operation OnDestCantCreateDir:VFSError::ToNSError(ret) ForDir:i->c_str()] WaitForResult];
+            if (result == OperationDialogResult::Retry) goto mkdir;
+            if (result == OperationDialogResult::Stop) { RequestStop(); return; }
+        }
+    }
 }
 
 void FileCopyOperationJobGenericToGeneric::ScanItems()
@@ -134,7 +232,20 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
     // compose real src name
     path entryname = _node->to_str_with_pref();
     path sourcepath = m_SrcDir / entryname;
-    path destinationpath = m_Destination / entryname;
+    path destinationpath;
+    
+    if(m_WorkMode == WorkMode::CopyToPathPreffix)
+        destinationpath = m_Destination / entryname;
+    else if(m_WorkMode == WorkMode::CopyToPathName)
+    {
+        destinationpath = m_Destination;
+        if(entryname.has_parent_path())
+        {
+            auto i = ++entryname.begin(), e = entryname.end();
+            while(i != e)
+                destinationpath /= *i++;
+        }
+    }
 
     if(sourcepath == destinationpath)
         return;
@@ -143,6 +254,7 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
     if(m_ItemFlags[_number] & (int)ItemFlags::is_dir)
     {
 //        assert(itemname[strlen(itemname)-1] == '/');
+        if(destinationpath.filename() == ".") destinationpath.remove_filename(); // get rid of trailing slashes
         CopyDirectoryTo(sourcepath, destinationpath);
     }
     else
@@ -263,7 +375,7 @@ opendest:
     {
         if(CheckPauseOrStop()) goto cleanup;
         
-        doread: ssize_t read_amount = src_file->Read(m_Buffer.get(), BUFFER_SIZE);
+        doread: ssize_t read_amount = src_file->Read(m_Buffer.get(), m_BufferSize);
         if(read_amount < 0)
         {
             if(m_SkipAll) goto cleanup;

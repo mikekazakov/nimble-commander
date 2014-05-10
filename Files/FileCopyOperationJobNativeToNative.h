@@ -100,34 +100,34 @@ private:
     void EraseXattrs(int _fd_in);
     void CopyXattrs(int _fd_from, int _fd_to);
     
-    __unsafe_unretained FileCopyOperation *m_Operation;
+    __unsafe_unretained FileCopyOperation *m_Operation = nil;
     chained_strings m_InitialItems;
     chained_strings m_ScannedItems;
     
     vector<uint8_t> m_ItemFlags;
     vector<const chained_strings::node *> m_FilesToDelete; // used for move work mode
     vector<const chained_strings::node *> m_DirsToDelete; // used for move work mode
-    const chained_strings::node *m_CurrentlyProcessingItem;
+    const chained_strings::node *m_CurrentlyProcessingItem = nullptr;
     char m_SourceDirectory[MAXPATHLEN];
     char m_Destination[MAXPATHLEN];
-    unsigned m_SourceNumberOfFiles;
-    unsigned m_SourceNumberOfDirectories;
-    unsigned long m_SourceTotalBytes;
-    unsigned long m_TotalCopied;
-    WorkMode m_WorkMode;
-    void *m_Buffer1;
-    void *m_Buffer2;
+    unsigned m_SourceNumberOfFiles = 0;
+    unsigned m_SourceNumberOfDirectories = 0;
+    unsigned long m_SourceTotalBytes = 0;
+    unsigned long m_TotalCopied = 0;
+    WorkMode m_WorkMode = Unknown;
+    void *m_Buffer1 = nullptr;
+    void *m_Buffer2 = nullptr;
     DispatchGroup m_IOGroup;
-    bool m_SkipAll;
-    bool m_OverwriteAll;
-    bool m_AppendAll;
-    bool m_IsSingleFileCopy;
-    bool m_SourceHasExternalEAs;
-    bool m_DestinationHasExternalEAs;
+    bool m_SkipAll = false;
+    bool m_OverwriteAll = false;
+    bool m_AppendAll = false;
+    bool m_IsSingleFileCopy = false;
+    bool m_SourceHasExternalEAs = false;
+    bool m_DestinationHasExternalEAs = false;
     
     FileCopyOperationOptions m_Options;
-    bool m_IsSingleEntryCopy;
-    bool m_SameVolume; // true means that source and destination are located at the same file system
+    bool m_IsSingleEntryCopy = false;
+    bool m_SameVolume = false; // true means that source and destination are located at the same file system
 };
 
 

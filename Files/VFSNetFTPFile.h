@@ -59,6 +59,6 @@ private:
     string                               m_URLRequest;
     uint64_t                             m_FileSize = 0;
     uint64_t                             m_FilePos = 0;
-    constexpr static const struct timeval m_SelectTimeout = {0, 10};
+    constexpr static const struct timeval m_SelectTimeout = {0, 10000};
 //    uint64_t                             m_BytesWritten = 0;
 };

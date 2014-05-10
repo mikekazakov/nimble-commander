@@ -872,7 +872,7 @@ dosymlink:
     if(result != 0)
     {   // failed to create a symlink
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantOpenDestFile:errno ForFile:_tagret_symlink] WaitForResult];
+        int result = [[m_Operation OnCopyCantOpenDestFile:ErrnoToNSError() ForFile:_tagret_symlink] WaitForResult];
         if(result == OperationDialogResult::Retry) goto dosymlink;
         if(result == OperationDialogResult::Skip) goto cleanup;
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -1098,7 +1098,7 @@ opendest: // open file descriptor for destination
     if(destinationfd == -1)
     {   // failed to open destination file
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantOpenDestFile:errno ForFile:_dest] WaitForResult];
+        int result = [[m_Operation OnCopyCantOpenDestFile:ErrnoToNSError() ForFile:_dest] WaitForResult];
         if(result == OperationDialogResult::Retry) goto opendest;
         if(result == OperationDialogResult::Skip) goto cleanup;
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}

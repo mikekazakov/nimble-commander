@@ -27,6 +27,7 @@ void FileCopyOperationJobGenericToGeneric::Init(chained_strings _src_files,
 {
     assert(_src_host);
     assert(_dst_host);
+    assert(_dst_host->IsNativeFS() == false);
     assert(_src_root.is_absolute());
     m_Operation = _op;
     m_InitialItems = move(_src_files);
@@ -40,7 +41,7 @@ void FileCopyOperationJobGenericToGeneric::Init(chained_strings _src_files,
 
 void FileCopyOperationJobGenericToGeneric::Do()
 {
-    sleep(1); // what for????
+//    sleep(1); // what for????
    // int a = 10;
     
     ScanItems();
@@ -61,7 +62,7 @@ void FileCopyOperationJobGenericToGeneric::ScanItems()
     }
 }
 
-void FileCopyOperationJobGenericToGeneric::ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix)
+void FileCopyOperationJobGenericToGeneric::ScanItem(const string &_full_path, const string &_short_path, const chained_strings::node *_prefix)
 {
     path fullpath = m_SrcDir / _full_path;
     
@@ -76,22 +77,19 @@ retry_stat:
         {
             m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
             m_ScannedItems.push_back(_short_path, _prefix);
-//            m_SourceNumberOfFiles++;
-//            m_SourceTotalBytes += stat_buffer.size;
+            m_SourceNumberOfFiles++;
+            m_SourceTotalBytes += stat_buffer.size;
         }
         else if(S_ISDIR(stat_buffer.mode))
         {
-            char dirpath[MAXPATHLEN];
-            sprintf(dirpath, "%s/", _short_path);
             m_ItemFlags.push_back((uint8_t)ItemFlags::is_dir);
-            m_ScannedItems.push_back(dirpath, _prefix);
+            m_ScannedItems.push_back(string(_short_path) + '/', _prefix);
+            m_SourceNumberOfDirectories++;
             auto dirnode = &m_ScannedItems.back();
             
         retry_opendir:
             int iter_ret = m_SrcHost->IterateDirectoryListing(fullpath.c_str(), ^bool(const VFSDirEnt &_dirent){
-                char dirpathnested[MAXPATHLEN];
-                sprintf(dirpathnested, "%s/%s", _full_path, _dirent.name);
-                ScanItem(dirpathnested, _dirent.name, dirnode);
+                ScanItem(string(_full_path) + '/' + _dirent.name, _dirent.name, dirnode);
                 if (CheckPauseOrStop())
                     return false;
                 return true;
@@ -149,6 +147,7 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
     }
     else
     {
+//        NSLog(@">>>>>>>>>>>>>>> Copying File %s <<<<<<<<<<<<<<<<<<", destinationpath.c_str());
         CopyFileTo(sourcepath, destinationpath);
     }
 }
@@ -156,7 +155,11 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
 void FileCopyOperationJobGenericToGeneric::CopyFileTo(const path &_src_full_path, const path &_dest_full_path)
 {
     int ret;
+    int dstopenflags=0;
+    bool remember_choice = false, unlink_on_stop = false, was_successful = false;
     uint64_t total_wrote = 0;
+    uint64_t totaldestsize = 0;
+    ssize_t startwriteoff = 0;
     
     VFSFilePtr src_file, dst_file;
     VFSStat src_stat, dst_stat;
@@ -173,6 +176,7 @@ statsource:
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
         if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
+    totaldestsize = src_stat.size;
     
 createsource:
     ret = m_SrcHost->CreateFile(_src_full_path.c_str(), src_file, 0);
@@ -199,11 +203,38 @@ opensource:
     }
     
     ret = m_DstHost->Stat(_dest_full_path.c_str(), dst_stat, 0, 0);
-    if(ret == 0)
-    {
-        // handle this later
-        assert(0);
-
+    if(ret == 0) { //file already exist - what should we do?
+        int result;
+        if(m_SkipAll) goto cleanup;
+        if(m_OverwriteAll) goto dec_overwrite;
+        if(m_AppendAll) goto dec_append;
+        
+        result = [[m_Operation OnFileExist:_dest_full_path.c_str()
+                                   newsize:src_stat.size
+                                   newtime:src_stat.mtime.tv_sec
+                                   exisize:dst_stat.size
+                                   exitime:dst_stat.mtime.tv_sec
+                                  remember:&remember_choice] WaitForResult];
+        if(result == FileCopyOperationDR::Overwrite){ if(remember_choice) m_OverwriteAll = true;  goto dec_overwrite; }
+        if(result == FileCopyOperationDR::Append)   { if(remember_choice) m_AppendAll = true;     goto dec_append;    }
+        if(result == OperationDialogResult::Skip)   { if(remember_choice) m_SkipAll = true;       goto cleanup;      }
+        if(result == OperationDialogResult::Stop)   { RequestStop(); goto cleanup; }
+        
+        // decisions about what to do with existing destination
+    dec_overwrite:
+        dstopenflags = VFSFile::OF_Write | VFSFile::OF_Truncate | VFSFile::OF_NoCache;
+        unlink_on_stop = true;
+        goto dec_end;
+    dec_append:
+        dstopenflags = VFSFile::OF_Write | VFSFile::OF_Append | VFSFile::OF_NoCache;
+        totaldestsize += dst_stat.size;
+        startwriteoff = dst_stat.size;
+        unlink_on_stop = false;
+    dec_end:;
+    } else {
+        // no dest file - just create it
+        dstopenflags = VFSFile::OF_Write | VFSFile::OF_Create | VFSFile::OF_NoCache;
+        unlink_on_stop = true;
     }
 
 createdest:
@@ -211,33 +242,68 @@ createdest:
     assert(ret == 0); // handle later
     
 opendest:
-    ret = dst_file->Open(VFSFile::OF_Write | VFSFile::OF_Create | VFSFile::OF_NoCache);
-    assert(ret == 0); // handle later
+    ret = dst_file->Open(dstopenflags);
+    if(ret < 0)
+    {   // failed to open destination file
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantOpenDestFile:VFSError::ToNSError(ret) ForFile:_dest_full_path.c_str()] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto opendest;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    }
     
-
+    if(dst_file->Pos() != startwriteoff)
+    { // need to seek to the end. (seek pos wasnt set upon opening with )
+        auto ret = dst_file->Seek(startwriteoff, VFSFile::Seek_Set);
+        assert(ret >= 0);
+    }
+    
     while( total_wrote < src_stat.size )
     {
-        ssize_t read_amount = src_file->Read(m_Buffer.get(), BUFFER_SIZE);
-        assert(read_amount >= 0); // handle later
+        if(CheckPauseOrStop()) goto cleanup;
         
-        
+        doread: ssize_t read_amount = src_file->Read(m_Buffer.get(), BUFFER_SIZE);
+        if(read_amount < 0)
+        {
+            if(m_SkipAll) goto cleanup;
+            int result = [[m_Operation OnCopyReadError:VFSError::ToNSError((int)read_amount) ForFile:_dest_full_path.c_str()] WaitForResult];
+            if(result == OperationDialogResult::Retry) goto doread;
+            if(result == OperationDialogResult::Skip) goto cleanup;
+            if(result == OperationDialogResult::SkipAll) { m_SkipAll = true; goto cleanup; }
+            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+        }
+
         size_t to_write = read_amount;
         while(to_write > 0)
         {
-            ssize_t write_amount = dst_file->Write(m_Buffer.get(), to_write);
-            assert(write_amount >= 0); // handle later
+            dowrite: ssize_t write_amount = dst_file->Write(m_Buffer.get(), to_write);
+            if(write_amount < 0)
+            {
+                if(m_SkipAll) goto cleanup;
+                int result = [[m_Operation OnCopyWriteError:VFSError::ToNSError((int)write_amount) ForFile:_dest_full_path.c_str()] WaitForResult];
+                if(result == OperationDialogResult::Retry) goto dowrite;
+                if(result == OperationDialogResult::Skip) goto cleanup;
+                if(result == OperationDialogResult::SkipAll) { m_SkipAll = true; goto cleanup; }
+                if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+            }
             
             to_write -= write_amount;
             total_wrote += write_amount;
-            
         }
     }
 
-    dst_file->Close();
-    src_file->Close();
+    was_successful = true;
     
 cleanup:;
+    src_file->Close();
+    src_file.reset();
+    dst_file->Close();
+    dst_file.reset();
     
+    if(was_successful == false &&
+       unlink_on_stop == true)
+        m_DstHost->Unlink(_dest_full_path.c_str(), 0);
 }
 
 void FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path)

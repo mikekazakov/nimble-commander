@@ -414,7 +414,7 @@ opendest: // open file descriptor for destination
     if(destinationfd == -1)
     {   // failed to open destination file
         if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyCantOpenDestFile:errno ForFile:_dest] WaitForResult];
+        int result = [[m_Operation OnCopyCantOpenDestFile:ErrnoToNSError() ForFile:_dest] WaitForResult];
         if(result == OperationDialogResult::Retry) goto opendest;
         if(result == OperationDialogResult::Skip) goto cleanup;
         if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}

@@ -35,7 +35,7 @@ public:
 private:
     virtual void Do();
     void ScanItems();
-    void ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix);
+    void ScanItem(const string &_full_path, const string &_short_path, const chained_strings::node *_prefix);
     void ProcessItems();
     void ProcessItem(const chained_strings::node *_node, int _number);
 
@@ -66,6 +66,11 @@ private:
     unique_ptr<uint8_t[]>                   m_Buffer = make_unique<uint8_t[]>(BUFFER_SIZE);
     
     vector<uint8_t>                         m_ItemFlags;
+    unsigned                                m_SourceNumberOfFiles = 0;
+    unsigned                                m_SourceNumberOfDirectories = 0;
+    uint64_t                                m_SourceTotalBytes = 0;
+    uint64_t                                m_TotalCopied = 0;
+    
     bool                                    m_SkipAll = false;
     bool                                    m_OverwriteAll = false;
     bool                                    m_AppendAll = false;

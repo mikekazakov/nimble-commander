@@ -325,15 +325,15 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     return alert;
 }
 
-- (OperationDialogAlert *)OnCopyCantOpenDestFile:(int)_error ForFile:(const char *)_path
+- (OperationDialogAlert *)OnCopyCantOpenDestFile:(NSError*)_error ForFile:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:@"Failed to open file"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
-                               strerror(_error), [NSString stringWithUTF8String:_path]]];
+    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
+                               [_error localizedDescription], [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
     

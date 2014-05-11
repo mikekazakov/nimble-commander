@@ -101,7 +101,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
     
     DIR *dirp = opendir(_path);
     if( dirp == 0 )
-        return VFSError::FromErrno(errno);
+        return VFSError::FromErrno();
     
     dirent *entp;
     
@@ -251,14 +251,14 @@ int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_can
         return VFSError::Ok;
     }
     
-    return VFSError::FromErrno(errno);
+    return VFSError::FromErrno();
 }
 
 int VFSNativeHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
 {
     DIR *dirp = opendir(_path);
     if(dirp == 0)
-        return VFSError::FromErrno(errno);
+        return VFSError::FromErrno();
         
     dirent *entp;
     VFSDirEnt vfs_dirent;
@@ -285,7 +285,7 @@ int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_ch
 {
     struct statfs info;
     if(statfs(_path, &info) < 0)
-        return VFSError::FromErrno(errno);
+        return VFSError::FromErrno();
 
     auto volume = NativeFSManager::Instance().VolumeFromMountPoint(info.f_mntonname);
     if(!volume)
@@ -306,7 +306,7 @@ int VFSNativeHost::Unlink(const char *_path, bool (^_cancel_checker)())
     int ret = unlink(_path);
     if(ret == 0)
         return 0;
-    return VFSError::FromErrno(errno);
+    return VFSError::FromErrno();
 }
 
 bool VFSNativeHost::IsWriteable() const
@@ -324,7 +324,7 @@ int VFSNativeHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
     int ret = mkdir(_path, 0777);
     if(ret == 0)
         return 0;
-    return VFSError::FromErrno(errno);
+    return VFSError::FromErrno();
 }
 
 int VFSNativeHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
@@ -332,14 +332,14 @@ int VFSNativeHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
     int ret = rmdir(_path);
     if(ret == 0)
         return 0;
-    return VFSError::FromErrno(errno);
+    return VFSError::FromErrno();
 }
 
 int VFSNativeHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, bool (^_cancel_checker)())
 {
     ssize_t sz = readlink(_path, _buffer, _buffer_size);
     if(sz < 0)
-        return VFSError::FromErrno(errno);
+        return VFSError::FromErrno();
     
     if(sz >= _buffer_size)
         return VFSError::SmallBuffer;
@@ -354,7 +354,7 @@ int VFSNativeHost::CreateSymlink(const char *_symlink_path,
 {
     int result = symlink(_symlink_value, _symlink_path);
     if(result < 0)
-        return VFSError::FromErrno(errno);
+        return VFSError::FromErrno();
     
     return 0;
 }
@@ -389,26 +389,34 @@ int VFSNativeHost::SetTimes(const char *_path,
     if(_birth_time != nullptr) {
         attrs.commonattr = ATTR_CMN_CRTIME;
         if(setattrlist(_path, &attrs, _birth_time, sizeof(struct timespec), flags) < 0)
-            result = VFSError::FromErrno(errno);
+            result = VFSError::FromErrno();
     }
     
     if(_chg_time != nullptr) {
         attrs.commonattr = ATTR_CMN_CHGTIME;
         if(setattrlist(_path, &attrs, _chg_time, sizeof(struct timespec), flags) < 0)
-            result = VFSError::FromErrno(errno);
+            result = VFSError::FromErrno();
     }
     
     if(_mod_time != nullptr) {
         attrs.commonattr = ATTR_CMN_MODTIME;
         if(setattrlist(_path, &attrs, _mod_time, sizeof(struct timespec), flags) < 0)
-            result = VFSError::FromErrno(errno);
+            result = VFSError::FromErrno();
     }
         
     if(_acc_time != nullptr) {
         attrs.commonattr = ATTR_CMN_ACCTIME;
         if(setattrlist(_path, &attrs, _acc_time, sizeof(struct timespec), flags) < 0)
-            result = VFSError::FromErrno(errno);
+            result = VFSError::FromErrno();
     }
     
     return result;
+}
+
+int VFSNativeHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)())
+{
+    int ret = rename(_old_path, _new_path);
+    if(ret == 0)
+        return 0;
+    return VFSError::FromErrno();
 }

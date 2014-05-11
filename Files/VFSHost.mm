@@ -308,3 +308,8 @@ int VFSHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
 {
     return VFSError::NotSupported;
 }
+
+int VFSHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)())
+{
+    return VFSError::NotSupported;
+}

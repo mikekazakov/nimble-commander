@@ -177,7 +177,12 @@ public:
      * Deletes and empty directory. Will fail on non-empty ones.
      */
     virtual int RemoveDirectory(const char *_path, bool (^_cancel_checker)());
-        
+    
+    /**
+     * Change the name of a file.
+     */
+    virtual int Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)());
+    
     /**
      * Adjust file node times. Any of timespec time pointers can be NULL, so they will be ignored.
      * NoFollow flag can be specified to alter symlink node itself.

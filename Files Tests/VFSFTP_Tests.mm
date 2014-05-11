@@ -245,5 +245,66 @@ static const char* readme = "\n\
     }
 }
 
+- (void) testLocal_Rename_NAS
+{
+    auto host = make_shared<VFSNetFTPHost>(g_LocalFTP.c_str());
+    XCTAssert( host->Open("/", nullptr) == 0 );
+    
+    string fn1 = "/mach_kernel", fn2 = g_LocalTestPath + "mach_kernel", fn3 = g_LocalTestPath + "mach_kernel34234234";
+    
+    VFSStat stat;
+    
+    // if there's a trash from previous runs - remove it
+    if( host->Stat(fn2.c_str(), stat, 0, 0) == 0)
+        XCTAssert( host->Unlink(fn2.c_str(), 0) == 0);
+    
+    XCTAssert( VFSEasyCopyFile(fn1.c_str(), VFSNativeHost::SharedHost(), fn2.c_str(), host) == 0);
+    XCTAssert( host->Rename(fn2.c_str(), fn3.c_str(), 0) == 0);
+    XCTAssert( host->Stat(fn3.c_str(), stat, 0, 0) == 0);
+    XCTAssert( host->Unlink(fn3.c_str(), 0) == 0);
+
+
+    if( host->Stat((g_LocalTestPath + "DirectoryName1").c_str(), stat, 0, 0) == 0)
+        XCTAssert( host->RemoveDirectory((g_LocalTestPath + "DirectoryName1").c_str(), 0) == 0);
+    if( host->Stat((g_LocalTestPath + "DirectoryName2").c_str(), stat, 0, 0) == 0)
+        XCTAssert( host->RemoveDirectory((g_LocalTestPath + "DirectoryName2").c_str(), 0) == 0);
+    
+    XCTAssert( host->CreateDirectory((g_LocalTestPath + "DirectoryName1").c_str(), 0) == 0);
+    XCTAssert( host->Rename((g_LocalTestPath + "DirectoryName1/").c_str(),
+                            (g_LocalTestPath + "DirectoryName2/").c_str(),
+                            0) == 0);
+    XCTAssert( host->Stat((g_LocalTestPath + "DirectoryName2").c_str(), stat, 0, 0) == 0);
+    XCTAssert( host->RemoveDirectory((g_LocalTestPath + "DirectoryName2").c_str(), 0) == 0);
+}
+
+- (void) testLocal_Rename_127001
+{
+    auto host = make_shared<VFSNetFTPHost>("r2d2:r2d2@127.0.0.1");
+    XCTAssert( host->Open("/", nullptr) == 0 );
+    
+    string fn1 = "/mach_kernel", fn2 = "/mach_kernel", fn3 = "/mach_kernel34234234";
+    
+    VFSStat stat;
+    
+    // if there's a trash from previous runs - remove it
+    if( host->Stat(fn2.c_str(), stat, 0, 0) == 0)
+        XCTAssert( host->Unlink(fn2.c_str(), 0) == 0);
+    
+    XCTAssert( VFSEasyCopyFile(fn1.c_str(), VFSNativeHost::SharedHost(), fn2.c_str(), host) == 0);
+    XCTAssert( host->Rename(fn2.c_str(), fn3.c_str(), 0) == 0);
+    XCTAssert( host->Stat(fn3.c_str(), stat, 0, 0) == 0);
+    XCTAssert( host->Unlink(fn3.c_str(), 0) == 0);
+    
+    if( host->Stat("/DirectoryName1", stat, 0, 0) == 0)
+        XCTAssert( host->RemoveDirectory("/DirectoryName1", 0) == 0);
+    if( host->Stat("/DirectoryName2", stat, 0, 0) == 0)
+        XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
+    
+    XCTAssert( host->CreateDirectory("/DirectoryName1", 0) == 0);
+    XCTAssert( host->Rename("/DirectoryName1/", "/DirectoryName2/", 0) == 0);
+    XCTAssert( host->Stat("/DirectoryName2", stat, 0, 0) == 0);
+    XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
+}
+
 @end
 

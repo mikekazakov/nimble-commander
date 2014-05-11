@@ -354,7 +354,7 @@ int VFSNetFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
     if(path.is_absolute() == false)
         return VFSError::InvalidCall;
     
-    if(*--path.end() == ".") // remove trailing slash if any
+    if(path.filename() == ".") // remove trailing slash if any
         path.remove_filename();
     
     string cmd = "RMD " + path.filename().native();
@@ -380,6 +380,44 @@ int VFSNetFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
     return curl_res == CURLE_OK ?
                         VFSError::Ok :
                         VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
+}
+
+int VFSNetFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)())
+{
+    path old_path = _old_path, new_path = _new_path;
+    if(old_path.is_absolute() == false || new_path.is_absolute() == false)
+        return VFSError::InvalidCall;
+    
+    if(old_path.filename() == ".") // remove trailing slash if any
+        old_path.remove_filename();
+    if(new_path.filename() == ".") // remove trailing slash if any
+        new_path.remove_filename();
+    
+    string url = BuildFullURLString((old_path.parent_path() / "/").c_str());
+    string cmd1 = string("RNFR ") + old_path.native();
+    string cmd2 = string("RNTO ") + new_path.native();
+    
+    auto curl = SpawnCURL(); // TODO: need to somehow get this handle from cache pool
+    
+    struct curl_slist* header = NULL;
+    header = curl_slist_append(header, cmd1.c_str());
+    header = curl_slist_append(header, cmd2.c_str());
+    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, header);
+    curl_easy_setopt(curl->curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl->curl, CURLOPT_WRITEFUNCTION, 0);
+    curl_easy_setopt(curl->curl, CURLOPT_WRITEDATA, 0);
+    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 1);
+    CURLcode curl_res = curl_easy_perform(curl->curl);
+    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, NULL);
+    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 0);
+    curl_slist_free_all(header);
+    
+    if(curl_res == CURLE_OK)
+        m_Cache->CommitRename(old_path.native(), new_path.native());
+    
+    return curl_res == CURLE_OK ?
+        VFSError::Ok :
+        VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
 void VFSNetFTPHost::MakeDirectoryStructureDirty(const char *_path)

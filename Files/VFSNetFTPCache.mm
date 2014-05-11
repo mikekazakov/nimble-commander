@@ -212,6 +212,55 @@ namespace VFSNetFTP
         }
         m_Callback(dir_path.native());
     }
+    
+    void Cache::CommitRename(const string &_old_path, const string &_new_path)
+    {
+        path old_path = _old_path, new_path = _new_path;
+        assert(old_path.is_absolute() && new_path.is_absolute());
+        
+        lock_guard<mutex> lock(m_CacheLock);
+     
+        path dir_path = old_path.parent_path();
+        if(dir_path != "/")
+            dir_path /= "/";
+        
+        auto dir = FindDirectoryInt(dir_path.native());
+        if(dir)
+        {
+            auto copy = make_shared<Directory>();
+            copy->path = dir->path;
+            copy->dirty_structure = dir->dirty_structure;
+            copy->has_dirty_items = dir->has_dirty_items;
+            
+            for(auto &i: dir->entries)
+                if(i.name != old_path.filename())
+                {
+                    copy->entries.emplace_back(i);
+                }
+                else
+                {
+                    Entry e(new_path.filename().native());
+                    e.size = i.size;
+                    e.time = i.time;
+                    e.mode = i.mode;
+                    e.dirty = i.dirty;
+                    copy->entries.push_back(e);
+                }
+            
+            m_Directories.find(dir_path.native())->second = copy;
+        }
+        
+        // if _old_path was a dir and we have it in cache - need to rename it too
+        if(old_path != "/") old_path /= "/";
+        if(new_path != "/") new_path /= "/";
+        auto self_dir = m_Directories.find(old_path.c_str());
+        if(self_dir != m_Directories.end())
+        {
+            auto data = self_dir->second;
+            m_Directories.erase(self_dir);
+            m_Directories.insert(make_pair(new_path.native(), data));
+        }
+    }
 
     void Cache::EraseEntryInt(const string &_path)
     {

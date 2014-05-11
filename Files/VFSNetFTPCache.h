@@ -102,6 +102,11 @@ namespace VFSNetFTP
          */
         void CommitUnlink(const string &_path);
         
+        /**
+         * Removes old entry path and places it as a new entry.
+         */
+        void CommitRename(const string &_old_path, const string &_new_path);
+        
     private:
         shared_ptr<Directory> FindDirectoryInt(const string &_path) const;
         void EraseEntryInt(const string &_path);

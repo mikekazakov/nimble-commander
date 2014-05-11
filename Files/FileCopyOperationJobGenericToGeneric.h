@@ -43,6 +43,7 @@ private:
 
     void CopyFileTo(const path &_src_full_path, const path &_dest_full_path);
     void CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path);
+    void RenameEntry(const path &_src_full_path, const path &_dest_full_path);
     
     enum class ItemFlags
     {
@@ -80,7 +81,19 @@ private:
          
          @brief CopyToPathPreffix is usually a CopyAs.
          */
-        CopyToPathName
+        CopyToPathName,
+        
+        /**
+         Doing a massive files renaming from [base src path] to some other dir.
+         @brief RenameToPathPreffix is basically a Rename To.
+         */
+        RenameToPathPreffix,
+        
+        /**
+         Doing just like CopyToPathName, but renaming insted of copying.
+         @brief RenameToPathName is basically a Rename As.
+         */
+        RenameToPathName
     };
     
     

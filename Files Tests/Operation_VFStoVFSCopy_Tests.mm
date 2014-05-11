@@ -246,7 +246,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self waitUntilFinish:finished];
     
     int result = 0;
-    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, path(dir) / "SomeDirectoryName" / "Mail.app", host, result) == 0);
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, dir / "SomeDirectoryName" / "Mail.app", host, result) == 0);
     XCTAssert( result == 0 );
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
@@ -277,7 +277,68 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self waitUntilFinish:finished];
     
     int result = 0;
-    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, path(dir) / "Mail2.app", host, result) == 0);
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, dir / "Mail2.app", host, result) == 0);
+    XCTAssert( result == 0 );
+    XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
+}
+
+- (void)testCopyGenericToGeneric_Modes_RenameToPathPreffix
+{
+    // works on single host - In and Out same as where source files are
+    // Copies "Mail.app" to "Mail2.app" in the same dir
+    auto dir = self.makeTmpDir;
+    auto dir2 = dir / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed";
+    auto host = VFSNativeHost::SharedHost();
+    
+    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app", host, (path(dir) / "Mail.app").c_str(), host) == 0);
+    
+    FileCopyOperationOptions opts;
+    opts.docopy = false;
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("Mail.app")
+                      root:dir.c_str()
+                    srcvfs:host
+                      dest:dir2.c_str()
+                    dstvfs:host
+                   options:opts];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, dir2 / "Mail.app", host, result) == 0);
+    XCTAssert( result == 0 );
+    XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
+}
+
+- (void)testCopyGenericToGeneric_Modes_RenameToPathName
+{
+    // works on single host - In and Out same as where source files are
+    // Copies "Mail.app" to "Mail2.app" in the same dir
+    auto dir = self.makeTmpDir;
+    auto host = VFSNativeHost::SharedHost();
+    
+    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app", host, (path(dir) / "Mail.app").c_str(), host) == 0);
+    
+    FileCopyOperationOptions opts;
+    opts.docopy = false;
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("Mail.app")
+                      root:dir.c_str()
+                    srcvfs:host
+                      dest:"Mail2.app"
+                    dstvfs:host
+                   options:opts];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, dir / "Mail2.app", host, result) == 0);
     XCTAssert( result == 0 );
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }

@@ -220,11 +220,16 @@ namespace VFSNetFTP
         
         lock_guard<mutex> lock(m_CacheLock);
      
-        path dir_path = old_path.parent_path();
-        if(dir_path != "/")
-            dir_path /= "/";
+        path old_par_path = old_path.parent_path();
+        if(old_par_path != "/") old_par_path /= "/";
+        path new_par_path = new_path.parent_path();
+        if(new_par_path != "/") new_par_path /= "/";
         
-        auto dir = FindDirectoryInt(dir_path.native());
+        
+        bool same_dir = old_path.parent_path() == new_path.parent_path();
+
+        const Entry* old_entry = nullptr;
+        auto dir = FindDirectoryInt(old_par_path.native());
         if(dir)
         {
             auto copy = make_shared<Directory>();
@@ -237,7 +242,7 @@ namespace VFSNetFTP
                 {
                     copy->entries.emplace_back(i);
                 }
-                else
+                else if(same_dir)
                 {
                     Entry e(new_path.filename().native());
                     e.size = i.size;
@@ -246,8 +251,28 @@ namespace VFSNetFTP
                     e.dirty = i.dirty;
                     copy->entries.push_back(e);
                 }
+                else
+                    old_entry = &i;
             
-            m_Directories.find(dir_path.native())->second = copy;
+            m_Directories.find(old_par_path.native())->second = copy;
+        }
+        
+        if(!same_dir && old_entry)
+        {
+            dir = FindDirectoryInt(new_par_path.native());
+            if(dir)
+            {
+                auto copy = make_shared<Directory>(*dir);
+
+                Entry e(new_path.filename().native());
+                e.size  = old_entry->size;
+                e.time  = old_entry->time;
+                e.mode  = old_entry->mode;
+                e.dirty = old_entry->dirty;
+                copy->entries.push_back(e);
+                
+                m_Directories.find(new_par_path.native())->second = copy;
+            }
         }
         
         // if _old_path was a dir and we have it in cache - need to rename it too

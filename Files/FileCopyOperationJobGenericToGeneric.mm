@@ -54,7 +54,15 @@ void FileCopyOperationJobGenericToGeneric::Do()
     assert(m_Destination.empty() == false);
     assert(m_DstHost != nullptr);
     
-    ScanItems();
+    if(m_WorkMode == WorkMode::CopyToPathName || m_WorkMode == WorkMode::CopyToPathPreffix)
+    {
+        ScanItems();
+    }
+    else
+    {
+        // no need for deep scanning
+        m_ScannedItems.swap(m_InitialItems);
+    }
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
     ProcessItems();
@@ -74,10 +82,17 @@ void FileCopyOperationJobGenericToGeneric::Analyze()
     if(m_OriginalDestination.is_absolute() == true)
     {
         // seems to be fairly easy - just use this dest as a preffix
-        
-        m_WorkMode = WorkMode::CopyToPathPreffix;
         m_Destination = m_OriginalDestination;
         m_DstHost = m_OrigDstHost;
+        if(m_Options.docopy)
+            m_WorkMode = WorkMode::CopyToPathPreffix;
+        else
+        {
+            if(m_SrcHost == m_OrigDstHost)
+                m_WorkMode = WorkMode::RenameToPathPreffix;
+            else
+                assert(0); // move insted of rename
+        }
         
         // now we need to check if this path is valid and available
         if(m_DstHost->Stat(m_Destination.c_str(), st, 0, 0) != 0)
@@ -104,7 +119,11 @@ void FileCopyOperationJobGenericToGeneric::Analyze()
             // user want to put files into a dir m_OriginalDestination that is in m_SrcDir.
             // meanwhile, this is a name for a topmost entries.
             // we work at the same host as where original files are, no need for m_OrigDstHost
-            m_WorkMode = WorkMode::CopyToPathName;
+            if(m_Options.docopy)
+                m_WorkMode = WorkMode::CopyToPathName;
+            else
+                m_WorkMode = WorkMode::RenameToPathName;
+            
             m_Destination = m_SrcDir / m_OriginalDestination;
             m_DstHost = m_SrcHost;
             m_OrigDstHost.reset();
@@ -234,33 +253,36 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
     path sourcepath = m_SrcDir / entryname;
     path destinationpath;
     
-    if(m_WorkMode == WorkMode::CopyToPathPreffix)
+    if(m_WorkMode == WorkMode::CopyToPathPreffix ||
+       m_WorkMode == WorkMode::RenameToPathPreffix )
         destinationpath = m_Destination / entryname;
-    else if(m_WorkMode == WorkMode::CopyToPathName)
+    else if(m_WorkMode == WorkMode::CopyToPathName ||
+            m_WorkMode == WorkMode::RenameToPathName )
     {
         destinationpath = m_Destination;
         if(entryname.has_parent_path())
-        {
-            auto i = ++entryname.begin(), e = entryname.end();
-            while(i != e)
+            for(auto i = ++entryname.begin(), e = entryname.end(); i != e;)
                 destinationpath /= *i++;
-        }
     }
 
     if(sourcepath == destinationpath)
         return;
     
-
-    if(m_ItemFlags[_number] & (int)ItemFlags::is_dir)
+    if(destinationpath.filename() == ".")
+        destinationpath.remove_filename(); // get rid of trailing slashes
+    
+    if(m_WorkMode == WorkMode::CopyToPathName ||
+       m_WorkMode == WorkMode::CopyToPathPreffix )
     {
-//        assert(itemname[strlen(itemname)-1] == '/');
-        if(destinationpath.filename() == ".") destinationpath.remove_filename(); // get rid of trailing slashes
-        CopyDirectoryTo(sourcepath, destinationpath);
+        if(m_ItemFlags[_number] & (int)ItemFlags::is_dir)
+            CopyDirectoryTo(sourcepath, destinationpath);
+        else
+            CopyFileTo(sourcepath, destinationpath);
     }
-    else
+    else if(m_WorkMode == WorkMode::RenameToPathPreffix ||
+            m_WorkMode == WorkMode::RenameToPathName )
     {
-//        NSLog(@">>>>>>>>>>>>>>> Copying File %s <<<<<<<<<<<<<<<<<<", destinationpath.c_str());
-        CopyFileTo(sourcepath, destinationpath);
+        RenameEntry(sourcepath, destinationpath);
     }
 }
 
@@ -453,4 +475,13 @@ void FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full
     }
     
     return true;*/
+}
+
+void FileCopyOperationJobGenericToGeneric::RenameEntry(const path &_src_full_path, const path &_dest_full_path)
+{
+    VFSStat st;
+    assert( m_SrcHost->Stat(_dest_full_path.c_str(), st, 0, 0) != 0); // need a dialog for an existing destinations
+    
+    int ret = m_SrcHost->Rename(_src_full_path.c_str(), _dest_full_path.c_str(), 0);
+    assert(ret == 0);
 }

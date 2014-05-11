@@ -969,10 +969,23 @@
     assert([self IsPanelActive]);
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
-    if(![self ActivePanelData]->Host()->IsNativeFS())
-        return; // currently support rename as only on native fs
     
-    auto const *item = [[self ActivePanelView] CurrentItem];
+    const PanelData *source, *destination;
+    if(m_ActiveState == StateLeftPanel)
+    {
+        source = &m_LeftPanelController.Data;
+        destination = &m_RightPanelController.Data;
+    }
+    else
+    {
+        source = &m_RightPanelController.Data;
+        destination = &m_LeftPanelController.Data;
+    }
+
+    if(!source->Host()->IsWriteable())
+        return;
+    
+    auto const *item = self.ActivePanelView.CurrentItem;
     if(!item)
         return;
     if(item->IsDotDot())
@@ -981,20 +994,31 @@
     auto files = make_shared<chained_strings>(item->Name());
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:[self window] initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:files.get() handler:^(int _ret)
+    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:files.get() handler:^(int _ret)
      {
          if(_ret == DialogResult::Copy)
          {
-             string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+             string root_path = source->DirectoryPathWithTrailingSlash();
              FileCopyOperationOptions opts;
              opts.docopy = false;
              [mc FillOptions:&opts];
              
+             FileCopyOperation *op = [FileCopyOperation alloc];
              
-             FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(*files.get())
-                                                                         root:root_path.c_str()
-                                                                         dest:[[mc.TextField stringValue] fileSystemRepresentation]
-                                                                      options:opts];
+             if(source->Host()->IsNativeFS())
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                   dest:mc.TextField.stringValue.fileSystemRepresentation
+                                options:opts];
+             else
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                 srcvfs:source->Host()
+                                   dest:mc.TextField.stringValue.fileSystemRepresentation
+                                 dstvfs:destination->Host()
+                                options:opts];
+                 
+             
              [op AddOnFinishHandler:^{
                  dispatch_to_main_queue( ^{
                      [m_LeftPanelController RefreshDirectory];

@@ -100,6 +100,7 @@ static void ReportProgress(void* _op, double _progress) {
     OperationJob *m_Job;
     vector<id<OperationDialogProtocol>> m_Dialogs;
     vector<void(^)()> m_Handlers;
+    bool m_Init;
 }
 
 - (uint64_t) ElapsedTime
@@ -128,6 +129,7 @@ static void ReportProgress(void* _op, double _progress) {
         _TargetPanel = nil;
         _Progress = 0;
         _IsIndeterminate = true;
+        m_Init = true;
         
         _job->SetBaseOperation(self);
         
@@ -138,7 +140,8 @@ static void ReportProgress(void* _op, double _progress) {
 
 - (void)dealloc
 {
-    RemoveOperation((__bridge void*)self);
+    if(m_Init)
+        RemoveOperation((__bridge void*)self);
 }
 
 - (void)Update

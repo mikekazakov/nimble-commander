@@ -41,9 +41,12 @@ private:
     void ProcessItems();
     void ProcessItem(const chained_strings::node *_node, int _number);
 
-    void CopyFileTo(const path &_src_full_path, const path &_dest_full_path);
-    void CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path);
+    bool CopyFileTo(const path &_src_full_path, const path &_dest_full_path);
+    bool CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path);
     void RenameEntry(const path &_src_full_path, const path &_dest_full_path);
+    
+    void ProcessFilesRemoval();
+    void ProcessFoldersRemoval();
     
     enum class ItemFlags
     {
@@ -93,7 +96,13 @@ private:
          Doing just like CopyToPathName, but renaming insted of copying.
          @brief RenameToPathName is basically a Rename As.
          */
-        RenameToPathName
+        RenameToPathName,
+        
+        /**
+         Just like RenameToPathPreffix but actually does copying and deleting source after.
+         @brief MoveToPathPreffix is basically a Move To
+         */
+        MoveToPathPreffix
     };
     
     
@@ -107,6 +116,9 @@ private:
     chained_strings                         m_InitialItems;
     chained_strings                         m_ScannedItems;
     const chained_strings::node             *m_CurrentlyProcessingItem;
+
+    vector<const chained_strings::node *>   m_FilesToDelete; // used for move* work mode
+    vector<const chained_strings::node *>   m_DirsToDelete;  // used for move* work mode
 
     shared_ptr<VFSHost>                     m_OrigSrcHost;
     shared_ptr<VFSHost>                     m_OrigDstHost;

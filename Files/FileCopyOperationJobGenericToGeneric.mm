@@ -54,7 +54,9 @@ void FileCopyOperationJobGenericToGeneric::Do()
     assert(m_Destination.empty() == false);
     assert(m_DstHost != nullptr);
     
-    if(m_WorkMode == WorkMode::CopyToPathName || m_WorkMode == WorkMode::CopyToPathPreffix)
+    if(m_WorkMode == WorkMode::CopyToPathName    ||
+       m_WorkMode == WorkMode::CopyToPathPreffix ||
+       m_WorkMode == WorkMode::MoveToPathPreffix  )
     {
         ScanItems();
     }
@@ -91,7 +93,7 @@ void FileCopyOperationJobGenericToGeneric::Analyze()
             if(m_SrcHost == m_OrigDstHost)
                 m_WorkMode = WorkMode::RenameToPathPreffix;
             else
-                assert(0); // move insted of rename
+                m_WorkMode = WorkMode::MoveToPathPreffix;
         }
         
         // now we need to check if this path is valid and available
@@ -106,7 +108,7 @@ void FileCopyOperationJobGenericToGeneric::Analyze()
         {
             // user wants to put files into a dir m_OriginalDestination that is in m_SrcDir
             // we work at the same host as where original files are, no need for m_OrigDstHost
-            m_WorkMode = WorkMode::CopyToPathPreffix;
+            m_WorkMode = m_Options.docopy ? WorkMode::CopyToPathPreffix : WorkMode::RenameToPathPreffix;
             m_Destination = m_SrcDir / m_OriginalDestination;
             m_DstHost = m_SrcHost;
             m_OrigDstHost.reset();
@@ -119,11 +121,7 @@ void FileCopyOperationJobGenericToGeneric::Analyze()
             // user want to put files into a dir m_OriginalDestination that is in m_SrcDir.
             // meanwhile, this is a name for a topmost entries.
             // we work at the same host as where original files are, no need for m_OrigDstHost
-            if(m_Options.docopy)
-                m_WorkMode = WorkMode::CopyToPathName;
-            else
-                m_WorkMode = WorkMode::RenameToPathName;
-            
+            m_WorkMode = m_Options.docopy ? WorkMode::CopyToPathName : WorkMode::RenameToPathName;
             m_Destination = m_SrcDir / m_OriginalDestination;
             m_DstHost = m_SrcHost;
             m_OrigDstHost.reset();
@@ -244,6 +242,9 @@ void FileCopyOperationJobGenericToGeneric::ProcessItems()
     }
     
     m_Stats.SetCurrentItem(nullptr);
+    
+    ProcessFilesRemoval();
+    ProcessFoldersRemoval();    
 }
 
 void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::node *_node, int _number)
@@ -253,10 +254,11 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
     path sourcepath = m_SrcDir / entryname;
     path destinationpath;
     
-    if(m_WorkMode == WorkMode::CopyToPathPreffix ||
-       m_WorkMode == WorkMode::RenameToPathPreffix )
+    if(m_WorkMode == WorkMode::CopyToPathPreffix   ||
+       m_WorkMode == WorkMode::RenameToPathPreffix ||
+       m_WorkMode == WorkMode::MoveToPathPreffix    )
         destinationpath = m_Destination / entryname;
-    else if(m_WorkMode == WorkMode::CopyToPathName ||
+    else if(m_WorkMode == WorkMode::CopyToPathName  ||
             m_WorkMode == WorkMode::RenameToPathName )
     {
         destinationpath = m_Destination;
@@ -271,13 +273,24 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
     if(destinationpath.filename() == ".")
         destinationpath.remove_filename(); // get rid of trailing slashes
     
-    if(m_WorkMode == WorkMode::CopyToPathName ||
-       m_WorkMode == WorkMode::CopyToPathPreffix )
+    if(m_WorkMode == WorkMode::CopyToPathName    ||
+       m_WorkMode == WorkMode::CopyToPathPreffix ||
+       m_WorkMode == WorkMode::MoveToPathPreffix  )
     {
+        bool result = false;
         if(m_ItemFlags[_number] & (int)ItemFlags::is_dir)
-            CopyDirectoryTo(sourcepath, destinationpath);
+        {
+            result = CopyDirectoryTo(sourcepath, destinationpath);
+            if(result == true && m_WorkMode == WorkMode::MoveToPathPreffix)
+                m_DirsToDelete.push_back(_node);
+        }
         else
-            CopyFileTo(sourcepath, destinationpath);
+        {
+            result = CopyFileTo(sourcepath, destinationpath);
+            if(result == true && m_WorkMode == WorkMode::MoveToPathPreffix)
+                m_FilesToDelete.push_back(_node);
+        }
+        
     }
     else if(m_WorkMode == WorkMode::RenameToPathPreffix ||
             m_WorkMode == WorkMode::RenameToPathName )
@@ -286,7 +299,26 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
     }
 }
 
-void FileCopyOperationJobGenericToGeneric::CopyFileTo(const path &_src_full_path, const path &_dest_full_path)
+void FileCopyOperationJobGenericToGeneric::ProcessFilesRemoval()
+{
+    for(auto i: m_FilesToDelete)
+    {
+        path p = m_SrcDir / i->to_str_with_pref();
+        m_SrcHost->Unlink(p.c_str(), 0); // any error handling here?
+    }
+}
+
+void FileCopyOperationJobGenericToGeneric::ProcessFoldersRemoval()
+{
+    for(auto i = m_DirsToDelete.rbegin(); i != m_DirsToDelete.rend(); ++i)
+    {
+        path p = m_SrcDir / (*i)->to_str_with_pref();
+        if(p.filename() == ".") p.remove_filename();
+        m_SrcHost->RemoveDirectory(p.c_str(), 0); // any error handling here?
+    }
+}
+
+bool FileCopyOperationJobGenericToGeneric::CopyFileTo(const path &_src_full_path, const path &_dest_full_path)
 {
     int ret;
     int dstopenflags=0;
@@ -438,9 +470,11 @@ cleanup:;
     if(was_successful == false &&
        unlink_on_stop == true)
         m_DstHost->Unlink(_dest_full_path.c_str(), 0);
+    
+    return was_successful;
 }
 
-void FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path)
+bool FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path)
 {
     int ret = m_DstHost->CreateDirectory(_dest_full_path.c_str(), 0);
     assert(ret == 0); // handle me later
@@ -475,6 +509,7 @@ void FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full
     }
     
     return true;*/
+    return true;
 }
 
 void FileCopyOperationJobGenericToGeneric::RenameEntry(const path &_src_full_path, const path &_dest_full_path)

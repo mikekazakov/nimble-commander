@@ -42,7 +42,7 @@
             auto &part = path[pp];
             
             if(part.fs_tag == VFSNativeHost::Tag)
-                hosts_stack.push_back(make_shared<VFSNativeHost>());
+                hosts_stack.push_back(VFSNativeHost::SharedHost());
             else if(part.fs_tag == VFSPSHost::Tag)
                 hosts_stack.push_back(make_shared<VFSPSHost>());
             else if(part.fs_tag == VFSArchiveHost::Tag)

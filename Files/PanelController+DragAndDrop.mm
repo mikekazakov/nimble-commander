@@ -64,14 +64,9 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     
     NSImage *icon_image;
     if(_item.vfs->IsNativeFS())
-    {
-        string path = _item.path + _item.filename;
-        icon_image = [[NSWorkspace sharedWorkspace] iconForFile:[NSString stringWithUTF8String:path.c_str()]];
-    }
+        icon_image = [NSWorkspace.sharedWorkspace iconForFile:[NSString stringWithUTF8String:_item.path.c_str()]];
     else
-    {
         icon_image = [NSWorkspace.sharedWorkspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-    }
     
     [icon_image setSize:NSMakeSize(line_height, line_height)];
     imageComponent = [NSDraggingImageComponent draggingImageComponentWithKey:NSDraggingImageComponentIconKey];
@@ -96,7 +91,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
     
     NSDictionary *attributes = @{ NSFontAttributeName: font,
-                                  NSForegroundColorAttributeName: [NSColor blackColor],
+                                  NSForegroundColorAttributeName: NSColor.blackColor,
                                   NSParagraphStyleAttributeName: item_text_pstyle,
                                   NSShadowAttributeName: label_shadow };
     
@@ -198,7 +193,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     { // old style is turned on by some special conditions
         NSMutableArray *ar = [NSMutableArray new];
         for(auto &i: m_Items)
-            [ar addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:(i.path+i.filename).c_str()]]];
+            [ar addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:i.path.c_str()]]];
         [sender writeObjects:ar];
         m_OldStyleDone = true;
     }
@@ -222,9 +217,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         if(m_URLPromiseTarget == nil)
             return;
         
-        path src = path(item.path) / item.filename;
         path dest = path(m_URLPromiseTarget.path.fileSystemRepresentation) / item.filename;
-        VFSEasyCopyNode(src.c_str(), item.vfs,
+        VFSEasyCopyNode(item.path.c_str(), item.vfs,
                         dest.c_str(), VFSNativeHost::SharedHost());
 
         [item setString:[NSString stringWithUTF8String:dest.c_str()]
@@ -233,7 +227,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     else if([type isEqualToString:(NSString *)kUTTypeFileURL] ||
             [type isEqualToString:(NSString *)kUTTypeURL])
     {
-        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:(item.path+item.filename).c_str()]];
+        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:item.path.c_str()]];
         [url writeToPasteboard:sender];
     }
 }
@@ -283,7 +277,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if(i.CFIsSelected())         // get all selected from listing
                 vfs_items.push_back(&i);
     
-    NSPoint dragPosition = [_view convertPoint:[_event locationInWindow] fromView:nil];
+    NSPoint dragPosition = [_view convertPoint:_event.locationInWindow fromView:nil];
     dragPosition.x -= 16;
     dragPosition.y -= 16;
     
@@ -297,13 +291,13 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         [pasteboard_types addObject:(NSString *)kUTTypeURL];
     }
     
-    for(auto *i: vfs_items) {
+    for(auto i: vfs_items) {
         PanelDraggingItem *pbItem = [PanelDraggingItem new];
         [pbItem setDataProvider:broker forTypes:pasteboard_types];
     
         // internal information
         pbItem.filename = i->Name();
-        pbItem.path = broker.root_path;
+        pbItem.path = broker.root_path + i->Name();
         pbItem.vfs = vfs;
 
         // for File URL Promise
@@ -332,7 +326,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 - (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
     if(id idsource = sender.draggingSource)
-        if([idsource isKindOfClass:[PanelControllerDragSourceBroker class]]) {
+        if([idsource isKindOfClass:PanelControllerDragSourceBroker.class]) {
             PanelControllerDragSourceBroker *source = (PanelControllerDragSourceBroker *)idsource;
             if(source.controller == self) {
                 return NSDragOperationNone;
@@ -349,7 +343,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             }
         }
     
-    if([[sender.draggingPasteboard types] containsObject:(NSString *)kUTTypeFileURL])
+    if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL])
     {
         if(!m_HostsStack.back()->IsWriteable())
             return NSDragOperationNone;
@@ -369,7 +363,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 - (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
     if(id idsource = sender.draggingSource) {
-        if([idsource isKindOfClass:[PanelControllerDragSourceBroker class]]) {
+        if([idsource isKindOfClass:PanelControllerDragSourceBroker.class]) {
             // we're dragging something here from another PanelView, lets understand what actually
             PanelControllerDragSourceBroker *source_broker = (PanelControllerDragSourceBroker *)idsource;
             PanelController *source_controller = source_broker.controller;
@@ -381,7 +375,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 //                return false;
             
             chained_strings files;
-            for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[[PanelDraggingItem class]]
+            for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                     options:nil])
                 files.push_back(item.filename, nullptr);
 
@@ -454,23 +448,22 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             }
         }
     }
-    else if([[sender.draggingPasteboard types] containsObject:(NSString *)kUTTypeFileURL]) {
+    else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
         
         NSArray *fileURLs = [sender.draggingPasteboard
-                             readObjectsForClasses:@[[NSURL class]]
+                             readObjectsForClasses:@[NSURL.class]
                              options:@{NSPasteboardURLReadingFileURLsOnlyKey:@YES}
                              ];
         
         bool result = false;
         for(NSURL *url in fileURLs) {
-            string source_path = url.path.fileSystemRepresentation;
-            char item_name[MAXPATHLEN];
-            GetFilenameFromPath(source_path.c_str(), item_name);
+            path source_path = url.path.fileSystemRepresentation;
+            path dest_path = path(self.GetCurrentDirectoryPathRelativeToHost) / source_path.filename();
             
             result = VFSEasyCopyNode(source_path.c_str(),
-                                     make_shared<VFSNativeHost>(),
-                                     (self.GetCurrentDirectoryPathRelativeToHost + item_name).c_str(),
-                                     make_shared<VFSNativeHost>()
+                                     VFSNativeHost::SharedHost(),
+                                     dest_path.c_str(),
+                                     VFSNativeHost::SharedHost()
                                      ) == 0;
         }
         

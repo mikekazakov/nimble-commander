@@ -73,10 +73,8 @@ public:
 
     void MakeDirectoryStructureDirty(const char *_path);
     
-    unique_ptr<VFSNetFTP::CURLInstance> InstanceForIO();
-    
-    unique_ptr<VFSNetFTP::CURLInstance> InstanceForIOAtDir(const char *_dir);
-    void CommitIOInstanceAtDir(const char *_dir, unique_ptr<VFSNetFTP::CURLInstance> _i);
+    unique_ptr<VFSNetFTP::CURLInstance> InstanceForIOAtDir(const path &_dir);
+    void CommitIOInstanceAtDir(const path &_dir, unique_ptr<VFSNetFTP::CURLInstance> _i);
     
     
     inline VFSNetFTP::Cache &Cache() const { return *m_Cache.get(); };

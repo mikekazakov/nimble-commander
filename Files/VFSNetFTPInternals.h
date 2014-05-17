@@ -42,8 +42,17 @@ struct CURLInstance
         return running_handles;
     }
     
+    template <typename T>
+    inline CURLcode EasySetOpt(CURLoption _option, T _t) { return curl_easy_setopt(curl, _option, _t); }
+    
+    bool IsAttached() const { return attached; }
+    CURLMcode Attach();
+    CURLMcode Detach();
+    CURLcode PerformMulti();
+    
     CURL  *curl  = nullptr;
     CURLM *curlm = nullptr;
+    bool attached = false;
 //    string last_cwd; // last path where this connection was at
     mutex call_lock;
 };

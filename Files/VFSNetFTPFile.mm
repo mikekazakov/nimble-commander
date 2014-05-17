@@ -368,9 +368,7 @@ int VFSNetFTPFile::Close()
 
 path VFSNetFTPFile::DirName() const
 {
-    path p = RelativePath();
-    p.remove_filename();
-    return p;
+    return path(RelativePath()).parent_path();
 }
 
 int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())

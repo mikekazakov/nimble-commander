@@ -259,4 +259,72 @@ void ClearRequestCancelCallback(CURL *_curl)
 }
 
     
+CURLcode CURLInstance::PerformMulti()
+{
+    bool error = false;
+    int running_handles = 0;
+    CURLcode result = CURLE_OK;
+    
+    while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(curlm, &running_handles));
+    
+    
+    while(running_handles)
+    {
+        struct timeval timeout = {0, 10000};
+        
+        fd_set fdread, fdwrite, fdexcep;
+        int maxfd;
+        
+        FD_ZERO(&fdread);
+        FD_ZERO(&fdwrite);
+        FD_ZERO(&fdexcep);
+        curl_multi_fdset(curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
+        
+        if (select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout) == -1)
+        {
+            error = true;
+            break;
+        }
+        
+        while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(curlm, &running_handles));
+    }
+    
+    
+    // check for error codes here
+    if (running_handles == 0) {
+        int msgs_left = 1;
+        while (msgs_left)
+        {
+            CURLMsg* msg = curl_multi_info_read(curlm, &msgs_left);
+            if (msg == NULL ||
+                msg->msg != CURLMSG_DONE ||
+                msg->data.result != CURLE_OK)
+            {
+                if(msg)
+                    result = msg->data.result;
+            }
+        }
+    }
+    return result;
+}
+
+CURLMcode CURLInstance::Attach()
+{
+    assert(!IsAttached());
+    CURLMcode e = curl_multi_add_handle(curlm, curl);
+    if(e == CURLM_OK)
+        attached = true;
+    
+    return e;
+}
+
+CURLMcode CURLInstance::Detach()
+{
+    assert(IsAttached());
+    CURLMcode e = curl_multi_remove_handle(curlm, curl);
+    if(e == CURLM_OK)
+        attached = false;
+    return e;
+}
+
 }

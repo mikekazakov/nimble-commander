@@ -100,10 +100,13 @@ private:
     
     void InformDirectoryChanged(const string &_dir_wth_sl);
     
+    void BasicOptsSetup(VFSNetFTP::CURLInstance *_inst);
+    
     unique_ptr<VFSNetFTP::Cache>        m_Cache;
     unique_ptr<VFSNetFTP::CURLInstance> m_ListingInstance;
     
-    map<path, unique_ptr<VFSNetFTP::CURLInstance>> m_IOIntances;
+    map<path, unique_ptr<VFSNetFTP::CURLInstance>>  m_IOIntances;
+    mutex                                           m_IOIntancesLock;
     
     struct UpdateHandler
     {

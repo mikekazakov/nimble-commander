@@ -18,6 +18,7 @@ namespace VFSNetFTP
 {
 
 static const curl_ftpmethod g_CURLFTPMethod = /*CURLFTPMETHOD_DEFAULT*/ /*CURLFTPMETHOD_MULTICWD*/ CURLFTPMETHOD_SINGLECWD /*CURLFTPMETHOD_NOCWD*/;
+static const int g_CURLVerbose = 1;
 
 struct CURLInstance
 {
@@ -44,6 +45,7 @@ struct CURLInstance
     
     template <typename T>
     inline CURLcode EasySetOpt(CURLoption _option, T _t) { return curl_easy_setopt(curl, _option, _t); }
+    inline void EasyReset() { curl_easy_reset(curl); }
     
     bool IsAttached() const { return attached; }
     CURLMcode Attach();

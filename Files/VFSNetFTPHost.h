@@ -16,6 +16,7 @@ struct VFSNetFTPOptions
 {
     string user;
     string passwd;
+    long   port = -1;
 };
 
 class VFSNetFTPHost : public VFSHost
@@ -68,7 +69,6 @@ public:
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    
     
     // internal stuff below:
-    void BuildFullURL(const char *_path, char *_buffer) const;
     string BuildFullURLString(const char *_path) const;
 
     void MakeDirectoryStructureDirty(const char *_path);

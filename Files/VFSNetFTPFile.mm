@@ -382,9 +382,7 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
        (_open_flags & VFSFile::OF_Read) != 0 &&
        (_open_flags & VFSFile::OF_Write) == 0 )
     {
-        char request[MAXPATHLEN*2];
-        ftp_host->BuildFullURL(RelativePath(), request);
-        m_URLRequest = request;
+        m_URLRequest = ftp_host->BuildFullURLString(RelativePath());
 
 //        host->CommitIOInstanceAtDir(DirName().c_str(),
 //                                    move(m_CURL));
@@ -431,9 +429,7 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         */
         
         
-        char request[MAXPATHLEN*2];
-        ftp_host->BuildFullURL(RelativePath(), request);
-        m_URLRequest = request;
+        m_URLRequest = ftp_host->BuildFullURLString(RelativePath());
         
 //        m_CURL  = ftp_host->InstanceForIO(); // TODO: Host should have some kind of handles cache and use the closes (cwd) available
         m_CURL  = ftp_host->InstanceForIOAtDir(DirName().c_str());        

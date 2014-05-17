@@ -88,14 +88,11 @@ int VFSNetFTPHost::DownloadListing(CURLInstance *_inst,
     if(path[strlen(path)-1] != '/')
         strcat(path, "/");
     
-    char request[MAXPATHLEN*2];
-    BuildFullURL(path, request);
-    
-    
+    string request = BuildFullURLString(path);
     string response;
     
     _inst->call_lock.lock();
-    curl_easy_setopt(_inst->curl, CURLOPT_URL, request);
+    curl_easy_setopt(_inst->curl, CURLOPT_URL, request.c_str());
     curl_easy_setopt(_inst->curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(_inst->curl, CURLOPT_WRITEDATA, &response);
     SetupRequestCancelCallback(_inst->curl, _cancel_checker);
@@ -116,12 +113,6 @@ int VFSNetFTPHost::DownloadListing(CURLInstance *_inst,
     return 0;
 }
 
-void VFSNetFTPHost::BuildFullURL(const char *_path, char *_buffer) const
-{
-    // naive implementation
-    sprintf(_buffer, "ftp://%s%s", JunctionPath(), _path);
-}
-
 string VFSNetFTPHost::BuildFullURLString(const char *_path) const
 {
     // naive implementation
@@ -136,8 +127,6 @@ unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()
     auto inst = make_unique<CURLInstance>();
     inst->curl = curl_easy_init();
     BasicOptsSetup(inst.get());
-    // ... set a lot of stuff like connection options/logins/etc here...
-    
     return inst;
 }
 
@@ -149,7 +138,7 @@ int VFSNetFTPHost::Stat(const char *_path,
     if(_path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
 
-    string path = _path;
+    path path = _path;
     if(path == "/")
     {
         // special case for root path
@@ -160,13 +149,11 @@ int VFSNetFTPHost::Stat(const char *_path,
     }
     
     // 1st - extract directory and filename from _path
-    if(path.back() == '/')
-        path.pop_back();
+    if(path.filename() == ".")
+        path.remove_filename();
     
-    auto last_sl = path.rfind('/');
-    assert(last_sl != string::npos);
-    string parent_dir(path, 0, last_sl + 1);
-    string filename(path, last_sl + 1);
+    string parent_dir = path.parent_path().native();
+    string filename = path.filename().native();
     
     // try to find dir from cache
     auto dir = m_Cache->FindDirectory(parent_dir);
@@ -570,4 +557,6 @@ void VFSNetFTPHost::BasicOptsSetup(VFSNetFTP::CURLInstance *_inst)
         _inst->EasySetOpt(CURLOPT_USERNAME, m_Options.user.c_str());
     if(m_Options.passwd != "")
         _inst->EasySetOpt(CURLOPT_PASSWORD, m_Options.passwd.c_str());
+    if(m_Options.port > 0)
+        _inst->EasySetOpt(CURLOPT_PORT, m_Options.port);
 }

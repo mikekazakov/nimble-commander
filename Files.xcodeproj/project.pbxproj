@@ -97,6 +97,8 @@
 		CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
 		CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A996186C743A00745C4C /* VFSPS_Tests.mm */; };
 		CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47F6971830CDB30060D474 /* NewVersionChecker.mm */; };
+		CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
+		CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */; };
 		CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
@@ -509,6 +511,9 @@
 		CF47A996186C743A00745C4C /* VFSPS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPS_Tests.mm; sourceTree = "<group>"; };
 		CF47F6961830CDB30060D474 /* NewVersionChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewVersionChecker.h; sourceTree = "<group>"; };
 		CF47F6971830CDB30060D474 /* NewVersionChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NewVersionChecker.mm; sourceTree = "<group>"; };
+		CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPConnectionSheetController.h; sourceTree = "<group>"; };
+		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FTPConnectionSheetController.mm; sourceTree = "<group>"; };
+		CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask.mm; sourceTree = "<group>"; };
 		CF4C5A5C17A7B48E00B1B061 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMask.h; sourceTree = "<group>"; };
 		CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionWithMaskSheetController.h; sourceTree = "<group>"; };
@@ -1133,6 +1138,9 @@
 				CFCD3B7918AB64C600028B41 /* FindFilesSheetController.h */,
 				CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */,
 				CFCD3B7B18AB64C600028B41 /* FindFilesSheetController.xib */,
+				CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */,
+				CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */,
+				CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -1926,6 +1934,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */,
 				CFB709BC18E4760D00A83E61 /* Help.pdf in Resources */,
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
@@ -2147,6 +2156,7 @@
 				CF9D0EA017CC961100CB8146 /* archive_read_support_format_7zip.c in Sources */,
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
 				CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */,
+				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
 				CF9D0EA517CC961100CB8146 /* archive_read_support_format_cpio.c in Sources */,
 				CF9D0E8917CC961100CB8146 /* archive_read_disk_entry_from_file.c in Sources */,
 				CF9D0ED417CC961100CB8146 /* archive_write_set_format_ustar.c in Sources */,

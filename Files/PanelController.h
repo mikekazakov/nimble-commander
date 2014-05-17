@@ -151,6 +151,7 @@ namespace panel
 - (void) HandleBriefSystemOverview; // cmd+L
 - (void) HandleFileSearch;
 - (void) HandleEjectVolume;
+- (void) HandleFTPConnection;
 
 - (void) ToggleSortingByName; // user pressed ctrl+F3 by default
 - (void) ToggleSortingByExt; // user pressed ctrl+F4 by default

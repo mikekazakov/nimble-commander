@@ -68,7 +68,27 @@ struct VFSStat
     uint32_t    gid;    /* Group ID of the file */
     int32_t     blksize;/* Optimal blocksize for I/O */
     uint32_t	flags;  /* User defined flags for file */
+    union {
     uint16_t    mode;   /* Mode of file */
+    struct {
+        unsigned xoth : 1;
+        unsigned woth : 1;
+        unsigned roth : 1;
+        unsigned xgrp : 1;
+        unsigned wgrp : 1;
+        unsigned rgrp : 1;
+        unsigned xusr : 1;
+        unsigned wusr : 1;
+        unsigned rusr : 1;
+        unsigned vtx  : 1;
+        unsigned gid  : 1;
+        unsigned uid  : 1;
+        unsigned fifo : 1;
+        unsigned chr  : 1;
+        unsigned dir  : 1;
+        unsigned reg  : 1;
+    } __attribute__((packed)) mode_bits; /* Mode decomposed as flags*/
+    };
     uint16_t    nlink;  /* Number of hard links */
 	timespec    atime;  /* Time of last access */
 	timespec    mtime;	/* Time of last data modification */

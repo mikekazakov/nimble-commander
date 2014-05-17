@@ -206,14 +206,18 @@ shared_ptr<Directory> ParseListing(const char *_str)
         if(parse_dir_unix(current_line, &st, filename, link) ||
             parse_dir_win(current_line, &st, filename, link) )
         {
-            entries.emplace_back();
-            auto &ent = entries.back();
+            if(strcmp(filename, ".") != 0 &&
+               strcmp(filename, "..") != 0)
+            {
+                entries.emplace_back();
+                auto &ent = entries.back();
 
-            ent.name = filename;
-            ent.cfname = CFStringCreateWithUTF8StdStringNoCopy(ent.name);
-            ent.mode = st.st_mode;
-            ent.size = st.st_size;
-            ent.time = st.st_mtime;
+                ent.name = filename;
+                ent.cfname = CFStringCreateWithUTF8StdStringNoCopy(ent.name);
+                ent.mode = st.st_mode;
+                ent.size = st.st_size;
+                ent.time = st.st_mtime;
+            }
         }
         else
         {

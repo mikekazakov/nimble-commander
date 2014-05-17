@@ -15,6 +15,7 @@
 #import "SharingService.h"
 #import "BriefSystemOverview.h"
 #import "ActionsShortcutsManager.h"
+#import "FTPConnectionSheetController.h"
 
 // todo: remove me
 #import "FindFilesSheetController.h"
@@ -790,18 +791,7 @@ void panel::GenericCursorPersistance::Restore()
     if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
-            auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-//            auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
-            if(host->Open("/") != 0)
-                return true;
-
-            vector<shared_ptr<VFSHost>> hosts;
-            hosts.emplace_back(host);
-            
-            [self AsyncGoToVFSHostsStack:hosts
-                                withPath:"/"
-                               withFlags:0
-                                andFocus:""];
+            [self HandleFTPConnection];
             return true;
         }
     }
@@ -1117,6 +1107,40 @@ void panel::GenericCursorPersistance::Restore()
     string path = m_Data.DirectoryPathWithoutTrailingSlash();
     if(IsVolumeContainingPathEjectable(path.c_str()))
         EjectVolumeContainingPath(path);
+}
+
+- (void) HandleFTPConnection
+{
+    FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
+    [sheet ShowSheet:((MainWindowFilePanelState*)self.state).window
+             handler:^{
+                 if(sheet.server == nil)
+                     return;
+                 string server =  sheet.server.UTF8String;
+                 
+                 string username = sheet.username ? sheet.username.UTF8String : "";
+                 string password = sheet.password ? sheet.password.UTF8String : "";
+                 string path = sheet.path ? sheet.path.UTF8String : "/";
+                 if(path.empty() || path[0] != '/')
+                     path = "/";
+                 
+                 
+                 VFSNetFTPOptions opts;
+                 opts.user = username;
+                 opts.passwd = password;
+
+                 auto host = make_shared<VFSNetFTPHost>(server.c_str());
+                 if(host->Open(path.c_str(), opts) != 0)
+                     return;
+                
+                 vector<shared_ptr<VFSHost>> hosts;
+                 hosts.emplace_back(host);
+                 
+                 [self AsyncGoToVFSHostsStack:hosts
+                                     withPath:path
+                                    withFlags:0
+                                     andFocus:""];
+             }];
 }
 
 @end

@@ -18,7 +18,7 @@
 - (void)testSimpleDeleteFromFTP
 {
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    XCTAssert( host->Open("/") == 0 );
     
     const char *fn1 = "/mach_kernel", *fn2 = "/Public/!FilesTesting/mach_kernel";
     VFSStat stat;
@@ -45,7 +45,7 @@
 - (void)testDeleteFromFTPASimpleDir
 {
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    XCTAssert( host->Open("/") == 0 );
     
     const char *fn1 = "/bin", *fn2 = "/Public/!FilesTesting/bin";
     VFSStat stat;

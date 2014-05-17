@@ -14,8 +14,8 @@
 
 struct VFSNetFTPOptions
 {
-    
-    
+    string user;
+    string passwd;
 };
 
 class VFSNetFTPHost : public VFSHost
@@ -32,7 +32,7 @@ public:
      * upon opening will read starting directory listing
      */
     int Open(const char *_starting_dir,
-             const VFSNetFTPOptions *_options
+             const VFSNetFTPOptions &_options = VFSNetFTPOptions()
              );
     
     // core VFSHost methods
@@ -118,4 +118,5 @@ private:
     vector<UpdateHandler> m_UpdateHandlers;
     mutex                 m_UpdateHandlersLock;
     unsigned long         m_LastUpdateTicket = 1;
+    VFSNetFTPOptions      m_Options;
 };

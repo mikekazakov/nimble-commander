@@ -34,8 +34,10 @@ const char *VFSNetFTPHost::FSTag() const
     return Tag;
 }
 
-int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions *_options)
+int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions &_options)
 {
+    m_Options = _options;
+        
     auto instance = SpawnCURL();
     
     int result = DownloadAndCacheListing(instance.get(), _starting_dir, nullptr, nullptr);
@@ -563,4 +565,9 @@ void VFSNetFTPHost::BasicOptsSetup(VFSNetFTP::CURLInstance *_inst)
 {
     _inst->EasySetOpt(CURLOPT_VERBOSE, g_CURLVerbose);
     _inst->EasySetOpt(CURLOPT_FTP_FILEMETHOD, g_CURLFTPMethod);
+    
+    if(m_Options.user != "")
+        _inst->EasySetOpt(CURLOPT_USERNAME, m_Options.user.c_str());
+    if(m_Options.passwd != "")
+        _inst->EasySetOpt(CURLOPT_PASSWORD, m_Options.passwd.c_str());
 }

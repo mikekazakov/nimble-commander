@@ -19,7 +19,7 @@
 - (void)testFTP_LocalNAS
 {
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    XCTAssert( host->Open("/") == 0 );
     
     CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
     op = [op initWithPath:"/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/" rootpath:"/" at:host];

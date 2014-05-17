@@ -31,7 +31,7 @@ static const char* readme = "\n\
 ";
     
     auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    XCTAssert( host->Open("/") == 0 );
     
     VFSStat stat;
     XCTAssert( host->Stat("/README", stat, 0, 0) == 0 );
@@ -87,7 +87,7 @@ static const char* readme = "\n\
 - (void)test192_168_2_5
 {
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    XCTAssert( host->Open("/") == 0 );
     
     const char *fn1 = "/mach_kernel",
                *fn2 = "/Public/!FilesTesting/mach_kernel";
@@ -118,8 +118,12 @@ static const char* readme = "\n\
 
 - (void)test127_0_0_1
 {
-    auto host = make_shared<VFSNetFTPHost>("r2d2:r2d2@127.0.0.1");
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    VFSNetFTPOptions opts;
+    opts.user = "r2d2";
+    opts.passwd = "r2d2";
+    
+    auto host = make_shared<VFSNetFTPHost>("127.0.0.1");
+    XCTAssert( host->Open("/", opts) == 0 );
     
     const char *fn1 = "/mach_kernel",
     *fn2 = "/mach_kernel";
@@ -151,7 +155,7 @@ static const char* readme = "\n\
 - (void)test192_168_2_5_EmptyFileTest
 {
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    XCTAssert( host->Open("/") == 0 );
     const char *fn = "/Public/!FilesTesting/empty_file";
 
     VFSStat stat;
@@ -179,10 +183,14 @@ static const char* readme = "\n\
 // so currently using OSX Server built-in ftp.
 - (void)test127_0_0_1_AppendTest
 {
-//    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    auto host = make_shared<VFSNetFTPHost>("r2d2:r2d2@127.0.0.1");
+    VFSNetFTPOptions opts;
+    opts.user = "r2d2";
+    opts.passwd = "r2d2";
     
-    XCTAssert( host->Open("/", nullptr) == 0 );
+//    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+    auto host = make_shared<VFSNetFTPHost>("127.0.0.1");
+    
+    XCTAssert( host->Open("/", opts) == 0 );
     const char *fn = "/Public/!FilesTesting/append.txt";
 
     VFSStat stat;
@@ -224,7 +232,7 @@ static const char* readme = "\n\
 - (void) testLocal_MKD_RMD
 {
     auto host = make_shared<VFSNetFTPHost>(g_LocalFTP.c_str());
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    XCTAssert( host->Open("/") == 0 );
     for(auto dir: {g_LocalTestPath + UUID(),
                    g_LocalTestPath + string(@"В лесу родилась елочка, В лесу она росла".UTF8String),
                    g_LocalTestPath + string(@"北京市 >≥±§ 😱".UTF8String)
@@ -248,7 +256,7 @@ static const char* readme = "\n\
 - (void) testLocal_Rename_NAS
 {
     auto host = make_shared<VFSNetFTPHost>(g_LocalFTP.c_str());
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    XCTAssert( host->Open("/") == 0 );
     
     string fn1 = "/mach_kernel", fn2 = g_LocalTestPath + "mach_kernel", fn3 = g_LocalTestPath + "mach_kernel34234234";
     
@@ -279,8 +287,12 @@ static const char* readme = "\n\
 
 - (void) testLocal_Rename_127001
 {
-    auto host = make_shared<VFSNetFTPHost>("r2d2:r2d2@127.0.0.1");
-    XCTAssert( host->Open("/", nullptr) == 0 );
+    VFSNetFTPOptions opts;
+    opts.user = "r2d2";    
+    opts.passwd = "r2d2";
+
+    auto host = make_shared<VFSNetFTPHost>("127.0.0.1");
+    XCTAssert( host->Open("/", opts) == 0 );
     
     string fn1 = "/mach_kernel", fn2 = "/mach_kernel", fn3 = "/mach_kernel34234234";
     
@@ -310,7 +322,7 @@ static const char* readme = "\n\
 {
     auto path = "/pub/camino/";
     auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
-    XCTAssert( host->Open(path, nullptr) == 0 );
+    XCTAssert( host->Open(path) == 0 );
 
     set<string> should_be = {"nightly", "releases", "source", "tinderbox-builds"};
     __block set<string> in_fact;
@@ -326,7 +338,7 @@ static const char* readme = "\n\
 {
     auto path = "/developr/fortran/";
     auto host = make_shared<VFSNetFTPHost>("ftp.microsoft.com");
-    XCTAssert( host->Open(path, nullptr) == 0 );
+    XCTAssert( host->Open(path) == 0 );
     
     set<string> should_be = {"KB", "public", "unsup-ed", "README.TXT", "ReadMe1.txt"};
     __block set<string> in_fact;

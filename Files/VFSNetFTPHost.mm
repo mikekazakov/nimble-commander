@@ -268,40 +268,38 @@ bool VFSNetFTPHost::ShouldProduceThumbnails()
 
 int VFSNetFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
 {
-    char filename[MAXPATHLEN],
-         directory[MAXPATHLEN],
-         cmd[MAXPATHLEN],
-         url[MAXPATHLEN];
-
-    if(IsPathWithTrailingSlash(_path))
-        return VFSError::InvalidCall;
-
-    if(!GetFilenameFromPath(_path, filename))
+    path path = _path;
+    if(path.is_absolute() == false || path.filename() == ".")
         return VFSError::InvalidCall;
     
-    if(!GetDirectoryContainingItemFromPath(_path, directory))
-        return VFSError::InvalidCall;
-
-    sprintf(cmd, "DELE %s", filename);
-    BuildFullURL(directory, url);
+    string cmd = "DELE " + path.filename().native();
+    string url = BuildFullURLString((path.parent_path() / "/").c_str());
     
-    auto curl = SpawnCURL(); // TODO: need to somehow get this handle from cache pool
-    
+    CURLMcode curlm_e;
+    auto curl = InstanceForIOAtDir( path.parent_path() );
+    if(curl->IsAttached()) {
+        curlm_e = curl->Detach();
+        assert(curlm_e == CURLM_OK);
+    }
+  
     struct curl_slist* header = NULL;
-    header = curl_slist_append(header, cmd);
+    header = curl_slist_append(header, cmd.c_str());
+    curl->EasySetOpt(CURLOPT_POSTQUOTE, header);
+    curl->EasySetOpt(CURLOPT_URL, url.c_str());
+    curl->EasySetOpt(CURLOPT_WRITEFUNCTION, 0);
+    curl->EasySetOpt(CURLOPT_WRITEDATA, 0);
+    curl->EasySetOpt(CURLOPT_NOBODY, 1);
+
+    curlm_e = curl->Attach();
+    assert(curlm_e == CURLM_OK);
+    CURLcode curl_res = curl->PerformMulti();
     
-    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, header);
-    curl_easy_setopt(curl->curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl->curl, CURLOPT_WRITEFUNCTION, 0);
-    curl_easy_setopt(curl->curl, CURLOPT_WRITEDATA, 0);
-    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 1);
-    CURLcode curl_res = curl_easy_perform(curl->curl);
-    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, NULL);
-    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 0);
     curl_slist_free_all(header);
     
     if(curl_res == CURLE_OK)
         m_Cache->CommitUnlink(_path);
+    
+    CommitIOInstanceAtDir(path.parent_path(), move(curl));
     
     return curl_res == CURLE_OK ?
             VFSError::Ok :
@@ -321,7 +319,6 @@ int VFSNetFTPHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
     string url = BuildFullURLString((path.parent_path() / "/").c_str());
     
     CURLMcode curlm_e;
-    
     auto curl = InstanceForIOAtDir( path.parent_path() );
     if(curl->IsAttached()) {
         curlm_e = curl->Detach();
@@ -365,22 +362,30 @@ int VFSNetFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
     string cmd = "RMD " + path.filename().native();
     string url = BuildFullURLString((path.parent_path() / "/").c_str());
     
-    auto curl = SpawnCURL(); // TODO: need to somehow get this handle from cache pool
+    CURLMcode curlm_e;
+    auto curl = InstanceForIOAtDir( path.parent_path() );
+    if(curl->IsAttached()) {
+        curlm_e = curl->Detach();
+        assert(curlm_e == CURLM_OK);
+    }
     
     struct curl_slist* header = NULL;
     header = curl_slist_append(header, cmd.c_str());
-    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, header);
-    curl_easy_setopt(curl->curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl->curl, CURLOPT_WRITEFUNCTION, 0);
-    curl_easy_setopt(curl->curl, CURLOPT_WRITEDATA, 0);
-    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 1);
-    CURLcode curl_res = curl_easy_perform(curl->curl);
-    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, NULL);
-    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 0);
+    curl->EasySetOpt(CURLOPT_POSTQUOTE, header);
+    curl->EasySetOpt(CURLOPT_URL, url.c_str());
+    curl->EasySetOpt(CURLOPT_WRITEFUNCTION, 0);
+    curl->EasySetOpt(CURLOPT_WRITEDATA, 0);
+    curl->EasySetOpt(CURLOPT_NOBODY, 1);
+
+    curlm_e = curl->Attach();
+    assert(curlm_e == CURLM_OK);
+    CURLcode curl_res = curl->PerformMulti();
     curl_slist_free_all(header);
     
     if(curl_res == CURLE_OK)
         m_Cache->CommitRMD(path.native());
+    
+    CommitIOInstanceAtDir(path.parent_path(), move(curl));
     
     return curl_res == CURLE_OK ?
                         VFSError::Ok :
@@ -402,23 +407,32 @@ int VFSNetFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^_
     string cmd1 = string("RNFR ") + old_path.native();
     string cmd2 = string("RNTO ") + new_path.native();
     
-    auto curl = SpawnCURL(); // TODO: need to somehow get this handle from cache pool
+    CURLMcode curlm_e;
+    auto curl = InstanceForIOAtDir( old_path.parent_path() );
+    if(curl->IsAttached()) {
+        curlm_e = curl->Detach();
+        assert(curlm_e == CURLM_OK);
+    }
     
     struct curl_slist* header = NULL;
     header = curl_slist_append(header, cmd1.c_str());
     header = curl_slist_append(header, cmd2.c_str());
-    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, header);
-    curl_easy_setopt(curl->curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl->curl, CURLOPT_WRITEFUNCTION, 0);
-    curl_easy_setopt(curl->curl, CURLOPT_WRITEDATA, 0);
-    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 1);
-    CURLcode curl_res = curl_easy_perform(curl->curl);
-    curl_easy_setopt(curl->curl, CURLOPT_POSTQUOTE, NULL);
-    curl_easy_setopt(curl->curl, CURLOPT_NOBODY, 0);
+    curl->EasySetOpt(CURLOPT_POSTQUOTE, header);
+    curl->EasySetOpt(CURLOPT_URL, url.c_str());
+    curl->EasySetOpt(CURLOPT_WRITEFUNCTION, 0);
+    curl->EasySetOpt(CURLOPT_WRITEDATA, 0);
+    curl->EasySetOpt(CURLOPT_NOBODY, 1);
+
+    curlm_e = curl->Attach();
+    assert(curlm_e == CURLM_OK);
+    CURLcode curl_res = curl->PerformMulti();
+    
     curl_slist_free_all(header);
     
     if(curl_res == CURLE_OK)
         m_Cache->CommitRename(old_path.native(), new_path.native());
+    
+    CommitIOInstanceAtDir(old_path.parent_path(), move(curl));
     
     return curl_res == CURLE_OK ?
         VFSError::Ok :

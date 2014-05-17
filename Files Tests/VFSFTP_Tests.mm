@@ -306,5 +306,38 @@ static const char* readme = "\n\
     XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
 }
 
+- (void)testListing_Mozilla_Org
+{
+    auto path = "/pub/camino/";
+    auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
+    XCTAssert( host->Open(path, nullptr) == 0 );
+
+    set<string> should_be = {"nightly", "releases", "source", "tinderbox-builds"};
+    __block set<string> in_fact;
+    
+    XCTAssert( host->IterateDirectoryListing(path, ^bool(const VFSDirEnt &_dirent) {
+            in_fact.emplace(_dirent.name);
+            return true;
+        }) == 0);
+    XCTAssert(should_be == in_fact);
+}
+
+- (void)testListing_Microsoft_Com
+{
+    auto path = "/developr/fortran/";
+    auto host = make_shared<VFSNetFTPHost>("ftp.microsoft.com");
+    XCTAssert( host->Open(path, nullptr) == 0 );
+    
+    set<string> should_be = {"KB", "public", "unsup-ed", "README.TXT", "ReadMe1.txt"};
+    __block set<string> in_fact;
+    
+    XCTAssert( host->IterateDirectoryListing(path, ^bool(const VFSDirEnt &_dirent) {
+        in_fact.emplace(_dirent.name);
+        return true;
+    }) == 0);
+    XCTAssert(should_be == in_fact);
+}
+
+
 @end
 

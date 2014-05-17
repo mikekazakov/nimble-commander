@@ -129,6 +129,51 @@ static int parse_dir_unix(const char *line,
     return 1;
 }
     
+static int parse_dir_win(const char *line,
+                         struct stat *sbuf,
+                         char *file,
+                         char *link)
+{
+    char date[9];
+    char hour[8];
+    char size[33];
+    struct tm tm;
+    time_t tt;
+    int res;
+    (void)link;
+        
+    memset(file, 0, sizeof(char)*1024);
+    memset(&tm, 0, sizeof(tm));
+    memset(&tt, 0, sizeof(tt));
+        
+    res = sscanf(line, "%8s%*[ \t]%7s%*[ \t]%32s%*[ \t]%1023c",
+                 date, hour, size, file);
+    if (res < 4) {
+        return 0;
+    }
+        
+    
+    tt = time(NULL);
+    gmtime_r(&tt, &tm);
+    tm.tm_sec = tm.tm_min = tm.tm_hour = 0;
+    strptime(date, "%m-%d-%y", &tm);
+    strptime(hour, "%I:%M%p", &tm);
+        
+    sbuf->st_atime = sbuf->st_ctime = sbuf->st_mtime = mktime(&tm);
+    sbuf->st_nlink = 1;
+        
+    if (!strcmp(size, "<DIR>")) {
+        sbuf->st_mode |= S_IFDIR;
+    } else {
+        unsigned long long nsize = strtoull(size, NULL, 0);
+        sbuf->st_mode |= S_IFREG;
+        sbuf->st_size = nsize;
+    }
+        
+    return 1;
+}
+
+    
 shared_ptr<Directory> ParseListing(const char *_str)
 {
     if(_str == nullptr)
@@ -158,7 +203,8 @@ shared_ptr<Directory> ParseListing(const char *_str)
         memset(&st, 0, sizeof(st));
         char filename[MAXPATHLEN];
         char link[MAXPATHLEN];
-        if(parse_dir_unix(current_line, &st, filename, link))
+        if(parse_dir_unix(current_line, &st, filename, link) ||
+            parse_dir_win(current_line, &st, filename, link) )
         {
             entries.emplace_back();
             auto &ent = entries.back();

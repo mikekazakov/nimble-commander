@@ -363,6 +363,14 @@ bool IsVolumeContainingPathEjectable(const char *_path)
 }
 @end
 
+@implementation NSPasteboard(SyntaxSugar)
++ (void) writeSingleString:(const char *)_s
+{
+    NSPasteboard *pb = NSPasteboard.generalPasteboard;
+    [pb declareTypes:@[NSStringPboardType] owner:nil];
+    [pb setString:[NSString stringWithUTF8String:_s] forType:NSStringPboardType];
+}
+@end
 
 NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz)
 {

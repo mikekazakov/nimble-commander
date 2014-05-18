@@ -23,8 +23,6 @@
 - (void) ReportUsedMask:(NSString*)_mask ForWindow:(NSWindow*)_window;
 @end
 
-typedef void (^SelectionWithMaskCompletionHandler)(int result);
-
 @interface SelectionWithMaskSheetController : NSWindowController
 
 @property (strong) IBOutlet NSComboBox *ComboBox;
@@ -35,7 +33,7 @@ typedef void (^SelectionWithMaskCompletionHandler)(int result);
 - (NSString *) Mask;
 - (IBAction)OnOK:(id)sender;
 - (IBAction)OnCancel:(id)sender;
-- (void)ShowSheet:(NSWindow *)_window handler:(SelectionWithMaskCompletionHandler)_handler;
+- (void)ShowSheet:(NSWindow *)_window handler:(void(^)())_on_ok;
 - (void)SetIsDeselect:(bool) _value;
 
 @end

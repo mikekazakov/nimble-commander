@@ -128,6 +128,7 @@ namespace panel
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) PanelData& data;
 @property (nonatomic, readonly) bool isActive;
+@property (nonatomic, readonly) NSWindow* window;
 
 // CONFIGURATION METHODS /////////////////////////////////////////////
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
@@ -140,15 +141,8 @@ namespace panel
 - (void) HandleGoIntoDirOrOpenInSystem;        // 'Open' menu item
 - (void) HandleOpenInSystem;                   // 'Open Natively' menu item
 - (bool) HandleGoIntoDir;                      // basically cmd+down_arrow
-
-- (void) HandleFileView;            // F3
 - (void) HandleCalculateSizes;      // alt+shift+return
 - (void) HandleCalculateAllSizes;   // alt+ctrl+shift+return
-- (void) HandleBriefSystemOverview; // cmd+L
-- (void) HandleFileSearch;
-- (void) HandleEjectVolume;
-- (void) HandleFTPConnection;
-
 - (void) ToggleSortingByName; // user pressed ctrl+F3 by default
 - (void) ToggleSortingByExt; // user pressed ctrl+F4 by default
 - (void) ToggleSortingByMTime; // user pressed ctrl+F5 by default
@@ -182,7 +176,6 @@ namespace panel
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
-- (void) SelectEntriesByMask:(NSString*) _mask select:(bool) _select; // if false - then deselect elements by mask
 @end
 
 // internal stuff, move it somewehere else

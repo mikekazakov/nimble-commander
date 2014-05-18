@@ -33,7 +33,6 @@
 #import "FileLinkAlterSymlinkSheetController.h"
 #import "FileLinkNewHardlinkSheetController.h"
 #import "FileLinkOperation.h"
-#import "SelectionWithMaskSheetController.h"
 #import "VFS.h"
 #import "FilePanelMainSplitView.h"
 #import "BriefSystemOverview.h"
@@ -498,14 +497,6 @@
     [self SavePanelsSettings];
 }
 
-- (IBAction)OnFileViewCommand:(id)sender{
-    [[self ActivePanelController] HandleFileView];
-}
-
-- (IBAction)OnBriefSystemOverviewCommand:(id)sender{
-    [[self ActivePanelController] HandleBriefSystemOverview];
-}
-
 - (IBAction)OnSyncPanels:(id)sender{
     if(!self.isPanelActive) return;
     if([m_MainSplitView AnyCollapsedOrOverlayed]) return;
@@ -534,11 +525,6 @@
     [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
     
     [self SavePanelsSettings];
-}
-
-- (IBAction)OnRefreshPanel:(id)sender{
-    if(!self.isPanelActive) return;
-    [[self ActivePanelController] RefreshDirectory];
 }
 
 - (void)flagsChanged:(NSEvent *)theEvent
@@ -1268,49 +1254,6 @@
                         ];
                  }                 
              }];
-}
-
-- (IBAction)OnSelectByMask:(id)sender
-{
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
-    [sheet ShowSheet:[self window]
-             handler:^(int result) {
-                 if(result == DialogResult::OK) {
-                     [[self ActivePanelController] SelectEntriesByMask:[sheet Mask] select:true];
-                 }
-             }];
-}
-
-- (IBAction)OnDeselectByMask:(id)sender
-{
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
-    [sheet SetIsDeselect:true];
-    [sheet ShowSheet:[self window]
-             handler:^(int result) {
-                 if(result == DialogResult::OK) {
-                     [[self ActivePanelController] SelectEntriesByMask:[sheet Mask] select:false];
-                 }
-             }];
-}
-
-- (IBAction)OnCopyCurrentFileName:(id)sender
-{
-    auto focus = [self.ActivePanelController GetCurrentFocusedEntryFilename];
-    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
-    [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
-    [pasteBoard setString:[NSString stringWithUTF8String:focus.c_str()] forType:NSStringPboardType];
-}
-
-- (IBAction)OnCopyCurrentFilePath:(id)sender
-{
-    auto path = [self.ActivePanelController GetCurrentFocusedEntryFilePathRelativeToHost];
-    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
-    [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
-    [pasteBoard setString:[NSString stringWithUTF8String:path.c_str()] forType:NSStringPboardType];
 }
 
 - (IBAction)paste:(id)sender

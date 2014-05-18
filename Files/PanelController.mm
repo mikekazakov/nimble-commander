@@ -16,6 +16,7 @@
 #import "BriefSystemOverview.h"
 #import "ActionsShortcutsManager.h"
 #import "FTPConnectionSheetController.h"
+#import "SelectionWithMaskSheetController.h"
 
 // todo: remove me
 #import "FindFilesSheetController.h"
@@ -689,7 +690,7 @@ void panel::GenericCursorPersistance::Restore()
     if([self GetCurrentVFSHost]->IsNativeFS() && IsEligbleToTryToExecuteInConsole(*entry))
     {
         auto path = [self GetCurrentDirectoryPathRelativeToHost];
-        [(MainWindowController*)((MainWindowFilePanelState*)self.state).window.delegate RequestTerminalExecution:entry->Name() at:path.c_str()];
+        [(MainWindowController*)self.window.delegate RequestTerminalExecution:entry->Name() at:path.c_str()];
         
         return;
     }
@@ -801,34 +802,6 @@ void panel::GenericCursorPersistance::Restore()
     }
 
     return false;
-}
-
-- (void) HandleBriefSystemOverview
-{
-    MainWindowFilePanelState* state = self.state;
-    if(m_BriefSystemOverview)
-    {
-        [state CloseOverlay:self];
-        m_BriefSystemOverview = nil;
-        return;
-    }
-    m_BriefSystemOverview = [state RequestBriefSystemOverview:self];
-    [self UpdateBriefSystemOverview];
-}
-
-- (void) HandleFileView // F3
-{
-    MainWindowFilePanelState* state = self.state;
-    
-    // Close quick preview, if it is open.
-    if(m_QuickLook) {
-        [state CloseOverlay:self];
-        m_QuickLook = nil;
-        return;
-    }
-    
-    m_QuickLook = [state RequestQuickLookView:self];
-    [self OnCursorChanged];
 }
 
 - (void) CalculateSizesWithNames:(chained_strings) _filenames
@@ -975,6 +948,39 @@ void panel::GenericCursorPersistance::Restore()
     [self SelectAllEntries:false];
 }
 
+- (IBAction)OnRefreshPanel:(id)sender
+{
+    [self RefreshDirectory];
+}
+
+- (IBAction)OnFileViewCommand:(id)sender
+{
+    MainWindowFilePanelState* state = self.state;
+    
+    // Close quick preview, if it is open.
+    if(m_QuickLook) {
+        [state CloseOverlay:self];
+        m_QuickLook = nil;
+        return;
+    }
+    
+    m_QuickLook = [state RequestQuickLookView:self];
+    [self OnCursorChanged];
+}
+
+- (IBAction)OnBriefSystemOverviewCommand:(id)sender
+{
+    MainWindowFilePanelState* state = self.state;
+    if(m_BriefSystemOverview)
+    {
+        [state CloseOverlay:self];
+        m_BriefSystemOverview = nil;
+        return;
+    }
+    m_BriefSystemOverview = [state RequestBriefSystemOverview:self];
+    [self UpdateBriefSystemOverview];
+}
+
 - (void) OnPathChanged:(int)_flags
 {
     [self ResetUpdatesObservation:m_Data.DirectoryPathWithTrailingSlash()];
@@ -1008,13 +1014,6 @@ void panel::GenericCursorPersistance::Restore()
 - (void)OnEjectButton:(id)sender
 {
     EjectVolumeContainingPath(m_Data.DirectoryPathWithoutTrailingSlash());
-}
-
-- (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
-{
-    bool ignore_dirs = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
-    if(m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
-        [m_View setNeedsDisplay:true];
 }
 
 - (void)OnShareButton:(id)sender
@@ -1077,37 +1076,10 @@ void panel::GenericCursorPersistance::Restore()
     [self HandleGoIntoDirOrOpenInSystem];
 }
 
-- (void) HandleFileSearch
-{
-    FindFilesSheetController *sheet = [FindFilesSheetController new];
-    [sheet ShowSheet:((MainWindowFilePanelState*)self.state).window
-             withVFS:self.GetCurrentVFSHost
-            fromPath:self.GetCurrentDirectoryPathRelativeToHost
-             handler:^{
-                 if(sheet.SelectedItem != nullptr)
-                 {
-                     auto item = sheet.SelectedItem;
-                     [self GoToRelativeToHostAsync:item->dir_path.c_str()
-                                      select_entry:item->filename.c_str()];
-                 }
-             }
-     ];
-}
-
-- (void) HandleEjectVolume
-{
-    if(!self.GetCurrentVFSHost->IsNativeFS())
-        return;
-    
-    string path = m_Data.DirectoryPathWithoutTrailingSlash();
-    if(IsVolumeContainingPathEjectable(path.c_str()))
-        EjectVolumeContainingPath(path);
-}
-
 - (void) HandleFTPConnection
 {
     FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
-    [sheet ShowSheet:((MainWindowFilePanelState*)self.state).window
+    [sheet ShowSheet:self.window
              handler:^{
                  if(sheet.server == nil)
                      return;
@@ -1136,6 +1108,70 @@ void panel::GenericCursorPersistance::Restore()
                                     withFlags:0
                                      andFocus:""];
              }];
+}
+
+- (IBAction)OnCopyCurrentFileName:(id)sender {
+    [NSPasteboard writeSingleString:self.GetCurrentFocusedEntryFilename.c_str()];
+}
+
+- (IBAction)OnCopyCurrentFilePath:(id)sender {
+    [NSPasteboard writeSingleString:self.GetCurrentFocusedEntryFilePathRelativeToHost.c_str()];
+}
+
+- (IBAction)performFindPanelAction:(id)sender
+{
+    FindFilesSheetController *sheet = [FindFilesSheetController new];
+    [sheet ShowSheet:self.window
+             withVFS:self.GetCurrentVFSHost
+            fromPath:self.GetCurrentDirectoryPathRelativeToHost
+             handler:^{
+                 if(sheet.SelectedItem != nullptr)
+                 {
+                     auto item = sheet.SelectedItem;
+                     [self GoToRelativeToHostAsync:item->dir_path.c_str()
+                                      select_entry:item->filename.c_str()];
+                 }
+             }
+     ];
+}
+
+- (IBAction)OnEjectVolume:(id)sender
+{
+    if(!self.GetCurrentVFSHost->IsNativeFS())
+        return;
+    
+    string path = m_Data.DirectoryPathWithoutTrailingSlash();
+    if(IsVolumeContainingPathEjectable(path.c_str()))
+        EjectVolumeContainingPath(path);
+}
+
+- (NSWindow*) window
+{
+    return ((MainWindowFilePanelState*)self.state).window;
+}
+
+- (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
+{
+    bool ignore_dirs = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
+    if(m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
+        [m_View setNeedsDisplay:true];
+}
+
+- (IBAction)OnSelectByMask:(id)sender
+{
+    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
+    [sheet ShowSheet:self.window handler:^{
+        [self SelectEntriesByMask:sheet.Mask select:true];
+    }];
+}
+
+- (IBAction)OnDeselectByMask:(id)sender
+{
+    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
+    [sheet SetIsDeselect:true];
+    [sheet ShowSheet:self.window handler:^{
+        [self SelectEntriesByMask:sheet.Mask select:false];
+    }];
 }
 
 @end

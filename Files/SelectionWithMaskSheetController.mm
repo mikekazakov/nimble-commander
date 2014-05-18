@@ -123,10 +123,10 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
 
 @implementation SelectionWithMaskSheetController
 {
-    NSString *m_Mask;
-    NSWindow       *m_ParentWindow;
-    bool    m_IsDeselect;
-    SelectionWithMaskCompletionHandler m_Handler;
+    NSString   *m_Mask;
+    NSWindow   *m_ParentWindow;
+    bool        m_IsDeselect;
+    void      (^m_OnOK)();
 }
 
 - (id)init
@@ -161,30 +161,29 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
 - (IBAction)OnOK:(id)sender
 {
     m_Mask = self.ComboBox.stringValue;
-    [[SelectionWithMaskSheetHistory sharedHistory] ReportUsedMask:m_Mask ForWindow:m_ParentWindow];
-    
-    [NSApp endSheet:[self window] returnCode:DialogResult::OK];    
+    [SelectionWithMaskSheetHistory.sharedHistory ReportUsedMask:m_Mask ForWindow:m_ParentWindow];
+    m_OnOK();
+    [NSApp endSheet:self.window returnCode:DialogResult::OK];
 }
 
 - (IBAction)OnCancel:(id)sender
 {
     m_Mask = @"";
-    [NSApp endSheet:[self window] returnCode:DialogResult::Cancel];    
+    [NSApp endSheet:self.window returnCode:DialogResult::Cancel];
 }
 
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
-    [[self window] orderOut:self];
+    [self.window orderOut:self];
     m_ParentWindow = nil;
-    m_Handler((int)returnCode);
-    m_Handler = nil;
+    m_OnOK = nil;
 }
 
-- (void)ShowSheet:(NSWindow *)_window handler:(SelectionWithMaskCompletionHandler)_handler
+- (void)ShowSheet:(NSWindow *)_window handler:(void(^)())_handler
 {
-    m_Handler = _handler;
+    m_OnOK = _handler;
     m_ParentWindow = _window;
-    [NSApp beginSheet: [self window]
+    [NSApp beginSheet: self.window
        modalForWindow: _window
         modalDelegate: self
        didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)

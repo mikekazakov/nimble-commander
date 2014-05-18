@@ -126,6 +126,9 @@ struct MachTimeBenchmark
 + (instancetype)stringWithCharactersNoCopy:(const unichar *)characters length:(NSUInteger)length;
 @end
 
+@interface NSPasteboard(SyntaxSugar)
++ (void) writeSingleString:(const char *)_s;
+@end
 
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
 bool IsRunningUnitTesting();

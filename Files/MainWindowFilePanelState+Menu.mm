@@ -147,21 +147,6 @@
     [m_OperationsController AddOperation:op];
 }
 
-- (IBAction)performFindPanelAction:(id)sender
-{
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    [self.ActivePanelController HandleFileSearch];
-}
-
-- (IBAction)OnEjectVolume:(id)sender
-{
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    
-    [self.ActivePanelController HandleEjectVolume];    
-}
-
 - (IBAction)OnGoToUpperDirectory:(id)sender
 {
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])

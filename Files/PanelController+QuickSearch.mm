@@ -211,7 +211,8 @@ static inline bool IsBackspace(NSString *_s)
     // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
     if((m_VFSFetchingFlags & VFSHost::F_NoDotDot) == 0 &&
        [m_View GetCursorPosition] == 0 &&
-       m_Data.SortedDirectoryEntries().size() >= 2)
+       m_Data.SortedDirectoryEntries().size() >= 2 &&
+       m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0])->IsDotDot() )
         [m_View SetCursorPosition:1];
     
     [m_View setNeedsDisplay:true];

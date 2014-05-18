@@ -88,8 +88,6 @@ void panel::GenericCursorPersistance::Restore()
 }
 
 @implementation PanelController
-
-@synthesize state = m_FilePanelState;
 @synthesize view = m_View;
 @synthesize data = m_Data;
 
@@ -176,6 +174,16 @@ void panel::GenericCursorPersistance::Restore()
     }
 }
 
+- (void) setState:(MainWindowFilePanelState *)state
+{
+    m_FilePanelState = state;
+}
+
+- (MainWindowFilePanelState*)state
+{
+    return m_FilePanelState;
+}
+
 - (void) LoadViewState:(NSDictionary *)_state
 {
     auto hard_filtering = m_Data.HardFiltering();
@@ -234,6 +242,7 @@ void panel::GenericCursorPersistance::Restore()
     pers.Restore();
     
     [m_View setNeedsDisplay:true];
+    [self.state SavePanelsSettings];
 }
 
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter
@@ -245,62 +254,67 @@ void panel::GenericCursorPersistance::Restore()
     pers.Restore();
     
     [m_View setNeedsDisplay:true];
+    [self.state SavePanelsSettings];
 }
 
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev
 {
     PanelSortMode mode = m_Data.SortMode(); // we don't want to change anything in sort params except the mode itself
-    if(mode.sort != _direct)  mode.sort = _direct;
-    else                      mode.sort = _rev;
+    mode.sort = mode.sort != _direct ? _direct : _rev;
     [self ChangeSortingModeTo:mode];
 }
 
-- (void) ToggleViewHiddenFiles
-{
+- (IBAction)ToggleViewHiddenFiles:(id)sender{
     auto filtering = m_Data.HardFiltering();
     filtering.show_hidden = !filtering.show_hidden;
     [self ChangeHardFilteringTo:filtering];
 }
-
-- (void) ToggleSeparateFoldersFromFiles
-{
+- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.sep_dirs = !mode.sep_dirs;
     [self ChangeSortingModeTo:mode];
 }
-
-- (void) ToggleCaseSensitiveComparison
-{
+- (IBAction)ToggleCaseSensitiveComparison:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.case_sens = !mode.case_sens;
     [self ChangeSortingModeTo:mode];
 }
-
-- (void) ToggleNumericComparison
-{
+- (IBAction)ToggleNumericComparison:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.numeric_sort = !mode.numeric_sort;
     [self ChangeSortingModeTo:mode];
 }
-
-- (void) ToggleSortingBySize{
-    [self MakeSortWith:PanelSortMode::SortBySize Rev:PanelSortMode::SortBySizeRev];}
-- (void) ToggleSortingByName{
-    [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];}
-- (void) ToggleSortingByMTime{
-    [self MakeSortWith:PanelSortMode::SortByMTime Rev:PanelSortMode::SortByMTimeRev];}
-- (void) ToggleSortingByBTime{
-    [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];}
-- (void) ToggleSortingByExt{
-    [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];}
-- (void) ToggleShortViewMode{
-    [m_View ToggleViewType:PanelViewType::ViewShort];}
-- (void) ToggleMediumViewMode{
-    [m_View ToggleViewType:PanelViewType::ViewMedium];}
-- (void) ToggleFullViewMode{
-    [m_View ToggleViewType:PanelViewType::ViewFull];}
-- (void) ToggleWideViewMode{
-    [m_View ToggleViewType:PanelViewType::ViewWide];}
+- (IBAction)ToggleSortByName:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];
+}
+- (IBAction)ToggleSortByExt:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];
+}
+- (IBAction)ToggleSortByMTime:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortByMTime Rev:PanelSortMode::SortByMTimeRev];
+}
+- (IBAction)ToggleSortBySize:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortBySize Rev:PanelSortMode::SortBySizeRev];
+}
+- (IBAction)ToggleSortByBTime:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];
+}
+- (IBAction)ToggleShortViewMode:(id)sender {
+    [m_View ToggleViewType:PanelViewType::ViewShort];
+    [self.state SavePanelsSettings];
+}
+- (IBAction)ToggleMediumViewMode:(id)sender {
+    [m_View ToggleViewType:PanelViewType::ViewMedium];
+    [self.state SavePanelsSettings];
+}
+- (IBAction)ToggleFullViewMode:(id)sender{
+    [m_View ToggleViewType:PanelViewType::ViewFull];
+    [self.state SavePanelsSettings];
+}
+- (IBAction)ToggleWideViewMode:(id)sender{
+    [m_View ToggleViewType:PanelViewType::ViewWide];
+    [self.state SavePanelsSettings];
+}
 
 - (void) ResetUpdatesObservation:(string)_new_path
 {
@@ -1172,6 +1186,52 @@ void panel::GenericCursorPersistance::Restore()
     [sheet ShowSheet:self.window handler:^{
         [self SelectEntriesByMask:sheet.Mask select:false];
     }];
+}
+
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    static const auto upd_for_sort = ^(NSMenuItem *_item, PanelSortMode _mode, PanelSortMode::Mode _mask) {
+        static NSImage *img = [NSImage imageNamed:NSImageNameRemoveTemplate];
+        if(_mode.sort & _mask) {
+            _item.image = _mode.isrevert() ? img : nil;
+            _item.state = NSOnState;
+        }
+        else {
+            _item.image = nil;
+            _item.state = NSOffState;
+        }
+    };
+    
+    static const int tag_short_mode =         ActionsShortcutsManager::Instance().TagFromAction("menu.view.toggle_short_mode");
+    static const int tag_medium_mode =        ActionsShortcutsManager::Instance().TagFromAction("menu.view.toggle_medium_mode");
+    static const int tag_full_mode =          ActionsShortcutsManager::Instance().TagFromAction("menu.view.toggle_full_mode");
+    static const int tag_wide_mode =          ActionsShortcutsManager::Instance().TagFromAction("menu.view.toggle_wide_mode");
+    static const int tag_sort_name =          ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_name");
+    static const int tag_sort_ext =           ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_extension");
+    static const int tag_sort_mod =           ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_modify_time");
+    static const int tag_sort_size =          ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_size");
+    static const int tag_sort_creat =         ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_by_creation_time");
+    static const int tag_sort_viewhidden =    ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_view_hidden");
+    static const int tag_sort_sepfolders =    ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_separate_folders");
+    static const int tag_sort_casesens =      ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_case_sensitive");
+    static const int tag_sort_numeric =       ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_numeric_comparison");
+    
+    NSInteger tag = item.tag;
+    if(tag == tag_short_mode)       item.State = self.GetViewType == PanelViewType::ViewShort;
+    else if(tag == tag_medium_mode) item.State = self.GetViewType == PanelViewType::ViewMedium;
+    else if(tag == tag_full_mode)   item.State = self.GetViewType == PanelViewType::ViewFull;
+    else if(tag == tag_wide_mode)   item.State = self.GetViewType == PanelViewType::ViewWide;
+    else if(tag == tag_sort_viewhidden) item.State = self.GetUserHardFiltering.show_hidden;
+    else if(tag == tag_sort_sepfolders) item.State = self.GetUserSortMode.sep_dirs;
+    else if(tag == tag_sort_casesens)   item.State = self.GetUserSortMode.case_sens;
+    else if(tag == tag_sort_numeric)    item.State = self.GetUserSortMode.numeric_sort;
+    else if(tag == tag_sort_name)   upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByNameMask);
+    else if(tag == tag_sort_ext)    upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByExtMask);
+    else if(tag == tag_sort_mod)    upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByMTimeMask);
+    else if(tag == tag_sort_size)   upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortBySizeMask);
+    else if(tag == tag_sort_creat)  upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByBTimeMask);
+    
+    return true; // will disable some items in the future
 }
 
 @end

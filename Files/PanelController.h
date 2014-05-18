@@ -124,7 +124,7 @@ namespace panel
     __weak MainWindowFilePanelState* m_FilePanelState;
 }
 
-@property (weak) MainWindowFilePanelState* state;
+@property (nonatomic) MainWindowFilePanelState* state;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) PanelData& data;
 @property (nonatomic, readonly) bool isActive;
@@ -143,19 +143,6 @@ namespace panel
 - (bool) HandleGoIntoDir;                      // basically cmd+down_arrow
 - (void) HandleCalculateSizes;      // alt+shift+return
 - (void) HandleCalculateAllSizes;   // alt+ctrl+shift+return
-- (void) ToggleSortingByName; // user pressed ctrl+F3 by default
-- (void) ToggleSortingByExt; // user pressed ctrl+F4 by default
-- (void) ToggleSortingByMTime; // user pressed ctrl+F5 by default
-- (void) ToggleSortingBySize; // user pressed ctrl+F6 by default
-- (void) ToggleSortingByBTime; // user pressed ctrl+F8 by default
-- (void) ToggleViewHiddenFiles;
-- (void) ToggleSeparateFoldersFromFiles;
-- (void) ToggleCaseSensitiveComparison;
-- (void) ToggleNumericComparison;
-- (void) ToggleShortViewMode; // user pressed ctrl+1 by default
-- (void) ToggleMediumViewMode; // user pressed ctrl+2 by default
-- (void) ToggleFullViewMode; // user pressed ctrl+3 by default
-- (void) ToggleWideViewMode; // user pressed ctrl+4 by default
 
 // refactor me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 - (PanelViewType) GetViewType;

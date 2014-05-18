@@ -89,6 +89,8 @@ void panel::GenericCursorPersistance::Restore()
 @implementation PanelController
 
 @synthesize state = m_FilePanelState;
+@synthesize view = m_View;
+@synthesize data = m_Data;
 
 - (id) init
 {
@@ -139,16 +141,6 @@ void panel::GenericCursorPersistance::Restore()
         m_UpdatesObservationHost->StopDirChangeObserving(m_UpdatesObservationTicket);
 
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:MyDefaultsKeys()];
-}
-
-- (PanelData&) Data
-{
-    return m_Data;
-}
-
-- (PanelView*) View
-{
-    return m_View;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -744,36 +736,29 @@ void panel::GenericCursorPersistance::Restore()
     });
 }
 
-- (bool) ProcessKeyDown:(NSEvent *)event; // return true if key was processed
+- (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
 {
+    MainWindowFilePanelState *state = (MainWindowFilePanelState*)self.state;
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
     
     if([self QuickSearchProcessKeyDown:event])
         return true;
     
-    NSString*  const character   = [event charactersIgnoringModifiers];
-    if ( [character length] != 1 )
+    NSString*  const character   = event.charactersIgnoringModifiers;
+    if ( character.length != 1 )
         return false;
     
-    NSUInteger const modif       = [event modifierFlags];
+    NSUInteger const modif       = event.modifierFlags;
     unichar const unicode        = [character characterAtIndex:0];
-    unsigned short const keycode = [event keyCode];
-
-    switch (unicode) {
-        case NSHomeFunctionKey:       [m_View HandleFirstFile];     return true;
-        case NSEndFunctionKey:        [m_View HandleLastFile];      return true;
-        case NSPageDownFunctionKey:   [m_View HandleNextPage];      return true;
-        case NSPageUpFunctionKey:     [m_View HandlePrevPage];      return true;
-        case NSLeftArrowFunctionKey:  [m_View HandlePrevColumn];    return true;
-        case NSRightArrowFunctionKey: [m_View HandleNextColumn];    return true;
-        case NSUpArrowFunctionKey:    [m_View HandlePrevFile];      return true;
-        case NSDownArrowFunctionKey:  [m_View HandleNextFile];      return true;
-        case 0x03:                    [m_View HandleInsert];        return true;
-    }
+    unsigned short const keycode = event.keyCode;
     
+    if(unicode == NSTabCharacter) { // Tab button
+        [state HandleTabButton];
+        return true;
+    }
     if(keycode == 53) { // Esc button
         [self CancelBackgroundOperations];
-        [(MainWindowFilePanelState*)self.state CloseOverlay:self];
+        [state CloseOverlay:self];
         m_BriefSystemOverview = nil;
         m_QuickLook = nil;
         [self QuickSearchClearFiltering];

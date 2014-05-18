@@ -73,13 +73,13 @@
         m_Skin = ((AppDelegate*)[NSApplication sharedApplication].delegate).Skin;
         if (m_Skin == ApplicationSkin::Modern)
         {
-            [m_LeftPanelController.View SetPresentation:new ModernPanelViewPresentation];
-            [m_RightPanelController.View SetPresentation:new ModernPanelViewPresentation];
+            [m_LeftPanelController.view SetPresentation:new ModernPanelViewPresentation];
+            [m_RightPanelController.view SetPresentation:new ModernPanelViewPresentation];
         }
         else if (m_Skin == ApplicationSkin::Classic)
         {
-            [m_LeftPanelController.View SetPresentation:new ClassicPanelViewPresentation];
-            [m_RightPanelController.View SetPresentation:new ClassicPanelViewPresentation];
+            [m_LeftPanelController.view SetPresentation:new ClassicPanelViewPresentation];
+            [m_RightPanelController.view SetPresentation:new ClassicPanelViewPresentation];
         }
         
         [self LoadPanelsSettings];
@@ -102,7 +102,8 @@
         }
         
         m_ActiveState = StateLeftPanel;
-        [m_LeftPanelController.View Activate];
+        [m_LeftPanelController.view Activate];
+        [self.window makeFirstResponder:m_LeftPanelController.view];
     }
     return self;
 }
@@ -119,7 +120,7 @@
     
     m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
     [m_MainSplitView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_MainSplitView SetBasicViews:m_LeftPanelController.View second:m_RightPanelController.View];
+    [m_MainSplitView SetBasicViews:m_LeftPanelController.view second:m_RightPanelController.view];
     [self addSubview:m_MainSplitView];
     
     m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 23)];
@@ -308,13 +309,13 @@
     
     if (_skin == ApplicationSkin::Modern)
     {
-        [m_LeftPanelController.View SetPresentation:new ModernPanelViewPresentation];
-        [m_RightPanelController.View SetPresentation:new ModernPanelViewPresentation];
+        [m_LeftPanelController.view SetPresentation:new ModernPanelViewPresentation];
+        [m_RightPanelController.view SetPresentation:new ModernPanelViewPresentation];
     }
     else if (_skin == ApplicationSkin::Classic)
     {
-        [m_LeftPanelController.View SetPresentation:new ClassicPanelViewPresentation];
-        [m_RightPanelController.View SetPresentation:new ClassicPanelViewPresentation];
+        [m_LeftPanelController.view SetPresentation:new ClassicPanelViewPresentation];
+        [m_RightPanelController.view SetPresentation:new ClassicPanelViewPresentation];
     }
 }
 
@@ -328,11 +329,11 @@
 {
     if(m_ActiveState == StateLeftPanel)
     {
-        return m_LeftPanelController.View;
+        return m_LeftPanelController.view;
     }
     else if(m_ActiveState == StateRightPanel)
     {
-        return m_RightPanelController.View;
+        return m_RightPanelController.view;
     }
     assert(0);
     return 0;
@@ -342,11 +343,11 @@
 {
     if(m_ActiveState == StateLeftPanel)
     {
-        return &m_LeftPanelController.Data;
+        return &m_LeftPanelController.data;
     }
     else if(m_ActiveState == StateRightPanel)
     {
-        return &m_RightPanelController.Data;
+        return &m_RightPanelController.data;
     }
     assert(0);
     return 0;
@@ -392,16 +393,19 @@
         assert(m_ActiveState == StateRightPanel);
         
         m_ActiveState = StateLeftPanel;
-        [m_LeftPanelController.View Activate];
-        [m_RightPanelController.View Disactivate];
+
+        [m_LeftPanelController.view Activate];
+        [m_RightPanelController.view Disactivate];
+        [self.window makeFirstResponder:m_LeftPanelController.view];
     }
     else
     {
         assert(m_ActiveState == StateLeftPanel);
         
         m_ActiveState = StateRightPanel;
-        [m_RightPanelController.View Activate];
-        [m_LeftPanelController.View Disactivate];
+        [m_RightPanelController.view Activate];
+        [m_LeftPanelController.view Disactivate];
+        [self.window makeFirstResponder:m_RightPanelController.view];
     }
     
     [self UpdateTitle];
@@ -432,23 +436,6 @@
     // Sending |titleBarFontOfSize| 0 returns default size
     NSDictionary* attributes = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0] forKey:NSFontAttributeName];
     window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
-}
-
-- (void)keyDown:(NSEvent *)event
-{
-    NSString* character = [event charactersIgnoringModifiers];
-    if ( [character length] != 1 ) {
-        [super keyDown:event];
-        return;
-    }
-
-    if([self IsPanelActive] && [[self ActivePanelController] ProcessKeyDown:event])
-        return;
-    
-    if([character characterAtIndex:0] == NSTabCharacter)
-        return [self HandleTabButton];
-    
-    [super keyDown:event];
 }
 
 - (void)LoadPanelsSettings
@@ -546,12 +533,12 @@
     
     if(m_ActiveState == StateLeftPanel)
     {
-        m_LeftPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
+        m_LeftPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
         [m_RightPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
     }
     else
     {
-        m_RightPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
+        m_RightPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
         [m_LeftPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
     }
 }
@@ -809,12 +796,12 @@
     
     const PanelData *source, *destination;
     if(m_ActiveState == StateLeftPanel) {
-        source = &m_LeftPanelController.Data;
-        destination = &m_RightPanelController.Data;
+        source = &m_LeftPanelController.data;
+        destination = &m_RightPanelController.data;
     }
     else {
-        source = &m_RightPanelController.Data;
-        destination = &m_LeftPanelController.Data;
+        source = &m_RightPanelController.data;
+        destination = &m_LeftPanelController.data;
     }
     
     auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
@@ -878,13 +865,13 @@
     const PanelData *source, *destination;
     if(m_ActiveState == StateLeftPanel)
     {
-        source = &m_LeftPanelController.Data;
-        destination = &m_RightPanelController.Data;
+        source = &m_LeftPanelController.data;
+        destination = &m_RightPanelController.data;
     }
     else
     {
-        source = &m_RightPanelController.Data;
-        destination = &m_LeftPanelController.Data;
+        source = &m_RightPanelController.data;
+        destination = &m_LeftPanelController.data;
     }
     
     auto const *item = self.ActivePanelView.CurrentItem;
@@ -949,13 +936,13 @@
     const PanelData *source, *destination;
     if(m_ActiveState == StateLeftPanel)
     {
-        source = &m_LeftPanelController.Data;
-        destination = &m_RightPanelController.Data;
+        source = &m_LeftPanelController.data;
+        destination = &m_RightPanelController.data;
     }
     else
     {
-        source = &m_RightPanelController.Data;
-        destination = &m_LeftPanelController.Data;
+        source = &m_RightPanelController.data;
+        destination = &m_LeftPanelController.data;
     }
     
     if(!source->Host()->IsWriteable())
@@ -1020,13 +1007,13 @@
     const PanelData *source, *destination;
     if(m_ActiveState == StateLeftPanel)
     {
-        source = &m_LeftPanelController.Data;
-        destination = &m_RightPanelController.Data;
+        source = &m_LeftPanelController.data;
+        destination = &m_RightPanelController.data;
     }
     else
     {
-        source = &m_RightPanelController.Data;
-        destination = &m_LeftPanelController.Data;
+        source = &m_RightPanelController.data;
+        destination = &m_LeftPanelController.data;
     }
 
     if(!source->Host()->IsWriteable())
@@ -1121,10 +1108,10 @@
     char path[MAXPATHLEN*8];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    m_LeftPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(path);
+    m_LeftPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(path);
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"FirstPanelPath"];
      
-    m_RightPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(path);
+    m_RightPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(path);
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];
 }
 
@@ -1423,7 +1410,7 @@
 
 - (IBAction)copy:(id)sender
 {
-    [self WriteToPasteboard:[NSPasteboard generalPasteboard]];
+    [self WriteToPasteboard:NSPasteboard.generalPasteboard];
     // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
 }
 
@@ -1431,9 +1418,9 @@
 {
     _paths.clear();
     char tmp[MAXPATHLEN*8];
-    m_LeftPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(tmp);
+    m_LeftPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(tmp);
     _paths.push_back(tmp);
-    m_RightPanelController.Data.GetDirectoryFullHostsPathWithTrailingSlash(tmp);
+    m_RightPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(tmp);
     _paths.push_back(tmp);
 }
 

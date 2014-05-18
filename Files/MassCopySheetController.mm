@@ -27,8 +27,8 @@
 {
     [super windowDidLoad];
  
-    [[self TextField] setStringValue:m_InitialPath];
-    [[self TextField] becomeFirstResponder];
+    [self.TextField setStringValue:m_InitialPath];
+    [self.window makeFirstResponder:self.TextField];
     
     int amount = m_Items->size();
     assert(amount > 0);

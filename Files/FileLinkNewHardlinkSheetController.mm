@@ -25,7 +25,7 @@
 {
     [super windowDidLoad];    
     [self.Text setStringValue:[NSString stringWithFormat:@"Create a hardlink of \'%@\' to:", m_SourceName]];
-    [self.LinkName becomeFirstResponder];
+    [self.window makeFirstResponder:self.LinkName];
 }
 
 - (void)ShowSheet:(NSWindow *)_window

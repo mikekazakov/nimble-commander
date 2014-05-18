@@ -21,7 +21,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    [[self TextField] becomeFirstResponder];
+    [self.window makeFirstResponder:self.TextField];
 }
 
 - (IBAction)OnCreate:(id)sender

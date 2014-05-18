@@ -148,7 +148,7 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
     NSString *mask = [[SelectionWithMaskSheetHistory sharedHistory] SelectedMaskForWindow:m_ParentWindow];
     [self.ComboBox setStringValue:mask];
     [self.ComboBox selectItemWithObjectValue:mask];
-    [self.ComboBox becomeFirstResponder];
+    [self.window makeFirstResponder:self.ComboBox];
     
     [self.TitleLabel setStringValue:m_IsDeselect ? @"Deselect using mask:" : @"Select using mask:" ];
 }

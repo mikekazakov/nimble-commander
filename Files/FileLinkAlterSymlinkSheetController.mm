@@ -27,7 +27,7 @@
     
     [self.Text setStringValue: [NSString stringWithFormat:@"Symbolic link \'%@\' points at:", m_LinkName] ];
     [self.SourcePath setStringValue:m_OriginalSourcePath];
-    [self.SourcePath becomeFirstResponder];    
+    [self.window makeFirstResponder:self.SourcePath];
 }
 
 - (void)ShowSheet:(NSWindow *)_window

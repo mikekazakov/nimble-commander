@@ -125,15 +125,14 @@ namespace panel
 }
 
 @property (weak) MainWindowFilePanelState* state;
+@property (nonatomic, readonly) PanelView* view;
+@property (nonatomic, readonly) PanelData& data;
+
 
 // CONFIGURATION METHODS /////////////////////////////////////////////
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
                     share:(NSButton*)_share;
 //////////////////////////////////////////////////////////////////////
-
-- (PanelData&) Data;
-- (PanelView*) View;
-
 
 - (void) LoadViewState:(NSDictionary *)_state;
 - (NSDictionary *) SaveViewState;
@@ -185,7 +184,6 @@ namespace panel
 ///////////////////////////////////////////////////////////////////////
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
-- (bool) ProcessKeyDown:(NSEvent *)event; // return true if key was processed
 
 - (void) SelectAllEntries: (bool) _select; // if false - then deselect all
 - (void) SelectEntriesByMask:(NSString*) _mask select:(bool) _select; // if false - then deselect elements by mask

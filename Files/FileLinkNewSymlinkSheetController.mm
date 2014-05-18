@@ -27,7 +27,7 @@
     
     [self.SourcePath setStringValue:m_InitialSrcPath];
     [self.LinkPath setStringValue:m_InitialLinkPath];
-    [self.LinkPath becomeFirstResponder];
+    [self.window makeFirstResponder:self.LinkPath];
 }
 
 - (void)ShowSheet:(NSWindow *)_window

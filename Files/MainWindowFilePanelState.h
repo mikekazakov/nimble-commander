@@ -79,7 +79,7 @@ enum ActiveState
 - (PanelController*) ActivePanelController;
 - (PanelView*) ActivePanelView;
 
-
+- (void) HandleTabButton;
 - (IBAction)OnDeleteCommand:(id)sender;
 @end
 

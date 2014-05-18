@@ -59,6 +59,11 @@ struct PanelViewStateStorage
     return YES;
 }
 
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
 - (void) Activate
 {
     if(m_State.Active == false)
@@ -272,6 +277,38 @@ struct PanelViewStateStorage
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
             [del PanelViewCursorChanged:self];
+}
+
+- (void)keyDown:(NSEvent *)event
+{
+    if(id<PanelViewDelegate> del = self.delegate)
+        if([del respondsToSelector:@selector(PanelViewProcessKeyDown:event:)])
+            if([del PanelViewProcessKeyDown:self event:event])
+                return;
+    
+    NSString* character = [event charactersIgnoringModifiers];
+    if ( [character length] != 1 ) {
+        [super keyDown:event];
+        return;
+    }
+    
+//    NSUInteger const modif       = [event modifierFlags];
+    unichar const unicode        = [character characterAtIndex:0];
+//    unsigned short const keycode = [event keyCode];
+    
+    switch (unicode) {
+        case NSHomeFunctionKey:       [self HandleFirstFile];     return;
+        case NSEndFunctionKey:        [self HandleLastFile];      return;
+        case NSPageDownFunctionKey:   [self HandleNextPage];      return;
+        case NSPageUpFunctionKey:     [self HandlePrevPage];      return;
+        case NSLeftArrowFunctionKey:  [self HandlePrevColumn];    return;
+        case NSRightArrowFunctionKey: [self HandleNextColumn];    return;
+        case NSUpArrowFunctionKey:    [self HandlePrevFile];      return;
+        case NSDownArrowFunctionKey:  [self HandleNextFile];      return;
+        case 0x03:                    [self HandleInsert];        return;
+    }
+    
+    [super keyDown:event];
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags

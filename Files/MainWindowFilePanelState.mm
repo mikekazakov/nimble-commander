@@ -605,22 +605,6 @@
     [sheet ShowSheet:[self window] destpath:path.c_str()];
 }
 
-- (void)selectAll:(id)sender
-{
-    if(!self.isPanelActive) return;
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    [self.ActivePanelController SelectAllEntries:true];
-}
-
-- (void)deselectAll:(id)sender
-{
-    if(!self.isPanelActive) return;
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    [self.ActivePanelController SelectAllEntries:false];
-}
-
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
     static const auto upd_for_sort = ^(NSMenuItem *_item, PanelSortMode _mode, PanelSortMode::Mode _mask) {

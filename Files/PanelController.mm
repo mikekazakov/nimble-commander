@@ -965,6 +965,16 @@ void panel::GenericCursorPersistance::Restore()
     [m_View setNeedsDisplay:true];
 }
 
+- (void)selectAll:(id)sender
+{
+    [self SelectAllEntries:true];
+}
+
+- (void)deselectAll:(id)sender
+{
+    [self SelectAllEntries:false];
+}
+
 - (void) OnPathChanged:(int)_flags
 {
     [self ResetUpdatesObservation:m_Data.DirectoryPathWithTrailingSlash()];

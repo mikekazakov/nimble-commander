@@ -59,7 +59,7 @@ namespace panel
     };
 }
 
-@interface PanelController : NSObject<PanelViewDelegate/*, NSDraggingSource, NSPasteboardItemDataProvider*/>
+@interface PanelController : NSResponder<PanelViewDelegate>
 {
     // Main controller's possessions
     PanelData                   m_Data;   // owns
@@ -182,7 +182,6 @@ namespace panel
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
-- (void) SelectAllEntries: (bool) _select; // if false - then deselect all
 - (void) SelectEntriesByMask:(NSString*) _mask select:(bool) _select; // if false - then deselect elements by mask
 @end
 

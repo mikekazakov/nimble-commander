@@ -47,6 +47,28 @@ struct PanelViewStateStorage
     bool                        m_DraggingIntoMe;
     bool                        m_IsCurrentlyMomentumScroll;
     bool                        m_DisableCurrentMomentumScroll;
+    __weak id<PanelViewDelegate> m_Delegate;
+}
+
+- (void) setDelegate:(id<PanelViewDelegate>)delegate
+{
+    m_Delegate = delegate;
+    if(delegate)
+    {
+        id<PanelViewDelegate> del = m_Delegate;
+        if([del isKindOfClass:NSResponder.class])
+        {
+            NSResponder *r = (NSResponder*)del;
+            NSResponder *current = self.nextResponder;
+            super.nextResponder = r;
+            r.nextResponder = current;
+        }
+    }
+}
+
+- (id<PanelViewDelegate>) delegate
+{
+    return m_Delegate;
 }
 
 - (BOOL)isFlipped
@@ -76,6 +98,18 @@ struct PanelViewStateStorage
     m_State.Active = false;
     [self setNeedsDisplay:true];
     return YES;
+}
+
+- (void)setNextResponder:(NSResponder *)newNextResponder
+{
+    if(self.delegate && [self.delegate isKindOfClass:NSResponder.class])
+    {
+        NSResponder *r = (NSResponder*)self.delegate;
+        r.nextResponder = newNextResponder;
+        return;
+    }
+    
+    [super setNextResponder:newNextResponder];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd

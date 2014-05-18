@@ -31,7 +31,7 @@ class PanelViewPresentation;
 @end
 
 @interface PanelView : NSView<NSDraggingDestination>
-@property (weak) id <PanelViewDelegate> delegate;
+@property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active;
 
 - (void) SetPanelData:(PanelData*)_data;

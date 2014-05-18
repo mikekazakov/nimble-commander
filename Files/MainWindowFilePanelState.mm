@@ -100,10 +100,6 @@
             int ret = [m_RightPanelController GoToGlobalHostsPathSync:"/"];
             assert(ret == VFSError::Ok);
         }
-        
-        m_ActiveState = StateLeftPanel;
-        [m_LeftPanelController.view Activate];
-        [self.window makeFirstResponder:m_LeftPanelController.view];
     }
     return self;
 }
@@ -115,52 +111,54 @@
 - (void) CreateControls
 {
     m_Toolbar = [[MyToolbar alloc] initWithFrame:NSRect()];
-    [m_Toolbar setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_Toolbar.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:m_Toolbar];
     
     m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
-    [m_MainSplitView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_MainSplitView.translatesAutoresizingMaskIntoConstraints = NO;
     [m_MainSplitView SetBasicViews:m_LeftPanelController.view second:m_RightPanelController.view];
     [self addSubview:m_MainSplitView];
     
     m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 23)];
-    [m_LeftPanelGoToButton setTarget:self];
-    [m_LeftPanelGoToButton setAction:@selector(LeftPanelGoToButtonAction:)];
+    m_LeftPanelGoToButton.target = self;
+    m_LeftPanelGoToButton.action = @selector(LeftPanelGoToButtonAction:);
     [m_LeftPanelGoToButton SetOwner:self];
     
     m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 23)];
-    [m_RightPanelGoToButton setTarget:self];
-    [m_RightPanelGoToButton setAction:@selector(RightPanelGoToButtonAction:)];
+    m_RightPanelGoToButton.target = self;
+    m_RightPanelGoToButton.action = @selector(RightPanelGoToButtonAction:);
     [m_RightPanelGoToButton SetOwner:self];
     
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
     {
         m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
-        [m_LeftPanelShareButton setBezelStyle:NSTexturedRoundedBezelStyle];
-        [m_LeftPanelShareButton setImage:[NSImage imageNamed:NSImageNameShareTemplate]];
+        m_LeftPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
+        m_LeftPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
         [m_LeftPanelShareButton sendActionOn:NSLeftMouseDownMask];
+        m_LeftPanelShareButton.refusesFirstResponder = true;
     
         m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
-        [m_RightPanelShareButton setBezelStyle:NSTexturedRoundedBezelStyle];
-        [m_RightPanelShareButton setImage:[NSImage imageNamed:NSImageNameShareTemplate]];
+        m_RightPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
+        m_RightPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
         [m_RightPanelShareButton sendActionOn:NSLeftMouseDownMask];
+        m_RightPanelShareButton.refusesFirstResponder = true;
     }
     
     m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    [m_LeftPanelSpinningIndicator setIndeterminate:YES];
-    [m_LeftPanelSpinningIndicator setStyle:NSProgressIndicatorSpinningStyle];
-    [m_LeftPanelSpinningIndicator setControlSize:NSSmallControlSize];
-    [m_LeftPanelSpinningIndicator setDisplayedWhenStopped:NO];
+    m_LeftPanelSpinningIndicator.indeterminate = YES;
+    m_LeftPanelSpinningIndicator.style = NSProgressIndicatorSpinningStyle;
+    m_LeftPanelSpinningIndicator.controlSize = NSSmallControlSize;
+    m_LeftPanelSpinningIndicator.displayedWhenStopped = NO;
     
     m_RightPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    [m_RightPanelSpinningIndicator setIndeterminate:YES];
-    [m_RightPanelSpinningIndicator setStyle:NSProgressIndicatorSpinningStyle];
-    [m_RightPanelSpinningIndicator setControlSize:NSSmallControlSize];
-    [m_RightPanelSpinningIndicator setDisplayedWhenStopped:NO];
+    m_RightPanelSpinningIndicator.indeterminate = YES;
+    m_RightPanelSpinningIndicator.style = NSProgressIndicatorSpinningStyle;
+    m_RightPanelSpinningIndicator.controlSize = NSSmallControlSize;
+    m_RightPanelSpinningIndicator.displayedWhenStopped = NO;
     
     m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
-    [m_SeparatorLine setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_SeparatorLine setBoxType:NSBoxSeparator];
+    m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
+    m_SeparatorLine.boxType = NSBoxSeparator;
     [self addSubview:m_SeparatorLine];
     
     [m_Toolbar InsertView:m_LeftPanelGoToButton];
@@ -220,8 +218,17 @@
     [m_Toolbar UpdateVisibility];
     [self BuildLayout];
     [self UpdateTitle];
-    [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]
-                             returnTypes:[NSArray arrayWithObjects:nil]];
+    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType] returnTypes:@[]];
+    
+    if(m_LastResponder)
+    { // if we alredy were active and have some focused view - restore it
+        [self.window makeFirstResponder:m_LastResponder];
+        m_LastResponder = nil;
+    }
+    if(!self.isPanelActive)
+    { // if we don't know which view should be active - make left panel a first responder
+        [self.window makeFirstResponder:m_LeftPanelController.view];
+    }
 }
 
 - (id)validRequestorForSendType:(NSString *)sendType
@@ -245,6 +252,7 @@
 
 - (bool)WriteToPasteboard:(NSPasteboard *)pboard
 {
+    if(!self.isPanelActive) return false;
     if(![self ActivePanelData]->Host()->IsNativeFS())
         return false;
     
@@ -257,21 +265,34 @@
             [filenames addObject:[NSString stringWithUTF8String:(dir_path + i.c_str()).c_str()]];
     }
     else {
-        auto const *item = [[self ActivePanelView] CurrentItem];
+        auto const *item = self.ActivePanelView.CurrentItem;
         if(item && !item->IsDotDot())
             [filenames addObject:[NSString stringWithUTF8String:(dir_path + item->Name()).c_str()]];
     }
     
-    if([filenames count] == 0)
+    if(filenames.count == 0)
         return false;
     
     [pboard clearContents];
-    [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+    [pboard declareTypes:@[NSFilenamesPboardType] owner:nil];
     return [pboard setPropertyList:filenames forType:NSFilenamesPboardType] == TRUE;
 }
 
 - (void) Resigned
 {
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)_wnd
+{
+    if(_wnd == nil)
+    {
+        m_LastResponder = nil;
+        NSResponder *resp = self.window.firstResponder;
+        if(resp != nil &&
+           [resp isKindOfClass:NSView.class] &&
+           [(NSView*)resp isDescendantOf:self] )
+            m_LastResponder = resp;
+    }
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{
@@ -319,100 +340,60 @@
     }
 }
 
-
-- (bool) IsPanelActive
+- (bool) isPanelActive
 {
-    return m_ActiveState == StateLeftPanel || m_ActiveState == StateRightPanel;
+    return self.ActivePanelView != nil;
 }
 
 - (PanelView*) ActivePanelView
 {
-    if(m_ActiveState == StateLeftPanel)
-    {
-        return m_LeftPanelController.view;
-    }
-    else if(m_ActiveState == StateRightPanel)
-    {
-        return m_RightPanelController.view;
-    }
-    assert(0);
-    return 0;
+    PanelController *pc = self.ActivePanelController;
+    return pc ? pc.view : nil;
 }
 
 - (PanelData*) ActivePanelData
 {
-    if(m_ActiveState == StateLeftPanel)
-    {
-        return &m_LeftPanelController.data;
-    }
-    else if(m_ActiveState == StateRightPanel)
-    {
-        return &m_RightPanelController.data;
-    }
-    assert(0);
-    return 0;
+    PanelController *pc = self.ActivePanelController;
+    return pc ? &pc.data : nullptr;
 }
 
 - (PanelController*) ActivePanelController
 {
-    if(m_ActiveState == StateLeftPanel)
-    {
+    if(m_LeftPanelController.isActive)
         return m_LeftPanelController;
-    }
-    else if(m_ActiveState == StateRightPanel)
-    {
+    else if(m_RightPanelController.isActive)
         return m_RightPanelController;
-    }
-    assert(0);
-    return 0;
+    return nil;
 }
 
 - (void) HandleTabButton
 {
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
-    [self ActivatePanel:(m_ActiveState == StateLeftPanel ? StateRightPanel : StateLeftPanel)];
+    if(m_LeftPanelController.isActive)
+        [self ActivatePanelByController:m_RightPanelController];
+    else if(m_RightPanelController.isActive)
+        [self ActivatePanelByController:m_LeftPanelController];
+    else ; // mb later ???
 }
 
 - (void)ActivatePanelByController:(PanelController *)controller
 {
     if (controller == m_LeftPanelController)
-        [self ActivatePanel:StateLeftPanel];
+        [self.window makeFirstResponder:m_LeftPanelController.view];
     else if (controller == m_RightPanelController)
-        [self ActivatePanel:StateRightPanel];
+        [self.window makeFirstResponder:m_RightPanelController.view];
     else
         assert(0);
 }
 
-- (void)ActivatePanel:(ActiveState)_state
-{
-    if (_state == m_ActiveState) return;
-    
-    if (_state == StateLeftPanel)
-    {
-        assert(m_ActiveState == StateRightPanel);
-        
-        m_ActiveState = StateLeftPanel;
-
-        [m_LeftPanelController.view Activate];
-        [m_RightPanelController.view Disactivate];
-        [self.window makeFirstResponder:m_LeftPanelController.view];
-    }
-    else
-    {
-        assert(m_ActiveState == StateLeftPanel);
-        
-        m_ActiveState = StateRightPanel;
-        [m_RightPanelController.view Activate];
-        [m_LeftPanelController.view Disactivate];
-        [self.window makeFirstResponder:m_RightPanelController.view];
-    }
-    
-    [self UpdateTitle];
-}
-
 - (void) UpdateTitle
 {
+    if(!self.ActivePanelData)
+    {
+        self.window.title = @"";
+        return;
+    }
     char path_raw[MAXPATHLEN*8];
     [self ActivePanelData]->GetDirectoryFullHostsPathWithTrailingSlash(path_raw);
     
@@ -526,12 +507,11 @@
 }
 
 - (IBAction)OnSyncPanels:(id)sender{
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
+    if([m_MainSplitView AnyCollapsedOrOverlayed]) return;
     char dirpath[MAXPATHLEN];
-    if([m_MainSplitView AnyCollapsedOrOverlayed])
-        return;
     
-    if(m_ActiveState == StateLeftPanel)
+    if(m_LeftPanelController.isActive)
     {
         m_LeftPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
         [m_RightPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
@@ -544,14 +524,10 @@
 }
 
 - (IBAction)OnSwapPanels:(id)sender{
-    assert([self IsPanelActive]);
-    
-    if([m_MainSplitView AnyCollapsed])
-        return;
+    if(!self.isPanelActive) return;
+    if([m_MainSplitView AnyCollapsed]) return;
     
     swap(m_LeftPanelController, m_RightPanelController);
-    if(m_ActiveState == StateLeftPanel) m_ActiveState = StateRightPanel;
-    else if(m_ActiveState == StateRightPanel) m_ActiveState = StateLeftPanel;
     [m_MainSplitView SwapViews];
     
     [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
@@ -561,13 +537,13 @@
 }
 
 - (IBAction)OnRefreshPanel:(id)sender{
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     [[self ActivePanelController] RefreshDirectory];
 }
 
 - (void)flagsChanged:(NSEvent *)theEvent
 {
-    if([self IsPanelActive])
+    if(self.isPanelActive)
     {
         unsigned long flags = [theEvent modifierFlags];
         [m_LeftPanelController ModifierFlagsChanged:flags];
@@ -576,7 +552,7 @@
 }
 
 - (IBAction)OnFileAttributes:(id)sender{
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if(![self ActivePanelData]->Host()->IsNativeFS())
         return; // currently support file info only on native fs
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
@@ -611,7 +587,7 @@
 }
 
 - (IBAction)OnDetailedVolumeInformation:(id)sender{
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     PanelView *curview = [self ActivePanelView];
     PanelData *curdata = [self ActivePanelData];
     if(!curdata->Host()->IsNativeFS())
@@ -631,18 +607,18 @@
 
 - (void)selectAll:(id)sender
 {
+    if(!self.isPanelActive) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
-    if([self IsPanelActive])
-        [[self ActivePanelController] SelectAllEntries:true];
+    [self.ActivePanelController SelectAllEntries:true];
 }
 
 - (void)deselectAll:(id)sender
 {
+    if(!self.isPanelActive) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
-    if([self IsPanelActive])
-        [[self ActivePanelController] SelectAllEntries:false];
+    [self.ActivePanelController SelectAllEntries:false];
 }
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
@@ -694,7 +670,7 @@
 
 - (void)DeleteFiles:(BOOL)_shift_behavior
 {
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     
@@ -759,7 +735,7 @@
 }
 
 - (IBAction)OnCreateDirectoryCommand:(id)sender{
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     PanelData *curdata = [self ActivePanelData];
@@ -790,12 +766,12 @@
 }
 
 - (IBAction)OnFileCopyCommand:(id)sender{
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
     
     const PanelData *source, *destination;
-    if(m_ActiveState == StateLeftPanel) {
+    if(m_LeftPanelController.isActive) {
         source = &m_LeftPanelController.data;
         destination = &m_RightPanelController.data;
     }
@@ -859,11 +835,11 @@
 
 - (IBAction)OnFileCopyAsCommand:(id)sender{
     // process only current cursor item
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     const PanelData *source, *destination;
-    if(m_ActiveState == StateLeftPanel)
+    if(m_LeftPanelController.isActive)
     {
         source = &m_LeftPanelController.data;
         destination = &m_RightPanelController.data;
@@ -930,11 +906,11 @@
 }
 
 - (IBAction)OnFileRenameMoveCommand:(id)sender{
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
     const PanelData *source, *destination;
-    if(m_ActiveState == StateLeftPanel)
+    if(m_LeftPanelController.isActive)
     {
         source = &m_LeftPanelController.data;
         destination = &m_RightPanelController.data;
@@ -1000,12 +976,12 @@
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender {
     
     // process only current cursor item
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     
     const PanelData *source, *destination;
-    if(m_ActiveState == StateLeftPanel)
+    if(m_LeftPanelController.isActive)
     {
         source = &m_LeftPanelController.data;
         destination = &m_RightPanelController.data;
@@ -1140,7 +1116,7 @@
 {
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
-    if([self IsPanelActive])
+    if(self.isPanelActive)
     {
         auto i = [[self ActivePanelView] CurrentItem];
         if(i && !i->IsDir())
@@ -1180,7 +1156,7 @@
 
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender
 {
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
     
@@ -1196,7 +1172,7 @@
     if(!item->IsDotDot())
         source_path += item->Name();
     
-    if(m_ActiveState == StateLeftPanel)
+    if(m_LeftPanelController.isActive)
         link_path = m_RightPanelController.GetCurrentDirectoryPathRelativeToHost;
     else
         link_path = m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost;
@@ -1222,7 +1198,7 @@
 
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     if(![self ActivePanelData]->Host()->IsNativeFS())
@@ -1264,7 +1240,7 @@
 
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
-    assert([self IsPanelActive]);
+    if(!self.isPanelActive) return;
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
     if(!m_RightPanelController.GetCurrentVFSHost->IsNativeFS() || !m_LeftPanelController.GetCurrentVFSHost->IsNativeFS())

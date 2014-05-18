@@ -32,6 +32,7 @@ class PanelViewPresentation;
 
 @interface PanelView : NSView<NSDraggingDestination>
 @property (weak) id <PanelViewDelegate> delegate;
+@property (nonatomic, readonly) bool active;
 
 - (void) SetPanelData:(PanelData*)_data;
 
@@ -40,30 +41,11 @@ class PanelViewPresentation;
 // _presentation must be created using new. PanelView gains ownership of the _presentation.
 - (PanelViewPresentation*) Presentation;
 - (void) SetPresentation:(PanelViewPresentation *)_presentation;
-
-// user input handling          normal keys
-- (void) HandlePrevFile;     // up
-- (void) HandleNextFile;     // down
-- (void) HandlePrevPage;     // page up (fn+up)
-- (void) HandleNextPage;     // page down (fn+down)
-- (void) HandlePrevColumn;   // left
-- (void) HandleNextColumn;   // right
-- (void) HandleFirstFile;    // home (fn+left)
-- (void) HandleLastFile;     // end (fn+right)
-- (void) HandleInsert;       // insert
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
-
-//- (void) mouseDown:(NSEvent *)_event;
-//- (void) mouseDragged:(NSEvent *)_event;
-//- (void) mouseUp:(NSEvent *)_event;
 
 // view type
 - (void) ToggleViewType:(PanelViewType)_type;
 - (PanelViewType) GetCurrentViewType;
-
-// focus handling
-- (void) Activate;
-- (void) Disactivate;
 
 // cursor handling
 - (int) GetCursorPosition;

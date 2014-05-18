@@ -204,9 +204,9 @@ void panel::GenericCursorPersistance::Restore()
         nil];
 }
 
-- (bool) IsActivePanel
+- (bool) isActive
 {
-    return [(MainWindowFilePanelState*)self.state ActivePanelController] == self;
+    return m_View.active;
 }
 
 - (void) HandleOpenInSystem

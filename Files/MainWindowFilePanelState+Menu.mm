@@ -66,12 +66,12 @@
 
 - (void) DoGoToNativeDirectoryFromMenuItem:(std::string)_path
 {
-    if(m_ActiveState == StateLeftPanel)
+    if(m_LeftPanelController.isActive)
     {
         [m_MainSplitView SetLeftOverlay:0]; // seem to be a redundant
         [m_LeftPanelController GoToGlobalHostsPathAsync:_path.c_str()];
     }
-    else if(m_ActiveState == StateRightPanel)
+    else if(m_RightPanelController.isActive)
     {
         [m_MainSplitView SetRightOverlay:0]; // seem to be a redundant
         [m_RightPanelController GoToGlobalHostsPathAsync:_path.c_str()];

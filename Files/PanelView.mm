@@ -64,22 +64,29 @@ struct PanelViewStateStorage
     return YES;
 }
 
-- (void) Activate
+- (BOOL)becomeFirstResponder
 {
-    if(m_State.Active == false)
-    {
-        m_State.Active = true;
-        [self setNeedsDisplay:true];
-    }
+    m_State.Active = true;
+    [self setNeedsDisplay:true];
+    return YES;
 }
 
-- (void) Disactivate
+- (BOOL)resignFirstResponder
 {
-    if(m_State.Active == true)
-    {
-        m_State.Active = false;
-        [self setNeedsDisplay:true];
-    }
+    m_State.Active = false;
+    [self setNeedsDisplay:true];
+    return YES;
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)_wnd
+{
+    if(_wnd == nil && m_State.Active == true)
+        [self resignFirstResponder];
+}
+
+- (bool)active
+{
+    return m_State.Active;
 }
 
 - (id)initWithFrame:(NSRect)frame

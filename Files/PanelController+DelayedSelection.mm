@@ -54,7 +54,7 @@
         {
             [m_View SetCursorPosition:sortpos];
             m_Data.CustomFlagsSelectAllSorted(false);
-            if(![self IsActivePanel])
+            if(!self.isActive)
                 [(MainWindowFilePanelState*)self.state ActivatePanelByController:self];
             return true;
         }

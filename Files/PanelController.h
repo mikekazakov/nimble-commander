@@ -127,7 +127,7 @@ namespace panel
 @property (weak) MainWindowFilePanelState* state;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) PanelData& data;
-
+@property (nonatomic, readonly) bool isActive;
 
 // CONFIGURATION METHODS /////////////////////////////////////////////
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
@@ -136,9 +136,6 @@ namespace panel
 
 - (void) LoadViewState:(NSDictionary *)_state;
 - (NSDictionary *) SaveViewState;
-
-- (bool) IsActivePanel;
-
 
 - (void) HandleGoIntoDirOrOpenInSystem;        // 'Open' menu item
 - (void) HandleOpenInSystem;                   // 'Open Natively' menu item

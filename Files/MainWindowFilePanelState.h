@@ -22,18 +22,10 @@ class PanelData;
 @class OperationsSummaryViewController;
 @class MyToolbar;
 
-enum ActiveState
-{
-    StateLeftPanel,
-    StateRightPanel
-    // many more will be here
-};
-
 @interface MainWindowFilePanelState : NSView<MainWindowStateProtocol>
 {
     ApplicationSkin m_Skin;
 
-    ActiveState m_ActiveState;
     
     PanelController *m_LeftPanelController;     // creates and owns
     PanelController *m_RightPanelController;    // creates and owns
@@ -52,10 +44,13 @@ enum ActiveState
     
     NSBox                *m_SeparatorLine;
     MyToolbar            *m_Toolbar;
+    
+    NSResponder          *m_LastResponder;
 }
 
 
 @property OperationsController *OperationsController;
+@property (nonatomic, readonly) bool isPanelActive;
 
 - (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
 - (void)ActivatePanelByController:(PanelController *)controller;

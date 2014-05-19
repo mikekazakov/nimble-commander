@@ -68,12 +68,12 @@
 {
     if(m_LeftPanelController.isActive)
     {
-        [m_MainSplitView SetLeftOverlay:0]; // seem to be a redundant
+        m_MainSplitView.leftOverlay = nil; // seem to be a redundant
         [m_LeftPanelController GoToGlobalHostsPathAsync:_path.c_str()];
     }
     else if(m_RightPanelController.isActive)
     {
-        [m_MainSplitView SetRightOverlay:0]; // seem to be a redundant
+        m_MainSplitView.rightOverlay = nil; // seem to be a redundant
         [m_RightPanelController GoToGlobalHostsPathAsync:_path.c_str()];
     }
 }
@@ -109,16 +109,6 @@
 
         return 0;
     }];
-}
-
-- (IBAction)OnCalculateSizes:(id)sender
-{
-    [[self ActivePanelController] HandleCalculateSizes];
-}
-
-- (IBAction)OnCalculateAllSizes:(id)sender
-{
-    [[self ActivePanelController] HandleCalculateAllSizes];
 }
 
 - (IBAction)OnMoveToTrash:(id)sender

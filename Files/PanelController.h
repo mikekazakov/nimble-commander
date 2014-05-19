@@ -141,8 +141,6 @@ namespace panel
 - (void) HandleGoIntoDirOrOpenInSystem;        // 'Open' menu item
 - (void) HandleOpenInSystem;                   // 'Open Natively' menu item
 - (bool) HandleGoIntoDir;                      // basically cmd+down_arrow
-- (void) HandleCalculateSizes;      // alt+shift+return
-- (void) HandleCalculateAllSizes;   // alt+ctrl+shift+return
 
 // refactor me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 - (PanelViewType) GetViewType;

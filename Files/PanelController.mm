@@ -17,7 +17,7 @@
 #import "ActionsShortcutsManager.h"
 #import "FTPConnectionSheetController.h"
 #import "SelectionWithMaskSheetController.h"
-
+#import "DetailedVolumeInformationSheetController.h"
 // todo: remove me
 #import "FindFilesSheetController.h"
 
@@ -807,11 +807,11 @@ void panel::GenericCursorPersistance::Restore()
         return true;
     }
     if(shortcuts.ShortCutFromAction("menu.file.calculate_sizes")->IsKeyDown(unicode, keycode, modif)) {
-        [self HandleCalculateSizes];
+        [self OnCalculateSizes:self];
         return true;
     }
     if(shortcuts.ShortCutFromAction("menu.file.calculate_all_sizes")->IsKeyDown(unicode, keycode, modif)) {
-        [self HandleCalculateAllSizes];
+        [self OnCalculateAllSizes:self];
         return true;
     }
 
@@ -845,13 +845,13 @@ void panel::GenericCursorPersistance::Restore()
     });
 }
 
-- (void) HandleCalculateSizes
+- (IBAction)OnCalculateSizes:(id)sender
 {
     // suboptimal - may have regular files inside (not dirs)
     [self CalculateSizesWithNames:self.GetSelectedEntriesOrFocusedEntryWithDotDot];
 }
 
-- (void) HandleCalculateAllSizes
+- (IBAction)OnCalculateAllSizes:(id)sender
 {
     chained_strings filenames;
     for(auto &i: *m_Data.Listing())
@@ -1232,6 +1232,38 @@ void panel::GenericCursorPersistance::Restore()
     else if(tag == tag_sort_creat)  upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByBTimeMask);
     
     return true; // will disable some items in the future
+}
+
+- (IBAction)OnShowTerminal:(id)sender
+{
+    string path;
+    if(self.GetCurrentVFSHost->IsNativeFS())
+        path = self.GetCurrentDirectoryPathRelativeToHost;
+    [(MainWindowController*)self.window.delegate RequestTerminal:path.c_str()];
+}
+
+- (IBAction)OnDetailedVolumeInformation:(id)sender
+{
+    if(!m_Data.Host()->IsNativeFS())
+        return; // currently support volume info only on native fs
+    
+    string path = self.GetCurrentDirectoryPathRelativeToHost;
+    if(m_View.CurrentItem && !m_View.CurrentItem->IsDotDot())
+        path += m_View.CurrentItem->Name();
+    
+    DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
+    [sheet ShowSheet:self.window destpath:path.c_str()];
+}
+
+- (IBAction)OnFileInternalBigViewCommand:(id)sender
+{
+    auto i = m_View.CurrentItem;
+    if(!i || i->IsDir()) return;
+    
+    string path = m_Data.DirectoryPathWithTrailingSlash() + i->Name();
+    auto host = m_Data.Host();
+    [(MainWindowController*)self.window.delegate RequestBigFileView:path
+                                                            with_fs:host];
 }
 
 @end

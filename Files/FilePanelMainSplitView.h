@@ -19,13 +19,13 @@
 - (bool) LeftCollapsed;
 - (bool) RightCollapsed;
 
-- (void) SetLeftOverlay:(NSView*)_o;
-- (void) SetRightOverlay:(NSView*)_o;
-
 - (bool) AnyOverlayed;
 - (bool) LeftOverlayed;
 - (bool) RightOverlayed;
 
 - (bool) AnyCollapsedOrOverlayed;
 - (bool) IsViewCollapsedOrOverlayed:(NSView*)_v;
+
+@property (nonatomic) NSView* leftOverlay;
+@property (nonatomic) NSView* rightOverlay;
 @end

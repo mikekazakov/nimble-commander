@@ -19,7 +19,6 @@
 #import "OperationsSummaryViewController.h"
 #import "FileSysAttrChangeOperation.h"
 #import "FileSysEntryAttrSheetController.h"
-#import "DetailedVolumeInformationSheetController.h"
 #import "chained_strings.h"
 #import "FileDeletionSheetController.h"
 #import "MassCopySheetController.h"
@@ -295,12 +294,12 @@
 }
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender{
-    [m_MainSplitView SetLeftOverlay:0]; // may cause bad situations with weak pointers inside panel controller here
+    m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     [m_LeftPanelController GoToGlobalHostsPathAsync:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation] select_entry:0];
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
-    [m_MainSplitView SetRightOverlay:0]; // may cause bad situations with weak pointers inside panel controller here 
+    m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     [m_RightPanelController GoToGlobalHostsPathAsync:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation] select_entry:0];
 }
 
@@ -341,7 +340,7 @@
 
 - (bool) isPanelActive
 {
-    return self.ActivePanelView != nil;
+    return self.ActivePanelController != nil;
 }
 
 - (PanelView*) ActivePanelView
@@ -462,14 +461,10 @@
     [self SavePanelsSettings];
 }
 
-- (void)flagsChanged:(NSEvent *)theEvent
+- (void)flagsChanged:(NSEvent *)event
 {
-    if(self.isPanelActive)
-    {
-        unsigned long flags = [theEvent modifierFlags];
-        [m_LeftPanelController ModifierFlagsChanged:flags];
-        [m_RightPanelController ModifierFlagsChanged:flags];
-    }
+    [m_LeftPanelController ModifierFlagsChanged:event.modifierFlags];
+    [m_RightPanelController ModifierFlagsChanged:event.modifierFlags];
 }
 
 - (IBAction)OnFileAttributes:(id)sender{
@@ -505,25 +500,6 @@
                 [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
         }
     }
-}
-
-- (IBAction)OnDetailedVolumeInformation:(id)sender{
-    if(!self.isPanelActive) return;
-    PanelView *curview = [self ActivePanelView];
-    PanelData *curdata = [self ActivePanelData];
-    if(!curdata->Host()->IsNativeFS())
-        return; // currently support volume info only on native fs
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    
-    int curpos = [curview GetCursorPosition];
-    if(curpos < 0) return;
-
-    // TODO: THIS IS WRONG! using volume information on ".." should leave us in current directory
-    string path = curdata->FullPathForEntry(curdata->RawIndexForSortIndex(curpos));
-    
-    DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
-    [sheet ShowSheet:[self window] destpath:path.c_str()];
 }
 
 - (void)DeleteFiles:(BOOL)_shift_behavior
@@ -970,23 +946,6 @@
     return false;
 }
 
-- (IBAction)OnFileInternalBigViewCommand:(id)sender
-{
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    if(self.isPanelActive)
-    {
-        auto i = [[self ActivePanelView] CurrentItem];
-        if(i && !i->IsDir())
-        {
-            string path = [self ActivePanelData]->DirectoryPathWithTrailingSlash() + i->Name();
-            auto host = [self ActivePanelData]->DirectoryEntries().Host();
-            [(MainWindowController*)self.window.delegate RequestBigFileView:path
-                                                                    with_fs:host];
-        }
-    }
-}
-
 - (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path
 {
     assert(dispatch_is_main_queue());
@@ -1015,14 +974,13 @@
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender
 {
     if(!self.isPanelActive) return;
-    if([m_MainSplitView AnyCollapsedOrOverlayed])
-        return;
+    if(m_MainSplitView.AnyCollapsedOrOverlayed) return;
     
     if(!m_RightPanelController.GetCurrentVFSHost->IsNativeFS() || !m_LeftPanelController.GetCurrentVFSHost->IsNativeFS())
         return; // currently support links only on native fs
     
     string link_path;
-    auto const *item = [[self ActivePanelView] CurrentItem];
+    auto const *item = self.ActivePanelView.CurrentItem;
     if(!item)
         return;
     
@@ -1057,13 +1015,13 @@
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
     if(!self.isPanelActive) return;
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:self.ActivePanelView])
         return;
-    if(![self ActivePanelData]->Host()->IsNativeFS())
+    if(!self.ActivePanelData->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
 //    char link_path[MAXPATHLEN];
-    auto const *item = [[self ActivePanelView] CurrentItem];
+    auto const *item = self.ActivePanelView.CurrentItem;
     if(!item)
         return;
     if(item->IsDotDot())
@@ -1219,9 +1177,9 @@
 {
     QuickLookView *view = [[QuickLookView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     if(_panel == m_LeftPanelController)
-        [m_MainSplitView SetRightOverlay:view];
+        m_MainSplitView.rightOverlay = view;
     else if(_panel == m_RightPanelController)
-        [m_MainSplitView SetLeftOverlay:view];
+        m_MainSplitView.leftOverlay = view;
     else
         return nil;
     return view;
@@ -1231,9 +1189,9 @@
 {
     BriefSystemOverview *view = [[BriefSystemOverview alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     if(_panel == m_LeftPanelController)
-        [m_MainSplitView SetRightOverlay:view];
+        m_MainSplitView.rightOverlay = view;
     else if(_panel == m_RightPanelController)
-        [m_MainSplitView SetLeftOverlay:view];
+        m_MainSplitView.leftOverlay = view;
     else
         return nil;
     return view;
@@ -1242,13 +1200,16 @@
 - (void)CloseOverlay:(PanelController*)_panel
 {
     if(_panel == m_LeftPanelController)
-        [m_MainSplitView SetRightOverlay:0];
+        m_MainSplitView.rightOverlay = 0;
     else if(_panel == m_RightPanelController)
-        [m_MainSplitView SetLeftOverlay:0];
+        m_MainSplitView.leftOverlay = 0;
 }
 
 - (IBAction)OnCompressFiles:(id)sender
 {
+    if(!self.isPanelActive) return;
+    if(m_MainSplitView.AnyCollapsedOrOverlayed) return;
+
     auto files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
     if(files.empty())
         return;
@@ -1283,19 +1244,5 @@
 {
     [m_OperationsController AddOperation:_operation];
 }
-
-///////////////////////////////////////////////////////////////
-- (IBAction)OnShowTerminal:(id)sender
-{
-    string path;
-    if([[self ActivePanelController] GetCurrentVFSHost]->IsNativeFS())
-        path = [[self ActivePanelController] GetCurrentDirectoryPathRelativeToHost];
-    [(MainWindowController*)[[self window] delegate] RequestTerminal:path.c_str()];
-}
-///////////////////////////////////////////////////////////////
-
-
-
-
 
 @end

@@ -16,7 +16,6 @@
     PanelView *m_BasicViews[2]; // if there's no overlays - this will be nils
                              // if any part becomes overlayed - basic view is backed up in this array
     
-//    __weak NSView *m_Overlays[2];
     double m_Prop;
 }
 
@@ -171,7 +170,21 @@
     [self addSubview:_v2];
 }
 
-- (void) SetLeftOverlay:(NSView*)_o
+- (NSView*)leftOverlay
+{
+    if(m_BasicViews[0] == nil)
+        return nil;
+    return [self.subviews objectAtIndex:0];
+}
+
+- (NSView*)rightOverlay
+{
+    if(m_BasicViews[1] == nil)
+        return nil;
+    return [self.subviews objectAtIndex:1];
+}
+
+- (void)setLeftOverlay:(NSView*)_o
 {
     NSRect leftRect = [[[self subviews] objectAtIndex:0] frame];
     if(_o != nil)
@@ -198,7 +211,7 @@
     }
 }
 
-- (void) SetRightOverlay:(NSView*)_o
+- (void)setRightOverlay:(NSView*)_o
 {
     NSRect rightRect = [[[self subviews] objectAtIndex:1] frame];
     if(_o != nil)

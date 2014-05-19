@@ -124,5 +124,12 @@ void NewVersionChecker::Go()
             // if there's no check date - set current date as check data and quit
             [defaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:g_DefKey];
         }
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 60*60*24*NSEC_PER_SEC + NSEC_PER_SEC), // 24 hours + 1 second
+                       dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
+                       ^{
+                           Go();
+                       }
+            );
     });
 }

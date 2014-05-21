@@ -17,8 +17,6 @@
 #import "MainWndGoToButton.h"
 #import "OperationsController.h"
 #import "OperationsSummaryViewController.h"
-#import "FileSysAttrChangeOperation.h"
-#import "FileSysEntryAttrSheetController.h"
 #import "chained_strings.h"
 #import "FileDeletionSheetController.h"
 #import "MassCopySheetController.h"
@@ -465,41 +463,6 @@
 {
     [m_LeftPanelController ModifierFlagsChanged:event.modifierFlags];
     [m_RightPanelController ModifierFlagsChanged:event.modifierFlags];
-}
-
-- (IBAction)OnFileAttributes:(id)sender{
-    if(!self.isPanelActive) return;
-    if(![self ActivePanelData]->Host()->IsNativeFS())
-        return; // currently support file info only on native fs
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    
-    FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
-    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
-        if(result == DialogResult::Apply)
-        {
-            FileSysAttrAlterCommand *command = [sheet Result];
-            [m_OperationsController AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:command]];
-        }
-    };
-
-    if([self ActivePanelData]->Stats().selected_entries_amount > 0 )
-    {
-        [sheet ShowSheet:[self window] selentries:[self ActivePanelData] handler:handler];
-    }
-    else
-    {
-        PanelView *curview = [self ActivePanelView];
-        PanelData *curdata = [self ActivePanelData];
-        int curpos = [curview GetCursorPosition];
-        if(curpos >= 0)
-        {
-            int rawpos = curdata->RawIndexForSortIndex(curpos);
-            if(rawpos >= 0 &&
-               curdata->EntryAtRawPosition(rawpos)->IsDotDot() == false)
-                [sheet ShowSheet:[self window] data:[self ActivePanelData] index:rawpos handler:handler];
-        }
-    }
 }
 
 - (void)DeleteFiles:(BOOL)_shift_behavior

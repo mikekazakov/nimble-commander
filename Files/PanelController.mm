@@ -18,8 +18,9 @@
 #import "FTPConnectionSheetController.h"
 #import "SelectionWithMaskSheetController.h"
 #import "DetailedVolumeInformationSheetController.h"
-// todo: remove me
+#import "FileSysEntryAttrSheetController.h"
 #import "FindFilesSheetController.h"
+#import "FileSysAttrChangeOperation.h"
 
 static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
@@ -1264,6 +1265,26 @@ void panel::GenericCursorPersistance::Restore()
     auto host = m_Data.Host();
     [(MainWindowController*)self.window.delegate RequestBigFileView:path
                                                             with_fs:host];
+}
+
+- (IBAction)OnFileAttributes:(id)sender
+{
+    if(!m_Data.Host()->IsNativeFS())
+        return; // currently support file info only on native fs
+    
+    FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
+    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
+        if(result == DialogResult::Apply)
+            [self.state AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:sheet.Result]];
+    };
+    
+    if(m_Data.Stats().selected_entries_amount > 0 )
+        [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
+    else if(m_View.CurrentItem && !m_View.CurrentItem->IsDotDot())
+        [sheet ShowSheet:self.window
+                    data:&m_Data
+                   index:m_Data.RawIndexForSortIndex(m_View.GetCursorPosition)
+                 handler:handler];
 }
 
 @end

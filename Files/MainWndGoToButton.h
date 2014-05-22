@@ -12,7 +12,7 @@
 
 @interface MainWndGoToButton : NSPopUpButton<NSMenuDelegate>
 
-- (NSString*) GetCurrentSelectionPath;
+- (NSString*) path;
 - (void) SetCurrentPath: (const char*)_path;
 - (void) SetOwner:(MainWindowFilePanelState*) _owner;
 - (void) SetAnchorPoint: (NSPoint)_point IsRight:(bool) _is_right; // screen coordinates

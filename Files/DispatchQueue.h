@@ -25,6 +25,20 @@ public:
     void Run( void (^_block)(shared_ptr<SerialQueueT> _que) );
     
     /**
+     * Run block synchronous against queue.
+     * Will not run block if currently IsStopped() is true.
+     * Will not call OnDry/OnWet/OnChange and will not change queue's- length.
+     */
+    void RunSync(void (^_block)(shared_ptr<SerialQueueT> _que));
+
+    /**
+     * Run block synchronous againt current queue, just for client's convenience.
+     * Will not run block if currently IsStopped() is true.
+     * Will not call OnDry/OnWet/OnChange and will not change queue's- length.
+     */
+    void RunSyncHere(void (^_block)(shared_ptr<SerialQueueT> _que));
+    
+    /**
      * Raised IsStopped() flag so currently running task can caught it.
      * Will skip any enqueued tasks and not add any more until became dry, then will automaticaly lower this flag
      */

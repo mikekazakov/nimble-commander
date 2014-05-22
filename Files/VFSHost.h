@@ -227,6 +227,8 @@ public:
                                    int _flags,
                                    bool (^_cancel_checker)());
 
+    static const shared_ptr<VFSHost> &DummyHost();
+    
     inline shared_ptr<VFSHost> SharedPtr() { return shared_from_this(); }
     inline shared_ptr<const VFSHost> SharedPtr() const { return shared_from_this(); }
 #define VFS_DECLARE_SHARED_PTR(_cl)\

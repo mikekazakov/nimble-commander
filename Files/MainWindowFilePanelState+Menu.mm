@@ -19,16 +19,6 @@
 
 @implementation MainWindowFilePanelState (Menu)
 
-- (IBAction)OnOpen:(id)sender
-{
-    [[self ActivePanelController] HandleGoIntoDirOrOpenInSystem];
-}
-
-- (IBAction)OnOpenNatively:(id)sender
-{
-    [[self ActivePanelController] HandleOpenInSystem];
-}
-
 - (IBAction)OnGoToHome:(id)sender
 {
     [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Home)];
@@ -64,17 +54,23 @@
     [self DoGoToNativeDirectoryFromMenuItem:CommonPaths::Get(CommonPaths::Library)];
 }
 
-- (void) DoGoToNativeDirectoryFromMenuItem:(std::string)_path
+- (void) DoGoToNativeDirectoryFromMenuItem:(string)_path
 {
     if(m_LeftPanelController.isActive)
     {
         m_MainSplitView.leftOverlay = nil; // seem to be a redundant
-        [m_LeftPanelController GoToGlobalHostsPathAsync:_path.c_str()];
+        [m_LeftPanelController GoToDir:_path
+                                   vfs:VFSNativeHost::SharedHost()
+                          select_entry:""
+                                 async:true];
     }
     else if(m_RightPanelController.isActive)
     {
         m_MainSplitView.rightOverlay = nil; // seem to be a redundant
-        [m_RightPanelController GoToGlobalHostsPathAsync:_path.c_str()];
+        [m_RightPanelController GoToDir:_path
+                                    vfs:VFSNativeHost::SharedHost()
+                           select_entry:""
+                                  async:true];
     }
 }
 
@@ -96,19 +92,29 @@
         assert(!path.empty());
         if(path[0] == '/') {
             // absolute path
-            return [self.ActivePanelController GoToGlobalHostsPathSync: path.c_str()];
+            [self.ActivePanelController GoToDir:path
+                                        vfs:VFSNativeHost::SharedHost()
+                               select_entry:""
+                                      async:true];
         } else if(path[0] == '~') {
             // relative to home
             path.replace(0, 1, CommonPaths::Get(CommonPaths::Home));
-            return [self.ActivePanelController GoToGlobalHostsPathSync: path.c_str()];
+            [self.ActivePanelController GoToDir:path
+                                            vfs:VFSNativeHost::SharedHost()
+                                   select_entry:""
+                                          async:true];
         } else {
             // sub-dir
             path.insert(0, [self.ActivePanelController GetCurrentDirectoryPathRelativeToHost]);
-            return [self.ActivePanelController GoToGlobalHostsPathSync:path.c_str()];
+            [self.ActivePanelController GoToDir:path
+                                            vfs:VFSNativeHost::SharedHost() // not sure if this is right, mb .VFS?
+                                   select_entry:""
+                                          async:true];
         }
 
         return 0;
     }];
+
 }
 
 - (IBAction)OnMoveToTrash:(id)sender
@@ -135,22 +141,6 @@
                                  rootpath:[self ActivePanelData]->DirectoryPathWithTrailingSlash().c_str()];
     op.TargetPanel = [self ActivePanelController];
     [m_OperationsController AddOperation:op];
-}
-
-- (IBAction)OnGoToUpperDirectory:(id)sender
-{
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    [[self ActivePanelController] GoToUpperDirectoryAsync];
-}
-
-- (IBAction)OnGoIntoDirectory:(id)sender
-{
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    auto item = self.ActivePanelView.item;
-    if(item != nullptr && item->IsDotDot() == false)
-        [[self ActivePanelController] HandleGoIntoDir];
 }
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender

@@ -64,7 +64,8 @@ namespace panel
     // Main controller's possessions
     PanelData                   m_Data;   // owns
     PanelView                   *m_View;  // create and owns
-    vector<shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
+//    vector<shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
+    
     
     // VFS changes observation
     shared_ptr<VFSHost>         m_UpdatesObservationHost;
@@ -130,28 +131,19 @@ namespace panel
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) NSWindow* window;
 
-// CONFIGURATION METHODS /////////////////////////////////////////////
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
                     share:(NSButton*)_share;
-//////////////////////////////////////////////////////////////////////
 
 - (void) LoadViewState:(NSDictionary *)_state;
 - (NSDictionary *) SaveViewState;
 
-- (void) HandleGoIntoDirOrOpenInSystem;        // 'Open' menu item
-- (void) HandleOpenInSystem;                   // 'Open Natively' menu item
-- (bool) HandleGoIntoDir;                      // basically cmd+down_arrow
 - (void) RefreshDirectory; // user pressed cmd+r by default
 
-// MAIN NAVIGATION METHODS ////////////////////////////////////////////
-- (void) GoToRelativeToHostAsync:(const char*) _path select_entry:(const char*) _entry; // _entry may be NULL
-- (void) GoToGlobalHostsPathAsync:(const char*) _path select_entry:(const char*) _entry; // _entry may be NULL
-- (void) GoToRelativeToHostAsync:(const char*) _path;
-- (void) GoToGlobalHostsPathAsync:(const char*) _path;
-- (int)  GoToRelativeToHostSync:(const char*) _path;
-- (int)  GoToGlobalHostsPathSync:(const char*) _path;
-- (void) GoToUpperDirectoryAsync;
-///////////////////////////////////////////////////////////////////////
+- (int) GoToDir:(string)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(string)_filename
+          async:(bool)_asynchronous;
+
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 

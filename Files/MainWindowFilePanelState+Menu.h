@@ -10,9 +10,6 @@
 
 @interface MainWindowFilePanelState (Menu)
 
-- (IBAction)OnOpen:(id)sender;
-- (IBAction)OnOpenNatively:(id)sender;
-
 // Navigation
 - (IBAction)OnGoBack:(id)sender;
 - (IBAction)OnGoForward:(id)sender;
@@ -24,9 +21,6 @@
 - (IBAction)OnGoToApplications:(id)sender;
 - (IBAction)OnGoToUtilities:(id)sender;
 - (IBAction)OnGoToFolder:(id)sender;
-
-- (IBAction)OnGoToUpperDirectory:(id)sender;
-- (IBAction)OnGoIntoDirectory:(id)sender;
 
 // Operations
 - (IBAction)OnMoveToTrash:(id)sender;

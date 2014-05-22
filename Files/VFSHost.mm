@@ -313,3 +313,13 @@ int VFSHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel
 {
     return VFSError::NotSupported;
 }
+
+const shared_ptr<VFSHost> &VFSHost::DummyHost()
+{
+    static dispatch_once_t once;
+    static shared_ptr<VFSHost> host;
+    dispatch_once(&once, [&]{
+        host = make_shared<VFSHost>("", nullptr);
+    });
+    return host;
+}

@@ -15,11 +15,11 @@ class VFSArchiveProxy
 {
 public:
     
-static bool CanOpenFileAsArchive(const char *_path,
+static bool CanOpenFileAsArchive(const string &_path,
                                   shared_ptr<VFSHost> _parent
                                   );
 
-static shared_ptr<VFSHost> OpenFileAsArchive(const char *_path,
+static shared_ptr<VFSHost> OpenFileAsArchive(const string &_path,
                                              shared_ptr<VFSHost> _parent
                                              );
 };

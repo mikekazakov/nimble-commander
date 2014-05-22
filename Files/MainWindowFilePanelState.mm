@@ -38,6 +38,7 @@
 #import "LSUrls.h"
 #import "ActionsShortcutsManager.h"
 #import "MyToolbar.h"
+#import "common_paths.h"
 
 @implementation MainWindowFilePanelState
 
@@ -79,7 +80,8 @@
         }
         
         [self LoadPanelsSettings];
-        
+
+#if 0
         // now load data into panels
         if([m_LeftPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]] < 0)
         { // if saved dir is invalid - try home directory
@@ -96,13 +98,22 @@
             int ret = [m_RightPanelController GoToGlobalHostsPathSync:"/"];
             assert(ret == VFSError::Ok);
         }
+#endif
+        [m_LeftPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
+                                   vfs:VFSNativeHost::SharedHost()
+                          select_entry:""
+                                 async:false];
+        [m_RightPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
+                                   vfs:VFSNativeHost::SharedHost()
+                          select_entry:""
+                                 async:false];
     }
     return self;
 }
 
-- (BOOL)acceptsFirstResponder {
-    return YES;
-}
+- (BOOL)acceptsFirstResponder { return true; }
+- (MyToolbar*)Toolbar { return m_Toolbar; }
+- (NSView*) ContentView { return self; }
 
 - (void) CreateControls
 {
@@ -199,16 +210,6 @@
     [self BuildLayout];    
 }
 
-- (MyToolbar*)Toolbar
-{
-    return m_Toolbar;
-}
-
-- (NSView*) ContentView
-{
-    return self;
-}
-
 - (void) Assigned
 {
     [m_Toolbar UpdateVisibility];
@@ -291,14 +292,21 @@
     }
 }
 
-- (IBAction)LeftPanelGoToButtonAction:(id)sender{
+- (IBAction)LeftPanelGoToButtonAction:(id)sender
+{
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    [m_LeftPanelController GoToGlobalHostsPathAsync:[[m_LeftPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation] select_entry:0];
+    [m_LeftPanelController GoToDir:m_LeftPanelGoToButton.path.fileSystemRepresentation
+                               vfs:VFSNativeHost::SharedHost()
+                      select_entry:""
+                             async:true];
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    [m_RightPanelController GoToGlobalHostsPathAsync:[[m_RightPanelGoToButton GetCurrentSelectionPath] fileSystemRepresentation] select_entry:0];
+    [m_RightPanelController GoToDir:m_RightPanelGoToButton.path.fileSystemRepresentation
+                               vfs:VFSNativeHost::SharedHost()
+                      select_entry:""
+                             async:true];
 }
 
 - (IBAction)LeftPanelGoto:(id)sender{
@@ -430,25 +438,22 @@
 }
 
 - (IBAction)OnSyncPanels:(id)sender{
-    if(!self.isPanelActive) return;
-    if([m_MainSplitView AnyCollapsedOrOverlayed]) return;
-    char dirpath[MAXPATHLEN];
+    if(!self.isPanelActive || m_MainSplitView.AnyCollapsedOrOverlayed) return;
     
     if(m_LeftPanelController.isActive)
-    {
-        m_LeftPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
-        [m_RightPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
-    }
+        [m_RightPanelController GoToDir:m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost
+                                    vfs:m_LeftPanelController.VFS
+                           select_entry:""
+                                  async:true];
     else
-    {
-        m_RightPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(dirpath);
-        [m_LeftPanelController GoToGlobalHostsPathAsync:dirpath select_entry:0];
-    }
+        [m_LeftPanelController GoToDir:m_RightPanelController.GetCurrentDirectoryPathRelativeToHost
+                                   vfs:m_RightPanelController.VFS
+                          select_entry:""
+                                 async:true];
 }
 
 - (IBAction)OnSwapPanels:(id)sender{
-    if(!self.isPanelActive) return;
-    if([m_MainSplitView AnyCollapsed]) return;
+    if(!self.isPanelActive || m_MainSplitView.AnyCollapsedOrOverlayed) return;
     
     swap(m_LeftPanelController, m_RightPanelController);
     [m_MainSplitView SwapViews];
@@ -911,6 +916,7 @@
 
 - (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path
 {
+#if 0
     assert(dispatch_is_main_queue());
     
     PanelController *panel = [self ActivePanelController];
@@ -927,6 +933,7 @@
         
         [[self ActivePanelView] setNeedsDisplay:true];
     }
+#endif
 }
 
 - (void)OnApplicationWillTerminate

@@ -207,7 +207,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     }
 }
 
-- (NSString*) GetCurrentSelectionPath
+- (NSString*) path
 {
     NSInteger n = [self indexOfSelectedItem] - 1;
     

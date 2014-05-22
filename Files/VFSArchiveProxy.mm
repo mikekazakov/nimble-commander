@@ -10,11 +10,11 @@
 #include "VFSArchiveHost.h"
 #include "VFSArchiveUnRARHost.h"
 
-bool VFSArchiveProxy::CanOpenFileAsArchive(const char *_path,
+bool VFSArchiveProxy::CanOpenFileAsArchive(const string &_path,
                                            shared_ptr<VFSHost> _parent)
 {
     if(_parent->IsNativeFS() &&
-       VFSArchiveUnRARHost::IsRarArchive(_path))
+       VFSArchiveUnRARHost::IsRarArchive(_path.c_str()))
         return true;
         
     // libarchive here
@@ -23,21 +23,21 @@ bool VFSArchiveProxy::CanOpenFileAsArchive(const char *_path,
     return false;
 }
 
-shared_ptr<VFSHost> VFSArchiveProxy::OpenFileAsArchive(const char *_path,
+shared_ptr<VFSHost> VFSArchiveProxy::OpenFileAsArchive(const string &_path,
                                                        shared_ptr<VFSHost> _parent
                                                        )
 {
     if(_parent->IsNativeFS() &&
-       VFSArchiveUnRARHost::IsRarArchive(_path) )
+       VFSArchiveUnRARHost::IsRarArchive(_path.c_str()) )
     {
-        shared_ptr<VFSArchiveUnRARHost> host = make_shared<VFSArchiveUnRARHost>(_path);
+        shared_ptr<VFSArchiveUnRARHost> host = make_shared<VFSArchiveUnRARHost>(_path.c_str());
         if(host->Open() == 0)
             return host;
         
         return nullptr;
     }
     
-    auto archive = make_shared<VFSArchiveHost>(_path, _parent);
+    auto archive = make_shared<VFSArchiveHost>(_path.c_str(), _parent);
     if(archive->Open() >= 0)
         return archive;
     

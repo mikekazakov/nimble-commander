@@ -10,11 +10,12 @@
 #import "Common.h"
 
 @implementation PanelController (Navigation)
-
+#if 0
 - (void) AsyncGoToVFSPathStack:(const VFSPathStack&)_path
                      withFlags:(int)_flags
                       andFocus:(string)_filename
 {
+
     if(!m_DirectoryLoadingQ->Empty())
         return;
     
@@ -84,13 +85,16 @@
             }
         }
     });
-}
 
+}
+#endif
+#if 0
 - (void) AsyncGoToVFSHostsStack:(vector<shared_ptr<VFSHost>>)_hosts
                        withPath:(string)_path
                       withFlags:(int)_flags
                        andFocus:(string)_filename
 {
+
     m_DirectoryLoadingQ->Run(^(SerialQueue _q) {
         if(_hosts.back()->IsDirectory(_path.c_str(), 0, 0)) {
             shared_ptr<VFSListing> listing;
@@ -106,10 +110,12 @@
                 });
         }
     });
-}
 
+}
+#endif
 - (void) OnGoBack
 {
+#if 0
     if(m_History.Length() < 2)
         return;
     if(m_History.IsBack())
@@ -125,10 +131,12 @@
                       withFlags:PanelControllerNavigation::NoHistory
                        andFocus:""
      ];
+#endif
 }
 
 - (void) OnGoForward
 {
+#if 0
     if(m_History.Length() < 2)
         return;
     if(m_History.IsBeyond())
@@ -140,6 +148,7 @@
         [self AsyncGoToVFSPathStack:*m_History.Current()
                           withFlags:PanelControllerNavigation::NoHistory
                            andFocus:""];
+#endif
 }
 
 @end

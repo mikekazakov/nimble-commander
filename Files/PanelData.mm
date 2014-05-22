@@ -15,7 +15,7 @@ static inline PanelSortMode DefaultSortMode()
 
 PanelData::PanelData():
     m_SortExecGroup(DispatchGroup::High),
-    m_Listing(make_shared<VFSListing>("", shared_ptr<VFSHost>(0))),
+    m_Listing(make_shared<VFSListing>("", VFSHost::DummyHost())),
     m_CustomSortMode(DefaultSortMode())
 {
 }

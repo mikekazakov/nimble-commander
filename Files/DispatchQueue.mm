@@ -78,6 +78,25 @@ void SerialQueueT::Run( void (^_block)(shared_ptr<SerialQueueT>) )
     });
 }
 
+void SerialQueueT::RunSync(void (^_block)(shared_ptr<SerialQueueT> _que))
+{
+    if(m_Stopped.load()) // won't push any the tasks until we're stopped
+        return;
+    
+    auto me = shared_from_this();
+    
+    dispatch_sync(m_Queue, ^{
+        _block(me);
+    });
+}
+
+void SerialQueueT::RunSyncHere(void (^_block)(shared_ptr<SerialQueueT> _que))
+{
+    if(m_Stopped.load()) // won't push any the tasks until we're stopped
+        return;
+    _block(shared_from_this());
+}
+
 void SerialQueueT::Wait()
 {
     if(m_Length.load() == 0)

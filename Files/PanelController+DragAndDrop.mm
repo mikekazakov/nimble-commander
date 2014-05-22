@@ -345,7 +345,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     
     if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL])
     {
-        if(!m_HostsStack.back()->IsWriteable())
+        if(!self.VFS->IsWriteable())
             return NSDragOperationNone;
   
         NSDragOperation mask = sender.draggingSourceOperationMask;
@@ -383,8 +383,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 return false;
             
             
-            if(!m_HostsStack.back()->IsNativeFS() &&
-               m_HostsStack.back()->IsWriteable() )
+            if(!self.VFS->IsNativeFS() && self.VFS->IsWriteable() )
             {
                 if(sender.draggingSourceOperationMask != NSDragOperationCopy)
                     return false;
@@ -395,7 +394,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                                             root:source_broker.root_path.c_str()
                                                                          srcvfs:source_broker.vfs
                                                                             dest:destination.c_str()
-                                                                          dstvfs:m_HostsStack.back()
+                                                                          dstvfs:self.VFS
                                                                          options:opts];
 
                 [filepanel_state.OperationsController AddOperation:op];

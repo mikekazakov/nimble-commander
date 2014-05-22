@@ -106,8 +106,6 @@ void panel::GenericCursorPersistance::Restore()
         m_DirectoryReLoadingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirreloading");
         m_DelayedSelection.isvalid = false;
         
-        m_HostsStack.push_back( VFSNativeHost::SharedHost() );
-        
         __weak PanelController* weakself = self;
         auto on_change = ^{
             dispatch_to_main_queue( ^{
@@ -183,6 +181,11 @@ void panel::GenericCursorPersistance::Restore()
 - (MainWindowFilePanelState*)state
 {
     return m_FilePanelState;
+}
+
+- (NSWindow*) window
+{
+    return self.state.window;
 }
 
 - (void) LoadViewState:(NSDictionary *)_state
@@ -325,12 +328,14 @@ void panel::GenericCursorPersistance::Restore()
     }
 
     __weak PanelController *weakself = self;
-    m_UpdatesObservationTicket = m_HostsStack.back()->DirChangeObserve(_new_path.c_str(),
+    m_UpdatesObservationTicket = self.VFS->DirChangeObserve(_new_path.c_str(),
         ^{[(PanelController *)weakself RefreshDirectory];} );
     
     if(m_UpdatesObservationTicket)
-        m_UpdatesObservationHost = m_HostsStack.back();
+        m_UpdatesObservationHost = self.VFS;
 }
+
+#if 0
 
 - (void) GoToRelativeToHostAsync:(const char*) _path select_entry:(const char*) _entry
 {
@@ -610,28 +615,34 @@ void panel::GenericCursorPersistance::Restore()
     }
 }
 
-- (void) GoToUpperDirectoryAsync
+#endif
+
+- (bool) HandleGoToUpperDirectory
 {
-    // TODO: need some changes when VFS will became multi-root (network connections, FS like PS list etc)
-    char path[MAXPATHLEN*8], last_path_entry[MAXPATHLEN];
-    m_Data.GetDirectoryFullHostsPathWithTrailingSlash(path);
-    string entry = m_Data.DirectoryPathShort();
-    
-    char *s = strrchr(path, '/');
-    if(!s) return;
-    *s = 0;
-    s = strrchr(path, '/');
-    if(!s) return;
-    strcpy(last_path_entry, s+1);
-    *(s+1) = 0;
-    if(!entry.empty()) // normal condition
-        [self GoToGlobalHostsPathAsync:path select_entry:entry.c_str()];
-    else // data has no info about how it's dir is named. seems that it's a VFS,
-         // and currently junction file should be selected - it is a last part of a full path
-        [self GoToGlobalHostsPathAsync:path select_entry:last_path_entry];
+    path cur = path(m_Data.DirectoryPathWithTrailingSlash());
+    if(cur.empty()) return false;
+    if(cur == "/")
+    {
+        if(self.VFS->Parent() != nullptr)
+        {
+            path junct = self.VFS->JunctionPath();
+            assert(!junct.empty());
+            string dir = junct.parent_path().native();
+            string sel_fn = junct.filename().native();
+            return [self GoToDir:dir vfs:self.VFS->Parent() select_entry:sel_fn async:true] == 0;
+        }
+    }
+    else
+    {
+        string dir = cur.parent_path().remove_filename().native();
+        string sel_fn = cur.parent_path().filename().native();
+        return [self GoToDir:dir vfs:self.VFS select_entry:sel_fn async:true] == 0;
+    }
+    return false;
 }
 
-- (bool) HandleGoIntoDir
+
+- (bool) HandleGoIntoDirOrArchive
 {
     const auto entry = m_View.item;
     if(entry == nullptr)
@@ -640,53 +651,18 @@ void panel::GenericCursorPersistance::Restore()
     // Handle directories.
     if(entry->IsDir())
     {
-        // TODO: make this use .GoToUpperDirectoryAsync method somehow
+        if(entry->IsDotDot())
+            return [self HandleGoToUpperDirectory];
         
-        if(!entry->IsDotDot() ||
-           strcmp(m_Data.Listing()->RelativePath(), "/"))
-        {
-            string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex(m_View.curpos));
-            
-            string curdirname;
-            if(entry->IsDotDot()) // go to parent directory
-                curdirname = m_Data.DirectoryPathShort();
-            
-            [self GoToRelativeAsync:path.c_str()
-                          WithHosts:make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack)
-                        SelectEntry:curdirname.c_str()
-             ];
-            return true;
-        }
-        else
-        { // dot-dot entry on some root dir - therefore it's some VFS like archive
-            char junct[1024];
-            strcpy(junct, m_HostsStack.back()->JunctionPath());
-            assert(strlen(junct) > 0);
-            if(IsPathWithTrailingSlash(junct)) junct[strlen(junct)-1] = 0;
-            char junct_entry[1024];
-            char directory_path[1024];
-            strcpy(junct_entry, strrchr(junct, '/')+1);
-            *(strrchr(junct, '/')+1) = 0;
-            strcpy(directory_path, junct);
-            
-            auto hosts = make_shared<vector<shared_ptr<VFSHost>>>(m_HostsStack);
-            hosts->pop_back();
-            
-            [self GoToRelativeAsync:directory_path WithHosts:hosts SelectEntry:junct];
-            
-            return true;
-        }
+        path cur = path(m_Data.DirectoryPathWithTrailingSlash());
+        return [self GoToDir:(cur/entry->Name()).native() vfs:self.VFS select_entry:"" async:true] == 0;
     }
     else
-    { // VFS stuff here
-        string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex(m_View.curpos));
-        auto arhost = VFSArchiveProxy::OpenFileAsArchive(path.c_str(), m_HostsStack.back());
+    { // archive stuff here
+        auto arhost = VFSArchiveProxy::OpenFileAsArchive(self.GetCurrentFocusedEntryFilePathRelativeToHost,
+                                                         self.VFS);
         if(arhost)
-        {
-            m_HostsStack.push_back(arhost);
-            [self GoToRelativeToHostAsync:"/" select_entry:0];
-            return true;
-        }
+            return [self GoToDir:"/" vfs:arhost select_entry:"" async:true] == 0;
     }
     
     return false;
@@ -694,10 +670,10 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) HandleGoIntoDirOrOpenInSystem
 {
-    if([self HandleGoIntoDir])
+    if([self HandleGoIntoDirOrArchive])
         return;
     
-    const auto entry = m_View.item;
+    auto entry = m_View.item;
     if(entry == nullptr)
         return;
     
@@ -717,18 +693,18 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) RefreshDirectory
 {
-    if(/*m_Data == nullptr || */m_View == nil)
-        return; // guard agains calls from init process
+    if(m_View == nil) return; // guard agains calls from init process
     
     // going async here
     if(!m_DirectoryLoadingQ->Empty())
         return; //reducing overhead
     
     string dirpath = m_Data.DirectoryPathWithTrailingSlash();
+    auto vfs = self.VFS;
     
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
         shared_ptr<VFSListing> listing;
-        int ret = m_HostsStack.back()->FetchDirectoryListing(dirpath.c_str(),&listing, m_VFSFetchingFlags, ^{ return _q->IsStopped(); });
+        int ret = vfs->FetchDirectoryListing(dirpath.c_str(), &listing, m_VFSFetchingFlags, ^{ return _q->IsStopped(); });
         if(ret >= 0)
         {
             dispatch_to_main_queue( ^{
@@ -754,7 +730,6 @@ void panel::GenericCursorPersistance::Restore()
 
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
 {
-    MainWindowFilePanelState *state = (MainWindowFilePanelState*)self.state;
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
     
     if([self QuickSearchProcessKeyDown:event])
@@ -769,12 +744,12 @@ void panel::GenericCursorPersistance::Restore()
     unsigned short const keycode = event.keyCode;
     
     if(unicode == NSTabCharacter) { // Tab button
-        [state HandleTabButton];
+        [self.state HandleTabButton];
         return true;
     }
     if(keycode == 53) { // Esc button
         [self CancelBackgroundOperations];
-        [state CloseOverlay:self];
+        [self.state CloseOverlay:self];
         m_BriefSystemOverview = nil;
         m_QuickLook = nil;
         [self QuickSearchClearFiltering];
@@ -783,8 +758,10 @@ void panel::GenericCursorPersistance::Restore()
     if(keycode == 35 ) { // 'P' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
-            auto path = VFSPathStack::SecretFunction___CreateVFSPSPath();
-            [self AsyncGoToVFSPathStack:path withFlags:0 andFocus:""];
+//            auto path = VFSPathStack::SecretFunction___CreateVFSPSPath();
+//            [self AsyncGoToVFSPathStack:path withFlags:0 andFocus:""];
+//            ;
+            [self GoToDir:"/" vfs:make_shared<VFSPSHost>() select_entry:"" async:true];
             return true;
         }
     }
@@ -837,7 +814,7 @@ void panel::GenericCursorPersistance::Restore()
     string current_dir = m_Data.DirectoryPathWithTrailingSlash();
     __block auto dir_names = move(_filenames);
     m_DirectorySizeCountingQ->Run( ^(SerialQueue _q){
-        m_HostsStack.back()->CalculateDirectoriesSizes(move(dir_names),
+        self.VFS->CalculateDirectoriesSizes(move(dir_names),
                                                        current_dir.c_str(),
                                                        ^bool {
                                                            return _q->IsStopped();
@@ -924,12 +901,14 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) RecoverFromInvalidDirectory
 {
+#if 0
     // TODO: recovering to upper host needed
     char path[MAXPATHLEN];
     strcpy(path, m_Data.DirectoryPathWithoutTrailingSlash().c_str());
     if(GetFirstAvailableDirectoryFromPath(path))
 //        [self GoToDirectory:path];
         [self GoToRelativeToHostAsync:path select_entry:0];
+#endif
 }
 
 - (void) SelectAllEntries:(bool) _select
@@ -955,29 +934,26 @@ void panel::GenericCursorPersistance::Restore()
 
 - (IBAction)OnFileViewCommand:(id)sender
 {
-    MainWindowFilePanelState* state = self.state;
-    
     // Close quick preview, if it is open.
     if(m_QuickLook) {
-        [state CloseOverlay:self];
+        [self.state CloseOverlay:self];
         m_QuickLook = nil;
         return;
     }
     
-    m_QuickLook = [state RequestQuickLookView:self];
+    m_QuickLook = [self.state RequestQuickLookView:self];
     [self OnCursorChanged];
 }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender
 {
-    MainWindowFilePanelState* state = self.state;
     if(m_BriefSystemOverview)
     {
-        [state CloseOverlay:self];
+        [self.state CloseOverlay:self];
         m_BriefSystemOverview = nil;
         return;
     }
-    m_BriefSystemOverview = [state RequestBriefSystemOverview:self];
+    m_BriefSystemOverview = [self.state RequestBriefSystemOverview:self];
     [self UpdateBriefSystemOverview];
 }
 
@@ -986,7 +962,7 @@ void panel::GenericCursorPersistance::Restore()
     [self ResetUpdatesObservation:m_Data.DirectoryPathWithTrailingSlash()];
     [self ClearSelectionRequest];
     [self QuickSearchClearFiltering];
-    [(MainWindowFilePanelState*)self.state PanelPathChanged:self];
+    [self.state PanelPathChanged:self];
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
     
@@ -1000,7 +976,7 @@ void panel::GenericCursorPersistance::Restore()
 {
     // need to update some UI here
     auto item = m_View.item;
-    auto host = m_HostsStack.back();
+    auto host = m_Data.Host();
   
     // update share button regaring current state
     m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
@@ -1027,7 +1003,7 @@ void panel::GenericCursorPersistance::Restore()
     
     [[SharingService new] ShowItems:move(files)
                               InDir:m_Data.DirectoryPathWithTrailingSlash()
-                              InVFS:m_HostsStack.back()
+                              InVFS:self.VFS
                      RelativeToRect:[sender bounds]
                              OfView:sender
                       PreferredEdge:NSMinYEdge];
@@ -1036,7 +1012,7 @@ void panel::GenericCursorPersistance::Restore()
 - (void) UpdateBriefSystemOverview
 {
     [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:[self GetCurrentDirectoryPathRelativeToHost].c_str()
-                                                             host:m_HostsStack.back()];
+                                                             host:self.VFS];
 }
 
 - (void) PanelViewCursorChanged:(PanelView*)_view
@@ -1046,7 +1022,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) PanelViewRequestsActivation:(PanelView*)_view
 {
-    [(MainWindowFilePanelState*)self.state ActivatePanelByController:self];
+    [self.state ActivatePanelByController:self];
 }
 
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
@@ -1065,10 +1041,10 @@ void panel::GenericCursorPersistance::Restore()
             if(i.CFIsSelected())
                 items.push_back(&i);
     
-    return [(MainWindowFilePanelState*)self.state RequestContextMenuOn:items
-                                                                  path:[self GetCurrentDirectoryPathRelativeToHost].c_str()
-                                                                   vfs:m_HostsStack.back()
-                                                                caller:self];
+    return [self.state RequestContextMenuOn:items
+                                       path:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+                                        vfs:self.VFS
+                                     caller:self];
 }
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos
@@ -1100,13 +1076,15 @@ void panel::GenericCursorPersistance::Restore()
                  if(host->Open(path.c_str(), opts) != 0)
                      return;
                 
-                 vector<shared_ptr<VFSHost>> hosts;
+                 [self GoToDir:path vfs:host select_entry:"" async:true];
+                 
+/*                 vector<shared_ptr<VFSHost>> hosts;
                  hosts.emplace_back(host);
                  
                  [self AsyncGoToVFSHostsStack:hosts
                                      withPath:path
                                     withFlags:0
-                                     andFocus:""];
+                                     andFocus:""];*/
              }];
 }
 
@@ -1125,12 +1103,8 @@ void panel::GenericCursorPersistance::Restore()
              withVFS:self.VFS
             fromPath:self.GetCurrentDirectoryPathRelativeToHost
              handler:^{
-                 if(sheet.SelectedItem != nullptr)
-                 {
-                     auto item = sheet.SelectedItem;
-                     [self GoToRelativeToHostAsync:item->dir_path.c_str()
-                                      select_entry:item->filename.c_str()];
-                 }
+                 if(auto item = sheet.SelectedItem)
+                     [self GoToDir:item->dir_path vfs:self.VFS select_entry:item->filename async:true];
              }
      ];
 }
@@ -1143,11 +1117,6 @@ void panel::GenericCursorPersistance::Restore()
     string path = m_Data.DirectoryPathWithoutTrailingSlash();
     if(IsVolumeContainingPathEjectable(path.c_str()))
         EjectVolumeContainingPath(path);
-}
-
-- (NSWindow*) window
-{
-    return ((MainWindowFilePanelState*)self.state).window;
 }
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
@@ -1270,6 +1239,79 @@ void panel::GenericCursorPersistance::Restore()
                     data:&m_Data
                    index:m_Data.RawIndexForSortIndex(m_View.curpos)
                  handler:handler];
+}
+
+- (int) GoToDir:(string)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(string)_filename
+          async:(bool)_asynchronous
+{
+    if(_asynchronous == false)
+    {
+        assert(dispatch_is_main_queue());
+        m_DirectoryLoadingQ->Stop();
+        m_DirectoryLoadingQ->Wait();
+    }
+    else
+    {
+        if(!m_DirectoryLoadingQ->Empty())
+            return 0;
+    }
+
+    __block int ret = 0;
+    auto workblock = ^(SerialQueue _q) {
+        if(_vfs->IsDirectory(_dir.c_str(), 0, 0))
+        {
+            shared_ptr<VFSListing> listing;
+            ret = _vfs->FetchDirectoryListing(_dir.c_str(),
+                                                  &listing,
+                                                  m_VFSFetchingFlags,
+                                                  ^{return _q->IsStopped();});
+            if(ret >= 0)
+            {
+                [self CancelBackgroundOperations]; // clean running operations if any
+                dispatch_or_run_in_main_queue( ^{
+                    [m_View SavePathState];
+                    m_Data.Load(listing);
+                    [m_View DirectoryChanged:_filename.c_str()];
+                    [self OnPathChanged:0];
+                });
+            }
+        }
+    };
+    
+    if(_asynchronous == false)
+    {
+        m_DirectoryLoadingQ->RunSyncHere(workblock);
+        return ret;
+    }
+    else
+    {
+        m_DirectoryLoadingQ->Run(workblock);
+        return 0;
+    }
+}
+
+- (IBAction)OnGoToUpperDirectory:(id)sender // cmd+up
+{
+    [self HandleGoToUpperDirectory];
+}
+
+- (IBAction)OnGoIntoDirectory:(id)sender // cmd+down
+{
+    auto item = m_View.item;
+    if(item != nullptr && item->IsDotDot() == false)
+        [self HandleGoIntoDirOrArchive];
+}
+
+- (IBAction)OnOpen:(id)sender // enter
+{
+    [self HandleGoIntoDirOrOpenInSystem];
+}
+
+- (IBAction)OnOpenNatively:(id)sender // shift+enter
+{
+    [self HandleOpenInSystem];
 }
 
 @end

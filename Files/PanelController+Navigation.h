@@ -10,7 +10,7 @@
 
 @interface PanelController (Navigation)
 
-- (void) AsyncGoToVFSPathStack:(const VFSPathStack&)_path
+/*- (void) AsyncGoToVFSPathStack:(const VFSPathStack&)_path
                      withFlags:(int)_flags
                       andFocus:(string)_filename;
 
@@ -19,7 +19,7 @@
                       withFlags:(int)_flags
                        andFocus:(string)_filename;
 
-
+*/
 - (void) OnGoBack;
 - (void) OnGoForward;
 

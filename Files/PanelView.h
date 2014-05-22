@@ -35,6 +35,7 @@ class PanelViewPresentation;
 @property (nonatomic, readonly) bool active;
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) const VFSListingItem* item; // return an item at current cursor position if any or nullptr
+@property (nonatomic) PanelViewType type;
 
 - (void) SetPanelData:(PanelData*)_data;
 
@@ -45,12 +46,8 @@ class PanelViewPresentation;
 - (void) SetPresentation:(PanelViewPresentation *)_presentation;
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
-// view type
-- (void) ToggleViewType:(PanelViewType)_type;
-- (PanelViewType) GetCurrentViewType;
 
 - (void) SavePathState;
 - (void) LoadPathState;
-
 
 @end

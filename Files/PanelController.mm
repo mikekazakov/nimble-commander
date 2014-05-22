@@ -198,7 +198,7 @@ void panel::GenericCursorPersistance::Restore()
     sort_mode.sort = (PanelSortMode::Mode)[[_state valueForKey:@"SortMode"] integerValue];
     [self ChangeSortingModeTo:sort_mode];
                                       
-    [m_View ToggleViewType:(PanelViewType)[[_state valueForKey:@"ViewMode"] integerValue]];
+    m_View.type = (PanelViewType)[[_state valueForKey:@"ViewMode"] integerValue];
 }
 
 - (NSDictionary *) SaveViewState
@@ -209,7 +209,7 @@ void panel::GenericCursorPersistance::Restore()
         [NSNumber numberWithBool:(m_Data.HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
         [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
         [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
-        [NSNumber numberWithInt:(int)[m_View GetCurrentViewType]], @"ViewMode",
+        [NSNumber numberWithInt:(int)m_View.type], @"ViewMode",
         [NSNumber numberWithInt:(int)mode.sort], @"SortMode",
         nil];
 }
@@ -301,19 +301,19 @@ void panel::GenericCursorPersistance::Restore()
     [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];
 }
 - (IBAction)ToggleShortViewMode:(id)sender {
-    [m_View ToggleViewType:PanelViewType::ViewShort];
+    m_View.type = PanelViewType::ViewShort;
     [self.state SavePanelsSettings];
 }
 - (IBAction)ToggleMediumViewMode:(id)sender {
-    [m_View ToggleViewType:PanelViewType::ViewMedium];
+    m_View.type = PanelViewType::ViewMedium;
     [self.state SavePanelsSettings];
 }
 - (IBAction)ToggleFullViewMode:(id)sender{
-    [m_View ToggleViewType:PanelViewType::ViewFull];
+    m_View.type = PanelViewType::ViewFull;
     [self.state SavePanelsSettings];
 }
 - (IBAction)ToggleWideViewMode:(id)sender{
-    [m_View ToggleViewType:PanelViewType::ViewWide];
+    m_View.type = PanelViewType::ViewWide;
     [self.state SavePanelsSettings];
 }
 
@@ -922,21 +922,6 @@ void panel::GenericCursorPersistance::Restore()
     m_IsAnythingWorksInBackground = is_anything_working;
 }
 
-- (PanelViewType) GetViewType
-{
-    return [m_View GetCurrentViewType];
-}
-
-- (PanelSortMode) GetUserSortMode
-{
-    return m_Data.SortMode();
-}
-
-- (PanelDataHardFiltering) GetUserHardFiltering
-{
-    return m_Data.HardFiltering();
-}
-
 - (void) RecoverFromInvalidDirectory
 {
     // TODO: recovering to upper host needed
@@ -1218,19 +1203,19 @@ void panel::GenericCursorPersistance::Restore()
     static const int tag_sort_numeric =       ActionsShortcutsManager::Instance().TagFromAction("menu.view.sorting_numeric_comparison");
     
     NSInteger tag = item.tag;
-    if(tag == tag_short_mode)       item.State = self.GetViewType == PanelViewType::ViewShort;
-    else if(tag == tag_medium_mode) item.State = self.GetViewType == PanelViewType::ViewMedium;
-    else if(tag == tag_full_mode)   item.State = self.GetViewType == PanelViewType::ViewFull;
-    else if(tag == tag_wide_mode)   item.State = self.GetViewType == PanelViewType::ViewWide;
-    else if(tag == tag_sort_viewhidden) item.State = self.GetUserHardFiltering.show_hidden;
-    else if(tag == tag_sort_sepfolders) item.State = self.GetUserSortMode.sep_dirs;
-    else if(tag == tag_sort_casesens)   item.State = self.GetUserSortMode.case_sens;
-    else if(tag == tag_sort_numeric)    item.State = self.GetUserSortMode.numeric_sort;
-    else if(tag == tag_sort_name)   upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByNameMask);
-    else if(tag == tag_sort_ext)    upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByExtMask);
-    else if(tag == tag_sort_mod)    upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByMTimeMask);
-    else if(tag == tag_sort_size)   upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortBySizeMask);
-    else if(tag == tag_sort_creat)  upd_for_sort(item, self.GetUserSortMode, PanelSortMode::SortByBTimeMask);
+    if(tag == tag_short_mode)       item.State = m_View.type == PanelViewType::ViewShort;
+    else if(tag == tag_medium_mode) item.State = m_View.type == PanelViewType::ViewMedium;
+    else if(tag == tag_full_mode)   item.State = m_View.type == PanelViewType::ViewFull;
+    else if(tag == tag_wide_mode)   item.State = m_View.type == PanelViewType::ViewWide;
+    else if(tag == tag_sort_viewhidden) item.State = m_Data.HardFiltering().show_hidden;
+    else if(tag == tag_sort_sepfolders) item.State = m_Data.SortMode().sep_dirs;
+    else if(tag == tag_sort_casesens)   item.State = m_Data.SortMode().case_sens;
+    else if(tag == tag_sort_numeric)    item.State = m_Data.SortMode().numeric_sort;
+    else if(tag == tag_sort_name)   upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByNameMask);
+    else if(tag == tag_sort_ext)    upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByExtMask);
+    else if(tag == tag_sort_mod)    upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByMTimeMask);
+    else if(tag == tag_sort_size)   upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortBySizeMask);
+    else if(tag == tag_sort_creat)  upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByBTimeMask);
     
     return true; // will disable some items in the future
 }

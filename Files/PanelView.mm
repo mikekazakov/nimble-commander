@@ -558,14 +558,14 @@ struct PanelViewStateStorage
                          select:m_CursorSelectionType == CursorSelectionState::Selection];
 }
 
-- (void) ToggleViewType:(PanelViewType)_type
+- (void) setType:(PanelViewType)_type
 {
     m_State.ViewType = _type;
     if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
     [self setNeedsDisplay:true];
 }
 
-- (PanelViewType) GetCurrentViewType
+- (PanelViewType)type
 {
     return m_State.ViewType;
 }

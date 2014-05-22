@@ -141,12 +141,6 @@ namespace panel
 - (void) HandleGoIntoDirOrOpenInSystem;        // 'Open' menu item
 - (void) HandleOpenInSystem;                   // 'Open Natively' menu item
 - (bool) HandleGoIntoDir;                      // basically cmd+down_arrow
-
-// refactor me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-- (PanelViewType) GetViewType;
-- (PanelSortMode) GetUserSortMode;
-- (PanelDataHardFiltering) GetUserHardFiltering;
-
 - (void) RefreshDirectory; // user pressed cmd+r by default
 
 // MAIN NAVIGATION METHODS ////////////////////////////////////////////

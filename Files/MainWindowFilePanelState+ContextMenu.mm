@@ -163,8 +163,8 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     // cur_pnl_path should be the same as m_DirPath!!!
     string cur_pnl_path = [m_CurrentController GetCurrentDirectoryPathRelativeToHost];
     string opp_pnl_path = [m_OppositeController GetCurrentDirectoryPathRelativeToHost];
-    bool cur_pnl_writable = [m_CurrentController GetCurrentVFSHost]->IsWriteableAtPath(cur_pnl_path.c_str());
-    bool opp_pnl_writable = [m_OppositeController GetCurrentVFSHost]->IsWriteableAtPath(opp_pnl_path.c_str());
+    bool cur_pnl_writable = m_CurrentController.VFS->IsWriteableAtPath(cur_pnl_path.c_str());
+    bool opp_pnl_writable = m_OppositeController.VFS->IsWriteableAtPath(opp_pnl_path.c_str());
     
     //////////////////////////////////////////////////////////////////////
     // regular Open item
@@ -557,9 +557,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 {
     FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:StringsFromVector(m_Items)
                                                                      srcroot:m_DirPath.c_str()
-                                                                      srcvfs:[m_CurrentController GetCurrentVFSHost]
+                                                                      srcvfs:m_CurrentController.VFS
                                                                      dstroot:[m_OppositeController GetCurrentDirectoryPathRelativeToHost].c_str()
-                                                                      dstvfs:[m_OppositeController GetCurrentVFSHost]
+                                                                      dstvfs:m_OppositeController.VFS
                                  ];
     op.TargetPanel = m_OppositeController;
     [m_MainWnd AddOperation:op];
@@ -569,9 +569,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 {
     FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:StringsFromVector(m_Items)
                                                                      srcroot:m_DirPath.c_str()
-                                                                      srcvfs:[m_CurrentController GetCurrentVFSHost]
+                                                                      srcvfs:m_CurrentController.VFS
                                                                      dstroot:m_DirPath.c_str()
-                                                                      dstvfs:[m_CurrentController GetCurrentVFSHost]
+                                                                      dstvfs:m_CurrentController.VFS
                                  ];
     op.TargetPanel = m_CurrentController;
     [m_MainWnd AddOperation:op];

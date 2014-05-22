@@ -15,7 +15,7 @@
     if(!m_View)
         return "";
     
-    if(auto item = [m_View CurrentItem])
+    if(auto item = m_View.item)
         return item->Name();
     
     return "";
@@ -26,7 +26,7 @@
     if(!m_View)
         return "";
     
-    return m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex([m_View GetCursorPosition]));
+    return m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex(m_View.curpos));
 }
 
 - (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot
@@ -40,7 +40,7 @@
     }
     else
     {
-        auto item = [m_View CurrentItem];
+        auto item = m_View.item;
         if(item && !item->IsDotDot())
             return chained_strings(item->Name());
         
@@ -59,7 +59,7 @@
     }
     else
     {
-        if(auto item = [m_View CurrentItem])
+        if(auto item = m_View.item)
             return chained_strings(item->Name());
         
         return chained_strings();
@@ -71,10 +71,12 @@
     return m_Data.DirectoryPathWithTrailingSlash();
 }
 
-- (shared_ptr<VFSHost>) GetCurrentVFSHost
+- (const shared_ptr<VFSHost>&) VFS
 {
+    static auto dummy = shared_ptr<VFSHost>(nullptr);
+    
     if(m_HostsStack.empty())
-        return shared_ptr<VFSHost>(nullptr);
+        return dummy;
     
     return m_HostsStack.back();
 }

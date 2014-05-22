@@ -261,7 +261,7 @@
             [filenames addObject:[NSString stringWithUTF8String:(dir_path + i.c_str()).c_str()]];
     }
     else {
-        auto const *item = self.ActivePanelView.CurrentItem;
+        auto const *item = self.ActivePanelView.item;
         if(item && !item->IsDotDot())
             [filenames addObject:[NSString stringWithUTF8String:(dir_path + item->Name()).c_str()]];
     }
@@ -647,7 +647,7 @@
         destination = &m_LeftPanelController.data;
     }
     
-    auto const *item = self.ActivePanelView.CurrentItem;
+    auto const *item = self.ActivePanelView.item;
     if(!item || item->IsDotDot())
         return;
     
@@ -792,7 +792,7 @@
     if(!source->Host()->IsWriteable())
         return;
     
-    auto const *item = self.ActivePanelView.CurrentItem;
+    auto const *item = self.ActivePanelView.item;
     if(!item || item->IsDotDot())
         return;
     
@@ -939,11 +939,11 @@
     if(!self.isPanelActive) return;
     if(m_MainSplitView.AnyCollapsedOrOverlayed) return;
     
-    if(!m_RightPanelController.GetCurrentVFSHost->IsNativeFS() || !m_LeftPanelController.GetCurrentVFSHost->IsNativeFS())
+    if(!m_RightPanelController.VFS->IsNativeFS() || !m_LeftPanelController.VFS->IsNativeFS())
         return; // currently support links only on native fs
     
     string link_path;
-    auto const *item = self.ActivePanelView.CurrentItem;
+    auto const *item = self.ActivePanelView.item;
     if(!item)
         return;
     
@@ -984,7 +984,7 @@
         return; // currently support links only on native fs
     
 //    char link_path[MAXPATHLEN];
-    auto const *item = self.ActivePanelView.CurrentItem;
+    auto const *item = self.ActivePanelView.item;
     if(!item)
         return;
     if(item->IsDotDot())
@@ -1022,10 +1022,10 @@
     if(!self.isPanelActive) return;
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
-    if(!m_RightPanelController.GetCurrentVFSHost->IsNativeFS() || !m_LeftPanelController.GetCurrentVFSHost->IsNativeFS())
+    if(!m_RightPanelController.VFS->IsNativeFS() || !m_LeftPanelController.VFS->IsNativeFS())
         return; // currently support links only on native fs
     
-    auto const *item = [[self ActivePanelView] CurrentItem];
+    auto const *item = self.ActivePanelView.item;
     if(!item)
         return;
     if(item->IsDotDot())
@@ -1180,15 +1180,15 @@
     string srcroot, dstroot;
     PanelController *target_pc;
     if([self ActivePanelController] == m_LeftPanelController) {
-        srcvfs = [m_LeftPanelController GetCurrentVFSHost];
-        dstvfs = [m_RightPanelController GetCurrentVFSHost];
+        srcvfs = m_LeftPanelController.VFS;
+        dstvfs = m_RightPanelController.VFS;
         srcroot = [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost];
         dstroot = [m_RightPanelController GetCurrentDirectoryPathRelativeToHost];
         target_pc = m_RightPanelController;
     }
     else {
-        srcvfs = [m_RightPanelController GetCurrentVFSHost];
-        dstvfs = [m_LeftPanelController GetCurrentVFSHost];
+        srcvfs = m_RightPanelController.VFS;
+        dstvfs = m_LeftPanelController.VFS;
         srcroot = [m_RightPanelController GetCurrentDirectoryPathRelativeToHost];
         dstroot = [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost];
         target_pc = m_LeftPanelController;

@@ -148,7 +148,7 @@
 {
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
-    auto item = self.ActivePanelView.CurrentItem;
+    auto item = self.ActivePanelView.item;
     if(item != nullptr && item->IsDotDot() == false)
         [[self ActivePanelController] HandleGoIntoDir];
 }
@@ -158,10 +158,10 @@
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     
-    if(self.ActivePanelController.GetCurrentVFSHost->IsNativeFS() == false)
+    if(self.ActivePanelController.VFS->IsNativeFS() == false)
         return;
     
-    auto item = self.ActivePanelView.CurrentItem;
+    auto item = self.ActivePanelView.item;
     if(item != nullptr && item->IsDotDot() == false)
     {
         ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];

@@ -62,10 +62,10 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     view(_view),
     data(_data),
-oldcursorpos([_view GetCursorPosition])
+    oldcursorpos(_view.curpos)
 {
-    if(oldcursorpos >= 0 && [view CurrentItem] != nullptr)
-        oldcursorname = [view CurrentItem]->Name();
+    if(oldcursorpos >= 0 && view.item != nullptr)
+        oldcursorname = view.item->Name();
 }
     
 void panel::GenericCursorPersistance::Restore()
@@ -75,16 +75,16 @@ void panel::GenericCursorPersistance::Restore()
     {
         int newcursorsortpos = data.SortedIndexForRawIndex(newcursorrawpos);
         if(newcursorsortpos >= 0)
-            [view SetCursorPosition:newcursorsortpos];
+            view.curpos = newcursorsortpos;
         else
-            [view SetCursorPosition:data.SortedDirectoryEntries().empty() ? -1 : 0];
+            view.curpos = data.SortedDirectoryEntries().empty() ? -1 : 0;
     }
     else
     {
         if( oldcursorpos < data.SortedDirectoryEntries().size() )
-            [view SetCursorPosition:oldcursorpos];
+            view.curpos = oldcursorpos;
         else
-            [view SetCursorPosition:int(data.SortedDirectoryEntries().size()) - 1];
+            view.curpos = int(data.SortedDirectoryEntries().size()) - 1;
     }
 }
 
@@ -221,7 +221,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) HandleOpenInSystem
 {
-    if(auto *item = [m_View CurrentItem])
+    if(auto *item = m_View.item)
     {
         string path = m_Data.DirectoryPathWithTrailingSlash();
 
@@ -633,7 +633,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (bool) HandleGoIntoDir
 {
-    const auto entry = [m_View CurrentItem];
+    const auto entry = m_View.item;
     if(entry == nullptr)
         return false;
     
@@ -645,7 +645,7 @@ void panel::GenericCursorPersistance::Restore()
         if(!entry->IsDotDot() ||
            strcmp(m_Data.Listing()->RelativePath(), "/"))
         {
-            string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex([m_View GetCursorPosition]));
+            string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex(m_View.curpos));
             
             string curdirname;
             if(entry->IsDotDot()) // go to parent directory
@@ -679,7 +679,7 @@ void panel::GenericCursorPersistance::Restore()
     }
     else
     { // VFS stuff here
-        string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex([m_View GetCursorPosition]));
+        string path = m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex(m_View.curpos));
         auto arhost = VFSArchiveProxy::OpenFileAsArchive(path.c_str(), m_HostsStack.back());
         if(arhost)
         {
@@ -697,12 +697,12 @@ void panel::GenericCursorPersistance::Restore()
     if([self HandleGoIntoDir])
         return;
     
-    const auto entry = [m_View CurrentItem];
+    const auto entry = m_View.item;
     if(entry == nullptr)
         return;
     
     // need more sophisticated executable handling here
-    if([self GetCurrentVFSHost]->IsNativeFS() && IsEligbleToTryToExecuteInConsole(*entry))
+    if(self.VFS->IsNativeFS() && IsEligbleToTryToExecuteInConsole(*entry))
     {
         auto path = [self GetCurrentDirectoryPathRelativeToHost];
         [(MainWindowController*)self.window.delegate RequestTerminalExecution:entry->Name() at:path.c_str()];
@@ -1014,7 +1014,7 @@ void panel::GenericCursorPersistance::Restore()
 - (void) OnCursorChanged
 {
     // need to update some UI here
-    auto item = [m_View CurrentItem];
+    auto item = m_View.item;
     auto host = m_HostsStack.back();
   
     // update share button regaring current state
@@ -1066,7 +1066,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
 {
-    const VFSListingItem* cur_focus = [m_View CurrentItem];
+    const VFSListingItem* cur_focus = m_View.item;
     if(!cur_focus || cur_focus->IsDotDot())
         return nil;
     
@@ -1137,7 +1137,7 @@ void panel::GenericCursorPersistance::Restore()
 {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     [sheet ShowSheet:self.window
-             withVFS:self.GetCurrentVFSHost
+             withVFS:self.VFS
             fromPath:self.GetCurrentDirectoryPathRelativeToHost
              handler:^{
                  if(sheet.SelectedItem != nullptr)
@@ -1152,7 +1152,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (IBAction)OnEjectVolume:(id)sender
 {
-    if(!self.GetCurrentVFSHost->IsNativeFS())
+    if(!self.VFS->IsNativeFS())
         return;
     
     string path = m_Data.DirectoryPathWithoutTrailingSlash();
@@ -1238,7 +1238,7 @@ void panel::GenericCursorPersistance::Restore()
 - (IBAction)OnShowTerminal:(id)sender
 {
     string path;
-    if(self.GetCurrentVFSHost->IsNativeFS())
+    if(self.VFS->IsNativeFS())
         path = self.GetCurrentDirectoryPathRelativeToHost;
     [(MainWindowController*)self.window.delegate RequestTerminal:path.c_str()];
 }
@@ -1249,8 +1249,8 @@ void panel::GenericCursorPersistance::Restore()
         return; // currently support volume info only on native fs
     
     string path = self.GetCurrentDirectoryPathRelativeToHost;
-    if(m_View.CurrentItem && !m_View.CurrentItem->IsDotDot())
-        path += m_View.CurrentItem->Name();
+    if(m_View.item && !m_View.item->IsDotDot())
+        path += m_View.item->Name();
     
     DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
     [sheet ShowSheet:self.window destpath:path.c_str()];
@@ -1258,7 +1258,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender
 {
-    auto i = m_View.CurrentItem;
+    auto i = m_View.item;
     if(!i || i->IsDir()) return;
     
     string path = m_Data.DirectoryPathWithTrailingSlash() + i->Name();
@@ -1280,10 +1280,10 @@ void panel::GenericCursorPersistance::Restore()
     
     if(m_Data.Stats().selected_entries_amount > 0 )
         [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
-    else if(m_View.CurrentItem && !m_View.CurrentItem->IsDotDot())
+    else if(m_View.item && !m_View.item->IsDotDot())
         [sheet ShowSheet:self.window
                     data:&m_Data
-                   index:m_Data.RawIndexForSortIndex(m_View.GetCursorPosition)
+                   index:m_Data.RawIndexForSortIndex(m_View.curpos)
                  handler:handler];
 }
 

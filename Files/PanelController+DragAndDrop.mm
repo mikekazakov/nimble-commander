@@ -256,11 +256,11 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event
 {
-    auto *focus_item = m_View.CurrentItem;
+    auto *focus_item = m_View.item;
     if( focus_item == nullptr || focus_item->IsDotDot() == true )
         return;
     
-    auto vfs = self.GetCurrentVFSHost;
+    auto vfs = self.VFS;
     PanelControllerDragSourceBroker *broker = [PanelControllerDragSourceBroker new];
     broker.controller = self;
     broker.vfs = vfs;

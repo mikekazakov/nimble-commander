@@ -295,7 +295,7 @@ struct PanelViewStateStorage
     [self OnCursorPositionChanged];
 }
 
-- (void) SetCursorPosition:(int)_pos
+- (void) setCurpos:(int)_pos
 {
 //    assert(_pos >= 0 && _pos < m_State.Data->SortedDirectoryEntries().size());
     
@@ -306,7 +306,7 @@ struct PanelViewStateStorage
     [self OnCursorPositionChanged];
 }
 
-- (int) GetCursorPosition
+- (int) curpos
 {
     return m_State.CursorPos;
 }
@@ -363,8 +363,7 @@ struct PanelViewStateStorage
     {
         if(m_CursorSelectionType == CursorSelectionState::No)
         { // lets decide if we need to select or unselect files when user will use navigation arrows
-            const auto *item = [self CurrentItem];
-            if(item)
+            if(const auto *item = self.item)
             {
                 if(!item->IsDotDot())
                 { // regular case
@@ -423,7 +422,7 @@ struct PanelViewStateStorage
     if ((modifier_flags & NSCommandKeyMask) == NSCommandKeyMask)
     {
         // Select or deselect a single item with cmd+click.
-        const auto *entry = [self CurrentItem];
+        const auto *entry = self.item;
         assert(entry);
         bool select = !entry->CFIsSelected();
         [self SelectUnselectInRange:m_State.CursorPos last_included:m_State.CursorPos
@@ -524,7 +523,7 @@ struct PanelViewStateStorage
         [self OnCursorPositionChanged];
 }
 
-- (const VFSListingItem*) CurrentItem
+- (const VFSListingItem*)item
 {
     if(m_State.CursorPos < 0) return nullptr;
     assert(m_State.CursorPos < (int)m_State.Data->SortedDirectoryEntries().size());
@@ -580,7 +579,7 @@ struct PanelViewStateStorage
     if(listing.get() == nullptr)
         return;
     
-    auto item = self.CurrentItem;
+    auto item = self.item;
     if(item == nullptr)
         return;
     

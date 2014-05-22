@@ -33,6 +33,8 @@ class PanelViewPresentation;
 @interface PanelView : NSView<NSDraggingDestination>
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active;
+@property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
+@property (nonatomic, readonly) const VFSListingItem* item; // return an item at current cursor position if any or nullptr
 
 - (void) SetPanelData:(PanelData*)_data;
 
@@ -46,11 +48,6 @@ class PanelViewPresentation;
 // view type
 - (void) ToggleViewType:(PanelViewType)_type;
 - (PanelViewType) GetCurrentViewType;
-
-// cursor handling
-- (int) GetCursorPosition;
-- (void) SetCursorPosition:(int)_pos; // will call EnsureCursorIsVisible implicitly
-- (const VFSListingItem*) CurrentItem; // return an item at current cursor position if any
 
 - (void) SavePathState;
 - (void) LoadPathState;

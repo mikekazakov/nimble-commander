@@ -318,7 +318,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     m_Header->Draw(panelpath, m_State->Active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
     
     // Footer
-    m_ItemsFooter->Draw(View().CurrentItem,
+    m_ItemsFooter->Draw(View().item,
                         m_State->Data->Stats(),
                         m_State->ViewType,
                         m_State->Active,

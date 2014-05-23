@@ -56,7 +56,7 @@ class PanelData;
 - (void)ActivatePanelByController:(PanelController *)controller;
 
 - (void)PanelPathChanged:(PanelController*)_panel;
-- (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path;
+- (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path;
 
 - (void)GetFilePanelsNativePaths:(vector<string> &)_paths;
 

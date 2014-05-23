@@ -21,9 +21,6 @@
 
 - (void)ApplySkin:(ApplicationSkin)_skin;
 
-// Services integration
-- (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path;
-
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;
 - (void)RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host;

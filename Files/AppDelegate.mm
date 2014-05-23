@@ -21,6 +21,7 @@
 #import "MainWindowTerminalState.h"
 #import "NativeFSManager.h"
 #import "ActionsShortcutsManager.h"
+#import "MainWindowFilePanelState.h"
 
 @implementation AppDelegate
 {
@@ -354,7 +355,7 @@
     {
         [target_window makeKeyAndOrderFront:self];
         MainWindowController *contr = (MainWindowController*)[target_window windowController];
-        [contr RevealEntries:std::move(filenames) inPath:common_path];
+        [contr.FilePanelState RevealEntries:std::move(filenames) inPath:common_path];
     }
 }
 

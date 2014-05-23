@@ -906,26 +906,25 @@
     return false;
 }
 
-- (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path
+- (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path
 {
-#if 0
     assert(dispatch_is_main_queue());
+    if(!self.isPanelActive) return;
     
-    PanelController *panel = [self ActivePanelController];
-    if([panel GoToGlobalHostsPathSync:_path] == VFSError::Ok)
+    PanelController *panel = self.ActivePanelController;
+    if([panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok)
     {
         if(!_entries.empty())
             [panel ScheduleDelayedSelectionChangeFor:_entries.front().c_str()
                                            timeoutms:100
                                             checknow:true];
         
-        PanelData *data = [self ActivePanelData];
+        PanelData *data = self.ActivePanelData;
         for(auto &i: _entries)
             data->CustomFlagsSelectSorted(data->SortedIndexForName(i.c_str()), true);
         
-        [[self ActivePanelView] setNeedsDisplay:true];
+        [self.ActivePanelView setNeedsDisplay:true];
     }
-#endif
 }
 
 - (void)OnApplicationWillTerminate

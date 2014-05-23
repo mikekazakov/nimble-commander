@@ -38,11 +38,3 @@ VFSPathStack VFSPathStack::CreateWithVFSListing(shared_ptr<VFSListing> _listing)
     return ret;
 }
 
-VFSPathStack VFSPathStack::SecretFunction___CreateVFSPSPath()
-{
-    VFSPathStack ret;
-    ret.m_Path.resize(1);
-    ret.m_Path[0].fs_tag = VFSPSHost::Tag;
-    ret.m_Path[0].path = "/";
-    return ret;
-}

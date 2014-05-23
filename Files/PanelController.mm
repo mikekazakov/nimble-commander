@@ -757,13 +757,7 @@ void panel::GenericCursorPersistance::Restore()
     }
     if(keycode == 35 ) { // 'P' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
-        {
-//            auto path = VFSPathStack::SecretFunction___CreateVFSPSPath();
-//            [self AsyncGoToVFSPathStack:path withFlags:0 andFocus:""];
-//            ;
-            [self GoToDir:"/" vfs:make_shared<VFSPSHost>() select_entry:"" async:true];
-            return true;
-        }
+            return [self GoToDir:"/" vfs:make_shared<VFSPSHost>() select_entry:"" async:true] == 0;
     }
     
     if(keycode == 3 ) { // 'F' button
@@ -856,8 +850,8 @@ void panel::GenericCursorPersistance::Restore()
     [m_SpinningIndicator stopAnimation:nil];
     [self UpdateSpinningIndicator];
     
-    [m_ShareButton setTarget:self];
-    [m_ShareButton setAction:@selector(OnShareButton:)];
+    m_ShareButton.target = self;
+    m_ShareButton.action = @selector(OnShareButton:);
 }
 
 - (void) CancelBackgroundOperations
@@ -883,16 +877,16 @@ void panel::GenericCursorPersistance::Restore()
                            if(m_IsAnythingWorksInBackground) // need to check if task was already done
                            {
                                [m_SpinningIndicator startAnimation:nil];
-                               if([m_SpinningIndicator isHidden])
-                                   [m_SpinningIndicator setHidden:false];
+                               if(m_SpinningIndicator.isHidden)
+                                   m_SpinningIndicator.hidden = false;
                            }
                        });
     }
     else
     {
         [m_SpinningIndicator stopAnimation:nil];
-        if(![m_SpinningIndicator isHidden])
-            [m_SpinningIndicator setHidden:true];
+        if(!m_SpinningIndicator.isHidden)
+            m_SpinningIndicator.hidden = true;
         
     }
     
@@ -1067,7 +1061,6 @@ void panel::GenericCursorPersistance::Restore()
                  if(path.empty() || path[0] != '/')
                      path = "/";
                  
-                 
                  VFSNetFTPOptions opts;
                  opts.user = username;
                  opts.passwd = password;
@@ -1077,14 +1070,6 @@ void panel::GenericCursorPersistance::Restore()
                      return;
                 
                  [self GoToDir:path vfs:host select_entry:"" async:true];
-                 
-/*                 vector<shared_ptr<VFSHost>> hosts;
-                 hosts.emplace_back(host);
-                 
-                 [self AsyncGoToVFSHostsStack:hosts
-                                     withPath:path
-                                    withFlags:0
-                                     andFocus:""];*/
              }];
 }
 
@@ -1145,7 +1130,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
-    static const auto upd_for_sort = ^(NSMenuItem *_item, PanelSortMode _mode, PanelSortMode::Mode _mask) {
+    auto upd_for_sort = [](NSMenuItem * _item, PanelSortMode _mode, PanelSortMode::Mode _mask){
         static NSImage *img = [NSImage imageNamed:NSImageNameRemoveTemplate];
         if(_mode.sort & _mask) {
             _item.image = _mode.isrevert() ? img : nil;

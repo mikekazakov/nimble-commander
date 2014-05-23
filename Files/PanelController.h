@@ -64,8 +64,6 @@ namespace panel
     // Main controller's possessions
     PanelData                   m_Data;   // owns
     PanelView                   *m_View;  // create and owns
-//    vector<shared_ptr<VFSHost>> m_HostsStack; // by default [0] is NativeHost
-    
     
     // VFS changes observation
     shared_ptr<VFSHost>         m_UpdatesObservationHost;

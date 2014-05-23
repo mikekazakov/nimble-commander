@@ -32,8 +32,6 @@ public:
     };
     
     static VFSPathStack CreateWithVFSListing(shared_ptr<VFSListing> _listing);
-    static VFSPathStack SecretFunction___CreateVFSPSPath();
-    
     
     inline bool operator==(const VFSPathStack& _r) const {
         return m_Path == _r.m_Path;

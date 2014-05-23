@@ -81,32 +81,26 @@
         
         [self LoadPanelsSettings];
 
-#if 0
-        // now load data into panels
-        if([m_LeftPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"FirstPanelPath"] fileSystemRepresentation]] < 0)
-        { // if saved dir is invalid - try home directory
-            char path[MAXPATHLEN];
-            if(!GetUserHomeDirectoryPath(path) || [m_LeftPanelController GoToGlobalHostsPathSync:path] < 0)
-            {
-                int ret = [m_LeftPanelController GoToRelativeToHostSync:"/"]; // if home directory is invalid too (lolwhat?) - go to root
-                assert(ret == VFSError::Ok);
-            }
-        }
+        // now load data into panels, on any fails - go into home dir
+        NSString *lp = [defaults stringForKey:@"FirstPanelPath"];
+        if(!lp || !lp.length || [m_LeftPanelController GoToDir:lp.fileSystemRepresentation
+                                                           vfs:VFSNativeHost::SharedHost()
+                                                  select_entry:""
+                                                         async:false] < 0)
+            [m_LeftPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
+                                       vfs:VFSNativeHost::SharedHost()
+                              select_entry:""
+                                     async:false];
         
-        if([m_RightPanelController GoToGlobalHostsPathSync:[[defaults stringForKey:@"SecondPanelPath"] fileSystemRepresentation]] < 0)
-        {
-            int ret = [m_RightPanelController GoToGlobalHostsPathSync:"/"];
-            assert(ret == VFSError::Ok);
-        }
-#endif
-        [m_LeftPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
-                                   vfs:VFSNativeHost::SharedHost()
-                          select_entry:""
-                                 async:false];
-        [m_RightPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
-                                   vfs:VFSNativeHost::SharedHost()
-                          select_entry:""
-                                 async:false];
+        NSString *rp = [defaults stringForKey:@"SecondPanelPath"];
+        if(!rp || !rp.length || [m_RightPanelController GoToDir:rp.fileSystemRepresentation
+                                                            vfs:VFSNativeHost::SharedHost()
+                                                   select_entry:""
+                                                          async:false] < 0)
+            [m_RightPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
+                                        vfs:VFSNativeHost::SharedHost()
+                               select_entry:""
+                                      async:false];
     }
     return self;
 }
@@ -883,15 +877,12 @@
 
 - (void)SavePanelPaths
 {
-/*  TODO!!!!
-    char path[MAXPATHLEN*8];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    m_LeftPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(path);
-    [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"FirstPanelPath"];
-     
-    m_RightPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(path);
-    [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];*/
+    string lp = m_LeftPanelController.VFS->IsNativeFS() ?
+        m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost.c_str() : "";
+    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:lp.c_str()] forKey:@"FirstPanelPath"];
+    string rp = m_RightPanelController.VFS->IsNativeFS() ?
+        m_RightPanelController.GetCurrentDirectoryPathRelativeToHost.c_str() : "";
+    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:rp.c_str()] forKey:@"SecondPanelPath"];
 }
 
 - (bool)WindowShouldClose:(MainWindowController*)sender

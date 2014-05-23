@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -382,6 +382,12 @@ DQ
                             <menuItem title="Utilities" tag="14100" keyEquivalent="U" id="BTy-M2-2G2">
                                 <connections>
                                     <action selector="OnGoToUtilities:" target="-1" id="k7t-uR-adI"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Processes List" tag="14120" keyEquivalent="p" id="ooW-Y5-gXA">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="OnGoToProcessesList:" target="-1" id="jfN-Xy-VDo"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="wKr-Tq-RoM"/>

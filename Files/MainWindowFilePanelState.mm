@@ -97,7 +97,7 @@
                                                             vfs:VFSNativeHost::SharedHost()
                                                    select_entry:""
                                                           async:false] < 0)
-            [m_RightPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
+            [m_RightPanelController GoToDir:"/"
                                         vfs:VFSNativeHost::SharedHost()
                                select_entry:""
                                       async:false];

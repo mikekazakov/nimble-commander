@@ -41,6 +41,13 @@ public:
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
     virtual string VerboseJunctionPath() const override;    
     
+    /**
+     * Since there's no meaning for having more than one of this FS - this is a caching creation.
+     * If there's a living fs already - it will return it, if - will create new.
+     * It will store a weak ptr and will not extend FS living time.
+     */
+    static shared_ptr<VFSPSHost> GetSharedOrNew();
+    
     shared_ptr<const VFSPSHost> SharedPtr() const {return static_pointer_cast<const VFSPSHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSPSHost> SharedPtr() {return static_pointer_cast<VFSPSHost>(VFSHost::SharedPtr());}
     

@@ -755,10 +755,6 @@ void panel::GenericCursorPersistance::Restore()
         [self QuickSearchClearFiltering];
         return true;
     }
-    if(keycode == 35 ) { // 'P' button
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
-            return [self GoToDir:"/" vfs:make_shared<VFSPSHost>() select_entry:"" async:true] == 0;
-    }
     
     if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
@@ -1302,6 +1298,11 @@ void panel::GenericCursorPersistance::Restore()
 - (IBAction)OnOpenNatively:(id)sender // shift+enter
 {
     [self HandleOpenInSystem];
+}
+
+- (IBAction)OnGoToProcessesList:(id)sender
+{
+    [self GoToDir:"/" vfs:VFSPSHost::GetSharedOrNew() select_entry:"" async:true];
 }
 
 @end

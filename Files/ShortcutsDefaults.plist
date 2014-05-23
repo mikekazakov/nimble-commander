@@ -102,6 +102,8 @@
 	<string>⇧⌘a</string>
 	<string>menu.go.utilities</string>
 	<string>⇧⌘u</string>
+	<string>menu.go.processes_list</string>
+	<string>⌥⌘p</string>
 	<string>menu.go.to_folder</string>
 	<string>⇧⌘g</string>
 	<string>menu.command.system_overview</string>

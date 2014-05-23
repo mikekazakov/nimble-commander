@@ -259,6 +259,20 @@ const char *VFSPSHost::FSTag() const
     return Tag;
 }
 
+shared_ptr<VFSPSHost> VFSPSHost::GetSharedOrNew()
+{
+    static mutex mt;
+    static weak_ptr<VFSPSHost> cache;
+    
+    lock_guard<mutex> lock(mt);
+    if(auto host = cache.lock())
+        return host;
+    
+    auto host = make_shared<VFSPSHost>();
+    cache = host;
+    return host;
+}
+
 vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
 {
     size_t proc_cnt = 0;

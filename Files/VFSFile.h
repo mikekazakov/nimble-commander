@@ -151,9 +151,9 @@ public:
     virtual shared_ptr<VFSFile> Clone() const;
 
     /**
-     * ComposeFullHostsPath() relies solely on RelativePath() and Host()
+     * ComposeVerbosePath() relies solely on Host() and VerboseJunctionPath()
      */
-    void ComposeFullHostsPath(char *_buf) const;
+    string ComposeVerbosePath() const;
     
     /**
      * ReadFile() return full file content in vector<uint8_t> or nullptr.

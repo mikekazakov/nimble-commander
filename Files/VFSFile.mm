@@ -69,32 +69,23 @@ ssize_t VFSFile::Size() const        { return SetLastError(VFSError::NotSupporte
 bool    VFSFile::Eof() const         { return true; }
 shared_ptr<VFSFile> VFSFile::Clone() const { return 0; }
 
-void VFSFile::ComposeFullHostsPath(char *_buf) const
+string VFSFile::ComposeVerbosePath() const
 {
-    // this can be more complex for network vfs - maybe make this function virtual in the future
-    // can be optimized
-    if(m_RelativePath.empty() && !m_Host.get())
-    {
-        strcpy(_buf, "");
-        return;
-    }
-    
-    VFSHost *hosts[32];
+    array<VFSHost*, 32> hosts;
     int hosts_n = 0;
 
     VFSHost *cur = m_Host.get();
-    while(cur->Parent().get() != 0) // skip the root host
+    while(cur)
     {
         hosts[hosts_n++] = cur;
         cur = cur->Parent().get();
     }
     
-    strcpy(_buf, "");
+    string s;
     while(hosts_n > 0)
-        strcat(_buf, hosts[--hosts_n]->JunctionPath());
-//    if(_buf[strlen(_buf)-1]!='/') strcat(_buf, "/");
-    assert(m_RelativePath.c_str()[0] == '/');
-    strcat(_buf, m_RelativePath.c_str());
+        s += hosts[--hosts_n]->VerboseJunctionPath();
+    s += m_RelativePath;
+    return s;
 }
 
 unsigned VFSFile::XAttrCount() const

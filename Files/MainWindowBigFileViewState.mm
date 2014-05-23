@@ -177,9 +177,7 @@ static int FileWindowSize()
                                      ([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewWholePhraseSearch"]   ? SearchInFile::OptionFindWholePhrase : 0) );
     
     m_FilePath = _fn;
-    char tmp[MAXPATHLEN*8]; // danger!
-    vfsfile->ComposeFullHostsPath(tmp);
-    m_GlobalFilePath = tmp;
+    m_GlobalFilePath = vfsfile->ComposeVerbosePath();
         
     // try to load a saved info if any
     if(BigFileViewHistoryEntry *info =

@@ -547,3 +547,8 @@ int VFSPSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const
     
     return VFSError::Ok;
 }
+
+string VFSPSHost::VerboseJunctionPath() const
+{
+    return "[psfs]:";
+}

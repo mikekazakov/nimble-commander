@@ -266,8 +266,7 @@ public:
     string DirectoryPathShort() const;
     
     
-    // TODO: refactor:    
-    void GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*8]) const;
+    string VerboseDirectoryFullPath() const;
     
     // sorting
     void SetSortMode(PanelSortMode _mode);

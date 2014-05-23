@@ -313,8 +313,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     if (!m_IsLeft) CGContextTranslateCTM(context, g_DividerWidth, 0);
     
     // Header
-    char panelpath[MAXPATHLEN*8] = {0};
-    m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(panelpath);
+    string panelpath = m_State->Data->VerboseDirectoryFullPath();
     m_Header->Draw(panelpath, m_State->Active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
     
     // Footer

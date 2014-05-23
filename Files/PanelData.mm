@@ -197,29 +197,26 @@ string PanelData::DirectoryPathShort() const
     return "";
 }
 
-void PanelData::GetDirectoryFullHostsPathWithTrailingSlash(char _buf[MAXPATHLEN*8]) const
+string PanelData::VerboseDirectoryFullPath() const
 {
-    if(m_Listing.get() == 0) {
-        strcpy(_buf, "");
-        return;
-    }
-    
-    VFSHost *hosts[32];
+    if(m_Listing == nullptr)
+        return "";
+    array<VFSHost*, 32> hosts;
     int hosts_n = 0;
 
     VFSHost *cur = m_Listing->Host().get();
-    while(cur && cur->Parent().get() != 0) // skip the root host
+    while(cur)
     {
         hosts[hosts_n++] = cur;
         cur = cur->Parent().get();
     }
     
-    strcpy(_buf, "");
+    string s;
     while(hosts_n > 0)
-        strcat(_buf, hosts[--hosts_n]->JunctionPath());
-    
-    strcat(_buf, m_Listing->RelativePath());
-    if(_buf[strlen(_buf)-1]!='/') strcat(_buf, "/"); // TODO: optimize me later
+        s += hosts[--hosts_n]->VerboseJunctionPath();
+    s += m_Listing->RelativePath();
+    if(s.back() != '/') s += '/';
+    return s;
 }
 
 struct SortPredLess

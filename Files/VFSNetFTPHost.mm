@@ -122,6 +122,11 @@ string VFSNetFTPHost::BuildFullURLString(const char *_path) const
     return url;
 }
 
+string VFSNetFTPHost::VerboseJunctionPath() const
+{
+    return string("ftp://") + JunctionPath();
+}
+
 unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()
 {
     auto inst = make_unique<CURLInstance>();

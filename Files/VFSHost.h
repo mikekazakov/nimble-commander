@@ -216,6 +216,16 @@ public:
                          bool (^_cancel_checker)()
                          );
     
+    /**
+     * Returns readable host's address.
+     * For example, for native fs it will be "".
+     * For PSFS it will be like "psfs:"
+     * For FTP it will be like "ftp://127.0.0.1"
+     * For archive fs it will be path at parent fs like "/Users/migun/Downloads/1.zip"
+     * Default implementation returns JunctionPath()
+     */
+    virtual string VerboseJunctionPath() const;
+    
     // return value 0 means error or unsupported for this VFS
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());
     virtual void StopDirChangeObserving(unsigned long _ticket);

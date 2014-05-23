@@ -58,7 +58,7 @@ class PanelData;
 - (void)PanelPathChanged:(PanelController*)_panel;
 - (void)RevealEntries:(chained_strings)_entries inPath:(const char*)_path;
 
-- (void)GetFilePanelsGlobalPaths:(vector<string> &)_paths;
+- (void)GetFilePanelsNativePaths:(vector<string> &)_paths;
 
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel;

@@ -68,6 +68,8 @@ public:
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    
     
+    virtual string VerboseJunctionPath() const override;
+
     // internal stuff below:
     string BuildFullURLString(const char *_path) const;
 

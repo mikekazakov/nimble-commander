@@ -148,6 +148,11 @@ public:
     inline uint16_t *Chars() { return m_Buff; }    
     inline const uint16_t *Chars() const { return m_Buff; }
   
+    inline void FromUTF8(const string &_utf8)
+    {
+        FromUTF8(_utf8.c_str(), _utf8.length());
+    }
+    
     void FromUTF8(const char *_utf8, size_t _utf8_sz)
     {
         assert(_utf8_sz < Capacity);

@@ -39,6 +39,7 @@ public:
     
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
+    virtual string VerboseJunctionPath() const override;    
     
     shared_ptr<const VFSPSHost> SharedPtr() const {return static_pointer_cast<const VFSPSHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSPSHost> SharedPtr() {return static_pointer_cast<VFSPSHost>(VFSHost::SharedPtr());}

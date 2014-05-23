@@ -214,18 +214,18 @@
 {
     [m_Toolbar UpdateVisibility];
     [self BuildLayout];
-    [self UpdateTitle];
     [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType] returnTypes:@[]];
     
+    // if we alredy were active and have some focused view - restore it
     if(m_LastResponder)
-    { // if we alredy were active and have some focused view - restore it
         [self.window makeFirstResponder:m_LastResponder];
-        m_LastResponder = nil;
-    }
+    m_LastResponder = nil;
+    
+    // if we don't know which view should be active - make left panel a first responder
     if(!self.isPanelActive)
-    { // if we don't know which view should be active - make left panel a first responder
         [self.window makeFirstResponder:m_LeftPanelController.view];
-    }
+    
+    [self UpdateTitle];
 }
 
 - (id)validRequestorForSendType:(NSString *)sendType
@@ -389,6 +389,7 @@
         [self.window makeFirstResponder:m_RightPanelController.view];
     else
         assert(0);
+    [self UpdateTitle];    
 }
 
 - (void) UpdateTitle
@@ -398,13 +399,12 @@
         self.window.title = @"";
         return;
     }
-    char path_raw[MAXPATHLEN*8];
-    [self ActivePanelData]->GetDirectoryFullHostsPathWithTrailingSlash(path_raw);
+    string path_raw = self.ActivePanelData->VerboseDirectoryFullPath();
     
-    NSString *path = [NSString stringWithUTF8String:path_raw];
+    NSString *path = [NSString stringWithUTF8String:path_raw.c_str()];
     if(path == nil)
     {
-        [self window].title = @"...";
+        self.window.title = @"...";
         return;
     }
     
@@ -883,6 +883,7 @@
 
 - (void)SavePanelPaths
 {
+/*  TODO!!!!
     char path[MAXPATHLEN*8];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -890,7 +891,7 @@
     [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"FirstPanelPath"];
      
     m_RightPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(path);
-    [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];
+    [defaults setObject:[NSString stringWithUTF8String:path] forKey:@"SecondPanelPath"];*/
 }
 
 - (bool)WindowShouldClose:(MainWindowController*)sender
@@ -1133,14 +1134,13 @@
     // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
 }
 
-- (void)GetFilePanelsGlobalPaths:(vector<string> &)_paths
+- (void)GetFilePanelsNativePaths:(vector<string> &)_paths
 {
     _paths.clear();
-    char tmp[MAXPATHLEN*8];
-    m_LeftPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(tmp);
-    _paths.push_back(tmp);
-    m_RightPanelController.data.GetDirectoryFullHostsPathWithTrailingSlash(tmp);
-    _paths.push_back(tmp);
+    if(m_LeftPanelController.VFS->IsNativeFS())
+      _paths.push_back(m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost);
+    if(m_RightPanelController.VFS->IsNativeFS())
+        _paths.push_back(m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost);
 }
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel

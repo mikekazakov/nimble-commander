@@ -167,7 +167,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     
     vector<string> current_paths;
     MainWindowFilePanelState *owner = m_Owner;
-    [owner GetFilePanelsGlobalPaths:current_paths];
+    [owner GetFilePanelsNativePaths:current_paths];
     
     auto main_wnd_controllers = [(AppDelegate*)[NSApplication sharedApplication].delegate GetMainWindowControllers];
     for(auto ctr: main_wnd_controllers)
@@ -177,7 +177,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
             continue;
         
         vector<string> paths;
-        [state GetFilePanelsGlobalPaths:paths];
+        [state GetFilePanelsNativePaths:paths];
     
         for(const auto& i: paths)
         {

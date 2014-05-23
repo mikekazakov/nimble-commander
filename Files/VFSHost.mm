@@ -323,3 +323,8 @@ const shared_ptr<VFSHost> &VFSHost::DummyHost()
     });
     return host;
 }
+
+string VFSHost::VerboseJunctionPath() const
+{
+    return JunctionPath();
+}

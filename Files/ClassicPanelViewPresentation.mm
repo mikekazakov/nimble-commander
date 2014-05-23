@@ -617,11 +617,10 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         
         if(m_SymbWidth > 14)
         {   // need to draw a path name
-            char pathutf8[MAXPATHLEN*8];
-            m_State->Data->GetDirectoryFullHostsPathWithTrailingSlash(pathutf8);
+            string pathutf8 = m_State->Data->VerboseDirectoryFullPath();
 
             oms::StringBuf<MAXPATHLEN*8> path;
-            path.FromUTF8(pathutf8, strlen(pathutf8));
+            path.FromUTF8(pathutf8);
             path.TrimEllipsisLeft(m_SymbWidth - 7);
             
             int symbs = path.Space() + 2;

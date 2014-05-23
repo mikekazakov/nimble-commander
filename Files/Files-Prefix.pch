@@ -13,6 +13,7 @@
 
 #ifdef __cplusplus
     #include <vector>
+    #include <array>
     #include <string>
     #include <list>
     #include <deque>

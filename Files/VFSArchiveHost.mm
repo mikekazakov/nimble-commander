@@ -15,7 +15,7 @@
 #import "VFSArchiveListing.h"
 #import "Common.h"
 
-const char *VFSArchiveHost::Tag = "archive";
+const char *VFSArchiveHost::Tag = "arc_libarchive";
 
 VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
                                shared_ptr<VFSHost> _parent):

@@ -115,8 +115,13 @@ public:
     virtual bool IsWriteable() const;
     virtual bool IsWriteableAtPath(const char *_dir) const;
     
+    /**
+     * Each virtual file system must return a unique statically allocated identifier string.
+     */
     virtual const char *FSTag() const;
+    
     virtual bool IsNativeFS() const { return false; }
+    
     /**
      * Returns a path of a filesystem root.
      * It may be a filepath for archive or network address for remote filesystem

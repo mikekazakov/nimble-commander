@@ -57,11 +57,35 @@ void PanelHistory::Put(const VFSPathStack& _path)
         m_Position++;
         if(IsBeyond() || *Current() != _path)
         {
-            m_History.resize(m_Position+1);
-            m_History.back() = _path;
+//            m_History.resize(m_Position+1);
+//            m_History.back() = _path;
+            m_History.emplace_back(_path);
         }
     }
 }
+
+void PanelHistory::Put(VFSPathStack&& _path)
+{
+    if(IsBeyond())
+    {
+        if(!m_History.empty() &&
+           m_History.back() == _path)
+            return;
+        m_History.emplace_back(move(_path));
+        m_Position++;
+    }
+    else
+    {
+        m_Position++;
+        if(IsBeyond() || *Current() != _path)
+        {
+            //            m_History.resize(m_Position+1);
+            //            m_History.back() = _path;
+            m_History.emplace_back(move(_path));
+        }
+    }
+}
+
 
 unsigned PanelHistory::Length() const
 {

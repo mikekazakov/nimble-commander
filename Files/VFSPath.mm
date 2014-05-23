@@ -8,33 +8,44 @@
 
 #import "VFS.h"
 
-VFSPathStack VFSPathStack::CreateWithVFSListing(shared_ptr<VFSListing> _listing)
+VFSPathStack::VFSPathStack(shared_ptr<VFSListing> _listing)
 {
     // 1st - calculate host's depth
     int depth = 0;
-    shared_ptr<VFSHost> curr_host = _listing->Host();
-    while(curr_host.get() != nullptr) {
+    VFSHost* curr_host = _listing->Host().get();
+    while(curr_host != nullptr) {
         depth++;
-        curr_host = curr_host->Parent();
+        curr_host = curr_host->Parent().get();
     }
     
     if(depth == 0)
-        return VFSPathStack();
+        return; // we're empty - invalid case
     
-    VFSPathStack ret;
-    ret.m_Path.resize(depth);
-    curr_host = _listing->Host();
-    ret.m_Path.back().path = _listing->RelativePath();
+    // build vfs stack
+    m_Stack.resize(depth);
+    curr_host = _listing->Host().get();
     do {
-        ret.m_Path[depth-1].fs_tag = curr_host->FSTag();
-        if(depth > 1)
-            ret.m_Path[depth - 2].path = curr_host->JunctionPath();
-        curr_host = curr_host->Parent();
+        m_Stack[depth-1].fs_tag = curr_host->FSTag();
+        m_Stack[depth-1].junction = curr_host->JunctionPath();
+        m_Stack[depth-1].host = curr_host->shared_from_this();
+        curr_host = curr_host->Parent().get();
         --depth;
-    } while(curr_host.get() != nullptr);
+    } while(curr_host != nullptr);
     
-    assert(depth == 0);
-        
-    return ret;
+    // remember relative path we're at
+    m_Path = _listing->RelativePath();
 }
+
+VFSPathStack::VFSPathStack(const VFSPathStack&_r):
+    m_Stack(_r.m_Stack),
+    m_Path(_r.m_Path)
+{
+}
+
+VFSPathStack::VFSPathStack(VFSPathStack&&_r):
+    m_Stack(move(_r.m_Stack)),
+    m_Path(move(_r.m_Path))
+{
+}
+
 

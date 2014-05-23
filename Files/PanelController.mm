@@ -958,7 +958,7 @@ void panel::GenericCursorPersistance::Restore()
     
     if((_flags & PanelControllerNavigation::NoHistory) == 0) {
         auto listing = m_Data.DirectoryEntries().SharedPtr();
-        m_History.Put(VFSPathStack::CreateWithVFSListing(listing));
+        m_History.Put(VFSPathStack(listing));
     }
 }
 

@@ -9,42 +9,43 @@
 #pragma once
 
 class VFSListing;
+class VFSHost;
 
 class VFSPathStack
 {
 public:
     struct Part
     {
-        string fs_tag;
+        const char* fs_tag;
         /* string fs_opt; - later: params for network fs etc */
-        string path;
-        
+        string junction;
+        weak_ptr<VFSHost> host;
         
         inline bool operator==(const Part&_r) const {
             return fs_tag == _r.fs_tag &&
-                    path == _r.path;
+                    junction == _r.junction &&
+                    !host.owner_before(_r.host) && !_r.host.owner_before(host); // tricky weak_ptr comparison
         }
-        inline bool operator!=(const Part&_r) const {
-            return fs_tag != _r.fs_tag ||
-            path != _r.path;
-        }
-        
+        inline bool operator!=(const Part&_r) const { return !(*this == _r); }
     };
     
-    static VFSPathStack CreateWithVFSListing(shared_ptr<VFSListing> _listing);
+    VFSPathStack(shared_ptr<VFSListing> _listing);
+    VFSPathStack(const VFSPathStack&_r);
+    VFSPathStack(VFSPathStack&&_r);
     
     inline bool operator==(const VFSPathStack& _r) const {
-        return m_Path == _r.m_Path;
+        return m_Stack == _r.m_Stack &&
+        m_Path == _r.m_Path;
     }
-    inline bool operator!=(const VFSPathStack& _r) const {
-        return m_Path != _r.m_Path;
-    }
-    const Part& operator[](size_t _n) const { return m_Path[_n]; }
-    inline bool empty() const {return m_Path.empty(); }
-    inline size_t size() const { return m_Path.size(); }
-    const Part& back() const { return m_Path.back(); }
+    inline bool operator!=(const VFSPathStack& _r) const { return !(*this == _r); }
+    const Part& operator[](size_t _n) const { return m_Stack[_n]; }
+    inline bool empty() const {return m_Stack.empty(); }
+    inline size_t size() const { return m_Stack.size(); }
+    const Part& back() const { return m_Stack.back(); }
 private:
-    vector<Part> m_Path;
+    friend struct hash<VFSPathStack>;
+    vector<Part>    m_Stack;
+    string          m_Path;
 };
 
 // calculating hash() of VFSPathStack
@@ -57,12 +58,14 @@ struct hash<VFSPathStack>
     value_type operator()(argument_type const& _v) const
     {
         string str;
-        for(int i = 0; i < _v.size(); ++i)
+        for(auto &i:_v.m_Stack)
         {
-            str += _v[i].fs_tag;
-            str += _v[i].path;
+            str += i.fs_tag;
+            str += i.junction;
             str += "|"; // really need this?
         }
+        str += _v.m_Path;
+        
         hash<string> h;
         return h(str);
     }

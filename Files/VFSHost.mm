@@ -63,7 +63,7 @@ VFSHost::~VFSHost()
 
 const char *VFSHost::FSTag() const
 {
-    return "";
+    return "nullfs";
 }
 
 shared_ptr<VFSHost> VFSHost::Parent() const

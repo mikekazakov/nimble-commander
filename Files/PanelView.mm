@@ -583,7 +583,7 @@ struct PanelViewStateStorage
     if(item == nullptr)
         return;
     
-    auto path = VFSPathStack::CreateWithVFSListing(listing);
+    auto path = VFSPathStack(listing);
     auto &storage = m_States[hash<VFSPathStack>()(path)];
     
     storage.focused_item = item->Name();
@@ -599,7 +599,7 @@ struct PanelViewStateStorage
     if(listing.get() == nullptr)
         return;
     
-    auto path = VFSPathStack::CreateWithVFSListing(listing);
+    auto path = VFSPathStack(listing);
     auto it = m_States.find(hash<VFSPathStack>()(path));
     if(it == end(m_States))
         return;

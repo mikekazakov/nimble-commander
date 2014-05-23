@@ -36,7 +36,7 @@ static time_t DosTimeToUnixTime(uint32_t _dos_time)
     return timegm(&timeinfo);
 }
 
-const char *VFSArchiveUnRARHost::Tag = "archive_unrar";
+const char *VFSArchiveUnRARHost::Tag = "arc_unrar";
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const char *_junction_path):
     VFSHost(_junction_path, VFSNativeHost::SharedHost()),

@@ -19,6 +19,7 @@ public:
     void MoveForth();
     void MoveBack();
     void Put(const VFSPathStack& _path);
+    void Put(VFSPathStack&& _path);
     const VFSPathStack* Current() const;
 private:
     list<VFSPathStack>  m_History;

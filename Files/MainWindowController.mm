@@ -223,15 +223,12 @@ static double TitleBarHeight()
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
         [m_WindowState.back() Assigned];
     
-#if 0
-    if(m_WindowState.back() == m_PanelState && is_terminal_resigning)
-    {
-        // here we need to synchonize cwd in terminal and cwd in active file panel
-        char termcwd[MAXPATHLEN];
-        if([m_Terminal GetCWD:termcwd])
-            [[m_PanelState ActivePanelController] GoToGlobalHostsPathAsync:termcwd select_entry:NULL];
-    }
-#endif
+    // here we need to synchonize cwd in terminal and cwd in active file panel
+    if(m_WindowState.back() == m_PanelState && is_terminal_resigning && m_PanelState.isPanelActive)
+        [m_PanelState.ActivePanelController GoToDir:m_Terminal.CWD
+                                                vfs:VFSNativeHost::SharedHost()
+                                       select_entry:""
+                                              async:true];
 }
 
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state

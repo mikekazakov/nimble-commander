@@ -258,17 +258,13 @@
     m_Task->Terminate();
 }
 
-- (bool) GetCWD:(char *)_cwd
+- (string)CWD
 {
     if(m_Task->State() == TermShellTask::StateInactive ||
        m_Task->State() == TermShellTask::StateDead)
-        return false;
+        return "";
     
-    if(strlen(m_Task->CWD()) == 0)
-       return 0;
-    
-    strcpy(_cwd, m_Task->CWD());
-    return true;
+    return m_Task->CWD();
 }
 
 - (IBAction)OnShowTerminal:(id)sender

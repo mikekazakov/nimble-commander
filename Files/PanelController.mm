@@ -1231,6 +1231,9 @@ void panel::GenericCursorPersistance::Restore()
    select_entry:(string)_filename
           async:(bool)_asynchronous
 {
+    if(_dir.empty() || _dir.front() != '/' || !_vfs)
+        return VFSError::InvalidCall;
+    
     if(_asynchronous == false)
     {
         assert(dispatch_is_main_queue());

@@ -118,7 +118,7 @@ static int FileWindowSize()
 
 - (void)cancelOperation:(id)sender
 {
-    [(MainWindowController*)[[self window] delegate] ResignAsWindowState:self];
+    [(MainWindowController*)self.window.delegate ResignAsWindowState:self];
 }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender

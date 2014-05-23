@@ -22,6 +22,6 @@
 - (bool) IsAnythingRunning;
 - (void) Terminate;
 
-- (bool) GetCWD:(char *)_cwd;
+- (string) CWD;
 
 @end

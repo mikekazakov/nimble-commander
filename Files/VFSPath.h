@@ -10,6 +10,7 @@
 
 class VFSListing;
 class VFSHost;
+struct VFSHostOptions;
 
 class VFSPathStack
 {
@@ -17,15 +18,11 @@ public:
     struct Part
     {
         const char* fs_tag;
-        /* string fs_opt; - later: params for network fs etc */
         string junction;
         weak_ptr<VFSHost> host;
-        
-        inline bool operator==(const Part&_r) const {
-            return fs_tag == _r.fs_tag &&
-                    junction == _r.junction &&
-                    !host.owner_before(_r.host) && !_r.host.owner_before(host); // tricky weak_ptr comparison
-        }
+        VFSHostOptionsPtr options;
+
+        bool operator==(const Part&_r) const;
         inline bool operator!=(const Part&_r) const { return !(*this == _r); }
     };
     

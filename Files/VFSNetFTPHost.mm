@@ -16,6 +16,17 @@ using namespace VFSNetFTP;
 
 const char *VFSNetFTPHost::Tag = "net_ftp";
 
+bool VFSNetFTPOptions::Equal(const VFSHostOptions &_r) const
+{
+    if(typeid(_r) != typeid(*this))
+        return false;
+
+    const VFSNetFTPOptions& r = (const VFSNetFTPOptions&)_r;
+    return user == r.user &&
+            passwd == r.passwd &&
+            port == r.port;
+}
+
 VFSNetFTPHost::VFSNetFTPHost(const char *_serv_url):
     VFSHost(_serv_url, nullptr),
     m_Cache(make_unique<VFSNetFTP::Cache>())
@@ -36,8 +47,8 @@ const char *VFSNetFTPHost::FSTag() const
 
 int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions &_options)
 {
-    m_Options = _options;
-        
+    m_Options = make_shared<VFSNetFTPOptions>(_options);
+    
     auto instance = SpawnCURL();
     
     int result = DownloadAndCacheListing(instance.get(), _starting_dir, nullptr, nullptr);
@@ -558,10 +569,15 @@ void VFSNetFTPHost::BasicOptsSetup(VFSNetFTP::CURLInstance *_inst)
     _inst->EasySetOpt(CURLOPT_VERBOSE, g_CURLVerbose);
     _inst->EasySetOpt(CURLOPT_FTP_FILEMETHOD, g_CURLFTPMethod);
     
-    if(m_Options.user != "")
-        _inst->EasySetOpt(CURLOPT_USERNAME, m_Options.user.c_str());
-    if(m_Options.passwd != "")
-        _inst->EasySetOpt(CURLOPT_PASSWORD, m_Options.passwd.c_str());
-    if(m_Options.port > 0)
-        _inst->EasySetOpt(CURLOPT_PORT, m_Options.port);
+    if(m_Options->user != "")
+        _inst->EasySetOpt(CURLOPT_USERNAME, m_Options->user.c_str());
+    if(m_Options->passwd != "")
+        _inst->EasySetOpt(CURLOPT_PASSWORD, m_Options->passwd.c_str());
+    if(m_Options->port > 0)
+        _inst->EasySetOpt(CURLOPT_PORT, m_Options->port);
+}
+
+shared_ptr<VFSHostOptions> VFSNetFTPHost::Options() const
+{
+    return m_Options;
 }

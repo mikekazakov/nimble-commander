@@ -11,6 +11,15 @@
 #import "VFSHost.h"
 #import "path_manip.h"
 
+VFSHostOptions::~VFSHostOptions()
+{
+};
+
+bool VFSHostOptions::Equal(const VFSHostOptions &_r) const
+{
+    return typeid(_r) == typeid(*this);
+}
+
 void VFSStat::FromSysStat(const struct stat &_from, VFSStat &_to)
 {
     _to.dev     = _from.st_dev;
@@ -327,4 +336,9 @@ const shared_ptr<VFSHost> &VFSHost::DummyHost()
 string VFSHost::VerboseJunctionPath() const
 {
     return JunctionPath();
+}
+
+shared_ptr<VFSHostOptions> VFSHost::Options() const
+{
+    return nullptr;
 }

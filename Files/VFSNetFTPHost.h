@@ -12,11 +12,13 @@
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
 
-struct VFSNetFTPOptions
+struct VFSNetFTPOptions : VFSHostOptions
 {
     string user;
     string passwd;
     long   port = -1;
+    
+    bool Equal(const VFSHostOptions &_r) const override;
 };
 
 class VFSNetFTPHost : public VFSHost
@@ -69,6 +71,7 @@ public:
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    
     
     virtual string VerboseJunctionPath() const override;
+    virtual shared_ptr<VFSHostOptions> Options() const override;
 
     // internal stuff below:
     string BuildFullURLString(const char *_path) const;
@@ -117,8 +120,8 @@ private:
         string        path; // path with trailing slash
     };
 
-    vector<UpdateHandler> m_UpdateHandlers;
-    mutex                 m_UpdateHandlersLock;
-    unsigned long         m_LastUpdateTicket = 1;
-    VFSNetFTPOptions      m_Options;
+    vector<UpdateHandler>           m_UpdateHandlers;
+    mutex                           m_UpdateHandlersLock;
+    unsigned long                   m_LastUpdateTicket = 1;
+    shared_ptr<VFSNetFTPOptions>    m_Options;
 };

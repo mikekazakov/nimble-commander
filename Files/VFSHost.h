@@ -98,6 +98,12 @@ struct VFSStat
     static void ToSysStat(const VFSStat &_from, struct stat &_to);
 };
 
+struct VFSHostOptions
+{
+    virtual ~VFSHostOptions();
+    virtual bool Equal(const VFSHostOptions &_r) const;
+};
+
 class VFSHost : public enable_shared_from_this<VFSHost>
 {
 public:
@@ -231,6 +237,14 @@ public:
      */
     virtual string VerboseJunctionPath() const;
     
+    /**
+     * Returns options used to open current host, which later can be used to reconstruct this host.
+     * This object should be immutable due to performance reasons.
+     * Best of all it should return a shared object which is already used in host.
+     * Can return nullptr, which is ok.
+     */
+    virtual shared_ptr<VFSHostOptions> Options() const;
+    
     // return value 0 means error or unsupported for this VFS
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());
     virtual void StopDirChangeObserving(unsigned long _ticket);
@@ -260,3 +274,4 @@ private:
 };
 
 typedef shared_ptr<VFSHost> VFSHostPtr;
+typedef shared_ptr<VFSHostOptions> VFSHostOptionsPtr;

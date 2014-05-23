@@ -8,6 +8,15 @@
 
 #import "VFS.h"
 
+bool VFSPathStack::Part::operator==(const VFSPathStack::Part&_r) const
+{
+    return fs_tag == _r.fs_tag &&
+            junction == _r.junction &&
+            !host.owner_before(_r.host) && !_r.host.owner_before(host) && // tricky weak_ptr comparison
+            options == _r.options
+            ;
+}
+
 VFSPathStack::VFSPathStack(shared_ptr<VFSListing> _listing)
 {
     // 1st - calculate host's depth
@@ -28,6 +37,7 @@ VFSPathStack::VFSPathStack(shared_ptr<VFSListing> _listing)
         m_Stack[depth-1].fs_tag = curr_host->FSTag();
         m_Stack[depth-1].junction = curr_host->JunctionPath();
         m_Stack[depth-1].host = curr_host->shared_from_this();
+        m_Stack[depth-1].options = curr_host->Options();
         curr_host = curr_host->Parent().get();
         --depth;
     } while(curr_host != nullptr);

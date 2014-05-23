@@ -1248,24 +1248,26 @@ void panel::GenericCursorPersistance::Restore()
 
     __block int ret = 0;
     auto workblock = ^(SerialQueue _q) {
-        if(_vfs->IsDirectory(_dir.c_str(), 0, 0))
+        if(!_vfs->IsDirectory(_dir.c_str(), 0, 0))
         {
-            shared_ptr<VFSListing> listing;
-            ret = _vfs->FetchDirectoryListing(_dir.c_str(),
-                                                  &listing,
-                                                  m_VFSFetchingFlags,
-                                                  ^{return _q->IsStopped();});
-            if(ret >= 0)
-            {
-                [self CancelBackgroundOperations]; // clean running operations if any
-                dispatch_or_run_in_main_queue( ^{
-                    [m_View SavePathState];
-                    m_Data.Load(listing);
-                    [m_View DirectoryChanged:_filename.c_str()];
-                    [self OnPathChanged:0];
-                });
-            }
+            ret = VFSError::FromErrno(ENOTDIR);
+            return;
         }
+        shared_ptr<VFSListing> listing;
+        ret = _vfs->FetchDirectoryListing(_dir.c_str(),
+                                          &listing,
+                                          m_VFSFetchingFlags,
+                                          ^{return _q->IsStopped();});
+        if(ret < 0)
+            return;
+        
+        [self CancelBackgroundOperations]; // clean running operations if any
+        dispatch_or_run_in_main_queue( ^{
+            [m_View SavePathState];
+            m_Data.Load(listing);
+            [m_View DirectoryChanged:_filename.c_str()];
+            [self OnPathChanged:0];
+        });
     };
     
     if(_asynchronous == false)

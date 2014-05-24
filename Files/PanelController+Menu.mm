@@ -18,6 +18,7 @@
 #import "FindFilesSheetController.h"
 #import "MainWindowController.h"
 #import "SelectionWithMaskSheetController.h"
+#import "ExternalEditorInfo.h"
 
 @implementation PanelController (Menu)
 
@@ -56,6 +57,7 @@
     TAG(tag_cmd_file_attrs,     "menu.command.file_attributes");
     TAG(tag_cmd_vol_info,       "menu.command.volume_information");
     TAG(tag_cmd_int_view,       "menu.command.internal_viewer");
+    TAG(tag_cmd_ext_edit,       "menu.command.external_editor");
     TAG(tag_cmd_eject_vol,      "menu.command.eject_volume");
     TAG(tag_cmd_copy_filename,  "menu.command.copy_file_name");
     TAG(tag_cmd_copy_filepath,  "menu.command.copy_file_path");
@@ -85,6 +87,7 @@
     IF(tag_cmd_file_attrs)  return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
     IF(tag_cmd_vol_info)    return self.VFS->IsNativeFS();
     IF(tag_cmd_int_view)    return m_View.item && !m_View.item->IsDir();
+    IF(tag_cmd_ext_edit)    return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
     IF(tag_cmd_eject_vol)   return self.VFS->IsNativeFS() && IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost);
     IF(tag_file_calc_sizes) return m_View.item != nullptr;
     IF(tag_cmd_copy_filename) return m_View.item != nullptr;
@@ -352,6 +355,36 @@
 - (IBAction)ToggleWideViewMode:(id)sender{
     m_View.type = PanelViewType::ViewWide;
     [self.state SavePanelsSettings];
+}
+
+- (IBAction)OnOpenWithExternalEditor:(id)sender {
+    if(self.VFS->IsNativeFS() == false)
+        return;
+    
+    auto item = m_View.item;
+    if(item == nullptr || item->IsDotDot())
+        return;
+    
+    ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];
+    if(ed == nil) {
+        NSBeep();
+        return;
+    }
+    
+    string fn_path = self.GetCurrentDirectoryPathRelativeToHost + item->Name();
+    if(ed.terminal == false) {
+        if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8String:fn_path.c_str()]
+                                   withApplication:ed.path
+                                     andDeactivate:true])
+            NSBeep();
+    }
+    else {
+        MainWindowController* wnd = (MainWindowController*)self.window.delegate;
+        [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
+                                             params:[ed substituteFileName:fn_path]
+                                               file:fn_path
+         ];
+    }
 }
 
 @end

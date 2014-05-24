@@ -44,43 +44,6 @@
     [m_OperationsController AddOperation:op];
 }
 
-- (IBAction)OnOpenWithExternalEditor:(id)sender
-{
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    
-    if(self.ActivePanelController.VFS->IsNativeFS() == false)
-        return;
-    
-    auto item = self.ActivePanelView.item;
-    if(item != nullptr && item->IsDotDot() == false)
-    {
-        ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];
-        if(ed == nil)
-        {
-            NSBeep();
-            return;
-        }
-
-        string fn_path = self.ActivePanelController.GetCurrentDirectoryPathRelativeToHost + item->Name();
-        if(ed.terminal == false)
-        {
-            if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8String:fn_path.c_str()]
-                                       withApplication:ed.path
-                                         andDeactivate:true])
-                NSBeep();
-        }
-        else
-        {
-            MainWindowController* wnd = (MainWindowController*)self.window.delegate;
-            [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
-                                                 params:[ed substituteFileName:fn_path]
-                                                   file:fn_path
-             ];
-        }
-    }
-}
-
 - (IBAction)OnShowTerminal:(id)sender
 {
     string path = "";

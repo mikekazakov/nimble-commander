@@ -333,20 +333,40 @@ struct PanelViewStateStorage
         return;
     }
     
-//    NSUInteger const modif       = [event modifierFlags];
-    unichar const unicode        = [character characterAtIndex:0];
+    auto mod = event.modifierFlags;
+    auto unicode = [character characterAtIndex:0];
 //    unsigned short const keycode = [event keyCode];
-    
+
     switch (unicode) {
         case NSHomeFunctionKey:       [self HandleFirstFile];     return;
         case NSEndFunctionKey:        [self HandleLastFile];      return;
         case NSPageDownFunctionKey:   [self HandleNextPage];      return;
         case NSPageUpFunctionKey:     [self HandlePrevPage];      return;
-        case NSLeftArrowFunctionKey:  [self HandlePrevColumn];    return;
-        case NSRightArrowFunctionKey: [self HandleNextColumn];    return;
-        case NSUpArrowFunctionKey:    [self HandlePrevFile];      return;
-        case NSDownArrowFunctionKey:  [self HandleNextFile];      return;
         case 0x03:                    [self HandleInsert];        return;
+        case NSLeftArrowFunctionKey:
+            if(!(mod & NSControlKeyMask) && !(mod & NSCommandKeyMask) && !(mod & NSAlternateKeyMask) ) {
+                [self HandlePrevColumn];
+                return;
+            }
+            break;
+        case NSRightArrowFunctionKey:
+            if(!(mod & NSControlKeyMask) && !(mod & NSCommandKeyMask) && !(mod & NSAlternateKeyMask) ) {
+                [self HandleNextColumn];
+                return;
+            }
+            break;
+        case NSUpArrowFunctionKey:
+            if(!(mod & NSControlKeyMask) && !(mod & NSCommandKeyMask) && !(mod & NSAlternateKeyMask) ) {
+                [self HandlePrevFile];
+                return;
+            }
+            break;
+        case NSDownArrowFunctionKey:
+            if(!(mod & NSControlKeyMask) && !(mod & NSCommandKeyMask) && !(mod & NSAlternateKeyMask) ) {
+                [self HandleNextFile];
+                return;
+            }
+            break;
     }
     
     [super keyDown:event];

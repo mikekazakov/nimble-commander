@@ -10,21 +10,12 @@
 
 @interface PanelController (Navigation)
 
-/*- (void) AsyncGoToVFSPathStack:(const VFSPathStack&)_path
-                     withFlags:(int)_flags
-                      andFocus:(string)_filename;
-
-- (void) AsyncGoToVFSHostsStack:(vector<shared_ptr<VFSHost>>)_hosts
-                       withPath:(string)_path
-                      withFlags:(int)_flags
-                       andFocus:(string)_filename;
-
-*/
+- (int) GoToDir:(string)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(string)_filename
+          async:(bool)_asynchronous;
 
 - (void) GoToVFSPathStack:(const VFSPathStack&)_stack;
 // some params later
-
-- (void) OnGoBack;
-- (void) OnGoForward;
 
 @end

@@ -10,18 +10,6 @@
 
 @interface MainWindowFilePanelState (Menu)
 
-// Navigation
-- (IBAction)OnGoBack:(id)sender;
-- (IBAction)OnGoForward:(id)sender;
-- (IBAction)OnGoToHome:(id)sender;
-- (IBAction)OnGoToDocuments:(id)sender;
-- (IBAction)OnGoToDesktop:(id)sender;
-- (IBAction)OnGoToDownloads:(id)sender;
-- (IBAction)OnGoToLibrary:(id)sender;
-- (IBAction)OnGoToApplications:(id)sender;
-- (IBAction)OnGoToUtilities:(id)sender;
-- (IBAction)OnGoToFolder:(id)sender;
-
 // Operations
 - (IBAction)OnMoveToTrash:(id)sender;
 @end

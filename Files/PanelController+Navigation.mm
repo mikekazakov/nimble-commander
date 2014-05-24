@@ -10,124 +10,6 @@
 #import "Common.h"
 
 @implementation PanelController (Navigation)
-#if 0
-- (void) AsyncGoToVFSPathStack:(const VFSPathStack&)_path
-                     withFlags:(int)_flags
-                      andFocus:(string)_filename
-{
-
-    if(!m_DirectoryLoadingQ->Empty())
-        return;
-    
-    if(_path.empty())
-        return;
- 
-    VFSPathStack path = _path;
-    
-    m_DirectoryLoadingQ->Run(^(SerialQueue _q) {
-        vector<shared_ptr<VFSHost>> current_hosts_stack = m_HostsStack;
-        vector<shared_ptr<VFSHost>> hosts_stack;
-        bool following = true;
-        for(int pp = 0; pp < path.size(); ++pp) {
-            if( following &&
-                pp < current_hosts_stack.size() &&
-                path[pp].fs_tag == current_hosts_stack[pp]->FSTag() &&
-                (pp == 0 || path[pp-1].path == current_hosts_stack[pp]->JunctionPath() )
-               ) {
-                hosts_stack.push_back(current_hosts_stack[pp]);
-                continue;
-            }
-            following = false;
-            
-            // process junction here
-            auto &part = path[pp];
-            
-            if(part.fs_tag == VFSNativeHost::Tag)
-                hosts_stack.push_back(VFSNativeHost::SharedHost());
-            else if(part.fs_tag == VFSPSHost::Tag)
-                hosts_stack.push_back(make_shared<VFSPSHost>());
-            else if(part.fs_tag == VFSArchiveHost::Tag)
-            {
-                auto arhost = make_shared<VFSArchiveHost>(path[pp-1].path.c_str(), hosts_stack.back());
-                if(arhost->Open() >= 0) {
-                    hosts_stack.push_back(arhost);
-                }
-                else {
-                    break;
-                }
-            }
-            else if(part.fs_tag == VFSArchiveUnRARHost::Tag &&
-                    hosts_stack.back()->IsNativeFS() )
-            {
-                auto arhost = make_shared<VFSArchiveUnRARHost>(path[pp-1].path.c_str());
-                if(arhost->Open() >= 0) {
-                    hosts_stack.push_back(arhost);
-                }
-                else {
-                    break;
-                }
-            }
-        }
-    
-        if(hosts_stack.size() == path.size()) {
-            if(hosts_stack.back()->IsDirectory(path.back().path.c_str(), 0, 0)) {
-                shared_ptr<VFSListing> listing;
-                int ret = hosts_stack.back()->FetchDirectoryListing(path.back().path.c_str(), &listing, m_VFSFetchingFlags, ^{return _q->IsStopped();});
-                if(ret >= 0)
-                    dispatch_to_main_queue( ^{
-                        [self CancelBackgroundOperations]; // clean running operations if any
-                        [m_View SavePathState];
-                        m_HostsStack = hosts_stack;
-                        m_Data.Load(listing);
-                        [m_View DirectoryChanged:_filename.c_str()];
-                        [self OnPathChanged:_flags];
-                    });
-            }
-        }
-    });
-
-}
-#endif
-#if 0
-- (void) AsyncGoToVFSHostsStack:(vector<shared_ptr<VFSHost>>)_hosts
-                       withPath:(string)_path
-                      withFlags:(int)_flags
-                       andFocus:(string)_filename
-{
-
-    m_DirectoryLoadingQ->Run(^(SerialQueue _q) {
-        if(_hosts.back()->IsDirectory(_path.c_str(), 0, 0)) {
-            shared_ptr<VFSListing> listing;
-            int ret = _hosts.back()->FetchDirectoryListing(_path.c_str(), &listing, m_VFSFetchingFlags, ^{return _q->IsStopped();});
-            if(ret >= 0)
-                dispatch_to_main_queue( ^{
-                    [self CancelBackgroundOperations]; // clean running operations if any
-                    [m_View SavePathState];
-                    m_HostsStack = _hosts;
-                    m_Data.Load(listing);
-                    [m_View DirectoryChanged:_filename.c_str()];
-                    [self OnPathChanged:_flags];
-                });
-        }
-    });
-
-}
-#endif
-- (void) OnGoBack
-{
-    if(!m_History.CanMoveBack())
-        return;
-    m_History.MoveBack();
-    [self GoToVFSPathStack:*m_History.Current()];
-}
-
-- (void) OnGoForward
-{
-    if(!m_History.CanMoveForth())
-        return;
-    m_History.MoveForth();
-    [self GoToVFSPathStack:*m_History.Current()];
-}
 
 - (void) GoToVFSPathStack:(const VFSPathStack&)_stack
 {
@@ -221,5 +103,63 @@
          select_entry:""
                 async:true];
 }
+
+- (int) GoToDir:(string)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(string)_filename
+          async:(bool)_asynchronous
+{
+    if(_dir.empty() || _dir.front() != '/' || !_vfs)
+        return VFSError::InvalidCall;
+    
+    if(_asynchronous == false)
+    {
+        assert(dispatch_is_main_queue());
+        m_DirectoryLoadingQ->Stop();
+        m_DirectoryLoadingQ->Wait();
+    }
+    else
+    {
+        if(!m_DirectoryLoadingQ->Empty())
+            return 0;
+    }
+    
+    __block int ret = 0;
+    auto workblock = ^(SerialQueue _q) {
+        if(!_vfs->IsDirectory(_dir.c_str(), 0, 0))
+        {
+            ret = VFSError::FromErrno(ENOTDIR);
+            return;
+        }
+        shared_ptr<VFSListing> listing;
+        ret = _vfs->FetchDirectoryListing(_dir.c_str(),
+                                          &listing,
+                                          m_VFSFetchingFlags,
+                                          ^{return _q->IsStopped();});
+        if(ret < 0)
+            return;
+        // TODO: need an ability to show errors at least        
+        
+        [self CancelBackgroundOperations]; // clean running operations if any
+        dispatch_or_run_in_main_queue( ^{
+            [m_View SavePathState];
+            m_Data.Load(listing);
+            [m_View DirectoryChanged:_filename.c_str()];
+            [self OnPathChanged];
+        });
+    };
+    
+    if(_asynchronous == false)
+    {
+        m_DirectoryLoadingQ->RunSyncHere(workblock);
+        return ret;
+    }
+    else
+    {
+        m_DirectoryLoadingQ->Run(workblock);
+        return 0;
+    }
+}
+
 
 @end

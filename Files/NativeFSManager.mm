@@ -245,9 +245,13 @@ bool NativeFSManager::GetVerboseInfo(NativeFileSystemInfo &_volume)
     
     if([url getResourceValue:&string forKey:NSURLVolumeNameKey error:&error])
         _volume.verbose.name = string;
+    if(!_volume.verbose.name)
+        _volume.verbose.name = @"";
     
     if([url getResourceValue:&string forKey:NSURLVolumeLocalizedNameKey error:&error])
         _volume.verbose.localized_name = string;
+    if(!_volume.verbose.localized_name)
+        _volume.verbose.localized_name = @"";
     
     if([url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error])
         _volume.verbose.icon = img;

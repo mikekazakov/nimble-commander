@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4511" systemVersion="13B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4511"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="GoToFolderSheetController">
@@ -15,16 +15,18 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="457" height="128"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <value key="minSize" type="size" width="457" height="128"/>
+            <value key="maxSize" type="size" width="1000" height="128"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="457" height="128"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4nT-xB-Ckb">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4nT-xB-Ckb">
                         <rect key="frame" x="18" y="91" width="468" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Go to the folder:" id="VhM-Z6-zaU">
@@ -33,7 +35,7 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jpX-Mg-UUc">
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jpX-Mg-UUc">
                         <rect key="frame" x="20" y="61" width="417" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="jIk-dP-n40">
@@ -42,9 +44,12 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y8b-xJ-mSa">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y8b-xJ-mSa">
                         <rect key="frame" x="347" y="13" width="96" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="84" id="AP2-SS-KMW"/>
+                        </constraints>
                         <buttonCell key="cell" type="push" title="Go" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="DTg-xe-1S8">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -56,9 +61,12 @@ DQ
                             <action selector="OnGo:" target="-2" id="E9g-EZ-yQH"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zn7-Mr-bwx">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zn7-Mr-bwx">
                         <rect key="frame" x="251" y="13" width="96" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="84" id="2pW-Xt-xsR"/>
+                        </constraints>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dOM-to-sC6">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -70,7 +78,7 @@ Gw
                             <action selector="OnCancel:" target="-2" id="qOZ-6F-mzc"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iG7-dg-Qbq">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iG7-dg-Qbq">
                         <rect key="frame" x="20" y="22" width="231" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="1e1-2H-uTM">
@@ -80,6 +88,23 @@ Gw
                         </textFieldCell>
                     </textField>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="zn7-Mr-bwx" firstAttribute="leading" secondItem="iG7-dg-Qbq" secondAttribute="trailing" constant="8" symbolic="YES" id="27S-bT-kEd"/>
+                    <constraint firstItem="zn7-Mr-bwx" firstAttribute="top" secondItem="y8b-xJ-mSa" secondAttribute="top" id="3uA-VI-j4q"/>
+                    <constraint firstAttribute="trailing" secondItem="4nT-xB-Ckb" secondAttribute="trailing" constant="-27" id="6NR-4a-pzc"/>
+                    <constraint firstItem="jpX-Mg-UUc" firstAttribute="leading" secondItem="4nT-xB-Ckb" secondAttribute="leading" id="F3Y-ig-Pyk"/>
+                    <constraint firstAttribute="trailing" secondItem="jpX-Mg-UUc" secondAttribute="trailing" constant="20" symbolic="YES" id="QXv-i9-Amc"/>
+                    <constraint firstItem="zn7-Mr-bwx" firstAttribute="centerY" secondItem="iG7-dg-Qbq" secondAttribute="centerY" id="Vyn-GX-JuR"/>
+                    <constraint firstItem="zn7-Mr-bwx" firstAttribute="top" secondItem="jpX-Mg-UUc" secondAttribute="bottom" constant="20" id="X96-GO-xKc"/>
+                    <constraint firstItem="jpX-Mg-UUc" firstAttribute="top" secondItem="4nT-xB-Ckb" secondAttribute="bottom" constant="8" symbolic="YES" id="ckx-Bb-7C1"/>
+                    <constraint firstItem="4nT-xB-Ckb" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="iF3-BD-vWm"/>
+                    <constraint firstItem="jpX-Mg-UUc" firstAttribute="trailing" secondItem="y8b-xJ-mSa" secondAttribute="trailing" id="mA9-dL-RwU"/>
+                    <constraint firstItem="y8b-xJ-mSa" firstAttribute="leading" secondItem="zn7-Mr-bwx" secondAttribute="trailing" constant="12" symbolic="YES" id="o0I-A1-pp8"/>
+                    <constraint firstItem="iG7-dg-Qbq" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="22" id="sg9-a3-j7k"/>
+                    <constraint firstItem="y8b-xJ-mSa" firstAttribute="baseline" secondItem="zn7-Mr-bwx" secondAttribute="baseline" id="tfy-aw-vbi"/>
+                    <constraint firstItem="iG7-dg-Qbq" firstAttribute="top" secondItem="jpX-Mg-UUc" secondAttribute="bottom" constant="22" id="vnI-Ah-8US"/>
+                    <constraint firstItem="4nT-xB-Ckb" firstAttribute="top" secondItem="2" secondAttribute="top" constant="20" symbolic="YES" id="wnK-Mh-KIx"/>
+                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="4"/>

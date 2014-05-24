@@ -947,7 +947,7 @@ void panel::GenericCursorPersistance::Restore()
     [self UpdateBriefSystemOverview];
 }
 
-- (void) OnPathChanged:(int)_flags
+- (void) OnPathChanged
 {
     [self ResetUpdatesObservation:m_Data.DirectoryPathWithTrailingSlash()];
     [self ClearSelectionRequest];
@@ -955,11 +955,7 @@ void panel::GenericCursorPersistance::Restore()
     [self.state PanelPathChanged:self];
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
-    
-    if((_flags & PanelControllerNavigation::NoHistory) == 0) {
-        auto listing = m_Data.DirectoryEntries().SharedPtr();
-        m_History.Put(VFSPathStack(listing));
-    }
+    m_History.Put(VFSPathStack(m_Data.DirectoryEntries().SharedPtr()));
 }
 
 - (void) OnCursorChanged
@@ -1262,7 +1258,7 @@ void panel::GenericCursorPersistance::Restore()
             [m_View SavePathState];
             m_Data.Load(listing);
             [m_View DirectoryChanged:_filename.c_str()];
-            [self OnPathChanged:0];
+            [self OnPathChanged];
         });
     };
     

@@ -22,10 +22,19 @@ public:
         weak_ptr<VFSHost> host;
         VFSHostOptionsPtr options;
 
+        /**
+         * operation== performs fast comparison by ptrs.
+         */
         bool operator==(const Part&_r) const;
         inline bool operator!=(const Part&_r) const { return !(*this == _r); }
+        
+        /**
+         * Will compare parts without respect to host ptr and will compare options by it's content.
+         */
+        bool weak_equal(const Part&_r) const;
     };
     
+    VFSPathStack();
     VFSPathStack(shared_ptr<VFSListing> _listing);
     VFSPathStack(const VFSPathStack&_r);
     VFSPathStack(VFSPathStack&&_r);
@@ -35,10 +44,12 @@ public:
         m_Path == _r.m_Path;
     }
     inline bool operator!=(const VFSPathStack& _r) const { return !(*this == _r); }
-    const Part& operator[](size_t _n) const { return m_Stack[_n]; }
+    inline const Part& operator[](size_t _n) const { return m_Stack[_n]; }
     inline bool empty() const {return m_Stack.empty(); }
     inline size_t size() const { return m_Stack.size(); }
-    const Part& back() const { return m_Stack.back(); }
+    inline const Part& back() const { return m_Stack.back(); }
+    inline const string& path() const { return m_Path; }
+    bool weak_equal(const VFSPathStack&_r) const;
 private:
     friend struct hash<VFSPathStack>;
     vector<Part>    m_Stack;
@@ -59,11 +70,10 @@ struct hash<VFSPathStack>
         {
             str += i.fs_tag;
             str += i.junction;
+            // we need to incorporate options somehow here. or not?
             str += "|"; // really need this?
         }
         str += _v.m_Path;
-        
-        hash<string> h;
-        return h(str);
+        return hash<string>()(str);
     }
 };

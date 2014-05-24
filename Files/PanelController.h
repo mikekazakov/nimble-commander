@@ -17,13 +17,6 @@
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
 
-struct PanelControllerNavigation
-{
-    enum {
-        NoHistory = 1
-    };
-};
-
 struct PanelQuickSearchMode
 {
     enum KeyModif { // persistancy-bound values, don't change it
@@ -150,7 +143,7 @@ namespace panel
 // internal stuff, move it somewehere else
 @interface PanelController ()
 - (void) CancelBackgroundOperations;
-- (void) OnPathChanged:(int)_flags;
+- (void) OnPathChanged;
 @end
 
 #import "PanelController+DataAccess.h"

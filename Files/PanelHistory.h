@@ -12,16 +12,23 @@
 class PanelHistory
 {
 public:
-    bool IsBeyond() const;
-    bool IsBack() const;
+    bool IsRecording() const;
     unsigned Length() const;
-
+    
+    bool CanMoveForth() const;
     void MoveForth();
+    
+    bool CanMoveBack() const;
     void MoveBack();
-    void Put(const VFSPathStack& _path);
+    
+    
     void Put(VFSPathStack&& _path);
     const VFSPathStack* Current() const;
 private:
     list<VFSPathStack>  m_History;
-    unsigned            m_Position{0};
+     // lesser the index - farther the history entry
+     // most recent entry is at .size()-1
+    unsigned            m_PlayingPosition = 0; // have meaningful value only when m_IsRecording==false
+    bool                m_IsRecording = true;
+    enum {              m_HistoryLength = 128 };
 };

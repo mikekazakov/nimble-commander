@@ -20,6 +20,10 @@
                        andFocus:(string)_filename;
 
 */
+
+- (void) GoToVFSPathStack:(const VFSPathStack&)_stack;
+// some params later
+
 - (void) OnGoBack;
 - (void) OnGoForward;
 

@@ -115,40 +115,111 @@
 #endif
 - (void) OnGoBack
 {
-#if 0
-    if(m_History.Length() < 2)
+    if(!m_History.CanMoveBack())
         return;
-    if(m_History.IsBack())
-        return;
-    
-    if(m_History.IsBeyond())
-        m_History.MoveBack();
-    
-    if(!m_History.IsBack())
-        m_History.MoveBack();
-
-    [self AsyncGoToVFSPathStack:*m_History.Current()
-                      withFlags:PanelControllerNavigation::NoHistory
-                       andFocus:""
-     ];
-#endif
+    m_History.MoveBack();
+    [self GoToVFSPathStack:*m_History.Current()];
 }
 
 - (void) OnGoForward
 {
-#if 0
-    if(m_History.Length() < 2)
+    if(!m_History.CanMoveForth())
         return;
-    if(m_History.IsBeyond())
-        return;
-
     m_History.MoveForth();
+    [self GoToVFSPathStack:*m_History.Current()];
+}
+
+- (void) GoToVFSPathStack:(const VFSPathStack&)_stack
+{
+    // TODO: make this async and run in appropriate queue
     
-    if(!m_History.IsBeyond())
-        [self AsyncGoToVFSPathStack:*m_History.Current()
-                          withFlags:PanelControllerNavigation::NoHistory
-                           andFocus:""];
-#endif
+    // 1st - build current hosts stack
+    vector<VFSHostPtr> curr_stack;
+    VFSHostPtr cur = self.VFS;
+    while(cur) {
+        curr_stack.emplace_back(cur);
+        cur = cur->Parent();
+    }
+    reverse(begin(curr_stack), end(curr_stack));
+    
+    // 2nd - compare with required stack and left only what matches
+    vector<VFSHostPtr> res_stack;
+    for(size_t i = 0; i < _stack.size(); ++i)
+    {
+        if(i >= curr_stack.size())
+            break;
+        if(!_stack[i].host.owner_before(curr_stack[i]) && !curr_stack[i].owner_before(_stack[i].host))
+        {
+            // exact match of an alive host, just use it and go on
+            res_stack.emplace_back(curr_stack[i]);
+            continue;
+        }
+        
+        if(_stack[i].fs_tag != curr_stack[i]->FSTag()) break;
+        if(_stack[i].junction != curr_stack[i]->JunctionPath()) break;
+        
+        auto opts1 = _stack[i].options;
+        auto opts2 = curr_stack[i]->Options();
+        if(opts1 == nullptr && opts2 != nullptr) break;
+        if(opts1 != nullptr && opts2 == nullptr) break;
+        if(opts1 != nullptr && !opts1->Equal(*opts2)) break;
+
+        // this is not the object which was used before, but it matches and seems that can be used
+        res_stack.emplace_back(curr_stack[i]);
+    }
+    
+    // 3rd - build what's absent
+    for(size_t i = res_stack.size(); i < _stack.size(); ++i)
+    {
+        // refactor this in separate functions
+        const auto &part = _stack[i];
+        if(part.fs_tag == VFSNativeHost::Tag) {
+            res_stack.emplace_back(VFSNativeHost::SharedHost());
+        }
+        else if(part.fs_tag == VFSPSHost::Tag) {
+            res_stack.emplace_back(VFSPSHost::GetSharedOrNew());
+        }
+        else if(part.fs_tag == VFSArchiveHost::Tag) {
+            assert(i > 0);
+            auto arhost = make_shared<VFSArchiveHost>(part.junction.c_str(), res_stack.back());
+            if(arhost->Open() >= 0)
+                res_stack.emplace_back(arhost);
+            else
+                break;
+        }
+        else if(part.fs_tag == VFSArchiveUnRARHost::Tag) {
+            assert(i > 0);
+            if(!res_stack.back()->IsNativeFS())
+                break;
+            auto arhost = make_shared<VFSArchiveUnRARHost>(part.junction.c_str());
+            if(arhost->Open() >= 0)
+                res_stack.emplace_back(arhost);
+            else
+                break;
+        }
+        else if(part.fs_tag == VFSNetFTPHost::Tag) {
+            assert(i == 0);
+            assert(i == _stack.size() - 1); // need to return here later
+            auto options = dynamic_pointer_cast<VFSNetFTPOptions>(part.options);
+            if(!options)
+                break;
+            auto ftp = make_shared<VFSNetFTPHost>(part.junction.c_str());
+            if(ftp->Open(_stack.path().c_str(), *options) >= 0)
+                res_stack.emplace_back(ftp);
+            else
+                break;
+        }
+        else
+            assert(0);
+    }
+    
+    // TODO: need an ability to show errors at least
+    
+    if(res_stack.size() == _stack.size())
+        [self GoToDir:_stack.path()
+                  vfs:res_stack.back()
+         select_entry:""
+                async:true];
 }
 
 @end

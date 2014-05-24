@@ -8,84 +8,93 @@
 
 #include "PanelHistory.h"
 
-bool PanelHistory::IsBeyond() const
+bool PanelHistory::IsRecording() const
 {
-    assert(m_Position <= m_History.size());
-    return m_Position == m_History.size();    
+    return m_IsRecording;
 }
 
-bool PanelHistory::IsBack() const
+bool PanelHistory::CanMoveForth() const
 {
-    return m_Position == 0;
+    if(m_IsRecording)
+        return false;
+    if(m_History.size() < 2)
+        return false;
+    return m_PlayingPosition < m_History.size() - 1;
+}
+
+bool PanelHistory::CanMoveBack() const
+{
+    if(m_History.size() < 2)
+        return false;
+    if(m_IsRecording)
+        return true;
+    return m_PlayingPosition > 0;
 }
 
 void PanelHistory::MoveForth()
 {
-    if(m_Position < m_History.size())
-        m_Position++;
+   assert(CanMoveForth());
+    if(m_IsRecording) return;
+    if(m_History.size() < 2) return;
+    if(m_PlayingPosition < m_History.size() - 1)
+        m_PlayingPosition++;
 }
 
 void PanelHistory::MoveBack()
 {
-    if(m_Position > 0)
-        m_Position--;
+    assert(CanMoveBack());
+    
+    if(m_IsRecording)
+    {
+        m_IsRecording = false;
+        m_PlayingPosition = (unsigned)m_History.size() - 2;
+    }
+    else
+    {
+        m_PlayingPosition--;
+    }
 }
 
 const VFSPathStack* PanelHistory::Current() const
 {
-    assert(m_Position <= m_History.size());
-    if(m_Position == m_History.size())
-        return nullptr;
-    
-    auto i = m_History.begin();
-    std::advance(i, m_Position);
+    assert(m_IsRecording == false);
+    auto i = begin(m_History);
+    advance(i, m_PlayingPosition);
     return &*i;
-}
-
-void PanelHistory::Put(const VFSPathStack& _path)
-{
-    if(IsBeyond())
-    {
-        if(!m_History.empty() &&
-           m_History.back() == _path)
-            return;
-        m_History.push_back(_path);
-        m_Position++;
-    }
-    else
-    {
-        m_Position++;
-        if(IsBeyond() || *Current() != _path)
-        {
-//            m_History.resize(m_Position+1);
-//            m_History.back() = _path;
-            m_History.emplace_back(_path);
-        }
-    }
 }
 
 void PanelHistory::Put(VFSPathStack&& _path)
 {
-    if(IsBeyond())
+    if(m_IsRecording)
     {
-        if(!m_History.empty() &&
-           m_History.back() == _path)
+        if(!m_History.empty() && m_History.back() == _path)
             return;
+        if(m_History.back().weak_equal(_path))
+            m_History.pop_back();
         m_History.emplace_back(move(_path));
-        m_Position++;
+        if(m_History.size() > m_HistoryLength)
+            m_History.pop_front();
     }
     else
     {
-        m_Position++;
-        if(IsBeyond() || *Current() != _path)
+        assert(m_PlayingPosition < m_History.size());
+        auto i = begin(m_History);
+        advance(i, m_PlayingPosition);
+        if(*i != _path)
         {
-            //            m_History.resize(m_Position+1);
-            //            m_History.back() = _path;
-            m_History.emplace_back(move(_path));
+            if(i->weak_equal(_path))
+            {
+                m_History.insert(m_History.erase(i), move(_path));
+            }
+            else
+            {
+                m_IsRecording = true;
+                m_History.resize(m_PlayingPosition + 1);
+                m_History.emplace_back(move(_path));
+            }
         }
     }
 }
-
 
 unsigned PanelHistory::Length() const
 {

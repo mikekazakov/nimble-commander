@@ -81,4 +81,12 @@
     }
 }
 
+- (IBAction)OnShowTerminal:(id)sender
+{
+    string path = "";
+    if(self.isPanelActive && self.ActivePanelController.VFS->IsNativeFS())
+        path = self.ActivePanelController.GetCurrentDirectoryPathRelativeToHost;
+    [(MainWindowController*)self.window.delegate RequestTerminal:path];
+}
+
 @end

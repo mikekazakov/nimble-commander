@@ -545,10 +545,7 @@ struct PanelViewStateStorage
 
 - (const VFSListingItem*)item
 {
-    if(m_State.CursorPos < 0) return nullptr;
-    assert(m_State.CursorPos < (int)m_State.Data->SortedDirectoryEntries().size());
-    assert(m_State.Data->DirectoryEntries().Count() >= m_State.Data->SortedDirectoryEntries().size());
-    return &m_State.Data->DirectoryEntries()[ m_State.Data->SortedDirectoryEntries()[m_State.CursorPos] ];
+    return m_State.Data->EntryAtSortPosition(m_State.CursorPos);
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select

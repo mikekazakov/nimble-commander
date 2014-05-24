@@ -24,7 +24,7 @@
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;
 - (void)RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host;
-- (void)RequestTerminal:(const char*)_cwd;
+- (void)RequestTerminal:(const string&)_cwd;
 - (void)RequestTerminalExecution:(const char*)_filename at:(const char*)_cwd;
 - (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
                                         params:(const string&)_params

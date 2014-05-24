@@ -10,6 +10,14 @@
 #import "PanelController+Menu.h"
 #import "common_paths.h"
 #import "GoToFolderSheetController.h"
+#import "FileSysAttrChangeOperation.h"
+#import "FileSysEntryAttrSheetController.h"
+#import "Common.h"
+#import "MainWindowFilePanelState.h"
+#import "DetailedVolumeInformationSheetController.h"
+#import "FindFilesSheetController.h"
+#import "MainWindowController.h"
+#import "SelectionWithMaskSheetController.h"
 
 @implementation PanelController (Menu)
 
@@ -45,19 +53,26 @@
     TAG(tag_go_forward,         "menu.go.forward");
     TAG(tag_go_up,              "menu.go.enclosing_folder");
     TAG(tag_go_down,            "menu.go.into_folder");
+    TAG(tag_cmd_file_attrs,     "menu.command.file_attributes");
+    TAG(tag_cmd_vol_info,       "menu.command.volume_information");
+    TAG(tag_cmd_int_view,       "menu.command.internal_viewer");
+    TAG(tag_cmd_eject_vol,      "menu.command.eject_volume");
+    TAG(tag_cmd_copy_filename,  "menu.command.copy_file_name");
+    TAG(tag_cmd_copy_filepath,  "menu.command.copy_file_path");
+    TAG(tag_file_calc_sizes,    "menu.file.calculate_sizes");
 #undef TAG
     
-    NSInteger tag = item.tag;
+    auto tag = item.tag;
 #define IF(a) else if(tag == a)
     if(false) void();
-    IF(tag_short_mode)      item.State = m_View.type == PanelViewType::ViewShort;
-    IF(tag_medium_mode)     item.State = m_View.type == PanelViewType::ViewMedium;
-    IF(tag_full_mode)       item.State = m_View.type == PanelViewType::ViewFull;
-    IF(tag_wide_mode)       item.State = m_View.type == PanelViewType::ViewWide;
-    IF(tag_sort_viewhidden) item.State = m_Data.HardFiltering().show_hidden;
-    IF(tag_sort_sepfolders) item.State = m_Data.SortMode().sep_dirs;
-    IF(tag_sort_casesens)   item.State = m_Data.SortMode().case_sens;
-    IF(tag_sort_numeric)    item.State = m_Data.SortMode().numeric_sort;
+    IF(tag_short_mode)      item.state = m_View.type == PanelViewType::ViewShort;
+    IF(tag_medium_mode)     item.state = m_View.type == PanelViewType::ViewMedium;
+    IF(tag_full_mode)       item.state = m_View.type == PanelViewType::ViewFull;
+    IF(tag_wide_mode)       item.state = m_View.type == PanelViewType::ViewWide;
+    IF(tag_sort_viewhidden) item.state = m_Data.HardFiltering().show_hidden;
+    IF(tag_sort_sepfolders) item.state = m_Data.SortMode().sep_dirs;
+    IF(tag_sort_casesens)   item.state = m_Data.SortMode().case_sens;
+    IF(tag_sort_numeric)    item.state = m_Data.SortMode().numeric_sort;
     IF(tag_sort_name)       upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByNameMask);
     IF(tag_sort_ext)        upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByExtMask);
     IF(tag_sort_mod)        upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByMTimeMask);
@@ -67,6 +82,13 @@
     IF(tag_go_forward)      return m_History.CanMoveForth();
     IF(tag_go_up)           return self.GetCurrentDirectoryPathRelativeToHost != "/" || self.VFS->Parent() != nullptr;
     IF(tag_go_down)         return m_View.item && !m_View.item->IsDotDot();
+    IF(tag_cmd_file_attrs)  return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
+    IF(tag_cmd_vol_info)    return self.VFS->IsNativeFS();
+    IF(tag_cmd_int_view)    return m_View.item && !m_View.item->IsDir();
+    IF(tag_cmd_eject_vol)   return self.VFS->IsNativeFS() && IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost);
+    IF(tag_file_calc_sizes) return m_View.item != nullptr;
+    IF(tag_cmd_copy_filename) return m_View.item != nullptr;
+    IF(tag_cmd_copy_filepath) return m_View.item != nullptr;
 #undef IF
     
     return true; // will disable some items in the future
@@ -121,7 +143,7 @@
 - (IBAction)OnGoToFolder:(id)sender {
     GoToFolderSheetController *sheet = [GoToFolderSheetController new];
     [sheet ShowSheet:self.window handler:^int(){
-        string path = [sheet.Text.stringValue fileSystemRepresentation];
+        string path = sheet.Text.stringValue.fileSystemRepresentation;
         assert(!path.empty());
         if(path[0] == '/'); // absolute path
         else if(path[0] == '~') // relative to home
@@ -144,6 +166,192 @@
     auto item = m_View.item;
     if(item != nullptr && item->IsDotDot() == false)
         [self HandleGoIntoDirOrArchive];
+}
+
+- (IBAction)OnOpen:(id)sender { // enter
+    [self HandleGoIntoDirOrOpenInSystem];
+}
+
+- (IBAction)OnOpenNatively:(id)sender { // shift+enter
+    [self HandleOpenInSystem];
+}
+
+- (IBAction)OnFileAttributes:(id)sender {
+    if(!m_Data.Host()->IsNativeFS())
+        return; // currently support file info only on native fs
+    
+    FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
+    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
+        if(result == DialogResult::Apply)
+            [self.state AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:sheet.Result]];
+    };
+    
+    if(m_Data.Stats().selected_entries_amount > 0 )
+        [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
+    else if(m_View.item && !m_View.item->IsDotDot())
+        [sheet ShowSheet:self.window
+                    data:&m_Data
+                   index:m_Data.RawIndexForSortIndex(m_View.curpos)
+                 handler:handler];
+}
+
+- (IBAction)OnDetailedVolumeInformation:(id)sender {
+    if(!m_Data.Host()->IsNativeFS())
+        return; // currently support volume info only on native fs
+    
+    string path = self.GetCurrentDirectoryPathRelativeToHost;
+    if(m_View.item && !m_View.item->IsDotDot())
+        path += m_View.item->Name();
+    
+    [[DetailedVolumeInformationSheetController new] ShowSheet:self.window destpath:path.c_str()];
+}
+
+- (IBAction)performFindPanelAction:(id)sender {
+    FindFilesSheetController *sheet = [FindFilesSheetController new];
+    [sheet ShowSheet:self.window
+             withVFS:self.VFS
+            fromPath:self.GetCurrentDirectoryPathRelativeToHost
+             handler:^{
+                 if(auto item = sheet.SelectedItem)
+                     [self GoToDir:item->dir_path vfs:self.VFS select_entry:item->filename async:true];
+             }
+     ];
+}
+
+- (IBAction)OnFileInternalBigViewCommand:(id)sender {
+    if(!m_View.item || m_View.item->IsDir())
+        return;
+    string path = m_Data.DirectoryPathWithTrailingSlash() + m_View.item->Name();
+    [(MainWindowController*)self.window.delegate RequestBigFileView:path with_fs:self.VFS];
+}
+
+- (IBAction)OnSelectByMask:(id)sender {
+    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
+    [sheet ShowSheet:self.window handler:^{
+        [self SelectEntriesByMask:sheet.Mask select:true];
+    }];
+}
+
+- (IBAction)OnDeselectByMask:(id)sender {
+    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
+    [sheet SetIsDeselect:true];
+    [sheet ShowSheet:self.window handler:^{
+        [self SelectEntriesByMask:sheet.Mask select:false];
+    }];
+}
+
+- (IBAction)OnEjectVolume:(id)sender {
+    if(self.VFS->IsNativeFS() && IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost))
+        EjectVolumeContainingPath(self.GetCurrentDirectoryPathRelativeToHost);
+}
+
+- (IBAction)OnCopyCurrentFileName:(id)sender {
+    [NSPasteboard writeSingleString:self.GetCurrentFocusedEntryFilename.c_str()];
+}
+
+- (IBAction)OnCopyCurrentFilePath:(id)sender {
+    [NSPasteboard writeSingleString:self.GetCurrentFocusedEntryFilePathRelativeToHost.c_str()];
+}
+
+- (IBAction)OnBriefSystemOverviewCommand:(id)sender {
+    if(m_BriefSystemOverview) {
+        [self.state CloseOverlay:self];
+        m_BriefSystemOverview = nil;
+        return;
+    }
+    m_BriefSystemOverview = [self.state RequestBriefSystemOverview:self];
+    [self UpdateBriefSystemOverview];
+}
+
+- (IBAction)OnFileViewCommand:(id)sender
+{
+    // Close quick preview, if it is open.
+    if(m_QuickLook) {
+        [self.state CloseOverlay:self];
+        m_QuickLook = nil;
+        return;
+    }
+    
+    m_QuickLook = [self.state RequestQuickLookView:self];
+    [self OnCursorChanged];
+}
+
+- (void)selectAll:(id)sender {
+    [self SelectAllEntries:true];
+}
+
+- (void)deselectAll:(id)sender {
+    [self SelectAllEntries:false];
+}
+
+- (IBAction)OnRefreshPanel:(id)sender {
+    [self RefreshDirectory];
+}
+
+- (IBAction)OnCalculateSizes:(id)sender {
+    // suboptimal - may have regular files inside (not dirs)
+    [self CalculateSizesWithNames:self.GetSelectedEntriesOrFocusedEntryWithDotDot];
+}
+
+- (IBAction)OnCalculateAllSizes:(id)sender {
+    chained_strings filenames;
+    for(auto &i: *m_Data.Listing())
+        if(i.IsDir() && !i.IsDotDot())
+            filenames.push_back(i.Name(), nullptr);
+    
+    [self CalculateSizesWithNames:move(filenames)];
+}
+
+- (IBAction)ToggleViewHiddenFiles:(id)sender{
+    auto filtering = m_Data.HardFiltering();
+    filtering.show_hidden = !filtering.show_hidden;
+    [self ChangeHardFilteringTo:filtering];
+}
+- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
+    PanelSortMode mode = m_Data.SortMode();
+    mode.sep_dirs = !mode.sep_dirs;
+    [self ChangeSortingModeTo:mode];
+}
+- (IBAction)ToggleCaseSensitiveComparison:(id)sender{
+    PanelSortMode mode = m_Data.SortMode();
+    mode.case_sens = !mode.case_sens;
+    [self ChangeSortingModeTo:mode];
+}
+- (IBAction)ToggleNumericComparison:(id)sender{
+    PanelSortMode mode = m_Data.SortMode();
+    mode.numeric_sort = !mode.numeric_sort;
+    [self ChangeSortingModeTo:mode];
+}
+- (IBAction)ToggleSortByName:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];
+}
+- (IBAction)ToggleSortByExt:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];
+}
+- (IBAction)ToggleSortByMTime:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortByMTime Rev:PanelSortMode::SortByMTimeRev];
+}
+- (IBAction)ToggleSortBySize:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortBySize Rev:PanelSortMode::SortBySizeRev];
+}
+- (IBAction)ToggleSortByBTime:(id)sender{
+    [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];
+}
+- (IBAction)ToggleShortViewMode:(id)sender {
+    m_View.type = PanelViewType::ViewShort;
+    [self.state SavePanelsSettings];
+}
+- (IBAction)ToggleMediumViewMode:(id)sender {
+    m_View.type = PanelViewType::ViewMedium;
+    [self.state SavePanelsSettings];
+}
+- (IBAction)ToggleFullViewMode:(id)sender{
+    m_View.type = PanelViewType::ViewFull;
+    [self.state SavePanelsSettings];
+}
+- (IBAction)ToggleWideViewMode:(id)sender{
+    m_View.type = PanelViewType::ViewWide;
+    [self.state SavePanelsSettings];
 }
 
 @end

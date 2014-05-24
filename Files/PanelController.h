@@ -135,10 +135,18 @@ namespace panel
 @interface PanelController ()
 - (void) CancelBackgroundOperations;
 - (void) OnPathChanged;
+- (void) OnCursorChanged;
 - (void) HandleOpenInSystem;
 - (bool) HandleGoToUpperDirectory;
 - (bool) HandleGoIntoDirOrArchive;
 - (void) HandleGoIntoDirOrOpenInSystem;
+- (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select;
+- (void) SelectAllEntries:(bool) _select;
+- (void) UpdateBriefSystemOverview;
+- (void) CalculateSizesWithNames:(chained_strings) _filenames;
+- (void) ChangeSortingModeTo:(PanelSortMode)_mode;
+- (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter;
+- (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev;
 @end
 
 #import "PanelController+DataAccess.h"

@@ -234,10 +234,11 @@ bool GetUserHomeDirectoryPath(char *_path)
     return true;
 }
 
-void EjectVolumeContainingPath(string _path)
+void EjectVolumeContainingPath(const string &_path)
 {
+    string path = _path;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if(auto volume = NativeFSManager::Instance().VolumeFromPath(_path))
+        if(auto volume = NativeFSManager::Instance().VolumeFromPath(path))
         {
             DASessionRef session = DASessionCreate(kCFAllocatorDefault);
             CFURLRef url = (__bridge CFURLRef)volume->verbose.url;
@@ -252,7 +253,7 @@ void EjectVolumeContainingPath(string _path)
     });
 }
 
-bool IsVolumeContainingPathEjectable(const char *_path)
+bool IsVolumeContainingPathEjectable(const string &_path)
 {
     auto volume = NativeFSManager::Instance().VolumeFromPath(_path);
     

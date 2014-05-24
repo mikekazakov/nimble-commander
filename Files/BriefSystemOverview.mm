@@ -490,7 +490,7 @@ static NSTextField *CreateStockTF()
     [m_TextVolumeAvailBytes setStringValue:[m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.avail_bytes]]];
 }
 
-- (void) UpdateVFSTarget:(const char*)_path host:(shared_ptr<VFSHost>)_host
+- (void) UpdateVFSTarget:(const string&)_path host:(shared_ptr<VFSHost>)_host
 {
     // TODO: need to prevent inefficient updates here when volume remains the same. (?)
     

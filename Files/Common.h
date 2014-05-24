@@ -40,8 +40,8 @@ bool GetFirstAvailableDirectoryFromPath(char *_path);
 bool GetUserHomeDirectoryPath(char *_path);
 bool IsDirectoryAvailableForBrowsing(const char *_path);
 
-void EjectVolumeContainingPath(string _path); // a very simple function with no error feedback
-bool IsVolumeContainingPathEjectable(const char *_path); // will return false on any errors
+void EjectVolumeContainingPath(const string &_path); // a very simple function with no error feedback
+bool IsVolumeContainingPathEjectable(const string &_path); // will return false on any errors
 
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);

@@ -57,7 +57,7 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
         [self close];
 }
 
-- (void)PreviewItem:(string)_path vfs:(shared_ptr<VFSHost>)_host
+- (void)PreviewItem:(const string&)_path vfs:(shared_ptr<VFSHost>)_host
 {
     // may cause collisions of same filenames on different vfs, nevermind for now
     assert(!m_Closed);

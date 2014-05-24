@@ -145,6 +145,7 @@
             [m_View SavePathState];
             m_Data.Load(listing);
             [m_View DirectoryChanged:_filename.c_str()];
+            m_View.needsDisplay = true;
             [self OnPathChanged];
         });
     };

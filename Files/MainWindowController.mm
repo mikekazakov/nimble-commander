@@ -258,19 +258,19 @@ static double TitleBarHeight()
     });
 }
 
-- (void)RequestTerminal:(const char*)_cwd;
+- (void)RequestTerminal:(const string&)_cwd;
 {
     if(m_Terminal == nil)
     {
         MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[self.window.contentView frame]];
-        [state SetInitialWD:_cwd];
+        [state SetInitialWD:_cwd.c_str()];
         [self PushNewWindowState:state];
         m_Terminal = state;
     }
     else
     {
         [self PushNewWindowState:m_Terminal];
-        [m_Terminal ChDir:_cwd];
+        [m_Terminal ChDir:_cwd.c_str()];
     }
 }
 

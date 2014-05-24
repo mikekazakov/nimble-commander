@@ -73,12 +73,6 @@
 
 - (const shared_ptr<VFSHost>&) VFS
 {
-/*    static auto dummy = shared_ptr<VFSHost>(nullptr);
-    
-    if(m_HostsStack.empty())
-        return dummy;
-    
-    return m_HostsStack.back();*/
     return m_Data.Host();
 }
 

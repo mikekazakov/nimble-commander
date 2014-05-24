@@ -217,6 +217,7 @@ public:
     const DirSortIndT&      EntriesBySoftFiltering() const;
     
     const VFSListingItem*   EntryAtRawPosition(int _pos) const;
+    const VFSListingItem*   EntryAtSortPosition(int _pos) const;
     chained_strings         StringsFromSelectedEntries() const;
 
     /**

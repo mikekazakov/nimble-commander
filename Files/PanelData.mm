@@ -391,6 +391,11 @@ const VFSListingItem* PanelData::EntryAtRawPosition(int _pos) const
     return nullptr;
 }
 
+const VFSListingItem* PanelData::EntryAtSortPosition(int _pos) const
+{
+    return EntryAtRawPosition(RawIndexForSortIndex(_pos));
+}
+
 void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
 {
     auto &entry = m_Listing->At(_at_raw_pos);

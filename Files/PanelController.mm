@@ -16,11 +16,6 @@
 #import "BriefSystemOverview.h"
 #import "ActionsShortcutsManager.h"
 #import "FTPConnectionSheetController.h"
-#import "SelectionWithMaskSheetController.h"
-#import "DetailedVolumeInformationSheetController.h"
-#import "FileSysEntryAttrSheetController.h"
-#import "FindFilesSheetController.h"
-#import "FileSysAttrChangeOperation.h"
 
 static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
@@ -268,58 +263,6 @@ void panel::GenericCursorPersistance::Restore()
     [self ChangeSortingModeTo:mode];
 }
 
-- (IBAction)ToggleViewHiddenFiles:(id)sender{
-    auto filtering = m_Data.HardFiltering();
-    filtering.show_hidden = !filtering.show_hidden;
-    [self ChangeHardFilteringTo:filtering];
-}
-- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
-    PanelSortMode mode = m_Data.SortMode();
-    mode.sep_dirs = !mode.sep_dirs;
-    [self ChangeSortingModeTo:mode];
-}
-- (IBAction)ToggleCaseSensitiveComparison:(id)sender{
-    PanelSortMode mode = m_Data.SortMode();
-    mode.case_sens = !mode.case_sens;
-    [self ChangeSortingModeTo:mode];
-}
-- (IBAction)ToggleNumericComparison:(id)sender{
-    PanelSortMode mode = m_Data.SortMode();
-    mode.numeric_sort = !mode.numeric_sort;
-    [self ChangeSortingModeTo:mode];
-}
-- (IBAction)ToggleSortByName:(id)sender{
-    [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];
-}
-- (IBAction)ToggleSortByExt:(id)sender{
-    [self MakeSortWith:PanelSortMode::SortByExt Rev:PanelSortMode::SortByExtRev];
-}
-- (IBAction)ToggleSortByMTime:(id)sender{
-    [self MakeSortWith:PanelSortMode::SortByMTime Rev:PanelSortMode::SortByMTimeRev];
-}
-- (IBAction)ToggleSortBySize:(id)sender{
-    [self MakeSortWith:PanelSortMode::SortBySize Rev:PanelSortMode::SortBySizeRev];
-}
-- (IBAction)ToggleSortByBTime:(id)sender{
-    [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];
-}
-- (IBAction)ToggleShortViewMode:(id)sender {
-    m_View.type = PanelViewType::ViewShort;
-    [self.state SavePanelsSettings];
-}
-- (IBAction)ToggleMediumViewMode:(id)sender {
-    m_View.type = PanelViewType::ViewMedium;
-    [self.state SavePanelsSettings];
-}
-- (IBAction)ToggleFullViewMode:(id)sender{
-    m_View.type = PanelViewType::ViewFull;
-    [self.state SavePanelsSettings];
-}
-- (IBAction)ToggleWideViewMode:(id)sender{
-    m_View.type = PanelViewType::ViewWide;
-    [self.state SavePanelsSettings];
-}
-
 - (void) ResetUpdatesObservation:(string)_new_path
 {
     if(m_UpdatesObservationHost) {
@@ -492,14 +435,6 @@ void panel::GenericCursorPersistance::Restore()
         [self HandleOpenInSystem];
         return true;
     }
-    if(shortcuts.ShortCutFromAction("menu.file.calculate_sizes")->IsKeyDown(unicode, keycode, modif)) {
-        [self OnCalculateSizes:self];
-        return true;
-    }
-    if(shortcuts.ShortCutFromAction("menu.file.calculate_all_sizes")->IsKeyDown(unicode, keycode, modif)) {
-        [self OnCalculateAllSizes:self];
-        return true;
-    }
 
     return false;
 }
@@ -529,22 +464,6 @@ void panel::GenericCursorPersistance::Restore()
                                                        },
                                                        complet);
     });
-}
-
-- (IBAction)OnCalculateSizes:(id)sender
-{
-    // suboptimal - may have regular files inside (not dirs)
-    [self CalculateSizesWithNames:self.GetSelectedEntriesOrFocusedEntryWithDotDot];
-}
-
-- (IBAction)OnCalculateAllSizes:(id)sender
-{
-    chained_strings filenames;
-    for(auto &i: *m_Data.Listing())
-        if(i.IsDir() && !i.IsDotDot())
-            filenames.push_back(i.Name(), nullptr);
-    
-    [self CalculateSizesWithNames:move(filenames)];
 }
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
@@ -625,46 +544,6 @@ void panel::GenericCursorPersistance::Restore()
     [m_View setNeedsDisplay:true];
 }
 
-- (void)selectAll:(id)sender
-{
-    [self SelectAllEntries:true];
-}
-
-- (void)deselectAll:(id)sender
-{
-    [self SelectAllEntries:false];
-}
-
-- (IBAction)OnRefreshPanel:(id)sender
-{
-    [self RefreshDirectory];
-}
-
-- (IBAction)OnFileViewCommand:(id)sender
-{
-    // Close quick preview, if it is open.
-    if(m_QuickLook) {
-        [self.state CloseOverlay:self];
-        m_QuickLook = nil;
-        return;
-    }
-    
-    m_QuickLook = [self.state RequestQuickLookView:self];
-    [self OnCursorChanged];
-}
-
-- (IBAction)OnBriefSystemOverviewCommand:(id)sender
-{
-    if(m_BriefSystemOverview)
-    {
-        [self.state CloseOverlay:self];
-        m_BriefSystemOverview = nil;
-        return;
-    }
-    m_BriefSystemOverview = [self.state RequestBriefSystemOverview:self];
-    [self UpdateBriefSystemOverview];
-}
-
 - (void) OnPathChanged
 {
     [self ResetUpdatesObservation:m_Data.DirectoryPathWithTrailingSlash()];
@@ -678,22 +557,14 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) OnCursorChanged
 {
-    // need to update some UI here
-    auto item = m_View.item;
-    auto host = m_Data.Host();
-  
+    // need to update some UI here  
     // update share button regaring current state
     m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
-                            [SharingService SharingEnabledForItem:item VFS:host];
+                            [SharingService SharingEnabledForItem:m_View.item VFS:self.VFS];
     
     // update QuickLook if any
-    [(QuickLookView *)m_QuickLook PreviewItem:[self GetCurrentFocusedEntryFilePathRelativeToHost]
-                                          vfs:host];
-}
-
-- (void)OnEjectButton:(id)sender
-{
-    EjectVolumeContainingPath(m_Data.DirectoryPathWithoutTrailingSlash());
+    [(QuickLookView *)m_QuickLook PreviewItem:self.GetCurrentFocusedEntryFilePathRelativeToHost
+                                          vfs:self.VFS];
 }
 
 - (void)OnShareButton:(id)sender
@@ -715,7 +586,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) UpdateBriefSystemOverview
 {
-    [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+    [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:self.GetCurrentDirectoryPathRelativeToHost
                                                              host:self.VFS];
 }
 
@@ -783,121 +654,11 @@ void panel::GenericCursorPersistance::Restore()
              }];
 }
 
-- (IBAction)OnCopyCurrentFileName:(id)sender {
-    [NSPasteboard writeSingleString:self.GetCurrentFocusedEntryFilename.c_str()];
-}
-
-- (IBAction)OnCopyCurrentFilePath:(id)sender {
-    [NSPasteboard writeSingleString:self.GetCurrentFocusedEntryFilePathRelativeToHost.c_str()];
-}
-
-- (IBAction)performFindPanelAction:(id)sender
-{
-    FindFilesSheetController *sheet = [FindFilesSheetController new];
-    [sheet ShowSheet:self.window
-             withVFS:self.VFS
-            fromPath:self.GetCurrentDirectoryPathRelativeToHost
-             handler:^{
-                 if(auto item = sheet.SelectedItem)
-                     [self GoToDir:item->dir_path vfs:self.VFS select_entry:item->filename async:true];
-             }
-     ];
-}
-
-- (IBAction)OnEjectVolume:(id)sender
-{
-    if(!self.VFS->IsNativeFS())
-        return;
-    
-    string path = m_Data.DirectoryPathWithoutTrailingSlash();
-    if(IsVolumeContainingPathEjectable(path.c_str()))
-        EjectVolumeContainingPath(path);
-}
-
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
 {
     bool ignore_dirs = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
     if(m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
         [m_View setNeedsDisplay:true];
-}
-
-- (IBAction)OnSelectByMask:(id)sender
-{
-    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
-    [sheet ShowSheet:self.window handler:^{
-        [self SelectEntriesByMask:sheet.Mask select:true];
-    }];
-}
-
-- (IBAction)OnDeselectByMask:(id)sender
-{
-    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
-    [sheet SetIsDeselect:true];
-    [sheet ShowSheet:self.window handler:^{
-        [self SelectEntriesByMask:sheet.Mask select:false];
-    }];
-}
-
-- (IBAction)OnShowTerminal:(id)sender
-{
-    string path;
-    if(self.VFS->IsNativeFS())
-        path = self.GetCurrentDirectoryPathRelativeToHost;
-    [(MainWindowController*)self.window.delegate RequestTerminal:path.c_str()];
-}
-
-- (IBAction)OnDetailedVolumeInformation:(id)sender
-{
-    if(!m_Data.Host()->IsNativeFS())
-        return; // currently support volume info only on native fs
-    
-    string path = self.GetCurrentDirectoryPathRelativeToHost;
-    if(m_View.item && !m_View.item->IsDotDot())
-        path += m_View.item->Name();
-    
-    DetailedVolumeInformationSheetController *sheet = [DetailedVolumeInformationSheetController new];
-    [sheet ShowSheet:self.window destpath:path.c_str()];
-}
-
-- (IBAction)OnFileInternalBigViewCommand:(id)sender
-{
-    auto i = m_View.item;
-    if(!i || i->IsDir()) return;
-    
-    string path = m_Data.DirectoryPathWithTrailingSlash() + i->Name();
-    auto host = m_Data.Host();
-    [(MainWindowController*)self.window.delegate RequestBigFileView:path
-                                                            with_fs:host];
-}
-
-- (IBAction)OnFileAttributes:(id)sender
-{
-    if(!m_Data.Host()->IsNativeFS())
-        return; // currently support file info only on native fs
-    
-    FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
-    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
-        if(result == DialogResult::Apply)
-            [self.state AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:sheet.Result]];
-    };
-    
-    if(m_Data.Stats().selected_entries_amount > 0 )
-        [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
-    else if(m_View.item && !m_View.item->IsDotDot())
-        [sheet ShowSheet:self.window
-                    data:&m_Data
-                   index:m_Data.RawIndexForSortIndex(m_View.curpos)
-                 handler:handler];
-}
-
-- (IBAction)OnOpen:(id)sender // enter
-{
-    [self HandleGoIntoDirOrOpenInSystem];
-}
-
-- (IBAction)OnOpenNatively:(id)sender // shift+enter
-{
-    [self HandleOpenInSystem];
 }
 
 @end

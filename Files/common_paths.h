@@ -24,5 +24,5 @@ struct CommonPaths
     };
     
     // returned paths may contain or not contain trailing slash
-    static string Get(Path _path);
+    static const string &Get(Path _path);
 };

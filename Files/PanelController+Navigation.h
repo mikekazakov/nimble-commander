@@ -18,4 +18,6 @@
 - (void) GoToVFSPathStack:(const VFSPathStack&)_stack;
 // some params later
 
+- (void) RecoverFromInvalidDirectory;
+
 @end

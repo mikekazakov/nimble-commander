@@ -112,24 +112,6 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
     return str;
 }
 
-
-// ask FS about real file path - case sensitive etc
-// also we're getting rid of symlinks - it will be a real file
-// return path with trailing slash
-bool GetRealPath(const char *_path_in, char *_path_out)
-{
-    int tfd = open(_path_in, O_RDONLY);
-    if(tfd == -1)
-        return false;
-    int ret = fcntl(tfd, F_GETPATH, _path_out);
-    close(tfd);
-    if(ret == -1)
-        return false;
-    if( _path_out[strlen(_path_out)-1] != '/' )
-        strcat(_path_out, "/");
-    return true;
-}
-
 bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size)
 {
     const char *second_sep = strrchr(_path, '/');
@@ -198,39 +180,12 @@ void SyncMessageBoxNS(NSString *_ns_string)
         dispatch_sync(dispatch_get_main_queue(), ^{ [alert runModal]; } );
 }
 
-bool GetFirstAvailableDirectoryFromPath(char *_path)
-{
-    assert(_path);
-    assert(_path[0] == '/');
-    while( !IsDirectoryAvailableForBrowsing(_path) )
-    {
-        char *s = strrchr(_path, '/');
-        if(s == 0)
-            return false; // a very strange case
-        
-        if(s == _path && _path[1] != 0)
-            _path[1] = 0;
-        else
-            *s = 0;
-    }
-    return true;
-}
-
 bool IsDirectoryAvailableForBrowsing(const char *_path)
 {
     DIR *dirp = opendir(_path);
     if(dirp == 0)
         return false;
     closedir(dirp);
-    return true;
-}
-
-bool GetUserHomeDirectoryPath(char *_path)
-{
-    struct passwd *pw = getpwuid(getuid());
-    if(!pw)
-        return false;
-    strcpy(_path, pw->pw_dir);
     return true;
 }
 

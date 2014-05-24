@@ -64,7 +64,7 @@
     
     auto tag = item.tag;
 #define IF(a) else if(tag == a)
-    if(false) void();
+    if(false);
     IF(tag_short_mode)      item.state = m_View.type == PanelViewType::ViewShort;
     IF(tag_medium_mode)     item.state = m_View.type == PanelViewType::ViewMedium;
     IF(tag_full_mode)       item.state = m_View.type == PanelViewType::ViewFull;

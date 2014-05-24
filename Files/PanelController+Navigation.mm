@@ -8,6 +8,7 @@
 
 #import "PanelController.h"
 #import "Common.h"
+#import "common_paths.h"
 
 @implementation PanelController (Navigation)
 
@@ -162,5 +163,43 @@
     }
 }
 
+- (void) RecoverFromInvalidDirectory
+{
+    path initial_path = self.GetCurrentDirectoryPathRelativeToHost;
+    auto initial_vfs = self.VFS;
+    m_DirectoryLoadingQ->Run(^(SerialQueue _que) {
+        // 1st - try to locate a valid dir in current host
+        path path = initial_path;
+        auto vfs = initial_vfs;
+        
+        while(true)
+        {
+            if(vfs->IterateDirectoryListing(path.c_str(), ^bool(const VFSDirEnt &_dirent) {
+                    return false;
+                }) >= 0) {
+                dispatch_to_main_queue(^{
+                    [self GoToDir:path.native()
+                              vfs:vfs
+                     select_entry:""
+                            async:true];
+                });
+            }
+            
+            if(path == "/")
+                break;
+            
+            if(path.filename() == "/") path.remove_filename();
+            path = path.parent_path();
+        }
+        
+        // we can't work on this vfs. currently for simplicity - just go home
+        dispatch_to_main_queue(^{
+            [self GoToDir:CommonPaths::Get(CommonPaths::Home)
+                      vfs:VFSNativeHost::SharedHost()
+             select_entry:""
+                    async:true];
+        });
+    });
+}
 
 @end

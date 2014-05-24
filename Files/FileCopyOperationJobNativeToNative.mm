@@ -22,6 +22,7 @@
 #import <unistd.h>
 #import <stdlib.h>
 #import "Common.h"
+#import "common_paths.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
 #define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
@@ -220,8 +221,7 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
     else if(strncmp(m_Destination, "~", strlen("~")) == 0)
     {
         char path[MAXPATHLEN];
-        bool b = GetUserHomeDirectoryPath(path);
-        assert(b);
+        strcpy(path, CommonPaths::Get(CommonPaths::Home).c_str());
         strcat(path, "/");
         if(strncmp(m_Destination, "~/", strlen("~/")) == 0)
             strcat(path, m_Destination + strlen("~/"));

@@ -16,6 +16,7 @@
 #import "FontCache.h"
 
 #import "Common.h"
+#import "common_paths.h"
 
 @implementation MainWindowTerminalState
 {
@@ -31,8 +32,7 @@
     self = [super initWithFrame:frameRect];
     if(self)
     {
-        strcpy(m_InitalWD, "/");
-        GetUserHomeDirectoryPath(m_InitalWD);
+        strcpy(m_InitalWD, CommonPaths::Get(CommonPaths::Home).c_str());
         
         m_View = [[TermView alloc] initWithFrame:self.frame];
         self.documentView = m_View;

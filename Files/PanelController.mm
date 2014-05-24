@@ -23,14 +23,9 @@ static NSString *g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhe
 static NSString *g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
 static NSString *g_DefaultsGeneralShowDotDotEntry       = @"FilePanelsGeneralShowDotDotEntry";
 static NSString *g_DefaultsGeneralIgnoreDirsOnMaskSel   = @"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask";
-
-static NSArray *MyDefaultsKeys()
-{
-    return [NSArray arrayWithObjects:g_DefaultsQuickSearchKeyModifier,
-            g_DefaultsQuickSearchSoftFiltering, g_DefaultsQuickSearchWhereToFind,
-            g_DefaultsQuickSearchTypingView, g_DefaultsGeneralShowDotDotEntry,
-            g_DefaultsGeneralIgnoreDirsOnMaskSel, nil];
-};
+static NSArray *g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuickSearchSoftFiltering,
+                                   g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView,
+                                   g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel];
 
 static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
@@ -117,7 +112,7 @@ void panel::GenericCursorPersistance::Restore()
         [self observeValueForKeyPath:g_DefaultsQuickSearchSoftFiltering ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsQuickSearchTypingView ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsGeneralShowDotDotEntry ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:MyDefaultsKeys()];
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:g_DefaultsKeys];
         
         m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_View.delegate = self;
@@ -133,7 +128,7 @@ void panel::GenericCursorPersistance::Restore()
     if(m_UpdatesObservationHost)
         m_UpdatesObservationHost->StopDirChangeObserving(m_UpdatesObservationTicket);
 
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:MyDefaultsKeys()];
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:g_DefaultsKeys];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -142,23 +137,23 @@ void panel::GenericCursorPersistance::Restore()
     
     if(object == defaults)
     {
-        if(keyPath == g_DefaultsQuickSearchKeyModifier) {
+        if([keyPath isEqualToString:g_DefaultsQuickSearchKeyModifier]) {
             m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchKeyModifier]);
             [self QuickSearchClearFiltering];
         }
-        else if(keyPath == g_DefaultsQuickSearchWhereToFind) {
+        else if([keyPath isEqualToString:g_DefaultsQuickSearchWhereToFind]) {
             m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchWhereToFind]);
             [self QuickSearchClearFiltering];
         }
-        else if(keyPath == g_DefaultsQuickSearchSoftFiltering) {
+        else if([keyPath isEqualToString:g_DefaultsQuickSearchSoftFiltering]) {
             m_QuickSearchIsSoftFiltering = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchSoftFiltering];
             [self QuickSearchClearFiltering];
         }
-        else if(keyPath == g_DefaultsQuickSearchTypingView) {
+        else if([keyPath isEqualToString:g_DefaultsQuickSearchTypingView]) {
             m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
             [self QuickSearchClearFiltering];
         }
-        else if(keyPath == g_DefaultsGeneralShowDotDotEntry) {
+        else if([keyPath isEqualToString:g_DefaultsGeneralShowDotDotEntry]) {
             if([defaults boolForKey:g_DefaultsGeneralShowDotDotEntry] == false)
                 m_VFSFetchingFlags |= VFSHost::F_NoDotDot;
             else
@@ -524,18 +519,6 @@ void panel::GenericCursorPersistance::Restore()
     }
     
     m_IsAnythingWorksInBackground = is_anything_working;
-}
-
-- (void) RecoverFromInvalidDirectory
-{
-#if 0
-    // TODO: recovering to upper host needed
-    char path[MAXPATHLEN];
-    strcpy(path, m_Data.DirectoryPathWithoutTrailingSlash().c_str());
-    if(GetFirstAvailableDirectoryFromPath(path))
-//        [self GoToDirectory:path];
-        [self GoToRelativeToHostAsync:path select_entry:0];
-#endif
 }
 
 - (void) SelectAllEntries:(bool) _select

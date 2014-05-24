@@ -31,13 +31,8 @@ struct DialogResult
 };
 
 // fs directory handling stuff
-bool GetRealPath(const char *_path_in, char *_path_out);
 bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size); // get last directory from path
-bool GetFirstAvailableDirectoryFromPath(char *_path);
-/**
- * Returns a home directory path if form "/Users/migun". (without trailing slash)
- */
-bool GetUserHomeDirectoryPath(char *_path);
+
 bool IsDirectoryAvailableForBrowsing(const char *_path);
 
 void EjectVolumeContainingPath(const string &_path); // a very simple function with no error feedback

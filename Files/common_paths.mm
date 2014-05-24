@@ -9,59 +9,111 @@
 #import <pwd.h>
 #import "common_paths.h"
 
-string CommonPaths::Get(CommonPaths::Path _path)
+const string &CommonPaths::Get(CommonPaths::Path _path)
 {
     switch (_path) {
         case Home:
-            return getpwuid(getuid())->pw_dir;
+        {
+            static dispatch_once_t onceToken;
+            static string path;
+            dispatch_once(&onceToken, ^{
+                path = getpwuid(getuid())->pw_dir;
+            });
+            return path;
+        }
         
         case Documents:
         {
-            NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
-            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            static dispatch_once_t onceToken;
+            static string path;
+            dispatch_once(&onceToken, ^{
+                NSArray* paths = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+                path = [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            });
+            return path;
         }
             
         case Desktop:
         {
-            NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask];
-            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            static dispatch_once_t onceToken;
+            static string path;
+            dispatch_once(&onceToken, ^{
+                NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask];
+                path = [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            });
+
+            return path;
         }
-            
+        
         case Downloads:
         {
-            NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask];
-            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            static dispatch_once_t onceToken;
+            static string path;
+            dispatch_once(&onceToken, ^{
+                NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask];
+                path = [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            });
+            return path;
         }
             
         case Applications:
-            return "/Applications/";
+        {
+            static string path = "/Applications/";
+            return path;
+        }
          
         case Utilities:
-            return "/Applications/Utilities/";
+        {
+            static string path = "/Applications/Utilities/";
+            return path;
+        }
             
         case Library:
         {
+            static dispatch_once_t onceToken;
+            static string path;
+            dispatch_once(&onceToken, ^{
             NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask];
-            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+                path = [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            });
+            return path;
         }
         
         case Movies:
         {
-            NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMoviesDirectory inDomains:NSUserDomainMask];
-            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            static dispatch_once_t onceToken;
+            static string path;
+            dispatch_once(&onceToken, ^{
+                NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMoviesDirectory inDomains:NSUserDomainMask];
+                path = [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            });
+            return path;
         }
         
         case Music:
         {
-            NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMusicDirectory inDomains:NSUserDomainMask];
-            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            static dispatch_once_t onceToken;
+            static string path;
+            dispatch_once(&onceToken, ^{
+                NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSMusicDirectory inDomains:NSUserDomainMask];
+                path = [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            });
+            return path;
         }
             
         case Pictures:
         {
-            NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSPicturesDirectory inDomains:NSUserDomainMask];
-            return [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            static dispatch_once_t onceToken;
+            static string path;
+            dispatch_once(&onceToken, ^{
+                NSArray* paths = [[NSFileManager defaultManager] URLsForDirectory:NSPicturesDirectory inDomains:NSUserDomainMask];
+                path = [[[paths objectAtIndex:0] path] fileSystemRepresentation];
+            });
+            return path;
         }
+        
+        default: assert(0);
     }
-    return "";
+    static string dummy;
+    return dummy;
 }

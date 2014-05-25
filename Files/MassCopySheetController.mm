@@ -27,8 +27,16 @@
 {
     [super windowDidLoad];
  
-    [self.TextField setStringValue:m_InitialPath];
     [self.window makeFirstResponder:self.TextField];
+    self.TextField.stringValue = m_InitialPath;
+    if(m_InitialPath.length > 0 && [m_InitialPath characterAtIndex:0] != u'/')
+    {
+        // short path, find if there's an extension, if so - select only filename without .ext
+        NSRange r = [m_InitialPath rangeOfString:@"." options:NSBackwardsSearch];
+        if(r.location != NSNotFound)
+            self.TextField.currentEditor.selectedRange = NSMakeRange(0, r.location);
+    }
+    
     
     int amount = m_Items->size();
     assert(amount > 0);
@@ -116,7 +124,7 @@
     m_IsCopying = _iscopying;
     m_Items = _items;
 
-    [NSApp beginSheet: [self window]
+    [NSApp beginSheet: self.window
        modalForWindow: _window
         modalDelegate: self
        didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
@@ -125,7 +133,7 @@
 
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
-    [[self window] orderOut:self];
+    [self.window orderOut:self];
     
     if(m_Handler)
         m_Handler((int)returnCode);

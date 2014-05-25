@@ -91,7 +91,6 @@
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
-		CF3FCE0E190EB96000E55698 /* shared_mutex in Resources */ = {isa = PBXBuildFile; fileRef = CF3FCE0C190EB96000E55698 /* shared_mutex */; };
 		CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
 		CF47A988186C607C00745C4C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF47A986186C607C00745C4C /* InfoPlist.strings */; };
@@ -1966,7 +1965,6 @@
 				CFEB07811886ECAA00E5CC0D /* linkarrow_icon.png in Resources */,
 				CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */,
 				CF649C3A18D2C0C200055595 /* show_oplist_icon.png in Resources */,
-				CF3FCE0E190EB96000E55698 /* shared_mutex in Resources */,
 				CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */,
 				CF12888017800724002816C2 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,

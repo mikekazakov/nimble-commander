@@ -108,7 +108,9 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     vector<shared_ptr<NativeFileSystemInfo>> m_Volumes;
     vector<AdditionalPath> m_OtherPanelsPaths;
     
-    NSString *m_CurrentPath;
+    NSString           *m_CurrentPath;
+    weak_ptr<VFSHost>   m_CurrentVFS;
+    
     NSPoint   m_AnchorPoint;
     bool      m_IsRight;
 
@@ -242,18 +244,18 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
         NSString *name;
         [url getResourceValue:&name forKey:NSURLLocalizedNameKey error:&error];
         NSMenuItem *menuitem = [NSMenuItem new];
-        [menuitem setTitle:name];
-        [[self menu] addItem:menuitem];
+        menuitem.title = name;
+        [self.menu addItem:menuitem];
 
         NSImage *img;
         [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error];
         if(img != nil)
         {
-            [img setSize:NSMakeSize(icon_size, icon_size)];
-            [menuitem setImage:img];
+            img.size = NSMakeSize(icon_size, icon_size);
+            menuitem.image = img;
         }
         
-        if(m_CurrentPath != nil)
+        if(m_CurrentPath != nil && !m_CurrentVFS.expired() && m_CurrentVFS.lock()->IsNativeFS())
         {
             size_t n = CommonCharsInPath(url, m_CurrentPath);
             if(n > common_path_max)
@@ -263,27 +265,27 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
             }
         }
 
-        [menuitem setKeyEquivalent:KeyEquivalentForUserDir(userdir_ind)];
-        [menuitem setKeyEquivalentModifierMask:0];
+        menuitem.keyEquivalent = KeyEquivalentForUserDir(userdir_ind);
+        menuitem.keyEquivalentModifierMask = 0;
         ++userdir_ind;
     }
 
-    [[self menu] addItem:[NSMenuItem separatorItem]];
+    [self.menu addItem:NSMenuItem.separatorItem];
     
     for(auto &i: m_Volumes)
     {
         NSMenuItem *menuitem = [NSMenuItem new];
-        [menuitem setTitle:i->verbose.name];
-        [[self menu] addItem:menuitem];
+        menuitem.title = i->verbose.name;
+        [self.menu addItem:menuitem];
         
         if(i->verbose.icon != nil)
         {
             NSImage *img = [i->verbose.icon copy];
-            [img setSize:NSMakeSize(icon_size, icon_size)];
-            [menuitem setImage:img];
+            img.size = NSMakeSize(icon_size, icon_size);
+            menuitem.image = img;
         }
         
-        if(m_CurrentPath != nil)
+        if(m_CurrentPath != nil && !m_CurrentVFS.expired() && m_CurrentVFS.lock()->IsNativeFS())
         {
             size_t n = CommonCharsInPath(i->verbose.url, m_CurrentPath);
             if(n > common_path_max)
@@ -296,35 +298,36 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     
     if(!m_OtherPanelsPaths.empty())
     {
-        [[self menu] addItem:[NSMenuItem separatorItem]];
+        [self.menu addItem:NSMenuItem.separatorItem];
         for(const auto &i: m_OtherPanelsPaths)
         {
             NSMenuItem *menuitem = [NSMenuItem new];
-            [menuitem setTitle:i.visible_path];
-            [[self menu] addItem:menuitem];
+            menuitem.title = i.visible_path;
+            [self.menu addItem:menuitem];
         }
     }
     
     if(common_item != nil)
-        [common_item setState:NSOnState];
+        common_item.state = NSOnState;
     
-    [[self menu] setDelegate:self];
+    self.menu.delegate = self;
 }
 
-- (void) SetCurrentPath: (const char*)_path
+- (void) SetCurrentPath: (const string&)_path at:(VFSHostPtr)_vfs
 {
-    m_CurrentPath = [NSString stringWithUTF8String:_path];
+    m_CurrentPath = [NSString stringWithUTF8String:_path.c_str()];
+    m_CurrentVFS = _vfs;
 }
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    for(NSMenuItem* i in [[self menu] itemArray])
-        [i setKeyEquivalent:@""];
+    for(NSMenuItem* i in self.menu.itemArray)
+        i.keyEquivalent = @"";
 }
 
 - (NSRect)confinementRectForMenu:(NSMenu *)menu onScreen:(NSScreen *)screen
 {
-    if(![self isHiddenOrHasHiddenAncestor])
+    if(!self.isHiddenOrHasHiddenAncestor)
         return NSZeroRect;
     
     NSSize sz = self.menu.size;

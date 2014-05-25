@@ -34,7 +34,6 @@
 #import "FilePanelMainSplitView.h"
 #import "BriefSystemOverview.h"
 #import "sysinfo.h"
-#import "FileCompressOperation.h"
 #import "LSUrls.h"
 #import "ActionsShortcutsManager.h"
 #import "MyToolbar.h"
@@ -842,19 +841,15 @@
 
 - (void)PanelPathChanged:(PanelController*)_panel
 {
-    if(_panel == [self ActivePanelController])
+    if(_panel == self.ActivePanelController)
         [self UpdateTitle];
      
     if(_panel == m_LeftPanelController)
-    {
-        string tmp = m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost;
-        [m_LeftPanelGoToButton SetCurrentPath:tmp.c_str()];
-    }
+        [m_LeftPanelGoToButton SetCurrentPath:m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost
+                                           at:m_LeftPanelController.VFS];
     if(_panel == m_RightPanelController)
-    {
-        string tmp = m_RightPanelController.GetCurrentDirectoryPathRelativeToHost;
-        [m_RightPanelGoToButton SetCurrentPath:tmp.c_str()];
-    }
+        [m_RightPanelGoToButton SetCurrentPath:m_RightPanelController.GetCurrentDirectoryPathRelativeToHost
+                                            at:m_RightPanelController.VFS];
 }
 
 - (void) DidBecomeKeyWindow
@@ -878,10 +873,10 @@
 - (void)SavePanelPaths
 {
     string lp = m_LeftPanelController.VFS->IsNativeFS() ?
-        m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost.c_str() : "";
+        m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost : "";
     [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:lp.c_str()] forKey:@"FirstPanelPath"];
     string rp = m_RightPanelController.VFS->IsNativeFS() ?
-        m_RightPanelController.GetCurrentDirectoryPathRelativeToHost.c_str() : "";
+        m_RightPanelController.GetCurrentDirectoryPathRelativeToHost : "";
     [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:rp.c_str()] forKey:@"SecondPanelPath"];
 }
 
@@ -1163,41 +1158,6 @@
         m_MainSplitView.rightOverlay = 0;
     else if(_panel == m_RightPanelController)
         m_MainSplitView.leftOverlay = 0;
-}
-
-- (IBAction)OnCompressFiles:(id)sender
-{
-    if(!self.isPanelActive) return;
-    if(m_MainSplitView.AnyCollapsedOrOverlayed) return;
-
-    auto files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
-    if(files.empty())
-        return;
-    shared_ptr<VFSHost> srcvfs, dstvfs;
-    string srcroot, dstroot;
-    PanelController *target_pc;
-    if([self ActivePanelController] == m_LeftPanelController) {
-        srcvfs = m_LeftPanelController.VFS;
-        dstvfs = m_RightPanelController.VFS;
-        srcroot = [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost];
-        dstroot = [m_RightPanelController GetCurrentDirectoryPathRelativeToHost];
-        target_pc = m_RightPanelController;
-    }
-    else {
-        srcvfs = m_RightPanelController.VFS;
-        dstvfs = m_LeftPanelController.VFS;
-        srcroot = [m_RightPanelController GetCurrentDirectoryPathRelativeToHost];
-        dstroot = [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost];
-        target_pc = m_LeftPanelController;
-    }
-    
-    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(files)
-                                                                     srcroot:srcroot.c_str()
-                                                                      srcvfs:srcvfs
-                                                                     dstroot:dstroot.c_str()
-                                                                      dstvfs:dstvfs];
-    op.TargetPanel = target_pc;
-    [m_OperationsController AddOperation:op];
 }
 
 - (void) AddOperation:(Operation*)_operation

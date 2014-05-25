@@ -7,13 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "VFS.h"
 
 @class MainWindowFilePanelState;
 
 @interface MainWndGoToButton : NSPopUpButton<NSMenuDelegate>
 
 - (NSString*) path;
-- (void) SetCurrentPath: (const char*)_path;
+- (void) SetCurrentPath: (const string&)_path at:(VFSHostPtr)_vfs;
 - (void) SetOwner:(MainWindowFilePanelState*) _owner;
 - (void) SetAnchorPoint: (NSPoint)_point IsRight:(bool) _is_right; // screen coordinates
 

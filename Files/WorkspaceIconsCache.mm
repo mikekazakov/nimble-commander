@@ -1,27 +1,50 @@
 //
-//  QLThumbnailsCache.cpp
+//  WorkspaceIconsCache.mm
 //  Files
 //
-//  Created by Michael G. Kazakov on 24.04.14.
+//  Created by Michael G. Kazakov on 25.05.14.
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Quartz/Quartz.h>
 #include <sys/stat.h>
+#include "WorkspaceIconsCache.h"
 #include "Common.h"
-#include "QLThumbnailsCache.h"
 
-QLThumbnailsCache &QLThumbnailsCache::Instance()
+WorkspaceIconsCache& WorkspaceIconsCache::Instance()
 {
     static dispatch_once_t onceToken;
-    static unique_ptr<QLThumbnailsCache> inst;
+    static unique_ptr<WorkspaceIconsCache> inst;
     dispatch_once(&onceToken, ^{
-        inst = make_unique<QLThumbnailsCache>();
+        inst = make_unique<WorkspaceIconsCache>();
     });
     return *inst;
 }
 
-NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize _size)
+NSImageRep *WorkspaceIconsCache::IconIfHas(const string &_filename)
+{
+    ting::shared_lock<ting::shared_mutex> lock(m_ItemsLock);
+    
+    auto i = m_Items.find(_filename);
+    if(i != end(m_Items))
+        return (*i).second.image;
+    return nil;
+}
+
+NSImageRep *WorkspaceIconsCache::BuildRep(const string &_filename, CGSize _size)
+{
+    NSImageRep *result = nil;
+    CFStringRef item_path = CFStringCreateWithUTF8StdStringNoCopy(_filename);
+    NSImage *image = [NSWorkspace.sharedWorkspace iconForFile: (__bridge NSString*)item_path];
+    if(image)
+        result = [image bestRepresentationForRect:NSMakeRect(0, 0, _size.width, _size.height)
+                                          context:nil
+                                            hints:nil];
+    
+    CFRelease(item_path);
+    return result;
+}
+
+NSImageRep *WorkspaceIconsCache::ProduceIcon(const string &_filename, CGSize _size)
 {
     m_ItemsLock.lock_shared();
     
@@ -31,14 +54,15 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
     if(i != end(m_Items))
     { // check what do we have in a cache
         Info &info = i->second;
-
+        
         // check if cache is up-to-date
         bool is_uptodate = false;
         struct stat st;
         if(stat(_filename.c_str(), &st) == 0)
         {
             if( i->second.file_size == st.st_size &&
-                i->second.mtime == st.st_mtime )
+               i->second.mtime == st.st_mtime &&
+               i->second.mode == st.st_mode)
             {
                 is_uptodate = true;
             }
@@ -47,6 +71,7 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
                 info.image = img;
                 info.file_size = st.st_size;
                 info.mtime = st.st_mtime;
+                info.mode = st.st_mode;
                 is_uptodate = true;
             }
         }
@@ -75,7 +100,7 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
         struct stat st;
         if(stat(_filename.c_str(), &st) == 0) // but file should exist and be accessible
         { // put in a cache
-        
+            
             lock_guard<mutex> mru_lock(m_MRULock);
             lock_guard<ting::shared_mutex> items_lock(m_ItemsLock);
             
@@ -93,38 +118,12 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
                 info.image = result;
                 info.file_size = st.st_size;
                 info.mtime = st.st_mtime;
+                info.mode = st.st_mode;
                 info.image_size = _size;
-            
+                
                 m_MRU.emplace_back(it);
             }
         }
     }
-    return result;
-}
-
-NSImageRep *QLThumbnailsCache::ThumbnailIfHas(const string &_filename)
-{
-    ting::shared_lock<ting::shared_mutex> lock(m_ItemsLock);
-    
-    auto i = m_Items.find(_filename);
-    if(i != end(m_Items))
-        return (*i).second.image;
-    return nil;
-}
-
-NSImageRep *QLThumbnailsCache::BuildRep(const string &_filename, CGSize _size)
-{
-    NSBitmapImageRep *result = nil;
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8 *)_filename.c_str(), _filename.length(), false);
-    static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-    static void *values[] = {(void*)kCFBooleanTrue};
-    static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
-    if(CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _size, dict))
-    {
-        result = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
-        CGImageRelease(thumbnail);
-    }
-    CFRelease(url);
-    
     return result;
 }

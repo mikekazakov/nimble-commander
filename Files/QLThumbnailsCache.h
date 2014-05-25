@@ -24,15 +24,17 @@ public:
      */
     NSImageRep *ThumbnailIfHas(const string &_filename);
     
+    /**
+     * Will check for a presence of a thumbnail for _filename in cache.
+     * If it is, will check if file wasn't changed - in this case just return a thumbnail that we have.
+     * If file was changed or there's no thumbnail for this file - produce it with BuildRep() and return result.
+     */
     NSImageRep *ProduceThumbnail(const string &_filename, CGSize _size);
     
+    static NSImageRep *BuildRep(const string &_filename, CGSize _size);    
+    
 private:
-    QLThumbnailsCache();
-    ~QLThumbnailsCache();
-    
-    NSImageRep *BuildRep(const string &_filename, CGSize _size) const;
-    
-    enum { m_CacheSize = 1024 };
+    enum { m_CacheSize = 4096 };
     
     struct Info
     {
@@ -44,8 +46,5 @@ private:
     map<string, Info>                   m_Items;
     ting::shared_mutex                  m_ItemsLock;
     deque<map<string, Info>::iterator>  m_MRU;
-    mutex                               m_MRULock;
-    
-    QLThumbnailsCache(const QLThumbnailsCache&) = delete;
-    void operator=(const QLThumbnailsCache&) = delete;
+    mutex                               m_MRULock;    
 };

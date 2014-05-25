@@ -12,6 +12,7 @@
 #import <sys/dirent.h>
 #import "IconsGenerator.h"
 #import "QLThumbnailsCache.h"
+#import "WorkspaceIconsCache.h"
 #import "Common.h"
 
 static const NSString *g_TempDir = NSTemporaryDirectory();
@@ -31,16 +32,15 @@ static bool CheckFileIsOK(const char* _s)
 
 static bool IsImageRepEqual(NSBitmapImageRep *_img1, NSBitmapImageRep *_img2)
 {
-    // compares only NSBitmapImageRep images
-    if([_img1 bitmapFormat] != [_img2 bitmapFormat]) return false;
-    if([_img1 bitsPerPixel] != [_img2 bitsPerPixel]) return false;
-    if([_img1 bytesPerPlane] != [_img2 bytesPerPlane]) return false;
-    if([_img1 bytesPerRow] != [_img2 bytesPerRow]) return false;
-    if([_img1 isPlanar] != [_img2 isPlanar]) return false;
-    if([_img1 numberOfPlanes] != [_img2 numberOfPlanes]) return false;
-    if([_img1 samplesPerPixel] != [_img2 samplesPerPixel]) return false;
+    if(_img1.bitmapFormat != _img2.bitmapFormat) return false;
+    if(_img1.bitsPerPixel != _img2.bitsPerPixel) return false;
+    if(_img1.bytesPerPlane != _img2.bytesPerPlane) return false;
+    if(_img1.bytesPerRow != _img2.bytesPerRow) return false;
+    if(_img1.isPlanar != _img2.isPlanar) return false;
+    if(_img1.numberOfPlanes != _img2.numberOfPlanes) return false;
+    if(_img1.samplesPerPixel != _img2.samplesPerPixel) return false;
     
-    return memcmp([_img1 bitmapData], [_img2 bitmapData], [_img1 bytesPerPlane]) == 0;
+    return memcmp(_img1.bitmapData, _img2.bitmapData, _img1.bytesPerPlane) == 0;
 }
 
 static NSImageRep *ProduceThumbnailForVFS(const char *_path,
@@ -277,12 +277,17 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         if(it != m_IconsCache.end())
             meta->filetype = it->second;
     }
-    
+
+    // check if we already have thumbnail built
     if(m_IconsMode == IconModeFileIconsThumbnails && meta->host->IsNativeFS())
-        // check if we already have thumbnail built
         if(NSImageRep *th = QLThumbnailsCache::Instance().ThumbnailIfHas(meta->relative_path))
             meta->thumbnail = th;
  
+    // check if we already have icon built
+    if(m_IconsMode >= IconModeFileIcons && meta->host->IsNativeFS())
+        if(NSImageRep *th = WorkspaceIconsCache::Instance().IconIfHas(meta->relative_path))
+            meta->filetype = th;
+        
     entry.SetCIcon(meta_no+1);
     
     auto sh_this = shared_from_this();
@@ -318,7 +323,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
                     m_IconsCache[_meta->extension] = 0; // to exclude parallel image building
             });
             if( it == m_IconsCache.end() )
-                if(NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]])
+                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]])
                 { // don't know anything about this extension - ok, ask system
                     auto rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
                     if(!IsImageRepEqual([[NSBitmapImageRep alloc] initWithCGImage:[rep CGImageForProposedRect:0 context:0 hints:0]], m_GenericFileIconBitmap))
@@ -352,13 +357,13 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
            CheckFileIsOK(_meta->relative_path.c_str()) // possible redundant call here. not good.
            )
         {
-            CFStringRef item_path = CFStringCreateWithUTF8StdStringNoCopy(_meta->relative_path);
-            NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile: (__bridge NSString*)item_path];
-            _meta->filetype = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
-            
-            CFRelease(item_path);
-            if(m_UpdateCallback)
-                m_UpdateCallback();
+            NSImageRep *icon = WorkspaceIconsCache::Instance().ProduceIcon(_meta->relative_path, m_IconSize.size);
+            if(icon != nil && icon != _meta->filetype)
+            {
+                _meta->filetype = icon;
+                if(m_UpdateCallback)
+                    m_UpdateCallback();
+            }
         }
     }
     else

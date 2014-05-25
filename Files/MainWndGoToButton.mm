@@ -50,8 +50,8 @@ static NSMutableArray *GetFindersFavorites()
         if(urlRef != 0) {
             NSURL* url = (__bridge NSURL*)urlRef;
             
-            if([[url scheme] isEqualToString:@"file"] &&
-               [[url resourceSpecifier] rangeOfString:@".cannedSearch/"].location == NSNotFound)
+            if([url.scheme isEqualToString:@"file"] &&
+               [url.resourceSpecifier rangeOfString:@".cannedSearch/"].location == NSNotFound)
                 [result addObject: url];
             CFRelease(urlRef);
         }
@@ -59,8 +59,7 @@ static NSMutableArray *GetFindersFavorites()
     
 	CFRelease(sflRef);
     
-    if([result count] > 0) return result;
-    return 0;
+    return result.count > 0 ? result : nil;
 }
 
 static NSURL *URLFromCommonPath(CommonPaths::Path _p)
@@ -122,14 +121,14 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
 {
     self = [super initWithFrame:frame];
     if (self) {        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(WillPopUp:)
-                                                     name:@"NSPopUpButtonWillPopUpNotification"
-                                                   object:self];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(WillPopUp:)
+                                                   name:@"NSPopUpButtonWillPopUpNotification"
+                                                 object:self];
         
-        [self setBezelStyle:NSTexturedRoundedBezelStyle];
-        [self setPullsDown:true];
-        [self setRefusesFirstResponder:true];
+        self.bezelStyle = NSTexturedRoundedBezelStyle;
+        self.pullsDown = true;
+        self.refusesFirstResponder = true;
         [self addItemWithTitle:@"Go to"];
         
         // grab user dir only in init, since they won't change (we presume so - if not then user has to close/open Files window)
@@ -143,7 +142,7 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
 
 -(void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (void) SetOwner:(MainWindowFilePanelState*) _owner
@@ -209,19 +208,19 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     }
 }
 
-- (NSString*) path
+- (string) path
 {
-    NSInteger n = [self indexOfSelectedItem] - 1;
-    
-    if(n >= 0 && n < [m_UserDirs count])
-        return [[m_UserDirs objectAtIndex:n] path];
-    else if( n - [m_UserDirs count] - 1 < m_Volumes.size() )
-        return m_Volumes[n - [m_UserDirs count] - 1]->verbose.mounted_at_path;
-    else if( n - [m_UserDirs count] - m_Volumes.size() - 2 < m_OtherPanelsPaths.size())
-        return m_OtherPanelsPaths[n - [m_UserDirs count] - m_Volumes.size() - 2].path;
-    assert(0);
+    NSInteger n = self.indexOfSelectedItem - 1;
+    NSString *s = nil;
+    if(n >= 0 && n < m_UserDirs.count)
+        s = ((NSURL*)[m_UserDirs objectAtIndex:n]).path;
+    else if( n - m_UserDirs.count - 1 < m_Volumes.size() )
+        s = m_Volumes[n - m_UserDirs.count - 1]->verbose.mounted_at_path;
+    else if( n - m_UserDirs.count - m_Volumes.size() - 2 < m_OtherPanelsPaths.size())
+        s = m_OtherPanelsPaths[n - m_UserDirs.count - m_Volumes.size() - 2].path;
 
-    return 0;
+    if(s == nil || s.length == 0 || s.fileSystemRepresentation == nullptr) return "";
+    return s.fileSystemRepresentation;
 }
 
 - (void) WillPopUp:(NSNotification *) notification

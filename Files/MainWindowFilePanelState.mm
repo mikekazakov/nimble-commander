@@ -288,7 +288,7 @@
 - (IBAction)LeftPanelGoToButtonAction:(id)sender
 {
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    [m_LeftPanelController GoToDir:m_LeftPanelGoToButton.path.fileSystemRepresentation
+    [m_LeftPanelController GoToDir:m_LeftPanelGoToButton.path
                                vfs:VFSNativeHost::SharedHost()
                       select_entry:""
                              async:true];
@@ -296,7 +296,7 @@
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    [m_RightPanelController GoToDir:m_RightPanelGoToButton.path.fileSystemRepresentation
+    [m_RightPanelController GoToDir:m_RightPanelGoToButton.path
                                vfs:VFSNativeHost::SharedHost()
                       select_entry:""
                              async:true];

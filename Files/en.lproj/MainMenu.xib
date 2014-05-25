@@ -99,6 +99,15 @@ DQ
                                     <action selector="OnOpenNatively:" target="-1" id="YXv-PR-7Uo"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Open In Opposite Panel" tag="11021" id="jt1-bG-SNx">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="OnFileOpenInOppositePanel:" target="-1" id="DYJ-vB-ePl"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Calculate Folders Sizes" tag="11030" id="GcS-df-Z23">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

@@ -7,6 +7,7 @@
 //
 
 #import "MainWindowFilePanelState+Menu.h"
+#import "ActionsShortcutsManager.h"
 #import "PanelController.h"
 #import "FileDeletionOperation.h"
 #import "FilePanelMainSplitView.h"
@@ -17,6 +18,21 @@
 #import "MainWindowController.h"
 
 @implementation MainWindowFilePanelState (Menu)
+
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+#define TAG(name, str) static const int name = ActionsShortcutsManager::Instance().TagFromAction(str)
+    TAG(tag_file_open_in_opp,         "menu.file.open_in_opposite_panel");
+#undef TAG
+    
+    auto tag = item.tag;
+#define IF(a) else if(tag == a)
+    if(false);
+    IF(tag_file_open_in_opp)        return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.ActivePanelView.item->IsDir();
+#undef IF
+    
+    return true;
+}
 
 - (IBAction)OnMoveToTrash:(id)sender
 {
@@ -52,4 +68,14 @@
     [(MainWindowController*)self.window.delegate RequestTerminal:path];
 }
 
+- (IBAction)OnFileOpenInOppositePanel:(id)sender
+{
+    if(!self.isPanelActive || m_MainSplitView.AnyCollapsedOrOverlayed || !self.ActivePanelView.item || !self.ActivePanelView.item->IsDir()) return;
+    auto cur = self.ActivePanelController == m_LeftPanelController ? m_LeftPanelController : m_RightPanelController;
+    auto opp = self.ActivePanelController == m_LeftPanelController ?  m_RightPanelController : m_LeftPanelController;
+    [opp GoToDir:cur.GetCurrentFocusedEntryFilePathRelativeToHost
+             vfs:cur.VFS
+    select_entry:""
+           async:true];
+}
 @end

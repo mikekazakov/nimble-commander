@@ -20,6 +20,8 @@
 	<string>\r</string>
 	<string>menu.file.open_native</string>
 	<string>⇧\r</string>
+	<string>menu.file.open_in_opposite_panel</string>
+	<string>⌥\r</string>
 	<string>menu.file.calculate_sizes</string>
 	<string>⇧⌥\r</string>
 	<string>menu.file.calculate_all_sizes</string>

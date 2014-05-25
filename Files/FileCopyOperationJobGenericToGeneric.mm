@@ -476,40 +476,30 @@ cleanup:;
 
 bool FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path)
 {
-    int ret = m_DstHost->CreateDirectory(_dest_full_path.c_str(), 0);
-    assert(ret == 0); // handle me later
-    
-    // TODO: existance checking, attributes, error handling and other stuff
-
-//    mkdir(_dest, 0777);
-    
-/*    VFSStat src_stat_buffer;
-    if(m_SrcHost->Stat(_src, src_stat_buffer, 0, 0) < 0)
-        return false;
-    
-    // change unix mode
-    mode_t mode = src_stat_buffer.mode;
-    if((mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0)
-    { // guard against malformed(?) archives
-        mode |= S_IRWXU | S_IRGRP | S_IXGRP;
-    }
-    chmod(_dest, mode);
-    
-    // change flags
-    chflags(_dest, src_stat_buffer.flags);
-    
-    // xattr processing
-    if(m_Options.copy_xattrs)
+    bool res = false;
+    VFSStat dest_st;
+    if(m_DstHost->Stat(_dest_full_path.c_str(), dest_st, VFSHost::F_NoFollow, 0) == 0)
     {
-        shared_ptr<VFSFile> src_file;
-        if(m_SrcHost->CreateFile(_src, src_file, 0) >= 0)
-            if(src_file->Open(VFSFile::OF_Read || VFSFile::OF_ShLock) >= 0)
-                if(src_file->XAttrCount() > 0)
-                    CopyXattrsFn(src_file, _dest);
+        // this directory already exist. currently do nothing, later - update it's attrs.
+        res = true;
+    }
+    else
+    {
+    domkdir:
+        int ret = m_DstHost->CreateDirectory(_dest_full_path.c_str(), 0);
+        if(ret < 0)
+        {
+            if(m_SkipAll) goto end;
+            int result = [[m_Operation OnDestCantCreateDir:VFSError::ToNSError(ret) ForDir:_dest_full_path.c_str()] WaitForResult];
+            if(result == OperationDialogResult::Retry) goto domkdir;
+            if(result == OperationDialogResult::Skip) goto end;
+            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto end;}
+            if(result == OperationDialogResult::Stop)  { RequestStop(); goto end; }
+        }
+        res = true;
     }
     
-    return true;*/
-    return true;
+end:return res;
 }
 
 void FileCopyOperationJobGenericToGeneric::RenameEntry(const path &_src_full_path, const path &_dest_full_path)

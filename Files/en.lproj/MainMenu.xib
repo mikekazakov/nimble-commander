@@ -211,7 +211,7 @@ DQ
                                     <action selector="OnSwapPanels:" target="-1" id="784"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Sync Panels" tag="13030" alternate="YES" keyEquivalent="u" id="779">
+                            <menuItem title="Sync Panels" tag="13030" keyEquivalent="u" id="779">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="OnSyncPanels:" target="-1" id="781"/>

@@ -343,6 +343,9 @@ int VFSNetFTPFile::Close()
     
     if(/*m_CURLM && */m_CURL)
     {
+        
+        // TODO: if file request was canceled, we need to tell curl about it, not waiting until in finishes!!!
+        
         int running_handles = 0;
         while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
         while(running_handles)

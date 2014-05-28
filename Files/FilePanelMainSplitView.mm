@@ -24,9 +24,9 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code here.
-        [self setVertical:true];
-        [self setDividerStyle:NSSplitViewDividerStyleThin];
-        [self setDelegate:self];
+        self.vertical = true;
+        self.dividerStyle = NSSplitViewDividerStyleThin;
+        self.delegate = self;
         m_Prop = 0.5;
     }
     return self;
@@ -39,7 +39,7 @@
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    m_Prop = proposedPosition / [self frame].size.width;
+    m_Prop = proposedPosition / self.frame.size.width;
     
     PanelView *v;
     if(m_BasicViews[0]) v = m_BasicViews[0];
@@ -60,7 +60,7 @@
 
 - (void)splitView:(NSSplitView *)splitView resizeSubviewsWithOldSize:(NSSize)oldSize
 {
-    NSRect newFrame  = [splitView frame];
+    NSRect newFrame  = splitView.frame;
     
     if (newFrame.size.width == oldSize.width) {                 // if the width hasn't changed
         [splitView adjustSubviews];                             // tell sender to adjust subviews
@@ -74,8 +74,8 @@
         
     if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>([v Presentation]))
     {
-        NSRect leftRect  = [[[splitView subviews] objectAtIndex:0] frame];
-        NSRect rightRect = [[[splitView subviews] objectAtIndex:1] frame];
+        NSRect leftRect  = [[splitView.subviews objectAtIndex:0] frame];
+        NSRect rightRect = [[splitView.subviews objectAtIndex:1] frame];
         
         float gran = p->Granularity();
         float center_x = m_Prop * newFrame.size.width;
@@ -84,13 +84,13 @@
         leftRect.origin = NSMakePoint(0, 0);
         leftRect.size.height = newFrame.size.height;
         leftRect.size.width = center_x - rest;
-        [[[splitView subviews] objectAtIndex:0] setFrame:leftRect];
+        [[splitView.subviews objectAtIndex:0] setFrame:leftRect];
         
         rightRect.origin.y = 0;
         rightRect.origin.x = leftRect.size.width + 1;
         rightRect.size.height = newFrame.size.height;
         rightRect.size.width = newFrame.size.width - leftRect.size.width;
-        [[[splitView subviews] objectAtIndex:1] setFrame:rightRect];
+        [[splitView.subviews objectAtIndex:1] setFrame:rightRect];
     }
     else
         [splitView adjustSubviews];
@@ -98,7 +98,7 @@
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    return [splitView frame].size.width - 100;
+    return splitView.frame.size.width - 100;
 }
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
@@ -113,24 +113,21 @@
 
 - (bool) LeftCollapsed
 {
-    auto views = [self subviews];
-    if(views.count == 0) return false;
-    return [self isSubviewCollapsed:[views objectAtIndex:0]];
+    if(self.subviews.count == 0) return false;
+    return [self isSubviewCollapsed:[self.subviews objectAtIndex:0]];
 }
 
 - (bool) RightCollapsed
 {
-    auto views = [self subviews];
-    if(views.count < 2) return false;
-    return [self isSubviewCollapsed:[views objectAtIndex:1]];
+    if(self.subviews.count < 2) return false;
+    return [self isSubviewCollapsed:[self.subviews objectAtIndex:1]];
 }
 
 - (bool) AnyCollapsed
 {
-    auto views = [self subviews];
-    if(views.count == 0) return false;
-    return [self isSubviewCollapsed:[views objectAtIndex:0]] ||
-        [self isSubviewCollapsed:[views objectAtIndex:1]];
+    if(self.subviews.count == 0) return false;
+    return [self isSubviewCollapsed:[self.subviews objectAtIndex:0]] ||
+        [self isSubviewCollapsed:[self.subviews objectAtIndex:1]];
 }
 
 - (bool) AnyCollapsedOrOverlayed
@@ -138,30 +135,28 @@
     if(m_BasicViews[0] != nil || m_BasicViews[1] != nil)
         return true;
     
-    auto views = [self subviews];
-    if(views.count == 0)
+    if(self.subviews.count == 0)
         return false;
-    return [self isSubviewCollapsed:[views objectAtIndex:0]] ||
-        [self isSubviewCollapsed:[views objectAtIndex:1]];
+    return [self isSubviewCollapsed:[self.subviews objectAtIndex:0]] ||
+        [self isSubviewCollapsed:[self.subviews objectAtIndex:1]];
 }
 
 - (void) SwapViews
 {
-    NSView *left = [[self subviews] objectAtIndex:0];
-    NSView *right = [[self subviews] objectAtIndex:1];
+    NSView *left = [self.subviews objectAtIndex:0];
+    NSView *right = [self.subviews objectAtIndex:1];
 
-    NSRect leftrect = [left frame];
-    NSRect rightrect = [right frame];
+    NSRect leftrect = left.frame;
+    NSRect rightrect = right.frame;
     
-    NSArray *views = [NSArray arrayWithObjects:right, left, nil];
-    [self setSubviews:views];
+    self.subviews = @[right, left];
     
-    [left setFrame:rightrect];
-    [right setFrame:leftrect];
+    left.frame = rightrect;
+    right.frame = leftrect;
 
     swap(m_BasicViews[0], m_BasicViews[1]);
-    [m_BasicViews[0] setFrame:leftrect];
-    [m_BasicViews[1] setFrame:rightrect];
+    m_BasicViews[0].frame = leftrect;
+    m_BasicViews[1].frame = rightrect;
 }
 
 - (void) SetBasicViews:(PanelView*)_v1 second:(PanelView*)_v2
@@ -186,17 +181,17 @@
 
 - (void)setLeftOverlay:(NSView*)_o
 {
-    NSRect leftRect = [[[self subviews] objectAtIndex:0] frame];
+    NSRect leftRect = [[self.subviews objectAtIndex:0] frame];
     if(_o != nil)
     {
         [_o setFrame:leftRect];
         if(m_BasicViews[0])
         {
-            [self replaceSubview:[[self subviews] objectAtIndex:0] with:_o];
+            [self replaceSubview:[self.subviews objectAtIndex:0] with:_o];
         }
         else
         {
-            m_BasicViews[0] = [[self subviews] objectAtIndex:0];
+            m_BasicViews[0] = [self.subviews objectAtIndex:0];
             [self replaceSubview:m_BasicViews[0] with:_o];
         }
     }
@@ -204,8 +199,8 @@
     {
         if(m_BasicViews[0] != nil)
         {
-            [m_BasicViews[0] setFrame:leftRect];
-            [self replaceSubview:[[self subviews] objectAtIndex:0] with:m_BasicViews[0]];
+            m_BasicViews[0].frame = leftRect;
+            [self replaceSubview:[self.subviews objectAtIndex:0] with:m_BasicViews[0]];
             m_BasicViews[0] = nil;
         }
     }
@@ -213,18 +208,18 @@
 
 - (void)setRightOverlay:(NSView*)_o
 {
-    NSRect rightRect = [[[self subviews] objectAtIndex:1] frame];
+    NSRect rightRect = [[self.subviews objectAtIndex:1] frame];
     if(_o != nil)
     {
         [_o setFrame:rightRect];
         
         if(m_BasicViews[1])
         {
-            [self replaceSubview:[[self subviews] objectAtIndex:1] with:_o];
+            [self replaceSubview:[self.subviews objectAtIndex:1] with:_o];
         }
         else
         {
-            m_BasicViews[1] = [[self subviews] objectAtIndex:1];
+            m_BasicViews[1] = [self.subviews objectAtIndex:1];
             [self replaceSubview:m_BasicViews[1] with:_o];
         }
     }
@@ -232,12 +227,11 @@
     {
         if(m_BasicViews[1] != nil)
         {
-            [m_BasicViews[1] setFrame:rightRect];
-            [self replaceSubview:[[self subviews] objectAtIndex:1] with:m_BasicViews[1]];
+            m_BasicViews[1].frame = rightRect;
+            [self replaceSubview:[self.subviews objectAtIndex:1] with:m_BasicViews[1]];
             m_BasicViews[1] = nil;
         }
     }
-//    [[[self subviews] objectAtIndex:1] setFrame:rightRect];
 }
 
 - (bool) AnyOverlayed
@@ -262,6 +256,86 @@
         return true;
     
     return [self isSubviewCollapsed:_v];
+}
+
+- (void)keyDown:(NSEvent *)event
+{
+    NSString* characters = event.charactersIgnoringModifiers;
+    if ( characters.length != 1 ) {
+        [super keyDown:event];
+        return;
+    }
+    
+    auto mod = event.modifierFlags;
+    mod &= ~NSAlphaShiftKeyMask;
+    mod &= ~NSNumericPadKeyMask;
+    mod &= ~NSFunctionKeyMask;
+    auto unicode = [characters characterAtIndex:0];
+    
+    if(unicode == NSLeftArrowFunctionKey &&
+       ((mod & NSDeviceIndependentModifierFlagsMask) == NSControlKeyMask ||
+        (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask)) &&
+       !self.AnyCollapsed)
+    {
+        NSView *v1 = [self.subviews objectAtIndex:0];
+        NSView *v2 = [self.subviews objectAtIndex:1];
+        NSRect left  = v1.frame;
+        NSRect right = v2.frame;
+        
+        auto gran = self.granularityForKeyResizing;
+  
+        left.size.width -= gran;
+        right.origin.x -= gran;
+        right.size.width += gran;
+        if(left.size.width < 0)
+        {
+            right.origin.x -= left.size.width;
+            right.size.width += left.size.width;
+            left.size.width = 0;
+        }
+        v1.frame = left;
+        v2.frame = right;
+        return;
+    }
+    else if(unicode == NSRightArrowFunctionKey &&
+            ((mod & NSDeviceIndependentModifierFlagsMask) == NSControlKeyMask ||
+             (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask)) &&
+            !self.AnyCollapsed)
+    {
+        NSView *v1 = [self.subviews objectAtIndex:0];
+        NSView *v2 = [self.subviews objectAtIndex:1];
+        NSRect left  = v1.frame;
+        NSRect right = v2.frame;
+        
+        auto gran = self.granularityForKeyResizing;
+        
+        left.size.width += gran;
+        right.origin.x += gran;
+        right.size.width -= gran;
+        if(right.size.width < 0)
+        {
+            left.size.width += right.size.width;
+            right.origin.x -= right.size.width;
+            right.size.width = 0;
+        }
+        v1.frame = left;
+        v2.frame = right;
+        return;
+    }
+    
+    [super keyDown:event];
+}
+
+- (double) granularityForKeyResizing
+{
+    PanelView *v;
+    if(m_BasicViews[0]) v = m_BasicViews[0];
+    else if(m_BasicViews[1]) v = m_BasicViews[1];
+    else v = (PanelView *)[self.subviews objectAtIndex:0];
+    
+    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(v.Presentation))
+        return p->Granularity();
+    return 14.;
 }
 
 @end

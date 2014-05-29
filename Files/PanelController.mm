@@ -178,33 +178,33 @@ void panel::GenericCursorPersistance::Restore()
     return self.state.window;
 }
 
-- (void) LoadViewState:(NSDictionary *)_state
+- (void) setOptions:(NSDictionary *)options
 {
     auto hard_filtering = m_Data.HardFiltering();
-    hard_filtering.show_hidden = [[_state valueForKey:@"ViewHiddenFiles"] boolValue];
+    hard_filtering.show_hidden = [[options valueForKey:@"ViewHiddenFiles"] boolValue];
     [self ChangeHardFilteringTo:hard_filtering];
     
     auto sort_mode = m_Data.SortMode();
-    sort_mode.sep_dirs = [[_state valueForKey:@"SeparateDirectories"] boolValue];
-    sort_mode.case_sens = [[_state valueForKey:@"CaseSensitiveComparison"] boolValue];
-    sort_mode.numeric_sort = [[_state valueForKey:@"NumericSort"] boolValue];
-    sort_mode.sort = (PanelSortMode::Mode)[[_state valueForKey:@"SortMode"] integerValue];
+    sort_mode.sep_dirs = [[options valueForKey:@"SeparateDirectories"] boolValue];
+    sort_mode.case_sens = [[options valueForKey:@"CaseSensitiveComparison"] boolValue];
+    sort_mode.numeric_sort = [[options valueForKey:@"NumericSort"] boolValue];
+    sort_mode.sort = (PanelSortMode::Mode)[[options valueForKey:@"SortMode"] integerValue];
     [self ChangeSortingModeTo:sort_mode];
-                                      
-    m_View.type = (PanelViewType)[[_state valueForKey:@"ViewMode"] integerValue];
+    
+    m_View.type = (PanelViewType)[[options valueForKey:@"ViewMode"] integerValue];
 }
 
-- (NSDictionary *) SaveViewState
+- (NSDictionary*) options
 {
     auto mode = m_Data.SortMode();
     return [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
-        [NSNumber numberWithBool:(m_Data.HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
-        [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
-        [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
-        [NSNumber numberWithInt:(int)m_View.type], @"ViewMode",
-        [NSNumber numberWithInt:(int)mode.sort], @"SortMode",
-        nil];
+            [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
+            [NSNumber numberWithBool:(m_Data.HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
+            [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
+            [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
+            [NSNumber numberWithInt:(int)m_View.type], @"ViewMode",
+            [NSNumber numberWithInt:(int)mode.sort], @"SortMode",
+            nil];
 }
 
 - (bool) isActive
@@ -236,7 +236,6 @@ void panel::GenericCursorPersistance::Restore()
     pers.Restore();
     
     [m_View setNeedsDisplay:true];
-    [self.state SavePanelsSettings];
 }
 
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter
@@ -248,7 +247,6 @@ void panel::GenericCursorPersistance::Restore()
     pers.Restore();
     
     [m_View setNeedsDisplay:true];
-    [self.state SavePanelsSettings];
 }
 
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev
@@ -256,6 +254,7 @@ void panel::GenericCursorPersistance::Restore()
     PanelSortMode mode = m_Data.SortMode(); // we don't want to change anything in sort params except the mode itself
     mode.sort = mode.sort != _direct ? _direct : _rev;
     [self ChangeSortingModeTo:mode];
+    [self.state savePanelOptionsFor:self];
 }
 
 - (void) ResetUpdatesObservation:(string)_new_path

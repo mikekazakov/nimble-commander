@@ -68,8 +68,7 @@ class PanelData;
 
 - (void) AddOperation:(Operation*)_operation;
 
-- (void)LoadPanelsSettings;
-- (void)SavePanelsSettings;
+- (void) savePanelOptionsFor:(PanelController*)_pc;
 
 - (PanelData*) ActivePanelData;
 - (PanelController*) ActivePanelController;

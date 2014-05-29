@@ -309,21 +309,25 @@
     auto filtering = m_Data.HardFiltering();
     filtering.show_hidden = !filtering.show_hidden;
     [self ChangeHardFilteringTo:filtering];
+    [self.state savePanelOptionsFor:self];
 }
 - (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.sep_dirs = !mode.sep_dirs;
     [self ChangeSortingModeTo:mode];
+    [self.state savePanelOptionsFor:self];
 }
 - (IBAction)ToggleCaseSensitiveComparison:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.case_sens = !mode.case_sens;
     [self ChangeSortingModeTo:mode];
+    [self.state savePanelOptionsFor:self];
 }
 - (IBAction)ToggleNumericComparison:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.numeric_sort = !mode.numeric_sort;
     [self ChangeSortingModeTo:mode];
+    [self.state savePanelOptionsFor:self];
 }
 - (IBAction)ToggleSortByName:(id)sender{
     [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];
@@ -342,19 +346,19 @@
 }
 - (IBAction)ToggleShortViewMode:(id)sender {
     m_View.type = PanelViewType::ViewShort;
-    [self.state SavePanelsSettings];
+    [self.state savePanelOptionsFor:self];
 }
 - (IBAction)ToggleMediumViewMode:(id)sender {
     m_View.type = PanelViewType::ViewMedium;
-    [self.state SavePanelsSettings];
+    [self.state savePanelOptionsFor:self];
 }
 - (IBAction)ToggleFullViewMode:(id)sender{
     m_View.type = PanelViewType::ViewFull;
-    [self.state SavePanelsSettings];
+    [self.state savePanelOptionsFor:self];
 }
 - (IBAction)ToggleWideViewMode:(id)sender{
     m_View.type = PanelViewType::ViewWide;
-    [self.state SavePanelsSettings];
+    [self.state savePanelOptionsFor:self];
 }
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender {

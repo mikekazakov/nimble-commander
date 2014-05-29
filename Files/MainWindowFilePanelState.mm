@@ -39,6 +39,9 @@
 #import "MyToolbar.h"
 #import "common_paths.h"
 
+static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
+static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
+
 @implementation MainWindowFilePanelState
 
 @synthesize OperationsController = m_OperationsController;
@@ -78,7 +81,8 @@
             [m_RightPanelController.view SetPresentation:new ClassicPanelViewPresentation];
         }
         
-        [self LoadPanelsSettings];
+        m_LeftPanelController.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
+        m_RightPanelController.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
 
         // now load data into panels, on any fails - go into home dir
         NSString *lp = [defaults stringForKey:@"FirstPanelPath"];
@@ -416,18 +420,18 @@
     window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
 }
 
-- (void)LoadPanelsSettings
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [m_LeftPanelController LoadViewState:[defaults dictionaryForKey:@"FilePanelsLeftPanelViewState"]];
-    [m_RightPanelController LoadViewState:[defaults dictionaryForKey:@"FilePanelsRightPanelViewState"]];
-}
-
 - (void)SavePanelsSettings
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:[m_LeftPanelController SaveViewState] forKey:@"FilePanelsLeftPanelViewState"];
-    [defaults setObject:[m_RightPanelController SaveViewState] forKey:@"FilePanelsRightPanelViewState"];
+    [self savePanelOptionsFor:m_LeftPanelController];
+    [self savePanelOptionsFor:m_RightPanelController];
+}
+
+- (void) savePanelOptionsFor:(PanelController*)_pc
+{
+    if(_pc == m_LeftPanelController)
+        [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsLeftOptions];
+    else if(_pc == m_RightPanelController)
+        [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsRightOptions];
 }
 
 - (IBAction)OnSyncPanels:(id)sender{

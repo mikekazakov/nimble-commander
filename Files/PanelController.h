@@ -121,11 +121,10 @@ namespace panel
 @property (nonatomic, readonly) PanelData& data;
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) NSWindow* window;
+@property (nonatomic) NSDictionary* options;
 
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
                     share:(NSButton*)_share;
-- (void) LoadViewState:(NSDictionary *)_state;
-- (NSDictionary *) SaveViewState;
 - (void) RefreshDirectory; // user pressed cmd+r by default
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 

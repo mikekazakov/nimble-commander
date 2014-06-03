@@ -16,6 +16,7 @@
 #import "BriefSystemOverview.h"
 #import "ActionsShortcutsManager.h"
 #import "FTPConnectionSheetController.h"
+#import "FileCopyOperation.h"
 
 static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
@@ -607,6 +608,49 @@ void panel::GenericCursorPersistance::Restore()
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos
 {
     [self HandleGoIntoDirOrOpenInSystem];
+}
+
+- (bool) PanelViewWantsRenameFieldEditor:(PanelView*)_view
+{
+    if(_view.item == nil ||
+       _view.item->IsDotDot() ||
+       !self.VFS->IsWriteable())
+        return false;
+    return true;
+}
+
+- (void) PanelViewRenamingFieldEditorFinished:(PanelView*)_view text:(NSString*)_filename
+{
+    if(_filename == nil ||
+       _filename.length == 0 ||
+       _filename.fileSystemRepresentation == nullptr ||
+       [_filename rangeOfString:@"/"].location != NSNotFound ||
+       [_filename isEqualToString:@"."] ||
+       [_filename isEqualToString:@".."] ||
+       !m_View.item ||
+       m_View.item->IsDotDot() ||
+       [_filename isEqualToString:m_View.item->NSName()])
+        return;
+    
+    FileCopyOperationOptions opts;
+    opts.docopy = false;
+    
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    if(self.VFS->IsNativeFS())
+        op = [op initWithFiles:chained_strings(m_View.item->Name())
+                          root:self.GetCurrentDirectoryPathRelativeToHost.c_str()
+                          dest:_filename.fileSystemRepresentation
+                       options:opts];
+    else if( self.VFS->IsWriteable() )
+        op = [op initWithFiles:chained_strings(m_View.item->Name())
+                          root:self.GetCurrentDirectoryPathRelativeToHost.c_str()
+                        srcvfs:self.VFS
+                          dest:_filename.fileSystemRepresentation
+                        dstvfs:self.VFS
+                       options:opts];
+    else
+        return;
+    [self.state AddOperation:op];
 }
 
 - (void) HandleFTPConnection

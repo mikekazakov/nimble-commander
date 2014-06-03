@@ -265,3 +265,16 @@ void PanelViewPresentation::UpdateStatFS()
         });
     }
 }
+
+int PanelViewPresentation::GetNumberOfItemColumns() const
+{
+    switch(m_State->ViewType)
+    {
+        case PanelViewType::ViewShort: return 3;
+        case PanelViewType::ViewMedium: return 2;
+        case PanelViewType::ViewWide: return 1;
+        case PanelViewType::ViewFull: return 1;
+    }
+    assert(0);
+    return 0;
+}

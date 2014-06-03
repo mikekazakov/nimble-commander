@@ -18,9 +18,8 @@ enum class PanelViewType
 
 struct PanelViewState
 {
-    PanelData       *Data       {nullptr};
-    int             CursorPos   {-1};
-    PanelViewType   ViewType    {PanelViewType::ViewMedium};
-    bool            Active      {false};
-    int             ItemsDisplayOffset {0};
+    PanelData       *Data        = nullptr;
+    int             CursorPos    = -1;
+    PanelViewType   ViewType     = PanelViewType::ViewMedium;
+    int             ItemsDisplayOffset  = 0;
 };

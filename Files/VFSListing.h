@@ -63,6 +63,9 @@ public:
     virtual const char     *Name()      const { return ""; }
     virtual size_t          NameLen()   const { return strlen(Name()); }
     virtual CFStringRef     CFName()    const { return CFSTR(""); }
+#ifdef __OBJC__
+    inline  NSString*       NSName()    const { return (__bridge NSString*)CFName(); }
+#endif
     virtual uint64_t        Size()      const { return 0; }
     virtual uint64_t        Inode()     const { return 0; }
     virtual time_t          ATime()     const { return 0; }

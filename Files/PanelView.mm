@@ -28,7 +28,6 @@ struct PanelViewStateStorage
     string focused_item;
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////
 
 @implementation PanelView
@@ -40,6 +39,9 @@ struct PanelViewStateStorage
     
     std::map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
     
+    NSScrollView               *m_RenamingEditor; // NSTextView inside
+    
+    
     double                      m_ScrollDY;
     
     bool                        m_ReadyToDrag;
@@ -47,7 +49,38 @@ struct PanelViewStateStorage
     bool                        m_DraggingIntoMe;
     bool                        m_IsCurrentlyMomentumScroll;
     bool                        m_DisableCurrentMomentumScroll;
+    int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
     __weak id<PanelViewDelegate> m_Delegate;
+}
+
+
+- (id)initWithFrame:(NSRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        m_KeysModifiersFlags = 0;
+        m_DraggingIntoMe = false;
+        m_ScrollDY = 0.0;
+        m_DisableCurrentMomentumScroll = false;
+        m_IsCurrentlyMomentumScroll = false;
+        m_LastPotentialRenamingLBDown = -1;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(frameDidChange)
+                                                     name:NSViewFrameDidChangeNotification
+                                                   object:self];
+        [self frameDidChange];
+        
+    }
+    
+    return self;
+}
+
+-(void) dealloc
+{
+    m_State.Data = nullptr;
+    delete m_Presentation;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void) setDelegate:(id<PanelViewDelegate>)delegate
@@ -88,14 +121,14 @@ struct PanelViewStateStorage
 
 - (BOOL)becomeFirstResponder
 {
-    m_State.Active = true;
     [self setNeedsDisplay:true];
     return YES;
 }
 
 - (BOOL)resignFirstResponder
 {
-    m_State.Active = false;
+    m_ReadyToDrag = false;
+    m_LastPotentialRenamingLBDown = -1;
     [self setNeedsDisplay:true];
     return YES;
 }
@@ -114,41 +147,13 @@ struct PanelViewStateStorage
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
-    if(_wnd == nil && m_State.Active == true)
+    if(_wnd == nil && self.active == true)
         [self resignFirstResponder];
 }
 
 - (bool)active
 {
-    return m_State.Active;
-}
-
-- (id)initWithFrame:(NSRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        m_KeysModifiersFlags = 0;
-        m_DraggingIntoMe = false;
-        m_ScrollDY = 0.0;
-        m_DisableCurrentMomentumScroll = false;
-        m_IsCurrentlyMomentumScroll = false;
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(frameDidChange)
-                                                     name:NSViewFrameDidChangeNotification
-                                                   object:self];
-        [self frameDidChange];
-        
-    }
-    
-    return self;
-}
-
--(void) dealloc
-{
-    m_State.Data = nullptr;
-    delete m_Presentation;
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    return self.window == nil ? false : self.window.firstResponder == self;
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -159,7 +164,14 @@ struct PanelViewStateStorage
     if(m_DraggingIntoMe) {
         [NSGraphicsContext saveGraphicsState];
         NSSetFocusRingStyle(NSFocusRingOnly);
-        [[NSBezierPath bezierPathWithRect:NSInsetRect([self bounds],2,2)] fill];
+        [[NSBezierPath bezierPathWithRect:NSInsetRect(self.bounds,2,2)] fill];
+        [NSGraphicsContext restoreGraphicsState];
+    }
+    
+    if(m_RenamingEditor) {
+        [NSGraphicsContext saveGraphicsState];
+        NSSetFocusRingStyle(NSFocusRingOnly);
+        [[NSBezierPath bezierPathWithRect:m_RenamingEditor.frame] fill];
         [NSGraphicsContext restoreGraphicsState];
     }
 }
@@ -168,6 +180,8 @@ struct PanelViewStateStorage
 {
     if (m_Presentation)
         m_Presentation->OnFrameChanged([self frame]);
+    if(m_RenamingEditor)
+        [self.window makeFirstResponder:self];
 }
 
 - (void) SetPanelData: (PanelData*) _data
@@ -411,19 +425,16 @@ struct PanelViewStateStorage
 
 - (void) mouseDown:(NSEvent *)_event
 {
-    if (!m_State.Active)
-        if(id<PanelViewDelegate> del = self.delegate)
-            if([del respondsToSelector:@selector(PanelViewRequestsActivation:)])
-                [del PanelViewRequestsActivation:self];
+    m_LastPotentialRenamingLBDown = -1;
     
-    NSPoint event_location = [_event locationInWindow];
-    NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
     
+    int old_cursor_pos = m_State.CursorPos;
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
     if (cursor_pos == -1) return;
     
     NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
-    if ((modifier_flags & NSShiftKeyMask) == NSShiftKeyMask)
+    if(modifier_flags & NSShiftKeyMask)
     {
         // Select range of items with shift+click.
         // If clicked item is selected, then deselect the range instead.
@@ -439,7 +450,7 @@ struct PanelViewStateStorage
     
     m_Presentation->SetCursorPos(cursor_pos);
     
-    if ((modifier_flags & NSCommandKeyMask) == NSCommandKeyMask)
+    if(modifier_flags & NSCommandKeyMask)
     {
         // Select or deselect a single item with cmd+click.
         const auto *entry = self.item;
@@ -449,10 +460,21 @@ struct PanelViewStateStorage
                              select:select];
     }
     
-    [self OnCursorPositionChanged];
+    if(old_cursor_pos != cursor_pos)
+    {
+        [self OnCursorPositionChanged];
+    }
+    else
+    {
+        // need more complex logic here
+        m_LastPotentialRenamingLBDown = cursor_pos;
+    }
 
-    m_ReadyToDrag = true;
-    m_LButtonDownPos = local_point;
+    if(self.active)
+    {
+        m_ReadyToDrag = true;
+        m_LButtonDownPos = local_point;
+    }
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)_event
@@ -463,9 +485,7 @@ struct PanelViewStateStorage
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
     if (cursor_pos >= 0)
-        if(id<PanelViewDelegate> del = self.delegate)
-            if([del respondsToSelector:@selector(PanelViewRequestsContextMenu:)])
-                return [del PanelViewRequestsContextMenu:self];
+        return [self.delegate PanelViewRequestsContextMenu:self];
     return nil;
 }
 
@@ -482,38 +502,38 @@ struct PanelViewStateStorage
         
         if(dist > 5)
         {
-            if(id<PanelViewDelegate> del = self.delegate)
-                if([del respondsToSelector:@selector(PanelViewWantsDragAndDrop:event:)])
-                    [del PanelViewWantsDragAndDrop:self event:_event];
-        
+            [self.delegate PanelViewWantsDragAndDrop:self event:_event];
             m_ReadyToDrag = false;
+            m_LastPotentialRenamingLBDown = -1;
         }
     }
 }
 
 - (void) mouseUp:(NSEvent *)_event
 {
-    m_ReadyToDrag = false;
-    
-    if ([_event clickCount] == 2)
+    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
+    if(_event.clickCount == 2) // Handle double click mouse up
     {
-        // Handle double click.
-        NSPoint event_location = [_event locationInWindow];
-        NSPoint local_point = [self convertPoint:event_location fromView:nil];
-        
-        int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
-        if (cursor_pos < 0 || cursor_pos != m_State.CursorPos)
-            return;
-        
-        if(id<PanelViewDelegate> del = self.delegate)
-            if([del respondsToSelector:@selector(PanelViewDoubleClick:atElement:)])
-                [del PanelViewDoubleClick:self atElement:cursor_pos];
+        if(cursor_pos >= 0 && cursor_pos != m_State.CursorPos)
+            [self.delegate PanelViewDoubleClick:self atElement:cursor_pos];
     }
+    else if(_event.clickCount <= 1 )
+    {
+        if(m_LastPotentialRenamingLBDown >= 0)
+        {
+            if(cursor_pos >= 0 && cursor_pos == m_LastPotentialRenamingLBDown)
+                [self startFieldEditorRenaming:_event];
+        }
+    }
+
+    m_ReadyToDrag = false;
+    m_LastPotentialRenamingLBDown = -1;
 }
 
 - (void)scrollWheel:(NSEvent *)_event
 {
-    if (!m_State.Active) // will react only on active panels
+    if (!self.active) // will react only on active panels
         return;
     
     if(m_DisableCurrentMomentumScroll == true &&
@@ -579,6 +599,8 @@ struct PanelViewStateStorage
 {
     m_State.ViewType = _type;
     if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
+    if(m_RenamingEditor)
+        [self.window makeFirstResponder:self];
     [self setNeedsDisplay:true];
 }
 
@@ -705,5 +727,75 @@ struct PanelViewStateStorage
             return [del PanelViewPerformDragOperation:self sender:sender];
     return NO;
 }
+
+- (void)startFieldEditorRenaming:(NSEvent*)_event
+{
+    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
+    if (cursor_pos < 0 || cursor_pos != m_State.CursorPos)
+        return;
+    
+    if(![self.delegate PanelViewWantsRenameFieldEditor:self])
+        return;
+    
+    m_RenamingEditor = [NSScrollView new];
+    m_RenamingEditor.borderType = NSNoBorder;
+    m_RenamingEditor.hasVerticalScroller = false;
+    m_RenamingEditor.hasHorizontalScroller = false;
+    m_RenamingEditor.autoresizingMask = NSViewNotSizable;
+    m_RenamingEditor.verticalScrollElasticity = NSScrollElasticityNone;
+    m_RenamingEditor.horizontalScrollElasticity = NSScrollElasticityNone;
+    
+    NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    tv.delegate = self;
+    tv.fieldEditor = true;
+    tv.string = self.item->NSName().copy;
+    tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
+    tv.verticallyResizable = false;
+    tv.horizontallyResizable = true;
+    tv.autoresizingMask = NSViewWidthSizable;
+    tv.textContainer.widthTracksTextView = true;
+    tv.textContainer.heightTracksTextView = true;
+    tv.richText = false;
+    tv.importsGraphics = false;
+    tv.allowsImageEditing = false;
+    tv.automaticQuoteSubstitutionEnabled = false;
+    tv.automaticLinkDetectionEnabled = false;
+    tv.continuousSpellCheckingEnabled = false;
+    tv.grammarCheckingEnabled = false;
+    NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
+    ps.lineBreakMode = NSLineBreakByClipping;
+    tv.defaultParagraphStyle = ps;
+    
+    m_RenamingEditor.documentView = tv;
+    
+    m_Presentation->SetupFieldRenaming(m_RenamingEditor, cursor_pos);
+
+    [self addSubview:m_RenamingEditor];
+    [self.window makeFirstResponder:m_RenamingEditor];
+}
+
+- (BOOL)textShouldEndEditing:(NSText *)textObject
+{
+    assert(m_RenamingEditor != nil);
+    NSTextView *tv = m_RenamingEditor.documentView;
+    [self.delegate PanelViewRenamingFieldEditorFinished:self text:tv.string];
+    return true;
+}
+
+- (void)textDidEndEditing:(NSNotification *)notification
+{
+    [m_RenamingEditor removeFromSuperview];
+    m_RenamingEditor = nil;
+    
+    if(self.window.firstResponder == nil || self.window.firstResponder == self.window)
+        [self.window makeFirstResponder:self];
+}
+
+- (NSArray *)textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index
+{
+    return nil;
+}
+
 
 @end

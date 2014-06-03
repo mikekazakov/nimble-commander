@@ -41,10 +41,13 @@ public:
     // Calculates cursor postion which corresponds to the point in view.
     // Returns -1 if point is out of the files' view area.
     virtual int GetItemIndexByPointInView(CGPoint _point) = 0;
+
+    virtual NSRect ItemRect(int _item_index) const = 0;
+    virtual NSRect ItemFilenameRect(int _item_index) const = 0;
     
-    virtual int GetNumberOfItemColumns() = 0;
-    virtual int GetMaxItemsPerColumn() = 0;
-    int GetMaxVisibleItems();
+    virtual void SetupFieldRenaming(NSScrollView *_editor, int _item_index) = 0;
+    
+
     
     /**
      * Return a height of a single file item. So this height*number_of_items_vertically should be something like height of a view minus decors.
@@ -52,6 +55,9 @@ public:
     virtual double GetSingleItemHeight() = 0;
     
 protected:
+    virtual int GetMaxItemsPerColumn() const = 0;
+    int GetNumberOfItemColumns() const;
+    int GetMaxVisibleItems();    
     void SetViewNeedsDisplay();
     
     inline const VFSStatFS &StatFS() const { return m_StatFS; }

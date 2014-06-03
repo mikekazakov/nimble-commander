@@ -275,11 +275,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     assert(m_State->CursorPos < (int)m_State->Data->SortedDirectoryEntries().size());
     assert(m_State->ItemsDisplayOffset >= 0);
     
-    auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
     auto &entries = m_State->Data->DirectoryEntries();
     const int items_per_column = GetMaxItemsPerColumn();
-    const int max_items = (int)sorted_entries.size();
     const int columns_count = GetNumberOfItemColumns();
+    const bool active = View().active;
     
     ///////////////////////////////////////////////////////////////////////////////
     // Clear view background.
@@ -314,13 +313,13 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     // Header
     string panelpath = m_State->Data->VerboseDirectoryFullPath();
-    m_Header->Draw(panelpath, m_State->Active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
+    m_Header->Draw(panelpath, active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
     
     // Footer
     m_ItemsFooter->Draw(View().item,
                         m_State->Data->Stats(),
                         m_State->ViewType,
-                        m_State->Active,
+                        active,
                         m_ItemsArea.origin.y + m_ItemsArea.size.height,
                         m_ItemsArea.size.width);
     
@@ -369,19 +368,13 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         for (; count < items_per_column; ++count, ++i)
         {
             const double item_start_y = start_y + count*m_LineHeight;
-            const VFSListingItem *item = nullptr;
-            auto raw_index = 0;
-            
-            if (i < max_items) {
-                raw_index = sorted_entries[i];
-                item = &entries[raw_index];
-            }
+            const VFSListingItem *item = m_State->Data->EntryAtSortPosition(i);
             
             // Draw background.
             if (item && item->CFIsSelected())
             {
                 // Draw selected item.
-                if (m_State->Active)
+                if (active)
                 {
                     int offset = (m_State->CursorPos == i) ? 2 : 1;
                     CGContextSetFillColorWithColor(context, m_ActiveSelectedItemBackgroundColor);
@@ -408,7 +401,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             if (!item) continue;
             
             // Draw as cursor item (only if panel is active).
-            if (m_State->CursorPos == i && m_State->Active)
+            if (m_State->CursorPos == i && active)
                 DrawCursor(context, NSMakeRect(start_x + 1.5,
                                                item_start_y + 1.5,
                                                column_width - 3, m_LineHeight - 2));
@@ -427,7 +420,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                        m_FontHeight);
             
             // Draw stats columns for specific views.
-            NSDictionary *item_text_attr = (m_State->Active && item->CFIsSelected()) ? m_ActiveSelectedItemTextAttr : m_ItemTextAttr;
+            NSDictionary *item_text_attr = (active && item->CFIsSelected()) ? m_ActiveSelectedItemTextAttr : m_ItemTextAttr;
             int spec_col_x = m_ItemsArea.size.width;
             if (m_State->ViewType == PanelViewType::ViewFull)
             {
@@ -436,7 +429,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_TimeColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 NSString *time_str = FormHumanReadableShortTime(item->MTime());
-                NSDictionary *attr = m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
+                NSDictionary *attr = active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
                 NSRect time_str_real_rc = [time_str boundingRectWithSize:NSMakeSize(10000, 100)
                                                                  options:0
                                                               attributes:attr];
@@ -456,7 +449,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_DateColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 NSString *date_str = FormHumanReadableShortDate(item->MTime());
-                attr = m_State->Active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
+                attr = active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
                 NSRect date_str_real_rc = [date_str boundingRectWithSize:NSMakeSize(10000, 100)
                                                                  options:0
                                                               attributes:attr];
@@ -479,7 +472,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 
                 [SizeToString6(*item) drawWithRect:size_rect
                                            options:0
-                                        attributes:m_State->Active && item->CFIsSelected() ?
+                                        attributes:active && item->CFIsSelected() ?
                                                     m_ActiveSelectedSizeColumnTextAttr :
                                                     m_SizeColumnTextAttr];
                 
@@ -488,10 +481,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 
             // Draw item text.
             if(rect.size.width > 0)
-                [(__bridge NSString *)item->CFName() drawWithRect:rect options:0 attributes:item_text_attr];
+                [item->NSName() drawWithRect:rect options:0 attributes:item_text_attr];
             
             // Draw icon
-            NSImageRep *image_rep = m_IconCache->ImageFor(raw_index, (VFSListing&)entries); // UGLY anti-const hack
+            NSImageRep *image_rep = m_IconCache->ImageFor(m_State->Data->RawIndexForSortIndex(i), (VFSListing&)entries); // UGLY anti-const hack
             [image_rep drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0],
                                              item_start_y + floor((m_LineHeight - icon_size) / 2. + 0.5),
                                              icon_size,
@@ -619,20 +612,30 @@ int ModernPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
     return m_State->ItemsDisplayOffset + file_number;
 }
 
-int ModernPanelViewPresentation::GetNumberOfItemColumns()
+NSRect ModernPanelViewPresentation::ItemRect(int _item_index) const
 {
-    switch(m_State->ViewType)
-    {
-        case PanelViewType::ViewShort: return 3;
-        case PanelViewType::ViewMedium: return 2;
-        case PanelViewType::ViewWide: return 1;
-        case PanelViewType::ViewFull: return 1;
-    }
-    assert(0);
-    return 0;
+    const int columns = GetNumberOfItemColumns();
+    const int entries_in_column = GetMaxItemsPerColumn();
+    const int max_files_to_show = entries_in_column * columns;
+    if(_item_index < m_State->ItemsDisplayOffset)
+        return NSMakeRect(0, 0, -1, -1);
+    const int scrolled_index = _item_index - m_State->ItemsDisplayOffset;
+    if(scrolled_index >= max_files_to_show)
+        return NSMakeRect(0, 0, -1, -1);
+    const int column = scrolled_index / entries_in_column;
+    const int row = scrolled_index % entries_in_column;
+    const double column_width = floor((m_ItemsArea.size.width - (columns - 1))/columns);
+    const double row_height   = m_LineHeight;
+    
+    return NSMakeRect(column * (column_width + 1), row * row_height + m_ItemsArea.origin.y, column_width, row_height);
 }
 
-int ModernPanelViewPresentation::GetMaxItemsPerColumn()
+NSRect ModernPanelViewPresentation::ItemFilenameRect(int _item_index) const
+{
+    return ItemRect(_item_index); // temp
+}
+
+int ModernPanelViewPresentation::GetMaxItemsPerColumn() const
 {
     return m_ItemsPerColumn;
 }
@@ -640,7 +643,6 @@ int ModernPanelViewPresentation::GetMaxItemsPerColumn()
 void ModernPanelViewPresentation::OnDirectoryChanged()
 {
     m_IconCache->Flush();
-//    m_IconCache->OnDirectoryChanged(m_State->Data);
 }
 
 double ModernPanelViewPresentation::GetSingleItemHeight()
@@ -656,4 +658,29 @@ void ModernPanelViewPresentation::DrawCursor(CGContextRef _context, NSRect _rc)
     CGContextSetStrokeColorWithColor(_context, m_CursorFrameColor);
     CGContextStrokeRect(_context, _rc);
     CGContextRestoreGState(_context);
+}
+
+void ModernPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int _item_index)
+{
+    NSRect rc = ItemRect(_item_index);
+    auto line_padding = 2.;
+    
+    double d = m_IconCache->IconSize() + 2*g_TextInsetsInLine[0];
+    rc.origin.x += d - line_padding;
+    rc.size.width -= d;
+    rc.size.width += line_padding - g_TextInsetsInLine[2];
+    rc.size.height -= g_TextInsetsInLine[1];
+    rc.origin.y += g_TextInsetsInLine[1];
+    if (m_State->ViewType == PanelViewType::ViewFull)
+        rc.size.width -= m_DateColumnWidth + m_TimeColumnWidth;
+    if(m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull)
+        rc.size.width -= m_SizeColumWidth;
+    
+    _editor.frame = rc;
+
+    NSTextView *tv = _editor.documentView;
+    tv.font = m_Font;
+    tv.maxSize = NSMakeSize(FLT_MAX, rc.size.height);
+    tv.textContainerInset = NSMakeSize(0, 0);
+    tv.textContainer.lineFragmentPadding = line_padding;
 }

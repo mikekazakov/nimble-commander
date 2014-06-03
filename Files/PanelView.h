@@ -28,9 +28,12 @@ class PanelViewPresentation;
 - (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)_event;
 
+- (bool) PanelViewWantsRenameFieldEditor:(PanelView*)_view;
+- (void) PanelViewRenamingFieldEditorFinished:(PanelView*)_view text:(NSString*)_filename;
+
 @end
 
-@interface PanelView : NSView<NSDraggingDestination>
+@interface PanelView : NSView<NSDraggingDestination, NSTextViewDelegate>
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active;
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set

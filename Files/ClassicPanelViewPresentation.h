@@ -25,12 +25,15 @@ public:
     NSRect GetItemColumnsRect() override;
     int GetItemIndexByPointInView(CGPoint _point) override;
     
-    int GetNumberOfItemColumns() override;
-    int GetMaxItemsPerColumn() override;
+    int GetMaxItemsPerColumn() const override;
     
     int Granularity();
     
     double GetSingleItemHeight() override;
+    NSRect ItemRect(int _item_index) const override;
+    NSRect ItemFilenameRect(int _item_index) const override;
+    
+    void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
     
 private:
     void BuildGeometry();
@@ -38,6 +41,11 @@ private:
     void DoDraw(CGContextRef _context);
     const DoubleColor& GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused);
     void CalcLayout(NSSize _from_px_size);
+    
+    array<int, 3>   ColumnWidthsShort() const;
+    array<int, 2>   ColumnWidthsMedium() const;
+    array<int, 4>   ColumnWidthsFull() const;
+    array<int, 2>   ColumnWidthsWide() const;
     
     NSSize          m_FrameSize;
     int             m_SymbWidth = 0;

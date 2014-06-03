@@ -479,20 +479,125 @@ int ClassicPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
     return m_State->ItemsDisplayOffset + file_number;
 }
 
-int ClassicPanelViewPresentation::GetNumberOfItemColumns()
+array<int, 3> ClassicPanelViewPresentation::ColumnWidthsShort() const
 {
-    switch(m_State->ViewType)
-    {
-        case PanelViewType::ViewShort: return 3;
-        case PanelViewType::ViewMedium: return 2;
-        case PanelViewType::ViewWide: return 1;
-        case PanelViewType::ViewFull: return 1;
-    }
-    assert(0);
-    return 0;
+    const int columns = GetNumberOfItemColumns();
+    int column_width = (m_SymbWidth - 1) / columns;
+    int columns_rest = m_SymbWidth - 1 - column_width*columns;
+    array<int, 3> columns_width{{column_width, column_width, column_width}};
+    if(columns_rest) { columns_width[2]++; columns_rest--; }
+    if(columns_rest) { columns_width[1]++; columns_rest--; }
+    columns_width[0]--;
+    columns_width[1]--;
+    columns_width[2]--;
+    return columns_width;    
 }
 
-int ClassicPanelViewPresentation::GetMaxItemsPerColumn()
+array<int, 2> ClassicPanelViewPresentation::ColumnWidthsMedium() const
+{
+    const int columns = GetNumberOfItemColumns();
+    int column_width = (m_SymbWidth - 1) / columns;
+    int columns_rest = m_SymbWidth - 1 - column_width*columns;
+    array<int, 2> columns_width{{column_width, column_width}};
+    if(columns_rest) { columns_width[1]++; columns_rest--; }
+    columns_width[0]--;
+    columns_width[1]--;
+    return columns_width;
+}
+
+array<int, 4> ClassicPanelViewPresentation::ColumnWidthsFull() const
+{
+    array<int, 4> columns_width{{m_SymbWidth - 23, 6, 8, 5}};
+    columns_width[0]--;
+    if(columns_width[0] < 0) columns_width[0] = 0;
+    return columns_width;
+}
+
+array<int, 2> ClassicPanelViewPresentation::ColumnWidthsWide() const
+{
+    array<int, 2> columns_width{{m_SymbWidth - 8, 6}};
+    columns_width[0]--;
+    if(columns_width[0] < 0) columns_width[0] = 0;
+    return columns_width;
+}
+
+NSRect ClassicPanelViewPresentation::ItemRect(int _item_index) const
+{
+    const int columns = GetNumberOfItemColumns();
+    const int entries_in_column = GetMaxItemsPerColumn();
+    const int max_files_to_show = entries_in_column * columns;
+    if(_item_index < m_State->ItemsDisplayOffset)
+        return NSMakeRect(0, 0, -1, -1);
+    const int scrolled_index = _item_index - m_State->ItemsDisplayOffset;
+    if(scrolled_index >= max_files_to_show)
+        return NSMakeRect(0, 0, -1, -1);
+    const int column = scrolled_index / entries_in_column;
+    const int row = scrolled_index % entries_in_column;
+    
+    int Y = row + 1;
+    int X = 1, W = 0;
+    if( m_State->ViewType == PanelViewType::ViewShort ) {
+        auto widths = ColumnWidthsShort();
+        for(int i = 0; i < column; ++i)
+            X += widths[i] + 1;
+        W = widths[column];
+    }
+    else if(m_State->ViewType == PanelViewType::ViewMedium) {
+        auto widths = ColumnWidthsMedium();
+        for(int i = 0; i < column; ++i)
+            X += widths[i] + 1;
+        W = widths[column];
+    }
+    else if( m_State->ViewType == PanelViewType::ViewFull )
+        W = m_SymbWidth - 2;
+    else if( m_State->ViewType == PanelViewType::ViewWide )
+        W = m_SymbWidth - 2;
+    
+    return NSMakeRect(X*m_FontCache->Width(),
+                      Y*m_FontCache->Height(),
+                      W*m_FontCache->Width(),
+                      m_FontCache->Height());
+}
+
+NSRect ClassicPanelViewPresentation::ItemFilenameRect(int _item_index) const
+{
+    const int columns = GetNumberOfItemColumns();
+    const int entries_in_column = GetMaxItemsPerColumn();
+    const int max_files_to_show = entries_in_column * columns;
+    if(_item_index < m_State->ItemsDisplayOffset)
+        return NSMakeRect(0, 0, -1, -1);
+    const int scrolled_index = _item_index - m_State->ItemsDisplayOffset;
+    if(scrolled_index >= max_files_to_show)
+        return NSMakeRect(0, 0, -1, -1);
+    const int column = scrolled_index / entries_in_column;
+    const int row = scrolled_index % entries_in_column;
+    
+    int Y = row + 1;
+    int X = 1, W = 0;
+    if( m_State->ViewType == PanelViewType::ViewShort ) {
+        auto widths = ColumnWidthsShort();
+        for(int i = 0; i < column; ++i)
+            X += widths[i] + 1;
+        W = widths[column];
+    }
+    else if(m_State->ViewType == PanelViewType::ViewMedium) {
+        auto widths = ColumnWidthsMedium();
+        for(int i = 0; i < column; ++i)
+            X += widths[i] + 1;
+        W = widths[column];
+    }
+    else if( m_State->ViewType == PanelViewType::ViewFull )
+        W = ColumnWidthsFull()[0];
+    else if( m_State->ViewType == PanelViewType::ViewWide )
+        W = ColumnWidthsWide()[0];
+    
+    return NSMakeRect(X*m_FontCache->Width(),
+                      Y*m_FontCache->Height(),
+                      W*m_FontCache->Width(),
+                      m_FontCache->Height());
+}
+
+int ClassicPanelViewPresentation::GetMaxItemsPerColumn() const
 {
     int headers_and_footers = 4;
     if(m_DrawVolumeInfo)
@@ -552,7 +657,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         int X = 1;
         for(int i = 0; i < CN; ++i) X += columns_width[i];
         
-        bool focused = (i == m_State->CursorPos) && m_State->Active;
+        bool focused = (i == m_State->CursorPos) && View().active;
         auto text_color = GetDirectoryEntryTextColor(current, focused);
         
         if(m_State->ViewType != PanelViewType::ViewFull)
@@ -627,10 +732,10 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             path_name_start_pos = (m_SymbWidth-symbs) / 2;
             path_name_end_pos = path_name_start_pos + symbs;
             
-            if(m_State->Active)
+            if(View().active)
                 omsc.DrawBackground(m_CursorBackgroundColor, path_name_start_pos, 0, symbs);
                 
-            omsc.DrawString(path.Chars(), 0, path.Size(), path_name_start_pos+1, 0, m_RegularFileColor[m_State->Active ? 1 : 0]);
+            omsc.DrawString(path.Chars(), 0, path.Size(), path_name_start_pos+1, 0, m_RegularFileColor[View().active ? 1 : 0]);
         }
         
         // entry footer info
@@ -785,4 +890,20 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
 double ClassicPanelViewPresentation::GetSingleItemHeight()
 {
     return m_SymbHeight;
+}
+
+void ClassicPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int _item_index)
+{
+    auto line_padding = 2.;
+    NSRect rc = ItemFilenameRect(_item_index);
+    rc.origin.x -= line_padding;
+    rc.size.width += line_padding;
+    
+    _editor.frame = rc;
+    
+    NSTextView *tv = _editor.documentView;
+    tv.font = (__bridge NSFont*) m_FontCache->BaseCTFont();
+    tv.maxSize = NSMakeSize(FLT_MAX, rc.size.height);
+    tv.textContainerInset = NSMakeSize(0, 0);
+    tv.textContainer.lineFragmentPadding = line_padding;
 }

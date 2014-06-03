@@ -28,12 +28,14 @@ public:
     NSRect GetItemColumnsRect() override;
     int GetItemIndexByPointInView(CGPoint _point) override;
     
-    int GetNumberOfItemColumns() override;
-    int GetMaxItemsPerColumn() override;
+    int GetMaxItemsPerColumn() const override;
     
     
     double GetSingleItemHeight() override;
     
+    NSRect ItemRect(int _item_index) const override;
+    NSRect ItemFilenameRect(int _item_index) const override;
+    void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
     
     
     static NSString* SizeToString6(const VFSListingItem &_dirent);

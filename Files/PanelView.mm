@@ -12,14 +12,11 @@
 #import "Common.h"
 #import "VFS.h"
 
-struct CursorSelectionState
+enum class CursorSelectionType
 {
-    enum Type
-    {
-        No,
-        Selection,
-        Unselection
-    };
+    No,
+    Selection,
+    Unselection
 };
 
 struct PanelViewStateStorage
@@ -32,12 +29,11 @@ struct PanelViewStateStorage
 
 @implementation PanelView
 {
-    unsigned long               m_KeysModifiersFlags;
-    CursorSelectionState::Type  m_CursorSelectionType;
+    CursorSelectionType         m_CursorSelectionType;
     PanelViewPresentation      *m_Presentation;
     PanelViewState              m_State;
     
-    std::map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
+    map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
     
     NSScrollView               *m_RenamingEditor; // NSTextView inside
     
@@ -58,17 +54,16 @@ struct PanelViewStateStorage
 {
     self = [super initWithFrame:frame];
     if (self) {
-        m_KeysModifiersFlags = 0;
         m_DraggingIntoMe = false;
         m_ScrollDY = 0.0;
         m_DisableCurrentMomentumScroll = false;
         m_IsCurrentlyMomentumScroll = false;
         m_LastPotentialRenamingLBDown = -1;
         
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(frameDidChange)
-                                                     name:NSViewFrameDidChangeNotification
-                                                   object:self];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(frameDidChange)
+                                                   name:NSViewFrameDidChangeNotification
+                                                 object:self];
         [self frameDidChange];
         
     }
@@ -80,7 +75,7 @@ struct PanelViewStateStorage
 {
     m_State.Data = nullptr;
     delete m_Presentation;
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (void) setDelegate:(id<PanelViewDelegate>)delegate
@@ -213,7 +208,7 @@ struct PanelViewStateStorage
     
     m_Presentation->MoveCursorToPrevItem();
     
-    if(m_CursorSelectionType != CursorSelectionState::No)
+    if(m_CursorSelectionType != CursorSelectionType::No)
         [self SelectUnselectInRange:origpos last_included:origpos];
     
     [self OnCursorPositionChanged];
@@ -224,9 +219,7 @@ struct PanelViewStateStorage
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextItem();
     
-    if(m_CursorSelectionType != CursorSelectionState::No)
-        [self SelectUnselectInRange:origpos last_included:origpos];
-    
+    [self SelectUnselectInRange:origpos last_included:origpos];
     [self OnCursorPositionChanged];
 }
 
@@ -235,9 +228,7 @@ struct PanelViewStateStorage
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToPrevPage();
 
-    if(m_CursorSelectionType != CursorSelectionState::No)
-        [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
-
+    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -246,9 +237,7 @@ struct PanelViewStateStorage
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextPage();
 
-    if(m_CursorSelectionType != CursorSelectionState::No)
-        [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];    
-
+    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -257,9 +246,7 @@ struct PanelViewStateStorage
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToPrevColumn();
     
-    if(m_CursorSelectionType != CursorSelectionState::No)
-        [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
-    
+    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -268,9 +255,7 @@ struct PanelViewStateStorage
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextColumn();
 
-    if(m_CursorSelectionType != CursorSelectionState::No)
-        [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
-
+    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -279,9 +264,7 @@ struct PanelViewStateStorage
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToFirstItem();
 
-    if(m_CursorSelectionType != CursorSelectionState::No)
-        [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
-    
+    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -290,9 +273,7 @@ struct PanelViewStateStorage
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToLastItem();
 
-    if(m_CursorSelectionType != CursorSelectionState::No)
-        [self SelectUnselectInRange:origpos last_included: m_State.CursorPos];    
-
+    [self SelectUnselectInRange:origpos last_included: m_State.CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -301,9 +282,10 @@ struct PanelViewStateStorage
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextItem();
     
-    auto entry = m_State.Data->EntryAtRawPosition(m_State.Data->RawIndexForSortIndex(origpos));
-    bool sel_now = entry->CFIsSelected();
-    [self SelectUnselectInRange:origpos last_included:origpos select:!sel_now];
+    if(auto entry = m_State.Data->EntryAtSortPosition(origpos))
+        [self SelectUnselectInRange:origpos
+                      last_included:origpos
+                             select:!entry->CFIsSelected()];
     
     [self OnCursorPositionChanged];
 }
@@ -389,33 +371,32 @@ struct PanelViewStateStorage
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags
 {
-    m_KeysModifiersFlags = _flags; // ??
-    if((m_KeysModifiersFlags & NSShiftKeyMask) == 0)
+    if((_flags & NSShiftKeyMask) == 0)
     { // clear selection type when user releases SHIFT button
-        m_CursorSelectionType = CursorSelectionState::No;
+        m_CursorSelectionType = CursorSelectionType::No;
     }
     else
     {
-        if(m_CursorSelectionType == CursorSelectionState::No)
+        if(m_CursorSelectionType == CursorSelectionType::No)
         { // lets decide if we need to select or unselect files when user will use navigation arrows
             if(const auto *item = self.item)
             {
                 if(!item->IsDotDot())
                 { // regular case
-                    if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionState::Unselection;
-                    else                     m_CursorSelectionType = CursorSelectionState::Selection;
+                    if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
+                    else                     m_CursorSelectionType = CursorSelectionType::Selection;
                 }
                 else
                 { // need to look at a first file (next to dotdot) for current representation if any.
                     if(m_State.Data->SortedDirectoryEntries().size() > 1)
                     { // using [1] item
                         const auto &item = m_State.Data->DirectoryEntries()[ m_State.Data->SortedDirectoryEntries()[1] ];
-                        if(item.CFIsSelected()) m_CursorSelectionType = CursorSelectionState::Unselection;
-                        else                     m_CursorSelectionType = CursorSelectionState::Selection;
+                        if(item.CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
+                        else                     m_CursorSelectionType = CursorSelectionType::Selection;
                     }
                     else
                     { // singular case - selection doesn't matter - nothing to select
-                        m_CursorSelectionType = CursorSelectionState::Selection;
+                        m_CursorSelectionType = CursorSelectionType::Selection;
                     }
                 }
             }
@@ -433,33 +414,26 @@ struct PanelViewStateStorage
     int old_cursor_pos = m_State.CursorPos;
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
     if (cursor_pos == -1) return;
+
+    auto click_entry = m_State.Data->EntryAtSortPosition(cursor_pos);
+    assert(click_entry);
     
     NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+    
+    // Select range of items with shift+click.
+    // If clicked item is selected, then deselect the range instead.
     if(modifier_flags & NSShiftKeyMask)
-    {
-        // Select range of items with shift+click.
-        // If clicked item is selected, then deselect the range instead.
-        assert(cursor_pos < m_State.Data->SortedDirectoryEntries().size());
-        int raw_pos = m_State.Data->SortedDirectoryEntries()[cursor_pos];
-        assert(raw_pos < m_State.Data->DirectoryEntries().Count());
-        const auto &click_entry = m_State.Data->DirectoryEntries()[raw_pos];
-        
-        bool deselect = click_entry.CFIsSelected();
-        if (m_State.CursorPos == -1) m_State.CursorPos = 0; // ?????????
-        [self SelectUnselectInRange:m_State.CursorPos last_included:cursor_pos select:!deselect];
-    }
+        [self SelectUnselectInRange:old_cursor_pos >= 0 ? old_cursor_pos : 0
+                      last_included:cursor_pos
+                             select:!click_entry->CFIsSelected()];
+    // Select or deselect a single item with cmd+click.
+    else if(modifier_flags & NSCommandKeyMask)
+        [self SelectUnselectInRange:cursor_pos
+                      last_included:cursor_pos
+                             select:!click_entry->CFIsSelected()];
     
     m_Presentation->SetCursorPos(cursor_pos);
     
-    if(modifier_flags & NSCommandKeyMask)
-    {
-        // Select or deselect a single item with cmd+click.
-        const auto *entry = self.item;
-        assert(entry);
-        bool select = !entry->CFIsSelected();
-        [self SelectUnselectInRange:m_State.CursorPos last_included:m_State.CursorPos
-                             select:select];
-    }
     
     if(old_cursor_pos != cursor_pos)
     {
@@ -482,8 +456,7 @@ struct PanelViewStateStorage
 {
     [self mouseDown:_event]; // interpret right mouse downs or ctrl+left mouse downs as regular mouse down
     
-    NSPoint event_location = [_event locationInWindow];
-    NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
     if (cursor_pos >= 0)
         return [self.delegate PanelViewRequestsContextMenu:self];
@@ -494,14 +467,8 @@ struct PanelViewStateStorage
 {
     if(m_ReadyToDrag)
     {
-        NSPoint event_location = [_event locationInWindow];
-        NSPoint local_point = [self convertPoint:event_location fromView:nil];
-        
-
-        double dist = hypot(local_point.x - m_LButtonDownPos.x,
-                       local_point.y - m_LButtonDownPos.y);
-        
-        if(dist > 5)
+        NSPoint lp = [self convertPoint:_event.locationInWindow fromView:nil];
+        if(hypot(lp.x - m_LButtonDownPos.x, lp.y - m_LButtonDownPos.y) > 5)
         {
             [self.delegate PanelViewWantsDragAndDrop:self event:_event];
             m_ReadyToDrag = false;
@@ -596,9 +563,11 @@ struct PanelViewStateStorage
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end
 {
-    assert(m_CursorSelectionType != CursorSelectionState::No);
-    [self SelectUnselectInRange:_start last_included:_end
-                         select:m_CursorSelectionType == CursorSelectionState::Selection];
+    if(m_CursorSelectionType == CursorSelectionType::No)
+        return;
+    [self SelectUnselectInRange:_start
+                  last_included:_end
+                         select:m_CursorSelectionType == CursorSelectionType::Selection];
 }
 
 - (void) setType:(PanelViewType)_type

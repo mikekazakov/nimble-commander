@@ -331,6 +331,9 @@ struct PanelViewStateStorage
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
             [del PanelViewCursorChanged:self];
+    
+    m_LastPotentialRenamingLBDown = -1;
+    [self cancelFieldEditor];
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -511,19 +514,24 @@ struct PanelViewStateStorage
 {
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
-    if(_event.clickCount == 2) // Handle double click mouse up
-    {
-        if(cursor_pos >= 0 && cursor_pos == m_State.CursorPos)
-            [self.delegate PanelViewDoubleClick:self atElement:cursor_pos];
-    }
-    else if(_event.clickCount <= 1 )
+    if(_event.clickCount <= 1 )
     {
         if(m_LastPotentialRenamingLBDown >= 0)
         {
             if(cursor_pos >= 0 && cursor_pos == m_LastPotentialRenamingLBDown)
-                [self startFieldEditorRenaming:_event];
+                [self performSelector:@selector(startFieldEditorRenaming:)
+                           withObject:_event
+                           afterDelay:NSEvent.doubleClickInterval];
         }
     }
+    else if(_event.clickCount == 2) // Handle double click mouse up
+    {
+        if(cursor_pos >= 0 && cursor_pos == m_State.CursorPos)
+            [self.delegate PanelViewDoubleClick:self atElement:cursor_pos];
+        
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    }
+    else
 
     m_ReadyToDrag = false;
     m_LastPotentialRenamingLBDown = -1;

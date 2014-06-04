@@ -800,16 +800,11 @@ struct PanelViewStateStorage
     return nil;
 }
 
-- (void) cancelOperation:(id)sender
-{
-    [self cancelFieldEditor];
-}
-
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
-    if(commandSelector == @selector(cancelOperation:))
+    if(commandSelector == NSSelectorFromString(@"cancelOperation:"))
     {
-        [self cancelOperation:self];
+        [self cancelFieldEditor];
         return true;
     }
     return false;

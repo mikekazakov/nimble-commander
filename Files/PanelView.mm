@@ -180,8 +180,7 @@ struct PanelViewStateStorage
 {
     if (m_Presentation)
         m_Presentation->OnFrameChanged([self frame]);
-    if(m_RenamingEditor)
-        [self.window makeFirstResponder:self];
+    [self cancelFieldEditor];
 }
 
 - (void) SetPanelData: (PanelData*) _data
@@ -349,7 +348,6 @@ struct PanelViewStateStorage
     
     auto mod = event.modifierFlags;
     auto unicode = [character characterAtIndex:0];
-//    unsigned short const keycode = [event keyCode];
 
     switch (unicode) {
         case NSHomeFunctionKey:       [self HandleFirstFile];     return;
@@ -515,7 +513,7 @@ struct PanelViewStateStorage
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
     if(_event.clickCount == 2) // Handle double click mouse up
     {
-        if(cursor_pos >= 0 && cursor_pos != m_State.CursorPos)
+        if(cursor_pos >= 0 && cursor_pos == m_State.CursorPos)
             [self.delegate PanelViewDoubleClick:self atElement:cursor_pos];
     }
     else if(_event.clickCount <= 1 )
@@ -599,8 +597,7 @@ struct PanelViewStateStorage
 {
     m_State.ViewType = _type;
     if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
-    if(m_RenamingEditor)
-        [self.window makeFirstResponder:self];
+    [self cancelFieldEditor];
     [self setNeedsDisplay:true];
 }
 
@@ -775,6 +772,12 @@ struct PanelViewStateStorage
     [self.window makeFirstResponder:m_RenamingEditor];
 }
 
+- (void)cancelFieldEditor
+{
+    if(m_RenamingEditor)
+        [self.window makeFirstResponder:self];
+}
+
 - (BOOL)textShouldEndEditing:(NSText *)textObject
 {
     assert(m_RenamingEditor != nil);
@@ -797,5 +800,19 @@ struct PanelViewStateStorage
     return nil;
 }
 
+- (void) cancelOperation:(id)sender
+{
+    [self cancelFieldEditor];
+}
+
+- (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+{
+    if(commandSelector == @selector(cancelOperation:))
+    {
+        [self cancelOperation:self];
+        return true;
+    }
+    return false;
+}
 
 @end

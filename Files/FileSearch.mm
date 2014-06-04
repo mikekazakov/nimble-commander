@@ -203,8 +203,6 @@ bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host)
                                  return m_Queue->IsStopped();
                              }
                              );
-    
-    fw.CloseFile();
 
     return result == SearchInFile::Result::Found;
 }

@@ -15,14 +15,7 @@
 
 TermScreen::TermScreen(int _w, int _h):
     m_Width(_w),
-    m_Height(_h),
-    m_PosX(0),
-    m_PosY(0),
-    m_Color(0x7),
-    m_Intensity(false),
-    m_Underline(false),
-    m_Reverse(false),
-    m_ScreenShot(0)
+    m_Height(_h)
 {
     m_EraseChar.l = 0;
     m_EraseChar.c1 = 0;
@@ -35,12 +28,10 @@ TermScreen::TermScreen(int _w, int _h):
     
     m_Title[0] = 0;
     
+    Line l;
+    l.chars.resize(m_Width, m_EraseChar);
     for(int i =0; i < m_Height; ++i)
-    {
-        m_Screen.push_back(vector<TermScreen::Space>());
-        vector<TermScreen::Space> *line = &m_Screen.back();
-        line->resize(m_Width, m_EraseChar);
-    }
+        m_Screen.push_back(l);
 }
 
 TermScreen::~TermScreen()
@@ -48,24 +39,22 @@ TermScreen::~TermScreen()
     free(m_ScreenShot);
 }
 
-const vector<TermScreen::Space> *TermScreen::GetScreenLine(int _line_no) const
+const TermScreen::Line *TermScreen::GetScreenLine(int _line_no) const
 {
-    if(_line_no >= m_Screen.size()) return 0;
+    if(_line_no < 0 || _line_no >= m_Screen.size()) return nullptr;
     
-    auto it = m_Screen.begin();
-    for(int i = 0; i < _line_no; ++i)
-        ++it;
+    auto it = begin(m_Screen);
+    advance(it, _line_no);
   
     return &(*it);
 }
 
-vector<TermScreen::Space> *TermScreen::GetLineRW(int _line_no)
+TermScreen::Line *TermScreen::GetLineRW(int _line_no)
 {
-    if(_line_no >= m_Screen.size() || _line_no < 0) return 0;
+    if(_line_no < 0 || _line_no >= m_Screen.size()) return nullptr;
     
-    auto it = m_Screen.begin();
-    for(int i = 0; i < _line_no; ++i)
-        ++it;
+    auto it = begin(m_Screen);
+    advance(it, _line_no);
     
     return &(*it);
 }
@@ -75,14 +64,12 @@ void TermScreen::PutCh(unsigned short _char)
     assert(m_PosY < m_Screen.size());
     // TODO: optimize it out
     
-    auto it = m_Screen.begin();
-    for(int i = 0; i < m_PosY; ++i) ++it;
-    vector<TermScreen::Space> &line = *it;
+    auto &line = *GetLineRW(m_PosY);
     
     if(!oms::IsUnicodeCombiningCharacter(_char))
     {
         assert(m_PosX >= 0 && m_PosX < m_Width);
-        auto &sp = line[m_PosX++];
+        auto &sp = line.chars[m_PosX++];
         sp.l = _char;
         sp.c1 = 0;
         sp.c2 = 0;
@@ -94,7 +81,7 @@ void TermScreen::PutCh(unsigned short _char)
     
         if(g_WCWidthTableFixedMin1[_char] == 2 && m_PosX < m_Width)
         {
-            auto &foll = line[m_PosX++];
+            auto &foll = line.chars[m_PosX++];
             foll = sp;
             foll.l = MultiCellGlyph;
         }
@@ -105,9 +92,9 @@ void TermScreen::PutCh(unsigned short _char)
         {
             assert(m_PosX <= m_Width);
             int target_pos = m_PosX - 1;
-            if((line[target_pos].l == MultiCellGlyph) && (target_pos > 0)) target_pos--;
-            if(line[target_pos].c1 == 0) line[target_pos].c1 = _char;
-            else if(line[target_pos].c2 == 0) line[target_pos].c2 = _char;
+            if((line.chars[target_pos].l == MultiCellGlyph) && (target_pos > 0)) target_pos--;
+            if(line.chars[target_pos].c1 == 0) line.chars[target_pos].c1 = _char;
+            else if(line.chars[target_pos].c2 == 0) line.chars[target_pos].c2 = _char;
         }
     }
 }
@@ -120,9 +107,9 @@ void TermScreen::DoEraseScreen(int _mode)
 {
     if(_mode == 1) {
         for(int i = 0; i < m_Height; ++i) {
-            auto *l = GetLineRW(i);
+            auto &l = *GetLineRW(i);
             for(int j = 0; j < m_Width; ++j) {
-                (*l)[j] = m_EraseChar;
+                l.chars[j] = m_EraseChar;
                 if(i == m_PosY && j == m_PosX)
                     return;
             }
@@ -130,15 +117,13 @@ void TermScreen::DoEraseScreen(int _mode)
     } else if(_mode == 2)
     { // clear all screen
         for(auto &l: m_Screen)
-            for(int i =0; i < l.size(); ++i)
-                l[i] = m_EraseChar;
-        
-//        GoTo(0, 0);
+            for(auto &c: l.chars)
+                c = m_EraseChar;
     } else {
         for(int i = m_PosY; i < m_Height; ++i) {
-            auto *l = GetLineRW(i);
+            auto &l = *GetLineRW(i);
             for(int j = (i == m_PosY ? m_PosX : 0); j < m_Width; ++j)
-                (*l)[j] = m_EraseChar;
+                l.chars[j] = m_EraseChar;
         }
     }
 }
@@ -213,16 +198,16 @@ void TermScreen::DoEraseInLine(int _mode)
     if(!line)
         return;
     if(_mode == 1) {
-        for(int i = 0; i < line->size() && i <= m_PosX; ++i)
-            (*line)[i] = m_EraseChar;
+        for(int i = 0; i < line->chars.size() && i <= m_PosX; ++i)
+            line->chars[i] = m_EraseChar;
     }
     else if(_mode == 2) {
-        for(int i = 0; i < line->size(); ++i)
-            (*line)[i] = m_EraseChar;
+        for(int i = 0; i < line->chars.size(); ++i)
+            line->chars[i] = m_EraseChar;
     }
     else {
-        for(int i = m_PosX; i < line->size(); ++i)
-            (*line)[i] = m_EraseChar;
+        for(int i = m_PosX; i < line->chars.size(); ++i)
+            line->chars[i] = m_EraseChar;
     }
 }
 
@@ -231,8 +216,8 @@ void TermScreen::DoEraseCharacters(int _n)
     auto *line = GetLineRW(m_PosY);
     if(!line)
         return;
-    for(int i = m_PosX; i < line->size() && _n > 0; ++i, --_n)
-        (*line)[i] = m_EraseChar;
+    for(int i = m_PosX; i < line->chars.size() && _n > 0; ++i, --_n)
+        line->chars[i] = m_EraseChar;
 }
 
 void TermScreen::SetColor(unsigned char _color)
@@ -270,10 +255,10 @@ void TermScreen::DoShiftRowLeft(int _chars)
     
     for(int x = m_PosX + _chars; x < m_Width; ++x)
 //        if(x-_chars >= 0)
-            (*line)[x-_chars] = (*line)[x];
+            line->chars[x-_chars] = line->chars[x];
     
     for(int i = 0; i < _chars; ++i)
-        (*line)[m_Width-i-1] = m_EraseChar; // why m_Width here???
+        line->chars[m_Width-i-1] = m_EraseChar; // why m_Width here???
 }
 
 void TermScreen::DoShiftRowRight(int _chars)
@@ -285,10 +270,10 @@ void TermScreen::DoShiftRowRight(int _chars)
     assert(m_PosX >= 0 && m_PosX < m_Width);
     
     for(int x = m_Width-1; x >= m_PosX + _chars; --x)
-        (*line)[x] = (*line)[x - _chars];
+        line->chars[x] = line->chars[x - _chars];
         
     for(int i = 0; i < _chars; ++i)
-        (*line)[m_PosX + i] = m_EraseChar;
+        line->chars[m_PosX + i] = m_EraseChar;
 }
 
 void TermScreen::DoEraseAt(int _x, int _y, int _count)
@@ -298,7 +283,7 @@ void TermScreen::DoEraseAt(int _x, int _y, int _count)
         return;
     
     for(int i = _x; i < _x + _count && i > 0 && i < m_Width; ++i)
-        (*line)[i] = m_EraseChar;
+        line->chars[i] = m_EraseChar;
 }
 
 void TermScreen::DoScrollDown(int _top, int _bottom, int _lines)
@@ -324,8 +309,8 @@ void TermScreen::DoScrollDown(int _top, int _bottom, int _lines)
     {
         auto *line = GetLineRW(i);
         assert(line);
-        for(int j = 0; j < m_Width; ++j)
-            (*line)[j] = m_EraseChar;
+        for(auto &c: line->chars)
+            c = m_EraseChar;
     }
 }
 
@@ -350,12 +335,13 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
             assert(src);
             
             // trim zero characters in scrollback - there's no need to store them
-            int sz = (int)src->size();
+            int sz = (int)src->chars.size();
             while(sz > 0)
-                if((*src)[sz-1].l == 0) sz--;
+                if(src->chars[sz-1].l == 0) sz--;
                 else break;
-            m_ScrollBack.push_back( vector<TermScreen::Space>(sz) );
-            memcpy(m_ScrollBack.back().data(), src->data(), sz * sizeof(TermScreen::Space));
+            m_ScrollBack.emplace_back(Line());
+            m_ScrollBack.back().chars.resize(sz);
+            memcpy(m_ScrollBack.back().chars.data(), src->chars.data(), sz * sizeof(TermScreen::Space));
         }
     
     for(int i = _top; i < _bottom - _lines; ++i)
@@ -371,8 +357,8 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
     {
         auto *line = GetLineRW(i);
         assert(line);
-        for(int j = 0; j < m_Width; ++j)
-            (*line)[j] = m_EraseChar;
+        for(auto &c: line->chars)
+            c = m_EraseChar;
     }
 }
 
@@ -389,7 +375,7 @@ void TermScreen::SaveScreen()
     for(auto &i: m_Screen)
     {
         int x = 0;
-        for(auto j: i)
+        for(auto j: i.chars)
             m_ScreenShot->chars[y*m_Width + x++] = j;
         ++y;
     }
@@ -408,7 +394,7 @@ void TermScreen::RestoreScreen()
             break;
         
         for(int x = 0; x < xmax; ++x)
-            i[x] = m_ScreenShot->chars[y*m_ScreenShot->width + x];
+            i.chars[x] = m_ScreenShot->chars[y*m_ScreenShot->width + x];
         
         ++y;
     }
@@ -417,14 +403,12 @@ void TermScreen::RestoreScreen()
     m_ScreenShot = 0;
 }
 
-const vector<TermScreen::Space> *TermScreen::GetScrollBackLine(int _line_no) const
+const TermScreen::Line *TermScreen::GetScrollBackLine(int _line_no) const
 {
-    if(_line_no >= m_ScrollBack.size()) return 0;
+    if(_line_no < 0 || _line_no >= m_ScrollBack.size()) return 0;
     
     auto it = m_ScrollBack.begin();
-    for(int i = 0; i < _line_no; ++i)
-        ++it;
-    
+    advance(it, _line_no);    
     return &(*it);    
 }
 
@@ -441,7 +425,7 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
     // resize main screen
     m_Screen.resize(m_Height);
     for(auto &l: m_Screen)
-        l.resize(m_Width, m_EraseChar);
+        l.chars.resize(m_Width, m_EraseChar);
     
     if(m_ScreenShot != 0)
     { // resize alternative screen

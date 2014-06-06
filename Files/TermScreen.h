@@ -50,11 +50,17 @@ public:
         unsigned int reverse    :1;
     };
     
+    struct Line
+    {
+        // some flags like wrapping will be here
+        vector<Space>     chars;
+    };
+    
     inline void Lock()      { m_Lock.lock();   }
     inline void Unlock()    { m_Lock.unlock(); }
     
-    const vector<Space> *GetScreenLine(int _line_no) const;
-    const vector<Space> *GetScrollBackLine(int _line_no) const;
+    const Line *GetScreenLine(int _line_no) const;
+    const Line *GetScrollBackLine(int _line_no) const;
     
     inline int ScrollBackLinesCount() const { return (int)m_ScrollBack.size(); }
     
@@ -118,21 +124,23 @@ private:
     };
     
     mutex                    m_Lock;
-    unsigned char                 m_Color;
-    bool                          m_Intensity;
-    bool                          m_Underline;
-    bool                          m_Reverse;
-    int                           m_Width;
-    int                           m_Height;
-    int                           m_PosX;
-    int                           m_PosY;
+    unsigned char                 m_Color = 0x7;
+    bool                          m_Intensity = false;
+    bool                          m_Underline = false;
+    bool                          m_Reverse = false;
+    int                           m_Width = 0;
+    int                           m_Height = 0;
+    int                           m_PosX = 0;
+    int                           m_PosY = 0;
     Space                         m_EraseChar;
-    ScreenShot                   *m_ScreenShot;
-    list<vector<Space>> m_Screen;
-    list<vector<Space>> m_ScrollBack;
+    ScreenShot                   *m_ScreenShot = nullptr;
+    list<Line>                    m_Screen;
+    list<Line>                    m_ScrollBack;
+
+    
     static const int        m_TitleMaxLen = 1024;
     char                    m_Title[m_TitleMaxLen];
     
     
-    vector<Space> *GetLineRW(int _line_no);
+    Line *GetLineRW(int _line_no);
 };

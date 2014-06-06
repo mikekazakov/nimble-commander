@@ -194,9 +194,9 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         if(i < m_Screen->ScrollBackLinesCount())
         {
             // scrollback
-            auto *line = m_Screen->GetScrollBackLine(i);
+            auto line = m_Screen->GetScrollBackLine(i);
             if(line)
-                [self DrawLine:line
+                [self DrawLine:*line
                           at_y:i
                          sel_y:i - m_Screen->ScrollBackLinesCount()
                        context:context
@@ -205,17 +205,17 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         else
         {
             // real screen
-            auto *line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
+            auto line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
             if(line)
             {
                 if(m_Screen->CursorY() != i - m_Screen->ScrollBackLinesCount())
-                    [self DrawLine:line
+                    [self DrawLine:*line
                               at_y:i
                              sel_y:i - m_Screen->ScrollBackLinesCount()
                            context:context
                          cursor_at:-1];
                 else
-                    [self DrawLine:line
+                    [self DrawLine:*line
                               at_y:i
                              sel_y:i - m_Screen->ScrollBackLinesCount()
                            context:context
@@ -230,7 +230,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     
 }
 
-- (void) DrawLine:(const vector<TermScreen::Space> *)_line
+- (void) DrawLine:(const TermScreen::Line &)_line
              at_y:(int)_y
             sel_y:(int)_sel_y
           context:(CGContextRef)_context
@@ -239,9 +239,8 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     // draw backgrounds
     DoubleColor curr_c = {-1, -1, -1, -1};
     int x = 0;
-    for(int n = 0; n < _line->size(); ++n)
+    for(TermScreen::Space char_space: _line.chars)
     {
-        TermScreen::Space char_space = (*_line)[n];
         const DoubleColor &c = TermColorToDoubleColor(char_space.reverse ? char_space.foreground : char_space.background);
         if(c != g_BackgroundColor)
         {
@@ -307,9 +306,8 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     bool is_aa = true;
     CGContextSetShouldAntialias(_context, is_aa);
     
-    for(int n = 0; n < _line->size(); ++n)
+    for(TermScreen::Space char_space: _line.chars)
     {
-        TermScreen::Space char_space = (*_line)[n];
         int foreground = char_space.foreground;
         if(char_space.intensity)
             foreground += 8;
@@ -434,7 +432,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     {
         if(curr >= m_SelEnd) break;
         
-        const vector<TermScreen::Space> *line = 0;
+        const TermScreen::Line *line = 0;
         if(curr.y < 0) line = m_Screen->GetScrollBackLine( m_Screen->ScrollBackLinesCount() + curr.y );
         else           line = m_Screen->GetScreenLine(curr.y);
         
@@ -444,8 +442,8 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         }
         
         bool any_inserted = false;
-        for(; curr.x < line->size() && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
-            auto &sp = (*line)[curr.x];
+        for(; curr.x < line->chars.size() && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
+            auto &sp = line->chars[curr.x];
             if(sp.l == TermScreen::MultiCellGlyph) continue;
             unichars.push_back(sp.l != 0 ? sp.l : ' ');
             if(sp.c1 != 0) unichars.push_back(sp.c1);

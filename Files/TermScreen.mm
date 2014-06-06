@@ -13,6 +13,13 @@
 #include "FontCache.h"
 #include "OrthodoxMonospace.h"
 
+unsigned TermScreen::Line::actual_length() const
+{
+    return (unsigned) count_if(begin(chars), end(chars), [](auto c) {
+        return c.l != 0;
+    });
+}
+
 TermScreen::TermScreen(int _w, int _h):
     m_Width(_w),
     m_Height(_h)
@@ -99,9 +106,16 @@ void TermScreen::PutCh(unsigned short _char)
     }
 }
 
+void TermScreen::PutWrap()
+{
+    // TODO: optimize it out
+    assert(m_PosY < m_Screen.size());
+    GetLineRW(m_PosY)->wrapped = true;
+}
+
 // ED – Erase Display	Clears part of the screen.
 //    If n is zero (or missing), clear from cursor to end of screen.
-//    If n is one, clear from cursor to beginning of the screen.
+//    If n is one, clear from beginning of the screen to cursor.
 //    If n is two, clear entire screen (and moves cursor to upper left on DOS ANSI.SYS).
 void TermScreen::DoEraseScreen(int _mode)
 {
@@ -113,15 +127,19 @@ void TermScreen::DoEraseScreen(int _mode)
                 if(i == m_PosY && j == m_PosX)
                     return;
             }
+            l.wrapped = false;
         }
     } else if(_mode == 2)
     { // clear all screen
-        for(auto &l: m_Screen)
+        for(auto &l: m_Screen) {
+            l.wrapped = false;
             for(auto &c: l.chars)
                 c = m_EraseChar;
+        }
     } else {
         for(int i = m_PosY; i < m_Height; ++i) {
             auto &l = *GetLineRW(i);
+            l.wrapped = false;
             for(int j = (i == m_PosY ? m_PosX : 0); j < m_Width; ++j)
                 l.chars[j] = m_EraseChar;
         }
@@ -339,7 +357,7 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
             while(sz > 0)
                 if(src->chars[sz-1].l == 0) sz--;
                 else break;
-            m_ScrollBack.emplace_back(Line());
+            m_ScrollBack.emplace_back();
             m_ScrollBack.back().chars.resize(sz);
             memcpy(m_ScrollBack.back().chars.data(), src->chars.data(), sz * sizeof(TermScreen::Space));
         }
@@ -359,6 +377,7 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
         assert(line);
         for(auto &c: line->chars)
             c = m_EraseChar;
+        line->wrapped = false;
     }
 }
 
@@ -418,14 +437,25 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         return;
         
     Lock();
+
+    // 1st - compose non-wrapped strings from current screen
+    list<vector<TermScreen::Space>> comp_lines = ComposeContinuousLines(m_Screen);
+
+    // 2nd - decompose it back with new width
+    list<TermScreen::Line> new_screen = DecomposeContinuousLines(comp_lines, _new_sx);
+
+    // 3rd - adjuct height (need something more intelligent here)
+    new_screen.resize(_new_sy);
+
+    // fill gaps(if any) with m_EraseChar
+    for(auto &l: new_screen)
+        l.chars.resize(_new_sx, m_EraseChar);
+    
+    m_Screen = move(new_screen);
+    
     
     m_Height = _new_sy;
     m_Width = _new_sx;
-
-    // resize main screen
-    m_Screen.resize(m_Height);
-    for(auto &l: m_Screen)
-        l.chars.resize(m_Width, m_EraseChar);
     
     if(m_ScreenShot != 0)
     { // resize alternative screen
@@ -447,4 +477,42 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
     GoTo(CursorX(), CursorY()); // will clip if necessary
     
     Unlock();
+}
+
+list<vector<TermScreen::Space>> TermScreen::ComposeContinuousLines(const list<Line> &_from)
+{
+    list<vector<TermScreen::Space>> lines;
+    vector<TermScreen::Space> *curr = nullptr;
+    
+    bool cont = false;
+    for(auto &l: _from) {
+        if(!cont) {
+            lines.emplace_back();
+            curr = &lines.back();
+        }
+        
+        curr->insert(end(*curr),
+                     begin(l.chars),
+                     begin(l.chars) + l.actual_length());
+        
+        cont = l.wrapped;
+    }
+    return lines;
+}
+
+list<TermScreen::Line> TermScreen::DecomposeContinuousLines(const list<vector<Space>> &_from, unsigned _width)
+{
+    list<TermScreen::Line> lines;
+    for(auto &l: _from)
+        for(int i = 0; i < l.size(); i += _width) {
+            lines.emplace_back();
+            auto &dl = lines.back();
+            if(i + _width < l.size()) {
+                dl.chars.assign(begin(l) + i, begin(l) + i + _width);
+                dl.wrapped = true;
+            }
+            else
+                dl.chars.assign(begin(l) + i, l.end());
+        }
+    return lines;
 }

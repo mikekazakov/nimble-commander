@@ -243,9 +243,11 @@ void TermParser::Flush()
     
     for(int i = 0; i < chars_len; ++i)
     {
+        // TODO: if(wrapping_mode == ...) <- need to add this
         if( m_Scr->CursorX() >= m_Scr->Width() &&
            !oms::IsUnicodeCombiningCharacter(m_UniCharsStock[i]) )
         {
+            m_Scr->PutWrap();
             CR();
             LF();
         }

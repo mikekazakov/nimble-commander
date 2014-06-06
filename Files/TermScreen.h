@@ -52,8 +52,9 @@ public:
     
     struct Line
     {
-        // some flags like wrapping will be here
-        vector<Space>     chars;
+        bool          wrapped = false;
+        vector<Space> chars;
+        unsigned actual_length() const;
     };
     
     inline void Lock()      { m_Lock.lock();   }
@@ -67,6 +68,12 @@ public:
     void ResizeScreen(int _new_sx, int _new_sy);
     
     void PutCh(unsigned short _char);
+    
+    /**
+     * Marks current screen line as wrapped. That means that the next line is continuation of current line.
+     */
+    void PutWrap();
+    
     void SetColor(unsigned char _color);
     void SetIntensity(bool _intensity);
     void SetUnderline(bool _is_underline);
@@ -143,4 +150,6 @@ private:
     
     
     Line *GetLineRW(int _line_no);
+    static list<vector<Space>> ComposeContinuousLines(const list<Line> &_from);
+    static list<Line> DecomposeContinuousLines(const list<vector<Space>> &_from, unsigned _width);
 };

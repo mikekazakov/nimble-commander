@@ -369,6 +369,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             PanelController *source_controller = source_broker.controller;
             MainWindowFilePanelState* filepanel_state = self.state;
             assert(source_controller != self);
+            auto opmask = sender.draggingSourceOperationMask;
             
             // currently we accept only copying to native fs
 //            if(!m_HostsStack.back()->IsNativeFS())
@@ -385,7 +386,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             
             if(!self.VFS->IsNativeFS() && self.VFS->IsWriteable() )
             {
-                if(sender.draggingSourceOperationMask != NSDragOperationCopy)
+                if(opmask != NSDragOperationCopy)
                     return false;
                 
                 string destination = self.GetCurrentDirectoryPathRelativeToHost;
@@ -401,7 +402,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 return true;
             }
 
-            if(sender.draggingSourceOperationMask == NSDragOperationCopy) {
+            if(opmask == NSDragOperationCopy) {
                 string destination = self.GetCurrentDirectoryPathRelativeToHost;
                 FileCopyOperationOptions opts;
                 FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(files)
@@ -413,9 +414,9 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 [filepanel_state.OperationsController AddOperation:op];
                 return true;
             }
-            if(sender.draggingSourceOperationMask == NSDragOperationMove ||
-               sender.draggingSourceOperationMask == (NSDragOperationMove|NSDragOperationLink) ||
-               sender.draggingSourceOperationMask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink)) {
+            if(opmask == NSDragOperationMove ||
+               opmask == (NSDragOperationMove|NSDragOperationLink) ||
+               opmask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink)) {
                 string destination = self.GetCurrentDirectoryPathRelativeToHost;
                 FileCopyOperationOptions opts;
                 opts.docopy = false;
@@ -435,7 +436,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 [filepanel_state.OperationsController AddOperation:op];
                 return true;
             }
-            if(sender.draggingSourceOperationMask == NSDragOperationLink &&
+            if(opmask == NSDragOperationLink &&
                files.size() == 1 &&
                source_broker.vfs->IsNativeFS() ) {
                 string source_path = source_broker.root_path + files.front().c_str();

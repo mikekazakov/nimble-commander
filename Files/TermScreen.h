@@ -78,6 +78,7 @@ public:
     void SetIntensity(bool _intensity);
     void SetUnderline(bool _is_underline);
     void SetReverse(bool _is_reverse);
+    void SetAlternateScreen(bool _is_alternate);
 
     void GoTo(int _x, int _y);
     void DoCursorUp(int _n = 1);
@@ -135,6 +136,7 @@ private:
     bool                          m_Intensity = false;
     bool                          m_Underline = false;
     bool                          m_Reverse = false;
+    bool                          m_AlternateScreen = false;
     int                           m_Width = 0;
     int                           m_Height = 0;
     int                           m_PosX = 0;

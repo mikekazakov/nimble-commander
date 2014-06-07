@@ -204,6 +204,7 @@ void TermParser::Reset()
     m_Title[m_TitleLen] = 0;
     m_Scr->SetTitle(m_Title);
     
+    m_Scr->SetAlternateScreen(false);
 
     m_TabStop[0]= 0x01010100;
     for(int i = 1; i < 16; ++i)
@@ -685,6 +686,7 @@ void TermParser::CSI_DEC_PMS(bool _on)
 				case 47: // alternate screen buffer mode
 					if(_on) m_Scr->SaveScreen();
 					else    m_Scr->RestoreScreen();
+                    m_Scr->SetAlternateScreen(_on);
 					break;
                 case 1048:
                     if(_on) {
@@ -710,6 +712,7 @@ void TermParser::CSI_DEC_PMS(bool _on)
                         EscRestore();
                         m_Scr->RestoreScreen();
                     }
+                    m_Scr->SetAlternateScreen(_on);
                     break;
                     
                 case 1002:

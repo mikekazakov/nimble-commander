@@ -263,6 +263,11 @@ void TermScreen::SetReverse(bool _is_reverse)
     m_EraseChar.reverse = _is_reverse;
 }
 
+void TermScreen::SetAlternateScreen(bool _is_alternate)
+{
+    m_AlternateScreen = _is_alternate;
+}
+
 void TermScreen::DoShiftRowLeft(int _chars)
 {
     auto *line = GetLineRW(m_PosY);
@@ -438,13 +443,47 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         
     Lock();
 
-    // 1st - compose non-wrapped strings from current screen
-    list<vector<TermScreen::Space>> comp_lines = ComposeContinuousLines(m_Screen);
+    list<TermScreen::Line> new_screen, new_scrollback;
+    bool feed_from_bs = m_PosY == m_Height - 1; // questionable!
+    
+    // if we're on alternate screen (ie mc, man, top etc) - don't alter backscroll on resizing side-effects
+    
+    if(feed_from_bs && !m_AlternateScreen) {
+        // compose non-wrapped strings from current screen and backscroll
+        list<vector<TermScreen::Space>> comp_lines;
+        comp_lines.splice(end(comp_lines), ComposeContinuousLines(m_ScrollBack));
+        comp_lines.splice(end(comp_lines), ComposeContinuousLines(m_Screen));
 
-    // 2nd - decompose it back with new width
-    list<TermScreen::Line> new_screen = DecomposeContinuousLines(comp_lines, _new_sx);
+        // decompose it back with new width
+        list<TermScreen::Line> new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
+        if(new_lines.size() <= _new_sy)
+            new_screen = move(new_lines);
+        else {
+            auto it = end(new_lines);
+            advance(it, -_new_sy);
+            new_screen.splice(end(new_screen), new_lines, it, end(new_lines));
+            new_scrollback = move(new_lines);
+        }
+    } else {
+        // compose non-wrapped strings from current screen
+        auto comp_lines = ComposeContinuousLines(m_Screen);
+        
+        // decompose it back with new width
+        list<TermScreen::Line> new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
 
-    // 3rd - adjuct height (need something more intelligent here)
+        new_scrollback = m_ScrollBack;
+        
+        if(new_lines.size() <= _new_sy || m_AlternateScreen)
+            new_screen = move(new_lines);
+        else {
+            auto it = end(new_lines);
+            advance(it, -_new_sy);
+            new_screen.splice(end(new_screen), new_lines, it, end(new_lines));
+            new_scrollback.splice(end(new_scrollback), new_lines, begin(new_lines), end(new_lines));
+        }
+    }
+    
+    // 3rd - append height if need
     new_screen.resize(_new_sy);
 
     // fill gaps(if any) with m_EraseChar
@@ -452,7 +491,7 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         l.chars.resize(_new_sx, m_EraseChar);
     
     m_Screen = move(new_screen);
-    
+    m_ScrollBack = move(new_scrollback);
     
     m_Height = _new_sy;
     m_Width = _new_sx;
@@ -473,8 +512,9 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         
         free(old);
     }
-    
-    GoTo(CursorX(), CursorY()); // will clip if necessary
+
+    // adjust cursor Y if it was at the bottom prior to resizing
+    GoTo(CursorX(), feed_from_bs ? m_Height - 1 : CursorY()); // will clip if necessary
     
     Unlock();
 }

@@ -106,6 +106,8 @@ void TermScreen::PutCh(unsigned short _char)
             else if(line.chars[target_pos].c2 == 0) line.chars[target_pos].c2 = _char;
         }
     }
+    
+    line.wrapped = false;
 }
 
 void TermScreen::PutWrap()
@@ -355,18 +357,8 @@ void TermScreen::DoScrollUp(int _top, int _bottom, int _lines)
     if(_top == 0 && _bottom == m_Height)
         for(int i = 0; i < _lines; ++i)
         { // we're scrolling up the whole screen - let's feed scrollback with leftover
-            // TODO: optimize this on speed and possible memory consumpion
-            auto *src = GetLineRW(i);
-            assert(src);
-            
-            // trim zero characters in scrollback - there's no need to store them
-            int sz = (int)src->chars.size();
-            while(sz > 0)
-                if(src->chars[sz-1].l == 0) sz--;
-                else break;
-            m_ScrollBack.emplace_back();
-            m_ScrollBack.back().chars.resize(sz);
-            memcpy(m_ScrollBack.back().chars.data(), src->chars.data(), sz * sizeof(TermScreen::Space));
+            m_ScrollBack.emplace_back(*GetLineRW(i));
+            m_ScrollBack.back().chars.resize(m_ScrollBack.back().actual_length());
         }
     
     for(int i = _top; i < _bottom - _lines; ++i)
@@ -473,7 +465,7 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         // decompose it back with new width
         list<TermScreen::Line> new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
 
-        new_scrollback = m_ScrollBack;
+        new_scrollback = DecomposeContinuousLines(ComposeContinuousLines(m_ScrollBack), _new_sx);
         
         if(new_lines.size() <= _new_sy || m_AlternateScreen)
             new_screen = move(new_lines);
@@ -545,7 +537,10 @@ list<vector<TermScreen::Space>> TermScreen::ComposeContinuousLines(const list<Li
 list<TermScreen::Line> TermScreen::DecomposeContinuousLines(const list<vector<Space>> &_from, unsigned _width)
 {
     list<TermScreen::Line> lines;
-    for(auto &l: _from)
+    for(auto &l: _from) {
+        if(l.empty()) // special case for CRLF-only lines
+            lines.emplace_back();
+        
         for(int i = 0; i < l.size(); i += _width) {
             lines.emplace_back();
             auto &dl = lines.back();
@@ -556,5 +551,6 @@ list<TermScreen::Line> TermScreen::DecomposeContinuousLines(const list<vector<Sp
             else
                 dl.chars.assign(begin(l) + i, l.end());
         }
+    }
     return lines;
 }

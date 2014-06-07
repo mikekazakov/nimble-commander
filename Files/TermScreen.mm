@@ -15,9 +15,11 @@
 
 unsigned TermScreen::Line::actual_length() const
 {
-    return (unsigned) count_if(begin(chars), end(chars), [](auto c) {
-        return c.l != 0;
-    });
+    size_t len = 0, i = 0, e = chars.size();
+    for(;i!=e;++i)
+        if(chars[i].l != 0)
+            len = i+1;
+    return (unsigned)len;
 }
 
 TermScreen::TermScreen(int _w, int _h):

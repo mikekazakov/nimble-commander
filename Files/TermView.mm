@@ -432,7 +432,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     {
         if(curr >= m_SelEnd) break;
         
-        const TermScreen::Line *line = 0;
+        const TermScreen::Line *line = nullptr;
         if(curr.y < 0) line = m_Screen->GetScrollBackLine( m_Screen->ScrollBackLinesCount() + curr.y );
         else           line = m_Screen->GetScreenLine(curr.y);
         
@@ -442,7 +442,8 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         }
         
         bool any_inserted = false;
-        for(; curr.x < line->chars.size() && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
+        auto chars_len = line->actual_length();
+        for(; curr.x < chars_len && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
             auto &sp = line->chars[curr.x];
             if(sp.l == TermScreen::MultiCellGlyph) continue;
             unichars.push_back(sp.l != 0 ? sp.l : ' ');
@@ -456,13 +457,13 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         
         curr.y++;
         curr.x = 0;
-        if(any_inserted) unichars.push_back(0x000A);
+        if(any_inserted && !line->wrapped) unichars.push_back(0x000A);
     }
     
     NSString *result = [NSString stringWithCharactersNoCopy:unichars.data() length:unichars.size()];
-    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+    NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
     [pasteBoard clearContents];
-    [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+    [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];
     [pasteBoard setString:result forType:NSStringPboardType];
 }
 

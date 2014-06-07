@@ -143,6 +143,9 @@ private:
     int                           m_PosY = 0;
     Space                         m_EraseChar;
     ScreenShot                   *m_ScreenShot = nullptr;
+    
+    // TODO: merge screen with scrollback to eliminate torn lines effects
+    // (line can't be wrapped between scrollback and screen now)
     list<Line>                    m_Screen;
     list<Line>                    m_ScrollBack;
 

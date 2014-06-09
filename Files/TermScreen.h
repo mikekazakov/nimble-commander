@@ -156,5 +156,6 @@ private:
     
     Line *GetLineRW(int _line_no);
     static list<vector<Space>> ComposeContinuousLines(const list<Line> &_from);
+    static list<vector<Space>> ComposeContinuousLines(const list<Line> &_from1, const list<Line> &_from2);
     static list<Line> DecomposeContinuousLines(const list<vector<Space>> &_from, unsigned _width);
 };

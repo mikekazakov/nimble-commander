@@ -444,12 +444,10 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
     
     if(feed_from_bs && !m_AlternateScreen) {
         // compose non-wrapped strings from current screen and backscroll
-        list<vector<TermScreen::Space>> comp_lines;
-        comp_lines.splice(end(comp_lines), ComposeContinuousLines(m_ScrollBack));
-        comp_lines.splice(end(comp_lines), ComposeContinuousLines(m_Screen));
+        auto comp_lines = ComposeContinuousLines(m_ScrollBack, m_Screen);
 
         // decompose it back with new width
-        list<TermScreen::Line> new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
+        auto new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
         if(new_lines.size() <= _new_sy)
             new_screen = move(new_lines);
         else {
@@ -463,7 +461,7 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
         auto comp_lines = ComposeContinuousLines(m_Screen);
         
         // decompose it back with new width
-        list<TermScreen::Line> new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
+        auto new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
 
         new_scrollback = DecomposeContinuousLines(ComposeContinuousLines(m_ScrollBack), _new_sx);
         
@@ -531,6 +529,41 @@ list<vector<TermScreen::Space>> TermScreen::ComposeContinuousLines(const list<Li
         
         cont = l.wrapped;
     }
+    return lines;
+}
+
+list<vector<TermScreen::Space>> TermScreen::ComposeContinuousLines(const list<Line> &_from1, const list<Line> &_from2)
+{
+    list<vector<TermScreen::Space>> lines;
+    vector<TermScreen::Space> *curr = nullptr;
+    
+    bool cont = false;
+    for(auto &l: _from1) {
+        if(!cont) {
+            lines.emplace_back();
+            curr = &lines.back();
+        }
+        
+        curr->insert(end(*curr),
+                     begin(l.chars),
+                     begin(l.chars) + l.actual_length());
+        
+        cont = l.wrapped;
+    }
+    
+    for(auto &l: _from2) {
+        if(!cont) {
+            lines.emplace_back();
+            curr = &lines.back();
+        }
+        
+        curr->insert(end(*curr),
+                     begin(l.chars),
+                     begin(l.chars) + l.actual_length());
+        
+        cont = l.wrapped;
+    }
+    
     return lines;
 }
 

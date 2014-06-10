@@ -47,8 +47,9 @@ struct AnsiColors : array<DoubleColor, 16>
             [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor15"] // Bright White
     }}{}
 };
-
-static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
+static const DoubleColor g_ForegroundColor = {0.7, 0.7, 0.7, 1.};
+static const DoubleColor g_BoldForegroundColor = {0.9, 0.9, 0.9, 1.};
+static const DoubleColor g_BackgroundColor = {0.0, 0., 0., 1.};
 static const DoubleColor g_SelectionColor = {0.1, 0.2, 1.0, 0.7};
 
 static inline bool IsBoxDrawingCharacter(unsigned short _ch)
@@ -168,7 +169,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     // Drawing code here.
     CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
     oms::SetFillColor(context, g_BackgroundColor);
-    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+    CGContextFillRect(context, NSRectToCGRect(self.bounds));
     
     if(!m_Screen)
         return;
@@ -242,17 +243,19 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     int x = 0;
     for(TermScreen::Space char_space: _line.chars)
     {
-        const DoubleColor &c = m_AnsiColors[char_space.reverse ? char_space.foreground : char_space.background];
-        if(c != g_BackgroundColor)
-        {
-            if(c != curr_c)
-                oms::SetFillColor(_context, curr_c = c);
+        int bg_no = char_space.reverse ? char_space.foreground : char_space.background;
+        if(bg_no != TermScreenColors::Default) {
+            const DoubleColor &c = m_AnsiColors[bg_no];
+            if(c != g_BackgroundColor) {
+                if(c != curr_c)
+                    oms::SetFillColor(_context, curr_c = c);
         
-            CGContextFillRect(_context,
-                            CGRectMake(x * m_FontCache->Width(),
-                                        _y * m_FontCache->Height(),
-                                        m_FontCache->Width(),
-                                        m_FontCache->Height()));
+                CGContextFillRect(_context,
+                                  CGRectMake(x * m_FontCache->Width(),
+                                             _y * m_FontCache->Height(),
+                                             m_FontCache->Width(),
+                                             m_FontCache->Height()));
+            }
         }
         ++x;
     }
@@ -309,16 +312,28 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     
     for(TermScreen::Space char_space: _line.chars)
     {
-        int foreground = char_space.foreground;
-        if(char_space.intensity)
-            foreground += 8;
+        DoubleColor c = g_ForegroundColor;
+        if(char_space.reverse) {
+            c = char_space.background != TermScreenColors::Default ?
+                m_AnsiColors[char_space.background] :
+                g_BackgroundColor;
+        } else {
+            int foreground = char_space.foreground;
+            if(foreground != TermScreenColors::Default){
+                if(char_space.intensity)
+                    foreground += 8;
+                c = m_AnsiColors[foreground];
+            } else {
+                if(char_space.intensity)
+                    c = g_BoldForegroundColor;
+            }
+        }
         
         if(char_space.l != 0 &&
            char_space.l != 32 &&
            char_space.l != TermScreen::MultiCellGlyph
            )
         {
-            const DoubleColor &c = m_AnsiColors[char_space.reverse ? char_space.background : foreground];
             if(c != curr_c)
                 oms::SetFillColor(_context, curr_c = c);
             

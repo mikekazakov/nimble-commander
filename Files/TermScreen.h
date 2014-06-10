@@ -11,6 +11,7 @@
 struct TermScreenColors
 {
     enum {
+        Default     = -1,
         Black       = 0,
         Red         = 1,
         Green       = 2,
@@ -43,8 +44,8 @@ public:
         unsigned short l; // letter. consider UTF-32 here? (16bit is not enough)
         unsigned short c1; // combining character 1. zero if no
         unsigned short c2; // combining character 2. zero if no
-        unsigned int foreground :3;
-        unsigned int background :3;
+        signed char foreground;
+        signed char background;
         unsigned int intensity  :1;
         unsigned int underline  :1;
         unsigned int reverse    :1;
@@ -74,7 +75,8 @@ public:
      */
     void PutWrap();
     
-    void SetColor(unsigned char _color);
+    void SetFgColor(int _color);
+    void SetBgColor(int _color);
     void SetIntensity(bool _intensity);
     void SetUnderline(bool _is_underline);
     void SetReverse(bool _is_reverse);
@@ -132,7 +134,8 @@ private:
     };
     
     mutex                    m_Lock;
-    unsigned char                 m_Color = 0x7;
+    int                           m_ForegroundColor = TermScreenColors::Default;
+    int                           m_BackgroundColor = TermScreenColors::Default;
     bool                          m_Intensity = false;
     bool                          m_Underline = false;
     bool                          m_Reverse = false;

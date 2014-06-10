@@ -71,7 +71,8 @@ private:
     int                     m_DECPMS_SavedCurX; // used only for DEC private modes 1048/1049
     int                     m_DECPMS_SavedCurY; // -""-
     struct{
-        unsigned char       color;
+        int                 fg_color;
+        int                 bg_color;
         unsigned char       g0_charset;
         unsigned char       g1_charset;
         unsigned char       charset_no;

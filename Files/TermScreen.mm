@@ -29,8 +29,8 @@ TermScreen::TermScreen(int _w, int _h):
     m_EraseChar.l = 0;
     m_EraseChar.c1 = 0;
     m_EraseChar.c2 = 0;
-    m_EraseChar.foreground = 0x7;
-    m_EraseChar.background = 0;
+    m_EraseChar.foreground = TermScreenColors::Default;
+    m_EraseChar.background = TermScreenColors::Default;
     m_EraseChar.intensity = 0;
     m_EraseChar.underline = 0;
     m_EraseChar.reverse   = 0;
@@ -82,8 +82,10 @@ void TermScreen::PutCh(unsigned short _char)
         sp.l = _char;
         sp.c1 = 0;
         sp.c2 = 0;
-        sp.foreground = m_Color & 0x7;
-        sp.background = (m_Color & 0x38) >> 3;
+//        sp.foreground = m_Color & 0x7;
+//        sp.background = (m_Color & 0x38) >> 3;
+        sp.foreground = m_ForegroundColor;
+        sp.background = m_BackgroundColor;
         sp.intensity = m_Intensity;
         sp.underline = m_Underline;
         sp.reverse   = m_Reverse;
@@ -242,11 +244,16 @@ void TermScreen::DoEraseCharacters(int _n)
         line->chars[i] = m_EraseChar;
 }
 
-void TermScreen::SetColor(unsigned char _color)
+void TermScreen::SetFgColor(int _color)
 {
-    m_Color = _color;
-    m_EraseChar.foreground = m_Color & 0x7;
-    m_EraseChar.background = (m_Color & 0x38) >> 3;
+    m_ForegroundColor = _color;
+    m_EraseChar.foreground = _color;
+}
+
+void TermScreen::SetBgColor(int _color)
+{
+    m_BackgroundColor = _color;
+    m_EraseChar.background = _color;
 }
 
 void TermScreen::SetIntensity(bool _intensity)

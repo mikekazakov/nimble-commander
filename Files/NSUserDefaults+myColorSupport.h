@@ -16,5 +16,8 @@
 - (void)setFont:(NSFont *)aFont forKey:(NSString *)aKey;
 - (NSFont *)fontForKey:(NSString *)aKey;
 
+- (void)setFont:(NSFont *)aFont forKeyPath:(NSString *)aKey;
+- (NSFont *)fontForKeyPath:(NSString *)aKey;
+
 
 @end

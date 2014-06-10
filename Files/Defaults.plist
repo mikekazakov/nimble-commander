@@ -148,5 +148,12 @@
 	<true/>
 	<key>FilePanelsQuickSearchTypingView</key>
 	<true/>
+	<key>Terminal</key>
+	<dict>
+		<key>Font</key>
+		<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
+		<key>Test</key>
+		<false/>
+	</dict>
 </dict>
 </plist>

@@ -7,6 +7,7 @@
 //
 
 #import "NSUserDefaults+myColorSupport.h"
+#import "3rd_party/CategoriesObjC/NSUserDefaults+KeyPaths.h"
 
 @implementation NSUserDefaults(myColorSupport)
 
@@ -39,6 +40,24 @@
         theFont=(NSFont *)[NSUnarchiver unarchiveObjectWithData:theData];
     return theFont;    
 }
+
+- (void)setFont:(NSFont *)aFont forKeyPath:(NSString *)aKey
+{
+    NSData *theData=[NSArchiver archivedDataWithRootObject:aFont];
+    [self setValue:theData forKeyPath:aKey];
+//    - (void)setValue:(id)value forKeyPath:(NSString*)keyPath ;
+}
+
+- (NSFont *)fontForKeyPath:(NSString *)aKey
+{
+    NSFont *theFont=nil;
+    NSData *theData = [self valueForKeyPath:aKey];
+    if (theData != nil)
+        theFont=(NSFont *)[NSUnarchiver unarchiveObjectWithData:theData];
+    return theFont;
+    
+}
+
 
 
 @end

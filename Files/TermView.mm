@@ -12,6 +12,7 @@
 #import "TermScreen.h"
 #import "TermParser.h"
 #import "Common.h"
+#import "NSUserDefaults+myColorSupport.h"
 
 struct SelPoint
 {
@@ -75,10 +76,11 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code here.
-        CTFontRef font = CTFontCreateWithName( (CFStringRef) @"Menlo-Regular", 13, 0);
-        m_FontCache = FontCache::FontCacheFromFont(font);
-        CFRelease(font);
+        NSFont *font = [NSUserDefaults.standardUserDefaults fontForKeyPath:@"Terminal.Font"];
+        if(!font)
+            font = [NSFont fontWithName:@"Menlo-Regular" size:13];
+        
+        m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
         m_LastScreenFSY = 0;
         m_HasSelection = false;
     }

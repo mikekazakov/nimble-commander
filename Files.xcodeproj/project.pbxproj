@@ -83,6 +83,9 @@
 		CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29312E17D79BA100648A90 /* IconsGenerator.mm */; };
 		CF29313417D9915600648A90 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
 		CF2AC58E1818DD3800B0BEB4 /* path_manip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF2AC58D1818DD3800B0BEB4 /* path_manip.c */; };
+		CF305DCA1946D50400840F25 /* NSArray+SSYMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC51946D50400840F25 /* NSArray+SSYMutations.m */; };
+		CF305DCB1946D50400840F25 /* NSDictionary+SimpleMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC71946D50400840F25 /* NSDictionary+SimpleMutations.m */; };
+		CF305DCC1946D50400840F25 /* NSUserDefaults+KeyPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC91946D50400840F25 /* NSUserDefaults+KeyPaths.m */; };
 		CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
 		CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
 		CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
@@ -322,6 +325,8 @@
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFDC4B5018F834EF004E6429 /* pref_extedit_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFDC4B4F18F834EF004E6429 /* pref_extedit_icon.png */; };
 		CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */; };
+		CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
+		CFE1088E1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
 		CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */; };
@@ -485,6 +490,12 @@
 		CF29313317D9915600648A90 /* rdrand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rdrand.h; path = 3rd_party/rdrand/rdrand.h; sourceTree = "<group>"; };
 		CF2AC58D1818DD3800B0BEB4 /* path_manip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = path_manip.c; sourceTree = "<group>"; };
 		CF2AC58F1818DD4800B0BEB4 /* path_manip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = path_manip.h; sourceTree = "<group>"; };
+		CF305DC41946D50400840F25 /* NSArray+SSYMutations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+SSYMutations.h"; path = "3rd_party/CategoriesObjC/NSArray+SSYMutations.h"; sourceTree = "<group>"; };
+		CF305DC51946D50400840F25 /* NSArray+SSYMutations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+SSYMutations.m"; path = "3rd_party/CategoriesObjC/NSArray+SSYMutations.m"; sourceTree = "<group>"; };
+		CF305DC61946D50400840F25 /* NSDictionary+SimpleMutations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+SimpleMutations.h"; path = "3rd_party/CategoriesObjC/NSDictionary+SimpleMutations.h"; sourceTree = "<group>"; };
+		CF305DC71946D50400840F25 /* NSDictionary+SimpleMutations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+SimpleMutations.m"; path = "3rd_party/CategoriesObjC/NSDictionary+SimpleMutations.m"; sourceTree = "<group>"; };
+		CF305DC81946D50400840F25 /* NSUserDefaults+KeyPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSUserDefaults+KeyPaths.h"; path = "3rd_party/CategoriesObjC/NSUserDefaults+KeyPaths.h"; sourceTree = "<group>"; };
+		CF305DC91946D50400840F25 /* NSUserDefaults+KeyPaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSUserDefaults+KeyPaths.m"; path = "3rd_party/CategoriesObjC/NSUserDefaults+KeyPaths.m"; sourceTree = "<group>"; };
 		CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileWindow.cpp; sourceTree = "<group>"; };
 		CF396AED173FA8AF00A20C42 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileWindow.h; sourceTree = "<group>"; };
 		CF396AEF173FA8C600A20C42 /* BigFileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileView.h; sourceTree = "<group>"; };
@@ -862,6 +873,9 @@
 		CFDC4B4F18F834EF004E6429 /* pref_extedit_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_extedit_icon.png; sourceTree = "<group>"; };
 		CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewDataBackend.mm; sourceTree = "<group>"; };
 		CFE0E66E17F7D16A00BCF557 /* BigFileViewDataBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewDataBackend.h; sourceTree = "<group>"; };
+		CFE1088A1946CBAF00DABC5C /* PreferencesWindowTerminalTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowTerminalTab.h; sourceTree = "<group>"; };
+		CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowTerminalTab.mm; sourceTree = "<group>"; };
+		CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowTerminalTab.xib; sourceTree = "<group>"; };
 		CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		CFE1A4F216C632F700EFBA3C /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
@@ -1002,6 +1016,9 @@
 				CF09857D18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */,
 				CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */,
 				CF09857F18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */,
+				CFE1088A1946CBAF00DABC5C /* PreferencesWindowTerminalTab.h */,
+				CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */,
+				CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -1161,6 +1178,19 @@
 				CF29313317D9915600648A90 /* rdrand.h */,
 			);
 			name = rdrand;
+			sourceTree = "<group>";
+		};
+		CF305DC21946D4F700840F25 /* CategoriesObjC */ = {
+			isa = PBXGroup;
+			children = (
+				CF305DC41946D50400840F25 /* NSArray+SSYMutations.h */,
+				CF305DC51946D50400840F25 /* NSArray+SSYMutations.m */,
+				CF305DC61946D50400840F25 /* NSDictionary+SimpleMutations.h */,
+				CF305DC71946D50400840F25 /* NSDictionary+SimpleMutations.m */,
+				CF305DC81946D50400840F25 /* NSUserDefaults+KeyPaths.h */,
+				CF305DC91946D50400840F25 /* NSUserDefaults+KeyPaths.m */,
+			);
+			name = CategoriesObjC;
 			sourceTree = "<group>";
 		};
 		CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */ = {
@@ -1818,6 +1848,7 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
+				CF305DC21946D4F700840F25 /* CategoriesObjC */,
 				CF3FCE0A190EB93600E55698 /* shared_mutex */,
 				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
 				CFDA4CD1182CBA51006EC35C /* sparkle */,
@@ -1960,6 +1991,7 @@
 				CFCD3B7D18AB64C600028B41 /* FindFilesSheetController.xib in Resources */,
 				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
 				B55DB19C171B0E9700E3610E /* question_icon.png in Resources */,
+				CFE1088E1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib in Resources */,
 				B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */,
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
 				CFEB07811886ECAA00E5CC0D /* linkarrow_icon.png in Resources */,
@@ -2122,6 +2154,7 @@
 				CF9D0EC117CC961100CB8146 /* archive_write_add_filter.c in Sources */,
 				CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF9D0EB017CC961100CB8146 /* archive_string_sprintf.c in Sources */,
+				CF305DCB1946D50400840F25 /* NSDictionary+SimpleMutations.m in Sources */,
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
 				CF6617EF17E48B5100593225 /* VFSError.mm in Sources */,
@@ -2157,6 +2190,7 @@
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */,
 				CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */,
+				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
 				CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */,
 				CFA0B22C186412BD00501C35 /* DispatchQueue.mm in Sources */,
@@ -2278,10 +2312,12 @@
 				CF9D0E8F17CC961100CB8146 /* archive_read_open_file.c in Sources */,
 				CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */,
 				CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */,
+				CF305DCC1946D50400840F25 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CF9D0ED117CC961100CB8146 /* archive_write_set_format_mtree.c in Sources */,
 				CF9D0EA917CC961100CB8146 /* archive_read_support_format_mtree.c in Sources */,
 				CFBE65AB17B607BE00451AE7 /* PanelFastSearchPopupViewController.mm in Sources */,
 				CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */,
+				CF305DCA1946D50400840F25 /* NSArray+SSYMutations.m in Sources */,
 				CF9D0E8017CC961100CB8146 /* archive_entry.c in Sources */,
 				CF27414917FF04EF006D6687 /* SharingService.mm in Sources */,
 				CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */,

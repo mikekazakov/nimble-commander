@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="13A584" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="14A238x" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowViewerTab">
@@ -25,7 +25,7 @@
                         <tabViewItem label="Common" identifier="1" id="4">
                             <view key="view" id="7">
                                 <rect key="frame" x="10" y="33" width="391" height="227"/>
-                                <autoresizingMask key="autoresizingMask"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="262">
                                         <rect key="frame" x="186" y="180" width="262" height="18"/>
@@ -61,7 +61,7 @@
                                         </constraints>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="280">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="281"/>
                                         </popUpButtonCell>
                                         <connections>
@@ -167,12 +167,12 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="95" id="624"/>
                                         </constraints>
-                                        <popUpButtonCell key="cell" type="push" title="32 Kb" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="614">
+                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="614">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="615">
                                                 <items>
-                                                    <menuItem title="32 Kb" state="on" id="616"/>
+                                                    <menuItem title="32 Kb" id="616"/>
                                                     <menuItem title="64 Kb" id="617"/>
                                                     <menuItem title="128Kb" id="618"/>
                                                     <menuItem title="256 Kb" id="636">

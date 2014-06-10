@@ -16,6 +16,7 @@
 #import "PreferencesWindowPanelsTab.h"
 #import "PreferencesWindowViewerTab.h"
 #import "PreferencesWindowExternalEditorsTab.h"
+#import "PreferencesWindowTerminalTab.h"
 #import "TemporaryNativeFileStorage.h"
 #import "NewVersionChecker.h"
 #import "MainWindowTerminalState.h"
@@ -366,7 +367,8 @@
         auto controllers = @[[PreferencesWindowGeneralTab new],
                              [PreferencesWindowPanelsTab new],
                              [PreferencesWindowViewerTab new],
-                             [PreferencesWindowExternalEditorsTab new]
+                             [PreferencesWindowExternalEditorsTab new],
+                             [PreferencesWindowTerminalTab new]
                              ];
         m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
                                                                                         andTitle:@"Preferences"];

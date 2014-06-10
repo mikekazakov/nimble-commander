@@ -47,10 +47,6 @@ struct AnsiColors : array<DoubleColor, 16>
             [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor15"] // Bright White
     }}{}
 };
-static const DoubleColor g_ForegroundColor = {0.7, 0.7, 0.7, 1.};
-static const DoubleColor g_BoldForegroundColor = {0.9, 0.9, 0.9, 1.};
-static const DoubleColor g_BackgroundColor = {0.0, 0., 0., 1.};
-static const DoubleColor g_SelectionColor = {0.1, 0.2, 1.0, 0.7};
 
 static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 {
@@ -70,6 +66,10 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     SelPoint        m_SelStart;
     SelPoint        m_SelEnd;
     const AnsiColors m_AnsiColors;
+    DoubleColor      m_ForegroundColor;
+    DoubleColor      m_BoldForegroundColor;
+    DoubleColor      m_BackgroundColor;
+    DoubleColor      m_SelectionColor;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -83,6 +83,10 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
         m_LastScreenFSY = 0;
         m_HasSelection = false;
+        m_ForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.FgColor"]);
+        m_BoldForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BldFgColor"]);
+        m_BackgroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BgColor"]);
+        m_SelectionColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.SelColor"]);
     }
     return self;
 }
@@ -168,7 +172,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 	
     // Drawing code here.
     CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-    oms::SetFillColor(context, g_BackgroundColor);
+    oms::SetFillColor(context, m_BackgroundColor);
     CGContextFillRect(context, NSRectToCGRect(self.bounds));
     
     if(!m_Screen)
@@ -246,7 +250,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         int bg_no = char_space.reverse ? char_space.foreground : char_space.background;
         if(bg_no != TermScreenColors::Default) {
             const DoubleColor &c = m_AnsiColors[bg_no];
-            if(c != g_BackgroundColor) {
+            if(c != m_BackgroundColor) {
                 if(c != curr_c)
                     oms::SetFillColor(_context, curr_c = c);
         
@@ -287,7 +291,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         
         if(rc.origin.x >= 0)
         {
-            oms::SetFillColor(_context, g_SelectionColor);
+            oms::SetFillColor(_context, m_SelectionColor);
             CGContextFillRect(_context, rc);
         }
         
@@ -312,11 +316,11 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     
     for(TermScreen::Space char_space: _line.chars)
     {
-        DoubleColor c = g_ForegroundColor;
+        DoubleColor c = m_ForegroundColor;
         if(char_space.reverse) {
             c = char_space.background != TermScreenColors::Default ?
                 m_AnsiColors[char_space.background] :
-                g_BackgroundColor;
+                m_BackgroundColor;
         } else {
             int foreground = char_space.foreground;
             if(foreground != TermScreenColors::Default){
@@ -325,7 +329,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
                 c = m_AnsiColors[foreground];
             } else {
                 if(char_space.intensity)
-                    c = g_BoldForegroundColor;
+                    c = m_BoldForegroundColor;
             }
         }
         

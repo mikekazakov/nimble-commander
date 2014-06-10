@@ -26,6 +26,15 @@
     return theColor;
 }
 
+- (NSColor *)colorForKeyPath:(NSString *)aKey
+{
+    NSColor *theColor=nil;
+    NSData *theData=[self valueForKeyPath:aKey];
+    if (theData != nil)
+        theColor=(NSColor *)[NSUnarchiver unarchiveObjectWithData:theData];
+    return theColor;
+}
+
 - (void)setFont:(NSFont *)aFont forKey:(NSString *)aKey
 {
     NSData *theData=[NSArchiver archivedDataWithRootObject:aFont];
@@ -45,7 +54,6 @@
 {
     NSData *theData=[NSArchiver archivedDataWithRootObject:aFont];
     [self setValue:theData forKeyPath:aKey];
-//    - (void)setValue:(id)value forKeyPath:(NSString*)keyPath ;
 }
 
 - (NSFont *)fontForKeyPath:(NSString *)aKey

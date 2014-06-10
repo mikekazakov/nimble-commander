@@ -11,7 +11,7 @@
 @interface NSUserDefaults(myColorSupport)
 - (void)setColor:(NSColor *)aColor forKey:(NSString *)aKey;
 - (NSColor *)colorForKey:(NSString *)aKey;
-
+- (NSColor *)colorForKeyPath:(NSString *)aKey;
 
 - (void)setFont:(NSFont *)aFont forKey:(NSString *)aKey;
 - (NSFont *)fontForKey:(NSString *)aKey;

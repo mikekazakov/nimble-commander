@@ -26,29 +26,27 @@ struct SelPoint
     inline bool operator !=(const SelPoint&_r) const { return y != _r.y || x != _r.x; }
 };
 
-static const DoubleColor& TermColorToDoubleColor(int _color)
+struct AnsiColors : array<DoubleColor, 16>
 {
-    static const DoubleColor colors[16] = {
-        {  0./ 255.,   0./ 255.,   0./ 255., 1.}, // Black
-        {153./ 255.,   0./ 255.,   0./ 255., 1.}, // Red
-        {  0./ 255., 166./ 255.,   0./ 255., 1.}, // Green
-        {153./ 255., 153./ 255.,   0./ 255., 1.}, // Yellow
-        {  0./ 255.,   0./ 255., 178./ 255., 1.}, // Blue
-        {178./ 255.,   0./ 255., 178./ 255., 1.}, // Magenta
-        {  0./ 255., 166./ 255., 178./ 255., 1.}, // Cyan
-        {191./ 255., 191./ 255., 191./ 255., 1.}, // White
-        {102./ 255., 102./ 255., 102./ 255., 1.}, // Bright Black
-        {229./ 255.,   0./ 255.,   0./ 255., 1.}, // Bright Red
-        {  0./ 255., 217./ 255.,   0./ 255., 1.}, // Bright Green
-        {229./ 255., 229./ 255.,   0./ 255., 1.}, // Bright Yellow
-        {  0./ 255.,   0./ 255., 255./ 255., 1.}, // Bright Blue
-        {229./ 255.,   0./ 255., 229./ 255., 1.}, // Bright Magenta
-        {  0./ 255., 229./ 255., 229./ 255., 1.}, // Bright Cyan
-        {229./ 255., 229./ 255., 229./ 235., 1.}  // Bright White
-    };
-    assert(_color >= 0 && _color <= 15);
-    return colors[_color];
-}
+    AnsiColors() : array{{
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor0"], // Black
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor1"], // Red
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor2"], // Green
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor3"], // Yellow
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor4"], // Blue
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor5"], // Magenta
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor6"], // Cyan
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor7"], // White
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor8"], // Bright Black
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor9"], // Bright Red
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor10"],// Bright Green
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor11"],// Bright Yellow
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor12"],// Bright Blue
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor13"],// Bright Magenta
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor14"],// Bright Cyan
+            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor15"] // Bright White
+    }}{}
+};
 
 static const DoubleColor g_BackgroundColor = {0., 0., 0., 1.};
 static const DoubleColor g_SelectionColor = {0.1, 0.2, 1.0, 0.7};
@@ -70,6 +68,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     bool            m_HasSelection;
     SelPoint        m_SelStart;
     SelPoint        m_SelEnd;
+    const AnsiColors m_AnsiColors;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -243,7 +242,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     int x = 0;
     for(TermScreen::Space char_space: _line.chars)
     {
-        const DoubleColor &c = TermColorToDoubleColor(char_space.reverse ? char_space.foreground : char_space.background);
+        const DoubleColor &c = m_AnsiColors[char_space.reverse ? char_space.foreground : char_space.background];
         if(c != g_BackgroundColor)
         {
             if(c != curr_c)
@@ -319,7 +318,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
            char_space.l != TermScreen::MultiCellGlyph
            )
         {
-            const DoubleColor &c = TermColorToDoubleColor(char_space.reverse ? char_space.background : foreground);
+            const DoubleColor &c = m_AnsiColors[char_space.reverse ? char_space.background : foreground];
             if(c != curr_c)
                 oms::SetFillColor(_context, curr_c = c);
             

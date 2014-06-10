@@ -148,8 +148,6 @@
  @details  If the receiver does not currently contain an equal object,
  this method is a no-op.  Note that it *moves* the object currently
  in the receiver.  It does not replace it with the given object.
- @param    object  
- @param    newIndex  
 */
 - (void)moveObject:(id)object
 		   toIndex:(NSInteger)newIndex ;

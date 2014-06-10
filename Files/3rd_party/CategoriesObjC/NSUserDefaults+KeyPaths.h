@@ -57,8 +57,6 @@
  @details  Note that this is an override of the NSObject method.  
  The opposite method, -valueForKeyPath:, is also provided by
  NSObject, but it works as expected.
- @param    value  
- @param    keyPath  
 */
 - (void)setValue:(id)value
 	  forKeyPath:(NSString*)keyPath ;

@@ -74,6 +74,9 @@
 }
 
 - (NSArray*)arrayByRemovingObjectsEqualPerSelector:(SEL)isEqualSelector {
+    assert(0); // commented out strange code
+    return nil;
+#if 0
 	NSMutableArray* keepers = [[NSMutableArray alloc] init] ;
 	for (id object in self) {
 		BOOL isUnique = YES ;
@@ -93,6 +96,7 @@
 	NSArray* answer = [keepers copy] ;
 	
 	return answer;
+#endif
 }
 
 - (NSArray*)arrayByRemovingEqualObjects {

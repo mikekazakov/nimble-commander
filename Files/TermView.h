@@ -22,6 +22,7 @@ enum class TermViewCursor
 
 - (FontCache*) FontCache;
 
+- (void) reloadSettings;
 - (void) AttachToScreen:(TermScreen*)_scr;
 - (void) AttachToParser:(TermParser*)_par;
 - (void) setRawTaskFeed:(void(^)(const void* _d, int _sz))_feed;

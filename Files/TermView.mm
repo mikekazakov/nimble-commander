@@ -65,32 +65,22 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     bool            m_HasSelection;
     SelPoint        m_SelStart;
     SelPoint        m_SelEnd;
-    const AnsiColors m_AnsiColors;
-    DoubleColor      m_ForegroundColor;
-    DoubleColor      m_BoldForegroundColor;
-    DoubleColor      m_BackgroundColor;
-    DoubleColor      m_SelectionColor;
-    DoubleColor      m_CursorColor;
-    TermViewCursor   m_CursorType;
+    AnsiColors      m_AnsiColors;
+    DoubleColor     m_ForegroundColor;
+    DoubleColor     m_BoldForegroundColor;
+    DoubleColor     m_BackgroundColor;
+    DoubleColor     m_SelectionColor;
+    DoubleColor     m_CursorColor;
+    TermViewCursor  m_CursorType;
 }
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        NSFont *font = [NSUserDefaults.standardUserDefaults fontForKeyPath:@"Terminal.Font"];
-        if(!font)
-            font = [NSFont fontWithName:@"Menlo-Regular" size:13];
-        
-        m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
         m_LastScreenFSY = 0;
         m_HasSelection = false;
-        m_ForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.FgColor"]);
-        m_BoldForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BldFgColor"]);
-        m_BackgroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BgColor"]);
-        m_SelectionColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.SelColor"]);
-        m_CursorColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.CursorColor"]);
-        m_CursorType = (TermViewCursor)[[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.CursorMode"] intValue];
+        [self reloadSettings];
     }
     return self;
 }
@@ -133,6 +123,22 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
 - (void) setRawTaskFeed:(void(^)(const void* _d, int _sz))_feed
 {
     m_RawTaskFeed = _feed;
+}
+
+- (void) reloadSettings
+{
+    NSFont *font = [NSUserDefaults.standardUserDefaults fontForKeyPath:@"Terminal.Font"];
+    if(!font)
+        font = [NSFont fontWithName:@"Menlo-Regular" size:13];
+    m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
+    
+    m_ForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.FgColor"]);
+    m_BoldForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BldFgColor"]);
+    m_BackgroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BgColor"]);
+    m_SelectionColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.SelColor"]);
+    m_CursorColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.CursorColor"]);
+    m_CursorType = (TermViewCursor)[[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.CursorMode"] intValue];
+    m_AnsiColors = AnsiColors();
 }
 
 - (void)keyDown:(NSEvent *)event

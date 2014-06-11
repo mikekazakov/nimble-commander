@@ -6,9 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <stdio.h>
-#include <assert.h>
-
 #include "TermScreen.h"
 #include "FontCache.h"
 #include "OrthodoxMonospace.h"

@@ -334,10 +334,10 @@
                     </textFieldCell>
                 </textField>
                 <matrix appearanceType="aqua" verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="stk-zw-sC0">
-                    <rect key="frame" x="263" y="228" width="93" height="58"/>
+                    <rect key="frame" x="263" y="228" width="126" height="58"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    <size key="cellSize" width="93" height="18"/>
+                    <size key="cellSize" width="110" height="18"/>
                     <size key="intercellSpacing" width="4" height="2"/>
                     <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="Rlj-B4-Zwm">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -345,15 +345,15 @@
                     </buttonCell>
                     <cells>
                         <column>
-                            <buttonCell type="radio" title="Block" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="lmd-o1-1kc">
+                            <buttonCell type="radio" title="█ Block" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="lmd-o1-1kc">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
-                            <buttonCell type="radio" title="Underline" imagePosition="left" alignment="left" inset="2" id="Hi6-HH-WxJ">
+                            <buttonCell type="radio" title="▁ Underline" imagePosition="left" alignment="left" inset="2" id="Hi6-HH-WxJ">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
-                            <buttonCell type="radio" title="Vertical Bar" imagePosition="left" alignment="left" inset="2" id="OJo-EQ-cnc">
+                            <buttonCell type="radio" title=" ▏Vertical Bar" imagePosition="left" alignment="left" inset="2" id="OJo-EQ-cnc">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>

@@ -229,7 +229,7 @@
                     </connections>
                 </colorWell>
                 <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wlb-jH-pG1">
-                    <rect key="frame" x="150" y="269" width="44" height="23"/>
+                    <rect key="frame" x="20" y="271" width="44" height="23"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -241,7 +241,7 @@
                     </connections>
                 </colorWell>
                 <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CIE-oo-Sjs">
-                    <rect key="frame" x="150" y="233" width="44" height="23"/>
+                    <rect key="frame" x="20" y="235" width="44" height="23"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -253,7 +253,7 @@
                     </connections>
                 </colorWell>
                 <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mLR-jE-upV">
-                    <rect key="frame" x="150" y="202" width="44" height="23"/>
+                    <rect key="frame" x="20" y="204" width="44" height="23"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -265,7 +265,7 @@
                     </connections>
                 </colorWell>
                 <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g8c-T5-qeY">
-                    <rect key="frame" x="150" y="174" width="44" height="23"/>
+                    <rect key="frame" x="20" y="176" width="44" height="23"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -277,7 +277,7 @@
                     </connections>
                 </colorWell>
                 <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O2I-Ah-bcY">
-                    <rect key="frame" x="200" y="272" width="100" height="17"/>
+                    <rect key="frame" x="70" y="274" width="100" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Text" id="p0R-sF-276">
                         <font key="font" metaFont="system"/>
@@ -286,7 +286,7 @@
                     </textFieldCell>
                 </textField>
                 <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2ZN-7T-nB3">
-                    <rect key="frame" x="200" y="236" width="100" height="17"/>
+                    <rect key="frame" x="70" y="238" width="100" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Bold Text" id="Yfm-Nn-AuD">
                         <font key="font" metaFont="system"/>
@@ -295,7 +295,7 @@
                     </textFieldCell>
                 </textField>
                 <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L7C-sQ-rpU">
-                    <rect key="frame" x="200" y="177" width="100" height="17"/>
+                    <rect key="frame" x="70" y="179" width="100" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Selection" id="ezd-9K-uv3">
                         <font key="font" metaFont="system"/>
@@ -304,7 +304,7 @@
                     </textFieldCell>
                 </textField>
                 <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6bS-Yw-6MZ">
-                    <rect key="frame" x="200" y="205" width="100" height="17"/>
+                    <rect key="frame" x="70" y="207" width="100" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Background" id="cwt-bk-IjR">
                         <font key="font" metaFont="system"/>
@@ -313,7 +313,7 @@
                     </textFieldCell>
                 </textField>
                 <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1hh-Ot-Nda">
-                    <rect key="frame" x="150" y="146" width="44" height="23"/>
+                    <rect key="frame" x="20" y="148" width="44" height="23"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -325,10 +325,49 @@
                     </connections>
                 </colorWell>
                 <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rF2-wk-sKe">
-                    <rect key="frame" x="200" y="149" width="100" height="17"/>
+                    <rect key="frame" x="70" y="151" width="100" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor" id="IGT-Dv-Ld8">
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <matrix appearanceType="aqua" verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="stk-zw-sC0">
+                    <rect key="frame" x="263" y="228" width="93" height="58"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    <size key="cellSize" width="93" height="18"/>
+                    <size key="intercellSpacing" width="4" height="2"/>
+                    <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="Rlj-B4-Zwm">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <cells>
+                        <column>
+                            <buttonCell type="radio" title="Block" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="lmd-o1-1kc">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <buttonCell type="radio" title="Underline" imagePosition="left" alignment="left" inset="2" id="Hi6-HH-WxJ">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <buttonCell type="radio" title="Vertical Bar" imagePosition="left" alignment="left" inset="2" id="OJo-EQ-cnc">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </column>
+                    </cells>
+                    <connections>
+                        <binding destination="kx9-7p-zxc" name="selectedIndex" keyPath="selection.CursorMode" id="y9g-6q-mua"/>
+                    </connections>
+                </matrix>
+                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y11-Bl-tZz">
+                    <rect key="frame" x="261" y="294" width="99" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor" id="nU3-et-JNg">
+                        <font key="font" metaFont="smallSystemBold"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>

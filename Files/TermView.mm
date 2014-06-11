@@ -82,7 +82,6 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         if(!font)
             font = [NSFont fontWithName:@"Menlo-Regular" size:13];
         
-        m_CursorType = TermViewCursor::Underline;
         m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
         m_LastScreenFSY = 0;
         m_HasSelection = false;
@@ -91,6 +90,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         m_BackgroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BgColor"]);
         m_SelectionColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.SelColor"]);
         m_CursorColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.CursorColor"]);
+        m_CursorType = (TermViewCursor)[[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.CursorMode"] intValue];
     }
     return self;
 }

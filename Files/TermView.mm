@@ -70,6 +70,8 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     DoubleColor      m_BoldForegroundColor;
     DoubleColor      m_BackgroundColor;
     DoubleColor      m_SelectionColor;
+    DoubleColor      m_CursorColor;
+    TermViewCursor   m_CursorType;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -80,6 +82,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         if(!font)
             font = [NSFont fontWithName:@"Menlo-Regular" size:13];
         
+        m_CursorType = TermViewCursor::Underline;
         m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
         m_LastScreenFSY = 0;
         m_HasSelection = false;
@@ -87,6 +90,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         m_BoldForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BldFgColor"]);
         m_BackgroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BgColor"]);
         m_SelectionColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.SelColor"]);
+        m_CursorColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.CursorColor"]);
     }
     return self;
 }
@@ -299,14 +303,11 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     
     // draw cursor if it's here
     if(_cur_x >= 0)
-    {
-        CGContextSetRGBFillColor(_context, 0.4, 0.4, 0.4, 1.);
-        CGContextFillRect(_context,
-                        CGRectMake(_cur_x * m_FontCache->Width(),
-                                    _y * m_FontCache->Height(),
-                                    m_FontCache->Width(),
-                                    m_FontCache->Height()));
-    }
+        [self drawCursor:NSMakeRect(_cur_x * m_FontCache->Width(),
+                                   _y * m_FontCache->Height(),
+                                   m_FontCache->Width(),
+                                   m_FontCache->Height())
+                 context:_context];
     
     // draw glyphs
     x = 0;
@@ -366,6 +367,31 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         }
         
         ++x;
+    }
+}
+
+- (void)drawCursor:(NSRect)_char_rect context:(CGContextRef)_context
+{
+    oms::SetFillColor(_context, m_CursorColor);
+    
+    switch (m_CursorType) {
+        case TermViewCursor::Block:
+            CGContextFillRect(_context, NSRectToCGRect(_char_rect));            
+            break;
+            
+        case TermViewCursor::Underline:
+            CGContextFillRect(_context,
+                              CGRectMake(_char_rect.origin.x,
+                                         _char_rect.origin.y + _char_rect.size.height - 2,
+                                         _char_rect.size.width,
+                                         2));
+            break;
+            
+        case TermViewCursor::VerticalBar:
+            CGContextFillRect(_context,
+                              CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height)
+                              );
+            break;
     }
 }
 

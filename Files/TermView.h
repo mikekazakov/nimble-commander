@@ -6,11 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
 class TermScreen;
 class TermParser;
 class FontCache;
+
+enum class TermViewCursor
+{
+    Block       = 0,
+    Underline   = 1,
+    VerticalBar = 2
+};
 
 @interface TermView : NSView
 

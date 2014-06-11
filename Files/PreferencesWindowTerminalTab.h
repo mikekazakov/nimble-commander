@@ -11,4 +11,6 @@
 
 @interface PreferencesWindowTerminalTab : NSViewController<RHPreferencesViewControllerProtocol>
 
+@property (strong) IBOutlet NSTextField *fontVisibleName;
+
 @end

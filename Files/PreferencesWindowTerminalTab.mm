@@ -23,6 +23,14 @@
     return self;
 }
 
+- (void)loadView
+{
+    [super loadView];
+    m_Font = [NSUserDefaults.standardUserDefaults fontForKeyPath:@"Terminal.Font"];
+    if(!m_Font) m_Font = [NSFont fontWithName:@"Menlo-Regular" size:13];
+
+    [self updateFontVisibleName];
+}
 
 -(NSString*)identifier{
     return NSStringFromClass(self.class);
@@ -34,11 +42,13 @@
     return @"Terminal";
 }
 
+- (void) updateFontVisibleName
+{
+    self.fontVisibleName.stringValue = [NSString stringWithFormat:@"%@ %.0f pt.", m_Font.displayName, m_Font.pointSize];
+}
+
 - (IBAction)OnSetFont:(id)sender
 {
-    m_Font = [NSUserDefaults.standardUserDefaults fontForKeyPath:@"Terminal.Font"];
-    if(!m_Font) m_Font = [NSFont fontWithName:@"Menlo-Regular" size:13];
-    
     NSFontManager * fontManager = [NSFontManager sharedFontManager];
     fontManager.target = self;
     fontManager.action = @selector(ChangeFont:);
@@ -50,6 +60,7 @@
 {
     m_Font = [sender convertFont:m_Font];
     [NSUserDefaults.standardUserDefaults setFont:m_Font forKeyPath:@"Terminal.Font"];
+    [self updateFontVisibleName];
 }
 
 @end

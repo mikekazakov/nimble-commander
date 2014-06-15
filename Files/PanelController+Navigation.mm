@@ -183,12 +183,13 @@
                      select_entry:""
                             async:true];
                 });
+                break;
             }
             
             if(path == "/")
                 break;
             
-            if(path.filename() == "/") path.remove_filename();
+            if(path.filename() == ".") path.remove_filename();
             path = path.parent_path();
         }
         

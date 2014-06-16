@@ -224,8 +224,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         [item setString:[NSString stringWithUTF8String:dest.c_str()]
                 forType:type];
     }
-    else if([type isEqualToString:(NSString *)kUTTypeFileURL] ||
-            [type isEqualToString:(NSString *)kUTTypeURL])
+    else if([type isEqualToString:(NSString *)kUTTypeFileURL])
     {
         NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:item.path.c_str()]];
         [url writeToPasteboard:sender];
@@ -288,7 +287,6 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     if(vfs->IsNativeFS()) {
         [pasteboard_types addObject:FilenamesPasteboardUTI()];
         [pasteboard_types addObject:(NSString *)kUTTypeFileURL];
-        [pasteboard_types addObject:(NSString *)kUTTypeURL];
     }
     
     for(auto i: vfs_items) {

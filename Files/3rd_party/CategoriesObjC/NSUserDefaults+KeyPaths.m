@@ -14,7 +14,7 @@
 			// Corrupt pref?
 			return nil ;
 		}
-		obj = [obj objectForKey:key] ;
+		obj = [(NSDictionary*)obj objectForKey:key] ;
 	}
 	
 	return obj;
@@ -33,7 +33,7 @@
 	NSInteger i ;
 	for (i=0; i<N-1; i++) {
 		NSString* key = [keyArray objectAtIndex:i] ;
-		object = [object objectForKey:key] ;
+		object = [(NSDictionary*)object objectForKey:key] ;
 		if ([object isKindOfClass:[NSDictionary class]]) {
 			// Required dictionary already exists.  Stash it for later.
 			[dics addObject:object] ;

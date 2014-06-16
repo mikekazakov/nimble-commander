@@ -309,7 +309,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (IBAction)LeftPanelGoto:(id)sender{
     NSPoint p = NSMakePoint(0, self.frame.size.height);
     p = [self convertPoint:p toView:nil];
-    p = [self.window convertBaseToScreen:p];
+    p = [self.window convertRectToScreen:NSMakeRect(p.x, p.y, 1, 1)].origin;
     [m_LeftPanelGoToButton SetAnchorPoint:p IsRight:false];
     [m_LeftPanelGoToButton performClick:self];
 }
@@ -317,7 +317,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (IBAction)RightPanelGoto:(id)sender{
     NSPoint p = NSMakePoint(self.frame.size.width, self.frame.size.height);
     p = [self convertPoint:p toView:nil];
-    p = [self.window convertBaseToScreen:p];
+    p = [self.window convertRectToScreen:NSMakeRect(p.x, p.y, 1, 1)].origin;
     [m_RightPanelGoToButton SetAnchorPoint:p IsRight:true];
     [m_RightPanelGoToButton performClick:self];
 }

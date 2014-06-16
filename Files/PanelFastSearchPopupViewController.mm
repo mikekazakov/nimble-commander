@@ -63,14 +63,14 @@ static const double   g_FadeTime    = 0.7; // 0.7 sec
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:nil
-                                                          attribute:0
+                                                          attribute:NSLayoutAttributeNotAnAttribute
                                                          multiplier:1
                                                            constant:235];
     NSLayoutConstraint *c4 = [NSLayoutConstraint constraintWithItem:me
                                                           attribute:NSLayoutAttributeHeight
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:nil
-                                                          attribute:0
+                                                          attribute:NSLayoutAttributeNotAnAttribute
                                                          multiplier:1
                                                            constant:35];
     [sup addConstraint:c1];

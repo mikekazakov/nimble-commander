@@ -242,7 +242,7 @@ void BigFileViewText::BuildLayout()
     
     double wrapping_width = 10000;
     if([m_View WordWrap])
-        wrapping_width = [m_View frame].size.width - [NSScroller scrollerWidth] - m_LeftInset;
+        wrapping_width = [m_View frame].size.width - [NSScroller scrollerWidthForControlSize:NSRegularControlSize scrollerStyle:NSScrollerStyleLegacy] - m_LeftInset;
 
     m_AttrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
     CFAttributedStringReplaceString(m_AttrString, CFRangeMake(0, 0), m_StringBuffer);

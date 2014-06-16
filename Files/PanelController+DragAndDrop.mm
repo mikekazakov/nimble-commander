@@ -280,7 +280,6 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     dragPosition.x -= 16;
     dragPosition.y -= 16;
     
-    // we still can't provide NSFilenamesPboardType due to gaps(?) in API, so some apps like VLC can't accept our drags
     NSMutableArray *pasteboard_types = [NSMutableArray new];
     [pasteboard_types addObject:(NSString *)kPasteboardTypeFileURLPromise];
     [pasteboard_types addObject:kPrivateDragUTI];

@@ -84,6 +84,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
         m_LastScreenFSY = 0;
         m_HasSelection = false;
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
+        m_FPS.fps = [[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.FramesPerSecond"] intValue];
         [self reloadSettings];
     }
     return self;

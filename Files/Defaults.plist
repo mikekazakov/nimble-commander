@@ -169,7 +169,7 @@
 		<key>AnsiColor6</key>
 		<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAIOnpiY/g7OyMj8Bhg==</data>
 		<key>AnsiColor7</key>
-		<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAABAYY=</data>
+		<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg8C/Pz+DwL8/P4PAvz8/AYY=</data>
 		<key>AnsiColor8</key>
 		<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg83MzD6DzczMPoPNzMw+AYY=</data>
 		<key>AnsiColor9</key>
@@ -196,6 +196,8 @@
 		<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg+blZT+D5uVlP4Pm5WU/AYY=</data>
 		<key>CursorColor</key>
 		<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg83MzD6DzczMPoPNzMw+AYY=</data>
+		<key>FramesPerSecond</key>
+		<integer>60</integer>
 	</dict>
 </dict>
 </plist>

@@ -47,6 +47,8 @@ static const uint64_t m_MaxTimeBeforeInvalidation = NSEC_PER_SEC * 5;
 - (void) setFps:(unsigned)_fps
 {
     assert(dispatch_is_main_queue());
+    if(_fps == m_FPS)
+        return;
     m_FPS = _fps;
     [self cleanupTimer];
     if(_fps > 0)
@@ -100,6 +102,8 @@ static const uint64_t m_MaxTimeBeforeInvalidation = NSEC_PER_SEC * 5;
 
 - (void) setupTimer
 {
+    if(m_DrawTimer)
+        return;
     m_DrawTimer = [NSTimer scheduledTimerWithTimeInterval:1./m_FPS
                                                    target:self
                                                  selector:@selector(UpdateByTimer:)

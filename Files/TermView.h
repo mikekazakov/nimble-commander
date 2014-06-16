@@ -6,6 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+
+#import "FPSLimitedDrawer.h"
+
 class TermScreen;
 class TermParser;
 class FontCache;
@@ -19,6 +22,7 @@ enum class TermViewCursor
 
 @interface TermView : NSView
 
+@property (readonly) FPSLimitedDrawer *FPSDrawer;
 
 - (FontCache*) FontCache;
 

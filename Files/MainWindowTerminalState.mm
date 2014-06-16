@@ -119,10 +119,12 @@
             strongself->m_Parser->Flush();
             strongself->m_Screen->Unlock();
         
+            
+            [strongself->m_View.FPSDrawer invalidate];
+            
             //            tmb.Reset("Parsed in: ");
             dispatch_to_main_queue( ^{
                 [strongself->m_View adjustSizes:false];
-                [strongself->m_View setNeedsDisplay:true];
                 if(newtitle)
                     [strongself UpdateTitle];
             });

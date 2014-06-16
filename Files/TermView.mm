@@ -72,7 +72,10 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     DoubleColor     m_SelectionColor;
     DoubleColor     m_CursorColor;
     TermViewCursor  m_CursorType;
+    FPSLimitedDrawer *m_FPS;
 }
+
+@synthesize FPSDrawer = m_FPS;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -80,6 +83,7 @@ static inline bool IsBoxDrawingCharacter(unsigned short _ch)
     if (self) {
         m_LastScreenFSY = 0;
         m_HasSelection = false;
+        m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         [self reloadSettings];
     }
     return self;

@@ -411,6 +411,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             }
             if(opmask == NSDragOperationMove ||
                opmask == (NSDragOperationMove|NSDragOperationLink) ||
+               opmask == (NSDragOperationMove|NSDragOperationCopy) ||
                opmask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink)) {
                 string destination = self.GetCurrentDirectoryPathRelativeToHost;
                 FileCopyOperationOptions opts;

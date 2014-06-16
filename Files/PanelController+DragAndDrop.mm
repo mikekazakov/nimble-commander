@@ -367,13 +367,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             // we're dragging something here from another PanelView, lets understand what actually
             PanelControllerDragSourceBroker *source_broker = (PanelControllerDragSourceBroker *)idsource;
             PanelController *source_controller = source_broker.controller;
-            MainWindowFilePanelState* filepanel_state = self.state;
             assert(source_controller != self);
             auto opmask = sender.draggingSourceOperationMask;
-            
-            // currently we accept only copying to native fs
-//            if(!m_HostsStack.back()->IsNativeFS())
-//                return false;
             
             chained_strings files;
             for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
@@ -398,7 +393,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                                           dstvfs:self.VFS
                                                                          options:opts];
 
-                [filepanel_state.OperationsController AddOperation:op];
+                [self.state.OperationsController AddOperation:op];
                 return true;
             }
 
@@ -411,7 +406,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                                             dest:destination.c_str()
                                                                          options:opts];
                     
-                [filepanel_state.OperationsController AddOperation:op];
+                [self.state.OperationsController AddOperation:op];
                 return true;
             }
             if(opmask == NSDragOperationMove ||
@@ -433,7 +428,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                              dest:destination.c_str()
                                                           options:opts];
                 
-                [filepanel_state.OperationsController AddOperation:op];
+                [self.state.OperationsController AddOperation:op];
                 return true;
             }
             if(opmask == NSDragOperationLink &&
@@ -441,7 +436,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                source_broker.vfs->IsNativeFS() ) {
                 string source_path = source_broker.root_path + files.front().c_str();
                 string dest_path = self.GetCurrentDirectoryPathRelativeToHost + files.front().c_str();
-                [filepanel_state.OperationsController AddOperation:
+                [self.state.OperationsController AddOperation:
                     [[FileLinkOperation alloc] initWithNewSymbolinkLink:source_path.c_str()
                                                                linkname:dest_path.c_str()]];
                 return true;
@@ -449,25 +444,47 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         }
     }
     else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
-        
         NSArray *fileURLs = [sender.draggingPasteboard
                              readObjectsForClasses:@[NSURL.class]
                              options:@{NSPasteboardURLReadingFileURLsOnlyKey:@YES}
                              ];
         
-        bool result = false;
+        map<string, vector<string>> files; // directory/ -> [filename1, filename2, ...]
+  
         for(NSURL *url in fileURLs) {
             path source_path = url.path.fileSystemRepresentation;
-            path dest_path = path(self.GetCurrentDirectoryPathRelativeToHost) / source_path.filename();
+            string root = source_path.parent_path().native() + "/";
+            string filename = source_path.filename().native();
+            files[root].emplace_back(filename);
+        }
+
+        for(auto &t: files)
+        {
+            chained_strings filenames;
+            for(auto &s: t.second)
+                filenames.push_back(s, nullptr);
             
-            result = VFSEasyCopyNode(source_path.c_str(),
-                                     VFSNativeHost::SharedHost(),
-                                     dest_path.c_str(),
-                                     VFSNativeHost::SharedHost()
-                                     ) == 0;
+            
+            FileCopyOperationOptions opts;
+            opts.docopy = true; // TODO: support move from other apps someday?
+            FileCopyOperation *op;
+
+            if(!self.VFS->IsNativeFS() && self.VFS->IsWriteable() ) // vfs->vfs path
+                op = [[FileCopyOperation alloc] initWithFiles:move(filenames)
+                                                         root:t.first.c_str()
+                                                       srcvfs:VFSNativeHost::SharedHost()
+                                                         dest:self.GetCurrentDirectoryPathRelativeToHost.c_str()
+                                                       dstvfs:self.VFS
+                                                      options:opts];
+            else // native -> native path
+                op = [[FileCopyOperation alloc] initWithFiles:move(filenames)
+                                                         root:t.first.c_str()
+                                                         dest:self.GetCurrentDirectoryPathRelativeToHost.c_str()
+                                                      options:opts];
+            [self.state.OperationsController AddOperation:op];
         }
         
-        return result;
+        return true;
     }
     
     return false;

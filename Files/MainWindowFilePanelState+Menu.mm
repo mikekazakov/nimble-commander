@@ -33,7 +33,7 @@
     if(false);
     IF(tag_file_open_in_opp)        return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.ActivePanelView.item->IsDir();
     IF(tag_cmd_compress)            return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && !self.ActivePanelView.item->IsDotDot();
-    IF(tag_cmd_move_to_trash)       return self.isPanelActive && self.ActivePanelView.item && !self.ActivePanelView.item->IsDotDot() && (self.ActivePanelController.VFS->IsNativeFS() || self.ActivePanelController.VFS->IsWriteable());
+    IF(tag_cmd_move_to_trash)       return self.isPanelActive && self.ActivePanelView.item && (!self.ActivePanelView.item->IsDotDot() || self.ActivePanelData->Stats().selected_entries_amount > 0)  && (self.ActivePanelController.VFS->IsNativeFS() || self.ActivePanelController.VFS->IsWriteable());
 #undef IF
     
     return true;

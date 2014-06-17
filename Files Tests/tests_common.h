@@ -10,7 +10,7 @@
 
 #import <XCTest/XCTest.h>
 
-#define XCTAssertCPPThrows(expression, format...) \
+#define _XCTAssertCPPThrows(test, expression, expressionStr, format...) \
     ({ \
         bool __caughtException = false; \
         try { \
@@ -20,6 +20,9 @@
             __caughtException = true; \
         }\
         if (!__caughtException) { \
-            _XCTRegisterFailure(_XCTFailureDescription(_XCTAssertion_Throws, 0, @#expression),format); \
-        } \
-    })
+            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_Throws, 0, expressionStr), format); \
+    } \
+})
+
+#define XCTAssertCPPThrows(expression, format...) \
+    _XCTAssertCPPThrows(self, expression, @#expression, format)

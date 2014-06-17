@@ -71,14 +71,14 @@ static int VFSCompareEntries(const path& _file1_full_path,
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
     XCTAssert( host->Open("/") == 0 );
     
-    const char *fn1 = "/mach_kernel",
-               *fn2 = "/Public/!FilesTesting/mach_kernel";
+    const char *fn1 = "/System/Library/Kernels/kernel",
+               *fn2 = "/Public/!FilesTesting/kernel";
 
     [self EnsureClean:fn2 at:host];
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("mach_kernel")
-                      root:"/"
+    op = [op initWithFiles:chained_strings("kernel")
+                      root:"/System/Library/Kernels/"
                     srcvfs:VFSNativeHost::SharedHost()
                       dest:"/Public/!FilesTesting/"
                     dstvfs:host

@@ -20,7 +20,7 @@
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
     XCTAssert( host->Open("/") == 0 );
     
-    const char *fn1 = "/mach_kernel", *fn2 = "/Public/!FilesTesting/mach_kernel";
+    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/mach_kernel";
     VFSStat stat;
     
     // if there's a trash from previous runs - remove it

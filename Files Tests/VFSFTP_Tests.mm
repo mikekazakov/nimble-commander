@@ -89,8 +89,8 @@ static const char* readme = "\n\
     auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
     XCTAssert( host->Open("/") == 0 );
     
-    const char *fn1 = "/mach_kernel",
-               *fn2 = "/Public/!FilesTesting/mach_kernel";
+    const char *fn1 = "/System/Library/Kernels/kernel",
+               *fn2 = "/Public/!FilesTesting/kernel";
     VFSStat stat;
     
     // if there's a trash from previous runs - remove it
@@ -125,8 +125,8 @@ static const char* readme = "\n\
     auto host = make_shared<VFSNetFTPHost>("127.0.0.1");
     XCTAssert( host->Open("/", opts) == 0 );
     
-    const char *fn1 = "/mach_kernel",
-    *fn2 = "/mach_kernel";
+    const char *fn1 = "/System/Library/Kernels/kernel",
+    *fn2 = "/kernel";
     VFSStat stat;
     
     // if there's a trash from previous runs - remove it
@@ -258,7 +258,7 @@ static const char* readme = "\n\
     auto host = make_shared<VFSNetFTPHost>(g_LocalFTP.c_str());
     XCTAssert( host->Open("/") == 0 );
     
-    string fn1 = "/mach_kernel", fn2 = g_LocalTestPath + "mach_kernel", fn3 = g_LocalTestPath + "mach_kernel34234234";
+    string fn1 = "/System/Library/Kernels/kernel", fn2 = g_LocalTestPath + "kernel", fn3 = g_LocalTestPath + "kernel34234234";
     
     VFSStat stat;
     
@@ -294,7 +294,7 @@ static const char* readme = "\n\
     auto host = make_shared<VFSNetFTPHost>("127.0.0.1");
     XCTAssert( host->Open("/", opts) == 0 );
     
-    string fn1 = "/mach_kernel", fn2 = "/mach_kernel", fn3 = "/mach_kernel34234234";
+    string fn1 = "/System/Library/Kernels/kernel", fn2 = "/kernel", fn3 = "/kernel34234234";
     
     VFSStat stat;
     

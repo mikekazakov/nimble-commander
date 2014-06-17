@@ -112,7 +112,7 @@
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
-
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"Terminal" options:0 context:nil];
     }
     return self;
 }
@@ -120,6 +120,7 @@
 - (void) dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Terminal"];    
 }
 
 - (NSView*) ContentView
@@ -132,6 +133,16 @@
     m_Task->Launch(m_BinaryPath.c_str(), m_Params.c_str(), m_Screen->Width(), m_Screen->Height());
     [self.window makeFirstResponder:m_View];
     [self updateTitle];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    if(object == defaults && [keyPath isEqualToString:@"Terminal"])
+    {
+        [m_View reloadSettings];
+        [self frameDidChange]; // handle with care - it will cause geometry recalculating
+    }
 }
 
 - (void)frameDidChange
@@ -151,8 +162,8 @@
     m_Parser->Resized();
     
     [m_View adjustSizes:true];
+    [m_View setNeedsDisplay:true];    
 }
-
 
 - (void) updateTitle
 {

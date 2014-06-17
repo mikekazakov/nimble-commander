@@ -307,8 +307,25 @@ void ClearRequestCancelCallback(CURL *_curl)
     curl_easy_setopt(_curl, CURLOPT_PROGRESSDATA, nullptr);
     curl_easy_setopt(_curl, CURLOPT_NOPROGRESS, 1);
 }
-
     
+CURLInstance::~CURLInstance()
+{
+    if(curl)
+    {
+        curl_easy_cleanup(curl);
+        curl = 0;
+    }
+        
+    if(curlm)
+        curl_multi_cleanup(curlm);
+}
+
+CURLcode CURLInstance::PerformEasy()
+{
+    assert(!IsAttached());
+    return curl_easy_perform(curl);
+}
+
 CURLcode CURLInstance::PerformMulti()
 {
     bool error = false;
@@ -376,5 +393,27 @@ CURLMcode CURLInstance::Detach()
         attached = false;
     return e;
 }
+    
+int CURLInstance::ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
+{
+    CURLInstance *_this = (CURLInstance *)clientp;
+    return _this->prog_func ? _this->prog_func(dltotal, dlnow, ultotal, ulnow) : 0;
+}
 
+void CURLInstance::EasySetupProgFunc()
+{
+    EasySetOpt(CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+    EasySetOpt(CURLOPT_PROGRESSDATA, this);
+    EasySetOpt(CURLOPT_NOPROGRESS, 0);
+    prog_func = nil;
+}
+
+void CURLInstance::EasyClearProgFunc()
+{
+    EasySetOpt(CURLOPT_PROGRESSFUNCTION, nullptr);
+    EasySetOpt(CURLOPT_PROGRESSDATA, nullptr);
+    EasySetOpt(CURLOPT_NOPROGRESS, 1);
+    prog_func = nil;
+}
+    
 }

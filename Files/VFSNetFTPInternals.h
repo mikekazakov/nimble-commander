@@ -22,17 +22,7 @@ static const int g_CURLVerbose = 1;
 
 struct CURLInstance
 {
-    ~CURLInstance()
-    {
-        if(curl)
-        {
-            curl_easy_cleanup(curl);
-            curl = 0;
-        }
-        
-        if(curlm)
-            curl_multi_cleanup(curlm);
-    }
+    ~CURLInstance();
     
     int RunningHandles()
     {
@@ -50,13 +40,20 @@ struct CURLInstance
     bool IsAttached() const { return attached; }
     CURLMcode Attach();
     CURLMcode Detach();
+    CURLcode PerformEasy();
     CURLcode PerformMulti();
+    
+    void EasySetupProgFunc(); // after this call client code can set/change prog_func, that will be called upon curl work and thus control it's flow
+    void EasyClearProgFunc();
     
     CURL  *curl  = nullptr;
     CURLM *curlm = nullptr;
     bool attached = false;
-//    string last_cwd; // last path where this connection was at
+    int (^prog_func)(double dltotal, double dlnow, double ultotal, double ulnow) = nil;
     mutex call_lock;
+    
+private:
+    static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 };
     
 struct Buffer

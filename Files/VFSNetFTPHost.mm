@@ -103,12 +103,18 @@ int VFSNetFTPHost::DownloadListing(CURLInstance *_inst,
     string response;
     
     _inst->call_lock.lock();
-    curl_easy_setopt(_inst->curl, CURLOPT_URL, request.c_str());
-    curl_easy_setopt(_inst->curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(_inst->curl, CURLOPT_WRITEDATA, &response);
-    SetupRequestCancelCallback(_inst->curl, _cancel_checker);
-    int result = curl_easy_perform(_inst->curl);
-    ClearRequestCancelCallback(_inst->curl);
+    _inst->EasySetOpt(CURLOPT_URL, request.c_str());
+    _inst->EasySetOpt(CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
+    _inst->EasySetOpt(CURLOPT_WRITEDATA, &response);
+    _inst->EasySetupProgFunc();
+    _inst->prog_func = ^(double, double, double, double) {
+        if(_cancel_checker == nil)
+            return 0;
+        return _cancel_checker() ? 1 : 0;
+    };
+    
+    int result = _inst->PerformEasy();
+    _inst->EasyClearProgFunc();
     _inst->call_lock.unlock();
     
 //    NSLog(@"%s", response.c_str());

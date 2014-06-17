@@ -296,75 +296,30 @@ bool VFSNetFTPFile::IsOpened() const
 
 int VFSNetFTPFile::Close()
 {
-//    if(m_CURLM && m_CURL)
+    if(m_CURL && m_Mode == Mode::Write)
+    {
+        // if we're still writing - finish it and tell cache about changes
+        FinishWriting();
+        dynamic_pointer_cast<VFSNetFTPHost>(Host())->Cache().CommitNewFile(RelativePath());
+    }
+    if(m_CURL && m_Mode == Mode::Read)
+    {
+        // if we're still reading something - cancel it and wait
+        FinishReading();
+    }
+    
     if(m_CURL)
     {
-        if( // && CREATE
-           m_Mode == Mode::Write &&
-//           m_BytesWritten == 0 &&
-//           m_CURLM->RunningHandles() > 0
-           m_CURL->RunningHandles() > 0
-           )
-        {
-            // tell curl that data is over
-            m_WriteBuf->discard(m_WriteBuf->size);
-            int running_handles = 0;
-            while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
-            while(running_handles)
-            {
-                struct timeval timeout = m_SelectTimeout;
-                
-                fd_set fdread, fdwrite, fdexcep;
-                int maxfd;
-                
-                FD_ZERO(&fdread);
-                FD_ZERO(&fdwrite);
-                FD_ZERO(&fdexcep);
-                curl_multi_fdset(m_CURL->curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
-                
-                if (select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout) == -1)
-                    break;
-                
-                while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
-            }
-        }
-        
-        if(m_Mode == Mode::Write)
-//            dynamic_pointer_cast<VFSNetFTPHost>(Host())->MakeEntryAndDirectoryDirty(RelativePath());
-//            dynamic_pointer_cast<VFSNetFTPHost>(Host())->MakeEntryDirty(RelativePath());
-            dynamic_pointer_cast<VFSNetFTPHost>(Host())->Cache().CommitNewFile(RelativePath());
+        auto host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
+        host->CommitIOInstanceAtDir(DirName().c_str(), move(m_CURL));
     }
+
     m_FilePos = 0;
     m_FileSize = 0;
     m_Mode = Mode::Closed;
     m_Buf->clear();
     m_BufFileOffset = 0;
-//    m_BytesWritten = 0;
-    
-    if(/*m_CURLM && */m_CURL)
-    {
-        
-        // TODO: if file request was canceled, we need to tell curl about it, not waiting until in finishes!!!
-        
-        int running_handles = 0;
-        while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
-        while(running_handles)
-            while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
-//                return VFSError::Cancelled;
-//        curl_multi_remove_handle(m_CURLM->curlm, m_CURL->curl);
-    }
-  
-    if(m_CURL)
-    {
-        auto host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
-        host->CommitIOInstanceAtDir(DirName().c_str(),
-                                    move(m_CURL));
-    }
-//            dynamic_pointer_cast<VFSNetFTPHost>(Host())->MakeEntryAndDirectoryDirty(RelativePath());
-    m_CURL.reset(); // TODO: should give this handle back to FTPHost.
-    
-    
-//    m_CURLM.reset();
+    m_CURL.reset();
     m_URLRequest.clear();
     return 0;
 }
@@ -386,14 +341,7 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
        (_open_flags & VFSFile::OF_Write) == 0 )
     {
         m_URLRequest = ftp_host->BuildFullURLString(RelativePath());
-
-//        host->CommitIOInstanceAtDir(DirName().c_str(),
-//                                    move(m_CURL));
-        
-        
-//        m_CURL  = ftp_host->InstanceForIO(); // TODO: Host should have some kind of handles cache and use the closes (cwd) available
         m_CURL  = ftp_host->InstanceForIOAtDir(DirName().c_str());
-//        m_CURLM = make_unique<CURLMInstance>();
         m_FileSize = stat.size;
         
         if(m_FileSize == 0)
@@ -434,18 +382,13 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         
         m_URLRequest = ftp_host->BuildFullURLString(RelativePath());
         
-//        m_CURL  = ftp_host->InstanceForIO(); // TODO: Host should have some kind of handles cache and use the closes (cwd) available
-        m_CURL  = ftp_host->InstanceForIOAtDir(DirName().c_str());        
-//        m_CURLM = make_unique<CURLMInstance>();
-        curl_multi_remove_handle(m_CURL->curlm, m_CURL->curl);
-        curl_easy_setopt(m_CURL->curl, CURLOPT_URL, m_URLRequest.c_str());
-        curl_easy_setopt(m_CURL->curl, CURLOPT_UPLOAD, 1);
-//        curl_easy_setopt(m_CURL->curl, CURLOPT_FTP_USE_EPSV, 0);
-
-        curl_easy_setopt(m_CURL->curl, CURLOPT_INFILESIZE, -1);
-        curl_easy_setopt(m_CURL->curl, CURLOPT_READFUNCTION, WriteBuffer::read_from_function);
-        curl_easy_setopt(m_CURL->curl, CURLOPT_READDATA, m_WriteBuf.get());
-//        curl_easy_setopt(m_CURL->curl, CURLOPT_BUFFERSIZE, 65536);
+        m_CURL  = ftp_host->InstanceForIOAtDir(DirName().c_str());
+        curl_multi_remove_handle(m_CURL->curlm, m_CURL->curl);        
+        m_CURL->EasySetOpt(CURLOPT_URL, m_URLRequest.c_str());
+        m_CURL->EasySetOpt(CURLOPT_UPLOAD, 1);
+        m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1);
+        m_CURL->EasySetOpt(CURLOPT_READFUNCTION, WriteBuffer::read_from_function);
+        m_CURL->EasySetOpt(CURLOPT_READDATA, m_WriteBuf.get());
 
         m_FilePos = 0;
         m_FileSize = 0;
@@ -508,6 +451,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
             curl_easy_setopt(m_CURL->curl, CURLOPT_READDATA, 0);
             curl_easy_setopt(m_CURL->curl, CURLOPT_LOW_SPEED_LIMIT, 1);
             curl_easy_setopt(m_CURL->curl, CURLOPT_LOW_SPEED_TIME, 60);
+            m_CURL->EasySetupProgFunc();
             
             // set offsets
             if (_file_offset) {
@@ -717,3 +661,47 @@ off_t VFSNetFTPFile::Seek(off_t _off, int _basis)
     return m_FilePos;
 }
 
+void VFSNetFTPFile::FinishWriting()
+{
+    assert(m_Mode == Mode::Write);
+    
+    if(m_CURL->RunningHandles() <= 0)
+        return;
+    
+    // tell curl that data is over
+    m_WriteBuf->discard(m_WriteBuf->size);
+    int running_handles = 0;
+    while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
+    while(running_handles)
+    {
+        struct timeval timeout = m_SelectTimeout;
+        
+        fd_set fdread, fdwrite, fdexcep;
+        int maxfd;
+        
+        FD_ZERO(&fdread);
+        FD_ZERO(&fdwrite);
+        FD_ZERO(&fdexcep);
+        curl_multi_fdset(m_CURL->curlm, &fdread, &fdwrite, &fdexcep, &maxfd);
+        
+        if (select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout) == -1)
+            break;
+        
+        while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
+    }
+}
+
+void VFSNetFTPFile::FinishReading()
+{
+    assert(m_Mode == Mode::Read);
+    
+    // tell curl to cancel any going reading if any
+    m_CURL->prog_func = ^(double, double, double, double) {
+        return 1;
+    };
+
+    int running_handles = 0;
+    do {
+        while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
+    } while(running_handles);
+}

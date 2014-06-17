@@ -47,18 +47,16 @@ private:
                       );
     
     path DirName() const;
+    void FinishWriting();
+    void FinishReading();
     
     unique_ptr<VFSNetFTP::CURLInstance>  m_CURL;
-//    unique_ptr<VFSNetFTP::CURLMInstance> m_CURLM;
     unique_ptr<VFSNetFTP::Buffer>        m_Buf;
     uint64_t                             m_BufFileOffset = 0;
     unique_ptr<VFSNetFTP::WriteBuffer>   m_WriteBuf;    
-//    bool                                 m_IOAttached = false;
-//    bool                                 m_IsOpened = false;
-    Mode                                 m_Mode = Mode::Closed;;
+    Mode                                 m_Mode = Mode::Closed;
     string                               m_URLRequest;
     uint64_t                             m_FileSize = 0;
     uint64_t                             m_FilePos = 0;
     constexpr static const struct timeval m_SelectTimeout = {0, 10000};
-//    uint64_t                             m_BytesWritten = 0;
 };

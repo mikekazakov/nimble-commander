@@ -350,6 +350,38 @@ static const char* readme = "\n\
     XCTAssert(should_be == in_fact);
 }
 
+- (void)testBigFilesReadingCancellation
+{
+    path path = "/pub/diskimages/Firefox1.0.iso";
+    auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
+    XCTAssert( host->Open(path.parent_path().c_str()) == 0 );
+  
+    __block bool finished = false;
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        VFSFilePtr file;
+        char buf[256];
+        XCTAssert( host->CreateFile(path.c_str(), file, 0) == 0 );
+        XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
+        XCTAssert( file->Read(buf, sizeof(buf)) == sizeof(buf) );
+        XCTAssert( file->Close() == 0 ); // at this moment we have read only a small part of file
+                                         // and Close() should tell curl to stop reading and will wait for a pending operations to be finished
+        finished = true;
+    });
+    
+    [self waitUntilFinish:finished];
+}
+
+- (void) waitUntilFinish:(volatile bool&)_finished
+{
+    int sleeped = 0, sleep_tresh = 60000;
+    while (!_finished)
+    {
+        sleeped += usleep(100);
+        XCTAssert( sleeped < sleep_tresh);
+        if(sleeped > sleep_tresh)
+            break;
+    }
+}
 
 @end
 

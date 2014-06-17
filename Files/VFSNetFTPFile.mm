@@ -379,11 +379,11 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         pthread_mutex_unlock(&ftpfs.lock);
         */
         
-        
         m_URLRequest = ftp_host->BuildFullURLString(RelativePath());
+        m_CURL = ftp_host->InstanceForIOAtDir(DirName().c_str());
         
-        m_CURL  = ftp_host->InstanceForIOAtDir(DirName().c_str());
-        curl_multi_remove_handle(m_CURL->curlm, m_CURL->curl);        
+        if(m_CURL->IsAttached())
+            m_CURL->Detach();
         m_CURL->EasySetOpt(CURLOPT_URL, m_URLRequest.c_str());
         m_CURL->EasySetOpt(CURLOPT_UPLOAD, 1);
         m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1);
@@ -394,7 +394,7 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         m_FileSize = 0;
         if(_open_flags & VFSFile::OF_Append)
         {
-            curl_easy_setopt(m_CURL->curl, CURLOPT_APPEND, 1);
+            m_CURL->EasySetOpt(CURLOPT_APPEND, 1);
   
             if(stat_ret == 0)
             {
@@ -403,7 +403,7 @@ int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
             }
         }
 
-        curl_multi_add_handle(m_CURL->curlm, m_CURL->curl);
+        m_CURL->Attach();
         
         m_Mode = Mode::Write;
         return 0;
@@ -441,27 +441,27 @@ ssize_t VFSNetFTPFile::ReadChunk(
             m_Buf->clear();
             m_BufFileOffset = _file_offset;
             
-            curl_multi_remove_handle(m_CURL->curlm, m_CURL->curl);
-            curl_easy_setopt(m_CURL->curl, CURLOPT_URL, m_URLRequest.c_str());
-            curl_easy_setopt(m_CURL->curl, CURLOPT_WRITEFUNCTION, Buffer::write_here_function);
-            curl_easy_setopt(m_CURL->curl, CURLOPT_WRITEDATA, m_Buf.get());
-            curl_easy_setopt(m_CURL->curl, CURLOPT_UPLOAD, 0);
-            curl_easy_setopt(m_CURL->curl, CURLOPT_INFILESIZE, -1);
-            curl_easy_setopt(m_CURL->curl, CURLOPT_READFUNCTION, 0);
-            curl_easy_setopt(m_CURL->curl, CURLOPT_READDATA, 0);
-            curl_easy_setopt(m_CURL->curl, CURLOPT_LOW_SPEED_LIMIT, 1);
-            curl_easy_setopt(m_CURL->curl, CURLOPT_LOW_SPEED_TIME, 60);
+            if(m_CURL->IsAttached())
+                m_CURL->Detach();
+            
+            m_CURL->EasySetOpt(CURLOPT_URL, m_URLRequest.c_str());
+            m_CURL->EasySetOpt(CURLOPT_WRITEFUNCTION, Buffer::write_here_function);
+            m_CURL->EasySetOpt(CURLOPT_WRITEDATA, m_Buf.get());
+            m_CURL->EasySetOpt(CURLOPT_UPLOAD, 0);
+            m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1);
+            m_CURL->EasySetOpt(CURLOPT_READFUNCTION, 0);
+            m_CURL->EasySetOpt(CURLOPT_READDATA, 0);
+            m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_LIMIT, 1);
+            m_CURL->EasySetOpt(CURLOPT_LOW_SPEED_TIME, 60);
             m_CURL->EasySetupProgFunc();
             
-            // set offsets
-            if (_file_offset) {
+            if (_file_offset) { // set offsets
                 char range[16];
                 snprintf(range, 16, "%lld-", _file_offset);
-                curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, range);
+                m_CURL->EasySetOpt(CURLOPT_RANGE, range);
             }
 
-            CURLMcode curlMCode =  curl_multi_add_handle(m_CURL->curlm, m_CURL->curl);
-            assert(curlMCode == CURLM_OK);
+            m_CURL->Attach();
         }
     
         int running_handles = 0;

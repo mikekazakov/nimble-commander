@@ -30,21 +30,6 @@ static int FileWindowSize()
     return file_window_size;
 }
 
-
-@interface MainWindowBigFileViewStateSearchField : NSSearchField
-@property (nonatomic, strong) void (^OnCancelOperation)();
-@end
-
-@implementation MainWindowBigFileViewStateSearchField
-
-- (void)cancelOperation:(id)sender
-{
-    if(self.OnCancelOperation)
-        self.OnCancelOperation();
-}
-
-@end
-
 @implementation MainWindowBigFileViewState
 {
     unique_ptr<FileWindow> m_FileWindow;
@@ -57,7 +42,7 @@ static int FileWindowSize()
     NSButton            *m_WordWrap;
     NSPopUpButton       *m_ModeSelect;
     NSTextField         *m_ScrollPosition;
-    MainWindowBigFileViewStateSearchField *m_SearchField;
+    NSSearchField       *m_SearchField;
     NSProgressIndicator *m_SearchIndicator;
     MyToolbar           *m_Toolbar;
     NSBox               *m_SeparatorLine;    
@@ -210,66 +195,63 @@ static int FileWindowSize()
 
 - (void) CreateControls
 {
-    __weak MainWindowBigFileViewState *weakself = self;
-    
     m_Toolbar = [[MyToolbar alloc] initWithFrame:NSRect()];
-    [m_Toolbar setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_Toolbar.translatesAutoresizingMaskIntoConstraints = false;
     [self addSubview:m_Toolbar];
     
     m_View = [[BigFileView alloc] initWithFrame:self.frame];
-    [m_View setTranslatesAutoresizingMaskIntoConstraints:NO];
+    m_View.translatesAutoresizingMaskIntoConstraints = false;
     m_View.delegate = self;
     [self addSubview:m_View];
     
     m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
-    [m_SeparatorLine setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [m_SeparatorLine setBoxType:NSBoxSeparator];
+    m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = false;
+    m_SeparatorLine.boxType = NSBoxSeparator;
     [self addSubview:m_SeparatorLine];    
     
     m_EncodingSelect = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 120, 20)];
-    [(NSPopUpButtonCell*)[m_EncodingSelect cell] setControlSize:NSSmallControlSize];
-    [m_EncodingSelect setTarget:self];
-    [m_EncodingSelect setAction:@selector(SelectedEncoding:)];
-    [m_EncodingSelect setFont:[NSFont menuFontOfSize:10]];
+    ((NSPopUpButtonCell*)m_EncodingSelect.cell).controlSize = NSSmallControlSize;
+    m_EncodingSelect.target = self;
+    m_EncodingSelect.action = @selector(SelectedEncoding:);
+    m_EncodingSelect.font = [NSFont menuFontOfSize:10];
     
     m_ModeSelect = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 20)];
-    [(NSPopUpButtonCell*)[m_ModeSelect cell] setControlSize:NSSmallControlSize];
-    [m_ModeSelect setTarget:self];
-    [m_ModeSelect setAction:@selector(SelectMode:)];
+    ((NSPopUpButtonCell*)m_ModeSelect.cell).controlSize = NSSmallControlSize;
+    m_ModeSelect.target = self;
+    m_ModeSelect.action = @selector(SelectMode:);
+    m_ModeSelect.font = [NSFont menuFontOfSize:10];
     [m_ModeSelect addItemWithTitle:@"Text"];
     [m_ModeSelect addItemWithTitle:@"Hex"];
-    [m_ModeSelect setFont:[NSFont menuFontOfSize:10]];
     
     m_WordWrap = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 80, 20)];
-    [[m_WordWrap cell] setControlSize:NSSmallControlSize];
-    [m_WordWrap setButtonType:NSSwitchButton];
-    [m_WordWrap setTitle:@"Word wrap"];
-    [m_WordWrap setTarget:self];
-    [m_WordWrap setAction:@selector(WordWrapChanged:)];
-    [m_WordWrap setFont:[NSFont menuFontOfSize:10]];
+    ((NSButtonCell*)m_WordWrap.cell).controlSize = NSSmallControlSize;
+    m_WordWrap.buttonType = NSSwitchButton;
+    m_WordWrap.title = @"Word wrap";
+    m_WordWrap.target = self;
+    m_WordWrap.action = @selector(WordWrapChanged:);
+    m_WordWrap.font = [NSFont menuFontOfSize:10];
     
     m_ScrollPosition = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 80, 12)];
-    [m_ScrollPosition setEditable:false];
-    [m_ScrollPosition setBordered:false];
-    [m_ScrollPosition setDrawsBackground:false];
-    [m_ScrollPosition setFont:[NSFont menuFontOfSize:10]];
+    m_ScrollPosition.editable = false;
+    m_ScrollPosition.bordered = false;
+    m_ScrollPosition.drawsBackground = false;
+    m_ScrollPosition.font = [NSFont menuFontOfSize:10];
     
-    m_SearchField = [[MainWindowBigFileViewStateSearchField alloc]initWithFrame:NSMakeRect(0, 0, 200, 20)];
-    [m_SearchField setTarget:self];
-    [m_SearchField setAction:@selector(UpdateSearchFilter:)];
-    [[m_SearchField cell] setPlaceholderString:@"Search in file"];
-    [[m_SearchField cell] setSendsWholeSearchString:true];
-    [[m_SearchField cell] setRecentsAutosaveName:@"BigFileViewRecentSearches"];
-    [[m_SearchField cell] setMaximumRecents:20];
-    [[m_SearchField cell] setSearchMenuTemplate:[self BuildSearchMenu]];
-    m_SearchField.OnCancelOperation = ^{ if(MainWindowBigFileViewState *s = weakself)
-                                            [s.window makeFirstResponder:s->m_View]; };
+    m_SearchField = [[NSSearchField alloc]initWithFrame:NSMakeRect(0, 0, 200, 20)];
+    m_SearchField.target = self;
+    m_SearchField.action = @selector(UpdateSearchFilter:);
+    m_SearchField.delegate = self;
+    [m_SearchField.cell setPlaceholderString:@"Search in file"];
+    [m_SearchField.cell setSendsWholeSearchString:true];
+    [m_SearchField.cell setRecentsAutosaveName:@"BigFileViewRecentSearches"];
+    [m_SearchField.cell setMaximumRecents:20];
+    [m_SearchField.cell setSearchMenuTemplate:self.searchMenu];
     
     m_SearchIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    [m_SearchIndicator setIndeterminate:YES];
-    [m_SearchIndicator setStyle:NSProgressIndicatorSpinningStyle];
-    [m_SearchIndicator setControlSize:NSSmallControlSize];
-    [m_SearchIndicator setDisplayedWhenStopped:NO];
+    m_SearchIndicator.indeterminate = true;
+    m_SearchIndicator.style = NSProgressIndicatorSpinningStyle;
+    m_SearchIndicator.controlSize = NSSmallControlSize;
+    m_SearchIndicator.displayedWhenStopped = false;
 
     [m_Toolbar InsertView:m_EncodingSelect];
     [m_Toolbar InsertView:m_ModeSelect];
@@ -374,7 +356,7 @@ static int FileWindowSize()
     NSString *s = [NSString stringWithFormat:@"%@  %.0f%%",
                    FormHumanReadableSizeRepresentation6(m_FileWindow->FileSize()),
                    [m_View VerticalScrollPosition]*100.];
-    [m_ScrollPosition setStringValue:s];
+    m_ScrollPosition.stringValue = s;
 }
 
 - (void) BigFileViewScrolledByUser
@@ -384,8 +366,8 @@ static int FileWindowSize()
 
 - (void)UpdateSearchFilter:sender
 {
-    NSString *str = [m_SearchField stringValue];
-    if([str length] == 0)
+    NSString *str = m_SearchField.stringValue;
+    if(str.length == 0)
     {
         m_SearchInFileQueue->Stop(); // we should stop current search if any
         [m_View SetSelectionInFile:CFRangeMake(-1, 0)];
@@ -466,7 +448,7 @@ static int FileWindowSize()
     // do our state persistance stuff
     BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
     info->path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
-    info->last_viewed = [NSDate date];    
+    info->last_viewed = NSDate.date;
     info->position = [m_View VerticalPositionInBytes];
     info->wrapping = [m_View WordWrap];
     info->view_mode = [m_View Mode];
@@ -475,38 +457,38 @@ static int FileWindowSize()
     [[BigFileViewHistory sharedHistory] InsertEntry:info];
 }
 
-- (NSMenu*) BuildSearchMenu
+- (NSMenu*) searchMenu
 {
-    NSMenu *cellMenu = [[NSMenu alloc] initWithTitle:@"Search Menu"];
+    NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Search Menu"];
     NSMenuItem *item;
     
     item = [[NSMenuItem alloc] initWithTitle:@"Case-sensitive search" action:@selector(SetCaseSensitiveSearch:) keyEquivalent:@""];
-    [item setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewCaseSensitiveSearch"]];
-    [item setTarget:self];
-    [cellMenu insertItem:item atIndex:0];
+    item.state = [NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewCaseSensitiveSearch"];
+    item.target = self;
+    [menu insertItem:item atIndex:0];
 
     item = [[NSMenuItem alloc] initWithTitle:@"Find whole phrase" action:@selector(SetWholePhrasesSearch:) keyEquivalent:@""];
-    [item setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"BigFileViewWholePhraseSearch"]];
-    [item setTarget:self];    
-    [cellMenu insertItem:item atIndex:1];
+    item.state = [NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewWholePhraseSearch"];
+    item.target = self;
+    [menu insertItem:item atIndex:1];
     
     item = [[NSMenuItem alloc] initWithTitle:@"Clear Recents" action:NULL keyEquivalent:@""];
-    [item setTag:NSSearchFieldClearRecentsMenuItemTag];
-    [cellMenu insertItem:item atIndex:2];
+    item.tag = NSSearchFieldClearRecentsMenuItemTag;
+    [menu insertItem:item atIndex:2];
     
     item = [NSMenuItem separatorItem];
-    [item setTag:NSSearchFieldRecentsTitleMenuItemTag];
-    [cellMenu insertItem:item atIndex:3];
+    item.tag = NSSearchFieldRecentsTitleMenuItemTag;
+    [menu insertItem:item atIndex:3];
     
     item = [[NSMenuItem alloc] initWithTitle:@"Recent Searches" action:NULL keyEquivalent:@""];
-    [item setTag:NSSearchFieldRecentsTitleMenuItemTag];
-    [cellMenu insertItem:item atIndex:4];
+    item.tag = NSSearchFieldRecentsTitleMenuItemTag;
+    [menu insertItem:item atIndex:4];
     
     item = [[NSMenuItem alloc] initWithTitle:@"Recents" action:NULL keyEquivalent:@""];
-    [item setTag:NSSearchFieldRecentsMenuItemTag];
-    [cellMenu insertItem:item atIndex:5];
+    item.tag = NSSearchFieldRecentsMenuItemTag;
+    [menu insertItem:item atIndex:5];
     
-    return cellMenu;
+    return menu;
 }
 
 - (IBAction)SetCaseSensitiveSearch:(NSMenuItem *)menuItem
@@ -516,10 +498,10 @@ static int FileWindowSize()
         ((options & SearchInFile::OptionCaseSensitive) ? 0 : SearchInFile::OptionCaseSensitive); // invert this option
     m_SearchInFile->SetSearchOptions(options);
     
-    NSMenu* menu = [[m_SearchField cell] searchMenuTemplate];
-    [[menu itemAtIndex:0] setState:(options & SearchInFile::OptionCaseSensitive) != 0];
-    [[m_SearchField cell] setSearchMenuTemplate:menu];
-    [[NSUserDefaults standardUserDefaults] setBool:options&SearchInFile::OptionCaseSensitive forKey:@"BigFileViewCaseSensitiveSearch"];
+    NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
+    [menu itemAtIndex:0].state = (options & SearchInFile::OptionCaseSensitive) != 0;
+    ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
+    [NSUserDefaults.standardUserDefaults setBool:options&SearchInFile::OptionCaseSensitive forKey:@"BigFileViewCaseSensitiveSearch"];
 }
 
 - (IBAction)SetWholePhrasesSearch:(NSMenuItem *)menuItem
@@ -529,10 +511,19 @@ static int FileWindowSize()
         ((options & SearchInFile::OptionFindWholePhrase) ? 0 : SearchInFile::OptionFindWholePhrase); // invert this option
     m_SearchInFile->SetSearchOptions(options);
     
-    NSMenu* menu = [[m_SearchField cell] searchMenuTemplate];
-    [[menu itemAtIndex:1] setState:(options & SearchInFile::OptionFindWholePhrase) != 0];
-    [[m_SearchField cell] setSearchMenuTemplate:menu];
-    [[NSUserDefaults standardUserDefaults] setBool:options&SearchInFile::OptionFindWholePhrase forKey:@"BigFileViewWholePhraseSearch"];
+    NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
+    [menu itemAtIndex:1].state = (options & SearchInFile::OptionFindWholePhrase) != 0;
+    ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
+    [NSUserDefaults.standardUserDefaults setBool:options&SearchInFile::OptionFindWholePhrase forKey:@"BigFileViewWholePhraseSearch"];
+}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+{
+    if(control == m_SearchField && commandSelector == NSSelectorFromString(@"cancelOperation:")) {
+        [self.window makeFirstResponder:m_View];
+        return true;
+    }
+    return false;
 }
 
 @end

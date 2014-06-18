@@ -58,7 +58,7 @@ int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions &_opti
         return 0;
     }
     
-    return VFSError::GenericError;
+    return result;
 }
 
 int VFSNetFTPHost::DownloadAndCacheListing(CURLInstance *_inst,
@@ -94,12 +94,11 @@ int VFSNetFTPHost::DownloadListing(CURLInstance *_inst,
        _path[0] != '/')
         return VFSError::InvalidCall;
     
-    char path[MAXPATHLEN];
-    strcpy(path, _path);
-    if(path[strlen(path)-1] != '/')
-        strcat(path, "/");
+    string path = _path;
+    if(path.back() != '/')
+        path += '/';
     
-    string request = BuildFullURLString(path);
+    string request = BuildFullURLString(path.c_str());
     string response;
     
     _inst->call_lock.lock();
@@ -113,17 +112,14 @@ int VFSNetFTPHost::DownloadListing(CURLInstance *_inst,
         return _cancel_checker() ? 1 : 0;
     };
     
-    int result = _inst->PerformEasy();
+    CURLcode result = _inst->PerformEasy();
     _inst->EasyClearProgFunc();
     _inst->call_lock.unlock();
     
 //    NSLog(@"%s", response.c_str());
     
     if(result != 0)
-    {
-        // handle somehow
-        return VFSError::GenericError;
-    }
+        return CURLErrorToVFSError(result);
     
     _buffer.swap(response);
     
@@ -581,6 +577,11 @@ void VFSNetFTPHost::BasicOptsSetup(VFSNetFTP::CURLInstance *_inst)
         _inst->EasySetOpt(CURLOPT_PASSWORD, m_Options->passwd.c_str());
     if(m_Options->port > 0)
         _inst->EasySetOpt(CURLOPT_PORT, m_Options->port);
+
+    // TODO: SSL support
+    // _inst->EasySetOpt(CURLOPT_USE_SSL, CURLUSESSL_TRY);
+    // _inst->EasySetOpt(CURLOPT_SSL_VERIFYPEER, false);
+    // _inst->EasySetOpt(CURLOPT_SSL_VERIFYHOST, false);
 }
 
 shared_ptr<VFSHostOptions> VFSNetFTPHost::Options() const

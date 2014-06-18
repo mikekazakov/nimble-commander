@@ -53,6 +53,15 @@ static NSString *TextForCode(int _code)
         case UnRARUnknownFormat:    return @"Unknown RAR format";
         case UnRARMissingPassword:  return @"Missing RAR password";
         case UnRARBadPassword:      return @"Bad RAR password";
+        case NetFTPLoginDenied:         return @"The remote server denied to login";
+        case NetFTPURLMalformat:        return @"URL malformat";
+        case NetFTPServerProblem:       return @"Weird FTP server behaviour";
+        case NetFTPCouldntResolveProxy: return @"Couldn't resolve proxy for FTP server";
+        case NetFTPCouldntResolveHost:  return @"Couldn't resolve FTP server host";
+        case NetFTPCouldntConnect:      return @"Failed to connect to remote FTP server";
+        case NetFTPAccessDenied:        return @"Access to remote resource is denied";
+        case NetFTPOperationTimeout:    return @"Operation timeout";
+        case NetFTPSSLFailure:          return @"FTP+SSL/TLS failure";
     }
     return [NSString stringWithFormat:@"Error code %d", _code];
 }

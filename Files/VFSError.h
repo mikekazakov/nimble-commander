@@ -43,7 +43,18 @@ namespace VFSError
         UnRARBadArchive          = -2102,
         UnRARUnknownFormat       = -2103,
         UnRARMissingPassword     = -2104,
-        UnRARBadPassword         = -2105
+        UnRARBadPassword         = -2105,
+        
+        // Net FTP error codes:
+        NetFTPLoginDenied           = -3000,
+        NetFTPURLMalformat          = -3001,
+        NetFTPServerProblem         = -3002,
+        NetFTPCouldntResolveProxy   = -3003,
+        NetFTPCouldntResolveHost    = -3004,
+        NetFTPCouldntConnect        = -3005,
+        NetFTPAccessDenied          = -3006,
+        NetFTPOperationTimeout      = -3007,
+        NetFTPSSLFailure            = -3008,
     };
     
     int FromErrno(int _errno);

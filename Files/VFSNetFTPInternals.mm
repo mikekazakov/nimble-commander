@@ -278,36 +278,6 @@ Listing::Listing(shared_ptr<Directory> _dir,
     }
 }
 
-int RequestCancelCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
-{
-    if(clientp == nullptr)
-        return 0;
-    bool (^checker)() = (__bridge bool(^)()) clientp;
-    bool res = checker();
-    return res ? 1 : 0;
-}
-
-void SetupRequestCancelCallback(CURL *_curl, bool (^_cancel_checker)())
-{
-    if(_cancel_checker)
-    {
-        curl_easy_setopt(_curl, CURLOPT_PROGRESSFUNCTION, RequestCancelCallback);
-        curl_easy_setopt(_curl, CURLOPT_PROGRESSDATA, (__bridge void *)_cancel_checker);
-        curl_easy_setopt(_curl, CURLOPT_NOPROGRESS, 0);
-    }
-    else
-    {
-        ClearRequestCancelCallback(_curl);
-    }
-}
-
-void ClearRequestCancelCallback(CURL *_curl)
-{
-    curl_easy_setopt(_curl, CURLOPT_PROGRESSFUNCTION, nullptr);
-    curl_easy_setopt(_curl, CURLOPT_PROGRESSDATA, nullptr);
-    curl_easy_setopt(_curl, CURLOPT_NOPROGRESS, 1);
-}
-    
 CURLInstance::~CURLInstance()
 {
     if(curl)
@@ -415,5 +385,45 @@ void CURLInstance::EasyClearProgFunc()
     EasySetOpt(CURLOPT_NOPROGRESS, 1);
     prog_func = nil;
 }
-    
+
+int CURLErrorToVFSError(CURLcode _curle)
+{
+    using namespace VFSError;
+    switch (_curle) {
+        case CURLE_LOGIN_DENIED:            return NetFTPLoginDenied;
+        case CURLE_URL_MALFORMAT:           return NetFTPURLMalformat;
+        case CURLE_FTP_WEIRD_SERVER_REPLY:
+        case CURLE_FTP_WEIRD_PASS_REPLY:
+        case CURLE_FTP_WEIRD_PASV_REPLY:
+        case CURLE_FTP_WEIRD_227_FORMAT:
+        case CURLE_FTP_COULDNT_USE_REST:
+        case CURLE_FTP_COULDNT_RETR_FILE:
+        case CURLE_FTP_COULDNT_SET_TYPE:
+        case CURLE_QUOTE_ERROR:
+        case CURLE_RANGE_ERROR:
+        case CURLE_FTP_PORT_FAILED:
+        case CURLE_BAD_CONTENT_ENCODING:    return NetFTPServerProblem;
+        case CURLE_COULDNT_RESOLVE_PROXY:   return NetFTPCouldntResolveProxy;
+        case CURLE_COULDNT_RESOLVE_HOST:
+        case CURLE_FTP_CANT_GET_HOST:       return NetFTPCouldntResolveHost;
+        case CURLE_COULDNT_CONNECT:         return NetFTPCouldntConnect;
+        case CURLE_REMOTE_ACCESS_DENIED:
+        case CURLE_UPLOAD_FAILED:           return NetFTPAccessDenied;
+        case CURLE_PARTIAL_FILE:
+        case CURLE_FTP_BAD_DOWNLOAD_RESUME: return UnexpectedEOF;
+        case CURLE_OPERATION_TIMEDOUT:      return NetFTPOperationTimeout;
+        case CURLE_SEND_ERROR:
+        case CURLE_RECV_ERROR:              return FromErrno(EIO);
+        case CURLE_REMOTE_FILE_NOT_FOUND:   return NotFound;
+        case CURLE_SSL_CONNECT_ERROR:
+        case CURLE_SSL_ENGINE_NOTFOUND:
+        case CURLE_SSL_ENGINE_SETFAILED:
+        case CURLE_SSL_CERTPROBLEM:
+        case CURLE_SSL_CIPHER:
+        case CURLE_SSL_CACERT:
+        case CURLE_USE_SSL_FAILED:          return NetFTPSSLFailure;
+        default: return FromErrno(EIO);
+    }
+}
+
 }

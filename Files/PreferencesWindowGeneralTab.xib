@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4511" systemVersion="13B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6154.17" systemVersion="14A261i" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4511"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6154.17"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowGeneralTab">
@@ -18,7 +18,6 @@
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8" userLabel="Static Text - Skin">
                     <rect key="frame" x="40" y="81" width="157" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Application appearance:" id="14">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -27,13 +26,9 @@
                 </textField>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9">
                     <rect key="frame" x="201" y="75" width="138" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="133" id="47"/>
-                    </constraints>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="10">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="11">
                             <items>
                                 <menuItem title="Classic" id="13"/>
@@ -47,7 +42,6 @@
                 </popUpButton>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
                     <rect key="frame" x="197" y="38" width="145" height="32"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Reset to defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="31">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -58,9 +52,8 @@
                 </button>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="55">
                     <rect key="frame" x="100" y="47" width="97" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="93" id="62"/>
+                        <constraint firstAttribute="width" constant="93" id="r3K-aw-RSZ"/>
                     </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Settings:" id="56">
                         <font key="font" metaFont="system"/>
@@ -70,14 +63,16 @@
                 </textField>
             </subviews>
             <constraints>
-                <constraint firstItem="9" firstAttribute="leading" secondItem="8" secondAttribute="trailing" constant="8" symbolic="YES" id="42"/>
-                <constraint firstItem="30" firstAttribute="leading" secondItem="9" secondAttribute="leading" id="59"/>
-                <constraint firstItem="30" firstAttribute="leading" secondItem="55" secondAttribute="trailing" constant="8" symbolic="YES" id="72"/>
-                <constraint firstItem="8" firstAttribute="baseline" secondItem="9" secondAttribute="baseline" id="74"/>
-                <constraint firstItem="9" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" symbolic="YES" id="75"/>
-                <constraint firstItem="8" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="42" id="78"/>
-                <constraint firstItem="30" firstAttribute="top" secondItem="1" secondAttribute="top" constant="53" id="79"/>
-                <constraint firstItem="55" firstAttribute="centerY" secondItem="30" secondAttribute="centerY" id="80"/>
+                <constraint firstItem="30" firstAttribute="leading" secondItem="9" secondAttribute="leading" id="0lX-Va-0XE"/>
+                <constraint firstItem="30" firstAttribute="leading" secondItem="55" secondAttribute="trailing" constant="8" symbolic="YES" id="F6U-R5-vz2"/>
+                <constraint firstItem="9" firstAttribute="leading" secondItem="8" secondAttribute="trailing" constant="8" symbolic="YES" id="GaV-Hd-gpw"/>
+                <constraint firstItem="9" firstAttribute="trailing" secondItem="30" secondAttribute="trailing" id="NBN-kT-8XE"/>
+                <constraint firstItem="8" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="42" id="TJl-JQ-Rgb"/>
+                <constraint firstItem="30" firstAttribute="top" secondItem="9" secondAttribute="bottom" constant="12" id="VZS-2q-NhX"/>
+                <constraint firstItem="9" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" symbolic="YES" id="Y8S-RY-Kiw"/>
+                <constraint firstAttribute="trailing" secondItem="9" secondAttribute="trailing" constant="69" id="b7q-Tg-zbi"/>
+                <constraint firstItem="55" firstAttribute="top" secondItem="8" secondAttribute="bottom" constant="17" id="oYs-5W-GGJ"/>
+                <constraint firstItem="30" firstAttribute="centerY" secondItem="55" secondAttribute="centerY" id="xx9-tK-Oov"/>
             </constraints>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="21"/>

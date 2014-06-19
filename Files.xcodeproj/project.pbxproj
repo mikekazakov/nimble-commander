@@ -2480,7 +2480,7 @@
 					"-std=c++1y",
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.9;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = x86_64;
 			};
@@ -2521,7 +2521,7 @@
 					"-std=c++1y",
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.9;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = x86_64;
 			};

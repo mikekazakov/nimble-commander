@@ -309,6 +309,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     }
 
     // If current panel is on the right, then translate all rendering by the divider's width.
+    CGContextSaveGState(context);
     if (!m_IsLeft) CGContextTranslateCTM(context, g_DividerWidth, 0);
     
     // Header
@@ -549,6 +550,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     if(full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2] > m_TimeColumnWidth)
         m_TimeColumnWidth = floor(full_wide_view_max_time_width + g_TextInsetsInLine[0] + g_TextInsetsInLine[2]);
+    
+    CGContextRestoreGState(context);    
 }
 
 void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
@@ -627,7 +630,11 @@ NSRect ModernPanelViewPresentation::ItemRect(int _item_index) const
     const double column_width = floor((m_ItemsArea.size.width - (columns - 1))/columns);
     const double row_height   = m_LineHeight;
     
-    return NSMakeRect(column * (column_width + 1), row * row_height + m_ItemsArea.origin.y, column_width, row_height);
+    double xoff = m_IsLeft ? 0 : g_DividerWidth;
+    return NSMakeRect(column * (column_width + 1) + xoff,
+                      row * row_height + m_ItemsArea.origin.y,
+                      column_width,
+                      row_height);
 }
 
 NSRect ModernPanelViewPresentation::ItemFilenameRect(int _item_index) const

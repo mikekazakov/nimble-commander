@@ -752,7 +752,10 @@ struct PanelViewStateStorage
 - (void)cancelFieldEditor
 {
     if(m_RenamingEditor)
+    {
         [self.window makeFirstResponder:self];
+        [m_RenamingEditor removeFromSuperview];
+    }
 }
 
 - (BOOL)textShouldEndEditing:(NSText *)textObject

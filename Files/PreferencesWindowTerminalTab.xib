@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6154.17" systemVersion="14A261i" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6154.21" systemVersion="14A261i" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6154.17"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6154.21"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowTerminalTab">
@@ -17,7 +17,7 @@
             <rect key="frame" x="0.0" y="0.0" width="348" height="352"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zr7-ub-6YW">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zr7-ub-6YW">
                     <rect key="frame" x="19" y="136" width="186" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ANSI Colors" id="2Kw-RY-4u0">
                         <font key="font" metaFont="smallSystemBold"/>
@@ -25,7 +25,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <colorWell toolTip="Black (0)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dZp-nY-uvb">
+                <colorWell toolTip="Black (0)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dZp-nY-uvb">
                     <rect key="frame" x="20" y="113" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -36,7 +36,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Red (1)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rh6-5H-Jyw">
+                <colorWell toolTip="Red (1)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rh6-5H-Jyw">
                     <rect key="frame" x="51" y="113" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -47,7 +47,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Green (2)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E42-cg-CNl">
+                <colorWell toolTip="Green (2)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E42-cg-CNl">
                     <rect key="frame" x="82" y="113" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -58,7 +58,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Yellow (3)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XGW-r6-zbG">
+                <colorWell toolTip="Yellow (3)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XGW-r6-zbG">
                     <rect key="frame" x="113" y="113" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -69,7 +69,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Blue (4)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zOX-2h-pbe">
+                <colorWell toolTip="Blue (4)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zOX-2h-pbe">
                     <rect key="frame" x="144" y="113" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -80,7 +80,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Magenta (5)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BoS-nR-L8j">
+                <colorWell toolTip="Magenta (5)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BoS-nR-L8j">
                     <rect key="frame" x="175" y="113" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -91,7 +91,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Cyan (6)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lYJ-Wx-Aeh">
+                <colorWell toolTip="Cyan (6)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lYJ-Wx-Aeh">
                     <rect key="frame" x="206" y="113" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -102,7 +102,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="White (7)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6CK-Is-VQh">
+                <colorWell toolTip="White (7)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6CK-Is-VQh">
                     <rect key="frame" x="237" y="113" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -113,7 +113,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Bright Black (8)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XtX-go-ptl">
+                <colorWell toolTip="Bright Black (8)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XtX-go-ptl">
                     <rect key="frame" x="20" y="90" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -124,7 +124,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Bright Red (9)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yzb-fh-eM5">
+                <colorWell toolTip="Bright Red (9)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yzb-fh-eM5">
                     <rect key="frame" x="51" y="90" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -135,7 +135,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Bright Green (10)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dHi-nX-Gs9">
+                <colorWell toolTip="Bright Green (10)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dHi-nX-Gs9">
                     <rect key="frame" x="82" y="90" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -146,7 +146,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Bright Yellow (11)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tDc-fO-mgO">
+                <colorWell toolTip="Bright Yellow (11)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tDc-fO-mgO">
                     <rect key="frame" x="113" y="90" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -157,7 +157,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Bright Blue (12)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UBU-ZG-6gR">
+                <colorWell toolTip="Bright Blue (12)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UBU-ZG-6gR">
                     <rect key="frame" x="144" y="90" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -168,7 +168,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Bright Magenta (13)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FNv-mM-sTP">
+                <colorWell toolTip="Bright Magenta (13)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FNv-mM-sTP">
                     <rect key="frame" x="175" y="90" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -179,7 +179,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Bright Cyan (14)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jPa-lB-CwM">
+                <colorWell toolTip="Bright Cyan (14)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jPa-lB-CwM">
                     <rect key="frame" x="206" y="90" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -190,7 +190,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell toolTip="Bright White (15)" appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4OJ-NR-85t">
+                <colorWell toolTip="Bright White (15)" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4OJ-NR-85t">
                     <rect key="frame" x="237" y="90" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -201,7 +201,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wlb-jH-pG1">
+                <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wlb-jH-pG1">
                     <rect key="frame" x="20" y="253" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -212,7 +212,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CIE-oo-Sjs">
+                <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CIE-oo-Sjs">
                     <rect key="frame" x="20" y="230" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -223,7 +223,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mLR-jE-upV">
+                <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mLR-jE-upV">
                     <rect key="frame" x="20" y="207" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -234,7 +234,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g8c-T5-qeY">
+                <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g8c-T5-qeY">
                     <rect key="frame" x="20" y="184" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -245,7 +245,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O2I-Ah-bcY">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O2I-Ah-bcY">
                     <rect key="frame" x="54" y="254" width="100" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Text" id="p0R-sF-276">
                         <font key="font" metaFont="smallSystem"/>
@@ -253,7 +253,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2ZN-7T-nB3">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2ZN-7T-nB3">
                     <rect key="frame" x="54" y="231" width="100" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Bold Text" id="Yfm-Nn-AuD">
                         <font key="font" metaFont="smallSystem"/>
@@ -261,7 +261,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L7C-sQ-rpU">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L7C-sQ-rpU">
                     <rect key="frame" x="54" y="185" width="100" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Selection" id="ezd-9K-uv3">
                         <font key="font" metaFont="smallSystem"/>
@@ -269,7 +269,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6bS-Yw-6MZ">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6bS-Yw-6MZ">
                     <rect key="frame" x="54" y="208" width="100" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Background" id="cwt-bk-IjR">
                         <font key="font" metaFont="smallSystem"/>
@@ -277,7 +277,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <colorWell appearanceType="aqua" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1hh-Ot-Nda">
+                <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1hh-Ot-Nda">
                     <rect key="frame" x="20" y="161" width="28" height="20"/>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
@@ -288,7 +288,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rF2-wk-sKe">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rF2-wk-sKe">
                     <rect key="frame" x="54" y="162" width="100" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor" id="IGT-Dv-Ld8">
                         <font key="font" metaFont="smallSystem"/>
@@ -296,7 +296,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <matrix appearanceType="aqua" verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="stk-zw-sC0">
+                <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="stk-zw-sC0">
                     <rect key="frame" x="20" y="6" width="172" height="58"/>
                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     <size key="cellSize" width="172" height="18"/>
@@ -325,7 +325,7 @@
                         <binding destination="kx9-7p-zxc" name="selectedIndex" keyPath="selection.CursorMode" id="y9g-6q-mua"/>
                     </connections>
                 </matrix>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y11-Bl-tZz">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y11-Bl-tZz">
                     <rect key="frame" x="18" y="65" width="99" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor" id="nU3-et-JNg">
                         <font key="font" metaFont="smallSystemBold"/>
@@ -333,7 +333,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nS8-9U-Klv">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nS8-9U-Klv">
                     <rect key="frame" x="271" y="115" width="79" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Normal" id="B4C-wO-uIY">
                         <font key="font" metaFont="smallSystem"/>
@@ -341,7 +341,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TYX-YO-eRo">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TYX-YO-eRo">
                     <rect key="frame" x="271" y="92" width="79" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Bright" id="AD2-zv-RsG">
                         <font key="font" metaFont="smallSystem"/>
@@ -349,7 +349,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kxJ-qf-MsA">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kxJ-qf-MsA">
                     <rect key="frame" x="18" y="274" width="114" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Basic Colors" id="WRM-bF-61O">
                         <font key="font" metaFont="smallSystemBold"/>
@@ -357,7 +357,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6TY-ad-Zr5">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6TY-ad-Zr5">
                     <rect key="frame" x="18" y="315" width="133" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Font" id="9LW-aK-nMs">
                         <font key="font" metaFont="smallSystemBold"/>
@@ -365,7 +365,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField appearanceType="aqua" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GJ7-fd-OXF">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GJ7-fd-OXF">
                     <rect key="frame" x="18" y="299" width="176" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="d5L-HZ-652">
                         <font key="font" metaFont="smallSystem"/>
@@ -373,7 +373,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button appearanceType="aqua" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rUn-31-MQ4">
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rUn-31-MQ4">
                     <rect key="frame" x="190" y="295" width="80" height="28"/>
                     <buttonCell key="cell" type="push" title="Change..." bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="10R-Vq-CP2">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>

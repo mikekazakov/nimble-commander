@@ -36,7 +36,7 @@
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:NSImageNameInfo];
+    return [NSImage imageNamed:@"pref_term_icon"];
 }
 -(NSString*)toolbarItemLabel{
     return @"Terminal";

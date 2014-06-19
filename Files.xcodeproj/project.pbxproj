@@ -63,6 +63,7 @@
 		CF1100DB191B46BD00E170FC /* FileDeletionOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100D9191B46BD00E170FC /* FileDeletionOperationVFSJob.mm */; };
 		CF1100DF191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */; };
 		CF1100E2191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */; };
+		CF120A931952B57C009527F4 /* pref_term_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF120A921952B57C009527F4 /* pref_term_icon.png */; };
 		CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
 		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
 		CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
@@ -456,6 +457,7 @@
 		CF1100DA191B46BD00E170FC /* FileDeletionOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperationVFSJob.h; sourceTree = "<group>"; };
 		CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFSDelete_Tests.mm; sourceTree = "<group>"; };
 		CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeDelete_Tests.mm; sourceTree = "<group>"; };
+		CF120A921952B57C009527F4 /* pref_term_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pref_term_icon.png; sourceTree = "<group>"; };
 		CF128876177FF9D3002816C2 /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkOperation.h; sourceTree = "<group>"; };
 		CF128877177FF9D3002816C2 /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperation.mm; sourceTree = "<group>"; };
 		CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperationJob.mm; sourceTree = "<group>"; };
@@ -946,6 +948,7 @@
 		B51014CF170721340023FF24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CF120A921952B57C009527F4 /* pref_term_icon.png */,
 				CFDC4B4F18F834EF004E6429 /* pref_extedit_icon.png */,
 				CF649C3C18D2D31600055595 /* show_oplist_hl_icon.png */,
 				CF649C3918D2C0C200055595 /* show_oplist_icon.png */,
@@ -2002,6 +2005,7 @@
 				CFEB07811886ECAA00E5CC0D /* linkarrow_icon.png in Resources */,
 				CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */,
 				CF649C3A18D2C0C200055595 /* show_oplist_icon.png in Resources */,
+				CF120A931952B57C009527F4 /* pref_term_icon.png in Resources */,
 				CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */,
 				CF12888017800724002816C2 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,

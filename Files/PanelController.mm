@@ -658,35 +658,37 @@ void panel::GenericCursorPersistance::Restore()
     FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
     [sheet ShowSheet:self.window
              handler:^{
-                 if(sheet.server == nil)
-                     return;
-
-                 string server =  sheet.server.UTF8String;
-                 string username = sheet.username ? sheet.username.UTF8String : "";
-                 string password = sheet.password ? sheet.password.UTF8String : "";
-                 string path = sheet.path ? sheet.path.UTF8String : "/";
-                 if(path.empty() || path[0] != '/')
-                     path = "/";
-                 
-                 VFSNetFTPOptions opts;
-                 opts.user = username;
-                 opts.passwd = password;
-                 if(sheet.port.intValue != 0)
-                     opts.port = sheet.port.intValue;
-
-                 auto host = make_shared<VFSNetFTPHost>(server.c_str());
-                 int ret = host->Open(path.c_str(), opts);
-                 if(ret != 0)
-                 {
-                     NSAlert *alert = [[NSAlert alloc] init];
-                     alert.messageText = @"FTP connection error:";
-                     alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
-                     [alert addButtonWithTitle:@"OK"];
-                     [alert runModal];
-                     return;
-                 }
-                
-                 [self GoToDir:path vfs:host select_entry:"" async:true];
+                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                     if(sheet.server == nil)
+                         return;
+                     
+                     string server =  sheet.server.UTF8String;
+                     string username = sheet.username ? sheet.username.UTF8String : "";
+                     string password = sheet.password ? sheet.password.UTF8String : "";
+                     string path = sheet.path ? sheet.path.UTF8String : "/";
+                     if(path.empty() || path[0] != '/')
+                         path = "/";
+                     
+                     VFSNetFTPOptions opts;
+                     opts.user = username;
+                     opts.passwd = password;
+                     if(sheet.port.intValue != 0)
+                         opts.port = sheet.port.intValue;
+                     
+                     auto host = make_shared<VFSNetFTPHost>(server.c_str());
+                     int ret = host->Open(path.c_str(), opts);
+                     if(ret != 0)
+                     {
+                         NSAlert *alert = [[NSAlert alloc] init];
+                         alert.messageText = @"FTP connection error:";
+                         alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
+                         [alert addButtonWithTitle:@"OK"];
+                         [alert runModal];
+                         return;
+                     }
+                     
+                     [self GoToDir:path vfs:host select_entry:"" async:true];
+                 });
              }];
 }
 

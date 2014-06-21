@@ -178,8 +178,8 @@ static int FileWindowSize()
         }
         // a bit suboptimal no - may re-layout after first one
         if(options.wrapping) m_View.wordWrap = info->wrapping;
-        if(options.position) [m_View SetVerticalPositionInBytes:info->position];
-        if(options.selection)[m_View SetSelectionInFile:info->selection];
+        if(options.position) m_View.verticalPositionInBytes = info->position;
+        if(options.selection) m_View.selectionInFile = info->selection;
     }
     else
         [m_View SetFile:m_FileWindow.get()];
@@ -301,7 +301,7 @@ static int FileWindowSize()
 
 - (void) SelectEncodingFromView
 {
-    int current_encoding = [m_View Enconding];
+    int current_encoding = m_View.encoding;
     for(const auto &i: encodings::LiteralEncodingsList())
         if(i.first == current_encoding)
         {
@@ -323,8 +323,8 @@ static int FileWindowSize()
 
 - (void) UpdateWordWrap
 {
-    m_WordWrap.state = m_View.WordWrap ? NSOnState : NSOffState;
-    m_WordWrap.enabled = m_View.Mode == BigFileViewModes::Text;
+    m_WordWrap.state = m_View.wordWrap ? NSOnState : NSOffState;
+    m_WordWrap.enabled = m_View.mode == BigFileViewModes::Text;
 }
 
 - (void) WordWrapChanged:(id)sender
@@ -334,9 +334,9 @@ static int FileWindowSize()
 
 - (void) SelectModeFromView
 {
-    if(m_View.Mode == BigFileViewModes::Text)
+    if(m_View.mode == BigFileViewModes::Text)
         [m_ModeSelect selectItemAtIndex:0];
-    else if(m_View.Mode == BigFileViewModes::Hex)
+    else if(m_View.mode == BigFileViewModes::Hex)
         [m_ModeSelect selectItemAtIndex:1];
     else
         assert(0);
@@ -361,7 +361,7 @@ static int FileWindowSize()
 
 - (void) BigFileViewScrolledByUser
 {
-    m_SearchInFile->MoveCurrentPosition(m_View.VerticalPositionInBytes);
+    m_SearchInFile->MoveCurrentPosition(m_View.verticalPositionInBytes);
 }
 
 - (void)UpdateSearchFilter:sender
@@ -370,18 +370,18 @@ static int FileWindowSize()
     if(str.length == 0)
     {
         m_SearchInFileQueue->Stop(); // we should stop current search if any
-        [m_View SetSelectionInFile:CFRangeMake(-1, 0)];
+        m_View.selectionInFile = CFRangeMake(-1, 0);
         return;
     }
     
     if( m_SearchInFile->TextSearchString() == NULL ||
        [str compare:(__bridge NSString*) m_SearchInFile->TextSearchString()] != NSOrderedSame ||
-       m_SearchInFile->TextSearchEncoding() != [m_View Enconding] )
+       m_SearchInFile->TextSearchEncoding() != m_View.encoding )
     { // user did some changes in search request
-        [m_View SetSelectionInFile:CFRangeMake(-1, 0)]; // remove current selection
+        m_View.selectionInFile = CFRangeMake(-1, 0); // remove current selection
 
-        uint64_t view_offset = [m_View VerticalPositionInBytes];
-        int encoding = [m_View Enconding];
+        uint64_t view_offset = m_View.verticalPositionInBytes;
+        int encoding = m_View.encoding;
         
         m_SearchInFileQueue->Stop(); // we should stop current search if any
         m_SearchInFileQueue->Wait();
@@ -408,7 +408,7 @@ static int FileWindowSize()
         
         if(result == SearchInFile::Result::Found)
             dispatch_to_main_queue( ^{
-                [m_View SetSelectionInFile:CFRangeMake(offset, len)];
+                m_View.selectionInFile = CFRangeMake(offset, len);
                 [m_View ScrollToSelection];
             });
     });
@@ -449,11 +449,11 @@ static int FileWindowSize()
     BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
     info->path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
     info->last_viewed = NSDate.date;
-    info->position = [m_View VerticalPositionInBytes];
-    info->wrapping = [m_View WordWrap];
-    info->view_mode = [m_View Mode];
-    info->encoding = [m_View Enconding];
-    info->selection = [m_View SelectionInFile];
+    info->position = m_View.verticalPositionInBytes;
+    info->wrapping = m_View.wordWrap;
+    info->view_mode = m_View.mode;
+    info->encoding = m_View.encoding;
+    info->selection = m_View.selectionInFile;
     [[BigFileViewHistory sharedHistory] InsertEntry:info];
 }
 

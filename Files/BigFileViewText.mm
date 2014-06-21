@@ -241,7 +241,7 @@ void BigFileViewText::BuildLayout()
         return;
     
     double wrapping_width = 10000;
-    if([m_View WordWrap])
+    if(m_View.wordWrap)
         wrapping_width = [m_View frame].size.width - [NSScroller scrollerWidthForControlSize:NSRegularControlSize scrollerStyle:NSScrollerStyleLegacy] - m_LeftInset;
 
     m_AttrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
@@ -759,7 +759,7 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
     }
     
     // horizontal scrolling
-    if( ![m_View WordWrap] && ((delta_x > 0 && m_HorizontalOffset > 0) || delta_x < 0) )
+    if( !m_View.wordWrap && ((delta_x > 0 && m_HorizontalOffset > 0) || delta_x < 0) )
     {
         m_SmoothOffset.x -= delta_x;
         if(m_SmoothOffset.x > m_FontWidth)
@@ -827,7 +827,7 @@ void BigFileViewText::OnFontSettingsChanged()
 
 void BigFileViewText::OnLeftArrow()
 {
-    if(m_View.WordWrap)
+    if(m_View.wordWrap)
         return;
     
     m_HorizontalOffset -= m_HorizontalOffset > 0 ? 1 : 0;
@@ -836,7 +836,7 @@ void BigFileViewText::OnLeftArrow()
 
 void BigFileViewText::OnRightArrow()
 {
-    if(m_View.WordWrap)
+    if(m_View.wordWrap)
         return;
     
     m_HorizontalOffset++;
@@ -864,7 +864,7 @@ void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
     int sel_end = i.unichar_no + i.unichar_len;
     int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
     int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
-    [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
+    m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
 }
 
 void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
@@ -902,7 +902,7 @@ void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
 
     int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
     int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
-    [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
+    m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
 }
 
 void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
@@ -939,10 +939,10 @@ void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
             int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
             int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
             assert(sel_end_byte >= sel_start_byte);
-            [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
+            m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
         }
         else
-            [m_View SetSelectionInFile:CFRangeMake(-1,0)];
+            m_View.selectionInFile = CFRangeMake(-1,0);
         
         event = [m_View.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
     }

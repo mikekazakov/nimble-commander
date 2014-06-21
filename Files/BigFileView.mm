@@ -240,59 +240,59 @@ static NSArray *MyDefaultsKeys()
 - (void)keyDown:(NSEvent *)event
 {
     if([[event charactersIgnoringModifiers] length] != 1) return;
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     switch ([[event charactersIgnoringModifiers] characterAtIndex:0]) {
         case NSHomeFunctionKey: m_ViewImpl->HandleVerticalScroll(0.0); break;
         case NSEndFunctionKey:  m_ViewImpl->HandleVerticalScroll(1.0); break;
         default: [super keyDown:event]; return;
     }
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveUp:(id)sender{
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnUpArrow();
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveDown:(id)sender {
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnDownArrow();
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveLeft:(id)sender {
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnLeftArrow();
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)moveRight:(id)sender {
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnRightArrow();
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)pageDown:(id)sender {
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];    
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnPageDown();
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void) pageUp:(id)sender {
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnPageUp();
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
-- (int) Enconding
+- (int) encoding
 {
     if(m_Data) return m_Data->Encoding();
     return ENCODING_UTF8; // ??
@@ -347,7 +347,7 @@ static NSArray *MyDefaultsKeys()
 
 - (void)VerticalScroll:(id)sender
 {
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     switch ([m_VerticalScroller hitPart])
     {
         case NSScrollerIncrementLine:
@@ -372,19 +372,19 @@ static NSArray *MyDefaultsKeys()
         default:
             break;
     }
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-    uint64_t was_vert_pos = [self VerticalPositionInBytes];
+    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnScrollWheel(theEvent);
-    if(was_vert_pos != [self VerticalPositionInBytes])
+    if(was_vert_pos != self.verticalPositionInBytes)
         [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
 }
 
-- (bool)WordWrap
+- (bool) wordWrap
 {
     return m_WrapWords;
 }
@@ -398,9 +398,8 @@ static NSArray *MyDefaultsKeys()
     }
 }
 
-- (BigFileViewModes) Mode
+- (BigFileViewModes) mode
 {
-//    if( [m_ViewImpl isKindOfClass: [BigFileViewText class]])
     if(dynamic_cast<BigFileViewText*>(m_ViewImpl.get()))
         return BigFileViewModes::Text;
     else if(dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
@@ -411,7 +410,7 @@ static NSArray *MyDefaultsKeys()
 
 - (void) setMode: (BigFileViewModes) _mode
 {
-    if(_mode == self.Mode)
+    if(_mode == self.mode)
         return;
     
     uint32_t current_offset = m_ViewImpl->GetOffsetWithinWindow();
@@ -437,27 +436,6 @@ static NSArray *MyDefaultsKeys()
     return  [m_VerticalScroller doubleValue];
 }
 
-- (void) SetSelectionInFile: (CFRange) _selection
-{
-    if(_selection.location == m_SelectionInFile.location &&
-       _selection.length   == m_SelectionInFile.length)
-        return;
-    
-    if(_selection.location < 0)
-    {
-        m_SelectionInFile = CFRangeMake(-1, 0);
-        m_SelectionInWindow = CFRangeMake(-1, 0);
-        m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
-    }
-    else
-    {
-        assert(_selection.location + _selection.length <= m_File->FileSize());
-        m_SelectionInFile = _selection;
-        [self UpdateSelectionRange];
-    }
-    [self setNeedsDisplay:true];
-}
-
 - (void) ScrollToSelection
 {
     if(m_SelectionInFile.location >= 0)
@@ -467,12 +445,12 @@ static NSArray *MyDefaultsKeys()
     }
 }
 
-- (uint64_t) VerticalPositionInBytes
+- (uint64_t) verticalPositionInBytes
 {
     return uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
 }
 
-- (void) SetVerticalPositionInBytes:(uint64_t) _pos
+- (void) setVerticalPositionInBytes:(uint64_t) _pos
 {
     m_ViewImpl->ScrollToByteOffset(_pos);
 }
@@ -538,6 +516,32 @@ static NSArray *MyDefaultsKeys()
     return m_SelectionInFile;
 }
 
+- (CFRange) selectionInFile
+{
+    return m_SelectionInFile;
+}
+
+- (void) setSelectionInFile:(CFRange) _selection
+{
+    if(_selection.location == m_SelectionInFile.location &&
+       _selection.length   == m_SelectionInFile.length)
+        return;
+    
+    if(_selection.location < 0)
+    {
+        m_SelectionInFile = CFRangeMake(-1, 0);
+        m_SelectionInWindow = CFRangeMake(-1, 0);
+        m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
+    }
+    else
+    {
+        assert(_selection.location + _selection.length <= m_File->FileSize());
+        m_SelectionInFile = _selection;
+        [self UpdateSelectionRange];
+    }
+    [self setNeedsDisplay:true];
+}
+
 - (void) mouseDown:(NSEvent *)_event
 {
     m_ViewImpl->OnMouseDown(_event);
@@ -558,12 +562,12 @@ static NSArray *MyDefaultsKeys()
 
 - (void)selectAll:(id)sender
 {
-    [self SetSelectionInFile: CFRangeMake(0, m_File->FileSize())];
+    self.selectionInFile = CFRangeMake(0, m_File->FileSize());
 }
 
 - (void)deselectAll:(id)sender
 {
-    [self SetSelectionInFile: CFRangeMake(-1, 0)];
+    self.selectionInFile = CFRangeMake(-1, 0);
 }
 
 @end

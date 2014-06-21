@@ -739,10 +739,10 @@ void BigFileViewHex::HandleSelectionWithMouseDragging(NSEvent* event)
             {
                 int sel_start = base_byte < curr_byte ? base_byte : curr_byte;
                 int sel_end   = base_byte > curr_byte ? base_byte : curr_byte;
-                [m_View SetSelectionInFile:CFRangeMake(sel_start + m_Data->FilePos(), sel_end - sel_start)];
+                m_View.selectionInFile = CFRangeMake(sel_start + m_Data->FilePos(), sel_end - sel_start);
             }
             else
-                [m_View SetSelectionInFile:CFRangeMake(-1,0)];
+                m_View.selectionInFile = CFRangeMake(-1,0);
             
             event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
         }
@@ -776,10 +776,10 @@ void BigFileViewHex::HandleSelectionWithMouseDragging(NSEvent* event)
                 int sel_start_byte = sel_start < m_Data->UniCharsSize() ? m_Data->UniCharToByteIndeces()[sel_start] : (int)m_Data->RawSize();
                 int sel_end_byte = sel_end < m_Data->UniCharsSize() ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
                 assert(sel_end_byte >= sel_start_byte);
-                [m_View SetSelectionInFile:CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte)];
+                m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
             }
             else
-                [m_View SetSelectionInFile:CFRangeMake(-1,0)];
+                m_View.selectionInFile = CFRangeMake(-1,0);
             
             event = [[m_View window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
         }

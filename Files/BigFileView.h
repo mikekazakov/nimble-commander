@@ -41,22 +41,35 @@ enum class BigFileViewModes
 - (bool)        ShouldSmoothFonts;
 
 // Frontend section
-- (int)         Enconding;
-- (void)        setEncoding:(int)_encoding;
 
-- (bool)        WordWrap;
-- (void)        setWordWrap:(bool)_wrapping;
+/**
+ * Setting how data backend should translate raw bytes into UniChars characters.
+ */
+@property (nonatomic) int encoding;
 
-- (BigFileViewModes) Mode;
-- (void)        setMode: (BigFileViewModes) _mode;
+/**
+ * Set if text presentation should fit lines into a view width to disable horiziontal scrolling.
+ * That is done by breaking sentences by words wrapping.
+ */
+@property (nonatomic) bool wordWrap;
+
+/**
+ * Visual presentation mode. Currently supports two: Text and Hex.
+ */
+@property (nonatomic) BigFileViewModes mode;
+
+/**
+ * Scroll position within whole file, now in a window
+ */
+@property (nonatomic) uint64_t verticalPositionInBytes;
+
+/**
+ * Selection in whole file, in raw bytes.
+ * It may render to different variant within concrete file window position.
+ */
+@property (nonatomic) CFRange selectionInFile;
 
 - (double)      VerticalScrollPosition;
-- (uint64_t)    VerticalPositionInBytes; // whithin all file, now in a window
-- (void)        SetVerticalPositionInBytes:(uint64_t) _pos;
-
-// raw bytes in whole file
-- (CFRange)     SelectionInFile;
-- (void)        SetSelectionInFile: (CFRange) _selection;
 - (void)        ScrollToSelection;
 - (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window
 - (CFRange)     SelectionWithinWindowUnichars;              // unichars within a decoded window

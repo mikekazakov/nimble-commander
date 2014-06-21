@@ -19,8 +19,6 @@ public:
     }; // 4bytes total
 
     inline CTFontRef BaseCTFont() const {return m_CTFonts[0];}
-    inline CGFontRef BaseCGFont() const {return m_CGFonts[0];}
-    inline CGFontRef *CGFonts() const {return (CGFontRef *)m_CGFonts;}
     inline CTFontRef *CTFonts() const {return (CTFontRef *)m_CTFonts;}
     inline double Size()    const {return m_FontSize;}
     inline double Height()  const {return m_FontHeight;}
@@ -36,8 +34,6 @@ public:
 private:
     CTFontRef   m_CTFonts[256]; // will anybody need more than 256 fallback fonts?
                                 // fallbacks start from [1]. [0] is basefont
-    CGFontRef   m_CGFonts[256]; // -""-. owned by FontCache
-    
     Pair        m_Cache[65536];
     
     CFStringRef m_FontName;

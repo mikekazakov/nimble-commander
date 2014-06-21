@@ -19,33 +19,13 @@ void SetFillColor(CGContextRef _context, const DoubleColor &_color)
 
 void DrawSingleUniChar(UniChar _s, double _x, double _y, CGContextRef _context, FontCache *_cache)
 {
-    CGFontRef current_font = _cache->BaseCGFont();
-    
     FontCache::Pair p = _cache->Get(_s);
-    if( p.glyph != 0 )
-    {
-        if(p.font != 0)
-        { // need to use a fallback font
-            if(_cache->CGFonts()[p.font] != current_font)
-            {
-                CGContextSetFont(_context, _cache->CGFonts()[p.font]);
-                current_font = _cache->CGFonts()[p.font];
-            }
-            CGContextShowGlyphsAtPoint(_context, _x, _y + _cache->Height() - _cache->Descent(), &p.glyph, 1);
-        }
-        else
-        { // use current default font
-            if(current_font != _cache->BaseCGFont())
-            {
-                CGContextSetFont(_context, _cache->BaseCGFont());
-                current_font = _cache->BaseCGFont();
-            }
-            CGContextShowGlyphsAtPoint(_context, _x, _y + _cache->Height() - _cache->Descent(), &p.glyph, 1);
-        }
-    }
-    
-    if(current_font != _cache->BaseCGFont())
-        CGContextSetFont(_context, _cache->BaseCGFont());
+    if( p.glyph == 0 )
+        return;
+
+    CGPoint pos{0., 0.};
+    CGContextSetTextPosition(_context, _x, _y + _cache->Height() - _cache->Descent());
+    CTFontDrawGlyphs(_cache->CTFonts()[p.font], &p.glyph, &pos, 1, _context);
 }
     
 void DrawSingleUniChar(UniChar _s,
@@ -118,20 +98,12 @@ void DrawString(UniChar *_s,
             posdelta = g_WCWidthTableFixedMin1[*s];
         }
         
-        // TODO: need to memorize current font to exclude redundant changes
         FontCache::Pair p = _cache->Get(*s);
         if( p.glyph != 0 )
         {
-            if(p.font != 0)
-            { // need to use a fallback font
-                CGContextSetFont(_context, _cache->CGFonts()[p.font]); // relying on font cache
-                CGContextShowGlyphsAtPoint(_context, _x + cpos*_cache->Width(), _y + _cache->Height() - _cache->Descent(), &p.glyph, 1);
-                CGContextSetFont(_context, _cache->BaseCGFont()); // clenup after
-            }
-            else
-            { // use current default font
-                CGContextShowGlyphsAtPoint(_context, _x + cpos*_cache->Width(), _y + _cache->Height() - _cache->Descent(), &p.glyph, 1);
-            }
+            CGPoint pos{0., 0.};
+            CGContextSetTextPosition(_context, _x + cpos*_cache->Width(), _y + _cache->Height() - _cache->Descent());
+            CTFontDrawGlyphs(_cache->CTFonts()[p.font], &p.glyph, &pos, 1, _context);
         }
     }
 }
@@ -184,10 +156,7 @@ void DrawStringWithBackgroundXY(UniChar *_s,
 void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache)
 {
     // font settings
-    CGContextSetFont(_context, _cache->BaseCGFont());
-    CGContextSetFontSize(_context, _cache->Size());
     CGContextSetTextDrawingMode(_context, kCGTextFill);
-//    CGContextSetShouldSmoothFonts(_context, false);
     CGContextSetShouldSmoothFonts(_context, true);
     CGContextSetShouldAntialias(_context, true);
         
@@ -205,10 +174,7 @@ void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache)
 void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache)
 {
     // font settings
-    CGContextSetFont(_context, _cache->BaseCGFont());
-    CGContextSetFontSize(_context, _cache->Size());
     CGContextSetTextDrawingMode(_context, kCGTextFill);
-//    CGContextSetShouldSmoothFonts(_context, false);
     CGContextSetShouldSmoothFonts(_context, true);
     CGContextSetShouldAntialias(_context, false);
         
@@ -316,8 +282,6 @@ void Context::SetFillColor(const DoubleColor &_color)
 void Context::SetupForText()
 {
     // font settings
-    CGContextSetFont(m_CGContext, m_FontCache->BaseCGFont());
-    CGContextSetFontSize(m_CGContext, m_FontCache->Size());
     CGContextSetTextDrawingMode(m_CGContext, kCGTextFill);
     CGContextSetShouldSmoothFonts(m_CGContext, true);
     CGContextSetShouldAntialias(m_CGContext, true);
@@ -336,8 +300,6 @@ void Context::SetupForText()
 void Context::SetupForASCIIArt()
 {
     // font settings
-    CGContextSetFont(m_CGContext, m_FontCache->BaseCGFont());
-    CGContextSetFontSize(m_CGContext, m_FontCache->Size());
     CGContextSetTextDrawingMode(m_CGContext, kCGTextFill);
     CGContextSetShouldSmoothFonts(m_CGContext, true);
     CGContextSetShouldAntialias(m_CGContext, false);

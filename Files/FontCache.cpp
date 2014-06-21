@@ -33,7 +33,6 @@ FontCache::FontCache(CTFontRef _basic_font)
 {
     memset(&m_Cache, 0, sizeof(m_Cache));
     memset(&m_CTFonts, 0, sizeof(m_CTFonts));
-    memset(&m_CGFonts, 0, sizeof(m_CGFonts));
     
     m_FontHeight = GetLineHeightForFont(_basic_font, &m_FontAscent, &m_FontDescent, &m_FontLeading);
     m_FontWidth  = GetMonospaceFontCharWidth(_basic_font);
@@ -42,7 +41,6 @@ FontCache::FontCache(CTFontRef _basic_font)
     
     CFRetain(_basic_font);    
     m_CTFonts[0] = _basic_font;
-    m_CGFonts[0] = CTFontCopyGraphicsFont(_basic_font, 0);
     m_Cache[0].searched = 1;
 }
 
@@ -53,9 +51,6 @@ FontCache::~FontCache()
     for(auto i:m_CTFonts)
         if(i!=0)
             CFRelease(i);
-    for(auto i:m_CGFonts)
-        if(i!=0)
-            CGFontRelease(i);
     
     g_Caches.erase(remove_if(begin(g_Caches),
                              end(g_Caches),
@@ -111,7 +106,6 @@ FontCache::Pair FontCache::Get(UniChar _c)
                     {
                         // a new one
                         m_CTFonts[i] = ctfont;
-                        m_CGFonts[i] = CTFontCopyGraphicsFont(ctfont, 0);
                         
                         m_Cache[_c].font = i;
                         m_Cache[_c].searched = 1;

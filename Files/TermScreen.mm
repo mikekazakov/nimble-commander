@@ -65,7 +65,7 @@ TermScreen::Line *TermScreen::GetLineRW(int _line_no)
     return &(*it);
 }
 
-void TermScreen::PutCh(unsigned short _char)
+void TermScreen::PutCh(uint32_t _char)
 {
     assert(m_PosY < m_Screen.size());
     // TODO: optimize it out
@@ -87,7 +87,7 @@ void TermScreen::PutCh(unsigned short _char)
         sp.underline = m_Underline;
         sp.reverse   = m_Reverse;
     
-        if(g_WCWidthTableFixedMin1[_char] == 2 && m_PosX < m_Width)
+        if(WCWidthMin1(_char) == 2 && m_PosX < m_Width)
         {
             auto &foll = line.chars[m_PosX++];
             foll = sp;

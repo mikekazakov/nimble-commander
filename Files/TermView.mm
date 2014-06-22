@@ -48,7 +48,7 @@ struct AnsiColors : array<DoubleColor, 16>
     }}{}
 };
 
-static inline bool IsBoxDrawingCharacter(unsigned short _ch)
+static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     return _ch >= 0x2500 && _ch <= 0x257F;
 }

@@ -48,7 +48,7 @@ private:
     };
     
     static const int        m_ParamsSize = 16;
-    static const int        m_UniCharsStockSize = 16384;
+    static const int        m_UTF16CharsStockSize = 16384;
     static const int        m_TitleMaxLen = 1024;
     static const unsigned char m_DefaultColor = 0x07;
     
@@ -58,9 +58,9 @@ private:
     int                     m_EscState;
     int                     m_Params[m_ParamsSize];
     int                     m_ParamsCnt;
-    int                     m_UniChar;
-    int                     m_UTFCount;
-    int                     m_UniCharsStockLen;
+    uint32_t                m_UTF32Char;
+    int                     m_UTF8Count;
+    int                     m_UTF16CharsStockLen;
     const unsigned short   *m_TranslateMap;
     int                     m_TitleLen;
     int                     m_TitleType;
@@ -90,7 +90,7 @@ private:
     
     // 'big' data comes at last
     unsigned int            m_TabStop[16];
-    unsigned short          m_UniCharsStock[m_UniCharsStockSize];
+    uint16_t                m_UTF16CharsStock[m_UTF16CharsStockSize];
     char                    m_Title[m_TitleMaxLen];
     
     // methods

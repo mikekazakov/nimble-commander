@@ -66,11 +66,11 @@ void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache);
 void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache);
     
 // drawing routines
-void DrawSingleUniChar(UniChar _s, double _x, double _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
-void DrawSingleUniChar(UniChar _s, double _x, double _y, CGContextRef _cont, FontCache *_cache);
-void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color, const DoubleColor &_bk_color);    
-void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
-void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache);
+void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
+void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _cont, FontCache *_cache);
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color, const DoubleColor &_bk_color);
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache);
 void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache *_cache);
 void DrawString(UniChar *_s,
                 size_t _start,    // position of a first symbol to draw
@@ -129,7 +129,7 @@ int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const UniChar *_s, size_t 
     // returns a number of actual unichars in _out
     // requires that _symb_amount should be >= 3, otherwise it's meaningless
 
-inline bool IsUnicodeCombiningCharacter(unsigned short a)
+inline bool IsUnicodeCombiningCharacter(uint32_t a)
 {
     return
     (a >= 0x0300 && a <= 0x036F) ||

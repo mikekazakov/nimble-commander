@@ -9,17 +9,16 @@ public:
     FontCache(CTFontRef _basic_font);
     ~FontCache();
     
-    // consider using plain uint4 here for performance (?) need to check
     struct Pair
     {
-        inline Pair():font(0),searched(0),glyph(0){};
-        unsigned char font; // zero mean that basic font is just ok, other ones are the indeces of ctfallbacks/cgfallbacks
-        unsigned char searched; // zero means that this glyph wasn't looked up yet. otherwise it's a space need for glyph to display (1 or 2)
-        CGGlyph       glyph;
+        uint8_t     font = 0;       // zero mean that basic font is just ok, other ones are the indeces of ctfallbacks
+        uint8_t     searched = 0;   // zero means that this glyph wasn't looked up yet
+        uint16_t    glyph = 0;      // zero glyphs should be ignored - that signal some king of failure
     }; // 4bytes total
 
-    inline CTFontRef BaseCTFont() const {return m_CTFonts[0];}
-    inline CTFontRef *CTFonts() const {return (CTFontRef *)m_CTFonts;}
+    inline CTFontRef BaseFont() const {return m_CTFonts[0];}
+    inline CTFontRef Font(int _no) const { return m_CTFonts[_no]; }
+    
     inline double Size()    const {return m_FontSize;}
     inline double Height()  const {return m_FontHeight;}
     inline double Width()   const {return m_FontWidth;}
@@ -27,14 +26,21 @@ public:
     inline double Descent() const {return m_FontDescent;}
     inline double Leading() const {return m_FontLeading;}
     
-    Pair    Get(UniChar _c);
+    Pair    Get(uint32_t _c);
     
     static shared_ptr<FontCache> FontCacheFromFont(CTFontRef _basic_font);
     
 private:
+    Pair DoGetBMP(uint16_t _c);
+    Pair DoGetNonBMP(uint32_t _c);
+    unsigned char InsertFont(CTFontRef _font);
+    
     CTFontRef   m_CTFonts[256]; // will anybody need more than 256 fallback fonts?
                                 // fallbacks start from [1]. [0] is basefont
-    Pair        m_Cache[65536];
+
+    Pair                m_CacheBMP[65536];
+    // TODO: consider mutex locking here
+    map<uint32_t, Pair> m_CacheNonBMP;
     
     CFStringRef m_FontName;
     double      m_FontSize;
@@ -47,4 +53,5 @@ private:
     FontCache(const FontCache&); // forbid
 };
 
+unsigned char WCWidthMin1(uint32_t _unicode);
 extern unsigned char g_WCWidthTableFixedMin1[65536];

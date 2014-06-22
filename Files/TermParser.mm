@@ -190,9 +190,9 @@ void TermParser::Reset()
     m_ParamsCnt = 0;
     m_QuestionFlag = false;
     m_ParsingParamNow = 0;
-    m_UniChar = 0;
-    m_UTFCount = 0;
-    m_UniCharsStockLen = 0;
+    m_UTF32Char = 0;
+    m_UTF8Count = 0;
+    m_UTF16CharsStockLen = 0;
     m_DECPMS_SavedCurX = 0;
     m_DECPMS_SavedCurY = 0;
     
@@ -214,27 +214,27 @@ void TermParser::Reset()
 
 void TermParser::Flush()
 {
-    if( m_UniCharsStockLen == 0 ) return;
+    if( m_UTF16CharsStockLen == 0 ) return;
     
-    
-    // possible changes this checking to IsUnicodeCombiningCharacter checking - it may reduce redundant normalizings
-    bool hi = false;
-    for(int i = 0; i < m_UniCharsStockLen; ++i)
-        if(m_UniCharsStock[i] > 0x7F)
+    // TODO: need some kind of table to explicitly exclude normalization for a bunch of characters
+    // *optimization*
+    bool has_non_ascii = false;
+    for(int i = 0; i < m_UTF16CharsStockLen; ++i)
+        if(m_UTF16CharsStock[i] > 0x7F)
         {
-            hi = true;
+            has_non_ascii = true;
             break;
         }
     
-    int chars_len = m_UniCharsStockLen;
-    
-    if(hi)
+    int chars_len = m_UTF16CharsStockLen;
+
+    if(has_non_ascii)
     {
         CFMutableStringRef str = CFStringCreateMutableWithExternalCharactersNoCopy (
                                                                               NULL,
-                                                                              m_UniCharsStock,
-                                                                              m_UniCharsStockLen,
-                                                                              m_UniCharsStockSize,
+                                                                              m_UTF16CharsStock,
+                                                                              m_UTF16CharsStockLen,
+                                                                              m_UTF16CharsStockSize,
                                                                               kCFAllocatorNull
                                                                               );
         assert(str != NULL);
@@ -245,22 +245,32 @@ void TermParser::Flush()
     
     for(int i = 0; i < chars_len; ++i)
     {
+        uint32_t c = 0;
+        if(CFStringIsSurrogateHighCharacter(m_UTF16CharsStock[i])) {
+            if(i + 1 < chars_len &&
+               CFStringIsSurrogateLowCharacter(m_UTF16CharsStock[i+1]) ) {
+                c = CFStringGetLongCharacterForSurrogatePair(m_UTF16CharsStock[i], m_UTF16CharsStock[i+1]);
+                ++i;
+            }
+        }
+        else
+            c = m_UTF16CharsStock[i];
+        
         // TODO: if(wrapping_mode == ...) <- need to add this
-        if( m_Scr->CursorX() >= m_Scr->Width() &&
-           !oms::IsUnicodeCombiningCharacter(m_UniCharsStock[i]) )
+        if( m_Scr->CursorX() >= m_Scr->Width() && !oms::IsUnicodeCombiningCharacter(c) )
         {
             m_Scr->PutWrap();
             CR();
             LF();
         }
-        
+
         if(m_InsertMode)
-            m_Scr->DoShiftRowRight(g_WCWidthTableFixedMin1[m_UniCharsStock[i]]);
+            m_Scr->DoShiftRowRight(WCWidthMin1(c));
         
-        m_Scr->PutCh(m_UniCharsStock[i]);
+        m_Scr->PutCh(c);
     }
     
-    m_UniCharsStockLen = 0;
+    m_UTF16CharsStockLen = 0;
 }
 
 void TermParser::EatByte(unsigned char _byte, int &_result_flags)
@@ -435,49 +445,55 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
             
         case S_Normal:
             if(c > 0x7f) {
-                if (m_UTFCount && (c&0xc0)==0x80) {
-                    m_UniChar = (m_UniChar<<6) | (c&0x3f);
-                    m_UTFCount--;
-                    if(m_UTFCount)
+                if (m_UTF8Count && (c&0xc0)==0x80) {
+                    m_UTF32Char = (m_UTF32Char<<6) | (c&0x3f);
+                    m_UTF8Count--;
+                    if(m_UTF8Count)
                         return;
                 }
                 else {
                     if ((c & 0xe0) == 0xc0) {
-                        m_UTFCount = 1;
-                        m_UniChar = (c & 0x1f);
+                        m_UTF8Count = 1;
+                        m_UTF32Char = (c & 0x1f);
                     }
                     else if ((c & 0xf0) == 0xe0) {
-                        m_UTFCount = 2;
-                        m_UniChar = (c & 0x0f);
+                        m_UTF8Count = 2;
+                        m_UTF32Char = (c & 0x0f);
                     }
                     else if ((c & 0xf8) == 0xf0) {
-                        m_UTFCount = 3;
-                        m_UniChar = (c & 0x07);
+                        m_UTF8Count = 3;
+                        m_UTF32Char = (c & 0x07);
                     }
                     else if ((c & 0xfc) == 0xf8) {
-                        m_UTFCount = 4;
-                        m_UniChar = (c & 0x03);
+                        m_UTF8Count = 4;
+                        m_UTF32Char = (c & 0x03);
                     }
                     else if ((c & 0xfe) == 0xfc) {
-                        m_UTFCount = 5;
-                        m_UniChar = (c & 0x01);
+                        m_UTF8Count = 5;
+                        m_UTF32Char = (c & 0x01);
                     }
                     else
-                        m_UTFCount = 0;
+                        m_UTF8Count = 0;
                     return;
                 }
             }
             else if (m_TranslateMap != 0 && m_TranslateMap != translate_maps[0] ) {
 //                if (toggle_meta)
 //                    c|=0x80;
-                m_UniChar = m_TranslateMap[c];
+                m_UTF32Char = m_TranslateMap[c];
             }
             else {
-                m_UniChar = c;
+                m_UTF32Char = c;
             }
             
-            if(m_UniCharsStockLen < m_UniCharsStockSize)
-                m_UniCharsStock[m_UniCharsStockLen++] = m_UniChar;
+            if(m_UTF16CharsStockLen < m_UTF16CharsStockSize) {
+                if(m_UTF32Char < 0x10000) // store directly as UTF16
+                    m_UTF16CharsStock[m_UTF16CharsStockLen++] = m_UTF32Char;
+                else if(m_UTF16CharsStockLen + 1 < m_UTF16CharsStockSize ) { // store as UTF16 suggorate pairs
+                        m_UTF16CharsStock[m_UTF16CharsStockLen++] = 0xD800 + ((m_UTF32Char - 0x010000) >> 10);
+                        m_UTF16CharsStock[m_UTF16CharsStockLen++] = 0xDC00 + ((m_UTF32Char - 0x010000) & 0x3FF);
+                }
+            }
             
             return;            
     }

@@ -41,9 +41,9 @@ public:
     
     struct Space
     {
-        unsigned short l; // letter. consider UTF-32 here? (16bit is not enough)
-        unsigned short c1; // combining character 1. zero if no
-        unsigned short c2; // combining character 2. zero if no
+        uint32_t l;        // basic letter, may be non-bmp
+        unsigned short c1; // combining character 1. zero if no. bmp-only
+        unsigned short c2; // combining character 2. zero if no. bmp-only
         signed char foreground;
         signed char background;
         unsigned int intensity  :1;
@@ -68,7 +68,7 @@ public:
     
     void ResizeScreen(int _new_sx, int _new_sy);
     
-    void PutCh(unsigned short _char);
+    void PutCh(uint32_t _char);
     
     /**
      * Marks current screen line as wrapped. That means that the next line is continuation of current line.

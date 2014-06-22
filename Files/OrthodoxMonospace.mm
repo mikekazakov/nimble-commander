@@ -17,7 +17,7 @@ void SetFillColor(CGContextRef _context, const DoubleColor &_color)
     CGContextSetRGBFillColor(_context, _color.r, _color.g, _color.b, _color.a);
 }
 
-void DrawSingleUniChar(UniChar _s, double _x, double _y, CGContextRef _context, FontCache *_cache)
+void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _context, FontCache *_cache)
 {
     FontCache::Pair p = _cache->Get(_s);
     if( p.glyph == 0 )
@@ -25,10 +25,10 @@ void DrawSingleUniChar(UniChar _s, double _x, double _y, CGContextRef _context, 
 
     CGPoint pos{0., 0.};
     CGContextSetTextPosition(_context, _x, _y + _cache->Height() - _cache->Descent());
-    CTFontDrawGlyphs(_cache->CTFonts()[p.font], &p.glyph, &pos, 1, _context);
+    CTFontDrawGlyphs(_cache->Font(p.font), &p.glyph, &pos, 1, _context);
 }
     
-void DrawSingleUniChar(UniChar _s,
+void DrawSingleUniChar(uint32_t _s,
                        double _x,
                        double _y,
                        CGContextRef _context,
@@ -40,17 +40,17 @@ void DrawSingleUniChar(UniChar _s,
     DrawSingleUniChar(_s, _x, _y, _context, _font_cache);
 }
 
-void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache)
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache)
 {
     DrawSingleUniChar(_s, _x * _cache->Width(), _y * _cache->Height(), _cont, _cache);
 }
     
-void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color)
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color)
 {
     DrawSingleUniChar(_s, _x * _cache->Width(), _y * _cache->Height(), _cont, _cache, _color);
 }
 
-void DrawSingleUniCharXY(UniChar _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color, const DoubleColor &_bk_color)
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color, const DoubleColor &_bk_color)
 {
     SetFillColor(_cont, _bk_color);
     CGContextFillRect(_cont,
@@ -103,7 +103,7 @@ void DrawString(UniChar *_s,
         {
             CGPoint pos{0., 0.};
             CGContextSetTextPosition(_context, _x + cpos*_cache->Width(), _y + _cache->Height() - _cache->Descent());
-            CTFontDrawGlyphs(_cache->CTFonts()[p.font], &p.glyph, &pos, 1, _context);
+            CTFontDrawGlyphs(_cache->Font(p.font), &p.glyph, &pos, 1, _context);
         }
     }
 }

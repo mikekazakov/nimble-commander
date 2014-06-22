@@ -35,10 +35,10 @@ private:
     Pair DoGetNonBMP(uint32_t _c);
     unsigned char InsertFont(CTFontRef _font);
     
-    CTFontRef   m_CTFonts[256]; // will anybody need more than 256 fallback fonts?
-                                // fallbacks start from [1]. [0] is basefont
+    array<CTFontRef, 256> m_CTFonts;    // will anybody need more than 256 fallback fonts?
+                                        // fallbacks start from [1]. [0] is basefont
 
-    Pair                m_CacheBMP[65536];
+    array<Pair, 65536> m_CacheBMP;
     // TODO: consider mutex locking here
     map<uint32_t, Pair> m_CacheNonBMP;
     

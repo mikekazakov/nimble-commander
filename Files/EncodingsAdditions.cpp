@@ -101,7 +101,7 @@ void InterpretAsUnichar(
                                                 0xFFFD
                                                 );
         else
-            InterpretUTF8BufferAsUniChar(
+            InterpretUTF8BufferAsUTF16(
                                                 _input,
                                                 _input_size,
                                                 _output_buf,

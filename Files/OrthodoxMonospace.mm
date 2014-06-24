@@ -71,7 +71,7 @@ void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache *
                           _cont, _cache);
 }
     
-void DrawString(UniChar *_s,
+void DrawString(uint16_t *_s,
                         size_t _start,    // position of a first symbol to draw
                         size_t _amount,   // number of symbols to draw. this means UniChar symbols, not visible symbols - result may be shorter
                         double _x,
@@ -83,25 +83,35 @@ void DrawString(UniChar *_s,
 {
     SetFillColor(_context, _text_color);
     UniChar *s = _s + _start;
-        
+    
+    CGPoint pos{0., 0.};
     int cpos = -1; // output character position
     int posdelta = 1;
     for(size_t i = 0; i < _amount; ++i, ++s)
     {
-        if(!*s) continue;
-            
-        bool iscomb = IsUnicodeCombiningCharacter(*s);
-            
-        if(!iscomb)
-        {
+        uint32_t c;
+        if(CFStringIsSurrogateHighCharacter(s[0])) { // surrogate pair start
+            if(i + 1 < _amount && CFStringIsSurrogateLowCharacter(s[1])) {
+                c = CFStringGetLongCharacterForSurrogatePair(s[0], s[1]);
+                ++i;
+                ++s;
+            }
+            else { // invalid UTF16 sequence
+                c = 0;
+            }
+        }
+        else
+            c = s[0];
+        
+        if(!c) continue;
+        
+        if(!IsUnicodeCombiningCharacter(c)) {
             cpos+=posdelta;
-            posdelta = g_WCWidthTableFixedMin1[*s];
+            posdelta = WCWidthMin1(c);
         }
         
-        FontCache::Pair p = _cache->Get(*s);
-        if( p.glyph != 0 )
-        {
-            CGPoint pos{0., 0.};
+        auto p = _cache->Get(c);
+        if( p.glyph != 0 ) {
             CGContextSetTextPosition(_context, _x + cpos*_cache->Width(), _y + _cache->Height() - _cache->Descent());
             CTFontDrawGlyphs(_cache->Font(p.font), &p.glyph, &pos, 1, _context);
         }
@@ -189,31 +199,54 @@ void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache)
     CGContextSetTextMatrix(_context, AFF);
 }
 
-int CalculateSymbolsSpaceForString(const UniChar *_s, size_t _amount)
+int CalculateSymbolsSpaceForString(const uint16_t *_s, size_t _amount)
 {
-    int output = 0;
+    int space = 0;
     for(size_t i = 0; i < _amount; ++i, ++_s)
-        if(!IsUnicodeCombiningCharacter(*_s))
-            output += g_WCWidthTableFixedMin1[*_s];
-    return output;
+        if(CFStringIsSurrogateHighCharacter(_s[0])) { // surrogate pair start
+            if(i + 1 < _amount && CFStringIsSurrogateLowCharacter(_s[1])) {
+                uint32_t c = CFStringGetLongCharacterForSurrogatePair(_s[0], _s[1]);
+                space += WCWidthMin1(c);
+                ++i;
+                ++_s;
+            }
+            else { // invalid UTF16 sequence
+                space += 1;
+            }
+        }
+        else if(!IsUnicodeCombiningCharacter(_s[0]))
+            space += WCWidthMin1(_s[0]);
+    return space;
 }
     
 // calculates maximum amount of unichars that will not exceed _symb_amount when printed
 // returns number of unichars that can be printed starting from 0 pos
-int CalculateUniCharsAmountForSymbolsFromLeft(const UniChar *_s, size_t _unic_amount, size_t _symb_amount)
+int CalculateUniCharsAmountForSymbolsFromLeft(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount)
 {
-    int cpos = 0, i=0, posdelta = 1;
+    int cpos = 0, i = 0, posdelta = 1;
     for(; i < _unic_amount; ++i, ++_s)
     {
-        bool iscomb = IsUnicodeCombiningCharacter(*_s);
-        if(!iscomb)
-        {
-            if(cpos == _symb_amount)
-                return i;
-            if(cpos + posdelta > _symb_amount) // for width = 2 case
+        if(CFStringIsSurrogateHighCharacter(_s[0])) { // surrogate pair start
+            if(cpos == _symb_amount || cpos + posdelta > _symb_amount)
                 return i;
             cpos += posdelta;
-            posdelta = g_WCWidthTableFixedMin1[*_s];
+            
+            if(i + 1 < _unic_amount && CFStringIsSurrogateLowCharacter(_s[1])) {
+                uint32_t c = CFStringGetLongCharacterForSurrogatePair(_s[0], _s[1]);
+                posdelta = WCWidthMin1(c);
+                ++i;
+                ++_s;
+            }
+            else { // invalid UTF16 sequence
+                posdelta = 1;
+            }
+        }
+        else if(!IsUnicodeCombiningCharacter(_s[0]))
+        {
+            if(cpos == _symb_amount || cpos + posdelta > _symb_amount)
+                return i;
+            cpos += posdelta;
+            posdelta = WCWidthMin1(_s[0]);
         }
     }
     return i;    
@@ -232,9 +265,9 @@ int CalculateUniCharsAmountForSymbolsFromRight(const UniChar *_s, size_t _unic_a
             
         if(!iscomb)
         {
-            if(cpos + g_WCWidthTableFixedMin1[*_s] > _symb_amount)
+            if(cpos + WCWidthMin1(*_s) > _symb_amount)
                 break;
-            cpos += g_WCWidthTableFixedMin1[*_s];
+            cpos += WCWidthMin1(*_s);
         }
     
         if(cpos == _symb_amount || i == 0) break;

@@ -9,6 +9,8 @@
 
 static vector<weak_ptr<FontCache>> g_Caches;
 
+extern unsigned char g_WCWidthTableFixedMin1[65536];
+
 unsigned char WCWidthMin1(uint32_t _unicode)
 {
     if(_unicode < 0x10000)

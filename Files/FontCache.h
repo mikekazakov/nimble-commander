@@ -54,4 +54,3 @@ private:
 };
 
 unsigned char WCWidthMin1(uint32_t _unicode);
-extern unsigned char g_WCWidthTableFixedMin1[65536];

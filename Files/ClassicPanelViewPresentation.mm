@@ -268,7 +268,7 @@ static void FormReadableBytes(unsigned long _sz, char buf[128])
 #undef __1000_5
 }
 
-static void FormHumanReadableBytesAndFiles128(unsigned long _sz, int _total_files, UniChar _out[128], size_t &_symbs, bool _space_prefix_and_postfix)
+static void FormHumanReadableBytesAndFiles128(unsigned long _sz, int _total_files, uint16_t _out[128], size_t &_symbs, bool _space_prefix_and_postfix)
 {
     // TODO: localization support
     char buf[128] = {0};
@@ -281,11 +281,11 @@ static void FormHumanReadableBytesAndFiles128(unsigned long _sz, int _total_file
     for(int i = 0; i < _symbs; ++i) _out[i] = buf[i];
 }
 
-static void ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, UniChar _buff[256], size_t &_sz)
+static void ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, uint16_t _buff[256], size_t &_sz)
 {   // output is a direct filename or symlink path in ->filename form
     if(!_dirent.IsSymlink())
     {
-        InterpretUTF8BufferAsUniChar( (unsigned char*) _dirent.Name(), _dirent.NameLen(), _buff, &_sz, 0xFFFD);
+        InterpretUTF8BufferAsUTF16( (unsigned char*) _dirent.Name(), _dirent.NameLen(), _buff, &_sz, 0xFFFD);
     }
     else
     {
@@ -293,7 +293,7 @@ static void ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, UniChar
         {
             _buff[0]='-';
             _buff[1]='>';
-            InterpretUTF8BufferAsUniChar( (unsigned char*)_dirent.Symlink(), strlen(_dirent.Symlink()), _buff+2, &_sz, 0xFFFD);
+            InterpretUTF8BufferAsUTF16( (unsigned char*)_dirent.Symlink(), strlen(_dirent.Symlink()), _buff+2, &_sz, 0xFFFD);
             _sz += 2;
         }
         else

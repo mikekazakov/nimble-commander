@@ -72,7 +72,7 @@ void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCa
 void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
 void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache);
 void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache *_cache);
-void DrawString(UniChar *_s,
+void DrawString(uint16_t *_s,
                 size_t _start,    // position of a first symbol to draw
                 size_t _amount,   // number of symbols to draw. this means UniChar symbols, not visible symbols - result may be shorter
                 double _x,
@@ -114,10 +114,10 @@ void DrawStringWithBackgroundXY(UniChar *_s,
                 );
 
 // unichar strings processing
-int CalculateSymbolsSpaceForString(const UniChar *_s, size_t _amount);
+int CalculateSymbolsSpaceForString(const uint16 *_s, size_t _amount);
     // calculates amount of monospace characters need to accommodate whole input string
 
-int CalculateUniCharsAmountForSymbolsFromLeft(const UniChar *_s, size_t _unic_amount, size_t _symb_amount);
+int CalculateUniCharsAmountForSymbolsFromLeft(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount);
     // calculates maximum amount of unichars that will not exceed _symb_amount when printed
     // returns number of unichars that can be printed starting from 0 pos
 
@@ -157,7 +157,7 @@ public:
     {
         assert(_utf8_sz < Capacity);
         size_t sz;
-        InterpretUTF8BufferAsUniChar( (const unsigned char*)_utf8,
+        InterpretUTF8BufferAsUTF16( (const uint8_t*)_utf8,
                                      _utf8_sz,
                                      m_Buff,
                                      &sz,

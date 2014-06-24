@@ -148,13 +148,12 @@ void InterpretUTF8BufferAsUniCharPreservingBufferSize(
     // this function will also visualize non-printed symbols (0-32) in funny DOS-style
     // not setting a null-terminator!
 
-void InterpretUTF8BufferAsUniChar(
-                                                      const unsigned char* _input,
-                                                      size_t _input_size,
-                                                      unsigned short *_output_buf, // should be at least _input_size 16b words long
-                                                      size_t *_output_sz, // size of an output
-                                                      unsigned short _bad_symb // something like '?' or U+FFFD
-                                                      );
+void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
+                                size_t _input_size,
+                                uint16_t *_output_buf, // should be at least _input_size 16b words long
+                                size_t *_output_sz, // size of an output
+                                uint16_t _bad_symb // something like '?' or U+FFFD
+                                );
     // this function will not visualize non-printed symbols (0-32) in funny DOS-style
     // it will set a null-terminator in the end
 

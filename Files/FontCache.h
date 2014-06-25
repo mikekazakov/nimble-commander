@@ -52,5 +52,3 @@ private:
     
     FontCache(const FontCache&); // forbid
 };
-
-unsigned char WCWidthMin1(uint32_t _unicode);

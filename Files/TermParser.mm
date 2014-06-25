@@ -216,20 +216,17 @@ void TermParser::Flush()
 {
     if( m_UTF16CharsStockLen == 0 ) return;
     
-    // TODO: need some kind of table to explicitly exclude normalization for a bunch of characters
-    // *optimization*
-    bool has_non_ascii = false;
+    bool can_be_composed = false;
     for(int i = 0; i < m_UTF16CharsStockLen; ++i)
-        if(m_UTF16CharsStock[i] > 0x7F)
-        {
-            has_non_ascii = true;
+        // treat utf16 code units as unicode, which is not right, but ok for this case, since we assume that >0xFFFF can't be composed
+        if(oms::CanCharBeTheoreticallyComposed(m_UTF16CharsStock[i])) {
+            can_be_composed = true;
             break;
         }
     
     int chars_len = m_UTF16CharsStockLen;
 
-    if(has_non_ascii)
-    {
+    if(can_be_composed) {
         CFMutableStringRef str = CFStringCreateMutableWithExternalCharactersNoCopy (
                                                                               NULL,
                                                                               m_UTF16CharsStock,
@@ -237,10 +234,11 @@ void TermParser::Flush()
                                                                               m_UTF16CharsStockSize,
                                                                               kCFAllocatorNull
                                                                               );
-        assert(str != NULL);
-        CFStringNormalize(str, kCFStringNormalizationFormC);
-        chars_len = (int)CFStringGetLength(str);
-        CFRelease(str);
+        if(str != NULL) {
+            CFStringNormalize(str, kCFStringNormalizationFormC);
+            chars_len = (int)CFStringGetLength(str);
+            CFRelease(str);
+        }
     }
     
     for(int i = 0; i < chars_len; ++i)
@@ -265,7 +263,7 @@ void TermParser::Flush()
         }
 
         if(m_InsertMode)
-            m_Scr->DoShiftRowRight(WCWidthMin1(c));
+            m_Scr->DoShiftRowRight(oms::WCWidthMin1(c));
         
         m_Scr->PutCh(c);
     }

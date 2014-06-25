@@ -145,6 +145,19 @@ inline bool CanCharBeTheoreticallyComposed(uint32_t _c) noexcept
         return false;
     return (__g_PossibleCompositionEvidence[_c / 32] >> (_c % 32)) & 1;
 }
+ 
+extern uint32_t __g_WCWidthTableIsFullSize[2048];
+inline unsigned char WCWidthMin1(uint32_t _c) noexcept
+{
+    if(_c < 0x10000)
+        return ((__g_WCWidthTableIsFullSize[_c / 32] >> (_c % 32)) & 1) ? 2 : 1;
+    else
+        return
+        (_c >= 0x10000 && _c <= 0x1fffd) ||
+        (_c >= 0x20000 && _c <= 0x2fffd) ||
+        (_c >= 0x30000 && _c <= 0x3fffd) ?
+        2 : 1;
+}
     
 template <int _buf_cap>
 class StringBuf

@@ -87,7 +87,7 @@ void TermScreen::PutCh(uint32_t _char)
         sp.underline = m_Underline;
         sp.reverse   = m_Reverse;
     
-        if(WCWidthMin1(_char) == 2 && m_PosX < m_Width)
+        if(oms::WCWidthMin1(_char) == 2 && m_PosX < m_Width)
         {
             auto &foll = line.chars[m_PosX++];
             foll = sp;

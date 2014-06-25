@@ -697,8 +697,8 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
                 
                 int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
                 if(symbs_for_name > 0) {
-                    int chars = footer_entry.MaxForSpaceRight(symbs_for_name);
-                    omsc.DrawString(footer_entry.Chars(), footer_entry.Size() - chars, chars, 1, Y, m_RegularFileColor[0]);
+                    auto chars = footer_entry.MaxForSpaceRight(symbs_for_name);
+                    omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, Y, m_RegularFileColor[0]);
                 }
             }
             else if(m_SymbWidth >= 2 + 6)
@@ -712,8 +712,8 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         }
         else if(current_entry)
         {
-            int chars = footer_entry.MaxForSpaceRight(m_SymbWidth-2);
-            omsc.DrawString(footer_entry.Chars(), footer_entry.Size() - chars, chars, 1, m_EntryFooterVPos, m_RegularFileColor[0]);
+            auto chars = footer_entry.MaxForSpaceRight(m_SymbWidth-2);
+            omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, m_EntryFooterVPos, m_RegularFileColor[0]);
         }
         
         if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 14)

@@ -254,32 +254,42 @@ int CalculateUniCharsAmountForSymbolsFromLeft(const uint16_t *_s, size_t _unic_a
     
     
 // calculates maximum amount of unichars that will not exceed _symb_amount when printed
-// returns number of unichar that can be printed started for _unic_amount - RET
-int CalculateUniCharsAmountForSymbolsFromRight(const UniChar *_s, size_t _unic_amount, size_t _symb_amount)
+// returns a pair of (Position,Amount)
+range CalculateUniCharsAmountForSymbolsFromRight(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount)
 {
+    if(_unic_amount == 0)
+        return range{0, 0};
     int cpos = 0, i=(int)_unic_amount-1;
     _s += i;
-    for(;; --i, --_s)
-    {
-        bool iscomb = IsUnicodeCombiningCharacter(*_s);
-            
-        if(!iscomb)
-        {
-            if(cpos + WCWidthMin1(*_s) > _symb_amount)
+    for(;; --i, --_s) {
+        if( CFStringIsSurrogateLowCharacter(_s[0]) ) {
+            uint32_t c = 0;
+            if( i > 0 && CFStringIsSurrogateHighCharacter(_s[-1]) ) {
+                c = CFStringGetLongCharacterForSurrogatePair(_s[-1], _s[0]);
+                if(cpos + WCWidthMin1(c) > _symb_amount)
+                    return range{i+1, int(_unic_amount - i - 1)};
+                --i;
+                --_s;
+            }
+            else if(cpos + WCWidthMin1(c) > _symb_amount)
                 break;
-            cpos += WCWidthMin1(*_s);
+            cpos += WCWidthMin1(c);
+        }
+        else if(!IsUnicodeCombiningCharacter(_s[0])) {
+            if(cpos + WCWidthMin1(_s[0]) > _symb_amount)
+                break;
+            cpos += WCWidthMin1(_s[0]);
         }
     
         if(cpos == _symb_amount || i == 0) break;
     }
 
-    return (int)_unic_amount - i;
+    return range{i, int(_unic_amount - i)};
 }
-
     
 // returns a number of actual unichars in _out
 // requires that _symb_amount should be >= 3, otherwise it's meaningless
-int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const UniChar *_s, size_t _unic_amount, size_t _symb_amount, UniChar *_out)
+int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount, uint16_t *_out)
 {
     const int ell_num = 3;
     assert(_symb_amount >= ell_num);
@@ -293,12 +303,12 @@ int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const UniChar *_s, size_t 
     }
         
     // trim out string
-    int chars = oms::CalculateUniCharsAmountForSymbolsFromRight(_s, _unic_amount, _symb_amount - ell_num);
+    auto chars = oms::CalculateUniCharsAmountForSymbolsFromRight(_s, _unic_amount, _symb_amount - ell_num);
     for(int i =0; i < ell_num; ++i)
         _out[i] = '.';
-    memcpy(_out + ell_num, _s + _unic_amount - chars, sizeof(UniChar)*chars);
+    memcpy(_out + ell_num, _s + chars.loc, sizeof(UniChar)*chars.len);
 
-    return ell_num + chars;
+    return ell_num + chars.len;
 }
     
 Context::Context(CGContextRef _cg_context, FontCache* _font_cache):

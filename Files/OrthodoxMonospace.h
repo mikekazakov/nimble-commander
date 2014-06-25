@@ -41,6 +41,12 @@ struct DoubleColor
 namespace oms
 {
 
+struct range
+{
+    int loc;
+    int len;
+};
+    
 struct unichars_draw_batch
 {
     enum {max = 1024*8};
@@ -114,18 +120,25 @@ void DrawStringWithBackgroundXY(UniChar *_s,
                 );
 
 // unichar strings processing
+
+/**
+ * calculates amount of monospace characters need to accommodate whole input string
+ */
 int CalculateSymbolsSpaceForString(const uint16 *_s, size_t _amount);
-    // calculates amount of monospace characters need to accommodate whole input string
 
+/**
+ * calculates maximum amount of unichars that will not exceed _symb_amount when printed
+ * returns number of unichars that can be printed starting from 0 pos
+ */
 int CalculateUniCharsAmountForSymbolsFromLeft(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount);
-    // calculates maximum amount of unichars that will not exceed _symb_amount when printed
-    // returns number of unichars that can be printed starting from 0 pos
 
-int CalculateUniCharsAmountForSymbolsFromRight(const UniChar *_s, size_t _unic_amount, size_t _symb_amount);
-    // calculates maximum amount of unichars that will not exceed _symb_amount when printed
-    // returns number of unichar that can be printed started for _unic_amount - RET
+/**
+ * calculates maximum amount of unichars that will not exceed _symb_amount when printed.
+ * returns a pair of (Position,Amount)
+ */
+range CalculateUniCharsAmountForSymbolsFromRight(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount);
 
-int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const UniChar *_s, size_t _unic_amount, size_t _symb_amount, UniChar *_out);
+int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount, uint16_t *_out);
     // returns a number of actual unichars in _out
     // requires that _symb_amount should be >= 3, otherwise it's meaningless
 
@@ -211,7 +224,7 @@ public:
         return CalculateUniCharsAmountForSymbolsFromLeft(m_Buff, m_Size, _space);
     }
 
-    unsigned MaxForSpaceRight(unsigned _space)
+    range MaxForSpaceRight(unsigned _space)
     {
         return CalculateUniCharsAmountForSymbolsFromRight(m_Buff, m_Size, _space);
     }

@@ -80,18 +80,24 @@ struct MachTimeBenchmark
     {
         return GetTimeInNanoseconds() - last;
     }
-    inline void Reset()
+    inline void ResetNano(const char *_msg = "")
     {
         uint64_t now = GetTimeInNanoseconds();
-        NSLog(@"%llu\n", (now - last) / 1000000 );
+        NSLog(@"%s%llu\n", _msg, now - last);
         last = now;
     }
-    inline void Reset(const char *_msg)
+    inline void ResetMicro(const char *_msg = "")
     {
         uint64_t now = GetTimeInNanoseconds();
-        NSLog(@"%s %llu\n", _msg, (now - last) / 1000000 );
+        NSLog(@"%s%llu\n", _msg, (now - last) / 1000);
         last = now;
-    }    
+    }
+    inline void ResetMilli(const char *_msg = "")
+    {
+        uint64_t now = GetTimeInNanoseconds();
+        NSLog(@"%s%llu\n", _msg, (now - last) / 1000000 );
+        last = now;
+    }
 };
 
 @interface NSView (Sugar)

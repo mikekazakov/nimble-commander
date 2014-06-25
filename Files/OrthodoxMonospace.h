@@ -137,7 +137,15 @@ inline bool IsUnicodeCombiningCharacter(uint32_t a)
     (a >= 0x20D0 && a <= 0x20FF) ||
     (a >= 0xFE20 && a <= 0xFE2F) ;
 }
-
+    
+extern uint32_t __g_PossibleCompositionEvidence[2048];
+inline bool CanCharBeTheoreticallyComposed(uint32_t _c) noexcept
+{
+    if(_c >= 0x10000)
+        return false;
+    return (__g_PossibleCompositionEvidence[_c / 32] >> (_c % 32)) & 1;
+}
+    
 template <int _buf_cap>
 class StringBuf
 {
@@ -171,6 +179,14 @@ public:
         memcpy(m_Buff, _unichars, sizeof(uint16_t) * _unichars_amount);
         m_Size = _unichars_amount;
     }
+    
+    void FromChars(const uint8_t *_chars, size_t _chars_amount)
+    {
+        assert(_chars_amount <= Capacity);
+        for(int i = 0; i < _chars_amount; ++i)
+            m_Buff[i] = _chars[i];
+        m_Size = _chars_amount;
+    }
 
     unsigned Space() const
     {
@@ -193,6 +209,24 @@ public:
         int n = PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(m_Buff, m_Size, _max_space, tmp);
         memcpy(m_Buff, tmp, sizeof(uint16_t) * n);
         m_Size = n;
+    }
+    
+    bool CanBeComposed() const
+    {
+        for(int i = 0; i < m_Size; ++i)
+            if(CanCharBeTheoreticallyComposed(m_Buff[i]))
+                return true;
+        return false;
+    }
+    
+    void NormalizeToFormC()
+    {
+        auto s = CFStringCreateMutableWithExternalCharactersNoCopy(0, m_Buff, m_Size, Capacity, kCFAllocatorNull);
+        if(s == nullptr)
+            return;
+        CFStringNormalize(s, kCFStringNormalizationFormC);
+        m_Size = CFStringGetLength(s);
+        CFRelease(s);
     }
 
 private:

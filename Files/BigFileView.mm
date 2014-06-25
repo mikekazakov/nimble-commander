@@ -535,7 +535,18 @@ static NSArray *MyDefaultsKeys()
     }
     else
     {
-        assert(_selection.location + _selection.length <= m_File->FileSize());
+        if(_selection.location + _selection.length > m_File->FileSize()) {
+            if(_selection.location > m_File->FileSize()) {
+                self.selectionInFile = CFRangeMake(-1, 0); // irrecoverable
+                return;
+            }
+            _selection.length = m_File->FileSize() - _selection.location;
+            if(_selection.length == 0) {
+                self.selectionInFile = CFRangeMake(-1, 0); // irrecoverable
+                return;
+            }
+        }
+        
         m_SelectionInFile = _selection;
         [self UpdateSelectionRange];
     }

@@ -148,18 +148,25 @@ static NSString* StorageFileName()
 
 - (BigFileViewHistoryEntry*) FindEntryByPath: (NSString *)_path
 {
+    if(_path == nil)
+        return nil;
     for(BigFileViewHistoryEntry *e in m_History)
-        if([e->path compare:_path] == NSOrderedSame)
+        if(e->path != nil &&
+           [e->path compare:_path] == NSOrderedSame)
             return e;
     return nil;
 }
 
 - (void) InsertEntry:(BigFileViewHistoryEntry*) _entry
 {
+    assert(_entry);
+    assert(_entry->last_viewed);
+    assert(_entry->path);
     m_Queue->Run(^{
         m_IsDirty = true;
         for(BigFileViewHistoryEntry *e in m_History)
-            if([e->path compare:_entry->path] == NSOrderedSame)
+            if(e->path != nil &&
+               [e->path compare:_entry->path] == NSOrderedSame)
             {
                 [m_History removeObject:e];
                 break;

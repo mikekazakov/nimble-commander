@@ -448,6 +448,8 @@ static int FileWindowSize()
     // do our state persistance stuff
     BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
     info->path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
+    if(info->path == nil)
+        return; // guard against malformed filenames, like an archives with invalid encoding
     info->last_viewed = NSDate.date;
     info->position = m_View.verticalPositionInBytes;
     info->wrapping = m_View.wordWrap;

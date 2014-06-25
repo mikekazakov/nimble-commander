@@ -66,6 +66,7 @@ enum class BigFileViewModes
 /**
  * Selection in whole file, in raw bytes.
  * It may render to different variant within concrete file window position.
+ * If set with improper range (larger than whole file), it will be implicitly trimmed
  */
 @property (nonatomic) CFRange selectionInFile;
 

@@ -31,6 +31,9 @@ public:
     void MoveCursorToFirstItem();
     void MoveCursorToLastItem();
     
+    /**
+     * Will adjust scrolling position if necessary.
+     */
     void EnsureCursorIsVisible();
     
     virtual void Draw(NSRect _dirty_rect) = 0;

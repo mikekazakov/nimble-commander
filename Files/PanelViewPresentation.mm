@@ -209,17 +209,22 @@ void PanelViewPresentation::EnsureCursorIsVisible()
     if(m_State->CursorPos < 0) return;
     
     int max_visible_items = GetMaxVisibleItems();
+    int total_items = (int)m_State->Data->SortedDirectoryEntries().size();
     
     // Check if cursor is above
     if(m_State->CursorPos < m_State->ItemsDisplayOffset)
-    {
         m_State->ItemsDisplayOffset = m_State->CursorPos;
-    }
     // check if cursor is below
     else if(m_State->CursorPos >= m_State->ItemsDisplayOffset + max_visible_items)
-    {
         m_State->ItemsDisplayOffset = m_State->CursorPos - max_visible_items + 1;
-    }
+    
+    
+    // check if there's a free space below cursor position and there are item above it
+    if( total_items - m_State->ItemsDisplayOffset < max_visible_items)
+        m_State->ItemsDisplayOffset = max(total_items - max_visible_items, 0);
+    
+    assert(m_State->CursorPos >= 0);
+    assert(m_State->ItemsDisplayOffset >= 0);
 }
 
 int PanelViewPresentation::GetMaxVisibleItems()

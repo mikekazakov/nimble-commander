@@ -72,6 +72,7 @@ static bool IsQuickSearchStringCharacter(NSString *_s)
         [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+        [un addCharactersInString:@" "];
         chars = un;
     });
     
@@ -88,6 +89,17 @@ static inline bool IsBackspace(NSString *_s)
        [_s characterAtIndex:0] == 0x7F)
         return true;
     return false;
+}
+
+static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
+{
+    // remove last symbol. since strings are decomposed (as for file system interaction),
+    // it should be composed first and decomposed back after altering
+    assert(_s != nil);
+    assert(_s.length > 0);
+    NSString *s = _s.precomposedStringWithCanonicalMapping;
+    s = [s substringToIndex:s.length-1];
+    return s.decomposedStringWithCanonicalMapping;
 }
 
 @implementation PanelController (QuickSearch)
@@ -132,7 +144,7 @@ static inline bool IsBackspace(NSString *_s)
         else
         {
             if(filtering.text != nil && filtering.text.length > 0 )
-                filtering.text = [filtering.text substringToIndex:filtering.text.length-1];
+                filtering.text = RemoveLastCharacterWithNormalization(filtering.text);
             else
                 return false;
         }
@@ -191,7 +203,7 @@ static inline bool IsBackspace(NSString *_s)
         else
         {
             if(filtering.text.text != nil && filtering.text.text.length > 0 )
-                filtering.text.text = [filtering.text.text substringToIndex:filtering.text.text.length-1];
+                filtering.text.text = RemoveLastCharacterWithNormalization(filtering.text.text);
             else
                 return false;
         }

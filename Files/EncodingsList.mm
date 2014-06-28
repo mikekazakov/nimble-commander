@@ -17,7 +17,6 @@ namespace encodings
         dispatch_once(&token, ^{
 #define _(a, b) encodings.emplace_back(a, (CFStringRef)CFBridgingRetain([NSString localizedNameOfStringEncoding:CFStringConvertEncodingToNSStringEncoding(b)]))
             _(ENCODING_MACOS_ROMAN_WESTERN, kTextEncodingMacRoman);
-            _(ENCODING_WIN1251,             kTextEncodingWindowsCyrillic);
             _(ENCODING_UTF8,                0x08000100); // what is UTF8 encoding in CarbonCore?
             _(ENCODING_UTF16LE,             0x14000100); // -""- UTF16LE
             _(ENCODING_UTF16BE,             0x10000100); // -""- UTF16BE
@@ -52,7 +51,15 @@ namespace encodings
             _(ENCODING_OEM865,              kTextEncodingDOSNordic);
             _(ENCODING_OEM866,              kTextEncodingDOSRussian);
             _(ENCODING_OEM869,              kTextEncodingDOSGreek2);
-
+            _(ENCODING_WIN1250,             kTextEncodingWindowsLatin2);
+            _(ENCODING_WIN1251,             kTextEncodingWindowsCyrillic);
+            _(ENCODING_WIN1252,             kTextEncodingWindowsLatin1);
+            _(ENCODING_WIN1253,             kTextEncodingWindowsGreek);
+            _(ENCODING_WIN1254,             kTextEncodingWindowsLatin5);
+            _(ENCODING_WIN1255,             kTextEncodingWindowsHebrew);
+            _(ENCODING_WIN1256,             kTextEncodingWindowsArabic);
+            _(ENCODING_WIN1257,             kTextEncodingWindowsBalticRim);
+            _(ENCODING_WIN1258,             kTextEncodingWindowsVietnamese);
 #undef _
         });
         return encodings;

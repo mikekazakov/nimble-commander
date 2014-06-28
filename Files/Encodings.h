@@ -35,7 +35,15 @@ enum {
     ENCODING_OEM865,
     ENCODING_OEM866,
     ENCODING_OEM869,
-    
+    ENCODING_WIN1250,
+    ENCODING_WIN1251,
+    ENCODING_WIN1252,
+    ENCODING_WIN1253,
+    ENCODING_WIN1254,
+    ENCODING_WIN1255,
+    ENCODING_WIN1256,
+    ENCODING_WIN1257,
+    ENCODING_WIN1258,
     
     /**
      * Mac OS Roman encoding, MIME=macintosh
@@ -46,16 +54,13 @@ enum {
     
     
 
-    ENCODING_WIN1251,
-    
-    
     
     
     ENCODING_UTF8                   = 0x00010000,
     ENCODING_UTF16LE                = 0x00010001,
     ENCODING_UTF16BE                = 0x00010002,
     ENCODING_SINGLE_BYTES_FIRST__   = ENCODING_ISO_8859_1,
-    ENCODING_SINGLE_BYTES_LAST__    = ENCODING_WIN1251
+    ENCODING_SINGLE_BYTES_LAST__    = ENCODING_MACOS_ROMAN_WESTERN
 };
 
 unsigned short SingleByteIntoUniCharUsingCodepage(

@@ -24,10 +24,20 @@
 static int FileWindowSize()
 {
     int file_window_size = FileWindow::DefaultWindowSize;
-    int file_window_pow2x = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"BigFileViewFileWindowPow2X"];
+    int file_window_pow2x = (int)[NSUserDefaults.standardUserDefaults integerForKey:@"BigFileViewFileWindowPow2X"];
     if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
         file_window_size *= 1 << file_window_pow2x;
     return file_window_size;
+}
+
+static int EncodingFromXAttr(const VFSFilePtr &_f)
+{
+    char buf[128];
+    ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
+    if(r < 0 || r >= sizeof(buf))
+        return encodings::ENCODING_INVALID;
+    buf[r] = 0;
+    return encodings::FromComAppleTextEncodingXAttr(buf);
 }
 
 @implementation MainWindowBigFileViewState
@@ -113,23 +123,25 @@ static int FileWindowSize()
 
 - (bool)OpenFile:(const char*)_fn with_fs:(shared_ptr<VFSHost>)_host
 {
-    VFSFilePtr vfsfile;
-    if(_host->CreateFile(_fn, vfsfile, 0) < 0)
+    VFSFilePtr origfile;
+    if(_host->CreateFile(_fn, origfile, 0) < 0)
         return false;
 
-    if(vfsfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
+    VFSFilePtr vfsfile;
+    
+    if(origfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
     { // we need to read a file into temporary mem/file storage to access it randomly
         ProcessSheetController *proc = [ProcessSheetController new];
         proc.window.title = @"Opening file...";
         [proc Show];
         
-        if(vfsfile->Open(VFSFile::OF_Read) < 0)
+        if(origfile->Open(VFSFile::OF_Read) < 0)
         {
             [proc Close];
             return false;
         }
 
-        auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(vfsfile);
+        auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);
         int res = wrapper->Open(VFSFile::OF_Read,
                                 ^{ return proc.UserCancelled; },
                                 ^(uint64_t _bytes, uint64_t _total) {
@@ -143,13 +155,14 @@ static int FileWindowSize()
     }
     else
     { // just open input file
-        if(vfsfile->Open(VFSFile::OF_Read) < 0)
+        if(origfile->Open(VFSFile::OF_Read) < 0)
             return false;
+        vfsfile = origfile;
     }
     
     auto fw = make_unique<FileWindow>();
     if(fw->OpenFile(vfsfile, FileWindowSize()) != 0)
-        return false;;
+        return false;
     
     m_FileWindow = move(fw);
     m_SearchFileWindow = make_unique<FileWindow>();
@@ -165,10 +178,10 @@ static int FileWindowSize()
     m_GlobalFilePath = vfsfile->ComposeVerbosePath();
         
     // try to load a saved info if any
+    int encoding = 0;
     if(BigFileViewHistoryEntry *info =
-        [BigFileViewHistory.sharedHistory FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath.c_str()]])
-    {
-        BigFileViewHistoryOptions options = [BigFileViewHistory HistoryOptions];
+        [BigFileViewHistory.sharedHistory FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath.c_str()]]) {
+        BigFileViewHistoryOptions options = BigFileViewHistory.HistoryOptions;
         if(options.encoding && options.mode)
             [m_View SetKnownFile:m_FileWindow.get() encoding:info->encoding mode:info->view_mode];
         else {
@@ -181,9 +194,13 @@ static int FileWindowSize()
         if(options.position) m_View.verticalPositionInBytes = info->position;
         if(options.selection) m_View.selectionInFile = info->selection;
     }
-    else
+    else {
         [m_View SetFile:m_FileWindow.get()];
-        
+        if([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewRespectComAppleTextEncoding"] &&
+           (encoding = EncodingFromXAttr(origfile)) != encodings::ENCODING_INVALID )
+            m_View.encoding = encoding;
+    }
+    
     // update UI
     [self SelectEncodingFromView];
     [self SelectModeFromView];

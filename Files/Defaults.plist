@@ -54,6 +54,8 @@
 	<false/>
 	<key>BigFileViewWholePhraseSearch</key>
 	<false/>
+	<key>BigFileViewRespectComAppleTextEncoding</key>
+	<true/>
 	<key>FilePanelsDeleteBehavior</key>
 	<integer>0</integer>
 	<key>FilePanelsShiftDeleteBehavior</key>

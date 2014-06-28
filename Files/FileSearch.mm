@@ -12,6 +12,16 @@
 #include "SearchInFile.h"
 #include "Common.h"
 
+static int EncodingFromXAttr(const VFSFilePtr &_f)
+{
+    char buf[128];
+    ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
+    if(r < 0 || r >= sizeof(buf))
+        return encodings::ENCODING_INVALID;
+    buf[r] = 0;
+    return encodings::FromComAppleTextEncodingXAttr(buf);
+}
+
 FileSearch::FileSearch():
     m_FilterName(nullptr),
     m_Queue(SerialQueueT::Make())
@@ -192,8 +202,12 @@ bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host)
     if(fw.OpenFile(file) != 0 )
         return false;
     
+    int encoding = m_FilterContent->encoding;
+    if(int xattr_enc = EncodingFromXAttr(file))
+        encoding = xattr_enc;
+    
     SearchInFile sif(&fw);
-    sif.ToggleTextSearch((__bridge CFStringRef)m_FilterContent->text, m_FilterContent->encoding);
+    sif.ToggleTextSearch((__bridge CFStringRef)m_FilterContent->text, encoding);
     sif.SetSearchOptions((m_FilterContent->case_sensitive  ? SearchInFile::OptionCaseSensitive   : 0) |
                          (m_FilterContent->whole_phrase    ? SearchInFile::OptionFindWholePhrase : 0) );
     

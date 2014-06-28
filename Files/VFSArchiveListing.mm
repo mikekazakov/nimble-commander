@@ -35,7 +35,7 @@ VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_pat
             unsigned short tmp[65536];
             size_t sz;
             encodings::InterpretAsUnichar(
-                                    ENCODING_UTF8,
+                                    encodings::ENCODING_UTF8,
                                     (const unsigned char*)item.name.c_str(),
                                     item.name.length(),          // in bytes
                                     &tmp[0], // should be at least _input_size unichars long

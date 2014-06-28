@@ -10,34 +10,52 @@
 #import <string.h>
 #import "Encodings.h"
 
+// don't care about ordering here
+#define _(a) {#a, a}
 static struct
 {
     const char *name;
     int         encoding;
 } g_Names [] = {
-    {"ENCODING_INVALID", ENCODING_INVALID},
-    {"ENCODING_OEM866", ENCODING_OEM866},
-    {"ENCODING_WIN1251", ENCODING_WIN1251},
-    {"ENCODING_MACOS_ROMAN_WESTERN", ENCODING_MACOS_ROMAN_WESTERN},
-    {"ENCODING_ISO_8859_1", ENCODING_ISO_8859_1},
-    {"ENCODING_ISO_8859_2", ENCODING_ISO_8859_2},
-    {"ENCODING_ISO_8859_3", ENCODING_ISO_8859_3},
-    {"ENCODING_ISO_8859_4", ENCODING_ISO_8859_4},
-    {"ENCODING_ISO_8859_5", ENCODING_ISO_8859_5},
-    {"ENCODING_ISO_8859_6", ENCODING_ISO_8859_6},
-    {"ENCODING_ISO_8859_7", ENCODING_ISO_8859_7},
-    {"ENCODING_ISO_8859_8", ENCODING_ISO_8859_8},
-    {"ENCODING_ISO_8859_9", ENCODING_ISO_8859_9},
-    {"ENCODING_ISO_8859_10", ENCODING_ISO_8859_10},
-    {"ENCODING_ISO_8859_11", ENCODING_ISO_8859_11},
-    {"ENCODING_ISO_8859_13", ENCODING_ISO_8859_13},
-    {"ENCODING_ISO_8859_14", ENCODING_ISO_8859_14},
-    {"ENCODING_ISO_8859_15", ENCODING_ISO_8859_15},
-    {"ENCODING_ISO_8859_16", ENCODING_ISO_8859_16},
-    {"ENCODING_UTF8", ENCODING_UTF8},
-    {"ENCODING_UTF16LE", ENCODING_UTF16LE},
-    {"ENCODING_UTF16BE", ENCODING_UTF16BE}
+    _(ENCODING_INVALID),
+    _(ENCODING_OEM437),
+    _(ENCODING_OEM737),
+    _(ENCODING_OEM775),
+    _(ENCODING_OEM850),
+    _(ENCODING_OEM851),
+    _(ENCODING_OEM852),
+    _(ENCODING_OEM855),
+    _(ENCODING_OEM857),
+    _(ENCODING_OEM860),
+    _(ENCODING_OEM861),
+    _(ENCODING_OEM862),
+    _(ENCODING_OEM863),
+    _(ENCODING_OEM864),
+    _(ENCODING_OEM865),
+    _(ENCODING_OEM866),
+    _(ENCODING_OEM869),
+    _(ENCODING_WIN1251),
+    _(ENCODING_MACOS_ROMAN_WESTERN),
+    _(ENCODING_ISO_8859_1),
+    _(ENCODING_ISO_8859_2),
+    _(ENCODING_ISO_8859_3),
+    _(ENCODING_ISO_8859_4),
+    _(ENCODING_ISO_8859_5),
+    _(ENCODING_ISO_8859_6),
+    _(ENCODING_ISO_8859_7),
+    _(ENCODING_ISO_8859_8),
+    _(ENCODING_ISO_8859_9),
+    _(ENCODING_ISO_8859_10),
+    _(ENCODING_ISO_8859_11),
+    _(ENCODING_ISO_8859_13),
+    _(ENCODING_ISO_8859_14),
+    _(ENCODING_ISO_8859_15),
+    _(ENCODING_ISO_8859_16),
+    _(ENCODING_UTF8),
+    _(ENCODING_UTF16LE),
+    _(ENCODING_UTF16BE)
 };
+#undef _
 
 namespace encodings
 {
@@ -92,7 +110,7 @@ void InterpretAsUnichar(
     else if(_encoding == ENCODING_UTF8)
     {
         if(_indexes_buf)
-            InterpretUTF8BufferAsIndexedUniChar(
+            InterpretUTF8BufferAsIndexedUTF16(
                                                 _input,
                                                 _input_size,
                                                 _output_buf,

@@ -12,35 +12,49 @@ namespace encodings
 {
     const vector< pair<int, CFStringRef> >& LiteralEncodingsList()
     {
-        // we don't need freeing upon application termination (atexit), sojust use 'new'
-        static vector< pair<int, CFStringRef> > *encodings = 0;
+        static vector< pair<int, CFStringRef> > encodings;
         static dispatch_once_t token = 0;
         dispatch_once(&token, ^{
-            encodings = new vector< pair<int, CFStringRef> >;
-#define _(a, b) encodings->emplace_back(a, (CFStringRef)b)
-            _(ENCODING_MACOS_ROMAN_WESTERN, @"Western (Mac OS Roman)");
-            _(ENCODING_OEM866, @"OEM 866 (DOS)");
-            _(ENCODING_WIN1251, @"Windows 1251");
-            _(ENCODING_UTF8, @"UTF-8");
-            _(ENCODING_UTF16LE, @"UTF-16 LE");
-            _(ENCODING_UTF16BE, @"UTF-16 BE");
-            _(ENCODING_ISO_8859_1, @"Western (ISO Latin 1)");
-            _(ENCODING_ISO_8859_2, @"Central European (ISO Latin 2)");
-            _(ENCODING_ISO_8859_3, @"Western (ISO Latin 3)");
-            _(ENCODING_ISO_8859_4, @"Central European (ISO Latin 4)");
-            _(ENCODING_ISO_8859_5, @"Cyrillic (ISO 8859-5)");
-            _(ENCODING_ISO_8859_6, @"Arabic (ISO 8859-6)");
-            _(ENCODING_ISO_8859_7, @"Greek (ISO 8859-7)");
-            _(ENCODING_ISO_8859_8, @"Hebrew (ISO 8859-8)");
-            _(ENCODING_ISO_8859_9, @"Turkish (ISO Latin 5)");
-            _(ENCODING_ISO_8859_10, @"Nordic (ISO Latin 6)");
-            _(ENCODING_ISO_8859_11, @"Thai (ISO 8859-11)");
-            _(ENCODING_ISO_8859_13, @"Baltic (ISO Latin 7)");
-            _(ENCODING_ISO_8859_14, @"Celtic (ISO Latin 8)");
-            _(ENCODING_ISO_8859_15, @"Western (ISO Latin 9)");
-            _(ENCODING_ISO_8859_16, @"Romanian (ISO Latin 10)");
+#define _(a, b) encodings.emplace_back(a, (CFStringRef)CFBridgingRetain([NSString localizedNameOfStringEncoding:CFStringConvertEncodingToNSStringEncoding(b)]))
+            _(ENCODING_MACOS_ROMAN_WESTERN, kTextEncodingMacRoman);
+            _(ENCODING_WIN1251,             kTextEncodingWindowsCyrillic);
+            _(ENCODING_UTF8,                0x08000100); // what is UTF8 encoding in CarbonCore?
+            _(ENCODING_UTF16LE,             0x14000100); // -""- UTF16LE
+            _(ENCODING_UTF16BE,             0x10000100); // -""- UTF16BE
+            _(ENCODING_ISO_8859_1,          kTextEncodingISOLatin1);
+            _(ENCODING_ISO_8859_2,          kTextEncodingISOLatin2);
+            _(ENCODING_ISO_8859_3,          kTextEncodingISOLatin3);
+            _(ENCODING_ISO_8859_4,          kTextEncodingISOLatin4);
+            _(ENCODING_ISO_8859_5,          kTextEncodingISOLatinCyrillic);
+            _(ENCODING_ISO_8859_6,          kTextEncodingISOLatinArabic);
+            _(ENCODING_ISO_8859_7,          kTextEncodingISOLatinGreek);
+            _(ENCODING_ISO_8859_8,          kTextEncodingISOLatinHebrew);
+            _(ENCODING_ISO_8859_9,          kTextEncodingISOLatin5);
+            _(ENCODING_ISO_8859_10,         kTextEncodingISOLatin6);
+            _(ENCODING_ISO_8859_11,         0x0000020B); // wtf? where Thai ISO encoding has gone?
+            _(ENCODING_ISO_8859_13,         kTextEncodingISOLatin7);
+            _(ENCODING_ISO_8859_14,         kTextEncodingISOLatin8);
+            _(ENCODING_ISO_8859_15,         kTextEncodingISOLatin9);
+            _(ENCODING_ISO_8859_16,         kTextEncodingISOLatin10);
+            _(ENCODING_OEM437,              kTextEncodingDOSLatinUS);
+            _(ENCODING_OEM737,              kTextEncodingDOSGreek);
+            _(ENCODING_OEM775,              kTextEncodingDOSBalticRim);
+            _(ENCODING_OEM850,              kTextEncodingDOSLatin1);
+            _(ENCODING_OEM851,              kTextEncodingDOSGreek1);
+            _(ENCODING_OEM852,              kTextEncodingDOSLatin2);
+            _(ENCODING_OEM855,              kTextEncodingDOSCyrillic);
+            _(ENCODING_OEM857,              kTextEncodingDOSTurkish);
+            _(ENCODING_OEM860,              kTextEncodingDOSPortuguese);
+            _(ENCODING_OEM861,              kTextEncodingDOSIcelandic);
+            _(ENCODING_OEM862,              kTextEncodingDOSHebrew);
+            _(ENCODING_OEM863,              kTextEncodingDOSCanadianFrench);
+            _(ENCODING_OEM864,              kTextEncodingDOSArabic);
+            _(ENCODING_OEM865,              kTextEncodingDOSNordic);
+            _(ENCODING_OEM866,              kTextEncodingDOSRussian);
+            _(ENCODING_OEM869,              kTextEncodingDOSGreek2);
+
 #undef _
         });
-        return *encodings;
+        return encodings;
     }
 }

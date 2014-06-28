@@ -2,127 +2,61 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 
-// unsigned short is just UniChar. not to let rubbish inter headers
+enum {
+    ENCODING_INVALID = 0,
+    ENCODING_ISO_8859_1,
+    ENCODING_ISO_8859_2,
+    ENCODING_ISO_8859_3,
+    ENCODING_ISO_8859_4,
+    ENCODING_ISO_8859_5,
+    ENCODING_ISO_8859_6,
+    ENCODING_ISO_8859_7,
+    ENCODING_ISO_8859_8,
+    ENCODING_ISO_8859_9,
+    ENCODING_ISO_8859_10,
+    ENCODING_ISO_8859_11,
+    ENCODING_ISO_8859_13,
+    ENCODING_ISO_8859_14,
+    ENCODING_ISO_8859_15,
+    ENCODING_ISO_8859_16,
+    ENCODING_OEM437,
+    ENCODING_OEM737,
+    ENCODING_OEM775,
+    ENCODING_OEM850,
+    ENCODING_OEM851,
+    ENCODING_OEM852,
+    ENCODING_OEM855,
+    ENCODING_OEM857,
+    ENCODING_OEM860,
+    ENCODING_OEM861,
+    ENCODING_OEM862,
+    ENCODING_OEM863,
+    ENCODING_OEM864,
+    ENCODING_OEM865,
+    ENCODING_OEM866,
+    ENCODING_OEM869,
+    
+    
+    /**
+     * Mac OS Roman encoding, MIME=macintosh
+     * Classic native Mac text encoding
+     * https://en.wikipedia.org/wiki/Mac_OS_Roman
+     */
+    ENCODING_MACOS_ROMAN_WESTERN,
+    
+    
 
-#define ENCODING_INVALID                0x00000000
-#define ENCODING_OEM866                 0x00000001
-#define ENCODING_WIN1251                0x00000002
-#define ENCODING_MACOS_ROMAN_WESTERN    0x00000003
-/* Mac OS Roman encoding, MIME=macintosh
- * Classic native Mac text encoding
- * https://en.wikipedia.org/wiki/Mac_OS_Roman
- */
-
-#define ENCODING_ISO_8859_1             0x00000004
-/* ISO/IEC 8859-1, also called Western (ISO Latin 1)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-1
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_2             0x00000005
-/* ISO/IEC 8859-2, also called Central European (ISO Latin 2)
- * http://en.wikipedia.org/wiki/ISO_8859-2
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_3             0x00000006
-/* ISO/IEC 8859-3, also called South European (ISO Latin 3)
- * Mac call it Western (ISO Latin 3)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-3
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_4             0x00000007
-/* ISO/IEC 8859-4, also called North European (ISO Latin 4)
- * Mac call it Central European (ISO Latin 4)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-4
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_5             0x00000008
-/* ISO/IEC 8859-5, also called Latin/Cyrillic (Part 5: Latin/Cyrillic )
- * Mac call it Cyrillic (ISO 8859-5)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-5
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_6             0x00000009
-/* ISO/IEC 8859-6, also called Latin/Arabic
- * Mac call it Arabic (ISO 8859-6)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-6
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_7             0x0000000A
-/* ISO/IEC 8859-7, also called Latin/Greek
- * Mac call it Greek (ISO 8859-7)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-7
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_8             0x0000000B
-/* ISO/IEC 8859-8, also called Latin/Hebrew
- * Mac call it Hebrew (ISO 8859-8)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-8
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_9             0x0000000C
-/* ISO/IEC 8859-9, also called Latin-5 Turkish
- * Mac call it Turkish (ISO Latin 5)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-9
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_10            0x0000000D
-/* ISO/IEC 8859-10, also caled Latin-6 Nordic
- * Mac call it Nordic (ISO Latin 6)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-10
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_11            0x0000000E
-/* ISO/IEC 8859-11, also called Latin/Thai
- * Mac call it Thai (ISO 8859-11)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-11
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_13            0x0000000F
-/* ISO/IEC 8859-13, also called Latin-7 Baltic Rim
- * Mac call it Baltic (ISO Latin 7)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-13
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_14            0x00000010
-/* ISO/IEC 8859-14, also called Latin-8 Celtic
- * Mac call it Celtic (ISO Latin 8)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-14
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_15            0x00000011
-/* ISO/IEC 8859-15, also called Latin-9
- * Mac call it Western (ISO Latin 9)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-15
- * NB! there are some holes in encodings which are filled with zeros
- */
-
-#define ENCODING_ISO_8859_16            0x00000012
-/* ISO/IEC 8859-16, also called Latin-10 South-Eastern European
- * Mac call it Romanian (ISO Latin 10)
- * http://en.wikipedia.org/wiki/ISO/IEC_8859-16
- * NB! there are some holes in encodings which are filled with zeros
- */ 
-
-#define ENCODING_UTF8                   0x00010000
-#define ENCODING_UTF16LE                0x00010001
-#define ENCODING_UTF16BE                0x00010002
-
-#define ENCODING_SINGLE_BYTES_FIRST__ ENCODING_OEM866
-#define ENCODING_SINGLE_BYTES_LAST__ ENCODING_ISO_8859_16
-
+    ENCODING_WIN1251,
+    
+    
+    
+    
+    ENCODING_UTF8                   = 0x00010000,
+    ENCODING_UTF16LE                = 0x00010001,
+    ENCODING_UTF16BE                = 0x00010002,
+    ENCODING_SINGLE_BYTES_FIRST__   = ENCODING_ISO_8859_1,
+    ENCODING_SINGLE_BYTES_LAST__    = ENCODING_WIN1251
+};
 
 unsigned short SingleByteIntoUniCharUsingCodepage(
                                                     unsigned char _input,
@@ -157,7 +91,7 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
     // this function will not visualize non-printed symbols (0-32) in funny DOS-style
     // it will set a null-terminator in the end
 
-void InterpretUTF8BufferAsIndexedUniChar(
+void InterpretUTF8BufferAsIndexedUTF16(
                                          const unsigned char* _input,
                                          size_t _input_size,
                                          unsigned short *_output_buf, // should be at least _input_size 16b words long

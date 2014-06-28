@@ -46,7 +46,7 @@
 		CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */; };
 		CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */; };
 		CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
-		CF07DE41176985EF00757DE1 /* EncodingsAdditions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */; };
+		CF07DE41176985EF00757DE1 /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE40176985EF00757DE1 /* EncodingsAdditions.mm */; };
 		CF09827117DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */; };
 		CF09856A18EDBFB0006E6410 /* TermTaskCommon.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09856818EDBFB0006E6410 /* TermTaskCommon.mm */; };
 		CF09857018EEA8CF006E6410 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09856E18EEA8CF006E6410 /* TermSingleTask.mm */; };
@@ -75,7 +75,6 @@
 		CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CF1648B117D57BDA00D0B17E /* VFSArchiveListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
-		CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBB54179B959300FE639F /* EncodingsList.mm */; };
 		CF27414917FF04EF006D6687 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
 		CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
 		CF2741501803F6A2006D6687 /* sysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414E1803F6A2006D6687 /* sysinfo.mm */; };
@@ -432,7 +431,7 @@
 		CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowBigFileViewState.mm; sourceTree = "<group>"; };
 		CF07DE3D1769754400757DE1 /* SearchInFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchInFile.mm; sourceTree = "<group>"; };
 		CF07DE3E1769754400757DE1 /* SearchInFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInFile.h; sourceTree = "<group>"; };
-		CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodingsAdditions.cpp; sourceTree = "<group>"; };
+		CF07DE40176985EF00757DE1 /* EncodingsAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EncodingsAdditions.mm; sourceTree = "<group>"; };
 		CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJobFromGeneric.mm; sourceTree = "<group>"; };
 		CF09827017DEDC3700F0871C /* FileCopyOperationJobFromGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJobFromGeneric.h; sourceTree = "<group>"; };
 		CF09856818EDBFB0006E6410 /* TermTaskCommon.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermTaskCommon.mm; sourceTree = "<group>"; };
@@ -477,7 +476,6 @@
 		CF1648B017D57BDA00D0B17E /* VFSArchiveListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveListing.h; sourceTree = "<group>"; };
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
-		CF1FBB54179B959300FE639F /* EncodingsList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EncodingsList.mm; sourceTree = "<group>"; };
 		CF27414717FF04EF006D6687 /* SharingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharingService.h; sourceTree = "<group>"; };
 		CF27414817FF04EF006D6687 /* SharingService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharingService.mm; sourceTree = "<group>"; };
 		CF27414A18000832006D6687 /* FilePanelMainSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelMainSplitView.h; sourceTree = "<group>"; };
@@ -1608,8 +1606,7 @@
 				CFE2697B16F01BAA0048A393 /* chained_strings.h */,
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
 				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
-				CF07DE40176985EF00757DE1 /* EncodingsAdditions.cpp */,
-				CF1FBB54179B959300FE639F /* EncodingsList.mm */,
+				CF07DE40176985EF00757DE1 /* EncodingsAdditions.mm */,
 				CF02F1D516F38805000AF870 /* Encodings.cpp */,
 				CF02F1D616F38805000AF870 /* Encodings.h */,
 				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
@@ -2252,7 +2249,7 @@
 				CF9D0E9917CC961100CB8146 /* archive_read_support_filter_lrzip.c in Sources */,
 				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
 				CF9D0E9A17CC961100CB8146 /* archive_read_support_filter_lzop.c in Sources */,
-				CF07DE41176985EF00757DE1 /* EncodingsAdditions.cpp in Sources */,
+				CF07DE41176985EF00757DE1 /* EncodingsAdditions.mm in Sources */,
 				CFEE8E5117748E3D00F6A254 /* FontExtras.mm in Sources */,
 				CF9D0EAF17CC961100CB8146 /* archive_read.c in Sources */,
 				CF9D0E7C17CC961100CB8146 /* archive_entry_sparse.c in Sources */,
@@ -2301,7 +2298,6 @@
 				CF9D0EB817CC961100CB8146 /* archive_write_add_filter_compress.c in Sources */,
 				CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
-				CF1FBB55179B959300FE639F /* EncodingsList.mm in Sources */,
 				CF9D0EC417CC961100CB8146 /* archive_write_disk_set_standard_lookup.c in Sources */,
 				CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF653E0418C5AB2000502920 /* VFSArchiveUnRARListing.mm in Sources */,

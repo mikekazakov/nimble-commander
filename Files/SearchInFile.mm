@@ -33,7 +33,7 @@ SearchInFile::SearchInFile(FileWindow* _file):
     m_WorkMode(WorkMode::NotSet),
     m_RequestedTextSearch(0),
     m_DecodedBufferString(0),
-    m_TextSearchEncoding(ENCODING_INVALID),
+    m_TextSearchEncoding(encodings::ENCODING_INVALID),
     m_SearchOptions(0)
 {
     assert(m_File->FileOpened());

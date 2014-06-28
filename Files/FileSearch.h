@@ -29,7 +29,7 @@ public:
     
     struct FilterContent {
         NSString *text;
-        int encoding        = ENCODING_UTF8;
+        int encoding        = encodings::ENCODING_UTF8;
         bool whole_phrase   = false; // search for a phrase, not a part of something
         bool case_sensitive = false;
     };

@@ -66,7 +66,7 @@ static NSString* StorageFileName()
                                                     UTF8String]
                                                    );
         else
-            encoding = ENCODING_INVALID;
+            encoding = encodings::ENCODING_INVALID;
         
         if([decoder containsValueForKey:g_SelPosArchiveKey] &&
            [decoder containsValueForKey:g_SelLenArchiveKey] )

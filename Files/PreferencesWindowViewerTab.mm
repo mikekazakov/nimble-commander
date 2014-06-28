@@ -34,8 +34,8 @@
         [self.DefaultEncoding addItemWithTitle: (__bridge NSString*)i.second];
     int default_encoding = encodings::EncodingFromName(
                                                [[[NSUserDefaults standardUserDefaults] stringForKey:@"BigFileViewDefaultEncoding"] UTF8String]);
-    if(default_encoding == ENCODING_INVALID)
-        default_encoding = ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
+    if(default_encoding == encodings::ENCODING_INVALID)
+        default_encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
     for(const auto &i: encodings::LiteralEncodingsList())
         if(i.first == default_encoding)

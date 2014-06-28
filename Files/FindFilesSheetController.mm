@@ -161,7 +161,7 @@ static const int g_MaximumSearchResults = 16384;
         item.tag = i.first;
         [self.EncodingsPopUp.menu addItem:item];
     }
-    [self.EncodingsPopUp selectItemWithTag:ENCODING_UTF8];
+    [self.EncodingsPopUp selectItemWithTag:encodings::ENCODING_UTF8];
     
 
 

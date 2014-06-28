@@ -195,16 +195,16 @@ static NSArray *MyDefaultsKeys()
 {
     int encoding = encodings::EncodingFromName(
         [NSUserDefaults.standardUserDefaults stringForKey:@"BigFileViewDefaultEncoding"].UTF8String);
-    if(encoding == ENCODING_INVALID)
-        encoding = ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
+    if(encoding == encodings::ENCODING_INVALID)
+        encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
     StaticDataBlockAnalysis stat;
     DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
     if([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewEncodingAutoDetect"])
     {
-        if(stat.likely_utf16_le)        encoding = ENCODING_UTF16LE;
-        else if(stat.likely_utf16_be)   encoding = ENCODING_UTF16BE;
-        else if(stat.can_be_utf8)       encoding = ENCODING_UTF8;
+        if(stat.likely_utf16_le)        encoding = encodings::ENCODING_UTF16LE;
+        else if(stat.likely_utf16_be)   encoding = encodings::ENCODING_UTF16BE;
+        else if(stat.can_be_utf8)       encoding = encodings::ENCODING_UTF8;
     }
     
     BigFileViewModes mode = stat.is_binary ? BigFileViewModes::Hex : BigFileViewModes::Text;
@@ -214,7 +214,7 @@ static NSArray *MyDefaultsKeys()
 
 - (void) SetKnownFile:(FileWindow*) _file encoding:(int)_encoding mode:(BigFileViewModes)_mode
 {
-    assert(_encoding != ENCODING_INVALID);
+    assert(_encoding != encodings::ENCODING_INVALID);
     
     m_File = _file;
     m_Data = make_unique<BigFileViewDataBackend>(m_File, _encoding);
@@ -295,7 +295,7 @@ static NSArray *MyDefaultsKeys()
 - (int) encoding
 {
     if(m_Data) return m_Data->Encoding();
-    return ENCODING_UTF8; // ??
+    return encodings::ENCODING_UTF8; // ??
 }
 
 - (void) setEncoding:(int)_encoding

@@ -2,67 +2,6 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 
-enum {
-    ENCODING_INVALID = 0,
-    ENCODING_ISO_8859_1,
-    ENCODING_ISO_8859_2,
-    ENCODING_ISO_8859_3,
-    ENCODING_ISO_8859_4,
-    ENCODING_ISO_8859_5,
-    ENCODING_ISO_8859_6,
-    ENCODING_ISO_8859_7,
-    ENCODING_ISO_8859_8,
-    ENCODING_ISO_8859_9,
-    ENCODING_ISO_8859_10,
-    ENCODING_ISO_8859_11,
-    ENCODING_ISO_8859_13,
-    ENCODING_ISO_8859_14,
-    ENCODING_ISO_8859_15,
-    ENCODING_ISO_8859_16,
-    ENCODING_OEM437,
-    ENCODING_OEM737,
-    ENCODING_OEM775,
-    ENCODING_OEM850,
-    ENCODING_OEM851,
-    ENCODING_OEM852,
-    ENCODING_OEM855,
-    ENCODING_OEM857,
-    ENCODING_OEM860,
-    ENCODING_OEM861,
-    ENCODING_OEM862,
-    ENCODING_OEM863,
-    ENCODING_OEM864,
-    ENCODING_OEM865,
-    ENCODING_OEM866,
-    ENCODING_OEM869,
-    ENCODING_WIN1250,
-    ENCODING_WIN1251,
-    ENCODING_WIN1252,
-    ENCODING_WIN1253,
-    ENCODING_WIN1254,
-    ENCODING_WIN1255,
-    ENCODING_WIN1256,
-    ENCODING_WIN1257,
-    ENCODING_WIN1258,
-    
-    /**
-     * Mac OS Roman encoding, MIME=macintosh
-     * Classic native Mac text encoding
-     * https://en.wikipedia.org/wiki/Mac_OS_Roman
-     */
-    ENCODING_MACOS_ROMAN_WESTERN,
-    
-    
-
-    
-    
-    ENCODING_UTF8                   = 0x00010000,
-    ENCODING_UTF16LE                = 0x00010001,
-    ENCODING_UTF16BE                = 0x00010002,
-    ENCODING_SINGLE_BYTES_FIRST__   = ENCODING_ISO_8859_1,
-    ENCODING_SINGLE_BYTES_LAST__    = ENCODING_MACOS_ROMAN_WESTERN
-};
-
 unsigned short SingleByteIntoUniCharUsingCodepage(
                                                     unsigned char _input,
                                                     int _codepage
@@ -126,9 +65,86 @@ void InterpretUTF16BEBufferAsUniChar(
 
 namespace encodings
 {
+    enum {
+        ENCODING_INVALID = 0,
+        ENCODING_ISO_8859_1,
+        ENCODING_ISO_8859_2,
+        ENCODING_ISO_8859_3,
+        ENCODING_ISO_8859_4,
+        ENCODING_ISO_8859_5,
+        ENCODING_ISO_8859_6,
+        ENCODING_ISO_8859_7,
+        ENCODING_ISO_8859_8,
+        ENCODING_ISO_8859_9,
+        ENCODING_ISO_8859_10,
+        ENCODING_ISO_8859_11,
+        ENCODING_ISO_8859_13,
+        ENCODING_ISO_8859_14,
+        ENCODING_ISO_8859_15,
+        ENCODING_ISO_8859_16,
+        ENCODING_OEM437,
+        ENCODING_OEM737,
+        ENCODING_OEM775,
+        ENCODING_OEM850,
+        ENCODING_OEM851,
+        ENCODING_OEM852,
+        ENCODING_OEM855,
+        ENCODING_OEM857,
+        ENCODING_OEM860,
+        ENCODING_OEM861,
+        ENCODING_OEM862,
+        ENCODING_OEM863,
+        ENCODING_OEM864,
+        ENCODING_OEM865,
+        ENCODING_OEM866,
+        ENCODING_OEM869,
+        ENCODING_WIN1250,
+        ENCODING_WIN1251,
+        ENCODING_WIN1252,
+        ENCODING_WIN1253,
+        ENCODING_WIN1254,
+        ENCODING_WIN1255,
+        ENCODING_WIN1256,
+        ENCODING_WIN1257,
+        ENCODING_WIN1258,
+        
+        /**
+         * Mac OS Roman encoding, MIME=macintosh
+         * Classic native Mac text encoding
+         * https://en.wikipedia.org/wiki/Mac_OS_Roman
+         */
+        ENCODING_MACOS_ROMAN_WESTERN,
+        
+    
+        
+        ENCODING_UTF8                   = 0x00010000,
+        ENCODING_UTF16LE                = 0x00010001,
+        ENCODING_UTF16BE                = 0x00010002,
+        ENCODING_SINGLE_BYTES_FIRST__   = ENCODING_ISO_8859_1,
+        ENCODING_SINGLE_BYTES_LAST__    = ENCODING_MACOS_ROMAN_WESTERN
+    };
+    
+    
+    
+    
     bool IsValidEncoding(int _encoding);
     const char *NameFromEncoding(int _encoding);
     int EncodingFromName(const char* _name);
+    
+    /**
+     * on error(if _encoding is invalid value) will return -1
+     */
+    int ToCFStringEncoding(int _encoding);
+
+    /**
+     * on error(if _encoding is not mapped currently) will return ENCODING_INVALID
+     */
+    int FromCFStringEncoding(int _encoding);
+    
+    /**
+     * on error will return ENCODING_INVALID
+     */
+    int FromComAppleTextEncodingXAttr(const char *_xattr_value);
     
     const vector< pair<int, CFStringRef> >& LiteralEncodingsList();
     

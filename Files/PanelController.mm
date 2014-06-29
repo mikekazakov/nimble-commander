@@ -23,10 +23,12 @@ static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSof
 static NSString *g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
 static NSString *g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
 static NSString *g_DefaultsGeneralShowDotDotEntry       = @"FilePanelsGeneralShowDotDotEntry";
+static NSString *g_DefaultsGeneralShowLocalizedFilenames= @"FilePanelsGeneralShowLocalizedFilenames";
 static NSString *g_DefaultsGeneralIgnoreDirsOnMaskSel   = @"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask";
 static NSArray *g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuickSearchSoftFiltering,
                                    g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView,
-                                   g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel];
+                                   g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
+                                   g_DefaultsGeneralShowLocalizedFilenames];
 
 static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
@@ -113,6 +115,7 @@ void panel::GenericCursorPersistance::Restore()
         [self observeValueForKeyPath:g_DefaultsQuickSearchSoftFiltering ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsQuickSearchTypingView ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsGeneralShowDotDotEntry ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
+        [self observeValueForKeyPath:g_DefaultsGeneralShowLocalizedFilenames ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:g_DefaultsKeys];
         
         m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
@@ -159,6 +162,13 @@ void panel::GenericCursorPersistance::Restore()
                 m_VFSFetchingFlags |= VFSHost::F_NoDotDot;
             else
                 m_VFSFetchingFlags &= ~VFSHost::F_NoDotDot;
+            [self RefreshDirectory];
+        }
+        else if([keyPath isEqualToString:g_DefaultsGeneralShowLocalizedFilenames]) {
+            if([defaults boolForKey:g_DefaultsGeneralShowLocalizedFilenames] == true)
+                m_VFSFetchingFlags |= VFSHost::F_LoadDisplayNames;
+            else
+                m_VFSFetchingFlags &= ~VFSHost::F_LoadDisplayNames;
             [self RefreshDirectory];
         }
     }

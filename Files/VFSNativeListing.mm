@@ -191,7 +191,7 @@ int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
     });
 
     // load display names
-//    if(_flags & VFSHost::F_LoadDisplayNames)
+    if(_flags & VFSHost::F_LoadDisplayNames)
     {
         shared_ptr<NativeFileSystemInfo> native_fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath());
         auto &dnc = DisplayNamesCache::Instance();

@@ -213,6 +213,14 @@ public:
             m_Buff[i] = _chars[i];
         m_Size = _chars_amount;
     }
+    
+    void FromCFString(CFStringRef _str)
+    {
+        int len = (int)CFStringGetLength(_str);
+        assert( len <= Capacity );
+        CFStringGetCharacters(_str, CFRangeMake(0, len), m_Buff);
+        m_Size = len;
+    }
 
     unsigned Space() const
     {

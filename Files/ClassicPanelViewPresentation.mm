@@ -591,7 +591,12 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         ++n, ++i)
     {
         const auto& current = raw_entries[ sorted_entries[i] ];
-        fn.FromUTF8(current.Name(), current.NameLen());
+        if(current.CFDisplayName() == current.CFName())
+            // entry has no altered display name, so just use it's real filename
+            fn.FromUTF8(current.Name(), current.NameLen());
+        else
+            // entry is localized, load buffer from given display name
+            fn.FromCFString(current.CFDisplayName());
         
         if(fn.CanBeComposed())// <-- this check usually takes 100-300 nanoseconds per filename
             fn.NormalizeToFormC();

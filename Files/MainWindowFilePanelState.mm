@@ -991,7 +991,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         NSAlert *alert = [NSAlert new];
         [alert setMessageText: @"Failed to edit"];
         [alert setInformativeText:
-         [NSString stringWithFormat:@"\'%@\' is not a symbolic link.", (__bridge NSString*)item->CFName()]];
+         [NSString stringWithFormat:@"\'%@\' is not a symbolic link.", item->NSName()]];
         [alert runModal];
         return;
     }

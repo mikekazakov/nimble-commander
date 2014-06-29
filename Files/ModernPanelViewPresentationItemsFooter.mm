@@ -134,7 +134,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 {
     // output is a direct filename or symlink path in ->filename form
     if(!_dirent.IsSymlink())
-        return ((__bridge NSString*) _dirent.CFName()).copy;
+        return (_dirent.NSName()).copy;
     else if(_dirent.Symlink() != 0) {
         NSString *link = [NSString stringWithUTF8String:_dirent.Symlink()];
         if(link != nil)

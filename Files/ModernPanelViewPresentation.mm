@@ -482,7 +482,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 
             // Draw item text.
             if(rect.size.width > 0)
-                [item->NSName() drawWithRect:rect options:0 attributes:item_text_attr];
+                [item->NSDisplayName() drawWithRect:rect options:0 attributes:item_text_attr];
             
             // Draw icon
             NSImageRep *image_rep = m_IconCache->ImageFor(m_State->Data->RawIndexForSortIndex(i), (VFSListing&)entries); // UGLY anti-const hack

@@ -16,6 +16,8 @@
 #import <memory.h>
 #import <stdlib.h>
 
+#import "DisplayNamesCache.h"
+#import "NativeFSManager.h"
 #import "VFSNativeListing.h"
 #import "VFSNativeHost.h"
 #import "Common.h"
@@ -24,10 +26,11 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
+static_assert(sizeof(VFSNativeListingItem) == 128, "");
+
 VFSNativeListing::VFSNativeListing(const char *_path, shared_ptr<VFSNativeHost> _host):
     VFSListing(_path, _host)
 {
-    assert(sizeof(VFSNativeListingItem) == 128);
 }
 
 VFSNativeListing::~VFSNativeListing()
@@ -87,7 +90,7 @@ int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
                 entp->d_type = DT_DIR; // a very-very strange bugfix
         }
         
-        m_Items.push_back(VFSNativeListingItem() = {}); // check me twice - does it really zeroing all members?
+        m_Items.emplace_back();
         
         VFSNativeListingItem &current = m_Items.back();
         current.unix_type = entp->d_type;
@@ -186,12 +189,31 @@ int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
                 current->unix_flags |= UF_HIDDEN; // current only using UF_HIDDEN flag
         }
     });
-    
+
+    // load display names
+//    if(_flags & VFSHost::F_LoadDisplayNames)
+    {
+        shared_ptr<NativeFileSystemInfo> native_fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath());
+        auto &dnc = DisplayNamesCache::Instance();
+        dnc.lock();
+        for(auto &it: m_Items)
+            if(it.IsDir() && !it.IsDotDot()) {
+                auto &dn = dnc.DisplayNameForNativeFS(native_fs_info->basic.fs_id,
+                                                      it.Inode(),
+                                                      RelativePath(),
+                                                      it.Name(),
+                                                      it.CFName()
+                                                      );
+                if(dn.str != nullptr) {
+                    it.cf_displayname = dn.str;
+                    CFRetain(it.cf_displayname);
+                }
+            }
+        dnc.unlock();
+    }
+
     if(_checker && _checker())
         return VFSError::Cancelled;
-    
-//    if(_target->size() == 0)
-//        return -1; // something was very wrong
     
     return VFSError::Ok;
 }

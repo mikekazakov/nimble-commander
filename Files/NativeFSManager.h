@@ -498,7 +498,7 @@ public:
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromPath(string _path);
+    shared_ptr<NativeFileSystemInfo> VolumeFromPath(const string &_path);
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
@@ -511,13 +511,13 @@ public:
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
      * so should be used very carefully only time-critical paths (this method dont make any syscalls).
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromPathFast(string _path);
+    shared_ptr<NativeFileSystemInfo> VolumeFromPathFast(const string &_path);
     
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(string _mount_point);
+    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const string &_mount_point);
 
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.

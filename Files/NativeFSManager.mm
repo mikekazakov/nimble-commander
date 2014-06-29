@@ -377,7 +377,7 @@ void NativeFSManager::UpdateSpaceInformation(shared_ptr<NativeFileSystemInfo> _v
     m_Lock.unlock();
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(string _path)
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(const string &_path)
 {
     shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
 
@@ -399,7 +399,7 @@ shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(string _pat
     return result;
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(string _mount_point)
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const string &_mount_point)
 {
     shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
     
@@ -441,7 +441,7 @@ shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const cha
     return result;
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(string _path)
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const string &_path)
 {
     struct statfs info;
     if(statfs(_path.c_str(), &info) < 0)

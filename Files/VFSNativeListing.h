@@ -23,44 +23,45 @@ struct VFSNativeListingItem : VFSListingItem
     // #0
     char           namebuf[14];             // UTF-8, including null-term. if namelen >13 => (char**)&name[0] is a buffer from malloc for namelen+1 bytes
     // #14
-    unsigned short namelen;                 // not-including null-term
+    unsigned short namelen = 0;             // not-including null-term
     // #16
-    uint64_t       inode;                     // 64b-long inode number
+    uint64_t       inode = 0;               // 64b-long inode number
     // #24
-    uint64_t       size;                    // file size. initial 0xFFFFFFFFFFFFFFFFu for directories, other value means calculated directory size
+    uint64_t       size = 0;                // file size. initial 0xFFFFFFFFFFFFFFFFu for directories, other value means calculated directory size
     // #32
-    time_t         atime;                   // time of last access. we're dropping st_atimespec.tv_nsec information
+    time_t         atime = 0;               // time of last access. we're dropping st_atimespec.tv_nsec information
     // #40
-    time_t         mtime;                   // time of last data modification. we're dropping st_mtimespec.tv_nsec information
+    time_t         mtime = 0;               // time of last data modification. we're dropping st_mtimespec.tv_nsec information
     // #48
-    time_t         ctime;                   // time of last status change (data modification OR access changes, hardlink changes etc). we're dropping st_ctimespec.tv_nsec information
+    time_t         ctime = 0;               // time of last status change (data modification OR access changes, hardlink changes etc). we're dropping st_ctimespec.tv_nsec information
     // #56
-    time_t         btime;                   // time of file creation(birth). we're dropping st_birthtimespec.tv_nsec information
+    time_t         btime = 0;               // time of file creation(birth). we're dropping st_birthtimespec.tv_nsec information
     // #64
-    mode_t         unix_mode;               // file type from stat
+    mode_t         unix_mode = 0;           // file type from stat
     // #66
-    CFStringRef    cf_name;                 // it's a string created with CFStringCreateWithBytesNoCopy, pointing at name()
+    CFStringRef    cf_name = 0;             // it's a string created with CFStringCreateWithBytesNoCopy, pointing at name()
     // #74
-    const char     *symlink;                // a pointer to symlink's value or NULL if entry is not a symlink or an error has occured
+    CFStringRef    cf_displayname = 0;      // string got from DispayNamesCache or NULL, thus cf_name should be used
     // #82
-    uint32_t       unix_flags;              // st_flags field from stat, see chflags(2)
+    const char     *symlink = 0;            // a pointer to symlink's value or NULL if entry is not a symlink or an error has occured
     // #86
-    uid_t          unix_uid;                // user ID of the file
+    uint32_t       unix_flags = 0;          // st_flags field from stat, see chflags(2)
     // #90
-    gid_t          unix_gid;                // group ID of the file
+    uid_t          unix_uid = 0;            // user ID of the file
     // #94
-    unsigned short extoffset;               // extension of a file if any. 0 if there's no extension, or position of a first char of an extention
+    gid_t          unix_gid = 0;            // group ID of the file
     // #96
-    unsigned char  unix_type;               // file type from <sys/dirent.h> (from readdir)
+    unsigned short extoffset = 0;           // extension of a file if any. 0 if there's no extension, or position of a first char of an extention
     // #97
-
-    
-    unsigned char  ___padding[8];
+    unsigned char  unix_type = 0;           // file type from <sys/dirent.h> (from readdir)
+    // #98
     
     inline void Destroy()
     {
         if(cf_name != 0)
             CFRelease(cf_name);
+        if(cf_displayname != 0)
+            CFRelease(cf_displayname);
         free((void*)symlink);
         if(namelen > 13)
             free((void*)*(const unsigned char**)(&namebuf[0]));
@@ -71,6 +72,7 @@ struct VFSNativeListingItem : VFSListingItem
         return *(const char**)(&namebuf[0]);
     }
     virtual CFStringRef     CFName()    const override { return cf_name; }
+    virtual CFStringRef     CFDisplayName() const override { return cf_displayname ? cf_displayname : cf_name; }
     virtual size_t          NameLen()   const override { return namelen; }
     virtual uint64_t        Size()      const override { return size; }
     virtual uint64_t        Inode()     const override { return inode; }
@@ -115,24 +117,3 @@ public:
     deque<VFSNativeListingItem> m_Items;
     
 };
-
-/*
-class VFSListing
-{
-public:
-    VFSListing(shared_ptr<VFSHost> _host);
-    virtual ~VFSListing();
-    
-    virtual VFSListingItem& At(int _position);
-    virtual const VFSListingItem& At(int _position) const;
-    virtual int Count() const;
-    virtual long Attributes() const; // bitfield with VFSListingAttributes values
-    
-    shared_ptr<VFSHost> Host() const;
-private:
-    shared_ptr<VFSHost> m_Host;
-    
-    // forbid copying
-    VFSListing(const VFSListing&);
-    void operator=(const VFSListing&);
-};*/

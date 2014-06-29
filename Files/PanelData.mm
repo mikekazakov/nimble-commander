@@ -249,31 +249,31 @@ public:
         switch(sort_mode.sort)
         {
             case PanelSortMode::SortByName:
-                return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) < 0;
+                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) < 0;
             case PanelSortMode::SortByNameRev:
-                return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) > 0;
+                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) > 0;
             case PanelSortMode::SortByExt:
                 if(val1.HasExtension() && val2.HasExtension() )
                 {
                     int r = strcmp(val1.Extension(), val2.Extension());
                     if(r < 0) return true;
                     if(r > 0) return false;
-                    return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) < 0;
+                    return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) < 0;
                 }
                 if(val1.HasExtension() && !val2.HasExtension() ) return false;
                 if(!val1.HasExtension() && val2.HasExtension() ) return true;
-                return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) < 0; // fallback case
+                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) < 0; // fallback case
             case PanelSortMode::SortByExtRev:
                 if(val1.HasExtension() && val2.HasExtension() )
                 {
                     int r = strcmp(val1.Extension(), val2.Extension());
                     if(r < 0) return false;
                     if(r > 0) return true;
-                    return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) > 0;
+                    return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) > 0;
                 }
                 if(val1.HasExtension() && !val2.HasExtension() ) return true;
                 if(!val1.HasExtension() && val2.HasExtension() ) return false;
-                return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) > 0; // fallback case
+                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) > 0; // fallback case
             case PanelSortMode::SortByMTime:    return val1.MTime() > val2.MTime();
             case PanelSortMode::SortByMTimeRev: return val1.MTime() < val2.MTime();
             case PanelSortMode::SortByBTime:    return val1.BTime() > val2.BTime();
@@ -283,13 +283,13 @@ public:
                     if(val1.Size() != val2.Size()) return val1.Size() > val2.Size();
                 if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() == VFSListingItem::InvalidSize) return false;
                 if(val1.Size() == VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize) return true;
-                return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) < 0; // fallback case
+                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) < 0; // fallback case
             case PanelSortMode::SortBySizeRev:
                 if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize)
                     if(val1.Size() != val2.Size()) return val1.Size() < val2.Size();
                 if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() == VFSListingItem::InvalidSize) return true;
                 if(val1.Size() == VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize) return false;
-                return CFStringCompare(val1.CFName(), val2.CFName(), str_comp_flags) > 0; // fallback case
+                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) > 0; // fallback case
             case PanelSortMode::SortByRawCName:
                 return strcmp(val1.Name(), val2.Name()) < 0;
                 break;
@@ -547,7 +547,7 @@ int PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, b
         if(entry.IsDotDot())
             continue;
         
-        if(mask.MatchName((__bridge NSString*)entry.CFName())) {
+        if(mask.MatchName(entry.NSDisplayName())) {
             CustomFlagsSelectRaw(i, _select);
             counter++;
         }
@@ -597,7 +597,7 @@ bool PanelDataTextFiltering::IsValidItem(const VFSListingItem& _item) const
     if(textlen == 0)
         return true; // will return true on any item with @"" filter
     
-    NSString *name = (__bridge NSString*) _item.CFName();
+    NSString *name = _item.NSDisplayName();
     if(type == Anywhere) {
         return [name rangeOfString:text
                            options:NSCaseInsensitiveSearch].length != 0;

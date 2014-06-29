@@ -125,7 +125,7 @@ static NSString* StorageFileName()
     if(m_FileMask == nullptr)
         return false;
     
-    if(m_FileMask->MatchName((__bridge NSString*)_it.CFName()) == false)
+    if(m_FileMask->MatchName(_it.NSName()) == false)
         return false;
     
     if(m_OnlyFiles == true && _it.IsReg() == false)

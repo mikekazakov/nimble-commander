@@ -91,6 +91,7 @@
 		CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
 		CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */; };
 		CF3B602A18CCA3A20005816A /* VFSArchiveProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B602818CCA3A20005816A /* VFSArchiveProxy.mm */; };
+		CF3C720C195EC2DB00DE165A /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C720B195EC2DB00DE165A /* DisplayNamesCache.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
@@ -508,6 +509,8 @@
 		CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewText.mm; sourceTree = "<group>"; };
 		CF3B602818CCA3A20005816A /* VFSArchiveProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveProxy.mm; sourceTree = "<group>"; };
 		CF3B602918CCA3A20005816A /* VFSArchiveProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveProxy.h; sourceTree = "<group>"; };
+		CF3C720B195EC2DB00DE165A /* DisplayNamesCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayNamesCache.mm; sourceTree = "<group>"; };
+		CF3C720D195EC30100DE165A /* DisplayNamesCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayNamesCache.h; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
 		CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLThumbnailsCache.mm; sourceTree = "<group>"; };
@@ -998,6 +1001,12 @@
 				CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */,
 				CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */,
 				CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */,
+				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
+				CF29312E17D79BA100648A90 /* IconsGenerator.mm */,
+				CF3FCE071908C49400E55698 /* QLThumbnailsCache.h */,
+				CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */,
+				CF14BE171931AD40008DDF6A /* WorkspaceIconsCache.h */,
+				CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */,
 			);
 			name = Presentation;
 			sourceTree = "<group>";
@@ -1115,12 +1124,6 @@
 				CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */,
 				CF27414717FF04EF006D6687 /* SharingService.h */,
 				CF27414817FF04EF006D6687 /* SharingService.mm */,
-				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
-				CF29312E17D79BA100648A90 /* IconsGenerator.mm */,
-				CF3FCE071908C49400E55698 /* QLThumbnailsCache.h */,
-				CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */,
-				CF14BE171931AD40008DDF6A /* WorkspaceIconsCache.h */,
-				CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -1720,6 +1723,8 @@
 				CFB8F23817CAF8F9004574FE /* VFSNativeListing.h */,
 				CF9D060617CB3B0400CB8146 /* VFSNativeFile.mm */,
 				CF9D060717CB3B0400CB8146 /* VFSNativeFile.h */,
+				CF3C720D195EC30100DE165A /* DisplayNamesCache.h */,
+				CF3C720B195EC2DB00DE165A /* DisplayNamesCache.mm */,
 			);
 			name = Native;
 			sourceTree = "<group>";
@@ -2063,6 +2068,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3C720C195EC2DB00DE165A /* DisplayNamesCache.mm in Sources */,
 				CFB709A018D700A000A83E61 /* VFSNetFTPHost.mm in Sources */,
 				CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF9D0E7F17CC961100CB8146 /* archive_entry_xattr.c in Sources */,

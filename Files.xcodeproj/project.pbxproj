@@ -262,6 +262,10 @@
 		CFA0B23718693F1100501C35 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA0B23518693F1100501C35 /* GoToFolderSheetController.xib */; };
 		CFA0B23A1869542200501C35 /* common_paths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2381869542200501C35 /* common_paths.mm */; };
 		CFA0B23E186BE3DF00501C35 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23C186BE3DF00501C35 /* VFSPSHost.mm */; };
+		CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
+		CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
+		CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
+		CFA3D7CE196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */; };
 		CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */; };
 		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
@@ -757,6 +761,12 @@
 		CFA0B2391869542200501C35 /* common_paths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common_paths.h; sourceTree = "<group>"; };
 		CFA0B23C186BE3DF00501C35 /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPSHost.mm; sourceTree = "<group>"; };
 		CFA0B23D186BE3DF00501C35 /* VFSPSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSPSHost.h; sourceTree = "<group>"; };
+		CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHotKeyTextField.h; path = 3rd_party/gtm/GTMHotKeyTextField.h; sourceTree = "<group>"; };
+		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = 3rd_party/gtm/GTMHotKeyTextField.mm; sourceTree = "<group>"; };
+		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowHotkeysTab.h; sourceTree = "<group>"; };
+		CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowHotkeysTab.mm; sourceTree = "<group>"; };
+		CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowHotkeysTab.xib; sourceTree = "<group>"; };
 		CFA58397170EA3C400E508CF /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperation.h; sourceTree = "<group>"; };
 		CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperation.mm; sourceTree = "<group>"; };
 		CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperationJob.mm; sourceTree = "<group>"; };
@@ -923,6 +933,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */,
 				CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */,
 				CF1100D01913788800E170FC /* Security.framework in Frameworks */,
 				CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */,
@@ -969,6 +980,7 @@
 		B528011916FCF347004E260D /* Operation */ = {
 			isa = PBXGroup;
 			children = (
+				CFB709C418E99AC100A83E61 /* ExternalEditors */,
 				CFAC50D41715565E00A3E5C5 /* Core */,
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				B5AD9CDE17030DAA0099BC6D /* Dummies */,
@@ -1032,6 +1044,9 @@
 				CFE1088A1946CBAF00DABC5C /* PreferencesWindowTerminalTab.h */,
 				CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */,
 				CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */,
+				CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */,
+				CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */,
+				CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -1533,6 +1548,15 @@
 			name = PS;
 			sourceTree = "<group>";
 		};
+		CFA3D7C319625F63006A30A1 /* gtm */ = {
+			isa = PBXGroup;
+			children = (
+				CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */,
+				CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */,
+			);
+			name = gtm;
+			sourceTree = "<group>";
+		};
 		CFA58396170EA35E00E508CF /* FileDeletionOperation */ = {
 			isa = PBXGroup;
 			children = (
@@ -1769,6 +1793,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFA3D7C81962613B006A30A1 /* Carbon.framework */,
 				CF1100D1191378BD00E170FC /* LDAP.framework */,
 				CF1100CF1913788800E170FC /* Security.framework */,
 				CF1100CD1913778800E170FC /* libcurl.a */,
@@ -1811,7 +1836,6 @@
 				CFAC50D5171557E100A3E5C5 /* Core */,
 				CFB8F22B17CA3C65004574FE /* VFS */,
 				B528011916FCF347004E260D /* Operation */,
-				CFB709C418E99AC100A83E61 /* ExternalEditors */,
 				CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */,
 				CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */,
 				CF536C0D16C92EA200F37203 /* PanelMainWindowState */,
@@ -1858,6 +1882,7 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
+				CFA3D7C319625F63006A30A1 /* gtm */,
 				CF305DC21946D4F700840F25 /* CategoriesObjC */,
 				CF3FCE0A190EB93600E55698 /* shared_mutex */,
 				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
@@ -2013,6 +2038,7 @@
 				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
+				CFA3D7CE196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF039EAC1791166000DC85D6 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CF039EB117911FFA00DC85D6 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF039EB61791204600DC85D6 /* PreferencesWindowViewerTab.xib in Resources */,
@@ -2126,6 +2152,7 @@
 				CFB8F23917CAF8F9004574FE /* VFSNativeListing.mm in Sources */,
 				CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */,
 				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,
+				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
 				CF9D0E7917CC961100CB8146 /* archive_entry_copy_bhfi.c in Sources */,
 				CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */,
 				CF9D0EBF17CC961100CB8146 /* archive_write_add_filter_uuencode.c in Sources */,
@@ -2219,6 +2246,7 @@
 				CF9A17CC186D9FCC00160CDB /* VFSPSFile.mm in Sources */,
 				CF9D0E8517CC961100CB8146 /* archive_ppmd7.c in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
+				CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF9D0ED517CC961100CB8146 /* archive_write_set_format_v7tar.c in Sources */,
 				CF9D0E8717CC961100CB8146 /* archive_read_append_filter.c in Sources */,
 				CF9D0ED817CC961100CB8146 /* archive_write_set_format.c in Sources */,

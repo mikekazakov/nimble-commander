@@ -35,7 +35,21 @@ NSString *ActionsShortcutsManager::ShortCut::ToString() const
     return result;
 }
 
-bool ActionsShortcutsManager::ShortCut::FromString(NSString *_from)
+bool ActionsShortcutsManager::ShortCut::FromStringAndModif(NSString *_from, unsigned long _modif)
+{
+    if(_from == nil || _from.length == 0)
+        return false;
+    key = _from;
+    unic = [_from characterAtIndex:0];
+    modifiers = 0;
+    if(_modif & NSShiftKeyMask)     modifiers |= NSShiftKeyMask;
+    if(_modif & NSControlKeyMask)   modifiers |= NSControlKeyMask;
+    if(_modif & NSAlternateKeyMask) modifiers |= NSAlternateKeyMask;
+    if(_modif & NSCommandKeyMask)   modifiers |= NSCommandKeyMask;
+    return true;
+}
+
+bool ActionsShortcutsManager::ShortCut::FromPersString(NSString *_from)
 {
     if(_from.length == 0)
     {
@@ -146,7 +160,7 @@ void ActionsShortcutsManager::ReadDefaults(NSArray *_dict)
             continue;
         
         ShortCut sc;
-        if(sc.FromString(obj))
+        if(sc.FromPersString(obj))
             m_ShortCutsDefaults[i->second] = sc;
     }
 }
@@ -183,21 +197,21 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
             auto scover = m_ShortCutsOverrides.find(tag);
             if(scover != m_ShortCutsOverrides.end())
             {
-                [i setKeyEquivalent:scover->second.key];
-                [i setKeyEquivalentModifierMask:scover->second.modifiers];
+                i.keyEquivalent = scover->second.key;
+                i.keyEquivalentModifierMask = scover->second.modifiers;
             }
             else
             {
                 auto sc = m_ShortCutsDefaults.find(tag);
                 if(sc != m_ShortCutsDefaults.end())
                 {
-                    [i setKeyEquivalent:sc->second.key];
-                    [i setKeyEquivalentModifierMask:sc->second.modifiers];
+                    i.keyEquivalent = sc->second.key;
+                    i.keyEquivalentModifierMask = sc->second.modifiers;
                 }
                 else if(m_TagToAction.find(tag) != m_TagToAction.end())
                 {
-                    [i setKeyEquivalent:@""];
-                    [i setKeyEquivalentModifierMask:0];
+                    i.keyEquivalent = @"";
+                    i.keyEquivalentModifierMask = 0;
                 }
             }
         }
@@ -226,7 +240,7 @@ void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
         }
         
         ShortCut sc;
-        if(sc.FromString(obj))
+        if(sc.FromPersString(obj))
         {
             m_ShortCutsOverrides[i->second] = sc;
             total_actions_read++;
@@ -305,4 +319,12 @@ const ActionsShortcutsManager::ShortCut *ActionsShortcutsManager::ShortCutFromTa
         return &sc_default->second;
     
     return nullptr;
+}
+
+void ActionsShortcutsManager::SetShortCutOverride(const string &_action, const ShortCut& _sc)
+{
+    int tag = TagFromAction(_action);
+    if(tag <= 0)
+        return;
+    m_ShortCutsOverrides[tag] = _sc;
 }

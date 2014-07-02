@@ -31,12 +31,13 @@ public:
     
     struct ShortCut
     {
-        unsigned long modifiers;
-        NSString *key;
-        unichar  unic; // same as [key characterAtIndex:0], for perfomance purposes
+        unsigned long modifiers = 0;
+        NSString *key           = @"";
+        uint16_t  unic          = 0; // same as [key characterAtIndex:0], for perfomance purposes
 
         NSString *ToString() const;
-        bool FromString(NSString *_from);
+        bool FromPersString(NSString *_from);
+        bool FromStringAndModif(NSString *_from, unsigned long _modif);
         bool IsKeyDown(unichar _unicode, unsigned short _keycode, unsigned long _modifiers) const;
     };
     
@@ -52,8 +53,12 @@ public:
      */
     const ShortCut *ShortCutFromTag(int _tag) const;
     
+    void SetShortCutOverride(const string &_action, const ShortCut& _sc);
+    
     void DoInit();
     void SetMenuShortCuts(NSMenu *_menu) const;
+    
+    inline const vector<pair<string,int>>& AllShortcuts() const { return m_ActionsTags; }
     
 private:
     ActionsShortcutsManager();
@@ -68,7 +73,7 @@ private:
     
     
     // persistance holy grail is below, change id's only in emergency case:
-    vector<pair<string,int>> m_ActionsTags = {
+    const vector<pair<string,int>> m_ActionsTags = {
         {"menu.files.about",                    10000},
         {"menu.files.preferences",              10010},
         {"menu.files.hide",                     10020},

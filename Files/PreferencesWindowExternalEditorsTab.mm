@@ -40,7 +40,7 @@
     return [NSImage imageNamed:@"pref_extedit_icon"];
 }
 -(NSString*)toolbarItemLabel{
-    return @"External Editors";
+    return @"Editors";
 }
 
 - (NSMutableArray *) ExtEditors

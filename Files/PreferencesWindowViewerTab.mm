@@ -52,7 +52,7 @@
     return [NSImage imageNamed:@"pref_viewer_icon"];
 }
 -(NSString*)toolbarItemLabel{
-    return @"Internal Viewer";
+    return @"Viewer";
 }
 
 - (IBAction) OnSetModernFont:(id)sender

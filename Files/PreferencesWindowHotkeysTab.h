@@ -17,5 +17,6 @@
 @property (strong) IBOutlet NSTableView *Table;
 @property (strong) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
 - (IBAction)OnApply:(id)sender;
+- (IBAction)OnDefaults:(id)sender;
 
 @end

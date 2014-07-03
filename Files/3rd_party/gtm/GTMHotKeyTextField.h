@@ -29,6 +29,8 @@
 + (id)hotKeyWithKey:(NSString *)key
            modifiers:(NSUInteger)modifiers;
 
++ (GTMHotKey*) emptyHotKey;
+
 
 //- (id)initWithKeyCode:(NSUInteger)keyCode
 //            modifiers:(NSUInteger)modifiers;
@@ -38,6 +40,8 @@
 
 
 // Custom accessors (readonly, nonatomic)
+- (bool)isEmpty;
+
 - (NSUInteger)modifiers;
 - (NSString *)key;
 - (NSString *)visualKey;

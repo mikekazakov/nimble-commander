@@ -53,28 +53,28 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
     {49,    0x2423,                     @"Space"},
     {51,    0x8,                        @"⌫"},
     {71,    NSClearDisplayFunctionKey,  @"Clear"},
-    {53,    0x1B,                       @"Esc"},
+    {53,    0x1B,                       @"⎋"},
     {115,   NSHomeFunctionKey,          @"↖"},
     {116,   NSPageUpFunctionKey,        @"⇞"},
     {119,   NSEndFunctionKey,           @"↘"},
     {121,   NSPageDownFunctionKey,      @"⇟"},
     {114,   NSHelpFunctionKey,          @"Help"},
-    {65,    '.',                        @"Keypad ."},
-    {67,    '*',                        @"Keypad *"},
-    {69,    '+',                        @"Keypad +"},
-    {75,    '/',                        @"Keypad /"},
-    {78,    '-',                        @"Keypad -"},
-    {81,    '=',                        @"Keypad ="},
-    {82,    '0',                        @"Keypad 0"},
-    {83,    '1',                        @"Keypad 1"},
-    {84,    '2',                        @"Keypad 2"},
-    {85,    '3',                        @"Keypad 3"},
-    {86,    '4',                        @"Keypad 4"},
-    {87,    '5',                        @"Keypad 5"},
-    {88,    '6',                        @"Keypad 6"},
-    {89,    '7',                        @"Keypad 7"},
-    {91,    '8',                        @"Keypad 8"},
-    {92,    '9',                        @"Keypad 9"}
+    {65,    '.',                        @"."},
+    {67,    '*',                        @"*"},
+    {69,    '+',                        @"+"},
+    {75,    '/',                        @"/"},
+    {78,    '-',                        @"-"},
+    {81,    '=',                        @"="},
+    {82,    '0',                        @"0"},
+    {83,    '1',                        @"1"},
+    {84,    '2',                        @"2"},
+    {85,    '3',                        @"3"},
+    {86,    '4',                        @"4"},
+    {87,    '5',                        @"5"},
+    {88,    '6',                        @"6"},
+    {89,    '7',                        @"7"},
+    {91,    '8',                        @"8"},
+    {92,    '9',                        @"9"}
 };
 
 @implementation GTMHotKey {
@@ -86,6 +86,18 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 + (id)hotKeyWithKey:(NSString *)str
           modifiers:(NSUInteger)modifiers {
     return [[self alloc] initWithKey:str modifiers:modifiers];
+}
+
++ (GTMHotKey*)emptyHotKey
+{
+    static GTMHotKey* eh = nil;
+    if(!eh) {
+        eh = [GTMHotKey new];
+        eh->m_Key = @"";
+        eh->m_Modif = 0;
+        eh->m_VisKey = @"";
+    }
+    return eh;
 }
 
 - (id)initWithKey:(NSString *)str
@@ -117,6 +129,10 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 
 - (NSString *)visualKey {
     return m_VisKey;
+}
+
+- (bool)isEmpty {
+    return m_Key == nil || [m_Key isEqualToString:@""];
 }
 
 - (BOOL)isEqual:(id)object {
@@ -405,6 +421,9 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 @end
 
 @implementation GTMHotKeyFieldEditor
+{
+    NSButton *m_ClearButton;
+}
 
 + (GTMHotKeyFieldEditor *)sharedHotKeyFieldEditor {
     static GTMHotKeyFieldEditor *obj = [self new];
@@ -423,17 +442,43 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 
 - (BOOL)becomeFirstResponder {
   // We need to lose focus any time the window is not key
-  [NSNotificationCenter.defaultCenter addObserver:self
-                                         selector:@selector(windowResigned:)
-                                             name:NSWindowDidResignKeyNotification
-                                           object:self.window];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(windowResigned:)
+                                               name:NSWindowDidResignKeyNotification
+                                             object:self.window];
+    
+    GTMHotKey *cur_hk = [self.cell objectValue];
+    if( cur_hk != nil && !cur_hk.isEmpty ) {
+        m_ClearButton = [[NSButton alloc] initWithFrame:NSMakeRect(self.bounds.size.width - 20, (self.bounds.size.height - 20)/2, 20, 20)];
+        m_ClearButton.title = @"-";
+        m_ClearButton.font = [NSFont labelFontOfSize:9];
+        m_ClearButton.refusesFirstResponder = true;
+        m_ClearButton.bezelStyle = NSCircularBezelStyle;
+        m_ClearButton.target = self;
+        m_ClearButton.action = @selector(OnClearButton:);
+        ((NSButtonCell*)m_ClearButton.cell).controlSize = NSMiniControlSize;
+        [self addSubview:m_ClearButton];
+    }
+    
   return [super becomeFirstResponder];
+}
+
+- (void)OnClearButton:(id)sender
+{
+    [self.cell setObjectValue:GTMHotKey.emptyHotKey];
+    [self didChangeText];
+    [self.window makeFirstResponder:nil];
 }
 
 - (BOOL)resignFirstResponder {
   // No longer interested in window resign
-  [NSNotificationCenter.defaultCenter removeObserver:self];
-  return [super resignFirstResponder];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    if(m_ClearButton) {
+        [m_ClearButton removeFromSuperview];
+        m_ClearButton = nil;
+    }
+
+    return [super resignFirstResponder];
 }
 
 // Private method we use to get out of global hotkey capture when the window
@@ -474,9 +519,8 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 // Private do method that tell us to ignore certain events
 - (BOOL)shouldBypassEvent:(NSEvent *)theEvent {
   BOOL bypass = NO;
-  UInt16 keyCode = [theEvent keyCode];
-  NSUInteger modifierFlags
-    = [theEvent modifierFlags] & NSDeviceIndependentModifierFlagsMask;
+  UInt16 keyCode = theEvent.keyCode;
+  NSUInteger modifierFlags = theEvent.modifierFlags & NSDeviceIndependentModifierFlagsMask;
 
   if (keyCode == 48) {  // Tab
     // Ignore all events that the dock cares about
@@ -506,7 +550,7 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 // hotkey plumbing.
 - (void)processEventToHotKeyAndString:(NSEvent *)theEvent {
     // Construct a dictionary of the event as a hotkey pref
-    GTMHotKey *newHotKey = nil;
+    GTMHotKey *newHotKey = GTMHotKey.emptyHotKey;
     NSString *prettyString = @"";
     // 51 is "the delete key"
     static const NSUInteger allModifiers = (NSCommandKeyMask | NSAlternateKeyMask | NSControlKeyMask | NSShiftKeyMask);

@@ -11,7 +11,12 @@
 
 static NSString *g_OverridesFilename = @"/shortcuts.plist";
 
-NSString *ActionsShortcutsManager::ShortCut::ToString() const
+static NSString *OverridesFullPath()
+{
+    return [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilename];
+}
+
+NSString *ActionsShortcutsManager::ShortCut::ToPersString() const
 {
     NSString *result = [NSString new];
     if(modifiers & NSShiftKeyMask)
@@ -109,6 +114,22 @@ bool ActionsShortcutsManager::ShortCut::IsKeyDown(unichar _unicode, unsigned sho
                 unic == _unicode;
 }
 
+bool ActionsShortcutsManager::ShortCut::operator==(const ShortCut&_r) const
+{
+    if(modifiers != _r.modifiers)
+        return false;
+    if(unic != _r.unic)
+        return false;
+    if(![key isEqualToString:_r.key])
+        return false;
+    return true;
+}
+
+bool ActionsShortcutsManager::ShortCut::operator!=(const ShortCut&_r) const
+{
+    return !(*this == _r);
+}
+
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
     for(auto &i: m_ActionsTags)
@@ -175,7 +196,7 @@ void ActionsShortcutsManager::WriteDefaults(NSMutableArray *_dict) const
         
         auto sc = m_ShortCutsDefaults.find(tag);
         if(sc != m_ShortCutsDefaults.end())
-            [_dict addObject:sc->second.ToString()];
+            [_dict addObject:sc->second.ToPersString()];
         else
             [_dict addObject:@""];
     }
@@ -248,12 +269,7 @@ void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
     }
     
     if(total_actions_read < m_ActionsTags.size())
-        m_OutdatedOverrides = true;
-}
-
-bool ActionsShortcutsManager::NeedToUpdateOverrides() const
-{
-    return m_OutdatedOverrides;
+        m_DirtyOverrides = true;
 }
 
 void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
@@ -266,30 +282,29 @@ void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
         
         auto scover = m_ShortCutsOverrides.find(tag);
         if(scover != m_ShortCutsOverrides.end())
-        {
-            [_dict addObject:scover->second.ToString()];
-        }
+            [_dict addObject:scover->second.ToPersString()];
         else
-        {
             [_dict addObject:@"default"];
-        }
     }
-    m_OutdatedOverrides = false;
+    m_DirtyOverrides = false;
 }
 
 void ActionsShortcutsManager::DoInit()
 {
     NSString *defaults_fn = [[NSBundle mainBundle] pathForResource:@"ShortcutsDefaults" ofType:@"plist"];
     ReadDefaults([NSArray arrayWithContentsOfFile:defaults_fn]);
+        ReadOverrides([NSArray arrayWithContentsOfFile:OverridesFullPath()]);
     
-    NSString *overrides_fn = [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilename];
-    ReadOverrides([NSArray arrayWithContentsOfFile:overrides_fn]);
-    if(NeedToUpdateOverrides())
-    {
-        NSMutableArray *new_overrides = [NSMutableArray new];
-        WriteOverrides(new_overrides);
-        [new_overrides writeToFile:overrides_fn atomically:true];
-    }
+    [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
+                                                    object:[NSApplication sharedApplication]
+                                                     queue:NSOperationQueue.mainQueue
+                                                usingBlock:^(NSNotification *note) {
+                                                    if(m_DirtyOverrides) {
+                                                        NSMutableArray *new_overrides = [NSMutableArray new];
+                                                        WriteOverrides(new_overrides);
+                                                        [new_overrides writeToFile:OverridesFullPath() atomically:true];
+                                                    }
+                                                }];
 }
 
 const ActionsShortcutsManager::ShortCut *ActionsShortcutsManager::ShortCutFromAction(const string &_action) const
@@ -326,5 +341,19 @@ void ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
     int tag = TagFromAction(_action);
     if(tag <= 0)
         return;
+    
+    m_DirtyOverrides = true;
+    
+    auto &orig = m_ShortCutsDefaults[tag];
+    if(orig == _sc) {
+        m_ShortCutsOverrides.erase(tag);
+        return;
+    }
     m_ShortCutsOverrides[tag] = _sc;
+}
+
+void ActionsShortcutsManager::RevertToDefaults()
+{
+    m_ShortCutsOverrides.clear();
+    m_DirtyOverrides = true;
 }

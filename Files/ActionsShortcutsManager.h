@@ -35,7 +35,10 @@ public:
         NSString *key           = @"";
         uint16_t  unic          = 0; // same as [key characterAtIndex:0], for perfomance purposes
 
-        NSString *ToString() const;
+        bool operator==(const ShortCut&_r) const;
+        bool operator!=(const ShortCut&_r) const;
+        
+        NSString *ToPersString() const;
         bool FromPersString(NSString *_from);
         bool FromStringAndModif(NSString *_from, unsigned long _modif);
         bool IsKeyDown(unichar _unicode, unsigned short _keycode, unsigned long _modifiers) const;
@@ -53,7 +56,11 @@ public:
      */
     const ShortCut *ShortCutFromTag(int _tag) const;
     
+    
+    void RevertToDefaults();
     void SetShortCutOverride(const string &_action, const ShortCut& _sc);
+    
+    
     
     void DoInit();
     void SetMenuShortCuts(NSMenu *_menu) const;
@@ -69,7 +76,6 @@ private:
     
     void ReadOverrides(NSArray *_dict);
     void WriteOverrides(NSMutableArray *_dict) const;
-    bool NeedToUpdateOverrides() const;
     
     
     // persistance holy grail is below, change id's only in emergency case:
@@ -161,5 +167,5 @@ private:
     
     map<int, ShortCut>      m_ShortCutsDefaults;
     map<int, ShortCut>      m_ShortCutsOverrides;
-    mutable bool            m_OutdatedOverrides = false;
+    mutable bool            m_DirtyOverrides = false;
 };

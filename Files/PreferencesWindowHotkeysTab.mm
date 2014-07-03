@@ -99,7 +99,14 @@
         
         am.SetShortCutOverride(am.ActionFromTag(tag), sc);
     }
+    am.SetMenuShortCuts([NSApp mainMenu]);
+}
+
+- (IBAction)OnDefaults:(id)sender
+{
+    ActionsShortcutsManager::Instance().RevertToDefaults();
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
+    [self.Table reloadData];
 }
 
 @end

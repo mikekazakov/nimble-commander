@@ -61,15 +61,15 @@
 	<string>menu.view.toggle_wide_mode</string>
 	<string>^4</string>
 	<string>menu.view.sorting_by_name</string>
-	<string>^</string>
+	<string>^⌘1</string>
 	<string>menu.view.sorting_by_extension</string>
-	<string>^</string>
+	<string>^⌘2</string>
 	<string>menu.view.sorting_by_modify_time</string>
-	<string>^</string>
+	<string>^⌘3</string>
 	<string>menu.view.sorting_by_size</string>
-	<string>^</string>
+	<string>^⌘4</string>
 	<string>menu.view.sorting_by_creation_time</string>
-	<string>^</string>
+	<string>^⌘5</string>
 	<string>menu.view.sorting_view_hidden</string>
 	<string>⇧⌥⌘i</string>
 	<string>menu.view.sorting_separate_folders</string>
@@ -129,7 +129,7 @@
 	<string>menu.command.external_editor</string>
 	<string></string>
 	<string>menu.command.eject_volume</string>
-	<string></string>
+	<string>⌘e</string>
 	<string>menu.command.compress</string>
 	<string></string>
 	<string>menu.command.copy_to</string>

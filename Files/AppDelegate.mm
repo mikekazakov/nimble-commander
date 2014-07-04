@@ -24,6 +24,8 @@
 #import "NativeFSManager.h"
 #import "ActionsShortcutsManager.h"
 #import "MainWindowFilePanelState.h"
+#import "SandboxManager.h"
+#import "common_paths.h"
 
 @implementation AppDelegate
 {
@@ -68,6 +70,12 @@
     
     ActionsShortcutsManager::Instance().DoInit();
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
+    
+    if(configuration::is_sandboxed) {
+        auto &sm = SandboxManager::Instance();
+        if(sm.Empty())
+            sm.AskAccessForPath(CommonPaths::Get(CommonPaths::Home));
+    }
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification

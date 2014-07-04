@@ -32,3 +32,5 @@
     #include "3rd_party/built/include/boost/filesystem.hpp"
     using boost::filesystem::path;
 #endif
+
+#include "Configuration.h"

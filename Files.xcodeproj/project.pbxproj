@@ -447,7 +447,11 @@
 		CF6D9D2019667E4B0077B146 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF039EBE1795AE9F00DC85D6 /* eject_icon.png */; };
 		CF6D9D2119667E4B0077B146 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CF27B50E172F8EAF005C9B28 /* pause_icon.png */; };
 		CF6D9D2219667E4B0077B146 /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B55DB19B171B0E9700E3610E /* question_icon.png */; };
-		CF6D9D2419667F660077B146 /* Files-Lite-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF6D9D2319667F660077B146 /* Files-Lite-Info.plist */; };
+		CF6D9D2C1966A56E0077B146 /* Files-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF6D9D2B1966A56E0077B146 /* Files-Info.plist */; };
+		CF6D9D2E1966A57B0077B146 /* Files-Lite-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF6D9D2D1966A57B0077B146 /* Files-Lite-Info.plist */; };
+		CF6D9D311966A5E10077B146 /* Files-Lite.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */; };
+		CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
+		CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
 		CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
 		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CF76B30617000C090066A49F /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
@@ -906,7 +910,12 @@
 		CF6D9C8E19667A5E0077B146 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		CF6D9C9019667A640077B146 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Quartz.framework; sourceTree = DEVELOPER_DIR; };
 		CF6D9C9219667A850077B146 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libSystem.dylib; sourceTree = DEVELOPER_DIR; };
-		CF6D9D2319667F660077B146 /* Files-Lite-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Files-Lite-Info.plist"; sourceTree = "<group>"; };
+		CF6D9D2B1966A56E0077B146 /* Files-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Files-Info.plist"; path = "Resource/Files-Info.plist"; sourceTree = "<group>"; };
+		CF6D9D2D1966A57B0077B146 /* Files-Lite-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Files-Lite-Info.plist"; path = "Resource/Files-Lite-Info.plist"; sourceTree = "<group>"; };
+		CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Lite.entitlements"; path = "Resource/Files-Lite.entitlements"; sourceTree = "<group>"; };
+		CF6D9D321966AC220077B146 /* Configuration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Configuration.h; sourceTree = "<group>"; };
+		CF6D9D331966BE710077B146 /* SandboxManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxManager.mm; sourceTree = "<group>"; };
+		CF6D9D361966BE840077B146 /* SandboxManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxManager.h; sourceTree = "<group>"; };
 		CF73A6201816B36C00F59016 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		CF73A6221816B3C200F59016 /* libquarantine.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libquarantine.dylib; path = usr/lib/system/libquarantine.dylib; sourceTree = SDKROOT; };
 		CF73C59C16DE0D2900F3D44F /* MessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBox.h; sourceTree = "<group>"; };
@@ -1182,7 +1191,6 @@
 		CFC5121716C4BD3D00D247EE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		CFC5121816C4BD3D00D247EE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CFC5121916C4BD3D00D247EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		CFC5121C16C4BD3D00D247EE /* Files-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Files-Info.plist"; sourceTree = "<group>"; };
 		CFC5121E16C4BD3D00D247EE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CFC5122016C4BD3D00D247EE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CFC5122216C4BD3D00D247EE /* Files-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files-Prefix.pch"; sourceTree = "<group>"; };
@@ -1708,7 +1716,7 @@
 		CF6D99A5196675FE0077B146 /* Files Full */ = {
 			isa = PBXGroup;
 			children = (
-				CFC5121C16C4BD3D00D247EE /* Files-Info.plist */,
+				CF6D9D2B1966A56E0077B146 /* Files-Info.plist */,
 			);
 			name = "Files Full";
 			sourceTree = "<group>";
@@ -1716,7 +1724,8 @@
 		CF6D99A6196676200077B146 /* Files Lite */ = {
 			isa = PBXGroup;
 			children = (
-				CF6D9D2319667F660077B146 /* Files-Lite-Info.plist */,
+				CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */,
+				CF6D9D2D1966A57B0077B146 /* Files-Lite-Info.plist */,
 			);
 			name = "Files Lite";
 			sourceTree = "<group>";
@@ -2048,6 +2057,8 @@
 				CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */,
 				CFB56284194ECA1B00A3B70E /* FPSLimitedDrawer.mm */,
 				CFB56283194ECA1B00A3B70E /* FPSLimitedDrawer.h */,
+				CF6D9D331966BE710077B146 /* SandboxManager.mm */,
+				CF6D9D361966BE840077B146 /* SandboxManager.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -2241,6 +2252,7 @@
 				CF8B09CA16ECEE9C0013B6A8 /* MainWindow */,
 				B52EB78B172277C5004ABC2E /* Preferences */,
 				B5A23000171E81AA00D9C1A6 /* Controls */,
+				CF6D9D321966AC220077B146 /* Configuration.h */,
 				B5A89D481746537C00EAB999 /* ApplicationSkins.h */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
 				CFC5122716C4BD3D00D247EE /* AppDelegate.mm */,
@@ -2379,6 +2391,11 @@
 					};
 					CF6D997C196675290077B146 = {
 						CreatedOnToolsVersion = 6.0;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -2490,6 +2507,7 @@
 				CFDC4B5018F834EF004E6429 /* pref_extedit_icon.png in Resources */,
 				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,
+				CF6D9D2C1966A56E0077B146 /* Files-Info.plist in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,
 				CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCD3B7D18AB64C600028B41 /* FindFilesSheetController.xib in Resources */,
@@ -2501,10 +2519,10 @@
 				CFEB07811886ECAA00E5CC0D /* linkarrow_icon.png in Resources */,
 				CF27B50F172F8EAF005C9B28 /* pause_icon.png in Resources */,
 				CF649C3A18D2C0C200055595 /* show_oplist_icon.png in Resources */,
+				CF6D9D311966A5E10077B146 /* Files-Lite.entitlements in Resources */,
 				CF120A931952B57C009527F4 /* pref_term_icon.png in Resources */,
 				CFCA09DF174BA93500AEC8C2 /* files.icns in Resources */,
 				CF12888017800724002816C2 /* FileLinkNewSymlinkSheetController.xib in Resources */,
-				CF6D9D2419667F660077B146 /* Files-Lite-Info.plist in Resources */,
 				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
@@ -2514,6 +2532,7 @@
 				CF039EB61791204600DC85D6 /* PreferencesWindowViewerTab.xib in Resources */,
 				CF039EBF1795AE9F00DC85D6 /* eject_icon.png in Resources */,
 				CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */,
+				CF6D9D2E1966A57B0077B146 /* Files-Lite-Info.plist in Resources */,
 				CF09858118F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFBE65AC17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib in Resources */,
 				CF09857A18F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
@@ -2593,6 +2612,7 @@
 				CF6D9CAE19667BA20077B146 /* archive_read_open_fd.c in Sources */,
 				CF6D9CAF19667BA20077B146 /* archive_read_open_file.c in Sources */,
 				CF6D9CB019667BA20077B146 /* archive_read_open_filename.c in Sources */,
+				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF6D9CB119667BA20077B146 /* archive_read_open_memory.c in Sources */,
 				CF6D9CB219667BA20077B146 /* archive_read_set_format.c in Sources */,
 				CF6D9CB319667BA20077B146 /* archive_read_set_options.c in Sources */,
@@ -2868,6 +2888,7 @@
 				CF9D0EAC17CC961100CB8146 /* archive_read_support_format_tar.c in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
+				CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */,
 				CF9D0EB417CC961100CB8146 /* archive_windows.c in Sources */,
 				CF9D0EA717CC961100CB8146 /* archive_read_support_format_iso9660.c in Sources */,
@@ -3223,20 +3244,21 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"$(inherited)",
+					"__FILES_VER_LITE__=1",
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Files/Files-Lite-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Lite-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3246,6 +3268,7 @@
 				METAL_ENABLE_DEBUG_INFO = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx10.9;
 			};
 			name = Debug;
@@ -3260,17 +3283,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_LITE__=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Files/Files-Lite-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Lite-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3391,12 +3416,16 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"__FILES_VER_FULL__=1",
+				);
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				INFOPLIST_FILE = "Files/Files-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					Files/3rd_party/built/lib,
@@ -3430,12 +3459,13 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_FULL__=1";
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				INFOPLIST_FILE = "Files/Files-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					Files/3rd_party/built/lib,

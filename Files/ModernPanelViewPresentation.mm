@@ -206,19 +206,19 @@ void ModernPanelViewPresentation::BuildAppearance()
     m_ActiveSelectedItemTextColor = [defaults colorForKey:@"FilePanelsModernActiveSelectedTextColor"];
 
     if(m_BackgroundColor) CGColorRelease(m_BackgroundColor);
-    m_BackgroundColor = [defaults colorForKey:@"FilePanelsModernBackgroundColor"].SafeCGColorRef;
+    m_BackgroundColor = [defaults colorForKey:@"FilePanelsModernBackgroundColor"].copyCGColorRefSafe;
 
     if(m_RegularOddBackgroundColor) CGColorRelease(m_RegularOddBackgroundColor);
-    m_RegularOddBackgroundColor = [defaults colorForKey:@"FilePanelsModernAlternativeBackgroundColor"].SafeCGColorRef;
+    m_RegularOddBackgroundColor = [defaults colorForKey:@"FilePanelsModernAlternativeBackgroundColor"].copyCGColorRefSafe;
     
     if(m_ActiveSelectedItemBackgroundColor) CGColorRelease(m_ActiveSelectedItemBackgroundColor);
-    m_ActiveSelectedItemBackgroundColor = [defaults colorForKey:@"FilePanelsModernActiveSelectedBackgroundColor"].SafeCGColorRef;
+    m_ActiveSelectedItemBackgroundColor = [defaults colorForKey:@"FilePanelsModernActiveSelectedBackgroundColor"].copyCGColorRefSafe;
     
     if(m_InactiveSelectedItemBackgroundColor) CGColorRelease(m_InactiveSelectedItemBackgroundColor);
-    m_InactiveSelectedItemBackgroundColor = [defaults colorForKey:@"FilePanelsModernInactiveSelectedBackgroundColor"].SafeCGColorRef;
+    m_InactiveSelectedItemBackgroundColor = [defaults colorForKey:@"FilePanelsModernInactiveSelectedBackgroundColor"].copyCGColorRefSafe;
     
     if(m_CursorFrameColor) CGColorRelease(m_CursorFrameColor);
-    m_CursorFrameColor = [defaults colorForKey:@"FilePanelsModernCursorFrameColor"].SafeCGColorRef;
+    m_CursorFrameColor = [defaults colorForKey:@"FilePanelsModernCursorFrameColor"].copyCGColorRefSafe;
     
     m_ColumnDividerColor = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0); // hard-coded for now
     

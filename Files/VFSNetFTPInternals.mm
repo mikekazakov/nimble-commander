@@ -298,7 +298,7 @@ CURLcode CURLInstance::PerformEasy()
 
 CURLcode CURLInstance::PerformMulti()
 {
-    bool error = false;
+//    bool error = false;
     int running_handles = 0;
     CURLcode result = CURLE_OK;
     
@@ -319,7 +319,7 @@ CURLcode CURLInstance::PerformMulti()
         
         if (select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout) == -1)
         {
-            error = true;
+//            error = true;
             break;
         }
         

@@ -119,11 +119,16 @@ static CTFontRef GetFallbackFontHardway(uint32_t _unicode, CTFontRef _basic_font
         CFRetain(font);
     
 cleanup:
-    CFRelease(frame);
-    CFRelease(framesetter);
-    CFRelease(str_attr);
-    CFRelease(str_dict);
-    CFRelease(str);
+    if(frame)
+        CFRelease(frame);
+    if(framesetter)
+        CFRelease(framesetter);
+    if(str_attr)
+        CFRelease(str_attr);
+    if(str_dict)
+        CFRelease(str_dict);
+    if(str)
+        CFRelease(str);
     return font;
 }
 
@@ -297,6 +302,7 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
                             CFRelease(font_straight);
                             return p;
                         }
+                        CFRelease(font_hard);
                     }
                     // back to straight fallback
                     Pair p;
@@ -307,6 +313,7 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
                     return p;
                 }
             }
+            CFRelease(font_straight);
         }
         
         // no luck

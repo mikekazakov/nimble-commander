@@ -67,8 +67,8 @@ dounlink:
             goto dounlink;
         else if (result == OperationDialogResult::Stop)
         {
-            return;
             RequestStop();
+            return;            
         }
     }
     

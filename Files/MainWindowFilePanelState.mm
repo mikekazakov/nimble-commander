@@ -391,12 +391,12 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void) UpdateTitle
 {
-    if(!self.ActivePanelData)
-    {
+    auto data = self.ActivePanelData;
+    if(!data) {
         self.window.title = @"";
         return;
     }
-    string path_raw = self.ActivePanelData->VerboseDirectoryFullPath();
+    string path_raw = data->VerboseDirectoryFullPath();
     
     NSString *path = [NSString stringWithUTF8String:path_raw.c_str()];
     if(path == nil)
@@ -845,6 +845,9 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void)PanelPathChanged:(PanelController*)_panel
 {
+    if(_panel == nil)
+        return;
+
     if(_panel == self.ActivePanelController)
         [self UpdateTitle];
      
@@ -908,7 +911,9 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path
 {
     assert(dispatch_is_main_queue());
-    if(!self.isPanelActive) return;
+    auto data = self.ActivePanelData;
+    if(!data)
+        return;
     
     PanelController *panel = self.ActivePanelController;
     if([panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok)
@@ -918,7 +923,6 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
                                            timeoutms:100
                                             checknow:true];
         
-        PanelData *data = self.ActivePanelData;
         for(auto &i: _entries)
             data->CustomFlagsSelectSorted(data->SortedIndexForName(i.c_str()), true);
         
@@ -974,10 +978,11 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
-    if(!self.isPanelActive) return;
+    auto data = self.ActivePanelData;
+    if(!data) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:self.ActivePanelView])
         return;
-    if(!self.ActivePanelData->Host()->IsNativeFS())
+    if(!data->Host()->IsNativeFS())
         return; // currently support links only on native fs
     
 //    char link_path[MAXPATHLEN];
@@ -996,7 +1001,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         return;
     }
     
-    string link_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash() + item->Name();
+    string link_path = data->DirectoryPathWithTrailingSlash() + item->Name();
     NSString *linkpath = [NSString stringWithUTF8String:link_path.c_str()];
     
     FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];

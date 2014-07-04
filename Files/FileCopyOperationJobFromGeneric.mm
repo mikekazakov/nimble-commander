@@ -258,7 +258,7 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     {
         shared_ptr<VFSFile> src_file;
         if(m_SrcHost->CreateFile(_src, src_file, 0) >= 0)
-            if(src_file->Open(VFSFile::OF_Read || VFSFile::OF_ShLock) >= 0)
+            if(src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock) >= 0)
                 if(src_file->XAttrCount() > 0)
                     CopyXattrsFn(src_file, _dest);
     }

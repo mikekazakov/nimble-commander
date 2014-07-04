@@ -386,6 +386,8 @@ void Context::DrawBackground(const DoubleColor &_color, int _x, int _y, int _w, 
                                  _h * m_FontCache->Height()));
 }
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
 static void BuildPossibleCompositionEvidenceTable()
 {
     vector<bool> canbecomposed(65536, false);
@@ -419,8 +421,9 @@ static void BuildPossibleCompositionEvidenceTable()
         fprintf(f, "%s0x%08x,", i % 256 == 0 ? "\n" : "", w);
     }
     fclose(f);
-}    
-
+}
+#pragma clang diagnostic pop
+    
 // 8192 bytes total, pretty straightforward
 uint32_t __g_PossibleCompositionEvidence[2048] = {
 0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,

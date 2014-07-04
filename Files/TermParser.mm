@@ -337,7 +337,7 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
                     return;
                 case 'R':
                     m_EscState = S_Normal;
-                default: printf("non-std right br char: %d(\'%c\')\n", (int)c, c); return;                    
+                default: printf("non-std right br char: %d(\'%c\')\n", (int)c, c);
             }
             
             m_EscState = S_Normal;

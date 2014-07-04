@@ -517,14 +517,6 @@ int VFSNetFTPHost::IterateDirectoryListing(const char *_path, bool (^_handler)(c
     return 0;
 }
 
-static int TalkAlot(CURL *, curl_infotype, char *s, size_t n , void *)
-{
-    string str(s, n);
-//    NSLog(@"%s", str.c_str());
-    NSLog(@"%@", [NSString stringWithUTF8String:str.c_str()]);
-    return 0;
-}
-
 unique_ptr<VFSNetFTP::CURLInstance> VFSNetFTPHost::InstanceForIOAtDir(const path &_dir)
 {
     assert(_dir.filename() != ".");

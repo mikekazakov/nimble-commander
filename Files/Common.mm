@@ -249,7 +249,7 @@ bool IsVolumeContainingPathEjectable(const string &_path)
 @end
 
 @implementation NSColor (MyAdditions)
-- (CGColorRef) SafeCGColorRef
+- (CGColorRef) copyCGColorRefSafe
 {
     const NSInteger numberOfComponents = [self numberOfComponents];
     CGFloat components[numberOfComponents];

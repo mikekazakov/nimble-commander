@@ -103,26 +103,6 @@ static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
     }
 }
 
-- (void)CreateBorder
-{
-    return; // mysteries of mystic mystery here
-    if(self.subviews.count > 0)
-    {
-        NSView *subview = self.subviews[0];
-    
-        if(subview.subviews.count > 0)
-        {
-            NSView *subsubview = subview.subviews[0];
-        
-            [subsubview setWantsLayer:true];
-            subsubview.layer.borderWidth = 1;
-            subsubview.layer.cornerRadius = 2;
-            static CGColorRef color = CGColorCreateGenericRGB(204/255.0, 204/255.0, 204/255.0, 0.5);
-            subsubview.layer.borderColor = color;
-        }
-    }
-}
-
 - (void)frameDidChange
 {
     NSView *subview = self.subviews[0];

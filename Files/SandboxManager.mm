@@ -69,6 +69,7 @@ void SandboxManager::SaveSecurityScopeBookmarks()
         [array addObject:i.data];
     
     [NSUserDefaults.standardUserDefaults setObject:array.copy forKey:g_BookmarksKey];
+    [NSUserDefaults.standardUserDefaults synchronize];
     m_BookmarksDirty = false;
 }
 
@@ -79,7 +80,7 @@ bool SandboxManager::Empty() const
 
 bool SandboxManager::AskAccessForPath(const string& _path)
 {
-    NSOpenPanel * openPanel = [NSOpenPanel openPanel];
+    NSOpenPanel * openPanel = NSOpenPanel.openPanel;
     openPanel.canChooseFiles = false;
     openPanel.canChooseDirectories = true;
     openPanel.allowsMultipleSelection = false;
@@ -87,28 +88,75 @@ bool SandboxManager::AskAccessForPath(const string& _path)
     long res = [openPanel runModal];
     if(res == NSModalResponseOK) {
         NSURL *url = openPanel.URL;
+        if(url) {
+            path url_path = url.path.fileSystemRepresentation;
         
-        // todo: check actual returned path
-        
-        NSData *bookmark_data = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
-                              includingResourceValuesForKeys:nil
-                                               relativeToURL:nil
-                                                       error:nil];
-        NSURL *scoped_url = [NSURL URLByResolvingBookmarkData:bookmark_data
-                                                      options:NSURLBookmarkResolutionWithSecurityScope
-                                                relativeToURL:nil
-                                          bookmarkDataIsStale:nil
-                                                        error:nil];
-        if([scoped_url startAccessingSecurityScopedResource]) {
-            Bookmark bm;
-            bm.data = bookmark_data;
-            bm.url = scoped_url;
-            bm.is_accessing = false;
-            bm.path = scoped_url.path.fileSystemRepresentation;
-            m_Bookmarks.emplace_back(bm);
-            m_BookmarksDirty = true;
-            return true;
+            NSData *bookmark_data = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
+                                  includingResourceValuesForKeys:nil
+                                                   relativeToURL:nil
+                                                           error:nil];
+            NSURL *scoped_url = [NSURL URLByResolvingBookmarkData:bookmark_data
+                                                          options:NSURLBookmarkResolutionWithSecurityScope
+                                                    relativeToURL:nil
+                                              bookmarkDataIsStale:nil
+                                                            error:nil];
+            if([scoped_url startAccessingSecurityScopedResource]) {
+                Bookmark bm;
+                bm.data = bookmark_data;
+                bm.url = scoped_url;
+                bm.is_accessing = false;
+                bm.path = scoped_url.path.fileSystemRepresentation;
+                if(bm.path.filename() == ".") bm.path.remove_filename();
+                m_Bookmarks.emplace_back(bm);
+                m_BookmarksDirty = true;
+                
+                return HasAccessToFolder(_path);
+            }
         }
     }
     return false;
+}
+
+bool SandboxManager::HasAccessToFolder(const path &_p) const
+{
+    auto p = _p;
+    if(p.filename() == ".") p.remove_filename();
+    
+    // look in our bookmarks user has given
+    for(auto &i: m_Bookmarks)
+        if( i.path.native().length() <= p.native().length() &&
+           i.path.native().compare(0, i.path.native().length(), p.native()) == 0)
+            return true;
+
+    // look in built-in r/o access
+    static const vector<string> granted_ro = {
+        "/bin",
+        "/sbin",
+        "/usr/bin",
+        "/usr/lib",
+        "/usr/sbin",
+        "/usr/share",
+        "/System"
+    };
+    for(auto &s: granted_ro)
+        if( s.length() < p.native().length() &&
+           s.compare(0, s.length(), p.native()) == 0)
+            return true;
+    
+    return false;
+}
+
+bool SandboxManager::CanAccessFolder(const string& _path) const
+{
+    return HasAccessToFolder(_path);
+}
+
+bool SandboxManager::CanAccessFolder(const char* _path) const
+{
+    return _path != nullptr ? HasAccessToFolder(_path) : false;
+}
+
+string SandboxManager::FirstFolderWithAccess() const
+{
+    return m_Bookmarks.empty() ? "" : m_Bookmarks.front().path.native();
 }

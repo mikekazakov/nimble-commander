@@ -36,14 +36,20 @@
     NSDockTile          *m_DockTile;
     double              m_AppProgress;
     bool                m_IsRunningTests;
+    string              m_StartupCWD;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
+@synthesize startupCWD = m_StartupCWD;
 
 - (id) init
 {
     self = [super init];
     if(self) {
+        char cwd[MAXPATHLEN];
+        getcwd(cwd, MAXPATHLEN);
+        m_StartupCWD = cwd;
+        
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
         m_AppProgress = -1;
         
@@ -104,7 +110,9 @@
 
     // calling modules running in background
     TemporaryNativeFileStorage::StartBackgroundPurging();
-    NewVersionChecker::Go();
+
+    if(!configuration::is_sandboxed)
+        NewVersionChecker::Go(); // we check for new versions only for non-sanboxed (say non-MAS) version
 }
 
 - (double) progress
@@ -132,6 +140,10 @@
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification
 {
+    if(configuration::is_sandboxed &&
+       [NSApp modalWindow] != nil)
+        return; // we can show NSOpenPanel on startup. in this case applicationDidBecomeActive should be ignored
+    
     if(m_MainWindows.empty())
     {
         if(!m_IsRunningTests)

@@ -38,6 +38,7 @@
 #import "ActionsShortcutsManager.h"
 #import "MyToolbar.h"
 #import "common_paths.h"
+#import "SandboxManager.h"
 
 static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
 static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
@@ -84,26 +85,77 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         m_LeftPanelController.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
         m_RightPanelController.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
 
+        
         // now load data into panels, on any fails - go into home dir
         NSString *lp = [defaults stringForKey:@"FirstPanelPath"];
-        if(!lp || !lp.length || [m_LeftPanelController GoToDir:lp.fileSystemRepresentation
-                                                           vfs:VFSNativeHost::SharedHost()
-                                                  select_entry:""
-                                                         async:false] < 0)
-            [m_LeftPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
-                                       vfs:VFSNativeHost::SharedHost()
-                              select_entry:""
-                                     async:false];
-        
         NSString *rp = [defaults stringForKey:@"SecondPanelPath"];
-        if(!rp || !rp.length || [m_RightPanelController GoToDir:rp.fileSystemRepresentation
-                                                            vfs:VFSNativeHost::SharedHost()
-                                                   select_entry:""
-                                                          async:false] < 0)
-            [m_RightPanelController GoToDir:"/"
-                                        vfs:VFSNativeHost::SharedHost()
-                               select_entry:""
-                                      async:false];
+        
+        if(!configuration::is_sandboxed) { // regular waypath
+            if(!lp || !lp.length || [m_LeftPanelController GoToDir:lp.fileSystemRepresentation
+                                                               vfs:VFSNativeHost::SharedHost()
+                                                      select_entry:""
+                                                             async:false] < 0)
+                [m_LeftPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
+                                           vfs:VFSNativeHost::SharedHost()
+                                  select_entry:""
+                                         async:false];
+        
+            if(!rp || !rp.length || [m_RightPanelController GoToDir:rp.fileSystemRepresentation
+                                                                vfs:VFSNativeHost::SharedHost()
+                                                       select_entry:""
+                                                              async:false] < 0)
+                [m_RightPanelController GoToDir:"/"
+                                            vfs:VFSNativeHost::SharedHost()
+                                   select_entry:""
+                                          async:false];
+        }
+        else { // on sandboxed version it's bit more complicated
+            if(!lp ||
+               !lp.length ||
+               !SandboxManager::Instance().CanAccessFolder(lp.fileSystemRepresentation) ||
+               [m_LeftPanelController GoToDir:lp.fileSystemRepresentation
+                                          vfs:VFSNativeHost::SharedHost()
+                                 select_entry:""
+                                        async:false] < 0) {
+                   // failed to load saved panel path (or there was no saved path)
+                   // try to go to some path we can
+                   if(SandboxManager::Instance().Empty() ||
+                      [m_LeftPanelController GoToDir:SandboxManager::Instance().FirstFolderWithAccess()
+                                                 vfs:VFSNativeHost::SharedHost()
+                                        select_entry:""
+                                               async:false] < 0) {
+                          // failed to go to folder with granted access(or no such folders)
+                          // as last resort - go to startup cwd
+                          [m_LeftPanelController GoToDir:[[NSApp delegate] startupCWD]
+                                                     vfs:VFSNativeHost::SharedHost()
+                                            select_entry:""
+                                                   async:false];
+                    }
+            }
+            
+            if(!rp ||
+               !rp.length ||
+               !SandboxManager::Instance().CanAccessFolder(rp.fileSystemRepresentation) ||
+               [m_RightPanelController GoToDir:rp.fileSystemRepresentation
+                                           vfs:VFSNativeHost::SharedHost()
+                                  select_entry:""
+                                         async:false] < 0) {
+                   // failed to load saved panel path (or there was no saved path)
+                   // try to go to some path we can
+                   if(SandboxManager::Instance().Empty() ||
+                      [m_RightPanelController GoToDir:SandboxManager::Instance().FirstFolderWithAccess()
+                                                  vfs:VFSNativeHost::SharedHost()
+                                         select_entry:""
+                                                async:false] < 0) {
+                          // failed to go to folder with granted access(or no such folders)
+                          // as last resort - go to startup cwd
+                          [m_RightPanelController GoToDir:[[NSApp delegate] startupCWD]
+                                                      vfs:VFSNativeHost::SharedHost()
+                                             select_entry:""
+                                                    async:false];
+                      }
+               }
+        }
     }
     return self;
 }

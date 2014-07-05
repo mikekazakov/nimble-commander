@@ -14,10 +14,28 @@ class SandboxManager
 public:
     static SandboxManager &Instance();
 
+    /**
+     * Returns true if application has no access to fs but it's own container and some folders hardcoded
+     */
     bool Empty() const;
     
+    /**
+     * Returns some (presumably the first) folder user has granted access to.
+     * If Empty() then will return "".
+     */
+    string FirstFolderWithAccess() const;
     
+    /**
+     * Currently don't work with symlinks, it's a caller's duty.
+     */
+    bool CanAccessFolder(const string& _path) const;
+    bool CanAccessFolder(const char* _path) const;
+    
+    /**
+     * Will synchronously show NSOpenPanel.
+     */
     bool AskAccessForPath(const string& _path);
+    
 
 private:
     struct Bookmark
@@ -32,6 +50,7 @@ private:
     void LoadSecurityScopeBookmarks();
     void SaveSecurityScopeBookmarks();
   
+    bool HasAccessToFolder(const path &_p) const;
     
     vector<Bookmark>    m_Bookmarks;
     bool                m_BookmarksDirty = false;

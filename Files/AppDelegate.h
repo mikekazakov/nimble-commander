@@ -36,4 +36,6 @@
  */
 @property (nonatomic, readonly) bool isRunningTests;
 
+@property (nonatomic, readonly) const string& startupCWD;
+
 @end

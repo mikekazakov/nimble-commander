@@ -181,7 +181,7 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     if(path[strlen(path)-1] != '/') strcat(path, "/");
     char *var = path + strlen(path);
     
-    dispatch_queue_t stat_queue = dispatch_queue_create("info.filesmanager.Files.VFSNativeHost.CalculateDirectoriesSizes", 0);
+    dispatch_queue_t stat_queue = dispatch_queue_create(__FILES_IDENTIFIER__".VFSNativeHost.CalculateDirectoriesSizes", 0);
     
     int error = VFSError::Ok;
     

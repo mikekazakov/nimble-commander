@@ -19,7 +19,7 @@
 - (void)testPermanentDeletion
 {
     char dir[MAXPATHLEN];
-    sprintf(dir, "%sinfo.filesmanager.tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+    sprintf(dir, "%s"__FILES_IDENTIFIER__".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
     XCTAssert( mkdtemp(dir) != nullptr );
     
     XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",

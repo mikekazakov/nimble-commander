@@ -32,7 +32,7 @@ static const double g_Gap = 8.0;
         m_SuperView = _sview;
         m_AllObjectsAdded = false;
         m_Constraints = [NSMutableArray new];
-        m_WorkQueue = dispatch_queue_create("info.filesmanager.StackOfDisappearingWidgets", 0);
+        m_WorkQueue = dispatch_queue_create(__FILES_IDENTIFIER__".StackOfDisappearingWidgets", 0);
     }
     return self;
 }

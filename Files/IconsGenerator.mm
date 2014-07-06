@@ -15,7 +15,7 @@
 #import "WorkspaceIconsCache.h"
 #import "Common.h"
 
-static const NSString *g_TempDir = NSTemporaryDirectory();
+static const string g_TempDir = NSTemporaryDirectory().fileSystemRepresentation;
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones
@@ -58,7 +58,7 @@ static NSImageRep *ProduceThumbnailForVFS(const char *_path,
         return 0;
     
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%sinfo.filesmanager.ico.XXXXXX", [g_TempDir fileSystemRepresentation]);
+    sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".ico.XXXXXX", g_TempDir.c_str());
     
     int fd = mkstemp(pattern_buf);
     if(fd < 0)
@@ -193,8 +193,8 @@ static unsigned MaximumConcurrentRunnersForVFS(VFSHost *_host)
 IconsGenerator::IconsGenerator():
     m_WorkGroup(DispatchGroup::Background)
 {
-    m_ControlQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
-    m_IconsCacheQueue = dispatch_queue_create("info.filesmanager.Files.IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);
+    m_ControlQueue = dispatch_queue_create(__FILES_IDENTIFIER__".IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
+    m_IconsCacheQueue = dispatch_queue_create(__FILES_IDENTIFIER__".IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);
     m_IconSize = NSMakeRect(0, 0, 16, 16);
     m_LastIconID = 0;
     m_StopWorkQueue = false;

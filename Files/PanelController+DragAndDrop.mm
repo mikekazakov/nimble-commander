@@ -14,7 +14,7 @@
 #import "FontExtras.h"
 #import "path_manip.h"
 
-static NSString *kPrivateDragUTI = @"info.filesmanager.filepanelsdraganddrop";
+static NSString *kPrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop";
 
 @interface PanelDraggingItem : NSPasteboardItem
 @property(nonatomic) string filename;

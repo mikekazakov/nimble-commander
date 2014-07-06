@@ -32,17 +32,20 @@ namespace configuration
         Full
     };
 
-    constexpr Version version =
 #if   defined(__FILES_VER_LITE__)
-    Version::Lite;
+    constexpr Version version = Version::Lite;
+    #define __FILES_IDENTIFIER__ "info.filesmanager.Files-Lite"
 #elif defined(__FILES_VER_PRO__)
-    Version::Pro;
+    constexpr Version version = Version::Pro;
+    #define __FILES_IDENTIFIER__ "info.filesmanager.Files-Pro"
 #elif defined(__FILES_VER_FULL__)
-    Version::Full;
+    constexpr Version version = Version::Full;
+    #define __FILES_IDENTIFIER__ "info.filesmanager.Files"
 #else
     #error Invalid build configuration - no version type specified
 #endif
-
+    
+    constexpr const char *identifier = __FILES_IDENTIFIER__;
     constexpr bool is_sandboxed = (version == Version::Lite) || (version == Version::Pro);
 }
 

@@ -66,7 +66,7 @@ static double TitleBarHeight()
 
     
     if(self = [super initWithWindow:window]) {
-        m_BigFileViewLoadingQ = SerialQueueT::Make("info.filesmanager.bigfileviewloading");
+        m_BigFileViewLoadingQ = SerialQueueT::Make(__FILES_IDENTIFIER__".bigfileviewloading");
         self.ShouldCascadeWindows = NO;
         window.Delegate = self;
         

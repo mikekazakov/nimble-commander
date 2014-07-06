@@ -21,7 +21,7 @@ VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
                                shared_ptr<VFSHost> _parent):
     VFSHost(_junction_path, _parent),
     m_Arc(0),
-    m_SeekCacheControl(dispatch_queue_create("info.filesmanager.Files.VFSArchiveHost.sc_control_queue", DISPATCH_QUEUE_SERIAL))
+    m_SeekCacheControl(dispatch_queue_create(__FILES_IDENTIFIER__".VFSArchiveHost.sc_control_queue", DISPATCH_QUEUE_SERIAL))
 {
 }
 

@@ -94,9 +94,9 @@ void panel::GenericCursorPersistance::Restore()
         m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
         m_IsAnythingWorksInBackground = false;
-        m_DirectorySizeCountingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirsizecounting");
-        m_DirectoryLoadingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirsizecounting");
-        m_DirectoryReLoadingQ = make_shared<SerialQueueT>("info.filespamanager.paneldirreloading");
+        m_DirectorySizeCountingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirsizecounting");
+        m_DirectoryLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirsizecounting");
+        m_DirectoryReLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirreloading");
         m_DelayedSelection.isvalid = false;
         
         __weak PanelController* weakself = self;

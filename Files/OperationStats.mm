@@ -19,7 +19,7 @@ OperationStats::OperationStats()
     m_MaxValue(1),
     m_CurrentItemChanged(false)
 {
-    m_ControlQue = dispatch_queue_create("info.filesmanager.OperationStats", 0);
+    m_ControlQue = dispatch_queue_create(__FILES_IDENTIFIER__".OperationStats", 0);
 }
 
 OperationStats::~OperationStats()

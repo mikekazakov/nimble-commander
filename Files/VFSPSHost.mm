@@ -244,7 +244,7 @@ ERROR_A:;
 
 VFSPSHost::VFSPSHost():
     VFSHost("", shared_ptr<VFSHost>(0)),
-    m_UpdateQ(make_shared<SerialQueueT>("info.filesmanager.VFSPSHost"))
+    m_UpdateQ(make_shared<SerialQueueT>(__FILES_IDENTIFIER__".VFSPSHost"))
 {
     CommitProcs(GetProcs());
 }

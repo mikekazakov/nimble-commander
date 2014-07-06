@@ -85,10 +85,8 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
     else
     {
         // we need to write it into a temp dir and delete it upon finish
-        NSString *temp_dir = NSTemporaryDirectory();
-        assert(temp_dir);
         char pattern_buf[MAXPATHLEN];
-        sprintf(pattern_buf, "%sinfo.filesmanager.vfs.XXXXXX", [temp_dir fileSystemRepresentation]);
+        sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".vfs.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
         
         int fd = mkstemp(pattern_buf);
         

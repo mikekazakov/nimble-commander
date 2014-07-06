@@ -81,6 +81,7 @@ bool SandboxManager::Empty() const
 bool SandboxManager::AskAccessForPath(const string& _path)
 {
     NSOpenPanel * openPanel = NSOpenPanel.openPanel;
+    openPanel.message = @"Click 'OK' to allow access to files contained in the selected directory";
     openPanel.canChooseFiles = false;
     openPanel.canChooseDirectories = true;
     openPanel.allowsMultipleSelection = false;

@@ -18,14 +18,12 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-static TemporaryNativeFileStorage *g_SharedInstance = 0;
-static const char *g_Pref = "info.filesmanager.tmp.";
-static const size_t g_PrefLen = strlen(g_Pref);
-static char g_TmpDirPath[MAXPATHLEN] = {0}; // will be temp dir with trailing slash
+static const string g_Pref = __FILES_IDENTIFIER__".tmp.";
+static const string g_TempDir = NSTemporaryDirectory().fileSystemRepresentation;
 
 TemporaryNativeFileStorage::TemporaryNativeFileStorage()
 {
-    m_ControlQueue = dispatch_queue_create("info.filesmanager.Files.TemporaryNativeFileStorage", NULL);
+    m_ControlQueue = dispatch_queue_create(__FILES_IDENTIFIER__".TemporaryNativeFileStorage", NULL);
     
     char tmp_1st[MAXPATHLEN];
     if(NewTempDir(tmp_1st))
@@ -37,17 +35,14 @@ TemporaryNativeFileStorage::~TemporaryNativeFileStorage()
 
 TemporaryNativeFileStorage &TemporaryNativeFileStorage::Instance()
 {
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        g_SharedInstance = new TemporaryNativeFileStorage;
-    });
+    static TemporaryNativeFileStorage *g_SharedInstance = new TemporaryNativeFileStorage;
     return *g_SharedInstance;
 }
 
 bool TemporaryNativeFileStorage::NewTempDir(char *_full_path)
 {
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%s%sXXXXXX", g_TmpDirPath, g_Pref);
+    sprintf(pattern_buf, "%s%sXXXXXX", g_TempDir.c_str(), g_Pref.c_str());
     char *res = mkdtemp(pattern_buf);
     if(res == 0)
         return false;
@@ -207,18 +202,18 @@ static bool DoSubDirPurge(const char *_dir)
 
 static void DoTempPurge()
 {
-    DIR *dirp = opendir(g_TmpDirPath);
+    DIR *dirp = opendir(g_TempDir.c_str());
     if(!dirp)
         return;
     
     dirent *entp;
     while((entp = _readdir_unlocked(dirp, 1)) != NULL)
-        if( strncmp(entp->d_name, g_Pref, g_PrefLen) == 0 &&
+        if( strncmp(entp->d_name, g_Pref.c_str(), g_Pref.length()) == 0 &&
            entp->d_type == DT_DIR
            )
         {
             char fn[MAXPATHLEN];
-            strcpy(fn, g_TmpDirPath);
+            strcpy(fn, g_TempDir.c_str());
             strcat(fn, entp->d_name);
             strcat(fn, "/");
             
@@ -238,13 +233,6 @@ static void DoTempPurge()
 
 void TemporaryNativeFileStorage::StartBackgroundPurging()
 {
-    // also initialize some stuff
-    NSString *temp_dir = NSTemporaryDirectory();
-    assert(temp_dir);
-    strcpy(g_TmpDirPath, [temp_dir fileSystemRepresentation]);
-    if(g_TmpDirPath[strlen(g_TmpDirPath)-1] != '/')
-        strcat(g_TmpDirPath, "/");
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         DoTempPurge();
     });

@@ -10,7 +10,7 @@
 #import "3rd_party/libarchive/archive_platform.h"
 #import "VFSError.h"
 
-static NSString *const g_Domain = @"info.filesmanager.files.vfs";
+static NSString *const g_Domain = @__FILES_IDENTIFIER__".vfs";
 
 namespace VFSError 
 {

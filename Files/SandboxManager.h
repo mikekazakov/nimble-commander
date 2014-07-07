@@ -34,8 +34,12 @@ public:
     /**
      * Will synchronously show NSOpenPanel.
      */
-    bool AskAccessForPath(const string& _path);
+    bool AskAccessForPathSync(const string& _path);
     
+    /**
+     * Removes any filesystem access granted by user.
+     */
+    void ResetBookmarks();
 
 private:
     struct Bookmark
@@ -54,5 +58,6 @@ private:
     
     vector<Bookmark>    m_Bookmarks;
     bool                m_BookmarksDirty = false;
+    mutable recursive_mutex m_Lock;
     
 };

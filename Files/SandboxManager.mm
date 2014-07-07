@@ -7,6 +7,7 @@
 //
 
 #include "SandboxManager.h"
+#include "AppDelegate.h"
 
 static NSString *g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 
@@ -18,7 +19,7 @@ SandboxManager &SandboxManager::Instance()
         manager = new SandboxManager;
         manager->LoadSecurityScopeBookmarks();
         [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
-                                                        object:[NSApplication sharedApplication]
+                                                        object:NSApplication.sharedApplication
                                                          queue:NSOperationQueue.mainQueue
                                                     usingBlock:^(NSNotification *note) {
                                                         auto &sm = SandboxManager::Instance();
@@ -78,18 +79,21 @@ bool SandboxManager::Empty() const
     return m_Bookmarks.empty();
 }
 
-bool SandboxManager::AskAccessForPath(const string& _path)
+bool SandboxManager::AskAccessForPathSync(const string& _path)
 {
+    lock_guard<recursive_mutex> lock(m_Lock);
+    
+    // TODO: this stuff should work from non-main thread also.
     NSOpenPanel * openPanel = NSOpenPanel.openPanel;
     openPanel.message = @"Click 'OK' to allow access to files contained in the selected directory";
     openPanel.canChooseFiles = false;
     openPanel.canChooseDirectories = true;
     openPanel.allowsMultipleSelection = false;
-    openPanel.directoryURL = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8String:_path.c_str()]];
+    NSURL *dir_url = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8String:_path.c_str()]];
+    openPanel.directoryURL = dir_url;
     long res = [openPanel runModal];
-    if(res == NSModalResponseOK) {
-        NSURL *url = openPanel.URL;
-        if(url) {
+    if(res == NSModalResponseOK)
+        if(NSURL *url = openPanel.URL) {
             path url_path = url.path.fileSystemRepresentation;
         
             NSData *bookmark_data = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
@@ -114,22 +118,27 @@ bool SandboxManager::AskAccessForPath(const string& _path)
                 return HasAccessToFolder(_path);
             }
         }
-    }
     return false;
 }
 
 bool SandboxManager::HasAccessToFolder(const path &_p) const
 {
+    // NB! TODO: consider using more complex comparison, regaring lowercase/uppercase and normalization stuff.
+    // currently doesn't accounts this and compares directly with characters
+    
     auto p = _p;
     if(p.filename() == ".") p.remove_filename();
     
     // look in our bookmarks user has given
     for(auto &i: m_Bookmarks)
         if( i.path.native().length() <= p.native().length() &&
-           i.path.native().compare(0, i.path.native().length(), p.native()) == 0)
+           mismatch(i.path.native().begin(),
+                    i.path.native().end(),
+                    p.native().begin()).first == i.path.native().end() )
             return true;
 
     // look in built-in r/o access
+    // also we can do stuff in dedicated temporary directory and in sandbox container
     static const vector<string> granted_ro = {
         "/bin",
         "/sbin",
@@ -137,11 +146,13 @@ bool SandboxManager::HasAccessToFolder(const path &_p) const
         "/usr/lib",
         "/usr/sbin",
         "/usr/share",
-        "/System"
+        "/System",
+        (path(NSTemporaryDirectory().fileSystemRepresentation).remove_filename()).native(),
+        ((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
     };
     for(auto &s: granted_ro)
-        if( s.length() < p.native().length() &&
-           s.compare(0, s.length(), p.native()) == 0)
+        if( s.length() <= p.native().length() &&
+           mismatch(s.begin(), s.end(), p.native().begin()).first == s.end())
             return true;
     
     return false;
@@ -149,15 +160,32 @@ bool SandboxManager::HasAccessToFolder(const path &_p) const
 
 bool SandboxManager::CanAccessFolder(const string& _path) const
 {
+    lock_guard<recursive_mutex> lock(m_Lock);
     return HasAccessToFolder(_path);
 }
 
 bool SandboxManager::CanAccessFolder(const char* _path) const
 {
+    lock_guard<recursive_mutex> lock(m_Lock);
     return _path != nullptr ? HasAccessToFolder(_path) : false;
 }
 
 string SandboxManager::FirstFolderWithAccess() const
 {
+    lock_guard<recursive_mutex> lock(m_Lock);
     return m_Bookmarks.empty() ? "" : m_Bookmarks.front().path.native();
+}
+
+void SandboxManager::ResetBookmarks()
+{
+    lock_guard<recursive_mutex> lock(m_Lock);
+    if(m_Bookmarks.empty())
+        return;
+    
+    for(auto &i: m_Bookmarks)
+        if(i.is_accessing)
+            [i.url stopAccessingSecurityScopedResource];
+    
+    m_Bookmarks.clear();
+    m_BookmarksDirty = true;
 }

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6154.17" systemVersion="14A261i" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6154.21" systemVersion="14A261i" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6154.17"/>
+        <deployment version="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6154.21"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowGeneralTab">
             <connections>
+                <outlet property="FSAccessLabel" destination="mE6-dr-OKl" id="bOi-pr-rtr"/>
+                <outlet property="FSAccessResetButton" destination="8tk-ZS-HXz" id="vPs-ST-nCy"/>
                 <outlet property="view" destination="1" id="2"/>
             </connections>
         </customObject>
@@ -61,16 +63,44 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mE6-dr-OKl">
+                    <rect key="frame" x="-2" y="18" width="199" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="195" id="dLf-zL-nnv"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Granted filesystem access:" id="q8n-Mc-Nho">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8tk-ZS-HXz">
+                    <rect key="frame" x="197" y="8" width="95" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="83" id="q34-rY-LY2"/>
+                    </constraints>
+                    <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Geu-Lq-Yub">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="OnFSAccessReset:" target="-2" id="qcr-xq-bMK"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstItem="30" firstAttribute="leading" secondItem="9" secondAttribute="leading" id="0lX-Va-0XE"/>
                 <constraint firstItem="30" firstAttribute="leading" secondItem="55" secondAttribute="trailing" constant="8" symbolic="YES" id="F6U-R5-vz2"/>
                 <constraint firstItem="9" firstAttribute="leading" secondItem="8" secondAttribute="trailing" constant="8" symbolic="YES" id="GaV-Hd-gpw"/>
+                <constraint firstItem="mE6-dr-OKl" firstAttribute="centerY" secondItem="8tk-ZS-HXz" secondAttribute="centerY" constant="-1" id="KMR-VB-Wht"/>
+                <constraint firstItem="8tk-ZS-HXz" firstAttribute="top" secondItem="30" secondAttribute="bottom" constant="9" id="KhN-6l-ocv"/>
                 <constraint firstItem="9" firstAttribute="trailing" secondItem="30" secondAttribute="trailing" id="NBN-kT-8XE"/>
                 <constraint firstItem="8" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="42" id="TJl-JQ-Rgb"/>
                 <constraint firstItem="30" firstAttribute="top" secondItem="9" secondAttribute="bottom" constant="12" id="VZS-2q-NhX"/>
                 <constraint firstItem="9" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" symbolic="YES" id="Y8S-RY-Kiw"/>
                 <constraint firstAttribute="trailing" secondItem="9" secondAttribute="trailing" constant="69" id="b7q-Tg-zbi"/>
+                <constraint firstItem="8tk-ZS-HXz" firstAttribute="leading" secondItem="30" secondAttribute="leading" id="cXN-fu-HMH"/>
+                <constraint firstItem="8tk-ZS-HXz" firstAttribute="leading" secondItem="mE6-dr-OKl" secondAttribute="trailing" constant="8" symbolic="YES" id="em3-Ns-5GL"/>
                 <constraint firstItem="55" firstAttribute="top" secondItem="8" secondAttribute="bottom" constant="17" id="oYs-5W-GGJ"/>
                 <constraint firstItem="30" firstAttribute="centerY" secondItem="55" secondAttribute="centerY" id="xx9-tK-Oov"/>
             </constraints>

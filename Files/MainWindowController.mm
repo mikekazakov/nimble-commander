@@ -103,6 +103,9 @@ static double TitleBarHeight()
     AppDelegate *delegate = (AppDelegate*)NSApplication.sharedApplication.delegate;
     if(delegate.isRunningTests)
         return;
+//  looks like current bugs in OSX10.10. uncomment this later:
+//    if(configuration::is_sandboxed && [NSApp modalWindow] != nil)
+//        return;
     
     NSWindow *window = nil;
     if ([identifier isEqualToString:NSStringFromClass(self.class)])

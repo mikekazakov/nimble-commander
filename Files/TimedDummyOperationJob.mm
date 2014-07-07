@@ -42,7 +42,7 @@ void TimedDummyOperationJob::Do()
     
         if (rand() % 50 == 0)
         {
-            if (false)
+            if ((false))
             {
                 TimedDummyOperationTestDialog *dialog = [m_Operation AskUser:elapsed_time];
             

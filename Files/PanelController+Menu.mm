@@ -112,30 +112,44 @@
 }
 
 - (IBAction)OnGoToHome:(id)sender {
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Home)])
+        return;
     [self GoToDir:CommonPaths::Get(CommonPaths::Home) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToDocuments:(id)sender {
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Documents)])
+        return;
     [self GoToDir:CommonPaths::Get(CommonPaths::Documents) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToDesktop:(id)sender {
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Desktop)])
+        return;
     [self GoToDir:CommonPaths::Get(CommonPaths::Desktop) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToDownloads:(id)sender {
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Downloads)])
+        return;
     [self GoToDir:CommonPaths::Get(CommonPaths::Downloads) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToApplications:(id)sender {
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Applications)])
+        return;
     [self GoToDir:CommonPaths::Get(CommonPaths::Applications) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToUtilities:(id)sender {
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Utilities)])
+        return;
     [self GoToDir:CommonPaths::Get(CommonPaths::Utilities) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToLibrary:(id)sender {
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Library)])
+        return;
     [self GoToDir:CommonPaths::Get(CommonPaths::Library) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
@@ -154,6 +168,8 @@
         else // sub-dir
             path.insert(0, self.GetCurrentDirectoryPathRelativeToHost);
 
+        // TODO: check reachability from sandbox
+        
         return [self GoToDir:path
                          vfs:VFSNativeHost::SharedHost() // not sure if this is right, mb .VFS in case of sub-dir?
                 select_entry:""

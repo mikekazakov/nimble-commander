@@ -17,6 +17,7 @@
 #import "ActionsShortcutsManager.h"
 #import "FTPConnectionSheetController.h"
 #import "FileCopyOperation.h"
+#import "SandboxManager.h"
 
 static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
@@ -32,6 +33,9 @@ static NSArray *g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQ
 
 static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
+    if(_item.IsDir())
+        return false;
+    
     // TODO: need more sophisticated executable handling here
     // THIS IS WRONG!
     bool uexec = (_item.UnixMode() & S_IXUSR) ||
@@ -295,6 +299,9 @@ void panel::GenericCursorPersistance::Restore()
             assert(!junct.empty());
             string dir = junct.parent_path().native();
             string sel_fn = junct.filename().native();
+            
+            if(self.VFS->Parent()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
+                return true; // silently reap this command, since user refuses to grant an access
             return [self GoToDir:dir vfs:self.VFS->Parent() select_entry:sel_fn async:true] == 0;
         }
     }
@@ -302,6 +309,9 @@ void panel::GenericCursorPersistance::Restore()
     {
         string dir = cur.parent_path().remove_filename().native();
         string sel_fn = cur.parent_path().filename().native();
+        
+        if(self.VFS->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
+            return true; // silently reap this command, since user refuses to grant an access
         return [self GoToDir:dir vfs:self.VFS select_entry:sel_fn async:true] == 0;
     }
     return false;
@@ -707,6 +717,20 @@ void panel::GenericCursorPersistance::Restore()
     bool ignore_dirs = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
     if(m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
         [m_View setNeedsDisplay:true];
+}
+
++ (bool) ensureCanGoToNativeFolderSync:(const string&)_path
+{
+    if(configuration::is_sandboxed &&
+       !SandboxManager::Instance().CanAccessFolder(_path) &&
+       !SandboxManager::Instance().AskAccessForPathSync(_path))
+        return false;
+    return true;
+}
+
+- (bool)ensureCanGoToNativeFolderSync:(const string&)_path
+{
+    return [PanelController ensureCanGoToNativeFolderSync:_path];
 }
 
 @end

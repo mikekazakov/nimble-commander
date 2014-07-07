@@ -12,6 +12,9 @@
 @interface PreferencesWindowGeneralTab : NSViewController <RHPreferencesViewControllerProtocol>
 - (IBAction)ResetToDefaults:(id)sender;
 
+@property (strong) IBOutlet NSButton *FSAccessResetButton;
+@property (strong) IBOutlet NSTextField *FSAccessLabel;
+- (IBAction)OnFSAccessReset:(id)sender;
 
 
 

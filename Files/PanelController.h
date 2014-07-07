@@ -146,6 +146,8 @@ namespace panel
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode;
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter;
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev;
++ (bool) ensureCanGoToNativeFolderSync:(const string&)_path;
+- (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.
 @end
 
 #import "PanelController+DataAccess.h"

@@ -126,7 +126,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
                                                async:false] < 0) {
                           // failed to go to folder with granted access(or no such folders)
                           // as last resort - go to startup cwd
-                          [m_LeftPanelController GoToDir:[[NSApp delegate] startupCWD]
+                          [m_LeftPanelController GoToDir:((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
                                                      vfs:VFSNativeHost::SharedHost()
                                             select_entry:""
                                                    async:false];
@@ -149,7 +149,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
                                                 async:false] < 0) {
                           // failed to go to folder with granted access(or no such folders)
                           // as last resort - go to startup cwd
-                          [m_RightPanelController GoToDir:[[NSApp delegate] startupCWD]
+                          [m_RightPanelController GoToDir:((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
                                                       vfs:VFSNativeHost::SharedHost()
                                              select_entry:""
                                                     async:false];
@@ -343,6 +343,8 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender
 {
+    if(![PanelController ensureCanGoToNativeFolderSync:m_LeftPanelGoToButton.path])
+        return;
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     [m_LeftPanelController GoToDir:m_LeftPanelGoToButton.path
                                vfs:VFSNativeHost::SharedHost()
@@ -351,6 +353,8 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender{
+    if(![PanelController ensureCanGoToNativeFolderSync:m_RightPanelGoToButton.path])
+        return;
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     [m_RightPanelController GoToDir:m_RightPanelGoToButton.path
                                vfs:VFSNativeHost::SharedHost()

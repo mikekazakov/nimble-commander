@@ -79,8 +79,11 @@
     
     if(configuration::is_sandboxed) {
         auto &sm = SandboxManager::Instance();
-        if(sm.Empty())
-            sm.AskAccessForPath(CommonPaths::Get(CommonPaths::Home));
+        if(sm.Empty()) {
+            sm.AskAccessForPathSync(CommonPaths::Get(CommonPaths::Home));
+            if(m_MainWindows.empty())
+                [self AllocateNewMainWindow];
+        }
     }
 }
 

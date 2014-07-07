@@ -1,4 +1,4 @@
-/* Copyright © 2012, Intel Corporation.  All rights reserved. 
+/* Copyright ï¿½ 2012, Intel Corporation.  All rights reserved. 
  
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -307,9 +307,9 @@ int rdrand_get_n_32(unsigned int n, uint32_t *dest)
 int rdrand_get_bytes(unsigned int n, unsigned char *dest)
 {
 	unsigned char *start;
-	unsigned char *residualstart;
+	unsigned char *residualstart = 0;
 	_wordlen_t *blockstart;
-	_wordlen_t i, temprand;
+	_wordlen_t i, temprand = 0;
 	unsigned int count;
 	unsigned int residual;
 	unsigned int startlen;

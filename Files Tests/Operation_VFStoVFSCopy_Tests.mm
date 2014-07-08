@@ -358,7 +358,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];
-    sprintf(dir, "%s"__FILES_IDENTIFIER__".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+    sprintf(dir, "%s" __FILES_IDENTIFIER__ ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
     XCTAssert( mkdtemp(dir) != nullptr );
     return dir;
 }

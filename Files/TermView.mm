@@ -483,7 +483,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     if(m_SelStart == m_SelEnd)
         return;
     
-    vector<unsigned short> unichars;
+    vector<uint32_t> unichars;
     SelPoint curr = m_SelStart;
     while(true)
     {
@@ -517,7 +517,9 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         if(any_inserted && !line->wrapped) unichars.push_back(0x000A);
     }
     
-    NSString *result = [NSString stringWithCharactersNoCopy:unichars.data() length:unichars.size()];
+    NSString *result = [[NSString alloc] initWithBytes:unichars.data()
+                                                length:unichars.size() * sizeof(uint32_t)
+                                              encoding:NSUTF32LittleEndianStringEncoding];
     NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
     [pasteBoard clearContents];
     [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];

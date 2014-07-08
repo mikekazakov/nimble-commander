@@ -11,7 +11,6 @@
 class TermShellTask
 {
 public:
-    TermShellTask();
     ~TermShellTask();
     
     enum TermState {
@@ -56,7 +55,7 @@ public:
     
     
     inline TermState State() const { return m_State; }
-    inline const char* CWD() const { return m_CWD; }
+    inline const char* CWD() const { return m_CWD.c_str(); }
     bool GetChildrenList(vector<string> &_children); // return false immediately if State is Inactive or Dead
     
     
@@ -78,17 +77,17 @@ private:
     void ShellDied();
     void CleanUp();
     void ReadChildOutput();
-    void (^m_OnChildOutput)(const void* _d, int _sz);
-    void (^m_OnBashPrompt)(const char *_cwd);
+    void (^m_OnChildOutput)(const void* _d, int _sz) = nil;
+    void (^m_OnBashPrompt)(const char *_cwd) = nil;
 
-    volatile TermState m_State;
-    volatile int m_MasterFD;
-    volatile int m_ShellPID;
-    int m_CwdPipe[2];
+    volatile TermState m_State = StateInactive;
+    volatile int m_MasterFD = -1;
+    volatile int m_ShellPID = -1;
+    int m_CwdPipe[2] = {-1, -1};
     recursive_mutex m_Lock;         // will lock on WriteChildInput or on cleanup process
-    volatile bool m_TemporarySuppressed; // will give no output until the next bash prompt will show m_RequestedCWD path
-    int m_TermSX;
-    int m_TermSY;    
-    char m_RequestedCWD[1024];
-    char m_CWD[1024];
+    volatile bool m_TemporarySuppressed = false; // will give no output until the next bash prompt will show m_RequestedCWD path
+    int m_TermSX = 0;
+    int m_TermSY = 0;
+    string m_RequestedCWD = "";
+    string m_CWD = "";
 };

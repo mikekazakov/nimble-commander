@@ -28,20 +28,6 @@ static       char *g_ShellParam[2] = {(char*)"-L", 0};
 static const int   g_PromptPipe    = 20;
 static const char *g_PromptStringPID  = "a=$$; b=%d; if [ $a -eq $b ]; then /bin/pwd>&20; fi";
 
-TermShellTask::TermShellTask():
-    m_MasterFD(-1),
-    m_OnChildOutput(0),
-    m_State(StateInactive),
-    m_ShellPID(-1),
-    m_TemporarySuppressed(false),
-    m_TermSX(0),
-    m_TermSY(0)
-{
-    m_CwdPipe[0] = m_CwdPipe[1] = -1;
-    m_RequestedCWD[0] = 0;
-    m_CWD[0] = 0;
-}
-
 TermShellTask::~TermShellTask()
 {
     CleanUp();
@@ -224,7 +210,7 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
                               tmp[strlen(tmp)-1] == '\r' ))
         tmp[strlen(tmp)-1] = 0;
     
-    strcpy(m_CWD, tmp);
+    m_CWD = tmp;
     
     if(m_OnBashPrompt)
         m_OnBashPrompt(tmp);
@@ -236,10 +222,10 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
         SetState(StateShell);
     }
     
-    if(m_TemporarySuppressed && strcmp(tmp, m_RequestedCWD) == 0)
+    if(m_TemporarySuppressed && m_RequestedCWD == tmp)
     {
         m_TemporarySuppressed = false;
-        m_RequestedCWD[0] = 0;
+        m_RequestedCWD = "";
             
         if(m_OnChildOutput)
             m_OnChildOutput("\n\r", 2); // hack
@@ -307,8 +293,8 @@ void TermShellTask::CleanUp()
     }
     
     m_TemporarySuppressed = false;
-    m_RequestedCWD[0] = 0;
-    m_CWD[0] = 0;
+    m_RequestedCWD = "";
+    m_CWD = "";
     
     SetState(StateInactive);
     
@@ -343,15 +329,16 @@ void TermShellTask::ChDir(const char *_new_cwd)
     if(IsPathWithTrailingSlash(new_cwd) && strlen(new_cwd) > 1) // cd command don't like trailing slashes
         new_cwd[strlen(new_cwd)-1] = 0;
     
-    if(strcmp(m_CWD, new_cwd) == 0) // do nothing if current working directory is the same as requested
+    if(m_CWD == new_cwd) // do nothing if current working directory is the same as requested
         return;
     
     if(!IsDirectoryAvailableForBrowsing(new_cwd)) // file I/O here
         return;
 
     m_TemporarySuppressed = true; // will show no output of bash when changing a directory
-    strcpy(m_RequestedCWD, new_cwd);
+    m_RequestedCWD = new_cwd;
     
+    WriteChildInput("\x03", 1); // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
     WriteChildInput(" cd '", 5);
     WriteChildInput(new_cwd, (int)strlen(new_cwd));
     WriteChildInput("'\n", 2);
@@ -374,7 +361,7 @@ void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *
         if(IsPathWithTrailingSlash(cwd) && strlen(cwd) > 1) // cd command don't like trailing slashes
             cwd[strlen(cwd)-1] = 0;
         
-        if(strcmp(m_CWD, cwd) == 0)
+        if(m_CWD == cwd)
         {
             cwd[0] = 0;
         }

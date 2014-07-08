@@ -104,9 +104,17 @@
 
 - (IBAction)OnDefaults:(id)sender
 {
-    ActionsShortcutsManager::Instance().RevertToDefaults();
-    ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
-    [self.Table reloadData];
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = @"Are you sure want to reset hotkeys to defaults?";
+    alert.informativeText = @"This will clear any custom set hotkeys.";
+    [alert addButtonWithTitle:@"Ok"];
+    [alert addButtonWithTitle:@"Cancel"];
+    [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
+    if([alert runModal] == NSAlertFirstButtonReturn) {
+        ActionsShortcutsManager::Instance().RevertToDefaults();
+        ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
+        [self.Table reloadData];
+    }
 }
 
 @end

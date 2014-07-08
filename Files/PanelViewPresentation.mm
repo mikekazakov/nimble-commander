@@ -88,6 +88,7 @@ void PanelViewPresentation::ScrollCursor(int _idx, int _idy)
                 m_State->CursorPos = total_items - 1;
         }
     }
+    EnsureCursorIsVisible();
 }
 
 void PanelViewPresentation::MoveCursorToNextItem()

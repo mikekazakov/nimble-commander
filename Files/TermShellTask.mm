@@ -455,16 +455,18 @@ int TermShellTask::EscapeShellFeed(const char *_feed, char *_escaped, size_t _bu
     return (int)res_sz;
 }
 
-bool TermShellTask::GetChildrenList(vector<string> &_children)
+vector<string> TermShellTask::ChildrenList()
 {
     if(m_State == StateInactive || m_State == StateDead || m_ShellPID < 0)
-        return false;
+        return vector<string>();
     
     size_t proc_cnt = 0;
     kinfo_proc *proc_list;
     if(sysinfo::GetBSDProcessList(&proc_list, &proc_cnt) != 0)
-        return false;
+        return vector<string>();
 
+    vector<string> result;
+    
     for(int i = 0; i < proc_cnt; ++i)
     {
         int pid = proc_list[i].kp_proc.p_pid;
@@ -474,7 +476,7 @@ again:  if(ppid == m_ShellPID)
         {
             char name[1024];
             int ret = proc_name(pid, name, sizeof(name));
-            _children.push_back(ret > 0 ? name : proc_list[i].kp_proc.p_comm);
+            result.emplace_back(ret > 0 ? name : proc_list[i].kp_proc.p_comm);
         }
         else if(ppid >= 1024)
             for(int j = 0; j < proc_cnt; ++j)
@@ -486,7 +488,7 @@ again:  if(ppid == m_ShellPID)
     }
     
     free(proc_list);
-    return true;
+    return result;
 }
 
 void TermShellTask::ResizeWindow(int _sx, int _sy)

@@ -40,11 +40,16 @@ public:
     void ChDir(const char *_new_cwd);
     
     /**
+     * executes a binary file in a directory using ./filename.
      * _at can be NULL. if it is the same as CWD - then ignored.
      * _parameters can be NULL. if they are not NULL - this string should be escaped in advance - this function doesn't convert is anyhow.
      */
     void Execute(const char *_short_fn, const char *_at, const char *_parameters);
     
+    /**
+     * executes a binary by a full path.
+     * _parameters can be NULL.
+     */
     void ExecuteWithFullPath(const char *_path, const char *_parameters);
     
     void ResizeWindow(int _sx, int _sy);
@@ -55,8 +60,17 @@ public:
     
     
     inline TermState State() const { return m_State; }
-    inline const char* CWD() const { return m_CWD.c_str(); }
-    bool GetChildrenList(vector<string> &_children); // return false immediately if State is Inactive or Dead
+    
+    /**
+     * Current working directory. Without trailing slash, in form: /Users/migun.
+     * Return string by value to minimize potential chance to get race condition.
+     */
+    inline string CWD() const { return m_CWD; }
+    
+    /**
+     * returns a list of children excluding topmost shell (ie bash).
+     */
+    vector<string> ChildrenList();
     
     
     

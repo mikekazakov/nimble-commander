@@ -43,7 +43,7 @@
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:@"pref_term_icon"];
+    return [NSImage imageNamed:@"pref_hotkeys_icon"];
 }
 -(NSString*)toolbarItemLabel{
     return @"Hotkeys";

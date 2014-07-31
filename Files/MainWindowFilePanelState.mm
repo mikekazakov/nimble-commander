@@ -889,12 +889,17 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
              else
                  op = nil;
              
-             
              if(op) {
+                 string single_fn_rename;
+                 if( req_path.native().find('/') == string::npos )
+                     single_fn_rename = req_path.filename().native();
+                 auto active = self.ActivePanelController;
+                 
                  [op AddOnFinishHandler:^{
                      dispatch_to_main_queue( ^{
                          [m_LeftPanelController RefreshDirectory];
                          [m_RightPanelController RefreshDirectory];
+                         [active ScheduleDelayedSelectionChangeFor:single_fn_rename timeoutms:500 checknow:true];
                      });
                  }];
                  [m_OperationsController AddOperation:op];

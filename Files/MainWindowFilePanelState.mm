@@ -18,18 +18,11 @@
 #import "OperationsController.h"
 #import "OperationsSummaryViewController.h"
 #import "chained_strings.h"
-#import "FileDeletionSheetController.h"
 #import "MassCopySheetController.h"
 #import "FileCopyOperation.h"
-#import "CreateDirectorySheetController.h"
-#import "CreateDirectoryOperation.h"
 #import "MessageBox.h"
 #import "QuickPreview.h"
 #import "MainWindowController.h"
-#import "FileLinkNewSymlinkSheetController.h"
-#import "FileLinkAlterSymlinkSheetController.h"
-#import "FileLinkNewHardlinkSheetController.h"
-#import "FileLinkOperation.h"
 #import "VFS.h"
 #import "FilePanelMainSplitView.h"
 #import "BriefSystemOverview.h"
@@ -480,7 +473,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
 }
 
-- (void)SavePanelsSettings
+- (void) savePanelsOptions
 {
     [self savePanelOptionsFor:m_LeftPanelController];
     [self savePanelOptionsFor:m_RightPanelController];
@@ -494,134 +487,10 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsRightOptions];
 }
 
-- (IBAction)OnSyncPanels:(id)sender{
-    if(!self.isPanelActive || m_MainSplitView.AnyCollapsedOrOverlayed) return;
-    
-    if(m_LeftPanelController.isActive)
-        [m_RightPanelController GoToDir:m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost
-                                    vfs:m_LeftPanelController.VFS
-                           select_entry:""
-                                  async:true];
-    else
-        [m_LeftPanelController GoToDir:m_RightPanelController.GetCurrentDirectoryPathRelativeToHost
-                                   vfs:m_RightPanelController.VFS
-                          select_entry:""
-                                 async:true];
-}
-
-- (IBAction)OnSwapPanels:(id)sender{
-    if(!self.isPanelActive || m_MainSplitView.AnyCollapsedOrOverlayed) return;
-    
-    swap(m_LeftPanelController, m_RightPanelController);
-    [m_MainSplitView SwapViews];
-    
-    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
-    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
-    
-    [self SavePanelsSettings];
-}
-
 - (void)flagsChanged:(NSEvent *)event
 {
     [m_LeftPanelController ModifierFlagsChanged:event.modifierFlags];
     [m_RightPanelController ModifierFlagsChanged:event.modifierFlags];
-}
-
-- (void)DeleteFiles:(BOOL)_shift_behavior
-{
-    if(!self.isPanelActive) return;
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    
-    auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
-    if(files->empty())
-        return;
-    
-    if([self ActivePanelData]->Host()->IsNativeFS())
-    {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-        FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
-                                                                     ? [defaults integerForKey:@"FilePanelsShiftDeleteBehavior"]
-                                                                     : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
-    
-        FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-        [sheet ShowSheet:self.window Files:files.get() Type:type
-                 Handler:^(int result){
-                     if (result == DialogResult::Delete)
-                     {
-                         FileDeletionOperationType type = [sheet GetType];
-                     
-                         string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
-                     
-                         FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                                      initWithFiles:move(*files.get())
-                                                      type:type
-                                                      rootpath:root_path.c_str()];
-                         op.TargetPanel = [self ActivePanelController];
-                         [m_OperationsController AddOperation:op];
-                     }
-             }];
-    }
-    else if([self ActivePanelData]->Host()->IsWriteable())
-    {
-        FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-        [sheet ShowSheetForVFS:self.window
-                         Files:files.get()
-                       Handler:^(int result){
-                           if (result == DialogResult::Delete)
-                           {
-                               string root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
-                               FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                                            initWithFiles:move(*files.get())
-                                                            rootpath:root_path
-                                                            at:[self ActivePanelData]->Host()];
-                               op.TargetPanel = [self ActivePanelController];
-                               [m_OperationsController AddOperation:op];
-                           }
-                       }];
-    }
-}
-
-- (IBAction)OnDeleteCommand:(id)sender
-{
-    [self DeleteFiles:NO];
-}
-
-- (IBAction)OnAlternativeDeleteCommand:(id)sender
-{
-    [self DeleteFiles:YES];
-}
-
-- (IBAction)OnCreateDirectoryCommand:(id)sender{
-    if(!self.isPanelActive) return;
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
-        return;
-    PanelData *curdata = [self ActivePanelData];
-    if( !curdata->Host()->IsWriteable() )
-        return;
-
-    CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
-    [cd ShowSheet:self.window handler:^(int _ret)
-     {
-         if(_ret == DialogResult::Create)
-         {
-             string pdir = curdata->DirectoryPathWithoutTrailingSlash();
-             
-             CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
-             if(curdata->Host()->IsNativeFS())
-                 op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
-                              rootpath:pdir.c_str()
-                       ];
-             else
-                 op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
-                              rootpath:pdir.c_str()
-                                    at:curdata->Host()
-                       ];
-             op.TargetPanel = [self ActivePanelController];
-             [m_OperationsController AddOperation:op];
-         }
-     }];
 }
 
 - (IBAction)OnFileCopyCommand:(id)sender{
@@ -996,138 +865,6 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (void)OnApplicationWillTerminate
 {
     [self SavePanelPaths];
-}
-
-- (IBAction)OnCreateSymbolicLinkCommand:(id)sender
-{
-    if(!self.isPanelActive) return;
-    if(m_MainSplitView.AnyCollapsedOrOverlayed) return;
-    
-    if(!m_RightPanelController.VFS->IsNativeFS() || !m_LeftPanelController.VFS->IsNativeFS())
-        return; // currently support links only on native fs
-    
-    string link_path;
-    auto const *item = self.ActivePanelView.item;
-    if(!item)
-        return;
-    
-    string source_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
-    if(!item->IsDotDot())
-        source_path += item->Name();
-    
-    if(m_LeftPanelController.isActive)
-        link_path = m_RightPanelController.GetCurrentDirectoryPathRelativeToHost;
-    else
-        link_path = m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost;
-
-    if(!item->IsDotDot())
-        link_path += item->Name();
-    else
-        link_path += [self ActivePanelData]->DirectoryPathShort();
-
-    FileLinkNewSymlinkSheetController *sheet = [FileLinkNewSymlinkSheetController new];
-    [sheet ShowSheet:[self window]
-          sourcepath:[NSString stringWithUTF8String:source_path.c_str()]
-            linkpath:[NSString stringWithUTF8String:link_path.c_str()]
-             handler:^(int result){
-                 if(result == DialogResult::Create && [[sheet.LinkPath stringValue] length] > 0)
-                     [m_OperationsController AddOperation:
-                      [[FileLinkOperation alloc] initWithNewSymbolinkLink:[[sheet.SourcePath stringValue] fileSystemRepresentation]
-                                                                 linkname:[[sheet.LinkPath stringValue] fileSystemRepresentation]
-                       ]
-                      ];
-             }];
-}
-
-- (IBAction)OnEditSymbolicLinkCommand:(id)sender
-{
-    auto data = self.ActivePanelData;
-    if(!data) return;
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:self.ActivePanelView])
-        return;
-    if(!data->Host()->IsNativeFS())
-        return; // currently support links only on native fs
-    
-//    char link_path[MAXPATHLEN];
-    auto const *item = self.ActivePanelView.item;
-    if(!item)
-        return;
-    if(item->IsDotDot())
-        return;
-    if(item->IsSymlink())
-    {
-        NSAlert *alert = [NSAlert new];
-        [alert setMessageText: @"Failed to edit"];
-        [alert setInformativeText:
-         [NSString stringWithFormat:@"\'%@\' is not a symbolic link.", item->NSName()]];
-        [alert runModal];
-        return;
-    }
-    
-    string link_path = data->DirectoryPathWithTrailingSlash() + item->Name();
-    NSString *linkpath = [NSString stringWithUTF8String:link_path.c_str()];
-    
-    FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
-    [sheet ShowSheet:[self window]
-          sourcepath:[NSString stringWithUTF8String:item->Symlink()]
-            linkname:[NSString stringWithUTF8String:item->Name()]
-             handler:^(int _result){
-                 if(_result == DialogResult::OK)
-                 {
-                     [m_OperationsController AddOperation:
-                      [[FileLinkOperation alloc] initWithAlteringOfSymbolicLink:[[sheet.SourcePath stringValue] fileSystemRepresentation]
-                                                                      linkname:[linkpath fileSystemRepresentation]]
-                      ];
-                 }
-             }];
-}
-
-- (IBAction)OnCreateHardLinkCommand:(id)sender
-{
-    if(!self.isPanelActive) return;
-    if([m_MainSplitView AnyCollapsedOrOverlayed])
-        return;
-    if(!m_RightPanelController.VFS->IsNativeFS() || !m_LeftPanelController.VFS->IsNativeFS())
-        return; // currently support links only on native fs
-    
-    auto const *item = self.ActivePanelView.item;
-    if(!item)
-        return;
-    if(item->IsDotDot())
-        return;
-    if(item->IsDir())
-    {
-        NSAlert *alert = [NSAlert new];
-        [alert setMessageText: @"Can't create a hardlink"];
-        [alert setInformativeText: @"Hardlinks to directories are not supported."];
-        [alert runModal];
-        return;
-    }
-    
-//    char  src_path[MAXPATHLEN];
-    string dir_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
-    string src_path = dir_path + item->Name();
-    NSString *srcpath = [NSString stringWithUTF8String:src_path.c_str()];
-    NSString *dirpath = [NSString stringWithUTF8String:dir_path.c_str()];
-    
-    FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
-    [sheet ShowSheet:[self window]
-          sourcename:[NSString stringWithUTF8String:item->Name()]
-             handler:^(int _result){
-                 if(_result == DialogResult::Create)
-                 {
-                     NSString *name = [sheet.LinkName stringValue];
-                     if([name length] == 0) return;
-                     
-                     if([name fileSystemRepresentation][0] != '/')
-                         name = [NSString stringWithFormat:@"%@%@", dirpath, name];
-                     
-                    [m_OperationsController AddOperation:
-                        [[FileLinkOperation alloc] initWithNewHardLink:[srcpath fileSystemRepresentation]
-                                                              linkname:[name fileSystemRepresentation]]
-                        ];
-                 }                 
-             }];
 }
 
 - (IBAction)paste:(id)sender

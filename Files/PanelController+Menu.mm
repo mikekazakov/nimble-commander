@@ -19,6 +19,9 @@
 #import "MainWindowController.h"
 #import "SelectionWithMaskSheetController.h"
 #import "ExternalEditorInfo.h"
+#import "FileDeletionSheetController.h"
+#import "CreateDirectorySheetController.h"
+#import "CreateDirectoryOperation.h"
 
 @implementation PanelController (Menu)
 
@@ -61,6 +64,10 @@
     TAG(tag_cmd_eject_vol,      "menu.command.eject_volume");
     TAG(tag_cmd_copy_filename,  "menu.command.copy_file_name");
     TAG(tag_cmd_copy_filepath,  "menu.command.copy_file_path");
+    TAG(tag_cmd_move_to_trash,  "menu.command.move_to_trash");
+    TAG(tag_cmd_delete,         "menu.command.delete");
+    TAG(tag_cmd_delete_alt,     "menu.command.delete_alternative");
+    TAG(tag_cmd_mkdir,          "menu.command.create_directory");
     TAG(tag_file_calc_sizes,    "menu.file.calculate_sizes");
 #undef TAG
     
@@ -92,6 +99,10 @@
     IF(tag_file_calc_sizes) return m_View.item != nullptr;
     IF(tag_cmd_copy_filename) return m_View.item != nullptr;
     IF(tag_cmd_copy_filepath) return m_View.item != nullptr;
+    IF(tag_cmd_move_to_trash) return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
+    IF(tag_cmd_delete)      return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
+    IF(tag_cmd_delete_alt)  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
+    IF(tag_cmd_mkdir)       return self.VFS->IsWriteable();
 #undef IF
     
     return true; // will disable some items in the future
@@ -405,6 +416,117 @@
                                                file:fn_path
          ];
     }
+}
+
+- (void)DeleteFiles:(BOOL)_shift_behavior
+{
+    auto files = make_shared<chained_strings>(self.GetSelectedEntriesOrFocusedEntryWithoutDotDot);
+    if(files->empty())
+        return;
+    
+    if(self.VFS->IsNativeFS())
+    {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        
+        FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
+                                                                     ? [defaults integerForKey:@"FilePanelsShiftDeleteBehavior"]
+                                                                     : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
+        
+        FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
+        [sheet ShowSheet:self.window Files:files.get() Type:type
+                 Handler:^(int result){
+                     if (result == DialogResult::Delete)
+                     {
+                         FileDeletionOperationType type = [sheet GetType];
+                         
+                         string root_path = m_Data.DirectoryPathWithTrailingSlash();
+                         
+                         FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                                      initWithFiles:move(*files.get())
+                                                      type:type
+                                                      rootpath:root_path.c_str()];
+                         op.TargetPanel = self;
+                         [self.state AddOperation:op];
+                     }
+                 }];
+    }
+    else if(self.VFS->IsWriteable())
+    {
+        FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
+        [sheet ShowSheetForVFS:self.window
+                         Files:files.get()
+                       Handler:^(int result){
+                           if (result == DialogResult::Delete)
+                           {
+                               string root_path = m_Data.DirectoryPathWithTrailingSlash();
+                               FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                                            initWithFiles:move(*files.get())
+                                                            rootpath:root_path
+                                                            at:self.VFS];
+                               op.TargetPanel = self;
+                               [self.state AddOperation:op];
+                           }
+                       }];
+    }
+}
+
+- (IBAction)OnDeleteCommand:(id)sender
+{
+    [self DeleteFiles:NO];
+}
+
+- (IBAction)OnAlternativeDeleteCommand:(id)sender
+{
+    [self DeleteFiles:YES];
+}
+
+- (IBAction)OnMoveToTrash:(id)sender
+{
+    if(self.VFS->IsNativeFS() == false &&
+       self.VFS->IsWriteable() == true )
+    {
+        // instead of trying to silently reap files on VFS like FTP (that means we'll erase it, not move to trash) -
+        // forward request as a regular F8 delete
+        [self OnDeleteCommand:self];
+        return;
+    }
+    
+    auto files = self.GetSelectedEntriesOrFocusedEntryWithoutDotDot;
+    if(files.empty())
+        return;
+    
+    FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                 initWithFiles:move(files)
+                                 type:FileDeletionOperationType::MoveToTrash
+                                 rootpath:m_Data.DirectoryPathWithTrailingSlash().c_str()];
+    op.TargetPanel = self;
+    [self.state AddOperation:op];
+}
+
+- (IBAction)OnCreateDirectoryCommand:(id)sender
+{
+    CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
+    [cd ShowSheet:self.window handler:^(int _ret)
+     {
+         if(_ret == DialogResult::Create &&
+            cd.TextField.stringValue.fileSystemRepresentation)
+         {
+             string pdir = m_Data.DirectoryPathWithoutTrailingSlash();
+             
+             CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
+             if(self.VFS->IsNativeFS())
+                 op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
+                              rootpath:pdir.c_str()
+                       ];
+             else
+                 op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
+                              rootpath:pdir.c_str()
+                                    at:self.VFS
+                       ];
+             op.TargetPanel = self;
+             [self.state AddOperation:op];
+         }
+     }];
 }
 
 @end

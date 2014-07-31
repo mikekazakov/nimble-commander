@@ -9,7 +9,4 @@
 #import "MainWindowFilePanelState.h"
 
 @interface MainWindowFilePanelState (Menu)
-
-// Operations
-- (IBAction)OnMoveToTrash:(id)sender;
 @end

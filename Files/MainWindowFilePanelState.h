@@ -69,6 +69,7 @@ class PanelData;
 
 - (void) AddOperation:(Operation*)_operation;
 
+
 - (void) savePanelOptionsFor:(PanelController*)_pc;
 
 - (PanelData*) ActivePanelData;
@@ -76,8 +77,15 @@ class PanelData;
 - (PanelView*) ActivePanelView;
 
 - (void) HandleTabButton;
-- (IBAction)OnDeleteCommand:(id)sender;
 @end
+
+
+@interface MainWindowFilePanelState ()
+
+- (void) savePanelsOptions;
+
+@end
+
 
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "MainWindowFilePanelState+Menu.h"

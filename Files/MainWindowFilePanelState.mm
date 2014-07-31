@@ -939,12 +939,10 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void)SavePanelPaths
 {
-    string lp = m_LeftPanelController.VFS->IsNativeFS() ?
-        m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost : "";
-    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:lp.c_str()] forKey:@"FirstPanelPath"];
-    string rp = m_RightPanelController.VFS->IsNativeFS() ?
-        m_RightPanelController.GetCurrentDirectoryPathRelativeToHost : "";
-    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:rp.c_str()] forKey:@"SecondPanelPath"];
+    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:m_LeftPanelController.lastNativeDirectoryPath.c_str()]
+                                            forKey:@"FirstPanelPath"];
+    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:m_RightPanelController.lastNativeDirectoryPath.c_str()]
+                                            forKey:@"SecondPanelPath"];
 }
 
 - (bool)WindowShouldClose:(MainWindowController*)sender

@@ -94,6 +94,8 @@ namespace panel
     
     NSButton            *m_ShareButton;
     
+    string              m_LastNativeDirectory;
+    
     // delayed entry selection support
     struct
     {
@@ -122,6 +124,7 @@ namespace panel
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) NSWindow* window;
 @property (nonatomic) NSDictionary* options;
+@property (nonatomic, readonly) const string& lastNativeDirectoryPath;
 
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
                     share:(NSButton*)_share;

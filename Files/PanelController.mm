@@ -88,6 +88,7 @@ void panel::GenericCursorPersistance::Restore()
 @implementation PanelController
 @synthesize view = m_View;
 @synthesize data = m_Data;
+@synthesize lastNativeDirectoryPath = m_LastNativeDirectory;
 
 - (id) init
 {
@@ -556,6 +557,8 @@ void panel::GenericCursorPersistance::Restore()
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
     m_History.Put(VFSPathStack(m_Data.DirectoryEntries().SharedPtr()));
+    if(self.VFS->IsNativeFS())
+        m_LastNativeDirectory = self.GetCurrentDirectoryPathRelativeToHost;
 }
 
 - (void) OnCursorChanged

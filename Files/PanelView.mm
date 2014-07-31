@@ -47,6 +47,7 @@ struct PanelViewStateStorage
     bool                        m_DisableCurrentMomentumScroll;
     int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
     __weak id<PanelViewDelegate> m_Delegate;
+    uint64_t                    m_ActivationTime; // time when view did became a first responder
 }
 
 
@@ -116,14 +117,16 @@ struct PanelViewStateStorage
 
 - (BOOL)becomeFirstResponder
 {
-    [self setNeedsDisplay:true];
+    m_ActivationTime = GetTimeInNanoseconds();
+    self.needsDisplay = true;
+    [self.delegate PanelViewDidBecomeFirstResponder:self];
+    m_ReadyToDrag = false;
+    m_LastPotentialRenamingLBDown = -1;
     return YES;
 }
 
 - (BOOL)resignFirstResponder
 {
-    m_ReadyToDrag = false;
-    m_LastPotentialRenamingLBDown = -1;
     [self setNeedsDisplay:true];
     return YES;
 }
@@ -434,14 +437,13 @@ struct PanelViewStateStorage
     
     m_Presentation->SetCursorPos(cursor_pos);
     
-    
     if(old_cursor_pos != cursor_pos)
     {
         [self OnCursorPositionChanged];
     }
-    else
+    else if(GetTimeInNanoseconds() - m_ActivationTime > NSEC_PER_MSEC * 300)
     {
-        // need more complex logic here
+        // need more complex logic here (?)
         m_LastPotentialRenamingLBDown = cursor_pos;
     }
 

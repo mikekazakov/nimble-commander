@@ -46,6 +46,10 @@ private:
         is_dir      = 0b0001,
     };
     
+    enum {
+        m_BufferSize = (512*1024) // 512kb
+    };
+    
     __unsafe_unretained FileCopyOperation *m_Operation;
     FileCopyOperationOptions m_Options;    
     chained_strings m_InitialItems;
@@ -56,8 +60,9 @@ private:
     char                     m_SrcDir[MAXPATHLEN];
     char                     m_Destination[MAXPATHLEN];
     
-    void *m_Buffer1;
-    void *m_Buffer2;    
+    unique_ptr<uint8_t[]>    m_Buffer1 = make_unique<uint8_t[]>(m_BufferSize);
+    unique_ptr<uint8_t[]>    m_Buffer2 = make_unique<uint8_t[]>(m_BufferSize);
+    
     DispatchGroup m_IOGroup;
     
     vector<uint8_t> m_ItemFlags;    

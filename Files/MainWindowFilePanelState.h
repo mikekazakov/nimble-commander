@@ -54,6 +54,7 @@ class PanelData;
 
 - (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
 - (void)ActivatePanelByController:(PanelController *)controller;
+- (void)activePanelChangedTo:(PanelController *)controller;
 
 - (void)PanelPathChanged:(PanelController*)_panel;
 - (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path;

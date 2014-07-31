@@ -13,7 +13,6 @@
 #import "FileCopyOperationJobFromGeneric.h"
 #import "Common.h"
 
-#define BUFFER_SIZE (512*1024) // 512kb
 #define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
 
 static void AdjustFileTimes(int _target_fd, VFSStat *_with_times)
@@ -51,16 +50,6 @@ FileCopyOperationJobFromGeneric::FileCopyOperationJobFromGeneric()
 
 FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
 {
-    if(m_Buffer1)
-    {
-        free(m_Buffer1);
-        m_Buffer1 = 0;
-    }
-    if(m_Buffer2)
-    {
-        free(m_Buffer2);
-        m_Buffer2 = 0;
-    }
 }
 
 void FileCopyOperationJobFromGeneric::Init(chained_strings _src_files,
@@ -92,9 +81,6 @@ void FileCopyOperationJobFromGeneric::Do()
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
     m_Stats.SetMaxValue(m_SourceTotalBytes);
-    
-    m_Buffer1 = malloc(BUFFER_SIZE);
-    m_Buffer2 = malloc(BUFFER_SIZE);    
     
     ProcessItems();
     if(CheckPauseOrStop()) { SetStopped(); return; }
@@ -269,8 +255,8 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
 void FileCopyOperationJobFromGeneric::EraseXattrs(int _fd_in)
 {
     assert(m_Buffer1);
-    char *xnames = (char*) m_Buffer1;
-    ssize_t xnamesizes = flistxattr(_fd_in, xnames, BUFFER_SIZE, 0);
+    char *xnames = (char*) m_Buffer1.get();
+    ssize_t xnamesizes = flistxattr(_fd_in, xnames, m_BufferSize, 0);
     if(xnamesizes > 0)
     { // iterate and remove
         char *s = xnames, *e = xnames + xnamesizes;
@@ -284,8 +270,8 @@ void FileCopyOperationJobFromGeneric::EraseXattrs(int _fd_in)
 
 void FileCopyOperationJobFromGeneric::CopyXattrsFn(shared_ptr<VFSFile> _file, const char *_fn_to)
 {
-    void *buf = m_Buffer1;
-    size_t buf_sz = BUFFER_SIZE;
+    void *buf = m_Buffer1.get();
+    size_t buf_sz = m_BufferSize;
     
     _file->XAttrIterateNames(^bool(const char *name){
         ssize_t res = _file->XAttrGet(name, buf, buf_sz);
@@ -297,8 +283,8 @@ void FileCopyOperationJobFromGeneric::CopyXattrsFn(shared_ptr<VFSFile> _file, co
 
 void FileCopyOperationJobFromGeneric::CopyXattrs(shared_ptr<VFSFile> _file, int _fd_to)
 {
-    void *buf = m_Buffer1;
-    size_t buf_sz = BUFFER_SIZE;
+    void *buf = m_Buffer1.get();
+    size_t buf_sz = m_BufferSize;
     
     _file->XAttrIterateNames(^bool(const char *name){
         ssize_t res = _file->XAttrGet(name, buf, buf_sz);
@@ -319,7 +305,7 @@ bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_
     int64_t preallocate_delta = 0;
     __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0, totaldestsize=0;
     __block bool io_docancel = false;
-    char *readbuf = (char*)m_Buffer1, *writebuf = (char*)m_Buffer2;
+    char *readbuf = (char*)m_Buffer1.get(), *writebuf = (char*)m_Buffer2.get();
 
 statsource:
     ret = m_SrcHost->Stat(_src, src_stat_buffer, 0, 0);
@@ -468,7 +454,7 @@ dolseek: // find right position in destination file
         doread:
             if(io_totalread < src_file->Size())
             {
-                io_nread = src_file->Read(readbuf, BUFFER_SIZE);
+                io_nread = src_file->Read(readbuf, m_BufferSize);
                 if(io_nread < 0)
                 {
                     if(m_SkipAll) {io_docancel = true; return;}

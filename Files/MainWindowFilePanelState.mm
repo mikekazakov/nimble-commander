@@ -442,7 +442,11 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         [self.window makeFirstResponder:m_RightPanelController.view];
     else
         assert(0);
-    [self UpdateTitle];    
+}
+
+- (void)activePanelChangedTo:(PanelController *)controller
+{
+    [self UpdateTitle];
 }
 
 - (void) UpdateTitle

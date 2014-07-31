@@ -67,12 +67,9 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
 
 @implementation FileCopyOperation
 {
-//    FileCopyOperationJob m_Job;
     unique_ptr<FileCopyOperationJobNativeToNative> m_NativeToNativeJob;
     unique_ptr<FileCopyOperationJobFromGeneric> m_GenericToNativeJob;
     unique_ptr<FileCopyOperationJobGenericToGeneric> m_GenericToGenericJob;
-    
-    
     int m_LastInfoUpdateTime;
 }
 
@@ -149,6 +146,23 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     self = [super initWithJob:m_GenericToGenericJob.get()];
     if (self)
     {
+        // Set caption.
+        char buff[128] = {0};
+        bool use_buff = GetDirectoryFromPath(_dest, buff, 128);
+        int items_amount = _files.size();
+        
+        NSString *operation = _opts.docopy ? @"Copying" : @"Moving";
+        if (items_amount == 1)
+            self.Caption = [NSString stringWithFormat:@"%@ \"%@\" to \"%@\"",
+                            operation,
+                            [NSString stringWithUTF8String:_files.front().c_str()],
+                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+        else
+            self.Caption = [NSString stringWithFormat:@"%@ %i items to \"%@\"",
+                            operation,
+                            items_amount,
+                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+        
         m_GenericToGenericJob->Init(move(_files),
                                     _root,
                                     _vfs,
@@ -156,17 +170,18 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
                                     _dst_vfs,
                                     _opts,
                                     self);
-    
     }
     return self;
 }
 
 - (void)Update
 {
-    if(m_NativeToNativeJob.get())
+    if(m_NativeToNativeJob)
         [self UpdateNativeToNative];
-    if(m_GenericToNativeJob.get())
+    if(m_GenericToNativeJob)
         [self UpdateGenericToNative];
+    if(m_GenericToGenericJob)
+        [self UpdateGenericToGeneric];
 }
 
 - (void)UpdateNativeToNative
@@ -268,6 +283,42 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
             self.ShortInfo = [NSString stringWithFormat:@"%s of %s - %s/s",
                                 copied, total, speed];
         }
+        
+        m_LastInfoUpdateTime = time;
+    }
+}
+
+- (void)UpdateGenericToGeneric
+{
+    OperationStats &stats = m_GenericToGenericJob->GetStats();
+    float progress = stats.GetProgress();
+    if (self.Progress != progress)
+        self.Progress = progress;
+    
+    if (m_GenericToGenericJob->IsPaused() || self.DialogsCount)
+    {
+        return;
+    }
+    
+    int time = stats.GetTime();
+    if (time - m_LastInfoUpdateTime >= 1000)
+    {
+        uint64_t copy_speed = 0;
+        if (time) copy_speed = stats.GetValue()*1000/time;
+        uint64_t eta_value = 0;
+        if (copy_speed) eta_value = (stats.GetMaxValue() - stats.GetValue())/copy_speed;
+        
+        char copied[18] = {0}, total[18] = {0}, speed[18] = {0}, eta[18] = {0};
+        FormHumanReadableSizeRepresentation(stats.GetValue(), copied);
+        FormHumanReadableSizeRepresentation(stats.GetMaxValue(), total);
+        FormHumanReadableSizeRepresentation(copy_speed, speed);
+        if (copy_speed)
+            FormHumanReadableTimeRepresentation(eta_value, eta);
+        
+        if (copy_speed)
+            self.ShortInfo = [NSString stringWithFormat:@"%s of %s - %s/s - %s", copied, total, speed, eta];
+        else
+            self.ShortInfo = [NSString stringWithFormat:@"%s of %s - %s/s", copied, total, speed];
         
         m_LastInfoUpdateTime = time;
     }

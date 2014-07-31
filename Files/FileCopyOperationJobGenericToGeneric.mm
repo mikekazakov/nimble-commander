@@ -67,6 +67,8 @@ void FileCopyOperationJobGenericToGeneric::Do()
     }
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
+    m_Stats.SetMaxValue(m_SourceTotalBytes);
+    
     ProcessItems();
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
@@ -456,7 +458,11 @@ opendest:
             
             to_write -= write_amount;
             total_wrote += write_amount;
+            m_TotalCopied += write_amount;
         }
+        
+        // update statistics
+        m_Stats.SetValue(m_TotalCopied);
     }
 
     was_successful = true;

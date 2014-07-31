@@ -598,11 +598,6 @@ void panel::GenericCursorPersistance::Restore()
     [self OnCursorChanged];
 }
 
-- (void) PanelViewRequestsActivation:(PanelView*)_view
-{
-    [self.state ActivatePanelByController:self];
-}
-
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
 {
     const VFSListingItem* cur_focus = m_View.item;
@@ -673,6 +668,11 @@ void panel::GenericCursorPersistance::Restore()
     [self.state AddOperation:op];
 }
 
+- (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view
+{
+    [self.state activePanelChangedTo:self];
+}
+
 - (void) HandleFTPConnection
 {
     FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
@@ -698,14 +698,13 @@ void panel::GenericCursorPersistance::Restore()
                      auto host = make_shared<VFSNetFTPHost>(server.c_str());
                      int ret = host->Open(path.c_str(), opts);
                      if(ret != 0)
-                     {
-                         NSAlert *alert = [[NSAlert alloc] init];
-                         alert.messageText = @"FTP connection error:";
-                         alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
-                         [alert addButtonWithTitle:@"OK"];
-                         [alert runModal];
-                         return;
-                     }
+                         return dispatch_async(dispatch_get_main_queue(), ^{
+                             NSAlert *alert = [[NSAlert alloc] init];
+                             alert.messageText = @"FTP connection error:";
+                             alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
+                             [alert addButtonWithTitle:@"OK"];
+                             [alert runModal];
+                         });
                      
                      [self GoToDir:path vfs:host select_entry:"" async:true];
                  });

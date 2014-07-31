@@ -1350,7 +1350,6 @@
 		B528011916FCF347004E260D /* Operation */ = {
 			isa = PBXGroup;
 			children = (
-				CFB709C418E99AC100A83E61 /* ExternalEditors */,
 				CFAC50D41715565E00A3E5C5 /* Core */,
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				B5AD9CDE17030DAA0099BC6D /* Dummies */,
@@ -2129,7 +2128,7 @@
 			name = FTP;
 			sourceTree = "<group>";
 		};
-		CFB709C418E99AC100A83E61 /* ExternalEditors */ = {
+		CFB709C418E99AC100A83E61 /* ExternalEditorMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
 				CFB709C618E99B7100A83E61 /* ExternalEditorInfo.h */,
@@ -2139,7 +2138,7 @@
 				CF09857218EEB031006E6410 /* MainWindowExternalTerminalEditorState.h */,
 				CF09857318EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm */,
 			);
-			name = ExternalEditors;
+			name = ExternalEditorMainWindowState;
 			sourceTree = "<group>";
 		};
 		CFB8F22B17CA3C65004574FE /* VFS */ = {
@@ -2269,6 +2268,7 @@
 				CFAC50D5171557E100A3E5C5 /* Core */,
 				CFB8F22B17CA3C65004574FE /* VFS */,
 				B528011916FCF347004E260D /* Operation */,
+				CFB709C418E99AC100A83E61 /* ExternalEditorMainWindowState */,
 				CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */,
 				CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */,
 				CF536C0D16C92EA200F37203 /* PanelMainWindowState */,

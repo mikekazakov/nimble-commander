@@ -18,8 +18,8 @@ class PanelViewPresentation;
 
 @protocol PanelViewDelegate<NSObject>
 @optional
+- (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view;
 - (void) PanelViewCursorChanged:(PanelView*)_view;
-- (void) PanelViewRequestsActivation:(PanelView*)_view;
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event;

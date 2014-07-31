@@ -975,8 +975,6 @@ void InterpretUTF8BufferAsUniCharPreservingBufferSize(
             ++_output;
             continue;
         }
-
-        // TODO: ! invalid UTF8-sequence handling !
         
         if(sz == 1)
         {

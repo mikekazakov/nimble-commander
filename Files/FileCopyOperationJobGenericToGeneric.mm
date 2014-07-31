@@ -85,22 +85,33 @@ void FileCopyOperationJobGenericToGeneric::Analyze()
     // lets analyze what user wants from us.
     if(m_OriginalDestination.is_absolute() == true)
     {
-        // seems to be fairly easy - just use this dest as a preffix
-        m_Destination = m_OriginalDestination;
-        m_DstHost = m_OrigDstHost;
-        if(m_Options.docopy)
-            m_WorkMode = WorkMode::CopyToPathPreffix;
-        else
-        {
-            if(m_SrcHost == m_OrigDstHost)
-                m_WorkMode = WorkMode::RenameToPathPreffix;
-            else
-                m_WorkMode = WorkMode::MoveToPathPreffix;
-        }
+        // seems to be fairly easy - just use this dest as a preffix or as a path name
         
-        // now we need to check if this path is valid and available
-        if(m_DstHost->Stat(m_Destination.c_str(), st, 0, 0) != 0)
-            BuildDirectories(m_Destination, m_DstHost);
+        if(m_OriginalDestination.filename() != "." &&
+           m_IsSingleEntryCopy &&
+           m_OrigSrcHost->Stat((m_SrcDir / m_InitialItems.front().c_str()).c_str(), st, 0, 0) == 0 &&
+           st.mode_bits.reg ) {
+            m_WorkMode = m_Options.docopy ? WorkMode::CopyToPathName : WorkMode::RenameToPathName;
+            m_Destination = m_OriginalDestination;
+            m_DstHost = m_OrigDstHost;
+        }
+        else {
+            m_Destination = m_OriginalDestination;
+            m_DstHost = m_OrigDstHost;
+            if(m_Options.docopy)
+                m_WorkMode = WorkMode::CopyToPathPreffix;
+            else
+            {
+                if(m_SrcHost == m_OrigDstHost)
+                    m_WorkMode = WorkMode::RenameToPathPreffix;
+                else
+                    m_WorkMode = WorkMode::MoveToPathPreffix;
+            }
+            
+            // now we need to check if this path is valid and available
+            if(m_DstHost->Stat(m_Destination.c_str(), st, 0, 0) != 0)
+                BuildDirectories(m_Destination, m_DstHost);
+        }
     }
     else
     {

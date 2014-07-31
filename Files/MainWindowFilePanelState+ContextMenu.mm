@@ -163,6 +163,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     // cur_pnl_path should be the same as m_DirPath!!!
     string cur_pnl_path = [m_CurrentController GetCurrentDirectoryPathRelativeToHost];
     string opp_pnl_path = [m_OppositeController GetCurrentDirectoryPathRelativeToHost];
+    bool cur_pnl_native = m_CurrentController.VFS->IsNativeFS();
     bool cur_pnl_writable = m_CurrentController.VFS->IsWriteableAtPath(cur_pnl_path.c_str());
     bool opp_pnl_writable = m_OppositeController.VFS->IsWriteableAtPath(opp_pnl_path.c_str());
     
@@ -171,9 +172,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     if(m_FilesCount > 0 || m_Host->IsNativeFS())
     {
         NSMenuItem *item = [NSMenuItem new];
-        [item setTitle:@"Open"];
-        [item setTarget:self];
-        [item setAction:@selector(OnRegularOpen:)];
+        item.title = @"Open";
+        item.target = self;
+        item.action = @selector(OnRegularOpen:);
         [self addItem:item];
     }
 
@@ -228,21 +229,19 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             if(m_OpenWithHandlers[i].is_default)
             {
                 NSMenuItem *item = [NSMenuItem new];
-                [item setTitle: [NSString stringWithFormat:@"%@ (default)",
-                                 m_OpenWithHandlers[i].app_name
-                                 ]];
-                [item setImage:m_OpenWithHandlers[i].app_icon];
-                [item setTag:i];
-                [item setTarget:self];
-                [item setAction:@selector(OnOpenWith:)];
+                item.title = [NSString stringWithFormat:@"%@ (default)", m_OpenWithHandlers[i].app_name];
+                item.image = m_OpenWithHandlers[i].app_icon;
+                item.tag = i;
+                item.target = self;
+                item.action = @selector(OnOpenWith:);
                 [openwith_submenu addItem:item];
                 
                 item = [item copy];
-                [item setAction:@selector(OnAlwaysOpenWith:)];
+                item.action = @selector(OnAlwaysOpenWith:);
                 [always_openwith_submenu addItem:item];
 
-                [openwith_submenu addItem:[NSMenuItem separatorItem]];
-                [always_openwith_submenu addItem:[NSMenuItem separatorItem]];
+                [openwith_submenu addItem:NSMenuItem.separatorItem];
+                [always_openwith_submenu addItem:NSMenuItem.separatorItem];
                 any_handlers_added = true;
                 break;
             }
@@ -252,15 +251,15 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             if(!m_OpenWithHandlers[i].is_default)
             {
                 NSMenuItem *item = [NSMenuItem new];
-                [item setTitle:m_OpenWithHandlers[i].app_name];
-                [item setImage:m_OpenWithHandlers[i].app_icon];
-                [item setTag:i];
-                [item setTarget:self];
-                [item setAction:@selector(OnOpenWith:)];
+                item.title = m_OpenWithHandlers[i].app_name;
+                item.image = m_OpenWithHandlers[i].app_icon;
+                item.tag = i;
+                item.target = self;
+                item.action = @selector(OnOpenWith:);
                 [openwith_submenu addItem:item];
                 
                 item = [item copy];
-                [item setAction:@selector(OnAlwaysOpenWith:)];
+                item.action = @selector(OnAlwaysOpenWith:);
                 [always_openwith_submenu addItem:item];
                 
                 any_handlers_added = true;
@@ -274,63 +273,66 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         }
         
         if(any_non_default_handlers_added || !any_handlers_added) {
-            [openwith_submenu addItem:[NSMenuItem separatorItem]];
-            [always_openwith_submenu addItem:[NSMenuItem separatorItem]];
+            [openwith_submenu addItem:NSMenuItem.separatorItem];
+            [always_openwith_submenu addItem:NSMenuItem.separatorItem];
         }
         
         // let user to select program manually
         NSMenuItem *item = [NSMenuItem new];
-        [item setTitle:@"Other..."];
-        [item setTarget:self];
-        [item setAction:@selector(OnOpenWithOther:)];
+        item.title = @"Other...";
+        item.target = self;
+        item.action = @selector(OnOpenWithOther:);
         [openwith_submenu addItem:item];
         
         item = [item copy];
-        [item setAction:@selector(OnAlwaysOpenWithOther:)];
+        item.action = @selector(OnAlwaysOpenWithOther:);
         [always_openwith_submenu addItem:item];
 
         // and put this stuff into root-level menu
         NSMenuItem *openwith = [NSMenuItem new];
-        [openwith setTitle:@"Open With"];
-        [openwith setSubmenu:openwith_submenu];
-        [openwith setKeyEquivalent:@""];
+        openwith.title = @"Open With";
+        openwith.submenu = openwith_submenu;
+        openwith.keyEquivalent = @"";
         [self addItem:openwith];
         
         NSMenuItem *always_openwith = [NSMenuItem new];
-        [always_openwith setTitle:@"Always Open With"];
-        [always_openwith setSubmenu:always_openwith_submenu];
-        [always_openwith setAlternate:YES];
-        [always_openwith setKeyEquivalent:@""];
-        [always_openwith setKeyEquivalentModifierMask:NSAlternateKeyMask];
+        always_openwith.title = @"Always Open With";
+        always_openwith.submenu = always_openwith_submenu;
+        always_openwith.alternate = true;
+        always_openwith.keyEquivalent = @"";
+        always_openwith.keyEquivalentModifierMask = NSAlternateKeyMask;
         [self addItem:always_openwith];
         
-        [self addItem:[NSMenuItem separatorItem]];
+        [self addItem:NSMenuItem.separatorItem];
     }
 
     //////////////////////////////////////////////////////////////////////
     // Move to Trash / Delete Permanently stuff
     {
-        NSMenuItem *item = [NSMenuItem new];
-        [item setTitle:@"Move to Trash"];
-        if(cur_pnl_writable) { // gray out this thing on read-only fs
-            [item setTarget:self];
-            [item setAction:@selector(OnMoveToTrash:)];
+        NSMenuItem *item;
+        if(cur_pnl_native) {
+            item = [NSMenuItem new];
+            item.title = @"Move to Trash";
+            if(cur_pnl_writable) { // gray out this thing on read-only fs
+                item.target = self;
+                item.action = @selector(OnMoveToTrash:);
+            }
+            item.keyEquivalent = @"";
+            [self addItem:item];
         }
-        [item setKeyEquivalent:@""];
-        [self addItem:item];
         
         item = [NSMenuItem new];
-        [item setTitle:@"Delete Permanently"];
+        item.title = @"Delete Permanently";
         if(cur_pnl_writable) { // gray out this thing on read-only fs
-            [item setTarget:self];
-            [item setAction:@selector(OnDeletePermanently:)];
+            item.target = self;
+            item.action = @selector(OnDeletePermanently:);
         }
-        [item setAlternate:YES];
-        [item setKeyEquivalent:@""];
-        [item setKeyEquivalentModifierMask:NSAlternateKeyMask];
+        item.alternate = cur_pnl_native ? true : false;
+        item.keyEquivalent = @"";
+        item.keyEquivalentModifierMask = cur_pnl_native ? NSAlternateKeyMask : 0;
         [self addItem:item];
     }
-    [self addItem:[NSMenuItem separatorItem]];
+    [self addItem:NSMenuItem.separatorItem];
     
     
     //////////////////////////////////////////////////////////////////////
@@ -338,28 +340,28 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     {
         NSMenuItem *item = [NSMenuItem new];
         if(m_Items.size() > 1)
-            [item setTitle:[NSString stringWithFormat:@"Compress %lu Items", m_Items.size()]];
+            item.title = [NSString stringWithFormat:@"Compress %lu Items", m_Items.size()];
         else
-            [item setTitle:[NSString stringWithFormat:@"Compress \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]]];
+            item.title = [NSString stringWithFormat:@"Compress \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(opp_pnl_writable) { // gray out this thing if we can't compress on opposite panel
-            [item setTarget:self];
-            [item setAction:@selector(OnCompressToOppositePanel:)];
+            item.target = self;
+            item.action = @selector(OnCompressToOppositePanel:);
         }
-        [item setKeyEquivalent:@""];
+        item.keyEquivalent = @"";
         [self addItem:item];
         
         item = [NSMenuItem new];
         if(m_Items.size() > 1)
-            [item setTitle:[NSString stringWithFormat:@"Compress %lu Items Here", m_Items.size()]];
+            item.title = [NSString stringWithFormat:@"Compress %lu Items Here", m_Items.size()];
         else
-            [item setTitle:[NSString stringWithFormat:@"Compress \"%@\" Here", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]]];
+            item.title = [NSString stringWithFormat:@"Compress \"%@\" Here", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(cur_pnl_writable) { // gray out this thing if we can't compress on this panel
-            [item setTarget:self];
-            [item setAction:@selector(OnCompressToCurrentPanel:)];
+            item.target = self;
+            item.action = @selector(OnCompressToCurrentPanel:);
         }
-        [item setKeyEquivalent:@""];
-        [item setAlternate:YES];
-        [item setKeyEquivalentModifierMask:NSAlternateKeyMask];
+        item.keyEquivalent = @"";
+        item.alternate = YES;
+        item.keyEquivalentModifierMask = NSAlternateKeyMask;
         [self addItem:item];
     }
 
@@ -367,10 +369,10 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     // Duplicate stuff
     {
         NSMenuItem *item = [NSMenuItem new];
-        [item setTitle:@"Duplicate"];
+        item.title = @"Duplicate";
         if(m_Items.size() == 1 && cur_pnl_writable) {
-            [item setTarget:self];
-            [item setAction:@selector(OnDuplicateItem:)];
+            item.target = self;
+            item.action = @selector(OnDuplicateItem:);
         }
         [self addItem:item];
     }
@@ -408,9 +410,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         }
         
         NSMenuItem *share_menuitem = [NSMenuItem new];
-        [share_menuitem setTitle:@"Share"];
-        [share_menuitem setSubmenu:share_submenu];
-        [share_menuitem setEnabled:eligible];
+        share_menuitem.title = @"Share";
+        share_menuitem.submenu = share_submenu;
+        share_menuitem.enabled = eligible;
         [self addItem:share_menuitem];
     }
     
@@ -421,17 +423,17 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     {
         NSMenuItem *item = [NSMenuItem new];
         if(m_Items.size() > 1)
-            [item setTitle:[NSString stringWithFormat:@"Copy %lu Items", m_Items.size()]];
+            item.title = [NSString stringWithFormat:@"Copy %lu Items", m_Items.size()];
         else
-            [item setTitle:[NSString stringWithFormat:@"Copy \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]]];
+            item.title = [NSString stringWithFormat:@"Copy \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(m_Host->IsNativeFS()) {  // such thing works only on native file systems
-            [item setTarget:self];
-            [item setAction:@selector(OnCopyPaths:)];
+            item.target = self;
+            item.action = @selector(OnCopyPaths:);
         }
         [self addItem:item];
     }
 
-    [self addItem:[NSMenuItem separatorItem]];
+    [self addItem:NSMenuItem.separatorItem];
 }
 
 - (void)OnRegularOpen:(id)sender
@@ -514,7 +516,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnMoveToTrash:(id)sender
 {
-    // TODO: currently no VFS support in DeletionOperation. should be implemented later, using native FS now
+    assert(m_CurrentController.VFS->IsNativeFS());
     FileDeletionOperation *op = [[FileDeletionOperation alloc]
                                  initWithFiles:StringsFromVector(m_Items)
                                  type:FileDeletionOperationType::MoveToTrash
@@ -524,32 +526,33 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnDeletePermanently:(id)sender
 {
-    // TODO: currently no VFS support in DeletionOperation. should be implemented later, using native FS now
     chained_strings files;
     for(auto &i:m_Items)
         files.push_back(i, nullptr);
     
-    FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                 initWithFiles:std::move(files)
-                                 type:FileDeletionOperationType::Delete
-                                 rootpath:m_DirPath.c_str()];
+    FileDeletionOperation *op = [FileDeletionOperation alloc];
+    if(m_CurrentController.VFS->IsNativeFS())
+        op = [op initWithFiles:move(files)
+                          type:FileDeletionOperationType::Delete
+                      rootpath:m_DirPath.c_str()];
+    else
+        op = [op initWithFiles:move(files)
+                      rootpath:m_DirPath
+                            at:m_CurrentController.VFS];
+
     [m_MainWnd AddOperation:op];
 }
 
 - (void)OnCopyPaths:(id)sender
 {
-    NSMutableArray *filenames = [NSMutableArray new];
+    NSMutableArray *filenames = [[NSMutableArray alloc] initWithCapacity:m_Items.size()];
     
-    char tmp[MAXPATHLEN];
-    for(auto &i: m_Items) {
-        strcpy(tmp, m_DirPath.c_str());
-        strcat(tmp, i.c_str());
-        [filenames addObject:[NSString stringWithUTF8String:tmp]];
-    }
+    for(auto &i: m_Items)
+        [filenames addObject:[NSString stringWithUTF8String:(m_DirPath + i).c_str()]];
     
-    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+    NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
     [pasteBoard clearContents];
-    [pasteBoard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+    [pasteBoard declareTypes:@[NSFilenamesPboardType] owner:nil];
     [pasteBoard setPropertyList:filenames forType:NSFilenamesPboardType];
 }
 
@@ -585,7 +588,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnDuplicateItem:(id)sender
 {
-    // TODO: currently no VFS support in CopyOperation. should be implemented later, using native FS now
+    // currently duplicating only first file in a selected set
     char filename[MAXPATHLEN], ext[MAXPATHLEN];
     bool has_ext = false;
     {
@@ -634,18 +637,29 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 proceed:;
     FileCopyOperationOptions opts;
     opts.docopy = true;
-    FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:chained_strings(m_Items[0])
-                                                                root:m_DirPath.c_str()
-                                                                dest:target
-                                                             options:opts];
+    
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    if(m_CurrentController.VFS->IsNativeFS())
+        op = [op initWithFiles:chained_strings(m_Items[0])
+                          root:m_DirPath.c_str()
+                          dest:target
+                       options:opts];
+    else
+        op = [op initWithFiles:chained_strings(m_Items[0])
+                          root:m_DirPath.c_str()
+                        srcvfs:m_CurrentController.VFS
+                          dest:target
+                        dstvfs:m_CurrentController.VFS
+                       options:opts];
+    
     char target_fn[MAXPATHLEN];
     GetFilenameFromPath(target, target_fn);
     string target_fns = target_fn;
+    string current_pan_path = m_CurrentController.GetCurrentDirectoryPathRelativeToHost;
     [op AddOnFinishHandler:^{
-        dispatch_to_main_queue( ^{
-            [m_CurrentController ScheduleDelayedSelectionChangeFor:target_fns
-                                                         timeoutms:500
-                                                          checknow:true];
+        if(m_CurrentController.GetCurrentDirectoryPathRelativeToHost == current_pan_path)
+            dispatch_to_main_queue( ^{
+                [m_CurrentController ScheduleDelayedSelectionChangeFor:target_fns timeoutms:500 checknow:true];
             });
         }
      ];

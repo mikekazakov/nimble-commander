@@ -647,6 +647,8 @@ void panel::GenericCursorPersistance::Restore()
        [_filename isEqualToString:m_View.item->NSName()])
         return;
     
+    string target_fn = _filename.fileSystemRepresentation;
+    
     FileCopyOperationOptions opts;
     opts.docopy = false;
     
@@ -654,17 +656,27 @@ void panel::GenericCursorPersistance::Restore()
     if(self.VFS->IsNativeFS())
         op = [op initWithFiles:chained_strings(m_View.item->Name())
                           root:self.GetCurrentDirectoryPathRelativeToHost.c_str()
-                          dest:_filename.fileSystemRepresentation
+                          dest:target_fn.c_str()
                        options:opts];
     else if( self.VFS->IsWriteable() )
         op = [op initWithFiles:chained_strings(m_View.item->Name())
                           root:self.GetCurrentDirectoryPathRelativeToHost.c_str()
                         srcvfs:self.VFS
-                          dest:_filename.fileSystemRepresentation
+                          dest:target_fn.c_str()
                         dstvfs:self.VFS
                        options:opts];
     else
         return;
+    
+    string curr_path = self.GetCurrentDirectoryPathRelativeToHost;
+    auto curr_vfs = self.VFS;
+    [op AddOnFinishHandler:^{
+        if(self.GetCurrentDirectoryPathRelativeToHost == curr_path && self.VFS == curr_vfs)
+            dispatch_to_main_queue( ^{
+                [self ScheduleDelayedSelectionChangeFor:target_fn timeoutms:500 checknow:true];
+            } );
+    }];
+    
     [self.state AddOperation:op];
 }
 

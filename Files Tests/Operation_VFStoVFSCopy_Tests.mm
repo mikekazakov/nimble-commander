@@ -282,6 +282,56 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
 
+- (void)testCopyGenericToGeneric_Modes_CopyToPathName_SingleFile
+{
+    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
+    XCTAssert( host->Open("/") == 0 );
+    
+    const char *fn1 = "/System/Library/Kernels/kernel",
+    *fn2 = "/Public/!FilesTesting/kernel",
+    *fn3 = "/Public/!FilesTesting/kernel copy";
+    
+    [self EnsureClean:fn2 at:host];
+    [self EnsureClean:fn3 at:host];
+    
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("kernel")
+                      root:"/System/Library/Kernels/"
+                    srcvfs:VFSNativeHost::SharedHost()
+                      dest:"/Public/!FilesTesting/"
+                    dstvfs:host
+                   options:FileCopyOperationOptions()];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int compare;
+    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
+    XCTAssert( compare == 0);
+    
+    
+    op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("kernel")
+                      root:"/Public/!FilesTesting/"
+                    srcvfs:host
+                      dest:fn3
+                    dstvfs:host
+                   options:FileCopyOperationOptions()];
+    
+    finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    XCTAssert( VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
+    XCTAssert( compare == 0);
+    
+    XCTAssert( host->Unlink(fn2, 0) == 0);
+    XCTAssert( host->Unlink(fn3, 0) == 0);
+}
+
 - (void)testCopyGenericToGeneric_Modes_RenameToPathPreffix
 {
     // works on single host - In and Out same as where source files are

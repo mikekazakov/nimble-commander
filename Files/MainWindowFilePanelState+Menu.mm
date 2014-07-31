@@ -21,6 +21,8 @@
 #import "FileLinkAlterSymlinkSheetController.h"
 #import "FileLinkNewHardlinkSheetController.h"
 #import "FileLinkOperation.h"
+#import "FileCopyOperation.h"
+#import "MassCopySheetController.h"
 
 @implementation MainWindowFilePanelState (Menu)
 
@@ -34,6 +36,10 @@
     TAG(tag_cmd_link_soft,              "menu.command.link_create_soft");
     TAG(tag_cmd_link_hard,              "menu.command.link_create_hard");
     TAG(tag_cmd_link_edit,              "menu.command.link_edit");
+    TAG(tag_cmd_copy_to,                "menu.command.copy_to");
+    TAG(tag_cmd_copy_as,                "menu.command.copy_as");
+    TAG(tag_cmd_move_to,                "menu.command.move_to");
+    TAG(tag_cmd_move_as,                "menu.command.move_as");
 #undef TAG
     
     auto tag = item.tag;
@@ -46,8 +52,12 @@
     IF(tag_cmd_link_soft)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && !self.ActivePanelView.item->IsDotDot() && m_LeftPanelController.VFS->IsNativeFS() && m_RightPanelController.VFS->IsNativeFS();
     IF(tag_cmd_link_hard)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && m_LeftPanelController.VFS->IsNativeFS() && m_RightPanelController.VFS->IsNativeFS() && !self.ActivePanelView.item->IsDir();
     IF(tag_cmd_link_edit)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.ActivePanelController.VFS->IsNativeFS() && !self.ActivePanelView.item->IsDir() && self.ActivePanelView.item->IsSymlink();
+    IF(tag_cmd_copy_to)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
+    IF(tag_cmd_copy_as)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
+    IF(tag_cmd_move_to)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
+    IF(tag_cmd_move_as)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
 #undef IF
-    
+
     return true;
 }
 
@@ -216,6 +226,290 @@
                       ];
                  }
              }];
+}
+
+- (IBAction)OnFileCopyCommand:(id)sender{
+    if(!self.isPanelActive) return;
+    if([m_MainSplitView AnyCollapsedOrOverlayed])
+        return;
+    
+    const PanelData *source, *destination;
+    if(m_LeftPanelController.isActive) {
+        source = &m_LeftPanelController.data;
+        destination = &m_RightPanelController.data;
+    }
+    else {
+        source = &m_RightPanelController.data;
+        destination = &m_LeftPanelController.data;
+    }
+    
+    auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
+    if(files->empty())
+        return;
+    
+    string dest_path = destination->DirectoryPathWithTrailingSlash();
+    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
+    MassCopySheetController *mc = [MassCopySheetController new];
+    [mc ShowSheet:self.window initpath:nsdirpath iscopying:true items:files.get() handler:^(int _ret)
+     {
+         path root_path = source->DirectoryPathWithTrailingSlash();
+         path req_path = mc.TextField.stringValue.fileSystemRepresentation;
+         if(_ret == DialogResult::Copy && !req_path.empty())
+         {
+             FileCopyOperationOptions opts;
+             opts.docopy = true;
+             [mc FillOptions:&opts];
+             
+             FileCopyOperation *op = [FileCopyOperation alloc];
+             if(source->Host()->IsNativeFS() && destination->Host()->IsNativeFS())
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                   dest:req_path.c_str()
+                                options:opts];
+             else if(destination->Host()->IsNativeFS() && req_path.is_absolute() )
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                rootvfs:source->Host()
+                                   dest:req_path.c_str()
+                                options:opts];
+             else if( ( req_path.is_absolute() && destination->Host()->IsWriteable()) ||
+                     (!req_path.is_absolute() && source->Host()->IsWriteable() )      )
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                 srcvfs:source->Host()
+                                   dest:req_path.c_str()
+                                 dstvfs:destination->Host()
+                                options:opts];
+             else
+                 op = nil;
+             
+             if(op) {
+                 [op AddOnFinishHandler:^{
+                     dispatch_to_main_queue( ^{
+                         [m_LeftPanelController RefreshDirectory];
+                         [m_RightPanelController RefreshDirectory];
+                     });
+                 }];
+                 [m_OperationsController AddOperation:op];
+             }
+         }
+     }];
+}
+
+- (IBAction)OnFileCopyAsCommand:(id)sender{
+    // process only current cursor item
+    if(!self.isPanelActive) return;
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
+    const PanelData *source, *destination;
+    if(m_LeftPanelController.isActive)
+    {
+        source = &m_LeftPanelController.data;
+        destination = &m_RightPanelController.data;
+    }
+    else
+    {
+        source = &m_RightPanelController.data;
+        destination = &m_LeftPanelController.data;
+    }
+    
+    auto const *item = self.ActivePanelView.item;
+    if(!item || item->IsDotDot())
+        return;
+    
+    auto files = make_shared<chained_strings>(item->Name());
+    
+    MassCopySheetController *mc = [MassCopySheetController new];
+    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:files.get() handler:^(int _ret)
+     {
+         path root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+         path req_path = mc.TextField.stringValue.fileSystemRepresentation;
+         if(_ret == DialogResult::Copy && !req_path.empty())
+         {
+             FileCopyOperationOptions opts;
+             opts.docopy = true;
+             [mc FillOptions:&opts];
+             
+             FileCopyOperation *op = [FileCopyOperation alloc];
+             if(source->Host()->IsNativeFS() &&
+                ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ) )
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                   dest:req_path.c_str()
+                                options:opts];
+             else if(destination->Host()->IsNativeFS() && req_path.is_absolute() )
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                rootvfs:source->Host()
+                                   dest:req_path.c_str()
+                                options:opts];
+             else if( (destination->Host()->IsWriteable() && req_path.is_absolute()) ||
+                     (source->Host()->IsWriteable()      &&!req_path.is_absolute())  )
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                 srcvfs:source->Host()
+                                   dest:req_path.c_str()
+                                 dstvfs:destination->Host()
+                                options:opts];
+             else
+                 op = nil;
+             
+             if(op)
+             {
+                 [op AddOnFinishHandler:^{
+                     dispatch_to_main_queue( ^{
+                         [m_LeftPanelController RefreshDirectory];
+                         [m_RightPanelController RefreshDirectory];
+                     });
+                 }];
+                 [m_OperationsController AddOperation:op];
+             }
+         }
+     }];
+}
+
+- (IBAction)OnFileRenameMoveCommand:(id)sender{
+    if(!self.isPanelActive) return;
+    if([m_MainSplitView AnyCollapsedOrOverlayed])
+        return;
+    const PanelData *source, *destination;
+    if(m_LeftPanelController.isActive)
+    {
+        source = &m_LeftPanelController.data;
+        destination = &m_RightPanelController.data;
+    }
+    else
+    {
+        source = &m_RightPanelController.data;
+        destination = &m_LeftPanelController.data;
+    }
+    
+    if(!source->Host()->IsWriteable())
+        return;
+    
+    auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
+    if(files->empty())
+        return;
+    
+    string dest_path = destination->DirectoryPathWithTrailingSlash();
+    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
+    
+    MassCopySheetController *mc = [MassCopySheetController new];
+    [mc ShowSheet:self.window initpath:nsdirpath iscopying:false items:files.get() handler:^(int _ret)
+     {
+         path root_path = source->DirectoryPathWithTrailingSlash();
+         path req_path = mc.TextField.stringValue.fileSystemRepresentation;
+         if(_ret == DialogResult::Copy && !req_path.empty())
+         {
+             FileCopyOperationOptions opts;
+             opts.docopy = false;
+             [mc FillOptions:&opts];
+             
+             FileCopyOperation *op = [FileCopyOperation alloc];
+             if(source->Host()->IsNativeFS() &&
+                ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ) )
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                   dest:req_path.c_str()
+                                options:opts];
+             else if( destination->Host()->IsWriteable() )
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                 srcvfs:source->Host()
+                                   dest:req_path.c_str()
+                                 dstvfs:destination->Host()
+                                options:opts];
+             else
+                 op = nil;
+             
+             
+             if(op) {
+                 [op AddOnFinishHandler:^{
+                     dispatch_to_main_queue( ^{
+                         [m_LeftPanelController RefreshDirectory];
+                         [m_RightPanelController RefreshDirectory];
+                     });
+                 }];
+                 [m_OperationsController AddOperation:op];
+             }
+         }
+     }];
+}
+
+- (IBAction)OnFileRenameMoveAsCommand:(id)sender {
+    
+    // process only current cursor item
+    if(!self.isPanelActive) return;
+    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+        return;
+    
+    const PanelData *source, *destination;
+    if(m_LeftPanelController.isActive)
+    {
+        source = &m_LeftPanelController.data;
+        destination = &m_RightPanelController.data;
+    }
+    else
+    {
+        source = &m_RightPanelController.data;
+        destination = &m_LeftPanelController.data;
+    }
+    
+    if(!source->Host()->IsWriteable())
+        return;
+    
+    auto const *item = self.ActivePanelView.item;
+    if(!item || item->IsDotDot())
+        return;
+    
+    auto files = make_shared<chained_strings>(item->Name());
+    
+    MassCopySheetController *mc = [MassCopySheetController new];
+    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:files.get() handler:^(int _ret)
+     {
+         path root_path = source->DirectoryPathWithTrailingSlash();
+         path req_path = mc.TextField.stringValue.fileSystemRepresentation;
+         if(_ret == DialogResult::Copy && !req_path.empty())
+         {
+             FileCopyOperationOptions opts;
+             opts.docopy = false;
+             [mc FillOptions:&opts];
+             
+             FileCopyOperation *op = [FileCopyOperation alloc];
+             
+             if(source->Host()->IsNativeFS() &&
+                ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ))
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                   dest:req_path.c_str()
+                                options:opts];
+             else if( destination->Host()->IsWriteable() )
+                 op = [op initWithFiles:move(*files.get())
+                                   root:root_path.c_str()
+                                 srcvfs:source->Host()
+                                   dest:req_path.c_str()
+                                 dstvfs:destination->Host()
+                                options:opts];
+             else
+                 op = nil;
+             
+             if(op) {
+                 string single_fn_rename;
+                 if( req_path.native().find('/') == string::npos )
+                     single_fn_rename = req_path.filename().native();
+                 auto active = self.ActivePanelController;
+                 
+                 [op AddOnFinishHandler:^{
+                     dispatch_to_main_queue( ^{
+                         [m_LeftPanelController RefreshDirectory];
+                         [m_RightPanelController RefreshDirectory];
+                         [active ScheduleDelayedSelectionChangeFor:single_fn_rename timeoutms:500 checknow:true];
+                     });
+                 }];
+                 [m_OperationsController AddOperation:op];
+             }
+         }
+     }];
 }
 
 @end

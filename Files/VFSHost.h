@@ -94,8 +94,26 @@ struct VFSStat
 	timespec    mtime;	/* Time of last data modification */
 	timespec    ctime;	/* Time of last status change */
 	timespec    btime;	/* Time of file creation(birth) */
+    struct meaningT {
+        unsigned size:   1;
+        unsigned blocks: 1;
+        unsigned inode:  1;
+        unsigned dev:    1;
+        unsigned rdev:   1;
+        unsigned uid:    1;
+        unsigned gid:    1;
+        unsigned blksize:1;
+        unsigned flags:  1;
+        unsigned mode:   1;
+        unsigned nlink:  1;
+        unsigned atime:  1;
+        unsigned mtime:  1;
+        unsigned ctime:  1;
+        unsigned btime:  1;
+    } meaning;
     static void FromSysStat(const struct stat &_from, VFSStat &_to);
     static void ToSysStat(const VFSStat &_from, struct stat &_to);
+    inline static meaningT AllMeaning() { const uint64_t t = ~0; return *(meaningT*)&t; }
 };
 
 struct VFSHostOptions

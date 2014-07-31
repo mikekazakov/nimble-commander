@@ -45,6 +45,10 @@ namespace VFSNetFTP
         _stat.ctime.tv_sec = time;
         _stat.btime.tv_sec = time;
         _stat.atime.tv_sec = time;
+        
+        _stat.meaning.size = 1;
+        _stat.meaning.mode = 1;
+        _stat.meaning.mtime = _stat.meaning.ctime = _stat.meaning.btime = _stat.meaning.atime = 1;
     }
     
     const Entry* Directory::EntryByName(const string &_name) const

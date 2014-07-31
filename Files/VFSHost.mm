@@ -11,6 +11,8 @@
 #import "VFSHost.h"
 #import "path_manip.h"
 
+static_assert(sizeof(VFSStat) == 128, "");
+
 VFSHostOptions::~VFSHostOptions()
 {
 };
@@ -37,6 +39,7 @@ void VFSStat::FromSysStat(const struct stat &_from, VFSStat &_to)
     _to.mtime   = _from.st_mtimespec;
     _to.ctime   = _from.st_ctimespec;
     _to.btime   = _from.st_birthtimespec;
+    _to.meaning = AllMeaning();
 }
 
 void VFSStat::ToSysStat(const VFSStat &_from, struct stat &_to)

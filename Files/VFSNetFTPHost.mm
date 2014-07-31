@@ -163,6 +163,10 @@ int VFSNetFTPHost::Stat(const char *_path,
         memset(&_st, 0, sizeof(_st));
         _st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
         _st.atime.tv_sec = _st.mtime.tv_sec = _st.btime.tv_sec = _st.ctime.tv_sec = time(0);
+
+        _st.meaning.size = 1;
+        _st.meaning.mode = 1;
+        _st.meaning.mtime = _st.meaning.ctime = _st.meaning.btime = _st.meaning.atime = 1;
         return 0;
     }
     

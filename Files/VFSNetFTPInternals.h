@@ -18,7 +18,7 @@ namespace VFSNetFTP
 {
 
 static const curl_ftpmethod g_CURLFTPMethod = /*CURLFTPMETHOD_DEFAULT*/ /*CURLFTPMETHOD_MULTICWD*/ CURLFTPMETHOD_SINGLECWD /*CURLFTPMETHOD_NOCWD*/;
-static const int g_CURLVerbose = 1;
+static const int g_CURLVerbose = 0;
 
 struct CURLInstance
 {

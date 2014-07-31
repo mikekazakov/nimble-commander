@@ -44,8 +44,6 @@ FileCopyOperationJobFromGeneric::FileCopyOperationJobFromGeneric()
     m_OverwriteAll = false;
     m_AppendAll = false;
     m_CurrentlyProcessingItem = 0;
-    m_Buffer1 = 0;
-    m_Buffer2 = 0;
 }
 
 FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()

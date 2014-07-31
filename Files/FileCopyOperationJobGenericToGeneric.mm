@@ -465,6 +465,12 @@ opendest:
         m_Stats.SetValue(m_TotalCopied);
     }
 
+    // TODO:
+    // xattrs
+    // owners
+    // flags
+    // file times
+
     was_successful = true;
     
 cleanup:;

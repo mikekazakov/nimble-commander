@@ -478,6 +478,18 @@ int VFSPSHost::CreateFile(const char* _path,
 
 int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
 {
+    static VFSStat::meaningT m;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        memset(&m, sizeof(m), 0);
+        m.size = 1;
+        m.mode = 1;
+        m.mtime = 1;
+        m.atime = 1;
+        m.ctime = 1;
+        m.btime = 1;
+    });
+    
     lock_guard<mutex> lock(m_Lock);
     
     if(_path == nullptr)
@@ -495,7 +507,8 @@ int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_
     _st.atime.tv_sec = m_Data->taken_time;
     _st.ctime.tv_sec = m_Data->taken_time;
     _st.btime.tv_sec = m_Data->taken_time;
-
+    _st.meaning = m;
+    
     return VFSError::Ok;
 }
 

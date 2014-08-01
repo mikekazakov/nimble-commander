@@ -292,7 +292,8 @@
 - (IBAction)OnMenuSendFeedback:(id)sender
 {
     NSString *toAddress = @"feedback@filesmanager.info";
-    NSString *subject = [NSString stringWithFormat: @"Feedback on Files version %@ (%@)",
+    NSString *subject = [NSString stringWithFormat: @"Feedback on %@ version %@ (%@)",
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Write your message here.";

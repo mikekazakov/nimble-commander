@@ -91,6 +91,12 @@
         menuitem("menu.command.internal_viewer").hidden = true;
     if(!configuration::has_compression_operation)
         menuitem("menu.command.compress").hidden = true;
+    if(!configuration::has_fs_links_manipulation) {
+        menuitem("menu.command.link_create_soft").hidden = true;
+        menuitem("menu.command.link_create_hard").hidden = true;
+        menuitem("menu.command.link_edit").hidden = true;
+        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.command.link_edit")].hidden = true;
+    }
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);

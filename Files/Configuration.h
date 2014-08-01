@@ -56,5 +56,6 @@ namespace configuration
     constexpr bool has_internal_viewer              = version >= Version::Pro;
     constexpr bool has_compression_operation        = version >= Version::Pro;
     constexpr bool has_archives_browsing            = version >= Version::Pro;
+    constexpr bool has_fs_links_manipulation        = version >= Version::Pro;
 }
 #endif

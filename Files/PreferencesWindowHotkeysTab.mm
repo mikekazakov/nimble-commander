@@ -8,16 +8,31 @@
 
 #import "PreferencesWindowHotkeysTab.h"
 #import "ActionsShortcutsManager.h"
+#import "Common.h"
 
 @implementation PreferencesWindowHotkeysTab
 {
     vector<GTMHotKeyTextField *> m_EditFields;
+    vector<pair<string,int>>     m_Shortcuts;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
+        m_Shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
+        
+        // remove shortcuts whichs are absent in main menu
+        m_Shortcuts.erase(remove_if(begin(m_Shortcuts),
+                                    end(m_Shortcuts),
+                                 [](auto &_t) {
+                                     if(_t.first.find_first_of("menu.") != 0)
+                                         return false;
+                                     NSMenuItem *it = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
+                                     return it == nil || it.isHidden == true;
+                                 }),
+                       end(m_Shortcuts)
+                       );
     }
     return self;
 }
@@ -51,15 +66,15 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return ActionsShortcutsManager::Instance().AllShortcuts().size();
+    return m_Shortcuts.size();
 }
 
 - (NSView *)tableView:(NSTableView *)tableView
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
-    assert(row < ActionsShortcutsManager::Instance().AllShortcuts().size());
-    auto &tag = ActionsShortcutsManager::Instance().AllShortcuts()[row];
+    assert(row < m_Shortcuts.size());
+    auto &tag = m_Shortcuts[row];
     auto sc = ActionsShortcutsManager::Instance().ShortCutFromTag(tag.second);
 
 

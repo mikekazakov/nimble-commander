@@ -133,6 +133,7 @@ struct MachTimeBenchmark
 
 @interface NSMenu(Hierarchical)
 - (NSMenuItem *)itemWithTagHierarchical:(NSInteger)tag;
+- (NSMenuItem *)itemContainingItemWithTagHierarchical:(NSInteger)tag;
 @end
 
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }

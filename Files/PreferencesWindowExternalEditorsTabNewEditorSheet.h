@@ -13,6 +13,7 @@
 @interface PreferencesWindowExternalEditorsTabNewEditorSheet : NSWindowController
 
 @property (nonatomic, strong) ExternalEditorInfo *Info;
+@property (nonatomic, readonly) bool hasTerminal;
 
 - (void)ShowSheet:(NSWindow *) _window
        ok_handler:(void(^)())_handler;

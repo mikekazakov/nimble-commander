@@ -38,17 +38,6 @@ static NSString* StorageFileName()
 @synthesize only_files = m_OnlyFiles;
 @synthesize terminal = m_Terminal;
 @synthesize max_size = m_MaxSize;
-
-/*
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString *path;
-@property (nonatomic, strong) NSString *arguments;
-@property (nonatomic, strong) NSString *mask;
-@property (nonatomic) bool only_files;
-@property (nonatomic) uint64_t max_size;
-@property (nonatomic) bool terminal;
-*/
-
 - (id) init
 {
     if(self = [super init])
@@ -194,14 +183,23 @@ static NSString* StorageFileName()
         {
             m_Editors = [NSMutableArray new];
             
-            ExternalEditorInfo *dummy = [ExternalEditorInfo new];
-            dummy.name = @"vi";
-            dummy.path = @"/usr/bin/vi";
-            dummy.arguments = @"%%";
-            dummy.mask = @"*";
-            dummy.terminal = true;
+            ExternalEditorInfo *deflt = [ExternalEditorInfo new];
+            if(configuration::has_terminal) {
+                deflt.name = @"vi";
+                deflt.path = @"/usr/bin/vi";
+                deflt.arguments = @"%%";
+                deflt.mask = @"*";
+                deflt.terminal = true;
+            }
+            else {
+                deflt.name = @"TextEdit";
+                deflt.path = @"/Applications/TextEdit.app";
+                deflt.arguments = @"";
+                deflt.mask = @"*";
+                deflt.terminal = false;
+            }
             
-            [m_Editors addObject:dummy];
+            [m_Editors addObject:deflt];
             m_IsDirty = true;
         }
         else

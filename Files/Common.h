@@ -131,6 +131,10 @@ struct MachTimeBenchmark
 + (void) writeSingleString:(const char *)_s;
 @end
 
+@interface NSMenu(Hierarchical)
+- (NSMenuItem *)itemWithTagHierarchical:(NSInteger)tag;
+@end
+
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
 bool IsRunningUnitTesting();
 

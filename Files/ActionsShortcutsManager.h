@@ -61,8 +61,6 @@ public:
     void SetShortCutOverride(const string &_action, const ShortCut& _sc);
     
     
-    
-    void DoInit();
     void SetMenuShortCuts(NSMenu *_menu) const;
     
     inline const vector<pair<string,int>>& AllShortcuts() const { return m_ActionsTags; }
@@ -70,6 +68,7 @@ public:
 private:
     ActionsShortcutsManager();
     ActionsShortcutsManager(const ActionsShortcutsManager&) = delete;
+    void DoInit();    
     
     void ReadDefaults(NSArray *_dict);
     void WriteDefaults(NSMutableArray *_dict) const;

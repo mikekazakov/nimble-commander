@@ -137,6 +137,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
         m_TagToAction[i.second] = i.first;
         m_ActionToTag[i.first]  = i.second;
     }
+    DoInit();
 }
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
@@ -293,7 +294,7 @@ void ActionsShortcutsManager::DoInit()
 {
     NSString *defaults_fn = [[NSBundle mainBundle] pathForResource:@"ShortcutsDefaults" ofType:@"plist"];
     ReadDefaults([NSArray arrayWithContentsOfFile:defaults_fn]);
-        ReadOverrides([NSArray arrayWithContentsOfFile:OverridesFullPath()]);
+    ReadOverrides([NSArray arrayWithContentsOfFile:OverridesFullPath()]);
     
     [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
                                                     object:[NSApplication sharedApplication]

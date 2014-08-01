@@ -337,6 +337,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     
     //////////////////////////////////////////////////////////////////////
     // Compression stuff
+    if(configuration::has_compression_operation)
     {
         NSMenuItem *item = [NSMenuItem new];
         if(m_Items.size() > 1)

@@ -49,6 +49,11 @@
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 }
 
+- (bool) hasTerminal
+{
+    return configuration::has_terminal;
+}
+
 - (void)ShowSheet:(NSWindow *) _window
        ok_handler:(void(^)())_handler
 {

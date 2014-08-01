@@ -328,6 +328,19 @@ bool IsVolumeContainingPathEjectable(const string &_path)
 }
 @end
 
+@implementation NSMenu(Hierarchical)
+- (NSMenuItem *)itemWithTagHierarchical:(NSInteger)tag
+{
+    if(NSMenuItem *i = [self itemWithTag:tag])
+        return i;
+    for(NSMenuItem *it in self.itemArray)
+        if(it.hasSubmenu)
+            if(NSMenuItem *i = [it.submenu itemWithTagHierarchical:tag])
+                return i;
+    return nil;
+}
+@end
+
 NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz)
 {
     if(_sz < 1000000) // bytes

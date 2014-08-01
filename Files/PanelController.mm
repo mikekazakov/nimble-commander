@@ -331,11 +331,16 @@ void panel::GenericCursorPersistance::Restore()
         if(entry->IsDotDot())
             return [self HandleGoToUpperDirectory];
         
-        path cur = path(m_Data.DirectoryPathWithTrailingSlash());
-        return [self GoToDir:(cur/entry->Name()).native() vfs:self.VFS select_entry:"" async:true] == 0;
+        path dir = path(m_Data.DirectoryPathWithTrailingSlash()) / entry->Name();
+        
+        if(self.VFS->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir.native()])
+            return true; // silently reap this command, since user refuses to grant an access
+        
+        return [self GoToDir:dir.native() vfs:self.VFS select_entry:"" async:true] == 0;
     }
-    else
-    { // archive stuff here
+    // archive stuff here
+    else if(configuration::has_archives_browsing)
+    {
         auto arhost = VFSArchiveProxy::OpenFileAsArchive(self.GetCurrentFocusedEntryFilePathRelativeToHost,
                                                          self.VFS);
         if(arhost)
@@ -355,7 +360,9 @@ void panel::GenericCursorPersistance::Restore()
         return;
     
     // need more sophisticated executable handling here
-    if(self.VFS->IsNativeFS() && IsEligbleToTryToExecuteInConsole(*entry))
+    if(configuration::has_terminal &&
+       self.VFS->IsNativeFS() &&
+       IsEligbleToTryToExecuteInConsole(*entry))
     {
         auto path = [self GetCurrentDirectoryPathRelativeToHost];
         [(MainWindowController*)self.window.delegate RequestTerminalExecution:entry->Name() at:path.c_str()];

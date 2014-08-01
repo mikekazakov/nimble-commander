@@ -73,9 +73,28 @@
 {
     // modules initialization
     NativeFSManager::Instance();
+        
+    // disable some features available in menu by configuration limitation
+    auto tag_from_lit   = [=](const char *s){ return ActionsShortcutsManager::Instance().TagFromAction(s);       };
+    auto menuitem       = [=](const char *s){ return [[NSApp mainMenu] itemWithTagHierarchical:tag_from_lit(s)]; };
+    if(!configuration::has_psfs)
+        menuitem("menu.go.processes_list").hidden = true;
+    if(!configuration::has_terminal)
+        menuitem("menu.view.show_terminal").hidden = true;
+    if(!configuration::has_brief_system_overview)
+        menuitem("menu.command.system_overview").hidden = true;
+    if(!configuration::has_unix_attributes_editing)
+        menuitem("menu.command.file_attributes").hidden = true;
+    if(!configuration::has_detailed_volume_information)
+        menuitem("menu.command.volume_information").hidden = true;
+    if(!configuration::has_internal_viewer)
+        menuitem("menu.command.internal_viewer").hidden = true;
+    if(!configuration::has_compression_operation)
+        menuitem("menu.command.compress").hidden = true;
     
-    ActionsShortcutsManager::Instance().DoInit();
+    // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
+    
     
     if(configuration::is_sandboxed) {
         auto &sm = SandboxManager::Instance();
@@ -388,13 +407,15 @@
 {
     if(!m_PreferencesController)
     {
-        auto controllers = @[[PreferencesWindowGeneralTab new],
-                             [PreferencesWindowPanelsTab new],
-                             [PreferencesWindowViewerTab new],
-                             [PreferencesWindowExternalEditorsTab new],
-                             [PreferencesWindowTerminalTab new],
-                             [PreferencesWindowHotkeysTab new]
-                             ];
+        NSMutableArray *controllers = [NSMutableArray new];
+        [controllers addObject:[PreferencesWindowGeneralTab new]];
+        [controllers addObject:[PreferencesWindowPanelsTab new]];
+        if(configuration::has_internal_viewer)
+            [controllers addObject:[PreferencesWindowViewerTab new]];
+        [controllers addObject:[PreferencesWindowExternalEditorsTab new]];
+        if(configuration::has_terminal)
+            [controllers addObject:[PreferencesWindowTerminalTab new]];
+        [controllers addObject:[PreferencesWindowHotkeysTab new]];
         m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
                                                                                         andTitle:@"Preferences"];
     }

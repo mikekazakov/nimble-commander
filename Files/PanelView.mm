@@ -154,6 +154,11 @@ struct PanelViewStateStorage
     return self.window == nil ? false : self.window.firstResponder == self;
 }
 
+- (void)resetCursorRects
+{
+    [self addCursorRect:self.frame cursor:NSCursor.arrowCursor];
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
     if (!m_State.Data || !m_Presentation) return;

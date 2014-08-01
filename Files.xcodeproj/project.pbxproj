@@ -697,6 +697,55 @@
 			remoteGlobalIDString = CF653C4A18C3934100502920;
 			remoteInfo = UnRAR_LIB;
 		};
+		CF7F323C198B72AB004D8AC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
+			remoteInfo = Files;
+		};
+		CF7F323F198B72AB004D8AC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
+			remoteInfo = Files;
+		};
+		CF7F3241198B72C1004D8AC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
+			remoteInfo = Files;
+		};
+		CF7F3243198B72C5004D8AC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
+			remoteInfo = Files;
+		};
+		CF7F3245198B72C9004D8AC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
+			remoteInfo = Files;
+		};
+		CF7F3247198B72D3004D8AC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
+			remoteInfo = Files;
+		};
+		CF7F3249198B74F4004D8AC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
+			remoteInfo = Files;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -2358,6 +2407,13 @@
 			);
 			dependencies = (
 				CF47A98D186C607C00745C4C /* PBXTargetDependency */,
+				CF7F323D198B72AB004D8AC0 /* PBXTargetDependency */,
+				CF7F3240198B72AB004D8AC0 /* PBXTargetDependency */,
+				CF7F3242198B72C1004D8AC0 /* PBXTargetDependency */,
+				CF7F3244198B72C5004D8AC0 /* PBXTargetDependency */,
+				CF7F3246198B72C9004D8AC0 /* PBXTargetDependency */,
+				CF7F3248198B72D3004D8AC0 /* PBXTargetDependency */,
+				CF7F324A198B74F4004D8AC0 /* PBXTargetDependency */,
 			);
 			name = "Files Tests";
 			productName = "Files Tests";
@@ -2414,6 +2470,7 @@
 					};
 					CF6D997C196675290077B146 = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = AC5SJT236H;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -3177,6 +3234,41 @@
 			target = CFC5121016C4BD3D00D247EE /* Files */;
 			targetProxy = CF47A98C186C607C00745C4C /* PBXContainerItemProxy */;
 		};
+		CF7F323D198B72AB004D8AC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFC5121016C4BD3D00D247EE /* Files */;
+			targetProxy = CF7F323C198B72AB004D8AC0 /* PBXContainerItemProxy */;
+		};
+		CF7F3240198B72AB004D8AC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFC5121016C4BD3D00D247EE /* Files */;
+			targetProxy = CF7F323F198B72AB004D8AC0 /* PBXContainerItemProxy */;
+		};
+		CF7F3242198B72C1004D8AC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFC5121016C4BD3D00D247EE /* Files */;
+			targetProxy = CF7F3241198B72C1004D8AC0 /* PBXContainerItemProxy */;
+		};
+		CF7F3244198B72C5004D8AC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFC5121016C4BD3D00D247EE /* Files */;
+			targetProxy = CF7F3243198B72C5004D8AC0 /* PBXContainerItemProxy */;
+		};
+		CF7F3246198B72C9004D8AC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFC5121016C4BD3D00D247EE /* Files */;
+			targetProxy = CF7F3245198B72C9004D8AC0 /* PBXContainerItemProxy */;
+		};
+		CF7F3248198B72D3004D8AC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFC5121016C4BD3D00D247EE /* Files */;
+			targetProxy = CF7F3247198B72D3004D8AC0 /* PBXContainerItemProxy */;
+		};
+		CF7F324A198B74F4004D8AC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFC5121016C4BD3D00D247EE /* Files */;
+			targetProxy = CF7F3249198B74F4004D8AC0 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -3278,14 +3370,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -3306,7 +3398,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				METAL_ENABLE_DEBUG_INFO = YES;
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1y",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx10.9;
@@ -3317,14 +3412,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3343,7 +3438,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				METAL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1y",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.9;
 			};

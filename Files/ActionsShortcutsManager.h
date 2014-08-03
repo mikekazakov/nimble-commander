@@ -132,6 +132,7 @@ private:
         {"menu.go.utilities",                   14100},
         {"menu.go.to_folder",                   14110},
         {"menu.go.processes_list",              14120},
+        {"menu.go.connect.ftp",                 14130},
         {"menu.command.system_overview",        15000},
         {"menu.command.volume_information",     15010},
         {"menu.command.file_attributes",        15020},

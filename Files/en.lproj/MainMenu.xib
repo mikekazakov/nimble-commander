@@ -405,6 +405,19 @@ DQ
                                     <action selector="OnGoToFolder:" target="-1" id="O9K-29-SEO"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Connect To..." id="R1g-do-NyV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Connect To..." id="vG4-7z-hXO">
+                                    <items>
+                                        <menuItem title="FTP Server" tag="14130" id="gZ9-Jg-sEd">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToFTP:" target="-1" id="Vp7-5m-44g"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

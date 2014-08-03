@@ -108,6 +108,8 @@
 	<string>⌥⌘p</string>
 	<string>menu.go.to_folder</string>
 	<string>⇧⌘g</string>
+	<string>menu.go.connect.ftp</string>
+	<string></string>
 	<string>menu.command.system_overview</string>
 	<string>⌘l</string>
 	<string>menu.command.volume_information</string>

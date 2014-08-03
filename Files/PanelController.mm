@@ -15,7 +15,6 @@
 #import "SharingService.h"
 #import "BriefSystemOverview.h"
 #import "ActionsShortcutsManager.h"
-#import "FTPConnectionSheetController.h"
 #import "FileCopyOperation.h"
 #import "SandboxManager.h"
 
@@ -440,14 +439,6 @@ void panel::GenericCursorPersistance::Restore()
         return true;
     }
     
-    if(keycode == 3 ) { // 'F' button
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
-        {
-            [self HandleFTPConnection];
-            return true;
-        }
-    }
-    
     // handle some actions manually, to prevent annoying by menu highlighting by hotkey
     auto &shortcuts = ActionsShortcutsManager::Instance();
     if(shortcuts.ShortCutFromAction("menu.file.open")->IsKeyDown(unicode, keycode, modif)) {
@@ -693,44 +684,6 @@ void panel::GenericCursorPersistance::Restore()
 - (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view
 {
     [self.state activePanelChangedTo:self];
-}
-
-- (void) HandleFTPConnection
-{
-    FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
-    [sheet ShowSheet:self.window
-             handler:^{
-                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
-                     if(sheet.server == nil)
-                         return;
-                     
-                     string server =  sheet.server.UTF8String;
-                     string username = sheet.username ? sheet.username.UTF8String : "";
-                     string password = sheet.password ? sheet.password.UTF8String : "";
-                     string path = sheet.path ? sheet.path.UTF8String : "/";
-                     if(path.empty() || path[0] != '/')
-                         path = "/";
-                     
-                     VFSNetFTPOptions opts;
-                     opts.user = username;
-                     opts.passwd = password;
-                     if(sheet.port.intValue != 0)
-                         opts.port = sheet.port.intValue;
-                     
-                     auto host = make_shared<VFSNetFTPHost>(server.c_str());
-                     int ret = host->Open(path.c_str(), opts);
-                     if(ret != 0)
-                         return dispatch_async(dispatch_get_main_queue(), ^{
-                             NSAlert *alert = [[NSAlert alloc] init];
-                             alert.messageText = @"FTP connection error:";
-                             alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
-                             [alert addButtonWithTitle:@"OK"];
-                             [alert runModal];
-                         });
-                     
-                     [self GoToDir:path vfs:host select_entry:"" async:true];
-                 });
-             }];
 }
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select

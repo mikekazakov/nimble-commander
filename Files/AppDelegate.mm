@@ -105,6 +105,10 @@
         menuitem("menu.command.link_edit").hidden = true;
         [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.command.link_edit")].hidden = true;
     }
+    if(!configuration::has_network_connectivity) {
+        menuitem("menu.go.connect.ftp").hidden = true;
+        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
+    }
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);

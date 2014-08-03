@@ -87,6 +87,14 @@
         menuitem("menu.command.file_attributes").hidden = true;
     if(!configuration::has_detailed_volume_information)
         menuitem("menu.command.volume_information").hidden = true;
+    // fix for a hanging separator in Lite version
+    // BAD, BAD approach with hardcoded standalone tag!
+    // need to write a mech to hide separators if surrounding menu items became hidden
+    // or just w8 till all upgrade to 10.10, which does it automatically
+    if(!configuration::has_brief_system_overview &&
+       !configuration::has_unix_attributes_editing &&
+       !configuration::has_detailed_volume_information)
+        [[NSApp mainMenu] itemWithTagHierarchical:15021].hidden = true;
     if(!configuration::has_internal_viewer)
         menuitem("menu.command.internal_viewer").hidden = true;
     if(!configuration::has_compression_operation)

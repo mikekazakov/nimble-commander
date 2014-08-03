@@ -584,3 +584,10 @@ shared_ptr<VFSHostOptions> VFSNetFTPHost::Options() const
 {
     return m_Options;
 }
+
+int VFSNetFTPHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+{
+    _stat.avail_bytes = _stat.free_bytes = _stat.total_bytes = 0;
+    _stat.volume_name = JunctionPath();
+    return 0;
+}

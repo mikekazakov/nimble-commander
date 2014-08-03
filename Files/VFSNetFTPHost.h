@@ -50,6 +50,10 @@ public:
                      VFSStat &_st,
                      int _flags,
                      bool (^_cancel_checker)()) override;
+    
+    virtual int StatFS(const char *_path,
+                       VFSStatFS &_stat,
+                       bool (^_cancel_checker)()) override;
 
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,

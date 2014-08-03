@@ -203,7 +203,7 @@
     FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
     [sheet ShowSheet:self.window
              handler:^{
-                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                 m_DirectoryLoadingQ->Run(^{
                      if(sheet.server == nil)
                          return;
                      
@@ -230,8 +230,10 @@
                              [alert addButtonWithTitle:@"OK"];
                              [alert runModal];
                          });
-                     
-                     [self GoToDir:path vfs:host select_entry:"" async:true];
+                     dispatch_to_main_queue(^{
+                         m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
+                         [self GoToDir:path vfs:host select_entry:"" async:true];
+                     });
                  });
              }];
 }

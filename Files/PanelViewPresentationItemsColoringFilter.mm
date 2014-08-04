@@ -26,7 +26,8 @@ bool PanelViewPresentationItemsColoringFilter::IsEmpty() const
         indeterminate(hidden) &&
         indeterminate(directory) &&
         indeterminate(symlink) &&
-        indeterminate(reg);
+        indeterminate(reg) &&
+        indeterminate(selected);
 }
 
 bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _item) const
@@ -55,6 +56,10 @@ bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _ite
         reg != _item.IsReg() )
         return false;
     
+    if( !indeterminate(selected) &&
+       selected != _item.CFIsSelected() )
+        return false;
+    
     return true;
 }
 
@@ -65,7 +70,8 @@ NSDictionary *PanelViewPresentationItemsColoringFilter::Archive() const
              @"hidden"      : @(hidden.value),
              @"directory"   : @(directory.value),
              @"symlink"     : @(symlink.value),
-             @"reg"         : @(reg.value)
+             @"reg"         : @(reg.value),
+             @"selected"    : @(selected.value)
              };
 }
 
@@ -99,6 +105,10 @@ PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilte
     if([_dict objectForKey:@"reg"] &&
        [[_dict objectForKey:@"reg"] isKindOfClass:NSNumber.class])
         f.reg = to_tribool([_dict objectForKey:@"reg"]);
+
+    if([_dict objectForKey:@"selected"] &&
+       [[_dict objectForKey:@"selected"] isKindOfClass:NSNumber.class])
+        f.selected = to_tribool([_dict objectForKey:@"selected"]);
     
     return f;
 }

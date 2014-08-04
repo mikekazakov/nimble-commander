@@ -21,7 +21,7 @@ struct PanelViewPresentationItemsColoringFilter
     tribool directory  = indeterminate; // based on VFSListingItem.IsDir
     tribool symlink    = indeterminate; // based on VFSListingItem.IsSymlink
     tribool reg        = indeterminate; // based on VFSListingItem.IsReg
-  
+    tribool selected   = indeterminate; // based on VFSListingItem.CFIsSelected
     
     /**
      * Return true if all filtering options are in non-set state.

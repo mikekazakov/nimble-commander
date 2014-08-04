@@ -10,6 +10,7 @@
 #import "OrthodoxMonospace.h"
 #import "ObjcToCppObservingBridge.h"
 #import "VFS.h"
+#import "PanelViewPresentationItemsColoringFilter.h"
 
 class FontCache;
 @class PanelView;
@@ -53,6 +54,8 @@ private:
     int             m_BytesInDirectoryVPos = 0;
     int             m_EntryFooterVPos = 0;
     int             m_SelectionVPos = 0;
+    
+    vector<PanelViewPresentationItemsColoringFilter> m_ColoringRules; // temporary dummy to test it
     
     shared_ptr<FontCache> m_FontCache;
     DoubleColor     m_BackgroundColor;

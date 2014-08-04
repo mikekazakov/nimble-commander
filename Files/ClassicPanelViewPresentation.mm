@@ -286,6 +286,13 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation()
                                 BuildAppearance();
                                 SetViewNeedsDisplay();
                             }];
+    
+    m_ColoringRules.resize(5);
+    m_ColoringRules[0].selected = true;
+    m_ColoringRules[1].hidden = true;
+    m_ColoringRules[2].reg = true;
+    m_ColoringRules[3].directory = true;
+//  m_ColoringRules[4] is an empty filter
 }
 
 void ClassicPanelViewPresentation::BuildGeometry()
@@ -318,12 +325,16 @@ void ClassicPanelViewPresentation::BuildAppearance()
 }
 
 const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
-{    
-    if(_dirent.CFIsSelected()) return m_SelectedColor[_is_focused ? 1 : 0];
-    if(_dirent.IsHidden()) return m_HiddenColor[_is_focused ? 1 : 0];
-    if(_dirent.IsReg() || _dirent.IsDotDot()) return m_RegularFileColor[_is_focused ? 1 : 0];
-    if(_dirent.IsDir()) return m_DirectoryColor[_is_focused ? 1 : 0];
-    return m_OtherColor[_is_focused ? 1 : 0];
+{
+    // TODO:
+    // TEMPORARY!! just an emulation of a user-defined rules
+    if(m_ColoringRules[0].Filter(_dirent)) return m_SelectedColor[_is_focused ? 1 : 0];
+    if(m_ColoringRules[1].Filter(_dirent)) return m_HiddenColor[_is_focused ? 1 : 0];
+    if(m_ColoringRules[2].Filter(_dirent)) return m_RegularFileColor[_is_focused ? 1 : 0];
+    if(m_ColoringRules[3].Filter(_dirent)) return m_DirectoryColor[_is_focused ? 1 : 0];
+    if(m_ColoringRules[4].Filter(_dirent)) return m_OtherColor[_is_focused ? 1 : 0];
+    static DoubleColor def;
+    return def;
 }
 
 void ClassicPanelViewPresentation::Draw(NSRect _dirty_rect)

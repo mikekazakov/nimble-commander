@@ -31,6 +31,10 @@
 
     #include "3rd_party/built/include/boost/filesystem.hpp"
     using boost::filesystem::path;
+
+    #include "3rd_party/built/include/boost/logic/tribool.hpp"
+    using boost::logic::tribool;
+    using boost::logic::indeterminate;
 #endif
 
 #include "Configuration.h"

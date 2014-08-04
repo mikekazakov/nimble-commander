@@ -635,6 +635,8 @@
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
+		CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */; };
+		CFC20B4D198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */; };
 		CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */; };
 		CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121416C4BD3D00D247EE /* Cocoa.framework */; };
@@ -1238,6 +1240,8 @@
 		CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
 		CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
 		CFC058DF170B297200A20CF2 /* FileSysAttrChangeOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperationJob.h; sourceTree = "<group>"; };
+		CFC20B49198F47DD000E73DD /* PanelViewPresentationItemsColoringFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanelViewPresentationItemsColoringFilter.h; sourceTree = "<group>"; };
+		CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelViewPresentationItemsColoringFilter.mm; sourceTree = "<group>"; };
 		CFC4342216E0E09B001B0512 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		CFC4342316E0E1E2001B0512 /* CreateDirectorySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectorySheetController.h; sourceTree = "<group>"; };
 		CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectorySheetController.mm; sourceTree = "<group>"; };
@@ -1417,6 +1421,8 @@
 			children = (
 				B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */,
 				B52D9A7C1736D7DE00EC7154 /* PanelViewPresentation.h */,
+				CFC20B49198F47DD000E73DD /* PanelViewPresentationItemsColoringFilter.h */,
+				CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */,
 				B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */,
 				B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */,
 				B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */,
@@ -2723,6 +2729,7 @@
 				CF6D9CBD19667BA20077B146 /* archive_read_support_filter_rpm.c in Sources */,
 				CF6D9CBE19667BA20077B146 /* archive_read_support_filter_uu.c in Sources */,
 				CF6D9CBF19667BA20077B146 /* archive_read_support_filter_xz.c in Sources */,
+				CFC20B4D198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF6D9CC019667BA20077B146 /* archive_read_support_format_7zip.c in Sources */,
 				CF6D9CC119667BA20077B146 /* archive_read_support_format_all.c in Sources */,
 				CF6D9CC219667BA20077B146 /* archive_read_support_format_ar.c in Sources */,
@@ -2999,6 +3006,7 @@
 				CF9D0EAA17CC961100CB8146 /* archive_read_support_format_rar.c in Sources */,
 				CF1648B117D57BDA00D0B17E /* VFSArchiveListing.mm in Sources */,
 				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
+				CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF2AC58E1818DD3800B0BEB4 /* path_manip.c in Sources */,
 				CF9D0E8317CC961100CB8146 /* archive_options.c in Sources */,
 				CF9D0ED917CC961100CB8146 /* archive_write_set_options.c in Sources */,
@@ -3457,7 +3465,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_STATIC_ANALYZER_MODE = shallow;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -3505,7 +3513,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_STATIC_ANALYZER_MODE = shallow;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;

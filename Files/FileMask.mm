@@ -8,11 +8,20 @@
 
 #include "FileMask.h"
 
+FileMask::FileMask():
+    m_Mask(nil),
+    m_RegExps(nil)
+{
+}
+
 FileMask::FileMask(NSString *_mask):
-    m_RegExps(0)
+    m_Mask(nil),
+    m_RegExps(nil)
 {
     if([_mask length] == 0) return;
-        
+
+    m_Mask = _mask.copy;
+    
     NSString *mask = [_mask decomposedStringWithCanonicalMapping];
 
     // guarding againts regexps operators
@@ -53,17 +62,48 @@ FileMask::FileMask(NSString *_mask):
     }
 }
 
+FileMask::FileMask(const FileMask&_r):
+    m_Mask([_r.m_Mask copy]),
+    m_RegExps([_r.m_RegExps copy])
+{
+}
+
+FileMask::FileMask(FileMask&&_r):
+    m_Mask(_r.m_Mask),
+    m_RegExps(_r.m_RegExps)
+{
+    _r.m_Mask = nil;
+    _r.m_RegExps = nil;
+}
+
+FileMask& FileMask::operator=(const FileMask&_r)
+{
+    m_Mask = [_r.m_Mask copy];
+    m_RegExps = [_r.m_RegExps copy];
+    return *this;
+}
+
+FileMask& FileMask::operator=(FileMask&&_r)
+{
+    m_Mask = _r.m_Mask;
+    m_RegExps = _r.m_RegExps;
+    _r.m_Mask = nil;
+    _r.m_RegExps = nil;
+    return *this;
+}
+
 bool FileMask::MatchName(NSString *_name) const
 {
-    if(!m_RegExps)
-        return false;    
+    if(!m_RegExps || !_name)
+        return false;
 
-    auto len = [_name length];
+    auto len = _name.length;
+    auto range = NSMakeRange(0, len);    
     for(NSRegularExpression *re: m_RegExps)
     {
         NSRange r = [re rangeOfFirstMatchInString:_name
                                           options:0
-                                            range:NSMakeRange(0, len)];
+                                            range:range];
         if(r.length == len)
             return true;
     }

@@ -27,6 +27,9 @@ struct DoubleColor
         assert(_c != nil);
         [[_c colorUsingColorSpace:NSColorSpace.genericRGBColorSpace] getRed:&r green:&g blue:&b alpha:&a];
     }
+    inline NSColor* ToNSColor() const {
+        return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:a];
+    }
     void Set(CGContextRef _context) const {
         CGContextSetRGBFillColor(_context, r, g, b, a);
     };

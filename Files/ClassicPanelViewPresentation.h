@@ -15,6 +15,16 @@
 class FontCache;
 @class PanelView;
 
+struct ClassicPanelViewPresentationItemsColoringFilter
+{
+    string                                      name;
+    DoubleColor                                 unfocused;
+    DoubleColor                                 focused;
+    PanelViewPresentationItemsColoringFilter    filter;
+    NSDictionary *Archive() const;
+    static ClassicPanelViewPresentationItemsColoringFilter Unarchive(NSDictionary *_dict);
+};
+
 class ClassicPanelViewPresentation : public PanelViewPresentation
 {
 public:
@@ -55,7 +65,7 @@ private:
     int             m_EntryFooterVPos = 0;
     int             m_SelectionVPos = 0;
     
-    vector<PanelViewPresentationItemsColoringFilter> m_ColoringRules; // temporary dummy to test it
+    vector<ClassicPanelViewPresentationItemsColoringFilter> m_ColoringRules;
     
     shared_ptr<FontCache> m_FontCache;
     DoubleColor     m_BackgroundColor;

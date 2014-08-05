@@ -251,10 +251,64 @@ static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSListingItem &_
 // ClassicPanelViewPresentation class
 /////////////////////////////////////////////////////////////////////////////////////////
 
+NSDictionary *ClassicPanelViewPresentationItemsColoringFilter::Archive() const
+{
+    return @{@"name"        : [NSString stringWithUTF8String:name.c_str()],
+             @"unfocused"   : [NSArchiver archivedDataWithRootObject:unfocused.ToNSColor()],
+             @"focused"     : [NSArchiver archivedDataWithRootObject:focused.ToNSColor()],
+             @"filter"      : filter.Archive()
+             };
+}
+
+ClassicPanelViewPresentationItemsColoringFilter ClassicPanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
+{
+    ClassicPanelViewPresentationItemsColoringFilter f;
+
+    if(!_dict)
+        return f;
+    
+    if([_dict objectForKey:@"filter"] &&
+       [[_dict objectForKey:@"filter"] isKindOfClass:NSDictionary.class])
+        f.filter = PanelViewPresentationItemsColoringFilter::Unarchive([_dict objectForKey:@"filter"]);
+    
+    if([_dict objectForKey:@"name"] &&
+       [[_dict objectForKey:@"name"] isKindOfClass:NSString.class])
+        f.name = [[_dict objectForKey:@"name"] UTF8String];
+
+    if([_dict objectForKey:@"unfocused"] &&
+       [[_dict objectForKey:@"unfocused"] isKindOfClass:NSData.class])
+        f.unfocused = DoubleColor((NSColor *)[NSUnarchiver unarchiveObjectWithData:[_dict objectForKey:@"unfocused"]]);
+    
+    if([_dict objectForKey:@"focused"] &&
+       [[_dict objectForKey:@"focused"] isKindOfClass:NSData.class])
+        f.focused = DoubleColor((NSColor *)[NSUnarchiver unarchiveObjectWithData:[_dict objectForKey:@"focused"]]);
+
+    return f;
+}
+
 ClassicPanelViewPresentation::ClassicPanelViewPresentation()
 {
+/*    m_ColoringRules.resize(5);
+    m_ColoringRules[0].name = "selected";
+    m_ColoringRules[0].filter.selected = true;
+    m_ColoringRules[1].name = "hidden";
+    m_ColoringRules[1].filter.hidden = true;
+    m_ColoringRules[2].name = "regular files";
+    m_ColoringRules[2].filter.reg = true;
+    m_ColoringRules[3].name = "directories";
+    m_ColoringRules[3].filter.directory = true;
+    m_ColoringRules[4].name = "other";
+    //  m_ColoringRules[4] is an empty filter
+    
+    */
     BuildGeometry();
     BuildAppearance();
+    
+/*    NSMutableArray *arr = [NSMutableArray new];
+    for(auto &r: m_ColoringRules)
+        [arr addObject:r.Archive()];
+    [NSUserDefaults.standardUserDefaults setObject:arr forKey:@"FilePanelsClassicColoringRules"];*/
+    
 
     m_GeometryObserver = [ObjcToCppObservingBlockBridge
                           bridgeWithObject:NSUserDefaults.standardUserDefaults
@@ -280,19 +334,14 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation()
                                           @"FilePanelsClassicSelectedColor",
                                           @"FilePanelsClassicFocusedSelectedColor",
                                           @"FilePanelsClassicOtherColor",
-                                          @"FilePanelsClassicFocusedOtherColor"]
+                                          @"FilePanelsClassicFocusedOtherColor",
+                                          @"FilePanelsClassicColoringRules"]
                             options:0
                             block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
                                 BuildAppearance();
                                 SetViewNeedsDisplay();
                             }];
     
-    m_ColoringRules.resize(5);
-    m_ColoringRules[0].selected = true;
-    m_ColoringRules[1].hidden = true;
-    m_ColoringRules[2].reg = true;
-    m_ColoringRules[3].directory = true;
-//  m_ColoringRules[4] is an empty filter
 }
 
 void ClassicPanelViewPresentation::BuildGeometry()
@@ -312,7 +361,19 @@ void ClassicPanelViewPresentation::BuildAppearance()
 
     m_BackgroundColor       = DoubleColor([defaults colorForKey:@"FilePanelsClassicBackgroundColor"]);
     m_CursorBackgroundColor = DoubleColor([defaults colorForKey:@"FilePanelsClassicCursorBackgroundColor"]);
-    m_RegularFileColor[0]   = DoubleColor([defaults colorForKey:@"FilePanelsClassicRegularFileColor"]);
+
+    m_ColoringRules.clear();
+    NSArray *coloring_rules = [NSUserDefaults.standardUserDefaults objectForKey:@"FilePanelsClassicColoringRules"];
+    if(coloring_rules && [coloring_rules isKindOfClass:NSArray.class])
+        for(id item: coloring_rules)
+            if([item isKindOfClass:NSDictionary.class])
+                m_ColoringRules.emplace_back( ClassicPanelViewPresentationItemsColoringFilter::Unarchive(item) );
+ 
+
+
+    
+    
+/*    m_RegularFileColor[0]   = DoubleColor([defaults colorForKey:@"FilePanelsClassicRegularFileColor"]);
     m_RegularFileColor[1]   = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedRegularFileColor"]);
     m_DirectoryColor[0]     = DoubleColor([defaults colorForKey:@"FilePanelsClassicDirectoryColor"]);
     m_DirectoryColor[1]     = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedDirectoryColor"]);
@@ -321,18 +382,24 @@ void ClassicPanelViewPresentation::BuildAppearance()
     m_SelectedColor[0]      = DoubleColor([defaults colorForKey:@"FilePanelsClassicSelectedColor"]);
     m_SelectedColor[1]      = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedSelectedColor"]);
     m_OtherColor[0]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicOtherColor"]);
-    m_OtherColor[1]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedOtherColor"]);
+    m_OtherColor[1]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedOtherColor"]);*/
+/*    m_ColoringRules[2].unfocused  = DoubleColor([defaults colorForKey:@"FilePanelsClassicRegularFileColor"]);
+    m_ColoringRules[2].focused    = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedRegularFileColor"]);
+    m_ColoringRules[3].unfocused     = DoubleColor([defaults colorForKey:@"FilePanelsClassicDirectoryColor"]);
+    m_ColoringRules[3].focused     = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedDirectoryColor"]);
+    m_ColoringRules[1].unfocused        = DoubleColor([defaults colorForKey:@"FilePanelsClassicHiddenColor"]);
+    m_ColoringRules[1].focused        = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedHiddenColor"]);
+    m_ColoringRules[0].unfocused      = DoubleColor([defaults colorForKey:@"FilePanelsClassicSelectedColor"]);
+    m_ColoringRules[0].focused      = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedSelectedColor"]);
+    m_ColoringRules[4].unfocused         = DoubleColor([defaults colorForKey:@"FilePanelsClassicOtherColor"]);
+    m_ColoringRules[4].focused         = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedOtherColor"]);*/
 }
 
 const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
 {
-    // TODO:
-    // TEMPORARY!! just an emulation of a user-defined rules
-    if(m_ColoringRules[0].Filter(_dirent)) return m_SelectedColor[_is_focused ? 1 : 0];
-    if(m_ColoringRules[1].Filter(_dirent)) return m_HiddenColor[_is_focused ? 1 : 0];
-    if(m_ColoringRules[2].Filter(_dirent)) return m_RegularFileColor[_is_focused ? 1 : 0];
-    if(m_ColoringRules[3].Filter(_dirent)) return m_DirectoryColor[_is_focused ? 1 : 0];
-    if(m_ColoringRules[4].Filter(_dirent)) return m_OtherColor[_is_focused ? 1 : 0];
+    for(auto &r: m_ColoringRules)
+        if(r.filter.Filter(_dirent))
+            return _is_focused ? r.focused : r.unfocused;
     static DoubleColor def;
     return def;
 }

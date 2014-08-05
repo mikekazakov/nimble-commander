@@ -10,8 +10,16 @@
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 
 
-@interface PreferencesWindowPanelsTab : NSViewController <RHPreferencesViewControllerProtocol>
+@interface PreferencesWindowPanelsTab : NSViewController <RHPreferencesViewControllerProtocol,
+                                                            NSTableViewDataSource,
+                                                            NSTableViewDelegate,
+                                                            NSTextFieldDelegate>
 - (IBAction)OnSetModernFont:(id)sender;
 - (IBAction)OnSetClassicFont:(id)sender;
+@property (strong) IBOutlet NSTableView *classicColoringRulesTable;
+
+@property (nonatomic) NSArray *classicColoringRules;
+- (IBAction)OnAddNewClassicColoringRule:(id)sender;
+- (IBAction)OnRemoveClassicColoringRule:(id)sender;
 
 @end

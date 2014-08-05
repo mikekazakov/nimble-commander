@@ -22,6 +22,10 @@ public:
     bool MatchName(const char *_name) const;
 
     inline bool IsEmpty() const { return m_RegExps == nil; }
+    
+    /**
+     * Can return nil on case of empty file mask.
+     */
     NSString *Mask() const { return m_Mask; }
 private:
     NSMutableArray  *m_RegExps;

@@ -73,6 +73,40 @@ NSString* ModernPanelViewPresentation::SizeToString6(const VFSListingItem &_dire
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // class ModernPanelViewPresentation
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+NSDictionary *ModernPanelViewPresentationItemsColoringFilter::Archive() const
+{
+    return @{@"name"    : [NSString stringWithUTF8String:name.c_str()],
+             @"regular" : [NSArchiver archivedDataWithRootObject:regular],
+             @"actsel"  : [NSArchiver archivedDataWithRootObject:actsel],
+             @"filter"  : filter.Archive()
+             };
+};
+
+ModernPanelViewPresentationItemsColoringFilter ModernPanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
+{
+    ModernPanelViewPresentationItemsColoringFilter f;
+    
+    if(!_dict)
+        return f;
+    
+    if([_dict objectForKey:@"filter"] &&
+       [[_dict objectForKey:@"filter"] isKindOfClass:NSDictionary.class])
+        f.filter = PanelViewPresentationItemsColoringFilter::Unarchive([_dict objectForKey:@"filter"]);
+    
+    if([_dict objectForKey:@"name"] &&
+       [[_dict objectForKey:@"name"] isKindOfClass:NSString.class])
+        f.name = [[_dict objectForKey:@"name"] UTF8String];
+    
+    if([_dict objectForKey:@"regular"] &&
+       [[_dict objectForKey:@"regular"] isKindOfClass:NSData.class])
+        f.regular = (NSColor *)[NSUnarchiver unarchiveObjectWithData:[_dict objectForKey:@"regular"]];
+    
+    if([_dict objectForKey:@"actsel"] &&
+       [[_dict objectForKey:@"actsel"] isKindOfClass:NSData.class])
+        f.actsel = (NSColor *)[NSUnarchiver unarchiveObjectWithData:[_dict objectForKey:@"actsel"]];
+    
+    return f;
+}
 
 // Item name display insets inside the item line.
 // Order: left, top, right, bottom.
@@ -124,14 +158,13 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     
     m_AppearanceObserver = [ObjcToCppObservingBlockBridge
                             bridgeWithObject:NSUserDefaults.standardUserDefaults
-                            forKeyPaths:@[@"FilePanelsModernRegularTextColor",
-                                          @"FilePanelsModernActiveSelectedTextColor",
-                                          @"FilePanelsModernBackgroundColor",
+                            forKeyPaths:@[@"FilePanelsModernBackgroundColor",
                                           @"FilePanelsModernAlternativeBackgroundColor",
                                           @"FilePanelsModernActiveSelectedBackgroundColor",
                                           @"FilePanelsModernInactiveSelectedBackgroundColor",
                                           @"FilePanelsModernCursorFrameColor",
-                                          @"FilePanelsModernIconsMode"]
+                                          @"FilePanelsModernIconsMode",
+                                          @"FilePanelsModernColoringRules"]
                             options:0
                             block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
                                 BuildAppearance();
@@ -202,9 +235,6 @@ void ModernPanelViewPresentation::BuildAppearance()
     m_IconCache->SetIconMode((int)[defaults integerForKey:@"FilePanelsModernIconsMode"]);
     
     // Colors
-    m_RegularItemTextColor = [defaults colorForKey:@"FilePanelsModernRegularTextColor"];
-    m_ActiveSelectedItemTextColor = [defaults colorForKey:@"FilePanelsModernActiveSelectedTextColor"];
-
     if(m_BackgroundColor) CGColorRelease(m_BackgroundColor);
     m_BackgroundColor = [defaults colorForKey:@"FilePanelsModernBackgroundColor"].copyCGColorRefSafe;
 
@@ -222,51 +252,55 @@ void ModernPanelViewPresentation::BuildAppearance()
     
     m_ColumnDividerColor = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0); // hard-coded for now
     
-    NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new];
-    item_text_pstyle.alignment = NSLeftTextAlignment;
-    item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
+    // Coloring rules
+    m_ColoringRules.clear();
+    NSArray *coloring_rules = [NSUserDefaults.standardUserDefaults objectForKey:@"FilePanelsModernColoringRules"];
+    if(coloring_rules && [coloring_rules isKindOfClass:NSArray.class])
+        for(id item: coloring_rules)
+            if([item isKindOfClass:NSDictionary.class])
+                m_ColoringRules.emplace_back( ModernPanelViewPresentationItemsColoringFilter::Unarchive(item) );
     
-    m_ActiveSelectedItemTextAttr =
-    @{
-      NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: m_ActiveSelectedItemTextColor,
-      NSParagraphStyleAttributeName: item_text_pstyle
-      };
+    if(m_ColoringRules.empty())
+        m_ColoringRules.emplace_back();
     
-    m_ItemTextAttr =
-    @{
-      NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: m_RegularItemTextColor,
-      NSParagraphStyleAttributeName: item_text_pstyle
-      };
+    // Coloring text attributes
+    m_ColoringAttrs.clear();
+    for(auto &c:m_ColoringRules) {
+        m_ColoringAttrs.emplace_back();
+        auto &ca = m_ColoringAttrs.back();
+        
+        NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new];
+        item_text_pstyle.alignment = NSLeftTextAlignment;
+        item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
     
-    NSMutableParagraphStyle *size_col_text_pstyle = [NSMutableParagraphStyle new];
-    size_col_text_pstyle.alignment = NSRightTextAlignment;
-    size_col_text_pstyle.lineBreakMode = NSLineBreakByClipping;
+        ca.active_selected = @{NSFontAttributeName: m_Font,
+                               NSForegroundColorAttributeName: c.actsel,
+                               NSParagraphStyleAttributeName: item_text_pstyle};
     
-    m_ActiveSelectedSizeColumnTextAttr =
-    @{NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: m_ActiveSelectedItemTextColor,
-      NSParagraphStyleAttributeName: size_col_text_pstyle
-      };
+        ca.regular = @{NSFontAttributeName: m_Font,
+                       NSForegroundColorAttributeName: c.regular,
+                       NSParagraphStyleAttributeName: item_text_pstyle};
+    
+        NSMutableParagraphStyle *size_col_text_pstyle = [NSMutableParagraphStyle new];
+        size_col_text_pstyle.alignment = NSRightTextAlignment;
+        size_col_text_pstyle.lineBreakMode = NSLineBreakByClipping;
 
-    m_SizeColumnTextAttr =
-    @{NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: m_RegularItemTextColor,
-      NSParagraphStyleAttributeName: size_col_text_pstyle
-      };
+        ca.active_selected_size = @{NSFontAttributeName: m_Font,
+                                    NSForegroundColorAttributeName: c.actsel,
+                                    NSParagraphStyleAttributeName: size_col_text_pstyle};
+
+        ca.regular_size = @{NSFontAttributeName: m_Font,
+                            NSForegroundColorAttributeName: c.regular,
+                            NSParagraphStyleAttributeName: size_col_text_pstyle};
+
+        ca.active_selected_time = @{NSFontAttributeName: m_Font,
+                                    NSForegroundColorAttributeName: c.actsel,
+                                    NSParagraphStyleAttributeName: size_col_text_pstyle};
     
-    m_ActiveSelectedTimeColumnTextAttr =
-    @{NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: m_ActiveSelectedItemTextColor,
-      NSParagraphStyleAttributeName: size_col_text_pstyle
-      };
-    
-    m_TimeColumnTextAttr =
-    @{NSFontAttributeName: m_Font,
-      NSForegroundColorAttributeName: m_RegularItemTextColor,
-      NSParagraphStyleAttributeName: size_col_text_pstyle
-      };
+        ca.regular_time = @{NSFontAttributeName: m_Font,
+                            NSForegroundColorAttributeName: c.regular,
+                            NSParagraphStyleAttributeName: size_col_text_pstyle};
+    }
 }
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
@@ -407,13 +441,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                                item_start_y + 1.5,
                                                column_width - 3, m_LineHeight - 2));
             
-            bool pushed_context = false;
-            
-            if(item->IsHidden()) {
-                CGContextSaveGState(context);
-                pushed_context = true;
-                CGContextSetAlpha(context, 0.6);
-            }
+            const ColoringAttrs& attrs = AttrsForItem(*item);
+            const bool actsel = active && item->CFIsSelected();
             
             NSRect rect = NSMakeRect(start_x + icon_size + 2*g_TextInsetsInLine[0],
                        item_start_y + g_TextInsetsInLine[1] + m_FontAscent,
@@ -421,16 +450,14 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                        m_FontHeight);
             
             // Draw stats columns for specific views.
-            NSDictionary *item_text_attr = (active && item->CFIsSelected()) ? m_ActiveSelectedItemTextAttr : m_ItemTextAttr;
             int spec_col_x = m_ItemsArea.size.width;
-            if (m_State->ViewType == PanelViewType::ViewFull)
-            {
+            if (m_State->ViewType == PanelViewType::ViewFull) {
                 NSRect time_rect = NSMakeRect(spec_col_x - m_TimeColumnWidth + g_TextInsetsInLine[0],
                                               rect.origin.y,
                                               m_TimeColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 NSString *time_str = FormHumanReadableShortTime(item->MTime());
-                NSDictionary *attr = active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
+                NSDictionary *attr = actsel ? attrs.active_selected_time : attrs.regular_time;
                 NSRect time_str_real_rc = [time_str boundingRectWithSize:NSMakeSize(10000, 100)
                                                                  options:0
                                                               attributes:attr];
@@ -450,7 +477,6 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_DateColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
                 NSString *date_str = FormHumanReadableShortDate(item->MTime());
-                attr = active && item->CFIsSelected() ? m_ActiveSelectedTimeColumnTextAttr : m_TimeColumnTextAttr;
                 NSRect date_str_real_rc = [date_str boundingRectWithSize:NSMakeSize(10000, 100)
                                                                  options:0
                                                               attributes:attr];
@@ -463,8 +489,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 rect.size.width -= m_DateColumnWidth;
                 spec_col_x -= m_DateColumnWidth;
             }
-            if(m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull)
-            {
+            if(m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull) {
                 // draw the entry size on the right
                 NSRect size_rect = NSMakeRect(spec_col_x - m_SizeColumWidth + g_TextInsetsInLine[0],
                                               rect.origin.y,
@@ -473,14 +498,13 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 
                 [SizeToString6(*item) drawWithRect:size_rect
                                            options:0
-                                        attributes:active && item->CFIsSelected() ?
-                                                    m_ActiveSelectedSizeColumnTextAttr :
-                                                    m_SizeColumnTextAttr];
+                                        attributes:actsel ? attrs.active_selected_size : attrs.regular_size];
                 
                 rect.size.width -= m_SizeColumWidth;
             }
 
             // Draw item text.
+            NSDictionary *item_text_attr = actsel ? attrs.active_selected : attrs.regular;
             if(rect.size.width > 0)
                 [item->NSDisplayName() drawWithRect:rect options:0 attributes:item_text_attr];
             
@@ -507,9 +531,6 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                        fraction:1.0
                                  respectFlipped:YES
                                           hints:nil];
-            
-            if(pushed_context)
-                CGContextRestoreGState(context);
         }
     }
     
@@ -559,6 +580,20 @@ void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
     m_Size = _frame.size;
     m_IsLeft = _frame.origin.x < 50;
     CalculateLayoutFromFrame();
+}
+
+const ModernPanelViewPresentation::ColoringAttrs& ModernPanelViewPresentation::AttrsForItem(const VFSListingItem& _item) const
+{
+    size_t i = 0, e = m_ColoringRules.size();
+    for(;i<e;++i)
+        if(m_ColoringRules[i].filter.Filter(_item)) {
+            assert(i < m_ColoringAttrs.size());
+            return m_ColoringAttrs[i];
+        }
+        
+    assert(0);
+    static ColoringAttrs dummy;
+    return dummy;
 }
 
 void ModernPanelViewPresentation::CalculateLayoutFromFrame()

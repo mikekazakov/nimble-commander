@@ -7,6 +7,7 @@
 //
 
 #import "PanelViewPresentation.h"
+#import "PanelViewPresentationItemsColoringFilter.h"
 #import "ObjcToCppObservingBridge.h"
 
 @class PanelView;
@@ -15,6 +16,16 @@ class IconsGenerator;
 class ModernPanelViewPresentationHeader;
 class ModernPanelViewPresentationItemsFooter;
 class ModernPanelViewPresentationVolumeFooter;
+
+struct ModernPanelViewPresentationItemsColoringFilter
+{
+    string                                      name;
+    NSColor                                     *regular = NSColor.blackColor; // all others state text color
+    NSColor                                     *actsel  = NSColor.blackColor; // active and selected text color
+    PanelViewPresentationItemsColoringFilter    filter;
+    NSDictionary *Archive() const;
+    static ModernPanelViewPresentationItemsColoringFilter Unarchive(NSDictionary *_dict);
+};
 
 class ModernPanelViewPresentation : public PanelViewPresentation
 {
@@ -40,10 +51,20 @@ public:
     
     static NSString* SizeToString6(const VFSListingItem &_dirent);
 private:
+    struct ColoringAttrs {
+        NSDictionary *active_selected;
+        NSDictionary *regular;
+        NSDictionary *active_selected_size;
+        NSDictionary *regular_size;
+        NSDictionary *active_selected_time;
+        NSDictionary *regular_time;
+    };
+    
     void CalculateLayoutFromFrame();
     void OnDirectoryChanged() override;
     void BuildGeometry();
     void BuildAppearance();
+    const ColoringAttrs& AttrsForItem(const VFSListingItem& _item) const;
     
     void DrawCursor(CGContextRef _context, NSRect _rc);
     
@@ -61,22 +82,14 @@ private:
     NSRect m_ItemsArea;
     int m_ItemsPerColumn;
     
-    NSDictionary *m_ActiveSelectedItemTextAttr;
-    NSDictionary *m_ItemTextAttr;
-    NSDictionary *m_ActiveSelectedSizeColumnTextAttr;
-    NSDictionary *m_SizeColumnTextAttr;
-    NSDictionary *m_ActiveSelectedTimeColumnTextAttr;
-    NSDictionary *m_TimeColumnTextAttr;
-    
-    NSColor     *m_RegularItemTextColor;
-    NSColor     *m_ActiveSelectedItemTextColor;
-    
     CGColorRef  m_BackgroundColor;
     CGColorRef  m_RegularOddBackgroundColor;
     CGColorRef  m_ActiveSelectedItemBackgroundColor;
     CGColorRef  m_InactiveSelectedItemBackgroundColor;
     CGColorRef  m_CursorFrameColor;
     CGColorRef  m_ColumnDividerColor;
+    vector<ModernPanelViewPresentationItemsColoringFilter> m_ColoringRules;
+    vector<ColoringAttrs> m_ColoringAttrs;
     
     static NSImage *m_SymlinkArrowImage;
     

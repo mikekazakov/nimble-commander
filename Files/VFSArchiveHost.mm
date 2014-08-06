@@ -60,6 +60,9 @@ int VFSArchiveHost::Open()
     if(res < 0)
         return res;
     
+    if(m_ArFile->Size() <= 0)
+        return VFSError::ArclibFileFormat; // libarchive thinks that zero-bytes archives are OK, but I don't think so.
+    
     m_Mediator = make_shared<VFSArchiveMediator>();
     m_Mediator->file = m_ArFile;
     

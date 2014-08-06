@@ -17,9 +17,15 @@
 - (IBAction)OnSetModernFont:(id)sender;
 - (IBAction)OnSetClassicFont:(id)sender;
 @property (strong) IBOutlet NSTableView *classicColoringRulesTable;
-
 @property (nonatomic) NSArray *classicColoringRules;
 - (IBAction)OnAddNewClassicColoringRule:(id)sender;
 - (IBAction)OnRemoveClassicColoringRule:(id)sender;
+
+@property (strong) IBOutlet NSTableView *modernColoringRulesTable;
+@property (nonatomic) NSArray *modernColoringRules;
+- (IBAction)OnAddNewModernColoringRule:(id)sender;
+- (IBAction)OnRemoveModernColoringRule:(id)sender;
+
+
 
 @end

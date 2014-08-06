@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
             <connections>
                 <outlet property="classicColoringRulesTable" destination="ICM-ex-rxA" id="KJi-E0-LlZ"/>
+                <outlet property="modernColoringRulesTable" destination="vjI-ps-c9i" id="yie-nn-1y7"/>
                 <outlet property="view" destination="1" id="2"/>
             </connections>
         </customObject>
@@ -300,7 +301,7 @@
                                         </connections>
                                     </colorWell>
                                     <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r2d-h9-GN7">
-                                        <rect key="frame" x="61" y="34" width="312" height="99"/>
+                                        <rect key="frame" x="61" y="34" width="312" height="100"/>
                                         <clipView key="contentView" ambiguous="YES" misplaced="YES" id="jVH-T1-DCG">
                                             <rect key="frame" x="1" y="17" width="238" height="117"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -422,6 +423,14 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xsa-mG-b5a">
+                                        <rect key="frame" x="110" y="4" width="265" height="28"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order and the first rule with appropriate filter is used." id="huB-JX-uOp">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
                             </view>
                         </tabViewItem>
@@ -431,63 +440,25 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="38">
-                                        <rect key="frame" x="225" y="1" width="77" height="32"/>
-                                        <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="39">
+                                        <rect key="frame" x="341" y="136" width="75" height="28"/>
+                                        <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="39">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                         </buttonCell>
                                         <connections>
                                             <action selector="OnSetModernFont:" target="-2" id="45"/>
                                         </connections>
                                     </button>
-                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="48">
-                                        <rect key="frame" x="233" y="185" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernRegularTextColor" id="66">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="53">
-                                        <rect key="frame" x="23" y="188" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Regular text:" id="54">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="68">
-                                        <rect key="frame" x="23" y="163" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selected text:" id="70">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="74">
-                                        <rect key="frame" x="233" y="160" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernActiveSelectedTextColor" id="81">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="82">
-                                        <rect key="frame" x="23" y="138" width="202" height="17"/>
+                                        <rect key="frame" x="2" y="188" width="157" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Regular background:" id="83">
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="87">
-                                        <rect key="frame" x="233" y="135" width="44" height="23"/>
+                                        <rect key="frame" x="165" y="188" width="28" height="20"/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsModernBackgroundColor" id="97">
@@ -498,15 +469,15 @@
                                         </connections>
                                     </colorWell>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98">
-                                        <rect key="frame" x="23" y="113" width="202" height="17"/>
+                                        <rect key="frame" x="4" y="163" width="155" height="18"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative background:" id="99">
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="103">
-                                        <rect key="frame" x="233" y="110" width="44" height="23"/>
+                                        <rect key="frame" x="165" y="163" width="28" height="20"/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsModernAlternativeBackgroundColor" id="112">
@@ -517,15 +488,15 @@
                                         </connections>
                                     </colorWell>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="113">
-                                        <rect key="frame" x="23" y="88" width="202" height="17"/>
+                                        <rect key="frame" x="199" y="188" width="178" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Active&amp;selected background:" id="114">
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="133">
-                                        <rect key="frame" x="233" y="85" width="44" height="23"/>
+                                        <rect key="frame" x="383" y="188" width="28" height="20"/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsModernActiveSelectedBackgroundColor" id="139">
@@ -536,23 +507,23 @@
                                         </connections>
                                     </colorWell>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="140">
-                                        <rect key="frame" x="23" y="63" width="202" height="17"/>
+                                        <rect key="frame" x="175" y="163" width="202" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Inactive&amp;selected background:" id="142">
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="153">
-                                        <rect key="frame" x="23" y="38" width="202" height="17"/>
+                                        <rect key="frame" x="20" y="212" width="139" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Cursor frame:" id="154">
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="146">
-                                        <rect key="frame" x="233" y="60" width="44" height="23"/>
+                                        <rect key="frame" x="383" y="163" width="28" height="20"/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsModernInactiveSelectedBackgroundColor" id="152">
@@ -563,7 +534,7 @@
                                         </connections>
                                     </colorWell>
                                     <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="161">
-                                        <rect key="frame" x="233" y="35" width="44" height="23"/>
+                                        <rect key="frame" x="165" y="212" width="28" height="20"/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsModernCursorFrameColor" id="167">
@@ -574,15 +545,15 @@
                                         </connections>
                                     </colorWell>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="168">
-                                        <rect key="frame" x="132" y="213" width="93" height="17"/>
+                                        <rect key="frame" x="200" y="212" width="93" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Icons mode:" id="169">
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="25">
-                                        <rect key="frame" x="230" y="208" width="191" height="22"/>
+                                        <rect key="frame" x="296" y="210" width="118" height="22"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="26">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -598,6 +569,71 @@
                                             <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsModernIconsMode" id="177"/>
                                         </connections>
                                     </popUpButton>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9rK-nA-bFK">
+                                        <rect key="frame" x="61" y="4" width="22" height="22"/>
+                                        <buttonCell key="cell" type="square" title="+" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FGS-3P-rLE">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="smallSystem"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="OnAddNewModernColoringRule:" target="-2" id="29x-Ul-UrZ"/>
+                                        </connections>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iFn-JJ-hX8">
+                                        <rect key="frame" x="82" y="4" width="22" height="22"/>
+                                        <buttonCell key="cell" type="square" title="-" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="DdJ-HV-ef7">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="smallSystem"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="OnRemoveModernColoringRule:" target="-2" id="6YX-CD-01y"/>
+                                        </connections>
+                                    </button>
+                                    <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jcR-wQ-ADP">
+                                        <rect key="frame" x="61" y="34" width="312" height="100"/>
+                                        <clipView key="contentView" ambiguous="YES" misplaced="YES" id="TdT-Uw-soe">
+                                            <rect key="frame" x="1" y="17" width="238" height="117"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Sdc-Nl-SkA" id="vjI-ps-c9i">
+                                                    <rect key="frame" x="0.0" y="0.0" width="238" height="117"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <size key="intercellSpacing" width="3" height="2"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                                </tableView>
+                                            </subviews>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </clipView>
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="nht-Ht-s5j">
+                                            <rect key="frame" x="1" y="119" width="223" height="15"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="33V-0y-6OS">
+                                            <rect key="frame" x="224" y="17" width="15" height="102"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <tableHeaderView key="headerView" id="Sdc-Nl-SkA">
+                                            <rect key="frame" x="0.0" y="0.0" width="238" height="17"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableHeaderView>
+                                    </scrollView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MZY-TB-fSP">
+                                        <rect key="frame" x="59" y="132" width="167" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Filenames coloring rules:" id="cYq-VC-V1Y">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6YT-WS-7Ci">
+                                        <rect key="frame" x="110" y="4" width="265" height="28"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order and the first rule with appropriate filter is used." id="dVh-IV-Uhm">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
                             </view>
                         </tabViewItem>
@@ -610,6 +646,7 @@
                 <constraint firstAttribute="bottom" secondItem="3" secondAttribute="bottom" constant="20" symbolic="YES" id="tIh-RM-Thd"/>
                 <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" id="wy0-Nt-R2A"/>
             </constraints>
+            <point key="canvasLocation" x="292" y="217.5"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="36"/>
     </objects>

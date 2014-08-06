@@ -423,7 +423,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xsa-mG-b5a">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xsa-mG-b5a">
                                         <rect key="frame" x="110" y="4" width="265" height="28"/>
                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order and the first rule with appropriate filter is used." id="huB-JX-uOp">
                                             <font key="font" metaFont="smallSystem"/>
@@ -596,7 +596,6 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Sdc-Nl-SkA" id="vjI-ps-c9i">
-                                                    <rect key="frame" x="0.0" y="0.0" width="238" height="117"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -626,7 +625,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6YT-WS-7Ci">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6YT-WS-7Ci">
                                         <rect key="frame" x="110" y="4" width="265" height="28"/>
                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order and the first rule with appropriate filter is used." id="dVh-IV-Uhm">
                                             <font key="font" metaFont="smallSystem"/>

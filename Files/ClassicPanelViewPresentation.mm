@@ -288,28 +288,9 @@ ClassicPanelViewPresentationItemsColoringFilter ClassicPanelViewPresentationItem
 
 ClassicPanelViewPresentation::ClassicPanelViewPresentation()
 {
-/*    m_ColoringRules.resize(5);
-    m_ColoringRules[0].name = "selected";
-    m_ColoringRules[0].filter.selected = true;
-    m_ColoringRules[1].name = "hidden";
-    m_ColoringRules[1].filter.hidden = true;
-    m_ColoringRules[2].name = "regular files";
-    m_ColoringRules[2].filter.reg = true;
-    m_ColoringRules[3].name = "directories";
-    m_ColoringRules[3].filter.directory = true;
-    m_ColoringRules[4].name = "other";
-    //  m_ColoringRules[4] is an empty filter
-    
-    */
     BuildGeometry();
     BuildAppearance();
     
-/*    NSMutableArray *arr = [NSMutableArray new];
-    for(auto &r: m_ColoringRules)
-        [arr addObject:r.Archive()];
-    [NSUserDefaults.standardUserDefaults setObject:arr forKey:@"FilePanelsClassicColoringRules"];*/
-    
-
     m_GeometryObserver = [ObjcToCppObservingBlockBridge
                           bridgeWithObject:NSUserDefaults.standardUserDefaults
                           forKeyPaths:@[@"FilePanelsClassicFont", @"FilePanelsGeneralShowVolumeInformationBar"]
@@ -325,16 +306,9 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation()
                             bridgeWithObject:NSUserDefaults.standardUserDefaults
                             forKeyPaths:@[@"FilePanelsClassicBackgroundColor",
                                           @"FilePanelsClassicCursorBackgroundColor",
-                                          @"FilePanelsClassicRegularFileColor",
-                                          @"FilePanelsClassicFocusedRegularFileColor",
-                                          @"FilePanelsClassicDirectoryColor",
-                                          @"FilePanelsClassicFocusedDirectoryColor",
-                                          @"FilePanelsClassicHiddenColor",
-                                          @"FilePanelsClassicFocusedHiddenColor",
-                                          @"FilePanelsClassicSelectedColor",
-                                          @"FilePanelsClassicFocusedSelectedColor",
-                                          @"FilePanelsClassicOtherColor",
-                                          @"FilePanelsClassicFocusedOtherColor",
+                                          @"FilePanelsClassicTextColor",
+                                          @"FilePanelsClassicActiveTextColor",
+                                          @"FilePanelsClassicHighlightTextColor",
                                           @"FilePanelsClassicColoringRules"]
                             options:0
                             block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
@@ -358,41 +332,18 @@ void ClassicPanelViewPresentation::BuildGeometry()
 void ClassicPanelViewPresentation::BuildAppearance()
 {
     NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-
     m_BackgroundColor       = DoubleColor([defaults colorForKey:@"FilePanelsClassicBackgroundColor"]);
     m_CursorBackgroundColor = DoubleColor([defaults colorForKey:@"FilePanelsClassicCursorBackgroundColor"]);
-
+    m_TextColor             = DoubleColor([defaults colorForKey:@"FilePanelsClassicTextColor"]);
+    m_ActiveTextColor       = DoubleColor([defaults colorForKey:@"FilePanelsClassicActiveTextColor"]);
+    m_HighlightTextColor    = DoubleColor([defaults colorForKey:@"FilePanelsClassicHighlightTextColor"]);
+    
     m_ColoringRules.clear();
     NSArray *coloring_rules = [NSUserDefaults.standardUserDefaults objectForKey:@"FilePanelsClassicColoringRules"];
     if(coloring_rules && [coloring_rules isKindOfClass:NSArray.class])
         for(id item: coloring_rules)
             if([item isKindOfClass:NSDictionary.class])
                 m_ColoringRules.emplace_back( ClassicPanelViewPresentationItemsColoringFilter::Unarchive(item) );
- 
-
-
-    
-    
-/*    m_RegularFileColor[0]   = DoubleColor([defaults colorForKey:@"FilePanelsClassicRegularFileColor"]);
-    m_RegularFileColor[1]   = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedRegularFileColor"]);
-    m_DirectoryColor[0]     = DoubleColor([defaults colorForKey:@"FilePanelsClassicDirectoryColor"]);
-    m_DirectoryColor[1]     = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedDirectoryColor"]);
-    m_HiddenColor[0]        = DoubleColor([defaults colorForKey:@"FilePanelsClassicHiddenColor"]);
-    m_HiddenColor[1]        = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedHiddenColor"]);
-    m_SelectedColor[0]      = DoubleColor([defaults colorForKey:@"FilePanelsClassicSelectedColor"]);
-    m_SelectedColor[1]      = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedSelectedColor"]);
-    m_OtherColor[0]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicOtherColor"]);
-    m_OtherColor[1]         = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedOtherColor"]);*/
-/*    m_ColoringRules[2].unfocused  = DoubleColor([defaults colorForKey:@"FilePanelsClassicRegularFileColor"]);
-    m_ColoringRules[2].focused    = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedRegularFileColor"]);
-    m_ColoringRules[3].unfocused     = DoubleColor([defaults colorForKey:@"FilePanelsClassicDirectoryColor"]);
-    m_ColoringRules[3].focused     = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedDirectoryColor"]);
-    m_ColoringRules[1].unfocused        = DoubleColor([defaults colorForKey:@"FilePanelsClassicHiddenColor"]);
-    m_ColoringRules[1].focused        = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedHiddenColor"]);
-    m_ColoringRules[0].unfocused      = DoubleColor([defaults colorForKey:@"FilePanelsClassicSelectedColor"]);
-    m_ColoringRules[0].focused      = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedSelectedColor"]);
-    m_ColoringRules[4].unfocused         = DoubleColor([defaults colorForKey:@"FilePanelsClassicOtherColor"]);
-    m_ColoringRules[4].focused         = DoubleColor([defaults colorForKey:@"FilePanelsClassicFocusedOtherColor"]);*/
 }
 
 const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
@@ -750,7 +701,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         }
         
         // draw sorting mode in left-upper corner
-        oms::DrawSingleUniCharXY(sort_mode.Chars()[0], 1, 0, context, fontcache, m_SelectedColor[0]);
+        oms::DrawSingleUniCharXY(sort_mode.Chars()[0], 1, 0, context, fontcache, m_HighlightTextColor);
         
         if(m_SymbWidth > 14) { // need to draw a path name on header
             oms::StringBuf<MAXPATHLEN*2> path;
@@ -766,7 +717,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             if(View().active)
                 omsc.DrawBackground(m_CursorBackgroundColor, path_name_start_pos, 0, symbs);
                 
-            omsc.DrawString(path.Chars(), 0, path.Size(), path_name_start_pos+1, 0, m_RegularFileColor[View().active ? 1 : 0]);
+            omsc.DrawString(path.Chars(), 0, path.Size(), path_name_start_pos+1, 0, View().active ? m_ActiveTextColor : m_TextColor);
         }
         
         // entry footer info
@@ -775,28 +726,28 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             if(m_SymbWidth > 2 + 14 + 6)
             {   // draw current entry time info, size info and maybe filename
                 int Y = m_EntryFooterVPos;
-                omsc.DrawString(time_info.Chars(), 0, time_info.Capacity, m_SymbWidth - 15, Y, m_RegularFileColor[0]);
-                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, m_SymbWidth - 15 - 7, Y, m_RegularFileColor[0]);
+                omsc.DrawString(time_info.Chars(), 0, time_info.Capacity, m_SymbWidth - 15, Y, m_TextColor);
+                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, m_SymbWidth - 15 - 7, Y, m_TextColor);
                 
                 int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
                 if(symbs_for_name > 0) {
                     auto chars = footer_entry.MaxForSpaceRight(symbs_for_name);
-                    omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, Y, m_RegularFileColor[0]);
+                    omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, Y, m_TextColor);
                 }
             }
             else if(m_SymbWidth >= 2 + 6)
             {   // draw current entry size info and maybe time info
                 int Y = m_EntryFooterVPos;
-                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, 1, Y, m_RegularFileColor[0]);
+                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, 1, Y, m_TextColor);
                 int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
                 if(symbs_for_name > 0)
-                    omsc.DrawString(time_info.Chars(), 0, time_info.MaxForSpaceLeft(symbs_for_name), 8, Y, m_RegularFileColor[0]);
+                    omsc.DrawString(time_info.Chars(), 0, time_info.MaxForSpaceLeft(symbs_for_name), 8, Y, m_TextColor);
             }
         }
         else if(current_entry)
         {
             auto chars = footer_entry.MaxForSpaceRight(m_SymbWidth-2);
-            omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, m_EntryFooterVPos, m_RegularFileColor[0]);
+            omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, m_EntryFooterVPos, m_TextColor);
         }
         
         if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 14)
@@ -808,7 +759,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             selected_bytes_start_pos = (m_SymbWidth-symbs) / 2;
             selected_bytes_end_pos   = selected_bytes_start_pos + symbs;
             omsc.DrawBackground(m_CursorBackgroundColor, selected_bytes_start_pos, m_SelectionVPos, symbs);
-            omsc.DrawString(str.Chars(), 0, str.Size(), selected_bytes_start_pos, m_SelectionVPos, m_SelectedColor[0]);
+            omsc.DrawString(str.Chars(), 0, str.Size(), selected_bytes_start_pos, m_SelectionVPos, m_HighlightTextColor);
         }
         
         if(m_SymbWidth > 14)
@@ -819,7 +770,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             int symbs = str.Space();
             bytes_in_dir_start_pos = (m_SymbWidth-symbs) / 2;
             bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs;
-            omsc.DrawString(str.Chars(), 0, str.Size(), bytes_in_dir_start_pos, m_BytesInDirectoryVPos, m_RegularFileColor[0]);
+            omsc.DrawString(str.Chars(), 0, str.Size(), bytes_in_dir_start_pos, m_BytesInDirectoryVPos, m_TextColor);
         }
         
         if(m_DrawVolumeInfo && m_SymbWidth > 14)
@@ -835,14 +786,14 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             int symbs = str.Space();
             volume_info_start_pos = (m_SymbWidth-symbs) / 2;
             volume_info_end_pos   = volume_info_start_pos + symbs;
-            omsc.DrawString(str.Chars(), 0, str.Size(), volume_info_start_pos, m_SymbHeight-1, m_RegularFileColor[0]);
+            omsc.DrawString(str.Chars(), 0, str.Size(), volume_info_start_pos, m_SymbHeight-1, m_TextColor);
         }
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw frames
     omsc.SetupForASCIIArt();
-    omsc.SetFillColor(m_RegularFileColor[0]);
+    omsc.SetFillColor(m_TextColor);
     oms::unichars_draw_batch b;
     
     for(int i = 1; i < m_SymbHeight - 1; ++i)

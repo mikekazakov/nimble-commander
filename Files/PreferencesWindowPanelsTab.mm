@@ -37,7 +37,7 @@
     [self.classicColoringRulesTable registerForDraggedTypes:@[MyPrivateTableViewDataTypeClassic]];
     
     NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"name"];
-    column.width = 80;
+    column.width = 100;
     ((NSTableHeaderCell*)column.headerCell).stringValue = @"Name";
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.classicColoringRulesTable addTableColumn:column];

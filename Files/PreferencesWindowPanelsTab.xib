@@ -38,6 +38,9 @@
                                     </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="770">
                                         <rect key="frame" x="15" y="109" width="185" height="17"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="181" id="37s-cH-1aL"/>
+                                        </constraints>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Delete (F8):" id="774">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -47,7 +50,7 @@
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="789">
                                         <rect key="frame" x="204" y="106" width="159" height="26"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="154" id="Tp1-qn-iMz"/>
+                                            <constraint firstAttribute="width" constant="154" id="eOP-RK-XUb"/>
                                         </constraints>
                                         <popUpButtonCell key="cell" type="push" title="Move To Trash" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" selectedItem="800" id="796">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -143,32 +146,32 @@
                                     </popUpButton>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="789" firstAttribute="top" secondItem="zSi-y5-IGC" secondAttribute="bottom" constant="8" id="2F4-iS-Kiu"/>
-                                    <constraint firstAttribute="trailing" secondItem="789" secondAttribute="trailing" constant="74" id="3KH-n6-mVh"/>
-                                    <constraint firstItem="760" firstAttribute="leading" secondItem="A0a-2e-yUq" secondAttribute="leading" id="5sr-3r-8Kj"/>
-                                    <constraint firstItem="790" firstAttribute="trailing" secondItem="789" secondAttribute="trailing" id="8pA-uM-pN8"/>
-                                    <constraint firstItem="760" firstAttribute="top" secondItem="22" secondAttribute="top" constant="3" id="92z-iJ-Fww"/>
-                                    <constraint firstItem="771" firstAttribute="top" secondItem="770" secondAttribute="bottom" constant="9" id="A1Y-P3-CyN"/>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="trailing" secondItem="A0a-2e-yUq" secondAttribute="trailing" id="BTd-MW-oWZ"/>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="trailing" secondItem="lg9-3W-PJz" secondAttribute="trailing" id="BZn-Ev-NHu"/>
-                                    <constraint firstItem="770" firstAttribute="bottom" secondItem="789" secondAttribute="bottom" id="DLv-cP-XI6"/>
-                                    <constraint firstItem="770" firstAttribute="leading" secondItem="771" secondAttribute="leading" id="Gca-y6-KSQ"/>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="top" secondItem="A0a-2e-yUq" secondAttribute="bottom" constant="6" symbolic="YES" id="JWl-rc-soo"/>
-                                    <constraint firstItem="790" firstAttribute="top" secondItem="789" secondAttribute="bottom" constant="8" id="LB0-l1-NHK"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="trailing" secondItem="zSi-y5-IGC" secondAttribute="trailing" id="OBR-br-n4u"/>
-                                    <constraint firstAttribute="trailing" secondItem="760" secondAttribute="trailing" constant="17" id="Ot4-aU-FRp"/>
-                                    <constraint firstItem="789" firstAttribute="leading" secondItem="790" secondAttribute="leading" id="Vfz-EM-pS2"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="zSi-y5-IGC" secondAttribute="leading" id="YPY-Bq-SZ5"/>
-                                    <constraint firstItem="760" firstAttribute="trailing" secondItem="A0a-2e-yUq" secondAttribute="trailing" id="Z0m-99-fR2"/>
-                                    <constraint firstItem="760" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="17" id="ZXf-x6-2EI"/>
-                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="top" secondItem="lg9-3W-PJz" secondAttribute="bottom" constant="6" symbolic="YES" id="a0b-zR-6h6"/>
-                                    <constraint firstItem="770" firstAttribute="leading" secondItem="zSi-y5-IGC" secondAttribute="leading" id="bB1-aN-jx9"/>
-                                    <constraint firstItem="790" firstAttribute="leading" secondItem="771" secondAttribute="trailing" constant="8" symbolic="YES" id="bMZ-pc-Wfu"/>
-                                    <constraint firstItem="A0a-2e-yUq" firstAttribute="leading" secondItem="s1m-K3-6d7" secondAttribute="leading" id="cHi-m4-1KC"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="s1m-K3-6d7" secondAttribute="leading" id="edN-md-tNT"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="top" secondItem="s1m-K3-6d7" secondAttribute="bottom" constant="6" symbolic="YES" id="fnM-Qt-Aea"/>
-                                    <constraint firstItem="789" firstAttribute="leading" secondItem="770" secondAttribute="trailing" constant="8" symbolic="YES" id="gfx-dA-1va"/>
-                                    <constraint firstItem="A0a-2e-yUq" firstAttribute="top" secondItem="760" secondAttribute="bottom" constant="6" symbolic="YES" id="r4i-xp-j1u"/>
+                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="trailing" secondItem="A0a-2e-yUq" secondAttribute="trailing" id="4qV-qc-9Xz"/>
+                                    <constraint firstItem="760" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="17" id="8eb-L4-3vH"/>
+                                    <constraint firstItem="790" firstAttribute="leading" secondItem="789" secondAttribute="leading" id="Dz2-6g-ZNj"/>
+                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="zSi-y5-IGC" secondAttribute="leading" id="HTf-nF-cL9"/>
+                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="top" secondItem="A0a-2e-yUq" secondAttribute="bottom" constant="6" symbolic="YES" id="J6q-Vl-y44"/>
+                                    <constraint firstItem="760" firstAttribute="leading" secondItem="A0a-2e-yUq" secondAttribute="leading" id="MTx-07-zcx"/>
+                                    <constraint firstItem="789" firstAttribute="bottom" secondItem="770" secondAttribute="bottom" id="NyM-sc-hGi"/>
+                                    <constraint firstAttribute="trailing" secondItem="789" secondAttribute="trailing" constant="74" id="OSg-pP-d3P"/>
+                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="top" secondItem="lg9-3W-PJz" secondAttribute="bottom" constant="6" symbolic="YES" id="Pki-Bc-EGq"/>
+                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="leading" secondItem="A0a-2e-yUq" secondAttribute="leading" id="TlG-tK-4l9"/>
+                                    <constraint firstItem="789" firstAttribute="leading" secondItem="770" secondAttribute="trailing" constant="8" symbolic="YES" id="bNq-MG-6fu"/>
+                                    <constraint firstItem="790" firstAttribute="top" secondItem="789" secondAttribute="bottom" constant="8" id="bol-xB-Tnt"/>
+                                    <constraint firstAttribute="trailing" secondItem="760" secondAttribute="trailing" constant="17" id="bzV-gR-vzW"/>
+                                    <constraint firstItem="771" firstAttribute="top" secondItem="770" secondAttribute="bottom" constant="9" id="cCV-QJ-TjH"/>
+                                    <constraint firstItem="790" firstAttribute="trailing" secondItem="789" secondAttribute="trailing" id="fbj-It-zNU"/>
+                                    <constraint firstItem="789" firstAttribute="top" secondItem="zSi-y5-IGC" secondAttribute="bottom" constant="8" id="hXl-Hx-UnA"/>
+                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="trailing" secondItem="lg9-3W-PJz" secondAttribute="trailing" id="jVm-wG-uTs"/>
+                                    <constraint firstItem="A0a-2e-yUq" firstAttribute="top" secondItem="760" secondAttribute="bottom" constant="6" symbolic="YES" id="kKX-K6-tPg"/>
+                                    <constraint firstItem="790" firstAttribute="leading" secondItem="771" secondAttribute="trailing" constant="8" symbolic="YES" id="kmj-iU-NYA"/>
+                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="trailing" secondItem="zSi-y5-IGC" secondAttribute="trailing" id="oqU-3O-QfR"/>
+                                    <constraint firstItem="760" firstAttribute="top" secondItem="22" secondAttribute="top" constant="3" id="p9W-Qc-91j"/>
+                                    <constraint firstItem="760" firstAttribute="trailing" secondItem="A0a-2e-yUq" secondAttribute="trailing" id="py7-s5-2SO"/>
+                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="s1m-K3-6d7" secondAttribute="leading" id="rYD-Xo-W5X"/>
+                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="leading" secondItem="770" secondAttribute="leading" id="uMS-Yb-W8g"/>
+                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="top" secondItem="s1m-K3-6d7" secondAttribute="bottom" constant="6" symbolic="YES" id="yTL-sP-N79"/>
+                                    <constraint firstItem="771" firstAttribute="leading" secondItem="770" secondAttribute="leading" id="zDQ-AI-wGo"/>
                                 </constraints>
                             </view>
                         </tabViewItem>
@@ -258,24 +261,8 @@
                                 <rect key="frame" x="10" y="33" width="434" height="235"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="274">
-                                        <rect key="frame" x="197" y="-6" width="82" height="32"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="70" id="Suh-4v-Y6K"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="275">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="OnSetClassicFont:" target="-2" id="281"/>
-                                        </connections>
-                                    </button>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="282">
-                                        <rect key="frame" x="259" y="209" width="44" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="44" id="NQ2-Zp-ilv"/>
-                                        </constraints>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="282">
+                                        <rect key="frame" x="168" y="212" width="28" height="20"/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsClassicBackgroundColor" id="295">
@@ -285,142 +272,24 @@
                                             </binding>
                                         </connections>
                                     </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="290">
-                                        <rect key="frame" x="102" y="212" width="147" height="17"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="143" id="bSU-IJ-rSq"/>
-                                        </constraints>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="290">
+                                        <rect key="frame" x="15" y="212" width="147" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Common background:" id="291">
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="296">
-                                        <rect key="frame" x="305" y="131" width="44" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="44" id="ByV-ZS-kfk"/>
-                                        </constraints>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicRegularFileColor" id="326">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="297">
-                                        <rect key="frame" x="102" y="187" width="147" height="17"/>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="297">
+                                        <rect key="frame" x="15" y="188" width="147" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Cursor background:" id="299">
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="315">
-                                        <rect key="frame" x="152" y="134" width="147" height="17"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="143" id="hDl-5N-2zU"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Regular file:" id="316">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="332">
-                                        <rect key="frame" x="299" y="162" width="56" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Default" id="333">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="337">
-                                        <rect key="frame" x="361" y="131" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicFocusedRegularFileColor" id="357">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="363">
-                                        <rect key="frame" x="305" y="104" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicDirectoryColor" id="387">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="364">
-                                        <rect key="frame" x="152" y="107" width="147" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Directory:" id="368">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="365">
-                                        <rect key="frame" x="361" y="104" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicFocusedDirectoryColor" id="388">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="345">
-                                        <rect key="frame" x="359" y="162" width="60" height="17"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="56" id="EhC-v3-NRi"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Focused" id="347">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="389">
-                                        <rect key="frame" x="305" y="76" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicHiddenColor" id="411">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="390">
-                                        <rect key="frame" x="152" y="79" width="147" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Hidden:" id="392">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="391">
-                                        <rect key="frame" x="361" y="76" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicFocusedHiddenColor" id="412">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="413">
-                                        <rect key="frame" x="259" y="184" width="44" height="23"/>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="413">
+                                        <rect key="frame" x="168" y="188" width="28" height="20"/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsClassicCursorBackgroundColor" id="421">
@@ -430,68 +299,8 @@
                                             </binding>
                                         </connections>
                                     </colorWell>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="422">
-                                        <rect key="frame" x="305" y="51" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicSelectedColor" id="439">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="423">
-                                        <rect key="frame" x="152" y="54" width="147" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selected:" id="425">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="424">
-                                        <rect key="frame" x="361" y="51" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicFocusedSelectedColor" id="440">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="453">
-                                        <rect key="frame" x="305" y="26" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicOtherColor" id="470">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="454">
-                                        <rect key="frame" x="150" y="29" width="147" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Other:" id="456">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="455">
-                                        <rect key="frame" x="361" y="26" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicFocusedOtherColor" id="471">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
                                     <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r2d-h9-GN7">
-                                        <rect key="frame" x="-3" y="20" width="259" height="135"/>
+                                        <rect key="frame" x="61" y="34" width="312" height="99"/>
                                         <clipView key="contentView" ambiguous="YES" misplaced="YES" id="jVH-T1-DCG">
                                             <rect key="frame" x="1" y="17" width="238" height="117"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -518,11 +327,8 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                     </scrollView>
-                                    <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5XO-Nu-xUb">
-                                        <rect key="frame" x="10" y="-3" width="22" height="22"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="22" id="nBH-DN-GWr"/>
-                                        </constraints>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5XO-Nu-xUb">
+                                        <rect key="frame" x="61" y="4" width="22" height="22"/>
                                         <buttonCell key="cell" type="square" title="+" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bwL-DX-wvp">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -531,8 +337,8 @@
                                             <action selector="OnAddNewClassicColoringRule:" target="-2" id="hEQ-QY-amL"/>
                                         </connections>
                                     </button>
-                                    <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="B8s-Za-fbG">
-                                        <rect key="frame" x="31" y="-3" width="22" height="22"/>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="B8s-Za-fbG">
+                                        <rect key="frame" x="82" y="4" width="22" height="22"/>
                                         <buttonCell key="cell" type="square" title="-" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jIX-LC-Sgl">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -541,83 +347,82 @@
                                             <action selector="OnRemoveClassicColoringRule:" target="-2" id="vUm-fa-V1w"/>
                                         </connections>
                                     </button>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="274">
+                                        <rect key="frame" x="285" y="135" width="80" height="28"/>
+                                        <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="275">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="smallSystem"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="OnSetClassicFont:" target="-2" id="281"/>
+                                        </connections>
+                                    </button>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QDq-2I-DDG">
+                                        <rect key="frame" x="332" y="213" width="28" height="20"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicTextColor" id="Vrn-Rc-Lug">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bda-Ny-0ZW">
+                                        <rect key="frame" x="202" y="212" width="124" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Text color:" id="q3b-YG-pX2">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kVJ-Ln-DEA">
+                                        <rect key="frame" x="202" y="188" width="124" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Active text color:" id="QIU-SV-1X1">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hOb-AO-4pS">
+                                        <rect key="frame" x="332" y="188" width="28" height="20"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicActiveTextColor" id="EmU-te-HSq">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MAT-Tm-la1">
+                                        <rect key="frame" x="202" y="164" width="124" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Highlight text color:" id="S7z-3w-oYP">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qdO-L6-bOj">
+                                        <rect key="frame" x="332" y="163" width="28" height="20"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsClassicHighlightTextColor" id="cwB-6W-zEz">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8d8-xG-L4U">
+                                        <rect key="frame" x="59" y="132" width="167" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Filenames coloring rules:" id="Yz6-Vn-ehr">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
-                                <constraints>
-                                    <constraint firstItem="391" firstAttribute="trailing" secondItem="424" secondAttribute="trailing" id="0Uf-Ap-hLB"/>
-                                    <constraint firstItem="390" firstAttribute="top" secondItem="364" secondAttribute="bottom" constant="11" id="3pJ-dC-Vr6"/>
-                                    <constraint firstItem="365" firstAttribute="bottom" secondItem="363" secondAttribute="bottom" id="6vX-Gg-1Wi"/>
-                                    <constraint firstItem="296" firstAttribute="leading" secondItem="363" secondAttribute="leading" id="6wZ-1i-UQ6"/>
-                                    <constraint firstItem="363" firstAttribute="centerY" secondItem="364" secondAttribute="centerY" id="8Ub-IP-jPL"/>
-                                    <constraint firstItem="453" firstAttribute="top" secondItem="422" secondAttribute="bottom" constant="2" id="93x-fV-rbA"/>
-                                    <constraint firstItem="B8s-Za-fbG" firstAttribute="leading" secondItem="5XO-Nu-xUb" secondAttribute="trailing" constant="-1" id="9MS-LU-tor"/>
-                                    <constraint firstItem="332" firstAttribute="centerX" secondItem="296" secondAttribute="centerX" id="AQT-WO-eAi"/>
-                                    <constraint firstItem="315" firstAttribute="leading" secondItem="7" secondAttribute="leading" constant="154" id="CDU-Qg-vDX"/>
-                                    <constraint firstItem="337" firstAttribute="bottom" secondItem="296" secondAttribute="bottom" id="Cdg-Lo-4E8"/>
-                                    <constraint firstItem="297" firstAttribute="trailing" secondItem="296" secondAttribute="trailing" constant="-102" id="CzN-2o-JO9"/>
-                                    <constraint firstItem="296" firstAttribute="trailing" secondItem="363" secondAttribute="trailing" id="Dqs-mM-Hbi"/>
-                                    <constraint firstItem="282" firstAttribute="leading" secondItem="290" secondAttribute="trailing" constant="12" id="E2d-qg-1AS"/>
-                                    <constraint firstItem="422" firstAttribute="trailing" secondItem="453" secondAttribute="trailing" id="Ec8-uL-JzI"/>
-                                    <constraint firstItem="389" firstAttribute="leading" secondItem="363" secondAttribute="leading" id="FVT-NH-rXr"/>
-                                    <constraint firstItem="332" firstAttribute="baseline" secondItem="345" secondAttribute="baseline" id="Fai-SN-lc9"/>
-                                    <constraint firstItem="282" firstAttribute="leading" secondItem="413" secondAttribute="leading" id="Fhu-Jv-x5q"/>
-                                    <constraint firstItem="389" firstAttribute="leading" secondItem="422" secondAttribute="leading" id="Fmz-h3-dKB"/>
-                                    <constraint firstItem="390" firstAttribute="leading" secondItem="423" secondAttribute="leading" id="FyF-SP-8kC"/>
-                                    <constraint firstItem="363" firstAttribute="trailing" secondItem="389" secondAttribute="trailing" id="HXM-C0-HyX"/>
-                                    <constraint firstItem="345" firstAttribute="top" secondItem="413" secondAttribute="bottom" constant="5" id="I75-Ns-V2A"/>
-                                    <constraint firstItem="332" firstAttribute="top" secondItem="297" secondAttribute="bottom" constant="8" id="IF0-UA-6G4"/>
-                                    <constraint firstItem="453" firstAttribute="leading" secondItem="422" secondAttribute="leading" id="IOF-Sg-Zsj"/>
-                                    <constraint firstItem="422" firstAttribute="top" secondItem="389" secondAttribute="bottom" constant="2" id="IvT-qU-xM6"/>
-                                    <constraint firstItem="282" firstAttribute="top" secondItem="7" secondAttribute="top" constant="3" id="JEO-aG-Jc7"/>
-                                    <constraint firstItem="424" firstAttribute="leading" secondItem="391" secondAttribute="leading" id="Jcs-y4-Aw1"/>
-                                    <constraint firstItem="389" firstAttribute="leading" secondItem="390" secondAttribute="trailing" constant="8" symbolic="YES" id="Liz-B0-Ghd"/>
-                                    <constraint firstItem="337" firstAttribute="leading" secondItem="345" secondAttribute="leading" id="MFO-Gc-h5R"/>
-                                    <constraint firstItem="455" firstAttribute="leading" secondItem="424" secondAttribute="leading" id="MfD-bO-5bc"/>
-                                    <constraint firstItem="337" firstAttribute="trailing" secondItem="365" secondAttribute="trailing" id="MtE-Qh-S3z"/>
-                                    <constraint firstItem="391" firstAttribute="trailing" secondItem="365" secondAttribute="trailing" id="MzU-eg-zuP"/>
-                                    <constraint firstItem="290" firstAttribute="centerY" secondItem="282" secondAttribute="centerY" id="Ne2-34-WfS"/>
-                                    <constraint firstItem="424" firstAttribute="trailing" secondItem="455" secondAttribute="trailing" id="O1C-cv-SR7"/>
-                                    <constraint firstItem="455" firstAttribute="top" secondItem="453" secondAttribute="top" id="OzU-oA-wYT"/>
-                                    <constraint firstItem="422" firstAttribute="top" secondItem="424" secondAttribute="top" id="RjA-1z-PzR"/>
-                                    <constraint firstItem="B8s-Za-fbG" firstAttribute="baseline" secondItem="5XO-Nu-xUb" secondAttribute="baseline" id="S7u-vq-VwZ"/>
-                                    <constraint firstItem="413" firstAttribute="top" secondItem="282" secondAttribute="bottom" constant="2" id="SUT-tL-DS3"/>
-                                    <constraint firstItem="363" firstAttribute="top" secondItem="365" secondAttribute="top" id="T4u-rD-dLA"/>
-                                    <constraint firstItem="390" firstAttribute="centerY" secondItem="389" secondAttribute="centerY" id="Tps-iY-De8"/>
-                                    <constraint firstItem="413" firstAttribute="trailing" secondItem="337" secondAttribute="trailing" constant="-102" id="UC5-hm-Tv4"/>
-                                    <constraint firstItem="391" firstAttribute="bottom" secondItem="389" secondAttribute="bottom" id="Voq-z4-hQS"/>
-                                    <constraint firstItem="297" firstAttribute="top" secondItem="290" secondAttribute="bottom" constant="8" symbolic="YES" id="W0G-lZ-Pur"/>
-                                    <constraint firstItem="389" firstAttribute="trailing" secondItem="422" secondAttribute="trailing" id="Wc5-iY-39E"/>
-                                    <constraint firstItem="422" firstAttribute="leading" secondItem="423" secondAttribute="trailing" constant="8" symbolic="YES" id="Wc8-Hj-6kJ"/>
-                                    <constraint firstItem="391" firstAttribute="leading" secondItem="365" secondAttribute="leading" id="X2Z-XC-hUa"/>
-                                    <constraint firstItem="454" firstAttribute="leading" secondItem="7" secondAttribute="leading" constant="152" id="YJC-uq-wU0"/>
-                                    <constraint firstItem="413" firstAttribute="trailing" secondItem="282" secondAttribute="trailing" id="aht-3N-5Sp"/>
-                                    <constraint firstItem="364" firstAttribute="leading" secondItem="315" secondAttribute="leading" id="aqL-VV-3GG"/>
-                                    <constraint firstItem="390" firstAttribute="leading" secondItem="364" secondAttribute="leading" id="bJY-DZ-WHC"/>
-                                    <constraint firstItem="345" firstAttribute="leading" secondItem="332" secondAttribute="trailing" constant="8" symbolic="YES" id="cK6-Oj-qog"/>
-                                    <constraint firstItem="296" firstAttribute="leading" secondItem="315" secondAttribute="trailing" constant="8" symbolic="YES" id="ct6-xE-szB"/>
-                                    <constraint firstItem="296" firstAttribute="top" secondItem="332" secondAttribute="bottom" constant="8" symbolic="YES" id="esz-aG-rnK"/>
-                                    <constraint firstItem="453" firstAttribute="leading" secondItem="274" secondAttribute="leading" constant="102" id="evh-Ir-wng"/>
-                                    <constraint firstItem="389" firstAttribute="top" secondItem="363" secondAttribute="bottom" constant="5" id="g74-en-JfK"/>
-                                    <constraint firstItem="453" firstAttribute="leading" secondItem="454" secondAttribute="trailing" constant="10" id="ges-u3-1wd"/>
-                                    <constraint firstItem="423" firstAttribute="top" secondItem="390" secondAttribute="bottom" constant="8" symbolic="YES" id="kVD-X2-Ygb"/>
-                                    <constraint firstItem="454" firstAttribute="top" secondItem="423" secondAttribute="bottom" constant="8" symbolic="YES" id="mY0-X5-oNH"/>
-                                    <constraint firstItem="274" firstAttribute="top" secondItem="453" secondAttribute="bottom" constant="4" id="n5e-P5-S3r"/>
-                                    <constraint firstItem="413" firstAttribute="centerY" secondItem="297" secondAttribute="centerY" id="ng8-9m-UQa"/>
-                                    <constraint firstItem="364" firstAttribute="top" secondItem="315" secondAttribute="bottom" constant="10" id="njF-WF-5nP"/>
-                                    <constraint firstItem="453" firstAttribute="bottom" secondItem="455" secondAttribute="bottom" id="o98-ti-hIU"/>
-                                    <constraint firstItem="345" firstAttribute="leading" secondItem="413" secondAttribute="leading" constant="102" id="pbi-Sh-KWU"/>
-                                    <constraint firstItem="363" firstAttribute="top" secondItem="296" secondAttribute="bottom" constant="4" id="q7a-f7-0Ol"/>
-                                    <constraint firstItem="391" firstAttribute="top" secondItem="389" secondAttribute="top" id="r0R-1F-Rp7"/>
-                                    <constraint firstItem="337" firstAttribute="top" secondItem="345" secondAttribute="bottom" constant="8" symbolic="YES" id="rnC-rs-IwV"/>
-                                    <constraint firstItem="315" firstAttribute="top" secondItem="297" secondAttribute="bottom" constant="36" id="sbr-Wj-AoZ"/>
-                                    <constraint firstItem="423" firstAttribute="centerY" secondItem="422" secondAttribute="centerY" id="sf0-3j-WZC"/>
-                                    <constraint firstItem="297" firstAttribute="leading" secondItem="290" secondAttribute="leading" id="uhh-WV-Rvi"/>
-                                    <constraint firstItem="453" firstAttribute="centerY" secondItem="454" secondAttribute="centerY" id="vI4-Zc-nii"/>
-                                    <constraint firstItem="296" firstAttribute="centerY" secondItem="315" secondAttribute="centerY" id="wZi-rm-uOq"/>
-                                    <constraint firstItem="290" firstAttribute="trailing" secondItem="297" secondAttribute="trailing" id="wlg-FL-ETQ"/>
-                                    <constraint firstItem="363" firstAttribute="leading" secondItem="364" secondAttribute="trailing" constant="8" symbolic="YES" id="xS6-Lt-zWw"/>
-                                    <constraint firstItem="424" firstAttribute="bottom" secondItem="422" secondAttribute="bottom" id="yDi-dk-Ymd"/>
-                                    <constraint firstItem="365" firstAttribute="leading" secondItem="337" secondAttribute="leading" id="yss-s2-qnx"/>
-                                </constraints>
                             </view>
                         </tabViewItem>
                         <tabViewItem label="Modern" identifier="3" id="5">
@@ -625,14 +430,162 @@
                                 <rect key="frame" x="10" y="33" width="434" height="235"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="25">
-                                        <rect key="frame" x="229" y="208" width="183" height="26"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="178" id="IL3-tv-nx1"/>
-                                        </constraints>
-                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="26">
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="38">
+                                        <rect key="frame" x="225" y="1" width="77" height="32"/>
+                                        <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="39">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="OnSetModernFont:" target="-2" id="45"/>
+                                        </connections>
+                                    </button>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="48">
+                                        <rect key="frame" x="233" y="185" width="44" height="23"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernRegularTextColor" id="66">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="53">
+                                        <rect key="frame" x="23" y="188" width="202" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Regular text:" id="54">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="68">
+                                        <rect key="frame" x="23" y="163" width="202" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selected text:" id="70">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="74">
+                                        <rect key="frame" x="233" y="160" width="44" height="23"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernActiveSelectedTextColor" id="81">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="82">
+                                        <rect key="frame" x="23" y="138" width="202" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Regular background:" id="83">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="87">
+                                        <rect key="frame" x="233" y="135" width="44" height="23"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernBackgroundColor" id="97">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98">
+                                        <rect key="frame" x="23" y="113" width="202" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative background:" id="99">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="103">
+                                        <rect key="frame" x="233" y="110" width="44" height="23"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernAlternativeBackgroundColor" id="112">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="113">
+                                        <rect key="frame" x="23" y="88" width="202" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Active&amp;selected background:" id="114">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="133">
+                                        <rect key="frame" x="233" y="85" width="44" height="23"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernActiveSelectedBackgroundColor" id="139">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="140">
+                                        <rect key="frame" x="23" y="63" width="202" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Inactive&amp;selected background:" id="142">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="153">
+                                        <rect key="frame" x="23" y="38" width="202" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Cursor frame:" id="154">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="146">
+                                        <rect key="frame" x="233" y="60" width="44" height="23"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernInactiveSelectedBackgroundColor" id="152">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="161">
+                                        <rect key="frame" x="233" y="35" width="44" height="23"/>
+                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernCursorFrameColor" id="167">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </colorWell>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="168">
+                                        <rect key="frame" x="132" y="213" width="93" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Icons mode:" id="169">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="25">
+                                        <rect key="frame" x="230" y="208" width="191" height="22"/>
+                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="26">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <menu key="menu" title="OtherViews" id="27">
                                                 <items>
                                                     <menuItem title="Generic Icons" id="30"/>
@@ -645,233 +598,17 @@
                                             <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsModernIconsMode" id="177"/>
                                         </connections>
                                     </popUpButton>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="38">
-                                        <rect key="frame" x="225" y="1" width="77" height="32"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="65" id="vd1-E9-7pT"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="39">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="OnSetModernFont:" target="-2" id="45"/>
-                                        </connections>
-                                    </button>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="48">
-                                        <rect key="frame" x="233" y="185" width="44" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="44" id="ipy-Bq-WOv"/>
-                                        </constraints>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernRegularTextColor" id="66">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="53">
-                                        <rect key="frame" x="23" y="188" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Regular text:" id="54">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="68">
-                                        <rect key="frame" x="23" y="163" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selected text:" id="70">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="74">
-                                        <rect key="frame" x="233" y="160" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernActiveSelectedTextColor" id="81">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="82">
-                                        <rect key="frame" x="23" y="138" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Regular background:" id="83">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="87">
-                                        <rect key="frame" x="233" y="135" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernBackgroundColor" id="97">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="98">
-                                        <rect key="frame" x="23" y="113" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative background:" id="99">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="103">
-                                        <rect key="frame" x="233" y="110" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernAlternativeBackgroundColor" id="112">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="113">
-                                        <rect key="frame" x="23" y="88" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Active&amp;selected background:" id="114">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="133">
-                                        <rect key="frame" x="233" y="85" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernActiveSelectedBackgroundColor" id="139">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="140">
-                                        <rect key="frame" x="23" y="63" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Inactive&amp;selected background:" id="142">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="153">
-                                        <rect key="frame" x="23" y="38" width="202" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Cursor frame:" id="154">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="146">
-                                        <rect key="frame" x="233" y="60" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernInactiveSelectedBackgroundColor" id="152">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="161">
-                                        <rect key="frame" x="233" y="35" width="44" height="23"/>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsModernCursorFrameColor" id="167">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="168">
-                                        <rect key="frame" x="132" y="213" width="93" height="17"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="89" id="1uU-iM-l36"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Icons mode:" id="169">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
                                 </subviews>
-                                <constraints>
-                                    <constraint firstItem="133" firstAttribute="trailing" secondItem="103" secondAttribute="trailing" id="1f5-sY-KDp"/>
-                                    <constraint firstItem="74" firstAttribute="centerY" secondItem="68" secondAttribute="centerY" id="1nj-PR-hPB"/>
-                                    <constraint firstItem="68" firstAttribute="trailing" secondItem="82" secondAttribute="trailing" id="34d-xg-Jrp"/>
-                                    <constraint firstItem="53" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="25" id="5Of-dk-SqQ"/>
-                                    <constraint firstItem="87" firstAttribute="leading" secondItem="74" secondAttribute="leading" id="71U-ms-ttk"/>
-                                    <constraint firstItem="153" firstAttribute="top" secondItem="140" secondAttribute="bottom" constant="8" symbolic="YES" id="8hS-Jn-2Vf"/>
-                                    <constraint firstItem="82" firstAttribute="centerY" secondItem="87" secondAttribute="centerY" id="9fm-gY-Zx9"/>
-                                    <constraint firstItem="140" firstAttribute="top" secondItem="113" secondAttribute="bottom" constant="8" symbolic="YES" id="9ms-Z6-moU"/>
-                                    <constraint firstItem="82" firstAttribute="top" secondItem="68" secondAttribute="bottom" constant="8" symbolic="YES" id="AbH-s5-J2B"/>
-                                    <constraint firstItem="68" firstAttribute="leading" secondItem="53" secondAttribute="leading" id="BlG-ou-S3m"/>
-                                    <constraint firstItem="113" firstAttribute="trailing" secondItem="140" secondAttribute="trailing" id="Bqh-sa-tXm"/>
-                                    <constraint firstItem="146" firstAttribute="trailing" secondItem="133" secondAttribute="trailing" id="Bxa-Xv-Ur0"/>
-                                    <constraint firstItem="53" firstAttribute="centerY" secondItem="48" secondAttribute="centerY" id="CIj-p4-uV3"/>
-                                    <constraint firstItem="74" firstAttribute="top" secondItem="48" secondAttribute="bottom" constant="2" id="DcQ-Ny-Fst"/>
-                                    <constraint firstItem="87" firstAttribute="top" secondItem="74" secondAttribute="bottom" constant="2" id="FQ5-Jf-fFH"/>
-                                    <constraint firstItem="153" firstAttribute="centerY" secondItem="161" secondAttribute="centerY" id="Fxt-MI-g0w"/>
-                                    <constraint firstItem="146" firstAttribute="trailing" secondItem="161" secondAttribute="trailing" id="Hwq-Et-Y2D"/>
-                                    <constraint firstItem="133" firstAttribute="leading" secondItem="103" secondAttribute="leading" id="JMY-8w-1Ad"/>
-                                    <constraint firstItem="74" firstAttribute="leading" secondItem="48" secondAttribute="leading" id="Jin-Za-alk"/>
-                                    <constraint firstItem="25" firstAttribute="leading" secondItem="168" secondAttribute="trailing" constant="8" symbolic="YES" id="KJc-mh-aQr"/>
-                                    <constraint firstItem="48" firstAttribute="top" secondItem="25" secondAttribute="bottom" constant="3" id="Lbz-K3-0Xq"/>
-                                    <constraint firstItem="53" firstAttribute="top" secondItem="168" secondAttribute="bottom" constant="8" symbolic="YES" id="MAV-l8-5gQ"/>
-                                    <constraint firstItem="113" firstAttribute="top" secondItem="98" secondAttribute="bottom" constant="8" symbolic="YES" id="NCN-uE-HJC"/>
-                                    <constraint firstItem="48" firstAttribute="trailing" secondItem="74" secondAttribute="trailing" id="OCN-1y-sqC"/>
-                                    <constraint firstItem="140" firstAttribute="trailing" secondItem="153" secondAttribute="trailing" id="OO1-hT-sf5"/>
-                                    <constraint firstItem="25" firstAttribute="top" secondItem="6" secondAttribute="top" constant="3" id="P7Q-R1-E79"/>
-                                    <constraint firstItem="53" firstAttribute="trailing" secondItem="168" secondAttribute="trailing" id="Qpl-16-IMm"/>
-                                    <constraint firstItem="103" firstAttribute="top" secondItem="87" secondAttribute="bottom" constant="2" id="RDx-fs-f0g"/>
-                                    <constraint firstItem="25" firstAttribute="leading" secondItem="38" secondAttribute="leading" id="Rjk-S9-KJz"/>
-                                    <constraint firstItem="53" firstAttribute="trailing" secondItem="68" secondAttribute="trailing" id="SuX-2m-ncj"/>
-                                    <constraint firstItem="98" firstAttribute="leading" secondItem="82" secondAttribute="leading" id="UzC-7N-lrv"/>
-                                    <constraint firstItem="103" firstAttribute="centerY" secondItem="98" secondAttribute="centerY" id="V0d-rb-K8k"/>
-                                    <constraint firstItem="161" firstAttribute="top" secondItem="146" secondAttribute="bottom" constant="2" id="a7O-ok-PjL"/>
-                                    <constraint firstItem="113" firstAttribute="trailing" secondItem="98" secondAttribute="trailing" id="aEa-WM-ZtD"/>
-                                    <constraint firstItem="133" firstAttribute="top" secondItem="103" secondAttribute="bottom" constant="2" id="bWl-N1-htv"/>
-                                    <constraint firstItem="113" firstAttribute="centerY" secondItem="133" secondAttribute="centerY" id="bo5-Rw-4Kg"/>
-                                    <constraint firstItem="133" firstAttribute="leading" secondItem="146" secondAttribute="leading" id="cAf-rd-9IH"/>
-                                    <constraint firstItem="103" firstAttribute="leading" secondItem="87" secondAttribute="leading" id="cHa-td-jwN"/>
-                                    <constraint firstItem="98" firstAttribute="top" secondItem="82" secondAttribute="bottom" constant="8" symbolic="YES" id="d1G-nE-1zb"/>
-                                    <constraint firstItem="140" firstAttribute="leading" secondItem="113" secondAttribute="leading" id="gQY-nY-OGL"/>
-                                    <constraint firstItem="113" firstAttribute="leading" secondItem="98" secondAttribute="leading" id="heu-CZ-TG9"/>
-                                    <constraint firstItem="48" firstAttribute="leading" secondItem="53" secondAttribute="trailing" constant="10" id="hqF-Nl-vYd"/>
-                                    <constraint firstItem="74" firstAttribute="trailing" secondItem="87" secondAttribute="trailing" id="ivh-z7-xcA"/>
-                                    <constraint firstItem="38" firstAttribute="top" secondItem="161" secondAttribute="bottom" constant="6" id="jPl-BE-Nm5"/>
-                                    <constraint firstAttribute="trailing" secondItem="25" secondAttribute="trailing" constant="25" id="kC7-h0-GDa"/>
-                                    <constraint firstItem="68" firstAttribute="leading" secondItem="82" secondAttribute="leading" id="lRP-3g-Jlp"/>
-                                    <constraint firstItem="68" firstAttribute="top" secondItem="53" secondAttribute="bottom" constant="8" symbolic="YES" id="mEO-2G-o15"/>
-                                    <constraint firstItem="103" firstAttribute="trailing" secondItem="87" secondAttribute="trailing" id="oWU-P8-pnD"/>
-                                    <constraint firstItem="140" firstAttribute="leading" secondItem="153" secondAttribute="leading" id="ovm-s6-vGD"/>
-                                    <constraint firstItem="25" firstAttribute="centerY" secondItem="168" secondAttribute="centerY" id="v0e-4F-ZgS"/>
-                                    <constraint firstItem="146" firstAttribute="centerY" secondItem="140" secondAttribute="centerY" id="vDr-Cx-Gu4"/>
-                                    <constraint firstItem="146" firstAttribute="top" secondItem="133" secondAttribute="bottom" constant="2" id="y4E-bi-GG9"/>
-                                    <constraint firstItem="146" firstAttribute="leading" secondItem="161" secondAttribute="leading" id="ySI-Nz-jmi"/>
-                                    <constraint firstItem="98" firstAttribute="trailing" secondItem="82" secondAttribute="trailing" id="yUQ-us-zjU"/>
-                                </constraints>
                             </view>
                         </tabViewItem>
                     </tabViewItems>
                 </tabView>
             </subviews>
             <constraints>
-                <constraint firstItem="3" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="9"/>
-                <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" id="13"/>
-                <constraint firstAttribute="trailing" secondItem="3" secondAttribute="trailing" constant="20" symbolic="YES" id="14"/>
-                <constraint firstAttribute="bottom" secondItem="3" secondAttribute="bottom" constant="20" symbolic="YES" id="15"/>
+                <constraint firstAttribute="trailing" secondItem="3" secondAttribute="trailing" constant="20" symbolic="YES" id="ArN-De-Gdy"/>
+                <constraint firstItem="3" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="Tmm-DU-NJ5"/>
+                <constraint firstAttribute="bottom" secondItem="3" secondAttribute="bottom" constant="20" symbolic="YES" id="tIh-RM-Thd"/>
+                <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" id="wy0-Nt-R2A"/>
             </constraints>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="36"/>

@@ -70,11 +70,9 @@ private:
     shared_ptr<FontCache> m_FontCache;
     DoubleColor     m_BackgroundColor;
     DoubleColor     m_CursorBackgroundColor;
-    DoubleColor     m_RegularFileColor[2];
-    DoubleColor     m_DirectoryColor[2];
-    DoubleColor     m_HiddenColor[2];
-    DoubleColor     m_SelectedColor[2];
-    DoubleColor     m_OtherColor[2];
+    DoubleColor     m_TextColor;
+    DoubleColor     m_ActiveTextColor;
+    DoubleColor     m_HighlightTextColor;
     ObjcToCppObservingBlockBridge *m_GeometryObserver;
     ObjcToCppObservingBlockBridge *m_AppearanceObserver;
     bool            m_DrawVolumeInfo = true;

@@ -2361,8 +2361,8 @@
 		CFC5121B16C4BD3D00D247EE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				CF6D99A5196675FE0077B146 /* Files Full */,
 				CF6D99A6196676200077B146 /* Files Lite */,
+				CF6D99A5196675FE0077B146 /* Files Full */,
 				CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */,
 				CFC5122016C4BD3D00D247EE /* main.m */,
 				CFC5122216C4BD3D00D247EE /* Files-Prefix.pch */,

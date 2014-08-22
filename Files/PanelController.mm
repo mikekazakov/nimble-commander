@@ -32,6 +32,26 @@ static NSArray *g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQ
 
 static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
+    static dispatch_once_t onceToken;
+    static vector<string> extensions;
+    dispatch_once(&onceToken, ^{
+        bool any = false;
+        
+        // load from defaults
+        if(NSString *exts_string = [NSUserDefaults.standardUserDefaults stringForKey:@"FilePanelsGeneralExecutableExtensionsList"])
+            if(NSArray *extensions_array = [exts_string componentsSeparatedByString:@","])
+                for(NSString *s: extensions_array)
+                    if(s != nil && s.length > 0)
+                        if(const char *utf8 = s.UTF8String) {
+                            extensions.emplace_back(utf8);
+                            any = true;
+                        }
+        
+        // hardcoded fallback case if something went wrong
+        if(!any)
+            extensions = vector<string>{"sh", "pl", "rb", "py"};
+    });
+    
     if(_item.IsDir())
         return false;
     
@@ -48,12 +68,12 @@ static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     
     const char *ext = _item.Extension();
 
-    return  strcmp(ext, "sh") == 0 ||
-            strcmp(ext, "pl") == 0 ||
-            strcmp(ext, "rb") == 0 ||
-            false; // need MOAR HERE!
+    for(auto &s: extensions)
+        if(s == ext)
+            return true;
+    
+    return false;
 }
-
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     view(_view),

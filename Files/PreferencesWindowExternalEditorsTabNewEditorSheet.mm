@@ -30,9 +30,6 @@
 @end
 
 @implementation PreferencesWindowExternalEditorsTabNewEditorSheet
-{
-    void (^m_OnOK)();
-}
 
 - (id) init
 {
@@ -42,38 +39,19 @@
     return self;
 }
 
-- (void)windowDidLoad
-{
-    [super windowDidLoad];
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-}
-
 - (bool) hasTerminal
 {
     return configuration::has_terminal;
 }
 
-- (void)ShowSheet:(NSWindow *) _window
-       ok_handler:(void(^)())_handler
-{
-    m_OnOK = _handler;
-    [NSApp beginSheet:self.window
-       modalForWindow:_window
-        modalDelegate:self
-       didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo:nil];
-}
-
 - (IBAction)OnClose:(id)sender
 {
-    [NSApp endSheet:self.window returnCode:0];
+    [self endSheet:NSModalResponseCancel];
 }
 
 - (IBAction)OnOK:(id)sender
 {
-    m_OnOK();
-    [NSApp endSheet:self.window returnCode:0];
+    [self endSheet:NSModalResponseOK];
 }
 
 - (IBAction)OnChoosePath:(id)sender
@@ -100,12 +78,6 @@
                 self.Info.name = loc_name;
         }
     }
-}
-
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [self.window orderOut:self];
-    m_OnOK = nil;
 }
 
 @end

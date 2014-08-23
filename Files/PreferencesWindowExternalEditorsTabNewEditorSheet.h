@@ -8,15 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "SheetController.h"
 #import "ExternalEditorInfo.h"
 
-@interface PreferencesWindowExternalEditorsTabNewEditorSheet : NSWindowController
+@interface PreferencesWindowExternalEditorsTabNewEditorSheet : SheetController
 
 @property (nonatomic, strong) ExternalEditorInfo *Info;
 @property (nonatomic, readonly) bool hasTerminal;
 
-- (void)ShowSheet:(NSWindow *) _window
-       ok_handler:(void(^)())_handler;
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnOK:(id)sender;
 - (IBAction)OnChoosePath:(id)sender;

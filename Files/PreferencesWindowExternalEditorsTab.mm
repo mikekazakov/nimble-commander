@@ -57,11 +57,10 @@
 {
     PreferencesWindowExternalEditorsTabNewEditorSheet *sheet = [PreferencesWindowExternalEditorsTabNewEditorSheet new];
     sheet.Info = [ExternalEditorInfo new];
-    [sheet ShowSheet:self.view.window
-          ok_handler:^{
-              [self.ExtEditorsController addObject:sheet.Info];
-          }
-     ];
+    [sheet beginSheetForWindow:self.view.window completionHandler:^(NSModalResponse returnCode) {
+        if(returnCode == NSModalResponseOK)
+            [self.ExtEditorsController addObject:sheet.Info];
+    }];    
 }
 
 - (void)OnTableDoubleClick:(id)table
@@ -73,11 +72,12 @@
     ExternalEditorInfo *item = [self.ExtEditorsController.arrangedObjects objectAtIndex:row];
     PreferencesWindowExternalEditorsTabNewEditorSheet *sheet = [PreferencesWindowExternalEditorsTabNewEditorSheet new];
     sheet.Info = [item copy];
-    [sheet ShowSheet:self.view.window
-          ok_handler:^{
-              [self.ExtEditorsController removeObjectAtArrangedObjectIndex:row];
-              [self.ExtEditorsController insertObject:sheet.Info atArrangedObjectIndex:row];
-          }
+    [sheet beginSheetForWindow:self.view.window completionHandler:^(NSModalResponse returnCode) {
+            if(returnCode == NSModalResponseOK) {
+                [self.ExtEditorsController removeObjectAtArrangedObjectIndex:row];
+                [self.ExtEditorsController insertObject:sheet.Info atArrangedObjectIndex:row];
+            }
+        }
      ];
 }
 

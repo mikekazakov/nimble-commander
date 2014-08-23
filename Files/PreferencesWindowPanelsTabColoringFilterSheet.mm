@@ -63,7 +63,13 @@ static tribool state_to_tribool(NSCellStateValue _val)
     m_Filter.symlink = state_to_tribool(self.symlink.state);
     m_Filter.reg = state_to_tribool(self.regular.state);
     m_Filter.selected = state_to_tribool(self.selected.state);
-    m_Filter.mask = FileMask(self.mask.stringValue ? self.mask.stringValue : @"");
+    NSString *mask = self.mask.stringValue;
+    if(mask == nil)
+        mask = @"";
+    else if( !FileMask::IsWildCard(mask) )
+        if(NSString *replace = FileMask::ToWildCard(mask))
+            mask = replace;
+    m_Filter.mask = mask;
     [self endSheet:NSModalResponseOK];
 }
 

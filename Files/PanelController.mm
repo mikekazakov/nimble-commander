@@ -10,7 +10,6 @@
 #import "MainWindowController.h"
 #import "QuickPreview.h"
 #import "MainWindowFilePanelState.h"
-#import "FileMask.h"
 #import "PanelAux.h"
 #import "SharingService.h"
 #import "BriefSystemOverview.h"
@@ -708,6 +707,8 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
 {
+    if(_mask == nil)
+        return;
     bool ignore_dirs = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
     if(m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
         [m_View setNeedsDisplay:true];

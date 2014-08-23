@@ -23,6 +23,7 @@
 #import "CreateDirectorySheetController.h"
 #import "CreateDirectoryOperation.h"
 #import "FTPConnectionSheetController.h"
+#import "FileMask.h"
 
 @implementation PanelController (Menu)
 
@@ -299,7 +300,10 @@
 - (IBAction)OnSelectByMask:(id)sender {
     SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
     [sheet ShowSheet:self.window handler:^{
-        [self SelectEntriesByMask:sheet.Mask select:true];
+        NSString *mask = sheet.Mask;
+        if( !FileMask::IsWildCard(mask) )
+            mask = FileMask::ToWildCard(mask);
+        [self SelectEntriesByMask:mask select:true];
     }];
 }
 
@@ -307,7 +311,10 @@
     SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
     [sheet SetIsDeselect:true];
     [sheet ShowSheet:self.window handler:^{
-        [self SelectEntriesByMask:sheet.Mask select:false];
+        NSString *mask = sheet.Mask;
+        if( !FileMask::IsWildCard(mask) )
+            mask = FileMask::ToWildCard(mask);        
+        [self SelectEntriesByMask:mask select:false];
     }];
 }
 

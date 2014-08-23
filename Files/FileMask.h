@@ -29,9 +29,18 @@ public:
      */
     NSString *Mask() const { return m_Mask; }
     
-    // TODO:
-    // static bool IsMask(NSString *_mask);
-    // static NSString *ExpandToMask(NSString *_not_mask); <--- ???
+    /**
+     * Return true if _mask is a wildcard(s).
+     * If it's a set of fixed names - return false.
+     */
+    static bool IsWildCard(NSString *_mask);
+    
+    /**
+     * Will try to convert _mask into a wildcard, by preffixing it's parts with "*." or with "*".
+     * Return nil on errors.
+     */
+    static NSString *ToWildCard(NSString *_mask);
+    
 private:
     static bool CompareAgainstSimpleMask(const string& _mask, NSString *_name);
     

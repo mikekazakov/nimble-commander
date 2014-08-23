@@ -176,3 +176,68 @@ bool FileMask::MatchName(const char *_name) const
     
     return result;
 }
+
+bool FileMask::IsWildCard(NSString *_mask)
+{
+    if(!_mask || _mask.length == 0)
+        return false;
+    
+    // convert from "mask1,    mask2" to "mask1,mask2"
+    for(;;) {
+        NSString *new_mask = [_mask stringByReplacingOccurrencesOfString:@", " withString:@","];
+        if([new_mask isEqualToString:_mask]) break;
+        _mask = new_mask;
+    }
+    
+    NSArray *simple_masks = [_mask componentsSeparatedByString:@","];
+    if(!simple_masks ||
+       simple_masks.count == 0)
+        return false;
+    
+    static NSCharacterSet *wildchars = [NSCharacterSet characterSetWithCharactersInString:@"*?"];
+    for(NSString *s: simple_masks)
+        if([s rangeOfCharacterFromSet:wildchars].length > 0)
+            return true;
+
+    return false;
+}
+
+NSString *FileMask::ToWildCard(NSString *_mask)
+{
+    if(!_mask || _mask.length == 0)
+        return nil;
+    
+    // convert from "mask1,    mask2" to "mask1,mask2"
+    for(;;) {
+        NSString *new_mask = [_mask stringByReplacingOccurrencesOfString:@", " withString:@","];
+        if([new_mask isEqualToString:_mask]) break;
+        _mask = new_mask;
+    }
+    
+    NSArray *simple_masks = [_mask componentsSeparatedByString:@","];
+    if(!simple_masks ||
+       simple_masks.count == 0)
+        return nil;
+    
+    NSMutableString *result = [NSMutableString new];
+    
+    static NSCharacterSet *wildchars = [NSCharacterSet characterSetWithCharactersInString:@"*?"];
+    for(NSString *s: simple_masks) {
+        if([s rangeOfCharacterFromSet:wildchars].length > 0) {
+            if(result.length > 0)
+                [result appendString:@", "];
+            [result appendString:s];
+        }
+        else if(s.length > 0) {
+            // currently simply append "*."
+            if(result.length > 0)
+                [result appendString:@", "];
+            [result appendString:@"*"];
+            if([s characterAtIndex:0] != '.')
+                [result appendString:@"."];
+            [result appendString:s];
+        }
+    }
+    
+    return [result copy];
+}

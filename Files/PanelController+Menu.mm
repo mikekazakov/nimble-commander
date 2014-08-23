@@ -17,13 +17,13 @@
 #import "DetailedVolumeInformationSheetController.h"
 #import "FindFilesSheetController.h"
 #import "MainWindowController.h"
-#import "SelectionWithMaskSheetController.h"
 #import "ExternalEditorInfo.h"
 #import "FileDeletionSheetController.h"
 #import "CreateDirectorySheetController.h"
 #import "CreateDirectoryOperation.h"
 #import "FTPConnectionSheetController.h"
 #import "FileMask.h"
+#import "SelectionWithMaskPopupViewController.h"
 
 @implementation PanelController (Menu)
 
@@ -297,25 +297,39 @@
     [(MainWindowController*)self.window.delegate RequestBigFileView:path with_fs:self.VFS];
 }
 
-- (IBAction)OnSelectByMask:(id)sender {
-    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
-    [sheet ShowSheet:self.window handler:^{
-        NSString *mask = sheet.Mask;
+- (IBAction)DoSelectByMask:(bool)_select {
+    
+    // TODO: remove hardcoded popover inset
+    
+    if(m_SelectionWithMaskPopover &&
+       m_SelectionWithMaskPopover.shown)
+        return;
+    
+    SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc] init];
+    [view setupForWindow:self.state.window];
+    view.titleLabel.stringValue = _select ? @"Select files using mask:" : @"Deselect files using mask:";
+    view.handler = ^(NSString *mask) {
+        [m_SelectionWithMaskPopover close];
         if( !FileMask::IsWildCard(mask) )
             mask = FileMask::ToWildCard(mask);
-        [self SelectEntriesByMask:mask select:true];
-    }];
+        
+        [self SelectEntriesByMask:mask select:_select];
+    };
+    
+    m_SelectionWithMaskPopover = [NSPopover new];
+    m_SelectionWithMaskPopover.contentViewController = view;
+    m_SelectionWithMaskPopover.behavior = NSPopoverBehaviorTransient;
+    [m_SelectionWithMaskPopover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, 18)
+                                            ofView:self.view
+                                     preferredEdge:NSMaxYEdge];
+}
+
+- (IBAction)OnSelectByMask:(id)sender {
+    [self DoSelectByMask:true];
 }
 
 - (IBAction)OnDeselectByMask:(id)sender {
-    SelectionWithMaskSheetController *sheet = [SelectionWithMaskSheetController new];
-    [sheet SetIsDeselect:true];
-    [sheet ShowSheet:self.window handler:^{
-        NSString *mask = sheet.Mask;
-        if( !FileMask::IsWildCard(mask) )
-            mask = FileMask::ToWildCard(mask);        
-        [self SelectEntriesByMask:mask select:false];
-    }];
+    [self DoSelectByMask:false];
 }
 
 - (IBAction)OnEjectVolume:(id)sender {

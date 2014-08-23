@@ -1,15 +1,29 @@
 //
-//  SelectionWithMaskSheetController.m
+//  SelectionWithMaskPopupViewController.m
 //  Files
 //
-//  Created by Michael G. Kazakov on 30.07.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
+//  Created by Michael G. Kazakov on 23/08/14.
+//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
-#import "SelectionWithMaskSheetController.h"
+#import "SelectionWithMaskPopupViewController.h"
 #import "Common.h"
 
+@interface SelectionWithMaskSheetHistoryEntry : NSObject<NSCoding>
+{
+@public
+    NSString    *mask;
+    NSDate      *last_used;
+}
+@end
+
+@interface SelectionWithMaskSheetHistory : NSObject
++ (SelectionWithMaskSheetHistory*) sharedHistory;
+- (NSArray*) History;
+- (NSString*) SelectedMaskForWindow:(NSWindow*)_window;
+- (void) ReportUsedMask:(NSString*)_mask ForWindow:(NSWindow*)_window;
+@end
 
 static NSString *g_FileName = @"/selectionwithmasksheet.bplist"; // bplist file name
 static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
@@ -96,7 +110,7 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
     void *key = (__bridge void*)_window;
     NSString *mask = [_mask copy];
     m_SelectedMask[key] = mask;
-
+    
     // exclude meaningless masks - don't store them
     if([mask isEqualToString:@""]    ||
        [mask isEqualToString:@"."]   ||
@@ -111,7 +125,7 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
             [m_History removeObject:entry];
             break;
         }
-        
+    
     SelectionWithMaskSheetHistoryEntry *new_entry = [SelectionWithMaskSheetHistoryEntry new];
     new_entry->mask = mask;
     new_entry->last_used = [NSDate date];
@@ -121,78 +135,46 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
 
 @end
 
-@implementation SelectionWithMaskSheetController
+
+@implementation SelectionWithMaskPopupViewController
 {
-    NSString   *m_Mask;
-    NSWindow   *m_ParentWindow;
-    bool        m_IsDeselect;
-    void      (^m_OnOK)();
+    NSWindow *m_TargetWnd;
 }
 
-- (id)init
+- (id) init
 {
-    self = [super initWithWindowNibName:NSStringFromClass(self.class)];
-    if(self){
-        m_IsDeselect = false;
+    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nil];
+    if(self) {
+        [self loadView];
     }
     return self;
 }
 
-- (void)windowDidLoad
+- (void) setupForWindow:(NSWindow*)_window
 {
-    [super windowDidLoad];
-
-    for(SelectionWithMaskSheetHistoryEntry *entry: [[SelectionWithMaskSheetHistory sharedHistory] History])
-        [self.ComboBox addItemWithObjectValue:entry->mask];
-
-    NSString *mask = [[SelectionWithMaskSheetHistory sharedHistory] SelectedMaskForWindow:m_ParentWindow];
-    [self.ComboBox setStringValue:mask];
-    [self.ComboBox selectItemWithObjectValue:mask];
-    [self.window makeFirstResponder:self.ComboBox];
+    for(SelectionWithMaskSheetHistoryEntry *entry: [SelectionWithMaskSheetHistory.sharedHistory History])
+        [self.comboBox addItemWithObjectValue:entry->mask];
     
-    [self.TitleLabel setStringValue:m_IsDeselect ? @"Deselect using mask:" : @"Select using mask:" ];
+    NSString *mask = [[SelectionWithMaskSheetHistory sharedHistory]
+                      SelectedMaskForWindow:_window];
+    self.comboBox.stringValue = mask;
+    [self.comboBox selectItemWithObjectValue:mask];
+    m_TargetWnd = _window;
 }
 
-- (NSString *) Mask
+- (IBAction)OnComboBox:(id)sender
 {
-    return m_Mask;
-}
-
-- (IBAction)OnOK:(id)sender
-{
-    m_Mask = self.ComboBox.stringValue;
-    [SelectionWithMaskSheetHistory.sharedHistory ReportUsedMask:m_Mask ForWindow:m_ParentWindow];
-    m_OnOK();
-    [NSApp endSheet:self.window returnCode:DialogResult::OK];
-}
-
-- (IBAction)OnCancel:(id)sender
-{
-    m_Mask = @"";
-    [NSApp endSheet:self.window returnCode:DialogResult::Cancel];
-}
-
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [self.window orderOut:self];
-    m_ParentWindow = nil;
-    m_OnOK = nil;
-}
-
-- (void)ShowSheet:(NSWindow *)_window handler:(void(^)())_handler
-{
-    m_OnOK = _handler;
-    m_ParentWindow = _window;
-    [NSApp beginSheet: self.window
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo: nil];
-}
-
-- (void)SetIsDeselect:(bool) _value
-{
-    m_IsDeselect = _value;
+    assert(self.handler != nil);
+    
+    if(self.comboBox.stringValue == nil ||
+       self.comboBox.stringValue.length == 0)
+        return;
+    
+    [SelectionWithMaskSheetHistory.sharedHistory ReportUsedMask:self.comboBox.stringValue
+                                                      ForWindow:m_TargetWnd];
+    self.handler( self.comboBox.stringValue );
+    self.handler = nil;
+    m_TargetWnd = nil;
 }
 
 @end

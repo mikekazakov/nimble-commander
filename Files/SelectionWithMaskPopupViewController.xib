@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6205" systemVersion="14A329f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment defaultVersion="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6205"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="SelectionWithMaskPopupViewController">
+            <connections>
+                <outlet property="comboBox" destination="ACk-NG-9Cm" id="psd-DF-B6E"/>
+                <outlet property="titleLabel" destination="PGG-CN-CJD" id="qrK-9O-q2W"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="237" height="96"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PGG-CN-CJD">
+                    <rect key="frame" x="18" y="63" width="201" height="13"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="5s2-5B-fk9">
+                        <font key="font" metaFont="label"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <comboBox toolTip="Use &quot;*&quot; for multiple-character wildcard, &quot;?&quot; for single-character wildcard and &quot;,&quot; to specify more than one mask." horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ACk-NG-9Cm">
+                    <rect key="frame" x="20" y="31" width="200" height="26"/>
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Type mask here" drawsBackground="YES" usesSingleLineMode="YES" completes="NO" numberOfVisibleItems="10" id="owl-H0-mNI">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </comboBoxCell>
+                    <connections>
+                        <action selector="OnComboBox:" target="-2" id="Jn9-z3-QXd"/>
+                    </connections>
+                </comboBox>
+            </subviews>
+            <point key="canvasLocation" x="310.5" y="280"/>
+        </customView>
+    </objects>
+</document>

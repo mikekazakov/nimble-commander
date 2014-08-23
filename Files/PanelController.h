@@ -115,6 +115,8 @@ namespace panel
         uint64_t    request_end;
     } m_DelayedSelection;
     
+    NSPopover            *m_SelectionWithMaskPopover;
+    
     __weak MainWindowFilePanelState* m_FilePanelState;
 }
 

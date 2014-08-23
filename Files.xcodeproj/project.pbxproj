@@ -100,8 +100,6 @@
 		CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
 		CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
-		CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */; };
-		CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
@@ -239,7 +237,6 @@
 		CF6D9C4A196678010077B146 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
 		CF6D9C4B196678010077B146 /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
 		CF6D9C4C196678010077B146 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
-		CF6D9C4D196678010077B146 /* SelectionWithMaskSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */; };
 		CF6D9C4E196678010077B146 /* PanelFastSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */; };
 		CF6D9C4F196678010077B146 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
 		CF6D9C50196678010077B146 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
@@ -413,7 +410,6 @@
 		CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CF6D9D0719667E390077B146 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */; };
 		CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
-		CF6D9D0919667E390077B146 /* SelectionWithMaskSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */; };
 		CF6D9D0A19667E390077B146 /* PanelFastSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */; };
 		CF6D9D0B19667E390077B146 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA0B23518693F1100501C35 /* GoToFolderSheetController.xib */; };
 		CF6D9D0C19667E390077B146 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCD3B7B18AB64C600028B41 /* FindFilesSheetController.xib */; };
@@ -577,6 +573,10 @@
 		CFA0B23718693F1100501C35 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA0B23518693F1100501C35 /* GoToFolderSheetController.xib */; };
 		CFA0B23A1869542200501C35 /* common_paths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2381869542200501C35 /* common_paths.mm */; };
 		CFA0B23E186BE3DF00501C35 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23C186BE3DF00501C35 /* VFSPSHost.mm */; };
+		CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
+		CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
+		CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
+		CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
 		CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
 		CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
 		CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
@@ -925,9 +925,6 @@
 		CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask.mm; sourceTree = "<group>"; };
 		CF4C5A5C17A7B48E00B1B061 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMask.h; sourceTree = "<group>"; };
-		CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionWithMaskSheetController.h; sourceTree = "<group>"; };
-		CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionWithMaskSheetController.mm; sourceTree = "<group>"; };
-		CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SelectionWithMaskSheetController.xib; sourceTree = "<group>"; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
@@ -1170,6 +1167,9 @@
 		CFA0B2391869542200501C35 /* common_paths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common_paths.h; sourceTree = "<group>"; };
 		CFA0B23C186BE3DF00501C35 /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPSHost.mm; sourceTree = "<group>"; };
 		CFA0B23D186BE3DF00501C35 /* VFSPSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSPSHost.h; sourceTree = "<group>"; };
+		CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionWithMaskPopupViewController.h; sourceTree = "<group>"; };
+		CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionWithMaskPopupViewController.mm; sourceTree = "<group>"; };
+		CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SelectionWithMaskPopupViewController.xib; sourceTree = "<group>"; };
 		CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHotKeyTextField.h; path = 3rd_party/gtm/GTMHotKeyTextField.h; sourceTree = "<group>"; };
 		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = 3rd_party/gtm/GTMHotKeyTextField.mm; sourceTree = "<group>"; };
 		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -1608,9 +1608,9 @@
 		CF27414D1803E60D006D6687 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				CF4C5A5E17A7D1D300B1B061 /* SelectionWithMaskSheetController.h */,
-				CF4C5A5F17A7D1D300B1B061 /* SelectionWithMaskSheetController.mm */,
-				CF4C5A6017A7D1D300B1B061 /* SelectionWithMaskSheetController.xib */,
+				CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */,
+				CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */,
+				CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */,
 				CFBE65A817B607BD00451AE7 /* PanelFastSearchPopupViewController.h */,
 				CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */,
 				CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */,
@@ -2570,10 +2570,10 @@
 				CF6D9D0519667E390077B146 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */,
 				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
+				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CF6D9D0719667E390077B146 /* CreateDirectorySheetController.xib in Resources */,
 				CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */,
-				CF6D9D0919667E390077B146 /* SelectionWithMaskSheetController.xib in Resources */,
 				CF6D9D0A19667E390077B146 /* PanelFastSearchPopupViewController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CF6D9D0B19667E390077B146 /* GoToFolderSheetController.xib in Resources */,
@@ -2634,12 +2634,12 @@
 				CFB598AB196E38E400D4C108 /* linkarrow_icon.png in Resources */,
 				CFB598AF196E38E400D4C108 /* pref_extedit_icon.png in Resources */,
 				CFA3D7CE196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib in Resources */,
+				CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF039EAC1791166000DC85D6 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CF039EB117911FFA00DC85D6 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF039EB61791204600DC85D6 /* PreferencesWindowViewerTab.xib in Resources */,
 				CF7249A91990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFB598B9196E38E400D4C108 /* question_icon.png in Resources */,
-				CF4C5A6217A7D1D300B1B061 /* SelectionWithMaskSheetController.xib in Resources */,
 				CF09858118F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFBE65AC17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib in Resources */,
 				CF09857A18F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
@@ -2716,6 +2716,7 @@
 				CF6D9C9B19667BA20077B146 /* archive_entry_link_resolver.c in Sources */,
 				CF6D9C9C19667BA20077B146 /* archive_entry_sparse.c in Sources */,
 				CF6D9C9D19667BA20077B146 /* archive_entry_stat.c in Sources */,
+				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF6D9C9E19667BA20077B146 /* archive_entry_strmode.c in Sources */,
 				CF6D9C9F19667BA20077B146 /* archive_entry_xattr.c in Sources */,
 				CF6D9CA019667BA20077B146 /* archive_entry.c in Sources */,
@@ -2936,7 +2937,6 @@
 				CF6D9C4A196678010077B146 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF6D9C4B196678010077B146 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CF6D9C4C196678010077B146 /* SharingService.mm in Sources */,
-				CF6D9C4D196678010077B146 /* SelectionWithMaskSheetController.mm in Sources */,
 				CF6D9C4E196678010077B146 /* PanelFastSearchPopupViewController.mm in Sources */,
 				CF6D9C4F196678010077B146 /* QuickPreview.mm in Sources */,
 				CF6D9C50196678010077B146 /* BriefSystemOverview.mm in Sources */,
@@ -2995,6 +2995,7 @@
 				CF9D0EC917CC961100CB8146 /* archive_write_open_memory.c in Sources */,
 				CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */,
+				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF9D0E9517CC961100CB8146 /* archive_read_support_filter_bzip2.c in Sources */,
 				CFC5123616C5284800D247EE /* PanelData.mm in Sources */,
 				CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */,
@@ -3246,7 +3247,6 @@
 				CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */,
 				CF9D0E8F17CC961100CB8146 /* archive_read_open_file.c in Sources */,
 				CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */,
-				CF4C5A6117A7D1D300B1B061 /* SelectionWithMaskSheetController.mm in Sources */,
 				CF305DCC1946D50400840F25 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CF9D0ED117CC961100CB8146 /* archive_write_set_format_mtree.c in Sources */,
 				CF9D0EA917CC961100CB8146 /* archive_read_support_format_mtree.c in Sources */,

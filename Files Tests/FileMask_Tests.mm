@@ -84,6 +84,12 @@
     XCTAssert( m8.MatchName("jpg") == true );
     XCTAssert( m8.MatchName("jpg1") == false );
     XCTAssert( m8.MatchName("JPG") == true );
+    
+    FileMask m9(@"*.*");
+    XCTAssert( m9.MatchName("abra.jpg") == true );
+    XCTAssert( m9.MatchName(".") == true );
+    XCTAssert( m9.MatchName("128736812763.137128736.987391273") == true );
+    XCTAssert( m9.MatchName("13123") == false );
 }
 
 

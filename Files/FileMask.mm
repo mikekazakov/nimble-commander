@@ -75,7 +75,7 @@ FileMask::FileMask(NSString *_mask):
                strncmp(str, ".*\\.", 4) == 0) {
                 // check that symbols on the right side are english letters in lowercase
                 for(int i = 4; i < str_len; ++i)
-                    if( str[i] < 'a' && str[i] > 'z')
+                    if( str[i] < 'a' || str[i] > 'z')
                         goto failed;
                 
                 simple = true;

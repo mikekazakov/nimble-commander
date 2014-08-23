@@ -186,9 +186,14 @@ struct PanelViewStateStorage
     [self cancelFieldEditor];
 }
 
-- (void) SetPanelData: (PanelData*) _data
+- (PanelData*) data
 {
-    m_State.Data = _data;
+    return m_State.Data;
+}
+
+- (void) setData:(PanelData *)data
+{
+    m_State.Data = data;
     [self setNeedsDisplay:true];
 }
 
@@ -634,7 +639,7 @@ struct PanelViewStateStorage
     [self OnCursorPositionChanged];
 }
 
-- (void) DirectoryChanged:(const char*)_focused_filename
+- (void)directoryChangedWithFocusedFilename:(const char*)_focused_filename
 {
     m_State.ItemsDisplayOffset = 0;
     m_State.CursorPos = -1;
@@ -795,6 +800,11 @@ struct PanelViewStateStorage
         return true;
     }
     return false;
+}
+
+- (void) dataUpdated
+{
+    [self cancelFieldEditor];    
 }
 
 @end

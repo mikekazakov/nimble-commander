@@ -38,6 +38,11 @@ static int UTF8Errors(const unsigned char *_bytes, size_t _n)
                 n = 2;
                 continue;
             }
+            else if((b & 0xF8) == 0xF0)
+            {
+                n = 3;
+                continue;
+            }
             else
             {
                 errors++;

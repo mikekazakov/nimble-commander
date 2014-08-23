@@ -143,7 +143,7 @@ void panel::GenericCursorPersistance::Restore()
         
         m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_View.delegate = self;
-        [m_View SetPanelData:&m_Data];
+        m_View.data = &m_Data;
         [self RegisterDragAndDropListeners];
     }
 
@@ -413,6 +413,7 @@ void panel::GenericCursorPersistance::Restore()
                 panel::GenericCursorPersistance pers(m_View, m_Data);
                 
                 m_Data.ReLoad(listing);
+                [m_View dataUpdated];
                 
                 if(![self CheckAgainstRequestedSelection])
                     pers.Restore();

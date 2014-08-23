@@ -39,10 +39,19 @@ class PanelViewPresentation;
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) const VFSListingItem* item; // return an item at current cursor position if any or nullptr
 @property (nonatomic) PanelViewType type;
+@property (nonatomic) PanelData* data;
 
-- (void) SetPanelData:(PanelData*)_data;
+/**
+ * called by controlled when a directory has been entirely changed in PanelData.
+ * possibly focusing some file, may be nullptr.
+ */
+- (void) directoryChangedWithFocusedFilename:(const char*)_focused_filename;
 
-- (void) DirectoryChanged:(const char*)_focused_filename;
+/**
+ * called by controller to inform that internals of panel data object has changed (possibly reloaded).
+ * should be called before directoryChanged
+ */
+- (void) dataUpdated;
 
 // _presentation must be created using new. PanelView gains ownership of the _presentation.
 - (PanelViewPresentation*) Presentation;

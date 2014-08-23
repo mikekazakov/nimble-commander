@@ -145,7 +145,8 @@
         dispatch_or_run_in_main_queue( ^{
             [m_View SavePathState];
             m_Data.Load(listing);
-            [m_View DirectoryChanged:_filename.c_str()];
+            [m_View dataUpdated];
+            [m_View directoryChangedWithFocusedFilename:_filename.c_str()];
             m_View.needsDisplay = true;
             [self OnPathChanged];
         });

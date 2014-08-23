@@ -138,7 +138,7 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
 
 @implementation SelectionWithMaskPopupViewController
 {
-    NSWindow *m_TargetWnd;
+    __unsafe_unretained NSWindow *m_TargetWnd;
 }
 
 - (id) init
@@ -176,6 +176,11 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
     self.handler( self.comboBox.stringValue );
     self.handler = nil;
     m_TargetWnd = nil;
+}
+
+- (void)popoverDidClose:(NSNotification *)notification
+{
+    ((NSPopover*)notification.object).contentViewController = nil; // here we are
 }
 
 @end

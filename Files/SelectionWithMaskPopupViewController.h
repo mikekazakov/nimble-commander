@@ -8,13 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface SelectionWithMaskPopupViewController : NSViewController
+@interface SelectionWithMaskPopupViewController : NSViewController<NSPopoverDelegate>
 @property (strong) IBOutlet NSComboBox *comboBox;
 @property (strong) IBOutlet NSTextField *titleLabel;
 @property (strong) void (^handler)(NSString *mask);
 
-
 - (void) setupForWindow:(NSWindow*)_window;
-- (IBAction)OnComboBox:(id)sender;
 
 @end

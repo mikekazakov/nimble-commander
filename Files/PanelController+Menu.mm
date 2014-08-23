@@ -319,6 +319,7 @@
     m_SelectionWithMaskPopover = [NSPopover new];
     m_SelectionWithMaskPopover.contentViewController = view;
     m_SelectionWithMaskPopover.behavior = NSPopoverBehaviorTransient;
+    m_SelectionWithMaskPopover.delegate = view;
     [m_SelectionWithMaskPopover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, 18)
                                             ofView:self.view
                                      preferredEdge:NSMaxYEdge];

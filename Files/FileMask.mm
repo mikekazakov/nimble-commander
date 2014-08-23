@@ -21,14 +21,12 @@ stricmp2(const char *s1, const char *s2)
 }
 
 FileMask::FileMask():
-    m_Mask(nil),
-    m_RegExps(nil)
+    m_Mask(nil)
 {
 }
 
 FileMask::FileMask(NSString *_mask):
-    m_Mask(nil),
-    m_RegExps(nil)
+    m_Mask(nil)
 {
     if(_mask == nil || _mask.length == 0) return;
 
@@ -119,12 +117,12 @@ FileMask& FileMask::operator=(FileMask&&_r)
 
 bool FileMask::CompareAgainstSimpleMask(const string& _mask, NSString *_name)
 {
-    if(_name.length <= _mask.length())
+    if(_name.length < _mask.length())
         return false;
     
     const char *chars = _name.UTF8String;
     size_t chars_num = strlen(chars);
-    assert(chars_num > _mask.length());
+    assert(chars_num >= _mask.length());
     
     return stricmp2(_mask.c_str(), chars + chars_num - _mask.size());
 }
@@ -140,10 +138,12 @@ bool FileMask::MatchName(NSString *_name) const
     auto range = NSMakeRange(0, len);
 
     for(auto &rx: m_RegExps) {
-        if (!rx.second.empty())
+        if (!rx.second.empty()) {
             // can compare with simple mask
             if(CompareAgainstSimpleMask(rx.second, _name))
                 return true;
+            continue;
+        }
         
         // perform full-weight matching
         NSRange r = [rx.first rangeOfFirstMatchInString:_name

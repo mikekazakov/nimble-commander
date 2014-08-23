@@ -164,7 +164,8 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
 
 - (IBAction)OnComboBox:(id)sender
 {
-    assert(self.handler != nil);
+    if(self.handler == nil)
+        return;
     
     if(self.comboBox.stringValue == nil ||
        self.comboBox.stringValue.length == 0)

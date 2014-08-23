@@ -28,7 +28,7 @@
                 </textField>
                 <comboBox toolTip="Use &quot;*&quot; for multiple-character wildcard, &quot;?&quot; for single-character wildcard and &quot;,&quot; to specify more than one mask." horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ACk-NG-9Cm">
                     <rect key="frame" x="20" y="31" width="200" height="26"/>
-                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Type mask here" drawsBackground="YES" usesSingleLineMode="YES" completes="NO" numberOfVisibleItems="10" id="owl-H0-mNI">
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Type mask here" drawsBackground="YES" usesSingleLineMode="YES" completes="NO" numberOfVisibleItems="10" id="owl-H0-mNI">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

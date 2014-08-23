@@ -18,16 +18,23 @@ public:
     FileMask& operator=(const FileMask&);
     FileMask& operator=(FileMask&&);
     
+    // will return false on empty names regardless of current file mask
     bool MatchName(NSString *_name) const;
     bool MatchName(const char *_name) const;
 
-    inline bool IsEmpty() const { return m_RegExps == nil; }
+    inline bool IsEmpty() const { return m_RegExps.empty(); }
     
     /**
      * Can return nil on case of empty file mask.
      */
     NSString *Mask() const { return m_Mask; }
+    
+    // TODO:
+    // static bool IsMask(NSString *_mask);
+    // static NSString *ExpandToMask(NSString *_not_mask); <--- ???
 private:
-    NSMutableArray  *m_RegExps;
+    static bool CompareAgainstSimpleMask(const string& _mask, NSString *_name);
+    
+    vector< pair<NSRegularExpression*, string> > m_RegExps; // regexp and corresponding simple mask if any
     NSString        *m_Mask;
 };

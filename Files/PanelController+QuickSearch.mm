@@ -177,11 +177,13 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
         m_View.needsDisplay = true;
         
         // automatically remove prompt after g_FastSeachDelayTresh
+        __weak PanelController *wself = self;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_FastSeachDelayTresh+1000), dispatch_get_main_queue(), ^{
-            if(m_QuickSearchLastType + g_FastSeachDelayTresh <= GetTimeInNanoseconds()) {
-                m_View.quickSearchPrompt = nil;
-                m_View.needsDisplay = true;
-            }
+            if(PanelController *sself = wself)
+                if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= GetTimeInNanoseconds()) {
+                    sself->m_View.quickSearchPrompt = nil;
+                    sself->m_View.needsDisplay = true;
+                }
         });
     }
     return true;

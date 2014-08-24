@@ -64,4 +64,6 @@ class PanelViewPresentation;
 
 - (void) setQuickSearchPrompt:(NSString*)_text;
 
+- (void) disableCurrentMomentumScroll;
+
 @end

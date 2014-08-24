@@ -49,8 +49,8 @@ public:
     virtual NSRect ItemFilenameRect(int _item_index) const = 0;
     
     virtual void SetupFieldRenaming(NSScrollView *_editor, int _item_index) = 0;
-    
-    virtual void SetQuickSearchPrompt(NSString *_text) {};
+
+    virtual void SetQuickSearchPrompt(NSString *_text) = 0;
 
     
     /**

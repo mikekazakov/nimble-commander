@@ -273,6 +273,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
         ( IsQuickSearchStringCharacter(character) || IsBackspace(character) )
        )
     {
+        [m_View disableCurrentMomentumScroll];
         if(m_QuickSearchIsSoftFiltering)
             return [self HandleQuickSearchSoft:character];
         else
@@ -284,12 +285,14 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
             case NSUpArrowFunctionKey:
                 if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
                 {
+                    [m_View disableCurrentMomentumScroll];
                     [self QuickSearchPrevious];
                     return true;
                 }
             case NSDownArrowFunctionKey:
                 if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
                 {
+                    [m_View disableCurrentMomentumScroll];                    
                     [self QuickSearchNext];
                     return true;
                 }

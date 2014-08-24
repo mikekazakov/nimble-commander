@@ -524,7 +524,7 @@ struct PanelViewStateStorage
     if(m_DisableCurrentMomentumScroll == true &&
        _event.phase == NSEventPhaseNone &&
        _event.momentumPhase != NSEventPhaseNone )
-        return; // momentum scroll is temporary disabled due to folder change.
+        return; // momentum scroll is temporary disabled due to folder change or quick search.
     m_DisableCurrentMomentumScroll = false;    
     if(_event.momentumPhase == NSEventPhaseBegan)
         m_IsCurrentlyMomentumScroll = true;
@@ -658,8 +658,7 @@ struct PanelViewStateStorage
         [self OnCursorPositionChanged];        
     }
     
-    if(m_IsCurrentlyMomentumScroll)
-        m_DisableCurrentMomentumScroll = true;
+    [self disableCurrentMomentumScroll];
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
@@ -810,6 +809,12 @@ struct PanelViewStateStorage
 - (void) setQuickSearchPrompt:(NSString*)_text
 {
     m_Presentation->SetQuickSearchPrompt(_text);
+}
+
+- (void) disableCurrentMomentumScroll
+{
+    if(m_IsCurrentlyMomentumScroll)
+        m_DisableCurrentMomentumScroll = true;
 }
 
 @end

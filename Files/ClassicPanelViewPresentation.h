@@ -45,6 +45,7 @@ public:
     NSRect ItemFilenameRect(int _item_index) const override;
     
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
+    void SetQuickSearchPrompt(NSString *_text) override;
     
 private:
     void BuildGeometry();
@@ -76,4 +77,5 @@ private:
     ObjcToCppObservingBlockBridge *m_GeometryObserver;
     ObjcToCppObservingBlockBridge *m_AppearanceObserver;
     bool            m_DrawVolumeInfo = true;
+    string          m_QuickSearchPrompt;
 };

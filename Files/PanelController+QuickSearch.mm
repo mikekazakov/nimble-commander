@@ -292,7 +292,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
             case NSDownArrowFunctionKey:
                 if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
                 {
-                    [m_View disableCurrentMomentumScroll];                    
+                    [m_View disableCurrentMomentumScroll];
                     [self QuickSearchNext];
                     return true;
                 }

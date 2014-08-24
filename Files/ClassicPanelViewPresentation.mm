@@ -862,7 +862,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
 
 double ClassicPanelViewPresentation::GetSingleItemHeight()
 {
-    return m_SymbHeight;
+    return m_FontCache->Height();
 }
 
 void ClassicPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int _item_index)

@@ -24,6 +24,7 @@
 #import "FTPConnectionSheetController.h"
 #import "FileMask.h"
 #import "SelectionWithMaskPopupViewController.h"
+#import "PanelViewPresentation.h"
 
 @implementation PanelController (Menu)
 
@@ -298,9 +299,6 @@
 }
 
 - (IBAction)DoSelectByMask:(bool)_select {
-    
-    // TODO: remove hardcoded popover inset
-    
     if(m_SelectionWithMaskPopover &&
        m_SelectionWithMaskPopover.shown)
         return;
@@ -320,7 +318,10 @@
     m_SelectionWithMaskPopover.contentViewController = view;
     m_SelectionWithMaskPopover.behavior = NSPopoverBehaviorTransient;
     m_SelectionWithMaskPopover.delegate = view;
-    [m_SelectionWithMaskPopover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, 18)
+    [m_SelectionWithMaskPopover showRelativeToRect:NSMakeRect(0,
+                                                              0,
+                                                              self.view.bounds.size.width,
+                                                              self.view.Presentation->GetSingleItemHeight())
                                             ofView:self.view
                                      preferredEdge:NSMaxYEdge];
 }

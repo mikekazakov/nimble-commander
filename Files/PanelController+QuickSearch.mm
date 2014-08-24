@@ -9,8 +9,6 @@
 #import "PanelController+QuickSearch.h"
 #import "Common.h"
 
-// this constant should be the same as g_FadeDelay in PanelFastSearchController,
-// otherwise it may cause UI/Input inconsistency
 static const uint64_t g_FastSeachDelayTresh = 4000000000; // 4 sec
 
 static bool IsQuickSearchModifier(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
@@ -121,7 +119,6 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
 
 - (bool)HandleQuickSearchSoft: (NSString*) _key
 {
-    _key = [_key decomposedStringWithCanonicalMapping];
     uint64_t currenttime = GetTimeInNanoseconds();
     if(_key != nil)
     {
@@ -191,8 +188,6 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
 
 - (bool)HandleQuickSearchHard: (NSString*) _key
 {
-    _key = [_key decomposedStringWithCanonicalMapping];
-    
     PanelDataHardFiltering filtering = m_Data.HardFiltering();
     
     if(_key != nil)
@@ -277,9 +272,9 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     {
         [m_View disableCurrentMomentumScroll];
         if(m_QuickSearchIsSoftFiltering)
-            return [self HandleQuickSearchSoft:character];
+            return [self HandleQuickSearchSoft:character.decomposedStringWithCanonicalMapping];
         else
-            return [self HandleQuickSearchHard:character];
+            return [self HandleQuickSearchHard:character.decomposedStringWithCanonicalMapping];
     }
     else if([character length] == 1)
         switch([character characterAtIndex:0])

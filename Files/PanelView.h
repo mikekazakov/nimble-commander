@@ -62,4 +62,6 @@ class PanelViewPresentation;
 - (void) SavePathState;
 - (void) LoadPathState;
 
+- (void) setQuickSearchPrompt:(NSString*)_text;
+
 @end

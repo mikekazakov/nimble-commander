@@ -237,7 +237,6 @@
 		CF6D9C4A196678010077B146 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
 		CF6D9C4B196678010077B146 /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
 		CF6D9C4C196678010077B146 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
-		CF6D9C4E196678010077B146 /* PanelFastSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */; };
 		CF6D9C4F196678010077B146 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
 		CF6D9C50196678010077B146 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
 		CF6D9C51196678010077B146 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
@@ -410,7 +409,6 @@
 		CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CF6D9D0719667E390077B146 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */; };
 		CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
-		CF6D9D0A19667E390077B146 /* PanelFastSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */; };
 		CF6D9D0B19667E390077B146 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA0B23518693F1100501C35 /* GoToFolderSheetController.xib */; };
 		CF6D9D0C19667E390077B146 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCD3B7B18AB64C600028B41 /* FindFilesSheetController.xib */; };
 		CF6D9D0D19667E390077B146 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */; };
@@ -637,8 +635,6 @@
 		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
 		CFB8F23917CAF8F9004574FE /* VFSNativeListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23717CAF8F9004574FE /* VFSNativeListing.mm */; };
-		CFBE65AB17B607BE00451AE7 /* PanelFastSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */; };
-		CFBE65AC17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
@@ -1245,9 +1241,6 @@
 		CFB8F23517CAF86B004574FE /* VFSNativeHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNativeHost.h; sourceTree = "<group>"; };
 		CFB8F23717CAF8F9004574FE /* VFSNativeListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNativeListing.mm; sourceTree = "<group>"; };
 		CFB8F23817CAF8F9004574FE /* VFSNativeListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNativeListing.h; sourceTree = "<group>"; };
-		CFBE65A817B607BD00451AE7 /* PanelFastSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelFastSearchPopupViewController.h; sourceTree = "<group>"; };
-		CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelFastSearchPopupViewController.mm; sourceTree = "<group>"; };
-		CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PanelFastSearchPopupViewController.xib; sourceTree = "<group>"; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
 		CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
@@ -1611,9 +1604,6 @@
 				CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */,
 				CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */,
 				CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */,
-				CFBE65A817B607BD00451AE7 /* PanelFastSearchPopupViewController.h */,
-				CFBE65A917B607BE00451AE7 /* PanelFastSearchPopupViewController.mm */,
-				CFBE65AA17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib */,
 				B50976A7172A3A0E0080412E /* QuickPreview.h */,
 				B50976A8172A3A0E0080412E /* QuickPreview.mm */,
 				CF27415218046A6E006D6687 /* BriefSystemOverview.h */,
@@ -2574,7 +2564,6 @@
 				CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CF6D9D0719667E390077B146 /* CreateDirectorySheetController.xib in Resources */,
 				CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */,
-				CF6D9D0A19667E390077B146 /* PanelFastSearchPopupViewController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CF6D9D0B19667E390077B146 /* GoToFolderSheetController.xib in Resources */,
 				CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */,
@@ -2641,7 +2630,6 @@
 				CF7249A91990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFB598B9196E38E400D4C108 /* question_icon.png in Resources */,
 				CF09858118F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
-				CFBE65AC17B607BE00451AE7 /* PanelFastSearchPopupViewController.xib in Resources */,
 				CF09857A18F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */,
 				CFA0B23718693F1100501C35 /* GoToFolderSheetController.xib in Resources */,
@@ -2937,7 +2925,6 @@
 				CF6D9C4A196678010077B146 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF6D9C4B196678010077B146 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CF6D9C4C196678010077B146 /* SharingService.mm in Sources */,
-				CF6D9C4E196678010077B146 /* PanelFastSearchPopupViewController.mm in Sources */,
 				CF6D9C4F196678010077B146 /* QuickPreview.mm in Sources */,
 				CF6D9C50196678010077B146 /* BriefSystemOverview.mm in Sources */,
 				CF6D9C51196678010077B146 /* FilePanelMainSplitView.mm in Sources */,
@@ -3250,7 +3237,6 @@
 				CF305DCC1946D50400840F25 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CF9D0ED117CC961100CB8146 /* archive_write_set_format_mtree.c in Sources */,
 				CF9D0EA917CC961100CB8146 /* archive_read_support_format_mtree.c in Sources */,
-				CFBE65AB17B607BE00451AE7 /* PanelFastSearchPopupViewController.mm in Sources */,
 				CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */,
 				CF305DCA1946D50400840F25 /* NSArray+SSYMutations.m in Sources */,
 				CF9D0E8017CC961100CB8146 /* archive_entry.c in Sources */,

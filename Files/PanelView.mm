@@ -807,4 +807,9 @@ struct PanelViewStateStorage
     [self cancelFieldEditor];    
 }
 
+- (void) setQuickSearchPrompt:(NSString*)_text
+{
+    m_Presentation->SetQuickSearchPrompt(_text);
+}
+
 @end

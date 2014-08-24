@@ -13,7 +13,6 @@
 #import "DispatchQueue.h"
 
 @class QuickLookView;
-@class PanelFastSearchPopupViewController;
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
 
@@ -72,7 +71,6 @@ namespace panel
     PanelDataTextFiltering::WhereEnum   m_QuickSearchWhere;
     uint64_t                            m_QuickSearchLastType;
     unsigned                            m_QuickSearchOffset;
-    PanelFastSearchPopupViewController *m_QuickSearchPopupView;
     
     // background operations' queues
     SerialQueue m_DirectorySizeCountingQ;

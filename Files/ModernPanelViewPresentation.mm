@@ -726,3 +726,8 @@ void ModernPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int 
     tv.textContainerInset = NSMakeSize(0, 0);
     tv.textContainer.lineFragmentPadding = line_padding;
 }
+
+void ModernPanelViewPresentation::SetQuickSearchPrompt(NSString *_text)
+{
+    m_Header->SetQuickSearchPrompt(_text);
+}

@@ -21,6 +21,7 @@ public:
               double _width,      // panel width
               PanelSortMode::Mode _sort_mode
             );
+    void SetQuickSearchPrompt(NSString *_text);
     
     inline double Height() const { return m_Height; }
 private:
@@ -31,6 +32,7 @@ private:
     double                          m_FontAscent = 0;
     double                          m_Height = 0;
     
+    string                          m_QuickSearchPrompt;
     string                          m_LastHeaderPath;
     bool                            m_LastActive = false;
     PanelSortMode::Mode             m_LastSortMode = PanelSortMode::SortNoSort;

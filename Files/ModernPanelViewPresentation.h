@@ -47,7 +47,7 @@ public:
     NSRect ItemRect(int _item_index) const override;
     NSRect ItemFilenameRect(int _item_index) const override;
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
-    
+    void SetQuickSearchPrompt(NSString *_text) override;
     
     static NSString* SizeToString6(const VFSListingItem &_dirent);
 private:

@@ -7,12 +7,11 @@
 //
 
 #import "PanelController+QuickSearch.h"
-#import "PanelFastSearchPopupViewController.h"
 #import "Common.h"
 
 // this constant should be the same as g_FadeDelay in PanelFastSearchController,
 // otherwise it may cause UI/Input inconsistency
-static const uint64_t g_FastSeachDelayTresh = 5000000000; // 5 sec
+static const uint64_t g_FastSeachDelayTresh = 4000000000; // 4 sec
 
 static bool IsQuickSearchModifier(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
 {
@@ -117,8 +116,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
         [m_View setNeedsDisplay:true];
     }
     
-    [m_QuickSearchPopupView PopOut];
-    m_QuickSearchPopupView = nil;
+    m_View.quickSearchPrompt = nil;
 }
 
 - (bool)HandleQuickSearchSoft: (NSString*) _key
@@ -167,19 +165,24 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     
     if(m_QuickSearchTypingView)
     {
-        PanelFastSearchPopupViewController *view = m_QuickSearchPopupView;
-        if(view == nil) {
-            view = [PanelFastSearchPopupViewController new];
-            m_QuickSearchPopupView = view;
-            __weak PanelController *weakself = self;
-            [view SetHandlers:^{[(PanelController*)weakself QuickSearchPrevious];}
-                         Next:^{[(PanelController*)weakself QuickSearchNext];}];
-            view.OnAutoPopOut = ^{ if(PanelController* pc = weakself) pc->m_QuickSearchPopupView = nil; };
-            [view PopUpWithView:m_View];
-        }
+        int total = (int)m_Data.EntriesBySoftFiltering().size();
+        NSString *prompt = nil;
+        if(total == 0)
+            prompt = [NSString stringWithFormat:@"Not found | %@", m_Data.SoftFiltering().text];
+        else if(total == 1)
+            prompt = [NSString stringWithFormat:@"1 match | %@", m_Data.SoftFiltering().text];
+        else
+            prompt = [NSString stringWithFormat:@"%i matches | %@", total, m_Data.SoftFiltering().text];
+        m_View.quickSearchPrompt = prompt;
+        m_View.needsDisplay = true;
         
-        [view UpdateWithString:m_Data.SoftFiltering().text
-                       Matches:(int)m_Data.EntriesBySoftFiltering().size()];
+        // automatically remove prompt after g_FastSeachDelayTresh
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_FastSeachDelayTresh+1000), dispatch_get_main_queue(), ^{
+            if(m_QuickSearchLastType + g_FastSeachDelayTresh <= GetTimeInNanoseconds()) {
+                m_View.quickSearchPrompt = nil;
+                m_View.needsDisplay = true;
+            }
+        });
     }
     return true;
 }
@@ -230,21 +233,20 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     [m_View setNeedsDisplay:true];
     
     if(m_QuickSearchTypingView) { // update typing UI
-        PanelFastSearchPopupViewController *view = m_QuickSearchPopupView;
-        if(view == nil) {
-            view = [PanelFastSearchPopupViewController new];
-            m_QuickSearchPopupView = view;
-            __weak PanelController *weakself = self;
-            view.OnAutoPopOut = ^{ if(PanelController* pc = weakself) pc->m_QuickSearchPopupView = nil; };
-            [view PopUpWithView:m_View];
-        }
-        
         int total = (int)m_Data.SortedDirectoryEntries().size();
         if(total > 0 &&
            m_Data.Listing()->At(0).IsDotDot())
             total--;
-        
-        [view UpdateWithString:filtering.text.text Matches:total];
+
+        NSString *prompt = nil;
+        if(total == 0)
+            prompt = [NSString stringWithFormat:@"Not found | %@", filtering.text.text];
+        else if(total == 1)
+            prompt = [NSString stringWithFormat:@"1 match | %@", filtering.text.text];
+        else
+            prompt = [NSString stringWithFormat:@"%i matches | %@", total, filtering.text.text];
+        m_View.quickSearchPrompt = prompt;
+        m_View.needsDisplay = true;        
     }
     return true;
 }

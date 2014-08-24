@@ -50,6 +50,7 @@ public:
     
     virtual void SetupFieldRenaming(NSScrollView *_editor, int _item_index) = 0;
     
+    virtual void SetQuickSearchPrompt(NSString *_text) {};
 
     
     /**

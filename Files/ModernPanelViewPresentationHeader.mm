@@ -114,7 +114,10 @@ void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to d
                                              double _width,      // panel width
                                              PanelSortMode::Mode _sort_mode)
 {
-    PrepareToDraw(_path, _active, _sort_mode);
+    // a tiny hack to show search prompt instead of a path, but it works. (for now)
+    PrepareToDraw(m_QuickSearchPrompt.empty() ? _path : m_QuickSearchPrompt,
+                  _active,
+                  _sort_mode);
     
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
     
@@ -183,4 +186,12 @@ void ModernPanelViewPresentationHeader::PrepareToDraw(const string& _path, bool 
     m_LastActive = _active;
     m_LastHeaderPath = _path;
     m_LastSortMode = _sort_mode;
+}
+
+void ModernPanelViewPresentationHeader::SetQuickSearchPrompt(NSString *_text)
+{
+    if(_text == nil || _text.length == 0)
+        m_QuickSearchPrompt = "";
+    else
+        m_QuickSearchPrompt = _text.UTF8String;
 }

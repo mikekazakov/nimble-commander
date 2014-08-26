@@ -16,7 +16,7 @@ namespace VFSNetFTP
     struct CURLInstance;
     struct Entry;
     struct Directory;
-    struct Buffer;
+    struct ReadBuffer;
     struct WriteBuffer;
     class Cache;
 }

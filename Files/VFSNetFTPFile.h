@@ -51,7 +51,7 @@ private:
     void FinishReading();
     
     unique_ptr<VFSNetFTP::CURLInstance>  m_CURL;
-    unique_ptr<VFSNetFTP::Buffer>        m_Buf;
+    unique_ptr<VFSNetFTP::ReadBuffer>    m_ReadBuf;
     uint64_t                             m_BufFileOffset = 0;
     unique_ptr<VFSNetFTP::WriteBuffer>   m_WriteBuf;    
     Mode                                 m_Mode = Mode::Closed;

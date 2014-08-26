@@ -54,7 +54,6 @@
 		CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CF09858118F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857F18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
-		CF1100CE1913778800E170FC /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
 		CF1100D6191A1EA000E170FC /* VFSNetFTPCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100D4191A1EA000E170FC /* VFSNetFTPCache.mm */; };
@@ -448,6 +447,15 @@
 		CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
+		CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
+		CF9066BD19AB71B5001DC687 /* VFSNetSFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066BC19AB71B5001DC687 /* VFSNetSFTPHost.mm */; };
+		CF9066BE19AB71B5001DC687 /* VFSNetSFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066BC19AB71B5001DC687 /* VFSNetSFTPHost.mm */; };
+		CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */; };
+		CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
+		CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
+		CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
+		CF9066C719AB9E9C001DC687 /* VFSNetSFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */; };
+		CF9066C819AB9E9C001DC687 /* VFSNetSFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */; };
 		CF9A17CC186D9FCC00160CDB /* VFSPSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */; };
 		CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */; };
 		CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; };
@@ -997,6 +1005,16 @@
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
 		CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeFSManager.mm; sourceTree = "<group>"; };
 		CF8F29CB188FEE490095D6F9 /* NativeFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFSManager.h; sourceTree = "<group>"; };
+		CF9066B219AB51B3001DC687 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
+		CF9066B419AB54CE001DC687 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_party/built/lib/libcrypto.a; sourceTree = "<group>"; };
+		CF9066B519AB54CE001DC687 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_party/built/lib/libssl.a; sourceTree = "<group>"; };
+		CF9066B819AB5636001DC687 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = 3rd_party/built/lib/libssh2.a; sourceTree = "<group>"; };
+		CF9066BB19AB719C001DC687 /* VFSNetSFTPHost.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSNetSFTPHost.h; sourceTree = "<group>"; };
+		CF9066BC19AB71B5001DC687 /* VFSNetSFTPHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetSFTPHost.mm; sourceTree = "<group>"; };
+		CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSSFTP_Tests.mm; sourceTree = "<group>"; };
+		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
+		CF9066C519AB9CCC001DC687 /* VFSNetSFTPInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSNetSFTPInternals.h; sourceTree = "<group>"; };
+		CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetSFTPInternals.mm; sourceTree = "<group>"; };
 		CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPSFile.mm; sourceTree = "<group>"; };
 		CF9A17CB186D9FCC00160CDB /* VFSPSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSPSFile.h; sourceTree = "<group>"; };
 		CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSGenericMemReadOnlyFile.mm; sourceTree = "<group>"; };
@@ -1372,6 +1390,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */,
+				CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */,
+				CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */,
+				CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */,
+				CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */,
+				CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */,
 				CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */,
 				CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */,
 				CF1100D01913788800E170FC /* Security.framework in Frameworks */,
@@ -1382,9 +1406,6 @@
 				CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */,
 				CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */,
 				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
-				CF1100CE1913778800E170FC /* libcurl.a in Frameworks */,
-				CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */,
-				CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */,
 				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
 				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
 				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
@@ -1682,6 +1703,7 @@
 				CF47A994186C663000745C4C /* tests_common.h */,
 				CF47A996186C743A00745C4C /* VFSPS_Tests.mm */,
 				CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */,
+				CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */,
 				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
@@ -1806,6 +1828,17 @@
 				CF07DE36175D971E00757DE1 /* MainWindowStateProtocol.h */,
 			);
 			name = MainWindow;
+			sourceTree = "<group>";
+		};
+		CF9066BA19AB7105001DC687 /* SFTP */ = {
+			isa = PBXGroup;
+			children = (
+				CF9066BC19AB71B5001DC687 /* VFSNetSFTPHost.mm */,
+				CF9066BB19AB719C001DC687 /* VFSNetSFTPHost.h */,
+				CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */,
+				CF9066C519AB9CCC001DC687 /* VFSNetSFTPInternals.h */,
+			);
+			name = SFTP;
 			sourceTree = "<group>";
 		};
 		CF9D0B6117CC5F9D00CB8146 /* Archive */ = {
@@ -2172,6 +2205,7 @@
 			isa = PBXGroup;
 			children = (
 				CFB7099D18D7008900A83E61 /* FTP */,
+				CF9066BA19AB7105001DC687 /* SFTP */,
 			);
 			name = Net;
 			sourceTree = "<group>";
@@ -2275,6 +2309,11 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF9066C319AB7928001DC687 /* libcrypto.dylib */,
+				CF9066B819AB5636001DC687 /* libssh2.a */,
+				CF9066B419AB54CE001DC687 /* libcrypto.a */,
+				CF9066B519AB54CE001DC687 /* libssl.a */,
+				CF9066B219AB51B3001DC687 /* libssl.dylib */,
 				CF6D9C9219667A850077B146 /* libSystem.dylib */,
 				CF6D9C9019667A640077B146 /* Quartz.framework */,
 				CF6D9C8E19667A5E0077B146 /* Cocoa.framework */,
@@ -2684,6 +2723,7 @@
 				CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */,
 				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
 				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
+				CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */,
 				CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */,
 				CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
@@ -2746,6 +2786,7 @@
 				CF6D9CC219667BA20077B146 /* archive_read_support_format_ar.c in Sources */,
 				CF6D9CC319667BA20077B146 /* archive_read_support_format_by_code.c in Sources */,
 				CF6D9CC419667BA20077B146 /* archive_read_support_format_cab.c in Sources */,
+				CF9066BE19AB71B5001DC687 /* VFSNetSFTPHost.mm in Sources */,
 				CF6D9CC519667BA20077B146 /* archive_read_support_format_cpio.c in Sources */,
 				CF6D9CC619667BA20077B146 /* archive_read_support_format_empty.c in Sources */,
 				CF6D9CC719667BA20077B146 /* archive_read_support_format_iso9660.c in Sources */,
@@ -2837,6 +2878,7 @@
 				CF6D9BF3196678000077B146 /* VFSError.mm in Sources */,
 				CF6D9BF4196678000077B146 /* VFSPSHost.mm in Sources */,
 				CF6D9BF5196678000077B146 /* VFSPSListing.mm in Sources */,
+				CF9066C819AB9E9C001DC687 /* VFSNetSFTPInternals.mm in Sources */,
 				CF6D9BF6196678000077B146 /* VFSPSFile.mm in Sources */,
 				CF6D9BF7196678000077B146 /* VFSArchiveHost.mm in Sources */,
 				CF6D9BF8196678000077B146 /* VFSArchiveInternal.mm in Sources */,
@@ -3024,6 +3066,7 @@
 				CF9D0ED917CC961100CB8146 /* archive_write_set_options.c in Sources */,
 				CF9D0B6717CC910100CB8146 /* VFSArchiveInternal.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
+				CF9066BD19AB71B5001DC687 /* VFSNetSFTPHost.mm in Sources */,
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */,
@@ -3115,6 +3158,7 @@
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
 				CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */,
 				CFA0B22C186412BD00501C35 /* DispatchQueue.mm in Sources */,
+				CF9066C719AB9E9C001DC687 /* VFSNetSFTPInternals.mm in Sources */,
 				CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */,
 				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,
 				CF9D0EA017CC961100CB8146 /* archive_read_support_format_7zip.c in Sources */,
@@ -3470,7 +3514,7 @@
 		CFC5122C16C4BD3D00D247EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -3518,7 +3562,7 @@
 		CFC5122D16C4BD3D00D247EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";

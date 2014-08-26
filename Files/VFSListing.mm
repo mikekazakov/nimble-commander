@@ -9,6 +9,20 @@
 #import "VFSListing.h"
 #import "Common.h"
 
+VFSGenericListingItem::~VFSGenericListingItem()
+{
+    if(m_NeedReleaseCFName &&
+       m_CFName != nullptr) {
+        CFRelease(m_CFName);
+        m_CFName = nullptr;
+    }
+    if(m_NeedReleaseName &&
+       m_Name != nullptr) {
+        free((void*)m_Name);
+        m_Name = nullptr;
+    }
+}
+
 VFSListing::VFSListing(const char* _relative_path, shared_ptr<VFSHost> _host):
     m_RelativePath(_relative_path),
     m_Host(_host)
@@ -82,4 +96,20 @@ string VFSListing::ComposeFullPathForEntry(size_t _entry_position) const
         res += entry.Name();
     }
     return res;
+}
+
+VFSGenericListing::VFSGenericListing(const char *_path, shared_ptr<VFSHost> _host):
+    VFSListing(_path, _host) {
+}
+
+VFSListingItem& VFSGenericListing::At(size_t _position) {
+    return m_Items[_position];
+}
+
+const VFSListingItem& VFSGenericListing::At(size_t _position) const {
+    return m_Items[_position];
+}
+
+int VFSGenericListing::Count() const {
+    return (int)m_Items.size();
 }

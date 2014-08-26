@@ -21,7 +21,7 @@
     
     string cwd = CommonPaths::Get(CommonPaths::Home);
     shell.Launch(cwd.c_str(), 100, 100);
-    usleep(100000); // 100msec should be enough for init process
+    usleep(200000); // 100msec should be enough for init process
     
     // check cwd
     XCTAssert( shell.CWD() == cwd );
@@ -32,21 +32,21 @@
 
     // test executing binaries within a shell
     shell.ExecuteWithFullPath("/usr/bin/top", nullptr);
-    usleep(100000);
+    usleep(200000);
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
     XCTAssert( shell.State() == TermShellTask::StateProgramExternal);
     
     // simulates user press Q to quit top
     shell.WriteChildInput("q", 1);
-    usleep(100000);
+    usleep(200000);
     XCTAssert( shell.ChildrenList().empty() );
     XCTAssert( shell.State() == TermShellTask::StateShell);
   
     // check chdir
     cwd = CommonPaths::Get(CommonPaths::Home) + "/Downloads";
     shell.ChDir( cwd.c_str() );
-    usleep(100000);
+    usleep(200000);
     XCTAssert( shell.CWD() == cwd );
     XCTAssert( shell.State() == TermShellTask::StateShell);
     
@@ -54,13 +54,13 @@
     shell.WriteChildInput("ls ", 3);
     cwd = CommonPaths::Get(CommonPaths::Home);
     shell.ChDir( cwd.c_str() );
-    usleep(100000);
+    usleep(200000);
     XCTAssert( shell.CWD() == cwd );
     XCTAssert( shell.State() == TermShellTask::StateShell);
 
     // check internal program state
     shell.WriteChildInput("top\r", 4);
-    usleep(100000);
+    usleep(200000);
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
     XCTAssert( shell.State() == TermShellTask::StateProgramInternal );
@@ -72,12 +72,15 @@
     
     // check execution with short path in different directory
     shell.Launch(CommonPaths::Get(CommonPaths::Home).c_str(), 100, 100);
-    usleep(100000); // 100msec should be enough for init process
+    usleep(200000); // 100msec should be enough for init process
     shell.Execute("top", "/usr/bin/", nullptr);
-    usleep(100000);
+    usleep(200000);
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
     XCTAssert( shell.State() == TermShellTask::StateProgramExternal );
+    
+    shell.Terminate();
+    XCTAssert( shell.ChildrenList().empty() );
 }
 
 @end

@@ -35,12 +35,12 @@ VFSNativeListing::VFSNativeListing(const char *_path, shared_ptr<VFSNativeHost> 
 
 VFSNativeListing::~VFSNativeListing()
 {
-    EraseListing();
+    m_Items.clear();
 }
 
 int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
 {
-    EraseListing();
+    m_Items.clear();
     
     DIR *dirp = opendir(RelativePath());
     if(!dirp)
@@ -120,7 +120,7 @@ int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
         current.namelen = 2;
         memcpy(&current.namebuf[0], "..", current.namelen+1);
         current.size = VFSListingItem::InvalidSize;
-        m_Items.insert(m_Items.begin(), current); // this can be looong on biiiiiig directories
+        m_Items.emplace_front(current);
     }
     
     // stat files, find extenstions any any and create CFString name representations in several threads
@@ -216,13 +216,6 @@ int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
         return VFSError::Cancelled;
     
     return VFSError::Ok;
-}
-
-void VFSNativeListing::EraseListing()
-{
-    for(auto &i :m_Items)
-        i.Destroy();
-    m_Items.clear();    
 }
 
 VFSListingItem& VFSNativeListing::At(size_t _position)

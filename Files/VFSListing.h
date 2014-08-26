@@ -118,6 +118,7 @@ private:
  */
 struct VFSGenericListingItem : public VFSListingItem
 {
+    virtual ~VFSGenericListingItem();
     virtual const char     *Name()      const override { return m_Name;     }
     virtual size_t          NameLen()   const override { return m_NameLen;  }
     virtual CFStringRef     CFName()    const override { return m_CFName;   }
@@ -132,7 +133,7 @@ struct VFSGenericListingItem : public VFSListingItem
     virtual uid_t           UnixUID()   const override { return m_UID;      }
     virtual gid_t           UnixGID()   const override { return m_GID;      }
     virtual uint8_t         UnixType()  const override { return m_Type;     }
-    virtual const char     *Symlink()   const override { return m_Symlink;  }
+    virtual const char     *Symlink()   const override { return (IsSymlink() && m_Symlink == 0) ? "" : m_Symlink;  } // fix for a bad-bad vfs, remove it later!
     virtual bool            IsDir()     const override { return (m_Mode & S_IFMT) == S_IFDIR;   }
     virtual bool            IsReg()     const override { return (m_Mode & S_IFMT) == S_IFREG;   }
     virtual bool            IsSymlink() const override { return m_Type == DT_LNK;               }
@@ -156,6 +157,8 @@ struct VFSGenericListingItem : public VFSListingItem
     uint8_t         m_Type      = 0;
     const char     *m_Symlink   = 0;
     uint16_t        m_ExtOff    = 0;
+    bool            m_NeedReleaseName = false;
+    bool            m_NeedReleaseCFName = false;
 
     // helper methods
     void FindExtension()
@@ -245,4 +248,18 @@ private:
     // forbid copying
     VFSListing(const VFSListing&) = delete;
     void operator=(const VFSListing&) = delete;
+};
+
+/**
+ * VFSGenericListing is a dumb class, storing a set of VFSGenericListingItem items.
+ * Meant to be filled by some outside code.
+ */
+class VFSGenericListing : public VFSListing
+{
+public:
+    VFSGenericListing(const char *_path, shared_ptr<VFSHost> _host);
+    virtual VFSListingItem& At(size_t _position) override;
+    virtual const VFSListingItem& At(size_t _position) const override;
+    virtual int Count() const override;
+    deque<VFSGenericListingItem> m_Items;
 };

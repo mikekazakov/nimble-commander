@@ -77,13 +77,6 @@ VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_pat
     }
 }
 
-VFSArchiveListing::~VFSArchiveListing()
-{
-    for(auto &i: m_Items)
-        i.destroy();
-}
-
-
 VFSListingItem& VFSArchiveListing::At(size_t _position)
 {
     assert(_position < m_Items.size());

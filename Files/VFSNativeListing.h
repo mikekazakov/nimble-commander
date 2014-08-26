@@ -56,8 +56,7 @@ struct VFSNativeListingItem : VFSListingItem
     unsigned char  unix_type = 0;           // file type from <sys/dirent.h> (from readdir)
     // #98
     
-    inline void Destroy()
-    {
+    virtual ~VFSNativeListingItem() {
         if(cf_name != 0)
             CFRelease(cf_name);
         if(cf_displayname != 0)
@@ -107,7 +106,6 @@ public:
     
     
     int LoadListingData(int _flags, bool (^_cancel_checker)());
-    void EraseListing();
     
     virtual VFSListingItem& At(size_t _position) override;
     virtual const VFSListingItem& At(size_t _position) const override;
@@ -115,5 +113,4 @@ public:
 
     
     deque<VFSNativeListingItem> m_Items;
-    
 };

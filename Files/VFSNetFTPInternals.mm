@@ -278,6 +278,21 @@ Listing::Listing(shared_ptr<Directory> _dir,
     }
 }
 
+VFSListingItem& Listing::At(size_t _position)
+{
+    return m_Items[_position];
+};
+    
+const VFSListingItem& Listing::At(size_t _position) const
+{
+    return m_Items[_position];
+};
+
+int Listing::Count() const
+{
+    return (int)m_Items.size();
+}
+
 CURLInstance::~CURLInstance()
 {
     if(curl)

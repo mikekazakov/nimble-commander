@@ -19,6 +19,7 @@
 #import "VFSArchiveHost.h"
 #import "VFSArchiveUnRARHost.h"
 #import "VFSNetFTPHost.h"
+#import "VFSNetSFTPHost.h"
 #import "VFSPSHost.h"
 #import "VFSEasyOps.h"
 #import "VFSArchiveProxy.h"

@@ -459,6 +459,21 @@ void panel::GenericCursorPersistance::Restore()
         return true;
     }
     
+    if(keycode == 3 ) { // 'F' button
+        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
+        {
+            auto host = make_shared<VFSNetSFTPHost>("192.168.2.5");
+            VFSNetSFTPOptions opts;
+            opts.user = "admin";
+            opts.passwd = "iddqd";
+            opts.port = 22;
+            if(host->Open("/", opts) == 0) {
+                [self GoToDir:"/" vfs:host select_entry:"" async:true];
+            }
+            return true;
+        }
+    }
+    
     // handle some actions manually, to prevent annoying by menu highlighting by hotkey
     auto &shortcuts = ActionsShortcutsManager::Instance();
     if(shortcuts.ShortCutFromAction("menu.file.open")->IsKeyDown(unicode, keycode, modif)) {

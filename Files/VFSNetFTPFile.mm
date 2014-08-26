@@ -279,7 +279,7 @@ using namespace VFSNetFTP;
 VFSNetFTPFile::VFSNetFTPFile(const char* _relative_path,
                              shared_ptr<VFSNetFTPHost> _host):
     VFSFile(_relative_path, _host),
-    m_Buf(make_unique<Buffer>()),
+    m_ReadBuf(make_unique<ReadBuffer>()),
     m_WriteBuf(make_unique<WriteBuffer>())
 {
 }
@@ -317,7 +317,7 @@ int VFSNetFTPFile::Close()
     m_FilePos = 0;
     m_FileSize = 0;
     m_Mode = Mode::Closed;
-    m_Buf->clear();
+    m_ReadBuf->clear();
     m_BufFileOffset = 0;
     m_CURL.reset();
     m_URLRequest.clear();
@@ -422,10 +422,10 @@ ssize_t VFSNetFTPFile::ReadChunk(
     // TODO: mutex lock
     bool error = false;
     
-    if ( (m_Buf->size < _read_size + _file_offset - m_BufFileOffset ||
+    if ( (m_ReadBuf->size < _read_size + _file_offset - m_BufFileOffset ||
           _file_offset < m_BufFileOffset ||
-          _file_offset > m_BufFileOffset + m_Buf->size) &&
-         (m_Buf->size < m_FileSize)
+          _file_offset > m_BufFileOffset + m_ReadBuf->size) &&
+         (m_ReadBuf->size < m_FileSize)
         )
     {
         // can't satisfy request from memory buffer, need to perform I/O
@@ -433,20 +433,20 @@ ssize_t VFSNetFTPFile::ReadChunk(
         // check for dead connection
         // check for big offset changes so we need to restart connection
         if(_file_offset < m_BufFileOffset ||
-           _file_offset > m_BufFileOffset + m_Buf->size ||
+           _file_offset > m_BufFileOffset + m_ReadBuf->size ||
            m_CURL->RunningHandles() == 0)
         { // (re)connect
             
             // create a brand new ftp request (possibly reusing exiting network connection)
-            m_Buf->clear();
+            m_ReadBuf->clear();
             m_BufFileOffset = _file_offset;
             
             if(m_CURL->IsAttached())
                 m_CURL->Detach();
             
             m_CURL->EasySetOpt(CURLOPT_URL, m_URLRequest.c_str());
-            m_CURL->EasySetOpt(CURLOPT_WRITEFUNCTION, Buffer::write_here_function);
-            m_CURL->EasySetOpt(CURLOPT_WRITEDATA, m_Buf.get());
+            m_CURL->EasySetOpt(CURLOPT_WRITEFUNCTION, ReadBuffer::write_here_function);
+            m_CURL->EasySetOpt(CURLOPT_WRITEDATA, m_ReadBuf.get());
             m_CURL->EasySetOpt(CURLOPT_UPLOAD, 0);
             m_CURL->EasySetOpt(CURLOPT_INFILESIZE, -1);
             m_CURL->EasySetOpt(CURLOPT_READFUNCTION, 0);
@@ -470,7 +470,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
 
         curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, NULL);
         
-        while( (m_Buf->size < _read_size + _file_offset - m_BufFileOffset) && running_handles)
+        while( (m_ReadBuf->size < _read_size + _file_offset - m_BufFileOffset) && running_handles)
         {
             struct timeval timeout = m_SelectTimeout;
             
@@ -515,13 +515,13 @@ ssize_t VFSNetFTPFile::ReadChunk(
         return VFSError::FromErrno(EIO);
 
     assert(m_BufFileOffset >= _file_offset);
-    size_t to_copy = m_Buf->size + m_BufFileOffset - _file_offset;
+    size_t to_copy = m_ReadBuf->size + m_BufFileOffset - _file_offset;
     size_t size = _read_size > to_copy ? to_copy : _read_size;
   
     if(_read_to != nullptr)
     {
-        memcpy(_read_to, m_Buf->buf + _file_offset - m_BufFileOffset, size);
-        m_Buf->discard( _file_offset - m_BufFileOffset + size );
+        memcpy(_read_to, m_ReadBuf->buf + _file_offset - m_BufFileOffset, size);
+        m_ReadBuf->discard( _file_offset - m_BufFileOffset + size );
         m_BufFileOffset = _file_offset + size;
     }
     

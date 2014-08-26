@@ -49,8 +49,7 @@ struct VFSArchiveListingItem : VFSListingItem
     virtual const char*     Extension()         const override { return Name() + extoffset; }
         
     virtual void            SetSize(uint64_t _size) override { st.st_size = _size; };
-
-    void destroy()
+    virtual ~VFSArchiveListingItem()
     {
         if(cf_name != 0)
             CFRelease(cf_name);
@@ -62,7 +61,6 @@ class VFSArchiveListing : public VFSListing
 {
 public:
     VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, shared_ptr<VFSArchiveHost> _host);
-    ~VFSArchiveListing();
     
     virtual VFSListingItem& At(size_t _position) override;
     virtual const VFSListingItem& At(size_t _position) const override;

@@ -56,19 +56,19 @@ private:
     static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
 };
     
-struct Buffer
+struct ReadBuffer
 {
-    Buffer()
+    ReadBuffer()
     {
         grow(default_capacity);
     }
-    ~Buffer()
+    ~ReadBuffer()
     {
         free(buf);
     }
-    Buffer(const Buffer&) = delete;
-    Buffer(const Buffer&&) = delete;
-    void operator=(const Buffer&) = delete;
+    ReadBuffer(const ReadBuffer&) = delete;
+    ReadBuffer(const ReadBuffer&&) = delete;
+    void operator=(const ReadBuffer&) = delete;
     
     void clear()
     {
@@ -91,7 +91,7 @@ struct Buffer
     
     static size_t write_here_function(void *buffer, size_t size, size_t nmemb, void *userp)
     {
-        Buffer *buf = (Buffer*) userp;
+        ReadBuffer *buf = (ReadBuffer*) userp;
         buf->add(buffer, size*nmemb);
         return size*nmemb;
     }
@@ -189,9 +189,9 @@ public:
             int _flags,
             shared_ptr<VFSHost> _host);
     
-    virtual VFSListingItem& At(size_t _position) override { return m_Items[_position];};
-    virtual const VFSListingItem& At(size_t _position) const override { return m_Items[_position];};
-    virtual int Count() const override { return (int)m_Items.size();}
+    virtual VFSListingItem& At(size_t _position) override;
+    virtual const VFSListingItem& At(size_t _position) const override;
+    virtual int Count() const override;
         
 private:
     vector<VFSGenericListingItem> m_Items;

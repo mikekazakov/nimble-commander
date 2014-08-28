@@ -462,12 +462,12 @@ void panel::GenericCursorPersistance::Restore()
     if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
-            auto host = make_shared<VFSNetSFTPHost>("192.168.2.5");
+            auto host = make_shared<VFSNetSFTPHost>("192.168.2.170");
             VFSNetSFTPOptions opts;
-            opts.user = "admin";
-            opts.passwd = "iddqd";
+            opts.user = "root";
+            opts.passwd = "123456";
             opts.port = 22;
-            if(host->Open("/", opts) == 0) {
+            if(host->Open(opts) == 0) {
                 [self GoToDir:"/" vfs:host select_entry:"" async:true];
             }
             return true;

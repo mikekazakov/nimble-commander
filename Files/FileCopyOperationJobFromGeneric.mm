@@ -522,7 +522,8 @@ dolseek: // find right position in destination file
     was_successful = true;
     
 cleanup:
-    src_file->Close();
+    if(src_file)
+        src_file->Close();
     if(!was_successful && destinationfd != -1)
     {
         // we need to revert what we've done

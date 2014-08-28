@@ -10,6 +10,7 @@
 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include "3rd_party/built/include/libssh2.h"
 #include "3rd_party/built/include/libssh2_sftp.h"
@@ -23,7 +24,7 @@ namespace VFSNetSFTP
     {
         ~Connection();
         
-        
+        bool Alive() const;        
         
         LIBSSH2_SFTP       *sftp   = nullptr;
         LIBSSH2_SESSION    *ssh    = nullptr;

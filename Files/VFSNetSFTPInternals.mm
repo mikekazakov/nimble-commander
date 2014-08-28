@@ -32,7 +32,13 @@ Connection::~Connection()
     }
 }
     
-    
+bool Connection::Alive() const {
+    int error = 0;
+    socklen_t len = sizeof (error);
+    int retval = getsockopt (socket, SOL_SOCKET, SO_ERROR, &error, &len );
+    return retval == 0;
+}
+
     
     
 }

@@ -7,24 +7,7 @@
 //
 
 #include "VFSNetSFTPHost.h"
-#include "VFSNetSFTPInternals.h"
 #include "VFSListing.h"
-
-/* last resort for systems not defining PRIu64 in inttypes.h */
-#ifndef __PRI64_PREFIX
-#ifdef WIN32
-#define __PRI64_PREFIX "I64"
-#else
-#if __WORDSIZE == 64
-#define __PRI64_PREFIX "l"
-#else
-#define __PRI64_PREFIX "ll"
-#endif /* __WORDSIZE */
-#endif /* WIN32 */
-#endif /* !__PRI64_PREFIX */
-#ifndef PRIu64
-#define PRIu64 __PRI64_PREFIX "u"
-#endif  /* PRIu64 */
 
 using namespace VFSNetSFTP;
 
@@ -59,14 +42,16 @@ VFSNetSFTPHost::VFSNetSFTPHost(const char *_serv_url):
     
 }
 
-int VFSNetSFTPHost::Open(const char *_starting_dir,
-                         const VFSNetSFTPOptions &_options)
+int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
 {
     m_Options = make_shared<VFSNetSFTPOptions>(_options);
     unique_ptr<VFSNetSFTP::Connection> conn;
-    int rc = SpawnConnection(conn);
+    int rc = GetConnection(conn);
+    if(rc != 0)
+        return rc;
     
-    int a = 10;
+    ReturnConnection(move(conn));
+    
     return 0;
 }
 
@@ -80,7 +65,6 @@ int VFSNetSFTPHost::SpawnConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
     
     in_addr_t hostaddr = InetAddr();
     connection->socket = socket(AF_INET, SOCK_STREAM, 0);
-    
     sockaddr_in sin;
     sin.sin_family = AF_INET;
     sin.sin_port = htons(m_Options->port >= 0 ? m_Options->port : 22);
@@ -89,6 +73,10 @@ int VFSNetSFTPHost::SpawnConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
         fprintf(stderr, "failed to connect remote sftp host!\n");
         return -1;
     }
+    
+    int optval = 1;
+    setsockopt(connection->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval));
+
     
     connection->ssh = libssh2_session_init();
     if(!connection->ssh)
@@ -119,6 +107,30 @@ int VFSNetSFTPHost::SpawnConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
     return 0;
 }
 
+int VFSNetSFTPHost::GetConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
+{
+    lock_guard<mutex> lock(m_ConnectionsLock);
+    
+    for(auto i = m_Connections.begin(); i != m_Connections.end(); ++i)
+        if((*i)->Alive()) {
+            _t = move(*i);
+            m_Connections.erase(i);
+            return 0;
+        }
+    
+    return SpawnConnection(_t);
+}
+
+void VFSNetSFTPHost::ReturnConnection(unique_ptr<VFSNetSFTP::Connection> _t)
+{
+    if(!_t->Alive())
+        return;
+    
+    lock_guard<mutex> lock(m_ConnectionsLock);
+
+    m_Connections.emplace_back(move(_t));
+}
+
 unsigned VFSNetSFTPHost::InetAddr() const
 {
     return inet_addr(JunctionPath());
@@ -130,7 +142,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
                                           bool (^_cancel_checker)())
 {
     unique_ptr<VFSNetSFTP::Connection> conn;
-    int rc = SpawnConnection(conn);
+    int rc = GetConnection(conn);
     if(rc)
         return -1;
     
@@ -151,6 +163,15 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
         if(rc <= 0)
             break;
         
+        if( mem[0] == '.' && mem[1] == 0 ) continue; // do not process self entry
+        if( mem[0] == '.' && mem[1] == '.' && mem[2] == 0 ) // special case for dot-dot directory
+        {
+            if(_flags & VFSHost::F_NoDotDot) continue;
+            
+            if(strcmp(_path, "/") == 0)
+                continue; // skip .. for root directory
+        }
+        
         dir->m_Items.emplace_back();
         auto &it = dir->m_Items.back();
         
@@ -160,13 +181,6 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
         it.m_NeedReleaseName = true;
         it.m_NeedReleaseCFName = true;
 
-/*
-#define LIBSSH2_SFTP_ATTR_SIZE              0x00000001
-#define LIBSSH2_SFTP_ATTR_UIDGID            0x00000002
-#define LIBSSH2_SFTP_ATTR_PERMISSIONS       0x00000004
-#define LIBSSH2_SFTP_ATTR_ACMODTIME         0x00000008
-#define LIBSSH2_SFTP_ATTR_EXTENDED          0x80000000
-  */
     
         if(attrs.flags & LIBSSH2_SFTP_ATTR_SIZE)
             it.m_Size = attrs.filesize;
@@ -174,67 +188,19 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
             it.m_UID = (uid_t)attrs.uid;
             it.m_GID = (uid_t)attrs.gid;
         }
-//    unsigned long atime,
         if(attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) {
             it.m_ATime = attrs.atime;
             it.m_MTime = attrs.mtime;
             it.m_CTime = attrs.mtime;
             it.m_BTime = attrs.mtime;
         }
-        
-        /*
-         * Reproduce the POSIX file modes here for systems that are not POSIX
-         * compliant.
-         *
-         * These is used in "permissions" of "struct _LIBSSH2_SFTP_ATTRIBUTES"
-         */
-        /* File type */
-//#define	S_IFMT		0170000		/* [XSI] type of file mask */
-//#define	S_IFIFO		0010000		/* [XSI] named pipe (fifo) */
-//#define	S_IFCHR		0020000		/* [XSI] character special */
-//#define	S_IFDIR		0040000		/* [XSI] directory */
-//#define	S_IFBLK		0060000		/* [XSI] block special */
-//#define	S_IFREG		0100000		/* [XSI] regular */
-//#define	S_IFLNK		0120000		/* [XSI] symbolic link */
-//#define	S_IFSOCK	0140000		/* [XSI] socket */
-        
-//#define LIBSSH2_SFTP_S_IFMT         0170000     /* type of file mask */
-//#define LIBSSH2_SFTP_S_IFIFO        0010000     /* named pipe (fifo) */
-//#define LIBSSH2_SFTP_S_IFCHR        0020000     /* character special */
-//#define LIBSSH2_SFTP_S_IFDIR        0040000     /* directory */
-//#define LIBSSH2_SFTP_S_IFBLK        0060000     /* block special */
-//#define LIBSSH2_SFTP_S_IFREG        0100000     /* regular */
-//#define LIBSSH2_SFTP_S_IFLNK        0120000     /* symbolic link */
-//#define LIBSSH2_SFTP_S_IFSOCK       0140000     /* socket */
-//        
-//        /* File mode */
-//        /* Read, write, execute/search by owner */
-//#define LIBSSH2_SFTP_S_IRWXU        0000700     /* RWX mask for owner */
-//#define LIBSSH2_SFTP_S_IRUSR        0000400     /* R for owner */
-//#define LIBSSH2_SFTP_S_IWUSR        0000200     /* W for owner */
-//#define LIBSSH2_SFTP_S_IXUSR        0000100     /* X for owner */
-//        /* Read, write, execute/search by group */
-//#define LIBSSH2_SFTP_S_IRWXG        0000070     /* RWX mask for group */
-//#define LIBSSH2_SFTP_S_IRGRP        0000040     /* R for group */
-//#define LIBSSH2_SFTP_S_IWGRP        0000020     /* W for group */
-//#define LIBSSH2_SFTP_S_IXGRP        0000010     /* X for group */
-//        /* Read, write, execute/search by others */
-//#define LIBSSH2_SFTP_S_IRWXO        0000007     /* RWX mask for other */
-//#define LIBSSH2_SFTP_S_IROTH        0000004     /* R for other */
-//#define LIBSSH2_SFTP_S_IWOTH        0000002     /* W for other */
-//#define LIBSSH2_SFTP_S_IXOTH        0000001     /* X for other */
-//        
-//        virtual bool            IsDir()     const override { return (m_Mode & S_IFMT) == S_IFDIR;   }
-//        virtual bool            IsReg()     const override { return (m_Mode & S_IFMT) == S_IFREG;   }
-//        virtual bool            IsSymlink() const override { return m_Type == DT_LNK;               }
-        
         if(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) {
             it.m_Mode = attrs.permissions;
             it.m_Type = IFTODT(attrs.permissions);
-//            DT_LNK
-            
-//            #define	IFTODT(mode)	(((mode) & 0170000) >> 12)
         }
+        if(it.IsDir())
+            it.m_Size = VFSListingItem::InvalidSize;
+        
         
 //    unsigned long permissions;
         
@@ -276,6 +242,8 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
 
     *_target = dir;
     
+    ReturnConnection(move(conn));
+    
     return 0;
 }
 
@@ -285,7 +253,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
                          bool (^_cancel_checker)())
 {
     unique_ptr<VFSNetSFTP::Connection> conn;
-    int rc = SpawnConnection(conn);
+    int rc = GetConnection(conn);
     if(rc)
         return -1;
 
@@ -310,6 +278,8 @@ int VFSNetSFTPHost::Stat(const char *_path,
     _st.size = attrs.filesize;
     
     // set meaning
+    
+    ReturnConnection(move(conn));
     
     return 0;
 }

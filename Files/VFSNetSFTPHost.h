@@ -10,6 +10,8 @@
 
 #import "VFSHost.h"
 
+#include "VFSNetSFTPInternals.h"
+
 namespace VFSNetSFTP
 {
     struct Connection;
@@ -28,8 +30,7 @@ class VFSNetSFTPHost : public VFSHost
 {
 public:
     VFSNetSFTPHost(const char *_serv_url);
-    int Open(const char *_starting_dir,
-             const VFSNetSFTPOptions &_options = VFSNetSFTPOptions());
+    int Open(const VFSNetSFTPOptions &_options = VFSNetSFTPOptions());
     
     static  const char *Tag;
     virtual const char *FSTag() const override;
@@ -47,11 +48,15 @@ public:
                                       bool (^_cancel_checker)()) override;
     
     
-    int SpawnConnection(unique_ptr<VFSNetSFTP::Connection> &_t);
+    int GetConnection(unique_ptr<VFSNetSFTP::Connection> &_t);
+    void ReturnConnection(unique_ptr<VFSNetSFTP::Connection> _t);
     
 private:
-//    in_addr_t hostaddr = inet_addr
+    int SpawnConnection(unique_ptr<VFSNetSFTP::Connection> &_t);
+    
     unsigned InetAddr() const; // return IP of a remote host
     
-    shared_ptr<VFSNetSFTPOptions>    m_Options;
+    list<unique_ptr<VFSNetSFTP::Connection>>    m_Connections;
+    mutex                                       m_ConnectionsLock;
+    shared_ptr<VFSNetSFTPOptions>               m_Options;
 };

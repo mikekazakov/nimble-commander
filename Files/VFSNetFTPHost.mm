@@ -269,7 +269,7 @@ int VFSNetFTPHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-bool VFSNetFTPHost::ShouldProduceThumbnails()
+bool VFSNetFTPHost::ShouldProduceThumbnails() const
 {
     return false;
 }

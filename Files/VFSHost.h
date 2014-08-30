@@ -268,7 +268,7 @@ public:
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)());
     virtual void StopDirChangeObserving(unsigned long _ticket);
     
-    virtual bool ShouldProduceThumbnails();
+    virtual bool ShouldProduceThumbnails() const;
     
     virtual bool FindLastValidItem(const char *_orig_path,
                                    char *_valid_path,

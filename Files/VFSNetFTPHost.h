@@ -67,7 +67,7 @@ public:
     virtual int RemoveDirectory(const char *_path, bool (^_cancel_checker)()) override;
     virtual int Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)()) override;
     
-    virtual bool ShouldProduceThumbnails() override;
+    virtual bool ShouldProduceThumbnails() const override;
     virtual bool IsWriteable() const override;
     virtual bool IsWriteableAtPath(const char *_dir) const override;
     

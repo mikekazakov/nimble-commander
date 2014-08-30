@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "VFSNetSFTPHost.h"
-#include "VFSListing.h"
+#import "VFSNetSFTPHost.h"
+#import "VFSListing.h"
+#import "VFSNetSFTPFile.h"
 
 using namespace VFSNetSFTP;
 
@@ -18,8 +19,8 @@ bool VFSNetSFTPOptions::Equal(const VFSHostOptions &_r) const
     
     const VFSNetSFTPOptions& r = (const VFSNetSFTPOptions&)_r;
     return user == r.user &&
-    passwd == r.passwd &&
-    port == r.port;
+        passwd == r.passwd &&
+        port == r.port;
 }
 
 const char *VFSNetSFTPHost::Tag = "net_sftp";
@@ -37,17 +38,45 @@ VFSNetSFTPHost::VFSNetSFTPHost(const char *_serv_url):
         int rc = libssh2_init(0);
         assert(rc == 0);
     });
-    
-    
-    
 }
 
 int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
 {
+    struct hostent *remote_host = gethostbyname(JunctionPath());
+    if(!remote_host)
+        return -1; // need something meaningful
+    if(remote_host->h_addrtype != AF_INET)
+        return -1; // need something meaningful
+    m_HostAddr = *(in_addr_t *) remote_host->h_addr_list[0];
+    
     m_Options = make_shared<VFSNetSFTPOptions>(_options);
+    
     unique_ptr<VFSNetSFTP::Connection> conn;
-    int rc = GetConnection(conn);
+    int rc = SpawnSSH2(conn);
     if(rc != 0)
+        return rc;
+    
+    LIBSSH2_CHANNEL *channel = libssh2_channel_open_session(conn->ssh);
+    if(channel == nullptr)
+        return -1;
+    
+    rc = libssh2_channel_exec(channel, "/bin/pwd");
+    if(rc < 0)
+        return -1;
+    
+    char buffer[MAXPATHLEN];
+    rc = (int)libssh2_channel_read( channel, buffer, sizeof(buffer) );
+    if( rc <= 0 )
+        return -1;
+    buffer[rc - 1] = 0;
+    
+    m_HomeDir = buffer;
+    
+    libssh2_channel_close(channel);
+    libssh2_channel_free(channel);
+    
+    rc = SpawnSFTP(conn);
+    if(rc < 0)
         return rc;
     
     ReturnConnection(move(conn));
@@ -55,7 +84,12 @@ int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
     return 0;
 }
 
-int VFSNetSFTPHost::SpawnConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
+const string& VFSNetSFTPHost::HomeDir() const
+{
+    return m_HomeDir;
+}
+
+int VFSNetSFTPHost::SpawnSSH2(unique_ptr<VFSNetSFTP::Connection> &_t)
 {
     assert(m_Options);
     _t = nullptr;
@@ -88,22 +122,36 @@ int VFSNetSFTPHost::SpawnConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
         return -1;
     }
     
-    if (libssh2_userauth_password(connection->ssh, m_Options->user.c_str(), m_Options->passwd.c_str())) {
+//    libssh2_userauth_password_ex((session), (username), strlen(username), \
+//                                 (password), strlen(password), NULL)
+    
+    
+    if (libssh2_userauth_password_ex(connection->ssh,
+                                     m_Options->user.c_str(),
+                                     (unsigned)m_Options->user.length(),
+                                     m_Options->passwd.c_str(),
+                                     (unsigned)m_Options->passwd.length(),
+                                     NULL)) {
 //        fprintf(stderr, "Authentication by password failed.\n");
         return -1;
     }
-    
-    connection->sftp = libssh2_sftp_init(connection->ssh);
-    
-    if (!connection->sftp) {
-//        fprintf(stderr, "Unable to init SFTP session\n");
-        return -1;
-    }
-    
+
     libssh2_session_set_blocking(connection->ssh, 1);
     
-
     _t = move(connection);
+    
+    return 0;
+}
+
+int VFSNetSFTPHost::SpawnSFTP(unique_ptr<VFSNetSFTP::Connection> &_t)
+{
+    _t->sftp = libssh2_sftp_init(_t->ssh);
+    
+    if (!_t->sftp) {
+        //        fprintf(stderr, "Unable to init SFTP session\n");
+        return -1;
+    }
+
     return 0;
 }
 
@@ -118,7 +166,11 @@ int VFSNetSFTPHost::GetConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
             return 0;
         }
     
-    return SpawnConnection(_t);
+    int rc = SpawnSSH2(_t);
+    if(rc < 0)
+        return rc;
+    
+    return SpawnSFTP(_t);
 }
 
 void VFSNetSFTPHost::ReturnConnection(unique_ptr<VFSNetSFTP::Connection> _t)
@@ -131,9 +183,9 @@ void VFSNetSFTPHost::ReturnConnection(unique_ptr<VFSNetSFTP::Connection> _t)
     m_Connections.emplace_back(move(_t));
 }
 
-unsigned VFSNetSFTPHost::InetAddr() const
+in_addr_t VFSNetSFTPHost::InetAddr() const
 {
-    return inet_addr(JunctionPath());
+    return m_HostAddr;
 }
 
 int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
@@ -146,20 +198,19 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     if(rc)
         return -1;
     
-    LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_opendir(conn->sftp, _path);
+    LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
     if (!sftp_handle) {
         return -1;
     }
  
     auto dir = make_shared<VFSGenericListing>(_path, shared_from_this());
  
-    do {
-        char mem[512];
-        char longentry[512];
+    while (true) {
+        char mem[MAXPATHLEN];
         LIBSSH2_SFTP_ATTRIBUTES attrs;
         
         /* loop until we fail */
-        rc = libssh2_sftp_readdir_ex(sftp_handle, mem, sizeof(mem), longentry, sizeof(longentry), &attrs);
+        rc = libssh2_sftp_readdir_ex(sftp_handle, mem, sizeof(mem), nullptr, 0, &attrs);        
         if(rc <= 0)
             break;
         
@@ -181,7 +232,6 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
         it.m_NeedReleaseName = true;
         it.m_NeedReleaseCFName = true;
 
-    
         if(attrs.flags & LIBSSH2_SFTP_ATTR_SIZE)
             it.m_Size = attrs.filesize;
         if(attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) {
@@ -198,45 +248,12 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
             it.m_Mode = attrs.permissions;
             it.m_Type = IFTODT(attrs.permissions);
         }
+        
         if(it.IsDir())
             it.m_Size = VFSListingItem::InvalidSize;
         
-        
-//    unsigned long permissions;
-        
-        
         it.FindExtension();
-        
-        
-            /* rc is the length of the file name in the mem
-             buffer */
-            
-/*            if (longentry[0] != '\0') {
-                printf("%s\n", longentry);
-            } else {
-                if(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) {
-                    // this should check what permissions it is and print the output accordingly
-                    printf("--fix----- ");
-                }
-                else {
-                    printf("---------- ");
-                }
-                
-                if(attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) {
-                    printf("%4ld %4ld ", attrs.uid, attrs.gid);
-                }
-                else {
-                    printf("   -    - ");
-                }
-                
-                if(attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) {
-                    printf("%8" PRIu64 " ", attrs.filesize);
-                }
-                
-                printf("%s\n", mem);
-            }*/
-        
-    } while (true);
+    }
     
     libssh2_sftp_closedir(sftp_handle);
 
@@ -261,23 +278,106 @@ int VFSNetSFTPHost::Stat(const char *_path,
     rc = libssh2_sftp_stat_ex(conn->sftp,
                               _path,
                               (unsigned)strlen(_path),
-                              LIBSSH2_SFTP_STAT,
+                              (_flags & F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
                               &attrs);
     if(rc)
         return -1;
+
+    if(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) {
+        _st.mode = attrs.permissions;
+        _st.meaning.mode = 1;
+    }
+
+    if(attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) {
+        _st.uid = (uid_t)attrs.uid;
+        _st.gid = (gid_t)attrs.gid;
+        _st.meaning.uid = 1;
+        _st.meaning.gid = 1;
+    }
+
+    if(attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) {
+        _st.atime.tv_sec = attrs.atime;
+        _st.mtime.tv_sec = attrs.mtime;
+        _st.ctime.tv_sec = attrs.mtime;
+        _st.btime.tv_sec = attrs.mtime;
+        _st.meaning.atime = 1;
+        _st.meaning.mtime = 1;
+        _st.meaning.ctime = 1;
+        _st.meaning.btime = 1;
+    }
     
-    // check flags
+    if(attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) {
+        _st.size = attrs.filesize;
+        _st.meaning.size = 1;
+    }
+        
+    ReturnConnection(move(conn));
     
-    _st.mode = attrs.permissions;
-    _st.uid = (uid_t)attrs.uid;
-    _st.gid = (gid_t)attrs.gid;
-    _st.atime.tv_sec = attrs.atime;
-    _st.mtime.tv_sec = attrs.mtime;
-    _st.ctime.tv_sec = attrs.mtime;
-    _st.btime.tv_sec = attrs.mtime;
-    _st.size = attrs.filesize;
+    return 0;
+}
+
+int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
+                                            bool (^_handler)(const VFSDirEnt &_dirent))
+{
+    unique_ptr<VFSNetSFTP::Connection> conn;
+    int rc = GetConnection(conn);
+    if(rc)
+        return -1;
     
-    // set meaning
+    LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
+    if (!sftp_handle) {
+        return -1;
+    }
+    
+    VFSDirEnt e;
+    while (true) {
+        char mem[MAXPATHLEN];
+        LIBSSH2_SFTP_ATTRIBUTES attrs;
+        
+        /* loop until we fail */
+        rc = libssh2_sftp_readdir_ex(sftp_handle, mem, sizeof(mem), nullptr, 0, &attrs);
+        if(rc <= 0)
+            break;
+        
+        if( mem[0] == '.' && mem[1] == 0 ) continue;
+        if( mem[0] == '.' && mem[1] == '.' && mem[2] == 0 ) continue;
+
+        if(!(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS))
+            break; // can't process without meanful mode
+        
+        strcpy(e.name, mem);
+        e.name_len = strlen(mem);
+        e.type = IFTODT(attrs.permissions);
+        
+        if( !_handler(e) )
+            break;
+    }
+
+    libssh2_sftp_closedir(sftp_handle);
+    
+    ReturnConnection(move(conn));
+    
+    return 0;
+}
+
+int VFSNetSFTPHost::StatFS(const char *_path,
+                           VFSStatFS &_stat,
+                           bool (^_cancel_checker)())
+{
+    unique_ptr<VFSNetSFTP::Connection> conn;
+    int rc = GetConnection(conn);
+    if(rc)
+        return -1;
+    
+    LIBSSH2_SFTP_STATVFS statfs;
+    rc = libssh2_sftp_statvfs(conn->sftp, _path, strlen(_path), &statfs);
+    if(rc < 0)
+        return -1;
+    
+    _stat.total_bytes = statfs.f_blocks * statfs.f_bsize;
+    _stat.avail_bytes = statfs.f_bavail * statfs.f_bsize;
+    _stat.free_bytes  = statfs.f_ffree  * statfs.f_bsize;
+    _stat.volume_name.clear(); // mb some dummy name here?
     
     ReturnConnection(move(conn));
     
@@ -285,19 +385,26 @@ int VFSNetSFTPHost::Stat(const char *_path,
 }
 
 
+int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, bool (^_cancel_checker)())
+{
+    auto file = make_shared<VFSNetSFTPFile>(_path, SharedPtr());
+    if(_cancel_checker && _cancel_checker())
+        return VFSError::Cancelled;
+    _target = file;
+    return VFSError::Ok;
+}
 
-/*
-LIBSSH2_API int libssh2_sftp_stat_ex(LIBSSH2_SFTP *sftp,
-                                     const char *path,
-                                     unsigned int path_len,
-                                     int stat_type,
-                                     LIBSSH2_SFTP_ATTRIBUTES *attrs);
-#define libssh2_sftp_stat(sftp, path, attrs) \
-libssh2_sftp_stat_ex((sftp), (path), strlen(path), LIBSSH2_SFTP_STAT, \
-(attrs))
-#define libssh2_sftp_lstat(sftp, path, attrs) \
-libssh2_sftp_stat_ex((sftp), (path), strlen(path), LIBSSH2_SFTP_LSTAT, \
-(attrs))
-#define libssh2_sftp_setstat(sftp, path, attrs) \
-libssh2_sftp_stat_ex((sftp), (path), strlen(path), LIBSSH2_SFTP_SETSTAT, \
-(attrs))*/
+string VFSNetSFTPHost::VerboseJunctionPath() const
+{
+    return string("sftp://") + JunctionPath();
+}
+
+shared_ptr<VFSHostOptions> VFSNetSFTPHost::Options() const
+{
+    return m_Options;
+}
+
+bool VFSNetSFTPHost::ShouldProduceThumbnails() const
+{
+    return false;
+}

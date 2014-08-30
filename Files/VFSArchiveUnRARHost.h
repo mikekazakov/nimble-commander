@@ -51,7 +51,7 @@ public:
                            bool (^_cancel_checker)()) override;
     
     
-    virtual bool ShouldProduceThumbnails() override;    
+    virtual bool ShouldProduceThumbnails() const override;
     
     
     // internal UnRAR stuff

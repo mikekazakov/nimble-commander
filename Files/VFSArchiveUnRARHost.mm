@@ -431,7 +431,7 @@ int VFSArchiveUnRARHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-bool VFSArchiveUnRARHost::ShouldProduceThumbnails()
+bool VFSArchiveUnRARHost::ShouldProduceThumbnails() const
 {
 //    if(m_IsSolidArchive && m_PackedItemsSize > 64*1024*1024)
 //        return false;

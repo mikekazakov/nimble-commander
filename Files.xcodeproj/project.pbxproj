@@ -676,6 +676,8 @@
 		CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
 		CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */; };
+		CFDB17BE19B07A4D00781976 /* VFSNetSFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17BC19B07A4D00781976 /* VFSNetSFTPFile.mm */; };
+		CFDB17BF19B07A4D00781976 /* VFSNetSFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17BC19B07A4D00781976 /* VFSNetSFTPFile.mm */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */; };
 		CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
@@ -1318,6 +1320,8 @@
 		CFDA4CD2182CBA68006EC35C /* SUStandardVersionComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUStandardVersionComparator.h; path = 3rd_party/sparkle/SUStandardVersionComparator.h; sourceTree = "<group>"; };
 		CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUStandardVersionComparator.m; path = 3rd_party/sparkle/SUStandardVersionComparator.m; sourceTree = "<group>"; };
 		CFDA4CD4182CBA68006EC35C /* SUVersionComparisonProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUVersionComparisonProtocol.h; path = 3rd_party/sparkle/SUVersionComparisonProtocol.h; sourceTree = "<group>"; };
+		CFDB17BC19B07A4D00781976 /* VFSNetSFTPFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetSFTPFile.mm; sourceTree = "<group>"; };
+		CFDB17BD19B07A4D00781976 /* VFSNetSFTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNetSFTPFile.h; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
 		CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewDataBackend.mm; sourceTree = "<group>"; };
@@ -1837,6 +1841,8 @@
 				CF9066BB19AB719C001DC687 /* VFSNetSFTPHost.h */,
 				CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */,
 				CF9066C519AB9CCC001DC687 /* VFSNetSFTPInternals.h */,
+				CFDB17BC19B07A4D00781976 /* VFSNetSFTPFile.mm */,
+				CFDB17BD19B07A4D00781976 /* VFSNetSFTPFile.h */,
 			);
 			name = SFTP;
 			sourceTree = "<group>";
@@ -2842,6 +2848,7 @@
 				CF6D9CF819667BA20077B146 /* archive_write_set_format.c in Sources */,
 				CF6D9CF919667BA20077B146 /* archive_write_set_options.c in Sources */,
 				CF6D9CFA19667BA20077B146 /* archive_write.c in Sources */,
+				CFDB17BF19B07A4D00781976 /* VFSNetSFTPFile.mm in Sources */,
 				CF6D9CFB19667BA20077B146 /* filter_fork_posix.c in Sources */,
 				CF6D9CFC19667BA20077B146 /* filter_fork_windows.c in Sources */,
 				CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */,
@@ -3122,6 +3129,7 @@
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
 				CF6617EF17E48B5100593225 /* VFSError.mm in Sources */,
+				CFDB17BE19B07A4D00781976 /* VFSNetSFTPFile.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
 				CF9D0ECF17CC961100CB8146 /* archive_write_set_format_gnutar.c in Sources */,
 				B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */,

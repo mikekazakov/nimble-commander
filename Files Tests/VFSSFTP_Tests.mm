@@ -8,40 +8,60 @@
 
 #import "tests_common.h"
 #import "VFS.h"
+#import "PanelData.h"
 
 @interface VFSSFTP_Tests : XCTestCase
-
 @end
 
 @implementation VFSSFTP_Tests
 
-- (void)setUp {
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+- (shared_ptr<VFSNetSFTPHost>) hostVBoxDebian7x86 {
+    return make_shared<VFSNetSFTPHost>("192.168.2.170");
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
-
-- (void)testExample {
-    // This is an example of a functional test case.
-//    XCTAssert(YES, @"Pass");
-    auto host = make_shared<VFSNetSFTPHost>("192.168.2.5");
+- (VFSNetSFTPOptions) optionsForVBoxDebian7x86 {
     VFSNetSFTPOptions opts;
-    opts.user = "admin";
-    opts.passwd = "iddqd";
-    opts.port = 22;
-    host->Open("/", opts);
+    opts.user = "root";
+    opts.passwd = "123456";
+    opts.port = -1;
+    return opts;
+}
+
+- (void)testBasic {
+    auto host = self.hostVBoxDebian7x86;
+    XCTAssert( host->Open(self.optionsForVBoxDebian7x86) == 0);
     
+    XCTAssert( host->HomeDir() == "/root" );
     
     shared_ptr<VFSListing> listing;
-    host->FetchDirectoryListing("/", &listing, 0, 0);
+    XCTAssert( host->FetchDirectoryListing("/", &listing, 0, 0) == 0);
     
- 
-    int a = 10;
+    PanelData data;
+    data.Load(listing);
+    XCTAssert( data.DirectoryEntries().Count() == 22);
+    XCTAssert( string("bin") == data.EntryAtSortPosition(0)->Name() );
+    XCTAssert( string("var") == data.EntryAtSortPosition(19)->Name() );
+    XCTAssert( string("initrd.img") == data.EntryAtSortPosition(20)->Name() );
+    XCTAssert( string("vmlinuz") == data.EntryAtSortPosition(21)->Name() );
+    
+    XCTAssert( data.EntryAtSortPosition(0)->IsDir() );
+    // need to check symlinks
 }
 
+- (void) testBasicRead {
+    auto host = self.hostVBoxDebian7x86;
+    XCTAssert( host->Open(self.optionsForVBoxDebian7x86) == 0);
+    
+    VFSFilePtr file;
+    XCTAssert( host->CreateFile("/etc/debian_version", file, 0) == 0);
+    XCTAssert( file->Open( VFSFile::OF_Read ) == 0);
+    
+    auto cont = file->ReadFile();
+    
+    XCTAssert( cont->size() == 4 );
+    XCTAssert( memcmp(cont->data(), "7.6\n", 4) == 0);
+    
+    file->Close();
+}
 
 @end

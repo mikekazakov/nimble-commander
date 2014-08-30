@@ -172,8 +172,10 @@ ssize_t VFSNativeFile::Size() const
 
 bool VFSNativeFile::Eof() const
 {
-    if(m_FD < 0)
+    if(m_FD < 0) {
+        SetLastError(VFSError::InvalidCall);
         return true;
+    }
     return m_Position >= m_Size;
 }
 

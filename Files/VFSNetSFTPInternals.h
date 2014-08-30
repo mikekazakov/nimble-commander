@@ -8,10 +8,6 @@
 
 #pragma once
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
 #include "3rd_party/built/include/libssh2.h"
 #include "3rd_party/built/include/libssh2_sftp.h"
 

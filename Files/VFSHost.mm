@@ -311,7 +311,7 @@ int VFSHost::SetTimes(const char *_path,
     return VFSError::NotSupported;
 }
 
-bool VFSHost::ShouldProduceThumbnails()
+bool VFSHost::ShouldProduceThumbnails() const
 {
     return true;
 }

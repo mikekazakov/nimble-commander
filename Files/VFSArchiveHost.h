@@ -48,7 +48,7 @@ public:
     
     virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
     
-    virtual bool ShouldProduceThumbnails() override;
+    virtual bool ShouldProduceThumbnails() const override;
     
     // Caching section - to reduce seeking overhead:
     

@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import "3rd_party/built/include/libssh2.h"
+#import "3rd_party/built/include/libssh2_sftp.h"
 #import "VFSNetSFTPFile.h"
 #import "VFSNetSFTPHost.h"
 
@@ -27,16 +29,26 @@ int VFSNetSFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
         Close();
     
     auto sftp_host = dynamic_pointer_cast<VFSNetSFTPHost>(Host());
-    unique_ptr<VFSNetSFTP::Connection> conn;
+    unique_ptr<VFSNetSFTPHost::Connection> conn;
     int rc;
     if( (rc = sftp_host->GetConnection(conn)) != 0 )
         return rc;
 
+    int sftp_flags = 0;
+    if( _open_flags & VFSFile::OF_Read     ) sftp_flags |= LIBSSH2_FXF_READ;
+    if( _open_flags & VFSFile::OF_Write    ) sftp_flags |= LIBSSH2_FXF_WRITE;
+    if( _open_flags & VFSFile::OF_Append   ) sftp_flags |= LIBSSH2_FXF_APPEND;
+    if( _open_flags & VFSFile::OF_Create   ) sftp_flags |= LIBSSH2_FXF_CREAT;
+    if( _open_flags & VFSFile::OF_Truncate ) sftp_flags |= LIBSSH2_FXF_TRUNC;
+    if( _open_flags & VFSFile::OF_NoExist  ) sftp_flags |= LIBSSH2_FXF_EXCL;
+    
+    int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
+    
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open_ex(conn->sftp,
                                                        RelativePath(),
                                                        (unsigned)strlen(RelativePath()),
-                                                       LIBSSH2_FXF_READ,
-                                                       0,
+                                                       sftp_flags,
+                                                       mode,
                                                        LIBSSH2_SFTP_OPENFILE);
     if(handle == nullptr) {
         sftp_host->ReturnConnection(move(conn));
@@ -103,6 +115,9 @@ off_t VFSNetSFTPFile::Seek(off_t _off, int _basis)
 
 ssize_t VFSNetSFTPFile::Read(void *_buf, size_t _size)
 {
+    if(!IsOpened())
+        return SetLastError(VFSError::InvalidCall);
+    
     ssize_t rc = libssh2_sftp_read(m_Handle, (char*)_buf, _size);
     
     if(rc >= 0) {
@@ -115,7 +130,19 @@ ssize_t VFSNetSFTPFile::Read(void *_buf, size_t _size)
 
 ssize_t VFSNetSFTPFile::Write(const void *_buf, size_t _size)
 {
-    return -1;
+    if(!IsOpened())
+        return SetLastError(VFSError::InvalidCall);
+
+    ssize_t rc = libssh2_sftp_write(m_Handle, (char*)_buf, _size);
+    
+    if(rc >= 0) {
+        if(m_Position + rc > m_Size)
+            m_Size = m_Position + rc;
+        m_Position += rc;
+        return rc;
+    }
+    else
+        return -1; // error code
 }
 
 ssize_t VFSNetSFTPFile::Pos() const

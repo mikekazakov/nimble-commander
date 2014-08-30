@@ -9,9 +9,7 @@
 #pragma once
 
 #import "VFSFile.h"
-#import "VFSNetSFTPInternals.h"
-
-class VFSNetSFTPHost;
+#import "VFSNetSFTPHost.h"
 
 class VFSNetSFTPFile : public VFSFile
 {
@@ -32,7 +30,7 @@ public:
     virtual bool Eof() const override;
 
 private:
-    unique_ptr<VFSNetSFTP::Connection> m_Connection;
+    unique_ptr<VFSNetSFTPHost::Connection> m_Connection;
     LIBSSH2_SFTP_HANDLE *m_Handle = nullptr;
     ssize_t m_Position = 0;
     ssize_t m_Size     = 0;    

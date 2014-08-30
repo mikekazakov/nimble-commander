@@ -51,15 +51,24 @@ public:
     virtual ~VFSFile();
 
     enum {
-        OF_Read     = 0b00000001,
-        OF_Write    = 0b00000010,
-        OF_Create   = 0b00000100,
-        OF_NoExist  = 0b00001000, // POSIX O_EXCL actucally, for clarity
-        OF_ShLock   = 0b00010000, // not yet implemented
-        OF_ExLock   = 0b00100000, // not yet implemented
-        OF_NoCache  = 0b01000000, // turns off caching if supported
-        OF_Append   = 0b10000000,  // appends file on writing
-        OF_Truncate = 0b100000000 // truncates files upon opening
+        OF_IXOth    = 0x00000001, // = S_IXOTH
+        OF_IWOth    = 0x00000002, // = S_IWOTH
+        OF_IROth    = 0x00000004, // = S_IRWXO
+        OF_IXGrp    = 0x00000008, // = S_IXGRP
+        OF_IWGrp    = 0x00000010, // = S_IWGRP
+        OF_IRGrp    = 0x00000020, // = S_IRGRP
+        OF_IXUsr    = 0x00000040, // = S_IXUSR
+        OF_IWUsr    = 0x00000080, // = S_IWUSR
+        OF_IRUsr    = 0x00000100, // = S_IRUSR
+        OF_Read     = 0x00010000,
+        OF_Write    = 0x00020000,
+        OF_Create   = 0x00040000,
+        OF_NoExist  = 0x00080000, // POSIX O_EXCL actucally, for clarity
+        OF_ShLock   = 0x00100000, // not yet implemented
+        OF_ExLock   = 0x00200000, // not yet implemented
+        OF_NoCache  = 0x00400000, // turns off caching if supported
+        OF_Append   = 0x00800000, // appends file on writing
+        OF_Truncate = 0x01000000  // truncates files upon opening
     };
     virtual int     Open(int _open_flags,
                          bool (^_cancel_checker)() = 0);
@@ -185,7 +194,7 @@ private:
     /**
      * m_LastError should be set when any error occurs. This storage is not thread-safe - concurrent accesses may overwrite it.
      */
-    mutable int m_LastError;
+    mutable volatile int m_LastError;
     
     // forbid copying
     VFSFile(const VFSFile&) = delete;

@@ -6,11 +6,12 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import "3rd_party/built/include/libssh2.h"
+#import "3rd_party/built/include/libssh2_sftp.h"
 #import "VFSNetSFTPHost.h"
 #import "VFSListing.h"
 #import "VFSNetSFTPFile.h"
 
-using namespace VFSNetSFTP;
 
 bool VFSNetSFTPOptions::Equal(const VFSHostOptions &_r) const
 {
@@ -21,6 +22,32 @@ bool VFSNetSFTPOptions::Equal(const VFSHostOptions &_r) const
     return user == r.user &&
         passwd == r.passwd &&
         port == r.port;
+}
+
+VFSNetSFTPHost::Connection::~Connection()
+{
+    if(sftp) {
+        libssh2_sftp_shutdown(sftp);
+        sftp = nullptr;
+    }
+    
+    if(ssh) {
+        libssh2_session_disconnect(ssh, "bye");
+        libssh2_session_free(ssh);
+        ssh = nullptr;
+    }
+    
+    if(socket >= 0) {
+        close(socket);
+        socket = -1;
+    }
+}
+
+bool VFSNetSFTPHost::Connection::Alive() const {
+    int error = 0;
+    socklen_t len = sizeof (error);
+    int retval = getsockopt (socket, SOL_SOCKET, SO_ERROR, &error, &len );
+    return retval == 0;
 }
 
 const char *VFSNetSFTPHost::Tag = "net_sftp";
@@ -51,7 +78,7 @@ int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
     
     m_Options = make_shared<VFSNetSFTPOptions>(_options);
     
-    unique_ptr<VFSNetSFTP::Connection> conn;
+    unique_ptr<Connection> conn;
     int rc = SpawnSSH2(conn);
     if(rc != 0)
         return rc;
@@ -60,7 +87,7 @@ int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
     if(channel == nullptr)
         return -1;
     
-    rc = libssh2_channel_exec(channel, "/bin/pwd");
+    rc = libssh2_channel_exec(channel, "pwd");
     if(rc < 0)
         return -1;
     
@@ -89,7 +116,7 @@ const string& VFSNetSFTPHost::HomeDir() const
     return m_HomeDir;
 }
 
-int VFSNetSFTPHost::SpawnSSH2(unique_ptr<VFSNetSFTP::Connection> &_t)
+int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
 {
     assert(m_Options);
     _t = nullptr;
@@ -143,8 +170,8 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<VFSNetSFTP::Connection> &_t)
     return 0;
 }
 
-int VFSNetSFTPHost::SpawnSFTP(unique_ptr<VFSNetSFTP::Connection> &_t)
-{
+int VFSNetSFTPHost::SpawnSFTP(unique_ptr<Connection> &_t)
+{    
     _t->sftp = libssh2_sftp_init(_t->ssh);
     
     if (!_t->sftp) {
@@ -155,7 +182,7 @@ int VFSNetSFTPHost::SpawnSFTP(unique_ptr<VFSNetSFTP::Connection> &_t)
     return 0;
 }
 
-int VFSNetSFTPHost::GetConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
+int VFSNetSFTPHost::GetConnection(unique_ptr<Connection> &_t)
 {
     lock_guard<mutex> lock(m_ConnectionsLock);
     
@@ -173,7 +200,7 @@ int VFSNetSFTPHost::GetConnection(unique_ptr<VFSNetSFTP::Connection> &_t)
     return SpawnSFTP(_t);
 }
 
-void VFSNetSFTPHost::ReturnConnection(unique_ptr<VFSNetSFTP::Connection> _t)
+void VFSNetSFTPHost::ReturnConnection(unique_ptr<Connection> _t)
 {
     if(!_t->Alive())
         return;
@@ -193,7 +220,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
                                           int _flags,
                                           bool (^_cancel_checker)())
 {
-    unique_ptr<VFSNetSFTP::Connection> conn;
+    unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
         return -1;
@@ -269,7 +296,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
                          int _flags,
                          bool (^_cancel_checker)())
 {
-    unique_ptr<VFSNetSFTP::Connection> conn;
+    unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
         return -1;
@@ -319,7 +346,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
 int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
                                             bool (^_handler)(const VFSDirEnt &_dirent))
 {
-    unique_ptr<VFSNetSFTP::Connection> conn;
+    unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
         return -1;
@@ -364,7 +391,7 @@ int VFSNetSFTPHost::StatFS(const char *_path,
                            VFSStatFS &_stat,
                            bool (^_cancel_checker)())
 {
-    unique_ptr<VFSNetSFTP::Connection> conn;
+    unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
         return -1;
@@ -383,7 +410,6 @@ int VFSNetSFTPHost::StatFS(const char *_path,
     
     return 0;
 }
-
 
 int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, bool (^_cancel_checker)())
 {
@@ -407,4 +433,14 @@ shared_ptr<VFSHostOptions> VFSNetSFTPHost::Options() const
 bool VFSNetSFTPHost::ShouldProduceThumbnails() const
 {
     return false;
+}
+
+bool VFSNetSFTPHost::IsWriteable() const
+{
+    return true; // dummy now
+}
+
+bool VFSNetSFTPHost::IsWriteableAtPath(const char *_dir) const
+{
+    return true; // dummy now
 }

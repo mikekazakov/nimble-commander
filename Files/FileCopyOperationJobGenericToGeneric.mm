@@ -421,6 +421,11 @@ createdest:
     assert(ret == 0); // handle later
     
 opendest:
+    if(m_Options.copy_unix_flags) // we want to copy src permissions
+        dstopenflags |= src_stat.mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+    else // open file with default permissions
+        dstopenflags |= S_IRUSR | S_IWUSR | S_IRGRP;
+        
     ret = dst_file->Open(dstopenflags);
     if(ret < 0)
     {   // failed to open destination file

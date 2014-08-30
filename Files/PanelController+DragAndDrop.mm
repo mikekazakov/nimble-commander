@@ -13,6 +13,7 @@
 #import "OperationsController.h"
 #import "FontExtras.h"
 #import "path_manip.h"
+#import "Common.h"
 
 static NSString *kPrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop";
 
@@ -375,7 +376,6 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if(files.empty())
                 return false;
             
-            
             if(!self.VFS->IsNativeFS() && self.VFS->IsWriteable() )
             {
                 if(opmask != NSDragOperationCopy)
@@ -389,7 +389,11 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                                             dest:destination.c_str()
                                                                           dstvfs:self.VFS
                                                                          options:opts];
-
+                [op AddOnFinishHandler:^{
+                    dispatch_to_main_queue( ^{
+                        [self RefreshDirectory];
+                    });
+                }];
                 [self.state.OperationsController AddOperation:op];
                 return true;
             }
@@ -402,7 +406,11 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                                          rootvfs:source_broker.vfs
                                                                             dest:destination.c_str()
                                                                          options:opts];
-                    
+                [op AddOnFinishHandler:^{
+                    dispatch_to_main_queue( ^{
+                        [self RefreshDirectory];
+                    });
+                }];
                 [self.state.OperationsController AddOperation:op];
                 return true;
             }
@@ -425,7 +433,11 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                           rootvfs:source_broker.vfs
                                                              dest:destination.c_str()
                                                           options:opts];
-                
+                [op AddOnFinishHandler:^{
+                    dispatch_to_main_queue( ^{
+                        [self RefreshDirectory];
+                    });
+                }];
                 [self.state.OperationsController AddOperation:op];
                 return true;
             }

@@ -16,7 +16,7 @@
 @implementation VFSSFTP_Tests
 
 - (shared_ptr<VFSNetSFTPHost>) hostVBoxDebian7x86 {
-    return make_shared<VFSNetSFTPHost>("192.168.2.170");
+    return make_shared<VFSNetSFTPHost>("debian7x86.local");
 }
 
 - (VFSNetSFTPOptions) optionsForVBoxDebian7x86 {

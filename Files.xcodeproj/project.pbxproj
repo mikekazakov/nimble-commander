@@ -454,8 +454,6 @@
 		CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
 		CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
-		CF9066C719AB9E9C001DC687 /* VFSNetSFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */; };
-		CF9066C819AB9E9C001DC687 /* VFSNetSFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */; };
 		CF9A17CC186D9FCC00160CDB /* VFSPSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */; };
 		CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */; };
 		CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; };
@@ -1015,8 +1013,6 @@
 		CF9066BC19AB71B5001DC687 /* VFSNetSFTPHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetSFTPHost.mm; sourceTree = "<group>"; };
 		CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSSFTP_Tests.mm; sourceTree = "<group>"; };
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
-		CF9066C519AB9CCC001DC687 /* VFSNetSFTPInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSNetSFTPInternals.h; sourceTree = "<group>"; };
-		CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetSFTPInternals.mm; sourceTree = "<group>"; };
 		CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPSFile.mm; sourceTree = "<group>"; };
 		CF9A17CB186D9FCC00160CDB /* VFSPSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSPSFile.h; sourceTree = "<group>"; };
 		CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSGenericMemReadOnlyFile.mm; sourceTree = "<group>"; };
@@ -1839,8 +1835,6 @@
 			children = (
 				CF9066BC19AB71B5001DC687 /* VFSNetSFTPHost.mm */,
 				CF9066BB19AB719C001DC687 /* VFSNetSFTPHost.h */,
-				CF9066C619AB9E9C001DC687 /* VFSNetSFTPInternals.mm */,
-				CF9066C519AB9CCC001DC687 /* VFSNetSFTPInternals.h */,
 				CFDB17BC19B07A4D00781976 /* VFSNetSFTPFile.mm */,
 				CFDB17BD19B07A4D00781976 /* VFSNetSFTPFile.h */,
 			);
@@ -2885,7 +2879,6 @@
 				CF6D9BF3196678000077B146 /* VFSError.mm in Sources */,
 				CF6D9BF4196678000077B146 /* VFSPSHost.mm in Sources */,
 				CF6D9BF5196678000077B146 /* VFSPSListing.mm in Sources */,
-				CF9066C819AB9E9C001DC687 /* VFSNetSFTPInternals.mm in Sources */,
 				CF6D9BF6196678000077B146 /* VFSPSFile.mm in Sources */,
 				CF6D9BF7196678000077B146 /* VFSArchiveHost.mm in Sources */,
 				CF6D9BF8196678000077B146 /* VFSArchiveInternal.mm in Sources */,
@@ -3166,7 +3159,6 @@
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
 				CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */,
 				CFA0B22C186412BD00501C35 /* DispatchQueue.mm in Sources */,
-				CF9066C719AB9E9C001DC687 /* VFSNetSFTPInternals.mm in Sources */,
 				CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */,
 				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,
 				CF9D0EA017CC961100CB8146 /* archive_read_support_format_7zip.c in Sources */,

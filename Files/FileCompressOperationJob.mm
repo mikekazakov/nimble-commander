@@ -96,7 +96,8 @@ void FileCompressOperationJob::Do()
         m_Stats.SetMaxValue(m_SourceTotalBytes);
         
         m_DstVFS->CreateFile(m_TargetFileName, m_TargetFile, 0);
-        if(m_TargetFile->Open(VFSFile::OF_Write | VFSFile::OF_Create) == 0)
+        if(m_TargetFile->Open(VFSFile::OF_Write | VFSFile::OF_Create |
+                              VFSFile::OF_IRUsr | VFSFile::OF_IWUsr | VFSFile::OF_IRGrp) == 0)
         {
             m_Archive = archive_write_new();
             archive_write_set_format_zip(m_Archive);

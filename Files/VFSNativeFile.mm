@@ -43,7 +43,9 @@ int VFSNativeFile::Open(int _open_flags, bool (^_cancel_checker)())
     if(_open_flags & VFSFile::OF_Create) openflags |= O_CREAT;
     if(_open_flags & VFSFile::OF_NoExist) openflags |= O_EXCL;
     
-    m_FD = open(RelativePath(), openflags, 0640);
+    int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
+    
+    m_FD = open(RelativePath(), openflags, mode);
     if(m_FD < 0)
     {
         return SetLastError(VFSError::FromErrno(errno));

@@ -676,6 +676,10 @@
 		CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */; };
 		CFDB17BE19B07A4D00781976 /* VFSNetSFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17BC19B07A4D00781976 /* VFSNetSFTPFile.mm */; };
 		CFDB17BF19B07A4D00781976 /* VFSNetSFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17BC19B07A4D00781976 /* VFSNetSFTPFile.mm */; };
+		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
+		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
+		CFDB17C619B3075000781976 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFDB17C319B3075000781976 /* SFTPConnectionSheetController.xib */; };
+		CFDB17C719B3075000781976 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFDB17C319B3075000781976 /* SFTPConnectionSheetController.xib */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */; };
 		CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
@@ -1318,6 +1322,9 @@
 		CFDA4CD4182CBA68006EC35C /* SUVersionComparisonProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUVersionComparisonProtocol.h; path = 3rd_party/sparkle/SUVersionComparisonProtocol.h; sourceTree = "<group>"; };
 		CFDB17BC19B07A4D00781976 /* VFSNetSFTPFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNetSFTPFile.mm; sourceTree = "<group>"; };
 		CFDB17BD19B07A4D00781976 /* VFSNetSFTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNetSFTPFile.h; sourceTree = "<group>"; };
+		CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFTPConnectionSheetController.h; sourceTree = "<group>"; };
+		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SFTPConnectionSheetController.mm; sourceTree = "<group>"; };
+		CFDB17C319B3075000781976 /* SFTPConnectionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SFTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
 		CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewDataBackend.mm; sourceTree = "<group>"; };
@@ -1642,6 +1649,9 @@
 				CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */,
 				CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */,
 				CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */,
+				CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */,
+				CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */,
+				CFDB17C319B3075000781976 /* SFTPConnectionSheetController.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -2606,6 +2616,7 @@
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CF6D9D0B19667E390077B146 /* GoToFolderSheetController.xib in Resources */,
 				CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */,
+				CFDB17C719B3075000781976 /* SFTPConnectionSheetController.xib in Resources */,
 				CF6D9D0C19667E390077B146 /* FindFilesSheetController.xib in Resources */,
 				CF6D9D0D19667E390077B146 /* FTPConnectionSheetController.xib in Resources */,
 				CFB598AE196E38E400D4C108 /* pause_icon.png in Resources */,
@@ -2671,6 +2682,7 @@
 				CF09858118F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CF09857A18F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */,
+				CFDB17C619B3075000781976 /* SFTPConnectionSheetController.xib in Resources */,
 				CFA0B23718693F1100501C35 /* GoToFolderSheetController.xib in Resources */,
 				CFB598B1196E38E400D4C108 /* pref_general_icon.png in Resources */,
 				CFB598B7196E38E400D4C108 /* pref_viewer_icon.png in Resources */,
@@ -2902,6 +2914,7 @@
 				CF6D9C0A196678000077B146 /* VFSArchiveProxy.mm in Sources */,
 				CF6D9C0B196678000077B146 /* ExternalEditorInfo.mm in Sources */,
 				CF6D9C0C196678000077B146 /* TermSingleTask.mm in Sources */,
+				CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CF6D9C0D196678000077B146 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CF6D9C0E196678000077B146 /* OperationStats.mm in Sources */,
 				CF6D9C0F196678000077B146 /* OperationJob.mm in Sources */,
@@ -3182,6 +3195,7 @@
 				CF9D0B6417CC5FB800CB8146 /* VFSArchiveHost.mm in Sources */,
 				CF9D0ECB17CC961100CB8146 /* archive_write_set_format_ar.c in Sources */,
 				CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */,
+				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CF9D0E8617CC961100CB8146 /* archive_rb.c in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
 				CF9D0E9F17CC961100CB8146 /* archive_read_support_filter_xz.c in Sources */,

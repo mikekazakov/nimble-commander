@@ -108,8 +108,6 @@ static const int g_MaximumSearchResults = 16384;
 
 @implementation FindFilesSheetController
 {
-    NSWindow                   *m_ParentWindow;
-    FindFilesSheetController   *m_Self;
     shared_ptr<VFSHost>         m_Host;
     string                      m_Path;
     unique_ptr<FileSearch>      m_FileSearch;
@@ -126,10 +124,12 @@ static const int g_MaximumSearchResults = 16384;
 }
 
 @synthesize FoundItems = m_FoundItems;
+@synthesize host = m_Host;
+@synthesize path = m_Path;
 
 - (id) init
 {
-    self = [super initWithWindowNibName:NSStringFromClass(self.class)];
+    self = [super init];
     if(self){
         m_FileSearch.reset(new FileSearch);
         m_FoundItems = [NSMutableArray new];
@@ -162,42 +162,14 @@ static const int g_MaximumSearchResults = 16384;
         [self.EncodingsPopUp.menu addItem:item];
     }
     [self.EncodingsPopUp selectItemWithTag:encodings::ENCODING_UTF8];
-    
-
-
 }
 
-- (void)ShowSheet:(NSWindow *)_window
-          withVFS:(shared_ptr<VFSHost>) _host
-         fromPath:(string) _path
-          handler:(void(^)())_handler
-{
-    m_ParentWindow = _window;
-    m_Host = _host;
-    m_Path = _path;
-    m_Handler = _handler;
-    m_Self = self;
-    [NSApp beginSheet:self.window
-       modalForWindow:_window
-        modalDelegate:self
-       didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo:nil];
-}
-
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [self.window orderOut:self];
-    m_ParentWindow = nil;
-    m_Self = nil;
-    m_Handler = nil;
-}
 
 - (IBAction)OnClose:(id)sender
 {
     m_FileSearch->Stop();
     m_FileSearch->Wait();
-    m_Handler();
-    [NSApp endSheet:self.window returnCode:0];
+    [self endSheet:NSModalResponseOK];
 }
 
 - (void) OnFinishedSearch

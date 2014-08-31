@@ -31,14 +31,6 @@
 
 @implementation PreferencesWindowExternalEditorsTabNewEditorSheet
 
-- (id) init
-{
-    self = [super initWithWindowNibName:NSStringFromClass(self.class)];
-    if(self) {
-    }
-    return self;
-}
-
 - (bool) hasTerminal
 {
     return configuration::has_terminal;

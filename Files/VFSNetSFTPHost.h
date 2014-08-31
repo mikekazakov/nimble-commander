@@ -87,6 +87,8 @@ public:
     
     VFS_DECLARE_SHARED_PTR(VFSNetSFTPHost);
 private:
+    struct AutoConnectionReturn;
+    
     int SpawnSSH2(unique_ptr<Connection> &_t);
     int SpawnSFTP(unique_ptr<Connection> &_t);
     

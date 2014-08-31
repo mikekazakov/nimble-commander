@@ -22,6 +22,7 @@
 #import "CreateDirectorySheetController.h"
 #import "CreateDirectoryOperation.h"
 #import "FTPConnectionSheetController.h"
+#import "SFTPConnectionSheetController.h"
 #import "FileMask.h"
 #import "SelectionWithMaskPopupViewController.h"
 #import "PanelViewPresentation.h"
@@ -203,43 +204,83 @@
 
 - (IBAction) OnGoToFTP:(id)sender {
     FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
-    [sheet ShowSheet:self.window
-             handler:^{
-                 m_DirectoryLoadingQ->Run(^{
-                     if(sheet.server == nil)
-                         return;
-                     
-                     string server =  sheet.server.UTF8String;
-                     string username = sheet.username ? sheet.username.UTF8String : "";
-                     string password = sheet.password ? sheet.password.UTF8String : "";
-                     string path = sheet.path ? sheet.path.UTF8String : "/";
-                     if(path.empty() || path[0] != '/')
-                         path = "/";
-                     
-                     VFSNetFTPOptions opts;
-                     opts.user = username;
-                     opts.passwd = password;
-                     if(sheet.port.intValue != 0)
-                         opts.port = sheet.port.intValue;
-                     
-                     auto host = make_shared<VFSNetFTPHost>(server.c_str());
-                     int ret = host->Open(path.c_str(), opts);
-                     if(ret != 0)
-                         return dispatch_async(dispatch_get_main_queue(), ^{
-                             NSAlert *alert = [[NSAlert alloc] init];
-                             alert.messageText = @"FTP connection error:";
-                             alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
-                             [alert addButtonWithTitle:@"OK"];
-                             [alert runModal];
-                         });
-                     dispatch_to_main_queue(^{
-                         m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-                         [self GoToDir:path vfs:host select_entry:"" async:true];
-                     });
-                 });
-             }];
+    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if(returnCode != NSModalResponseOK)
+            return;
+
+        m_DirectoryLoadingQ->Run(^{
+            if(sheet.server == nil)
+                return;
+            
+            string server =  sheet.server.UTF8String;
+            string username = sheet.username ? sheet.username.UTF8String : "";
+            string password = sheet.password ? sheet.password.UTF8String : "";
+            string path = sheet.path ? sheet.path.UTF8String : "/";
+            if(path.empty() || path[0] != '/')
+                path = "/";
+            
+            VFSNetFTPOptions opts;
+            opts.user = username;
+            opts.passwd = password;
+            if(sheet.port.intValue != 0)
+                opts.port = sheet.port.intValue;
+            
+            auto host = make_shared<VFSNetFTPHost>(server.c_str());
+            int ret = host->Open(path.c_str(), opts);
+            if(ret != 0)
+                return dispatch_async(dispatch_get_main_queue(), ^{
+                    NSAlert *alert = [[NSAlert alloc] init];
+                    alert.messageText = @"FTP connection error:";
+                    alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
+                    [alert addButtonWithTitle:@"OK"];
+                    [alert runModal];
+                });
+            dispatch_to_main_queue(^{
+                m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
+                [self GoToDir:path vfs:host select_entry:"" async:true];
+            });
+        });
+    }];
 }
 
+- (IBAction) OnGoToSFTP:(id)sender {
+    SFTPConnectionSheetController *sheet = [SFTPConnectionSheetController new];
+    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if(returnCode != NSModalResponseOK)
+            return;
+        
+        m_DirectoryLoadingQ->Run(^{
+            if(sheet.server == nil)
+                return;
+            
+            string server =  sheet.server.UTF8String;
+            string username = sheet.username ? sheet.username.UTF8String : "";
+            string password = sheet.password ? sheet.password.UTF8String : "";
+            
+            VFSNetSFTPOptions opts;
+            opts.user = username;
+            opts.passwd = password;
+            if(sheet.port.intValue != 0)
+                opts.port = sheet.port.intValue;
+            
+            auto host = make_shared<VFSNetSFTPHost>(server.c_str());
+            int ret = host->Open(opts);
+            if(ret != 0)
+                return dispatch_async(dispatch_get_main_queue(), ^{
+                    NSAlert *alert = [[NSAlert alloc] init];
+                    alert.messageText = @"SFTP connection error:";
+                    alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
+                    [alert addButtonWithTitle:@"OK"];
+                    [alert runModal];
+                });
+            dispatch_to_main_queue(^{
+                m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
+                [self GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
+            });
+        });
+    }];
+    
+}
 
 - (IBAction)OnOpen:(id)sender { // enter
     [self HandleGoIntoDirOrOpenInSystem];
@@ -281,14 +322,12 @@
 
 - (IBAction)performFindPanelAction:(id)sender {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
-    [sheet ShowSheet:self.window
-             withVFS:self.VFS
-            fromPath:self.GetCurrentDirectoryPathRelativeToHost
-             handler:^{
-                 if(auto item = sheet.SelectedItem)
-                     [self GoToDir:item->dir_path vfs:self.VFS select_entry:item->filename async:true];
-             }
-     ];
+    sheet.host = self.VFS;
+    sheet.path = self.GetCurrentDirectoryPathRelativeToHost;
+    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if(auto item = sheet.SelectedItem)
+            [self GoToDir:item->dir_path vfs:self.VFS select_entry:item->filename async:true];
+    }];
 }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {

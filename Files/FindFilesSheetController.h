@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "VFS.h"
+#import "SheetController.h"
 
 struct FindFilesSheetControllerFoundItem
 {
@@ -17,16 +17,13 @@ struct FindFilesSheetControllerFoundItem
     VFSStat st;
 };
 
-@interface FindFilesSheetController : NSWindowController<NSTableViewDataSource, NSTableViewDelegate>
-
-
-- (void)ShowSheet:(NSWindow *) _window
-          withVFS:(shared_ptr<VFSHost>) _host
-         fromPath:(string) _path
-          handler:(void(^)())_handler;
+@interface FindFilesSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate>
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnSearch:(id)sender;
+
+@property (nonatomic) VFSHostPtr host;
+@property (nonatomic) string path;
 
 @property (strong) IBOutlet NSButton *CloseButton;
 @property (strong) IBOutlet NSButton *SearchButton;

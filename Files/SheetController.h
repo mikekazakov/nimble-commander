@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
 @interface SheetController : NSWindowController
 
 - (void) beginSheetForWindow:(NSWindow*)_wnd

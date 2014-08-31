@@ -48,6 +48,22 @@ bool VFSNetSFTPHost::Connection::Alive() const {
     return retval == 0;
 }
 
+struct VFSNetSFTPHost::AutoConnectionReturn // classic RAII stuff to prevent connections leaking in operations
+{
+    inline AutoConnectionReturn(unique_ptr<Connection> &_conn, VFSNetSFTPHost *_this):
+        m_Conn(_conn),
+        m_This(_this) {
+        assert(_conn != nullptr);
+        assert(_this != nullptr);
+    }
+    
+    inline ~AutoConnectionReturn() {
+        m_This->ReturnConnection(move(m_Conn));
+    }
+    unique_ptr<Connection> &m_Conn;
+    VFSNetSFTPHost *m_This;
+};
+
 const char *VFSNetSFTPHost::Tag = "net_sftp";
 
 const char *VFSNetSFTPHost::FSTag() const
@@ -126,7 +142,7 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     connection->socket = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in sin;
     sin.sin_family = AF_INET;
-    sin.sin_port = htons(m_Options->port >= 0 ? m_Options->port : 22);
+    sin.sin_port = htons(m_Options->port > 0 ? m_Options->port : 22);
     sin.sin_addr.s_addr = hostaddr;
     if (connect(connection->socket, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
         fprintf(stderr, "failed to connect remote sftp host!\n");
@@ -182,14 +198,15 @@ int VFSNetSFTPHost::SpawnSFTP(unique_ptr<Connection> &_t)
 
 int VFSNetSFTPHost::GetConnection(unique_ptr<Connection> &_t)
 {
-    lock_guard<mutex> lock(m_ConnectionsLock);
-    
-    for(auto i = m_Connections.begin(); i != m_Connections.end(); ++i)
-        if((*i)->Alive()) {
-            _t = move(*i);
-            m_Connections.erase(i);
-            return 0;
-        }
+    {
+        lock_guard<mutex> lock(m_ConnectionsLock);
+        for(auto i = m_Connections.begin(); i != m_Connections.end(); ++i)
+            if((*i)->Alive()) {
+                _t = move(*i);
+                m_Connections.erase(i);
+                return 0;
+            }
+    }
     
     int rc = SpawnSSH2(_t);
     if(rc < 0)
@@ -222,6 +239,8 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     int rc = GetConnection(conn);
     if(rc)
         return -1;
+    
+    AutoConnectionReturn acr(conn, this);
     
     LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
     if (!sftp_handle) {
@@ -321,8 +340,6 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     
     *_target = dir;
     
-    ReturnConnection(move(conn));
-    
     return 0;
 }
 
@@ -335,6 +352,9 @@ int VFSNetSFTPHost::Stat(const char *_path,
     int rc = GetConnection(conn);
     if(rc)
         return -1;
+    
+    AutoConnectionReturn acr(conn, this);
+    
 
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     rc = libssh2_sftp_stat_ex(conn->sftp,
@@ -343,7 +363,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
                               (_flags & F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
                               &attrs);
     if(rc)
-        return -1;
+        return -1; // some return code here
 
     if(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) {
         _st.mode = attrs.permissions;
@@ -372,10 +392,8 @@ int VFSNetSFTPHost::Stat(const char *_path,
         _st.size = attrs.filesize;
         _st.meaning.size = 1;
     }
-        
-    ReturnConnection(move(conn));
     
-    return 0;
+    return 0; // some return code here
 }
 
 int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
@@ -385,6 +403,8 @@ int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
     int rc = GetConnection(conn);
     if(rc)
         return -1;
+    
+    AutoConnectionReturn acr(conn, this);
     
     LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
     if (!sftp_handle) {
@@ -417,8 +437,6 @@ int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
 
     libssh2_sftp_closedir(sftp_handle);
     
-    ReturnConnection(move(conn));
-    
     return 0;
 }
 
@@ -431,6 +449,8 @@ int VFSNetSFTPHost::StatFS(const char *_path,
     if(rc)
         return -1;
     
+    AutoConnectionReturn acr(conn, this);
+    
     LIBSSH2_SFTP_STATVFS statfs;
     rc = libssh2_sftp_statvfs(conn->sftp, _path, strlen(_path), &statfs);
     if(rc < 0)
@@ -440,8 +460,6 @@ int VFSNetSFTPHost::StatFS(const char *_path,
     _stat.avail_bytes = statfs.f_bavail * statfs.f_bsize;
     _stat.free_bytes  = statfs.f_ffree  * statfs.f_bsize;
     _stat.volume_name.clear(); // mb some dummy name here?
-    
-    ReturnConnection(move(conn));
     
     return 0;
 }
@@ -487,9 +505,9 @@ int VFSNetSFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
     if(rc)
         return -1; // return something
     
-    rc = libssh2_sftp_unlink_ex(conn->sftp, _path, (unsigned)strlen(_path));
+    AutoConnectionReturn acr(conn, this);
     
-    ReturnConnection(move(conn));
+    rc = libssh2_sftp_unlink_ex(conn->sftp, _path, (unsigned)strlen(_path));
     
     if(rc < 0)
         return -1; // return something
@@ -504,10 +522,10 @@ int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^
     if(rc)
         return -1; // return something
     
+    AutoConnectionReturn acr(conn, this);
+    
     rc = libssh2_sftp_rename_ex(conn->sftp, _old_path, (unsigned)strlen(_old_path), _new_path, (unsigned)strlen(_new_path),
                                 LIBSSH2_SFTP_RENAME_OVERWRITE | LIBSSH2_SFTP_RENAME_ATOMIC | LIBSSH2_SFTP_RENAME_NATIVE);
-    
-    ReturnConnection(move(conn));
     
     if(rc < 0)
         return -1; // return something
@@ -522,9 +540,9 @@ int VFSNetSFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)()
     if(rc)
         return -1; // return something
   
-    rc = libssh2_sftp_rmdir_ex(conn->sftp, _path, (unsigned)strlen(_path));
+    AutoConnectionReturn acr(conn, this);
     
-    ReturnConnection(move(conn));
+    rc = libssh2_sftp_rmdir_ex(conn->sftp, _path, (unsigned)strlen(_path));
     
     if(rc < 0)
         return -1; // return something
@@ -539,9 +557,9 @@ int VFSNetSFTPHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel
     if(rc)
         return -1; // return something
     
-    rc = libssh2_sftp_mkdir_ex(conn->sftp, _path, (unsigned)strlen(_path), _mode);
+    AutoConnectionReturn acr(conn, this);
     
-    ReturnConnection(move(conn));
+    rc = libssh2_sftp_mkdir_ex(conn->sftp, _path, (unsigned)strlen(_path), _mode);
     
     if(rc < 0)
         return -1; // return something

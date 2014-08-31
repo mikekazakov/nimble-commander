@@ -490,9 +490,7 @@ opendest:
     was_successful = true;
     
 cleanup:;
-    src_file->Close();
     src_file.reset();
-    dst_file->Close();
     dst_file.reset();
     
     if(was_successful == false &&

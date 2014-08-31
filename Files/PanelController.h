@@ -131,6 +131,8 @@ namespace panel
 - (void) RefreshDirectory; // user pressed cmd+r by default
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
+- (IBAction) OnGoToSFTP:(id)sender; // remove me!
+
 @end
 
 // internal stuff, move it somewehere else

@@ -74,15 +74,16 @@ bool VFSNetSFTPFile::IsOpened() const
 
 int VFSNetSFTPFile::Close()
 {
-    if(IsOpened()) {
+    if(m_Handle) {
         libssh2_sftp_close(m_Handle);
         m_Handle = nullptr;
-
+    }
+    
+    if(m_Connection)
         dynamic_pointer_cast<VFSNetSFTPHost>(Host())->ReturnConnection(move(m_Connection));
 
-        m_Position = 0;
-        m_Size     = 0;
-    }
+    m_Position = 0;
+    m_Size     = 0;
     return 0;
 }
 

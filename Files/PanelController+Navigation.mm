@@ -92,6 +92,18 @@
             else
                 break;
         }
+        else if(part.fs_tag == VFSNetSFTPHost::Tag) {
+            assert(i == 0);
+            assert(i == _stack.size() - 1); // need to return here later
+            auto options = dynamic_pointer_cast<VFSNetSFTPOptions>(part.options);
+            if(!options)
+                break;
+            auto sftp = make_shared<VFSNetSFTPHost>(part.junction.c_str());
+            if(sftp->Open(*options) >= 0)
+                res_stack.emplace_back(sftp);
+            else
+                break;
+        }
         else
             assert(0);
     }

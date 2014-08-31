@@ -19,9 +19,7 @@ bool VFSNetSFTPOptions::Equal(const VFSHostOptions &_r) const
         return false;
     
     const VFSNetSFTPOptions& r = (const VFSNetSFTPOptions&)_r;
-    return user == r.user &&
-        passwd == r.passwd &&
-        port == r.port;
+    return user == r.user && passwd == r.passwd && port == r.port;
 }
 
 VFSNetSFTPHost::Connection::~Connection()
@@ -32,7 +30,7 @@ VFSNetSFTPHost::Connection::~Connection()
     }
     
     if(ssh) {
-        libssh2_session_disconnect(ssh, "bye");
+        libssh2_session_disconnect(ssh, "Farewell from Files!");
         libssh2_session_free(ssh);
         ssh = nullptr;
     }
@@ -231,27 +229,34 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     }
  
     auto dir = make_shared<VFSGenericListing>(_path, shared_from_this());
- 
+    bool need_dot_dot = !(_flags & VFSHost::F_NoDotDot) && strcmp(_path, "/") != 0;
+    
+    if(need_dot_dot)
+        dir->m_Items.emplace_back(); // reserve a space for dot-dot entry
+    
     while (true) {
         char mem[MAXPATHLEN];
         LIBSSH2_SFTP_ATTRIBUTES attrs;
-        
-        /* loop until we fail */
-        rc = libssh2_sftp_readdir_ex(sftp_handle, mem, sizeof(mem), nullptr, 0, &attrs);        
-        if(rc <= 0)
+        if(libssh2_sftp_readdir_ex(sftp_handle, mem, sizeof(mem), nullptr, 0, &attrs) <= 0)
             break;
         
-        if( mem[0] == '.' && mem[1] == 0 ) continue; // do not process self entry
-        if( mem[0] == '.' && mem[1] == '.' && mem[2] == 0 ) // special case for dot-dot directory
+        bool isdotdot = false;
+        if( mem[0] == '.' && mem[1] == 0 )
+            continue; // do not process self entry
+        else if( mem[0] == '.' && mem[1] == '.' && mem[2] == 0 ) // special case for dot-dot directory
         {
             if(_flags & VFSHost::F_NoDotDot) continue;
             
             if(strcmp(_path, "/") == 0)
                 continue; // skip .. for root directory
+            
+            isdotdot = true;
         }
-        
-        dir->m_Items.emplace_back();
-        auto &it = dir->m_Items.back();
+        else { // all other cases
+            dir->m_Items.emplace_back();
+        }
+
+        auto &it = isdotdot ? dir->m_Items[0] : dir->m_Items.back();
         
         it.m_Name = strdup(mem);
         it.m_NameLen = strlen(mem);
@@ -284,6 +289,36 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     
     libssh2_sftp_closedir(sftp_handle);
 
+    // check for a symlinks and read additional info
+    for(auto &i: *dir ){
+        if(i.IsSymlink()) {
+            char path[MAXPATHLEN], symlink[MAXPATHLEN];
+            strcpy(path, _path);
+            if( path[strlen(path)-1] != '/' ) strcat(path, "/");
+            strcat(path, i.Name());
+            
+            // read where symlink points at
+            rc = libssh2_sftp_symlink_ex(conn->sftp, path, (unsigned)strlen(path), symlink, MAXPATHLEN, LIBSSH2_SFTP_READLINK);
+            if(rc >= 0) {
+                ((VFSGenericListingItem*)&i)->m_Symlink = strdup(symlink);
+                ((VFSGenericListingItem*)&i)->m_NeedReleaseSymlink = strdup(symlink);
+            }
+            else {
+                ((VFSGenericListingItem*)&i)->m_Symlink = ""; // fallback case to return something on request
+            }
+
+            // read info about real object
+            LIBSSH2_SFTP_ATTRIBUTES stat;
+            if(libssh2_sftp_stat_ex(conn->sftp, path, (unsigned)strlen(path), LIBSSH2_SFTP_STAT, &stat) >= 0) {
+                ((VFSGenericListingItem*)&i)->m_Mode = stat.permissions;
+                if(!i.IsDir())
+                    ((VFSGenericListingItem*)&i)->m_Size = stat.filesize;
+                else
+                    ((VFSGenericListingItem*)&i)->m_Size = VFSListingItem::InvalidSize;
+            }
+        }
+    }
+    
     *_target = dir;
     
     ReturnConnection(move(conn));
@@ -443,4 +478,73 @@ bool VFSNetSFTPHost::IsWriteable() const
 bool VFSNetSFTPHost::IsWriteableAtPath(const char *_dir) const
 {
     return true; // dummy now
+}
+
+int VFSNetSFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
+{
+    unique_ptr<Connection> conn;
+    int rc = GetConnection(conn);
+    if(rc)
+        return -1; // return something
+    
+    rc = libssh2_sftp_unlink_ex(conn->sftp, _path, (unsigned)strlen(_path));
+    
+    ReturnConnection(move(conn));
+    
+    if(rc < 0)
+        return -1; // return something
+    
+    return 0;
+}
+
+int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)())
+{
+    unique_ptr<Connection> conn;
+    int rc = GetConnection(conn);
+    if(rc)
+        return -1; // return something
+    
+    rc = libssh2_sftp_rename_ex(conn->sftp, _old_path, (unsigned)strlen(_old_path), _new_path, (unsigned)strlen(_new_path),
+                                LIBSSH2_SFTP_RENAME_OVERWRITE | LIBSSH2_SFTP_RENAME_ATOMIC | LIBSSH2_SFTP_RENAME_NATIVE);
+    
+    ReturnConnection(move(conn));
+    
+    if(rc < 0)
+        return -1; // return something
+    
+    return 0;
+}
+
+int VFSNetSFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
+{
+    unique_ptr<Connection> conn;
+    int rc = GetConnection(conn);
+    if(rc)
+        return -1; // return something
+  
+    rc = libssh2_sftp_rmdir_ex(conn->sftp, _path, (unsigned)strlen(_path));
+    
+    ReturnConnection(move(conn));
+    
+    if(rc < 0)
+        return -1; // return something
+    
+    return 0;
+}
+
+int VFSNetSFTPHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel_checker)() )
+{
+    unique_ptr<Connection> conn;
+    int rc = GetConnection(conn);
+    if(rc)
+        return -1; // return something
+    
+    rc = libssh2_sftp_mkdir_ex(conn->sftp, _path, (unsigned)strlen(_path), _mode);
+    
+    ReturnConnection(move(conn));
+    
+    if(rc < 0)
+        return -1; // return something
+    
+    return 0;
 }

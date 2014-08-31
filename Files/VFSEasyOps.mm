@@ -215,7 +215,7 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     if(!_src_host->IsDirectory(_src_full_path, 0, 0))
         return VFSError::InvalidCall;
     
-    result = _dst_host->CreateDirectory(_dst_full_path, 0);
+    result = _dst_host->CreateDirectory(_dst_full_path, 0640, 0);
     if(result < 0)
         return result;
     

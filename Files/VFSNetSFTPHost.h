@@ -62,6 +62,11 @@ public:
                            shared_ptr<VFSFile> &_target,
                            bool (^_cancel_checker)()) override;
     
+    virtual int Unlink(const char *_path, bool (^_cancel_checker)()) override;    
+    virtual int Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)()) override;
+    virtual int CreateDirectory(const char* _path, int _mode, bool (^_cancel_checker)() ) override;
+    virtual int RemoveDirectory(const char *_path, bool (^_cancel_checker)()) override;
+    
     virtual string VerboseJunctionPath() const override;
     virtual shared_ptr<VFSHostOptions> Options() const override;
     virtual bool ShouldProduceThumbnails() const override;

@@ -188,6 +188,7 @@ public:
                            bool (^_cancel_checker)());
     
     virtual int CreateDirectory(const char* _path,
+                                int _mode,
                                 bool (^_cancel_checker)()
                                 );
     

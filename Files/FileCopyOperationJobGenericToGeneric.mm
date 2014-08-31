@@ -169,7 +169,7 @@ void FileCopyOperationJobGenericToGeneric::BuildDirectories(const path &_dir, co
     for(auto i = rbegin(to_create); i != rend(to_create); ++i)
     {
     mkdir:;
-        int ret = _host->CreateDirectory(i->c_str(), 0);
+        int ret = _host->CreateDirectory(i->c_str(), 0640, 0);
         if(ret != 0)
         {
             int result = [[m_Operation OnDestCantCreateDir:VFSError::ToNSError(ret) ForDir:i->c_str()] WaitForResult];
@@ -505,7 +505,12 @@ cleanup:;
 bool FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full_path, const path &_dest_full_path)
 {
     bool res = false;
-    VFSStat dest_st;
+    VFSStat src_st, dest_st;
+ 
+    if(m_SrcHost->Stat(_src_full_path.c_str(), src_st, 0, 0) != 0)
+        return false;
+    
+    
     if(m_DstHost->Stat(_dest_full_path.c_str(), dest_st, VFSHost::F_NoFollow, 0) == 0)
     {
         // this directory already exist. currently do nothing, later - update it's attrs.
@@ -514,7 +519,7 @@ bool FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full
     else
     {
     domkdir:
-        int ret = m_DstHost->CreateDirectory(_dest_full_path.c_str(), 0);
+        int ret = m_DstHost->CreateDirectory(_dest_full_path.c_str(), src_st.mode, 0);
         if(ret < 0)
         {
             if(m_SkipAll) goto end;
@@ -534,7 +539,6 @@ void FileCopyOperationJobGenericToGeneric::RenameEntry(const path &_src_full_pat
 {
     VFSStat st;
     assert( m_SrcHost->Stat(_dest_full_path.c_str(), st, 0, 0) != 0); // need a dialog for an existing destinations
-    
     int ret = m_SrcHost->Rename(_src_full_path.c_str(), _dest_full_path.c_str(), 0);
     assert(ret == 0);
 }

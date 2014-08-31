@@ -159,6 +159,7 @@ struct VFSGenericListingItem : public VFSListingItem
     uint16_t        m_ExtOff    = 0;
     bool            m_NeedReleaseName = false;
     bool            m_NeedReleaseCFName = false;
+    bool            m_NeedReleaseSymlink = false;
 
     // helper methods
     void FindExtension()

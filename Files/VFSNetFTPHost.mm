@@ -314,7 +314,8 @@ int VFSNetFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
             VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
-int VFSNetFTPHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
+// _mode is ignored, since we can't specify any access mode from ftp
+int VFSNetFTPHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel_checker)())
 {
     path path = _path;
     if(path.is_absolute() == false)

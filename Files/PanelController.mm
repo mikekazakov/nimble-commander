@@ -462,7 +462,7 @@ void panel::GenericCursorPersistance::Restore()
     if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
-            auto host = make_shared<VFSNetSFTPHost>("debian7x86.local");            
+            auto host = make_shared<VFSNetSFTPHost>("debian7x86.local");
             VFSNetSFTPOptions opts;
             opts.user = "root";
             opts.passwd = "123456";
@@ -710,6 +710,7 @@ void panel::GenericCursorPersistance::Restore()
         if(self.GetCurrentDirectoryPathRelativeToHost == curr_path && self.VFS == curr_vfs)
             dispatch_to_main_queue( ^{
                 [self ScheduleDelayedSelectionChangeFor:target_fn timeoutms:500 checknow:true];
+                [self RefreshDirectory];
             } );
     }];
     

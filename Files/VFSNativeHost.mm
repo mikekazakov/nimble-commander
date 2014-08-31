@@ -319,9 +319,9 @@ bool VFSNativeHost::IsWriteableAtPath(const char *_dir) const
     return true; // dummy now
 }
 
-int VFSNativeHost::CreateDirectory(const char* _path, bool (^_cancel_checker)())
+int VFSNativeHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel_checker)())
 {
-    int ret = mkdir(_path, 0777);
+    int ret = mkdir(_path, _mode);
     if(ret == 0)
         return 0;
     return VFSError::FromErrno();

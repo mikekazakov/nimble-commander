@@ -415,6 +415,12 @@ DQ
                                                 <action selector="OnGoToFTP:" target="-1" id="Vp7-5m-44g"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="SFTP Server" tag="14140" id="bip-nL-0se">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToSFTP:" target="-1" id="j70-jL-OKb"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

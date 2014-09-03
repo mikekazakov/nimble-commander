@@ -48,8 +48,9 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.server" id="aI7-Qp-J3w">
+                            <binding destination="-2" name="value" keyPath="self.server" id="F0g-IE-q0P">
                                 <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                     <string key="NSNullPlaceholder">example.com</string>
                                 </dictionary>
                             </binding>
@@ -71,8 +72,9 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.username" id="Kax-T7-arm">
+                            <binding destination="-2" name="value" keyPath="self.username" id="9Qu-hD-qcg">
                                 <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                     <string key="NSNullPlaceholder">root</string>
                                 </dictionary>
                             </binding>
@@ -94,8 +96,9 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.password" id="9Q5-lU-orh">
+                            <binding destination="-2" name="value" keyPath="self.password" id="NpK-Wh-VzO">
                                 <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                     <string key="NSNullPlaceholder">passwd</string>
                                 </dictionary>
                             </binding>
@@ -120,8 +123,9 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.port" id="4lf-df-1f6">
+                            <binding destination="-2" name="value" keyPath="self.port" id="OFd-Oy-lpd">
                                 <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                     <string key="NSNullPlaceholder">22</string>
                                 </dictionary>
                             </binding>

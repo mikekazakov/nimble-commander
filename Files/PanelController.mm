@@ -118,7 +118,7 @@ void panel::GenericCursorPersistance::Restore()
         m_VFSFetchingFlags = 0;
         m_IsAnythingWorksInBackground = false;
         m_DirectorySizeCountingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirsizecounting");
-        m_DirectoryLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirsizecounting");
+        m_DirectoryLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirloading");
         m_DirectoryReLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirreloading");
         m_DelayedSelection.isvalid = false;
         
@@ -459,21 +459,12 @@ void panel::GenericCursorPersistance::Restore()
         return true;
     }
     
-    if(keycode == 3 ) { // 'F' button
+/*    if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
-/*            auto host = make_shared<VFSNetSFTPHost>("debian7x86.local");
-            VFSNetSFTPOptions opts;
-            opts.user = "root";
-            opts.passwd = "123456";
-            opts.port = 22;
-            if(host->Open(opts) == 0) {
-                [self GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
-            }*/
-            [self OnGoToSFTP:self];
             return true;
         }
-    }
+    }*/
     
     // handle some actions manually, to prevent annoying by menu highlighting by hotkey
     auto &shortcuts = ActionsShortcutsManager::Instance();

@@ -57,9 +57,10 @@
 {
     PreferencesWindowExternalEditorsTabNewEditorSheet *sheet = [PreferencesWindowExternalEditorsTabNewEditorSheet new];
     sheet.Info = [ExternalEditorInfo new];
+    sheet.Info.mask = @"*";
     [sheet beginSheetForWindow:self.view.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode == NSModalResponseOK)
-            [self.ExtEditorsController addObject:sheet.Info];
+            [self.ExtEditorsController insertObject:sheet.Info atArrangedObjectIndex:0];
     }];    
 }
 

@@ -272,6 +272,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
                      returnType:(NSString *)returnType
 {
     if([sendType isEqualToString:NSFilenamesPboardType] &&
+       self.isPanelActive &&
        [self ActivePanelData]->Host()->IsNativeFS() )
         return self;
     
@@ -289,8 +290,8 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (bool)WriteToPasteboard:(NSPasteboard *)pboard
 {
-    if(!self.isPanelActive) return false;
-    if(![self ActivePanelData]->Host()->IsNativeFS())
+    if(!self.isPanelActive ||
+       ![self ActivePanelData]->Host()->IsNativeFS())
         return false;
     
     NSMutableArray *filenames = [NSMutableArray new];
@@ -594,7 +595,8 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         return;
 
     // check if we're on native fs now (all others vfs are r/o now)
-    if(![self ActivePanelData]->Host()->IsNativeFS())
+    if(!self.isPanelActive ||
+       !self.ActivePanelData->Host()->IsNativeFS())
         return;
     
     // input should be an array of filepaths

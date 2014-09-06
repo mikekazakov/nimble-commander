@@ -51,13 +51,16 @@ int VFSNetSFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
                                                        mode,
                                                        LIBSSH2_SFTP_OPENFILE);
     if(handle == nullptr) {
+        rc = sftp_host->VFSErrorForConnection(*conn);
         sftp_host->ReturnConnection(move(conn));
-        return -1; // return some error code
+        return rc;
     }
     
     LIBSSH2_SFTP_ATTRIBUTES attrs;
-    if((rc = libssh2_sftp_fstat_ex(handle, &attrs, 0)) < 0)
-        return rc; // return some error code
+    if((rc = libssh2_sftp_fstat_ex(handle, &attrs, 0)) < 0) {
+        rc = sftp_host->VFSErrorForConnection(*conn);
+        return rc;
+    }
     
     m_Connection = move(conn);
     m_Handle = handle;
@@ -126,7 +129,7 @@ ssize_t VFSNetSFTPFile::Read(void *_buf, size_t _size)
         return rc;
     }
     else
-        return -1; // error code
+        return SetLastError(dynamic_pointer_cast<VFSNetSFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
 }
 
 ssize_t VFSNetSFTPFile::Write(const void *_buf, size_t _size)
@@ -143,7 +146,7 @@ ssize_t VFSNetSFTPFile::Write(const void *_buf, size_t _size)
         return rc;
     }
     else
-        return -1; // error code
+        return SetLastError(dynamic_pointer_cast<VFSNetSFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
 }
 
 ssize_t VFSNetSFTPFile::Pos() const

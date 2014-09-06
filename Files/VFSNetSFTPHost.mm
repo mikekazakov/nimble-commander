@@ -85,9 +85,9 @@ int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
 {
     struct hostent *remote_host = gethostbyname(JunctionPath());
     if(!remote_host)
-        return -1; // need something meaningful
+        return VFSError::NetSFTPCouldntResolveHost; // need something meaningful
     if(remote_host->h_addrtype != AF_INET)
-        return -1; // need something meaningful
+        return VFSError::NetSFTPCouldntResolveHost; // need something meaningful
     m_HostAddr = *(in_addr_t *) remote_host->h_addr_list[0];
     
     m_Options = make_shared<VFSNetSFTPOptions>(_options);
@@ -99,22 +99,25 @@ int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
     
     LIBSSH2_CHANNEL *channel = libssh2_channel_open_session(conn->ssh);
     if(channel == nullptr)
-        return -1;
+        return VFSError::NetSFTPErrorSSH;
     
     rc = libssh2_channel_exec(channel, "pwd");
-    if(rc < 0)
-        return -1;
+    if(rc < 0) {
+        libssh2_channel_close(channel);
+        libssh2_channel_free(channel);
+        return VFSError::NetSFTPErrorSSH;
+    }
     
     char buffer[MAXPATHLEN];
     rc = (int)libssh2_channel_read( channel, buffer, sizeof(buffer) );
+    libssh2_channel_close(channel);
+    libssh2_channel_free(channel);
+    
     if( rc <= 0 )
-        return -1;
+        return VFSError::NetSFTPErrorSSH;
     buffer[rc - 1] = 0;
     
     m_HomeDir = buffer;
-    
-    libssh2_channel_close(channel);
-    libssh2_channel_free(channel);
     
     rc = SpawnSFTP(conn);
     if(rc < 0)
@@ -144,10 +147,8 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     sin.sin_family = AF_INET;
     sin.sin_port = htons(m_Options->port > 0 ? m_Options->port : 22);
     sin.sin_addr.s_addr = hostaddr;
-    if (connect(connection->socket, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
-        fprintf(stderr, "failed to connect remote sftp host!\n");
-        return -1;
-    }
+    if (connect(connection->socket, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0)
+        return VFSError::NetSFTPCouldntConnect;
     
     int optval = 1;
     setsockopt(connection->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval));
@@ -155,27 +156,19 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     
     connection->ssh = libssh2_session_init();
     if(!connection->ssh)
-        return -1;
+        return VFSError::GenericError;
     
     rc = libssh2_session_handshake(connection->ssh, connection->socket);
-    if(rc) {
-//        fprintf(stderr, "Failure establishing SSH session: %d\n", rc);
-        return -1;
-    }
-    
-//    libssh2_userauth_password_ex((session), (username), strlen(username), \
-//                                 (password), strlen(password), NULL)
-    
+    if(rc)
+        return VFSError::NetSFTPCouldntEstablishSSH;
     
     if (libssh2_userauth_password_ex(connection->ssh,
                                      m_Options->user.c_str(),
                                      (unsigned)m_Options->user.length(),
                                      m_Options->passwd.c_str(),
                                      (unsigned)m_Options->passwd.length(),
-                                     NULL)) {
-//        fprintf(stderr, "Authentication by password failed.\n");
-        return -1;
-    }
+                                     NULL))
+        return VFSError::NetSFTPCouldntAuthenticate;
 
     libssh2_session_set_blocking(connection->ssh, 1);
     
@@ -188,10 +181,8 @@ int VFSNetSFTPHost::SpawnSFTP(unique_ptr<Connection> &_t)
 {    
     _t->sftp = libssh2_sftp_init(_t->ssh);
     
-    if (!_t->sftp) {
-        //        fprintf(stderr, "Unable to init SFTP session\n");
-        return -1;
-    }
+    if (!_t->sftp)
+        return VFSError::NetSFTPCouldntInitSFTP;
 
     return 0;
 }
@@ -238,13 +229,13 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
-        return -1;
+        return rc;
     
     AutoConnectionReturn acr(conn, this);
     
     LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
     if (!sftp_handle) {
-        return -1;
+        return VFSErrorForConnection(*conn);
     }
  
     auto dir = make_shared<VFSGenericListing>(_path, shared_from_this());
@@ -351,7 +342,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
-        return -1;
+        return rc;
     
     AutoConnectionReturn acr(conn, this);
     
@@ -363,7 +354,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
                               (_flags & F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
                               &attrs);
     if(rc)
-        return -1; // some return code here
+        return VFSErrorForConnection(*conn);
 
     if(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) {
         _st.mode = attrs.permissions;
@@ -393,7 +384,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
         _st.meaning.size = 1;
     }
     
-    return 0; // some return code here
+    return 0;
 }
 
 int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
@@ -402,13 +393,13 @@ int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
-        return -1;
+        return rc;
     
     AutoConnectionReturn acr(conn, this);
     
     LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
     if (!sftp_handle) {
-        return -1;
+        return VFSErrorForConnection(*conn);
     }
     
     VFSDirEnt e;
@@ -447,14 +438,14 @@ int VFSNetSFTPHost::StatFS(const char *_path,
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
-        return -1;
+        return rc;
     
     AutoConnectionReturn acr(conn, this);
     
     LIBSSH2_SFTP_STATVFS statfs;
     rc = libssh2_sftp_statvfs(conn->sftp, _path, strlen(_path), &statfs);
     if(rc < 0)
-        return -1;
+        return VFSErrorForConnection(*conn);
     
     _stat.total_bytes = statfs.f_blocks * statfs.f_bsize;
     _stat.avail_bytes = statfs.f_bavail * statfs.f_bsize;
@@ -503,14 +494,14 @@ int VFSNetSFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
-        return -1; // return something
+        return rc;
     
     AutoConnectionReturn acr(conn, this);
     
     rc = libssh2_sftp_unlink_ex(conn->sftp, _path, (unsigned)strlen(_path));
     
     if(rc < 0)
-        return -1; // return something
+        return VFSErrorForConnection(*conn);
     
     return 0;
 }
@@ -520,7 +511,7 @@ int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
-        return -1; // return something
+        return rc;
     
     AutoConnectionReturn acr(conn, this);
     
@@ -528,7 +519,7 @@ int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^
                                 LIBSSH2_SFTP_RENAME_OVERWRITE | LIBSSH2_SFTP_RENAME_ATOMIC | LIBSSH2_SFTP_RENAME_NATIVE);
     
     if(rc < 0)
-        return -1; // return something
+        return VFSErrorForConnection(*conn);
     
     return 0;
 }
@@ -538,14 +529,14 @@ int VFSNetSFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)()
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
-        return -1; // return something
+        return rc;
   
     AutoConnectionReturn acr(conn, this);
     
     rc = libssh2_sftp_rmdir_ex(conn->sftp, _path, (unsigned)strlen(_path));
     
     if(rc < 0)
-        return -1; // return something
+        return VFSErrorForConnection(*conn);
     
     return 0;
 }
@@ -555,14 +546,96 @@ int VFSNetSFTPHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
     if(rc)
-        return -1; // return something
+        return rc;
     
     AutoConnectionReturn acr(conn, this);
     
     rc = libssh2_sftp_mkdir_ex(conn->sftp, _path, (unsigned)strlen(_path), _mode);
     
     if(rc < 0)
-        return -1; // return something
+        return VFSErrorForConnection(*conn);
     
     return 0;
+}
+
+int VFSNetSFTPHost::VFSErrorForConnection(Connection &_conn) const
+{
+    using namespace VFSError;
+    int sess_errno = libssh2_session_last_errno(_conn.ssh);
+    if(sess_errno == 0)
+        return 0;
+    if(sess_errno == LIBSSH2_ERROR_SFTP_PROTOCOL)
+        switch (libssh2_sftp_last_error(_conn.sftp)) {
+            case LIBSSH2_FX_OK:                         return 0;
+            case LIBSSH2_FX_EOF:                        return NetSFTPEOF;
+            case LIBSSH2_FX_NO_SUCH_FILE:               return NetSFTPNoSuchFile;
+            case LIBSSH2_FX_PERMISSION_DENIED:          return NetSFTPPermissionDenied;
+            case LIBSSH2_FX_FAILURE:                    return NetSFTPFailure;
+            case LIBSSH2_FX_BAD_MESSAGE:                return NetSFTPBadMessage;
+            case LIBSSH2_FX_NO_CONNECTION:              return NetSFTPNoConnection;
+            case LIBSSH2_FX_CONNECTION_LOST:            return NetSFTPConnectionLost;
+            case LIBSSH2_FX_OP_UNSUPPORTED:             return NetSFTPOpUnsupported;
+            case LIBSSH2_FX_INVALID_HANDLE:             return NetSFTPInvalidHandle;
+            case LIBSSH2_FX_NO_SUCH_PATH:               return NetSFTPNoSuchPath;
+            case LIBSSH2_FX_FILE_ALREADY_EXISTS:        return NetSFTPFileAlreadyExists;
+            case LIBSSH2_FX_WRITE_PROTECT:              return NetSFTPWriteProtect;
+            case LIBSSH2_FX_NO_MEDIA:                   return NetSFTPNoMedia;
+            case LIBSSH2_FX_NO_SPACE_ON_FILESYSTEM:     return NetSFTPNoSpaceOnFilesystem;
+            case LIBSSH2_FX_QUOTA_EXCEEDED:             return NetSFTPQuotaExceeded;
+            case LIBSSH2_FX_UNKNOWN_PRINCIPAL:          return NetSFTPUnknownPrincipal;
+            case LIBSSH2_FX_LOCK_CONFLICT:              return NetSFTPLockConflict;
+            case LIBSSH2_FX_DIR_NOT_EMPTY:              return NetSFTPDirNotEmpty;
+            case LIBSSH2_FX_NOT_A_DIRECTORY:            return NetSFTPNotADir;
+            case LIBSSH2_FX_INVALID_FILENAME:           return NetSFTPInvalidFilename;
+            case LIBSSH2_FX_LINK_LOOP:                  return NetSFTPLinkLoop;
+            default:                                    return NetSFTPFailure;
+        }
+    switch (sess_errno) {
+        case LIBSSH2_ERROR_BANNER_RECV:
+        case LIBSSH2_ERROR_BANNER_SEND:
+        case LIBSSH2_ERROR_INVALID_MAC:
+        case LIBSSH2_ERROR_KEX_FAILURE:
+        case LIBSSH2_ERROR_ALLOC:
+        case LIBSSH2_ERROR_SOCKET_SEND:
+        case LIBSSH2_ERROR_KEY_EXCHANGE_FAILURE:
+        case LIBSSH2_ERROR_TIMEOUT:
+        case LIBSSH2_ERROR_HOSTKEY_INIT:
+        case LIBSSH2_ERROR_HOSTKEY_SIGN:
+        case LIBSSH2_ERROR_DECRYPT:
+        case LIBSSH2_ERROR_SOCKET_DISCONNECT:
+        case LIBSSH2_ERROR_PROTO:
+        case LIBSSH2_ERROR_PASSWORD_EXPIRED:
+        case LIBSSH2_ERROR_FILE:
+        case LIBSSH2_ERROR_METHOD_NONE:
+        case LIBSSH2_ERROR_AUTHENTICATION_FAILED:
+        case LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED:
+        case LIBSSH2_ERROR_CHANNEL_OUTOFORDER:
+        case LIBSSH2_ERROR_CHANNEL_FAILURE:
+        case LIBSSH2_ERROR_CHANNEL_REQUEST_DENIED:
+        case LIBSSH2_ERROR_CHANNEL_UNKNOWN:
+        case LIBSSH2_ERROR_CHANNEL_WINDOW_EXCEEDED:
+        case LIBSSH2_ERROR_CHANNEL_PACKET_EXCEEDED:
+        case LIBSSH2_ERROR_CHANNEL_CLOSED:
+        case LIBSSH2_ERROR_CHANNEL_EOF_SENT:
+        case LIBSSH2_ERROR_ZLIB:
+        case LIBSSH2_ERROR_SOCKET_TIMEOUT:
+        case LIBSSH2_ERROR_SFTP_PROTOCOL:
+        case LIBSSH2_ERROR_REQUEST_DENIED:
+        case LIBSSH2_ERROR_METHOD_NOT_SUPPORTED:
+        case LIBSSH2_ERROR_INVAL:
+        case LIBSSH2_ERROR_INVALID_POLL_TYPE:
+        case LIBSSH2_ERROR_PUBLICKEY_PROTOCOL:
+        case LIBSSH2_ERROR_EAGAIN:
+        case LIBSSH2_ERROR_BUFFER_TOO_SMALL:
+        case LIBSSH2_ERROR_BAD_USE:
+        case LIBSSH2_ERROR_COMPRESS:
+        case LIBSSH2_ERROR_OUT_OF_BOUNDARY:
+        case LIBSSH2_ERROR_AGENT_PROTOCOL:
+        case LIBSSH2_ERROR_SOCKET_RECV:
+        case LIBSSH2_ERROR_ENCRYPT:
+        case LIBSSH2_ERROR_BAD_SOCKET:
+        case LIBSSH2_ERROR_KNOWN_HOSTS: return NetSFTPErrorSSH; // until the better times we dont have a better errors explanation
+        default:                        return NetSFTPErrorSSH;
+    }
+    return NetSFTPErrorSSH;
 }

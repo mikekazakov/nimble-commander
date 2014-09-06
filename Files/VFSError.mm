@@ -62,6 +62,33 @@ static NSString *TextForCode(int _code)
         case NetFTPAccessDenied:        return @"Access to remote resource is denied";
         case NetFTPOperationTimeout:    return @"Operation timeout";
         case NetFTPSSLFailure:          return @"FTP+SSL/TLS failure";
+        case NetSFTPCouldntResolveHost: return @"Couldn't resolve SFTP server host";
+        case NetSFTPCouldntConnect:     return @"Failed to connect remote SFTP server";
+        case NetSFTPCouldntEstablishSSH:return @"Failed to establish SSH session";
+        case NetSFTPCouldntAuthenticate:return @"Authentication by password failed";
+        case NetSFTPCouldntInitSFTP:    return @"Unable to init SFTP session";
+        case NetSFTPErrorSSH:           return @"SSH error";
+        case NetSFTPEOF:                return @"End of file";
+        case NetSFTPNoSuchFile:         return @"No such file";
+        case NetSFTPPermissionDenied:   return @"Permission denied";
+        case NetSFTPFailure:            return @"General SFTP failure";
+        case NetSFTPBadMessage:         return @"Bad message";
+        case NetSFTPNoConnection:       return @"No connection";
+        case NetSFTPConnectionLost:     return @"Connection lost";
+        case NetSFTPOpUnsupported:      return @"Operation unsupported";
+        case NetSFTPInvalidHandle:      return @"Invalid handle";
+        case NetSFTPNoSuchPath:         return @"No such path";
+        case NetSFTPFileAlreadyExists:  return @"File already exists";
+        case NetSFTPWriteProtect:       return @"Write protect";
+        case NetSFTPNoMedia:            return @"No media";
+        case NetSFTPNoSpaceOnFilesystem:return @"No space on filesystem";
+        case NetSFTPQuotaExceeded:      return @"Quota exceeded";
+        case NetSFTPUnknownPrincipal:   return @"Unknown principal";
+        case NetSFTPLockConflict:       return @"Lock conflict";
+        case NetSFTPDirNotEmpty:        return @"Directory not empty";
+        case NetSFTPNotADir:            return @"Not a directory";
+        case NetSFTPInvalidFilename:    return @"Invalid filename";
+        case NetSFTPLinkLoop:           return @"Link loop";
     }
     return [NSString stringWithFormat:@"Error code %d", _code];
 }

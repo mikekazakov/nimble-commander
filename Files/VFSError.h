@@ -55,6 +55,35 @@ namespace VFSError
         NetFTPAccessDenied          = -3006,
         NetFTPOperationTimeout      = -3007,
         NetFTPSSLFailure            = -3008,
+        
+        // Net SFTP error codes:
+        NetSFTPCouldntResolveHost   = -4000,
+        NetSFTPCouldntConnect       = -4001,
+        NetSFTPCouldntEstablishSSH  = -4002,
+        NetSFTPCouldntAuthenticate  = -4003,
+        NetSFTPCouldntInitSFTP      = -4004,
+        NetSFTPErrorSSH             = -4005,
+        NetSFTPEOF                  = -4006,
+        NetSFTPNoSuchFile           = -4007,
+        NetSFTPPermissionDenied     = -4008,
+        NetSFTPFailure              = -4009,
+        NetSFTPBadMessage           = -4010,
+        NetSFTPNoConnection         = -4011,
+        NetSFTPConnectionLost       = -4012,
+        NetSFTPOpUnsupported        = -4013,
+        NetSFTPInvalidHandle        = -4014,
+        NetSFTPNoSuchPath           = -4015,
+        NetSFTPFileAlreadyExists    = -4016,
+        NetSFTPWriteProtect         = -4017,
+        NetSFTPNoMedia              = -4018,
+        NetSFTPNoSpaceOnFilesystem  = -4019,
+        NetSFTPQuotaExceeded        = -4020,
+        NetSFTPUnknownPrincipal     = -4021,
+        NetSFTPLockConflict         = -4022,
+        NetSFTPDirNotEmpty          = -4023,
+        NetSFTPNotADir              = -4024,
+        NetSFTPInvalidFilename      = -4025,
+        NetSFTPLinkLoop             = -4026,
     };
     
     int FromErrno(int _errno);
@@ -65,5 +94,3 @@ namespace VFSError
     NSError* ToNSError(int _code);
 #endif
 };
-
-

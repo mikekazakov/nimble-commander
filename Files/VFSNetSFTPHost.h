@@ -81,7 +81,7 @@ public:
         int                 socket = -1;
     };
     
-    
+    int VFSErrorForConnection(Connection &_conn) const;
     int GetConnection(unique_ptr<Connection> &_t);
     void ReturnConnection(unique_ptr<Connection> _t);
     

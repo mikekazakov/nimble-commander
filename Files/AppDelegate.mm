@@ -107,6 +107,7 @@
     }
     if(!configuration::has_network_connectivity) {
         menuitem("menu.go.connect.ftp").hidden = true;
+        menuitem("menu.go.connect.sftp").hidden = true;        
         [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
     }
     

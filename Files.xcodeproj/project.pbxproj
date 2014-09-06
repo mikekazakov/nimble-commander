@@ -659,6 +659,9 @@
 		CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CFC5123616C5284800D247EE /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123416C5284800D247EE /* PanelData.mm */; };
 		CFC5123916C5287B00D247EE /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
+		CFC5D4A719BB4FFB005BB24A /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4A519BB4FFB005BB24A /* Hash.cpp */; };
+		CFC5D4A819BB4FFB005BB24A /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4A519BB4FFB005BB24A /* Hash.cpp */; };
+		CFC5D4AB19BB52D7005BB24A /* Hash_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AA19BB52D7005BB24A /* Hash_Tests.mm */; };
 		CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
@@ -1291,6 +1294,9 @@
 		CFC5123516C5284800D247EE /* PanelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelData.h; sourceTree = "<group>"; };
 		CFC5123716C5287B00D247EE /* PanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelView.h; sourceTree = "<group>"; };
 		CFC5123816C5287B00D247EE /* PanelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelView.mm; sourceTree = "<group>"; };
+		CFC5D4A519BB4FFB005BB24A /* Hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hash.cpp; sourceTree = "<group>"; };
+		CFC5D4A619BB4FFB005BB24A /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hash.h; sourceTree = "<group>"; };
+		CFC5D4AA19BB52D7005BB24A /* Hash_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Hash_Tests.mm; sourceTree = "<group>"; };
 		CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
@@ -1729,6 +1735,7 @@
 				CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */,
 				CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */,
 				CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */,
+				CFC5D4AA19BB52D7005BB24A /* Hash_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
 			path = "Files Tests";
@@ -2166,6 +2173,8 @@
 				CFB56283194ECA1B00A3B70E /* FPSLimitedDrawer.h */,
 				CF6D9D331966BE710077B146 /* SandboxManager.mm */,
 				CF6D9D361966BE840077B146 /* SandboxManager.h */,
+				CFC5D4A519BB4FFB005BB24A /* Hash.cpp */,
+				CFC5D4A619BB4FFB005BB24A /* Hash.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -2744,6 +2753,7 @@
 				CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */,
 				CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */,
+				CFC5D4AB19BB52D7005BB24A /* Hash_Tests.mm in Sources */,
 				CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2791,6 +2801,7 @@
 				CF6D9CB619667BA20077B146 /* archive_read_support_filter_compress.c in Sources */,
 				CF6D9CB719667BA20077B146 /* archive_read_support_filter_grzip.c in Sources */,
 				CF6D9CB819667BA20077B146 /* archive_read_support_filter_gzip.c in Sources */,
+				CFC5D4A819BB4FFB005BB24A /* Hash.cpp in Sources */,
 				CF6D9CB919667BA20077B146 /* archive_read_support_filter_lrzip.c in Sources */,
 				CF6D9CBA19667BA20077B146 /* archive_read_support_filter_lzop.c in Sources */,
 				CF6D9CBB19667BA20077B146 /* archive_read_support_filter_none.c in Sources */,
@@ -3072,6 +3083,7 @@
 				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */,
 				CF9D0E9B17CC961100CB8146 /* archive_read_support_filter_none.c in Sources */,
+				CFC5D4A719BB4FFB005BB24A /* Hash.cpp in Sources */,
 				CF9D0EE317CE11C800CB8146 /* VFSSeqToRandomWrapper.mm in Sources */,
 				CF9D0EB117CC961100CB8146 /* archive_string.c in Sources */,
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.mm in Sources */,

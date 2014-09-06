@@ -395,10 +395,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void) waitUntilFinish:(volatile bool&)_finished
 {
-    int sleeped = 0, sleep_tresh = 60000;
+    chrono::microseconds sleeped = 0us, sleep_tresh = 60s;
     while (!_finished)
     {
-        sleeped += usleep(100);
+        this_thread::sleep_for(100us);
+        sleeped += 100us;
         XCTAssert( sleeped < sleep_tresh);
         if(sleeped > sleep_tresh)
             break;

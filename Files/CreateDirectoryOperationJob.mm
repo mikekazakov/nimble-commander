@@ -80,7 +80,7 @@ void CreateDirectoryOperationJob::Do()
     }
     
 domkdir2:
-    if(mkdir(m_Name, 0777) == -1)
+    if(mkdir(m_Name, 0755) == -1)
     {
         int result = [[m_Operation DialogOnCrDirError:errno ForDir:m_Name] WaitForResult];
         if (result == OperationDialogResult::Retry)

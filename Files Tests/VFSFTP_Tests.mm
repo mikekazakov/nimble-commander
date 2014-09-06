@@ -238,7 +238,7 @@ static const char* readme = "\n\
                    g_LocalTestPath + string(@"北京市 >≥±§ 😱".UTF8String)
         })
     {
-        XCTAssert( host->CreateDirectory(dir.c_str(), 0) == 0 );
+        XCTAssert( host->CreateDirectory(dir.c_str(), 0755, 0) == 0 );
         XCTAssert( host->IsDirectory(dir.c_str(), 0, 0) == true );
         XCTAssert( host->RemoveDirectory(dir.c_str(), 0) == 0 );
         XCTAssert( host->IsDirectory(dir.c_str(), 0, 0) == false );
@@ -248,7 +248,7 @@ static const char* readme = "\n\
                    string("/some/another/invalid/path")
         })
     {
-        XCTAssert( host->CreateDirectory(dir.c_str(), 0) != 0 );
+        XCTAssert( host->CreateDirectory(dir.c_str(), 0755, 0) != 0 );
         XCTAssert( host->IsDirectory(dir.c_str(), 0, 0) == false );
     }
 }
@@ -277,7 +277,7 @@ static const char* readme = "\n\
     if( host->Stat((g_LocalTestPath + "DirectoryName2").c_str(), stat, 0, 0) == 0)
         XCTAssert( host->RemoveDirectory((g_LocalTestPath + "DirectoryName2").c_str(), 0) == 0);
     
-    XCTAssert( host->CreateDirectory((g_LocalTestPath + "DirectoryName1").c_str(), 0) == 0);
+    XCTAssert( host->CreateDirectory((g_LocalTestPath + "DirectoryName1").c_str(), 0755, 0) == 0);
     XCTAssert( host->Rename((g_LocalTestPath + "DirectoryName1/").c_str(),
                             (g_LocalTestPath + "DirectoryName2/").c_str(),
                             0) == 0);
@@ -312,7 +312,7 @@ static const char* readme = "\n\
     if( host->Stat("/DirectoryName2", stat, 0, 0) == 0)
         XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
     
-    XCTAssert( host->CreateDirectory("/DirectoryName1", 0) == 0);
+    XCTAssert( host->CreateDirectory("/DirectoryName1", 0640, 0) == 0);
     XCTAssert( host->Rename("/DirectoryName1/", "/DirectoryName2/", 0) == 0);
     XCTAssert( host->Stat("/DirectoryName2", stat, 0, 0) == 0);
     XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
@@ -373,10 +373,11 @@ static const char* readme = "\n\
 
 - (void) waitUntilFinish:(volatile bool&)_finished
 {
-    int sleeped = 0, sleep_tresh = 60000;
+    chrono::microseconds sleeped = 0us, sleep_tresh = 60s;
     while (!_finished)
     {
-        sleeped += usleep(100);
+        this_thread::sleep_for(100us);
+        sleeped += 100us;
         XCTAssert( sleeped < sleep_tresh);
         if(sleeped > sleep_tresh)
             break;

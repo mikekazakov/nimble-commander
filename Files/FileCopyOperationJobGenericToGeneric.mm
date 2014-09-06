@@ -169,7 +169,7 @@ void FileCopyOperationJobGenericToGeneric::BuildDirectories(const path &_dir, co
     for(auto i = rbegin(to_create); i != rend(to_create); ++i)
     {
     mkdir:;
-        int ret = _host->CreateDirectory(i->c_str(), 0640, 0);
+        int ret = _host->CreateDirectory(i->c_str(), 0755, 0);
         if(ret != 0)
         {
             int result = [[m_Operation OnDestCantCreateDir:VFSError::ToNSError(ret) ForDir:i->c_str()] WaitForResult];

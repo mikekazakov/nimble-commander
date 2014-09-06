@@ -182,4 +182,9 @@
     self.window.title = title;
 }
 
+- (bool)WindowShouldClose:(MainWindowController*)sender
+{
+    return false;
+}
+
 @end

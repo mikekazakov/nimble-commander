@@ -91,6 +91,9 @@
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
 		CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
+		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
+		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
+		CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
 		CF47A988186C607C00745C4C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF47A986186C607C00745C4C /* InfoPlist.strings */; };
 		CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
@@ -1372,6 +1375,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */,
+				CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */,
+				CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */,
 				CF6D9C9319667A850077B146 /* libSystem.dylib in Frameworks */,
 				CF6D9C9119667A640077B146 /* Quartz.framework in Frameworks */,
 				CF6D9C8F19667A5E0077B146 /* Cocoa.framework in Frameworks */,

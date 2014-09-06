@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6206.9" systemVersion="14A343f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1070" identifier="macosx"/>
+        <development version="5100" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6206.9"/>
     </dependencies>
     <objects>
@@ -38,7 +39,7 @@
                     </connections>
                 </comboBox>
             </subviews>
-            <point key="canvasLocation" x="310.5" y="280"/>
+            <point key="canvasLocation" x="188.5" y="250"/>
         </customView>
     </objects>
 </document>

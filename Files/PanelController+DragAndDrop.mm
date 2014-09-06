@@ -367,6 +367,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             PanelController *source_controller = source_broker.controller;
             assert(source_controller != self);
             auto opmask = sender.draggingSourceOperationMask;
+            string destination_dir = self.GetCurrentDirectoryPathRelativeToHost;
             
             chained_strings files;
             for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
@@ -376,36 +377,31 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if(files.empty())
                 return false;
             
-            if(!self.VFS->IsNativeFS() && self.VFS->IsWriteable() )
-            {
-                if(opmask != NSDragOperationCopy)
-                    return false;
-                
-                string destination = self.GetCurrentDirectoryPathRelativeToHost;
-                FileCopyOperationOptions opts;
-                FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(files)
-                                                                            root:source_broker.root_path.c_str()
-                                                                         srcvfs:source_broker.vfs
-                                                                            dest:destination.c_str()
-                                                                          dstvfs:self.VFS
-                                                                         options:opts];
-                [op AddOnFinishHandler:^{
-                    dispatch_to_main_queue( ^{
-                        [self RefreshDirectory];
-                    });
-                }];
-                [self.state.OperationsController AddOperation:op];
-                return true;
-            }
+            if( !self.VFS->IsWriteable() )
+                return false;
+            
 
             if(opmask == NSDragOperationCopy) {
-                string destination = self.GetCurrentDirectoryPathRelativeToHost;
                 FileCopyOperationOptions opts;
-                FileCopyOperation *op = [[FileCopyOperation alloc] initWithFiles:move(files)
-                                                                            root:source_broker.root_path.c_str()
-                                                                         rootvfs:source_broker.vfs
-                                                                            dest:destination.c_str()
-                                                                         options:opts];
+                FileCopyOperation *op;
+                if(source_broker.vfs->IsNativeFS() && self.VFS->IsNativeFS())
+                    op = [[FileCopyOperation alloc] initWithFiles:move(files)
+                                                             root:source_broker.root_path.c_str()
+                                                             dest:destination_dir.c_str()
+                                                          options:opts]; // native->native
+                else if(self.VFS->IsNativeFS())
+                    op = [[FileCopyOperation alloc] initWithFiles:move(files)
+                                                             root:source_broker.root_path.c_str()
+                                                          rootvfs:source_broker.vfs
+                                                             dest:destination_dir.c_str()
+                                                          options:opts]; // vfs->native
+                else
+                    op = [[FileCopyOperation alloc] initWithFiles:move(files)
+                                                             root:source_broker.root_path.c_str()
+                                                           srcvfs:source_broker.vfs
+                                                             dest:destination_dir.c_str()
+                                                           dstvfs:self.VFS
+                                                          options:opts]; // vfs->vfs
                 [op AddOnFinishHandler:^{
                     dispatch_to_main_queue( ^{
                         [self RefreshDirectory];
@@ -418,24 +414,30 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                opmask == (NSDragOperationMove|NSDragOperationLink) ||
                opmask == (NSDragOperationMove|NSDragOperationCopy) ||
                opmask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink)) {
-                string destination = self.GetCurrentDirectoryPathRelativeToHost;
+                if( !source_broker.vfs->IsWriteable() )
+                    return false;
                 FileCopyOperationOptions opts;
                 opts.docopy = false;
                 FileCopyOperation *op;
-                if(source_broker.vfs->IsNativeFS()) // we'll use straight native->native copy
+                if( source_broker.vfs->IsNativeFS() && self.VFS->IsNativeFS() )
                     op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                              root:source_broker.root_path.c_str()
-                                                             dest:destination.c_str()
-                                                          options:opts];
-                else // here we'll use vfs->native copy (no removing actually - not yet implemented)
+                                                             dest:destination_dir.c_str()
+                                                          options:opts]; // native->native
+                // TODO: implement moving vfs->native !!!!!
+                else
                     op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                              root:source_broker.root_path.c_str()
-                                                          rootvfs:source_broker.vfs
-                                                             dest:destination.c_str()
-                                                          options:opts];
+                                                           srcvfs:source_broker.vfs
+                                                             dest:destination_dir.c_str()
+                                                           dstvfs:self.VFS
+                                                          options:opts]; // vfs->vfs
+                __weak PanelController *src_cntr = source_controller;
+                __weak PanelController *dst_cntr = self;
                 [op AddOnFinishHandler:^{
                     dispatch_to_main_queue( ^{
-                        [self RefreshDirectory];
+                        if(PanelController *pc = src_cntr) [pc RefreshDirectory];
+                        if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
                     });
                 }];
                 [self.state.OperationsController AddOperation:op];

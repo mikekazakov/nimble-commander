@@ -594,9 +594,9 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     if(!best_type)
         return;
 
-    // check if we're on native fs now (all others vfs are r/o now)
+    // check if we're on writeable VFS
     if(!self.isPanelActive ||
-       !self.ActivePanelData->Host()->IsNativeFS())
+       !self.ActivePanelController.VFS->IsWriteable())
         return;
     
     // input should be an array of filepaths
@@ -630,11 +630,29 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         FileCopyOperationOptions opts;
         opts.docopy = true;
         
-        [m_OperationsController AddOperation:
-             [[FileCopyOperation alloc] initWithFiles:move(files)
-                                                 root:i.first.c_str()
-                                                 dest:destination.c_str()
-                                              options:opts]];
+        Operation *op;
+        
+        if(self.ActivePanelController.VFS->IsNativeFS())
+            op = [[FileCopyOperation alloc] initWithFiles:move(files)
+                                                     root:i.first.c_str()
+                                                     dest:destination.c_str()
+                                                  options:opts]; // native->native
+        else
+            op = [[FileCopyOperation alloc] initWithFiles:move(files)
+                                                     root:i.first.c_str()
+                                                   srcvfs:VFSNativeHost::SharedHost()
+                                                     dest:destination.c_str()
+                                                   dstvfs:self.ActivePanelController.VFS
+                                                  options:opts]; // vfs(native)->vfs
+        
+        __weak PanelController *wpc = self.ActivePanelController;
+        [op AddOnFinishHandler:^{
+            dispatch_to_main_queue( ^{
+                if(PanelController *pc = wpc) [pc RefreshDirectory];
+            });
+        }];
+        
+        [m_OperationsController AddOperation:op];
     }
 }
 

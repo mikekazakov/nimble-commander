@@ -355,6 +355,8 @@ int VFSNetSFTPHost::Stat(const char *_path,
                               &attrs);
     if(rc)
         return VFSErrorForConnection(*conn);
+    
+    memset(&_st, 0, sizeof(_st));
 
     if(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) {
         _st.mode = attrs.permissions;

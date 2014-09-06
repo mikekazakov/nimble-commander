@@ -260,8 +260,7 @@ void ModernPanelViewPresentation::BuildAppearance()
             if([item isKindOfClass:NSDictionary.class])
                 m_ColoringRules.emplace_back( ModernPanelViewPresentationItemsColoringFilter::Unarchive(item) );
     
-    if(m_ColoringRules.empty())
-        m_ColoringRules.emplace_back();
+    m_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
     
     // Coloring text attributes
     m_ColoringAttrs.clear();
@@ -590,8 +589,7 @@ const ModernPanelViewPresentation::ColoringAttrs& ModernPanelViewPresentation::A
             assert(i < m_ColoringAttrs.size());
             return m_ColoringAttrs[i];
         }
-        
-    assert(0);
+    
     static ColoringAttrs dummy;
     return dummy;
 }

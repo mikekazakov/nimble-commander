@@ -8,6 +8,7 @@
 
 #import "PreferencesWindowGeneralTab.h"
 #import "SandboxManager.h"
+#import "AppDelegate.h"
 
 @implementation PreferencesWindowGeneralTab
 
@@ -42,14 +43,7 @@
 
 - (IBAction)ResetToDefaults:(id)sender
 {
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Are you sure want to return to defaults?";
-    alert.informativeText = @"This will erase all your custom settings.";
-    [alert addButtonWithTitle:@"Ok"];
-    [alert addButtonWithTitle:@"Cancel"];    
-    [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
-    if([alert runModal] == NSAlertFirstButtonReturn)
-        [NSUserDefaults.standardUserDefaults removePersistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
+    [(AppDelegate*)[NSApplication sharedApplication].delegate askToResetDefaults];
 }
 
 - (IBAction)OnFSAccessReset:(id)sender

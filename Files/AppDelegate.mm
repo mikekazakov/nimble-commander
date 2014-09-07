@@ -56,6 +56,10 @@
         NSString *defaults_file = [NSBundle.mainBundle pathForResource:@"Defaults" ofType:@"plist"];
         NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
         [NSUserDefaults.standardUserDefaults registerDefaults:defaults];
+        if(NSEvent.modifierFlags & (NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask)) {
+            [self askToResetDefaults];
+            exit(0);
+        }
         [NSUserDefaults.standardUserDefaults addObserver:self
                                               forKeyPath:@"Skin"
                                                  options:NSKeyValueObservingOptionNew
@@ -452,6 +456,22 @@
 {
     NSString *path = [NSBundle.mainBundle pathForResource:@"Help" ofType:@"pdf"];
     [NSWorkspace.sharedWorkspace openURL:[NSURL fileURLWithPath:path]];
+}
+
+- (bool)askToResetDefaults
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = @"Are you sure want to reset settings to defaults?";
+    alert.informativeText = @"This will erase all your custom settings.";
+    [alert addButtonWithTitle:@"Ok"];
+    [alert addButtonWithTitle:@"Cancel"];
+    [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
+    if([alert runModal] == NSAlertFirstButtonReturn) {
+        [NSUserDefaults.standardUserDefaults removePersistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
+        [NSUserDefaults.standardUserDefaults synchronize];
+        return  true;
+    }
+    return false;
 }
 
 @end

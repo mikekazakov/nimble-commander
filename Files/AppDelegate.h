@@ -23,6 +23,11 @@
 
 - (vector<MainWindowController*>) GetMainWindowControllers;
 
+/**
+ * Runs a modal dialog window, which asks user if he wants to reset app settings.
+ * Returns true if defaults were actually reset.
+ */
+- (bool) askToResetDefaults;
 
 /**
  * Will set a progress indicator at the bottom of app icon to a specified value in [0; 1].
@@ -36,6 +41,9 @@
  */
 @property (nonatomic, readonly) bool isRunningTests;
 
+/**
+ * Initial working directory registered at application startup.
+ */
 @property (nonatomic, readonly) const string& startupCWD;
 
 @end

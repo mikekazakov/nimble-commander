@@ -1,0 +1,221 @@
+//
+//  CalculateChecksumSheetController.m
+//  Files
+//
+//  Created by Michael G. Kazakov on 08/09/14.
+//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
+//
+
+#import "CalculateChecksumSheetController.h"
+#import "Hash.h"
+#import "DispatchQueue.h"
+
+const static vector<pair<NSString*,int>> g_Algos = {
+    {@"Adler32",     Hash::Adler32},
+    {@"CRC32",       Hash::CRC32},
+    {@"MD2",         Hash::MD2},
+    {@"MD4",         Hash::MD4},
+    {@"MD5",         Hash::MD5},
+    {@"SHA1-160",    Hash::SHA1_160},
+    {@"SHA2-224",    Hash::SHA2_224},
+    {@"SHA2-256",    Hash::SHA2_256},
+    {@"SHA2-384",    Hash::SHA2_384},
+    {@"SHA2-512",    Hash::SHA2_512},
+};
+
+@implementation CalculateChecksumSheetController
+{
+    VFSHostPtr          m_Host;
+    vector<string>      m_Filenames;
+    vector<uint64_t>    m_Sizes;
+    vector<string>      m_Checksums;
+    vector<string>      m_Errors;
+    string              m_Path;
+    SerialQueue         m_WorkQue;
+    uint64_t            m_TotalSize;
+}
+
+- (id)initWithFiles:(vector<string>)files
+          withSizes:(vector<uint64_t>)sizes
+             atHost:(const VFSHostPtr&)host
+             atPath:(string)path
+{
+    self = [super init];
+    if(self) {
+        m_Host = host;
+        m_Filenames = files;
+        m_Sizes = sizes;
+        m_TotalSize = accumulate(begin(m_Sizes), end(m_Sizes), 0ull);
+        assert(files.size() == sizes.size());
+        m_Checksums.resize(m_Filenames.size());
+        m_Errors.resize(m_Filenames.size());
+        m_Path = path;
+        m_WorkQue = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".CalculateChecksumSheetController");
+        m_WorkQue->OnWet(^{self.isWorking = true;});
+        m_WorkQue->OnDry(^{self.isWorking = false;});
+    }
+    return self;
+}
+
+- (IBAction)OnCalc:(id)sender
+{
+    if(!m_WorkQue->Empty())
+        return;
+    
+    const int chunk_sz = 16*1024*1024;
+    int method = g_Algos[self.HashMethod.indexOfSelectedItem].second;
+    self.Progress.doubleValue = 0;
+    
+    m_WorkQue->Run(^(shared_ptr<SerialQueueT> _q) {
+        unique_ptr<uint8_t[]> buf(new uint8_t[chunk_sz]);
+        uint64_t total_fed = 0;
+        for(auto &i:m_Filenames) {
+            if(_q->IsStopped())
+                break;
+            path p = path(m_Path) / i;
+            
+            VFSFilePtr file;
+            int rc = m_Host->CreateFile(p.c_str(), file, ^{ return _q->IsStopped(); } );
+            if(rc != 0) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self reportError:rc forFilenameAtIndex:int(&i-&m_Filenames[0])];
+                });
+                continue;
+            }
+            
+            rc = file->Open( VFSFile::OF_Read | VFSFile::OF_ShLock | VFSFile::OF_NoCache,
+                            ^{ return _q->IsStopped(); } );
+            if(rc != 0) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self reportError:rc forFilenameAtIndex:int(&i-&m_Filenames[0])];
+                });
+                continue;
+            }
+
+            Hash h( (Hash::Mode)method );
+            
+            ssize_t rn = 0;
+            while( (rn = file->Read(buf.get(), chunk_sz)) > 0) {
+                if(_q->IsStopped())
+                    break;
+                h.Feed(buf.get(), rn);
+                total_fed += rn;
+                self.Progress.doubleValue = double(total_fed);
+            }
+            
+            if( rn < 0 ) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self reportError:(int)rn forFilenameAtIndex:int(&i-&m_Filenames[0])];
+                });
+                continue;
+            }
+        
+            auto result = h.Final();
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self reportChecksum:Hash::Hex(result) forFilenameAtIndex:int(&i-&m_Filenames[0])];
+            });
+        }
+    });
+    
+}
+
+- (void)windowDidLoad
+{
+    [super windowDidLoad];
+    
+    for(auto &i:g_Algos)
+        [self.HashMethod addItemWithTitle:i.first];
+    [self.HashMethod selectItemWithTitle:@"MD5"];
+    
+    self.Table.delegate = self;
+    self.Table.dataSource = self;
+    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"filename"];
+    column.width = 250;
+    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Filename";
+    ((NSTableHeaderCell*)column.headerCell).alignment = NSLeftTextAlignment;
+    [self.Table addTableColumn:column];
+    
+    column = [[NSTableColumn alloc] initWithIdentifier:@"checksum"];
+    column.width = 250;
+    column.minWidth = 150;
+    column.maxWidth = 1500;
+    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Checksum";
+    ((NSTableHeaderCell*)column.headerCell).alignment = NSLeftTextAlignment;
+
+    [self.Table addTableColumn:column];
+    column = [[NSTableColumn alloc] initWithIdentifier:@"dummy"];
+    column.width = 10;
+    column.minWidth = 10;
+    column.maxWidth = 10;
+    ((NSTableHeaderCell*)column.headerCell).stringValue = @"";    
+    [self.Table addTableColumn:column];
+    
+    self.Progress.doubleValue = 0;
+    self.Progress.minValue = 0;
+    self.Progress.maxValue = double(m_TotalSize);
+    self.Progress.controlSize = NSMiniControlSize;
+    [self.Progress setIndeterminate:false];
+}
+
+- (IBAction)OnClose:(id)sender
+{
+    m_WorkQue->Stop();
+    m_WorkQue->Wait();
+    [self endSheet:NSModalResponseCancel];
+}
+
+- (void)reportChecksum:(string)checksum forFilenameAtIndex:(int)ind
+{
+    m_Checksums[ind] = checksum;
+    [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:ind]
+                          columnIndexes:[NSIndexSet indexSetWithIndex:1]];
+}
+
+- (void)reportError:(int)error forFilenameAtIndex:(int)ind
+{
+    
+    
+}
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return m_Filenames.size();
+}
+
+- (NSView *)tableView:(NSTableView *)tableView
+   viewForTableColumn:(NSTableColumn *)tableColumn
+                  row:(NSInteger)row
+{
+    auto mktf = []{
+        NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+        tf.bordered = false;
+        tf.editable = false;
+        tf.selectable = true;
+        tf.drawsBackground = false;
+        [[tf cell] setLineBreakMode:NSLineBreakByTruncatingTail];
+        return tf;
+    };
+    
+    assert(row < m_Filenames.size());
+    if([tableColumn.identifier isEqualToString:@"filename"]) {
+        NSTextField *tf = mktf();
+        tf.stringValue = [NSString stringWithUTF8String:m_Filenames[row].c_str()];
+        return tf;
+    }
+    if([tableColumn.identifier isEqualToString:@"checksum"]) {
+        NSString *val;
+        if(!m_Checksums[row].empty()) val = [NSString stringWithUTF8String:m_Checksums[row].c_str()];
+        if(!val && !m_Errors[row].empty()) val = [NSString stringWithUTF8String:m_Errors[row].c_str()];
+        if(!val) val = @"";
+
+        NSTextField *tf = mktf();
+        tf.stringValue = val;
+        return tf;
+    }
+    return nil;
+}
+
+
+
+@end

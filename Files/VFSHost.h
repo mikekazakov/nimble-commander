@@ -185,7 +185,7 @@ public:
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           bool (^_cancel_checker)());
+                           bool (^_cancel_checker)() = nullptr);
     
     virtual int CreateDirectory(const char* _path,
                                 int _mode,

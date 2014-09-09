@@ -12,6 +12,7 @@
 @implementation SheetController
 {
     void (^m_Handler)(NSModalResponse returnCode); // for pre-10.9
+    __strong SheetController *m_Self;
 }
 
 - (id) init
@@ -22,10 +23,18 @@
     return self;
 }
 
+- (bool) isSelfKeeping
+{
+    return false;
+}
+
 - (void) beginSheetForWindow:(NSWindow*)_wnd
            completionHandler:(void (^)(NSModalResponse returnCode))_handler
 {
     assert(_handler != nil);
+    if(self.isSelfKeeping)
+        m_Self = self;
+    
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9) {
         [_wnd beginSheet:self.window completionHandler:_handler];
     }
@@ -54,6 +63,10 @@
     else
         [NSApp endSheet:self.window
              returnCode:returnCode];
+    if(m_Self != nil)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            m_Self = nil;
+        });
 }
 
 @end

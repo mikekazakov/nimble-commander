@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6206.9" systemVersion="14A343f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment defaultVersion="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6206.9"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="CalculateChecksumSheetController">
+            <connections>
+                <outlet property="HashMethod" destination="QV2-I9-9Ap" id="56P-Dm-8FF"/>
+                <outlet property="Progress" destination="b6B-oW-wWo" id="bUh-PN-vjO"/>
+                <outlet property="Table" destination="vl9-rf-iiq" id="BmT-ih-dux"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="580" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <value key="minSize" type="size" width="530" height="270"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="580" height="270"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hhp-HY-cCP">
+                        <rect key="frame" x="484" y="13" width="82" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="70" id="cWF-4k-h6J"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Vmd-i3-ebR">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnClose:" target="-2" id="EPj-U2-u6I"/>
+                        </connections>
+                    </button>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QV2-I9-9Ap">
+                        <rect key="frame" x="18" y="226" width="115" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="110" id="zfa-Zy-aIE"/>
+                        </constraints>
+                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="XGb-BH-EXL">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="YLl-MJ-3w1"/>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2CR-TF-U3c">
+                        <rect key="frame" x="359" y="222" width="104" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="92" id="Xvq-vs-0Vr"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Calculate" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="agr-rn-xaZ">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnCalc:" target="-2" id="HwS-aa-gGt"/>
+                        </connections>
+                    </button>
+                    <scrollView autohidesScrollers="YES" horizontalLineScroll="18" horizontalPageScroll="10" verticalLineScroll="18" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bqc-Pp-qBl">
+                        <rect key="frame" x="20" y="58" width="540" height="139"/>
+                        <clipView key="contentView" id="T9b-YG-ici">
+                            <rect key="frame" x="1" y="0.0" width="238" height="134"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="16" headerView="wn2-N8-XpH" id="vl9-rf-iiq">
+                                    <rect key="frame" x="0.0" y="0.0" width="238" height="134"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <size key="intercellSpacing" width="3" height="2"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                </tableView>
+                            </subviews>
+                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="jpj-JW-7OP">
+                            <rect key="frame" x="1" y="119" width="223" height="15"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="6Ca-HS-M2o">
+                            <rect key="frame" x="224" y="17" width="15" height="102"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <tableHeaderView key="headerView" id="wn2-N8-XpH">
+                            <rect key="frame" x="0.0" y="0.0" width="238" height="17"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </tableHeaderView>
+                    </scrollView>
+                    <progressIndicator maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="b6B-oW-wWo">
+                        <rect key="frame" x="20" y="190" width="540" height="20"/>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="isWorking" id="0Mx-W0-pCI">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </progressIndicator>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="QV2-I9-9Ap" firstAttribute="leading" secondItem="b6B-oW-wWo" secondAttribute="leading" id="AFW-Rg-PaU"/>
+                    <constraint firstItem="bqc-Pp-qBl" firstAttribute="top" secondItem="2CR-TF-U3c" secondAttribute="bottom" constant="32" id="CR5-yp-XW6"/>
+                    <constraint firstItem="QV2-I9-9Ap" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Mc9-cQ-DJx"/>
+                    <constraint firstItem="b6B-oW-wWo" firstAttribute="leading" secondItem="bqc-Pp-qBl" secondAttribute="leading" id="PRR-7B-IKF"/>
+                    <constraint firstItem="2CR-TF-U3c" firstAttribute="top" secondItem="QV2-I9-9Ap" secondAttribute="top" id="Q6y-4X-P7n"/>
+                    <constraint firstItem="QV2-I9-9Ap" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="VV3-a5-SF4"/>
+                    <constraint firstItem="hhp-HY-cCP" firstAttribute="top" secondItem="bqc-Pp-qBl" secondAttribute="bottom" constant="17" id="YQ5-yJ-HHj"/>
+                    <constraint firstAttribute="bottom" secondItem="hhp-HY-cCP" secondAttribute="bottom" constant="20" symbolic="YES" id="Yfb-KS-JYQ"/>
+                    <constraint firstItem="bqc-Pp-qBl" firstAttribute="trailing" secondItem="b6B-oW-wWo" secondAttribute="trailing" id="gGF-dH-9xF"/>
+                    <constraint firstAttribute="trailing" secondItem="2CR-TF-U3c" secondAttribute="trailing" constant="123" id="rc5-Ex-fI3"/>
+                    <constraint firstItem="b6B-oW-wWo" firstAttribute="top" secondItem="QV2-I9-9Ap" secondAttribute="bottom" constant="20" id="sDb-mh-4oK"/>
+                    <constraint firstItem="bqc-Pp-qBl" firstAttribute="trailing" secondItem="hhp-HY-cCP" secondAttribute="trailing" id="uwO-ez-REu"/>
+                    <constraint firstAttribute="trailing" secondItem="b6B-oW-wWo" secondAttribute="trailing" constant="20" symbolic="YES" id="zab-Rq-8uf"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="-65" y="95"/>
+        </window>
+        <userDefaultsController representsSharedInstance="YES" id="0Qo-8u-EYU"/>
+    </objects>
+</document>

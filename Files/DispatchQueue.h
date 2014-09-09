@@ -20,6 +20,7 @@ public:
     void Run( void (^_block)() );
     
     /**
+     * Starts _block asynchronously in this queue.
      * Run will not start any task if IsStopped() is true.
      */
     void Run( void (^_block)(shared_ptr<SerialQueueT> _que) );

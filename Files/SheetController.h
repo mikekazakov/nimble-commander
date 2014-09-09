@@ -13,5 +13,10 @@
 
 - (void) endSheet:(NSModalResponse)returnCode;
 
+/**
+ * subclass should return true, if sheet object should contain a strong link to itself.
+ * (mostly for a sheets with now logic involved after closing)
+ */
+- (bool) isSelfKeeping;
 
 @end

@@ -26,6 +26,7 @@
 #import "FileMask.h"
 #import "SelectionWithMaskPopupViewController.h"
 #import "PanelViewPresentation.h"
+#import "CalculateChecksumSheetController.h"
 
 @implementation PanelController (Menu)
 
@@ -630,6 +631,27 @@
              [self.state AddOperation:op];
          }
      }];
+}
+
+- (IBAction)OnCalculateChecksum:(id)sender
+{
+    vector<string> filenames;
+    vector<uint64_t> sizes;
+    size_t sz = m_Data.EntriesBySoftFiltering().size();
+    for(int i = 0; i < sz; ++i) {
+        auto item = m_Data.EntryAtSortPosition(i);
+        if( item->IsReg() && !item->IsSymlink() ) {
+            filenames.emplace_back(item->Name());
+            sizes.emplace_back(item->Size());
+        }
+    }
+    
+    CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
+                                                                                            withSizes:move(sizes)
+                                                                                               atHost:self.VFS
+                                                                                               atPath:self.GetCurrentDirectoryPathRelativeToHost];
+    [sheet beginSheetForWindow:self.window
+             completionHandler:^(NSModalResponse returnCode) {}];
 }
 
 @end

@@ -184,20 +184,20 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         list<LauchServicesHandlers> per_item_handlers;
         for(auto &i: _items)
         {
-            per_item_handlers.push_back(LauchServicesHandlers());
             char full_path[MAXPATHLEN];
             sprintf(full_path, "%s%s", m_DirPath.c_str(), i->Name());
-            LauchServicesHandlers::DoOnItem(i, m_Host, full_path, &per_item_handlers.back());
+            auto lsh = LauchServicesHandlers::GetForItem(*i, m_Host, full_path);
+            per_item_handlers.emplace_back(move(lsh));
             
             // check if there is no need to investigate types further since there's already no intersection
             LauchServicesHandlers items_check;
-            LauchServicesHandlers::DoMerge(&per_item_handlers, &items_check);
+            LauchServicesHandlers::DoMerge(per_item_handlers, items_check);
             if(items_check.paths.empty() && items_check.uti.empty())
                 break;
         }
         
         LauchServicesHandlers items_handlers;
-        LauchServicesHandlers::DoMerge(&per_item_handlers, &items_handlers);
+        LauchServicesHandlers::DoMerge(per_item_handlers, items_handlers);
         
         m_ItemsUTI = items_handlers.uti;
 

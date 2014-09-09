@@ -662,6 +662,10 @@
 		CFC5D4A719BB4FFB005BB24A /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4A519BB4FFB005BB24A /* Hash.cpp */; };
 		CFC5D4A819BB4FFB005BB24A /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4A519BB4FFB005BB24A /* Hash.cpp */; };
 		CFC5D4AB19BB52D7005BB24A /* Hash_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AA19BB52D7005BB24A /* Hash_Tests.mm */; };
+		CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
+		CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
+		CFC5D4B319BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */; };
+		CFC5D4B419BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */; };
 		CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
@@ -1297,6 +1301,9 @@
 		CFC5D4A519BB4FFB005BB24A /* Hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hash.cpp; sourceTree = "<group>"; };
 		CFC5D4A619BB4FFB005BB24A /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hash.h; sourceTree = "<group>"; };
 		CFC5D4AA19BB52D7005BB24A /* Hash_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Hash_Tests.mm; sourceTree = "<group>"; };
+		CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateChecksumSheetController.h; sourceTree = "<group>"; };
+		CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CalculateChecksumSheetController.mm; sourceTree = "<group>"; };
+		CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CalculateChecksumSheetController.xib; sourceTree = "<group>"; };
 		CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
@@ -1664,6 +1671,9 @@
 				CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */,
 				CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */,
 				CFDB17C319B3075000781976 /* SFTPConnectionSheetController.xib */,
+				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
+				CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */,
+				CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -2623,6 +2633,7 @@
 				CF6D9D0419667E390077B146 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CF6D9D0519667E390077B146 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */,
+				CFC5D4B419BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */,
 				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
@@ -2681,6 +2692,7 @@
 				CF12888017800724002816C2 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFB598B3196E38E400D4C108 /* pref_panels_icon.png in Resources */,
 				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
+				CFC5D4B319BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */,
 				CFB598BD196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */,
@@ -2833,6 +2845,7 @@
 				CF6D9CD319667BA20077B146 /* archive_virtual.c in Sources */,
 				CF6D9CD419667BA20077B146 /* archive_windows.c in Sources */,
 				CF6D9CD519667BA20077B146 /* archive_write_add_filter_b64encode.c in Sources */,
+				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF6D9CD619667BA20077B146 /* archive_write_add_filter_by_name.c in Sources */,
 				CF6D9CD719667BA20077B146 /* archive_write_add_filter_bzip2.c in Sources */,
 				CF6D9CD819667BA20077B146 /* archive_write_add_filter_compress.c in Sources */,
@@ -3115,6 +3128,7 @@
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF9D0E9D17CC961100CB8146 /* archive_read_support_filter_rpm.c in Sources */,
 				CF9D0E7B17CC961100CB8146 /* archive_entry_link_resolver.c in Sources */,
+				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				B528012316FCF361004E260D /* OperationsController.mm in Sources */,
 				B528012416FCF361004E260D /* OperationJob.mm in Sources */,
 				CF9D0EDB17CC961100CB8146 /* filter_fork_posix.c in Sources */,

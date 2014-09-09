@@ -10,18 +10,40 @@
 #import "LSUrls.h"
 #import "Common.h"
 
-void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, shared_ptr<VFSHost> _host, const char* _path, LauchServicesHandlers* _result)
+/**
+ * If container is not empty and has only the equal elements - return it.
+ * Otherwise, return _default
+ */
+template <class InputIterator, class UnaryPredicate, class T>
+inline T all_equal_or_default(InputIterator _first,
+                      InputIterator _last,
+                      UnaryPredicate _pred,
+                      T&& _default)
 {
-    _result->uti.clear();
-    _result->paths.clear();
-    _result->default_path = -1;
+    if( _first == _last )
+        return _default;
+
+    T&& val = _pred(*_first);
+    _first++;
+
+    while( _first != _last ) {
+        if ( _pred(*_first) != val )
+            return _default;
+        ++_first;
+    }
+    return val;
+}
+
+LauchServicesHandlers LauchServicesHandlers::GetForItem(const VFSListingItem &_it, const VFSHostPtr &_host, const char* _path)
+{
+    LauchServicesHandlers result;
     
     if(_host->IsNativeFS())
     {
-        if(_it->HasExtension()) {
-            if(CFStringRef ext = CFStringCreateWithUTF8StringNoCopy(_it->Extension())) {
+        if(_it.HasExtension()) {
+            if(CFStringRef ext = CFStringCreateWithUTF8StringNoCopy(_it.Extension())) {
                 if(CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL)) {
-                    _result->uti = [((__bridge NSString*)UTI) UTF8String];
+                    result.uti = ((__bridge NSString*)UTI).UTF8String;
                     CFRelease(UTI);
                 }
                 CFRelease(ext);
@@ -37,9 +59,9 @@ void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, shared_ptr<VFSHo
                 int ind = 0;
                 for(NSURL *url in apps)
                 {
-                    _result->paths.push_back([[url path] fileSystemRepresentation]);
+                    result.paths.push_back(url.path.fileSystemRepresentation);
                     if([(__bridge NSURL*)(default_app_url) isEqual: url])
-                        _result->default_path = ind;
+                        result.default_path = ind;
                     ++ind;
                 }
                 CFRelease(default_app_url);
@@ -49,17 +71,17 @@ void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, shared_ptr<VFSHo
     }
     else
     {
-        if(_it->IsDir())
-            return;
+        if(_it.IsDir())
+            return move(result);
                 
-        if(_it->HasExtension())
+        if(_it.HasExtension())
         {
-            CFStringRef ext = CFStringCreateWithUTF8StringNoCopy(_it->Extension());
+            CFStringRef ext = CFStringCreateWithUTF8StringNoCopy(_it.Extension());
             CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL);
             CFRelease(ext);
             if(UTI != 0)
             {
-                _result->uti = [((__bridge NSString*)UTI) UTF8String];
+                result.uti = [((__bridge NSString*)UTI) UTF8String];
                 NSString *default_bundle = (__bridge_transfer id)LSCopyDefaultRoleHandlerForContentType(UTI,kLSRolesAll);
                 NSArray *apps = (NSArray *)CFBridgingRelease(LSCopyAllRoleHandlersForContentType(UTI,kLSRolesAll));
                 int ind = 0;
@@ -69,9 +91,9 @@ void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, shared_ptr<VFSHo
                     if(nspath)
                     {
                         const char *path = [nspath fileSystemRepresentation];
-                        _result->paths.push_back(path);
+                        result.paths.push_back(path);
                         if([bundleIdentifier isEqualToString:default_bundle])
-                            _result->default_path = ind;
+                            result.default_path = ind;
                         ++ind;
                     }
                 }
@@ -79,70 +101,41 @@ void LauchServicesHandlers::DoOnItem(const VFSListingItem* _it, shared_ptr<VFSHo
             }
         }
     }
+    return move(result);
 }
 
-void LauchServicesHandlers::DoMerge(const list<LauchServicesHandlers>* _input, LauchServicesHandlers* _result)
+void LauchServicesHandlers::DoMerge(const list<LauchServicesHandlers>& _input, LauchServicesHandlers& _result)
 {
-    string default_handler; // empty handler path means that there's no default handler available
-    string default_uti; // -""-
-    if(!_input->empty())
-    {
-        int ind = (*_input->begin()).default_path;
-        if(ind >= 0)
-            default_handler = (*_input->begin()).paths[ind];
-        
-        for(auto i = _input->begin()++, e = _input->end(); i!=e ; ++i)
-        {
-            int nind = (*i).default_path;
-            if(ind < 0)
-            {
-                default_handler = "";
-                break;
-            }
-            
-            const string &ndefault_handler = (*i).paths[nind];
-            if(ndefault_handler != default_handler)
-            {
-                default_handler = "";
-                break;
-            }
-        }
-        
-        default_uti = (*_input->begin()).uti;
-        for(auto i = _input->begin()++, e = _input->end(); i!=e ; ++i)
-            if((*i).uti != default_uti)
-            {
-                default_uti = "";
-                break;
-            }
-    }
+    // empty handler path means that there's no default handler available
+    string default_handler = all_equal_or_default(begin(_input), end(_input), [](auto &i){
+        return i.default_path >= 0 ? i.paths[i.default_path] : string(""); }, string(""));
+    
+    // empty default_uti means that uti's are different in _input
+    string default_uti = all_equal_or_default(begin(_input), end(_input), [](auto &i){ return i.uti; }, string(""));
     
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
     map<string, int> handlers_count;
-    
-    for(auto i1 = _input->begin(), e1 = _input->end(); i1!=e1; ++i1)
-    {
-        set<string> inserted; // a very inefficient approach, should be rewritten if will cause lags on UI
-        for(auto i2 = (*i1).paths.begin(), e2 = (*i1).paths.end(); i2!=e2; ++i2)
-            if(inserted.find(*i2) == inserted.end()) // here we exclude multiple counting for repeating handlers for one content type
-            {
-                handlers_count[*i2]++;
-                inserted.insert(*i2);
+    for(auto &i:_input) {
+        // a very inefficient approach, should be rewritten if will cause lags on UI
+        set<string> inserted;
+        for(auto &p:i.paths)
+            // here we exclude multiple counting for repeating handlers for one content type
+            if( !inserted.count(p) ) {
+                handlers_count[p]++;
+                inserted.insert(p);
             }
     }
-    int total_input = (int)_input->size();
     
-    _result->paths.clear();
-    _result->uti = default_uti;
-    _result->default_path = -1;
+    _result.paths.clear();
+    _result.uti = default_uti;
+    _result.default_path = -1;
     
-    for(auto i = handlers_count.begin(), e = handlers_count.end(); i!=e; ++i)
-        if(i->second == total_input)
-        {
-            _result->paths.push_back(i->first);
-            if(i->first == default_handler)
-                _result->default_path = (int)_result->paths.size()-1;
+    for(auto &i:handlers_count)
+        if(i.second == _input.size()) {
+            _result.paths.emplace_back(i.first);
+            if(i.first == default_handler)
+                _result.default_path = (int)_result.paths.size()-1;
         }
 }
 

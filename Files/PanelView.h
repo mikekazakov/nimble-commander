@@ -25,6 +25,7 @@ class PanelViewPresentation;
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event;
 - (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (NSDragOperation)PanelViewDraggingUpdated:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
+- (void)PanelViewDraggingExited:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)_event;
 

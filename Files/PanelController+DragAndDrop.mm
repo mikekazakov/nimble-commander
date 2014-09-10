@@ -323,39 +323,60 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 - (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
-    if(id idsource = sender.draggingSource)
-        if([idsource isKindOfClass:PanelControllerDragSourceBroker.class]) {
-            PanelControllerDragSourceBroker *source = (PanelControllerDragSourceBroker *)idsource;
-            if(source.controller == self) {
-                return NSDragOperationNone;
-            }
-            else {
-                // some logic regarding R/W situation on medium and link capabilities should be here
-                NSDragOperation mask = sender.draggingSourceOperationMask;
-                if(mask == (NSDragOperationCopy|NSDragOperationLink|NSDragOperationMove))
-                    return NSDragOperationMove;
-                if(mask == (NSDragOperationCopy|NSDragOperationMove))
-                    return NSDragOperationMove;
-                
-                return mask;
-            }
+    NSDragOperation result = NSDragOperationNone;
+    if([sender.draggingSource isKindOfClass:PanelControllerDragSourceBroker.class]) {
+        PanelControllerDragSourceBroker *source = (PanelControllerDragSourceBroker *)sender.draggingSource;
+        if(source.controller == self) {
+            result = NSDragOperationNone;
         }
-    
-    if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL])
-    {
-        if(!self.VFS->IsWriteable())
-            return NSDragOperationNone;
-  
-        NSDragOperation mask = sender.draggingSourceOperationMask;
-        if(mask & NSDragOperationCopy)
-            return NSDragOperationCopy;
+        else {
+            // some logic regarding R/W situation on medium and link capabilities should be here
+            NSDragOperation mask = sender.draggingSourceOperationMask;
+            if(mask == (NSDragOperationCopy|NSDragOperationLink|NSDragOperationMove))
+                result = NSDragOperationMove;
+            else if(mask == (NSDragOperationCopy|NSDragOperationMove))
+                result = NSDragOperationMove;
+            else
+                result = mask;
+        }
     }
-    return NSDragOperationNone;
+    else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
+        if(self.VFS->IsWriteable()) {
+            __block int urls_amount = 0;
+            [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
+                                              forView:self.view
+                                              classes:@[NSPasteboardItem.class]
+                                        searchOptions:nil
+                                           usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
+                                               if( [((NSPasteboardItem*)draggingItem.item).types containsObject:(NSString *)kUTTypeFileURL] )
+                                                   urls_amount++;
+                                           }];
+
+            sender.numberOfValidItemsForDrop = urls_amount;
+
+            NSDragOperation mask = sender.draggingSourceOperationMask;
+            if(mask & NSDragOperationCopy)
+                result = NSDragOperationCopy;
+        }
+    }
+    
+    m_LastDDInfo = (__bridge void*)sender;
+    m_LastPreparedDDOperation = result;
+    return result;
 }
 
 - (NSDragOperation)PanelViewDraggingUpdated:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
+    if( m_LastDDInfo == (__bridge void*)sender )
+        return m_LastPreparedDDOperation;
+    
     return [self PanelViewDraggingEntered:_view sender:sender];
+}
+
+- (void)PanelViewDraggingExited:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
+{
+    m_LastDDInfo = nullptr;
+    m_LastPreparedDDOperation = 0;
 }
 
 - (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender

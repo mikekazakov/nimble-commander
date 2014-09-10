@@ -694,6 +694,9 @@ struct PanelViewStateStorage
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender
 {
+    if(id<PanelViewDelegate> del = self.delegate)
+        if([del respondsToSelector:@selector(PanelViewDraggingExited:sender:)])
+            [del PanelViewDraggingExited:self sender:sender];
     m_DraggingIntoMe = false;
     [self setNeedsDisplay];
 }

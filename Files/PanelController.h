@@ -90,6 +90,10 @@ namespace panel
     // BriefSystemOverview support
     __weak BriefSystemOverview* m_BriefSystemOverview;
     
+    // drag & drop support, caching
+    NSDragOperation     m_LastPreparedDDOperation;
+    void*               m_LastDDInfo; // converted address of NSDraggingInfo passed in a view, like hash/id
+    
     NSButton            *m_ShareButton;
     
     string              m_LastNativeDirectory;

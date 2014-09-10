@@ -58,13 +58,17 @@ const static vector<pair<NSString*,int>> g_Algos = {
         self.sumsAvailable = false;
         self.didSaved = false;
         m_WorkQue->OnWet(^{
-            self.isWorking = true;
-            self.sumsAvailable = false;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.isWorking = true;
+                self.sumsAvailable = false;
+            });
         });
         m_WorkQue->OnDry(^{
-            self.isWorking = false;
-            self.sumsAvailable = count_if(begin(m_Checksums), end(m_Checksums), [](auto &i){return !i.empty();}) > 0;
-        });        
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.isWorking = false;
+                self.sumsAvailable = count_if(begin(m_Checksums), end(m_Checksums), [](auto &i){return !i.empty();}) > 0;
+            });
+        });
     }
     return self;
 }

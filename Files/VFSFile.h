@@ -169,6 +169,11 @@ public:
      */
     unique_ptr<vector<uint8_t>> ReadFile();
     
+    /**
+     * Will call Write until data ends or an error occurs;
+     */
+    int WriteFile(const void *_d, size_t _sz);
+    
     // sugar wrappers for Cocoa APIs
 #ifdef __OBJC__
     /**

@@ -155,6 +155,25 @@ NSData *VFSFile::ReadFileToNSData()
     return [NSData dataWithBytesNoCopy:buf length:sz]; // NSData will deallocate buf
 }
 
+int VFSFile::WriteFile(const void *_d, size_t _sz)
+{
+    if(!IsOpened())
+        return VFSError::InvalidCall;
+    
+    const uint8_t *d = (uint8_t *)_d;
+    ssize_t r = 0;
+    while( _sz > 0 ) {
+        r = Write(d, _sz);
+        if(r >= 0) {
+            d += r;
+            _sz -= r;
+        }
+        else
+            return (int)r;
+    }
+    return 0;
+}
+
 ssize_t VFSFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
 {
     return SetLastError(VFSError::NotSupported);

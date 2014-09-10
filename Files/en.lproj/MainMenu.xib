@@ -120,7 +120,7 @@ DQ
                                     <action selector="OnCalculateAllSizes:" target="-1" id="c5x-U6-Pr8"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Calculate Checksum" id="mz4-ml-xw1">
+                            <menuItem title="Calculate Checksum" tag="11080" id="mz4-ml-xw1">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnCalculateChecksum:" target="-1" id="eOO-mt-7dI"/>

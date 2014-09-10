@@ -15,6 +15,9 @@
 @property (strong) IBOutlet NSTableView *Table;
 @property (strong) IBOutlet NSProgressIndicator *Progress;
 @property bool isWorking;
+@property bool sumsAvailable;
+@property (nonatomic) bool didSaved;
+@property (nonatomic, readonly) string savedFilename;
 
 - (id)initWithFiles:(vector<string>)files
           withSizes:(vector<uint64_t>)sizes
@@ -23,6 +26,6 @@
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnCalc:(id)sender;
-
+- (IBAction)OnSave:(id)sender;
 
 @end

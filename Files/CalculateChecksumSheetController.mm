@@ -10,6 +10,9 @@
 #import "Hash.h"
 #import "DispatchQueue.h"
 
+static NSString *g_DefAlgoKey = @"FilePanelsChecksumCalculationAlgorithm";
+const static string g_SumsFilename = "checksums.txt";
+
 const static vector<pair<NSString*,int>> g_Algos = {
     {@"Adler32",     Hash::Adler32},
     {@"CRC32",       Hash::CRC32},
@@ -51,8 +54,17 @@ const static vector<pair<NSString*,int>> g_Algos = {
         m_Errors.resize(m_Filenames.size());
         m_Path = path;
         m_WorkQue = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".CalculateChecksumSheetController");
-        m_WorkQue->OnWet(^{self.isWorking = true;});
-        m_WorkQue->OnDry(^{self.isWorking = false;});
+        self.isWorking = false;
+        self.sumsAvailable = false;
+        self.didSaved = false;
+        m_WorkQue->OnWet(^{
+            self.isWorking = true;
+            self.sumsAvailable = false;
+        });
+        m_WorkQue->OnDry(^{
+            self.isWorking = false;
+            self.sumsAvailable = count_if(begin(m_Checksums), end(m_Checksums), [](auto &i){return !i.empty();}) > 0;
+        });        
     }
     return self;
 }
@@ -63,6 +75,9 @@ const static vector<pair<NSString*,int>> g_Algos = {
         return;
     
     const int chunk_sz = 16*1024*1024;
+    
+    if(![[NSUserDefaults.standardUserDefaults stringForKey:g_DefAlgoKey] isEqualToString:self.HashMethod.titleOfSelectedItem])
+        [NSUserDefaults.standardUserDefaults setObject:self.HashMethod.titleOfSelectedItem forKey:g_DefAlgoKey];
     int method = g_Algos[self.HashMethod.indexOfSelectedItem].second;
     self.Progress.doubleValue = 0;
     
@@ -72,10 +87,9 @@ const static vector<pair<NSString*,int>> g_Algos = {
         for(auto &i:m_Filenames) {
             if(_q->IsStopped())
                 break;
-            path p = path(m_Path) / i;
             
             VFSFilePtr file;
-            int rc = m_Host->CreateFile(p.c_str(), file, ^{ return _q->IsStopped(); } );
+            int rc = m_Host->CreateFile((path(m_Path) / i).c_str(), file, ^{ return _q->IsStopped(); } );
             if(rc != 0) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self reportError:rc forFilenameAtIndex:int(&i-&m_Filenames[0])];
@@ -126,7 +140,11 @@ const static vector<pair<NSString*,int>> g_Algos = {
     
     for(auto &i:g_Algos)
         [self.HashMethod addItemWithTitle:i.first];
-    [self.HashMethod selectItemWithTitle:@"MD5"];
+    
+    NSString *def_algo = [NSUserDefaults.standardUserDefaults stringForKey:g_DefAlgoKey];
+    if(!def_algo) // should not happen in normal workflow
+        def_algo = @"MD5";
+    [self.HashMethod selectItemWithTitle:def_algo];
     
     self.Table.delegate = self;
     self.Table.dataSource = self;
@@ -174,8 +192,9 @@ const static vector<pair<NSString*,int>> g_Algos = {
 
 - (void)reportError:(int)error forFilenameAtIndex:(int)ind
 {
-    
-    
+    m_Errors[ind] = [NSString stringWithFormat:@"Error: %@", VFSError::ToNSError(error).localizedDescription].UTF8String;
+    [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:ind]
+                          columnIndexes:[NSIndexSet indexSetWithIndex:1]];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -216,6 +235,35 @@ const static vector<pair<NSString*,int>> g_Algos = {
     return nil;
 }
 
+- (IBAction)OnSave:(id)sender
+{
+    // currently doing all stuff on main thread synchronously. may be bad for some vfs like ftp
+    string str;
+    for(auto &i: m_Checksums)
+        if(!i.empty())
+            str += i + "  " + m_Filenames[ &i-&m_Checksums[0] ] + "\n";
+  
+    if(str.empty())
+        return;
+    
+    VFSFilePtr file;
+    m_Host->CreateFile( (path(m_Path) / g_SumsFilename).c_str(), file);
+    int rc = file->Open(VFSFile::OF_Write | VFSFile::OF_NoExist | VFSFile::OF_Create | S_IWUSR | S_IRUSR | S_IRGRP );
+    if(rc < 0) {
+        [[NSAlert alertWithError:VFSError::ToNSError(rc)] runModal];
+        return;
+    }
+    
+    rc = file->WriteFile(str.data(), str.size());
+    if(rc < 0)
+        [[NSAlert alertWithError:VFSError::ToNSError(rc)] runModal];
+    
+    self.didSaved = true;
+}
 
+- (string) savedFilename
+{
+    return g_SumsFilename;
+}
 
 @end

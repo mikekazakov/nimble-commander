@@ -637,21 +637,38 @@
 {
     vector<string> filenames;
     vector<uint64_t> sizes;
-    size_t sz = m_Data.EntriesBySoftFiltering().size();
-    for(int i = 0; i < sz; ++i) {
+    
+    // grab selected regular files if any
+    for(int i = 0, e = (int)m_Data.SortedDirectoryEntries().size(); i < e; ++i) {
         auto item = m_Data.EntryAtSortPosition(i);
-        if( item->IsReg() && !item->IsSymlink() ) {
+        if( item->CFIsSelected() && item->IsReg() && !item->IsSymlink() ) {
             filenames.emplace_back(item->Name());
             sizes.emplace_back(item->Size());
         }
     }
+    
+    // if have no - try focused item
+    if( filenames.empty() )
+        if( auto item = m_View.item )
+            if( !item->IsDir() && !item->IsSymlink() ) {
+                filenames.emplace_back(item->Name());
+                sizes.emplace_back(item->Size());
+            }
+
+    if( filenames.empty() )
+        return;
     
     CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
                                                                                             withSizes:move(sizes)
                                                                                                atHost:self.VFS
                                                                                                atPath:self.GetCurrentDirectoryPathRelativeToHost];
     [sheet beginSheetForWindow:self.window
-             completionHandler:^(NSModalResponse returnCode) {}];
+             completionHandler:^(NSModalResponse returnCode) {
+                 if(sheet.didSaved)
+                     [self ScheduleDelayedSelectionChangeFor:sheet.savedFilename
+                                                   timeoutms:500
+                                                    checknow:true];
+             }];
 }
 
 @end

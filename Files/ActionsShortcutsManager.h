@@ -91,6 +91,7 @@ private:
         {"menu.file.open_in_opposite_panel",    11021},
         {"menu.file.calculate_sizes",           11030},
         {"menu.file.calculate_all_sizes",       11031},
+        {"menu.file.calculate_checksum",        11080},
         {"menu.file.close",                     11040},
         {"menu.file.find",                      11050},
         {"menu.file.page_setup",                11060},

@@ -317,6 +317,8 @@
 	<true/>
 	<key>FilePanelsQuickSearchTypingView</key>
 	<true/>
+	<key>FilePanelsChecksumCalculationAlgorithm</key>
+	<string>MD5</string>
 	<key>Terminal</key>
 	<dict>
 		<key>CursorMode</key>

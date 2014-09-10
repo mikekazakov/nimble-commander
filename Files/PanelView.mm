@@ -432,6 +432,7 @@ struct PanelViewStateStorage
     assert(click_entry);
     
     NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+    bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
     
     // Select range of items with shift+click.
     // If clicked item is selected, then deselect the range instead.
@@ -451,13 +452,13 @@ struct PanelViewStateStorage
     {
         [self OnCursorPositionChanged];
     }
-    else if(GetTimeInNanoseconds() - m_ActivationTime > NSEC_PER_MSEC * 300)
+    else if(lb_pressed && GetTimeInNanoseconds() - m_ActivationTime > NSEC_PER_MSEC * 300)
     {
         // need more complex logic here (?)
         m_LastPotentialRenamingLBDown = cursor_pos;
     }
 
-    if(self.active)
+    if(lb_pressed && self.active)
     {
         m_ReadyToDrag = true;
         m_LButtonDownPos = local_point;

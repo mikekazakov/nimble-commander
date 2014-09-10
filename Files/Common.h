@@ -42,7 +42,7 @@ bool IsVolumeContainingPathEjectable(const string &_path); // will return false 
 void SyncMessageBoxUTF8(const char *_utf8_string);
 void SyncMessageBoxNS(NSString *_ns_string);
 
-extern uint64_t (*GetTimeInNanoseconds)();
+nanoseconds timenow() noexcept;
 
 inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s)
 {
@@ -74,28 +74,28 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 
 struct MachTimeBenchmark
 {
-    uint64_t last;
-    inline MachTimeBenchmark() : last(GetTimeInNanoseconds()) {};
-    inline uint64_t Delta() const
+    nanoseconds last;
+    inline MachTimeBenchmark() : last(timenow()) {};
+    inline nanoseconds Delta() const
     {
-        return GetTimeInNanoseconds() - last;
+        return timenow() - last;
     }
     inline void ResetNano(const char *_msg = "")
     {
-        uint64_t now = GetTimeInNanoseconds();
-        NSLog(@"%s%llu\n", _msg, now - last);
+        auto now = timenow();
+        NSLog(@"%s%llu\n", _msg, (now - last).count());
         last = now;
     }
     inline void ResetMicro(const char *_msg = "")
     {
-        uint64_t now = GetTimeInNanoseconds();
-        NSLog(@"%s%llu\n", _msg, (now - last) / 1000);
+        auto now = timenow();
+        NSLog(@"%s%llu\n", _msg, duration_cast<microseconds>(now - last).count());
         last = now;
     }
     inline void ResetMilli(const char *_msg = "")
     {
-        uint64_t now = GetTimeInNanoseconds();
-        NSLog(@"%s%llu\n", _msg, (now - last) / 1000000 );
+        auto now = timenow();
+        NSLog(@"%s%llu\n", _msg, duration_cast<milliseconds>(now - last).count() );
         last = now;
     }
 };

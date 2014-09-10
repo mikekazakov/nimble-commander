@@ -395,7 +395,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void) waitUntilFinish:(volatile bool&)_finished
 {
-    chrono::microseconds sleeped = 0us, sleep_tresh = 60s;
+    microseconds sleeped = 0us, sleep_tresh = 60s;
     while (!_finished)
     {
         this_thread::sleep_for(100us);

@@ -373,7 +373,7 @@ static const char* readme = "\n\
 
 - (void) waitUntilFinish:(volatile bool&)_finished
 {
-    chrono::microseconds sleeped = 0us, sleep_tresh = 60s;
+    microseconds sleeped = 0us, sleep_tresh = 60s;
     while (!_finished)
     {
         this_thread::sleep_for(100us);

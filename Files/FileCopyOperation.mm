@@ -70,7 +70,7 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
     unique_ptr<FileCopyOperationJobNativeToNative> m_NativeToNativeJob;
     unique_ptr<FileCopyOperationJobFromGeneric> m_GenericToNativeJob;
     unique_ptr<FileCopyOperationJobGenericToGeneric> m_GenericToGenericJob;
-    int m_LastInfoUpdateTime;
+    milliseconds m_LastInfoUpdateTime;
 }
 
 - (id)initWithFiles:(chained_strings)_files
@@ -198,13 +198,13 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
         return;
     }
     
-    int time = stats.GetTime();
-    if (time - m_LastInfoUpdateTime >= 1000)
+    milliseconds time = stats.GetTime();
+    if (time - m_LastInfoUpdateTime >= 1000ms)
     {
         if (value_type == FileCopyOperationJobNativeToNative::StatValueBytes)
         {
             uint64_t copy_speed = 0;
-            if (time) copy_speed = stats.GetValue()*1000/time;
+            if (time.count()>0) copy_speed = stats.GetValue()*1000/time.count();
             uint64_t eta_value = 0;
             if (copy_speed) eta_value = (stats.GetMaxValue() - stats.GetValue())/copy_speed;
             
@@ -258,11 +258,11 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
         return;
     }
     
-    int time = stats.GetTime();
-    if (time - m_LastInfoUpdateTime >= 1000)
+    milliseconds time = stats.GetTime();
+    if (time - m_LastInfoUpdateTime >= 1000ms)
     {
         uint64_t copy_speed = 0;
-        if (time) copy_speed = stats.GetValue()*1000/time;
+        if (time.count() > 0) copy_speed = stats.GetValue()*1000/time.count();
         uint64_t eta_value = 0;
         if (copy_speed) eta_value = (stats.GetMaxValue() - stats.GetValue())/copy_speed;
             
@@ -300,11 +300,11 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
         return;
     }
     
-    int time = stats.GetTime();
-    if (time - m_LastInfoUpdateTime >= 1000)
+    milliseconds time = stats.GetTime();
+    if (time - m_LastInfoUpdateTime >= 1000ms)
     {
         uint64_t copy_speed = 0;
-        if (time) copy_speed = stats.GetValue()*1000/time;
+        if (time.count()>0) copy_speed = stats.GetValue()*1000/time.count();
         uint64_t eta_value = 0;
         if (copy_speed) eta_value = (stats.GetMaxValue() - stats.GetValue())/copy_speed;
         

@@ -34,12 +34,14 @@ public:
     void PauseTimeTracking();
     void ResumeTimeTracking();
 
-    // Returns time in milliseconds.
-    int GetTime() const;
+    /**
+     * Returns worked time in milliseconds.
+     */
+    milliseconds GetTime() const;
     
 private:
-    volatile uint64_t m_StartTime;
-    volatile uint64_t m_PauseTime;
+    nanoseconds m_StartTime;
+    nanoseconds m_PauseTime;
     
     volatile bool m_Started;
     volatile int m_Paused;

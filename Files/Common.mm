@@ -16,7 +16,7 @@
 #import "AppDelegate.h"
 
 static uint64_t InitGetTimeInNanoseconds();
-uint64_t (*GetTimeInNanoseconds)() = InitGetTimeInNanoseconds;
+static uint64_t (*GetTimeInNanoseconds)() = InitGetTimeInNanoseconds;
 
 static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)
 {
@@ -162,6 +162,11 @@ static uint64_t InitGetTimeInNanoseconds()
             GetTimeInNanoseconds = &GetTimeInNanosecondsScale;
     });
     return GetTimeInNanoseconds();
+}
+
+nanoseconds timenow() noexcept
+{
+    return nanoseconds(GetTimeInNanoseconds());
 }
 
 void SyncMessageBoxUTF8(const char *_utf8_string)

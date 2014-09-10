@@ -103,7 +103,7 @@ static void ReportProgress(void* _op, double _progress) {
     bool m_Init;
 }
 
-- (uint64_t) ElapsedTime
+- (milliseconds) ElapsedTime
 {
     return m_Job->GetStats().GetTime();
 }
@@ -152,7 +152,7 @@ static void ReportProgress(void* _op, double _progress) {
         self.Progress = progress;
     
 
-    double time = stats.GetTime()/1000.0;
+    double time = double(stats.GetTime().count())/1000.0;
     self.ShortInfo = [NSString stringWithFormat:@"time:%.0f, %llu of %llu (%.02f/s)",
                       time, stats.GetValue(), stats.GetMaxValue(),
                           stats.GetValue()/time];
@@ -274,10 +274,10 @@ static void ReportProgress(void* _op, double _progress) {
 - (NSString*) ProduceDescriptionStringForBytesProcess
 {
     OperationStats &stats = m_Job->GetStats();
-    int time = stats.GetTime();
+    milliseconds time = stats.GetTime();
     uint64_t copy_speed = 0;
-    if (time)
-        copy_speed = stats.GetValue()*1000/time;
+    if (time.count() > 0)
+        copy_speed = stats.GetValue()*1000/time.count();
     uint64_t eta_value = 0;
     if (copy_speed)
         eta_value = (stats.GetMaxValue() - stats.GetValue())/copy_speed;

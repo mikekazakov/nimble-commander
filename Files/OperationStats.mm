@@ -84,7 +84,7 @@ void OperationStats::StartTimeTracking()
 {
     dispatch_sync(m_ControlQue, ^{
         assert(!m_Started);
-        m_StartTime = GetTimeInNanoseconds();
+        m_StartTime = timenow();
         if (m_Paused)
             m_PauseTime = m_StartTime;
         m_Started = true;
@@ -95,7 +95,7 @@ void OperationStats::PauseTimeTracking()
 {
     dispatch_sync(m_ControlQue, ^{
         if (++m_Paused == 1)
-            m_PauseTime = GetTimeInNanoseconds();
+            m_PauseTime = timenow();
     });
 }
 
@@ -105,24 +105,24 @@ void OperationStats::ResumeTimeTracking()
         assert(m_Paused >= 1);
         if (--m_Paused == 0)
         {
-            uint64_t pause_duration = GetTimeInNanoseconds() - m_PauseTime;
+            auto pause_duration = timenow() - m_PauseTime;
             m_StartTime += pause_duration;
         }
     });
 }
 
-int OperationStats::GetTime() const
+milliseconds OperationStats::GetTime() const
 {
-    __block uint64_t time;
+    __block nanoseconds time;
     
     dispatch_sync(m_ControlQue, ^{
         if (!m_Started)
-            time = 0;
+            time = 0ns;
         else if (m_Paused)
             time = m_PauseTime - m_StartTime;
         else
-            time = GetTimeInNanoseconds() - m_StartTime;
+            time = timenow() - m_StartTime;
     });
     
-    return int(time/1000000);
+    return duration_cast<milliseconds>(time);
 }

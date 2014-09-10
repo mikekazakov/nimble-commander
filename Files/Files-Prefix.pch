@@ -38,6 +38,7 @@
     #include <chrono>
     #include <thread>
     using namespace std;
+    using namespace std::chrono;
 
     #include "3rd_party/built/include/boost/filesystem.hpp"
     using boost::filesystem::path;

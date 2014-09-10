@@ -9,13 +9,13 @@
 #import "FPSLimitedDrawer.h"
 #import "Common.h"
 
-static const uint64_t m_MaxTimeBeforeInvalidation = NSEC_PER_SEC * 5;
+static const nanoseconds m_MaxTimeBeforeInvalidation = 5s;
 
 @implementation FPSLimitedDrawer
 {
     __weak NSView *m_View;
     unsigned       m_FPS;
-    uint64_t       m_LastDrawedTimer;
+    nanoseconds    m_LastDrawedTime;
     atomic_bool    m_Dirty;
     NSTimer       *m_DrawTimer;
 }
@@ -28,7 +28,7 @@ static const uint64_t m_MaxTimeBeforeInvalidation = NSEC_PER_SEC * 5;
         m_FPS = 60;
         m_Dirty = false;
         m_View = _view;
-        m_LastDrawedTimer = 0;
+        m_LastDrawedTime = 0ns;
         [self setupTimer];
     }
     return self;
@@ -85,12 +85,12 @@ static const uint64_t m_MaxTimeBeforeInvalidation = NSEC_PER_SEC * 5;
         {
             [self.view setNeedsDisplay:true];
             m_Dirty = false;
-            m_LastDrawedTimer = GetTimeInNanoseconds();
+            m_LastDrawedTime = timenow();
         }
         else
         {
             // timer invalidation by max inactivity time
-            if(GetTimeInNanoseconds() - m_LastDrawedTimer > m_MaxTimeBeforeInvalidation)
+            if(timenow() - m_LastDrawedTime > m_MaxTimeBeforeInvalidation)
                 [self cleanupTimer];
         }
     }
@@ -109,7 +109,7 @@ static const uint64_t m_MaxTimeBeforeInvalidation = NSEC_PER_SEC * 5;
                                                  selector:@selector(UpdateByTimer:)
                                                  userInfo:nil
                                                   repeats:YES];
-    m_LastDrawedTimer = GetTimeInNanoseconds();
+    m_LastDrawedTime = timenow();
     [m_DrawTimer SetSafeTolerance];
 }
 

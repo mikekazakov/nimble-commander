@@ -9,7 +9,7 @@
 #import "PanelController+QuickSearch.h"
 #import "Common.h"
 
-static const uint64_t g_FastSeachDelayTresh = 4000000000; // 4 sec
+static const nanoseconds g_FastSeachDelayTresh = 4s;
 
 static bool IsQuickSearchModifier(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
 {
@@ -119,7 +119,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
 
 - (bool)HandleQuickSearchSoft: (NSString*) _key
 {
-    uint64_t currenttime = GetTimeInNanoseconds();
+    nanoseconds currenttime = timenow();
     if(_key != nil)
     {
         // update soft filtering
@@ -175,9 +175,9 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
         
         // automatically remove prompt after g_FastSeachDelayTresh
         __weak PanelController *wself = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_FastSeachDelayTresh+1000), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration_cast<nanoseconds>(g_FastSeachDelayTresh).count() + 1000), dispatch_get_main_queue(), ^{
             if(PanelController *sself = wself)
-                if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= GetTimeInNanoseconds()) {
+                if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= timenow()) {
                     sself->m_View.quickSearchPrompt = nil;
                     sself->m_View.needsDisplay = true;
                 }

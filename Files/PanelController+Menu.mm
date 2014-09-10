@@ -666,7 +666,7 @@
              completionHandler:^(NSModalResponse returnCode) {
                  if(sheet.didSaved)
                      [self ScheduleDelayedSelectionChangeFor:sheet.savedFilename
-                                                   timeoutms:500
+                                                     timeout:500ms
                                                     checknow:true];
              }];
 }

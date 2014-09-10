@@ -14,7 +14,7 @@
 @implementation FileCompressOperation
 {
     FileCompressOperationJob m_Job;
-    int m_LastInfoUpdateTime;
+    milliseconds m_LastInfoUpdateTime;
     bool m_HasTargetFn;
     bool m_NeedUpdateCaption;
     NSString *m_ArchiveName;
@@ -30,7 +30,7 @@
     if (self)
     {
         m_Job.Init(move(_src_files), _src_root, _src_vfs, _dst_root, _dst_vfs, self);
-        m_LastInfoUpdateTime = 0;
+        m_LastInfoUpdateTime = 0ms;
         m_HasTargetFn = false;
         m_NeedUpdateCaption = true;
         
@@ -59,7 +59,7 @@
     if (self.Progress != progress)
         self.Progress = progress;
     
-    int time = stats.GetTime();
+    milliseconds time = stats.GetTime();
     
     // titles stuff
     if(m_NeedUpdateCaption)
@@ -85,7 +85,7 @@
         }
     }
 
-    if (time - m_LastInfoUpdateTime >= 1000) {
+    if (time - m_LastInfoUpdateTime >= 1000ms) {
         self.ShortInfo = [self ProduceDescriptionStringForBytesProcess];
         m_LastInfoUpdateTime = time;
     }
@@ -168,7 +168,7 @@
     dispatch_to_main_queue( ^{
         [target RefreshDirectory];
         [target ScheduleDelayedSelectionChangeFor:arc_name
-                                        timeoutms:500
+                                          timeout:500ms
                                          checknow:true];
     });
 }

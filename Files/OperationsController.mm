@@ -9,7 +9,7 @@
 #import "OperationsController.h"
 #import "Common.h"
 
-static const uint64_t g_DialogAutoTriggeringTreshMS = 2000;
+static const milliseconds g_DialogAutoTriggeringTreshMS = 2000ms;
 
 @implementation OperationsController
 {

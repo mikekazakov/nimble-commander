@@ -15,13 +15,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Delayed cursors movement support
 
-- (void) ScheduleDelayedSelectionChangeFor:(const string &)_item_name timeoutms:(int)_time_out_in_ms checknow:(bool)_check_now
+- (void) ScheduleDelayedSelectionChangeFor:(const string &)_item_name timeout:(milliseconds)_time_out_in_ms checknow:(bool)_check_now
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     // we assume that _item_name will not contain any forward slashes
     
     m_DelayedSelection.isvalid = true;
-    m_DelayedSelection.request_end = GetTimeInNanoseconds() + _time_out_in_ms*USEC_PER_SEC;
+    m_DelayedSelection.request_end = timenow() + _time_out_in_ms;
     m_DelayedSelection.filename = _item_name;
     
     if(_check_now)
@@ -34,8 +34,7 @@
     if(!m_DelayedSelection.isvalid)
         return false;
     
-    uint64_t now = GetTimeInNanoseconds();
-    if(now > m_DelayedSelection.request_end)
+    if(timenow() > m_DelayedSelection.request_end)
     {
         m_DelayedSelection.isvalid = false;
         return false;

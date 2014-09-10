@@ -62,7 +62,7 @@ class OperationJob;
  * Returns a time spent in operation in millisecond.
  * Time spent on pause state is not accounted.
  */
-@property (nonatomic, readonly) uint64 ElapsedTime;
+@property (nonatomic, readonly) milliseconds ElapsedTime;
 
 - (id)initWithJob:(OperationJob *)_job;
 

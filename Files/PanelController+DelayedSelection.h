@@ -21,7 +21,7 @@
  * Will also deselect any currenly selected items.
  */
 - (void) ScheduleDelayedSelectionChangeFor:(const string &)_item_name
-                                 timeoutms:(int)_time_out_in_ms
+                                   timeout:(milliseconds)_time_out_in_ms
                                   checknow:(bool)_check_now;
 
 /**

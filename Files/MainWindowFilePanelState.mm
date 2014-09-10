@@ -567,7 +567,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     {
         if(!_entries.empty())
             [panel ScheduleDelayedSelectionChangeFor:_entries.front().c_str()
-                                           timeoutms:100
+                                             timeout:100ms
                                             checknow:true];
         
         for(auto &i: _entries)

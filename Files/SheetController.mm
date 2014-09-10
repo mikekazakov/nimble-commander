@@ -57,13 +57,15 @@
 
 - (void) endSheet:(NSModalResponse)returnCode
 {
+    bool release_self = m_Self != nil;
+    
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9)
         [self.window.sheetParent endSheet:self.window
                                returnCode:returnCode];
     else
         [NSApp endSheet:self.window
              returnCode:returnCode];
-    if(m_Self != nil)
+    if(release_self)
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             m_Self = nil;
         });

@@ -69,7 +69,7 @@ namespace panel
     bool                                m_QuickSearchTypingView;
     PanelQuickSearchMode::KeyModif      m_QuickSearchMode;
     PanelDataTextFiltering::WhereEnum   m_QuickSearchWhere;
-    uint64_t                            m_QuickSearchLastType;
+    nanoseconds                         m_QuickSearchLastType;
     unsigned                            m_QuickSearchOffset;
     
     // background operations' queues
@@ -110,7 +110,7 @@ namespace panel
         /**
          * Time after which request is meaningless and should be removed
          */
-        uint64_t    request_end;
+        nanoseconds    request_end;
     } m_DelayedSelection;
     
     NSPopover            *m_SelectionWithMaskPopover;

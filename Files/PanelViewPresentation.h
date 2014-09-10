@@ -74,7 +74,7 @@ private:
     virtual void OnDirectoryChanged() {}
 
     VFSStatFS                      m_StatFS;
-    uint64_t                       m_StatFSLastUpdate = 0;
+    nanoseconds                    m_StatFSLastUpdate = 0ns;
     SerialQueue                    m_StatFSQueue = SerialQueueT::Make();
     VFSHost                       *m_StatFSLastHost = nullptr;
     string                         m_StatFSLastPath;

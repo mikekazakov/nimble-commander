@@ -660,7 +660,7 @@ proceed:;
     [op AddOnFinishHandler:^{
         if(m_CurrentController.GetCurrentDirectoryPathRelativeToHost == current_pan_path)
             dispatch_to_main_queue( ^{
-                [m_CurrentController ScheduleDelayedSelectionChangeFor:target_fns timeoutms:500 checknow:true];
+                [m_CurrentController ScheduleDelayedSelectionChangeFor:target_fns timeout:500ms checknow:true];
             });
         }
      ];

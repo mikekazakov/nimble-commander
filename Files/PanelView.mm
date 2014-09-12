@@ -42,12 +42,14 @@ struct PanelViewStateStorage
     
     bool                        m_ReadyToDrag;
     NSPoint                     m_LButtonDownPos;
-    bool                        m_DraggingIntoMe;
     bool                        m_IsCurrentlyMomentumScroll;
     bool                        m_DisableCurrentMomentumScroll;
     int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
     __weak id<PanelViewDelegate> m_Delegate;
     nanoseconds                 m_ActivationTime; // time when view did became a first responder
+    
+    bool                        m_DraggingOver;
+    int                         m_DraggingOverItemAtPosition;
 }
 
 
@@ -55,11 +57,12 @@ struct PanelViewStateStorage
 {
     self = [super initWithFrame:frame];
     if (self) {
-        m_DraggingIntoMe = false;
         m_ScrollDY = 0.0;
         m_DisableCurrentMomentumScroll = false;
         m_IsCurrentlyMomentumScroll = false;
         m_LastPotentialRenamingLBDown = -1;
+        m_DraggingOver = false;
+        m_DraggingOverItemAtPosition = -1;
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -164,18 +167,27 @@ struct PanelViewStateStorage
     if (!m_State.Data || !m_Presentation) return;
     m_Presentation->Draw(dirtyRect);
     
-    if(m_DraggingIntoMe) {
-        [NSGraphicsContext saveGraphicsState];
-        NSSetFocusRingStyle(NSFocusRingOnly);
-        [[NSBezierPath bezierPathWithRect:NSInsetRect(self.bounds,2,2)] fill];
-        [NSGraphicsContext restoreGraphicsState];
-    }
-    
     if(m_RenamingEditor) {
         [NSGraphicsContext saveGraphicsState];
         NSSetFocusRingStyle(NSFocusRingOnly);
         [[NSBezierPath bezierPathWithRect:m_RenamingEditor.frame] fill];
         [NSGraphicsContext restoreGraphicsState];
+    }
+    
+    if( m_DraggingOver ) {
+        if( m_DraggingOverItemAtPosition >= 0 && m_Presentation->IsItemVisible(m_DraggingOverItemAtPosition) ) {
+            NSRect rc = m_Presentation->ItemRect(m_DraggingOverItemAtPosition);
+            [NSGraphicsContext saveGraphicsState];
+            NSSetFocusRingStyle(NSFocusRingOnly);
+            [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
+            [NSGraphicsContext restoreGraphicsState];
+        }
+        else {
+            [NSGraphicsContext saveGraphicsState];
+            NSSetFocusRingStyle(NSFocusRingOnly);
+            [[NSBezierPath bezierPathWithRect:NSInsetRect(self.bounds,2,2)] fill];
+            [NSGraphicsContext restoreGraphicsState];
+        }
     }
 }
 
@@ -668,12 +680,6 @@ struct PanelViewStateStorage
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewDraggingEntered:sender:)])
             result = [del PanelViewDraggingEntered:self sender:sender];
-
-    if(result != NSDragOperationNone && m_DraggingIntoMe == false) {
-        m_DraggingIntoMe = true;
-        [self setNeedsDisplay];
-    }
-    
     return result;
 }
 
@@ -683,12 +689,6 @@ struct PanelViewStateStorage
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewDraggingUpdated:sender:)])
             result = [del PanelViewDraggingUpdated:self sender:sender];
-    
-    if(result != NSDragOperationNone && m_DraggingIntoMe == false) {
-        m_DraggingIntoMe = true;
-        [self setNeedsDisplay];
-    }
-    
     return result;
 }
 
@@ -697,14 +697,10 @@ struct PanelViewStateStorage
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewDraggingExited:sender:)])
             [del PanelViewDraggingExited:self sender:sender];
-    m_DraggingIntoMe = false;
-    [self setNeedsDisplay];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
 {
-    m_DraggingIntoMe = false;
-    [self setNeedsDisplay];
     // possibly add some checking stage here later
     return YES;
 }
@@ -819,6 +815,48 @@ struct PanelViewStateStorage
 {
     if(m_IsCurrentlyMomentumScroll)
         m_DisableCurrentMomentumScroll = true;
+}
+
+- (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
+{
+    assert(dispatch_is_main_queue());
+    // TODO: hit-test options
+    int pos = m_Presentation->GetItemIndexByPointInView(_point);
+    if(pos < 0)
+        return -1;
+    
+    auto item = m_State.Data->EntryAtSortPosition(pos);
+    if(!item)
+        return -1;
+    return pos;
+}
+
+- (int) draggingOverItemAtPosition
+{
+    return m_DraggingOverItemAtPosition;
+}
+
+- (void) setDraggingOverItemAtPosition:(int)draggingOverItemAtPosition
+{
+    if(m_DraggingOverItemAtPosition != draggingOverItemAtPosition) {
+        m_DraggingOverItemAtPosition = draggingOverItemAtPosition;
+        self.needsDisplay = true;
+    }
+}
+
+- (bool) draggingOver
+{
+    return m_DraggingOver;
+}
+
+- (void) setDraggingOver:(bool)draggingOver
+{
+    if(m_DraggingOver != draggingOver)
+    {
+        m_DraggingOverItemAtPosition = -1;
+        m_DraggingOver = draggingOver;
+        self.needsDisplay = true;
+    }
 }
 
 @end

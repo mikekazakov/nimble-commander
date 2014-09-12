@@ -41,6 +41,7 @@ public:
     
     virtual NSRect GetItemColumnsRect() = 0;
     
+    // TODO: add hit-test flags, to allow testing hitting exactly in a filename for example.
     // Calculates cursor postion which corresponds to the point in view.
     // Returns -1 if point is out of the files' view area.
     virtual int GetItemIndexByPointInView(CGPoint _point) = 0;
@@ -58,10 +59,12 @@ public:
      */
     virtual double GetSingleItemHeight() = 0;
     
+    bool IsItemVisible(int _item_no) const;
+    
 protected:
     virtual int GetMaxItemsPerColumn() const = 0;
     int GetNumberOfItemColumns() const;
-    int GetMaxVisibleItems();    
+    int GetMaxVisibleItems() const;
     void SetViewNeedsDisplay();
     
     inline const VFSStatFS &StatFS() const { return m_StatFS; }

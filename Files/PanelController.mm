@@ -121,8 +121,7 @@ void panel::GenericCursorPersistance::Restore()
         m_DirectoryLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirloading");
         m_DirectoryReLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirreloading");
         m_DelayedSelection.isvalid = false;
-        m_LastPreparedDDOperation = 0;
-        m_LastDDInfo = nullptr;
+        m_DragDrop.last_valid_items = -1;
         
         __weak PanelController* weakself = self;
         auto on_change = ^{

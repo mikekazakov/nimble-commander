@@ -91,8 +91,9 @@ namespace panel
     __weak BriefSystemOverview* m_BriefSystemOverview;
     
     // drag & drop support, caching
-    NSDragOperation     m_LastPreparedDDOperation;
-    void*               m_LastDDInfo; // converted address of NSDraggingInfo passed in a view, like hash/id
+    struct {
+        int                 last_valid_items;
+    } m_DragDrop;
     
     NSButton            *m_ShareButton;
     

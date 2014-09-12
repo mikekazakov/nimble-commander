@@ -102,6 +102,8 @@
 	<true/>
 	<key>FilePanelsGeneralExecutableExtensionsList</key>
 	<string>sh,pl,rb,py</string>
+	<key>FilePanelsGeneralAllowDraggingIntoFolders</key>
+	<true/>
 	<key>FilePanelsModernFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABoAAAD//kwAdQBjAGkAZABhAEcAcgBhAG4AZABlAAAAhAFmDYQBYwCYAZgAmACG</data>
 	<key>FilePanelsModernColoringRules</key>

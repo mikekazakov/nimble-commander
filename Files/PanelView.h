@@ -34,6 +34,13 @@ class PanelViewPresentation;
 
 @end
 
+namespace PanelViewHitTest {
+    enum Options {
+        FullArea,
+        NameOnly
+    };
+};
+
 @interface PanelView : NSView<NSDraggingDestination, NSTextViewDelegate>
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active;
@@ -41,6 +48,20 @@ class PanelViewPresentation;
 @property (nonatomic, readonly) const VFSListingItem* item; // return an item at current cursor position if any or nullptr
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
+
+/**
+ * Set to true to tell PanelView to drag focus ring. If draggingOverItemAtPosition<0 - draw focus ring in view bounds,
+ * otherwise draw focus ring in specified item.
+ * No KVO support here.
+ */
+@property (nonatomic) bool draggingOver;
+
+/**
+ * Tell PanelView to draw a focus ring over item at specified position.
+ * draggingOver should be true, otherwise value ignored.
+ * No KVO support here.
+ */
+@property (nonatomic) int draggingOverItemAtPosition;
 
 /**
  * called by controlled when a directory has been entirely changed in PanelData.
@@ -66,5 +87,11 @@ class PanelViewPresentation;
 - (void) setQuickSearchPrompt:(NSString*)_text;
 
 - (void) disableCurrentMomentumScroll;
+
+/**
+ * return a number of item at specified point.
+ * options currently unsupported.
+ */
+- (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
 
 @end

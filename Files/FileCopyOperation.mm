@@ -446,6 +446,8 @@ static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
 - (OperationDialogAlert *)OnRenameDestinationExists:(const char *)_dest
                                              Source:(const char *)_src
 {
+    // TODO:
+    // why we use here a different dialog, not one that used on copy operation?
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
     [alert AddButtonWithTitle:@"Rewrite" andResult:OperationDialogResult::Continue];
     [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];

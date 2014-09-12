@@ -25,6 +25,11 @@ static NSString *kPrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop"
 - (void) Clear;
 @end
 
+static bool DraggingIntoFoldersAllowed()
+{
+    return [NSUserDefaults.standardUserDefaults boolForKey:@"FilePanelsGeneralAllowDraggingIntoFolders"];
+}
+
 static NSFont *FontForDragImages()
 {
     static dispatch_once_t once;
@@ -321,75 +326,131 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         [_view beginDraggingSessionWithItems:drag_items event:_event source:broker];
 }
 
+- (int) countAcceptableDraggingItems:(id <NSDraggingInfo>)sender
+{
+    __block int urls_amount = 0;
+    [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
+                                      forView:self.view
+                                      classes:@[NSPasteboardItem.class]
+                                searchOptions:nil
+                                   usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
+                                       if( [((NSPasteboardItem*)draggingItem.item).types containsObject:(NSString *)kUTTypeFileURL] )
+                                           urls_amount++;
+                                   }];
+    return urls_amount;
+}
+
+- (path) composeDestinationForDrag:(id <NSDraggingInfo>)sender
+{
+    int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
+                                               hitTestOption:PanelViewHitTest::FullArea];
+    auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
+    bool dragging_over_dir = dragging_over_item && dragging_over_item->IsDir() && DraggingIntoFoldersAllowed();
+    path destination_dir = self.GetCurrentDirectoryPathRelativeToHost;
+    destination_dir.remove_filename();
+    if(dragging_over_dir) { // alter destination regarding to where drag is currently placed
+        if(!dragging_over_item->IsDotDot())
+            destination_dir /= dragging_over_item->Name();
+        else
+            destination_dir = destination_dir.parent_path();
+    }
+    return destination_dir;
+}
+
 - (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
+    int valid_items = [self countAcceptableDraggingItems:sender];
+    int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
+                                            hitTestOption:PanelViewHitTest::FullArea];
+    auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
+    bool dragging_over_dir = dragging_over_item && dragging_over_item->IsDir() && DraggingIntoFoldersAllowed();
+    path destination_dir = [self composeDestinationForDrag:sender];
+    
     NSDragOperation result = NSDragOperationNone;
-    if([sender.draggingSource isKindOfClass:PanelControllerDragSourceBroker.class]) {
-        PanelControllerDragSourceBroker *source = (PanelControllerDragSourceBroker *)sender.draggingSource;
-        if(source.controller == self) {
-            result = NSDragOperationNone;
-        }
-        else {
-            // some logic regarding R/W situation on medium and link capabilities should be here
-            NSDragOperation mask = sender.draggingSourceOperationMask;
-            if(mask == (NSDragOperationCopy|NSDragOperationLink|NSDragOperationMove))
-                result = NSDragOperationMove;
-            else if(mask == (NSDragOperationCopy|NSDragOperationMove))
-                result = NSDragOperationMove;
-            else
-                result = mask;
-        }
-    }
-    else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
-        if(self.VFS->IsWriteable()) {
-            __block int urls_amount = 0;
-            [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
-                                              forView:self.view
-                                              classes:@[NSPasteboardItem.class]
-                                        searchOptions:nil
-                                           usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
-                                               if( [((NSPasteboardItem*)draggingItem.item).types containsObject:(NSString *)kUTTypeFileURL] )
-                                                   urls_amount++;
-                                           }];
+    if(self.VFS->IsWriteable()) {
+        if([sender.draggingSource isKindOfClass:PanelControllerDragSourceBroker.class]) {
+            // drag is from some other panel
+            PanelControllerDragSourceBroker *source = (PanelControllerDragSourceBroker *)sender.draggingSource;
+            if(source.controller == self && !dragging_over_dir) {
+                result = NSDragOperationNone; // we can't drag into the same dir on the same panel
+            }
+            else {
+                // some logic regarding R/W situation on medium and link capabilities should be here
+                NSDragOperation mask = sender.draggingSourceOperationMask;
+                if(mask == (NSDragOperationCopy|NSDragOperationLink|NSDragOperationMove))
+                    result = NSDragOperationMove;
+                else if(mask == (NSDragOperationCopy|NSDragOperationMove))
+                    result = NSDragOperationMove;
+                else
+                    result = mask;
+            }
 
-            sender.numberOfValidItemsForDrop = urls_amount;
-
+            // check that we dont drag a folder into itself
+            if(dragging_over_dir)
+                for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
+                                                                                        options:nil])
+                    if( destination_dir == item.path) {
+                        result = NSDragOperationNone;
+                        break;
+                    }
+        }
+        else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
+            // drag is from some other application
             NSDragOperation mask = sender.draggingSourceOperationMask;
             if(mask & NSDragOperationCopy)
                 result = NSDragOperationCopy;
         }
     }
     
-    m_LastDDInfo = (__bridge void*)sender;
-    m_LastPreparedDDOperation = result;
+    if(valid_items == 0) // regardless of a previous logic - we can't accept an unacceptable drags
+        result = NSDragOperationNone;
+    else if(result == NSDragOperationNone) // inverse - we can't drag here anything - amount of draggable items is zero
+        valid_items = 0;
+    
+    if(valid_items != m_DragDrop.last_valid_items) {
+        m_DragDrop.last_valid_items = valid_items;
+        sender.numberOfValidItemsForDrop = valid_items;
+    }
+    
+    if(result != NSDragOperationNone) {
+        m_View.draggingOver = true;
+        m_View.draggingOverItemAtPosition = dragging_over_dir ? dragging_over_item_no : -1;
+    }
+    else {
+        m_View.draggingOver = false;
+        m_View.draggingOverItemAtPosition = -1;
+    }
     return result;
 }
 
 - (NSDragOperation)PanelViewDraggingUpdated:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
-    if( m_LastDDInfo == (__bridge void*)sender )
-        return m_LastPreparedDDOperation;
-    
     return [self PanelViewDraggingEntered:_view sender:sender];
 }
 
 - (void)PanelViewDraggingExited:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
-    m_LastDDInfo = nullptr;
-    m_LastPreparedDDOperation = 0;
+    m_DragDrop.last_valid_items = -1;
+    m_View.draggingOver = false;
+    m_View.draggingOverItemAtPosition = -1;
 }
 
 - (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
+    // clear UI from dropping information
+    m_DragDrop.last_valid_items = -1;
+    m_View.draggingOver = false;
+    m_View.draggingOverItemAtPosition = -1;
+    
+    path destination_dir = [self composeDestinationForDrag:sender];
+    
     if(id idsource = sender.draggingSource) {
         if([idsource isKindOfClass:PanelControllerDragSourceBroker.class]) {
             // we're dragging something here from another PanelView, lets understand what actually
             PanelControllerDragSourceBroker *source_broker = (PanelControllerDragSourceBroker *)idsource;
             PanelController *source_controller = source_broker.controller;
-            assert(source_controller != self);
             auto opmask = sender.draggingSourceOperationMask;
-            string destination_dir = self.GetCurrentDirectoryPathRelativeToHost;
-            
+
             chained_strings files;
             for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                     options:nil])
@@ -506,13 +567,13 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 op = [[FileCopyOperation alloc] initWithFiles:move(filenames)
                                                          root:t.first.c_str()
                                                        srcvfs:VFSNativeHost::SharedHost()
-                                                         dest:self.GetCurrentDirectoryPathRelativeToHost.c_str()
+                                                         dest:destination_dir.c_str()
                                                        dstvfs:self.VFS
                                                       options:opts];
             else // native -> native path
                 op = [[FileCopyOperation alloc] initWithFiles:move(filenames)
                                                          root:t.first.c_str()
-                                                         dest:self.GetCurrentDirectoryPathRelativeToHost.c_str()
+                                                         dest:destination_dir.c_str()
                                                       options:opts];
             [self.state.OperationsController AddOperation:op];
         }

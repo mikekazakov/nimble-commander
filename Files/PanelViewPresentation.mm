@@ -228,7 +228,7 @@ void PanelViewPresentation::EnsureCursorIsVisible()
     assert(m_State->ItemsDisplayOffset >= 0);
 }
 
-int PanelViewPresentation::GetMaxVisibleItems()
+int PanelViewPresentation::GetMaxVisibleItems() const
 {
     return GetNumberOfItemColumns() * GetMaxItemsPerColumn();
 }
@@ -283,4 +283,11 @@ int PanelViewPresentation::GetNumberOfItemColumns() const
     }
     assert(0);
     return 0;
+}
+
+bool PanelViewPresentation::IsItemVisible(int _item_no) const
+{
+    if(_item_no < 0) return false;
+    return _item_no - m_State->ItemsDisplayOffset >= 0 &&
+        _item_no - m_State->ItemsDisplayOffset < GetMaxVisibleItems();
 }

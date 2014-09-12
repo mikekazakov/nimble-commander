@@ -386,7 +386,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             }
 
             // check that we dont drag a folder into itself
-            if(dragging_over_dir)
+            if(dragging_over_dir && source.vfs == self.VFS)
                 for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                         options:nil])
                     if( destination_dir == item.path) {

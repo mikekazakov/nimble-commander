@@ -74,6 +74,7 @@
     TAG(tag_cmd_delete_alt,     "menu.command.delete_alternative");
     TAG(tag_cmd_mkdir,          "menu.command.create_directory");
     TAG(tag_file_calc_sizes,    "menu.file.calculate_sizes");
+    TAG(tag_file_calc_checksum, "menu.file.calculate_checksum");
 #undef TAG
     
     auto tag = item.tag;
@@ -108,6 +109,7 @@
     IF(tag_cmd_delete)      return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
     IF(tag_cmd_delete_alt)  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
     IF(tag_cmd_mkdir)       return self.VFS->IsWriteable();
+    IF(tag_file_calc_checksum) return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
 #undef IF
     
     return true; // will disable some items in the future

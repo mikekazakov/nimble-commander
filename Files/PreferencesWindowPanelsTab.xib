@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6206.9" systemVersion="14A343f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A343f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6206.9"/>
+        <deployment version="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
@@ -37,11 +37,58 @@
                                             <binding destination="36" name="value" keyPath="values.FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask" id="769"/>
                                         </connections>
                                     </button>
+                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
+                                        <rect key="frame" x="15" y="176" width="404" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Show other windows' paths in GoTo button menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu" id="TNv-P7-9uV"/>
+                                        </connections>
+                                    </button>
+                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
+                                        <rect key="frame" x="15" y="156" width="404" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Show &quot;..&quot; entry in directory listing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tmQ-Kf-Ylo">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowDotDotEntry" id="QwH-3H-ODO"/>
+                                        </connections>
+                                    </button>
+                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="zSi-y5-IGC">
+                                        <rect key="frame" x="15" y="116" width="404" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Show volume information bar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="nz9-v0-Dc6">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowVolumeInformationBar" id="ean-d2-Api"/>
+                                        </connections>
+                                    </button>
+                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="lg9-3W-PJz">
+                                        <rect key="frame" x="15" y="136" width="404" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Show localized filenames" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Tdz-Yw-NMY">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowLocalizedFilenames" id="71K-og-ztz"/>
+                                        </connections>
+                                    </button>
+                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
+                                        <rect key="frame" x="15" y="196" width="404" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Allow dragging into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAllowDraggingIntoFolders" id="D5D-qS-Cv2"/>
+                                        </connections>
+                                    </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="770">
-                                        <rect key="frame" x="15" y="109" width="185" height="17"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="181" id="37s-cH-1aL"/>
-                                        </constraints>
+                                        <rect key="frame" x="15" y="89" width="185" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Delete (F8):" id="774">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -49,9 +96,9 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="789">
-                                        <rect key="frame" x="204" y="106" width="159" height="26"/>
+                                        <rect key="frame" x="204" y="86" width="159" height="26"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="154" id="eOP-RK-XUb"/>
+                                            <constraint firstAttribute="width" constant="154" id="a90-Z0-fSG"/>
                                         </constraints>
                                         <popUpButtonCell key="cell" type="push" title="Move To Trash" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" selectedItem="800" id="796">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -74,48 +121,8 @@
                                             <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsDeleteBehavior" id="841"/>
                                         </connections>
                                     </popUpButton>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
-                                        <rect key="frame" x="15" y="196" width="404" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show other windows' paths in GoTo button menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu" id="TNv-P7-9uV"/>
-                                        </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
-                                        <rect key="frame" x="15" y="176" width="404" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show &quot;..&quot; entry in directory listing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tmQ-Kf-Ylo">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowDotDotEntry" id="QwH-3H-ODO"/>
-                                        </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="zSi-y5-IGC">
-                                        <rect key="frame" x="15" y="136" width="404" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show volume information bar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="nz9-v0-Dc6">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowVolumeInformationBar" id="ean-d2-Api"/>
-                                        </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="lg9-3W-PJz">
-                                        <rect key="frame" x="15" y="156" width="404" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show localized filenames" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Tdz-Yw-NMY">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowLocalizedFilenames" id="71K-og-ztz"/>
-                                        </connections>
-                                    </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="771">
-                                        <rect key="frame" x="15" y="83" width="185" height="17"/>
+                                        <rect key="frame" x="15" y="63" width="185" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative Delete (Shift-F8):" id="772">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -123,7 +130,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="790">
-                                        <rect key="frame" x="204" y="77" width="159" height="26"/>
+                                        <rect key="frame" x="204" y="57" width="159" height="26"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="791">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -147,32 +154,35 @@
                                     </popUpButton>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="trailing" secondItem="A0a-2e-yUq" secondAttribute="trailing" id="4qV-qc-9Xz"/>
-                                    <constraint firstItem="760" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="17" id="8eb-L4-3vH"/>
-                                    <constraint firstItem="790" firstAttribute="leading" secondItem="789" secondAttribute="leading" id="Dz2-6g-ZNj"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="zSi-y5-IGC" secondAttribute="leading" id="HTf-nF-cL9"/>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="top" secondItem="A0a-2e-yUq" secondAttribute="bottom" constant="6" symbolic="YES" id="J6q-Vl-y44"/>
-                                    <constraint firstItem="760" firstAttribute="leading" secondItem="A0a-2e-yUq" secondAttribute="leading" id="MTx-07-zcx"/>
-                                    <constraint firstItem="789" firstAttribute="bottom" secondItem="770" secondAttribute="bottom" id="NyM-sc-hGi"/>
-                                    <constraint firstAttribute="trailing" secondItem="789" secondAttribute="trailing" constant="74" id="OSg-pP-d3P"/>
-                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="top" secondItem="lg9-3W-PJz" secondAttribute="bottom" constant="6" symbolic="YES" id="Pki-Bc-EGq"/>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="leading" secondItem="A0a-2e-yUq" secondAttribute="leading" id="TlG-tK-4l9"/>
-                                    <constraint firstItem="789" firstAttribute="leading" secondItem="770" secondAttribute="trailing" constant="8" symbolic="YES" id="bNq-MG-6fu"/>
-                                    <constraint firstItem="790" firstAttribute="top" secondItem="789" secondAttribute="bottom" constant="8" id="bol-xB-Tnt"/>
-                                    <constraint firstAttribute="trailing" secondItem="760" secondAttribute="trailing" constant="17" id="bzV-gR-vzW"/>
-                                    <constraint firstItem="771" firstAttribute="top" secondItem="770" secondAttribute="bottom" constant="9" id="cCV-QJ-TjH"/>
-                                    <constraint firstItem="790" firstAttribute="trailing" secondItem="789" secondAttribute="trailing" id="fbj-It-zNU"/>
-                                    <constraint firstItem="789" firstAttribute="top" secondItem="zSi-y5-IGC" secondAttribute="bottom" constant="8" id="hXl-Hx-UnA"/>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="trailing" secondItem="lg9-3W-PJz" secondAttribute="trailing" id="jVm-wG-uTs"/>
-                                    <constraint firstItem="A0a-2e-yUq" firstAttribute="top" secondItem="760" secondAttribute="bottom" constant="6" symbolic="YES" id="kKX-K6-tPg"/>
-                                    <constraint firstItem="790" firstAttribute="leading" secondItem="771" secondAttribute="trailing" constant="8" symbolic="YES" id="kmj-iU-NYA"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="trailing" secondItem="zSi-y5-IGC" secondAttribute="trailing" id="oqU-3O-QfR"/>
-                                    <constraint firstItem="760" firstAttribute="top" secondItem="22" secondAttribute="top" constant="3" id="p9W-Qc-91j"/>
-                                    <constraint firstItem="760" firstAttribute="trailing" secondItem="A0a-2e-yUq" secondAttribute="trailing" id="py7-s5-2SO"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="s1m-K3-6d7" secondAttribute="leading" id="rYD-Xo-W5X"/>
-                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="leading" secondItem="770" secondAttribute="leading" id="uMS-Yb-W8g"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="top" secondItem="s1m-K3-6d7" secondAttribute="bottom" constant="6" symbolic="YES" id="yTL-sP-N79"/>
-                                    <constraint firstItem="771" firstAttribute="leading" secondItem="770" secondAttribute="leading" id="zDQ-AI-wGo"/>
+                                    <constraint firstItem="789" firstAttribute="leading" secondItem="790" secondAttribute="leading" id="0Hk-87-nOP"/>
+                                    <constraint firstItem="771" firstAttribute="top" secondItem="770" secondAttribute="bottom" constant="9" id="1T7-V2-dtg"/>
+                                    <constraint firstItem="770" firstAttribute="leading" secondItem="771" secondAttribute="leading" id="5iE-uJ-2jW"/>
+                                    <constraint firstItem="789" firstAttribute="top" secondItem="zSi-y5-IGC" secondAttribute="bottom" constant="8" id="8dv-9k-Agb"/>
+                                    <constraint firstItem="760" firstAttribute="leading" secondItem="bG0-HE-nN2" secondAttribute="leading" id="E9b-Pi-jDi"/>
+                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="trailing" secondItem="A0a-2e-yUq" secondAttribute="trailing" id="EQa-kg-5Hi"/>
+                                    <constraint firstItem="A0a-2e-yUq" firstAttribute="top" secondItem="bG0-HE-nN2" secondAttribute="bottom" constant="6" symbolic="YES" id="F3L-EU-HNy"/>
+                                    <constraint firstItem="760" firstAttribute="top" secondItem="22" secondAttribute="top" constant="3" id="FK7-vs-ZPH"/>
+                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="trailing" secondItem="760" secondAttribute="trailing" id="J28-gC-cuC"/>
+                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="top" secondItem="s1m-K3-6d7" secondAttribute="bottom" constant="6" symbolic="YES" id="KXY-Bi-Ow5"/>
+                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="zSi-y5-IGC" secondAttribute="leading" id="LZd-eR-aHK"/>
+                                    <constraint firstItem="790" firstAttribute="leading" secondItem="771" secondAttribute="trailing" constant="8" symbolic="YES" id="OXS-gX-GmX"/>
+                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="leading" secondItem="A0a-2e-yUq" secondAttribute="leading" id="T6I-Vi-k1C"/>
+                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="top" secondItem="lg9-3W-PJz" secondAttribute="bottom" constant="6" symbolic="YES" id="UMF-8f-hYV"/>
+                                    <constraint firstItem="760" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="17" id="UVh-jj-3FR"/>
+                                    <constraint firstItem="770" firstAttribute="bottom" secondItem="789" secondAttribute="bottom" id="VHR-dB-k3l"/>
+                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="top" secondItem="A0a-2e-yUq" secondAttribute="bottom" constant="6" symbolic="YES" id="Vmw-jM-dho"/>
+                                    <constraint firstItem="789" firstAttribute="leading" secondItem="770" secondAttribute="trailing" constant="8" symbolic="YES" id="Vzd-8K-qHZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="760" secondAttribute="trailing" constant="17" id="WMc-TJ-XJA"/>
+                                    <constraint firstItem="790" firstAttribute="top" secondItem="789" secondAttribute="bottom" constant="8" id="XFg-aR-CbJ"/>
+                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="s1m-K3-6d7" secondAttribute="leading" id="aKi-W0-wOI"/>
+                                    <constraint firstAttribute="trailing" secondItem="789" secondAttribute="trailing" constant="74" id="bIa-Tz-NQm"/>
+                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="top" secondItem="760" secondAttribute="bottom" constant="6" symbolic="YES" id="cNO-6W-jOW"/>
+                                    <constraint firstItem="790" firstAttribute="trailing" secondItem="789" secondAttribute="trailing" id="el7-hR-f0x"/>
+                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="leading" secondItem="A0a-2e-yUq" secondAttribute="leading" id="lFt-oJ-rZ5"/>
+                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="leading" secondItem="770" secondAttribute="leading" id="mFM-qC-gCh"/>
+                                    <constraint firstItem="A0a-2e-yUq" firstAttribute="trailing" secondItem="bG0-HE-nN2" secondAttribute="trailing" id="pvA-0Q-gen"/>
+                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="trailing" secondItem="lg9-3W-PJz" secondAttribute="trailing" id="wwo-RF-Ttd"/>
+                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="trailing" secondItem="s1m-K3-6d7" secondAttribute="trailing" id="xHd-Zw-9KW"/>
                                 </constraints>
                             </view>
                         </tabViewItem>

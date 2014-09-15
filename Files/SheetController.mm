@@ -11,7 +11,7 @@
 
 @implementation SheetController
 {
-    void (^m_Handler)(NSModalResponse returnCode); // for pre-10.9
+    void (^m_Handler)(NSModalResponse returnCode);
     __strong SheetController *m_Self;
 }
 
@@ -35,17 +35,18 @@
     if(self.isSelfKeeping)
         m_Self = self;
     
-    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9) {
-        [_wnd beginSheet:self.window completionHandler:_handler];
-    }
-    else {
-        m_Handler = _handler;
+    m_Handler = [_handler copy];
+    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9)
+        [_wnd beginSheet:self.window completionHandler:^(NSModalResponse returnCode) {
+            m_Handler(returnCode);
+            m_Handler = nil;
+        }];
+    else
         [NSApp beginSheet:self.window
            modalForWindow:_wnd
             modalDelegate:self
            didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)
               contextInfo:nil];
-    }
 }
 
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo

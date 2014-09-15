@@ -113,7 +113,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
 #undef __1000_4
 #undef __1000_5
     
-    return [NSString stringWithFormat:@"Selected %@ in %d %@", bytes, _total_files, postfix];
+    return [NSString stringWithFormat:@"Selected %@ bytes in %d %@", bytes, _total_files, postfix];
 }
 
 static NSString* FormHumanReadableDateTime(time_t _in)

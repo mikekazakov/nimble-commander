@@ -116,6 +116,11 @@ namespace panel
          * Time after which request is meaningless and should be removed
          */
         nanoseconds    request_end;
+
+        /**
+         * Called when changed a cursor position
+         */
+        void          (^done)();
     } m_DelayedSelection;
     
     NSPopover            *m_SelectionWithMaskPopover;

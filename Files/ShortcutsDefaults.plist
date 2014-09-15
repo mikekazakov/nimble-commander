@@ -16,6 +16,8 @@
 	<string>⌘q</string>
 	<string>menu.file.newwindow</string>
 	<string>⌘n</string>
+	<string>menu.file.new_folder</string>
+	<string>⇧⌘n</string>
 	<string>menu.file.open</string>
 	<string>\r</string>
 	<string>menu.file.open_native</string>

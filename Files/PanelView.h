@@ -94,4 +94,6 @@ namespace PanelViewHitTest {
  */
 - (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
 
+- (void) startFieldEditorRenaming;
+
 @end

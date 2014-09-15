@@ -68,6 +68,11 @@ struct PanelViewStateStorage
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(appWillResignActive)
+                                                   name:NSApplicationWillResignActiveNotification
+                                                 object:[NSApplication sharedApplication]];
+        
         [self frameDidChange];
         
     }
@@ -511,7 +516,7 @@ struct PanelViewStateStorage
         if(m_LastPotentialRenamingLBDown >= 0)
         {
             if(cursor_pos >= 0 && cursor_pos == m_LastPotentialRenamingLBDown)
-                [self performSelector:@selector(startFieldEditorRenaming:)
+                [self performSelector:@selector(startFieldEditorRenamingByEvent:)
                            withObject:_event
                            afterDelay:NSEvent.doubleClickInterval];
         }
@@ -713,11 +718,20 @@ struct PanelViewStateStorage
     return NO;
 }
 
-- (void)startFieldEditorRenaming:(NSEvent*)_event
+- (void)startFieldEditorRenamingByEvent:(NSEvent*)_event
 {
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
     if (cursor_pos < 0 || cursor_pos != m_State.CursorPos)
+        return;
+    
+    [self startFieldEditorRenaming];
+}
+
+- (void)startFieldEditorRenaming
+{
+    int cursor_pos = m_State.CursorPos;
+    if(!m_Presentation->IsItemVisible(cursor_pos))
         return;
     
     if(![self.delegate PanelViewWantsRenameFieldEditor:self])
@@ -735,6 +749,14 @@ struct PanelViewStateStorage
     tv.delegate = self;
     tv.fieldEditor = true;
     tv.string = self.item->NSName().copy;
+    NSRange sel_range = NSMakeRange(0, tv.string.length); // select whole filename by default
+    if(self.item->HasExtension()) { // find where extension starts and select filename only
+        NSRange r = [tv.string rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"."]
+                                               options:NSBackwardsSearch];
+        if(r.location > 0)
+            sel_range = NSMakeRange(0, r.location);
+    }
+    tv.selectedRange = sel_range;
     tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
     tv.verticallyResizable = false;
     tv.horizontallyResizable = true;
@@ -857,6 +879,11 @@ struct PanelViewStateStorage
         m_DraggingOver = draggingOver;
         self.needsDisplay = true;
     }
+}
+
+- (void) appWillResignActive
+{
+    [self cancelFieldEditor];
 }
 
 @end

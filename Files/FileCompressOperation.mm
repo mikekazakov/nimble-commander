@@ -167,8 +167,9 @@
     
     dispatch_to_main_queue( ^{
         [target RefreshDirectory];
-        [target ScheduleDelayedSelectionChangeFor:arc_name
-                                          timeout:500ms
+        PanelControllerDelayedSelection req;
+        req.filename = arc_name;
+        [target ScheduleDelayedSelectionChangeFor:req
                                          checknow:true];
     });
 }

@@ -702,7 +702,9 @@ void panel::GenericCursorPersistance::Restore()
     [op AddOnFinishHandler:^{
         if(self.GetCurrentDirectoryPathRelativeToHost == curr_path && self.VFS == curr_vfs)
             dispatch_to_main_queue( ^{
-                [self ScheduleDelayedSelectionChangeFor:target_fn timeout:500ms checknow:true];
+                PanelControllerDelayedSelection req;
+                req.filename = target_fn;
+                [self ScheduleDelayedSelectionChangeFor:req checknow:true];
                 [self RefreshDirectory];
             } );
     }];

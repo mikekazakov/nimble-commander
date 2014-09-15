@@ -565,10 +565,12 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     PanelController *panel = self.ActivePanelController;
     if([panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok)
     {
-        if(!_entries.empty())
-            [panel ScheduleDelayedSelectionChangeFor:_entries.front().c_str()
-                                             timeout:100ms
+        if(!_entries.empty()) {
+            PanelControllerDelayedSelection req;
+            req.filename = _entries.front().c_str();
+            [panel ScheduleDelayedSelectionChangeFor:req
                                             checknow:true];
+        }
         
         for(auto &i: _entries)
             data->CustomFlagsSelectSorted(data->SortedIndexForName(i.c_str()), true);

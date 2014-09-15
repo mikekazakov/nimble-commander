@@ -8,6 +8,17 @@
 
 #import "PanelController.h"
 
+struct PanelControllerDelayedSelection
+{
+    string          filename;
+    milliseconds    timeout = 500ms;
+
+    /**
+     * called by PanelController when succesfully changed the cursor position regarding this request.
+     */
+    void          (^done)();
+};
+
 @interface PanelController (DelayedSelection)
 
 /** 
@@ -20,8 +31,7 @@
  * If on any checking it will be found that time for request has went out - it will be removed (500ms is just ok for _time_out_in_ms).
  * Will also deselect any currenly selected items.
  */
-- (void) ScheduleDelayedSelectionChangeFor:(const string &)_item_name
-                                   timeout:(milliseconds)_time_out_in_ms
+- (void) ScheduleDelayedSelectionChangeFor:(PanelControllerDelayedSelection)request
                                   checknow:(bool)_check_now;
 
 /**

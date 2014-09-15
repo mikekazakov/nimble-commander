@@ -98,8 +98,9 @@
             
             dispatch_to_main_queue( ^{
                 [target RefreshDirectory];
-                [target ScheduleDelayedSelectionChangeFor:m_OriginalPathRequest
-                                                  timeout:500ms
+                PanelControllerDelayedSelection req;
+                req.filename = m_OriginalPathRequest;
+                [target ScheduleDelayedSelectionChangeFor:req
                                                  checknow:true];
                 });
         }

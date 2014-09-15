@@ -75,6 +75,7 @@
     TAG(tag_cmd_mkdir,          "menu.command.create_directory");
     TAG(tag_file_calc_sizes,    "menu.file.calculate_sizes");
     TAG(tag_file_calc_checksum, "menu.file.calculate_checksum");
+    TAG(tag_file_new_folder,    "menu.file.new_folder");
 #undef TAG
     
     auto tag = item.tag;
@@ -110,6 +111,7 @@
     IF(tag_cmd_delete_alt)  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
     IF(tag_cmd_mkdir)       return self.VFS->IsWriteable();
     IF(tag_file_calc_checksum) return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
+    IF(tag_file_new_folder) return self.VFS->IsWriteable();
 #undef IF
     
     return true; // will disable some items in the future
@@ -666,11 +668,55 @@
                                                                                                atPath:self.GetCurrentDirectoryPathRelativeToHost];
     [sheet beginSheetForWindow:self.window
              completionHandler:^(NSModalResponse returnCode) {
-                 if(sheet.didSaved)
-                     [self ScheduleDelayedSelectionChangeFor:sheet.savedFilename
-                                                     timeout:500ms
+                 if(sheet.didSaved) {
+                     PanelControllerDelayedSelection req;
+                     req.filename = sheet.savedFilename;
+                     [self ScheduleDelayedSelectionChangeFor:req
                                                     checknow:true];
+                 }
              }];
+}
+
+- (IBAction)OnQuickNewFolder:(id)sender
+{
+    NSString *stub = @"untitled folder";
+    path dir = self.GetCurrentDirectoryPathRelativeToHost;
+    string name = stub.UTF8String;
+    
+    // currently doing existance checking in main thread, which is bad for a slow remote vfs
+    // better implement it asynchronously.
+    VFSStat st;
+    if( self.VFS->Stat((dir/name).c_str(), st, VFSHost::F_NoFollow, 0) == 0 )
+        // this file already exists, will try another ones
+        for( int i = 2; ; ++i ) {
+            name = [NSString stringWithFormat:@"%@ %i", stub, i].UTF8String;
+            if( self.VFS->Stat((dir/name).c_str(), st, VFSHost::F_NoFollow, 0) != 0 )
+                break;
+            if( i >= 100 )
+                return; // we're full of such filenames, no reason to go on
+        }
+
+    CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
+    if(self.VFS->IsNativeFS())
+        op = [op initWithPath:name.c_str() rootpath:dir.c_str()];
+    else
+        op = [op initWithPath:name.c_str() rootpath:dir.c_str() at:self.VFS];
+    
+    __weak PanelController *ws = self;
+    [op AddOnFinishHandler:^{
+        dispatch_to_main_queue(^{
+            PanelController *ss = ws;
+            PanelControllerDelayedSelection req;
+            req.filename = name;
+            req.done = ^{
+                [((PanelController*)ws).view startFieldEditorRenaming];
+            };
+            [ss ScheduleDelayedSelectionChangeFor:req
+                                         checknow:true];
+        });
+    }];
+    
+    [self.state AddOperation:op];
 }
 
 @end

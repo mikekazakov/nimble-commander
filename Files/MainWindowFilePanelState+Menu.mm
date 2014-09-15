@@ -503,7 +503,9 @@
                      dispatch_to_main_queue( ^{
                          [m_LeftPanelController RefreshDirectory];
                          [m_RightPanelController RefreshDirectory];
-                         [active ScheduleDelayedSelectionChangeFor:single_fn_rename timeout:500ms checknow:true];
+                         PanelControllerDelayedSelection req;
+                         req.filename = single_fn_rename;
+                         [active ScheduleDelayedSelectionChangeFor:req checknow:true];
                      });
                  }];
                  [m_OperationsController AddOperation:op];

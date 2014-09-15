@@ -137,7 +137,7 @@ string VFSNetFTPHost::BuildFullURLString(const char *_path) const
 
 string VFSNetFTPHost::VerboseJunctionPath() const
 {
-    return string("ftp://") + JunctionPath();
+    return "ftp://"s + JunctionPath();
 }
 
 unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()
@@ -413,8 +413,8 @@ int VFSNetFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^_
         new_path.remove_filename();
     
     string url = BuildFullURLString((old_path.parent_path() / "/").c_str());
-    string cmd1 = string("RNFR ") + old_path.native();
-    string cmd2 = string("RNTO ") + new_path.native();
+    string cmd1 = "RNFR "s + old_path.native();
+    string cmd2 = "RNTO "s + new_path.native();
     
     CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir( old_path.parent_path() );

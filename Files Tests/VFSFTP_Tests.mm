@@ -245,7 +245,7 @@ static const char* readme = "\n\
     }
     
     for(auto dir: {g_LocalTestPath + "some / very / bad / filename",
-                   string("/some/another/invalid/path")
+                   "/some/another/invalid/path"s
         })
     {
         XCTAssert( host->CreateDirectory(dir.c_str(), 0755, 0) != 0 );

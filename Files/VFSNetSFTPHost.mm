@@ -468,7 +468,7 @@ int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, 
 
 string VFSNetSFTPHost::VerboseJunctionPath() const
 {
-    return string("sftp://") + JunctionPath();
+    return "sftp://"s + JunctionPath();
 }
 
 shared_ptr<VFSHostOptions> VFSNetSFTPHost::Options() const

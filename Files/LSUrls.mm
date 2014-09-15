@@ -108,10 +108,10 @@ void LauchServicesHandlers::DoMerge(const list<LauchServicesHandlers>& _input, L
 {
     // empty handler path means that there's no default handler available
     string default_handler = all_equal_or_default(begin(_input), end(_input), [](auto &i){
-        return i.default_path >= 0 ? i.paths[i.default_path] : string(""); }, string(""));
+        return i.default_path >= 0 ? i.paths[i.default_path] : ""s; }, ""s);
     
     // empty default_uti means that uti's are different in _input
-    string default_uti = all_equal_or_default(begin(_input), end(_input), [](auto &i){ return i.uti; }, string(""));
+    string default_uti = all_equal_or_default(begin(_input), end(_input), [](auto &i){ return i.uti; }, ""s);
     
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)

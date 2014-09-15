@@ -12,6 +12,6 @@
 
 @interface QuickLookView : QLPreviewView
 
-- (void)PreviewItem:(const string&)_path vfs:(shared_ptr<VFSHost>)_host;
+- (void)PreviewItem:(const string&)_path vfs:(const VFSHostPtr&)_host;
 
 @end

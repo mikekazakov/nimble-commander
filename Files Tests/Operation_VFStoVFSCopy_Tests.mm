@@ -104,7 +104,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     auto files = {"Info.plist", "PkgInfo", "version.plist"};
     
     for(auto &i: files)
-      [self EnsureClean:string("/Public/!FilesTesting/") + i at:host];
+      [self EnsureClean:"/Public/!FilesTesting/"s + i at:host];
     
     
     FileCopyOperation *op = [FileCopyOperation alloc];
@@ -123,13 +123,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
     for(auto &i: files)
     {
         int compare;
-        XCTAssert( VFSEasyCompareFiles((string("/Applications/Mail.app/Contents/") + i).c_str(),
+        XCTAssert( VFSEasyCompareFiles(("/Applications/Mail.app/Contents/"s + i).c_str(),
                                        VFSNativeHost::SharedHost(),
-                                       (string("/Public/!FilesTesting/") + i).c_str(),
+                                       ("/Public/!FilesTesting/"s + i).c_str(),
                                        host,
                                        compare) == 0);
         XCTAssert( compare == 0);
-        XCTAssert( host->Unlink((string("/Public/!FilesTesting/") + i).c_str(), 0) == 0);
+        XCTAssert( host->Unlink(("/Public/!FilesTesting/"s + i).c_str(), 0) == 0);
     }
 }
 

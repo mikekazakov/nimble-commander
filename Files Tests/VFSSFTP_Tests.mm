@@ -39,10 +39,10 @@
     PanelData data;
     data.Load(listing);
     XCTAssert( data.DirectoryEntries().Count() == 22);
-    XCTAssert( string("bin") == data.EntryAtSortPosition(0)->Name() );
-    XCTAssert( string("var") == data.EntryAtSortPosition(19)->Name() );
-    XCTAssert( string("initrd.img") == data.EntryAtSortPosition(20)->Name() );
-    XCTAssert( string("vmlinuz") == data.EntryAtSortPosition(21)->Name() );
+    XCTAssert( "bin"s == data.EntryAtSortPosition(0)->Name() );
+    XCTAssert( "var"s == data.EntryAtSortPosition(19)->Name() );
+    XCTAssert( "initrd.img"s == data.EntryAtSortPosition(20)->Name() );
+    XCTAssert( "vmlinuz"s == data.EntryAtSortPosition(21)->Name() );
     
     XCTAssert( data.EntryAtSortPosition(0)->IsDir() );
     // need to check symlinks

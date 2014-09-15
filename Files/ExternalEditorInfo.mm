@@ -153,7 +153,7 @@ static NSString* StorageFileName()
         return esc_buf; // just return escaped file path
     
     string args = m_Arguments.fileSystemRepresentation;
-    string path = string(" ") + esc_buf + " ";
+    string path = " "s + esc_buf + " ";
 
     size_t start_pos;
     if((start_pos = args.find("%%")) != std::string::npos)

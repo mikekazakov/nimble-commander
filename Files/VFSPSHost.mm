@@ -373,7 +373,7 @@ void VFSPSHost::CommitProcs(vector<ProcInfo> _procs)
     for(auto &i: newdata->procs)
     {
         newdata->files.push_back(ProcInfoIntoFile(i, newdata));
-        newdata->plain_filenames.push_back( /*string("/") + */to_string(i.pid) + " - " + i.name + ".txt" );
+        newdata->plain_filenames.push_back( to_string(i.pid) + " - " + i.name + ".txt" );
     }
     
     m_Data = newdata;
@@ -397,20 +397,20 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
     if(struct passwd *pwd = getpwuid(_info.p_uid))
         user_name = pwd->pw_name;
     
-    result += string("Name: ") + _info.name + "\n";
-    result += string("Process id: ") + to_string(_info.pid) + "\n";
-    result += string("Process group id: ") + to_string(_info.gid) + "\n";
-    result += string("Process parent id: ") + to_string(_info.ppid) + " (" + parent_name + ")\n";
-    result += string("Process user id: ") + to_string(_info.p_uid) + " (" + user_name + ")\n";
-    result += string("Process priority: ") + to_string(_info.priority) + "\n";
-    result += string("Process \"nice\" value: ") + to_string(_info.nice) + "\n";
-    result += string("Started at: ") +
+    result += "Name: "s + _info.name + "\n";
+    result += "Process id: "s + to_string(_info.pid) + "\n";
+    result += "Process group id: "s + to_string(_info.gid) + "\n";
+    result += "Process parent id: "s + to_string(_info.ppid) + " (" + parent_name + ")\n";
+    result += "Process user id: "s + to_string(_info.p_uid) + " (" + user_name + ")\n";
+    result += "Process priority: "s + to_string(_info.priority) + "\n";
+    result += "Process \"nice\" value: "s + to_string(_info.nice) + "\n";
+    result += "Started at: "s +
         [ProcDateFormatter() stringFromDate:[NSDate dateWithTimeIntervalSince1970:_info.start_time]].UTF8String +
         "\n";
-    result += string("Status: ") + ProcStatus(_info.status) + "\n";
-    result += string("Architecture: ") + ArchType(_info.cpu_type) + "\n";
-    result += string("Image file: ") + (_info.bin_path.empty() ? "N/A" : _info.bin_path) + "\n";
-    result += string("Arguments: ") + (_info.arguments.empty() ? "N/A" : _info.arguments) + "\n";
+    result += "Status: "s + ProcStatus(_info.status) + "\n";
+    result += "Architecture: "s + ArchType(_info.cpu_type) + "\n";
+    result += "Image file: "s + (_info.bin_path.empty() ? "N/A" : _info.bin_path) + "\n";
+    result += "Arguments: "s + (_info.arguments.empty() ? "N/A" : _info.arguments) + "\n";
     
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9 &&
        _info.rusage_avail)
@@ -421,10 +421,10 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
                                                                        max(bread.length(), bwritten.length()) -
                                                                         min(bread.length(), bwritten.length()),
                                                                        ' '); // right align
-        result += string("Disk I/O bytes read:    ") + bread + "\n";
-        result += string("Disk I/O bytes written: ") + bwritten + "\n";
-        result += string("Memory resident size: ") +  to_string(_info.rusage.ri_resident_size) + "\n";
-        result += string("Idle wake ups: ") + to_string(_info.rusage.ri_pkg_idle_wkups) + "\n";
+        result += "Disk I/O bytes read:    "s + bread + "\n";
+        result += "Disk I/O bytes written: "s + bwritten + "\n";
+        result += "Memory resident size: "s +  to_string(_info.rusage.ri_resident_size) + "\n";
+        result += "Idle wake ups: "s + to_string(_info.rusage.ri_pkg_idle_wkups) + "\n";
     }
     
     return result;

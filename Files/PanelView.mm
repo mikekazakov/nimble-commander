@@ -36,7 +36,7 @@ struct PanelViewStateStorage
     map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
     
     NSScrollView               *m_RenamingEditor; // NSTextView inside
-    
+    string                      m_RenamingOriginalName;
     
     double                      m_ScrollDY;
     
@@ -780,6 +780,8 @@ struct PanelViewStateStorage
 
     [self addSubview:m_RenamingEditor];
     [self.window makeFirstResponder:m_RenamingEditor];
+    
+    m_RenamingOriginalName = self.item->Name();
 }
 
 - (void)cancelFieldEditor
@@ -794,6 +796,9 @@ struct PanelViewStateStorage
 - (BOOL)textShouldEndEditing:(NSText *)textObject
 {
     assert(m_RenamingEditor != nil);
+    if(!self.item || m_RenamingOriginalName != self.item->Name())
+        return true;
+        
     NSTextView *tv = m_RenamingEditor.documentView;
     [self.delegate PanelViewRenamingFieldEditorFinished:self text:tv.string];
     return true;
@@ -803,6 +808,7 @@ struct PanelViewStateStorage
 {
     [m_RenamingEditor removeFromSuperview];
     m_RenamingEditor = nil;
+    m_RenamingOriginalName = "";
     
     if(self.window.firstResponder == nil || self.window.firstResponder == self.window)
         [self.window makeFirstResponder:self];

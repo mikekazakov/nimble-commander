@@ -86,7 +86,7 @@
                                     <action selector="OnQuickNewFolder:" target="-1" id="j86-lJ-nJN"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="New Folder with Selection" keyEquivalent="n" id="n1z-q2-heV">
+                            <menuItem title="New Folder with Selection" tag="11100" keyEquivalent="n" id="n1z-q2-heV">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
                                     <action selector="OnQuickNewFolderWithSelection:" target="-1" id="5F4-td-7DF"/>

@@ -87,6 +87,7 @@ private:
         {"menu.files.quit",                     10050},
         {"menu.file.newwindow",                 11000},
         {"menu.file.new_folder",                11090},
+        {"menu.file.new_folder_with_selection", 11100},
         {"menu.file.open",                      11010},
         {"menu.file.open_native",               11020},
         {"menu.file.open_in_opposite_panel",    11021},

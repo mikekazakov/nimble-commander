@@ -77,6 +77,7 @@
     TAG(tag_file_calc_sizes,    "menu.file.calculate_sizes");
     TAG(tag_file_calc_checksum, "menu.file.calculate_checksum");
     TAG(tag_file_new_folder,    "menu.file.new_folder");
+    TAG(tag_file_new_folder_ws, "menu.file.new_folder_with_selection");
 #undef TAG
     
     auto tag = item.tag;
@@ -113,6 +114,7 @@
     IF(tag_cmd_mkdir)       return self.VFS->IsWriteable();
     IF(tag_file_calc_checksum) return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
     IF(tag_file_new_folder) return self.VFS->IsWriteable();
+    IF(tag_file_new_folder_ws) return self.VFS->IsWriteable() && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
 #undef IF
     
     return true; // will disable some items in the future

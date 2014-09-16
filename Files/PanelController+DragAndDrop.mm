@@ -326,7 +326,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         [_view beginDraggingSessionWithItems:drag_items event:_event source:broker];
 }
 
-- (int) countAcceptableDraggingItems:(id <NSDraggingInfo>)sender
+- (int) countAcceptableDraggingItemsExt:(id <NSDraggingInfo>)sender
 {
     __block int urls_amount = 0;
     [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
@@ -354,12 +354,13 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         else
             destination_dir = destination_dir.parent_path();
     }
+    destination_dir /= "/";
     return destination_dir;
 }
 
 - (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
-    int valid_items = [self countAcceptableDraggingItems:sender];
+    int valid_items = 0;
     int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
                                             hitTestOption:PanelViewHitTest::FullArea];
     auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
@@ -371,6 +372,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         if([sender.draggingSource isKindOfClass:PanelControllerDragSourceBroker.class]) {
             // drag is from some other panel
             PanelControllerDragSourceBroker *source = (PanelControllerDragSourceBroker *)sender.draggingSource;
+            valid_items = (int)source.items.size();
             if(source.controller == self && !dragging_over_dir) {
                 result = NSDragOperationNone; // we can't drag into the same dir on the same panel
             }
@@ -396,6 +398,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         }
         else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
             // drag is from some other application
+            valid_items = [self countAcceptableDraggingItemsExt:sender];
             NSDragOperation mask = sender.draggingSourceOperationMask;
             if(mask & NSDragOperationCopy)
                 result = NSDragOperationCopy;

@@ -204,6 +204,13 @@ public:
                      bool (^_cancel_checker)());
     
     /**
+     * Actually calls Stat and returns true if return was Ok.
+     */ 
+    virtual bool Exists(const char *_path,
+                        bool (^_cancel_checker)() = nil
+                        );
+    
+    /**
      * Return zero upon succes, negative value on error.
      */
     virtual int ReadSymlink(const char *_symlink_path,

@@ -677,6 +677,7 @@ struct PanelViewStateStorage
     }
     
     [self disableCurrentMomentumScroll];
+    [self discardFieldEditor];
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
@@ -793,6 +794,12 @@ struct PanelViewStateStorage
     }
 }
 
+- (void)discardFieldEditor
+{
+    m_RenamingOriginalName = "";
+    [self cancelFieldEditor];
+}
+
 - (BOOL)textShouldEndEditing:(NSText *)textObject
 {
     assert(m_RenamingEditor != nil);
@@ -831,7 +838,8 @@ struct PanelViewStateStorage
 
 - (void) dataUpdated
 {
-    [self cancelFieldEditor];    
+    if(!self.item || m_RenamingOriginalName != self.item->Name())
+        [self discardFieldEditor];
 }
 
 - (void) setQuickSearchPrompt:(NSString*)_text

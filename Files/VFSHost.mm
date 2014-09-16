@@ -345,3 +345,9 @@ shared_ptr<VFSHostOptions> VFSHost::Options() const
 {
     return nullptr;
 }
+
+bool VFSHost::Exists(const char *_path, bool (^_cancel_checker)())
+{
+    VFSStat st;
+    return Stat(_path, st, 0, _cancel_checker) == 0;
+}

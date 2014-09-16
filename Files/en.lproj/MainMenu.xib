@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A343f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A361c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
@@ -84,6 +84,12 @@
                             <menuItem title="New Folder" tag="11090" keyEquivalent="N" id="6A9-YW-RMg">
                                 <connections>
                                     <action selector="OnQuickNewFolder:" target="-1" id="j86-lJ-nJN"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="New Folder with Selection" keyEquivalent="n" id="n1z-q2-heV">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="OnQuickNewFolderWithSelection:" target="-1" id="5F4-td-7DF"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open" tag="11010" id="72">

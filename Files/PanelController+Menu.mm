@@ -27,6 +27,7 @@
 #import "SelectionWithMaskPopupViewController.h"
 #import "PanelViewPresentation.h"
 #import "CalculateChecksumSheetController.h"
+#import "FileCopyOperation.h"
 
 @implementation PanelController (Menu)
 
@@ -685,12 +686,11 @@
     
     // currently doing existance checking in main thread, which is bad for a slow remote vfs
     // better implement it asynchronously.
-    VFSStat st;
-    if( self.VFS->Stat((dir/name).c_str(), st, VFSHost::F_NoFollow, 0) == 0 )
+    if( self.VFS->Exists((dir/name).c_str()) )
         // this file already exists, will try another ones
         for( int i = 2; ; ++i ) {
             name = [NSString stringWithFormat:@"%@ %i", stub, i].UTF8String;
-            if( self.VFS->Stat((dir/name).c_str(), st, VFSHost::F_NoFollow, 0) != 0 )
+            if( !self.VFS->Exists((dir/name).c_str()) )
                 break;
             if( i >= 100 )
                 return; // we're full of such filenames, no reason to go on
@@ -702,6 +702,55 @@
     else
         op = [op initWithPath:name.c_str() rootpath:dir.c_str() at:self.VFS];
     
+    __weak PanelController *ws = self;
+    [op AddOnFinishHandler:^{
+        dispatch_to_main_queue(^{
+            PanelController *ss = ws;
+            PanelControllerDelayedSelection req;
+            req.filename = name;
+            req.done = ^{
+                [((PanelController*)ws).view startFieldEditorRenaming];
+            };
+            [ss ScheduleDelayedSelectionChangeFor:req
+                                         checknow:true];
+        });
+    }];
+    
+    [self.state AddOperation:op];
+}
+
+- (IBAction)OnQuickNewFolderWithSelection:(id)sender
+{
+    auto files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    if(files.empty())
+        return;
+    NSString *stub = @"New Folder With Items";
+    string name = stub.UTF8String;
+    path dir = self.GetCurrentDirectoryPathRelativeToHost;
+    
+    // currently doing existance checking in main thread, which is bad for a slow remote vfs
+    // better implement it asynchronously.
+    if( self.VFS->Exists((dir/name).c_str()) )
+        // this file already exists, will try another ones
+        for( int i = 2; ; ++i ) {
+            name = [NSString stringWithFormat:@"%@ %i", stub, i].UTF8String;
+            if( !self.VFS->Exists((dir/name).c_str()) )
+                break;
+            if( i >= 100 )
+                return; // we're full of such filenames, no reason to go on
+        }
+    
+    path src = self.GetCurrentDirectoryPathRelativeToHost;
+    path dst = src / name / "/";
+    
+    FileCopyOperationOptions opts;
+    opts.docopy = false;
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    if(self.VFS->IsNativeFS())
+        op = [op initWithFiles:move(files) root:src.c_str() dest:dst.c_str() options:opts];
+    else
+        op = [op initWithFiles:move(files) root:src.c_str() srcvfs:self.VFS dest:dst.c_str() dstvfs:self.VFS options:opts];
+
     __weak PanelController *ws = self;
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue(^{

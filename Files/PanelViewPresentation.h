@@ -41,10 +41,11 @@ public:
     
     virtual NSRect GetItemColumnsRect() = 0;
     
-    // TODO: add hit-test flags, to allow testing hitting exactly in a filename for example.
-    // Calculates cursor postion which corresponds to the point in view.
-    // Returns -1 if point is out of the files' view area.
-    virtual int GetItemIndexByPointInView(CGPoint _point) = 0;
+    /**
+     * Calculates cursor postion which corresponds to the point in view.
+     * Returns -1 if point is out of the files' view area or if it doesnt belowing to item due to hit-test options.
+     */
+    virtual int GetItemIndexByPointInView(CGPoint _point, PanelViewHitTest::Options _opt) = 0;
 
     virtual NSRect ItemRect(int _item_index) const = 0;
     virtual NSRect ItemFilenameRect(int _item_index) const = 0;

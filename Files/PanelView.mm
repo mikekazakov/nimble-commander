@@ -442,7 +442,7 @@ struct PanelViewStateStorage
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
     
     int old_cursor_pos = m_State.CursorPos;
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
+    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
     if (cursor_pos == -1) return;
 
     auto click_entry = m_State.Data->EntryAtSortPosition(cursor_pos);
@@ -487,7 +487,7 @@ struct PanelViewStateStorage
     [self mouseDown:_event]; // interpret right mouse downs or ctrl+left mouse downs as regular mouse down
     
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
+    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
     if (cursor_pos >= 0)
         return [self.delegate PanelViewRequestsContextMenu:self];
     return nil;
@@ -510,7 +510,7 @@ struct PanelViewStateStorage
 - (void) mouseUp:(NSEvent *)_event
 {
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
+    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
     if(_event.clickCount <= 1 )
     {
         if(m_LastPotentialRenamingLBDown >= 0)
@@ -722,7 +722,7 @@ struct PanelViewStateStorage
 - (void)startFieldEditorRenamingByEvent:(NSEvent*)_event
 {
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point);
+    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FilenameFact);
     if (cursor_pos < 0 || cursor_pos != m_State.CursorPos)
         return;
     
@@ -856,8 +856,7 @@ struct PanelViewStateStorage
 - (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
 {
     assert(dispatch_is_main_queue());
-    // TODO: hit-test options
-    int pos = m_Presentation->GetItemIndexByPointInView(_point);
+    int pos = m_Presentation->GetItemIndexByPointInView(_point, _options);
     if(pos < 0)
         return -1;
     

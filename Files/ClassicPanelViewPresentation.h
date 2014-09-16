@@ -34,7 +34,7 @@ public:
     void OnFrameChanged(NSRect _frame) override;
     
     NSRect GetItemColumnsRect() override;
-    int GetItemIndexByPointInView(CGPoint _point) override;
+    int GetItemIndexByPointInView(CGPoint _point, PanelViewHitTest::Options _opt) override;
     
     int GetMaxItemsPerColumn() const override;
     

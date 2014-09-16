@@ -23,3 +23,11 @@ struct PanelViewState
     PanelViewType   ViewType     = PanelViewType::ViewMedium;
     int             ItemsDisplayOffset  = 0;
 };
+
+namespace PanelViewHitTest {
+    enum Options {
+        FullArea,
+        FilenameArea,
+        FilenameFact,
+    };
+};

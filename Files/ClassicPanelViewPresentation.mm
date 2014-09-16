@@ -395,7 +395,7 @@ NSRect ClassicPanelViewPresentation::GetItemColumnsRect()
                       m_FontCache->Width()*m_SymbWidth, m_FontCache->Height()*GetMaxItemsPerColumn());
 }
 
-int ClassicPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
+int ClassicPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point, PanelViewHitTest::Options _opt)
 {
     // Developer defined constants.
     const int columns_max = 3;

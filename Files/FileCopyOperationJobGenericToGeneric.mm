@@ -535,8 +535,18 @@ end:return res;
 
 void FileCopyOperationJobGenericToGeneric::RenameEntry(const path &_src_full_path, const path &_dest_full_path)
 {
-    VFSStat st;
-    assert( m_SrcHost->Stat(_dest_full_path.c_str(), st, 0, 0) != 0); // need a dialog for an existing destinations
+    if( m_SrcHost->Exists(_dest_full_path.c_str()) ) {
+        int result = [[m_Operation OnRenameDestinationExists:_dest_full_path.c_str() Source:_src_full_path.c_str()]
+                      WaitForResult];
+    
+        if (result == OperationDialogResult::Stop) { RequestStop(); return; }
+    }
+    
+retry_rename:
     int ret = m_SrcHost->Rename(_src_full_path.c_str(), _dest_full_path.c_str(), 0);
-    assert(ret == 0);
+    if (ret != 0) {
+        int result = [[m_Operation OnCopyWriteError:VFSError::ToNSError(ret) ForFile:_dest_full_path.c_str()] WaitForResult];
+        if (result == OperationDialogResult::Retry) goto retry_rename;
+        else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
+    }
 }

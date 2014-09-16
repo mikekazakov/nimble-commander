@@ -37,7 +37,7 @@ public:
     void OnFrameChanged(NSRect _frame) override;
     
     NSRect GetItemColumnsRect() override;
-    int GetItemIndexByPointInView(CGPoint _point) override;
+    int GetItemIndexByPointInView(CGPoint _point, PanelViewHitTest::Options _opt) override;
     
     int GetMaxItemsPerColumn() const override;
     
@@ -60,6 +60,19 @@ private:
         NSDictionary *regular_time;
     };
     
+    struct ItemLayout {
+        NSRect whole_area       = { {0, 0}, {-1, -1}};
+        NSRect filename_area    = { {0, 0}, {-1, -1}};
+        NSRect filename_fact    = { {0, 0}, {-1, -1}};
+        NSRect icon             = { {0, 0}, {-1, -1}};
+        // time?
+        // size?
+        // date?
+        // mb later
+    };
+    
+    NSPoint ItemOrigin(int _item_index) const; // for not visible items return {0,0}
+    ItemLayout LayoutItem(int _item_index) const;
     void CalculateLayoutFromFrame();
     void OnDirectoryChanged() override;
     void BuildGeometry();

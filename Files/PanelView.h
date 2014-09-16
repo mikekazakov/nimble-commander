@@ -34,13 +34,6 @@ class PanelViewPresentation;
 
 @end
 
-namespace PanelViewHitTest {
-    enum Options {
-        FullArea,
-        NameOnly
-    };
-};
-
 @interface PanelView : NSView<NSDraggingDestination, NSTextViewDelegate>
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active;

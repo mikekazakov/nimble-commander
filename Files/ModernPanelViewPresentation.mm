@@ -618,7 +618,7 @@ NSRect ModernPanelViewPresentation::GetItemColumnsRect()
     return m_ItemsArea;
 }
 
-int ModernPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
+int ModernPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point, PanelViewHitTest::Options _opt)
 {
     const int columns = GetNumberOfItemColumns();
     const int entries_in_column = GetMaxItemsPerColumn();
@@ -645,34 +645,109 @@ int ModernPanelViewPresentation::GetItemIndexByPointInView(CGPoint _point)
     if (file_number >= visible_files)
         return -1;
     
-    return m_State->ItemsDisplayOffset + file_number;
+    int index = m_State->ItemsDisplayOffset + file_number;
+    
+    // now check that index against requested hit-test
+    if( _opt != PanelViewHitTest::FullArea ) {
+        auto origin = ItemOrigin(index);
+        auto il = LayoutItem(index);
+        
+        if( _opt == PanelViewHitTest::FilenameArea )
+            if( !NSPointInRect(_point, NSOffsetRect(il.filename_area, origin.x, origin.y)) )
+                return -1;
+        
+        if( _opt == PanelViewHitTest::FilenameFact )
+            if( !NSPointInRect(_point, NSOffsetRect(il.filename_fact, origin.x, origin.y)) )
+                return -1;
+    }
+    
+    return index;
 }
 
-NSRect ModernPanelViewPresentation::ItemRect(int _item_index) const
+NSPoint ModernPanelViewPresentation::ItemOrigin(int _item_index) const
 {
+    if(!IsItemVisible(_item_index))
+        return {0,0};
+    
+    int columns = GetNumberOfItemColumns();
+    int entries_in_column = GetMaxItemsPerColumn();
+    int scrolled_index = _item_index - m_State->ItemsDisplayOffset;
+    int column = scrolled_index / entries_in_column;
+    int row = scrolled_index % entries_in_column;
+    double column_width = floor((m_ItemsArea.size.width - (columns - 1))/columns);
+    return NSMakePoint( column*(column_width + 1) + (m_IsLeft ? 0 : g_DividerWidth),
+                        m_ItemsArea.origin.y + row*m_LineHeight
+                       );
+}
+
+// NB!
+// if someday this function become a bottleneck - add flags to specify what to calculate
+ModernPanelViewPresentation::ItemLayout ModernPanelViewPresentation::LayoutItem(int _item_index) const
+{
+    ItemLayout il;
+    
     const int columns = GetNumberOfItemColumns();
     const int entries_in_column = GetMaxItemsPerColumn();
     const int max_files_to_show = entries_in_column * columns;
     if(_item_index < m_State->ItemsDisplayOffset)
-        return NSMakeRect(0, 0, -1, -1);
+        return il;
     const int scrolled_index = _item_index - m_State->ItemsDisplayOffset;
     if(scrolled_index >= max_files_to_show)
-        return NSMakeRect(0, 0, -1, -1);
-    const int column = scrolled_index / entries_in_column;
-    const int row = scrolled_index % entries_in_column;
+        return il;
+
     const double column_width = floor((m_ItemsArea.size.width - (columns - 1))/columns);
     const double row_height   = m_LineHeight;
+    const double icon_size    = m_IconCache->IconSize();
     
-    double xoff = m_IsLeft ? 0 : g_DividerWidth;
-    return NSMakeRect(column * (column_width + 1) + xoff,
-                      row * row_height + m_ItemsArea.origin.y,
-                      column_width,
-                      row_height);
+    il.whole_area.size.width    = column_width;
+    il.whole_area.size.height   = row_height;
+    
+    il.icon = NSMakeRect(g_TextInsetsInLine[0], floor((m_LineHeight - icon_size) / 2. + 0.5),
+                         icon_size, icon_size);
+    
+    NSRect filename_rect = NSMakeRect(icon_size + 2*g_TextInsetsInLine[0], 0,
+                             column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
+                             m_FontHeight);
+    if (m_State->ViewType == PanelViewType::ViewFull)
+        filename_rect.size.width -= m_TimeColumnWidth + m_DateColumnWidth;
+    if(m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull)
+        filename_rect.size.width -= m_SizeColumWidth;
+    if(filename_rect.size.width < 0)
+        filename_rect.size.width = 0;
+    
+    il.filename_area = filename_rect;
+    
+    const VFSListingItem *item = m_State->Data->EntryAtSortPosition(_item_index);
+    if(!item)
+        return il;
+    
+    if(filename_rect.size.width > 0) {
+        NSRect rc = [item->NSDisplayName() boundingRectWithSize:filename_rect.size
+                                                        options:0
+                                                     attributes:AttrsForItem(*item).regular];
+        
+        il.filename_fact = il.filename_area;
+        il.filename_fact.size.width = rc.size.width;
+    }
+    return il;
+}
+
+NSRect ModernPanelViewPresentation::ItemRect(int _item_index) const
+{
+    if(!IsItemVisible(_item_index))
+        return NSMakeRect(0, 0, -1, -1);
+    
+    NSPoint origin = ItemOrigin(_item_index);
+    return NSOffsetRect(LayoutItem(_item_index).whole_area, origin.x, origin.y);
 }
 
 NSRect ModernPanelViewPresentation::ItemFilenameRect(int _item_index) const
 {
-    return ItemRect(_item_index); // temp
+    if(!IsItemVisible(_item_index))
+        return NSMakeRect(0, 0, -1, -1);
+    
+    NSPoint origin = ItemOrigin(_item_index);
+    return NSOffsetRect(LayoutItem(_item_index).filename_area, origin.x, origin.y);
 }
 
 int ModernPanelViewPresentation::GetMaxItemsPerColumn() const
@@ -702,19 +777,12 @@ void ModernPanelViewPresentation::DrawCursor(CGContextRef _context, NSRect _rc)
 
 void ModernPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int _item_index)
 {
-    NSRect rc = ItemRect(_item_index);
+    NSPoint origin = ItemOrigin(_item_index);
+    NSRect rc = NSOffsetRect(LayoutItem(_item_index).filename_area, origin.x, origin.y);
     auto line_padding = 2.;
-    
-    double d = m_IconCache->IconSize() + 2*g_TextInsetsInLine[0];
-    rc.origin.x += d - line_padding;
-    rc.size.width -= d;
-    rc.size.width += line_padding - g_TextInsetsInLine[2];
-    rc.size.height -= g_TextInsetsInLine[1];
+    rc.origin.x -= line_padding;
     rc.origin.y += g_TextInsetsInLine[1];
-    if (m_State->ViewType == PanelViewType::ViewFull)
-        rc.size.width -= m_DateColumnWidth + m_TimeColumnWidth;
-    if(m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull)
-        rc.size.width -= m_SizeColumWidth;
+    rc.size.width += line_padding;
     
     _editor.frame = rc;
 

@@ -149,7 +149,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 @interface PanelControllerDragSourceBroker : NSObject<NSDraggingSource, NSPasteboardItemDataProvider>
 @property(weak)         PanelController    *controller;
 @property(nonatomic)    shared_ptr<VFSHost> vfs;
-@property(nonatomic)    string              root_path;
+@property(nonatomic)    string              root_path; // path with trailing slash
 @property(nonatomic)    unsigned            count;
 @property(nonatomic)    vector<PanelDraggingItem*>& items;
 @end
@@ -387,6 +387,11 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                     result = mask;
             }
 
+            // check that we dont drag an item to the same folder in other panel
+            if(source.vfs == self.VFS &&
+               destination_dir == source.root_path)
+                result = NSDragOperationNone;
+            
             // check that we dont drag a folder into itself
             if(dragging_over_dir && source.vfs == self.VFS)
                 for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]

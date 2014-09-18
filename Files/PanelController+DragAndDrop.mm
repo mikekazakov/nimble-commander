@@ -377,12 +377,11 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 result = NSDragOperationNone; // we can't drag into the same dir on the same panel
             }
             else {
-                // some logic regarding R/W situation on medium and link capabilities should be here
                 NSDragOperation mask = sender.draggingSourceOperationMask;
-                if(mask == (NSDragOperationCopy|NSDragOperationLink|NSDragOperationMove))
-                    result = NSDragOperationMove;
-                else if(mask == (NSDragOperationCopy|NSDragOperationMove))
-                    result = NSDragOperationMove;
+                if( mask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink) ||
+                    mask == (NSDragOperationMove|NSDragOperationLink) ||
+                    mask == (NSDragOperationMove|NSDragOperationCopy) )
+                    result = source.vfs->IsWriteable() ? NSDragOperationMove : NSDragOperationCopy;
                 else
                     result = mask;
             }
@@ -471,7 +470,12 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 return false;
             
 
-            if(opmask == NSDragOperationCopy) {
+            if( opmask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink) ||
+                opmask == (NSDragOperationMove|NSDragOperationLink) ||
+                opmask == (NSDragOperationMove|NSDragOperationCopy) )
+                opmask = source_broker.vfs->IsWriteable() ? NSDragOperationMove : NSDragOperationCopy;
+
+            if( opmask == NSDragOperationCopy ) {
                 FileCopyOperationOptions opts;
                 FileCopyOperation *op;
                 if(source_broker.vfs->IsNativeFS() && self.VFS->IsNativeFS())
@@ -500,12 +504,9 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 [self.state.OperationsController AddOperation:op];
                 return true;
             }
-            if(opmask == NSDragOperationMove ||
-               opmask == (NSDragOperationMove|NSDragOperationLink) ||
-               opmask == (NSDragOperationMove|NSDragOperationCopy) ||
-               opmask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink)) {
+            else if( opmask == NSDragOperationMove ) {
                 if( !source_broker.vfs->IsWriteable() )
-                    return false;
+                    return false; // should not happen!
                 FileCopyOperationOptions opts;
                 opts.docopy = false;
                 FileCopyOperation *op;
@@ -533,7 +534,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 [self.state.OperationsController AddOperation:op];
                 return true;
             }
-            if(opmask == NSDragOperationLink &&
+            else if(opmask == NSDragOperationLink &&
                files.size() == 1 &&
                source_broker.vfs->IsNativeFS() ) {
                 string source_path = source_broker.root_path + files.front().c_str();

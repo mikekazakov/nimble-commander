@@ -10,7 +10,6 @@
 #include "ModernPanelViewPresentationVolumeFooter.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
-static CGColorRef g_HeaderStrokeColor = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
 
 enum {
     kUnitStringBinaryUnits     = 1 << 0,
@@ -51,7 +50,7 @@ ModernPanelViewPresentationVolumeFooter::ModernPanelViewPresentationVolumeFooter
     m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
 }
 
-void ModernPanelViewPresentationVolumeFooter::Draw(const VFSStatFS &_stat, double _start_y, double _width)
+void ModernPanelViewPresentationVolumeFooter::Draw(const VFSStatFS &_stat, bool _wnd_active, double _start_y, double _width)
 {
     PrepareToDraw(_stat);
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
@@ -65,7 +64,9 @@ void ModernPanelViewPresentationVolumeFooter::Draw(const VFSStatFS &_stat, doubl
     NSDrawWindowBackground(footer_rect);
     
     // Footer line separator.
-    CGContextSetStrokeColorWithColor(context, g_HeaderStrokeColor);
+    static CGColorRef divider_stroke_color_act = CGColorCreateGenericRGB(160/255.0, 160/255.0, 160/255.0, 1.0);
+    static CGColorRef divider_stroke_color_act_inact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
+    CGContextSetStrokeColorWithColor(context, _wnd_active ? divider_stroke_color_act : divider_stroke_color_act_inact);
     NSPoint footer_points[2] = { {0, _start_y + 0.5}, {_width, _start_y + 0.5} };
     CGContextStrokeLineSegments(context, footer_points, 2);
     

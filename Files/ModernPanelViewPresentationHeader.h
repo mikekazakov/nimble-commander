@@ -18,6 +18,7 @@ public:
     void SetFont(NSFont *_font);
     void Draw(const string& _path, // a path to draw
               bool _active,       // is panel active now?
+              bool _wnd_active,   // is window active now?
               double _width,      // panel width
               PanelSortMode::Mode _sort_mode
             );

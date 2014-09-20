@@ -14,7 +14,7 @@ class ModernPanelViewPresentationVolumeFooter
 {
 public:
     ModernPanelViewPresentationVolumeFooter();
-    void Draw(const VFSStatFS &_stat, double _start_y, double _width);
+    void Draw(const VFSStatFS &_stat, bool _wnd_active, double _start_y, double _width);
     inline double Height() const { return m_Height; }
 
 private:

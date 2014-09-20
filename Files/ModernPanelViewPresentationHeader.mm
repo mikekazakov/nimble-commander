@@ -11,77 +11,8 @@
 #import "PanelData.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
-static CGColorRef g_HeaderStrokeColor = CGColorCreateGenericRGB(102/255.0, 102/255.0, 102/255.0, 1.0);
-
-static NSShadow* ActiveTextShadow()
-{
-    static dispatch_once_t onceToken;
-    static NSShadow *shadow;
-    dispatch_once(&onceToken, ^{
-        shadow = [NSShadow new];
-        shadow.shadowBlurRadius = 1;
-        shadow.shadowColor = [NSColor colorWithDeviceRed:0.83 green:0.93 blue:1 alpha:1];
-        shadow.shadowOffset = NSMakeSize(0, -1);
-    });
-    return shadow;
-}
-
-static NSShadow* InactiveTextShadow()
-{
-    static dispatch_once_t onceToken;
-    static NSShadow *shadow;
-    dispatch_once(&onceToken, ^{
-        shadow = [NSShadow new];
-        shadow.shadowBlurRadius = 1;
-        shadow.shadowColor = [NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:0.9];
-        shadow.shadowOffset = NSMakeSize(0, -1);
-    });
-    return shadow;
-}
-
-static CGGradientRef ActiveTextGradient()
-{
-    static dispatch_once_t onceToken;
-    static CGGradientRef gradient;
-    dispatch_once(&onceToken, ^{
-        CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
-        const CGFloat outer_color[3] = { 200/255.0, 230/255.0, 245/255.0 };
-        const CGFloat inner_color[3] = { 150/255.0, 196/255.0, 240/255.0 };
-        CGFloat components[] =
-        {
-            outer_color[0], outer_color[1], outer_color[2], 1.0,
-            inner_color[0], inner_color[1], inner_color[2], 1.0,
-            inner_color[0], inner_color[1], inner_color[2], 1.0,
-            outer_color[0], outer_color[1], outer_color[2], 1.0
-        };
-        CGFloat locations[] = {0.0, 0.45, 0.55, 1.0};
-        gradient = CGGradientCreateWithColorComponents(color_space, components, locations, 4);
-        CGColorSpaceRelease(color_space);
-    });
-    return gradient;
-}
-
-static CGGradientRef InactiveTextGradient()
-{
-    static dispatch_once_t onceToken;
-    static CGGradientRef gradient;
-    dispatch_once(&onceToken, ^{
-        CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
-        const CGFloat upper_color[3] = { 220/255.0, 220/255.0, 220/255.0 };
-        const CGFloat bottom_color[3] = { 200/255.0, 200/255.0, 200/255.0 };
-        CGFloat components[] =
-        {
-            upper_color[0], upper_color[1], upper_color[2], 1.0,
-            upper_color[0], upper_color[1], upper_color[2], 1.0,
-            bottom_color[0], bottom_color[1], bottom_color[2], 1.0,
-            bottom_color[0], bottom_color[1], bottom_color[2], 1.0
-        };
-        CGFloat locations[] = {0.0, 0.45, 0.7, 1.0};
-        gradient = CGGradientCreateWithColorComponents(color_space, components, locations, 4);
-        CGColorSpaceRelease(color_space);
-    });
-    return gradient;
-}
+static CGColorRef g_HeaderStrokeColorAct = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
+static CGColorRef g_HeaderStrokeColorInact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
 
 static NSString *FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode)
 {
@@ -111,9 +42,13 @@ void ModernPanelViewPresentationHeader::SetFont(NSFont *_font)
 
 void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to draw
                                              bool _active,       // is panel active now?
+                                             bool _wnd_active,
                                              double _width,      // panel width
                                              PanelSortMode::Mode _sort_mode)
 {
+    if(!_wnd_active)
+        _active = false;
+    
     // a tiny hack to show search prompt instead of a path, but it works. (for now)
     PrepareToDraw(m_QuickSearchPrompt.empty() ? _path : m_QuickSearchPrompt,
                   _active,
@@ -121,21 +56,20 @@ void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to d
     
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
     
-    // draw header gradient
+    // draw header bg
     CGContextSaveGState(context);
     NSRect header_rect = NSMakeRect(0, 0, _width, m_Height - 1);
-    CGContextAddRect(context, header_rect);
-    CGContextClip(context);
-    CGContextDrawLinearGradient(context,
-                                _active ? ActiveTextGradient() : InactiveTextGradient(),
-                                header_rect.origin,
-                                NSMakePoint(header_rect.origin.x,
-                                            header_rect.origin.y + header_rect.size.height),
-                                0);
+    if(_active) {
+        static CGColorRef bg = CGColorCreateGenericRGB(217/255.0, 217/255.0, 217/255.0, 1.0);
+        CGContextSetFillColorWithColor(context, bg);
+        CGContextFillRect(context, header_rect);
+    }
+    else
+        NSDrawWindowBackground(header_rect);
     CGContextRestoreGState(context);
     
     // draw header line separator.
-    CGContextSetStrokeColorWithColor(context, g_HeaderStrokeColor);
+    CGContextSetStrokeColorWithColor(context, _wnd_active ? g_HeaderStrokeColorAct : g_HeaderStrokeColorInact);
     NSPoint header_points[2] = { {0, m_Height - 0.5}, {_width, m_Height - 0.5} };
     CGContextStrokeLineSegments(context, header_points, 2);
     
@@ -168,11 +102,9 @@ void ModernPanelViewPresentationHeader::PrepareToDraw(const string& _path, bool 
         return p.copy;
     }();
 
-    NSShadow *header_text_shadow = _active ? ActiveTextShadow() : InactiveTextShadow();
     
     NSDictionary *header_text_attr =@{NSFontAttributeName: m_Font,
-                                      NSParagraphStyleAttributeName: header_text_pstyle,
-                                      NSShadowAttributeName: header_text_shadow};
+                                      NSParagraphStyleAttributeName: header_text_pstyle};
 
     NSString *header_string = [NSString stringWithUTF8String:_path.c_str()];
     if(header_string == nil) header_string = @"...";

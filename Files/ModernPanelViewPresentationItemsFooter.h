@@ -23,6 +23,7 @@ public:
               const PanelDataStatistics &_stats,
               PanelViewType _view_type,
               bool _active,
+              bool _wnd_active,   // is window active now?              
               double _start_y,
               double _width
               );

@@ -312,6 +312,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     const int items_per_column = GetMaxItemsPerColumn();
     const int columns_count = GetNumberOfItemColumns();
     const bool active = View().active;
+    const bool wnd_active = NSView.focusView.window.isKeyWindow;
     
     ///////////////////////////////////////////////////////////////////////////////
     // Clear view background.
@@ -325,20 +326,48 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     ///////////////////////////////////////////////////////////////////////////////
     // Divider.
-    static CGColorRef divider_stroke_color = CGColorCreateGenericRGB(101/255.0, 101/255.0, 101/255.0, 1.0);
-    CGContextSetStrokeColorWithColor(context, divider_stroke_color);
+    static CGColorRef divider_stroke_color_act = CGColorCreateGenericRGB(160/255.0, 160/255.0, 160/255.0, 1.0);
+    static CGColorRef divider_stroke_color_act_inact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
+    static CGColorRef divider_act_bg = CGColorCreateGenericRGB(217/255.0, 217/255.0, 217/255.0, 1.0);
+    CGContextSetStrokeColorWithColor(context, wnd_active ? divider_stroke_color_act : divider_stroke_color_act_inact);
     if (m_IsLeft)
     {
         float x = m_ItemsArea.origin.x + m_ItemsArea.size.width;
-        NSPoint view_divider[2] = { {x + 0.5, 0}, {x + 0.5, m_Size.height} };
-        CGContextStrokeLineSegments(context, view_divider, 2);
-        NSDrawWindowBackground(NSMakeRect(x + 1, 0, g_DividerWidth - 1, m_Size.height));
+        NSRect rc = NSMakeRect(x, 0, g_DividerWidth, m_Size.height);
+        if(wnd_active) {
+            CGContextSetFillColorWithColor(context, divider_act_bg);
+            CGContextFillRect(context, rc);
+        }
+        else
+            NSDrawWindowBackground(rc);
+
+        if(active) {
+            NSPoint view_divider[2] = { {x + 0.5, m_Header->Height()-1}, {x + 0.5, m_Size.height} };
+            CGContextStrokeLineSegments(context, view_divider, 2);
+        }
+        else {
+            NSPoint view_divider[2] = { {x + 0.5, 0}, {x + 0.5, m_Size.height} };
+            CGContextStrokeLineSegments(context, view_divider, 2);
+        }
     }
     else
     {
-        NSPoint view_divider[2] = { {g_DividerWidth - 0.5, 0}, {g_DividerWidth - 0.5, m_Size.height} };
-        CGContextStrokeLineSegments(context, view_divider, 2);
-        NSDrawWindowBackground(NSMakeRect(0, 0, g_DividerWidth - 1, m_Size.height));
+        NSRect rc = NSMakeRect(0, 0, g_DividerWidth, m_Size.height);
+        if(wnd_active) {
+            CGContextSetFillColorWithColor(context, divider_act_bg);
+            CGContextFillRect(context, rc);
+        }
+        else
+            NSDrawWindowBackground(rc);
+        
+        if(active) {
+            NSPoint view_divider[2] = { {g_DividerWidth - 0.5, m_Header->Height()-1}, {g_DividerWidth - 0.5, m_Size.height} };
+            CGContextStrokeLineSegments(context, view_divider, 2);
+        }
+        else {
+            NSPoint view_divider[2] = { {g_DividerWidth - 0.5, 0}, {g_DividerWidth - 0.5, m_Size.height} };
+            CGContextStrokeLineSegments(context, view_divider, 2);
+        }
     }
 
     // If current panel is on the right, then translate all rendering by the divider's width.
@@ -347,13 +376,14 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     // Header
     string panelpath = m_State->Data->VerboseDirectoryFullPath();
-    m_Header->Draw(panelpath, active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
+    m_Header->Draw(panelpath, active, wnd_active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
     
     // Footer
     m_ItemsFooter->Draw(View().item,
                         m_State->Data->Stats(),
                         m_State->ViewType,
                         active,
+                        wnd_active,
                         m_ItemsArea.origin.y + m_ItemsArea.size.height,
                         m_ItemsArea.size.width);
     
@@ -362,6 +392,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     {
         UpdateStatFS();
         m_VolumeFooter->Draw(StatFS(),
+                             wnd_active,
                              m_ItemsArea.origin.y + m_ItemsArea.size.height + m_ItemsFooter->Height(),
                              m_ItemsArea.size.width
                              );
@@ -408,7 +439,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             if (item && item->CFIsSelected())
             {
                 // Draw selected item.
-                if (active)
+                if (active && wnd_active)
                 {
                     int offset = (m_State->CursorPos == i) ? 2 : 1;
                     CGContextSetFillColorWithColor(context, m_ActiveSelectedItemBackgroundColor);
@@ -435,7 +466,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             if (!item) continue;
             
             // Draw as cursor item (only if panel is active).
-            if (m_State->CursorPos == i && active)
+            if (m_State->CursorPos == i && active && wnd_active)
                 DrawCursor(context, NSMakeRect(start_x + 1.5,
                                                item_start_y + 1.5,
                                                column_width - 3, m_LineHeight - 2));

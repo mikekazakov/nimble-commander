@@ -155,6 +155,18 @@ struct PanelViewStateStorage
 {
     if(_wnd == nil && self.active == true)
         [self resignFirstResponder];
+    
+    if(_wnd) {
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(windowDidBecomeKey)
+                                                   name:NSWindowDidBecomeKeyNotification
+                                                 object:_wnd];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(windowDidResignKey)
+                                                   name:NSWindowDidResignKeyNotification
+                                                 object:_wnd];
+    }
+
 }
 
 - (bool)active
@@ -897,6 +909,16 @@ struct PanelViewStateStorage
 - (void) appWillResignActive
 {
     [self cancelFieldEditor];
+}
+
+- (void) windowDidBecomeKey
+{
+    self.needsDisplay = true;
+}
+
+- (void) windowDidResignKey
+{
+    self.needsDisplay = true;
 }
 
 @end

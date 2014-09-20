@@ -21,6 +21,7 @@ static NSString *kPrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop"
 @property(nonatomic) string filename;
 @property(nonatomic) string path;
 @property(nonatomic) shared_ptr<VFSHost> vfs;
+@property(nonatomic) bool isDir;
 - (bool) IsValid;
 - (void) Clear;
 @end
@@ -124,11 +125,13 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     string m_Filename;
     string m_Path;
     shared_ptr<VFSHost> m_VFS;
+    bool m_IsDir;
 }
 
 @synthesize filename = m_Filename;
 @synthesize path = m_Path;
 @synthesize vfs = m_VFS;
+@synthesize isDir = m_IsDir;
 
 - (bool) IsValid
 {
@@ -300,6 +303,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     
         // internal information
         pbItem.filename = i->Name();
+        pbItem.isDir = i->IsDir();
         pbItem.path = broker.root_path + i->Name();
         pbItem.vfs = vfs;
 
@@ -395,7 +399,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if(dragging_over_dir && source.vfs == self.VFS)
                 for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                         options:nil])
-                    if( destination_dir == item.path) {
+                    if( item.isDir && destination_dir == item.path+"/" ) { // filenames are stored without trailing slashes, so have to add it
                         result = NSDragOperationNone;
                         break;
                     }

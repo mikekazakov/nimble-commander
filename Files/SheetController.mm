@@ -8,6 +8,7 @@
 
 #import "SheetController.h"
 #import "sysinfo.h"
+#import "Common.h"
 
 @implementation SheetController
 {
@@ -23,17 +24,18 @@
     return self;
 }
 
-- (bool) isSelfKeeping
-{
-    return false;
-}
-
 - (void) beginSheetForWindow:(NSWindow*)_wnd
            completionHandler:(void (^)(NSModalResponse returnCode))_handler
 {
+    if(!dispatch_is_main_queue()) {
+        dispatch_to_main_queue(^{
+            [self beginSheetForWindow:_wnd completionHandler:_handler];
+        });
+        return;
+    }
+    
     assert(_handler != nil);
-    if(self.isSelfKeeping)
-        m_Self = self;
+    m_Self = self;
     
     m_Handler = [_handler copy];
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9)

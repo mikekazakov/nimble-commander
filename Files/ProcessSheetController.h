@@ -15,5 +15,5 @@
 
 @property (strong) IBOutlet NSProgressIndicator *Progress;
 @property (nonatomic, strong) void (^OnCancelOperation)();
-@property (nonatomic, readonly) bool UserCancelled;
+@property (nonatomic, readonly) bool userCancelled;
 @end

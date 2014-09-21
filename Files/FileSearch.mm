@@ -171,14 +171,15 @@ void FileSearch::ProcessDirent(const char* _full_path,
     }
     
     // Filter by file content
+    CFRange content_pos{-1, 0};
     if(failed_filtering == false && m_FilterContent)
     {
-       if(_dirent.type != VFSDirEnt::Reg || !FilterByContent(_full_path, _in_host) )
+       if(_dirent.type != VFSDirEnt::Reg || !FilterByContent(_full_path, _in_host, content_pos) )
            failed_filtering = true;
     }
     
     if(failed_filtering == false)
-        ProcessValidEntry(_full_path, _dir_path, _dirent, _in_host);
+        ProcessValidEntry(_full_path, _dir_path, _dirent, _in_host, content_pos);
     
     if(m_SearchOptions & Options::GoIntoSubDirs)
     {
@@ -189,7 +190,7 @@ void FileSearch::ProcessDirent(const char* _full_path,
     }
 }
 
-bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host)
+bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host, CFRange &_r)
 {
     VFSFilePtr file;
     if(_in_host->CreateFile(_full_path, file, 0) != 0)
@@ -211,14 +212,20 @@ bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host)
     sif.SetSearchOptions((m_FilterContent->case_sensitive  ? SearchInFile::OptionCaseSensitive   : 0) |
                          (m_FilterContent->whole_phrase    ? SearchInFile::OptionFindWholePhrase : 0) );
     
-    auto result = sif.Search(nullptr,
-                             nullptr,
+    
+    uint64_t found_pos;
+    uint64_t found_len;
+    auto result = sif.Search(&found_pos,
+                             &found_len,
                              ^bool{
                                  return m_Queue->IsStopped();
                              }
                              );
-
-    return result == SearchInFile::Result::Found;
+    if(result == SearchInFile::Result::Found) {
+        _r = CFRangeMake(found_pos, found_len);
+        return true;
+    }
+    return false;
 }
 
 bool FileSearch::FilterByFilename(const char* _filename)
@@ -234,10 +241,11 @@ bool FileSearch::FilterByFilename(const char* _filename)
 void FileSearch::ProcessValidEntry(const char* _full_path,
                        const char* _dir_path,
                        const VFSDirEnt &_dirent,
-                       VFSHost *_in_host)
+                       VFSHost *_in_host,
+                       CFRange _cont_range)
 {
     if(m_Callback)
-        m_Callback(_dirent.name, _dir_path);
+        m_Callback(_dirent.name, _dir_path, _cont_range);
 }
 
 bool FileSearch::IsRunning() const

@@ -15,4 +15,6 @@
 
 - (bool) OpenFile: (const char*) _fn with_fs:(shared_ptr<VFSHost>) _host;
 
++ (int) fileWindowSize;
+
 @end

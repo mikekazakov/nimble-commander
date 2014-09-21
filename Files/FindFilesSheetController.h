@@ -15,12 +15,14 @@ struct FindFilesSheetControllerFoundItem
     string dir_path;
     string full_filename;
     VFSStat st;
+    CFRange content_pos;
 };
 
 @interface FindFilesSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate>
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnSearch:(id)sender;
+- (IBAction)OnFileView:(id)sender;
 
 @property (nonatomic) VFSHostPtr host;
 @property (nonatomic) string path;

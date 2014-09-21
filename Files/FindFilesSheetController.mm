@@ -10,13 +10,14 @@
 #import "Encodings.h"
 #import "FileSearch.h"
 #import "Common.h"
+#import "BigFileViewSheet.h"
 
 static const int g_MaximumSearchResults = 16384;
     
 @interface FindFilesSheetFoundItem : NSObject
 
 - (id) initWithFoundItem:(const FindFilesSheetControllerFoundItem&)_item;
-- (FindFilesSheetControllerFoundItem*) data;
+@property (nonatomic, readonly) FindFilesSheetControllerFoundItem *data;
 @property (nonatomic, readonly) NSString *location;
 @property (nonatomic, readonly) NSString *filename;
 @property (nonatomic, readonly) uint64_t size;
@@ -148,10 +149,10 @@ static const int g_MaximumSearchResults = 16384;
     self.TableView.DoubleAction = @selector(doubleClick:);
     
     self.ArrayController.SortDescriptors = @[
-                                             [[NSSortDescriptor alloc] initWithKey:@"location" ascending:YES],
-                                             [[NSSortDescriptor alloc] initWithKey:@"filename" ascending:YES],
-                                             [[NSSortDescriptor alloc] initWithKey:@"size" ascending:YES],
-                                             [[NSSortDescriptor alloc] initWithKey:@"mdate" ascending:YES]
+                                             [NSSortDescriptor sortDescriptorWithKey:@"location" ascending:YES],
+                                             [NSSortDescriptor sortDescriptorWithKey:@"filename" ascending:YES],
+                                             [NSSortDescriptor sortDescriptorWithKey:@"size" ascending:YES],
+                                             [NSSortDescriptor sortDescriptorWithKey:@"mdate" ascending:YES]
                                              ];
     
     for(const auto &i: encodings::LiteralEncodingsList())
@@ -246,7 +247,7 @@ static const int g_MaximumSearchResults = 16384;
     bool r = m_FileSearch->Go(m_Path.c_str(),
                               m_Host,
                               search_options,
-                              ^(const char *_filename, const char *_in_path){
+                              ^(const char *_filename, const char *_in_path, CFRange _cont_pos){
                                   FindFilesSheetControllerFoundItem it;
                                   it.filename = _filename;
                                   it.dir_path = _in_path;
@@ -254,7 +255,7 @@ static const int g_MaximumSearchResults = 16384;
                                   if(it.full_filename.back() != '/') it.full_filename += '/';
                                   it.full_filename += it.filename;
                                   if(it.dir_path != "/" && it.dir_path.back() == '/') it.dir_path.pop_back();
-                                  
+                                  it.content_pos = _cont_pos;
                                   memset(&it.st, 0, sizeof(it.st));
                          
                                   // sync op - bad. better move it off the searching thread
@@ -312,9 +313,34 @@ static const int g_MaximumSearchResults = 16384;
 - (void)doubleClick:(id)table
 {
     NSInteger row = [self.TableView clickedRow];
+    if(row < 0 || row >= self.TableView.numberOfRows)
+        return;
     FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
     m_DoubleClickedItem = item;
     [self OnClose:self];
+}
+
+- (IBAction)OnFileView:(id)sender
+{
+    // OSX10.9 and higher - need to check on Lion
+    
+    NSInteger row = [self.TableView selectedRow];
+    FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
+    FindFilesSheetControllerFoundItem *data = item.data;
+    
+    string p = data->full_filename;
+    VFSHostPtr vfs = self.host;
+    CFRange cont = data->content_pos;
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
+        if([sheet open]) {
+            if(cont.location >= 0)
+                [sheet selectBlockAt:cont.location length:cont.length];
+            [sheet beginSheetForWindow:self.window
+                     completionHandler:^(NSModalResponse returnCode) {}];
+        }
+    });
 }
 
 @end

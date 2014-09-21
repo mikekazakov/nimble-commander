@@ -23,3 +23,4 @@
 #import "VFSPSHost.h"
 #import "VFSEasyOps.h"
 #import "VFSArchiveProxy.h"
+#import "VFSSeqToRandomWrapper.h"

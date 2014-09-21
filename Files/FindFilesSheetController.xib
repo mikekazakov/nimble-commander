@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6206.8" systemVersion="14A329f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A361c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6206.8"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FindFilesSheetController">
@@ -26,7 +27,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="1">
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="FindFilesSheet" animationBehavior="default" id="1">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="519" height="468"/>
@@ -68,15 +69,9 @@ DQ
                             <action selector="OnSearch:" target="-2" id="uWV-KV-Hkg"/>
                         </connections>
                     </button>
-                    <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o7G-2J-2qr">
-                        <rect key="frame" x="323" y="22" width="16" height="16"/>
-                        <connections>
-                            <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
-                        </connections>
-                    </progressIndicator>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="axX-0L-v6g">
                         <rect key="frame" x="20" y="61" width="479" height="217"/>
-                        <clipView key="contentView" id="vBG-YV-mkX">
+                        <clipView key="contentView" misplaced="YES" id="vBG-YV-mkX">
                             <rect key="frame" x="1" y="17" width="505" height="199"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
@@ -371,6 +366,12 @@ DQ
                                         <menu key="menu" title="OtherViews" id="EnK-Kt-A7e"/>
                                     </popUpButtonCell>
                                 </popUpButton>
+                                <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o7G-2J-2qr">
+                                    <rect key="frame" x="464" y="4" width="16" height="16"/>
+                                    <connections>
+                                        <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
+                                    </connections>
+                                </progressIndicator>
                             </subviews>
                         </view>
                         <constraints>
@@ -401,14 +402,26 @@ DQ
                             <constraint firstAttribute="width" constant="479" id="kSq-00-rqJ"/>
                             <constraint firstItem="WTz-uI-fN2" firstAttribute="leading" secondItem="a2f-4v-JJC" secondAttribute="trailing" constant="8" symbolic="YES" id="pIs-sv-t6a"/>
                             <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="NWO-0P-f1V" secondAttribute="trailing" constant="8" symbolic="YES" id="pen-ol-yYr"/>
+                            <constraint firstAttribute="trailing" secondItem="o7G-2J-2qr" secondAttribute="trailing" constant="2" id="uoB-SJ-GOX"/>
                             <constraint firstItem="bcm-dE-57n" firstAttribute="leading" secondItem="O0G-eo-ej9" secondAttribute="trailing" constant="8" symbolic="YES" id="vH9-g1-BIu"/>
                             <constraint firstItem="jb7-tj-7W9" firstAttribute="centerY" secondItem="qoi-dO-SIU" secondAttribute="centerY" id="vfW-gH-y4w"/>
                             <constraint firstItem="ddq-vO-Myl" firstAttribute="top" secondItem="bcm-dE-57n" secondAttribute="bottom" constant="2" id="x3Q-2X-pzN"/>
                             <constraint firstItem="a2f-4v-JJC" firstAttribute="leading" secondItem="kfR-KH-AUs" secondAttribute="trailing" constant="8" symbolic="YES" id="yHQ-gq-LEW"/>
+                            <constraint firstAttribute="bottom" secondItem="o7G-2J-2qr" secondAttribute="bottom" id="ztF-va-FX6"/>
                         </constraints>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
+                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XFM-mL-fme">
+                        <rect key="frame" x="259" y="13" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="View" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cjR-hz-P7N">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFileView:" target="-2" id="E4B-3D-vl8"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="axX-0L-v6g" firstAttribute="top" secondItem="3im-V9-my6" secondAttribute="bottom" constant="8" symbolic="YES" id="43f-vg-Mzk"/>
@@ -417,16 +430,16 @@ DQ
                     <constraint firstItem="WmK-6C-oal" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" id="5xp-dR-Q9F"/>
                     <constraint firstAttribute="centerX" secondItem="3im-V9-my6" secondAttribute="centerX" id="A1v-yf-5gv"/>
                     <constraint firstItem="00I-4I-INo" firstAttribute="leading" secondItem="40b-pd-d3f" secondAttribute="trailing" constant="12" symbolic="YES" id="EjG-pB-ubm"/>
-                    <constraint firstAttribute="bottom" secondItem="o7G-2J-2qr" secondAttribute="bottom" constant="22" id="G7z-ol-Md8"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="baseline" secondItem="00I-4I-INo" secondAttribute="baseline" id="QtB-9M-dJj"/>
                     <constraint firstAttribute="bottom" secondItem="WmK-6C-oal" secondAttribute="bottom" constant="23" id="T8o-93-ahA"/>
-                    <constraint firstItem="40b-pd-d3f" firstAttribute="leading" secondItem="o7G-2J-2qr" secondAttribute="trailing" constant="8" symbolic="YES" id="TC2-PI-Lfx"/>
+                    <constraint firstItem="XFM-mL-fme" firstAttribute="baseline" secondItem="40b-pd-d3f" secondAttribute="baseline" id="Y7X-RC-ZeI"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="top" secondItem="axX-0L-v6g" secondAttribute="bottom" constant="20" symbolic="YES" id="YDo-HV-w6L"/>
                     <constraint firstItem="3im-V9-my6" firstAttribute="top" secondItem="2" secondAttribute="top" id="atJ-OV-YLN"/>
                     <constraint firstAttribute="bottom" secondItem="00I-4I-INo" secondAttribute="bottom" constant="20" symbolic="YES" id="dgX-2Y-QXz"/>
                     <constraint firstAttribute="trailing" secondItem="00I-4I-INo" secondAttribute="trailing" constant="20" symbolic="YES" id="f0v-6e-fOK"/>
                     <constraint firstItem="axX-0L-v6g" firstAttribute="trailing" secondItem="00I-4I-INo" secondAttribute="trailing" id="hZ6-OY-oyt"/>
                     <constraint firstItem="rT5-dE-JF7" firstAttribute="leading" secondItem="WmK-6C-oal" secondAttribute="trailing" constant="8" id="onO-Nr-1kq"/>
+                    <constraint firstItem="40b-pd-d3f" firstAttribute="leading" secondItem="XFM-mL-fme" secondAttribute="trailing" constant="12" symbolic="YES" id="rBr-Rj-jqx"/>
                     <constraint firstItem="axX-0L-v6g" firstAttribute="top" secondItem="2" secondAttribute="top" constant="190" id="rfW-EE-0xd"/>
                 </constraints>
             </view>

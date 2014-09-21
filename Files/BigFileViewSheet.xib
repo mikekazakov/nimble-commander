@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A361c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="BigFileViewSheet">
+            <connections>
+                <outlet property="encoding" destination="fgO-gn-d1M" id="eyK-66-ZRs"/>
+                <outlet property="mode" destination="1xk-Ka-iJl" id="m2A-h7-NoR"/>
+                <outlet property="view" destination="agn-et-TU9" id="wBQ-Dy-Z7e"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="BigFileViewSheet" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="739" height="491"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <value key="minSize" type="size" width="300" height="491"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="739" height="491"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="agn-et-TU9" customClass="BigFileView">
+                        <rect key="frame" x="20" y="61" width="699" height="384"/>
+                    </customView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1BM-GG-fwQ">
+                        <rect key="frame" x="643" y="13" width="82" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="70" id="6xO-8W-BhE"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5rO-0k-5gI">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnClose:" target="-2" id="5HP-M4-3SK"/>
+                        </connections>
+                    </button>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fgO-gn-d1M">
+                        <rect key="frame" x="17" y="450" width="126" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="120" id="3hz-mZ-B01"/>
+                        </constraints>
+                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="7R9-gd-OGA">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                            <menu key="menu" id="ixi-et-13x"/>
+                        </popUpButtonCell>
+                        <connections>
+                            <action selector="OnEncoding:" target="-2" id="ffD-LR-wfV"/>
+                        </connections>
+                    </popUpButton>
+                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1xk-Ka-iJl">
+                        <rect key="frame" x="146" y="451" width="110" height="20"/>
+                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="sc3-Hr-k27">
+                            <font key="font" metaFont="smallSystem"/>
+                            <segments>
+                                <segment label="Text" width="52" selected="YES"/>
+                                <segment label="Hex" width="51" tag="1"/>
+                            </segments>
+                        </segmentedCell>
+                        <connections>
+                            <action selector="OnMode:" target="-2" id="VtC-JN-afS"/>
+                        </connections>
+                    </segmentedControl>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="1xk-Ka-iJl" firstAttribute="top" secondItem="fgO-gn-d1M" secondAttribute="top" id="71L-rk-czn"/>
+                    <constraint firstItem="agn-et-TU9" firstAttribute="top" secondItem="fgO-gn-d1M" secondAttribute="bottom" constant="8" symbolic="YES" id="DHP-Kc-tne"/>
+                    <constraint firstAttribute="bottom" secondItem="1BM-GG-fwQ" secondAttribute="bottom" constant="20" symbolic="YES" id="Erx-r9-yxF"/>
+                    <constraint firstItem="fgO-gn-d1M" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="FCV-5e-PFQ"/>
+                    <constraint firstItem="agn-et-TU9" firstAttribute="leading" secondItem="fgO-gn-d1M" secondAttribute="leading" id="QL9-FU-sP6"/>
+                    <constraint firstItem="fgO-gn-d1M" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="W7h-I8-PcQ"/>
+                    <constraint firstItem="1xk-Ka-iJl" firstAttribute="leading" secondItem="fgO-gn-d1M" secondAttribute="trailing" constant="8" symbolic="YES" id="ZIl-hS-PE8"/>
+                    <constraint firstAttribute="trailing" secondItem="agn-et-TU9" secondAttribute="trailing" constant="20" symbolic="YES" id="ZhP-i6-UVA"/>
+                    <constraint firstItem="1BM-GG-fwQ" firstAttribute="top" secondItem="agn-et-TU9" secondAttribute="bottom" constant="20" symbolic="YES" id="daP-zf-5rb"/>
+                    <constraint firstItem="agn-et-TU9" firstAttribute="trailing" secondItem="1BM-GG-fwQ" secondAttribute="trailing" id="jgM-bI-zoI"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="24.5" y="296.5"/>
+        </window>
+    </objects>
+</document>

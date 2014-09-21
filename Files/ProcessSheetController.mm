@@ -18,7 +18,7 @@ static const auto g_ShowDelaySec = 0.15;
     bool m_ClientClosed;
 }
 
-@synthesize UserCancelled = m_UserCancelled;
+@synthesize userCancelled = m_UserCancelled;
 
 - (id)init
 {

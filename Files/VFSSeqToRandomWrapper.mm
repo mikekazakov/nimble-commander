@@ -33,7 +33,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
     
     if(!m_SeqFile->IsOpened())
     {
-        int res = m_SeqFile->Open(VFSFile::OF_Read);
+        int res = m_SeqFile->Open(_flags);
         if(res < 0)
             return res;
     }

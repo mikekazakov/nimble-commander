@@ -39,7 +39,9 @@ public:
         uint64_t max = numeric_limits<uint64_t>::max();
     };
     
-    typedef void (^FoundCallBack)(const char *_filename, const char *_in_path);
+    typedef void (^FoundCallBack)(const char *_filename,
+                                  const char *_in_path,
+                                  CFRange _content_found); // _content_found used to pass info where requested content was found, or {-1,0} if not used
     typedef void (^FinishCallBack)();
     
     FileSearch();
@@ -95,10 +97,11 @@ private:
     void ProcessValidEntry(const char* _full_path,
                            const char* _dir_path,
                            const VFSDirEnt &_dirent,
-                           VFSHost *_in_host);
+                           VFSHost *_in_host,
+                           CFRange _cont_range);
     
     
-    bool FilterByContent(const char* _full_path, VFSHost *_in_host);
+    bool FilterByContent(const char* _full_path, VFSHost *_in_host, CFRange &_r);
     bool FilterByFilename(const char* _filename);
     
     SerialQueue             m_Queue;

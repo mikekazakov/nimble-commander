@@ -18,17 +18,7 @@
 #import "VFSFile.h"
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"
-#import "VFSSeqToRandomWrapper.h"
 #import "ProcessSheetController.h"
-
-static int FileWindowSize()
-{
-    int file_window_size = FileWindow::DefaultWindowSize;
-    int file_window_pow2x = (int)[NSUserDefaults.standardUserDefaults integerForKey:@"BigFileViewFileWindowPow2X"];
-    if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
-        file_window_size *= 1 << file_window_pow2x;
-    return file_window_size;
-}
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
@@ -90,6 +80,15 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     m_SearchInFileQueue->Wait();
 }
 
++ (int) fileWindowSize
+{
+    int file_window_size = FileWindow::DefaultWindowSize;
+    int file_window_pow2x = (int)[NSUserDefaults.standardUserDefaults integerForKey:@"BigFileViewFileWindowPow2X"];
+    if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
+        file_window_size *= 1 << file_window_pow2x;
+    return file_window_size;
+}
+
 - (void) UpdateTitle
 {
     NSString *path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
@@ -135,15 +134,9 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         proc.window.title = @"Opening file...";
         [proc Show];
         
-        if(origfile->Open(VFSFile::OF_Read) < 0)
-        {
-            [proc Close];
-            return false;
-        }
-
         auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);
-        int res = wrapper->Open(VFSFile::OF_Read,
-                                ^{ return proc.UserCancelled; },
+        int res = wrapper->Open(VFSFile::OF_Read | VFSFile::OF_ShLock,
+                                ^{ return proc.userCancelled; },
                                 ^(uint64_t _bytes, uint64_t _total) {
                                     proc.Progress.doubleValue = double(_bytes) / double(_total);
                                 });
@@ -160,11 +153,10 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         vfsfile = origfile;
     }
     
-    auto fw = make_unique<FileWindow>();
-    if(fw->OpenFile(vfsfile, FileWindowSize()) != 0)
+    m_FileWindow = make_unique<FileWindow>();
+    if(m_FileWindow->OpenFile(vfsfile, MainWindowBigFileViewState.fileWindowSize) != 0)
         return false;
     
-    m_FileWindow = move(fw);
     m_SearchFileWindow = make_unique<FileWindow>();
     if(m_SearchFileWindow->OpenFile(vfsfile) != 0)
         return false;
@@ -202,7 +194,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     }
     
     // update UI
-    [self SelectEncodingFromView];
+    [m_EncodingSelect selectItemWithTag:m_View.encoding];
     [self SelectModeFromView];
     [self UpdateWordWrap];
     [self BigFileViewScrolled];
@@ -278,8 +270,10 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     [m_Toolbar InsertView:m_SearchIndicator];
     [m_Toolbar InsertView:m_SearchField];
     
-    for(const auto &i: encodings::LiteralEncodingsList())
+    for(const auto &i: encodings::LiteralEncodingsList()) {
         [m_EncodingSelect addItemWithTitle: (__bridge NSString*)i.second];
+        m_EncodingSelect.lastItem.tag = i.first;
+    }
     
     [self BuildLayout];
 }
@@ -316,26 +310,10 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     return m_Toolbar;
 }
 
-- (void) SelectEncodingFromView
-{
-    int current_encoding = m_View.encoding;
-    for(const auto &i: encodings::LiteralEncodingsList())
-        if(i.first == current_encoding)
-        {
-            [m_EncodingSelect selectItemWithTitle:(__bridge NSString*)i.second];
-            break;
-        }
-}
-
 - (void) SelectedEncoding:(id)sender
 {
-    for(const auto &i: encodings::LiteralEncodingsList())
-        if([(__bridge NSString*)i.second isEqualToString:m_EncodingSelect.selectedItem.title])
-        {
-            m_View.encoding = i.first;
-            [self UpdateSearchFilter:self];
-            break;
-        }
+    m_View.encoding = (int)m_EncodingSelect.selectedTag;
+    [self UpdateSearchFilter:self];
 }
 
 - (void) UpdateWordWrap

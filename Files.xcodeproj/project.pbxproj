@@ -699,6 +699,10 @@
 		CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */; };
 		CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
+		CFE3829119CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3828F19CEFBA0005C8958 /* BigFileViewSheet.mm */; };
+		CFE3829219CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3828F19CEFBA0005C8958 /* BigFileViewSheet.mm */; };
+		CFE3829319CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE3829019CEFBA0005C8958 /* BigFileViewSheet.xib */; };
+		CFE3829419CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE3829019CEFBA0005C8958 /* BigFileViewSheet.xib */; };
 		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
 		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */; };
@@ -1357,6 +1361,9 @@
 		CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetController.xib; sourceTree = "<group>"; };
 		CFE2697A16F01BA90048A393 /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chained_strings.cpp; sourceTree = "<group>"; };
 		CFE2697B16F01BAA0048A393 /* chained_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chained_strings.h; sourceTree = "<group>"; };
+		CFE3828E19CEFBA0005C8958 /* BigFileViewSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewSheet.h; sourceTree = "<group>"; };
+		CFE3828F19CEFBA0005C8958 /* BigFileViewSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewSheet.mm; sourceTree = "<group>"; };
+		CFE3829019CEFBA0005C8958 /* BigFileViewSheet.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BigFileViewSheet.xib; sourceTree = "<group>"; };
 		CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationHeader.mm; sourceTree = "<group>"; };
 		CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationHeader.h; sourceTree = "<group>"; };
 		CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationItemsFooter.mm; sourceTree = "<group>"; };
@@ -1716,6 +1723,9 @@
 				CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */,
 				CF07DE3A175D997A00757DE1 /* MainWindowBigFileViewState.h */,
 				CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */,
+				CFE3828E19CEFBA0005C8958 /* BigFileViewSheet.h */,
+				CFE3828F19CEFBA0005C8958 /* BigFileViewSheet.mm */,
+				CFE3829019CEFBA0005C8958 /* BigFileViewSheet.xib */,
 			);
 			name = BigFileViewMainWindowState;
 			sourceTree = "<group>";
@@ -2636,6 +2646,7 @@
 				CFC5D4B419BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */,
 				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
+				CFE3829419CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */,
 				CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CF6D9D0719667E390077B146 /* CreateDirectorySheetController.xib in Resources */,
 				CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */,
@@ -2685,6 +2696,7 @@
 				CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCD3B7D18AB64C600028B41 /* FindFilesSheetController.xib in Resources */,
 				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
+				CFE3829319CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */,
 				CFE1088E1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib in Resources */,
 				B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */,
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
@@ -2792,6 +2804,7 @@
 				CF6D9CA219667BA20077B146 /* archive_match.c in Sources */,
 				CF6D9CA319667BA20077B146 /* archive_options.c in Sources */,
 				CF6D9CA419667BA20077B146 /* archive_pathmatch.c in Sources */,
+				CFE3829219CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
 				CF6D9CA519667BA20077B146 /* archive_ppmd7.c in Sources */,
 				CF6D9CA619667BA20077B146 /* archive_rb.c in Sources */,
 				CF6D9CA719667BA20077B146 /* archive_read_append_filter.c in Sources */,
@@ -3075,6 +3088,7 @@
 				CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */,
 				CF09856A18EDBFB0006E6410 /* TermTaskCommon.mm in Sources */,
 				CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */,
+				CFE3829119CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,

@@ -144,7 +144,6 @@ DispatchGroup::DispatchGroup(Priority _priority):
 {
     assert(m_Queue != 0);
     assert(m_Group != 0);
-    m_Count.store(0);
 }
 
 DispatchGroup::~DispatchGroup()

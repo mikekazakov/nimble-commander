@@ -182,24 +182,13 @@ static NSImageRep *ProduceBundleThumbnailForVFS(const char *_path,
     return [image bestRepresentationForRect:_rc context:nil hints:nil];
 }
 
-static unsigned MaximumConcurrentRunnersForVFS(VFSHost *_host)
+inline static unsigned MaximumConcurrentRunnersForVFS(const VFSHostPtr &_host)
 {
-    if(_host->IsNativeFS())
-        return 32;
-    else
-        return 6;
+    return _host->IsNativeFS() ? 32 : 6;
 }
 
-IconsGenerator::IconsGenerator():
-    m_WorkGroup(DispatchGroup::Background)
+IconsGenerator::IconsGenerator()
 {
-    m_ControlQueue = dispatch_queue_create(__FILES_IDENTIFIER__".IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
-    m_IconsCacheQueue = dispatch_queue_create(__FILES_IDENTIFIER__".IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);
-    m_IconSize = NSMakeRect(0, 0, 16, 16);
-    m_LastIconID = 0;
-    m_StopWorkQueue = false;
-    m_IconsMode = IconModeFileIconsThumbnails;
-    m_UpdateCallback = 0;
     BuildGenericIcons();
 }
 
@@ -254,7 +243,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     // need to collect the appropriate info and put request into generating queue
     
     if(m_LastIconID == MaxIcons ||
-       m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_listing.Host().get()) )
+       m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_listing.Host()) )
         return entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
 
     unsigned short meta_no = m_LastIconID++;
@@ -448,7 +437,7 @@ void IconsGenerator::StopWorkQueue()
     auto sh_this = shared_from_this();
     dispatch_async(m_ControlQueue, ^{
         m_WorkGroup.Wait();
-        sh_this->m_StopWorkQueue--; // possible race condition
+        sh_this->m_StopWorkQueue--;
     });
 }
 

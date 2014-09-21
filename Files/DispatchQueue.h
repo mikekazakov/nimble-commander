@@ -136,7 +136,7 @@ private:
     void operator=(const DispatchGroup&) = delete;
     dispatch_queue_t m_Queue;
     dispatch_group_t m_Group;
-    atomic<unsigned> m_Count;
+    atomic_uint m_Count{0};
 };
 
 

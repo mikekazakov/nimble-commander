@@ -58,8 +58,8 @@ private:
     };
     
     map<unsigned short, shared_ptr<Meta>> m_Icons;
-    unsigned int m_LastIconID;
-    NSRect m_IconSize;
+    unsigned int m_LastIconID = 0;
+    NSRect m_IconSize = NSMakeRect(0, 0, 16, 16);
 
     
     NSImage *m_GenericFileIconImage;
@@ -69,13 +69,13 @@ private:
     NSBitmapImageRep *m_GenericFileIconBitmap;
     NSBitmapImageRep *m_GenericFolderIconBitmap;
 
-    DispatchGroup    m_WorkGroup;    // working queue is concurrent
-    dispatch_queue_t m_ControlQueue; // linear queue
-    dispatch_queue_t m_IconsCacheQueue;
+    DispatchGroup    m_WorkGroup{DispatchGroup::Background};    // working queue is concurrent
+    dispatch_queue_t m_ControlQueue = dispatch_queue_create(__FILES_IDENTIFIER__".IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t m_IconsCacheQueue = dispatch_queue_create(__FILES_IDENTIFIER__".IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);    
     
-    int              m_StopWorkQueue;
-    int              m_IconsMode;
-    void             (^m_UpdateCallback)();
+    atomic_int       m_StopWorkQueue{0};
+    int              m_IconsMode = IconModeFileIconsThumbnails;
+    void             (^m_UpdateCallback)() = nil;
     
     void BuildGenericIcons();
     void Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _guard);

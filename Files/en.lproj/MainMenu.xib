@@ -306,12 +306,6 @@ DQ
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="878"/>
-                                        <menuItem title="View Hidden Files" tag="13140" keyEquivalent="I" id="869">
-                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                            <connections>
-                                                <action selector="ToggleViewHiddenFiles:" target="-1" id="872"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="Separate Folders From Files" tag="13150" id="870">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -332,6 +326,12 @@ DQ
                                         </menuItem>
                                     </items>
                                 </menu>
+                            </menuItem>
+                            <menuItem title="Show Hidden Files" tag="13140" keyEquivalent="I" id="zGu-Ls-RVD">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="ToggleViewHiddenFiles:" target="-1" id="Ayw-w8-zaF"/>
+                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="t5L-ik-2nt"/>
                             <menuItem title="Show/Hide Toolbar" tag="13180" id="I1T-dz-dM2">

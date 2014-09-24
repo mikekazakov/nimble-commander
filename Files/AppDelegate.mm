@@ -56,7 +56,8 @@
         NSString *defaults_file = [NSBundle.mainBundle pathForResource:@"Defaults" ofType:@"plist"];
         NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
         [NSUserDefaults.standardUserDefaults registerDefaults:defaults];
-        if(NSEvent.modifierFlags & (NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask)) {
+        auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
+        if((NSEvent.modifierFlags & erase_mask) == erase_mask) {
             [self askToResetDefaults];
             exit(0);
         }

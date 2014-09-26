@@ -13,7 +13,6 @@
                 <outlet property="ContainingTextField" destination="bcm-dE-57n" id="vIC-PE-7nX"/>
                 <outlet property="EncodingsPopUp" destination="ddq-vO-Myl" id="3rJ-yn-Nxo"/>
                 <outlet property="MaskTextField" destination="qoi-dO-SIU" id="b9o-51-fmd"/>
-                <outlet property="OnSearch" destination="40b-pd-d3f" id="t80-zk-S7E"/>
                 <outlet property="SearchButton" destination="40b-pd-d3f" id="1i2-gY-Yd6"/>
                 <outlet property="SearchForDirsButton" destination="cVD-9V-sOV" id="Xm9-f3-i97"/>
                 <outlet property="SearchInSubDirsButton" destination="JW2-j0-Voo" id="yTt-Bz-lQ6"/>
@@ -66,7 +65,7 @@ DQ
 </string>
                         </buttonCell>
                         <connections>
-                            <action selector="OnSearch:" target="-2" id="uWV-KV-Hkg"/>
+                            <action selector="OnSearch:" target="-2" id="PJf-Kk-SLs"/>
                         </connections>
                     </button>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="axX-0L-v6g">
@@ -306,12 +305,12 @@ DQ
                                     <constraints>
                                         <constraint firstAttribute="width" constant="46" id="RV8-dI-ztw"/>
                                     </constraints>
-                                    <popUpButtonCell key="cell" type="push" title="b" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Tt9-8O-AZV" id="kh9-Bc-dmG">
+                                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="kh9-Bc-dmG">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="menu"/>
                                         <menu key="menu" title="OtherViews" id="8sA-yU-MON">
                                             <items>
-                                                <menuItem title="b" state="on" id="Tt9-8O-AZV">
+                                                <menuItem title="b" id="Tt9-8O-AZV">
                                                     <modifierMask key="keyEquivalentModifierMask"/>
                                                 </menuItem>
                                                 <menuItem title="Kb" tag="1" id="WY5-uo-vrc">
@@ -367,7 +366,7 @@ DQ
                                     </popUpButtonCell>
                                 </popUpButton>
                                 <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o7G-2J-2qr">
-                                    <rect key="frame" x="464" y="4" width="16" height="16"/>
+                                    <rect key="frame" x="450" y="1" width="16" height="16"/>
                                     <connections>
                                         <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
                                     </connections>
@@ -402,18 +401,21 @@ DQ
                             <constraint firstAttribute="width" constant="479" id="kSq-00-rqJ"/>
                             <constraint firstItem="WTz-uI-fN2" firstAttribute="leading" secondItem="a2f-4v-JJC" secondAttribute="trailing" constant="8" symbolic="YES" id="pIs-sv-t6a"/>
                             <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="NWO-0P-f1V" secondAttribute="trailing" constant="8" symbolic="YES" id="pen-ol-yYr"/>
-                            <constraint firstAttribute="trailing" secondItem="o7G-2J-2qr" secondAttribute="trailing" constant="2" id="uoB-SJ-GOX"/>
+                            <constraint firstAttribute="trailing" secondItem="o7G-2J-2qr" secondAttribute="trailing" constant="16" id="uoB-SJ-GOX"/>
                             <constraint firstItem="bcm-dE-57n" firstAttribute="leading" secondItem="O0G-eo-ej9" secondAttribute="trailing" constant="8" symbolic="YES" id="vH9-g1-BIu"/>
                             <constraint firstItem="jb7-tj-7W9" firstAttribute="centerY" secondItem="qoi-dO-SIU" secondAttribute="centerY" id="vfW-gH-y4w"/>
                             <constraint firstItem="ddq-vO-Myl" firstAttribute="top" secondItem="bcm-dE-57n" secondAttribute="bottom" constant="2" id="x3Q-2X-pzN"/>
                             <constraint firstItem="a2f-4v-JJC" firstAttribute="leading" secondItem="kfR-KH-AUs" secondAttribute="trailing" constant="8" symbolic="YES" id="yHQ-gq-LEW"/>
-                            <constraint firstAttribute="bottom" secondItem="o7G-2J-2qr" secondAttribute="bottom" id="ztF-va-FX6"/>
+                            <constraint firstAttribute="bottom" secondItem="o7G-2J-2qr" secondAttribute="bottom" constant="-3" id="ztF-va-FX6"/>
                         </constraints>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XFM-mL-fme">
-                        <rect key="frame" x="259" y="13" width="82" height="32"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XFM-mL-fme">
+                        <rect key="frame" x="272" y="13" width="69" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="57" id="LbT-45-6a9"/>
+                        </constraints>
                         <buttonCell key="cell" type="push" title="View" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cjR-hz-P7N">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>

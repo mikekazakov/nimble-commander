@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A361c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1070" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
+        <deployment version="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="OperationsSummaryViewController">
@@ -14,7 +14,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="gst-Y4-7ma">
             <rect key="frame" x="0.0" y="0.0" width="163" height="96"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -25,7 +25,6 @@
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2499" userLabel="Short Info">
                     <rect key="frame" x="9" y="4" width="273" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Short info string" id="2500">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
@@ -37,7 +36,6 @@
                 </textField>
                 <textField verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="913" userLabel="Caption">
                     <rect key="frame" x="9" y="38" width="280" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" priority="1" constant="276" id="2702"/>
                         <constraint firstAttribute="width" constant="276" id="2772"/>
@@ -53,7 +51,6 @@
                 </textField>
                 <progressIndicator maxValue="1" controlSize="small" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="925" userLabel="Progress">
                     <rect key="frame" x="33" y="22" width="216" height="12"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="216" id="2780"/>
                     </constraints>
@@ -63,7 +60,6 @@
                 </progressIndicator>
                 <button focusRingType="none" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="927" userLabel="Pause Button">
                     <rect key="frame" x="257" y="22" width="14" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="2657"/>
                     </constraints>
@@ -81,7 +77,6 @@
                 </button>
                 <button focusRingType="none" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="926" userLabel="Stop Button">
                     <rect key="frame" x="273" y="22" width="14" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="2550"/>
                     </constraints>
@@ -99,7 +94,6 @@
                 </button>
                 <button focusRingType="none" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="928" userLabel="Dialog Button">
                     <rect key="frame" x="11" y="22" width="14" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="2579"/>
                         <constraint firstAttribute="height" constant="14" id="2652"/>
@@ -139,9 +133,6 @@
                 <constraint firstItem="925" firstAttribute="leading" secondItem="912" secondAttribute="leading" constant="33" id="2782"/>
                 <constraint firstItem="927" firstAttribute="leading" secondItem="925" secondAttribute="trailing" constant="8" symbolic="YES" id="2881"/>
             </constraints>
-            <connections>
-                <outlet property="PauseButton" destination="927" id="940"/>
-            </connections>
         </customView>
         <collectionViewItem id="955" userLabel="Operations List View Item">
             <connections>
@@ -181,6 +172,7 @@
                 <rect key="frame" x="234" y="1" width="15" height="143"/>
                 <autoresizingMask key="autoresizingMask"/>
             </scroller>
+            <point key="canvasLocation" x="452" y="107"/>
         </scrollView>
         <viewController id="Vby-0l-Kwr">
             <connections>
@@ -190,7 +182,7 @@
     </objects>
     <resources>
         <image name="NSRefreshFreestandingTemplate" width="14" height="14"/>
-        <image name="NSStopProgressFreestandingTemplate" width="12" height="12"/>
+        <image name="NSStopProgressFreestandingTemplate" width="14" height="14"/>
         <image name="pause_icon" width="14" height="14"/>
         <image name="question_icon" width="12" height="12"/>
     </resources>

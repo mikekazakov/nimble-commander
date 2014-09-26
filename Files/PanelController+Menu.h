@@ -10,4 +10,6 @@
 
 @interface PanelController (Menu)
 
+- (IBAction)OnFileViewCommand:(id)sender;
+
 @end

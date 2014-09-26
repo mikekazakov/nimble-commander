@@ -451,6 +451,10 @@ void panel::GenericCursorPersistance::Restore()
         [self.state HandleTabButton];
         return true;
     }
+    if(unicode == 0x20) { // Space button
+        [self OnFileViewCommand:self];
+        return true;
+    }
     if(keycode == 53) { // Esc button
         [self CancelBackgroundOperations];
         [self.state CloseOverlay:self];

@@ -69,7 +69,6 @@ static bool IsQuickSearchStringCharacter(NSString *_s)
         [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
-        [un addCharactersInString:@" "];
         chars = un;
     });
     
@@ -82,10 +81,12 @@ static bool IsQuickSearchStringCharacter(NSString *_s)
 
 static inline bool IsBackspace(NSString *_s)
 {
-    if(_s.length == 1 &&
-       [_s characterAtIndex:0] == 0x7F)
-        return true;
-    return false;
+    return _s.length == 1 && [_s characterAtIndex:0] == 0x7F;
+}
+
+static inline bool IsSpace(NSString *_s)
+{
+    return _s.length == 1 && [_s characterAtIndex:0] == 0x20;
 }
 
 static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
@@ -266,8 +267,15 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     NSString*  const character   = [event charactersIgnoringModifiers];
     NSUInteger const modif       = [event modifierFlags];
     
+    bool empty_text = m_QuickSearchIsSoftFiltering ?
+        m_Data.SoftFiltering().text.length == 0 :
+        m_Data.HardFiltering().text.text.length == 0;
+    
     if( IsQuickSearchModifier(modif, m_QuickSearchMode) &&
-        ( IsQuickSearchStringCharacter(character) || IsBackspace(character) )
+        ( IsQuickSearchStringCharacter(character) ||
+            ( !empty_text && IsSpace(character) ) ||
+            IsBackspace(character)
+         )
        )
     {
         [m_View disableCurrentMomentumScroll];

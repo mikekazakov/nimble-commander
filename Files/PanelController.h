@@ -168,3 +168,4 @@ namespace panel
 #import "PanelController+Navigation.h"
 #import "PanelController+QuickSearch.h"
 #import "PanelController+DragAndDrop.h"
+#import "PanelController+Menu.h"

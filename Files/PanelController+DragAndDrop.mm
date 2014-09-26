@@ -431,6 +431,9 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         m_View.draggingOver = false;
         m_View.draggingOverItemAtPosition = -1;
     }
+    
+    sender.draggingFormation = NSDraggingFormationList;
+    
     return result;
 }
 

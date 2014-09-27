@@ -230,7 +230,8 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
         strcpy(m_Destination, path);
     }
     
-    if(stat(m_Destination, &stat_buffer) == 0)
+    if(m_Destination[0] == '/' &&
+       stat(m_Destination, &stat_buffer) == 0)
     {
         CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);        
         bool isfile = (stat_buffer.st_mode&S_IFMT) == S_IFREG;

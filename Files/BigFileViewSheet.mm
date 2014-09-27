@@ -73,6 +73,8 @@
 
 - (void)windowDidLoad
 {
+    self.view.hasBorder = true;
+    self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
     [self.view SetFile:m_FileWindow.get()];
     if( m_InitialSelection.location >= 0 ) {
         self.view.selectionInFile = m_InitialSelection;

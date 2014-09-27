@@ -40,6 +40,17 @@ enum class BigFileViewModes
 - (bool)        ShouldAntialias;
 - (bool)        ShouldSmoothFonts;
 
+/**
+ * Specify if view should draw a border.
+ */
+@property (nonatomic) bool hasBorder;
+
+/**
+ * Interior size, excluding scroll bar and possibly border
+ */
+@property (nonatomic, readonly) NSSize contentBounds;
+
+
 // Frontend section
 
 /**

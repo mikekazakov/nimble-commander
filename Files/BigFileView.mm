@@ -24,6 +24,8 @@ static NSArray *MyDefaultsKeys()
  @"BigFileViewClassicFont", nil];
 }
 
+const static double g_BorderWidth = 1.0;
+
 @implementation BigFileView
 {
     FileWindow     *m_File;
@@ -50,12 +52,12 @@ static NSArray *MyDefaultsKeys()
                                                  // updated when windows moves, regarding current selection in bytes
 }
 
-//@property (nonatomic, weak) id<BigFileViewDelegateProtocol> delegate;
 @synthesize delegate = m_Delegate;
 
 - (id)initWithFrame:(NSRect)frame
 {
     if (self = [super initWithFrame:frame]) {
+        self.hasBorder = false;
         m_WrapWords = true;
         m_SelectionInFile = CFRangeMake(-1, 0);
         m_SelectionInWindow = CFRangeMake(-1, 0);
@@ -78,11 +80,7 @@ static NSArray *MyDefaultsKeys()
         m_VerticalScroller.action = @selector(VerticalScroll:);
         m_VerticalScroller.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_VerticalScroller];
-        
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[m_VerticalScroller(15)]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_VerticalScroller]-(==0)-|" options:0 metrics:nil views:views]];
-        
+        [self layoutVerticalScroll];
         [self frameDidChange];
         
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:MyDefaultsKeys() options:0 context:0];
@@ -97,6 +95,20 @@ static NSArray *MyDefaultsKeys()
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:MyDefaultsKeys()];
     CFRelease(m_ForegroundColor);
     CFRelease(m_Font);
+}
+
+- (void)layoutVerticalScroll
+{
+    for(NSLayoutConstraint *c in self.constraints)
+        if(c.firstItem == m_VerticalScroller || c.secondItem == m_VerticalScroller)
+            [self removeConstraint:c];
+    
+    double off = self.hasBorder ? g_BorderWidth : 0;
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"[m_VerticalScroller(15)]-(==%f)-|",off]
+                                                                 options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-(==%f)-[m_VerticalScroller]-(==%f)-|",off,off]
+                                                                 options:0 metrics:nil views:views]];
 }
 
 - (void) InitAppearanceForModernPresentation
@@ -183,7 +195,33 @@ static NSArray *MyDefaultsKeys()
 - (void)drawRect:(NSRect)dirtyRect
 {
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    CGContextSaveGState(context);
+    if(self.hasBorder)
+        CGContextTranslateCTM(context, g_BorderWidth, g_BorderWidth);
+    
     m_ViewImpl->DoDraw(context, dirtyRect);
+    
+    if(self.hasBorder) {
+        CGContextTranslateCTM(context, -g_BorderWidth, -g_BorderWidth);
+        NSRect rc = NSMakeRect(0, 0, self.bounds.size.width - g_BorderWidth, self.bounds.size.height - g_BorderWidth);
+        CGContextSetAllowsAntialiasing(context, false);
+        NSBezierPath *bp = [NSBezierPath bezierPathWithRect:rc];
+        bp.lineWidth = g_BorderWidth;
+        [[NSColor colorWithCalibratedWhite:184./255 alpha:1.0] set];
+        [bp stroke];
+        CGContextSetAllowsAntialiasing(context, true);
+    }
+    CGContextRestoreGState(context);
+}
+
+- (void)drawFocusRingMask
+{
+    NSRectFill(self.focusRingMaskBounds);
+}
+
+- (NSRect)focusRingMaskBounds
+{
+    return self.bounds;
 }
 
 - (void)resetCursorRects
@@ -579,6 +617,25 @@ static NSArray *MyDefaultsKeys()
 - (void)deselectAll:(id)sender
 {
     self.selectionInFile = CFRangeMake(-1, 0);
+}
+
+- (NSSize)contentBounds
+{
+    NSSize sz = self.bounds.size;
+    sz.width -= [NSScroller scrollerWidthForControlSize:NSRegularControlSize scrollerStyle:NSScrollerStyleLegacy];
+    if(self.hasBorder) {
+        sz.width -= g_BorderWidth * 2;
+        sz.height -= g_BorderWidth * 2;
+    }
+    return sz;
+}
+
+- (void) setHasBorder:(bool)hasBorder
+{
+    if(hasBorder != _hasBorder) {
+        _hasBorder = hasBorder;
+        [self layoutVerticalScroll];
+    }
 }
 
 @end

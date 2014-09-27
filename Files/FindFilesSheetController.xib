@@ -422,6 +422,11 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="OnFileView:" target="-2" id="E4B-3D-vl8"/>
+                            <binding destination="-2" name="enabled" keyPath="self.focusedItem" id="rpL-HM-rCY">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSIsNotNil</string>
+                                </dictionary>
+                            </binding>
                         </connections>
                     </button>
                 </subviews>

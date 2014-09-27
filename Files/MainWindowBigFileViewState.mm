@@ -210,6 +210,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     
     m_View = [[BigFileView alloc] initWithFrame:self.frame];
     m_View.translatesAutoresizingMaskIntoConstraints = false;
+    m_View.focusRingType = NSFocusRingTypeNone;
     m_View.delegate = self;
     [self addSubview:m_View];
     

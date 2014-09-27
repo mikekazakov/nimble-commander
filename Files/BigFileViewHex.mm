@@ -75,7 +75,7 @@ BigFileViewHex::BigFileViewHex(BigFileViewDataBackend* _data, BigFileView* _view
 {
     m_View = _view;
     m_Data = _data;
-    m_FixupWindow.reset(new UniChar[m_Data->RawSize()]);
+    m_FixupWindow = make_unique<UniChar[]>(m_Data->RawSize());
     m_LeftInset = 5;
     
     GrabFontGeometry();
@@ -96,7 +96,7 @@ void BigFileViewHex::GrabFontGeometry()
 {
     m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
     m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
-    m_FrameLines = floor([m_View frame].size.height / m_FontHeight);    
+    m_FrameLines = floor(m_View.contentBounds.height / m_FontHeight);
 }
 
 void BigFileViewHex::OnBufferDecoded()

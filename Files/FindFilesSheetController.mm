@@ -136,6 +136,7 @@ static const int g_MaximumSearchResults = 16384;
         m_FoundItems = [NSMutableArray new];
         m_FoundItemsBatch = [NSMutableArray new];
         m_BatchQueue = SerialQueueT::Make();
+        self.focusedItem = nil;
     }
     return self;
 }
@@ -145,6 +146,7 @@ static const int g_MaximumSearchResults = 16384;
     [super windowDidLoad];
     self.TableView.ColumnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];
+    self.TableView.delegate = self;
     self.TableView.Target = self;
     self.TableView.DoubleAction = @selector(doubleClick:);
     
@@ -318,6 +320,15 @@ static const int g_MaximumSearchResults = 16384;
     FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
     m_DoubleClickedItem = item;
     [self OnClose:self];
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification
+{
+    NSInteger row = [self.TableView selectedRow];
+    if(row >= 0)
+        self.focusedItem = (FindFilesSheetFoundItem *)[self.ArrayController.arrangedObjects objectAtIndex:row];
+    else
+        self.focusedItem = nil;
 }
 
 - (IBAction)OnFileView:(id)sender

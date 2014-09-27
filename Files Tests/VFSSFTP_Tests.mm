@@ -36,6 +36,9 @@
     shared_ptr<VFSListing> listing;
     XCTAssert( host->FetchDirectoryListing("/", &listing, 0, 0) == 0);
     
+    if(!listing)
+        return;
+    
     PanelData data;
     data.Load(listing);
     XCTAssert( data.DirectoryEntries().Count() == 22);

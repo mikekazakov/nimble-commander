@@ -242,7 +242,7 @@ void BigFileViewText::BuildLayout()
     
     double wrapping_width = 10000;
     if(m_View.wordWrap)
-        wrapping_width = [m_View frame].size.width - [NSScroller scrollerWidthForControlSize:NSRegularControlSize scrollerStyle:NSScrollerStyleLegacy] - m_LeftInset;
+        wrapping_width = m_View.contentBounds.width - m_LeftInset;
 
     m_AttrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
     CFAttributedStringReplaceString(m_AttrString, CFRangeMake(0, 0), m_StringBuffer);
@@ -734,6 +734,8 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
                 m_SmoothOffset.y -= m_FontHeight;
             }
         }
+        else
+            return;
     }
     else
     {
@@ -756,6 +758,8 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
                 m_SmoothOffset.y -= dl * m_FontHeight;
             }
         }
+        else
+            return;
     }
     
     // horizontal scrolling
@@ -796,12 +800,12 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
 
 void BigFileViewText::OnFrameChanged()
 {
-    NSRect fr = [m_View frame];
-    m_FrameLines = fr.size.height / m_FontHeight;
+    NSSize sz = m_View.contentBounds;
+    m_FrameLines = sz.height / m_FontHeight;
 
-    if(m_FrameSize.width != fr.size.width)
+    if(m_FrameSize.width != sz.width)
         BuildLayout();
-    m_FrameSize = fr.size;
+    m_FrameSize = sz;
 }
 
 void BigFileViewText::OnWordWrappingChanged()

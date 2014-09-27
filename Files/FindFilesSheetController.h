@@ -9,6 +9,8 @@
 #import "VFS.h"
 #import "SheetController.h"
 
+@class FindFilesSheetFoundItem;
+
 struct FindFilesSheetControllerFoundItem
 {
     string filename;
@@ -43,6 +45,7 @@ struct FindFilesSheetControllerFoundItem
 @property (strong) IBOutlet NSButton *SearchForDirsButton;
 @property (strong) IBOutlet NSButton *SearchInSubDirsButton;
 @property (strong) IBOutlet NSPopUpButton *EncodingsPopUp;
+@property FindFilesSheetFoundItem* focusedItem; // may be nullptr
 
 - (FindFilesSheetControllerFoundItem*) SelectedItem; // may be nullptr
 

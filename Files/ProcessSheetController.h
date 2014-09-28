@@ -13,6 +13,7 @@
 - (void)Show;
 - (void)Close;
 
+@property NSString *title;
 @property (strong) IBOutlet NSProgressIndicator *Progress;
 @property (nonatomic, strong) void (^OnCancelOperation)();
 @property (nonatomic, readonly) bool userCancelled;

@@ -333,8 +333,6 @@ static const int g_MaximumSearchResults = 16384;
 
 - (IBAction)OnFileView:(id)sender
 {
-    // OSX10.9 and higher - need to check on Lion
-    
     NSInteger row = [self.TableView selectedRow];
     FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
     FindFilesSheetControllerFoundItem *data = item.data;

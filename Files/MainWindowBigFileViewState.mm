@@ -166,7 +166,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     if(origfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
     { // we need to read a file into temporary mem/file storage to access it randomly
         ProcessSheetController *proc = [ProcessSheetController new];
-        proc.window.title = @"Opening file...";
+        proc.title = @"Opening file...";
         [proc Show];
         
         auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);

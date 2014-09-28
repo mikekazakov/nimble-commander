@@ -9,7 +9,7 @@
 #import "ProcessSheetController.h"
 #import "Common.h"
 
-static const auto g_ShowDelaySec = 0.15;
+static const nanoseconds g_ShowDelay = 150ms;
 
 @implementation ProcessSheetController
 {
@@ -22,8 +22,22 @@ static const auto g_ShowDelaySec = 0.15;
 
 - (id)init
 {
-    if(self = [super initWithWindowNibName:NSStringFromClass(self.class)])
-    {
+    // NEED EVEN MOAR GCD HACKS!!
+    if(dispatch_is_main_queue()) {
+        self = [super initWithWindowNibName:NSStringFromClass(self.class)];
+        (void)self.window;
+    }
+    else {
+        __block ProcessSheetController *me;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            me = [super initWithWindowNibName:NSStringFromClass(self.class)];
+            (void)me.window;
+        });
+        self = me;
+    }
+    
+    if(self) {
+        self.window.movableByWindowBackground = true;
         m_Running = false;
         m_UserCancelled = false;
         m_ClientClosed = false;
@@ -46,7 +60,7 @@ static const auto g_ShowDelaySec = 0.15;
     
     if(m_Running == true)
         return;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(g_ShowDelaySec * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_ShowDelay.count()), dispatch_get_main_queue(), ^{
         if(m_ClientClosed)
             return;
         [self showWindow:self];
@@ -67,6 +81,16 @@ static const auto g_ShowDelaySec = 0.15;
     
     dispatch_to_main_queue(^{ [self.window close]; });
     m_Running = false;
+}
+
+- (void) setTitle:(NSString *)title
+{
+    ((NSTextField*)[self.window.contentView viewWithTag:777]).stringValue = title;
+}
+
+- (NSString*) title
+{
+    return ((NSTextField*)[self.window.contentView viewWithTag:777]).stringValue;
 }
 
 @end

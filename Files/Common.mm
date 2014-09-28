@@ -164,7 +164,7 @@ static uint64_t InitGetTimeInNanoseconds()
     return GetTimeInNanoseconds();
 }
 
-nanoseconds timenow() noexcept
+nanoseconds machtime() noexcept
 {
     return nanoseconds(GetTimeInNanoseconds());
 }

@@ -21,7 +21,7 @@
     // we assume that _item_name will not contain any forward slashes
     
     m_DelayedSelection.isvalid = true;
-    m_DelayedSelection.request_end = timenow() + request.timeout;
+    m_DelayedSelection.request_end = machtime() + request.timeout;
     m_DelayedSelection.filename = request.filename;
     m_DelayedSelection.done = [request.done copy];
     
@@ -35,7 +35,7 @@
     if(!m_DelayedSelection.isvalid)
         return false;
     
-    if(timenow() > m_DelayedSelection.request_end)
+    if(machtime() > m_DelayedSelection.request_end)
     {
         m_DelayedSelection.isvalid = false;
         m_DelayedSelection.filename.clear();

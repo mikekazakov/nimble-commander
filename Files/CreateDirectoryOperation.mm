@@ -28,7 +28,7 @@
     if (self)
     {
         m_OriginalPathRequest = _path;
-        m_OperationStart = timenow();
+        m_OperationStart = machtime();
         m_NativeJob->Init(_path, _rootpath, self);
         self.Caption = [NSString stringWithFormat:@"Creating directory \"%@\"",
                         [NSString stringWithUTF8String:_path]];
@@ -43,7 +43,7 @@
     if (self)
     {
         m_OriginalPathRequest = _path;
-        m_OperationStart = timenow();
+        m_OperationStart = machtime();
         m_VFSJob->Init(_path, _rootpath, _host, self);
         self.Caption = [NSString stringWithFormat:@"Creating directory \"%@\"",
                         [NSString stringWithUTF8String:_path]];
@@ -89,7 +89,7 @@
     [super OnFinish];
     
     // if operation was done in 500ms - we will ask panel to change cursor
-    if(self.TargetPanel != nil && (timenow() - m_OperationStart < 500ms) )
+    if(self.TargetPanel != nil && (machtime() - m_OperationStart < 500ms) )
     {
         if(m_OriginalPathRequest.find('/') == string::npos)
         {

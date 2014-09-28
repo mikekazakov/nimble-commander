@@ -125,7 +125,7 @@ struct PanelViewStateStorage
 
 - (BOOL)becomeFirstResponder
 {
-    m_ActivationTime = timenow();
+    m_ActivationTime = machtime();
     self.needsDisplay = true;
     [self.delegate PanelViewDidBecomeFirstResponder:self];
     m_ReadyToDrag = false;
@@ -481,7 +481,7 @@ struct PanelViewStateStorage
     {
         [self OnCursorPositionChanged];
     }
-    else if(lb_pressed && timenow() - m_ActivationTime > 300ms)
+    else if(lb_pressed && machtime() - m_ActivationTime > 300ms)
     {
         // need more complex logic here (?)
         m_LastPotentialRenamingLBDown = cursor_pos;

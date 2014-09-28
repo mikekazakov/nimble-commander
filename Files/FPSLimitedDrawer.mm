@@ -85,12 +85,12 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 5s;
         {
             [self.view setNeedsDisplay:true];
             m_Dirty = false;
-            m_LastDrawedTime = timenow();
+            m_LastDrawedTime = machtime();
         }
         else
         {
             // timer invalidation by max inactivity time
-            if(timenow() - m_LastDrawedTime > m_MaxTimeBeforeInvalidation)
+            if(machtime() - m_LastDrawedTime > m_MaxTimeBeforeInvalidation)
                 [self cleanupTimer];
         }
     }
@@ -109,7 +109,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 5s;
                                                  selector:@selector(UpdateByTimer:)
                                                  userInfo:nil
                                                   repeats:YES];
-    m_LastDrawedTime = timenow();
+    m_LastDrawedTime = machtime();
     [m_DrawTimer SetSafeTolerance];
 }
 

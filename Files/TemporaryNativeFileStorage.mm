@@ -98,7 +98,7 @@ bool TemporaryNativeFileStorage::GetSubDirForFilename(const char *_filename, cha
 }
 
 bool TemporaryNativeFileStorage::CopySingleFile(const char* _vfs_filename,
-                                                shared_ptr<VFSHost> _host,
+                                                const VFSHostPtr &_host,
                                                 char *_tmp_filename
                                                 )
 {
@@ -185,9 +185,8 @@ static bool DoSubDirPurge(const char *_dir)
         {
             if( S_ISREG(st.st_mode) )
             {
-                NSDate *file_date = [NSDate dateWithTimeIntervalSince1970:st.st_mtimespec.tv_sec];
-                NSTimeInterval diff = [file_date timeIntervalSinceNow];
-                if(diff < -60*60*24 && unlink(tmp) == 0) // delete every file older than 24 hours
+                time_t tdiff = st.st_mtimespec.tv_sec - time(nullptr);
+                if(tdiff < -60*60*24 && unlink(tmp) == 0) // delete every file older than 24 hours
                     filesnum--;
             }
             else if( S_ISDIR(st.st_mode) )

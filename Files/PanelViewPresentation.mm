@@ -241,7 +241,7 @@ void PanelViewPresentation::SetViewNeedsDisplay()
 void PanelViewPresentation::UpdateStatFS()
 {
     // in usual redrawings - update not more that in 5 secs
-    nanoseconds now = timenow();
+    nanoseconds now = machtime();
     if(m_StatFSLastUpdate + 5s < now ||
        m_StatFSLastHost != m_State->Data->Host().get() ||
        m_StatFSLastPath != m_State->Data->Listing()->RelativePath()

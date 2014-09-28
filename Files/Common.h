@@ -42,7 +42,7 @@ bool IsVolumeContainingPathEjectable(const string &_path); // will return false 
 void SyncMessageBoxUTF8(const char *_utf8_string);
 void SyncMessageBoxNS(NSString *_ns_string);
 
-nanoseconds timenow() noexcept;
+nanoseconds machtime() noexcept;
 
 inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s)
 {
@@ -75,26 +75,26 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 struct MachTimeBenchmark
 {
     nanoseconds last;
-    inline MachTimeBenchmark() : last(timenow()) {};
+    inline MachTimeBenchmark() : last(machtime()) {};
     inline nanoseconds Delta() const
     {
-        return timenow() - last;
+        return machtime() - last;
     }
     inline void ResetNano(const char *_msg = "")
     {
-        auto now = timenow();
+        auto now = machtime();
         NSLog(@"%s%llu\n", _msg, (now - last).count());
         last = now;
     }
     inline void ResetMicro(const char *_msg = "")
     {
-        auto now = timenow();
+        auto now = machtime();
         NSLog(@"%s%llu\n", _msg, duration_cast<microseconds>(now - last).count());
         last = now;
     }
     inline void ResetMilli(const char *_msg = "")
     {
-        auto now = timenow();
+        auto now = machtime();
         NSLog(@"%s%llu\n", _msg, duration_cast<milliseconds>(now - last).count() );
         last = now;
     }

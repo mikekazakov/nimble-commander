@@ -16,7 +16,7 @@ class TemporaryNativeFileStorage
 {
 public:
     bool CopySingleFile(const char* _vfs_filename,
-                        shared_ptr<VFSHost> _host,
+                        const VFSHostPtr &_host,
                         char *_tmp_filename
                         ); // can run from any thread
 

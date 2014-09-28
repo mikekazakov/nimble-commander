@@ -120,7 +120,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
 
 - (bool)HandleQuickSearchSoft: (NSString*) _key
 {
-    nanoseconds currenttime = timenow();
+    nanoseconds currenttime = machtime();
     if(_key != nil)
     {
         // update soft filtering
@@ -178,7 +178,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
         __weak PanelController *wself = self;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration_cast<nanoseconds>(g_FastSeachDelayTresh).count() + 1000), dispatch_get_main_queue(), ^{
             if(PanelController *sself = wself)
-                if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= timenow()) {
+                if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime()) {
                     sself->m_View.quickSearchPrompt = nil;
                     sself->m_View.needsDisplay = true;
                 }

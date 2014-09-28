@@ -243,8 +243,9 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
 {
-    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
-        return @[ @"filepanels_left_goto_button",
+    static NSArray *allowed_items =
+        sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8 ?
+               @[ @"filepanels_left_goto_button",
                   @"filepanels_left_share_button",
                   @"filepanels_left_spinning_indicator",
                   NSToolbarFlexibleSpaceItemIdentifier,
@@ -252,15 +253,15 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
                   NSToolbarFlexibleSpaceItemIdentifier,
                   @"filepanels_right_spinning_indicator",
                   @"filepanels_right_share_button",
-                  @"filepanels_right_goto_button"];
-    else
-        return @[ @"filepanels_left_goto_button",
+                  @"filepanels_right_goto_button"] :
+               @[ @"filepanels_left_goto_button",
                   @"filepanels_left_spinning_indicator",
                   NSToolbarFlexibleSpaceItemIdentifier,
                   @"filepanels_operations_box",
                   NSToolbarFlexibleSpaceItemIdentifier,
                   @"filepanels_right_spinning_indicator",
                   @"filepanels_right_goto_button"];
+    return allowed_items;
 }
 
 - (void) Assigned
@@ -530,6 +531,25 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (void)WindowDidResize
 {
     [self UpdateTitle];
+    
+    // update some toolbar items' visibility
+    // hardcoded for now, mb write some separate class later
+    if(m_Toolbar.visible && sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8) {
+        if(self.window.frame.size.width < 686) {
+            if(m_Toolbar.items.count == [self toolbarAllowedItemIdentifiers:m_Toolbar].count) {
+                // need to hide spinning indicators
+                [m_Toolbar removeItemAtIndex:6];
+                [m_Toolbar removeItemAtIndex:2];
+            }
+        }
+        else {
+            if(m_Toolbar.items.count < [self toolbarAllowedItemIdentifiers:m_Toolbar].count) {
+                // need to show spinning indicators
+                [m_Toolbar insertItemWithItemIdentifier:@"filepanels_left_spinning_indicator" atIndex:2];
+                [m_Toolbar insertItemWithItemIdentifier:@"filepanels_right_spinning_indicator" atIndex:6];
+            }
+        }
+    }
 }
 
 - (void)WindowWillClose

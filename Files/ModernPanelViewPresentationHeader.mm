@@ -60,7 +60,7 @@ void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to d
     CGContextSaveGState(context);
     NSRect header_rect = NSMakeRect(0, 0, _width, m_Height - 1);
     if(_active) {
-        static CGColorRef bg = CGColorCreateGenericRGB(217/255.0, 217/255.0, 217/255.0, 1.0);
+        static CGColorRef bg = CGColorCreateGenericRGB(1, 1, 1, 1);
         CGContextSetFillColorWithColor(context, bg);
         CGContextFillRect(context, header_rect);
     }

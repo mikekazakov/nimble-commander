@@ -114,7 +114,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem* _current
     CGContextSaveGState(context);
     NSRect footer_rect = NSMakeRect(0, _start_y + 1, _width, m_Height - 1);
     if(_active) {
-        static CGColorRef bg = CGColorCreateGenericRGB(217/255.0, 217/255.0, 217/255.0, 1.0);
+        static CGColorRef bg = CGColorCreateGenericRGB(1, 1, 1, 1);
         CGContextSetFillColorWithColor(context, bg);
         CGContextFillRect(context, footer_rect);
     }

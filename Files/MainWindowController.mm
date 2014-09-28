@@ -35,7 +35,7 @@
                                                    styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask
                                                      backing:NSBackingStoreBuffered
                                                        defer:false];
-    window.minSize = NSMakeSize(686, 480);
+    window.minSize = NSMakeSize(636, 480);
     window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     window.restorable = YES;
     window.restorationClass = self.class;
@@ -43,6 +43,10 @@
     window.title = @"Files αλφα ver.";
     if(![window setFrameUsingName:NSStringFromClass(self.class)])
         [window center];
+
+    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
+    [window setContentBorderThickness:40 forEdge:NSMinYEdge];
+    
     [self updateTitleVisibility];
     
     if(self = [super initWithWindow:window]) {

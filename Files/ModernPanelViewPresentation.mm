@@ -112,7 +112,7 @@ ModernPanelViewPresentationItemsColoringFilter ModernPanelViewPresentationItemsC
 // Order: left, top, right, bottom.
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 // Width of the divider between views.
-static const double g_DividerWidth = 3;
+static const double g_DividerWidth = 2;
 
 NSImage *ModernPanelViewPresentation::m_SymlinkArrowImage = nil;
 
@@ -328,46 +328,19 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     // Divider.
     static CGColorRef divider_stroke_color_act = CGColorCreateGenericRGB(160/255.0, 160/255.0, 160/255.0, 1.0);
     static CGColorRef divider_stroke_color_act_inact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
-    static CGColorRef divider_act_bg = CGColorCreateGenericRGB(217/255.0, 217/255.0, 217/255.0, 1.0);
     CGContextSetStrokeColorWithColor(context, wnd_active ? divider_stroke_color_act : divider_stroke_color_act_inact);
     if (m_IsLeft)
     {
         float x = m_ItemsArea.origin.x + m_ItemsArea.size.width;
-        NSRect rc = NSMakeRect(x, 0, g_DividerWidth, m_Size.height);
-        if(wnd_active) {
-            CGContextSetFillColorWithColor(context, divider_act_bg);
-            CGContextFillRect(context, rc);
-        }
-        else
-            NSDrawWindowBackground(rc);
-
-        if(active) {
-            NSPoint view_divider[2] = { {x + 0.5, m_Header->Height()-1}, {x + 0.5, m_Size.height} };
-            CGContextStrokeLineSegments(context, view_divider, 2);
-        }
-        else {
-            NSPoint view_divider[2] = { {x + 0.5, 0}, {x + 0.5, m_Size.height} };
-            CGContextStrokeLineSegments(context, view_divider, 2);
-        }
+        NSDrawWindowBackground(NSMakeRect(x, 0, g_DividerWidth, m_Size.height));
+        NSPoint view_divider[2] = { {x + 0.5, 0}, {x + 0.5, m_Size.height} };
+        CGContextStrokeLineSegments(context, view_divider, 2);
     }
     else
     {
-        NSRect rc = NSMakeRect(0, 0, g_DividerWidth, m_Size.height);
-        if(wnd_active) {
-            CGContextSetFillColorWithColor(context, divider_act_bg);
-            CGContextFillRect(context, rc);
-        }
-        else
-            NSDrawWindowBackground(rc);
-        
-        if(active) {
-            NSPoint view_divider[2] = { {g_DividerWidth - 0.5, m_Header->Height()-1}, {g_DividerWidth - 0.5, m_Size.height} };
-            CGContextStrokeLineSegments(context, view_divider, 2);
-        }
-        else {
-            NSPoint view_divider[2] = { {g_DividerWidth - 0.5, 0}, {g_DividerWidth - 0.5, m_Size.height} };
-            CGContextStrokeLineSegments(context, view_divider, 2);
-        }
+        NSDrawWindowBackground(NSMakeRect(0, 0, g_DividerWidth, m_Size.height));
+        NSPoint view_divider[2] = { {g_DividerWidth - 0.5, 0}, {g_DividerWidth - 0.5, m_Size.height} };
+        CGContextStrokeLineSegments(context, view_divider, 2);
     }
 
     // If current panel is on the right, then translate all rendering by the divider's width.

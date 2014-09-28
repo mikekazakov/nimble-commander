@@ -115,6 +115,8 @@
         menuitem("menu.go.connect.sftp").hidden = true;        
         [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
     }
+    if(!configuration::has_checksum_calculation)
+        menuitem("menu.file.calculate_checksum").hidden = true;
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);

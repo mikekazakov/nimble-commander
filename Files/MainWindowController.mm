@@ -19,21 +19,6 @@
 #import "Common.h"
 #import "sysinfo.h"
 
-static double TitleBarHeight()
-{
-    static double h = 0;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSRect frame = NSMakeRect (0, 0, 100, 100);
-        NSRect contentRect;
-        contentRect = [NSWindow contentRectForFrameRect:frame
-                                              styleMask:NSTitledWindowMask];
-        
-        h = (frame.size.height - contentRect.size.height);
-    });
-    return h;
-}
-
 @implementation MainWindowController
 {
     vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state

@@ -39,7 +39,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     BigFileView         *m_View;
     NSPopUpButton       *m_EncodingSelect;
     NSButton            *m_WordWrap;
-    NSPopUpButton       *m_ModeSelect;
+    NSSegmentedControl  *m_ModeSelect;
     NSTextField         *m_ScrollPosition;
     NSSearchField       *m_SearchField;
     NSProgressIndicator *m_SearchIndicator;
@@ -256,13 +256,17 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     m_EncodingSelect.action = @selector(SelectedEncoding:);
     m_EncodingSelect.font = [NSFont menuFontOfSize:10];
     
-    m_ModeSelect = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 20)];
-    ((NSPopUpButtonCell*)m_ModeSelect.cell).controlSize = NSSmallControlSize;
+    m_ModeSelect = [[NSSegmentedControl alloc] initWithFrame:NSMakeRect(0, 0, 110, 20)];
+    [m_ModeSelect.cell setControlSize:NSSmallControlSize];
     m_ModeSelect.target = self;
     m_ModeSelect.action = @selector(SelectMode:);
-    m_ModeSelect.font = [NSFont menuFontOfSize:10];
-    [m_ModeSelect addItemWithTitle:@"Text"];
-    [m_ModeSelect addItemWithTitle:@"Hex"];
+    m_ModeSelect.segmentStyle = NSSegmentStyleRounded;
+    m_ModeSelect.segmentCount = 2;
+    m_ModeSelect.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+    [m_ModeSelect setLabel:@"Text" forSegment:0];
+    [m_ModeSelect setLabel:@"Hex" forSegment:1];
+    [m_ModeSelect setWidth:52 forSegment:0];
+    [m_ModeSelect setWidth:52 forSegment:1];
     
     m_WordWrap = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 80, 20)];
     ((NSButtonCell*)m_WordWrap.cell).controlSize = NSSmallControlSize;
@@ -335,20 +339,12 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 
 - (void) SelectModeFromView
 {
-    if(m_View.mode == BigFileViewModes::Text)
-        [m_ModeSelect selectItemAtIndex:0];
-    else if(m_View.mode == BigFileViewModes::Hex)
-        [m_ModeSelect selectItemAtIndex:1];
-    else
-        assert(0);
+    m_ModeSelect.selectedSegment = (int)m_View.mode;
 }
 
 - (void) SelectMode:(id)sender
 {
-    if(m_ModeSelect.indexOfSelectedItem == 0)
-        m_View.mode = BigFileViewModes::Text;
-    else if(m_ModeSelect.indexOfSelectedItem == 1)
-        m_View.mode = BigFileViewModes::Hex;
+    m_View.mode = (BigFileViewModes)m_ModeSelect.selectedSegment;
     [self UpdateWordWrap];
 }
 

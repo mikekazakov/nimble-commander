@@ -55,8 +55,11 @@ Gw
                             <action selector="OnEncoding:" target="-2" id="ffD-LR-wfV"/>
                         </connections>
                     </popUpButton>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="agn-et-TU9" customClass="BigFileView">
+                        <rect key="frame" x="20" y="61" width="699" height="384"/>
+                    </customView>
                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1xk-Ka-iJl">
-                        <rect key="frame" x="146" y="452" width="110" height="20"/>
+                        <rect key="frame" x="146" y="451" width="110" height="20"/>
                         <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="sc3-Hr-k27">
                             <font key="font" metaFont="smallSystem"/>
                             <segments>
@@ -68,12 +71,9 @@ Gw
                             <action selector="OnMode:" target="-2" id="VtC-JN-afS"/>
                         </connections>
                     </segmentedControl>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="agn-et-TU9" customClass="BigFileView">
-                        <rect key="frame" x="20" y="61" width="699" height="384"/>
-                    </customView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="1xk-Ka-iJl" firstAttribute="top" secondItem="fgO-gn-d1M" secondAttribute="top" constant="-1" id="71L-rk-czn"/>
+                    <constraint firstItem="1xk-Ka-iJl" firstAttribute="top" secondItem="fgO-gn-d1M" secondAttribute="top" id="71L-rk-czn"/>
                     <constraint firstItem="agn-et-TU9" firstAttribute="top" secondItem="fgO-gn-d1M" secondAttribute="bottom" constant="8" symbolic="YES" id="DHP-Kc-tne"/>
                     <constraint firstAttribute="bottom" secondItem="1BM-GG-fwQ" secondAttribute="bottom" constant="20" symbolic="YES" id="Erx-r9-yxF"/>
                     <constraint firstItem="fgO-gn-d1M" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="FCV-5e-PFQ"/>

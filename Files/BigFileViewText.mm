@@ -316,7 +316,7 @@ void BigFileViewText::ClearLayout()
 CGPoint BigFileViewText::TextAnchor()
 {
     return NSMakePoint(ceil((m_LeftInset - m_HorizontalOffset * m_FontWidth)) - m_SmoothOffset.x,
-                       floor(m_View.bounds.size.height - m_FontHeight + m_FontDescent) + m_SmoothOffset.y);
+                       floor(m_View.contentBounds.height - m_FontHeight + m_FontDescent) + m_SmoothOffset.y);
 }
 
 int BigFileViewText::LineIndexFromYPos(double _y)
@@ -359,7 +359,7 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
     
     CGPoint pos = TextAnchor();
     
-    double view_width = m_View.bounds.size.width;
+    double view_width = m_View.contentBounds.width;
     
     size_t first_string = m_VerticalOffset;
     if(m_SmoothOffset.y < 0 && first_string > 0)

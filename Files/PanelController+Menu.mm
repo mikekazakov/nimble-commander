@@ -710,6 +710,7 @@
             PanelController *ss = ws;
             PanelControllerDelayedSelection req;
             req.filename = name;
+            req.timeout = 2s;
             req.done = ^{
                 [((PanelController*)ws).view startFieldEditorRenaming];
             };
@@ -759,6 +760,7 @@
             PanelController *ss = ws;
             PanelControllerDelayedSelection req;
             req.filename = name;
+            req.timeout = 2s;            
             req.done = ^{
                 [((PanelController*)ws).view startFieldEditorRenaming];
             };

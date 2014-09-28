@@ -14,13 +14,12 @@
 @class MyToolbar;
 
 @protocol MainWindowStateProtocol <NSObject>
-
-- (NSView*) ContentView;
+- (NSView*) windowContentView;
+- (NSToolbar*) toolbar;
 
 @optional
-- (void) Assigned;
-- (void) Resigned;
-
+- (void)Assigned;
+- (void)Resigned;
 - (void)DidBecomeKeyWindow;
 - (void)WindowDidResize;
 - (void)WindowWillClose;
@@ -30,6 +29,5 @@
 - (void)SkinSettingsChanged;
 - (void)ApplySkin:(ApplicationSkin)_skin;
 - (void)OnApplicationWillTerminate;
-- (MyToolbar*)Toolbar;
 
 @end

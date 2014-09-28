@@ -14,7 +14,6 @@
 #import "SearchInFile.h"
 #import "BigFileViewHistory.h"
 #import "DispatchQueue.h"
-#import "MyToolbar.h"
 #import "VFSFile.h"
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"
@@ -44,7 +43,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     NSTextField         *m_ScrollPosition;
     NSSearchField       *m_SearchField;
     NSProgressIndicator *m_SearchIndicator;
-    MyToolbar           *m_Toolbar;
+    NSToolbar           *m_Toolbar;
     NSBox               *m_SeparatorLine;    
 
     string              m_FilePath;
@@ -62,7 +61,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     return self;
 }
 
-- (NSView*) ContentView
+- (NSView*) windowContentView
 {
     return self;
 }
@@ -87,6 +86,42 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
         file_window_size *= 1 << file_window_pow2x;
     return file_window_size;
+}
+
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
+     itemForItemIdentifier:(NSString *)itemIdentifier
+ willBeInsertedIntoToolbar:(BOOL)flag
+{
+    auto f = [](NSString *_id, NSView *_v) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:_id];
+        item.view = _v;
+        return item;
+    };
+#define item(a, b) if([itemIdentifier isEqualToString:a]) return f(a, b)
+    item(@"bigfileview_encoding",           m_EncodingSelect);
+    item(@"bigfileview_texthex",            m_ModeSelect);
+    item(@"bigfileview_wordwrap",           m_WordWrap);
+    item(@"bigfileview_filepos",            m_ScrollPosition);
+    item(@"bigfileview_search",             m_SearchField);
+    item(@"bigfileview_search_indicator",   m_SearchIndicator);
+#undef item
+    return nil;
+}
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
+{
+    return [self toolbarAllowedItemIdentifiers:toolbar];
+}
+
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
+{
+    return @[ @"bigfileview_encoding",
+              @"bigfileview_texthex",
+              @"bigfileview_wordwrap",
+              @"bigfileview_filepos",
+              NSToolbarFlexibleSpaceItemIdentifier,
+              @"bigfileview_search_indicator",
+              @"bigfileview_search"];
 }
 
 - (void) UpdateTitle
@@ -204,10 +239,6 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 
 - (void) CreateControls
 {
-    m_Toolbar = [[MyToolbar alloc] initWithFrame:NSRect()];
-    m_Toolbar.translatesAutoresizingMaskIntoConstraints = false;
-    [self addSubview:m_Toolbar];
-    
     m_View = [[BigFileView alloc] initWithFrame:self.frame];
     m_View.translatesAutoresizingMaskIntoConstraints = false;
     m_View.focusRingType = NSFocusRingTypeNone;
@@ -263,50 +294,24 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     m_SearchIndicator.controlSize = NSSmallControlSize;
     m_SearchIndicator.displayedWhenStopped = false;
 
-    [m_Toolbar InsertView:m_EncodingSelect];
-    [m_Toolbar InsertView:m_ModeSelect];
-    [m_Toolbar InsertView:m_WordWrap];
-    [m_Toolbar InsertView:m_ScrollPosition];
-    [m_Toolbar InsertFlexSpace];
-    [m_Toolbar InsertView:m_SearchIndicator];
-    [m_Toolbar InsertView:m_SearchField];
+    m_Toolbar = [[NSToolbar alloc] initWithIdentifier:@"bigfileview_toolbar"];
+    m_Toolbar.delegate = self;
+    m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
+    m_Toolbar.autosavesConfiguration = true;
+    m_Toolbar.showsBaselineSeparator = false;
     
     for(const auto &i: encodings::LiteralEncodingsList()) {
         [m_EncodingSelect addItemWithTitle: (__bridge NSString*)i.second];
         m_EncodingSelect.lastItem.tag = i.first;
     }
     
-    [self BuildLayout];
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_SeparatorLine);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
 }
 
-- (void) BuildLayout
-{
-    [self removeConstraints:self.constraints];
-
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_Toolbar, m_SeparatorLine);
-    
-    if(m_Toolbar.isHidden == false)
-    {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_Toolbar]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_Toolbar(==36)]-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
-    }
-    else
-    {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
-    }
-}
-
-- (void)toggleToolbarShown:(id)sender
-{
-    m_Toolbar.Hidden = !m_Toolbar.isHidden;
-    [self BuildLayout];
-}
-
-- (MyToolbar*)Toolbar
+- (NSToolbar*)toolbar
 {
     return m_Toolbar;
 }
@@ -425,9 +430,8 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 
 - (IBAction)performFindPanelAction:(id)sender
 {
-    if(m_Toolbar.isHidden)
-        [self toggleToolbarShown:self];
-    
+    if(!m_Toolbar.visible)
+        [((MainWindowController*)self.window.delegate) OnShowToolbar:self];
     [self.window makeFirstResponder:m_SearchField];
 }
 

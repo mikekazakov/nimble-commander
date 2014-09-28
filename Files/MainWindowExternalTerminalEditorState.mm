@@ -123,9 +123,14 @@
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Terminal"];    
 }
 
-- (NSView*) ContentView
+- (NSView*) windowContentView
 {
     return self;
+}
+
+- (NSToolbar*)toolbar
+{
+    return nil;
 }
 
 - (void) Assigned
@@ -179,7 +184,9 @@
                  [NSString stringWithUTF8String:m_Task->TaskBinaryName()],
                  [NSString stringWithUTF8String:m_FilePath.filename().c_str()]];
     
-    self.window.title = title;
+    dispatch_or_run_in_main_queue(^{
+        self.window.title = title;
+    });
 }
 
 - (bool)WindowShouldClose:(MainWindowController*)sender

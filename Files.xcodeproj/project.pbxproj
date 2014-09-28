@@ -30,7 +30,6 @@
 		CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
 		CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */; };
 		CF033A6D1805A50D0088CAB4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF033A6C1805A50D0088CAB4 /* IOKit.framework */; };
-		CF039E97179041CE00DC85D6 /* StackOfDisappearingWidgets.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039E96179041CE00DC85D6 /* StackOfDisappearingWidgets.mm */; };
 		CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
@@ -265,8 +264,6 @@
 		CF6D9C66196678010077B146 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
 		CF6D9C67196678010077B146 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
 		CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
-		CF6D9C69196678010077B146 /* StackOfDisappearingWidgets.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039E96179041CE00DC85D6 /* StackOfDisappearingWidgets.mm */; };
-		CF6D9C6A196678010077B146 /* MyToolbar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B818E3CB3600A83E61 /* MyToolbar.mm */; };
 		CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
 		CF6D9C6D196678010077B146 /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
@@ -634,7 +631,6 @@
 		CFB709AB18D962E600A83E61 /* VFSNetFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709A918D962E600A83E61 /* VFSNetFTPFile.mm */; };
 		CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */; };
 		CFB709B518DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */; };
-		CFB709B918E3CB3600A83E61 /* MyToolbar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B818E3CB3600A83E61 /* MyToolbar.mm */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */; };
 		CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */; };
@@ -821,8 +817,6 @@
 		CF02F1D616F38805000AF870 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encodings.h; sourceTree = "<group>"; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CF033A6C1805A50D0088CAB4 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		CF039E95179041CE00DC85D6 /* StackOfDisappearingWidgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackOfDisappearingWidgets.h; sourceTree = "<group>"; };
-		CF039E96179041CE00DC85D6 /* StackOfDisappearingWidgets.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StackOfDisappearingWidgets.mm; sourceTree = "<group>"; };
 		CF039EA21791112900DC85D6 /* RHPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferences.h; path = 3rd_party/RHPreferences/RHPreferences/RHPreferences.h; sourceTree = "<group>"; };
 		CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RHPreferencesWindow.xib; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindow.xib; sourceTree = "<group>"; };
 		CF039EA41791112900DC85D6 /* RHPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferencesWindowController.h; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindowController.h; sourceTree = "<group>"; };
@@ -1258,8 +1252,6 @@
 		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
 		CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJobGenericToGeneric.mm; sourceTree = "<group>"; };
 		CFB709B418DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJobGenericToGeneric.h; sourceTree = "<group>"; };
-		CFB709B718E3CB3600A83E61 /* MyToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyToolbar.h; sourceTree = "<group>"; };
-		CFB709B818E3CB3600A83E61 /* MyToolbar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MyToolbar.mm; sourceTree = "<group>"; };
 		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSheetController.h; sourceTree = "<group>"; };
 		CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSheetController.mm; sourceTree = "<group>"; };
 		CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProcessSheetController.xib; sourceTree = "<group>"; };
@@ -1545,10 +1537,6 @@
 				CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */,
 				B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */,
 				B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */,
-				CF039E95179041CE00DC85D6 /* StackOfDisappearingWidgets.h */,
-				CF039E96179041CE00DC85D6 /* StackOfDisappearingWidgets.mm */,
-				CFB709B718E3CB3600A83E61 /* MyToolbar.h */,
-				CFB709B818E3CB3600A83E61 /* MyToolbar.mm */,
 				CFB709BD18E561F200A83E61 /* ProcessSheetController.h */,
 				CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */,
 				CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */,
@@ -3075,8 +3063,6 @@
 				CF6D9C66196678010077B146 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF6D9C67196678010077B146 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
-				CF6D9C69196678010077B146 /* StackOfDisappearingWidgets.mm in Sources */,
-				CF6D9C6A196678010077B146 /* MyToolbar.mm in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
 				CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */,
 				CF6D9C6D196678010077B146 /* MessageBox.mm in Sources */,
@@ -3318,12 +3304,10 @@
 				CF9D0ECD17CC961100CB8146 /* archive_write_set_format_cpio_newc.c in Sources */,
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF9D0EBC17CC961100CB8146 /* archive_write_add_filter_lzop.c in Sources */,
-				CF039E97179041CE00DC85D6 /* StackOfDisappearingWidgets.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF7249AE1990AC2800583BC5 /* SheetController.mm in Sources */,
 				CF9D0EBD17CC961100CB8146 /* archive_write_add_filter_none.c in Sources */,
 				CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */,
-				CFB709B918E3CB3600A83E61 /* MyToolbar.mm in Sources */,
 				CF9D0E9817CC961100CB8146 /* archive_read_support_filter_gzip.c in Sources */,
 				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF9D0E8817CC961100CB8146 /* archive_read_data_into_fd.c in Sources */,

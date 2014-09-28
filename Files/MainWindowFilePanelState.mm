@@ -26,7 +26,6 @@
 #import "sysinfo.h"
 #import "LSUrls.h"
 #import "ActionsShortcutsManager.h"
-#import "MyToolbar.h"
 #import "common_paths.h"
 #import "SandboxManager.h"
 #import "FileCopyOperation.h"
@@ -152,15 +151,11 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 }
 
 - (BOOL)acceptsFirstResponder { return true; }
-- (MyToolbar*)Toolbar { return m_Toolbar; }
-- (NSView*) ContentView { return self; }
+- (NSToolbar*)toolbar { return m_Toolbar; }
+- (NSView*) windowContentView { return self; }
 
 - (void) CreateControls
 {
-    m_Toolbar = [[MyToolbar alloc] initWithFrame:NSRect()];
-    m_Toolbar.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:m_Toolbar];
-    
     m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
     m_MainSplitView.translatesAutoresizingMaskIntoConstraints = NO;
     [m_MainSplitView SetBasicViews:m_LeftPanelController.view second:m_RightPanelController.view];
@@ -208,52 +203,68 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     m_SeparatorLine.boxType = NSBoxSeparator;
     [self addSubview:m_SeparatorLine];
     
-    [m_Toolbar InsertView:m_LeftPanelGoToButton];
+    m_Toolbar = [[NSToolbar alloc] initWithIdentifier:@"filepanels_toolbar"];
+    m_Toolbar.delegate = self;
+    m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
+    m_Toolbar.autosavesConfiguration = true;
+    m_Toolbar.showsBaselineSeparator = false;
+    
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
+}
+
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
+     itemForItemIdentifier:(NSString *)itemIdentifier
+ willBeInsertedIntoToolbar:(BOOL)flag
+{
+    auto f = [](NSString *_id, NSView *_v) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:_id];
+        item.view = _v;
+        return item;
+    };
+#define item(a, b) if([itemIdentifier isEqualToString:a]) return f(a, b)
+    item(@"filepanels_left_goto_button",        m_LeftPanelGoToButton);
+    item(@"filepanels_right_goto_button",       m_RightPanelGoToButton);
+    item(@"filepanels_left_share_button",       m_LeftPanelShareButton);
+    item(@"filepanels_right_share_button",      m_RightPanelShareButton);
+    item(@"filepanels_left_spinning_indicator", m_LeftPanelSpinningIndicator);
+    item(@"filepanels_right_spinning_indicator",m_RightPanelSpinningIndicator);
+    item(@"filepanels_operations_box",          m_OpSummaryController.view);
+#undef item
+    return nil;
+}
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
+{
+    return [self toolbarAllowedItemIdentifiers:toolbar];
+}
+
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
+{
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
-        [m_Toolbar InsertView:m_LeftPanelShareButton];
-    [m_Toolbar InsertView:m_LeftPanelSpinningIndicator];
-    [m_Toolbar InsertFlexSpace];
-    [m_Toolbar InsertView:m_OpSummaryController.view];
-    [m_Toolbar InsertFlexSpace];
-    [m_Toolbar InsertView:m_RightPanelSpinningIndicator];
-        if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
-    [m_Toolbar InsertView:m_RightPanelShareButton];
-    [m_Toolbar InsertView:m_RightPanelGoToButton];
-    
-    [self BuildLayout];
-}
-
-- (void) BuildLayout
-{
-    [self removeConstraints:self.constraints];
-    
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView, m_Toolbar);
-    
-    if(m_Toolbar.isHidden == false)
-    {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_Toolbar(==36)]-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_Toolbar]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
-    }
+        return @[ @"filepanels_left_goto_button",
+                  @"filepanels_left_share_button",
+                  @"filepanels_left_spinning_indicator",
+                  NSToolbarFlexibleSpaceItemIdentifier,
+                  @"filepanels_operations_box",
+                  NSToolbarFlexibleSpaceItemIdentifier,
+                  @"filepanels_right_spinning_indicator",
+                  @"filepanels_right_share_button",
+                  @"filepanels_right_goto_button"];
     else
-    {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
-    }
-}
-
-- (void)toggleToolbarShown:(id)sender
-{
-    m_Toolbar.Hidden = !m_Toolbar.isHidden;
-    [self BuildLayout];    
+        return @[ @"filepanels_left_goto_button",
+                  @"filepanels_left_spinning_indicator",
+                  NSToolbarFlexibleSpaceItemIdentifier,
+                  @"filepanels_operations_box",
+                  NSToolbarFlexibleSpaceItemIdentifier,
+                  @"filepanels_right_spinning_indicator",
+                  @"filepanels_right_goto_button"];
 }
 
 - (void) Assigned
 {
-    [m_Toolbar UpdateVisibility];
-    [self BuildLayout];
     [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType] returnTypes:@[]];
     
     // if we alredy were active and have some focused view - restore it

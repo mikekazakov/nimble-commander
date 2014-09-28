@@ -72,9 +72,14 @@
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Terminal"];
 }
 
-- (NSView*) ContentView
+- (NSView*) windowContentView
 {
     return self;
+}
+
+- (NSToolbar*) toolbar
+{
+    return nil;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -173,7 +178,9 @@
         title = [NSString stringWithUTF8String:cwd.c_str()];
     }
 
-    self.window.title = title;
+    dispatch_or_run_in_main_queue(^{
+        self.window.title = title;
+    });
 }
 
 - (void) ChDir:(const char*)_new_dir

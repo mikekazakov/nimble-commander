@@ -16,8 +16,8 @@
 #import "MainWindowTerminalState.h"
 #import "MainWindowExternalTerminalEditorState.h"
 #import "PanelController.h"
-#import "MyToolbar.h"
 #import "Common.h"
+#import "sysinfo.h"
 
 static double TitleBarHeight()
 {
@@ -50,7 +50,7 @@ static double TitleBarHeight()
                                                    styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask
                                                      backing:NSBackingStoreBuffered
                                                        defer:false];
-    window.minSize = NSMakeSize(660, 480);
+    window.minSize = NSMakeSize(686, 480);
     window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     window.restorable = YES;
     window.restorationClass = self.class;
@@ -58,17 +58,12 @@ static double TitleBarHeight()
     window.title = @"Files αλφα ver.";
     if(![window setFrameUsingName:NSStringFromClass(self.class)])
         [window center];
-    
-    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
-    [window setContentBorderThickness:36 forEdge:NSMaxYEdge];
-    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
-    [window setContentBorderThickness:0 forEdge:NSMinYEdge];
-
+    [self updateTitleVisibility];
     
     if(self = [super initWithWindow:window]) {
         m_BigFileViewLoadingQ = SerialQueueT::Make(__FILES_IDENTIFIER__".bigfileviewloading");
         self.ShouldCascadeWindows = NO;
-        window.Delegate = self;
+        window.delegate = self;
         
         m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[self.window.contentView frame]
                                                                 Window:self.window];
@@ -114,6 +109,16 @@ static double TitleBarHeight()
         window = [delegate AllocateNewMainWindow].window;
     }
     completionHandler(window, nil);
+}
+
+- (void) updateTitleVisibility
+{
+    if(sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_10)
+        return;
+
+    bool has_toolbar = self.window.toolbar != nil;
+    bool toolbar_visible = has_toolbar ? self.window.toolbar.isVisible : false;
+    self.window.titleVisibility = has_toolbar && toolbar_visible ? NSWindowTitleHidden : NSWindowTitleVisible;
 }
 
 - (void)applicationWillTerminate
@@ -191,17 +196,24 @@ static double TitleBarHeight()
             [i WindowDidEndSheet];
 }
 
-- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
++ (bool)toolbarVisible
 {
-    rect.origin.y = NSHeight(window.frame) - TitleBarHeight() - 1;
-    if([m_WindowState.back() respondsToSelector:@selector(Toolbar)])
-    {
-        MyToolbar *tb = m_WindowState.back().Toolbar;
-        if(tb != nil && !tb.isHidden)
-            rect.origin.y -= tb.bounds.size.height;
-    }
+    return [NSUserDefaults.standardUserDefaults boolForKey:@"GeneralShowToolbar"];
+}
+
++ (void)setToolbarVisible:(bool)visible
+{
+    [NSUserDefaults.standardUserDefaults setBool:visible forKey:@"GeneralShowToolbar"];
+}
+
+- (IBAction)OnShowToolbar:(id)sender
+{
+    MainWindowController.toolbarVisible = !MainWindowController.toolbarVisible;
     
-	return rect;
+    if(self.window.toolbar)
+        self.window.toolbar.visible = MainWindowController.toolbarVisible;
+    
+    [self updateTitleVisibility];
 }
 
 - (void) ResignAsWindowState:(id)_state
@@ -216,7 +228,7 @@ static double TitleBarHeight()
         [m_WindowState.back() Resigned];
     m_WindowState.pop_back();
     
-    self.window.contentView = m_WindowState.back().ContentView;
+    self.window.contentView = m_WindowState.back().windowContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
@@ -228,16 +240,24 @@ static double TitleBarHeight()
                                                 vfs:VFSNativeHost::SharedHost()
                                        select_entry:""
                                               async:true];
+
+    self.window.toolbar = m_WindowState.back().toolbar;
+    self.window.toolbar.visible = MainWindowController.toolbarVisible;
+    [self updateTitleVisibility];    
 }
 
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
 {
     m_WindowState.push_back(_state);
-    self.window.contentView = m_WindowState.back().ContentView;
+    self.window.contentView = m_WindowState.back().windowContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
         [m_WindowState.back() Assigned];
+    
+    self.window.toolbar = m_WindowState.back().toolbar;
+    self.window.toolbar.visible = MainWindowController.toolbarVisible;
+    [self updateTitleVisibility];
 }
 
 - (OperationsController*) OperationsController

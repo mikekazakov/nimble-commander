@@ -487,7 +487,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void)OnOpenWithOther:(id)sender
 {
     NSOpenPanel *panel = [self BuildAppChoose];
-    [panel beginSheetModalForWindow:m_MainWnd.ContentView.window
+    [panel beginSheetModalForWindow:m_MainWnd.windowContentView.window
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
                       {
@@ -501,7 +501,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void)OnAlwaysOpenWithOther:(id)sender
 {
     NSOpenPanel *panel = [self BuildAppChoose];
-    [panel beginSheetModalForWindow:m_MainWnd.ContentView.window
+    [panel beginSheetModalForWindow:m_MainWnd.windowContentView.window
                   completionHandler:^(NSInteger result){
                       if(result == NSFileHandlingPanelOKButton)
                       {

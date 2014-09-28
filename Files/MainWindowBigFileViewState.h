@@ -11,7 +11,7 @@
 #import "BigFileView.h"
 #import "VFS.h"
 
-@interface MainWindowBigFileViewState : NSView<MainWindowStateProtocol, BigFileViewDelegateProtocol, NSTextFieldDelegate>
+@interface MainWindowBigFileViewState : NSView<MainWindowStateProtocol, BigFileViewDelegateProtocol, NSTextFieldDelegate, NSToolbarDelegate>
 
 - (bool) OpenFile: (const char*) _fn with_fs:(shared_ptr<VFSHost>) _host;
 

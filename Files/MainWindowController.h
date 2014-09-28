@@ -34,4 +34,9 @@
 @property (nonatomic, readonly) MainWindowFilePanelState* FilePanelState; // one and only one per window
 @property (nonatomic, readonly) MainWindowTerminalState* TerminalState;// zero or one per window
 
+// Toolbar support
++ (bool)toolbarVisible; // stored in user defaults
++ (void)setToolbarVisible:(bool)visible;
+- (void)OnShowToolbar:(id)sender;
+
 @end

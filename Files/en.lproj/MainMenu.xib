@@ -337,7 +337,7 @@ DQ
                             <menuItem title="Show/Hide Toolbar" tag="13180" id="I1T-dz-dM2">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="toggleToolbarShown:" target="-1" id="rXv-kQ-QFb"/>
+                                    <action selector="OnShowToolbar:" target="-1" id="R1D-yh-leB"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Show/Hide Terminal" tag="13190" keyEquivalent="o" id="wOP-H6-qux">

@@ -20,9 +20,8 @@ class PanelData;
 @class FilePanelMainSplitView;
 @class MainWndGoToButton;
 @class OperationsSummaryViewController;
-@class MyToolbar;
 
-@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol>
+@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate>
 {
     ApplicationSkin m_Skin;
 
@@ -43,8 +42,7 @@ class PanelData;
     OperationsSummaryViewController *m_OpSummaryController;
     
     NSBox                *m_SeparatorLine;
-    MyToolbar            *m_Toolbar;
-    
+    NSToolbar            *m_Toolbar;
     NSResponder          *m_LastResponder;
 }
 

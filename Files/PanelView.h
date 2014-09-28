@@ -7,10 +7,9 @@
 //
 #pragma once
 
-#import <Cocoa/Cocoa.h>
-
 #import "PanelViewTypes.h"
 #import "VFS.h"
+#import "FPSLimitedDrawer.h"
 
 @class PanelView;
 class PanelData;
@@ -41,6 +40,7 @@ class PanelViewPresentation;
 @property (nonatomic, readonly) const VFSListingItem* item; // return an item at current cursor position if any or nullptr
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
+@property (nonatomic, readonly) FPSLimitedDrawer* fpsDrawer;
 
 /**
  * Set to true to tell PanelView to drag focus ring. If draggingOverItemAtPosition<0 - draw focus ring in view bounds,

@@ -50,8 +50,11 @@ struct PanelViewStateStorage
     
     bool                        m_DraggingOver;
     int                         m_DraggingOverItemAtPosition;
+    
+    FPSLimitedDrawer           *m_FPSLimitedDrawer;
 }
 
+@synthesize fpsDrawer = m_FPSLimitedDrawer;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -63,6 +66,8 @@ struct PanelViewStateStorage
         m_LastPotentialRenamingLBDown = -1;
         m_DraggingOver = false;
         m_DraggingOverItemAtPosition = -1;
+        m_FPSLimitedDrawer = [[FPSLimitedDrawer alloc] initWithView:self];
+        m_FPSLimitedDrawer.fps = 60;
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -135,7 +140,7 @@ struct PanelViewStateStorage
 
 - (BOOL)resignFirstResponder
 {
-    [self setNeedsDisplay:true];
+    self.needsDisplay = true;
     return YES;
 }
 
@@ -223,7 +228,7 @@ struct PanelViewStateStorage
 - (void) setData:(PanelData *)data
 {
     m_State.Data = data;
-    [self setNeedsDisplay:true];
+    self.needsDisplay = true;
 }
 
 - (void) SetPresentation:(PanelViewPresentation *)_presentation
@@ -235,7 +240,7 @@ struct PanelViewStateStorage
         m_Presentation->SetState(&m_State);
         m_Presentation->SetView(self);
         [self frameDidChange];
-        [self setNeedsDisplay:true];
+        self.needsDisplay = true;
     }
 }
 
@@ -350,7 +355,7 @@ struct PanelViewStateStorage
 
 - (void) OnCursorPositionChanged
 {
-    [self setNeedsDisplay:true];
+    [m_FPSLimitedDrawer invalidate];
     
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
@@ -617,7 +622,7 @@ struct PanelViewStateStorage
     m_State.ViewType = _type;
     if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
     [self cancelFieldEditor];
-    [self setNeedsDisplay:true];
+    self.needsDisplay = true;
 }
 
 - (PanelViewType)type

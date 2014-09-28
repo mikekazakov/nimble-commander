@@ -10,10 +10,21 @@
 
 - (id) initWithView:(NSView*)_view;
 
-@property unsigned fps; // zero fps means that invalidation will cause setNeedDisplay immediately
+/**
+ * A view Drawer is attech at. Set upon init.
+ */
 @property (readonly) NSView *view;
 
-- (void) invalidate;
+/**
+ * Zero fps means that invalidation will cause setNeedDisplay immediately.
+ */
+@property unsigned fps;
 
+/**
+ * Marks view as invalid thus needs to be redrawn.
+ * If fps > 0 then needsDisplay would be deferred.
+ * Otherwise it is called immediately
+ */
+- (void) invalidate;
 
 @end

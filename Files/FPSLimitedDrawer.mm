@@ -9,7 +9,7 @@
 #import "FPSLimitedDrawer.h"
 #import "Common.h"
 
-static const nanoseconds m_MaxTimeBeforeInvalidation = 5s;
+static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
 
 @implementation FPSLimitedDrawer
 {
@@ -62,16 +62,18 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 5s;
 
 - (void) invalidate
 {
-    if(m_FPS > 0)
-    {
+    if(m_FPS > 0) {
         m_Dirty = true;
-        if(m_DrawTimer == nil)
-            dispatch_to_main_queue(^{ [self setupTimer]; });
+        if(m_DrawTimer == nil) {
+            if(dispatch_is_main_queue())
+                [self setupTimer];
+            else
+                dispatch_to_main_queue(^{ [self setupTimer]; });
+        }
     }
-    else
-    {
+    else {
         if(dispatch_is_main_queue())
-            [self.view setNeedsDisplay:true];
+            self.view.needsDisplay = true;
         else
             dispatch_to_main_queue(^{ [self.view setNeedsDisplay:true]; } );
     }
@@ -79,23 +81,19 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 5s;
 
 - (void) UpdateByTimer:(NSTimer*)theTimer
 {
-    if(self.view)
-    {
-        if(m_Dirty)
-        {
-            [self.view setNeedsDisplay:true];
+    if(self.view) {
+        if(m_Dirty) {
+            self.view.needsDisplay = true;
             m_Dirty = false;
             m_LastDrawedTime = machtime();
         }
-        else
-        {
+        else {
             // timer invalidation by max inactivity time
             if(machtime() - m_LastDrawedTime > m_MaxTimeBeforeInvalidation)
                 [self cleanupTimer];
         }
     }
-    else
-    {
+    else {
         [self cleanupTimer];
     }
 }

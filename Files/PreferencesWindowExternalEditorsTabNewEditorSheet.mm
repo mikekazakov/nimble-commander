@@ -7,6 +7,7 @@
 //
 
 #import "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
+#import "FileMask.h"
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty : NSValueTransformer
 @end
@@ -43,6 +44,10 @@
 
 - (IBAction)OnOK:(id)sender
 {
+    if( !FileMask::IsWildCard(self.Info.mask) )
+        if(NSString *replace = FileMask::ToWildCard(self.Info.mask))
+            self.Info.mask = replace;
+    
     [self endSheet:NSModalResponseOK];
 }
 

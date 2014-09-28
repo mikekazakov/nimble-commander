@@ -133,7 +133,7 @@
 	<string>menu.command.deselect_with_mask</string>
 	<string>⌘-</string>
 	<string>menu.command.quick_look</string>
-	<string></string>
+	<string>⌘y</string>
 	<string>menu.command.internal_viewer</string>
 	<string>⌥</string>
 	<string>menu.command.external_editor</string>

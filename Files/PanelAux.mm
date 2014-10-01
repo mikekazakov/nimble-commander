@@ -57,12 +57,12 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
         if(st.size > g_MaxFileSizeForVFSOpen)
             return;
         
-        char tmp[MAXPATHLEN];
+        string tmp;
         
-        if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_filename.c_str(), _host, tmp))
+        if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, _host, tmp))
             return;
         
-        NSString *fn = [NSString stringWithUTF8String:tmp];
+        NSString *fn = [NSString stringWithUTF8StdString:tmp];
         dispatch_to_main_queue( ^{
             
             if(!_with_app_path.empty())
@@ -116,12 +116,11 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
             if(st.size > g_MaxFileSizeForVFSOpen)
                 continue;
             
-            char tmp[MAXPATHLEN];
-            
-            if(!TemporaryNativeFileStorage::Instance().CopySingleFile(i.c_str(), _host, tmp))
+            string tmp;
+            if(!TemporaryNativeFileStorage::Instance().CopySingleFile(i, _host, tmp))
                 continue;
             
-            if(NSString *s = [NSString stringWithUTF8String:tmp])
+            if(NSString *s = [NSString stringWithUTF8StdString:tmp])
                 [arr addObject: [[NSURL alloc] initFileURLWithPath:s] ];
         }
 

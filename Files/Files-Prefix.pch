@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>
+#include <ftw.h>
 
 // networking stuff
 #include <sys/socket.h>
@@ -37,6 +38,7 @@
     #include <mutex>
     #include <chrono>
     #include <thread>
+    #include <functional>
     using namespace std;
     using namespace std::chrono;
 

@@ -19,8 +19,8 @@ static const nanoseconds g_Delay = 100ms;
 @implementation QuickLookView
 {
     string              m_OrigPath;
-    volatile bool       m_Closed;
-    atomic<uint64_t>    m_CurrentPreviewTicket;
+    atomic_bool         m_Closed;
+    atomic_ullong       m_CurrentPreviewTicket;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -67,32 +67,48 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void) doPreviewItemVFS:(const string&)_path vfs:(const VFSHostPtr&)_host ticket:(uint64_t)_ticket
 {
-    if(_host->IsDirectory(_path.c_str(), 0, 0))
-    {
-        dispatch_to_main_queue( ^{ self.previewItem = nil; });
-        return;
-    }
-    VFSStat st;
-    if(_host->Stat(_path.c_str(), st, 0, 0) < 0)
-    {
-        dispatch_to_main_queue( ^{ self.previewItem = nil; });
-        return;
-    }
-    if(st.size > g_MaxFileSizeForVFSQL)
-    {
-        dispatch_to_main_queue( ^{ self.previewItem = nil; });
-        return;
-    }
+    static auto &tnfs = TemporaryNativeFileStorage::Instance();
+    bool dir = _host->IsDirectory(_path.c_str(), 0, 0);
     
-    char tmp[MAXPATHLEN];
-    if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_path.c_str(), _host, tmp))
-        return;
-    NSString *fn = [NSString stringWithUTF8String:tmp];
-    if(!m_Closed && _ticket == m_CurrentPreviewTicket)
-        dispatch_to_main_queue( ^{
+    if( !dir ) {
+        VFSStat st;
+        if(_host->Stat(_path.c_str(), st, 0, 0) < 0) {
+            dispatch_to_main_queue( ^{ self.previewItem = nil; });
+            return;
+        }
+        if(st.size > g_MaxFileSizeForVFSQL) {
+            dispatch_to_main_queue( ^{ self.previewItem = nil; });
+            return;
+        }
+        
+        string tmp;
+        if(!tnfs.CopySingleFile(_path, _host, tmp))
+            return;
+        NSString *fn = [NSString stringWithUTF8StdString:tmp];
+        if(!m_Closed && _ticket == m_CurrentPreviewTicket)
+            dispatch_to_main_queue( ^{
+                if(!m_Closed)
+                    self.previewItem = [NSURL fileURLWithPath:fn];
+            });
+    }
+    else {
+        // basic check that directory looks like a bundle
+        if(!path(_path).has_extension()) {
             if(!m_Closed)
-                self.previewItem = [NSURL fileURLWithPath:fn];
-        });
+                dispatch_to_main_queue( ^{ self.previewItem = nil; });
+            return;
+        }
+        
+        string tmp;
+        if(!tnfs.CopyDirectory(_path, _host, g_MaxFileSizeForVFSQL, nullptr, tmp))
+            return;
+        NSString *fn = [NSString stringWithUTF8StdString:tmp];
+        if(!m_Closed && _ticket == m_CurrentPreviewTicket)
+            dispatch_to_main_queue( ^{
+                if(!m_Closed)
+                    self.previewItem = [NSURL fileURLWithPath:fn];
+            });
+    }
 }
 
 - (void)PreviewItem:(const string&)_path vfs:(const VFSHostPtr&)_host
@@ -107,7 +123,7 @@ static const nanoseconds g_Delay = 100ms;
   
     if(_host->IsNativeFS())
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_Delay.count()), dispatch_get_main_queue(), ^{
-            if(ticket != m_CurrentPreviewTicket)
+            if(ticket != m_CurrentPreviewTicket || m_Closed)
                 return;
             [self doPreviewItemNative:path];
         });

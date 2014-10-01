@@ -15,11 +15,18 @@
 class TemporaryNativeFileStorage
 {
 public:
-    bool CopySingleFile(const char* _vfs_filename,
+    bool CopySingleFile(const string &_vfs_filepath,
                         const VFSHostPtr &_host,
-                        char *_tmp_filename
+                        string& _tmp_filepath
                         ); // can run from any thread
 
+    // _vfs_dirpath may be with trailing slash or without
+    bool CopyDirectory(const string &_vfs_dirpath,
+                       const VFSHostPtr &_host,
+                       uint64_t _max_total_size,
+                       function<bool()> _cancel_checker,
+                       string &_tmp_dirpath);
+                       
     static void StartBackgroundPurging(); // should be called once upon application start
     
     static TemporaryNativeFileStorage &Instance();

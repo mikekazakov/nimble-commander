@@ -326,6 +326,11 @@ int VFSHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel
     return VFSError::NotSupported;
 }
 
+int VFSHost::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs)
+{
+    return VFSError::NotSupported;
+}
+
 const shared_ptr<VFSHost> &VFSHost::DummyHost()
 {
     static dispatch_once_t once;

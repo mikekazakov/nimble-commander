@@ -93,7 +93,8 @@ static const nanoseconds g_Delay = 100ms;
     }
     else {
         // basic check that directory looks like a bundle
-        if(!path(_path).has_extension()) {
+        if(!path(_path).has_extension() ||
+           path(_path).filename() == path(_path).extension() ) {
             if(!m_Closed)
                 dispatch_to_main_queue( ^{ self.previewItem = nil; });
             return;

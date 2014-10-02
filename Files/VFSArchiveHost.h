@@ -48,6 +48,7 @@ public:
     
     virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
     
+    int GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs) override;
     virtual bool ShouldProduceThumbnails() const override;
     
     // Caching section - to reduce seeking overhead:

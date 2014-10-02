@@ -68,8 +68,9 @@ int VFSArchiveFile::Open(int _open_flags, bool (^_cancel_checker)())
         res = archive_read_open1(m_Arc);
         if(res < 0)
         {
+            int rc = VFSError::FromLibarchive(archive_errno(m_Arc));
             Close();
-            return SetLastError(VFSError::FromLibarchive(archive_errno(m_Arc)));
+            return rc;
         }
         bool found = false;
         struct archive_entry *entry;

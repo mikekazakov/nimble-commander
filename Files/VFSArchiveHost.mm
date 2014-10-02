@@ -14,6 +14,7 @@
 #import "VFSArchiveFile.h"
 #import "VFSArchiveListing.h"
 #import "Common.h"
+#import "AppleDoubleEA.h"
 
 const char *VFSArchiveHost::Tag = "arc_libarchive";
 
@@ -460,4 +461,102 @@ int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_c
 bool VFSArchiveHost::ShouldProduceThumbnails() const
 {
     return true;
+}
+
+int VFSArchiveHost::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs)
+{
+    // BAAAAAD. need to refactor VFSArchiveHost, it looks like a crap.
+    assert(0);
+    
+    uint32_t myuid = ItemUID(_path);
+    if(myuid == 0)
+        return VFSError::NotFound;
+    
+    bool found = false;
+    struct archive_entry *entry;
+    char path[1024];
+    strcpy(path, _path+1); // skip first symbol, which is '/'
+    strcat(path, "/");
+    
+    auto sc = SeekCache(myuid);
+    if(!sc) {
+        auto file = ArFile()->Clone();
+        int res;
+        
+        res = file->Open(VFSFile::OF_Read);
+        if(res < 0)
+            return res;
+        
+        auto mediator = make_shared<VFSArchiveMediator>();
+        mediator->file = file;
+        
+        // open for read-only now
+        archive *arc = archive_read_new();
+        archive_read_support_filter_all(arc);
+        archive_read_support_format_all(arc);
+        mediator->setup(arc);
+        
+        if( (res = archive_read_open1(arc)) < 0 ) {
+            int rc = VFSError::FromLibarchive(archive_errno(arc));
+            archive_read_free(arc);
+            return rc;
+        }
+
+        while (archive_read_next_header(arc, &entry) == ARCHIVE_OK)
+            // consider case-insensitive comparison later
+            if(strcmp(path, archive_entry_pathname(entry)) == 0) {
+                found = true;
+                break;
+            }
+        
+        if(!found) {
+            archive_read_open1(arc);
+            return VFSError::NotFound;
+        }
+        
+        // read and parse metadata(xattrs) if any
+        size_t s, ea_count;
+        AppleDoubleEA *ea = ExtractEAFromAppleDouble(archive_entry_mac_metadata(entry, &s), s, &ea_count);
+        _xattrs.reserve(ea_count);
+        for(int i = 0; i < ea_count; ++i)
+            _xattrs.emplace_back( ea[i].name,
+                                 vector<uint8_t>( (uint8_t*)ea[i].data, ((uint8_t*)ea[i].data)+ea[i].data_sz )
+                                 );
+        
+        
+        
+        shared_ptr<VFSArchiveSeekCache> sc1 = make_shared<VFSArchiveSeekCache>();
+        sc1->uid = myuid;
+        sc1->arc = arc;
+        sc1->mediator = mediator;
+        CommitSeekCache(sc1);
+    }
+    else
+    {
+        while (archive_read_next_header(sc->arc, &entry) == ARCHIVE_OK)
+            // consider case-insensitive comparison later
+            if(strcmp(path, archive_entry_pathname(entry)) == 0) {
+                found = true;
+                break;
+            }
+        
+        if(!found) {
+            archive_read_free(sc->arc);
+            return VFSError::NotFound;
+        }
+        
+        // read and parse metadata(xattrs) if any
+        size_t s, ea_count;
+        AppleDoubleEA *ea = ExtractEAFromAppleDouble(archive_entry_mac_metadata(entry, &s), s, &ea_count);
+        
+        _xattrs.reserve(ea_count);
+        for(int i = 0; i < ea_count; ++i)
+            _xattrs.emplace_back( ea[i].name,
+                                 vector<uint8_t>( (uint8_t*)ea[i].data, ((uint8_t*)ea[i].data)+ea[i].data_sz )
+                                 );
+        sc->uid = myuid;
+        CommitSeekCache(sc);
+    }
+    
+    return VFSError::Ok;
 }

@@ -255,6 +255,13 @@ public:
                          );
     
     /**
+     * DO NOT USE IT. Currently for experimental purposes only.
+     * Returns a vector with all xattrs at _path, labeled with it's names.
+     * On any error return negative value.
+     */
+    virtual int GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs);
+    
+    /**
      * Returns readable host's address.
      * For example, for native fs it will be "".
      * For PSFS it will be like "psfs:"

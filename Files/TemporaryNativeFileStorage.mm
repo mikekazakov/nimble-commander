@@ -320,6 +320,10 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
             if(mkdir(p.c_str(), 0700) != 0)
                 return false;
             // todo: xattrs
+/*            vector<pair<string,vector<uint8_t>>> xattrs;
+            _host->GetXAttrs(i.src_path.c_str(), xattrs);
+            for(auto &xa: xattrs)
+                setxattr(p.c_str(), xa.first.c_str(), xa.second.data(), xa.second.size(), 0, 0); */        
         }
         else {
             int rc = Extract(i.src_path.c_str(), *_host, p.c_str());

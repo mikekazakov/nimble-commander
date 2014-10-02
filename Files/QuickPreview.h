@@ -6,11 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <Quartz/Quartz.h>
 #import "VFS.h"
 
-@interface QuickLookView : QLPreviewView
+@interface QuickLookView : NSView
 
 - (void)PreviewItem:(const string&)_path vfs:(const VFSHostPtr&)_host;
 

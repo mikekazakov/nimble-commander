@@ -208,7 +208,7 @@
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
     scrollRect.origin.y -= theEvent.deltaY * self.verticalLineScroll;
-    [self.documentView scrollRectToVisible:scrollRect];
+    [(NSView *)self.documentView scrollRectToVisible:scrollRect];
 }
 
 - (bool)WindowShouldClose:(MainWindowController*)sender

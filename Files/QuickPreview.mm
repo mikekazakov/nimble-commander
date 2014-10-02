@@ -6,9 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/types.h>
-#import <sys/stat.h>
-#import <Quartz/Quartz.h>
 #import "QuickPreview.h"
 #import "Common.h"
 #import "TemporaryNativeFileStorage.h"
@@ -16,7 +13,13 @@
 static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
 static const nanoseconds g_Delay = 100ms;
 
-@implementation QuickLookView
+@interface QuickLookWrapper : QLPreviewView
+
+- (void)PreviewItem:(const string&)_path vfs:(const VFSHostPtr&)_host;
+
+@end
+
+@implementation QuickLookWrapper
 {
     string              m_OrigPath;
     atomic_bool         m_Closed;
@@ -142,6 +145,81 @@ static const nanoseconds g_Delay = 100ms;
 {
     NSView *subview = self.subviews[0];
     [subview setFrameSize:self.frame.size];
+}
+
+@end
+
+@implementation QuickLookView
+{
+    QuickLookWrapper *m_QL;
+}
+
+- (id) initWithFrame:(NSRect)frameRect
+{
+    self = [super initWithFrame:frameRect];
+    if (self) {
+        m_QL = [[QuickLookWrapper alloc] initWithFrame:self.frame];
+        m_QL.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_QL];
+
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_QL);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_QL]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_QL]-(==0)-|" options:0 metrics:nil views:views]];
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+- (void)PreviewItem:(const string&)_path vfs:(const VFSHostPtr&)_host
+{
+    [m_QL PreviewItem:_path vfs:_host];
+}
+
+- (BOOL) acceptsFirstResponder
+{
+    return false;
+}
+
+- (BOOL) isOpaque
+{
+    return true;
+}
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+    if(self.window.isKeyWindow) {
+        CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;        
+        static CGColorRef c = CGColorCreateGenericGray(244.0 / 255.0, 1.0);
+        CGContextSetFillColorWithColor(context, c);
+        CGRect rc = NSRectToCGRect(dirtyRect);
+        CGContextFillRect(context, rc);
+    }
+    else {
+        NSDrawWindowBackground(dirtyRect);
+    }
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)_wnd
+{
+    if(!_wnd)
+        return;
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(windowKeyChanged)
+                                               name:NSWindowDidBecomeKeyNotification
+                                             object:_wnd];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(windowKeyChanged)
+                                               name:NSWindowDidResignKeyNotification
+                                             object:_wnd];
+}
+
+- (void) windowKeyChanged
+{
+    self.needsDisplay = true;
 }
 
 @end

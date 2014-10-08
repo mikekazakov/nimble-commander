@@ -12,6 +12,8 @@
 #import "Common.h"
 #import "BigFileViewSheet.h"
 
+static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
+static NSString *g_TextHistoryKey = @"FilePanelsSearchTextHistory";
 static const int g_MaximumSearchResults = 16384;
     
 @interface FindFilesSheetFoundItem : NSObject
@@ -115,6 +117,8 @@ static const int g_MaximumSearchResults = 16384;
     NSDateFormatter            *m_DateFormatter;
     
     NSMutableArray             *m_FoundItems;
+    NSArray                    *m_MaskHistory;
+    NSArray                    *m_TextHistory;
     
     NSMutableArray             *m_FoundItemsBatch;
     NSTimer                    *m_BatchDrainTimer;
@@ -135,6 +139,15 @@ static const int g_MaximumSearchResults = 16384;
         m_FileSearch.reset(new FileSearch);
         m_FoundItems = [NSMutableArray new];
         m_FoundItemsBatch = [NSMutableArray new];
+
+        m_MaskHistory = [NSUserDefaults.standardUserDefaults arrayForKey:g_MaskHistoryKey];
+        if(!m_MaskHistory)
+            m_MaskHistory = [NSArray new];
+        
+        m_TextHistory = [NSUserDefaults.standardUserDefaults arrayForKey:g_TextHistoryKey];
+        if(!m_TextHistory)
+            m_TextHistory = @[@""];
+        
         m_BatchQueue = SerialQueueT::Make();
         self.focusedItem = nil;
     }
@@ -157,16 +170,39 @@ static const int g_MaximumSearchResults = 16384;
                                              [NSSortDescriptor sortDescriptorWithKey:@"mdate" ascending:YES]
                                              ];
     
-    for(const auto &i: encodings::LiteralEncodingsList())
-    {
+    for(const auto &i: encodings::LiteralEncodingsList()) {
         NSMenuItem *item = [NSMenuItem new];
         item.Title = (__bridge NSString*)i.second;
         item.tag = i.first;
         [self.EncodingsPopUp.menu addItem:item];
     }
     [self.EncodingsPopUp selectItemWithTag:encodings::ENCODING_UTF8];
+    
+    self.MaskComboBox.usesDataSource = true;
+    self.MaskComboBox.dataSource = self;
+    self.MaskComboBox.stringValue = m_MaskHistory.count ? m_MaskHistory[0] : @"*";
+    self.TextComboBox.usesDataSource = true;
+    self.TextComboBox.dataSource = self;
+    self.TextComboBox.stringValue = m_TextHistory[0];
 }
 
+- (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox;
+{
+    if(aComboBox == self.MaskComboBox)
+        return m_MaskHistory.count;
+    if(aComboBox == self.TextComboBox)
+        return m_TextHistory.count;
+    return 0;
+}
+
+- (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index;
+{
+    if(aComboBox == self.MaskComboBox)
+        return m_MaskHistory[index];
+    if(aComboBox == self.TextComboBox)
+        return m_TextHistory[index];
+    return 0;
+}
 
 - (IBAction)OnClose:(id)sender
 {
@@ -186,6 +222,30 @@ static const int g_MaximumSearchResults = 16384;
     });
 }
 
+- (void) updateFileMaskHistoryWithMask:(NSString *)_mask
+{
+    static const int max_items = 16;
+    NSMutableArray *masks = [m_MaskHistory mutableCopy];
+    [masks removeObject:_mask];
+    [masks insertObject:_mask.copy atIndex:0];
+    while(masks.count > max_items)
+        [masks removeLastObject];
+    if(![masks isEqualToArray:m_MaskHistory])
+        [NSUserDefaults.standardUserDefaults setObject:masks.copy forKey:g_MaskHistoryKey];
+}
+
+- (void) updateFileTextHistoryWithText:(NSString *)_text
+{
+    static const int max_items = 16;
+    NSMutableArray *texts = [m_TextHistory mutableCopy];
+    [texts removeObject:_text];
+    [texts insertObject:_text.copy atIndex:0];
+    while(texts.count > max_items)
+        [texts removeLastObject];
+    if(![texts isEqualToArray:m_TextHistory])
+        [NSUserDefaults.standardUserDefaults setObject:texts.copy forKey:g_TextHistoryKey];
+}
+
 - (IBAction)OnSearch:(id)sender
 {
     if(m_FileSearch->IsRunning()) {
@@ -196,20 +256,24 @@ static const int g_MaximumSearchResults = 16384;
     NSRange range_all = NSMakeRange(0, [self.ArrayController.arrangedObjects count]);
     [self.ArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
     
-    if([self.MaskTextField.stringValue isEqualToString:@""] == false &&
-       [self.MaskTextField.stringValue isEqualToString:@"*"] == false)
-    {
+    NSString *mask = self.MaskComboBox.stringValue;
+    if(mask != nil &&
+       [mask isEqualToString:@""] == false &&
+       [mask isEqualToString:@"*"] == false) {
         FileSearch::FilterName filter_name;
-        filter_name.mask = self.MaskTextField.stringValue;
+        filter_name.mask = self.MaskComboBox.stringValue;
         m_FileSearch->SetFilterName(&filter_name);
+        [self updateFileMaskHistoryWithMask:mask];
     }
-    else
+    else {
         m_FileSearch->SetFilterName(nullptr);
+        [self updateFileMaskHistoryWithMask:@"*"];
+    }
     
-    if([self.ContainingTextField.stringValue isEqualToString:@""] == false)
-    {
+    NSString *cont_text = self.TextComboBox.stringValue;
+    if([cont_text isEqualToString:@""] == false) {
         FileSearch::FilterContent filter_content;
-        filter_content.text = self.ContainingTextField.stringValue;
+        filter_content.text = cont_text;
         filter_content.encoding = (int)self.EncodingsPopUp.selectedTag;
         filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
         filter_content.whole_phrase = self.WholePhraseButton.intValue;
@@ -217,6 +281,7 @@ static const int g_MaximumSearchResults = 16384;
     }
     else
         m_FileSearch->SetFilterContent(nullptr);
+    [self updateFileTextHistoryWithText:cont_text];
     
     if([self.SizeTextField.stringValue isEqualToString:@""] == false)
     {

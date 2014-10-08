@@ -20,7 +20,7 @@ struct FindFilesSheetControllerFoundItem
     CFRange content_pos;
 };
 
-@interface FindFilesSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate>
+@interface FindFilesSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate, NSComboBoxDataSource>
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnSearch:(id)sender;
@@ -31,8 +31,9 @@ struct FindFilesSheetControllerFoundItem
 
 @property (strong) IBOutlet NSButton *CloseButton;
 @property (strong) IBOutlet NSButton *SearchButton;
-@property (strong) IBOutlet NSTextField *MaskTextField;
-@property (strong) IBOutlet NSTextField *ContainingTextField;
+@property (strong) IBOutlet NSComboBox *MaskComboBox;
+@property (strong) IBOutlet NSComboBox *TextComboBox;
+
 @property (strong) IBOutlet NSTableView *TableView;
 @property (strong) IBOutlet NSButton *CaseSensitiveButton;
 @property (strong) IBOutlet NSButton *WholePhraseButton;

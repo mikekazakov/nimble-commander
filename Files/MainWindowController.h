@@ -10,6 +10,7 @@
 #import "chained_strings.h"
 #import "ApplicationSkins.h"
 #import "VFS.h"
+#import "MainWindowStateProtocol.h"
 
 @class OperationsController;
 @class MainWindowFilePanelState;
@@ -33,6 +34,7 @@
 // Access to states
 @property (nonatomic, readonly) MainWindowFilePanelState* FilePanelState; // one and only one per window
 @property (nonatomic, readonly) MainWindowTerminalState* TerminalState;// zero or one per window
+@property (nonatomic, readonly) id<MainWindowStateProtocol> topmostState;
 
 // Toolbar support
 + (bool)toolbarVisible; // stored in user defaults

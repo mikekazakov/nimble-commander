@@ -29,5 +29,5 @@
 - (void)SkinSettingsChanged;
 - (void)ApplySkin:(ApplicationSkin)_skin;
 - (void)OnApplicationWillTerminate;
-
+- (bool)needsWindowTitle;
 @end

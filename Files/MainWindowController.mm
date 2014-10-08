@@ -104,7 +104,12 @@
 {
     if(sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_10)
         return;
-
+    if([self.topmostState respondsToSelector:@selector(needsWindowTitle)] &&
+       [self.topmostState needsWindowTitle]) {
+        self.window.titleVisibility = NSWindowTitleVisible;
+        return;
+    }
+    
     bool has_toolbar = self.window.toolbar != nil;
     bool toolbar_visible = has_toolbar ? self.window.toolbar.isVisible : false;
     self.window.titleVisibility = has_toolbar && toolbar_visible ? NSWindowTitleHidden : NSWindowTitleVisible;
@@ -314,6 +319,11 @@
                                      file:_file_path
              ];
     [self PushNewWindowState:state];
+}
+
+- (id<MainWindowStateProtocol>) topmostState
+{
+    return m_WindowState.empty() ? nil : m_WindowState.back();
 }
 
 @end

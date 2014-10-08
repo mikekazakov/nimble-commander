@@ -66,6 +66,11 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     return self;
 }
 
+- (bool) needsWindowTitle
+{
+    return true;
+}
+
 - (void) Assigned
 {
     [self.window makeFirstResponder:m_View];

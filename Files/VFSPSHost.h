@@ -35,7 +35,7 @@ public:
                                       shared_ptr<VFSListing> *_target,
                                       int _flags,
                                       bool (^_cancel_checker)()) override;
-    virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
+    virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
     
     virtual unsigned long DirChangeObserve(const char *_path, void (^_handler)()) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;

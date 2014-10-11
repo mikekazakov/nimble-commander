@@ -390,7 +390,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
 }
 
 int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
-                                            bool (^_handler)(const VFSDirEnt &_dirent))
+                                            function<bool(const VFSDirEnt &_dirent)> _handler)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);

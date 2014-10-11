@@ -254,7 +254,7 @@ int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_can
     return VFSError::FromErrno();
 }
 
-int VFSNativeHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
+int VFSNativeHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
 {
     DIR *dirp = opendir(_path);
     if(dirp == 0)

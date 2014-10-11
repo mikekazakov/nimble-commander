@@ -55,7 +55,7 @@ public:
                                       bool (^_cancel_checker)()) override;
     
     virtual int IterateDirectoryListing(const char *_path,
-                                        bool (^_handler)(const VFSDirEnt &_dirent)) override;
+                                        function<bool(const VFSDirEnt &_dirent)> _handler) override;
     
     
     virtual int CreateFile(const char* _path,

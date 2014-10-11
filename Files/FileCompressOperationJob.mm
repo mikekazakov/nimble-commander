@@ -203,7 +203,7 @@ retry_stat:
             auto dirnode = &m_ScannedItems.back();
             
         retry_opendir:
-            int iter_ret = m_SrcVFS->IterateDirectoryListing(fullpath, ^bool(const VFSDirEnt &_dirent){
+            int iter_ret = m_SrcVFS->IterateDirectoryListing(fullpath, [&](const VFSDirEnt &_dirent){
                 char dirpathnested[MAXPATHLEN];
                 sprintf(dirpathnested, "%s/%s", _full_path, _dirent.name);
                 ScanItem(dirpathnested, _dirent.name, dirnode);

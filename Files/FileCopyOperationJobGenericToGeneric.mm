@@ -216,7 +216,7 @@ retry_stat:
             auto dirnode = &m_ScannedItems.back();
             
         retry_opendir:
-            int iter_ret = m_SrcHost->IterateDirectoryListing(fullpath.c_str(), ^bool(const VFSDirEnt &_dirent){
+            int iter_ret = m_SrcHost->IterateDirectoryListing(fullpath.c_str(), [&](const VFSDirEnt &_dirent){
                 ScanItem(string(_full_path) + '/' + _dirent.name, _dirent.name, dirnode);
                 if (CheckPauseOrStop())
                     return false;

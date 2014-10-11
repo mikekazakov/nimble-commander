@@ -39,7 +39,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     }
     else if ( S_ISDIR(st1.mode) )
     {
-        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), ^bool(const VFSDirEnt &_dirent) {
+        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
             int ret = VFSCompareEntries( _file1_full_path / _dirent.name,
                                         _file1_host,
                                         _file2_full_path / _dirent.name,

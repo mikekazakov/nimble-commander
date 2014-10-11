@@ -111,7 +111,7 @@ void FileDeletionOperationVFSJob::DoScan()
 void FileDeletionOperationVFSJob::DoScanDir(const path &_full_path, const chained_strings::node *_prefix)
 {
 retry_iterate:;
-    int ret = m_Host->IterateDirectoryListing(_full_path.c_str(), ^bool(const VFSDirEnt &_dirent)
+    int ret = m_Host->IterateDirectoryListing(_full_path.c_str(), [&](const VFSDirEnt &_dirent)
     {
         if(_dirent.type == VFSDirEnt::Reg ||
            _dirent.type == VFSDirEnt::Link)

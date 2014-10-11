@@ -325,9 +325,9 @@ static const char* readme = "\n\
     XCTAssert( host->Open(path) == 0 );
 
     set<string> should_be = {"nightly", "releases", "source", "tinderbox-builds"};
-    __block set<string> in_fact;
+    set<string> in_fact;
     
-    XCTAssert( host->IterateDirectoryListing(path, ^bool(const VFSDirEnt &_dirent) {
+    XCTAssert( host->IterateDirectoryListing(path, [&](const VFSDirEnt &_dirent) {
             in_fact.emplace(_dirent.name);
             return true;
         }) == 0);
@@ -341,9 +341,9 @@ static const char* readme = "\n\
     XCTAssert( host->Open(path) == 0 );
     
     set<string> should_be = {"KB", "public", "unsup-ed", "README.TXT", "ReadMe1.txt"};
-    __block set<string> in_fact;
+    set<string> in_fact;
     
-    XCTAssert( host->IterateDirectoryListing(path, ^bool(const VFSDirEnt &_dirent) {
+    XCTAssert( host->IterateDirectoryListing(path, [&](const VFSDirEnt &_dirent) {
         in_fact.emplace(_dirent.name);
         return true;
     }) == 0);

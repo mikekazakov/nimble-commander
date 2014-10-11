@@ -548,7 +548,7 @@ void VFSPSHost::StopDirChangeObserving(unsigned long _ticket)
         m_UpdateHandlers.erase(it);
 }
 
-int VFSPSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
+int VFSPSHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
 {
     assert(_path != 0);
     if(_path[0] != '/' || _path[1] != 0)

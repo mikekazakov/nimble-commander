@@ -114,7 +114,7 @@ void FileSearch::AsyncProc(const char *_from_path, VFSHost *_in_host)
         m_DirsFIFO.pop_front();
         
         _in_host->IterateDirectoryListing(path.c_str(),
-                                      ^(const VFSDirEnt &_dirent)
+                                      [&](const VFSDirEnt &_dirent)
                                       {
                                           if(m_Queue->IsStopped())
                                               return false;

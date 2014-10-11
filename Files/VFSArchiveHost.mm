@@ -306,7 +306,7 @@ int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_ca
     return VFSError::NotFound;
 }
 
-int VFSArchiveHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
+int VFSArchiveHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
 {
     assert(_path != 0);
     if(_path[0] != '/')

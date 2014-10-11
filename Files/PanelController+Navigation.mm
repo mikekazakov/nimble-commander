@@ -187,7 +187,7 @@
         
         while(true)
         {
-            if(vfs->IterateDirectoryListing(path.c_str(), ^bool(const VFSDirEnt &_dirent) {
+            if(vfs->IterateDirectoryListing(path.c_str(), [](const VFSDirEnt &_dirent) {
                     return false;
                 }) >= 0) {
                 dispatch_to_main_queue(^{

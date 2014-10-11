@@ -224,7 +224,7 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     if(result < 0)
         return result;
     
-    result = _src_host->IterateDirectoryListing(_src_full_path, ^bool(const VFSDirEnt &_dirent)
+    result = _src_host->IterateDirectoryListing(_src_full_path, [&](const VFSDirEnt &_dirent)
     {
         string source(_src_full_path);
         source += '/';
@@ -377,7 +377,7 @@ int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
         return result;
     
     if((st.mode & S_IFMT) == S_IFDIR) {
-        _host->IterateDirectoryListing(_full_path, ^bool(const VFSDirEnt &_dirent) {
+        _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
             path p = _full_path;
             p /= _dirent.name;
             VFSEasyDelete(p.native().c_str(), _host);

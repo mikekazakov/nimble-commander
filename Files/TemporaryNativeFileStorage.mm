@@ -249,7 +249,7 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
     if( !st.mode_bits.dir )
         return false;
     
-    __block uint64_t total_size = 0;
+    uint64_t total_size = 0;
     
     struct S {
         inline S(const path &_src_path, const path &_rel_path, const VFSStat& _st):
@@ -268,8 +268,8 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
         vfs_dirpath.filename().native();
     
     // traverse source structure
-    __block vector< S > src;
-    __block stack< S > traverse_log;
+    vector< S > src;
+    stack< S > traverse_log;
     
     src.emplace_back(_vfs_dirpath, top_level_name, st);
     
@@ -279,7 +279,7 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
         path dir_path = last.src_path;
         traverse_log.pop();
         
-        int res = _host->IterateDirectoryListing(dir_path.c_str(), ^bool(const VFSDirEnt &_dirent) {
+        int res = _host->IterateDirectoryListing(dir_path.c_str(), [&](const VFSDirEnt &_dirent) {
             if( _cancel_checker && _cancel_checker() )
                 return false;
             

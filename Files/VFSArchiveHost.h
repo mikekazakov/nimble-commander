@@ -46,7 +46,7 @@ public:
                                       int _flags,                                      
                                       bool (^_cancel_checker)()) override;
     
-    virtual int IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent)) override;
+    virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
     
     int GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs) override;
     virtual bool ShouldProduceThumbnails() const override;

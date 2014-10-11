@@ -245,7 +245,7 @@ int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
 }
 
 int VFSArchiveUnRARHost::IterateDirectoryListing(const char *_path,
-                                                 bool (^_handler)(const VFSDirEnt &_dirent))
+                                                 function<bool(const VFSDirEnt &_dirent)> _handler)
 {
     auto dir = FindDirectory(_path);
     if(!dir)

@@ -502,7 +502,7 @@ bool VFSNetFTPHost::IsWriteableAtPath(const char *_dir) const
     return true;
 }
 
-int VFSNetFTPHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
+int VFSNetFTPHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
 {
     shared_ptr<VFSNetFTP::Directory> dir;
     int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, nullptr);

@@ -173,8 +173,8 @@ int VFSHost::CalculateDirectoriesSizes(
        _root_path[0] != '/')
         return VFSError::InvalidCall;
     
-    __block queue<string> look_paths;
-    __block int64_t total_size = 0;
+    queue<string> look_paths;
+    int64_t total_size = 0;
     
     if(_dirs.singleblock() &&
        _dirs.size() == 1 &&
@@ -189,7 +189,7 @@ int VFSHost::CalculateDirectoriesSizes(
             if(_cancel_checker && _cancel_checker()) // check if we need to quit
                 return VFSError::Cancelled;
                 
-            IterateDirectoryListing(look_paths.front().c_str(), ^(const VFSDirEnt& _dirent){
+            IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
                 char full_path[MAXPATHLEN];
                 strcpy(full_path, look_paths.front().c_str());
                 strcat(full_path, _dirent.name);
@@ -228,7 +228,7 @@ int VFSHost::CalculateDirectoriesSizes(
                 if(_cancel_checker && _cancel_checker()) // check if we need to quit
                     return VFSError::Cancelled;
                 
-                IterateDirectoryListing(look_paths.front().c_str(), ^bool(const VFSDirEnt& _dirent){
+                IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
                     char full_path[MAXPATHLEN];
                     strcpy(full_path, look_paths.front().c_str());
                     strcat(full_path, _dirent.name);
@@ -267,7 +267,7 @@ int VFSHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_ch
     return VFSError::NotSupported;
 }
 
-int VFSHost::IterateDirectoryListing(const char *_path, bool (^_handler)(const VFSDirEnt &_dirent))
+int VFSHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
 {
     // TODO: write a default implementation using listing fetching.
     // it will be less efficient, but for some FS like PS it will be ok

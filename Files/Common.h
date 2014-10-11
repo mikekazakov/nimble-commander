@@ -38,14 +38,6 @@ bool IsDirectoryAvailableForBrowsing(const char *_path);
 void EjectVolumeContainingPath(const string &_path); // a very simple function with no error feedback
 bool IsVolumeContainingPathEjectable(const string &_path); // will return false on any errors
 
-#ifdef __OBJC__
-
-// intended for debug and development purposes only
-void SyncMessageBoxUTF8(const char *_utf8_string);
-void SyncMessageBoxNS(NSString *_ns_string);
-
-nanoseconds machtime() noexcept;
-
 inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s)
 {
     return CFStringCreateWithBytesNoCopy(0,
@@ -65,6 +57,15 @@ inline CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s)
                                          false,
                                          kCFAllocatorNull);
 }
+
+#ifdef __OBJC__
+
+// intended for debug and development purposes only
+void SyncMessageBoxUTF8(const char *_utf8_string);
+void SyncMessageBoxNS(NSString *_ns_string);
+
+nanoseconds machtime() noexcept;
+
 
 typedef enum
 {

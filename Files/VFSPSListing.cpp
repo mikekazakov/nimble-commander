@@ -25,8 +25,7 @@ VFSPSListing::VFSPSListing(const char* _relative_path,
         VFSPSListingItem t;
         t.index = i;
         t.data = _snapshot.get();
-        t.cf_name = (CFStringRef)CFBridgingRetain([NSString stringWithUTF8StdStringNoCopy:
-                                                   _snapshot->plain_filenames[i]]);
+        t.cf_name = CFStringCreateWithUTF8StdStringNoCopy(_snapshot->plain_filenames[i]);
         m_Items.push_back(t);
     }
 }

@@ -34,21 +34,21 @@ public:
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> *_target,
                                       int _flags,
-                                      bool (^_cancel_checker)()) override;
+                                      VFSCancelChecker _cancel_checker) override;
     
     virtual int IterateDirectoryListing(const char *_path,
                                         function<bool(const VFSDirEnt &_dirent)> _handler) override;
     
-    virtual int StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)()) override;    
+    virtual int StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker) override;
     
     virtual int Stat(const char *_path,
                      VFSStat &_st,
                      int _flags,
-                     bool (^_cancel_checker)()) override;
+                     VFSCancelChecker _cancel_checker) override;
 
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           bool (^_cancel_checker)()) override;
+                           VFSCancelChecker _cancel_checker) override;
     
     
     virtual bool ShouldProduceThumbnails() const override;

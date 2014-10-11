@@ -10,6 +10,7 @@
 
 #pragma once
 
+#import "VFSDeclarations.h"
 #import "VFSError.h"
 #import "VFSHost.h"
 #import "VFSFile.h"

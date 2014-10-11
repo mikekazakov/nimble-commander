@@ -105,7 +105,7 @@ public:
     ~VFSNativeListing();
     
     
-    int LoadListingData(int _flags, bool (^_cancel_checker)());
+    int LoadListingData(int _flags, VFSCancelChecker _cancel_checker);
     
     virtual VFSListingItem& At(size_t _position) override;
     virtual const VFSListingItem& At(size_t _position) const override;

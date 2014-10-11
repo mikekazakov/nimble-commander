@@ -329,7 +329,7 @@ path VFSNetFTPFile::DirName() const
     return path(RelativePath()).parent_path();
 }
 
-int VFSNetFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
+int VFSNetFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
     auto ftp_host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
     VFSStat stat;
@@ -416,7 +416,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
                                  void *_read_to,
                                  uint64_t _read_size,
                                  uint64_t _file_offset,
-                                 bool (^_cancel_checker)()
+                                 VFSCancelChecker _cancel_checker
                                  )
 {
     // TODO: mutex lock

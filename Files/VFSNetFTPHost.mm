@@ -64,7 +64,7 @@ int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions &_opti
 int VFSNetFTPHost::DownloadAndCacheListing(CURLInstance *_inst,
                                            const char *_path,
                                            shared_ptr<Directory> *_cached_dir,
-                                           bool (^_cancel_checker)())
+                                           VFSCancelChecker _cancel_checker)
 {
     if(_inst == nullptr || _path == nullptr)
         return VFSError::InvalidCall;
@@ -88,7 +88,7 @@ int VFSNetFTPHost::DownloadAndCacheListing(CURLInstance *_inst,
 int VFSNetFTPHost::DownloadListing(CURLInstance *_inst,
                                    const char *_path,
                                    string &_buffer,
-                                   bool (^_cancel_checker)())
+                                   VFSCancelChecker _cancel_checker)
 {
     if(_path == nullptr ||
        _path[0] != '/')
@@ -151,7 +151,7 @@ unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()
 int VFSNetFTPHost::Stat(const char *_path,
                         VFSStat &_st,
                         int _flags,
-                        bool (^_cancel_checker)())
+                        VFSCancelChecker _cancel_checker)
 {
     if(_path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -219,7 +219,7 @@ int VFSNetFTPHost::Stat(const char *_path,
 int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
                                          shared_ptr<VFSListing> *_target,
                                          int _flags,
-                                         bool (^_cancel_checker)())
+                                         VFSCancelChecker _cancel_checker)
 {
     shared_ptr<VFSNetFTP::Directory> dir;
     int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, _cancel_checker);
@@ -235,7 +235,7 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
 int VFSNetFTPHost::GetListingForFetching(VFSNetFTP::CURLInstance *_inst,
                      const char *_path,
                      shared_ptr<VFSNetFTP::Directory> *_cached_dir,
-                     bool (^_cancel_checker)())
+                     VFSCancelChecker _cancel_checker)
 {
     if(_path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -260,7 +260,7 @@ int VFSNetFTPHost::GetListingForFetching(VFSNetFTP::CURLInstance *_inst,
 
 int VFSNetFTPHost::CreateFile(const char* _path,
                               shared_ptr<VFSFile> &_target,
-                              bool (^_cancel_checker)())
+                              VFSCancelChecker _cancel_checker)
 {
     auto file = make_shared<VFSNetFTPFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
@@ -274,7 +274,7 @@ bool VFSNetFTPHost::ShouldProduceThumbnails() const
     return false;
 }
 
-int VFSNetFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
+int VFSNetFTPHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
 {
     path path = _path;
     if(path.is_absolute() == false || path.filename() == ".")
@@ -315,7 +315,7 @@ int VFSNetFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
 }
 
 // _mode is ignored, since we can't specify any access mode from ftp
-int VFSNetFTPHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel_checker)())
+int VFSNetFTPHost::CreateDirectory(const char* _path, int _mode, VFSCancelChecker _cancel_checker)
 {
     path path = _path;
     if(path.is_absolute() == false)
@@ -359,7 +359,7 @@ int VFSNetFTPHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel_
                         VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
-int VFSNetFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
+int VFSNetFTPHost::RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker)
 {
     path path = _path;
     if(path.is_absolute() == false)
@@ -401,7 +401,7 @@ int VFSNetFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
                         VFSError::FromErrno(EPERM); // TODO: convert curl_res to something meaningful
 }
 
-int VFSNetFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)())
+int VFSNetFTPHost::Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker)
 {
     path old_path = _old_path, new_path = _new_path;
     if(old_path.is_absolute() == false || new_path.is_absolute() == false)
@@ -457,7 +457,7 @@ void VFSNetFTPHost::MakeDirectoryStructureDirty(const char *_path)
     }
 }
 
-unsigned long VFSNetFTPHost::DirChangeObserve(const char *_path, void (^_handler)())
+unsigned long VFSNetFTPHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     if(_path == 0 || _path[0] != '/')
         return 0;
@@ -469,7 +469,7 @@ unsigned long VFSNetFTPHost::DirChangeObserve(const char *_path, void (^_handler
     h.ticket = m_LastUpdateTicket++;
     h.path = _path;
     if(h.path.back() != '/') h.path += '/';
-    h.handler = _handler;
+    h.handler = move(_handler);
     
     return h.ticket;
 }
@@ -586,7 +586,7 @@ shared_ptr<VFSHostOptions> VFSNetFTPHost::Options() const
     return m_Options;
 }
 
-int VFSNetFTPHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+int VFSNetFTPHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
 {
     _stat.avail_bytes = _stat.free_bytes = _stat.total_bytes = 0;
     _stat.volume_name = JunctionPath();

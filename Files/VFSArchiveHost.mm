@@ -236,7 +236,7 @@ shared_ptr<VFSFile> VFSArchiveHost::ArFile() const
 
 int VFSArchiveHost::CreateFile(const char* _path,
                        shared_ptr<VFSFile> &_target,
-                       bool (^_cancel_checker)())
+                       VFSCancelChecker _cancel_checker)
 {
     auto file = make_shared<VFSArchiveFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
@@ -248,7 +248,7 @@ int VFSArchiveHost::CreateFile(const char* _path,
 int VFSArchiveHost::FetchDirectoryListing(const char *_path,
                                           shared_ptr<VFSListing> *_target,
                                           int _flags,
-                                          bool (^_cancel_checker)())
+                                          VFSCancelChecker _cancel_checker)
 {
     char path[1024];
     strcpy(path, _path);
@@ -273,7 +273,7 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
 
 bool VFSArchiveHost::IsDirectory(const char *_path,
                                  int _flags,
-                                 bool (^_cancel_checker)())
+                                 VFSCancelChecker _cancel_checker)
 {
     if(_path[0] != '/') return false;
     char tmp[MAXPATHLEN];
@@ -284,7 +284,7 @@ bool VFSArchiveHost::IsDirectory(const char *_path,
     return it != m_PathToDir.end();
 }
 
-int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
+int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
 {
     // currenty do not support symlinks in archives, so ignore NoFollow flag
     assert(_path != 0);
@@ -444,7 +444,7 @@ shared_ptr<VFSArchiveSeekCache> VFSArchiveHost::SeekCache(uint32_t _requested_it
     return res;
 }
 
-int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
 {
     char vol_name[256];
     if(!GetFilenameFromPath(JunctionPath(), vol_name))

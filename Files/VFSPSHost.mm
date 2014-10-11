@@ -433,7 +433,7 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
 int VFSPSHost::FetchDirectoryListing(const char *_path,
                                   shared_ptr<VFSListing> *_target,
                                   int _flags,
-                                  bool (^_cancel_checker)())
+                                  VFSCancelChecker _cancel_checker)
 {
     EnsureUpdateRunning();
     
@@ -447,7 +447,7 @@ int VFSPSHost::FetchDirectoryListing(const char *_path,
 
 bool VFSPSHost::IsDirectory(const char *_path,
                          int _flags,
-                         bool (^_cancel_checker)())
+                         VFSCancelChecker _cancel_checker)
 {
     if(_path == 0 ||
        strcmp(_path, "/") != 0)
@@ -457,7 +457,7 @@ bool VFSPSHost::IsDirectory(const char *_path,
 
 int VFSPSHost::CreateFile(const char* _path,
                        shared_ptr<VFSFile> &_target,
-                       bool (^_cancel_checker)())
+                       VFSCancelChecker _cancel_checker)
 {
     lock_guard<mutex> lock(m_Lock);
     
@@ -476,7 +476,7 @@ int VFSPSHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
+int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
 {
     static VFSStat::meaningT m;
     static dispatch_once_t onceToken;
@@ -531,7 +531,7 @@ int VFSPSHost::ProcIndexFromFilepath(const char *_filepath)
     return int(it - begin(m_Data->plain_filenames));
 }
 
-unsigned long VFSPSHost::DirChangeObserve(const char *_path, void (^_handler)())
+unsigned long VFSPSHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;
@@ -543,7 +543,7 @@ void VFSPSHost::StopDirChangeObserving(unsigned long _ticket)
 {
     auto it = find_if(begin(m_UpdateHandlers),
                       end(m_UpdateHandlers),
-                      [=](pair<unsigned long, void (^)()> &i){ return i.first == _ticket; } );
+                      [=](const auto &i){ return i.first == _ticket; } );
     if(it != end(m_UpdateHandlers))
         m_UpdateHandlers.erase(it);
 }

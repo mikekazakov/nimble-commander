@@ -43,16 +43,16 @@ public:
     virtual int Stat(const char *_path,
                      VFSStat &_st,
                      int _flags,
-                     bool (^_cancel_checker)());
+                     VFSCancelChecker _cancel_checker);
     
     virtual int StatFS(const char *_path,
                        VFSStatFS &_stat,
-                       bool (^_cancel_checker)()) override;
+                       VFSCancelChecker _cancel_checker) override;
     
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> *_target,
                                       int _flags,
-                                      bool (^_cancel_checker)()) override;
+                                      VFSCancelChecker _cancel_checker) override;
     
     virtual int IterateDirectoryListing(const char *_path,
                                         function<bool(const VFSDirEnt &_dirent)> _handler) override;
@@ -60,12 +60,12 @@ public:
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           bool (^_cancel_checker)()) override;
+                           VFSCancelChecker _cancel_checker) override;
     
-    virtual int Unlink(const char *_path, bool (^_cancel_checker)()) override;    
-    virtual int Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)()) override;
-    virtual int CreateDirectory(const char* _path, int _mode, bool (^_cancel_checker)() ) override;
-    virtual int RemoveDirectory(const char *_path, bool (^_cancel_checker)()) override;
+    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker) override;
+    virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker) override;
+    virtual int CreateDirectory(const char* _path, int _mode, VFSCancelChecker _cancel_checker) override;
+    virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker) override;
     
     virtual string VerboseJunctionPath() const override;
     virtual shared_ptr<VFSHostOptions> Options() const override;

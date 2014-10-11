@@ -7,10 +7,8 @@
 //
 
 #pragma once
-#include <dirent.h>
 
-class VFSHost;
-class VFSListing;
+#include "VFSDeclarations.h"
 
 struct VFSListingAttributes
 {

@@ -407,7 +407,7 @@ void panel::GenericCursorPersistance::Restore()
     
     m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
         shared_ptr<VFSListing> listing;
-        int ret = vfs->FetchDirectoryListing(dirpath.c_str(), &listing, m_VFSFetchingFlags, ^{ return _q->IsStopped(); });
+        int ret = vfs->FetchDirectoryListing(dirpath.c_str(), &listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
         if(ret >= 0)
         {
             dispatch_to_main_queue( ^{

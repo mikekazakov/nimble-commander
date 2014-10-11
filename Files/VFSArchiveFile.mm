@@ -28,7 +28,7 @@ VFSArchiveFile::~VFSArchiveFile()
     Close();
 }
 
-int VFSArchiveFile::Open(int _open_flags, bool (^_cancel_checker)())
+int VFSArchiveFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
     if( strlen(RelativePath()) < 2 || RelativePath()[0] != '/' )
         return SetLastError(VFSError::NotFound);
@@ -228,7 +228,7 @@ unsigned VFSArchiveFile::XAttrCount() const
     return (unsigned)m_EACount;
 }
 
-void VFSArchiveFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name) ) const
+void VFSArchiveFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
 {
     if(!_handler || m_EACount == 0)
         return;

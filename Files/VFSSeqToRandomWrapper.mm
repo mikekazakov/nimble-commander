@@ -23,7 +23,7 @@ VFSSeqToRandomROWrapperFile::~VFSSeqToRandomROWrapperFile()
 }
 
 int VFSSeqToRandomROWrapperFile::Open(int _flags,
-                                      bool (^_cancel_checker)(),
+                                      VFSCancelChecker _cancel_checker,
                                       void (^_progress)(uint64_t _bytes_proc, uint64_t _bytes_total))
 {
     if(m_SeqFile.get() == 0)
@@ -145,7 +145,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
     return VFSError::Ok;
 }
 
-int VFSSeqToRandomROWrapperFile::Open(int _flags, bool (^_cancel_checker)())
+int VFSSeqToRandomROWrapperFile::Open(int _flags, VFSCancelChecker _cancel_checker)
 {
     return Open(_flags, _cancel_checker, nil);
 }

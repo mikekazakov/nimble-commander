@@ -13,6 +13,22 @@
 
 static_assert(sizeof(VFSStat) == 128, "");
 
+bool VFSStatFS::operator==(const VFSStatFS& _r) const
+{
+    return total_bytes == _r.total_bytes &&
+    free_bytes == _r.free_bytes  &&
+    avail_bytes == _r.avail_bytes &&
+    volume_name == _r.volume_name;
+}
+
+bool VFSStatFS::operator!=(const VFSStatFS& _r) const
+{
+    return total_bytes != _r.total_bytes ||
+    free_bytes != _r.free_bytes  ||
+    avail_bytes != _r.avail_bytes ||
+    volume_name != _r.volume_name;
+}
+
 VFSHostOptions::~VFSHostOptions()
 {
 };
@@ -102,7 +118,7 @@ int VFSHost::FetchDirectoryListing(
                                   const char *_path,
                                   shared_ptr<VFSListing> *_target,
                                   int _flags,                                   
-                                  bool (^_cancel_checker)()
+                                  VFSCancelChecker _cancel_checker
                                   )
 {
     return VFSError::NotSupported;
@@ -110,14 +126,14 @@ int VFSHost::FetchDirectoryListing(
 
 int VFSHost::CreateFile(const char* _path,
                        shared_ptr<VFSFile> &_target,
-                       bool (^_cancel_checker)())
+                       VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
 bool VFSHost::IsDirectory(const char *_path,
                           int _flags,
-                          bool (^_cancel_checker)())
+                          VFSCancelChecker _cancel_checker)
 {
     VFSStat st;
     if(Stat(_path, st, _flags, _cancel_checker) < 0)
@@ -129,7 +145,7 @@ bool VFSHost::IsDirectory(const char *_path,
 bool VFSHost::FindLastValidItem(const char *_orig_path,
                                char *_valid_path,
                                int _flags,
-                               bool (^_cancel_checker)())
+                               VFSCancelChecker _cancel_checker)
 {
     // TODO: maybe it's better to go left-to-right than right-to-left
     if(_orig_path[0] != '/') return false;
@@ -165,8 +181,8 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
 int VFSHost::CalculateDirectoriesSizes(
                                     chained_strings _dirs,
                                     const char *_root_path,
-                                    bool (^_cancel_checker)(),
-                                    void (^_completion_handler)(const char* _dir_sh_name, uint64_t _size)
+                                    VFSCancelChecker _cancel_checker,
+                                    function<void(const char* _dir_sh_name, uint64_t _size)> _completion_handler
                                     )
 {
     if(_root_path == 0 ||
@@ -253,7 +269,7 @@ int VFSHost::CalculateDirectoriesSizes(
     return VFSError::Ok;
 }
 
-unsigned long VFSHost::DirChangeObserve(const char *_path, void (^_handler)())
+unsigned long VFSHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     return 0;
 }
@@ -262,7 +278,7 @@ void VFSHost::StopDirChangeObserving(unsigned long _ticket)
 {
 }
 
-int VFSHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
+int VFSHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -274,27 +290,27 @@ int VFSHost::IterateDirectoryListing(const char *_path, function<bool(const VFSD
     return VFSError::NotSupported;
 }
 
-int VFSHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+int VFSHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::Unlink(const char *_path, bool (^_cancel_checker)())
+int VFSHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel_checker)())
+int VFSHost::CreateDirectory(const char* _path, int _mode, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, bool (^_cancel_checker)())
+int VFSHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::CreateSymlink(const char *_symlink_path, const char *_symlink_value, bool (^_cancel_checker)())
+int VFSHost::CreateSymlink(const char *_symlink_path, const char *_symlink_value, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -305,7 +321,7 @@ int VFSHost::SetTimes(const char *_path,
                       struct timespec *_mod_time,
                       struct timespec *_chg_time,
                       struct timespec *_acc_time,
-                      bool (^_cancel_checker)()
+                      VFSCancelChecker _cancel_checker
                      )
 {
     return VFSError::NotSupported;
@@ -316,12 +332,12 @@ bool VFSHost::ShouldProduceThumbnails() const
     return true;
 }
 
-int VFSHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
+int VFSHost::RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)())
+int VFSHost::Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -333,11 +349,7 @@ int VFSHost::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>>
 
 const shared_ptr<VFSHost> &VFSHost::DummyHost()
 {
-    static dispatch_once_t once;
-    static shared_ptr<VFSHost> host;
-    dispatch_once(&once, [&]{
-        host = make_shared<VFSHost>("", nullptr);
-    });
+    static shared_ptr<VFSHost> host = make_shared<VFSHost>("", nullptr);
     return host;
 }
 
@@ -351,7 +363,7 @@ shared_ptr<VFSHostOptions> VFSHost::Options() const
     return nullptr;
 }
 
-bool VFSHost::Exists(const char *_path, bool (^_cancel_checker)())
+bool VFSHost::Exists(const char *_path, VFSCancelChecker _cancel_checker)
 {
     VFSStat st;
     return Stat(_path, st, 0, _cancel_checker) == 0;

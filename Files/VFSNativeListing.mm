@@ -38,7 +38,7 @@ VFSNativeListing::~VFSNativeListing()
     m_Items.clear();
 }
 
-int VFSNativeListing::LoadListingData(int _flags, bool (^_checker)())
+int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
 {
     m_Items.clear();
     

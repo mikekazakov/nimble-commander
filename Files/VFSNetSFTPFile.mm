@@ -23,7 +23,7 @@ VFSNetSFTPFile::~VFSNetSFTPFile()
         Close();
 }
 
-int VFSNetSFTPFile::Open(int _open_flags, bool (^_cancel_checker)())
+int VFSNetSFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
     if(IsOpened())
         Close();

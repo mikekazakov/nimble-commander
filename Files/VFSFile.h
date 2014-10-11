@@ -7,10 +7,8 @@
 //
 
 #pragma once
-
 #import "VFSError.h"
-
-class VFSHost;
+#import "VFSDeclarations.h"
 
 class VFSFile : public enable_shared_from_this<VFSFile>
 {
@@ -71,7 +69,7 @@ public:
         OF_Truncate = 0x01000000  // truncates files upon opening
     };
     virtual int     Open(int _open_flags,
-                         bool (^_cancel_checker)() = 0);
+                         VFSCancelChecker _cancel_checker = nullptr);
     virtual bool    IsOpened() const;
     virtual int     Close();
 
@@ -139,7 +137,7 @@ public:
      * This function may cause blocking I/O.
      */
     virtual void XAttrIterateNames(
-                                   bool (^_handler)(const char* _xattr_name) // return true for allowing iteration, false to stop it
+                                   function<bool(const char* _xattr_name)> _handler // return true for allowing iteration, false to stop it
                                    ) const;
     
     /**
@@ -206,8 +204,6 @@ private:
     void operator=(const VFSFile&) = delete;
 };
 
-typedef shared_ptr<VFSFile> VFSFilePtr;
-
 inline int VFSFile::SetLastError(int _error) const
 {
     return m_LastError = _error;
@@ -217,3 +213,11 @@ inline int VFSFile::LastError() const
 {
     return m_LastError;
 }
+
+#ifdef __OBJC__
+inline NSData *VFSFile::ReadFileToNSData()
+{
+    auto d = ReadFile();
+    return d ? [NSData dataWithBytes:d->data() length:d->size()] : nil;
+}
+#endif

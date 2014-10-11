@@ -15,7 +15,7 @@ class FSEventsDirUpdate
 public:
     static FSEventsDirUpdate *Inst();
  
-    unsigned long AddWatchPath(const char *_path, void (^_handler)());
+    unsigned long AddWatchPath(const char *_path, function<void()> _handler);
     // zero returned value means error. any others - valid observation tickets
     
     bool RemoveWatchPathWithTicket(unsigned long _ticket); // it's better to use this method
@@ -27,9 +27,9 @@ private:
     {
         string path;        // should include trailing slash
         FSEventStreamRef stream;
-        vector<pair<unsigned long, void (^)()> > handlers;
+        vector<pair<unsigned long, function<void()>>> handlers;
     };
-    vector<WatchData*> m_Watches;
+    vector<unique_ptr<WatchData>> m_Watches;
     unsigned long           m_LastTicket;
         
     FSEventsDirUpdate();

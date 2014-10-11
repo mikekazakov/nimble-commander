@@ -79,7 +79,7 @@ void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRe
     }
 }
 
-unsigned long FSEventsDirUpdate::AddWatchPath(const char *_path, void (^_handler)())
+unsigned long FSEventsDirUpdate::AddWatchPath(const char *_path, function<void()> _handler)
 {
     // convert _path into canonical path of OS
     char dirpath[__DARWIN_MAXPATHLEN];
@@ -87,7 +87,7 @@ unsigned long FSEventsDirUpdate::AddWatchPath(const char *_path, void (^_handler
         return 0;
     
     // check if this path already presents in watched paths
-    for(auto i: m_Watches)
+    for(auto &i: m_Watches)
         if( i->path == dirpath )
         { // then just increase refcount and exit
             i->handlers.push_back(make_pair(m_LastTicket++, _handler));
@@ -95,11 +95,12 @@ unsigned long FSEventsDirUpdate::AddWatchPath(const char *_path, void (^_handler
         }
 
     // create new watch stream
-    WatchData *w = new WatchData;
+    auto w = make_unique<WatchData>();
     w->path = dirpath;
-    w->handlers.push_back(make_pair(m_LastTicket++, _handler));
+    w->handlers.emplace_back(m_LastTicket++, move(_handler));
+    auto ticket = w->handlers.back().first;
     
-    FSEventStreamContext context = {0, w, NULL, NULL, NULL};
+    FSEventStreamContext context = {0, w.get(), NULL, NULL, NULL};
     CFStringRef path = CFStringCreateWithBytes(0, (const UInt8*)_path, strlen(_path), kCFStringEncodingUTF8, false);
 
     void *ar[1] = {(void*)path};
@@ -121,9 +122,9 @@ unsigned long FSEventsDirUpdate::AddWatchPath(const char *_path, void (^_handler
     
     w->stream = stream;
     
-    m_Watches.push_back(w);
+    m_Watches.emplace_back(move(w));
     
-    return w->handlers.back().first;
+    return ticket;
 }
 
 bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
@@ -133,7 +134,7 @@ bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
     
     for(auto i = m_Watches.begin(); i < m_Watches.end(); ++i)
     {
-        WatchData *w = *i;
+        WatchData *w = i->get();
         for(auto h = w->handlers.begin(); h < w->handlers.end(); ++h)
             if((*h).first == _ticket)
             {
@@ -144,7 +145,6 @@ bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
                     FSEventStreamUnscheduleFromRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
                     FSEventStreamInvalidate(w->stream);
                     FSEventStreamRelease(w->stream);
-                    delete w;
                     m_Watches.erase(i);
                 }
                 
@@ -161,7 +161,7 @@ void FSEventsDirUpdate::OnVolumeDidUnmount(string _on_path)
     // TODO: this is a brute approach, need to build a more intelligent volume monitoring machinery later
     // it should monitor paths of removed volumes and fires notification only for appropriate watches
     FSEventsDirUpdate *me = Inst();
-    for(auto i: me->m_Watches)
+    for(auto &i: me->m_Watches)
         for(auto &h: (*i).handlers)
             h.second();
 }

@@ -61,7 +61,7 @@ bool VFSFile::IsOpened() const
     return false;
 }
 
-int     VFSFile::Open(int, bool(^)()){ return SetLastError(VFSError::NotSupported); }
+int     VFSFile::Open(int, VFSCancelChecker){ return SetLastError(VFSError::NotSupported); }
 int     VFSFile::Close()             { return SetLastError(VFSError::NotSupported); }
 off_t   VFSFile::Seek(off_t, int)    { return SetLastError(VFSError::NotSupported); }
 ssize_t VFSFile::Pos() const         { return SetLastError(VFSError::NotSupported); }
@@ -93,7 +93,7 @@ unsigned VFSFile::XAttrCount() const
     return 0;
 }
 
-void VFSFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name) ) const
+void VFSFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
 {
 }
 
@@ -122,37 +122,6 @@ unique_ptr<vector<uint8_t>> VFSFile::ReadFile()
     }
     
     return buf;
-}
-
-NSData *VFSFile::ReadFileToNSData()
-{
-    if(!IsOpened())
-        return 0;
-    
-    if(GetReadParadigm() < ReadParadigm::Seek && Pos() != 0)
-        return 0;
-    
-    if(Pos() != 0 && Seek(Seek_Set, 0) < 0)
-        return 0; // can't rewind file        
-    
-    uint64_t sz = Size();
-    char *buf = (char*)malloc(sz);
-    if(!buf)
-        return 0;
-    char *buftmp = buf;
-    uint64_t szleft = sz;
-    while(szleft) {
-        ssize_t r = Read(buftmp, szleft);
-        if(r < 0)
-        {
-            free(buf);
-            return 0;
-        }
-        szleft -= r;
-        buftmp += r;
-    }
-    
-    return [NSData dataWithBytesNoCopy:buf length:sz]; // NSData will deallocate buf
 }
 
 int VFSFile::WriteFile(const void *_d, size_t _sz)

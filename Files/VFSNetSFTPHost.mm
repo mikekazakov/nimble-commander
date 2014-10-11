@@ -224,7 +224,7 @@ in_addr_t VFSNetSFTPHost::InetAddr() const
 int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
                                           shared_ptr<VFSListing> *_target,
                                           int _flags,
-                                          bool (^_cancel_checker)())
+                                          VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -337,7 +337,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
 int VFSNetSFTPHost::Stat(const char *_path,
                          VFSStat &_st,
                          int _flags,
-                         bool (^_cancel_checker)())
+                         VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -435,7 +435,7 @@ int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
 
 int VFSNetSFTPHost::StatFS(const char *_path,
                            VFSStatFS &_stat,
-                           bool (^_cancel_checker)())
+                           VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -457,7 +457,7 @@ int VFSNetSFTPHost::StatFS(const char *_path,
     return 0;
 }
 
-int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, bool (^_cancel_checker)())
+int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, VFSCancelChecker _cancel_checker)
 {
     auto file = make_shared<VFSNetSFTPFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
@@ -491,7 +491,7 @@ bool VFSNetSFTPHost::IsWriteableAtPath(const char *_dir) const
     return true; // dummy now
 }
 
-int VFSNetSFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
+int VFSNetSFTPHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -508,7 +508,7 @@ int VFSNetSFTPHost::Unlink(const char *_path, bool (^_cancel_checker)())
     return 0;
 }
 
-int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^_cancel_checker)())
+int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -526,7 +526,7 @@ int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, bool (^
     return 0;
 }
 
-int VFSNetSFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)())
+int VFSNetSFTPHost::RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -543,7 +543,7 @@ int VFSNetSFTPHost::RemoveDirectory(const char *_path, bool (^_cancel_checker)()
     return 0;
 }
 
-int VFSNetSFTPHost::CreateDirectory(const char* _path, int _mode, bool (^_cancel_checker)() )
+int VFSNetSFTPHost::CreateDirectory(const char* _path, int _mode, VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);

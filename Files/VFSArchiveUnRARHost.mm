@@ -228,7 +228,7 @@ VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindOrBuildDirectory(const string
 int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
                                                shared_ptr<VFSListing> *_target,
                                                int _flags,
-                                               bool (^_cancel_checker)())
+                                               VFSCancelChecker _cancel_checker)
 {
     auto dir = FindDirectory(_path);
     if(!dir)
@@ -278,7 +278,7 @@ const VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindDirectory(const string&
     return &i->second;
 }
 
-int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, bool (^_cancel_checker)())
+int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
 {
     static VFSStat::meaningT m;
     static dispatch_once_t onceToken;
@@ -422,7 +422,7 @@ void VFSArchiveUnRARHost::CommitSeekCache(unique_ptr<VFSArchiveUnRARSeekCache> _
 
 int VFSArchiveUnRARHost::CreateFile(const char* _path,
                                     shared_ptr<VFSFile> &_target,
-                                    bool (^_cancel_checker)())
+                                    VFSCancelChecker _cancel_checker)
 {
     auto file = make_shared<VFSArchiveUnRARFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
@@ -444,7 +444,7 @@ uint32_t VFSArchiveUnRARHost::LastItemUUID() const
     return m_LastItemUID;
 };
 
-int VFSArchiveUnRARHost::StatFS(const char *_path, VFSStatFS &_stat, bool (^_cancel_checker)())
+int VFSArchiveUnRARHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
 {
     char vol_name[256];
     if(!GetFilenameFromPath(JunctionPath(), vol_name))

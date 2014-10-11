@@ -8,9 +8,7 @@
 
 #pragma once
 
-class VFSListing;
-class VFSHost;
-struct VFSHostOptions;
+#include "VFSDeclarations.h"
 
 class VFSPathStack
 {

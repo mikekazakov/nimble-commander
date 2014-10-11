@@ -38,6 +38,8 @@ bool IsDirectoryAvailableForBrowsing(const char *_path);
 void EjectVolumeContainingPath(const string &_path); // a very simple function with no error feedback
 bool IsVolumeContainingPathEjectable(const string &_path); // will return false on any errors
 
+#ifdef __OBJC__
+
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);
 void SyncMessageBoxNS(NSString *_ns_string);
@@ -147,6 +149,8 @@ inline void dispatch_to_main_queue(dispatch_block_t block) { dispatch_async(disp
 inline void dispatch_or_run_in_main_queue(dispatch_block_t block) {
     dispatch_is_main_queue() ? block() : dispatch_to_main_queue(block);
 }
+
+#endif
 
 inline bool strisdotdot(const char *s) { return s && s[0] == '.' && s[1] == '.' && s[2] == 0; }
 

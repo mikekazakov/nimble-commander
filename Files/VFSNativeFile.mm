@@ -27,7 +27,7 @@ VFSNativeFile::~VFSNativeFile()
     Close();
 }
 
-int VFSNativeFile::Open(int _open_flags, bool (^_cancel_checker)())
+int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
     auto fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath());
     
@@ -213,7 +213,7 @@ unsigned VFSNativeFile::XAttrCount() const
     return count;
 }
 
-void VFSNativeFile::XAttrIterateNames( bool (^_handler)(const char* _xattr_name) ) const
+void VFSNativeFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
 {
     if(m_FD < 0 || !_handler)
         return;

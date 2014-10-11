@@ -144,10 +144,10 @@
 		CF6D9BEC196678000077B146 /* DispatchQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.mm */; };
 		CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CF6D9BEE196678000077B146 /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB56284194ECA1B00A3B70E /* FPSLimitedDrawer.mm */; };
-		CF6D9BEF196678000077B146 /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
-		CF6D9BF0196678000077B146 /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
-		CF6D9BF1196678000077B146 /* VFSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060317CB2DC900CB8146 /* VFSFile.mm */; };
-		CF6D9BF2196678000077B146 /* VFSPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2271864064700501C35 /* VFSPath.mm */; };
+		CF6D9BEF196678000077B146 /* VFSHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.cpp */; };
+		CF6D9BF0196678000077B146 /* VFSListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.cpp */; };
+		CF6D9BF1196678000077B146 /* VFSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060317CB2DC900CB8146 /* VFSFile.cpp */; };
+		CF6D9BF2196678000077B146 /* VFSPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2271864064700501C35 /* VFSPath.cpp */; };
 		CF6D9BF3196678000077B146 /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6617EE17E48B5100593225 /* VFSError.mm */; };
 		CF6D9BF4196678000077B146 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23C186BE3DF00501C35 /* VFSPSHost.mm */; };
 		CF6D9BF5196678000077B146 /* VFSPSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF2EA0A186C1E4C00BC7A63 /* VFSPSListing.mm */; };
@@ -457,7 +457,7 @@
 		CF9A17CC186D9FCC00160CDB /* VFSPSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CA186D9FCC00160CDB /* VFSPSFile.mm */; };
 		CF9A17CF186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */; };
 		CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; };
-		CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060317CB2DC900CB8146 /* VFSFile.mm */; };
+		CF9D060517CB2DC900CB8146 /* VFSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060317CB2DC900CB8146 /* VFSFile.cpp */; };
 		CF9D060817CB3B0400CB8146 /* VFSNativeFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D060617CB3B0400CB8146 /* VFSNativeFile.mm */; };
 		CF9D0B6417CC5FB800CB8146 /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B6217CC5FB800CB8146 /* VFSArchiveHost.mm */; };
 		CF9D0B6717CC910100CB8146 /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0B6517CC910100CB8146 /* VFSArchiveInternal.mm */; };
@@ -569,7 +569,7 @@
 		CF9D0EE317CE11C800CB8146 /* VFSSeqToRandomWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0EE117CE11C800CB8146 /* VFSSeqToRandomWrapper.mm */; };
 		CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */; };
 		CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */; };
-		CFA0B2291864064700501C35 /* VFSPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2271864064700501C35 /* VFSPath.mm */; };
+		CFA0B2291864064700501C35 /* VFSPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2271864064700501C35 /* VFSPath.cpp */; };
 		CFA0B22C186412BD00501C35 /* DispatchQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.mm */; };
 		CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
 		CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
@@ -634,8 +634,8 @@
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */; };
 		CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */; };
-		CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.mm */; };
-		CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.mm */; };
+		CFB8F22E17CA3C80004574FE /* VFSHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22C17CA3C80004574FE /* VFSHost.cpp */; };
+		CFB8F23117CA4175004574FE /* VFSListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F22F17CA4175004574FE /* VFSListing.cpp */; };
 		CFB8F23617CAF86B004574FE /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */; };
 		CFB8F23917CAF8F9004574FE /* VFSNativeListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB8F23717CAF8F9004574FE /* VFSNativeListing.mm */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
@@ -834,6 +834,7 @@
 		CF039EB8179142A900DC85D6 /* NSUserDefaults+myColorSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+myColorSupport.m"; sourceTree = "<group>"; };
 		CF0519DA17E9C98A00590C74 /* PanelAux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelAux.h; sourceTree = "<group>"; };
 		CF0519DB17E9C98A00590C74 /* PanelAux.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelAux.mm; sourceTree = "<group>"; };
+		CF07526319E8DDB2001253B1 /* VFSDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSDeclarations.h; sourceTree = "<group>"; };
 		CF07DE36175D971E00757DE1 /* MainWindowStateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainWindowStateProtocol.h; sourceTree = "<group>"; };
 		CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowFilePanelState.h; sourceTree = "<group>"; };
 		CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowFilePanelState.mm; sourceTree = "<group>"; };
@@ -1030,7 +1031,7 @@
 		CF9A17CD186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSGenericMemReadOnlyFile.mm; sourceTree = "<group>"; };
 		CF9A17CE186DA6AD00160CDB /* VFSGenericMemReadOnlyFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSGenericMemReadOnlyFile.h; sourceTree = "<group>"; };
 		CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask_Tests.mm; sourceTree = "<group>"; };
-		CF9D060317CB2DC900CB8146 /* VFSFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFile.mm; sourceTree = "<group>"; };
+		CF9D060317CB2DC900CB8146 /* VFSFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSFile.cpp; sourceTree = "<group>"; };
 		CF9D060417CB2DC900CB8146 /* VFSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSFile.h; sourceTree = "<group>"; };
 		CF9D060617CB3B0400CB8146 /* VFSNativeFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNativeFile.mm; sourceTree = "<group>"; };
 		CF9D060717CB3B0400CB8146 /* VFSNativeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSNativeFile.h; sourceTree = "<group>"; };
@@ -1176,7 +1177,7 @@
 		CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperation.mm; sourceTree = "<group>"; };
 		CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationJob.mm; sourceTree = "<group>"; };
 		CF9DF217171320D40008CBAE /* CreateDirectoryOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectoryOperationJob.h; sourceTree = "<group>"; };
-		CFA0B2271864064700501C35 /* VFSPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSPath.mm; sourceTree = "<group>"; };
+		CFA0B2271864064700501C35 /* VFSPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSPath.cpp; sourceTree = "<group>"; };
 		CFA0B2281864064700501C35 /* VFSPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSPath.h; sourceTree = "<group>"; };
 		CFA0B22A186412BD00501C35 /* DispatchQueue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DispatchQueue.mm; sourceTree = "<group>"; };
 		CFA0B22B186412BD00501C35 /* DispatchQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchQueue.h; sourceTree = "<group>"; };
@@ -1257,9 +1258,9 @@
 		CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProcessSheetController.xib; sourceTree = "<group>"; };
 		CFB709C618E99B7100A83E61 /* ExternalEditorInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalEditorInfo.h; sourceTree = "<group>"; };
 		CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalEditorInfo.mm; sourceTree = "<group>"; };
-		CFB8F22C17CA3C80004574FE /* VFSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSHost.mm; sourceTree = "<group>"; };
+		CFB8F22C17CA3C80004574FE /* VFSHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSHost.cpp; sourceTree = "<group>"; };
 		CFB8F22D17CA3C80004574FE /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSHost.h; sourceTree = "<group>"; };
-		CFB8F22F17CA4175004574FE /* VFSListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSListing.mm; sourceTree = "<group>"; };
+		CFB8F22F17CA4175004574FE /* VFSListing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSListing.cpp; sourceTree = "<group>"; };
 		CFB8F23017CA4175004574FE /* VFSListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSListing.h; sourceTree = "<group>"; };
 		CFB8F23317CAF4EC004574FE /* VFSError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VFSError.h; sourceTree = "<group>"; };
 		CFB8F23417CAF86B004574FE /* VFSNativeHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSNativeHost.mm; sourceTree = "<group>"; };
@@ -1803,13 +1804,14 @@
 		CF653C4018C38DD400502920 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CFB8F22C17CA3C80004574FE /* VFSHost.mm */,
+				CF07526319E8DDB2001253B1 /* VFSDeclarations.h */,
+				CFB8F22C17CA3C80004574FE /* VFSHost.cpp */,
 				CFB8F22D17CA3C80004574FE /* VFSHost.h */,
-				CFB8F22F17CA4175004574FE /* VFSListing.mm */,
+				CFB8F22F17CA4175004574FE /* VFSListing.cpp */,
 				CFB8F23017CA4175004574FE /* VFSListing.h */,
-				CF9D060317CB2DC900CB8146 /* VFSFile.mm */,
+				CF9D060317CB2DC900CB8146 /* VFSFile.cpp */,
 				CF9D060417CB2DC900CB8146 /* VFSFile.h */,
-				CFA0B2271864064700501C35 /* VFSPath.mm */,
+				CFA0B2271864064700501C35 /* VFSPath.cpp */,
 				CFA0B2281864064700501C35 /* VFSPath.h */,
 				CF6617EE17E48B5100593225 /* VFSError.mm */,
 				CFB8F23317CAF4EC004574FE /* VFSError.h */,
@@ -2941,10 +2943,10 @@
 				CF6D9BEC196678000077B146 /* DispatchQueue.mm in Sources */,
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
 				CF6D9BEE196678000077B146 /* FPSLimitedDrawer.mm in Sources */,
-				CF6D9BEF196678000077B146 /* VFSHost.mm in Sources */,
-				CF6D9BF0196678000077B146 /* VFSListing.mm in Sources */,
-				CF6D9BF1196678000077B146 /* VFSFile.mm in Sources */,
-				CF6D9BF2196678000077B146 /* VFSPath.mm in Sources */,
+				CF6D9BEF196678000077B146 /* VFSHost.cpp in Sources */,
+				CF6D9BF0196678000077B146 /* VFSListing.cpp in Sources */,
+				CF6D9BF1196678000077B146 /* VFSFile.cpp in Sources */,
+				CF6D9BF2196678000077B146 /* VFSPath.cpp in Sources */,
 				CF6D9BF3196678000077B146 /* VFSError.mm in Sources */,
 				CF6D9BF4196678000077B146 /* VFSPSHost.mm in Sources */,
 				CF6D9BF5196678000077B146 /* VFSPSListing.mm in Sources */,
@@ -3099,7 +3101,7 @@
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
 				CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */,
 				CF09856A18EDBFB0006E6410 /* TermTaskCommon.mm in Sources */,
-				CFB8F23117CA4175004574FE /* VFSListing.mm in Sources */,
+				CFB8F23117CA4175004574FE /* VFSListing.cpp in Sources */,
 				CFE3829119CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */,
@@ -3200,7 +3202,7 @@
 				CF9D0EDA17CC961100CB8146 /* archive_write.c in Sources */,
 				CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */,
 				CF9D0ECC17CC961100CB8146 /* archive_write_set_format_by_name.c in Sources */,
-				CFA0B2291864064700501C35 /* VFSPath.mm in Sources */,
+				CFA0B2291864064700501C35 /* VFSPath.cpp in Sources */,
 				CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */,
 				CF9D0E8D17CC961100CB8146 /* archive_read_extract.c in Sources */,
 				CF9D0E8417CC961100CB8146 /* archive_pathmatch.c in Sources */,
@@ -3228,7 +3230,7 @@
 				CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */,
 				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
-				CF9D060517CB2DC900CB8146 /* VFSFile.mm in Sources */,
+				CF9D060517CB2DC900CB8146 /* VFSFile.cpp in Sources */,
 				CFA0B22C186412BD00501C35 /* DispatchQueue.mm in Sources */,
 				CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */,
 				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,
@@ -3277,7 +3279,7 @@
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
 				CFB3E4831844ACD700D375E2 /* TermShellTask.mm in Sources */,
 				CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */,
-				CFB8F22E17CA3C80004574FE /* VFSHost.mm in Sources */,
+				CFB8F22E17CA3C80004574FE /* VFSHost.cpp in Sources */,
 				CF9D0E9917CC961100CB8146 /* archive_read_support_filter_lrzip.c in Sources */,
 				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
 				CF9D0E9A17CC961100CB8146 /* archive_read_support_filter_lzop.c in Sources */,

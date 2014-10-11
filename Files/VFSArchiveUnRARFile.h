@@ -23,7 +23,7 @@ public:
     VFSArchiveUnRARFile(const char* _relative_path, shared_ptr<VFSArchiveUnRARHost> _host);
     ~VFSArchiveUnRARFile();
     
-    virtual int Open(int _open_flags, bool (^_cancel_checker)()) override;
+    virtual int Open(int _open_flags, VFSCancelChecker _cancel_checker) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;
 

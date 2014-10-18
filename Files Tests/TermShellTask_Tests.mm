@@ -21,7 +21,7 @@
     
     string cwd = CommonPaths::Get(CommonPaths::Home);
     shell.Launch(cwd.c_str(), 100, 100);
-    usleep( microseconds(1s).count() );
+    usleep( microseconds(5s).count() );
     
     // check cwd
     XCTAssert( shell.CWD() == cwd );
@@ -72,7 +72,7 @@
     
     // check execution with short path in different directory
     shell.Launch(CommonPaths::Get(CommonPaths::Home).c_str(), 100, 100);
-    usleep( microseconds(1s).count() ); // 200msec should be enough for init process
+    usleep( microseconds(5s).count() );
     shell.Execute("top", "/usr/bin/", nullptr);
     usleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().size() == 1 );

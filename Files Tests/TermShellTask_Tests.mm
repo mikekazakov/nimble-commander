@@ -26,6 +26,19 @@ static void testMicrosleep(uint64_t _microseconds)
         this_thread::sleep_for(microseconds(_microseconds));
 }
 
+static string ToRealPath(const string &_from)
+{
+    int tfd = open(_from.c_str(), O_RDONLY);
+    if(tfd == -1)
+        return _from;
+    char path_out[MAXPATHLEN];
+    int ret = fcntl(tfd, F_GETPATH, path_out);
+    close(tfd);
+    if(ret == -1)
+        return _from;
+    return path_out;
+}
+
 @interface TermShellTask_Tests : XCTestCase
 @end
 
@@ -40,8 +53,7 @@ static void testMicrosleep(uint64_t _microseconds)
     testMicrosleep( microseconds(5s).count() );
     
     // check cwd
-    NSLog(@"%s | %s", shell.CWD().c_str(), cwd.c_str());
-    XCTAssert( shell.CWD() == cwd );
+    XCTAssert( ToRealPath(shell.CWD()) == ToRealPath(cwd) );
     XCTAssert( shell.State() == TermShellTask::StateShell);
     
     // the only task is running is shell itself, and is not returned by ChildrenList

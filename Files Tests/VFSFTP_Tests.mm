@@ -116,13 +116,13 @@ static const char* readme = "\n\
     XCTAssert( host->Stat(fn2, stat, 0, 0) != 0);
 }
 
-- (void)test127_0_0_1
+- (void)testMacMini
 {
     VFSNetFTPOptions opts;
     opts.user = "r2d2";
     opts.passwd = "r2d2";
     
-    auto host = make_shared<VFSNetFTPHost>("127.0.0.1");
+    auto host = make_shared<VFSNetFTPHost>("macmini.local");
     XCTAssert( host->Open("/", opts) == 0 );
     
     const char *fn1 = "/System/Library/Kernels/kernel",
@@ -181,14 +181,13 @@ static const char* readme = "\n\
 
 // thanks to QNAP weird firmware update - it's ftp server stop overwriting files and began to appending them always
 // so currently using OSX Server built-in ftp.
-- (void)test127_0_0_1_AppendTest
+- (void)testMacMini_AppendTest
 {
     VFSNetFTPOptions opts;
     opts.user = "r2d2";
     opts.passwd = "r2d2";
     
-//    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    auto host = make_shared<VFSNetFTPHost>("127.0.0.1");
+    auto host = make_shared<VFSNetFTPHost>("macmini.local");
     
     XCTAssert( host->Open("/", opts) == 0 );
     const char *fn = "/Public/!FilesTesting/append.txt";
@@ -291,7 +290,7 @@ static const char* readme = "\n\
     opts.user = "r2d2";    
     opts.passwd = "r2d2";
 
-    auto host = make_shared<VFSNetFTPHost>("127.0.0.1");
+    auto host = make_shared<VFSNetFTPHost>("macmini.local");
     XCTAssert( host->Open("/", opts) == 0 );
     
     string fn1 = "/System/Library/Kernels/kernel", fn2 = "/kernel", fn3 = "/kernel34234234";

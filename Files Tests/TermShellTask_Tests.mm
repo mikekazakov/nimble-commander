@@ -9,6 +9,22 @@
 #include "tests_common.h"
 #include "TermShellTask.h"
 #include "common_paths.h"
+#include "common.h"
+
+static void testMicrosleep(uint64_t _microseconds)
+{
+    if( dispatch_is_main_queue() ) {
+        double secs = double(_microseconds) / USEC_PER_SEC;
+        NSDate *when = [NSDate dateWithTimeIntervalSinceNow:secs];
+        do {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:when];
+            if ([when timeIntervalSinceNow] < 0.0)
+                break;
+        } while(1);
+    }
+    else
+        this_thread::sleep_for(microseconds(_microseconds));
+}
 
 @interface TermShellTask_Tests : XCTestCase
 @end
@@ -21,7 +37,7 @@
     
     string cwd = CommonPaths::Get(CommonPaths::Home);
     shell.Launch(cwd.c_str(), 100, 100);
-    usleep( microseconds(5s).count() );
+    testMicrosleep( microseconds(5s).count() );
     
     // check cwd
     XCTAssert( shell.CWD() == cwd );
@@ -32,21 +48,21 @@
 
     // test executing binaries within a shell
     shell.ExecuteWithFullPath("/usr/bin/top", nullptr);
-    usleep( microseconds(1s).count() );
+    testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
     XCTAssert( shell.State() == TermShellTask::StateProgramExternal);
     
     // simulates user press Q to quit top
     shell.WriteChildInput("q", 1);
-    usleep( microseconds(1s).count() );
+    testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().empty() );
     XCTAssert( shell.State() == TermShellTask::StateShell);
   
     // check chdir
     cwd = CommonPaths::Get(CommonPaths::Home) + "/Downloads";
     shell.ChDir( cwd.c_str() );
-    usleep( microseconds(1s).count() );
+    testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.CWD() == cwd );
     XCTAssert( shell.State() == TermShellTask::StateShell);
     
@@ -54,13 +70,13 @@
     shell.WriteChildInput("ls ", 3);
     cwd = CommonPaths::Get(CommonPaths::Home);
     shell.ChDir( cwd.c_str() );
-    usleep( microseconds(1s).count() );
+    testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.CWD() == cwd );
     XCTAssert( shell.State() == TermShellTask::StateShell);
 
     // check internal program state
     shell.WriteChildInput("top\r", 4);
-    usleep( microseconds(1s).count() );
+    testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
     XCTAssert( shell.State() == TermShellTask::StateProgramInternal );
@@ -72,9 +88,9 @@
     
     // check execution with short path in different directory
     shell.Launch(CommonPaths::Get(CommonPaths::Home).c_str(), 100, 100);
-    usleep( microseconds(5s).count() );
+    testMicrosleep( microseconds(1s).count() );
     shell.Execute("top", "/usr/bin/", nullptr);
-    usleep( microseconds(1s).count() );
+    testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
     XCTAssert( shell.State() == TermShellTask::StateProgramExternal );

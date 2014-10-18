@@ -40,6 +40,7 @@ static void testMicrosleep(uint64_t _microseconds)
     testMicrosleep( microseconds(5s).count() );
     
     // check cwd
+    NSLog(@"%s | %s", shell.CWD().c_str(), cwd.c_str());
     XCTAssert( shell.CWD() == cwd );
     XCTAssert( shell.State() == TermShellTask::StateShell);
     

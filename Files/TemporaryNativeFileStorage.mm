@@ -51,8 +51,8 @@ static int Extract(
             if(res_write >= 0)
                 res_read -= res_write;
             else {
-                goto error;
                 ret = (int)res_write;
+                goto error;
             }
         }
     }

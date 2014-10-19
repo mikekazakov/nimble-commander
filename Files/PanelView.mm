@@ -505,8 +505,11 @@ struct PanelViewStateStorage
     
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-    if (cursor_pos >= 0)
+    if (cursor_pos >= 0) {
+        self.needsDisplay = true; // force immediately redraw on any rbc since by default there's a delay by invalidate timer and
+                                  // in this case it wont be fired before menu showed
         return [self.delegate PanelViewRequestsContextMenu:self];
+    }
     return nil;
 }
 

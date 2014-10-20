@@ -266,7 +266,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void) Assigned
 {
-    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType] returnTypes:@[]];
+    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL] returnTypes:@[]];
     
     // if we alredy were active and have some focused view - restore it
     if(m_LastResponder)
@@ -283,7 +283,8 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (id)validRequestorForSendType:(NSString *)sendType
                      returnType:(NSString *)returnType
 {
-    if([sendType isEqualToString:NSFilenamesPboardType] &&
+    if(([sendType isEqualToString:NSFilenamesPboardType] ||
+        [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]) &&
        self.isPanelActive &&
        [self ActivePanelData]->Host()->IsNativeFS() )
         return self;
@@ -294,13 +295,16 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
                              types:(NSArray *)types
 {
-    if ([types containsObject:NSFilenamesPboardType] == NO)
-        return NO;
+    if([types containsObject:NSFilenamesPboardType])
+        return [self WriteFilesnamesPBoard:pboard];
+        
+    if([types containsObject:(__bridge NSString *)kUTTypeFileURL])
+        return [self WriteURLSPBoard:pboard];
     
-    return [self WriteToPasteboard:pboard];
+    return NO;
 }
 
-- (bool)WriteToPasteboard:(NSPasteboard *)pboard
+- (bool)WriteFilesnamesPBoard:(NSPasteboard *)pboard
 {
     if(!self.isPanelActive ||
        ![self ActivePanelData]->Host()->IsNativeFS())
@@ -326,6 +330,33 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     [pboard clearContents];
     [pboard declareTypes:@[NSFilenamesPboardType] owner:nil];
     return [pboard setPropertyList:filenames forType:NSFilenamesPboardType] == TRUE;
+}
+
+- (bool)WriteURLSPBoard:(NSPasteboard *)pboard
+{
+    if(!self.isPanelActive ||
+       ![self ActivePanelData]->Host()->IsNativeFS())
+        return false;
+    
+    NSMutableArray *fileurls = [NSMutableArray new];
+    
+    PanelData *pd = [self ActivePanelData];
+    string dir_path = pd->DirectoryPathWithTrailingSlash();
+    if(pd->Stats().selected_entries_amount > 0) {
+        for(auto &i: pd->StringsFromSelectedEntries())
+            [fileurls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:(dir_path + i.c_str()).c_str()]]];
+    }
+    else {
+        auto const *item = self.ActivePanelView.item;
+        if(item && !item->IsDotDot())
+            [fileurls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:(dir_path + item->Name()).c_str()]]];
+    }
+    
+    if(fileurls.count == 0)
+        return false;
+    
+    [pboard clearContents]; // clear pasteboard to take ownership
+    return [pboard writeObjects:fileurls]; // write the URLs
 }
 
 - (void) Resigned
@@ -691,7 +722,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (IBAction)copy:(id)sender
 {
-    [self WriteToPasteboard:NSPasteboard.generalPasteboard];
+    [self WriteFilesnamesPBoard:NSPasteboard.generalPasteboard];
     // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
 }
 

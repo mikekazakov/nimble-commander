@@ -62,13 +62,29 @@ void InterpretUTF16BEBufferAsUniChar(
                                      );
 
 /**
+ * UTF16LE->UTF8
  * _input_chars - amount or characters, not bytes
  * _output_size - size of buffer in bytes
  * _output_result - amount of utf8 chars in buffer resulted, not accounting null-terminator
  * output will be null-terminated
  * _input_chars_eaten - (optional) how much input unicode characters was processed
  */
-void InterpretUnicharsAsUTF8(const unsigned short* _input,
+void InterpretUnicharsAsUTF8(const uint16_t* _input,
+                             size_t _input_chars,
+                             unsigned char* _output,
+                             size_t _output_size,
+                             size_t&_output_result,
+                             size_t*_input_chars_eaten);
+
+/**
+ * UTF32LE->UTF8
+ * _input_chars - amount or characters, not bytes
+ * _output_size - size of buffer in bytes
+ * _output_result - amount of utf8 chars in buffer resulted, not accounting null-terminator
+ * output will be null-terminated
+ * _input_chars_eaten - (optional) how much input unicode characters was processed
+ */
+void InterpretUnicodeAsUTF8(const uint32_t* _input,
                              size_t _input_chars,
                              unsigned char* _output,
                              size_t _output_size,

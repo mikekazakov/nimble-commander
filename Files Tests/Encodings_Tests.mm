@@ -55,4 +55,31 @@
     }
 }
 
+- (void)testInterpretUnicodeAsUTF8
+{
+    { // using nsstring->utf32->utf8 == nsstring->utf comparison
+        NSString *input_ns = @"☕Hello world, Привет мир🌀😁🙀北京市🟔🜽𞸵𝄑𝁺🁰";
+        const char *input_ns_utf8 = input_ns.UTF8String;
+        uint32_t input[64];
+        unsigned long input_sz;
+        [input_ns getBytes:input
+                 maxLength:sizeof(input)
+                usedLength:&input_sz
+                  encoding:NSUTF32LittleEndianStringEncoding
+                   options:0
+                     range:NSMakeRange(0, input_ns.length)
+            remainingRange:nullptr];
+        input_sz /= sizeof(uint32_t);
+        
+        unsigned char output[128];
+        size_t output_sz;
+        size_t input_eaten;
+        InterpretUnicodeAsUTF8(input, input_sz, output, 128, output_sz, &input_eaten);
+        XCTAssert(input_eaten == input_sz);
+        XCTAssert(output_sz == strlen(input_ns_utf8));
+        for(int i = 0; i < output_sz; ++i)
+            XCTAssert(output[i] == (unsigned char)input_ns_utf8[i]);
+    }
+}
+
 @end

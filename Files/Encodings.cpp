@@ -1459,7 +1459,7 @@ void InterpretUTF16BEBufferAsUniChar(
     *_output_sz = total;
 }
 
-void InterpretUnicharsAsUTF8(const unsigned short* _input,
+void InterpretUnicharsAsUTF8(const uint16_t* _input,
                              size_t _input_chars,
                              unsigned char* _output,
                              size_t _output_size,
@@ -1546,6 +1546,86 @@ void InterpretUnicharsAsUTF8(const unsigned short* _input,
         // place UTF8 chars into output buffer
         if( output_sz_left > utf8_sz) {
             cur += input_delta;
+            output_sz_left -= utf8_sz;
+            for(int i = 0; i < utf8_sz; ++i)
+                *(output++) = utf8[i];
+        }
+        else // we're out of output space
+            break;
+    }
+    
+    assert(output_sz_left > 0);
+    _output_result = output - _output;
+    *output = 0; // null-terminate output utf8 string
+    if(_input_chars_eaten)
+        *_input_chars_eaten = cur - _input;
+}
+
+void InterpretUnicodeAsUTF8(const uint32_t* _input,
+                            size_t _input_chars,
+                            unsigned char* _output,
+                            size_t _output_size,
+                            size_t&_output_result,
+                            size_t*_input_chars_eaten)
+{
+    const uint32_t *cur = _input;
+    const uint32_t *end = cur + _input_chars;
+    unsigned char *output = _output;
+    
+    if(_input_chars_eaten)
+        *_input_chars_eaten = 0;
+    
+    if( _input == nullptr || _output == nullptr ) {
+        _output_result = 0;
+        return;
+    }
+    if( _output_size == 1) {
+        _output[0] = _output_result = 0;
+        return;
+    }
+    else if( _output_size == 0 ) {
+        _output_result = 0;
+        return;
+    }
+    
+    size_t output_sz_left = _output_size;
+    
+    while( cur < end ) {
+        uint32_t codepoint = *cur; // we have codepoint from start
+        unsigned char utf8[4];
+        unsigned utf8_sz;
+        
+        // convert unicode code points into an array of UTF8 chars
+        if( codepoint < 0x0080 ) {
+            utf8_sz = 1;
+            utf8[0] = codepoint;
+        }
+        else if( codepoint <= 0x7FF ) {
+            utf8_sz = 2;
+            utf8[0] = (codepoint >> 6)   + 0xC0;
+            utf8[1] = (codepoint & 0x3F) + 0x80;
+        }
+        else if( codepoint <= 0xFFFF ) {
+            utf8_sz = 3;
+            utf8[0] = (codepoint >> 12)         + 0xE0;
+            utf8[1] = ((codepoint >> 6) & 0x3F) + 0x80;
+            utf8[2] = (codepoint & 0x3F)        + 0x80;
+        }
+        else if( codepoint <= 0x10FFFF ) {
+            utf8_sz = 4;
+            utf8[0] = (codepoint >> 18)          + 0xF0;
+            utf8[1] = ((codepoint >> 12) & 0x3F) + 0x80;
+            utf8[2] = ((codepoint >> 6)  & 0x3F) + 0x80;
+            utf8[3] = (codepoint & 0x3F)         + 0x80;
+        }
+        else { // fallback on error
+            utf8_sz = 1;
+            utf8[0] = '?';
+        }
+        
+        // place UTF8 chars into output buffer
+        if( output_sz_left > utf8_sz) {
+            cur++;
             output_sz_left -= utf8_sz;
             for(int i = 0; i < utf8_sz; ++i)
                 *(output++) = utf8[i];

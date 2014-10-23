@@ -24,6 +24,7 @@ VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
     m_Arc(0),
     m_SeekCacheControl(dispatch_queue_create(__FILES_IDENTIFIER__".VFSArchiveHost.sc_control_queue", DISPATCH_QUEUE_SERIAL))
 {
+    assert(_parent);
 }
 
 VFSArchiveHost::~VFSArchiveHost()
@@ -124,6 +125,7 @@ int VFSArchiveHost::ReadArchiveListing()
         int path_len = (int)strlen(path);
         
         bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
+        bool isreg = (stat->st_mode & S_IFMT) == S_IFREG;
         
         char short_name[256];
         char parent_path[1024];
@@ -140,7 +142,7 @@ int VFSArchiveHost::ReadArchiveListing()
         
         if(parent_dir->full_path != parent_path)
             parent_dir = FindOrBuildDir(parent_path);
-        
+                
         VFSArchiveDirEntry *entry = 0;
         if(isdir) // check if it wasn't added before via FindOrBuildDir
             for(auto &it: parent_dir->entries)
@@ -174,6 +176,10 @@ int VFSArchiveHost::ReadArchiveListing()
                 m_PathToDir.insert(make_pair(path, dir));
             }
         }
+        
+        if(isdir) m_TotalDirs++;
+        if(isreg) m_TotalRegs++;
+        m_TotalFiles++;
     }
     
     

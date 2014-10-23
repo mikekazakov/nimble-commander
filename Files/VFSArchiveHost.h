@@ -50,6 +50,10 @@ public:
     
     int GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs) override;
     virtual bool ShouldProduceThumbnails() const override;
+
+    inline uint32_t StatTotalFiles() const { return m_TotalFiles; }
+    inline uint32_t StatTotalDirs() const { return m_TotalDirs; }
+    inline uint32_t StatTotalRegs() const { return m_TotalRegs; }
     
     // Caching section - to reduce seeking overhead:
     
@@ -84,6 +88,9 @@ private:
     
 // TODO: change this to map<string, VFSArchiveDir>
     map<string, VFSArchiveDir*>   m_PathToDir;
+    uint32_t                                m_TotalFiles = 0;
+    uint32_t                                m_TotalDirs = 0;
+    uint32_t                                m_TotalRegs = 0;
     uint64_t                                m_ArchiveFileSize = 0;
     uint64_t                                m_ArchivedFilesTotalSize = 0;
     uint32_t                                m_LastItemUID = 0;

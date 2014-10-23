@@ -926,6 +926,8 @@ static_assert(sizeof(g_SingleBytesTable) / sizeof(unsigned short*) == ENCODING_S
     ((((uint16_t)((value) & 0x00FF)) << 8) | \
     (((uint16_t)((value) & 0xFF00)) >> 8))
 
+static const uint16_t g_ReplacementCharacter = 0xFFFD; //  � character
+
 void InterpretSingleByteBufferAsUniCharPreservingBufferSize(
                                                             const unsigned char* _input,
                                                             size_t _input_size,
@@ -1455,4 +1457,106 @@ void InterpretUTF16BEBufferAsUniChar(
     }
     
     *_output_sz = total;
+}
+
+void InterpretUnicharsAsUTF8(const unsigned short* _input,
+                             size_t _input_chars,
+                             unsigned char* _output,
+                             size_t _output_size,
+                             size_t&_output_result,
+                             size_t*_input_chars_eaten)
+{
+    const uint16_t *cur = _input;
+    const uint16_t *end = cur + _input_chars;
+    unsigned char *output = _output;
+    
+    if(_input_chars_eaten)
+        *_input_chars_eaten = 0;
+    
+    if( _input == nullptr || _output == nullptr ) {
+        _output_result = 0;
+        return;
+    }
+    if( _output_size == 1) {
+        _output[0] = _output_result = 0;
+        return;
+    }
+    else if( _output_size == 0 ) {
+        _output_result = 0;
+        return;
+    }
+    
+    size_t output_sz_left = _output_size;
+    
+    while( cur < end ) {
+        uint16_t val = *cur;
+        uint32_t codepoint;
+        unsigned char utf8[4];
+        unsigned utf8_sz, input_delta = 1;
+        
+        // decode UTF16 aka Unichars
+        if(val <= 0xD7FF || (val >= 0xE000 && val <= 0xFFFF)) // BMP - just use it
+            codepoint = val;
+        else { // process surrogates
+            if(val >= 0xD800 && val <= 0xDBFF) { // leading surrogate
+                if(cur + 1 < end) {
+                    uint16_t next = *(cur+1);
+                    if(next >= 0xDC00 && next <= 0xDFFF) { // ok, normal surrogates
+                        codepoint = (((val - 0xD800) << 10) + (next - 0xDC00) + 0x0010000);
+                        input_delta = 2;
+                    }
+                    else // corrupted surrogate - without trailing
+                        codepoint = g_ReplacementCharacter;
+                }
+                else // torn surrogate pair
+                    codepoint = g_ReplacementCharacter;
+            }
+            else // trailing surrogate found - invalid situation
+                codepoint = g_ReplacementCharacter;
+        }
+
+        // convert unicode code points into an array of UTF8 chars
+        if( codepoint < 0x0080 ) {
+            utf8_sz = 1;
+            utf8[0] = codepoint;
+        }
+        else if( codepoint <= 0x7FF ) {
+            utf8_sz = 2;
+            utf8[0] = (codepoint >> 6)   + 0xC0;
+            utf8[1] = (codepoint & 0x3F) + 0x80;
+        }
+        else if( codepoint <= 0xFFFF ) {
+            utf8_sz = 3;
+            utf8[0] = (codepoint >> 12)         + 0xE0;
+            utf8[1] = ((codepoint >> 6) & 0x3F) + 0x80;
+            utf8[2] = (codepoint & 0x3F)        + 0x80;
+        }
+        else if( codepoint <= 0x10FFFF ) {
+            utf8_sz = 4;
+            utf8[0] = (codepoint >> 18)          + 0xF0;
+            utf8[1] = ((codepoint >> 12) & 0x3F) + 0x80;
+            utf8[2] = ((codepoint >> 6)  & 0x3F) + 0x80;
+            utf8[3] = (codepoint & 0x3F)         + 0x80;
+        }
+        else { // fallback on error
+            utf8_sz = 1;
+            utf8[0] = '?';
+        }
+        
+        // place UTF8 chars into output buffer
+        if( output_sz_left > utf8_sz) {
+            cur += input_delta;
+            output_sz_left -= utf8_sz;
+            for(int i = 0; i < utf8_sz; ++i)
+                *(output++) = utf8[i];
+        }
+        else // we're out of output space
+            break;
+    }
+    
+    assert(output_sz_left > 0);
+    _output_result = output - _output;
+    *output = 0; // null-terminate output utf8 string
+    if(_input_chars_eaten)
+        *_input_chars_eaten = cur - _input;
 }

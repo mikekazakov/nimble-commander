@@ -594,6 +594,7 @@
 		CFAC50D31714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm */; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
+		CFB1E08319F8ED4300AD567A /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */; };
 		CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */; };
 		CFB3E4831844ACD700D375E2 /* TermShellTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */; };
 		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
@@ -1217,6 +1218,7 @@
 		CFB060DC172E6AC4001F6949 /* Common.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Common.mm; sourceTree = "<group>"; };
 		CFB190D717A3B1FA005B8B15 /* ObjcToCppObservingBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcToCppObservingBridge.h; sourceTree = "<group>"; };
 		CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
+		CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Encodings_Tests.mm; sourceTree = "<group>"; };
 		CFB3E4781844AC8A00D375E2 /* MainWindowTerminalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowTerminalState.h; sourceTree = "<group>"; };
 		CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowTerminalState.mm; sourceTree = "<group>"; };
 		CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermShellTask.mm; sourceTree = "<group>"; };
@@ -1746,6 +1748,7 @@
 				CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */,
 				CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */,
 				CFC5D4AA19BB52D7005BB24A /* Hash_Tests.mm */,
+				CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
 			path = "Files Tests";
@@ -2790,6 +2793,7 @@
 				CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */,
 				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
 				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
+				CFB1E08319F8ED4300AD567A /* Encodings_Tests.mm in Sources */,
 				CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */,
 				CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */,

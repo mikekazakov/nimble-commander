@@ -69,6 +69,7 @@ static bool IsQuickSearchStringCharacter(NSString *_s)
         [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+        [un removeCharactersInString:@"/"]; // such character simply can't appear in filename under unix
         chars = un;
     });
     

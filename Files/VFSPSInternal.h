@@ -36,6 +36,9 @@ struct VFSPSHost::ProcInfo
     
     time_t start_time;
     
+    // is this process sandboxed
+    bool    sandboxed = false;
+    
     int    status;
     
     int     priority;

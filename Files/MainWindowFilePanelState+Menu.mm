@@ -49,8 +49,8 @@
     IF(tag_view_sync_panels)        return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
     IF(tag_file_open_in_opp)        return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.ActivePanelView.item->IsDir();
     IF(tag_cmd_compress)            return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && !self.ActivePanelView.item->IsDotDot();
-    IF(tag_cmd_link_soft)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && !self.ActivePanelView.item->IsDotDot() && m_LeftPanelController.VFS->IsNativeFS() && m_RightPanelController.VFS->IsNativeFS();
-    IF(tag_cmd_link_hard)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && m_LeftPanelController.VFS->IsNativeFS() && m_RightPanelController.VFS->IsNativeFS() && !self.ActivePanelView.item->IsDir();
+    IF(tag_cmd_link_soft)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && !self.ActivePanelView.item->IsDotDot() && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS();
+    IF(tag_cmd_link_hard)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS() && !self.ActivePanelView.item->IsDir();
     IF(tag_cmd_link_edit)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.ActivePanelController.VFS->IsNativeFS() && !self.ActivePanelView.item->IsDir() && self.ActivePanelView.item->IsSymlink();
     IF(tag_cmd_copy_to)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
     IF(tag_cmd_copy_as)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
@@ -63,7 +63,8 @@
 
 - (IBAction)OnSyncPanels:(id)sender
 {
-    if(m_LeftPanelController.isActive)
+    assert(0);
+/*    if(m_LeftPanelController.isActive)
         [m_RightPanelController GoToDir:m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost
                                     vfs:m_LeftPanelController.VFS
                            select_entry:""
@@ -72,18 +73,19 @@
         [m_LeftPanelController GoToDir:m_RightPanelController.GetCurrentDirectoryPathRelativeToHost
                                    vfs:m_RightPanelController.VFS
                           select_entry:""
-                                 async:true];
+                                 async:true];*/
 }
 
 - (IBAction)OnSwapPanels:(id)sender
 {
-    swap(m_LeftPanelController, m_RightPanelController);
+    assert(0);
+/*    swap(m_LeftPanelController, m_RightPanelController);
     [m_MainSplitView SwapViews];
     
     [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
     [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
     
-    [self savePanelsOptions];
+    [self savePanelsOptions];*/
 }
 
 - (IBAction)OnShowTerminal:(id)sender
@@ -97,8 +99,8 @@
 - (IBAction)OnFileOpenInOppositePanel:(id)sender
 {
     if(!self.isPanelActive || m_MainSplitView.AnyCollapsedOrOverlayed || !self.ActivePanelView.item || !self.ActivePanelView.item->IsDir()) return;
-    auto cur = self.ActivePanelController == m_LeftPanelController ? m_LeftPanelController : m_RightPanelController;
-    auto opp = self.ActivePanelController == m_LeftPanelController ?  m_RightPanelController : m_LeftPanelController;
+    auto cur = self.ActivePanelController;
+    auto opp = self.oppositePanelController;
     [opp GoToDir:cur.GetCurrentFocusedEntryFilePathRelativeToHost
              vfs:cur.VFS
     select_entry:""
@@ -115,20 +117,11 @@
     shared_ptr<VFSHost> srcvfs, dstvfs;
     string srcroot, dstroot;
     PanelController *target_pc;
-    if([self ActivePanelController] == m_LeftPanelController) {
-        srcvfs = m_LeftPanelController.VFS;
-        dstvfs = m_RightPanelController.VFS;
-        srcroot = [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost];
-        dstroot = [m_RightPanelController GetCurrentDirectoryPathRelativeToHost];
-        target_pc = m_RightPanelController;
-    }
-    else {
-        srcvfs = m_RightPanelController.VFS;
-        dstvfs = m_LeftPanelController.VFS;
-        srcroot = [m_RightPanelController GetCurrentDirectoryPathRelativeToHost];
-        dstroot = [m_LeftPanelController GetCurrentDirectoryPathRelativeToHost];
-        target_pc = m_LeftPanelController;
-    }
+    srcvfs = self.ActivePanelController.VFS;
+    dstvfs = self.oppositePanelController.VFS;
+    srcroot = [self.ActivePanelController GetCurrentDirectoryPathRelativeToHost];
+    dstroot = [self.oppositePanelController GetCurrentDirectoryPathRelativeToHost];
+    target_pc = self.oppositePanelController;
     
     FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(files)
                                                                      srcroot:srcroot.c_str()
@@ -141,7 +134,9 @@
 
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender
 {
-    string link_path;
+    if(!self.ActivePanelController || !self.oppositePanelController)
+        return;
+    
     auto const *item = self.ActivePanelView.item;
     if(!item)
         return;
@@ -150,10 +145,7 @@
     if(!item->IsDotDot())
         source_path += item->Name();
     
-    if(m_LeftPanelController.isActive)
-        link_path = m_RightPanelController.GetCurrentDirectoryPathRelativeToHost;
-    else
-        link_path = m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost;
+    string link_path = self.oppositePanelController.GetCurrentDirectoryPathRelativeToHost;
     
     if(!item->IsDotDot())
         link_path += item->Name();
@@ -229,19 +221,15 @@
 }
 
 - (IBAction)OnFileCopyCommand:(id)sender{
-    if(!self.isPanelActive) return;
+    if(!self.ActivePanelController || !self.oppositePanelController) return;
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
     
     const PanelData *source, *destination;
-    if(m_LeftPanelController.isActive) {
-        source = &m_LeftPanelController.data;
-        destination = &m_RightPanelController.data;
-    }
-    else {
-        source = &m_RightPanelController.data;
-        destination = &m_LeftPanelController.data;
-    }
+    source = &self.ActivePanelController.data;
+    destination = &self.oppositePanelController.data;
+    __weak PanelController *act = self.ActivePanelController;
+    __weak PanelController *opp = self.oppositePanelController;
     
     auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
     if(files->empty())
@@ -286,8 +274,8 @@
              if(op) {
                  [op AddOnFinishHandler:^{
                      dispatch_to_main_queue( ^{
-                         [m_LeftPanelController RefreshDirectory];
-                         [m_RightPanelController RefreshDirectory];
+                         [(PanelController*)act RefreshDirectory];
+                         [(PanelController*)opp RefreshDirectory];
                      });
                  }];
                  [m_OperationsController AddOperation:op];
@@ -298,20 +286,14 @@
 
 - (IBAction)OnFileCopyAsCommand:(id)sender{
     // process only current cursor item
-    if(!self.isPanelActive) return;
+    if(!self.ActivePanelController || !self.oppositePanelController) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     const PanelData *source, *destination;
-    if(m_LeftPanelController.isActive)
-    {
-        source = &m_LeftPanelController.data;
-        destination = &m_RightPanelController.data;
-    }
-    else
-    {
-        source = &m_RightPanelController.data;
-        destination = &m_LeftPanelController.data;
-    }
+    source = &self.ActivePanelController.data;
+    destination = &self.oppositePanelController.data;
+    __weak PanelController *act = self.ActivePanelController;
+    __weak PanelController *opp = self.oppositePanelController;
     
     auto const *item = self.ActivePanelView.item;
     if(!item || item->IsDotDot())
@@ -358,8 +340,8 @@
              {
                  [op AddOnFinishHandler:^{
                      dispatch_to_main_queue( ^{
-                         [m_LeftPanelController RefreshDirectory];
-                         [m_RightPanelController RefreshDirectory];
+                         [(PanelController*)act RefreshDirectory];
+                         [(PanelController*)opp RefreshDirectory];
                      });
                  }];
                  [m_OperationsController AddOperation:op];
@@ -369,20 +351,14 @@
 }
 
 - (IBAction)OnFileRenameMoveCommand:(id)sender{
-    if(!self.isPanelActive) return;
+    if(!self.ActivePanelController || !self.oppositePanelController) return;
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
     const PanelData *source, *destination;
-    if(m_LeftPanelController.isActive)
-    {
-        source = &m_LeftPanelController.data;
-        destination = &m_RightPanelController.data;
-    }
-    else
-    {
-        source = &m_RightPanelController.data;
-        destination = &m_LeftPanelController.data;
-    }
+    source = &self.ActivePanelController.data;
+    destination = &self.oppositePanelController.data;
+    __weak PanelController *act = self.ActivePanelController;
+    __weak PanelController *opp = self.oppositePanelController;
     
     if(!source->Host()->IsWriteable())
         return;
@@ -426,8 +402,8 @@
              if(op) {
                  [op AddOnFinishHandler:^{
                      dispatch_to_main_queue( ^{
-                         [m_LeftPanelController RefreshDirectory];
-                         [m_RightPanelController RefreshDirectory];
+                         [(PanelController*)act RefreshDirectory];
+                         [(PanelController*)opp RefreshDirectory];
                      });
                  }];
                  [m_OperationsController AddOperation:op];
@@ -439,21 +415,15 @@
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender {
     
     // process only current cursor item
-    if(!self.isPanelActive) return;
+    if(!self.ActivePanelController || !self.oppositePanelController) return;
     if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
         return;
     
     const PanelData *source, *destination;
-    if(m_LeftPanelController.isActive)
-    {
-        source = &m_LeftPanelController.data;
-        destination = &m_RightPanelController.data;
-    }
-    else
-    {
-        source = &m_RightPanelController.data;
-        destination = &m_LeftPanelController.data;
-    }
+    source = &self.ActivePanelController.data;
+    destination = &self.oppositePanelController.data;
+    __weak PanelController *act = self.ActivePanelController;
+    __weak PanelController *opp = self.oppositePanelController;
     
     if(!source->Host()->IsWriteable())
         return;
@@ -497,12 +467,12 @@
                  string single_fn_rename;
                  if( req_path.native().find('/') == string::npos )
                      single_fn_rename = req_path.filename().native();
-                 auto active = self.ActivePanelController;
                  
                  [op AddOnFinishHandler:^{
                      dispatch_to_main_queue( ^{
-                         [m_LeftPanelController RefreshDirectory];
-                         [m_RightPanelController RefreshDirectory];
+                         PanelController* active = act;
+                         [active RefreshDirectory];
+                         [(PanelController*)opp RefreshDirectory];
                          PanelControllerDelayedSelection req;
                          req.filename = single_fn_rename;
                          [active ScheduleDelayedSelectionChangeFor:req checknow:true];

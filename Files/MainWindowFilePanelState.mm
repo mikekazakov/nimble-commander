@@ -48,32 +48,23 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController
                                                                                      window:_wnd];
         
-        m_LeftPanelController = [PanelController new];
-        m_RightPanelController = [PanelController new];
+        m_LeftPanelControllers.emplace_back([PanelController new]);
+        m_RightPanelControllers.emplace_back([PanelController new]);
+  
+        auto left_controller = m_LeftPanelControllers.front();
+        auto right_controller = m_RightPanelControllers.front();
         
         [self CreateControls];
         
         // panel creation and preparation
-        m_LeftPanelController.state = self;
-        [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+        left_controller.state = self;
+        [left_controller AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+        right_controller.state = self;
+        [right_controller AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
+
         
-        m_RightPanelController.state = self;
-        [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
-        
-        m_Skin = ((AppDelegate*)[NSApplication sharedApplication].delegate).Skin;
-        if (m_Skin == ApplicationSkin::Modern)
-        {
-            [m_LeftPanelController.view SetPresentation:new ModernPanelViewPresentation];
-            [m_RightPanelController.view SetPresentation:new ModernPanelViewPresentation];
-        }
-        else if (m_Skin == ApplicationSkin::Classic)
-        {
-            [m_LeftPanelController.view SetPresentation:new ClassicPanelViewPresentation];
-            [m_RightPanelController.view SetPresentation:new ClassicPanelViewPresentation];
-        }
-        
-        m_LeftPanelController.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
-        m_RightPanelController.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
+        left_controller.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
+        right_controller.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
 
         
         // now load data into panels, on any fails - go into home dir
@@ -81,20 +72,20 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         NSString *rp = [defaults stringForKey:@"SecondPanelPath"];
         
         if(!configuration::is_sandboxed) { // regular waypath
-            if(!lp || !lp.length || [m_LeftPanelController GoToDir:lp.fileSystemRepresentation
+            if(!lp || !lp.length || [left_controller GoToDir:lp.fileSystemRepresentation
                                                                vfs:VFSNativeHost::SharedHost()
                                                       select_entry:""
                                                              async:false] < 0)
-                [m_LeftPanelController GoToDir:CommonPaths::Get(CommonPaths::Home)
+                [left_controller GoToDir:CommonPaths::Get(CommonPaths::Home)
                                            vfs:VFSNativeHost::SharedHost()
                                   select_entry:""
                                          async:false];
         
-            if(!rp || !rp.length || [m_RightPanelController GoToDir:rp.fileSystemRepresentation
+            if(!rp || !rp.length || [right_controller GoToDir:rp.fileSystemRepresentation
                                                                 vfs:VFSNativeHost::SharedHost()
                                                        select_entry:""
                                                               async:false] < 0)
-                [m_RightPanelController GoToDir:"/"
+                [right_controller GoToDir:"/"
                                             vfs:VFSNativeHost::SharedHost()
                                    select_entry:""
                                           async:false];
@@ -103,20 +94,20 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
             if(!lp ||
                !lp.length ||
                !SandboxManager::Instance().CanAccessFolder(lp.fileSystemRepresentation) ||
-               [m_LeftPanelController GoToDir:lp.fileSystemRepresentation
+               [left_controller GoToDir:lp.fileSystemRepresentation
                                           vfs:VFSNativeHost::SharedHost()
                                  select_entry:""
                                         async:false] < 0) {
                    // failed to load saved panel path (or there was no saved path)
                    // try to go to some path we can
                    if(SandboxManager::Instance().Empty() ||
-                      [m_LeftPanelController GoToDir:SandboxManager::Instance().FirstFolderWithAccess()
+                      [left_controller GoToDir:SandboxManager::Instance().FirstFolderWithAccess()
                                                  vfs:VFSNativeHost::SharedHost()
                                         select_entry:""
                                                async:false] < 0) {
                           // failed to go to folder with granted access(or no such folders)
                           // as last resort - go to startup cwd
-                          [m_LeftPanelController GoToDir:((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
+                          [left_controller GoToDir:((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
                                                      vfs:VFSNativeHost::SharedHost()
                                             select_entry:""
                                                    async:false];
@@ -126,20 +117,20 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
             if(!rp ||
                !rp.length ||
                !SandboxManager::Instance().CanAccessFolder(rp.fileSystemRepresentation) ||
-               [m_RightPanelController GoToDir:rp.fileSystemRepresentation
+               [right_controller GoToDir:rp.fileSystemRepresentation
                                            vfs:VFSNativeHost::SharedHost()
                                   select_entry:""
                                          async:false] < 0) {
                    // failed to load saved panel path (or there was no saved path)
                    // try to go to some path we can
                    if(SandboxManager::Instance().Empty() ||
-                      [m_RightPanelController GoToDir:SandboxManager::Instance().FirstFolderWithAccess()
+                      [right_controller GoToDir:SandboxManager::Instance().FirstFolderWithAccess()
                                                   vfs:VFSNativeHost::SharedHost()
                                          select_entry:""
                                                 async:false] < 0) {
                           // failed to go to folder with granted access(or no such folders)
                           // as last resort - go to startup cwd
-                          [m_RightPanelController GoToDir:((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
+                          [right_controller GoToDir:((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
                                                       vfs:VFSNativeHost::SharedHost()
                                              select_entry:""
                                                     async:false];
@@ -158,7 +149,10 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 {
     m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
     m_MainSplitView.translatesAutoresizingMaskIntoConstraints = NO;
-    [m_MainSplitView SetBasicViews:m_LeftPanelController.view second:m_RightPanelController.view];
+    [m_MainSplitView.leftTabbedHolder addPanel:m_LeftPanelControllers.front().view];
+    [m_MainSplitView.rightTabbedHolder addPanel:m_RightPanelControllers.front().view];
+    m_MainSplitView.leftTabbedHolder.tabBar.delegate = self;
+    m_MainSplitView.rightTabbedHolder.tabBar.delegate = self;
     [self addSubview:m_MainSplitView];
     
     m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 23)];
@@ -275,7 +269,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     
     // if we don't know which view should be active - make left panel a first responder
     if(!self.isPanelActive)
-        [self.window makeFirstResponder:m_LeftPanelController.view];
+        [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
     
     [self UpdateTitle];
 }
@@ -381,20 +375,21 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     if(![PanelController ensureCanGoToNativeFolderSync:m_LeftPanelGoToButton.path])
         return;
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    [m_LeftPanelController GoToDir:m_LeftPanelGoToButton.path
-                               vfs:VFSNativeHost::SharedHost()
-                      select_entry:""
-                             async:true];
+    [self.leftPanelController GoToDir:m_LeftPanelGoToButton.path
+                                  vfs:VFSNativeHost::SharedHost()
+                         select_entry:""
+                                async:true];
 }
 
-- (IBAction)RightPanelGoToButtonAction:(id)sender{
+- (IBAction)RightPanelGoToButtonAction:(id)sender
+{
     if(![PanelController ensureCanGoToNativeFolderSync:m_RightPanelGoToButton.path])
         return;
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    [m_RightPanelController GoToDir:m_RightPanelGoToButton.path
-                               vfs:VFSNativeHost::SharedHost()
-                      select_entry:""
-                             async:true];
+    [self.rightPanelController GoToDir:m_RightPanelGoToButton.path
+                                   vfs:VFSNativeHost::SharedHost()
+                          select_entry:""
+                                 async:true];
 }
 
 - (IBAction)LeftPanelGoto:(id)sender{
@@ -420,7 +415,8 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
     m_Skin = _skin;
     
-    if (_skin == ApplicationSkin::Modern)
+    // rewrite me!
+/*    if (_skin == ApplicationSkin::Modern)
     {
         [m_LeftPanelController.view SetPresentation:new ModernPanelViewPresentation];
         [m_RightPanelController.view SetPresentation:new ModernPanelViewPresentation];
@@ -429,7 +425,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     {
         [m_LeftPanelController.view SetPresentation:new ClassicPanelViewPresentation];
         [m_RightPanelController.view SetPresentation:new ClassicPanelViewPresentation];
-    }
+    }*/
 }
 
 - (bool) isPanelActive
@@ -451,32 +447,101 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (PanelController*) ActivePanelController
 {
-    if(m_LeftPanelController.isActive)
-        return m_LeftPanelController;
-    else if(m_RightPanelController.isActive)
-        return m_RightPanelController;
+    if(!self.window)
+        return nil;
+    NSResponder *r = self.window.firstResponder;
+    for(auto pc: m_LeftPanelControllers)  if(r == pc.view) return pc;
+    for(auto pc: m_RightPanelControllers) if(r == pc.view) return pc;
     return nil;
+}
+
+- (PanelController*) oppositePanelController
+{
+    PanelController* act = self.ActivePanelController;
+    if(!act)
+        return nil;
+    if(act == self.leftPanelController)
+        return self.rightPanelController;
+    return self.leftPanelController;
+}
+
+- (PanelData*) oppositePanelData
+{
+    PanelController* pc = self.oppositePanelController;
+    return pc ? &pc.data : nullptr;
+}
+
+- (PanelView*) oppositePanelView
+{
+    PanelController* pc = self.oppositePanelController;
+    return pc ? pc.view : nil;
+}
+
+- (PanelController*) leftPanelController
+{
+    PanelView *pv = m_MainSplitView.leftTabbedHolder.current;
+    if(!pv) return nil;
+    assert( [pv.delegate isKindOfClass:PanelController.class] );
+    return (PanelController*)pv.delegate;
+}
+
+- (PanelController*) rightPanelController
+{
+    PanelView *pv = m_MainSplitView.rightTabbedHolder.current;
+    if(!pv) return nil;
+    assert( [pv.delegate isKindOfClass:PanelController.class] );
+    return (PanelController*)pv.delegate;
+}
+
+- (bool) isLeftController:(PanelController*)_controller
+{
+    return any_of(begin(m_LeftPanelControllers), end(m_LeftPanelControllers), [&](auto p){ return p == _controller; });
+}
+
+- (bool) isRightController:(PanelController*)_controller
+{
+    return any_of(begin(m_RightPanelControllers), end(m_RightPanelControllers), [&](auto p){ return p == _controller; });
 }
 
 - (void) HandleTabButton
 {
     if([m_MainSplitView AnyCollapsedOrOverlayed])
         return;
-    if(m_LeftPanelController.isActive)
-        [self ActivatePanelByController:m_RightPanelController];
-    else if(m_RightPanelController.isActive)
-        [self ActivatePanelByController:m_LeftPanelController];
-    else ; // mb later ???
+    PanelController *cur = self.ActivePanelController;
+    if(!cur)
+        return;
+    if([self isLeftController:cur])
+        [self.window makeFirstResponder:m_MainSplitView.rightTabbedHolder.current];
+    else
+        [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
 }
 
 - (void)ActivatePanelByController:(PanelController *)controller
 {
-    if (controller == m_LeftPanelController)
-        [self.window makeFirstResponder:m_LeftPanelController.view];
-    else if (controller == m_RightPanelController)
-        [self.window makeFirstResponder:m_RightPanelController.view];
-    else
-        assert(0);
+    if([self isLeftController:controller]) {
+        if(m_MainSplitView.leftTabbedHolder.current == controller.view) {
+            [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
+            return;
+        }
+        for(NSTabViewItem *it in m_MainSplitView.leftTabbedHolder.tabView.tabViewItems)
+            if(it.view == controller.view) {
+                [m_MainSplitView.leftTabbedHolder.tabView selectTabViewItem:it];
+                [self.window makeFirstResponder:it.view];
+                return;
+            }
+    }
+    else if([self isRightController:controller]) {
+        if(m_MainSplitView.rightTabbedHolder.current == controller.view) {
+            [self.window makeFirstResponder:m_MainSplitView.rightTabbedHolder.current];
+            return;
+        }
+        for(NSTabViewItem *it in m_MainSplitView.rightTabbedHolder.tabView.tabViewItems)
+            if(it.view == controller.view) {
+                [m_MainSplitView.rightTabbedHolder.tabView selectTabViewItem:it];
+                [self.window makeFirstResponder:it.view];
+                return;
+            }
+    }
 }
 
 - (void)activePanelChangedTo:(PanelController *)controller
@@ -517,22 +582,22 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void) savePanelsOptions
 {
-    [self savePanelOptionsFor:m_LeftPanelController];
-    [self savePanelOptionsFor:m_RightPanelController];
+    [self savePanelOptionsFor:self.leftPanelController];
+    [self savePanelOptionsFor:self.rightPanelController];
 }
 
 - (void) savePanelOptionsFor:(PanelController*)_pc
 {
-    if(_pc == m_LeftPanelController)
+    if(_pc == self.leftPanelController)
         [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsLeftOptions];
-    else if(_pc == m_RightPanelController)
+    else if(_pc == self.rightPanelController)
         [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsRightOptions];
 }
 
 - (void)flagsChanged:(NSEvent *)event
 {
-    [m_LeftPanelController ModifierFlagsChanged:event.modifierFlags];
-    [m_RightPanelController ModifierFlagsChanged:event.modifierFlags];
+    for(auto p: m_LeftPanelControllers) [p ModifierFlagsChanged:event.modifierFlags];
+    for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:event.modifierFlags];
 }
 
 - (void)PanelPathChanged:(PanelController*)_panel
@@ -542,21 +607,23 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
     if(_panel == self.ActivePanelController)
         [self UpdateTitle];
-     
-    if(_panel == m_LeftPanelController)
-        [m_LeftPanelGoToButton SetCurrentPath:m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost
-                                           at:m_LeftPanelController.VFS];
-    if(_panel == m_RightPanelController)
-        [m_RightPanelGoToButton SetCurrentPath:m_RightPanelController.GetCurrentDirectoryPathRelativeToHost
-                                            at:m_RightPanelController.VFS];
+    
+    [self updateTabNameForController:_panel];
+    
+    if(_panel == self.leftPanelController)
+        [m_LeftPanelGoToButton SetCurrentPath:_panel.GetCurrentDirectoryPathRelativeToHost
+                                           at:_panel.VFS];
+    if(_panel == self.rightPanelController)
+        [m_RightPanelGoToButton SetCurrentPath:_panel.GetCurrentDirectoryPathRelativeToHost
+                                            at:_panel.VFS];
 }
 
 - (void) DidBecomeKeyWindow
 {
     // update key modifiers state for views
     unsigned long flags = [NSEvent modifierFlags];
-    [m_LeftPanelController ModifierFlagsChanged:flags];
-    [m_RightPanelController ModifierFlagsChanged:flags];
+    for(auto p: m_LeftPanelControllers) [p ModifierFlagsChanged:flags];
+    for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:flags];
 }
 
 - (void)WindowDidResize
@@ -590,9 +657,9 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void)SavePanelPaths
 {
-    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:m_LeftPanelController.lastNativeDirectoryPath.c_str()]
+    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:self.leftPanelController.lastNativeDirectoryPath.c_str()]
                                             forKey:@"FirstPanelPath"];
-    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:m_RightPanelController.lastNativeDirectoryPath.c_str()]
+    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:self.rightPanelController.lastNativeDirectoryPath.c_str()]
                                             forKey:@"SecondPanelPath"];
 }
 
@@ -729,18 +796,21 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (void)GetFilePanelsNativePaths:(vector<string> &)_paths
 {
     _paths.clear();
-    if(m_LeftPanelController.VFS->IsNativeFS())
-      _paths.push_back(m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost);
-    if(m_RightPanelController.VFS->IsNativeFS())
-        _paths.push_back(m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost);
+    
+    for(auto p: m_LeftPanelControllers)
+        if(p.VFS->IsNativeFS())
+            _paths.push_back(p.GetCurrentDirectoryPathRelativeToHost);
+    for(auto p: m_RightPanelControllers)
+        if(p.VFS->IsNativeFS())
+            _paths.push_back(p.GetCurrentDirectoryPathRelativeToHost);
 }
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel
 {
     QuickLookView *view = [[QuickLookView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    if(_panel == m_LeftPanelController)
+    if([self isLeftController:_panel])
         m_MainSplitView.rightOverlay = view;
-    else if(_panel == m_RightPanelController)
+    else if([self isRightController:_panel])
         m_MainSplitView.leftOverlay = view;
     else
         return nil;
@@ -750,9 +820,9 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel
 {
     BriefSystemOverview *view = [[BriefSystemOverview alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    if(_panel == m_LeftPanelController)
+    if([self isLeftController:_panel])
         m_MainSplitView.rightOverlay = view;
-    else if(_panel == m_RightPanelController)
+    else if([self isRightController:_panel])
         m_MainSplitView.leftOverlay = view;
     else
         return nil;
@@ -761,9 +831,9 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void)CloseOverlay:(PanelController*)_panel
 {
-    if(_panel == m_LeftPanelController)
+    if([self isLeftController:_panel])
         m_MainSplitView.rightOverlay = 0;
-    else if(_panel == m_RightPanelController)
+    else if([self isRightController:_panel])
         m_MainSplitView.leftOverlay = 0;
 }
 

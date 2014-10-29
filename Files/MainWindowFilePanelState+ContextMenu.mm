@@ -682,12 +682,12 @@ proceed:;
 {
     PanelController *current_cont = _caller;
     PanelController *opp_cont;
-    if(current_cont == m_LeftPanelController)
-        opp_cont = m_RightPanelController;
-    else if(current_cont == m_RightPanelController)
-        opp_cont = m_LeftPanelController;
+    if(current_cont == self.leftPanelController)
+        opp_cont = self.rightPanelController;
+    else if(current_cont == self.rightPanelController)
+        opp_cont = self.leftPanelController;
     else
-        assert(0);
+        return nil;
     
     MainWindowFilePanelContextMenu *menu = [MainWindowFilePanelContextMenu alloc];
     menu = [menu initWithData:_items

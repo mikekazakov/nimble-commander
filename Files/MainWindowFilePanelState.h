@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
 #import "MainWindowStateProtocol.h"
 #import "chained_strings.h"
 
@@ -21,13 +22,12 @@ class PanelData;
 @class MainWndGoToButton;
 @class OperationsSummaryViewController;
 
-@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate>
+@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate, MMTabBarViewDelegate>
 {
     ApplicationSkin m_Skin;
 
-    
-    PanelController *m_LeftPanelController;     // creates and owns
-    PanelController *m_RightPanelController;    // creates and owns
+    vector<PanelController*> m_LeftPanelControllers;
+    vector<PanelController*> m_RightPanelControllers;
     
     FilePanelMainSplitView *m_MainSplitView;
     
@@ -70,9 +70,44 @@ class PanelData;
 
 - (void) savePanelOptionsFor:(PanelController*)_pc;
 
-- (PanelData*) ActivePanelData;
+
+/**
+ * Return currently active file panel if any.
+ */
 - (PanelController*) ActivePanelController;
-- (PanelView*) ActivePanelView;
+- (PanelData*) ActivePanelData; // based on .ActivePanelController
+- (PanelView*) ActivePanelView; // based on .ActivePanelController
+
+/**
+ * If current active panel controller is left - return .rightPanelController,
+ * If current active panel controller is right - return .leftPanelController,
+ * If there's no active panel controller (no focus) - return nil
+ */
+- (PanelController*) oppositePanelController;
+- (PanelData*)       oppositePanelData; // based on oppositePanelController
+- (PanelView*)       oppositePanelView; // based on oppositePanelController
+
+/**
+ * Pick one of a controllers in left side tabbed bar, which is currently selected (regardless if it is active or not).
+ * May return nil in init/shutdown period or in invalid state.
+ */
+- (PanelController*) leftPanelController;
+
+/**
+ * Pick one of a controllers in right side tabbed bar, which is currently selected (regardless if it is active or not).
+ * May return nil in init/shutdown period or in invalid state.
+ */
+- (PanelController*) rightPanelController;
+
+/**
+ * Checks if this controller is one of a state's left-side controllers set.
+ */
+- (bool) isLeftController:(PanelController*)_controller;
+
+/**
+ * Checks if this controller is one of a state's right-side controllers set.
+ */
+- (bool) isRightController:(PanelController*)_controller;
 
 - (void) HandleTabButton;
 @end
@@ -87,3 +122,4 @@ class PanelData;
 
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "MainWindowFilePanelState+Menu.h"
+#import "MainWindowFilePanelState+TabsSupport.h"

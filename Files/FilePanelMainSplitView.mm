@@ -10,6 +10,7 @@
 #import "PanelView.h"
 #import "ModernPanelViewPresentation.h"
 #import "ClassicPanelViewPresentation.h"
+#import "FilePanelsTabbedHolder.h"
 
 @implementation FilePanelMainSplitView
 {
@@ -28,15 +29,21 @@
         self.dividerStyle = NSSplitViewDividerStyleThin;
         self.delegate = self;
         m_Prop = 0.5;
+        
+        FilePanelsTabbedHolder *th1 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        [self addSubview:th1];
+        FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        [self addSubview:th2];
     }
     return self;
 }
 
 - (CGFloat)dividerThickness
 {
-    return [self AnyCollapsed] ? 1 : 0;
+//    return [self AnyCollapsed] ? 1 : 0;
+    return [self AnyCollapsed] ? 1 : 1;
 }
-
+/*
 - (CGFloat)splitView:(NSSplitView *)splitView constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)dividerIndex
 {
     m_Prop = proposedPosition / self.frame.size.width;
@@ -94,7 +101,7 @@
     }
     else
         [splitView adjustSubviews];
-}
+}*/
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
@@ -159,10 +166,16 @@
     m_BasicViews[1].frame = rightrect;
 }
 
-- (void) SetBasicViews:(PanelView*)_v1 second:(PanelView*)_v2
+- (FilePanelsTabbedHolder*) leftTabbedHolder
 {
-    [self addSubview:_v1];
-    [self addSubview:_v2];
+    // REWRITE ME! THIS WILL CRASH!
+    return [self.subviews objectAtIndex:0]; /// !!!!!!!!!!!!!!!!!!!!!!!!!!!
+}
+
+- (FilePanelsTabbedHolder*) rightTabbedHolder
+{
+    // REWRITE ME! THIS WILL CRASH!    
+    return [self.subviews objectAtIndex:1]; /// !!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
 - (NSView*)leftOverlay
@@ -182,23 +195,18 @@
 - (void)setLeftOverlay:(NSView*)_o
 {
     NSRect leftRect = [[self.subviews objectAtIndex:0] frame];
-    if(_o != nil)
-    {
+    if(_o != nil) {
         [_o setFrame:leftRect];
-        if(m_BasicViews[0])
-        {
+        if(m_BasicViews[0]) {
             [self replaceSubview:[self.subviews objectAtIndex:0] with:_o];
         }
-        else
-        {
+        else {
             m_BasicViews[0] = [self.subviews objectAtIndex:0];
             [self replaceSubview:m_BasicViews[0] with:_o];
         }
     }
-    else
-    {
-        if(m_BasicViews[0] != nil)
-        {
+    else {
+        if(m_BasicViews[0] != nil) {
             m_BasicViews[0].frame = leftRect;
             [self replaceSubview:[self.subviews objectAtIndex:0] with:m_BasicViews[0]];
             m_BasicViews[0] = nil;
@@ -209,24 +217,19 @@
 - (void)setRightOverlay:(NSView*)_o
 {
     NSRect rightRect = [[self.subviews objectAtIndex:1] frame];
-    if(_o != nil)
-    {
+    if(_o != nil) {
         [_o setFrame:rightRect];
         
-        if(m_BasicViews[1])
-        {
+        if(m_BasicViews[1]) {
             [self replaceSubview:[self.subviews objectAtIndex:1] with:_o];
         }
-        else
-        {
+        else {
             m_BasicViews[1] = [self.subviews objectAtIndex:1];
             [self replaceSubview:m_BasicViews[1] with:_o];
         }
     }
-    else
-    {
-        if(m_BasicViews[1] != nil)
-        {
+    else {
+        if(m_BasicViews[1] != nil) {
             m_BasicViews[1].frame = rightRect;
             [self replaceSubview:[self.subviews objectAtIndex:1] with:m_BasicViews[1]];
             m_BasicViews[1] = nil;

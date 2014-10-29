@@ -7,12 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "FilePanelsTabbedHolder.h"
 
 @class PanelView;
 
 @interface FilePanelMainSplitView : NSSplitView<NSSplitViewDelegate>
 
-- (void) SetBasicViews:(PanelView*)_v1 second:(PanelView*)_v2;
 - (void) SwapViews;
 
 - (bool) AnyCollapsed;
@@ -28,4 +28,8 @@
 
 @property (nonatomic) NSView* leftOverlay;
 @property (nonatomic) NSView* rightOverlay;
+
+@property (nonatomic) FilePanelsTabbedHolder *leftTabbedHolder;
+@property (nonatomic) FilePanelsTabbedHolder *rightTabbedHolder;
+
 @end

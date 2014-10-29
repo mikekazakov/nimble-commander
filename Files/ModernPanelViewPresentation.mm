@@ -111,8 +111,6 @@ ModernPanelViewPresentationItemsColoringFilter ModernPanelViewPresentationItemsC
 // Item name display insets inside the item line.
 // Order: left, top, right, bottom.
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
-// Width of the divider between views.
-static const double g_DividerWidth = 2;
 
 NSImage *ModernPanelViewPresentation::m_SymlinkArrowImage = nil;
 
@@ -323,29 +321,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     bk_fill_rect.origin.y += m_Header->Height();
     bk_fill_rect.size.height -= m_Header->Height() + m_ItemsFooter->Height();
     CGContextFillRect(context, bk_fill_rect);
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Divider.
-    static CGColorRef divider_stroke_color_act = CGColorCreateGenericRGB(160/255.0, 160/255.0, 160/255.0, 1.0);
-    static CGColorRef divider_stroke_color_act_inact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
-    CGContextSetStrokeColorWithColor(context, wnd_active ? divider_stroke_color_act : divider_stroke_color_act_inact);
-    if (m_IsLeft)
-    {
-        float x = m_ItemsArea.origin.x + m_ItemsArea.size.width;
-        NSDrawWindowBackground(NSMakeRect(x, 0, g_DividerWidth, m_Size.height));
-        NSPoint view_divider[2] = { {x + 0.5, 0}, {x + 0.5, m_Size.height} };
-        CGContextStrokeLineSegments(context, view_divider, 2);
-    }
-    else
-    {
-        NSDrawWindowBackground(NSMakeRect(0, 0, g_DividerWidth, m_Size.height));
-        NSPoint view_divider[2] = { {g_DividerWidth - 0.5, 0}, {g_DividerWidth - 0.5, m_Size.height} };
-        CGContextStrokeLineSegments(context, view_divider, 2);
-    }
 
     // If current panel is on the right, then translate all rendering by the divider's width.
     CGContextSaveGState(context);
-    if (!m_IsLeft) CGContextTranslateCTM(context, g_DividerWidth, 0);
     
     // Header
     string panelpath = m_State->Data->VerboseDirectoryFullPath();
@@ -609,8 +587,7 @@ void ModernPanelViewPresentation::CalculateLayoutFromFrame()
     if(m_VolumeFooter)
         m_ItemsArea.size.height -= m_VolumeFooter->Height();
     
-    m_ItemsArea.size.width = floor(m_Size.width - g_DividerWidth);
-    if (!m_IsLeft) m_ItemsArea.origin.x += g_DividerWidth;
+    m_ItemsArea.size.width = floor(m_Size.width);
     
     m_ItemsPerColumn = int(m_ItemsArea.size.height/m_LineHeight);
     
@@ -679,7 +656,7 @@ NSPoint ModernPanelViewPresentation::ItemOrigin(int _item_index) const
     int column = scrolled_index / entries_in_column;
     int row = scrolled_index % entries_in_column;
     double column_width = floor((m_ItemsArea.size.width - (columns - 1))/columns);
-    return NSMakePoint( column*(column_width + 1) + (m_IsLeft ? 0 : g_DividerWidth),
+    return NSMakePoint( column*(column_width + 1),
                         m_ItemsArea.origin.y + row*m_LineHeight
                        );
 }

@@ -70,7 +70,6 @@ class PanelViewPresentation;
 
 // _presentation must be created using new. PanelView gains ownership of the _presentation.
 - (PanelViewPresentation*) Presentation;
-- (void) SetPresentation:(PanelViewPresentation *)_presentation;
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
 

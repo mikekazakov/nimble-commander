@@ -9,8 +9,11 @@
 #import "PanelView.h"
 #import "PanelData.h"
 #import "PanelViewPresentation.h"
+#import "ModernPanelViewPresentation.h"
+#import "ClassicPanelViewPresentation.h"
 #import "Common.h"
 #import "VFS.h"
+#import "AppDelegate.h"
 
 enum class CursorSelectionType
 {
@@ -78,8 +81,11 @@ struct PanelViewStateStorage
                                                    name:NSApplicationWillResignActiveNotification
                                                  object:[NSApplication sharedApplication]];
         
-        [self frameDidChange];
-        
+        auto skin = ((AppDelegate*)([NSApplication sharedApplication].delegate)).Skin;
+        if (skin == ApplicationSkin::Modern)
+            [self SetPresentation:new ModernPanelViewPresentation];
+        else if(skin == ApplicationSkin::Classic)
+            [self SetPresentation:new ClassicPanelViewPresentation];
     }
     
     return self;

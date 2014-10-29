@@ -703,6 +703,12 @@
 		CFE3829419CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE3829019CEFBA0005C8958 /* BigFileViewSheet.xib */; };
 		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
+		CFE3E84719FFBC4D009ADE5E /* MMTabBarView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */; };
+		CFE3E84919FFBD12009ADE5E /* MMTabBarView.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
+		CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
+		CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
+		CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */; };
 		CFEE8E5117748E3D00F6A254 /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEE8E4F17748E3D00F6A254 /* FontExtras.mm */; };
 		CFF0C83818FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */; };
@@ -775,7 +781,27 @@
 			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
 			remoteInfo = Files;
 		};
+		CFE3E84519FFBB6C009ADE5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFE3E83B19FFBB67009ADE5E /* MMTabBarView.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 06DB23A61609F5830071BDA0;
+			remoteInfo = MMTabBarView;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CFE3E84819FFBCBA009ADE5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CFE3E84919FFBD12009ADE5E /* MMTabBarView.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		B50976A31729BA150080412E /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
@@ -1366,6 +1392,11 @@
 		CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationHeader.h; sourceTree = "<group>"; };
 		CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationItemsFooter.mm; sourceTree = "<group>"; };
 		CFE38BA918FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationItemsFooter.h; sourceTree = "<group>"; };
+		CFE3E83B19FFBB67009ADE5E /* MMTabBarView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarView.xcodeproj; path = 3rd_party/MMTabBarView/MMTabBarView.xcodeproj; sourceTree = "<group>"; };
+		CFE3E84A19FFC0C9009ADE5E /* FilePanelsTabbedHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelsTabbedHolder.h; sourceTree = "<group>"; };
+		CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePanelsTabbedHolder.mm; sourceTree = "<group>"; };
+		CFE3E8501A011218009ADE5E /* MainWindowFilePanelState+TabsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+TabsSupport.h"; sourceTree = "<group>"; };
+		CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+TabsSupport.mm"; sourceTree = "<group>"; };
 		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TemporaryNativeFileStorage.mm; sourceTree = "<group>"; };
 		CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileStorage.h; sourceTree = "<group>"; };
 		CFEE8E4F17748E3D00F6A254 /* FontExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontExtras.mm; sourceTree = "<group>"; };
@@ -1421,6 +1452,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFE3E84719FFBC4D009ADE5E /* MMTabBarView.framework in Frameworks */,
 				CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */,
 				CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */,
 				CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */,
@@ -1620,6 +1652,8 @@
 				CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */,
 				CFDA4CCE182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.h */,
 				CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */,
+				CFE3E8501A011218009ADE5E /* MainWindowFilePanelState+TabsSupport.h */,
+				CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */,
 				CF27414717FF04EF006D6687 /* SharingService.h */,
 				CF27414817FF04EF006D6687 /* SharingService.mm */,
 			);
@@ -1658,6 +1692,8 @@
 				CF27415318046A6E006D6687 /* BriefSystemOverview.mm */,
 				CF27414A18000832006D6687 /* FilePanelMainSplitView.h */,
 				CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */,
+				CFE3E84A19FFC0C9009ADE5E /* FilePanelsTabbedHolder.h */,
+				CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */,
 				CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */,
 				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */,
 				CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */,
@@ -2490,6 +2526,7 @@
 				CF305DC21946D4F700840F25 /* CategoriesObjC */,
 				CF3FCE0A190EB93600E55698 /* shared_mutex */,
 				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
+				CFE3E83B19FFBB67009ADE5E /* MMTabBarView.xcodeproj */,
 				CFDA4CD1182CBA51006EC35C /* sparkle */,
 				CF29313117D9914700648A90 /* rdrand */,
 				CF9D0CEE17CC957700CB8146 /* archivelib */,
@@ -2511,6 +2548,14 @@
 				CFDA4CD4182CBA68006EC35C /* SUVersionComparisonProtocol.h */,
 			);
 			name = sparkle;
+			sourceTree = "<group>";
+		};
+		CFE3E84219FFBB6B009ADE5E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2566,6 +2611,7 @@
 				CFC5120D16C4BD3D00D247EE /* Sources */,
 				CFC5120E16C4BD3D00D247EE /* Frameworks */,
 				CFC5120F16C4BD3D00D247EE /* Resources */,
+				CFE3E84819FFBCBA009ADE5E /* CopyFiles */,
 				CF9EEB3E17256372001443FA /* ShellScript */,
 			);
 			buildRules = (
@@ -2613,6 +2659,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = CFE3E84219FFBB6B009ADE5E /* Products */;
+					ProjectRef = CFE3E83B19FFBB67009ADE5E /* MMTabBarView.xcodeproj */;
+				},
+				{
 					ProductGroup = CF653C5218C3934100502920 /* Products */;
 					ProjectRef = CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */;
 				},
@@ -2632,6 +2682,13 @@
 			fileType = archive.ar;
 			path = libUnRAR_LIB.a;
 			remoteRef = CF653C5518C3934200502920 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MMTabBarView.framework;
+			remoteRef = CFE3E84519FFBB6C009ADE5E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2951,6 +3008,7 @@
 				CF6D9BEC196678000077B146 /* DispatchQueue.mm in Sources */,
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
 				CF6D9BEE196678000077B146 /* FPSLimitedDrawer.mm in Sources */,
+				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF6D9BEF196678000077B146 /* VFSHost.cpp in Sources */,
 				CF6D9BF0196678000077B146 /* VFSListing.cpp in Sources */,
 				CF6D9BF1196678000077B146 /* VFSFile.cpp in Sources */,
@@ -2984,6 +3042,7 @@
 				CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CF6D9C0D196678000077B146 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CF6D9C0E196678000077B146 /* OperationStats.mm in Sources */,
+				CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
 				CF6D9C0F196678000077B146 /* OperationJob.mm in Sources */,
 				CF6D9C10196678000077B146 /* Operation.mm in Sources */,
 				CF6D9C11196678000077B146 /* OperationsController.mm in Sources */,
@@ -3233,6 +3292,7 @@
 				CF9D0E7E17CC961100CB8146 /* archive_entry_strmode.c in Sources */,
 				CF9D0EA617CC961100CB8146 /* archive_read_support_format_empty.c in Sources */,
 				CF9D0E7617CC961100CB8146 /* archive_check_magic.c in Sources */,
+				CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */,
 				CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */,
@@ -3266,6 +3326,7 @@
 				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CF9D0E8617CC961100CB8146 /* archive_rb.c in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
+				CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
 				CF9D0E9F17CC961100CB8146 /* archive_read_support_filter_xz.c in Sources */,
 				CF9D0ECE17CC961100CB8146 /* archive_write_set_format_cpio.c in Sources */,
 				CF9D0EC217CC961100CB8146 /* archive_write_disk_acl.c in Sources */,

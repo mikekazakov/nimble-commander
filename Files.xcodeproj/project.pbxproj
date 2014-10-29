@@ -105,6 +105,7 @@
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
+		CF5DDF3E1A013169004B0405 /* MMTabBarView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */; };
 		CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF653E0418C5AB2000502920 /* VFSArchiveUnRARListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */; };
@@ -703,7 +704,6 @@
 		CFE3829419CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE3829019CEFBA0005C8958 /* BigFileViewSheet.xib */; };
 		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
-		CFE3E84719FFBC4D009ADE5E /* MMTabBarView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */; };
 		CFE3E84919FFBD12009ADE5E /* MMTabBarView.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
 		CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
@@ -1452,13 +1452,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFE3E84719FFBC4D009ADE5E /* MMTabBarView.framework in Frameworks */,
 				CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */,
 				CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */,
 				CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */,
 				CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */,
 				CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */,
 				CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */,
+				CF5DDF3E1A013169004B0405 /* MMTabBarView.framework in Frameworks */,
 				CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */,
 				CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */,
 				CF1100D01913788800E170FC /* Security.framework in Frameworks */,
@@ -2611,8 +2611,8 @@
 				CFC5120D16C4BD3D00D247EE /* Sources */,
 				CFC5120E16C4BD3D00D247EE /* Frameworks */,
 				CFC5120F16C4BD3D00D247EE /* Resources */,
-				CFE3E84819FFBCBA009ADE5E /* CopyFiles */,
 				CF9EEB3E17256372001443FA /* ShellScript */,
+				CFE3E84819FFBCBA009ADE5E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -3770,6 +3770,7 @@
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					Files/3rd_party/built/lib,
@@ -3810,6 +3811,7 @@
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					Files/3rd_party/built/lib,

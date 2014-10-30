@@ -7,6 +7,16 @@
 static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
 static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
+template <class _Cont, class _Tp>
+inline void erase_from(_Cont &__cont_, const _Tp& __value_)
+{
+    __cont_.erase(remove(begin(__cont_),
+                         end(__cont_),
+                         __value_),
+                  end(__cont_)
+                  );
+}
+
 @implementation MainWindowFilePanelState (TabsSupport)
 
 - (BOOL)tabView:(NSTabView *)tabView shouldSelectTabViewItem:(NSTabViewItem *)tabViewItem
@@ -73,6 +83,32 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     
     [self ActivatePanelByController:pc];
 }
+
+/*- (BOOL)tabView:(NSTabView *)aTabView disableTabCloseForTabViewItem:(NSTabViewItem *)tabViewItem
+{
+    return false;
+}
+
+- (BOOL)tabView:(NSTabView *)aTabView shouldCloseTabViewItem:(NSTabViewItem *)tabViewItem
+{
+    return true;
+}
+
+- (void)tabView:(NSTabView *)aTabView willCloseTabViewItem:(NSTabViewItem *)tabViewItem
+{
+}*/
+
+- (void)tabView:(NSTabView *)aTabView didCloseTabViewItem:(NSTabViewItem *)tabViewItem
+{
+    // NB! at this moment a tab was already removed from NSTabView objects
+    assert( [tabViewItem.view isKindOfClass:PanelView.class] );
+    assert( [((PanelView*)tabViewItem.view).delegate isKindOfClass:PanelController.class] );
+    PanelController *pc = (PanelController*)((PanelView*)tabViewItem.view).delegate;
+    
+    erase_from(m_LeftPanelControllers, pc);
+    erase_from(m_RightPanelControllers, pc);
+}
+
 
 @end
 

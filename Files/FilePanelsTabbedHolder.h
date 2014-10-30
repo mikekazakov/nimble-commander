@@ -8,7 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
+#import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarItem.h"
 #import "PanelView.h"
+
+@interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
+
+@property (assign) BOOL hasCloseButton;
+
+@end
+
 
 @interface FilePanelsTabbedHolder : NSStackView
 

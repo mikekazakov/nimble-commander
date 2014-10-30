@@ -9,6 +9,19 @@
 #import "FilePanelsTabbedHolder.h"
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
 
+@implementation FilePanelsTabbedBarItem
+
+- (id)init
+{
+    self = [super init];
+    if(self) {
+        self.hasCloseButton = true;
+    }
+    return self;
+}
+
+@end
+
 @implementation FilePanelsTabbedHolder
 {
     MMTabBarView    *m_TabBar;
@@ -48,6 +61,10 @@
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
         m_TabBar.showAddTabButton = true;
+        m_TabBar.canCloseOnlyTab = false;
+        m_TabBar.disableTabClose = false;
+        m_TabBar.onlyShowCloseOnHover = true;
+        m_TabBar.useOverflowMenu = false;
         [m_TabBar setStyleNamed:@"Adium"];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
                                                              attribute:NSLayoutAttributeWidth
@@ -82,7 +99,10 @@
 
 - (void) addPanel:(PanelView*)_panel
 {
-    NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:@"Test"];
+    FilePanelsTabbedBarItem *bar_item = [FilePanelsTabbedBarItem new];
+    bar_item.hasCloseButton = true;
+    
+    NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:bar_item];
     item.view = _panel;
     item.initialFirstResponder = _panel;
     [m_TabView addTabViewItem:item];

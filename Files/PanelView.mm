@@ -81,7 +81,7 @@ struct PanelViewStateStorage
                                                    name:NSApplicationWillResignActiveNotification
                                                  object:[NSApplication sharedApplication]];
         
-        auto skin = ((AppDelegate*)([NSApplication sharedApplication].delegate)).Skin;
+        auto skin = ((AppDelegate*)([NSApplication sharedApplication].delegate)).skin;
         if (skin == ApplicationSkin::Modern)
             [self SetPresentation:new ModernPanelViewPresentation];
         else if(skin == ApplicationSkin::Classic)

@@ -74,9 +74,9 @@ class PanelData;
 /**
  * Return currently active file panel if any.
  */
-- (PanelController*) ActivePanelController;
-- (PanelData*) ActivePanelData; // based on .ActivePanelController
-- (PanelView*) ActivePanelView; // based on .ActivePanelController
+- (PanelController*) activePanelController;
+- (PanelData*) activePanelData; // based on .ActivePanelController
+- (PanelView*) activePanelView; // based on .ActivePanelController
 
 /**
  * If current active panel controller is left - return .rightPanelController,

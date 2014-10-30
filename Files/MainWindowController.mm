@@ -230,7 +230,7 @@
     
     // here we need to synchonize cwd in terminal and cwd in active file panel
     if(m_WindowState.back() == m_PanelState && is_terminal_resigning && m_PanelState.isPanelActive)
-        [m_PanelState.ActivePanelController GoToDir:m_Terminal.CWD
+        [m_PanelState.activePanelController GoToDir:m_Terminal.CWD
                                                 vfs:VFSNativeHost::SharedHost()
                                        select_entry:""
                                               async:true];

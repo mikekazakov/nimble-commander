@@ -31,7 +31,7 @@
 {
     vector<MainWindowController *> m_MainWindows;
     RHPreferencesWindowController *m_PreferencesController;
-    
+    ApplicationSkin     m_Skin;
     NSProgressIndicator *m_ProgressIndicator;
     NSDockTile          *m_DockTile;
     double              m_AppProgress;
@@ -41,6 +41,7 @@
 
 @synthesize isRunningTests = m_IsRunningTests;
 @synthesize startupCWD = m_StartupCWD;
+@synthesize skin = m_Skin;
 
 - (id) init
 {
@@ -61,6 +62,9 @@
             [self askToResetDefaults];
             exit(0);
         }
+        
+        m_Skin = (ApplicationSkin)[NSUserDefaults.standardUserDefaults integerForKey:@"Skin"];
+        assert(m_Skin == ApplicationSkin::Modern || m_Skin == ApplicationSkin::Classic);
         [NSUserDefaults.standardUserDefaults addObserver:self
                                               forKeyPath:@"Skin"
                                                  options:NSKeyValueObservingOptionNew
@@ -72,6 +76,12 @@
 - (void)dealloc
 {
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Skin" context:NULL];
+}
+
++ (AppDelegate*) me
+{
+    static AppDelegate *_ = (AppDelegate*) ((NSApplication*)NSApp).delegate;
+    return _;
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
@@ -323,28 +333,21 @@
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
 }
 
-- (ApplicationSkin)Skin
-{
-    ApplicationSkin skin = (ApplicationSkin)[NSUserDefaults.standardUserDefaults integerForKey:@"Skin"];
-    assert(skin == ApplicationSkin::Modern || skin == ApplicationSkin::Classic);
-    return skin;
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     // Check if defaults changed.
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if (object == defaults)
-    {
+    if (object == defaults) {
         // Check if the skin value was modified.
-        if ([keyPath isEqualToString:@"Skin"])
-        {
+        if ([keyPath isEqualToString:@"Skin"]) {
             ApplicationSkin skin = (ApplicationSkin)[defaults integerForKey:@"Skin"];
             assert(skin == ApplicationSkin::Modern || skin == ApplicationSkin::Classic);
+            
+            [self willChangeValueForKey:@"skin"];
+            m_Skin = skin;
+            [self didChangeValueForKey:@"skin"];
             for (MainWindowController *wincont : m_MainWindows)
-            {
                 [wincont ApplySkin:skin];
-            }
         }
     }
 }

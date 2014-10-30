@@ -280,7 +280,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     if(([sendType isEqualToString:NSFilenamesPboardType] ||
         [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]) &&
        self.isPanelActive &&
-       [self ActivePanelData]->Host()->IsNativeFS() )
+       self.activePanelData->Host()->IsNativeFS() )
         return self;
     
     return [super validRequestorForSendType:sendType returnType:returnType];
@@ -301,19 +301,19 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (bool)WriteFilesnamesPBoard:(NSPasteboard *)pboard
 {
     if(!self.isPanelActive ||
-       ![self ActivePanelData]->Host()->IsNativeFS())
+       !self.activePanelData->Host()->IsNativeFS())
         return false;
     
     NSMutableArray *filenames = [NSMutableArray new];
     
-    PanelData *pd = [self ActivePanelData];
+    PanelData *pd = self.activePanelData;
     string dir_path = pd->DirectoryPathWithTrailingSlash();
     if(pd->Stats().selected_entries_amount > 0) {
         for(auto &i: pd->StringsFromSelectedEntries())
             [filenames addObject:[NSString stringWithUTF8String:(dir_path + i.c_str()).c_str()]];
     }
     else {
-        auto const *item = self.ActivePanelView.item;
+        auto const *item = self.activePanelView.item;
         if(item && !item->IsDotDot())
             [filenames addObject:[NSString stringWithUTF8String:(dir_path + item->Name()).c_str()]];
     }
@@ -329,19 +329,19 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (bool)WriteURLSPBoard:(NSPasteboard *)pboard
 {
     if(!self.isPanelActive ||
-       ![self ActivePanelData]->Host()->IsNativeFS())
+       !self.activePanelData->Host()->IsNativeFS())
         return false;
     
     NSMutableArray *fileurls = [NSMutableArray new];
     
-    PanelData *pd = [self ActivePanelData];
+    PanelData *pd = self.activePanelData;
     string dir_path = pd->DirectoryPathWithTrailingSlash();
     if(pd->Stats().selected_entries_amount > 0) {
         for(auto &i: pd->StringsFromSelectedEntries())
             [fileurls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:(dir_path + i.c_str()).c_str()]]];
     }
     else {
-        auto const *item = self.ActivePanelView.item;
+        auto const *item = self.activePanelView.item;
         if(item && !item->IsDotDot())
             [fileurls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:(dir_path + item->Name()).c_str()]]];
     }
@@ -430,22 +430,22 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (bool) isPanelActive
 {
-    return self.ActivePanelController != nil;
+    return self.activePanelController != nil;
 }
 
-- (PanelView*) ActivePanelView
+- (PanelView*) activePanelView
 {
-    PanelController *pc = self.ActivePanelController;
+    PanelController *pc = self.activePanelController;
     return pc ? pc.view : nil;
 }
 
-- (PanelData*) ActivePanelData
+- (PanelData*) activePanelData
 {
-    PanelController *pc = self.ActivePanelController;
+    PanelController *pc = self.activePanelController;
     return pc ? &pc.data : nullptr;
 }
 
-- (PanelController*) ActivePanelController
+- (PanelController*) activePanelController
 {
     if(!self.window)
         return nil;
@@ -457,7 +457,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (PanelController*) oppositePanelController
 {
-    PanelController* act = self.ActivePanelController;
+    PanelController* act = self.activePanelController;
     if(!act)
         return nil;
     if(act == self.leftPanelController)
@@ -505,9 +505,9 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void) HandleTabButton
 {
-    if([m_MainSplitView AnyCollapsedOrOverlayed])
+    if([m_MainSplitView anyCollapsedOrOverlayed])
         return;
-    PanelController *cur = self.ActivePanelController;
+    PanelController *cur = self.activePanelController;
     if(!cur)
         return;
     if([self isLeftController:cur])
@@ -551,7 +551,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (void) UpdateTitle
 {
-    auto data = self.ActivePanelData;
+    auto data = self.activePanelData;
     if(!data) {
         self.window.title = @"";
         return;
@@ -605,7 +605,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     if(_panel == nil)
         return;
 
-    if(_panel == self.ActivePanelController)
+    if(_panel == self.activePanelController)
         [self UpdateTitle];
     
     [self updateTabNameForController:_panel];
@@ -687,11 +687,11 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path
 {
     assert(dispatch_is_main_queue());
-    auto data = self.ActivePanelData;
+    auto data = self.activePanelData;
     if(!data)
         return;
     
-    PanelController *panel = self.ActivePanelController;
+    PanelController *panel = self.activePanelController;
     if([panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok)
     {
         if(!_entries.empty()) {
@@ -704,7 +704,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         for(auto &i: _entries)
             data->CustomFlagsSelectSorted(data->SortedIndexForName(i.c_str()), true);
         
-        [self.ActivePanelView setNeedsDisplay:true];
+        [self.activePanelView setNeedsDisplay:true];
     }
 }
 
@@ -715,7 +715,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 - (IBAction)paste:(id)sender
 {
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+    if([m_MainSplitView isViewCollapsedOrOverlayed:self.activePanelView])
         return;
     
     NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
@@ -727,7 +727,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
     // check if we're on writeable VFS
     if(!self.isPanelActive ||
-       !self.ActivePanelController.VFS->IsWriteable())
+       !self.activePanelController.VFS->IsWriteable())
         return;
     
     // input should be an array of filepaths
@@ -750,7 +750,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     if(filenames.empty()) // invalid pasteboard?
         return;
     
-    string destination = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+    string destination = self.activePanelData->DirectoryPathWithTrailingSlash();
     
     for(auto i: filenames)
     {
@@ -763,7 +763,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
         
         Operation *op;
         
-        if(self.ActivePanelController.VFS->IsNativeFS())
+        if(self.activePanelController.VFS->IsNativeFS())
             op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                      root:i.first.c_str()
                                                      dest:destination.c_str()
@@ -773,10 +773,10 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
                                                      root:i.first.c_str()
                                                    srcvfs:VFSNativeHost::SharedHost()
                                                      dest:destination.c_str()
-                                                   dstvfs:self.ActivePanelController.VFS
+                                                   dstvfs:self.activePanelController.VFS
                                                   options:opts]; // vfs(native)->vfs
         
-        __weak PanelController *wpc = self.ActivePanelController;
+        __weak PanelController *wpc = self.activePanelController;
         [op AddOnFinishHandler:^{
             dispatch_to_main_queue( ^{
                 if(PanelController *pc = wpc) [pc RefreshDirectory];

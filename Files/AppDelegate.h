@@ -13,8 +13,6 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-@property (nonatomic, readonly) ApplicationSkin Skin;
-
 - (IBAction)NewWindow:(id)sender;
 - (void) RemoveMainWindow:(MainWindowController*) _wnd;
 - (MainWindowController*) AllocateNewMainWindow;
@@ -22,6 +20,17 @@
 - (IBAction)OnMenuSendFeedback:(id)sender;
 
 - (vector<MainWindowController*>) GetMainWindowControllers;
+
+
+/**
+ * Equal to (AppDelegate*) ((NSApplication*)NSApp).delegate.
+ */
++ (AppDelegate*) me;
+
+/**
+ * KVO-compatible property about current app skin.
+ */
+@property (nonatomic, readonly) ApplicationSkin skin;
 
 /**
  * Runs a modal dialog window, which asks user if he wants to reset app settings.

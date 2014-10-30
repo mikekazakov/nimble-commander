@@ -64,7 +64,7 @@ const static double g_BorderWidth = 1.0;
         m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
         m_ViewImpl = make_unique<BigFileViewImpl>(); // dummy for initialization process
         
-        if( [(AppDelegate*)NSApplication.sharedApplication.delegate Skin] == ApplicationSkin::Modern)
+        if( [(AppDelegate*)NSApplication.sharedApplication.delegate skin] == ApplicationSkin::Modern)
             [self InitAppearanceForModernPresentation];
         else
             [self InitAppearanceForClassicPresentation];
@@ -136,7 +136,7 @@ const static double g_BorderWidth = 1.0;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    auto skin = [(AppDelegate*)NSApplication.sharedApplication.delegate Skin];
+    auto skin = [(AppDelegate*)NSApplication.sharedApplication.delegate skin];
 
     if(skin == ApplicationSkin::Modern) {
         if([keyPath isEqualToString:@"BigFileViewModernBackgroundColor"])

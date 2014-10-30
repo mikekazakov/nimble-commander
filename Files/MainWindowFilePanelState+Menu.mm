@@ -45,17 +45,17 @@
     auto tag = item.tag;
 #define IF(a) else if(tag == a)
     if(false);
-    IF(tag_view_swap_panels)        return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
-    IF(tag_view_sync_panels)        return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
-    IF(tag_file_open_in_opp)        return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.ActivePanelView.item->IsDir();
-    IF(tag_cmd_compress)            return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && !self.ActivePanelView.item->IsDotDot();
-    IF(tag_cmd_link_soft)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && !self.ActivePanelView.item->IsDotDot() && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS();
-    IF(tag_cmd_link_hard)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS() && !self.ActivePanelView.item->IsDir();
-    IF(tag_cmd_link_edit)           return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed && self.ActivePanelView.item && self.ActivePanelController.VFS->IsNativeFS() && !self.ActivePanelView.item->IsDir() && self.ActivePanelView.item->IsSymlink();
-    IF(tag_cmd_copy_to)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
-    IF(tag_cmd_copy_as)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
-    IF(tag_cmd_move_to)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
-    IF(tag_cmd_move_as)             return self.isPanelActive && !m_MainSplitView.AnyCollapsedOrOverlayed;
+    IF(tag_view_swap_panels)        return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF(tag_view_sync_panels)        return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF(tag_file_open_in_opp)        return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item->IsDir();
+    IF(tag_cmd_compress)            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot();
+    IF(tag_cmd_link_soft)           return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot() && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS();
+    IF(tag_cmd_link_hard)           return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir();
+    IF(tag_cmd_link_edit)           return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir() && self.activePanelView.item->IsSymlink();
+    IF(tag_cmd_copy_to)             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF(tag_cmd_copy_as)             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF(tag_cmd_move_to)             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF(tag_cmd_move_as)             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
 #undef IF
 
     return true;
@@ -91,15 +91,15 @@
 - (IBAction)OnShowTerminal:(id)sender
 {
     string path = "";
-    if(self.isPanelActive && self.ActivePanelController.VFS->IsNativeFS())
-        path = self.ActivePanelController.GetCurrentDirectoryPathRelativeToHost;
+    if(self.isPanelActive && self.activePanelController.VFS->IsNativeFS())
+        path = self.activePanelController.GetCurrentDirectoryPathRelativeToHost;
     [(MainWindowController*)self.window.delegate RequestTerminal:path];
 }
 
 - (IBAction)OnFileOpenInOppositePanel:(id)sender
 {
-    if(!self.isPanelActive || m_MainSplitView.AnyCollapsedOrOverlayed || !self.ActivePanelView.item || !self.ActivePanelView.item->IsDir()) return;
-    auto cur = self.ActivePanelController;
+    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item || !self.activePanelView.item->IsDir()) return;
+    auto cur = self.activePanelController;
     auto opp = self.oppositePanelController;
     [opp GoToDir:cur.GetCurrentFocusedEntryFilePathRelativeToHost
              vfs:cur.VFS
@@ -109,17 +109,17 @@
 
 - (IBAction)OnCompressFiles:(id)sender
 {
-    if(!self.isPanelActive || m_MainSplitView.AnyCollapsedOrOverlayed) return;
+    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed) return;
     
-    auto files = [self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    auto files = [self.activePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
     if(files.empty())
         return;
     shared_ptr<VFSHost> srcvfs, dstvfs;
     string srcroot, dstroot;
     PanelController *target_pc;
-    srcvfs = self.ActivePanelController.VFS;
+    srcvfs = self.activePanelController.VFS;
     dstvfs = self.oppositePanelController.VFS;
-    srcroot = [self.ActivePanelController GetCurrentDirectoryPathRelativeToHost];
+    srcroot = [self.activePanelController GetCurrentDirectoryPathRelativeToHost];
     dstroot = [self.oppositePanelController GetCurrentDirectoryPathRelativeToHost];
     target_pc = self.oppositePanelController;
     
@@ -134,14 +134,14 @@
 
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender
 {
-    if(!self.ActivePanelController || !self.oppositePanelController)
+    if(!self.activePanelController || !self.oppositePanelController)
         return;
     
-    auto const *item = self.ActivePanelView.item;
+    auto const *item = self.activePanelView.item;
     if(!item)
         return;
     
-    string source_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+    string source_path = [self activePanelData]->DirectoryPathWithTrailingSlash();
     if(!item->IsDotDot())
         source_path += item->Name();
     
@@ -150,7 +150,7 @@
     if(!item->IsDotDot())
         link_path += item->Name();
     else
-        link_path += [self ActivePanelData]->DirectoryPathShort();
+        link_path += [self activePanelData]->DirectoryPathShort();
     
     FileLinkNewSymlinkSheetController *sheet = [FileLinkNewSymlinkSheetController new];
     [sheet ShowSheet:[self window]
@@ -168,8 +168,8 @@
 
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
-    auto data = self.ActivePanelData;
-    auto const *item = self.ActivePanelView.item;
+    auto data = self.activePanelData;
+    auto const *item = self.activePanelView.item;
     assert(item->IsSymlink());
     
     string link_path = data->DirectoryPathWithTrailingSlash() + item->Name();
@@ -192,10 +192,10 @@
 
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
-    auto const *item = self.ActivePanelView.item;
+    auto const *item = self.activePanelView.item;
     assert(not item->IsDir());
     
-    string dir_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+    string dir_path = [self activePanelData]->DirectoryPathWithTrailingSlash();
     string src_path = dir_path + item->Name();
     NSString *srcpath = [NSString stringWithUTF8String:src_path.c_str()];
     NSString *dirpath = [NSString stringWithUTF8String:dir_path.c_str()];
@@ -221,17 +221,17 @@
 }
 
 - (IBAction)OnFileCopyCommand:(id)sender{
-    if(!self.ActivePanelController || !self.oppositePanelController) return;
-    if([m_MainSplitView AnyCollapsedOrOverlayed])
+    if(!self.activePanelController || !self.oppositePanelController) return;
+    if([m_MainSplitView anyCollapsedOrOverlayed])
         return;
     
     const PanelData *source, *destination;
-    source = &self.ActivePanelController.data;
+    source = &self.activePanelController.data;
     destination = &self.oppositePanelController.data;
-    __weak PanelController *act = self.ActivePanelController;
+    __weak PanelController *act = self.activePanelController;
     __weak PanelController *opp = self.oppositePanelController;
     
-    auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
+    auto files = make_shared<chained_strings>([self.activePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
     if(files->empty())
         return;
     
@@ -286,16 +286,16 @@
 
 - (IBAction)OnFileCopyAsCommand:(id)sender{
     // process only current cursor item
-    if(!self.ActivePanelController || !self.oppositePanelController) return;
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+    if(!self.activePanelController || !self.oppositePanelController) return;
+    if([m_MainSplitView isViewCollapsedOrOverlayed:self.activePanelView])
         return;
     const PanelData *source, *destination;
-    source = &self.ActivePanelController.data;
+    source = &self.activePanelController.data;
     destination = &self.oppositePanelController.data;
-    __weak PanelController *act = self.ActivePanelController;
+    __weak PanelController *act = self.activePanelController;
     __weak PanelController *opp = self.oppositePanelController;
     
-    auto const *item = self.ActivePanelView.item;
+    auto const *item = self.activePanelView.item;
     if(!item || item->IsDotDot())
         return;
     
@@ -304,7 +304,7 @@
     MassCopySheetController *mc = [MassCopySheetController new];
     [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:files.get() handler:^(int _ret)
      {
-         path root_path = [self ActivePanelData]->DirectoryPathWithTrailingSlash();
+         path root_path = self.activePanelData->DirectoryPathWithTrailingSlash();
          path req_path = mc.TextField.stringValue.fileSystemRepresentation;
          if(_ret == DialogResult::Copy && !req_path.empty())
          {
@@ -351,19 +351,19 @@
 }
 
 - (IBAction)OnFileRenameMoveCommand:(id)sender{
-    if(!self.ActivePanelController || !self.oppositePanelController) return;
-    if([m_MainSplitView AnyCollapsedOrOverlayed])
+    if(!self.activePanelController || !self.oppositePanelController) return;
+    if([m_MainSplitView anyCollapsedOrOverlayed])
         return;
     const PanelData *source, *destination;
-    source = &self.ActivePanelController.data;
+    source = &self.activePanelController.data;
     destination = &self.oppositePanelController.data;
-    __weak PanelController *act = self.ActivePanelController;
+    __weak PanelController *act = self.activePanelController;
     __weak PanelController *opp = self.oppositePanelController;
     
     if(!source->Host()->IsWriteable())
         return;
     
-    auto files = make_shared<chained_strings>([self.ActivePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
+    auto files = make_shared<chained_strings>([self.activePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
     if(files->empty())
         return;
     
@@ -415,20 +415,20 @@
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender {
     
     // process only current cursor item
-    if(!self.ActivePanelController || !self.oppositePanelController) return;
-    if([m_MainSplitView IsViewCollapsedOrOverlayed:[self ActivePanelView]])
+    if(!self.activePanelController || !self.oppositePanelController) return;
+    if([m_MainSplitView isViewCollapsedOrOverlayed:self.activePanelView])
         return;
     
     const PanelData *source, *destination;
-    source = &self.ActivePanelController.data;
+    source = &self.activePanelController.data;
     destination = &self.oppositePanelController.data;
-    __weak PanelController *act = self.ActivePanelController;
+    __weak PanelController *act = self.activePanelController;
     __weak PanelController *opp = self.oppositePanelController;
     
     if(!source->Host()->IsWriteable())
         return;
     
-    auto const *item = self.ActivePanelView.item;
+    auto const *item = self.activePanelView.item;
     if(!item || item->IsDotDot())
         return;
     

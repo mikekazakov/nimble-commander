@@ -15,16 +15,16 @@
 
 - (void) SwapViews;
 
-- (bool) AnyCollapsed;
-- (bool) LeftCollapsed;
-- (bool) RightCollapsed;
+@property (nonatomic, readonly) bool anyCollapsed;
+@property (nonatomic, readonly) bool isLeftCollapsed;
+@property (nonatomic, readonly) bool isRightCollapsed;
 
-- (bool) AnyOverlayed;
-- (bool) LeftOverlayed;
-- (bool) RightOverlayed;
+@property (nonatomic, readonly) bool anyOverlayed;
+@property (nonatomic, readonly) bool isLeftOverlayed;
+@property (nonatomic, readonly) bool isRightOverlayed;
 
-- (bool) AnyCollapsedOrOverlayed;
-- (bool) IsViewCollapsedOrOverlayed:(NSView*)_v;
+@property (nonatomic, readonly) bool anyCollapsedOrOverlayed;
+- (bool) isViewCollapsedOrOverlayed:(NSView*)_v;
 
 @property (nonatomic) NSView* leftOverlay;
 @property (nonatomic) NSView* rightOverlay;

@@ -408,26 +408,6 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     [m_RightPanelGoToButton performClick:self];
 }
 
-- (void)ApplySkin:(ApplicationSkin)_skin
-{
-    if(m_Skin == _skin)
-        return;
-
-    m_Skin = _skin;
-    
-    // rewrite me!
-/*    if (_skin == ApplicationSkin::Modern)
-    {
-        [m_LeftPanelController.view SetPresentation:new ModernPanelViewPresentation];
-        [m_RightPanelController.view SetPresentation:new ModernPanelViewPresentation];
-    }
-    else if (_skin == ApplicationSkin::Classic)
-    {
-        [m_LeftPanelController.view SetPresentation:new ClassicPanelViewPresentation];
-        [m_RightPanelController.view SetPresentation:new ClassicPanelViewPresentation];
-    }*/
-}
-
 - (bool) isPanelActive
 {
     return self.activePanelController != nil;

@@ -151,12 +151,6 @@
     [(AppDelegate*)NSApplication.sharedApplication.delegate RemoveMainWindow:self];
 }
 
-- (void)ApplySkin:(ApplicationSkin)_skin {
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(ApplySkin:)])
-            [i ApplySkin:_skin];
-}
-
 - (BOOL)windowShouldClose:(id)sender {
     for(auto i = m_WindowState.rbegin(), e = m_WindowState.rend(); i != e; ++i)
         if([*i respondsToSelector:@selector(WindowShouldClose:)])

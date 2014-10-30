@@ -33,7 +33,7 @@ struct PanelViewStateStorage
 @implementation PanelView
 {
     CursorSelectionType         m_CursorSelectionType;
-    PanelViewPresentation      *m_Presentation;
+    unique_ptr<PanelViewPresentation> m_Presentation;
     PanelViewState              m_State;
     
     map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
@@ -80,12 +80,13 @@ struct PanelViewStateStorage
                                                selector:@selector(appWillResignActive)
                                                    name:NSApplicationWillResignActiveNotification
                                                  object:[NSApplication sharedApplication]];
+        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
         
-        auto skin = ((AppDelegate*)([NSApplication sharedApplication].delegate)).skin;
+        auto skin = AppDelegate.me.skin;
         if (skin == ApplicationSkin::Modern)
-            [self SetPresentation:new ModernPanelViewPresentation];
+            [self setPresentation:make_unique<ModernPanelViewPresentation>()];
         else if(skin == ApplicationSkin::Classic)
-            [self SetPresentation:new ClassicPanelViewPresentation];
+            [self setPresentation:make_unique<ClassicPanelViewPresentation>()];
     }
     
     return self;
@@ -94,8 +95,8 @@ struct PanelViewStateStorage
 -(void) dealloc
 {
     m_State.Data = nullptr;
-    delete m_Presentation;
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    [AppDelegate.me removeObserver:self forKeyPath:@"skin"];    
 }
 
 - (void) setDelegate:(id<PanelViewDelegate>)delegate
@@ -237,12 +238,10 @@ struct PanelViewStateStorage
     self.needsDisplay = true;
 }
 
-- (void) SetPresentation:(PanelViewPresentation *)_presentation
+- (void) setPresentation:(unique_ptr<PanelViewPresentation>)_presentation
 {
-    if (m_Presentation) delete m_Presentation;
-    m_Presentation = _presentation;
-    if (m_Presentation)
-    {
+    m_Presentation = move(_presentation);
+    if (m_Presentation) {
         m_Presentation->SetState(&m_State);
         m_Presentation->SetView(self);
         [self frameDidChange];
@@ -250,9 +249,9 @@ struct PanelViewStateStorage
     }
 }
 
-- (PanelViewPresentation*) Presentation
+- (PanelViewPresentation*) presentation
 {
-    return m_Presentation;
+    return m_Presentation.get();
 }
 
 - (void) HandlePrevFile
@@ -933,6 +932,17 @@ struct PanelViewStateStorage
 - (void) windowDidResignKey
 {
     self.needsDisplay = true;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
+        auto skin = AppDelegate.me.skin;
+        if (skin == ApplicationSkin::Modern)
+            [self setPresentation:make_unique<ModernPanelViewPresentation>()];
+        else if(skin == ApplicationSkin::Classic)
+            [self setPresentation:make_unique<ClassicPanelViewPresentation>()];
+    }
 }
 
 @end

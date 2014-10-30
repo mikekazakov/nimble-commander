@@ -23,6 +23,12 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     // just set current PanelView to first responder
     assert( [tabViewItem.view isKindOfClass:PanelView.class] );
     [self.window makeFirstResponder:tabViewItem.view];
+  
+    PanelController *pc = (PanelController *)((PanelView*)tabViewItem.view).delegate;
+    if(tabView == m_MainSplitView.leftTabbedHolder.tabView)
+        [pc AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+    if(tabView == m_MainSplitView.rightTabbedHolder.tabView)
+        [pc AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
 }
 
 - (void) updateTabNameForController:(PanelController*)_controller

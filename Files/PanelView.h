@@ -41,6 +41,7 @@ class PanelViewPresentation;
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) FPSLimitedDrawer* fpsDrawer;
+@property (nonatomic, readonly) PanelViewPresentation* presentation;
 
 /**
  * Set to true to tell PanelView to drag focus ring. If draggingOverItemAtPosition<0 - draw focus ring in view bounds,
@@ -68,8 +69,6 @@ class PanelViewPresentation;
  */
 - (void) dataUpdated;
 
-// _presentation must be created using new. PanelView gains ownership of the _presentation.
-- (PanelViewPresentation*) Presentation;
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
 

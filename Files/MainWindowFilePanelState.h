@@ -24,8 +24,6 @@ class PanelData;
 
 @interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate, MMTabBarViewDelegate>
 {
-    ApplicationSkin m_Skin;
-
     vector<PanelController*> m_LeftPanelControllers;
     vector<PanelController*> m_RightPanelControllers;
     
@@ -74,30 +72,31 @@ class PanelData;
 /**
  * Return currently active file panel if any.
  */
-- (PanelController*) activePanelController;
-- (PanelData*) activePanelData; // based on .ActivePanelController
-- (PanelView*) activePanelView; // based on .ActivePanelController
+@property (nonatomic, readonly) PanelController *activePanelController;
+@property (nonatomic, readonly) PanelData       *activePanelData; // based on .ActivePanelController
+@property (nonatomic, readonly) PanelView       *activePanelView; // based on .ActivePanelController
 
 /**
  * If current active panel controller is left - return .rightPanelController,
  * If current active panel controller is right - return .leftPanelController,
  * If there's no active panel controller (no focus) - return nil
+ * (regardless if this panel is collapsed or overlayed)
  */
-- (PanelController*) oppositePanelController;
-- (PanelData*)       oppositePanelData; // based on oppositePanelController
-- (PanelView*)       oppositePanelView; // based on oppositePanelController
+@property (nonatomic, readonly) PanelController *oppositePanelController;
+@property (nonatomic, readonly) PanelData       *oppositePanelData; // based on oppositePanelController
+@property (nonatomic, readonly) PanelView       *oppositePanelView; // based on oppositePanelController
 
 /**
  * Pick one of a controllers in left side tabbed bar, which is currently selected (regardless if it is active or not).
  * May return nil in init/shutdown period or in invalid state.
  */
-- (PanelController*) leftPanelController;
+@property (nonatomic, readonly) PanelController *leftPanelController;
 
 /**
  * Pick one of a controllers in right side tabbed bar, which is currently selected (regardless if it is active or not).
  * May return nil in init/shutdown period or in invalid state.
  */
-- (PanelController*) rightPanelController;
+@property (nonatomic, readonly) PanelController *rightPanelController;
 
 /**
  * Checks if this controller is one of a state's left-side controllers set.

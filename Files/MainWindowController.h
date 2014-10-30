@@ -20,8 +20,6 @@
 
 - (OperationsController*) OperationsController;
 
-- (void)ApplySkin:(ApplicationSkin)_skin;
-
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;
 - (void)RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host;

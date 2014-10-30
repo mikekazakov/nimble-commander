@@ -368,7 +368,7 @@
     [m_SelectionWithMaskPopover showRelativeToRect:NSMakeRect(0,
                                                               0,
                                                               self.view.bounds.size.width,
-                                                              self.view.Presentation->GetSingleItemHeight())
+                                                              self.view.presentation->GetSingleItemHeight())
                                             ofView:self.view
                                      preferredEdge:NSMaxYEdge];
 }

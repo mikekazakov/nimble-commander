@@ -27,7 +27,6 @@
 - (void)WindowDidEndSheet;
 - (bool)WindowShouldClose:(MainWindowController*)sender;
 - (void)SkinSettingsChanged;
-- (void)ApplySkin:(ApplicationSkin)_skin;
 - (void)OnApplicationWillTerminate;
 - (bool)needsWindowTitle;
 @end

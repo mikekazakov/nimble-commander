@@ -84,6 +84,7 @@
 {
     NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:@"Test"];
     item.view = _panel;
+    item.initialFirstResponder = _panel;
     [m_TabView addTabViewItem:item];
 }
 

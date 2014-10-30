@@ -63,29 +63,27 @@
 
 - (IBAction)OnSyncPanels:(id)sender
 {
-    assert(0);
-/*    if(m_LeftPanelController.isActive)
-        [m_RightPanelController GoToDir:m_LeftPanelController.GetCurrentDirectoryPathRelativeToHost
-                                    vfs:m_LeftPanelController.VFS
-                           select_entry:""
-                                  async:true];
-    else
-        [m_LeftPanelController GoToDir:m_RightPanelController.GetCurrentDirectoryPathRelativeToHost
-                                   vfs:m_RightPanelController.VFS
-                          select_entry:""
-                                 async:true];*/
+    if(!self.activePanelController || !self.oppositePanelController || m_MainSplitView.anyCollapsedOrOverlayed)
+        return;
+    
+    [self.oppositePanelController GoToDir:self.activePanelController.GetCurrentDirectoryPathRelativeToHost
+                                      vfs:self.activePanelController.VFS
+                             select_entry:""
+                                    async:true];
 }
 
 - (IBAction)OnSwapPanels:(id)sender
 {
-    assert(0);
-/*    swap(m_LeftPanelController, m_RightPanelController);
+    if(m_MainSplitView.anyCollapsedOrOverlayed)
+        return;
+    
+    swap(m_LeftPanelControllers, m_RightPanelControllers);
     [m_MainSplitView SwapViews];
     
-    [m_LeftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
-    [m_RightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
+    [self.leftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+    [self.rightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
     
-    [self savePanelsOptions];*/
+    [self savePanelsOptions];
 }
 
 - (IBAction)OnShowTerminal:(id)sender

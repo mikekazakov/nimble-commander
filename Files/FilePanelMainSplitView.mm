@@ -38,9 +38,14 @@
         [self addSubview:th2];
 
         [self observeValueForKeyPath:@"skin" ofObject:[AppDelegate me] change:nil context:nullptr];
-        [[AppDelegate me] addObserver:self forKeyPath:@"skin" options:0 context:NULL];
+        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
     }
     return self;
+}
+
+- (void) dealloc
+{
+    [AppDelegate.me removeObserver:self forKeyPath:@"skin"];
 }
 
 - (CGFloat)dividerThickness
@@ -52,9 +57,9 @@
 {
     m_Prop = proposedPosition / self.frame.size.width;
     
-    if([AppDelegate me].skin == ApplicationSkin::Modern)
+    if(AppDelegate.me.skin == ApplicationSkin::Modern)
         return proposedPosition;
-    else if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.Presentation)) {
+    else if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
         float gran = p->Granularity();
         float rest = fmod(proposedPosition, gran);
         return proposedPosition - rest;
@@ -68,14 +73,20 @@
     
     // if the width hasn't changed - tell sender to adjust subviews
     // this is also true for modern presentation - default behaviour that case
-    if (newFrame.size.width == oldSize.width || [AppDelegate me].skin == ApplicationSkin::Modern) {
+    if (newFrame.size.width == oldSize.width || AppDelegate.me.skin == ApplicationSkin::Modern) {
         [splitView adjustSubviews];
         return;
     }
     
-    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.Presentation)) {
-        NSRect leftRect  = [splitView.subviews[0] frame];
-        NSRect rightRect = [splitView.subviews[1] frame];
+    [self resizeSubviewsManually];
+}
+
+- (void)resizeSubviewsManually
+{
+    NSRect newFrame = self.frame;
+    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
+        NSRect leftRect  = [self.subviews[0] frame];
+        NSRect rightRect = [self.subviews[1] frame];
         
         float gran = p->Granularity();
         float center_x = m_Prop * newFrame.size.width;
@@ -84,16 +95,16 @@
         leftRect.origin = NSMakePoint(0, 0);
         leftRect.size.height = newFrame.size.height;
         leftRect.size.width = center_x - rest;
-        [splitView.subviews[0] setFrame:leftRect];
+        [self.subviews[0] setFrame:leftRect];
         
         rightRect.origin.y = 0;
         rightRect.origin.x = leftRect.size.width + 1;
         rightRect.size.height = newFrame.size.height;
         rightRect.size.width = newFrame.size.width - leftRect.size.width;
-        [splitView.subviews[1] setFrame:rightRect];
+        [self.subviews[1] setFrame:rightRect];
         return;
     }
-    [splitView adjustSubviews];
+    [self adjustSubviews];
 }
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
@@ -142,8 +153,8 @@
 
 - (void) SwapViews
 {
-    NSView *left = [self.subviews objectAtIndex:0];
-    NSView *right = [self.subviews objectAtIndex:1];
+    NSView *left = self.subviews[0];
+    NSView *right = self.subviews[1];
 
     NSRect leftrect = left.frame;
     NSRect rightrect = right.frame;
@@ -252,22 +263,41 @@
 
 - (bool) isViewCollapsedOrOverlayed:(NSView*)_v
 {
-    if(m_BasicViews[0] == _v ||
-       m_BasicViews[1] == _v)
+    if(m_BasicViews[0] == _v || m_BasicViews[1] == _v)
         return true;
     
     return [self isSubviewCollapsed:_v];
 }
 
-- (void)keyDown:(NSEvent *)event
+- (double) granularityForKeyResizing
 {
-    NSString* characters = event.charactersIgnoringModifiers;
-    if ( characters.length != 1 ) {
-        [super keyDown:event];
-        return;
-    }
+    FilePanelsTabbedHolder *v;
+    if(m_BasicViews[0]) v = m_BasicViews[0];
+    else if(m_BasicViews[1]) v = m_BasicViews[1];
+    else v = (FilePanelsTabbedHolder *)[self.subviews objectAtIndex:0];
     
-    auto mod = event.modifierFlags;
+    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(v.current.presentation))
+        return p->Granularity();
+    return 14.;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
+        m_DividerThickness = AppDelegate.me.skin == ApplicationSkin::Classic ? 0 : 1;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, nanoseconds(1ms).count()), dispatch_get_main_queue(), ^{
+            [self resizeSubviewsManually];
+        });
+    }
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+{
+    NSString* characters = theEvent.charactersIgnoringModifiers;
+    if ( characters.length != 1 )
+        return [super performKeyEquivalent:theEvent];
+    
+    auto mod = theEvent.modifierFlags;
     mod &= ~NSAlphaShiftKeyMask;
     mod &= ~NSNumericPadKeyMask;
     mod &= ~NSFunctionKeyMask;
@@ -283,7 +313,7 @@
         NSRect right = v2.frame;
         
         auto gran = self.granularityForKeyResizing;
-  
+        
         left.size.width -= gran;
         right.origin.x -= gran;
         right.size.width += gran;
@@ -294,7 +324,7 @@
         }
         v1.frame = left;
         v2.frame = right;
-        return;
+        return true;
     }
     else if(unicode == NSRightArrowFunctionKey &&
             ((mod & NSDeviceIndependentModifierFlagsMask) == NSControlKeyMask ||
@@ -317,28 +347,10 @@
         }
         v1.frame = left;
         v2.frame = right;
-        return;
+        return true;
     }
     
-    [super keyDown:event];
-}
-
-- (double) granularityForKeyResizing
-{
-    FilePanelsTabbedHolder *v;
-    if(m_BasicViews[0]) v = m_BasicViews[0];
-    else if(m_BasicViews[1]) v = m_BasicViews[1];
-    else v = (FilePanelsTabbedHolder *)[self.subviews objectAtIndex:0];
-    
-    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(v.current.Presentation))
-        return p->Granularity();
-    return 14.;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (object == [AppDelegate me] && [keyPath isEqualToString:@"skin"])
-        m_DividerThickness = [AppDelegate me].skin == ApplicationSkin::Classic ? 0 : 1;
+    return [super performKeyEquivalent:theEvent];
 }
 
 @end

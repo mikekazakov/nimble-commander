@@ -346,8 +346,6 @@
             [self willChangeValueForKey:@"skin"];
             m_Skin = skin;
             [self didChangeValueForKey:@"skin"];
-            for (MainWindowController *wincont : m_MainWindows)
-                [wincont ApplySkin:skin];
         }
     }
 }

@@ -482,4 +482,14 @@
      }];
 }
 
+- (IBAction)OnFileNewTab:(id)sender
+{
+    if(!self.activePanelController)
+        return;
+    if(self.activePanelController == self.leftPanelController)
+       [self addNewTabToTabView:m_MainSplitView.leftTabbedHolder.tabView];
+    else if(self.activePanelController == self.rightPanelController)
+        [self addNewTabToTabView:m_MainSplitView.rightTabbedHolder.tabView];
+}
+
 @end

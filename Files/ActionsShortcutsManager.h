@@ -85,9 +85,11 @@ private:
         {"menu.files.hide_others",              10030},
         {"menu.files.show_all",                 10040},
         {"menu.files.quit",                     10050},
+        
         {"menu.file.newwindow",                 11000},
         {"menu.file.new_folder",                11090},
         {"menu.file.new_folder_with_selection", 11100},
+        {"menu.file.new_tab",                   11110},
         {"menu.file.open",                      11010},
         {"menu.file.open_native",               11020},
         {"menu.file.open_in_opposite_panel",    11021},
@@ -98,6 +100,7 @@ private:
         {"menu.file.find",                      11050},
         {"menu.file.page_setup",                11060},
         {"menu.file.print",                     11070},
+        
         {"menu.edit.copy",                      12000},
         {"menu.edit.paste",                     12010},
         {"menu.edit.select_all",                12020},

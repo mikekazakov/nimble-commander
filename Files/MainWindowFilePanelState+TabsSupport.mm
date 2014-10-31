@@ -1,3 +1,4 @@
+#import "3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
 #import "MainWindowFilePanelState+TabsSupport.h"
 #import "PanelView.h"
 #import "PanelController.h"
@@ -109,6 +110,28 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     erase_from(m_RightPanelControllers, pc);
 }
 
+- (void) closeCurrentTab
+{
+    PanelController *cur = self.activePanelController;
+    if(!cur)
+        return;
+
+    NSTabViewItem *it;
+    MMTabBarView *bar;
+    
+    if( cur.view == m_MainSplitView.leftTabbedHolder.current ) {
+        it = [m_MainSplitView.leftTabbedHolder tabViewItemForController:cur];
+        bar = m_MainSplitView.leftTabbedHolder.tabBar;
+    }
+    else if( cur.view == m_MainSplitView.rightTabbedHolder.current ) {
+        it = [m_MainSplitView.rightTabbedHolder tabViewItemForController:cur];
+        bar = m_MainSplitView.rightTabbedHolder.tabBar;
+    }
+    
+    if(it && bar)
+        if(MMAttachedTabBarButton *bb = [bar attachedButtonForTabViewItem:it])
+            [bar performSelector:bb.closeButtonAction withObject:bb.closeButton afterDelay:0.0];
+}
 
 @end
 

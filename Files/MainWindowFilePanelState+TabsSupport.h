@@ -5,5 +5,6 @@
 
 - (void) addNewTabToTabView:(NSTabView *)aTabView;
 - (void) updateTabNameForController:(PanelController*)_controller;
+- (void) closeCurrentTab;
 
 @end

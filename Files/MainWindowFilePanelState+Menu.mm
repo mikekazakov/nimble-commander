@@ -28,36 +28,47 @@
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
-#define TAG(name, str) static const int name = ActionsShortcutsManager::Instance().TagFromAction(str)
-    TAG(tag_view_swap_panels,           "menu.view.swap_panels");
-    TAG(tag_view_sync_panels,           "menu.view.sync_panels");
-    TAG(tag_file_open_in_opp,           "menu.file.open_in_opposite_panel");
-    TAG(tag_cmd_compress,               "menu.command.compress");
-    TAG(tag_cmd_link_soft,              "menu.command.link_create_soft");
-    TAG(tag_cmd_link_hard,              "menu.command.link_create_hard");
-    TAG(tag_cmd_link_edit,              "menu.command.link_edit");
-    TAG(tag_cmd_copy_to,                "menu.command.copy_to");
-    TAG(tag_cmd_copy_as,                "menu.command.copy_as");
-    TAG(tag_cmd_move_to,                "menu.command.move_to");
-    TAG(tag_cmd_move_as,                "menu.command.move_as");
-#undef TAG
-    
     auto tag = item.tag;
-#define IF(a) else if(tag == a)
-    if(false);
-    IF(tag_view_swap_panels)        return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF(tag_view_sync_panels)        return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF(tag_file_open_in_opp)        return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item->IsDir();
-    IF(tag_cmd_compress)            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot();
-    IF(tag_cmd_link_soft)           return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot() && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS();
-    IF(tag_cmd_link_hard)           return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir();
-    IF(tag_cmd_link_edit)           return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir() && self.activePanelView.item->IsSymlink();
-    IF(tag_cmd_copy_to)             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF(tag_cmd_copy_as)             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF(tag_cmd_move_to)             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF(tag_cmd_move_as)             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-#undef IF
+    
+#define TOKENPASTE(x, y) x ## y
+#define TOKENPASTE2(x, y) TOKENPASTE(x, y)
+#define IF(str) static const long TOKENPASTE2(__tag_no_, __LINE__) = ActionsShortcutsManager::Instance().TagFromAction(str); \
+    if( tag == TOKENPASTE2(__tag_no_, __LINE__) )
 
+    
+    IF("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item->IsDir();
+    IF("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot();
+    IF("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot() && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS();
+    IF("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir();
+    IF("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir() && self.activePanelView.item->IsSymlink();
+    IF("menu.command.copy_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF("menu.command.copy_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF("menu.command.move_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF("menu.command.move_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF("menu.file.close") {
+        if( !self.isPanelActive ) {
+            item.title = @"Close Window";
+            return true;
+        }
+
+        PanelController *cur = self.activePanelController;
+        int tabs = 1;
+        if( [self isLeftController:cur] )
+            tabs = m_MainSplitView.leftTabbedHolder.tabsCount;
+        if( [self isRightController:cur] )
+            tabs = m_MainSplitView.rightTabbedHolder.tabsCount;
+
+        item.title = tabs <= 1 ? @"Close Window" : @"Close Tab";
+        return true;
+    }
+        
+
+#undef IF
+#undef TOKENPASTE2
+#undef TOKENPASTE
+    
     return true;
 }
 
@@ -490,6 +501,21 @@
        [self addNewTabToTabView:m_MainSplitView.leftTabbedHolder.tabView];
     else if(self.activePanelController == self.rightPanelController)
         [self addNewTabToTabView:m_MainSplitView.rightTabbedHolder.tabView];
+}
+
+- (IBAction)performClose:(id)sender
+{
+    PanelController *cur = self.activePanelController;
+    int tabs = 1;
+    if( [self isLeftController:cur] )
+        tabs = m_MainSplitView.leftTabbedHolder.tabsCount;
+    if( [self isRightController:cur] )
+        tabs = m_MainSplitView.rightTabbedHolder.tabsCount;
+
+    if(tabs > 1)
+        [self closeCurrentTab];
+    else
+        [self.window performClose:sender];
 }
 
 @end

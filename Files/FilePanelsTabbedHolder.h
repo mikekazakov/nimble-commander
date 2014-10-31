@@ -6,24 +6,18 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
-#import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarItem.h"
-#import "PanelView.h"
-
-@interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
-
-@property (assign) BOOL hasCloseButton;
-
-@end
-
+@class MMTabBarView;
+@class PanelView;
+@class PanelController;
 
 @interface FilePanelsTabbedHolder : NSStackView
 
 @property (nonatomic, readonly) MMTabBarView *tabBar;
 @property (nonatomic, readonly) NSTabView    *tabView;
 @property (nonatomic, readonly) PanelView    *current; // can return nil in case if there's no panels inserted or in some other weird cases
+@property (nonatomic, readonly) unsigned     tabsCount;
 
 - (void) addPanel:(PanelView*)_panel;
+- (NSTabViewItem*) tabViewItemForController:(PanelController*)_controller;
 
 @end

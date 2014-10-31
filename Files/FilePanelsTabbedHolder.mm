@@ -8,6 +8,15 @@
 
 #import "FilePanelsTabbedHolder.h"
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
+#import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarItem.h"
+#import "PanelController.h"
+#import "PanelView.h"
+
+@interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
+
+@property (assign) BOOL hasCloseButton;
+
+@end
 
 @implementation FilePanelsTabbedBarItem
 
@@ -117,6 +126,20 @@
     assert( [it.view isKindOfClass:PanelView.class] );
     
     return (PanelView*)it.view;
+}
+
+- (unsigned) tabsCount
+{
+    return (unsigned)m_TabView.numberOfTabViewItems;
+}
+
+- (NSTabViewItem*) tabViewItemForController:(PanelController*)_controller
+{
+    PanelView *v = _controller.view;
+    for(NSTabViewItem *it in m_TabView.tabViewItems)
+        if(it.view == v)
+            return it;
+    return nil;
 }
 
 @end

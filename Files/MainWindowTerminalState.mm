@@ -14,6 +14,7 @@
 #import "MainWindowController.h"
 #import "MessageBox.h"
 #import "FontCache.h"
+#import "ActionsShortcutsManager.h"
 
 #import "Common.h"
 #import "common_paths.h"
@@ -292,6 +293,16 @@
 - (IBAction)OnShowTerminal:(id)sender
 {
     [(MainWindowController*)self.window.delegate ResignAsWindowState:self];
+}
+
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    auto tag = item.tag;
+    IF_MENU_TAG("menu.view.show_terminal") {
+        item.title = @"Hide Terminal";
+        return true;
+    }
+    return true;
 }
 
 @end

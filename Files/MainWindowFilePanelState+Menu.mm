@@ -61,6 +61,16 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     }
     IF_MENU_TAG("menu.window.show_previous_tab")    return self.currentSideTabsCount > 1;
     IF_MENU_TAG("menu.window.show_next_tab")        return self.currentSideTabsCount > 1;
+    IF_MENU_TAG("menu.view.show_tabs") {
+        item.title = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsGeneralShowTabs] ?
+            @"Hide Tab Bar" : @"Show Tab Bar";
+        return true;
+    }
+    IF_MENU_TAG("menu.view.show_terminal") {
+        item.title = @"Show Terminal";
+        return true;
+    }
+    
     return true;
 }
 

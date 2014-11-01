@@ -96,6 +96,7 @@ private:
         {"menu.file.calculate_sizes",           11030},
         {"menu.file.calculate_all_sizes",       11031},
         {"menu.file.calculate_checksum",        11080},
+        {"menu.file.close_window",              11041},
         {"menu.file.close",                     11040},
         {"menu.file.find",                      11050},
         {"menu.file.page_setup",                11060},
@@ -163,9 +164,12 @@ private:
         {"menu.command.link_create_soft",       15190},
         {"menu.command.link_create_hard",       15200},
         {"menu.command.link_edit",              15210},
+        
         {"menu.window.minimize",                16000},
         {"menu.window.fullscreen",              16010},
         {"menu.window.zoom",                    16020},
+        {"menu.window.show_previous_tab",       16040},
+        {"menu.window.show_next_tab",           16050},
         {"menu.window.bring_all_to_front",      16030}
     };
     
@@ -176,3 +180,8 @@ private:
     map<int, ShortCut>      m_ShortCutsOverrides;
     mutable bool            m_DirtyOverrides = false;
 };
+
+#define IF_MENU_TAG_TOKENPASTE(x, y) x ## y
+#define IF_MENU_TAG_TOKENPASTE2(x, y) IF_MENU_TAG_TOKENPASTE(x, y)
+#define IF_MENU_TAG(str) static const long IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) = ActionsShortcutsManager::Instance().TagFromAction(str); \
+    if( tag == IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) )

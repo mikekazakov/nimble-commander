@@ -34,6 +34,8 @@
 	<string>⇧^\r</string>
 	<string>menu.file.calculate_checksum</string>
 	<string>⇧⌘k</string>
+	<string>menu.file.close_window</string>
+	<string>⇧⌘w</string>
 	<string>menu.file.close</string>
 	<string>⌘w</string>
 	<string>menu.file.find</string>
@@ -172,6 +174,10 @@
 	<string>^⌘f</string>
 	<string>menu.window.zoom</string>
 	<string></string>
+	<string>menu.window.show_previous_tab</string>
+	<string>⇧^\t</string>
+	<string>menu.window.show_next_tab</string>
+	<string>^\t</string>
 	<string>menu.window.bring_all_to_front</string>
 	<string></string>
 </array>

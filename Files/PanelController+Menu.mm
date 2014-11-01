@@ -59,25 +59,6 @@
     TAG(tag_sort_sepfolders,    "menu.view.sorting_separate_folders");
     TAG(tag_sort_casesens,      "menu.view.sorting_case_sensitive");
     TAG(tag_sort_numeric,       "menu.view.sorting_numeric_comparison");
-    TAG(tag_go_back,            "menu.go.back");
-    TAG(tag_go_forward,         "menu.go.forward");
-    TAG(tag_go_up,              "menu.go.enclosing_folder");
-    TAG(tag_go_down,            "menu.go.into_folder");
-    TAG(tag_cmd_file_attrs,     "menu.command.file_attributes");
-    TAG(tag_cmd_vol_info,       "menu.command.volume_information");
-    TAG(tag_cmd_int_view,       "menu.command.internal_viewer");
-    TAG(tag_cmd_ext_edit,       "menu.command.external_editor");
-    TAG(tag_cmd_eject_vol,      "menu.command.eject_volume");
-    TAG(tag_cmd_copy_filename,  "menu.command.copy_file_name");
-    TAG(tag_cmd_copy_filepath,  "menu.command.copy_file_path");
-    TAG(tag_cmd_move_to_trash,  "menu.command.move_to_trash");
-    TAG(tag_cmd_delete,         "menu.command.delete");
-    TAG(tag_cmd_delete_alt,     "menu.command.delete_alternative");
-    TAG(tag_cmd_mkdir,          "menu.command.create_directory");
-    TAG(tag_file_calc_sizes,    "menu.file.calculate_sizes");
-    TAG(tag_file_calc_checksum, "menu.file.calculate_checksum");
-    TAG(tag_file_new_folder,    "menu.file.new_folder");
-    TAG(tag_file_new_folder_ws, "menu.file.new_folder_with_selection");
 #undef TAG
     
     auto tag = item.tag;
@@ -96,26 +77,27 @@
     IF(tag_sort_mod)        upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByMTimeMask);
     IF(tag_sort_size)       upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortBySizeMask);
     IF(tag_sort_creat)      upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByBTimeMask);
-    IF(tag_go_back)         return m_History.CanMoveBack();
-    IF(tag_go_forward)      return m_History.CanMoveForth();
-    IF(tag_go_up)           return self.GetCurrentDirectoryPathRelativeToHost != "/" || self.VFS->Parent() != nullptr;
-    IF(tag_go_down)         return m_View.item && !m_View.item->IsDotDot();
-    IF(tag_cmd_file_attrs)  return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
-    IF(tag_cmd_vol_info)    return self.VFS->IsNativeFS();
-    IF(tag_cmd_int_view)    return m_View.item && !m_View.item->IsDir();
-    IF(tag_cmd_ext_edit)    return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
-    IF(tag_cmd_eject_vol)   return self.VFS->IsNativeFS() && IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost);
-    IF(tag_file_calc_sizes) return m_View.item != nullptr;
-    IF(tag_cmd_copy_filename) return m_View.item != nullptr;
-    IF(tag_cmd_copy_filepath) return m_View.item != nullptr;
-    IF(tag_cmd_move_to_trash) return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
-    IF(tag_cmd_delete)      return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
-    IF(tag_cmd_delete_alt)  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
-    IF(tag_cmd_mkdir)       return self.VFS->IsWriteable();
-    IF(tag_file_calc_checksum) return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
-    IF(tag_file_new_folder) return self.VFS->IsWriteable();
-    IF(tag_file_new_folder_ws) return self.VFS->IsWriteable() && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
 #undef IF
+    
+    IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack();
+    IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
+    IF_MENU_TAG("menu.go.enclosing_folder")             return self.GetCurrentDirectoryPathRelativeToHost != "/" || self.VFS->Parent() != nullptr;
+    IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item->IsDotDot();
+    IF_MENU_TAG("menu.command.file_attributes")         return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
+    IF_MENU_TAG("menu.command.volume_information")      return self.VFS->IsNativeFS();
+    IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item->IsDir();
+    IF_MENU_TAG("menu.command.external_editor")         return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
+    IF_MENU_TAG("menu.command.eject_volume")            return self.VFS->IsNativeFS() && IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost);
+    IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item != nullptr;
+    IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item != nullptr;
+    IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item != nullptr;
+    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
+    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
+    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
+    IF_MENU_TAG("menu.command.create_directory")        return self.VFS->IsWriteable();
+    IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.new_folder")                 return self.VFS->IsWriteable();
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.VFS->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     
     return true; // will disable some items in the future
 }

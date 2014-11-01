@@ -69,6 +69,8 @@
 		CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
 		CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CF1648B117D57BDA00D0B17E /* VFSArchiveListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */; };
+		CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
+		CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF27414917FF04EF006D6687 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
 		CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
@@ -912,6 +914,8 @@
 		CF14BE171931AD40008DDF6A /* WorkspaceIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkspaceIconsCache.h; sourceTree = "<group>"; };
 		CF1648AF17D57BDA00D0B17E /* VFSArchiveListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchiveListing.mm; sourceTree = "<group>"; };
 		CF1648B017D57BDA00D0B17E /* VFSArchiveListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSArchiveListing.h; sourceTree = "<group>"; };
+		CF17D1F01A049E1700B523C9 /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindow.h; sourceTree = "<group>"; };
+		CF17D1F11A049E1700B523C9 /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindow.mm; sourceTree = "<group>"; };
 		CF1D17D316FAA58F0050B13F /* filesysinfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysinfo.mm; sourceTree = "<group>"; };
 		CF1D17D416FAA58F0050B13F /* filesysinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysinfo.h; sourceTree = "<group>"; };
 		CF27414717FF04EF006D6687 /* SharingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharingService.h; sourceTree = "<group>"; };
@@ -1899,6 +1903,8 @@
 		CF8B09CA16ECEE9C0013B6A8 /* MainWindow */ = {
 			isa = PBXGroup;
 			children = (
+				CF17D1F01A049E1700B523C9 /* MainWindow.h */,
+				CF17D1F11A049E1700B523C9 /* MainWindow.mm */,
 				CFE1A4F216C632F700EFBA3C /* MainWindowController.h */,
 				CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */,
 				CF07DE36175D971E00757DE1 /* MainWindowStateProtocol.h */,
@@ -2955,6 +2961,7 @@
 				CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF6D9CE219667BA20077B146 /* archive_write_disk_acl.c in Sources */,
 				CF6D9CE319667BA20077B146 /* archive_write_disk_posix.c in Sources */,
+				CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CF6D9CE419667BA20077B146 /* archive_write_disk_set_standard_lookup.c in Sources */,
 				CF6D9CE519667BA20077B146 /* archive_write_disk_windows.c in Sources */,
 				CF6D9CE619667BA20077B146 /* archive_write_open_fd.c in Sources */,
@@ -3239,6 +3246,7 @@
 				CF7249A71990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */,
 				CF9D0EC717CC961100CB8146 /* archive_write_open_file.c in Sources */,
+				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CF76B318170146240066A49F /* TimedDummyOperation.mm in Sources */,
 				CF76B319170146240066A49F /* TimedDummyOperationJob.mm in Sources */,
 				CF9D0E9317CC961100CB8146 /* archive_read_set_options.c in Sources */,

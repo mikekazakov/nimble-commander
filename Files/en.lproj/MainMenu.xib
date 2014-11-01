@@ -145,6 +145,11 @@ DQ
                             <menuItem isSeparatorItem="YES" id="79">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
+                            <menuItem title="Close Window" tag="11041" keyEquivalent="W" id="fHK-0D-kaF">
+                                <connections>
+                                    <action selector="OnFileCloseWindow:" target="-1" id="CXz-JX-9j7"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Close" tag="11040" keyEquivalent="w" id="73">
                                 <connections>
                                     <action selector="performClose:" target="-1" id="193"/>
@@ -620,6 +625,27 @@ CA
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="92">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Show Previous Tab" tag="16040" id="ViK-AU-jLn">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+GQ
+</string>
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES"/>
+                                <connections>
+                                    <action selector="OnWindowShowPreviousTab:" target="-1" id="G6S-3f-cP1"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show Next Tab" tag="16050" id="t1q-Im-cLd">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+CQ
+</string>
+                                <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                <connections>
+                                    <action selector="OnWindowShowNextTab:" target="-1" id="D5x-Mn-YmE"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="tbS-FY-UXh">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
                             <menuItem title="Bring All to Front" tag="16030" id="5">

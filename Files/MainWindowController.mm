@@ -8,6 +8,7 @@
 //
 
 #import "MainWindowController.h"
+#import "MainWindow.h"
 #import "AppDelegate.h"
 #import "QuickPreview.h"
 #import "BigFileView.h"
@@ -31,10 +32,10 @@
 @synthesize TerminalState = m_Terminal;
 
 - (id)init {
-    NSWindow* window = [[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
-                                                   styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask
-                                                     backing:NSBackingStoreBuffered
-                                                       defer:false];
+    MainWindow* window = [[MainWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
+                                                       styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask
+                                                         backing:NSBackingStoreBuffered
+                                                           defer:false];
     window.minSize = NSMakeSize(636, 480);
     window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     window.restorable = YES;

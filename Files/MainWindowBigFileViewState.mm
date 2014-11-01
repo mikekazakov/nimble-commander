@@ -18,6 +18,7 @@
 #import "VFSNativeHost.h"
 #import "VFSArchiveHost.h"
 #import "ProcessSheetController.h"
+#import "ActionsShortcutsManager.h"
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
@@ -527,6 +528,21 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         return true;
     }
     return false;
+}
+
+- (IBAction)performClose:(id)sender
+{
+    [self cancelOperation:sender];
+}
+
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    auto tag = item.tag;
+    IF_MENU_TAG("menu.file.close") {
+        item.title = @"Close Viewer";
+        return true;
+    }
+    return true;
 }
 
 @end

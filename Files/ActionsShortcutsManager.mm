@@ -96,6 +96,9 @@ bool ActionsShortcutsManager::ShortCut::FromPersString(NSString *_from)
     
     if([key_ isEqualToString:@"\\r"])
         key_ = @"\r";
+    else if([key_ isEqualToString:@"\\t"])
+        key_ = @"\t";
+    
     
     modifiers = mod_;
     key = key_;

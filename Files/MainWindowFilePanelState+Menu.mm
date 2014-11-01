@@ -29,46 +29,36 @@
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
     auto tag = item.tag;
-    
-#define TOKENPASTE(x, y) x ## y
-#define TOKENPASTE2(x, y) TOKENPASTE(x, y)
-#define IF(str) static const long TOKENPASTE2(__tag_no_, __LINE__) = ActionsShortcutsManager::Instance().TagFromAction(str); \
-    if( tag == TOKENPASTE2(__tag_no_, __LINE__) )
-
-    
-    IF("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item->IsDir();
-    IF("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot();
-    IF("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot() && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS();
-    IF("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir();
-    IF("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir() && self.activePanelView.item->IsSymlink();
-    IF("menu.command.copy_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF("menu.command.copy_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF("menu.command.move_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF("menu.command.move_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF("menu.file.close") {
-        if( !self.isPanelActive ) {
-            item.title = @"Close Window";
+    IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item->IsDir();
+    IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot();
+    IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot() && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS();
+    IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.VFS->IsNativeFS() && self.rightPanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir();
+    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.VFS->IsNativeFS() && !self.activePanelView.item->IsDir() && self.activePanelView.item->IsSymlink();
+    IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF_MENU_TAG("menu.command.move_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF_MENU_TAG("menu.file.close") {
+        unsigned tabs = self.currentSideTabsCount;
+        if( tabs == 0 ) {
+            // in this case (no other adequate responders) - pass validation  up
+            NSResponder *resp = self;
+            while( (resp = resp.nextResponder) )
+                if( [resp respondsToSelector:item.action] && [resp respondsToSelector:@selector(validateMenuItem:)] )
+                    return [resp validateMenuItem:item];
             return true;
         }
-
-        PanelController *cur = self.activePanelController;
-        int tabs = 1;
-        if( [self isLeftController:cur] )
-            tabs = m_MainSplitView.leftTabbedHolder.tabsCount;
-        if( [self isRightController:cur] )
-            tabs = m_MainSplitView.rightTabbedHolder.tabsCount;
-
-        item.title = tabs <= 1 ? @"Close Window" : @"Close Tab";
+        item.title = tabs > 1 ? @"Close Tab" : @"Close Window" ;
         return true;
     }
-        
-
-#undef IF
-#undef TOKENPASTE2
-#undef TOKENPASTE
-    
+    IF_MENU_TAG("menu.file.close_window") {
+        item.hidden = self.currentSideTabsCount < 2;
+        return true;
+    }
+    IF_MENU_TAG("menu.window.show_previous_tab")    return self.currentSideTabsCount > 1;
+    IF_MENU_TAG("menu.window.show_next_tab")        return self.currentSideTabsCount > 1;
     return true;
 }
 
@@ -516,6 +506,50 @@
         [self closeCurrentTab];
     else
         [self.window performClose:sender];
+}
+
+- (IBAction)OnFileCloseWindow:(id)sender
+{
+    [self.window performClose:sender];
+}
+
+- (IBAction)OnWindowShowPreviousTab:(id)sender
+{
+    [self selectPreviousFilePanelTab];
+}
+
+- (IBAction)OnWindowShowNextTab:(id)sender
+{
+    [self selectNextFilePanelTab];
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+{
+    NSString* characters = theEvent.charactersIgnoringModifiers;
+    if ( characters.length != 1 )
+        return [super performKeyEquivalent:theEvent];
+    
+    auto mod = theEvent.modifierFlags;
+    mod &= ~NSAlphaShiftKeyMask;
+    mod &= ~NSNumericPadKeyMask;
+    mod &= ~NSFunctionKeyMask;
+    auto unicode = [characters characterAtIndex:0];
+    
+    // workaround for (shift)+ctrl+tab when it's menu item is disabled. mysterious stuff...
+    if( unicode == NSTabCharacter && (mod & NSDeviceIndependentModifierFlagsMask) == NSControlKeyMask ) {
+        static const int next_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_next_tab");
+        if([NSApplication.sharedApplication.menu itemWithTagHierarchical:next_tab].enabled)
+            return [super performKeyEquivalent:theEvent];
+        return true;
+    }
+    if( unicode == NSTabCharacter && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSShiftKeyMask) ) {
+        static const int prev_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_previous_tab");
+        if([NSApplication.sharedApplication.menu itemWithTagHierarchical:prev_tab].enabled)
+            return [super performKeyEquivalent:theEvent];
+        return true;
+    }
+    
+    return [super performKeyEquivalent:theEvent];
 }
 
 @end

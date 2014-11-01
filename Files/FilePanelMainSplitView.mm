@@ -37,7 +37,7 @@
         FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:th2];
 
-        [self observeValueForKeyPath:@"skin" ofObject:[AppDelegate me] change:nil context:nullptr];
+        [self observeValueForKeyPath:@"skin" ofObject:AppDelegate.me change:nil context:nullptr];
         [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
     }
     return self;

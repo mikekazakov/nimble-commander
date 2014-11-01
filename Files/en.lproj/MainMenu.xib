@@ -344,6 +344,12 @@ DQ
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="t5L-ik-2nt"/>
+                            <menuItem title="Show/Hide Tab Bar" tag="13179" id="NK3-hW-YDx">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnShowTabs:" target="-1" id="42j-qD-uKh"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Show/Hide Toolbar" tag="13180" id="I1T-dz-dM2">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

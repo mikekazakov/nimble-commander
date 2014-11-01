@@ -99,6 +99,11 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 {
 }*/
 
+- (void)tabViewDidChangeNumberOfTabViewItems:(NSTabView *)tabView
+{
+    [self updateTabBarsVisibility];
+}
+
 - (void)tabView:(NSTabView *)aTabView didCloseTabViewItem:(NSTabViewItem *)tabViewItem
 {
     // NB! at this moment a tab was already removed from NSTabView objects
@@ -195,6 +200,14 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     
     unsigned long willbe = now + 1 < tabs ? now + 1 : 0;
     [bar selectTabViewItem:bar.tabView.tabViewItems[willbe]];
+}
+
+- (void) updateTabBarsVisibility
+{
+    unsigned lc = m_MainSplitView.leftTabbedHolder.tabsCount, rc = m_MainSplitView.rightTabbedHolder.tabsCount;
+    bool should_be_shown = m_ShowTabs ? true : (lc > 1 || rc > 1);
+    m_MainSplitView.leftTabbedHolder.tabBarShown = should_be_shown;
+    m_MainSplitView.rightTabbedHolder.tabBarShown = should_be_shown;
 }
 
 @end

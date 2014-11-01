@@ -32,6 +32,7 @@
 
 static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
 static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
+static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 @implementation MainWindowFilePanelState
 
@@ -43,6 +44,7 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
     if(self)
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        m_ShowTabs = [defaults boolForKey:g_DefsGeneralShowTabs];
         
         m_OperationsController = [[OperationsController alloc] init];
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController
@@ -137,8 +139,16 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
                       }
                }
         }
+        
+        [self updateTabBarsVisibility];
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:g_DefsGeneralShowTabs options:0 context:NULL];
     }
     return self;
+}
+
+- (void) dealloc
+{
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:g_DefsGeneralShowTabs];
 }
 
 - (BOOL)acceptsFirstResponder { return true; }
@@ -820,6 +830,22 @@ static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 - (void) AddOperation:(Operation*)_operation
 {
     [m_OperationsController AddOperation:_operation];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    // Check if defaults changed.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (object == defaults) {
+        // Check if the skin value was modified.
+        if ([keyPath isEqualToString:g_DefsGeneralShowTabs]) {
+            bool show = [defaults boolForKey:g_DefsGeneralShowTabs];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, nanoseconds(1ms).count()), dispatch_get_main_queue(), ^{
+                m_ShowTabs = show;
+                [self updateTabBarsVisibility];
+            });
+        }
+    }
 }
 
 @end

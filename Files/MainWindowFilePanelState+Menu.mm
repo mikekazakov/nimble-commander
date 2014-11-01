@@ -24,6 +24,8 @@
 #import "FileCopyOperation.h"
 #import "MassCopySheetController.h"
 
+static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
+
 @implementation MainWindowFilePanelState (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
@@ -550,6 +552,12 @@
     }
     
     return [super performKeyEquivalent:theEvent];
+}
+
+- (IBAction)OnShowTabs:(id)sender
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:![defaults boolForKey:g_DefsGeneralShowTabs] forKey:g_DefsGeneralShowTabs];
 }
 
 @end

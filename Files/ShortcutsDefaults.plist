@@ -88,6 +88,8 @@
 	<string></string>
 	<string>menu.view.sorting_numeric_comparison</string>
 	<string></string>
+	<string>menu.view.show_tabs</string>
+	<string>⇧⌘t</string>
 	<string>menu.view.show_toolbar</string>
 	<string>⌥⌘t</string>
 	<string>menu.view.show_terminal</string>

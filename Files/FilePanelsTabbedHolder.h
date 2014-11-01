@@ -16,6 +16,7 @@
 @property (nonatomic, readonly) NSTabView    *tabView;
 @property (nonatomic, readonly) PanelView    *current; // can return nil in case if there's no panels inserted or in some other weird cases
 @property (nonatomic, readonly) unsigned     tabsCount;
+@property (nonatomic)           bool         tabBarShown;
 
 - (void) addPanel:(PanelView*)_panel;
 - (NSTabViewItem*) tabViewItemForController:(PanelController*)_controller;

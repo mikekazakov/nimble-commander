@@ -35,13 +35,14 @@
 {
     MMTabBarView    *m_TabBar;
     NSTabView       *m_TabView;
+    bool m_TabBarShown;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if(self) {
-        
+        m_TabBarShown = false;
         self.orientation = NSUserInterfaceLayoutOrientationVertical;
         self.edgeInsets = NSEdgeInsetsMake(0, 0, 0, 0);
         self.spacing = 0;
@@ -88,8 +89,8 @@
                                                                 toItem:nil
                                                             attribute:NSLayoutAttributeNotAnAttribute
                                                             multiplier:1.0
-                                                              constant:22]];
-        [self addView:m_TabBar inGravity:NSStackViewGravityTop];
+                                                              constant:m_TabBar.heightOfTabBarButtons]];
+//        [self addView:m_TabBar inGravity:NSStackViewGravityTop];
         
         m_TabView.delegate = m_TabBar;
     }
@@ -140,6 +141,37 @@
         if(it.view == v)
             return it;
     return nil;
+}
+
+- (void) doShowTabBar
+{
+    if(!m_TabBarShown) {
+        [self addView:m_TabBar inGravity:NSStackViewGravityTop];
+        m_TabBarShown = true;
+    }
+}
+
+- (void) doHideTabBar
+{
+    if(m_TabBarShown) {
+        [self removeView:m_TabBar];
+        m_TabBarShown = false;
+    }
+}
+
+- (bool) tabBarShown
+{
+    return m_TabBarShown;
+}
+
+- (void) setTabBarShown:(bool)tabBarShown
+{
+    if(m_TabBarShown == tabBarShown)
+        return;
+    if(m_TabBarShown && !tabBarShown)
+        [self doHideTabBar];
+    else if(!m_TabBarShown && tabBarShown)
+        [self doShowTabBar];
 }
 
 @end

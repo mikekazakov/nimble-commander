@@ -42,6 +42,8 @@ class PanelData;
     NSBox                *m_SeparatorLine;
     NSToolbar            *m_Toolbar;
     NSResponder          *m_LastResponder;
+    
+    bool m_ShowTabs;    
 }
 
 

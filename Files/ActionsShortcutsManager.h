@@ -124,8 +124,10 @@ private:
         {"menu.view.sorting_separate_folders",  13150},
         {"menu.view.sorting_case_sensitive",    13160},
         {"menu.view.sorting_numeric_comparison",13170},
+        {"menu.view.show_tabs",                 13179},
         {"menu.view.show_toolbar",              13180},
         {"menu.view.show_terminal",             13190},
+        
         {"menu.go.back",                        14000},
         {"menu.go.forward",                     14010},
         {"menu.go.enclosing_folder",            14020},
@@ -141,6 +143,7 @@ private:
         {"menu.go.processes_list",              14120},
         {"menu.go.connect.ftp",                 14130},
         {"menu.go.connect.sftp",                14140},
+        
         {"menu.command.system_overview",        15000},
         {"menu.command.volume_information",     15010},
         {"menu.command.file_attributes",        15020},

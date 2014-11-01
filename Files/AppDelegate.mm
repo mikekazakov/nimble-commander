@@ -67,7 +67,7 @@
         assert(m_Skin == ApplicationSkin::Modern || m_Skin == ApplicationSkin::Classic);
         [NSUserDefaults.standardUserDefaults addObserver:self
                                               forKeyPath:@"Skin"
-                                                 options:NSKeyValueObservingOptionNew
+                                                 options:0
                                                  context:NULL];
     }
     return self;

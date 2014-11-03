@@ -99,6 +99,33 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 {
 }*/
 
+- (void)tabView:(NSTabView *)aTabView didMoveTabViewItem:(NSTabViewItem *)tabViewItem toIndex:(NSUInteger)index
+{
+    PanelController *pc =  (PanelController*)(((PanelView*)tabViewItem.view).delegate);
+    if( [self isLeftController:pc] ) {
+        auto it = find(begin(m_LeftPanelControllers), end(m_LeftPanelControllers), pc);
+        if(it == end(m_LeftPanelControllers))
+            return;
+        
+        m_LeftPanelControllers.erase(it);
+        m_LeftPanelControllers.insert(begin(m_LeftPanelControllers)+index, pc);
+        
+    }
+    else if( [self isRightController:pc] ) {
+        auto it = find(begin(m_RightPanelControllers), end(m_RightPanelControllers), pc);
+        if(it == end(m_RightPanelControllers))
+            return;
+        
+        m_RightPanelControllers.erase(it);
+        m_RightPanelControllers.insert(begin(m_RightPanelControllers)+index, pc);
+    }
+}
+
+- (BOOL)tabView:(NSTabView *)aTabView shouldDragTabViewItem:(NSTabViewItem *)tabViewItem inTabBarView:(MMTabBarView *)tabBarView
+{
+    return aTabView.numberOfTabViewItems > 1;
+}
+
 - (void)tabViewDidChangeNumberOfTabViewItems:(NSTabView *)tabView
 {
     [self updateTabBarsVisibility];

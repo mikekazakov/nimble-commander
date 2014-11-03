@@ -64,21 +64,28 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     PanelController *pc = [PanelController new];
     pc.state = self;
     
+    string path;
+    VFSHostPtr vfs;
     if(aTabView == m_MainSplitView.leftTabbedHolder.tabView) {
         pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
+        vfs = self.leftPanelController.VFS;
+        path = self.leftPanelController.GetCurrentDirectoryPathRelativeToHost;
+        
         m_LeftPanelControllers.emplace_back(pc);
         [m_MainSplitView.leftTabbedHolder addPanel:pc.view];
     }
     else if(aTabView == m_MainSplitView.rightTabbedHolder.tabView) {
         pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
+        vfs = self.rightPanelController.VFS;
+        path = self.rightPanelController.GetCurrentDirectoryPathRelativeToHost;
         m_RightPanelControllers.emplace_back(pc);
         [m_MainSplitView.rightTabbedHolder addPanel:pc.view];
     }
     else
         assert(0); // something is really broken
     
-    [pc GoToDir:"/"
-            vfs:VFSNativeHost::SharedHost()
+    [pc GoToDir:path
+            vfs:vfs
    select_entry:""
           async:false];
     

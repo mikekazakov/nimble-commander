@@ -13,6 +13,13 @@
 #import "FilePanelsTabbedHolder.h"
 #import "AppDelegate.h"
 
+static CGColorRef DividerColor(bool _wnd_active)
+{
+    static CGColorRef act = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
+    static CGColorRef inact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
+    return _wnd_active ? act : inact;
+}
+
 @implementation FilePanelMainSplitView
 {
     FilePanelsTabbedHolder *m_BasicViews[2]; // if there's no overlays - this will be nils
@@ -115,6 +122,15 @@
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
     return 100;
+}
+
+- (void)drawDividerInRect:(NSRect)rect
+{
+    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    CGContextSaveGState(context);    
+    CGContextSetFillColorWithColor(context, DividerColor(self.window.isKeyWindow));
+    CGContextFillRect(context, rect);
+    CGContextRestoreGState(context);
 }
 
 - (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview

@@ -7,6 +7,7 @@
 - (void) updateTabNameForController:(PanelController*)_controller;
 - (void) closeCurrentTab;
 - (void) updateTabBarsVisibility;
+- (void) updateTabBarButtons;
 
 /**
  * if file panel is not active - return 0, otherwise return amount of tabs on active side

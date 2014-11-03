@@ -444,6 +444,8 @@
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */; };
+		CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
+		CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
@@ -1040,6 +1042,8 @@
 		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
 		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
 		CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ShortcutsDefaults.plist; sourceTree = "<group>"; };
+		CF7C920B1A07458900FAE649 /* MMTabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTabBarStyle.h; sourceTree = "<group>"; };
+		CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MMTabBarStyle.mm; sourceTree = "<group>"; };
 		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailedVolumeInformationSheetController.h; sourceTree = "<group>"; };
@@ -1698,6 +1702,8 @@
 				CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */,
 				CFE3E84A19FFC0C9009ADE5E /* FilePanelsTabbedHolder.h */,
 				CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */,
+				CF7C920B1A07458900FAE649 /* MMTabBarStyle.h */,
+				CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */,
 				CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */,
 				CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */,
 				CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */,
@@ -3040,6 +3046,7 @@
 				CF6D9C04196678000077B146 /* VFSNetFTPInternals.mm in Sources */,
 				CF6D9C05196678000077B146 /* VFSNetFTPFile.mm in Sources */,
 				CF6D9C06196678000077B146 /* VFSNetFTPCache.mm in Sources */,
+				CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CF6D9C07196678000077B146 /* VFSSeqToRandomWrapper.mm in Sources */,
 				CF6D9C08196678000077B146 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF6D9C09196678000077B146 /* VFSEasyOps.mm in Sources */,
@@ -3325,6 +3332,7 @@
 				CF9D0ED517CC961100CB8146 /* archive_write_set_format_v7tar.c in Sources */,
 				CF9D0E8717CC961100CB8146 /* archive_read_append_filter.c in Sources */,
 				CF9D0ED817CC961100CB8146 /* archive_write_set_format.c in Sources */,
+				CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CFB060DD172E6AC4001F6949 /* Common.mm in Sources */,
 				B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */,
 				B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */,

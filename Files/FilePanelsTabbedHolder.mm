@@ -11,6 +11,7 @@
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarItem.h"
 #import "PanelController.h"
 #import "PanelView.h"
+#import "MMTabBarStyle.h"
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
 
@@ -40,6 +41,11 @@
 
 - (id) initWithFrame:(NSRect)frameRect
 {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [MMTabBarView registerTabStyleClass:MMTabBarStyle.class];
+    });
+    
     self = [super initWithFrame:frameRect];
     if(self) {
         m_TabBarShown = false;
@@ -75,7 +81,10 @@
         m_TabBar.disableTabClose = false;
         m_TabBar.onlyShowCloseOnHover = true;
         m_TabBar.useOverflowMenu = false;
-        [m_TabBar setStyleNamed:@"Adium"];
+        m_TabBar.buttonMinWidth = 100;
+        m_TabBar.buttonMaxWidth = 2000;
+        m_TabBar.buttonOptimumWidth = 2000;
+        [m_TabBar setStyleNamed:@"Files"];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
                                                              attribute:NSLayoutAttributeWidth
                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual

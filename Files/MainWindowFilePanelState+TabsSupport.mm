@@ -237,5 +237,15 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     m_MainSplitView.rightTabbedHolder.tabBarShown = should_be_shown;
 }
 
+- (void) updateTabBarButtons
+{
+    [m_MainSplitView.leftTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
+            aButton.needsDisplay = true;
+        }];
+    [m_MainSplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
+            aButton.needsDisplay = true;
+            }];
+}
+
 @end
 

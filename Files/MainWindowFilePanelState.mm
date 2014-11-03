@@ -537,6 +537,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 - (void)activePanelChangedTo:(PanelController *)controller
 {
     [self UpdateTitle];
+    [self updateTabBarButtons];
 }
 
 - (void) UpdateTitle

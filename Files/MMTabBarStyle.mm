@@ -27,9 +27,6 @@ static CGColorRef DividerColor(bool _wnd_active)
 	return self.class.name;
 }
 
-#pragma mark -
-#pragma mark Creation/Destruction
-
 - (id) init {
     if ( (self = [super init]) ) {
         cardCloseButton = [[NSImage alloc] initByReferencingFile:[[MMTabBarView bundle] pathForImageResource:@"AquaTabClose_Front"]];
@@ -165,6 +162,18 @@ static CGColorRef DividerColor(bool _wnd_active)
         {frame.origin.x + frame.size.width - 0.5, frame.origin.y + frame.size.height} };
     CGContextStrokeLineSegments(context, points, 2);
     CGContextRestoreGState(context);
+}
+
+- (void)drawTitleOfTabCell:(MMTabBarButtonCell *)cell withFrame:(NSRect)frame inView:(NSView *)controlView
+{
+    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    CGContextSaveGState(context);
+    CGContextSetShouldSmoothFonts((CGContextRef)NSGraphicsContext.currentContext.graphicsPort, false);
+
+    // draw title
+    [[cell attributedStringValue] drawInRect:[cell titleRectForBounds:frame]];
+    
+   CGContextRestoreGState(context);
 }
 
 @end

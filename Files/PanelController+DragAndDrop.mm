@@ -352,6 +352,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     bool dragging_over_dir = dragging_over_item && dragging_over_item->IsDir() && DraggingIntoFoldersAllowed();
     path destination_dir = self.GetCurrentDirectoryPathRelativeToHost;
     destination_dir.remove_filename();
+    if(destination_dir.empty())
+        destination_dir = "/";
     if(dragging_over_dir) { // alter destination regarding to where drag is currently placed
         if(!dragging_over_item->IsDotDot())
             destination_dir /= dragging_over_item->Name();

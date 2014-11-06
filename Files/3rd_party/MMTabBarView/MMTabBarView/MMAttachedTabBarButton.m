@@ -195,7 +195,7 @@
 
     NSRect draggingRect = NSZeroRect;
     
-    if (style && [style respondsToSelector:@selector(dragRectForTabButton:ofTabBarView:)]) {
+    if (style && [style respondsToSelector:@selector(draggingRectForTabButton:ofTabBarView:)]) {
         draggingRect = [style draggingRectForTabButton:self ofTabBarView:tabBarView];
     } else {
         draggingRect = [self _draggingRect];

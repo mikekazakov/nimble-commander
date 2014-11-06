@@ -107,7 +107,6 @@
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
-		CF5DDF3E1A013169004B0405 /* MMTabBarView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */; };
 		CF653C3D18C38D0900502920 /* VFSArchiveUnRARHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653C3B18C38D0900502920 /* VFSArchiveUnRARHost.mm */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF653E0418C5AB2000502920 /* VFSArchiveUnRARListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF653E0218C5AB2000502920 /* VFSArchiveUnRARListing.mm */; };
@@ -446,6 +445,13 @@
 		CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */; };
 		CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
+		CF7C92141A0B865D00FAE649 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92131A0B865D00FAE649 /* tab_add.png */; };
+		CF7C92151A0B865D00FAE649 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92131A0B865D00FAE649 /* tab_add.png */; };
+		CF7C92191A0B877B00FAE649 /* tab_close.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92181A0B877B00FAE649 /* tab_close.png */; };
+		CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92181A0B877B00FAE649 /* tab_close.png */; };
+		CF7C921C1A0B90D200FAE649 /* tab_close_hover.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */; };
+		CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */; };
+		CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
 		CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
@@ -708,7 +714,6 @@
 		CFE3829419CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE3829019CEFBA0005C8958 /* BigFileViewSheet.xib */; };
 		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
-		CFE3E84919FFBD12009ADE5E /* MMTabBarView.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
 		CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
 		CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
@@ -735,6 +740,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = CF653C4A18C3934100502920;
 			remoteInfo = UnRAR_LIB;
+		};
+		CF7C924E1A0B97EC00FAE649 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF7C92271A0B977C00FAE649;
+			remoteInfo = MMTabBarView_LIB;
 		};
 		CF7F323C198B72AB004D8AC0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -793,19 +805,6 @@
 			remoteInfo = MMTabBarView;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		CFE3E84819FFBCBA009ADE5E /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				CFE3E84919FFBD12009ADE5E /* MMTabBarView.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		B50976A31729BA150080412E /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
@@ -1044,6 +1043,10 @@
 		CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ShortcutsDefaults.plist; sourceTree = "<group>"; };
 		CF7C920B1A07458900FAE649 /* MMTabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTabBarStyle.h; sourceTree = "<group>"; };
 		CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MMTabBarStyle.mm; sourceTree = "<group>"; };
+		CF7C92131A0B865D00FAE649 /* tab_add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_add.png; path = Resource/tab_add.png; sourceTree = "<group>"; };
+		CF7C92181A0B877B00FAE649 /* tab_close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_close.png; path = Resource/tab_close.png; sourceTree = "<group>"; };
+		CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_close_hover.png; path = Resource/tab_close_hover.png; sourceTree = "<group>"; };
+		CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarView_LIB.xcodeproj; path = 3rd_party/MMTabBarView/MMTabBarView_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailedVolumeInformationSheetController.h; sourceTree = "<group>"; };
@@ -1466,7 +1469,6 @@
 				CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */,
 				CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */,
 				CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */,
-				CF5DDF3E1A013169004B0405 /* MMTabBarView.framework in Frameworks */,
 				CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */,
 				CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */,
 				CF1100D01913788800E170FC /* Security.framework in Frameworks */,
@@ -1478,6 +1480,7 @@
 				CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */,
 				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
 				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
+				CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */,
 				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
 				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
 				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
@@ -1896,6 +1899,14 @@
 			name = "Files Lite";
 			sourceTree = "<group>";
 		};
+		CF7C924B1A0B97EC00FAE649 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */ = {
 			isa = PBXGroup;
 			children = (
@@ -2266,6 +2277,9 @@
 		CFB5989A196E38C700D4C108 /* Art */ = {
 			isa = PBXGroup;
 			children = (
+				CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */,
+				CF7C92181A0B877B00FAE649 /* tab_close.png */,
+				CF7C92131A0B865D00FAE649 /* tab_add.png */,
 				CFCA762F19D288BA00AF87A8 /* Lite */,
 				CFCA763119D288C200AF87A8 /* Pro */,
 				CFCA763219D288C600AF87A8 /* Full */,
@@ -2539,6 +2553,7 @@
 				CF3FCE0A190EB93600E55698 /* shared_mutex */,
 				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
 				CFE3E83B19FFBB67009ADE5E /* MMTabBarView.xcodeproj */,
+				CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */,
 				CFDA4CD1182CBA51006EC35C /* sparkle */,
 				CF29313117D9914700648A90 /* rdrand */,
 				CF9D0CEE17CC957700CB8146 /* archivelib */,
@@ -2624,7 +2639,6 @@
 				CFC5120E16C4BD3D00D247EE /* Frameworks */,
 				CFC5120F16C4BD3D00D247EE /* Resources */,
 				CF9EEB3E17256372001443FA /* ShellScript */,
-				CFE3E84819FFBCBA009ADE5E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -2675,6 +2689,10 @@
 					ProjectRef = CFE3E83B19FFBB67009ADE5E /* MMTabBarView.xcodeproj */;
 				},
 				{
+					ProductGroup = CF7C924B1A0B97EC00FAE649 /* Products */;
+					ProjectRef = CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */;
+				},
+				{
 					ProductGroup = CF653C5218C3934100502920 /* Products */;
 					ProjectRef = CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */;
 				},
@@ -2694,6 +2712,13 @@
 			fileType = archive.ar;
 			path = libUnRAR_LIB.a;
 			remoteRef = CF653C5518C3934200502920 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMMTabBarView_LIB.a;
+			remoteRef = CF7C924E1A0B97EC00FAE649 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFE3E84619FFBB6C009ADE5E /* MMTabBarView.framework */ = {
@@ -2730,6 +2755,7 @@
 				CFCA763419D288E300AF87A8 /* files.icns in Resources */,
 				CF6D9D0219667E390077B146 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CF6D9D0319667E390077B146 /* FileLinkNewHardlinkSheetController.xib in Resources */,
+				CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */,
 				CFB598BE196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CFB598AC196E38E400D4C108 /* linkarrow_icon.png in Resources */,
 				CF6D9D0419667E390077B146 /* FileSysEntryAttrSheetController.xib in Resources */,
@@ -2739,6 +2765,7 @@
 				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFE3829419CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */,
+				CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CF6D9D0719667E390077B146 /* CreateDirectorySheetController.xib in Resources */,
 				CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */,
@@ -2763,6 +2790,7 @@
 				CF6D99AB196676B10077B146 /* ShortcutsDefaults.plist in Resources */,
 				CF6D99AA196676AE0077B146 /* Defaults.plist in Resources */,
 				CF7249AA1990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
+				CF7C92151A0B865D00FAE649 /* tab_add.png in Resources */,
 				CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2774,6 +2802,7 @@
 				CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */,
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
+				CF7C92191A0B877B00FAE649 /* tab_close.png in Resources */,
 				CFB598BB196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */,
 				CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */,
@@ -2789,6 +2818,7 @@
 				CFCD3B7D18AB64C600028B41 /* FindFilesSheetController.xib in Resources */,
 				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
 				CFE3829319CEFBA0005C8958 /* BigFileViewSheet.xib in Resources */,
+				CF7C921C1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFE1088E1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib in Resources */,
 				B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */,
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
@@ -2800,6 +2830,7 @@
 				CFB598BD196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */,
+				CF7C92141A0B865D00FAE649 /* tab_add.png in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
 				CFB598AB196E38E400D4C108 /* linkarrow_icon.png in Resources */,
 				CFB598AF196E38E400D4C108 /* pref_extedit_icon.png in Resources */,
@@ -3710,6 +3741,10 @@
 					"$(OTHER_CFLAGS)",
 					"-std=c++1y",
 				);
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-ObjC",
+				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -3750,6 +3785,10 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-std=c++1y",
+				);
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-ObjC",
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;

@@ -40,6 +40,9 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
         [pc AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
     if(tabView == m_MainSplitView.rightTabbedHolder.tabView)
         [pc AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
+    
+    m_MainSplitView.leftOverlay = nil;
+    m_MainSplitView.rightOverlay = nil;
 }
 
 - (void) updateTabNameForController:(PanelController*)_controller

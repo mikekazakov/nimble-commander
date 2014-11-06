@@ -10,14 +10,6 @@ static CGColorRef DividerColor(bool _wnd_active)
 }
 
 @implementation MMTabBarStyle
-{
-    NSImage *cardCloseButton;
-    NSImage *cardCloseButtonDown;
-    NSImage *cardCloseButtonOver;
-    NSImage *cardCloseDirtyButton;
-    NSImage *cardCloseDirtyButtonDown;
-    NSImage *cardCloseDirtyButtonOver;
-}
 
 + (NSString *)name {
     return @"Files";
@@ -29,13 +21,6 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (id) init {
     if ( (self = [super init]) ) {
-        cardCloseButton = [[NSImage alloc] initByReferencingFile:[[MMTabBarView bundle] pathForImageResource:@"AquaTabClose_Front"]];
-        cardCloseButtonDown = [[NSImage alloc] initByReferencingFile:[[MMTabBarView bundle] pathForImageResource:@"AquaTabClose_Front_Pressed"]];
-        cardCloseButtonOver = [[NSImage alloc] initByReferencingFile:[[MMTabBarView bundle] pathForImageResource:@"AquaTabClose_Front_Rollover"]];
-        
-        cardCloseDirtyButton = [[NSImage alloc] initByReferencingFile:[[MMTabBarView bundle] pathForImageResource:@"AquaTabCloseDirty_Front"]];
-        cardCloseDirtyButtonDown = [[NSImage alloc] initByReferencingFile:[[MMTabBarView bundle] pathForImageResource:@"AquaTabCloseDirty_Front_Pressed"]];
-        cardCloseDirtyButtonOver = [[NSImage alloc] initByReferencingFile:[[MMTabBarView bundle] pathForImageResource:@"AquaTabCloseDirty_Front_Rollover"]];
 	}
     return self;
 }
@@ -62,7 +47,6 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (CGFloat)heightOfTabBarButtonsForTabBarView:(MMTabBarView *)tabBarView
 {
-
     return kMMTabBarViewHeight;
 }
 
@@ -80,12 +64,15 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (NSImage *)closeButtonImageOfType:(MMCloseButtonImageType)type forTabCell:(MMTabBarButtonCell *)cell
 {
+    static NSImage *def   = [NSImage imageNamed:@"tab_close.png"];
+    static NSImage *hover = [NSImage imageNamed:@"tab_close_hover.png"];
+    
     switch (type) {
-        case MMCloseButtonImageTypeStandard:
-            return cardCloseButton;
+//        case MMCloseButtonImageTypeStandard:
+//            return cardCloseButton;
         case MMCloseButtonImageTypeRollover:
-            return cardCloseButtonOver;
-        case MMCloseButtonImageTypePressed:
+            return hover;
+/*        case MMCloseButtonImageTypePressed:
             return cardCloseButtonDown;
             
         case MMCloseButtonImageTypeDirty:
@@ -93,10 +80,10 @@ static CGColorRef DividerColor(bool _wnd_active)
         case MMCloseButtonImageTypeDirtyRollover:
             return cardCloseDirtyButtonOver;
         case MMCloseButtonImageTypeDirtyPressed:
-            return cardCloseDirtyButtonDown;
+            return cardCloseDirtyButtonDown;*/
             
         default:
-            break;
+            return def;
     }
 }
 
@@ -174,6 +161,27 @@ static CGColorRef DividerColor(bool _wnd_active)
     [[cell attributedStringValue] drawInRect:[cell titleRectForBounds:frame]];
     
    CGContextRestoreGState(context);
+}
+
+- (void)updateAddButton:(MMRolloverButton *)aButton ofTabBarView:(MMTabBarView *)tabBarView
+{
+    [aButton setImage:[NSImage imageNamed:@"tab_add.png"]];
+/*
+    [_addTabButton setImage:_staticAquaTabNewImage()];
+    [_addTabButton setAlternateImage:_staticAquaTabNewPressedImage()];
+    [_addTabButton setRolloverImage:_staticAquaTabNewRolloverImage()];
+    
+    [_addTabButton setTitle:@""];
+    [_addTabButton setImagePosition:NSImageOnly];
+    [_addTabButton setRolloverButtonType:MMRolloverActionButton];
+    [_addTabButton setBordered:NO];
+    [_addTabButton setBezelStyle:NSShadowlessSquareBezelStyle];
+    */
+}
+
+- (NSSize)addTabButtonSizeForTabBarView:(MMTabBarView *)tabBarView
+{
+       return NSMakeSize(12.0,20.0);
 }
 
 @end

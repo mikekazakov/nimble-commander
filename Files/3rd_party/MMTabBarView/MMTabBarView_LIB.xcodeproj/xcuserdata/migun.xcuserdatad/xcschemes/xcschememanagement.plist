@@ -4,35 +4,20 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Files Lite.xcscheme_^#shared#^_</key>
+		<key>MMTabBarView_LIB.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
-		</dict>
-		<key>Files.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>3</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>CF47A97F186C607B00745C4C</key>
+		<key>CF7C92261A0B977C00FAE649</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>CF6D997C196675290077B146</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CF6D998E196675290077B146</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CFC5121016C4BD3D00D247EE</key>
+		<key>CF7C92311A0B977C00FAE649</key>
 		<dict>
 			<key>primary</key>
 			<true/>

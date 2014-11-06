@@ -95,8 +95,8 @@ static CGColorRef DividerColor(bool _wnd_active)
     // draw horizontal divider line
     CGContextSaveGState(context);
     CGContextSetStrokeColorWithColor(context, DividerColor(tabBarView.isWindowActive));
-    NSPoint points[2] = { {rect.origin.x, rect.origin.y + rect.size.height - 0.5},
-                          {rect.origin.x + rect.size.width, rect.origin.y + rect.size.height - 0.5} };
+    NSPoint points[2] = { {rect.origin.x, tabBarView.bounds.size.height - 0.5},
+                          {rect.origin.x + rect.size.width, tabBarView.bounds.size.height - 0.5} };
     CGContextStrokeLineSegments(context, points, 2);
     CGContextRestoreGState(context);
 }
@@ -129,12 +129,12 @@ static CGColorRef DividerColor(bool _wnd_active)
     else {
         if(wnd_active) {
             if(!button_hovered) {
-                static CGColorRef bg = CGColorCreateGenericRGB(180./256., 180./256., 180./256., 1);
+                static CGColorRef bg = CGColorCreateGenericRGB(185./256., 185./256., 185./256., 1);
                 CGContextSetFillColorWithColor(context, bg);
                 CGContextFillRect(context, frame);
             }
             else {
-                static CGColorRef bg = CGColorCreateGenericRGB(160./256., 160./256., 160./256., 1);
+                static CGColorRef bg = CGColorCreateGenericRGB(165./256., 165./256., 165./256., 1);
                 CGContextSetFillColorWithColor(context, bg);
                 CGContextFillRect(context, frame);
             }
@@ -165,23 +165,20 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (void)updateAddButton:(MMRolloverButton *)aButton ofTabBarView:(MMTabBarView *)tabBarView
 {
-    [aButton setImage:[NSImage imageNamed:@"tab_add.png"]];
-/*
-    [_addTabButton setImage:_staticAquaTabNewImage()];
-    [_addTabButton setAlternateImage:_staticAquaTabNewPressedImage()];
-    [_addTabButton setRolloverImage:_staticAquaTabNewRolloverImage()];
+    static NSImage *img;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        img = [NSImage imageNamed:@"tab_add.png"];
+        [img setTemplate:true];
+    });
     
-    [_addTabButton setTitle:@""];
-    [_addTabButton setImagePosition:NSImageOnly];
-    [_addTabButton setRolloverButtonType:MMRolloverActionButton];
-    [_addTabButton setBordered:NO];
-    [_addTabButton setBezelStyle:NSShadowlessSquareBezelStyle];
-    */
+    aButton.image = img;
+    aButton.alternateImage = nil;
 }
 
 - (NSSize)addTabButtonSizeForTabBarView:(MMTabBarView *)tabBarView
 {
-       return NSMakeSize(12.0,20.0);
+    return NSMakeSize(12.0,20.0);
 }
 
 @end

@@ -347,7 +347,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 - (path) composeDestinationForDrag:(id <NSDraggingInfo>)sender
 {
     int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
-                                               hitTestOption:PanelViewHitTest::FullArea];
+                                               hitTestOption:PanelViewHitTest::FilenameFact];
     auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
     bool dragging_over_dir = dragging_over_item && dragging_over_item->IsDir() && DraggingIntoFoldersAllowed();
     path destination_dir = self.GetCurrentDirectoryPathRelativeToHost;
@@ -368,7 +368,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 {
     int valid_items = 0;
     int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
-                                            hitTestOption:PanelViewHitTest::FullArea];
+                                            hitTestOption:PanelViewHitTest::FilenameFact];
     auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
     bool dragging_over_dir = dragging_over_item && dragging_over_item->IsDir() && DraggingIntoFoldersAllowed();
     path destination_dir = [self composeDestinationForDrag:sender];

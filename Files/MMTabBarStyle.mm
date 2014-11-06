@@ -19,12 +19,6 @@ static CGColorRef DividerColor(bool _wnd_active)
 	return self.class.name;
 }
 
-- (id) init {
-    if ( (self = [super init]) ) {
-	}
-    return self;
-}
-
 - (CGFloat)leftMarginForTabBarView:(MMTabBarView *)tabBarView
 {
     return 0.0;

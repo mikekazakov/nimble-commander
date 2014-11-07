@@ -49,20 +49,17 @@
     self = [super initWithFrame:frameRect];
     if(self) {
         m_TabBarShown = false;
-        self.orientation = NSUserInterfaceLayoutOrientationVertical;
-        self.edgeInsets = NSEdgeInsetsMake(0, 0, 0, 0);
-        self.spacing = 0;
         
         m_TabView = [[NSTabView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabView.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabView.tabViewType = NSNoTabsNoBorder;
         [m_TabView addConstraint:[NSLayoutConstraint constraintWithItem:m_TabView
-                                                                   attribute:NSLayoutAttributeWidth
-                                                                   relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                      toItem:nil
-                                                                   attribute:NSLayoutAttributeNotAnAttribute
-                                                                  multiplier:1.0
-                                                                    constant:50]];
+                                                              attribute:NSLayoutAttributeWidth
+                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                 toItem:nil
+                                                              attribute:NSLayoutAttributeNotAnAttribute
+                                                             multiplier:1.0
+                                                               constant:50]];
         [m_TabView addConstraint:[NSLayoutConstraint constraintWithItem:m_TabView
                                                               attribute:NSLayoutAttributeHeight
                                                               relatedBy:NSLayoutRelationGreaterThanOrEqual
@@ -70,8 +67,7 @@
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
                                                                constant:50]];
-        [self addView:m_TabView inGravity:NSStackViewGravityBottom];
-        
+        [self addSubview:m_TabView];
         
         m_TabBar = [[MMTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
@@ -93,17 +89,34 @@
                                                             multiplier:1.0
                                                               constant:50]];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
-                                                            attribute:NSLayoutAttributeHeight
-                                                            relatedBy:NSLayoutRelationEqual
+                                                             attribute:NSLayoutAttributeHeight
+                                                             relatedBy:NSLayoutRelationEqual
                                                                 toItem:nil
-                                                            attribute:NSLayoutAttributeNotAnAttribute
+                                                             attribute:NSLayoutAttributeNotAnAttribute
                                                             multiplier:1.0
                                                               constant:m_TabBar.heightOfTabBarButtons]];
-//        [self addView:m_TabBar inGravity:NSStackViewGravityTop];
-        
         m_TabView.delegate = m_TabBar;
+        
+        [self doLayoutTabless];
     }
     return self;
+}
+
+- (void) doLayoutTabless
+{
+    [self removeConstraints:self.constraints];
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_TabView);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabView]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TabView]-(==0)-|" options:0 metrics:nil views:views]];
+}
+
+- (void) doLayoutWithTabs
+{
+    [self removeConstraints:self.constraints];
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_TabView, m_TabBar);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabView]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabBar]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TabBar]-(==0)-[m_TabView]-(==0)-|" options:0 metrics:nil views:views]];
 }
 
 - (MMTabBarView*) tabBar
@@ -155,7 +168,8 @@
 - (void) doShowTabBar
 {
     if(!m_TabBarShown) {
-        [self addView:m_TabBar inGravity:NSStackViewGravityTop];
+        [self addSubview:m_TabBar];
+        [self doLayoutWithTabs];
         m_TabBarShown = true;
     }
 }
@@ -163,7 +177,8 @@
 - (void) doHideTabBar
 {
     if(m_TabBarShown) {
-        [self removeView:m_TabBar];
+        [m_TabBar removeFromSuperview];
+        [self doLayoutTabless];
         m_TabBarShown = false;
     }
 }

@@ -10,7 +10,7 @@
 @class PanelView;
 @class PanelController;
 
-@interface FilePanelsTabbedHolder : NSStackView
+@interface FilePanelsTabbedHolder : NSView
 
 @property (nonatomic, readonly) MMTabBarView *tabBar;
 @property (nonatomic, readonly) NSTabView    *tabView;

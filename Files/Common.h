@@ -143,8 +143,6 @@ struct MachTimeBenchmark
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
 bool IsRunningUnitTesting();
 
-NSString* FormHumanReadableSizeRepresentation6(uint64_t _sz);
-
 inline bool dispatch_is_main_queue() { return [NSThread isMainThread]; }
 inline void dispatch_to_main_queue(dispatch_block_t block) { dispatch_async(dispatch_get_main_queue(), block); }
 inline void dispatch_or_run_in_main_queue(dispatch_block_t block) {

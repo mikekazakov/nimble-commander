@@ -8,40 +8,9 @@
 
 #import "FontExtras.h"
 #include "ModernPanelViewPresentationVolumeFooter.h"
+#import "ByteCountFormatter.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
-
-enum {
-    kUnitStringBinaryUnits     = 1 << 0,
-    kUnitStringOSNativeUnits   = 1 << 1,
-    kUnitStringLocalizedFormat = 1 << 2
-};
-
-static NSString* unitStringFromBytes(uint64_t _bytes, uint8_t flags)
-{
-    // TODO: use static allocated formatter
-    
-    static const char units[] = { '\0', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
-    static int maxUnits = sizeof units - 1;
-    
-//    int multiplier = (flags & kUnitStringOSNativeUnits && !leopardOrGreater() || flags & kUnitStringBinaryUnits) ? 1024 : 1000;
-//    int multiplier = 1024;
-    int multiplier = 1000;
-    int exponent = 0;
-    double bytes = _bytes;
-    
-    while (bytes >= multiplier && exponent < maxUnits) {
-        bytes /= multiplier;
-        exponent++;
-    }
-    NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
-    [formatter setMaximumFractionDigits:2];
-    if (flags & kUnitStringLocalizedFormat) {
-        [formatter setNumberStyle: NSNumberFormatterDecimalStyle];
-    }
-    // Beware of reusing this format string. -[NSString stringWithFormat] ignores \0, *printf does not.
-    return [NSString stringWithFormat:@"%@ %cB", [formatter stringFromNumber: [NSNumber numberWithDouble: bytes]], units[exponent]];
-}
 
 ModernPanelViewPresentationVolumeFooter::ModernPanelViewPresentationVolumeFooter()
 {
@@ -110,7 +79,7 @@ void ModernPanelViewPresentationVolumeFooter::PrepareToDraw(const VFSStatFS &_st
     m_VolumeName = [[NSAttributedString alloc] initWithString:name_str
                                                    attributes:attr1];
     
-    NSString *avail = [NSString stringWithFormat:@"%@ available", unitStringFromBytes(m_CurrentStat.avail_bytes, 0)];
+    NSString *avail = [NSString stringWithFormat:@"%@ available", ByteCountFormatter::Instance().ToNSString(m_CurrentStat.avail_bytes, ByteCountFormatter::Adaptive)];
     m_FreeSpace = [[NSAttributedString alloc] initWithString:avail
                                                   attributes:attr2];
 }

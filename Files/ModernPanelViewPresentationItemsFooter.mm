@@ -11,6 +11,7 @@
 #import "FontExtras.h"
 #import "PanelData.h"
 #import "VFS.h"
+#import "ByteCountFormatter.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 static CGColorRef g_FooterStrokeColorAct = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
@@ -20,30 +21,10 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
 {
     // TODO: localization support
     NSString *postfix = _total_files > 1 ? @"files" : @"file";
-    NSString *bytes = @"";
-    
-#define __1000_1(a) ( (a) % 1000lu )
-#define __1000_2(a) __1000_1( (a)/1000lu )
-#define __1000_3(a) __1000_1( (a)/1000000lu )
-#define __1000_4(a) __1000_1( (a)/1000000000lu )
-#define __1000_5(a) __1000_1( (a)/1000000000000lu )
-    if(_sz < 1000lu)
-        bytes = [NSString stringWithFormat:@"%llu", _sz];
-    else if(_sz < 1000lu * 1000lu)
-        bytes = [NSString stringWithFormat:@"%llu %03llu", __1000_2(_sz), __1000_1(_sz)];
-    else if(_sz < 1000lu * 1000lu * 1000lu)
-        bytes = [NSString stringWithFormat:@"%llu %03llu %03llu", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz)];
-    else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu)
-        bytes = [NSString stringWithFormat:@"%llu %03llu %03llu %03llu", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz)];
-    else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu)
-        bytes = [NSString stringWithFormat:@"%llu %03llu %03llu %03llu %03llu", __1000_5(_sz), __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz)];
-#undef __1000_1
-#undef __1000_2
-#undef __1000_3
-#undef __1000_4
-#undef __1000_5
-    
-    return [NSString stringWithFormat:@"Selected %@ bytes in %d %@", bytes, _total_files, postfix];
+    return [NSString stringWithFormat:@"Selected %@ bytes in %d %@",
+                    ByteCountFormatter::Instance().SpaceSeparated_NSString(_sz),
+                    _total_files,
+                    postfix];
 }
 
 static NSString* FormHumanReadableDateTime(time_t _in)

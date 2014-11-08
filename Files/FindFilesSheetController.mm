@@ -11,6 +11,7 @@
 #import "FileSearch.h"
 #import "Common.h"
 #import "BigFileViewSheet.h"
+#import "ByteCountFormatter.h"
 
 static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
 static NSString *g_TextHistoryKey = @"FilePanelsSearchTextHistory";
@@ -75,7 +76,7 @@ static const int g_MaximumSearchResults = 16384;
 }
 - (id)transformedValue:(id)value
 {
-    return (value == nil) ? nil : FormHumanReadableSizeRepresentation6([value unsignedLongLongValue]);
+    return (value == nil) ? nil : ByteCountFormatter::Instance().Fixed6_NSString([value unsignedLongLongValue]);
 }
 @end
 

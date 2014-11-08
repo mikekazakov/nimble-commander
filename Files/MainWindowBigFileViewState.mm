@@ -19,6 +19,7 @@
 #import "VFSArchiveHost.h"
 #import "ProcessSheetController.h"
 #import "ActionsShortcutsManager.h"
+#import "ByteCountFormatter.h"
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
@@ -357,7 +358,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 - (void) BigFileViewScrolled
 {
     NSString *s = [NSString stringWithFormat:@"%@  %.0f%%",
-                   FormHumanReadableSizeRepresentation6(m_FileWindow->FileSize()),
+                   ByteCountFormatter::Instance().Fixed6_NSString(m_FileWindow->FileSize()),
                    [m_View VerticalScrollPosition]*100.];
     m_ScrollPosition.stringValue = s;
 }

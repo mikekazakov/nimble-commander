@@ -15,6 +15,7 @@
 #import "FontCache.h"
 #import "NSUserDefaults+myColorSupport.h"
 #import "ObjcToCppObservingBridge.h"
+#import "ByteCountFormatter.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions and constants.
@@ -101,46 +102,10 @@ static void FormHumanReadableTimeRepresentation5(time_t _in, UniChar _out[5])
 
 static oms::StringBuf<6> FormHumanReadableSizeRepresentation(unsigned long _sz)
 {
-    char buf[32];
-    
-    if(_sz < 1000000) // bytes
-    {
-        sprintf(buf, "%6ld", _sz);
-    }
-    else if(_sz < 9999lu * 1024lu) // kilobytes
-    {
-        unsigned long div = 1024lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld K", res + (_sz - res * div) / (div/2));
-    }
-    else if(_sz < 9999lu * 1048576lu) // megabytes
-    {
-        unsigned long div = 1048576lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld M", res + (_sz - res * div) / (div/2));
-    }
-    else if(_sz < 9999lu * 1073741824lu) // gigabytes
-    {
-        unsigned long div = 1073741824lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld G", res + (_sz - res * div) / (div/2));
-    }
-    else if(_sz < 9999lu * 1099511627776lu) // terabytes
-    {
-        unsigned long div = 1099511627776lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld T", res + (_sz - res * div) / (div/2));
-    }
-    else if(_sz < 9999lu * 1125899906842624lu) // petabytes
-    {
-        unsigned long div = 1125899906842624lu;
-        unsigned long res = _sz / div;
-        sprintf(buf, "%4ld P", res + (_sz - res * div) / (div/2));
-    }
-    else memset(buf, 0, 32);
-    
+    unsigned short buf[6];
+    ByteCountFormatter::Instance().Fixed6_UTF16(_sz, buf, 6);
     oms::StringBuf<6> r;
-    r.FromChars((uint8_t*)buf, 6);
+    r.FromUniChars(buf, 6);
     return r;
 }
 
@@ -193,41 +158,18 @@ static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelSortMode::Mo
     return r;
 }
 
-static void FormReadableBytes(unsigned long _sz, char buf[128])
-{
-#define __1000_1(a) ( (a) % 1000lu )
-#define __1000_2(a) __1000_1( (a)/1000lu )
-#define __1000_3(a) __1000_1( (a)/1000000lu )
-#define __1000_4(a) __1000_1( (a)/1000000000lu )
-#define __1000_5(a) __1000_1( (a)/1000000000000lu )
-    if(_sz < 1000lu)
-        sprintf(buf, "%lu", _sz);
-    else if(_sz < 1000lu * 1000lu)
-        sprintf(buf, "%lu %03lu", __1000_2(_sz), __1000_1(_sz));
-    else if(_sz < 1000lu * 1000lu * 1000lu)
-        sprintf(buf, "%lu %03lu %03lu", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
-    else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu)
-        sprintf(buf, "%lu %03lu %03lu %03lu", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
-    else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu)
-        sprintf(buf, "%lu %03lu %03lu %03lu %03lu", __1000_5(_sz), __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
-#undef __1000_1
-#undef __1000_2
-#undef __1000_3
-#undef __1000_4
-#undef __1000_5
-}
-
 static oms::StringBuf<128> FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, bool _space_prefix_and_postfix)
 {
     // TODO: localization support
+    char buf_bytes[256];
+    ByteCountFormatter::Instance().SpaceSeparated_UTF8(_sz, (unsigned char*)buf_bytes, 256);
+    
     char buf[128] = {0};
-    char buf1[128] = {0};
     const char *postfix = _total_files > 1 ? "files" : "file";
     const char *space = _space_prefix_and_postfix ? " " : "";
-    FormReadableBytes(_sz, buf1);
-    sprintf(buf, "%s%s bytes in %d %s%s", space, buf1, _total_files, postfix, space);
+    sprintf(buf, "%s%s bytes in %d %s%s", space, buf_bytes, _total_files, postfix, space);
     oms::StringBuf<128> out;
-    out.FromChars((uint8_t*)buf, strlen(buf));
+    out.FromUTF8(buf, strlen(buf));
     return out;
 }
 
@@ -778,9 +720,9 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         
         if(m_DrawVolumeInfo && m_SymbWidth > 14)
         {
-            char bytes[128], buf[1024];
+            char bytes[256], buf[1024];
             UpdateStatFS();
-            FormReadableBytes(StatFS().avail_bytes, bytes);
+            ByteCountFormatter::Instance().SpaceSeparated_UTF8(StatFS().avail_bytes, (unsigned char*)bytes, 256);
             sprintf(buf, " %s: %s bytes available ", StatFS().volume_name.c_str(), bytes);
             oms::StringBuf<1024> str;
             str.FromUTF8(buf, strlen(buf));

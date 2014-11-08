@@ -19,6 +19,7 @@
 #import "ModernPanelViewPresentationHeader.h"
 #import "ModernPanelViewPresentationItemsFooter.h"
 #import "ModernPanelViewPresentationVolumeFooter.h"
+#import "ByteCountFormatter.h"
 
 static NSString* FormHumanReadableShortDate(time_t _in)
 {
@@ -50,11 +51,13 @@ static NSString* FormHumanReadableShortTime(time_t _in)
 
 NSString* ModernPanelViewPresentation::SizeToString6(const VFSListingItem &_dirent)
 {
+    auto format = ByteCountFormatter::Adaptive;
+    
     if( _dirent.IsDir() )
     {
         if( _dirent.Size() != VFSListingItem::InvalidSize)
         {
-            return FormHumanReadableSizeRepresentation6(_dirent.Size());
+            return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), format);
         }
         else
         {
@@ -66,7 +69,7 @@ NSString* ModernPanelViewPresentation::SizeToString6(const VFSListingItem &_dire
     }
     else
     {
-        return FormHumanReadableSizeRepresentation6(_dirent.Size());
+        return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), format);
     }
 }
 

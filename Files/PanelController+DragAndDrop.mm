@@ -257,6 +257,11 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 @implementation PanelController (DragAndDrop)
 
++ (NSString*) dragAndDropPrivateUTI
+{
+    return kPrivateDragUTI;
+}
+
 - (void) RegisterDragAndDropListeners
 {
     [m_View registerForDraggedTypes:@[kPrivateDragUTI, (NSString *)kUTTypeFileURL]];

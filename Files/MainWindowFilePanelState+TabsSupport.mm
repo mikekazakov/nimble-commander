@@ -136,6 +136,11 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     return aTabView.numberOfTabViewItems > 1;
 }
 
+- (NSArray *)allowedDraggedTypesForTabView:(NSTabView *)aTabView
+{
+    return @[PanelController.dragAndDropPrivateUTI];
+}
+
 - (void)tabViewDidChangeNumberOfTabViewItems:(NSTabView *)tabView
 {
     [self updateTabBarsVisibility];

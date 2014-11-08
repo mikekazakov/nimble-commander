@@ -11,5 +11,6 @@
 @interface PanelController (DragAndDrop)
 
 - (void) RegisterDragAndDropListeners;
++ (NSString*) dragAndDropPrivateUTI;
 
 @end

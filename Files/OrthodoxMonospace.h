@@ -181,6 +181,14 @@ class StringBuf
 public:
     enum { Capacity = _buf_cap };
     
+    inline StringBuf(){}
+    
+    inline StringBuf(const StringBuf<Capacity> &_r):
+        m_Size(_r.m_Size)
+    {
+        memcpy(m_Buff, _r.m_Buff, sizeof(uint16_t) * m_Size);
+    }
+    
     inline uint16_t Size() const { return m_Size; }
     inline uint16_t *Chars() { return m_Buff; }    
     inline const uint16_t *Chars() const { return m_Buff; }

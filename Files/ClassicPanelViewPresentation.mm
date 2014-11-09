@@ -177,7 +177,6 @@ oms::StringBuf<128> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles
     // TODO: localization support
     char buf_bytes[256];
     ByteCountFormatter::Instance().ToUTF8(_sz, (unsigned char*)buf_bytes, 256, SelectionSizeFormat());
-    strlefttrim(buf_bytes, ' ');
     
     char buf[128] = {0};
     const char *postfix = _total_files > 1 ? "files" : "file";

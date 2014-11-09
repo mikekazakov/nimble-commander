@@ -16,8 +16,8 @@
  "123456"
  "1234 K"
  "1235 M"
- "  65 G"
- "   7 T"
+   "65 G"
+    "7 T"
 
  SpaceSeparated examples:
  "12 232 bytes"
@@ -77,7 +77,7 @@ private:
     NSString* Adaptive8_NSString(uint64_t _size);
 #endif
     
-    void Fixed6_Impl(uint64_t _size, unsigned short _buf[6]);
+    int Fixed6_Impl(uint64_t _size, unsigned short _buf[6]);
     int SpaceSeparated_Impl(uint64_t _size, unsigned short _buf[64]);
     int Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]);
     int Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]);

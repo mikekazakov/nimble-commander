@@ -55,7 +55,7 @@ NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles
     // TODO: localization support
     NSString *postfix = _total_files > 1 ? @"files" : @"file";
     return [NSString stringWithFormat:@"Selected %@ in %d %@",
-                   ByteCountFormatter::Instance().ToNSString(_sz, m_Parent->SelectionSizeFormat()).stringByTrimmingLeadingWhitespace,
+                   ByteCountFormatter::Instance().ToNSString(_sz, m_Parent->SelectionSizeFormat()),
             _total_files,
             postfix];
 }

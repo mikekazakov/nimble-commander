@@ -89,19 +89,19 @@ NSString* ByteCountFormatter::ToNSString(uint64_t _size, Type _type)
 unsigned ByteCountFormatter::Fixed6_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size)
 {
     unsigned short buf[6];
-    Fixed6_Impl(_size, buf);
+    int len = Fixed6_Impl(_size, buf);
     
     size_t utf8len;
-    InterpretUnicharsAsUTF8(buf, 6, _buf, _buffer_size, utf8len, nullptr);
+    InterpretUnicharsAsUTF8(buf, len, _buf, _buffer_size, utf8len, nullptr);
     return (unsigned)utf8len;
 }
 
 unsigned ByteCountFormatter::Fixed6_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size)
 {
     unsigned short buf[6];
-    Fixed6_Impl(_size, buf);
+    int len = Fixed6_Impl(_size, buf);
     int i = 0;
-    for(; i < _buffer_size && i < 6; ++i)
+    for(; i < _buffer_size && i < len; ++i)
         _buf[i] = buf[i];
     return i;
 }
@@ -109,8 +109,8 @@ unsigned ByteCountFormatter::Fixed6_UTF16(uint64_t _size, unsigned short *_buf, 
 NSString* ByteCountFormatter::Fixed6_NSString(uint64_t _size)
 {
     unsigned short buf[6];
-    Fixed6_Impl(_size, buf);
-    return [NSString stringWithCharacters:buf length:6];
+    int len = Fixed6_Impl(_size, buf);
+    return [NSString stringWithCharacters:buf length:len];
 }
 
 unsigned ByteCountFormatter::SpaceSeparated_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size)
@@ -198,62 +198,61 @@ NSString* ByteCountFormatter::Adaptive8_NSString(uint64_t _size)
 // Implementation itself
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6])
+int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6])
 {
     char buf[32];
     
     if(_size < 1000000) { // bytes
-        sprintf(buf, "%6llu", _size);
-        for(int i = 0; i < 6; ++i)
-            _buf[i] = buf[i];
+        int len = sprintf(buf, "%llu", _size);
+        chartouni(buf, _buf, len);
+        return len;
     }
     else if(_size < 9999lu * m_Exponent[1]) { // kilobytes
         uint64_t div = m_Exponent[1];
         uint64_t res = _size / div;
-        sprintf(buf, "%4llu", res + (_size - res * div) / (div/2));
-        for(int i = 0; i < 4; ++i)
-            _buf[i] = buf[i];
-        _buf[4] = ' ';
-        _buf[5] = m_SI[1];
+        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div/2));
+        chartouni(buf, _buf, len);
+        _buf[len] = ' ';
+        _buf[len+1] = m_SI[1];
+        return len+2;
     }
     else if(_size < 9999lu * m_Exponent[2]) { // megabytes
         uint64_t div = m_Exponent[2];
         uint64_t res = _size / div;
-        sprintf(buf, "%4llu", res + (_size - res * div) / (div/2));
-        for(int i = 0; i < 4; ++i)
-            _buf[i] = buf[i];
-        _buf[4] = ' ';
-        _buf[5] = m_SI[2];
+        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div/2));
+        chartouni(buf, _buf, len);
+        _buf[len] = ' ';
+        _buf[len+1] = m_SI[2];
+        return len+2;
     }
     else if(_size < 9999lu * m_Exponent[3]) { // gigabytes
         uint64_t div = m_Exponent[3];
         uint64_t res = _size / div;
-        sprintf(buf, "%4llu", res + (_size - res * div) / (div/2));
-        for(int i = 0; i < 4; ++i)
-            _buf[i] = buf[i];
-        _buf[4] = ' ';
-        _buf[5] = m_SI[3];
+        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div/2));
+        chartouni(buf, _buf, len);
+        _buf[len] = ' ';
+        _buf[len+1] = m_SI[3];
+        return len+2;
     }
     else if(_size < 9999lu * m_Exponent[4]) { // terabytes
         uint64_t div = m_Exponent[4];
         uint64_t res = _size / div;
-        sprintf(buf, "%4llu", res + (_size - res * div) / (div/2));
-        for(int i = 0; i < 4; ++i)
-            _buf[i] = buf[i];
-        _buf[4] = ' ';
-        _buf[5] = m_SI[4];
+        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div/2));
+        chartouni(buf, _buf, len);
+        _buf[len] = ' ';
+        _buf[len+1] = m_SI[4];
+        return len+2;
     }
     else if(_size < 9999lu * m_Exponent[5]) { // petabytes
         uint64_t div = m_Exponent[5];
         uint64_t res = _size / div;
-        sprintf(buf, "%4llu", res + (_size - res * div) / (div/2));
-        for(int i = 0; i < 4; ++i)
-            _buf[i] = buf[i];
-        _buf[4] = ' ';
-        _buf[5] = m_SI[5];
+        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div/2));
+        chartouni(buf, _buf, len);
+        _buf[len] = ' ';
+        _buf[len+1] = m_SI[5];
+        return len+2;
     }
-    else
-        memset(_buf, 0, sizeof(unsigned short) * 6);
+    return 0;
 }
 
 int ByteCountFormatter::SpaceSeparated_Impl(uint64_t _sz, unsigned short _buf[64])

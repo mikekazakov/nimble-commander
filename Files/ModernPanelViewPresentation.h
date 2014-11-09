@@ -49,7 +49,7 @@ public:
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
     void SetQuickSearchPrompt(NSString *_text) override;
     
-    static NSString* SizeToString6(const VFSListingItem &_dirent);
+    NSString* FileSizeToString(const VFSListingItem &_dirent);
 private:
     struct ColoringAttrs {
         NSDictionary *active_selected;

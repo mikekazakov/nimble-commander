@@ -9,12 +9,15 @@
 #import "PanelViewTypes.h"
 #import "VFS.h"
 #import "DispatchQueue.h"
+#import "ObjcToCppObservingBridge.h"
+#import "ByteCountFormatter.h"
 
 @class PanelView;
 
 class PanelViewPresentation
 {
 public:
+    PanelViewPresentation();
     virtual ~PanelViewPresentation();
     
     void SetState(PanelViewState *_state);
@@ -62,6 +65,9 @@ public:
     
     bool IsItemVisible(int _item_no) const;
     
+    inline ByteCountFormatter::Type FileSizeFormat() const { return m_FileSizeFormat; }
+    inline ByteCountFormatter::Type SelectionSizeFormat() const { return m_SelectionSizeFormat; }
+    
 protected:
     virtual int GetMaxItemsPerColumn() const = 0;
     int GetNumberOfItemColumns() const;
@@ -76,12 +82,17 @@ protected:
     inline PanelView *View() { return m_View; }
 private:
     virtual void OnDirectoryChanged() {}
+    void LoadSizeFormats();
 
     VFSStatFS                      m_StatFS;
     nanoseconds                    m_StatFSLastUpdate = 0ns;
     SerialQueue                    m_StatFSQueue = SerialQueueT::Make();
     VFSHost                       *m_StatFSLastHost = nullptr;
     string                         m_StatFSLastPath;
+    
+    ObjcToCppObservingBlockBridge *m_SizeFormatObserver;
+    ByteCountFormatter::Type       m_FileSizeFormat = ByteCountFormatter::Fixed6;
+    ByteCountFormatter::Type       m_SelectionSizeFormat = ByteCountFormatter::SpaceSeparated;
     
     __unsafe_unretained PanelView *m_View = nil;
 };

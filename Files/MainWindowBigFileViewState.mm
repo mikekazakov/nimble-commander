@@ -358,7 +358,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 - (void) BigFileViewScrolled
 {
     NSString *s = [NSString stringWithFormat:@"%@  %.0f%%",
-                   ByteCountFormatter::Instance().Fixed6_NSString(m_FileWindow->FileSize()),
+                   ByteCountFormatter::Instance().ToNSString(m_FileWindow->FileSize(), ByteCountFormatter::Fixed6),
                    [m_View VerticalScrollPosition]*100.];
     m_ScrollPosition.stringValue = s;
 }

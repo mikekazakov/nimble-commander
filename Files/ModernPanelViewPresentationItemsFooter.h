@@ -13,10 +13,13 @@
 
 class VFSListingItem;
 struct PanelDataStatistics;
+class ModernPanelViewPresentation;
 
 class ModernPanelViewPresentationItemsFooter
 {
 public:
+    ModernPanelViewPresentationItemsFooter(ModernPanelViewPresentation *_parent);
+    
     void SetFont(NSFont *_font);
     
     void Draw(const VFSListingItem* _current_item,
@@ -31,6 +34,7 @@ public:
     inline double Height() const { return m_Height; }    
     
 private:
+    NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files);
     void PrepareToDraw(const VFSListingItem* _current_item, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active);
     
     
@@ -58,4 +62,6 @@ private:
     NSAttributedString              *m_ItemDateStr;
     NSAttributedString              *m_ItemSizeStr;
     NSAttributedString              *m_ItemNameStr;
+    
+    ModernPanelViewPresentation     *m_Parent;
 };

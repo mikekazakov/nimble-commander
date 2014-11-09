@@ -11,6 +11,20 @@
 #import "PanelData.h"
 #import "Common.h"
 
+PanelViewPresentation::PanelViewPresentation()
+{
+    LoadSizeFormats();
+    m_SizeFormatObserver = [ObjcToCppObservingBlockBridge
+                            bridgeWithObject:NSUserDefaults.standardUserDefaults
+                            forKeyPaths:@[@"FilePanelsGeneralFileSizeFormat",
+                                          @"FilePanelsGeneralSelectionSizeFormat"]
+                            options:0
+                            block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
+                                LoadSizeFormats();
+                                SetViewNeedsDisplay();
+                            }];
+}
+
 PanelViewPresentation::~PanelViewPresentation()
 {
     m_StatFSQueue->Wait();
@@ -290,4 +304,10 @@ bool PanelViewPresentation::IsItemVisible(int _item_no) const
     if(_item_no < 0) return false;
     return _item_no - m_State->ItemsDisplayOffset >= 0 &&
         _item_no - m_State->ItemsDisplayOffset < GetMaxVisibleItems();
+}
+
+void PanelViewPresentation::LoadSizeFormats()
+{
+    m_FileSizeFormat = (ByteCountFormatter::Type)[NSUserDefaults.standardUserDefaults integerForKey:@"FilePanelsGeneralFileSizeFormat"];
+    m_SelectionSizeFormat = (ByteCountFormatter::Type)[NSUserDefaults.standardUserDefaults integerForKey:@"FilePanelsGeneralSelectionSizeFormat"];
 }

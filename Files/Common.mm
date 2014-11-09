@@ -283,6 +283,16 @@ bool IsVolumeContainingPathEjectable(const string &_path)
 
 @implementation NSString(PerformanceAdditions)
 
+- (NSString*)stringByTrimmingLeadingWhitespace
+{
+    NSInteger i = 0;
+    static NSCharacterSet *cs = [NSCharacterSet whitespaceCharacterSet];
+    
+    while( i < self.length && [cs characterIsMember:[self characterAtIndex:i]] )
+        i++;
+    return [self substringFromIndex:i];
+}
+
 + (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString
 {
     return (NSString*) CFBridgingRelease(CFStringCreateWithBytesNoCopy(0,

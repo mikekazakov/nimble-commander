@@ -21,6 +21,17 @@
 // Helper functions and constants.
 /////////////////////////////////////////////////////////////////////////////////////////
 
+static char *strlefttrim(char *_s, char _c)
+{
+    int amount = 0;
+    while(_s[amount] && _s[amount] == _c)
+        amount++;
+    if(!amount)
+        return _s;
+    memmove(_s, _s + amount, strlen(_s) - amount + 1);
+    return _s;
+}
+
 static bool TimeFormatIsDayFirst()
 {
     static bool day_first = true; // month is first overwise
@@ -100,16 +111,19 @@ static void FormHumanReadableTimeRepresentation5(time_t _in, UniChar _out[5])
     for(int i = 0; i < 5; ++i) _out[i] = buf[i];
 }
 
-static oms::StringBuf<6> FormHumanReadableSizeRepresentation(unsigned long _sz)
+oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeRepresentation(unsigned long _sz) const
 {
     unsigned short buf[6];
-    ByteCountFormatter::Instance().Fixed6_UTF16(_sz, buf, 6);
+    int sz = ByteCountFormatter::Instance().ToUTF16(_sz, buf, 6, FileSizeFormat());
+    assert(sz <= 6);
     oms::StringBuf<6> r;
-    r.FromUniChars(buf, 6);
+    r.FromUniChars(buf, sz);
+    if(r.Size() < 6)
+        r.AddLeadingPaddingChars(' ', 6 - r.Size());
     return r;
 }
 
-static oms::StringBuf<6> FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent)
+oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent) const
 {
     if( _dirent.IsDir() )
     {
@@ -158,16 +172,17 @@ static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelSortMode::Mo
     return r;
 }
 
-static oms::StringBuf<128> FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, bool _space_prefix_and_postfix)
+oms::StringBuf<128> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, bool _space_prefix_and_postfix) const
 {
     // TODO: localization support
     char buf_bytes[256];
-    ByteCountFormatter::Instance().SpaceSeparated_UTF8(_sz, (unsigned char*)buf_bytes, 256);
+    ByteCountFormatter::Instance().ToUTF8(_sz, (unsigned char*)buf_bytes, 256, SelectionSizeFormat());
+    strlefttrim(buf_bytes, ' ');
     
     char buf[128] = {0};
     const char *postfix = _total_files > 1 ? "files" : "file";
     const char *space = _space_prefix_and_postfix ? " " : "";
-    sprintf(buf, "%s%s bytes in %d %s%s", space, buf_bytes, _total_files, postfix, space);
+    sprintf(buf, "%s%s in %d %s%s", space, buf_bytes, _total_files, postfix, space);
     oms::StringBuf<128> out;
     out.FromUTF8(buf, strlen(buf));
     return out;
@@ -722,8 +737,8 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         {
             char bytes[256], buf[1024];
             UpdateStatFS();
-            ByteCountFormatter::Instance().SpaceSeparated_UTF8(StatFS().avail_bytes, (unsigned char*)bytes, 256);
-            sprintf(buf, " %s: %s bytes available ", StatFS().volume_name.c_str(), bytes);
+            ByteCountFormatter::Instance().ToUTF8(StatFS().avail_bytes, (unsigned char*)bytes, 256, ByteCountFormatter::Adaptive6);
+            sprintf(buf, " %s: %s available ", StatFS().volume_name.c_str(), bytes);
             oms::StringBuf<1024> str;
             str.FromUTF8(buf, strlen(buf));
             str.TrimEllipsisLeft(m_SymbWidth - 2);

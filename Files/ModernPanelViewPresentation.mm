@@ -49,15 +49,13 @@ static NSString* FormHumanReadableShortTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-NSString* ModernPanelViewPresentation::SizeToString6(const VFSListingItem &_dirent)
+NSString* ModernPanelViewPresentation::FileSizeToString(const VFSListingItem &_dirent)
 {
-    auto format = ByteCountFormatter::Adaptive;
-    
     if( _dirent.IsDir() )
     {
         if( _dirent.Size() != VFSListingItem::InvalidSize)
         {
-            return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), format);
+            return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), FileSizeFormat());
         }
         else
         {
@@ -69,7 +67,7 @@ NSString* ModernPanelViewPresentation::SizeToString6(const VFSListingItem &_dire
     }
     else
     {
-        return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), format);
+        return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), FileSizeFormat());
     }
 }
 
@@ -126,7 +124,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     m_CursorFrameColor(0),
     m_ColumnDividerColor(0),
     m_Header(make_unique<ModernPanelViewPresentationHeader>()),
-    m_ItemsFooter(make_unique<ModernPanelViewPresentationItemsFooter>()),
+    m_ItemsFooter(make_unique<ModernPanelViewPresentationItemsFooter>(this)),
     m_VolumeFooter(make_unique<ModernPanelViewPresentationVolumeFooter>())
 {
     static dispatch_once_t onceToken;
@@ -480,9 +478,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_SizeColumWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
 
-                [SizeToString6(*item) drawWithRect:size_rect
-                                           options:0
-                                        attributes:actsel ? attrs.active_selected_size : attrs.regular_size];
+                [FileSizeToString(*item) drawWithRect:size_rect
+                                              options:0
+                                           attributes:actsel ? attrs.active_selected_size : attrs.regular_size];
                 
                 rect.size.width -= m_SizeColumWidth;
             }

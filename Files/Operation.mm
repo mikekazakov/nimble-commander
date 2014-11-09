@@ -10,6 +10,7 @@
 #import "OperationJob.h"
 #import "OperationDialogController.h"
 #import "Common.h"
+#import "ByteCountFormatter.h"
 
 #import "AppDelegate.h"
 
@@ -30,39 +31,6 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
     else if(_time < 31*86400lu) // days
     {
         sprintf(_out, "%llu d", (_time + 43200)/86400lu);
-    }
-}
-
-static void FormHumanReadableSizeRepresentation(uint64_t _sz, char _out[18])
-{
-    if(_sz < 1024) // bytes
-    {
-        sprintf(_out, "%3llu", _sz);
-    }
-    else if(_sz < 1024lu * 1024lu) // kilobytes
-    {
-        double size = _sz/1024.0;
-        sprintf(_out, "%.1f KB", size);
-    }
-    else if(_sz < 1024lu * 1048576lu) // megabytes
-    {
-        double size = (_sz/1024)/1024.0;
-        sprintf(_out, "%.1fMB", size);
-    }
-    else if(_sz < 1024lu * 1073741824lu) // gigabytes
-    {
-        double size = (_sz/1048576lu)/1024.0;
-        sprintf(_out, "%.1fGB", size);
-    }
-    else if(_sz < 1024lu * 1099511627776lu) // terabytes
-    {
-        double size = (_sz/1073741824lu)/1024.0;
-        sprintf(_out, "%.1f TB", size);
-    }
-    else if(_sz < 1024lu * 1125899906842624lu) // petabytes
-    {
-        double size = (_sz/1099511627776lu)/1024.0;
-        sprintf(_out, "%.1f PB", size);
     }
 }
 
@@ -282,20 +250,24 @@ static void ReportProgress(void* _op, double _progress) {
     if (copy_speed)
         eta_value = (stats.GetMaxValue() - stats.GetValue())/copy_speed;
         
-    char copied[18] = {0}, total[18] = {0}, speed[18] = {0}, eta[18] = {0};
-    FormHumanReadableSizeRepresentation(stats.GetValue(), copied);
-    FormHumanReadableSizeRepresentation(stats.GetMaxValue(), total);
-    FormHumanReadableSizeRepresentation(copy_speed, speed);
+    char eta[18] = {0};
     if (copy_speed)
         FormHumanReadableTimeRepresentation(eta_value, eta);
 
     NSString *desc = nil;
+    auto &f = ByteCountFormatter::Instance();
     if (copy_speed)
-        desc = [NSString stringWithFormat:@"%s of %s - %s/s - %s",
-                            copied, total, speed, eta];
+        desc = [NSString stringWithFormat:@"%@ of %@ - %@/s - %s",
+                          f.ToNSString(stats.GetValue(), ByteCountFormatter::Adaptive8),
+                          f.ToNSString(stats.GetMaxValue(), ByteCountFormatter::Adaptive8),
+                          f.ToNSString(copy_speed, ByteCountFormatter::Adaptive8),
+                          eta];
     else
-        desc = [NSString stringWithFormat:@"%s of %s - %s/s",
-                            copied, total, speed];
+        desc = [NSString stringWithFormat:@"%@ of %@ - %@/s",
+                          f.ToNSString(stats.GetValue(), ByteCountFormatter::Adaptive8),
+                          f.ToNSString(stats.GetMaxValue(), ByteCountFormatter::Adaptive8),
+                          f.ToNSString(copy_speed, ByteCountFormatter::Adaptive8)];
+    
     return desc;
 }
 

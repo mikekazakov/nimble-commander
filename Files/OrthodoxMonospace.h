@@ -225,6 +225,24 @@ public:
         m_Size = len;
     }
 
+    void AddLeadingPaddingChars(uint16_t _char, size_t _amount)
+    {
+        assert( m_Size + _amount <= Capacity );
+        memmove( m_Buff + _amount, m_Buff, sizeof(uint16_t)*m_Size );
+        for(int i = 0; i < _amount; ++i)
+            m_Buff[i] = _char;
+        m_Size += _amount;
+    }
+    
+    void RemoveLeadingPaddingChars(uint16_t _char)
+    {
+        int amount = 0;
+        while( amount < m_Size && m_Buff[amount] == _char )
+            amount++;
+        memmove( m_Buff, m_Buff + amount, sizeof(uint16_t)*(m_Size-amount) );
+        m_Size -= amount;
+    }
+    
     unsigned Space() const
     {
         return CalculateSymbolsSpaceForString(m_Buff, m_Size);

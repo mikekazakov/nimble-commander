@@ -9,44 +9,7 @@
 #import "BriefSystemOverview.h"
 #import "sysinfo.h"
 #import "Common.h"
-
-static NSString *FormHumanReadableMemSize(uint64_t _sz)
-{
-    // format should be xx.yy AB
-    // or x.YY AB
-    // or 0 bytes
-    
-    if(_sz < 999ul)
-    {
-        // bytes, ABC bytes format, 5 symbols max
-        return [NSString stringWithFormat:@"%llu B",
-                _sz
-                ];
-    }
-    else if(_sz < 999ul * 1024ul)
-    {
-        // kilobytes, ABC KB format, 6 symbols max
-        return [NSString stringWithFormat:@"%.0f KB",
-                (double)_sz / double(1024ul)
-                ];
-    }
-    else if(_sz < 99ul * 1024ul * 1024ul)
-    {
-        // megabytes, AB.CD MB format, 8 symbols max
-        return [NSString stringWithFormat:@"%.2f MB",
-                (double)_sz / double(1024ul * 1024ul)
-                ];
-    }
-    else if(_sz < 99ul * 1024ul * 1024ul * 1024ul)
-    {
-        // gygabites, AB.CD GB format, 8 symbols max
-        return [NSString stringWithFormat:@"%.2f GB",
-                (double)_sz / double(1024ul * 1024ul * 1024ul)
-                ];
-    }
-    else
-        return @"";
-}
+#import "ByteCountFormatter.h"
 
 static NSTextField *CreateStockTF()
 {
@@ -475,9 +438,10 @@ static NSTextField *CreateStockTF()
     [m_TextCPULoadSystem setStringValue:[NSString stringWithFormat:@"%.2f %%", m_CPULoad.system*100.]];
     [m_TextCPULoadUser setStringValue:[NSString stringWithFormat:@"%.2f %%", m_CPULoad.user*100.]];
     [m_TextCPULoadIdle setStringValue:[NSString stringWithFormat:@"%.2f %%", m_CPULoad.idle*100.]];
-    [m_TextMemTotal setStringValue:FormHumanReadableMemSize(m_MemoryInfo.total_hw)];
-    [m_TextMemUsed setStringValue:FormHumanReadableMemSize(m_MemoryInfo.used)];
-    [m_TextMemSwap setStringValue:FormHumanReadableMemSize(m_MemoryInfo.swap)];
+    auto &f = ByteCountFormatter::Instance();
+    [m_TextMemTotal setStringValue:f.ToNSString(m_MemoryInfo.total_hw, ByteCountFormatter::Adaptive8)];
+    [m_TextMemUsed setStringValue:f.ToNSString(m_MemoryInfo.used, ByteCountFormatter::Adaptive8)];
+    [m_TextMemSwap setStringValue:f.ToNSString(m_MemoryInfo.swap, ByteCountFormatter::Adaptive8)];
     [m_TextMachineModel setStringValue:m_Overview.human_model];
     [m_TextComputerName setStringValue:m_Overview.computer_name];
     [m_TextUserName setStringValue:m_Overview.user_full_name];

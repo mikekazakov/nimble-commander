@@ -12,20 +12,11 @@
 #import "PanelData.h"
 #import "VFS.h"
 #import "ByteCountFormatter.h"
+#import "Common.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 static CGColorRef g_FooterStrokeColorAct = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
 static CGColorRef g_FooterStrokeColorInact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
-
-static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
-{
-    // TODO: localization support
-    NSString *postfix = _total_files > 1 ? @"files" : @"file";
-    return [NSString stringWithFormat:@"Selected %@ bytes in %d %@",
-                    ByteCountFormatter::Instance().SpaceSeparated_NSString(_sz),
-                    _total_files,
-                    postfix];
-}
 
 static NSString* FormHumanReadableDateTime(time_t _in)
 {
@@ -52,6 +43,21 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
             return [@"->" stringByAppendingString:link];
     }
     return @""; // fallback case
+}
+
+ModernPanelViewPresentationItemsFooter::ModernPanelViewPresentationItemsFooter(ModernPanelViewPresentation *_parent):
+    m_Parent(_parent)
+{
+}
+
+NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
+{
+    // TODO: localization support
+    NSString *postfix = _total_files > 1 ? @"files" : @"file";
+    return [NSString stringWithFormat:@"Selected %@ in %d %@",
+                   ByteCountFormatter::Instance().ToNSString(_sz, m_Parent->SelectionSizeFormat()).stringByTrimmingLeadingWhitespace,
+            _total_files,
+            postfix];
 }
 
 void ModernPanelViewPresentationItemsFooter::SetFont(NSFont *_font)
@@ -205,7 +211,7 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem*
         m_ItemDateStr = [[NSAttributedString alloc] initWithString:date_str
                                                         attributes:attr1];
         
-        NSString *size_str = ModernPanelViewPresentation::SizeToString6(*_current_item);
+        NSString *size_str = m_Parent->FileSizeToString(*_current_item);
         m_ItemSizeStr = [[NSAttributedString alloc] initWithString:size_str
                                                         attributes:attr1];
 

@@ -11,6 +11,7 @@
 #import "ClassicPanelViewPresentation.h"
 #import "ModernPanelViewPresentation.h"
 #import "PreferencesWindowPanelsTabColoringFilterSheet.h"
+#import "ByteCountFormatter.h"
 
 #define MyPrivateTableViewDataTypeClassic @"PreferencesWindowPanelsTabPrivateTableViewDataTypeClassic"
 #define MyPrivateTableViewDataTypeModern @"PreferencesWindowPanelsTabPrivateTableViewDataTypeModern"
@@ -88,6 +89,13 @@
     ((NSTableHeaderCell*)column.headerCell).stringValue = @"Filter";
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.modernColoringRulesTable addTableColumn:column];
+    
+    
+    uint64_t magic_size = 2597065;
+    for(NSMenuItem *it in self.fileSizeFormatCombo.itemArray)
+        it.title = ByteCountFormatter::Instance().ToNSString(magic_size, (ByteCountFormatter::Type)it.tag);
+    for(NSMenuItem *it in self.selectionSizeFormatCombo.itemArray)
+        it.title = ByteCountFormatter::Instance().ToNSString(magic_size, (ByteCountFormatter::Type)it.tag);
 }
 
 -(NSString*)identifier{

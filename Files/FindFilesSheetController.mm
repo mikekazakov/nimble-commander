@@ -76,7 +76,7 @@ static const int g_MaximumSearchResults = 16384;
 }
 - (id)transformedValue:(id)value
 {
-    return (value == nil) ? nil : ByteCountFormatter::Instance().Fixed6_NSString([value unsignedLongLongValue]);
+    return (value == nil) ? nil : ByteCountFormatter::Instance().ToNSString([value unsignedLongLongValue], ByteCountFormatter::Fixed6);
 }
 @end
 

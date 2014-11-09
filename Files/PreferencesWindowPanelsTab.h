@@ -25,6 +25,8 @@
 @property (nonatomic) NSArray *modernColoringRules;
 - (IBAction)OnAddNewModernColoringRule:(id)sender;
 - (IBAction)OnRemoveModernColoringRule:(id)sender;
+@property (strong) IBOutlet NSPopUpButton *fileSizeFormatCombo;
+@property (strong) IBOutlet NSPopUpButton *selectionSizeFormatCombo;
 
 
 

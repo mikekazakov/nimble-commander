@@ -10,7 +10,7 @@
 
 /**
  All _UTF8 methods forms a null-terminated string.
- All _UTF16 methods forms string without a null-terminator.
+ All _UTF16 methods forms a string without null-terminator.
  
  Fixed6 examples:
  "123456"
@@ -20,11 +20,11 @@
  "   7 T"
 
  SpaceSeparated examples:
- "12 232"
- "23 353 342"
- "123 234 545 454"
+ "12 232 bytes"
+ "23 353 342 bytes"
+ "123 234 545 454 bytes"
  
- Adaptive examples:
+ Adaptive6 examples:
      "2 B"
     "20 B"
    "100 B"
@@ -33,6 +33,14 @@
    "7.5 M" 
     "34 M"
    "157 G"
+ 
+ Adaptive8 examples:
+    "234 B"
+   "123 KB"
+  "3.53 MB"
+ "56.34 MB"
+ "43.78 GB"
+   "0.1 TB"
  */
 class ByteCountFormatter
 {
@@ -43,43 +51,43 @@ public:
     enum Type {
         SpaceSeparated = 0,
         Fixed6         = 1,
-        Adaptive       = 2
+        Adaptive6      = 2,
+        Adaptive8      = 3,
     };
     
-    unsigned To_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size, Type _type);
-    unsigned To_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size, Type _type);
+    unsigned ToUTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size, Type _type);
+    unsigned ToUTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size, Type _type);
 #ifdef __OBJC__
     NSString* ToNSString(uint64_t _size, Type _type);
 #endif
     
+private:
     unsigned Fixed6_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size);
     unsigned Fixed6_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size);
-#ifdef __OBJC__
-    NSString* Fixed6_NSString(uint64_t _size);
-#endif
-    
     unsigned SpaceSeparated_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size);
     unsigned SpaceSeparated_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size);
-#ifdef __OBJC__
-    NSString* SpaceSeparated_NSString(uint64_t _size);
-#endif
-    
     unsigned Adaptive_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size);
     unsigned Adaptive_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size);
+    unsigned Adaptive8_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size);
+    unsigned Adaptive8_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size);
 #ifdef __OBJC__
+    NSString* Fixed6_NSString(uint64_t _size);
+    NSString* SpaceSeparated_NSString(uint64_t _size);
     NSString* Adaptive_NSString(uint64_t _size);
+    NSString* Adaptive8_NSString(uint64_t _size);
 #endif
     
-private:
     void Fixed6_Impl(uint64_t _size, unsigned short _buf[6]);
     int SpaceSeparated_Impl(uint64_t _size, unsigned short _buf[64]);
-    int Adaptive_Impl(uint64_t _size, unsigned short _buf[6]);
-    
+    int Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]);
+    int Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]);
+    void MessWithSeparator(char *_s);
     
     ByteCountFormatter(const ByteCountFormatter&) = delete;
     ByteCountFormatter& operator=(const ByteCountFormatter&) = delete;
     
     vector<uint16_t> m_SI; // localizable in the future
+    uint16_t         m_B;  // localizable in the future
     
     char             m_DecimalSeparator = '.';
     unsigned short   m_DecimalSeparatorUni = '.';

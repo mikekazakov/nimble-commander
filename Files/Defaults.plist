@@ -106,6 +106,10 @@
 	<string>sh,pl,rb,py</string>
 	<key>FilePanelsGeneralAllowDraggingIntoFolders</key>
 	<true/>
+	<key>FilePanelsGeneralFileSizeFormat</key>
+	<integer>1</integer>
+	<key>FilePanelsGeneralSelectionSizeFormat</key>
+	<integer>0</integer>
 	<key>FilePanelsModernFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABoAAAD//kwAdQBjAGkAZABhAEcAcgBhAG4AZABlAAAAhAFmDYQBYwCYAZgAmACG</data>
 	<key>FilePanelsModernColoringRules</key>

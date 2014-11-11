@@ -106,7 +106,7 @@ static const milliseconds g_DialogAutoTriggeringTreshMS = 2000ms;
                                                        selector:@selector(Update)
                                                        userInfo:nil
                                                         repeats:YES];
-        [m_UpdateTimer SetSafeTolerance];
+        [m_UpdateTimer setSafeTolerance];
     }
 }
 

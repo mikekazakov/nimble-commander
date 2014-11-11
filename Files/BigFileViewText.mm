@@ -204,7 +204,7 @@ BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _vi
     GrabFontGeometry();
     OnFrameChanged();
     OnBufferDecoded();
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 BigFileViewText::~BigFileViewText()
@@ -299,7 +299,7 @@ void BigFileViewText::BuildLayout()
     if(m_VerticalOffset >= m_Lines.size())
         m_VerticalOffset = !m_Lines.empty() ? (unsigned)m_Lines.size()-1 : 0;
     
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 void BigFileViewText::ClearLayout()
@@ -488,7 +488,7 @@ void BigFileViewText::MoveLinesDelta(int _delta)
                 m_VerticalOffset = 0;
             }
         }
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     else if(_delta > 0)
     { // we're moving down
@@ -518,7 +518,7 @@ void BigFileViewText::MoveLinesDelta(int _delta)
                     m_VerticalOffset = (unsigned)m_Lines.size() - m_FrameLines;
             }
         }
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
 }
 
@@ -560,7 +560,7 @@ void BigFileViewText::MoveFileWindowTo(uint64_t _pos, uint64_t _anchor_byte_no, 
     m_VerticalOffset = max(closest_ind - _anchor_line_no, 0);
     
     assert(m_VerticalOffset < m_Lines.size());
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 int BigFileViewText::FindClosestLineInd(uint64_t _glob_offset) const
@@ -658,13 +658,13 @@ void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
         if((unsigned)closest + m_FrameLines < m_Lines.size())
         { // check that we will fill whole screen after scrolling
             m_VerticalOffset = (unsigned)closest;
-            [m_View setNeedsDisplay:true];
+            [m_View setNeedsDisplay];
             return;
         }
         else if(window_pos + window_size == file_size)
         { // trying to scroll below bottom
             m_VerticalOffset = clip((int)m_Lines.size()-m_FrameLines, 0, (int)m_Lines.size()-1);
-            [m_View setNeedsDisplay:true];
+            [m_View setNeedsDisplay];
             return;
         }
     }
@@ -699,7 +699,7 @@ void BigFileViewText::HandleVerticalScroll(double _pos)
         double scroll_y_offset = _pos * (full_document_size - m_FrameSize.height);
         m_VerticalOffset = floor(scroll_y_offset / m_FontHeight);
         m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontHeight;
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
@@ -794,7 +794,7 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
     if(m_HorizontalOffset == 0 && m_SmoothOffset.x > 0)
         m_SmoothOffset.x = 0;
     
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
 
@@ -835,7 +835,7 @@ void BigFileViewText::OnLeftArrow()
         return;
     
     m_HorizontalOffset -= m_HorizontalOffset > 0 ? 1 : 0;
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 void BigFileViewText::OnRightArrow()
@@ -844,7 +844,7 @@ void BigFileViewText::OnRightArrow()
         return;
     
     m_HorizontalOffset++;
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 void BigFileViewText::OnMouseDown(NSEvent *event)

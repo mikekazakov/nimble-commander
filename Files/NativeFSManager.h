@@ -530,6 +530,15 @@ public:
      */
     void UpdateSpaceInformation(shared_ptr<NativeFileSystemInfo> _volume);
     
+    /**
+     * A very simple function with no error feedback.
+     */
+    void EjectVolumeContainingPath(const string &_path);
+    
+    /**
+     * Return true is volume can be programmatically ejected. Will return false on any errors.
+     */
+    bool IsVolumeContainingPathEjectable(const string &_path);
     
 private:
     NativeFSManager();

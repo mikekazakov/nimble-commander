@@ -83,7 +83,7 @@ BigFileViewHex::BigFileViewHex(BigFileViewDataBackend* _data, BigFileView* _view
     
     m_RowsOffset = 0;
     
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
     assert(m_FrameLines >= 0);
 }
 
@@ -226,7 +226,7 @@ void BigFileViewHex::OnBufferDecoded()
     CFRelease(big_string);
     CFRelease(attributes);
     
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 void BigFileViewHex::OnFontSettingsChanged()
@@ -432,7 +432,7 @@ void BigFileViewHex::OnUpArrow()
     {
         // just move offset;
         m_RowsOffset--;
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     else
     {
@@ -456,14 +456,14 @@ void BigFileViewHex::OnUpArrow()
             uint64_t anchor_new_offset = anchor_row_offset - m_Data->FilePos();
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine);
             assert(m_RowsOffset < m_Lines.size());
-            [m_View setNeedsDisplay:true];
+            [m_View setNeedsDisplay];
         }
         else
         {
             if(m_RowsOffset > 0)
             {
                 m_RowsOffset--;
-                [m_View setNeedsDisplay:true];
+                [m_View setNeedsDisplay];
             }
         }
     }
@@ -477,7 +477,7 @@ void BigFileViewHex::OnDownArrow()
     {
         // just move offset;
         m_RowsOffset++;
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     else
     {
@@ -501,7 +501,7 @@ void BigFileViewHex::OnDownArrow()
             uint64_t anchor_new_offset = anchor_row_offset - m_Data->FilePos();
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) + 2; // why +2?
             assert(m_RowsOffset < m_Lines.size());
-            [m_View setNeedsDisplay:true];
+            [m_View setNeedsDisplay];
         }
     }
 }
@@ -515,7 +515,7 @@ void BigFileViewHex::OnPageDown()
     {
         // just move offset;
         m_RowsOffset += m_FrameLines;
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     else
     {
@@ -540,14 +540,14 @@ void BigFileViewHex::OnPageDown()
             uint64_t anchor_new_offset = anchor_row_offset - m_Data->FilePos();
             m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) + 1;
             assert(m_RowsOffset < m_Lines.size());
-            [m_View setNeedsDisplay:true];
+            [m_View setNeedsDisplay];
         }
         else
         {
             if(m_RowsOffset + m_FrameLines < m_Lines.size())
             {
                 m_RowsOffset = (unsigned)m_Lines.size() - m_FrameLines;
-                [m_View setNeedsDisplay:true];
+                [m_View setNeedsDisplay];
             }
         }
     }
@@ -560,7 +560,7 @@ void BigFileViewHex::OnPageUp()
     if(m_RowsOffset > m_FrameLines + 1)
     {
         m_RowsOffset -= m_FrameLines;
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     else
     {
@@ -586,14 +586,14 @@ void BigFileViewHex::OnPageUp()
             else
                 m_RowsOffset = 0;
             assert(m_RowsOffset < m_Lines.size());
-            [m_View setNeedsDisplay:true];
+            [m_View setNeedsDisplay];
         }
         else
         {
             if(m_RowsOffset > 0)
             {
                 m_RowsOffset=0;
-                [m_View setNeedsDisplay:true];
+                [m_View setNeedsDisplay];
             }
         }
     }
@@ -661,7 +661,7 @@ void BigFileViewHex::ScrollToByteOffset(uint64_t _offset)
     { // we can just move our offset in window
         
         m_RowsOffset = unsigned ( (_offset - window_pos) / g_BytesPerHexLine );
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     else
     {
@@ -682,7 +682,7 @@ void BigFileViewHex::ScrollToByteOffset(uint64_t _offset)
             assert(desired_wnd_pos <= _offset);
             uint32_t byte_offset = uint32_t(_offset - desired_wnd_pos);
             m_RowsOffset = byte_offset / g_BytesPerHexLine;
-            [m_View setNeedsDisplay:true];
+            [m_View setNeedsDisplay];
         }
         else
         {
@@ -695,7 +695,7 @@ void BigFileViewHex::ScrollToByteOffset(uint64_t _offset)
                     des_row_offset = 0;
             }
             m_RowsOffset = des_row_offset;
-            [m_View setNeedsDisplay:true];
+            [m_View setNeedsDisplay];
         }
     }
     m_SmoothOffset.y = 0;
@@ -808,7 +808,7 @@ void BigFileViewHex::OnScrollWheel(NSEvent *theEvent)
             OnDownArrow();
             m_SmoothOffset.y -= m_FontHeight;
         }
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     
     // edge-case clipping (not allowing to appear a gap before first line or after last line)

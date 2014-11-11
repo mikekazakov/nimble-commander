@@ -459,3 +459,40 @@ shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const char* _pa
     
     return VolumeFromMountPoint((const char*)info.f_mntonname);
 }
+
+bool NativeFSManager::IsVolumeContainingPathEjectable(const string &_path)
+{
+    auto volume = VolumeFromPath(_path);
+    
+    if(!volume)
+        return false;
+    
+    static string net("/net"), dev("/dev"), home("/home");
+    
+    if(volume->mounted_at_path == net ||
+       volume->mounted_at_path == dev ||
+       volume->mounted_at_path == home )
+        return false;
+    
+    return  volume->mount_flags.ejectable   == true  ||
+            volume->mount_flags.removable   == true  ||
+            volume->mount_flags.internal    == false ||
+            volume->mount_flags.local       == false ;
+}
+
+void NativeFSManager::EjectVolumeContainingPath(const string &_path)
+{
+    string path = _path;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if(auto volume = VolumeFromPath(path)) {
+            DASessionRef session = DASessionCreate(kCFAllocatorDefault);
+            CFURLRef url = (__bridge CFURLRef)volume->verbose.url;
+            DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
+            if(disk) {
+                DADiskUnmount(disk, kDADiskUnmountOptionDefault, NULL, NULL);
+                CFRelease(disk);
+            }
+            CFRelease(session);
+        }
+    });
+}

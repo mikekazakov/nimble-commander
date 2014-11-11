@@ -179,7 +179,7 @@ const static double g_BorderWidth = 1.0;
         }
     }
     
-    [self setNeedsDisplay:true];
+    [self setNeedsDisplay];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -466,7 +466,7 @@ const static double g_BorderWidth = 1.0;
     }
 
     m_ViewImpl->MoveOffsetWithinWindow(current_offset);
-    [self setNeedsDisplay:true];
+    [self setNeedsDisplay];
 }
 
 - (double) VerticalScrollPosition
@@ -588,7 +588,7 @@ const static double g_BorderWidth = 1.0;
         m_SelectionInFile = _selection;
         [self UpdateSelectionRange];
     }
-    [self setNeedsDisplay:true];
+    [self setNeedsDisplay];
 }
 
 - (void) mouseDown:(NSEvent *)_event

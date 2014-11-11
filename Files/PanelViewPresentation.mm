@@ -249,7 +249,7 @@ int PanelViewPresentation::GetMaxVisibleItems() const
 
 void PanelViewPresentation::SetViewNeedsDisplay()
 {
-    [m_View setNeedsDisplay:YES];
+    [m_View setNeedsDisplay];
 }
 
 void PanelViewPresentation::UpdateStatFS()

@@ -695,7 +695,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         for(auto &i: _entries)
             data->CustomFlagsSelectSorted(data->SortedIndexForName(i.c_str()), true);
         
-        [self.activePanelView setNeedsDisplay:true];
+        [self.activePanelView setNeedsDisplay];
     }
 }
 

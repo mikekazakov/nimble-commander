@@ -159,7 +159,7 @@
             m_Data.Load(listing);
             [m_View dataUpdated];
             [m_View directoryChangedWithFocusedFilename:_filename.c_str()];
-            m_View.needsDisplay = true;
+            [m_View setNeedsDisplay];
             [self OnPathChanged];
         });
     };

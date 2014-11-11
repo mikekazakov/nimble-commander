@@ -270,7 +270,7 @@ void panel::GenericCursorPersistance::Restore()
 
     pers.Restore();
     
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter
@@ -281,7 +281,7 @@ void panel::GenericCursorPersistance::Restore()
     
     pers.Restore();
     
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev
@@ -420,7 +420,7 @@ void panel::GenericCursorPersistance::Restore()
                     pers.Restore();
 
                 [self OnCursorChanged];
-                [m_View setNeedsDisplay:true];
+                [m_View setNeedsDisplay];
             });
         }
         else

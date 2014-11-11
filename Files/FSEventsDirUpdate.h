@@ -8,7 +8,6 @@
 
 #pragma once
 #import <DiskArbitration/DiskArbitration.h>
-#include <sys/dirent.h>
 
 class FSEventsDirUpdate
 {

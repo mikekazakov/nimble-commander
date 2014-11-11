@@ -267,7 +267,7 @@
     m_Parser->Resized();
     
     [m_View adjustSizes:true];
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
 }
 
 - (bool) IsAnythingRunning

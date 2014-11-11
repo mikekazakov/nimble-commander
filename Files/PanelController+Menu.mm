@@ -28,6 +28,7 @@
 #import "PanelViewPresentation.h"
 #import "CalculateChecksumSheetController.h"
 #import "FileCopyOperation.h"
+#import "NativeFSManager.h"
 
 @implementation PanelController (Menu)
 
@@ -87,7 +88,7 @@
     IF_MENU_TAG("menu.command.volume_information")      return self.VFS->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item->IsDir();
     IF_MENU_TAG("menu.command.external_editor")         return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.eject_volume")            return self.VFS->IsNativeFS() && IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost);
+    IF_MENU_TAG("menu.command.eject_volume")            return self.VFS->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost);
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item != nullptr;
     IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item != nullptr;
     IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item != nullptr;
@@ -364,8 +365,9 @@
 }
 
 - (IBAction)OnEjectVolume:(id)sender {
-    if(self.VFS->IsNativeFS() && IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost))
-        EjectVolumeContainingPath(self.GetCurrentDirectoryPathRelativeToHost);
+    auto &nfsm = NativeFSManager::Instance();
+    if(self.VFS->IsNativeFS() && nfsm.IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost))
+        nfsm.EjectVolumeContainingPath(self.GetCurrentDirectoryPathRelativeToHost);
 }
 
 - (IBAction)OnCopyCurrentFileName:(id)sender {

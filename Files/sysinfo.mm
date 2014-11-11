@@ -233,7 +233,7 @@ bool GetCPULoad(CPULoad &_load)
     return true;
 }
 
-OSXVersion GetOSXVersion()
+OSXVersion GetOSXVersion() noexcept
 {
     static OSXVersion version = OSXVersion::OSX_Unknown;
     static dispatch_once_t once;

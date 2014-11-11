@@ -9,7 +9,6 @@
 
 #include "path_manip.h"
 
-
 struct DialogResult
 {
     enum
@@ -33,11 +32,6 @@ struct DialogResult
 // fs directory handling stuff
 bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size); // get last directory from path
 
-bool IsDirectoryAvailableForBrowsing(const char *_path);
-
-void EjectVolumeContainingPath(const string &_path); // a very simple function with no error feedback
-bool IsVolumeContainingPathEjectable(const string &_path); // will return false on any errors
-
 inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s)
 {
     return CFStringCreateWithBytesNoCopy(0,
@@ -58,14 +52,14 @@ inline CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s)
                                          kCFAllocatorNull);
 }
 
-#ifdef __OBJC__
-
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);
-void SyncMessageBoxNS(NSString *_ns_string);
 
 nanoseconds machtime() noexcept;
 
+#ifdef __OBJC__
+
+void SyncMessageBoxNS(NSString *_ns_string);
 
 typedef enum
 {
@@ -120,7 +114,7 @@ struct MachTimeBenchmark
 @end
 
 @interface NSTimer (SafeTolerance)
-- (void) SetSafeTolerance;
+- (void) setSafeTolerance;
 @end
 
 
@@ -142,7 +136,6 @@ struct MachTimeBenchmark
 @end
 
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
-bool IsRunningUnitTesting();
 
 inline bool dispatch_is_main_queue() { return [NSThread isMainThread]; }
 inline void dispatch_to_main_queue(dispatch_block_t block) { dispatch_async(dispatch_get_main_queue(), block); }

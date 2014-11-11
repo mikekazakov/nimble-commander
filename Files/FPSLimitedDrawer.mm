@@ -71,12 +71,8 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
                 dispatch_to_main_queue(^{ [self setupTimer]; });
         }
     }
-    else {
-        if(dispatch_is_main_queue())
-            self.view.needsDisplay = true;
-        else
-            dispatch_to_main_queue(^{ [self.view setNeedsDisplay:true]; } );
-    }
+    else
+        [self.view setNeedsDisplay];
 }
 
 - (void) UpdateByTimer:(NSTimer*)theTimer
@@ -107,8 +103,8 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
                                                  selector:@selector(UpdateByTimer:)
                                                  userInfo:nil
                                                   repeats:YES];
+    [m_DrawTimer setSafeTolerance];
     m_LastDrawedTime = machtime();
-    [m_DrawTimer SetSafeTolerance];
 }
 
 - (void) cleanupTimer

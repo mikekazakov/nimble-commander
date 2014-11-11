@@ -113,7 +113,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     
     if(m_Data.ClearTextFiltering()) {
         pers.Restore();
-        [m_View setNeedsDisplay:true];
+        [m_View setNeedsDisplay];
     }
     
     m_View.quickSearchPrompt = nil;
@@ -173,7 +173,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
         else
             prompt = [NSString stringWithFormat:@"%i matches | %@", total, m_Data.SoftFiltering().text];
         m_View.quickSearchPrompt = prompt;
-        m_View.needsDisplay = true;
+        [m_View setNeedsDisplay];
         
         // automatically remove prompt after g_FastSeachDelayTresh
         __weak PanelController *wself = self;
@@ -229,7 +229,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
        m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0])->IsDotDot() )
         m_View.curpos = 1;
     
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
     
     if(m_QuickSearchTypingView) { // update typing UI
         int total = (int)m_Data.SortedDirectoryEntries().size();

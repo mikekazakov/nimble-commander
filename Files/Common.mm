@@ -1,22 +1,7 @@
 #import <mach/mach_time.h>
-#import <sys/types.h>
-#import <sys/dirent.h>
-#import <sys/stat.h>
-#import <sys/attr.h>
-#import <sys/vnode.h>
-#import <sys/param.h>
-#import <sys/mount.h>
-#import <unistd.h>
-#import <dirent.h>
-#import <pwd.h>
-#import <DiskArbitration/DiskArbitration.h>
-#import "NativeFSManager.h"
 #import "Common.h"
 #import "sysinfo.h"
 #import "AppDelegate.h"
-
-static uint64_t InitGetTimeInNanoseconds();
-static uint64_t (*GetTimeInNanoseconds)() = InitGetTimeInNanoseconds;
 
 static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)
 {
@@ -145,7 +130,10 @@ bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size)
     return true;
 }
 
+static uint64_t InitGetTimeInNanoseconds();
+static uint64_t (*GetTimeInNanoseconds)() = InitGetTimeInNanoseconds;
 static mach_timebase_info_data_t info_data;
+
 static uint64_t GetTimeInNanosecondsScale()
 {
     return mach_absolute_time()*info_data.numer/info_data.denom;
@@ -183,54 +171,6 @@ void SyncMessageBoxNS(NSString *_ns_string)
         [alert runModal];
     else
         dispatch_sync(dispatch_get_main_queue(), ^{ [alert runModal]; } );
-}
-
-bool IsDirectoryAvailableForBrowsing(const char *_path)
-{
-    DIR *dirp = opendir(_path);
-    if(dirp == 0)
-        return false;
-    closedir(dirp);
-    return true;
-}
-
-void EjectVolumeContainingPath(const string &_path)
-{
-    string path = _path;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if(auto volume = NativeFSManager::Instance().VolumeFromPath(path))
-        {
-            DASessionRef session = DASessionCreate(kCFAllocatorDefault);
-            CFURLRef url = (__bridge CFURLRef)volume->verbose.url;
-            DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
-            if(disk)
-            {
-                DADiskUnmount(disk, kDADiskUnmountOptionDefault, NULL, NULL);
-                CFRelease(disk);
-            }
-            CFRelease(session);
-        }
-    });
-}
-
-bool IsVolumeContainingPathEjectable(const string &_path)
-{
-    auto volume = NativeFSManager::Instance().VolumeFromPath(_path);
-    
-    if(!volume)
-        return false;
-    
-    static string net("/net"), dev("/dev"), home("/home");
-    
-    if(volume->mounted_at_path == net ||
-       volume->mounted_at_path == dev ||
-       volume->mounted_at_path == home )
-        return false;
-    
-    return  volume->mount_flags.ejectable   == true  ||
-            volume->mount_flags.removable   == true  ||
-            volume->mount_flags.internal    == false ||
-            volume->mount_flags.local       == false ;
 }
 
 @implementation NSObject (MassObserving)
@@ -274,10 +214,10 @@ bool IsVolumeContainingPathEjectable(const string &_path)
 @end
 
 @implementation NSTimer (SafeTolerance)
-- (void) SetSafeTolerance
+- (void) setSafeTolerance
 {
     if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9)
-        [self setTolerance:[self timeInterval]/10.];
+        self.tolerance = self.timeInterval/10.;
 }
 @end
 
@@ -337,9 +277,9 @@ bool IsVolumeContainingPathEjectable(const string &_path)
 - (void) setNeedsDisplay
 {
     if(dispatch_is_main_queue())
-        [self setNeedsDisplay:TRUE];
+        self.needsDisplay = true;
     else
-        dispatch_to_main_queue( ^{ [self setNeedsDisplay:TRUE]; } );
+        dispatch_to_main_queue( ^{ self.needsDisplay = true; } );
 }
 @end
 
@@ -383,8 +323,3 @@ bool IsVolumeContainingPathEjectable(const string &_path)
 }
 
 @end
-
-bool IsRunningUnitTesting()
-{
-    return ((AppDelegate*)[NSApplication.sharedApplication delegate]).isRunningTests;
-}

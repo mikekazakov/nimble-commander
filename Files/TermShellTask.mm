@@ -28,6 +28,15 @@ static       char *g_ShellParam[2] = {(char*)"-L", 0};
 static const int   g_PromptPipe    = 20;
 static const char *g_PromptStringPID  = "a=$$; b=%d; if [ $a -eq $b ]; then /bin/pwd>&20; fi";
 
+static bool IsDirectoryAvailableForBrowsing(const char *_path)
+{
+    DIR *dirp = opendir(_path);
+    if(dirp == 0)
+        return false;
+    closedir(dirp);
+    return true;
+}
+
 TermShellTask::~TermShellTask()
 {
     CleanUp();

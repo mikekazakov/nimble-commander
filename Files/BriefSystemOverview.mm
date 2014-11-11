@@ -73,7 +73,7 @@ static NSTextField *CreateStockTF()
                                                        selector:@selector(UpdateByTimer:)
                                                        userInfo:nil
                                                         repeats:YES];
-        [m_UpdateTimer SetSafeTolerance];
+        [m_UpdateTimer setSafeTolerance];
     }
     return self;
 }
@@ -112,9 +112,7 @@ static NSTextField *CreateStockTF()
     {
         [self CreateControls];
         [self UpdateControls];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * USEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [self setNeedsDisplay:true]; // 10.8-specific (or maybe VM) code
-        });
+        [self setNeedsDisplay];
     }
 }
 

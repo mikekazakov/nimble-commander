@@ -456,11 +456,11 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         {
             if(end > m_SelStart) {
                 m_SelEnd = end;
-                [self setNeedsDisplay:true];
+                [self setNeedsDisplay];
             }
             else if(end < m_SelStart) {
                 m_SelStart = end;
-                [self setNeedsDisplay:true];
+                [self setNeedsDisplay];
             }
         }
         else if(!m_HasSelection || m_SelEnd != end || m_SelStart != start)
@@ -468,10 +468,10 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
             m_HasSelection = true;
             m_SelStart = start;
             m_SelEnd = end;
-            [self setNeedsDisplay:true];
+            [self setNeedsDisplay];
         }
 
-        event = [[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+        event = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
     }
 }
 
@@ -550,13 +550,13 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     m_SelStart.x = 0;
     m_SelEnd.y = m_Screen->Height()-1;
     m_SelEnd.x = m_Screen->Width();
-    [self setNeedsDisplay:true];
+    [self setNeedsDisplay];
 }
 
 - (void)deselectAll:(id)sender
 {
     m_HasSelection = false;
-    [self setNeedsDisplay:true];
+    [self setNeedsDisplay];
 }
 
 

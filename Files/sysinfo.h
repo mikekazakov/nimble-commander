@@ -66,7 +66,7 @@ bool GetCPULoad(CPULoad &_load);
  * OSX_Below if current system is Snow Leopard or older
  * Loads this info on first use, then return cached data instantly
  */
-OSXVersion GetOSXVersion();
+OSXVersion GetOSXVersion() noexcept;
 
 /**
  * Returns common information about system, such as computer name, computer model, user name etc

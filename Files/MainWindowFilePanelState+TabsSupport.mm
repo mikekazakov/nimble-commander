@@ -255,10 +255,10 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 - (void) updateTabBarButtons
 {
     [m_MainSplitView.leftTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
-            aButton.needsDisplay = true;
+            [aButton setNeedsDisplay];
         }];
     [m_MainSplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
-            aButton.needsDisplay = true;
+            [aButton setNeedsDisplay];
             }];
 }
 

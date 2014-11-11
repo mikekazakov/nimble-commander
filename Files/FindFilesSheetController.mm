@@ -349,7 +349,7 @@ static const int g_MaximumSearchResults = 16384;
                                                            selector:@selector(UpdateByTimer:)
                                                            userInfo:nil
                                                             repeats:YES];
-        [m_BatchDrainTimer SetSafeTolerance];
+        [m_BatchDrainTimer setSafeTolerance];
     }
     else {
         self.SearchButton.state = NSOffState;

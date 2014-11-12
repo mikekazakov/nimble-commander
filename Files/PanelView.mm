@@ -472,6 +472,7 @@ struct PanelViewStateStorage
     
     NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
     bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
+    bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
     
     // Select range of items with shift+click.
     // If clicked item is selected, then deselect the range instead.
@@ -491,13 +492,13 @@ struct PanelViewStateStorage
     {
         [self OnCursorPositionChanged];
     }
-    else if(lb_pressed && machtime() - m_ActivationTime > 300ms)
+    else if(lb_pressed && !lb_cooldown)
     {
         // need more complex logic here (?)
         m_LastPotentialRenamingLBDown = cursor_pos;
     }
 
-    if(lb_pressed && self.active)
+    if(lb_pressed && self.active && !lb_cooldown)
     {
         m_ReadyToDrag = true;
         m_LButtonDownPos = local_point;
@@ -609,8 +610,9 @@ struct PanelViewStateStorage
         _end = t;
     }
     
-    if(m_State.Data->DirectoryEntries()[m_State.Data->SortedDirectoryEntries()[_start]].IsDotDot())
-        ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
+    if(auto i = m_State.Data->EntryAtSortPosition(_start))
+        if(i->IsDotDot())
+            ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
     
     for(int i = _start; i <= _end; ++i)
         m_State.Data->CustomFlagsSelectSorted(i, _select);

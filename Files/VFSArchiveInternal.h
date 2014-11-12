@@ -24,11 +24,39 @@ struct VFSArchiveMediator
     void setup(struct archive *a);
 };
 
-struct VFSArchiveSeekCache
+struct VFSArchiveState
 {
-    struct archive *arc;
-    uint32_t uid; // uid of a last read item. if client want to use such cache, their's uid should be bigger than uid
-    shared_ptr<VFSArchiveMediator> mediator; // includes a valid opened VFSFile;
+    // passes ownership of _arc
+    VFSArchiveState( const VFSFilePtr &_file, struct archive *_arc );
+    ~VFSArchiveState();
+    
+    inline struct archive          *Archive() { return m_Archive; }
+    inline struct archive_entry    *Entry() { return m_Entry; }
+    inline uint32_t                 UID() { return m_UID; }
+    inline bool                     Consumed() { return m_Consumed; }
+    
+    // assumes that this call is in  archive_read_next_header cycle. sets consumed flag to false
+    void SetEntry(struct archive_entry *_e, uint32_t _uid);
+    inline void ConsumeEntry() { m_Consumed = true; }
+    
+    // libarchive API wrapping
+    // any error codes are raw libarchive one, not converted to VFSError
+    int Open();
+    int Errno();
+    
+private:
+    VFSArchiveState(const VFSArchiveState&) = delete;
+    void Setup();
+    static ssize_t myread(struct archive *a, void *client_data, const void **buff);
+    static off_t myseek(struct archive *a, void *client_data, off_t offset, int whence);
+
+    enum {BufferSize = 65536 * 4};
+    VFSFilePtr              m_File;
+    struct archive         *m_Archive = nil;
+    struct archive_entry   *m_Entry = nil; // entry for current archive state
+    uint32_t                m_UID = 0;
+    bool                    m_Consumed = false;
+    char                    m_Buf[BufferSize];
 };
 
 struct VFSArchiveDirEntry

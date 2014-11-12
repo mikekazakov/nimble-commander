@@ -14,10 +14,6 @@
 
 VFSArchiveFile::VFSArchiveFile(const char* _relative_path, shared_ptr<VFSArchiveHost> _host):
     VFSFile(_relative_path, _host),
-    m_Arc(0),
-    m_ShouldCommitSC(0),
-    m_UID(0),
-    m_Entry(0),
     m_EA(0),
     m_EACount(0)
 {
@@ -35,140 +31,38 @@ int VFSArchiveFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     
     if(_open_flags & VFSFile::OF_Write)
         return SetLastError(VFSError::NotSupported); // ArchiveFile is Read-Only
-    
+
+    int res;
     auto host = dynamic_pointer_cast<VFSArchiveHost>(Host());
-    
-    uint32_t myuid = host->ItemUID(RelativePath());
-    if(myuid == 0)
-        return SetLastError(VFSError::NotFound);
-    m_UID = myuid;
-    
-//    unsigned long scuid = host->SeekCachePosition();
-    auto sc = host->SeekCache(myuid);
-    
-//    if(scuid == 0 || scuid >= myuid)
-    if(!sc.get())
-    {
-        m_ArFile = dynamic_pointer_cast<VFSArchiveHost>(Host())->ArFile()->Clone();
-        int res;
-    
-        res = m_ArFile->Open(VFSFile::OF_Read);
-        if(res < 0)
-            return SetLastError(res);
-    
-        m_Mediator = make_shared<VFSArchiveMediator>();
-        m_Mediator->file = m_ArFile;
-    
-        // open for read-only now
-        m_Arc = archive_read_new();
-        archive_read_support_filter_all(m_Arc);
-        archive_read_support_format_all(m_Arc);
-        m_Mediator->setup(m_Arc);
+    unique_ptr<VFSArchiveState> state;
 
-        res = archive_read_open1(m_Arc);
-        if(res < 0)
-        {
-            int rc = VFSError::FromLibarchive(archive_errno(m_Arc));
-            Close();
-            return rc;
-        }
-        bool found = false;
-        struct archive_entry *entry;
-        char path[1024];
-        strcpy(path, RelativePath()+1); // skip first symbol, which is '/'
-        while (archive_read_next_header(m_Arc, &entry) == ARCHIVE_OK)
-            // consider case-insensitive comparison later
-            if(strcmp(path, archive_entry_pathname(entry)) == 0)
-            {
-                found = true;
-                break;
-            }
+    res = host->ArchiveStateForItem(RelativePath(), state);
+    if(res < 0)
+        return res;
     
-        if(!found)
-        {
-            Close();
-            return SetLastError(VFSError::NotFound);
-        }
-        
-        m_Entry = entry;
-        m_Position = 0;
-        m_Size = archive_entry_size(entry);
-        m_ShouldCommitSC = true;
-        
-        // read and parse metadata(xattrs) if any
-        size_t s;
-        m_EA = ExtractEAFromAppleDouble(archive_entry_mac_metadata(m_Entry, &s), s, &m_EACount);
+    assert(state->Entry());
 
-        return VFSError::Ok;
-    }
-    else
-    {
-        bool found = false;
-        struct archive_entry *entry;
-        char path[1024];
-        strcpy(path, RelativePath()+1); // skip first symbol, which is '/'
-        while (archive_read_next_header(sc->arc, &entry) == ARCHIVE_OK)
-            // consider case-insensitive comparison later
-            if(strcmp(path, archive_entry_pathname(entry)) == 0)
-            {
-                found = true;
-                break;
-            }
-
-        if(!found)
-        {
-            archive_read_free(sc->arc);
-            return SetLastError(VFSError::NotFound);
-        }
-
-        m_Entry = entry;
-        m_Arc = sc->arc;
-        m_ArFile = sc->mediator->file;
-        m_Mediator = sc->mediator;
-        m_Position = 0;
-        m_Size = archive_entry_size(entry);
-        m_ShouldCommitSC = true;
-
-        // read and parse metadata(xattrs) if any
-        size_t s;
-        m_EA = ExtractEAFromAppleDouble(archive_entry_mac_metadata(m_Entry, &s), s, &m_EACount);
-        
-        return VFSError::Ok;
-    }
+    // read and parse metadata(xattrs) if any
+    size_t s;
+    m_EA = ExtractEAFromAppleDouble(archive_entry_mac_metadata(state->Entry(), &s), s, &m_EACount);
+    
+    m_Position = 0;
+    m_Size = archive_entry_size(state->Entry());
+    m_State = move(state);
+    
+    return VFSError::Ok;;
 }
 
 bool VFSArchiveFile::IsOpened() const
 {
-    return m_Arc != 0;
+    return m_State != nullptr;
 }
 
 int VFSArchiveFile::Close()
-{    
-    if(m_Arc != 0)
-    {
-        if(!m_ShouldCommitSC)
-        {
-            archive_read_free(m_Arc);
-            m_Arc = 0;
-            m_Mediator.reset();
-            m_ArFile.reset();
-        }
-        else
-        {
-            // transfer ownership of handles to Host
-            assert(m_UID);
-            shared_ptr<VFSArchiveSeekCache> sc = make_shared<VFSArchiveSeekCache>();
-            sc->uid = m_UID;
-            sc->arc = m_Arc;
-            sc->mediator = m_Mediator;
-            dynamic_pointer_cast<VFSArchiveHost>(Host())->CommitSeekCache(sc);
-            m_Arc = 0;
-            m_Mediator.reset();
-            m_ArFile.reset();
-        }
-    }
+{
+    dynamic_pointer_cast<VFSArchiveHost>(Host())->CommitState( move(m_State) );
+    m_State.reset();
     
-    m_Entry = 0;
     m_EACount = 0;
     free(m_EA);
     m_EA = 0;
@@ -183,39 +77,39 @@ VFSFile::ReadParadigm VFSArchiveFile::GetReadParadigm() const
 
 ssize_t VFSArchiveFile::Pos() const
 {
-    if(!m_Arc)
+    if(!IsOpened())
         return SetLastError(VFSError::InvalidCall);
     return m_Position;
 }
 
 ssize_t VFSArchiveFile::Size() const
 {
-    if(!m_Arc)
+    if(!IsOpened())
         return SetLastError(VFSError::InvalidCall);
     return m_Size;
 }
 
 bool VFSArchiveFile::Eof() const
 {
-    if(!m_Arc)
+    if(!IsOpened())
         return true;
     return m_Position == m_Size;
 }
 
 ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
 {
-    if(m_Arc == 0) return SetLastError(VFSError::InvalidCall);
+    if(IsOpened() == 0) return SetLastError(VFSError::InvalidCall);
     if(Eof())     return 0;
     
     assert(_buf != 0);
 
-    ssize_t size = archive_read_data(m_Arc, _buf, _size);
+    m_State->ConsumeEntry();
+    ssize_t size = archive_read_data(m_State->Archive(), _buf, _size);
     if(size < 0)
     {
         // TODO: libarchive error - convert it into our errors
-        printf("libarchive error: %s\n", archive_error_string(m_Arc));
-//        return -1;
-        return SetLastError(VFSError::FromLibarchive(archive_errno(m_Arc)));
+        printf("libarchive error: %s\n", archive_error_string(m_State->Archive()));
+        return SetLastError(VFSError::FromLibarchive(archive_errno(m_State->Archive())));
     }
     
     m_Position += size;
@@ -241,7 +135,7 @@ void VFSArchiveFile::XAttrIterateNames( function<bool(const char* _xattr_name)> 
 
 ssize_t VFSArchiveFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
 {
-    if(!m_Arc || !_xattr_name)
+    if(!IsOpened() || !_xattr_name)
         return SetLastError(VFSError::InvalidCall);
     
     for(int i = 0; i < m_EACount; ++i)

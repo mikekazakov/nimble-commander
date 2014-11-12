@@ -14,7 +14,7 @@
 struct VFSArchiveMediator;
 struct VFSArchiveDir;
 struct VFSArchiveDirEntry;
-struct VFSArchiveSeekCache;
+struct VFSArchiveState;
 
 class VFSArchiveHost : public VFSHost
 {
@@ -48,7 +48,6 @@ public:
     
     virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
     
-    int GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs) override;
     virtual bool ShouldProduceThumbnails() const override;
 
     inline uint32_t StatTotalFiles() const { return m_TotalFiles; }
@@ -59,18 +58,12 @@ public:
     
     // return zero on not found
     uint32_t ItemUID(const char* _filename);
-
-    // destruct call - will override currently stored one
-    void CommitSeekCache(shared_ptr<VFSArchiveSeekCache> _sc);
     
-    // destructive call - host will no longer hold returned seek cache
-    // if there're no caches, that can satisfy this call - zero ptr is returned
-    shared_ptr<VFSArchiveSeekCache> SeekCache(uint32_t _requested_item);
+    unique_ptr<VFSArchiveState> ClosestState(uint32_t _requested_item);
+    void CommitState(unique_ptr<VFSArchiveState> _state);
     
-    
-    shared_ptr<VFSFile> ArFile() const;
-    
-    struct archive* Archive();
+    // use SeekCache or open a new file and seeks to requested item
+    int ArchiveStateForItem(const char *_filename, unique_ptr<VFSArchiveState> &_target);
     
     shared_ptr<const VFSArchiveHost> SharedPtr() const {return static_pointer_cast<const VFSArchiveHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSArchiveHost> SharedPtr() {return static_pointer_cast<VFSArchiveHost>(VFSHost::SharedPtr());}
@@ -80,6 +73,7 @@ private:
     const VFSArchiveDirEntry *FindEntry(const char* _path);
     
     void InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir_name);
+    struct archive* SpawnLibarchive();
     
     shared_ptr<VFSFile>                m_ArFile;
     shared_ptr<VFSArchiveMediator>     m_Mediator;
@@ -95,7 +89,6 @@ private:
     uint64_t                                m_ArchivedFilesTotalSize = 0;
     uint32_t                                m_LastItemUID = 0;
     
-    list<shared_ptr<VFSArchiveSeekCache>> m_SeekCaches;
-    
-    dispatch_queue_t                        m_SeekCacheControl;
+    list<unique_ptr<VFSArchiveState>>       m_States;
+    mutex                                   m_StatesLock;
 };

@@ -33,14 +33,9 @@ public:
     virtual void XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const override;
     virtual ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const override;
 private:
+    unique_ptr<VFSArchiveState> m_State;
     AppleDoubleEA *m_EA;
     size_t         m_EACount;
-    struct archive *m_Arc;
-    struct archive_entry *m_Entry;
-    shared_ptr<VFSFile> m_ArFile;
-    shared_ptr<VFSArchiveMediator> m_Mediator;
-    ssize_t m_Position;
-    ssize_t m_Size;
-    uint32_t m_UID;
-    bool    m_ShouldCommitSC;
+    ssize_t        m_Position;
+    ssize_t        m_Size;
 };

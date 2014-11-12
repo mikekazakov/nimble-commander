@@ -21,20 +21,15 @@ const char *VFSArchiveHost::Tag = "arc_libarchive";
 VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
                                shared_ptr<VFSHost> _parent):
     VFSHost(_junction_path, _parent),
-    m_Arc(0),
-    m_SeekCacheControl(dispatch_queue_create(__FILES_IDENTIFIER__".VFSArchiveHost.sc_control_queue", DISPATCH_QUEUE_SERIAL))
+    m_Arc(0)
 {
     assert(_parent);
 }
 
 VFSArchiveHost::~VFSArchiveHost()
 {
-    dispatch_sync(m_SeekCacheControl, ^{});
-    dispatch_release(m_SeekCacheControl);
     if(m_Arc != 0)
         archive_read_free(m_Arc);
-    for(auto i:m_SeekCaches)
-        archive_read_free(i->arc);
     for(auto &i: m_PathToDir)
         delete i.second;
 }
@@ -68,19 +63,7 @@ int VFSArchiveHost::Open()
     m_Mediator = make_shared<VFSArchiveMediator>();
     m_Mediator->file = m_ArFile;
     
-    m_Arc = archive_read_new();
-    archive_read_support_filter_all(m_Arc);
-	archive_read_support_format_ar(m_Arc);
-	archive_read_support_format_cpio(m_Arc);
-	archive_read_support_format_empty(m_Arc);
-	archive_read_support_format_lha(m_Arc);
-	archive_read_support_format_mtree(m_Arc);
-	archive_read_support_format_tar(m_Arc);
-	archive_read_support_format_xar(m_Arc);
-	archive_read_support_format_7zip(m_Arc);
-	archive_read_support_format_cab(m_Arc);
-	archive_read_support_format_iso9660(m_Arc);
-	archive_read_support_format_zip(m_Arc);
+    m_Arc = SpawnLibarchive();
     
     archive_read_set_callback_data(m_Arc, m_Mediator.get());
     archive_read_set_read_callback(m_Arc, VFSArchiveMediator::myread);
@@ -230,16 +213,6 @@ void VFSArchiveHost::InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir
     entry.st.st_mode = S_IFDIR;
 }
 
-struct archive* VFSArchiveHost::Archive()
-{
-    return m_Arc;
-}
-
-shared_ptr<VFSFile> VFSArchiveHost::ArFile() const
-{
-    return m_ArFile;
-}
-
 int VFSArchiveHost::CreateFile(const char* _path,
                        shared_ptr<VFSFile> &_target,
                        VFSCancelChecker _cancel_checker)
@@ -355,8 +328,7 @@ uint32_t VFSArchiveHost::ItemUID(const char* _filename)
 
 const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
 {
-    assert(_path != 0);
-    if(_path[0] != '/') return 0;
+    if(!_path || _path[0] != '/') return 0;
     
     // 1st - try to find _path directly (assume it's directory)
     char buf[1024], short_name[256];
@@ -393,63 +365,6 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
     return 0;
 }
 
-void VFSArchiveHost::CommitSeekCache(shared_ptr<VFSArchiveSeekCache> _sc)
-{
-/*    if(m_SeekCache.get())
-    {
-        // flush current one
-        archive_read_free(m_SeekCache->arc);
-    }
-    
-    m_SeekCache = _sc;*/
-    dispatch_sync(m_SeekCacheControl, ^{
-        // will throw away archives positioned at last item - they are useless
-        // they will be closed automatically
-        if(_sc->uid < m_LastItemUID)
-        {
-            m_SeekCaches.push_back(_sc);
-        }
-        else
-        {
-            archive_read_free(_sc->arc);
-        }
-    });
-}
-
-shared_ptr<VFSArchiveSeekCache> VFSArchiveHost::SeekCache(uint32_t _requested_item)
-{
-    if(_requested_item == 0)
-        return 0;
-
-    __block shared_ptr<VFSArchiveSeekCache> res;
-    dispatch_sync(m_SeekCacheControl, ^{
-        // choose the closest if any
-        uint32_t best_delta = -1;
-        auto best = m_SeekCaches.end();
-        for(auto i = m_SeekCaches.begin(); i != m_SeekCaches.end(); ++i)
-        {
-            if((*i)->uid < _requested_item)
-            {
-                uint32_t delta = _requested_item - (*i)->uid;
-                if(delta < best_delta)
-                {
-                    best_delta = delta;
-                    best = i;
-                    if(delta == 1) // the closest one is found, no need to search further
-                        break;
-                }
-            }
-        }
-        if(best != m_SeekCaches.end())
-        {
-            res = *best;
-            m_SeekCaches.erase(best);
-        }
-    });
-    
-    return res;
-}
-
 int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
 {
     char vol_name[256];
@@ -469,100 +384,112 @@ bool VFSArchiveHost::ShouldProduceThumbnails() const
     return true;
 }
 
-int VFSArchiveHost::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs)
+unique_ptr<VFSArchiveState> VFSArchiveHost::ClosestState(uint32_t _requested_item)
 {
-    // BAAAAAD. need to refactor VFSArchiveHost, it looks like a crap.
-    assert(0);
+    if(_requested_item == 0)
+        return nullptr;
+
+    lock_guard<mutex> lock(m_StatesLock);
+
+    uint32_t best_delta = numeric_limits<uint32_t>::max();
+    auto best = m_States.end();
+    for(auto i = m_States.begin(); i != m_States.end(); ++i) {
+        if(  (*i)->UID() < _requested_item ||
+           ( (*i)->UID() == _requested_item && !(*i)->Consumed() ) ) {
+                uint32_t delta = _requested_item - (*i)->UID();
+                if(delta < best_delta) {
+                    best_delta = delta;
+                    best = i;
+                    if(delta <= 1) // the closest one is found, no need to search further
+                        break;
+                }
+            }
+        }
     
-    uint32_t myuid = ItemUID(_path);
-    if(myuid == 0)
+    if(best != m_States.end()) {
+        auto state = move(*best);
+        m_States.erase(best);
+        return move(state);
+    }
+    
+    return nullptr;
+}
+
+void VFSArchiveHost::CommitState(unique_ptr<VFSArchiveState> _state)
+{
+    if(!_state)
+        return;
+    
+    // will throw away archives positioned at last item - they are useless
+    if(_state->UID() < m_LastItemUID) {
+        lock_guard<mutex> lock(m_StatesLock);
+        m_States.emplace_back(move(_state));
+    }
+}
+
+int VFSArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<VFSArchiveState> &_target)
+{
+    uint32_t requested_item = ItemUID(_filename);
+    if(requested_item == 0)
         return VFSError::NotFound;
     
-    bool found = false;
-    struct archive_entry *entry;
-    char path[1024];
-    strcpy(path, _path+1); // skip first symbol, which is '/'
-    strcat(path, "/");
+    auto state = ClosestState(requested_item);
     
-    auto sc = SeekCache(myuid);
-    if(!sc) {
-        auto file = ArFile()->Clone();
-        int res;
-        
-        res = file->Open(VFSFile::OF_Read);
+    if(!state) {
+        auto file = m_ArFile->Clone();
+        int res = file->Open(VFSFile::OF_Read);
         if(res < 0)
             return res;
         
-        auto mediator = make_shared<VFSArchiveMediator>();
-        mediator->file = file;
-        
-        // open for read-only now
-        archive *arc = archive_read_new();
-        archive_read_support_filter_all(arc);
-        archive_read_support_format_all(arc);
-        mediator->setup(arc);
-        
-        if( (res = archive_read_open1(arc)) < 0 ) {
-            int rc = VFSError::FromLibarchive(archive_errno(arc));
-            archive_read_free(arc);
+        auto new_state = make_unique<VFSArchiveState>(file, SpawnLibarchive());
+        if( (res = new_state->Open()) < 0 ) {
+            int rc = VFSError::FromLibarchive(new_state->Errno());
             return rc;
         }
-
-        while (archive_read_next_header(arc, &entry) == ARCHIVE_OK)
-            // consider case-insensitive comparison later
-            if(strcmp(path, archive_entry_pathname(entry)) == 0) {
-                found = true;
-                break;
-            }
-        
-        if(!found) {
-            archive_read_open1(arc);
-            return VFSError::NotFound;
-        }
-        
-        // read and parse metadata(xattrs) if any
-        size_t s, ea_count;
-        AppleDoubleEA *ea = ExtractEAFromAppleDouble(archive_entry_mac_metadata(entry, &s), s, &ea_count);
-        _xattrs.reserve(ea_count);
-        for(int i = 0; i < ea_count; ++i)
-            _xattrs.emplace_back( ea[i].name,
-                                 vector<uint8_t>( (uint8_t*)ea[i].data, ((uint8_t*)ea[i].data)+ea[i].data_sz )
-                                 );
-        
-        
-        
-        shared_ptr<VFSArchiveSeekCache> sc1 = make_shared<VFSArchiveSeekCache>();
-        sc1->uid = myuid;
-        sc1->arc = arc;
-        sc1->mediator = mediator;
-        CommitSeekCache(sc1);
+        state = move(new_state);
     }
-    else
-    {
-        while (archive_read_next_header(sc->arc, &entry) == ARCHIVE_OK)
-            // consider case-insensitive comparison later
-            if(strcmp(path, archive_entry_pathname(entry)) == 0) {
-                found = true;
-                break;
-            }
-        
-        if(!found) {
-            archive_read_free(sc->arc);
-            return VFSError::NotFound;
-        }
-        
-        // read and parse metadata(xattrs) if any
-        size_t s, ea_count;
-        AppleDoubleEA *ea = ExtractEAFromAppleDouble(archive_entry_mac_metadata(entry, &s), s, &ea_count);
-        
-        _xattrs.reserve(ea_count);
-        for(int i = 0; i < ea_count; ++i)
-            _xattrs.emplace_back( ea[i].name,
-                                 vector<uint8_t>( (uint8_t*)ea[i].data, ((uint8_t*)ea[i].data)+ea[i].data_sz )
-                                 );
-        sc->uid = myuid;
-        CommitSeekCache(sc);
+    else if( state->UID() == requested_item && !state->Consumed() ) {
+        assert(state->Entry());
+        _target = move(state);
+        return VFSError::Ok;
     }
     
+    bool found = false;
+    char path[1024];
+    strcpy(path, _filename+1); // skip first symbol, which is '/'
+    // TODO: need special case for directories
+    
+    // consider case-insensitive comparison later
+    struct archive_entry *entry;
+    while( archive_read_next_header(state->Archive(), &entry) == ARCHIVE_OK )
+        if( strcmp(path, archive_entry_pathname(entry)) == 0 ) {
+            found = true;
+            break;
+        }
+    
+    if(!found)
+        return VFSError::NotFound;
+    
+    state->SetEntry(entry, requested_item);
+    _target = move(state);
+    
     return VFSError::Ok;
+}
+
+struct archive* VFSArchiveHost::SpawnLibarchive()
+{
+    archive *arc = archive_read_new();
+    archive_read_support_filter_all(arc);
+    archive_read_support_format_ar(arc);
+    archive_read_support_format_cpio(arc);
+    archive_read_support_format_empty(arc);
+    archive_read_support_format_lha(arc);
+    archive_read_support_format_mtree(arc);
+    archive_read_support_format_tar(arc);
+    archive_read_support_format_xar(arc);
+    archive_read_support_format_7zip(arc);
+    archive_read_support_format_cab(arc);
+    archive_read_support_format_iso9660(arc);
+    archive_read_support_format_zip(arc);
+    return arc;
 }

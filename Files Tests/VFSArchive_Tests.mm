@@ -57,6 +57,10 @@ static string g_Preffix = "/.FilesTestingData/archives/";
     for(int i = 0; i < 1000; ++i)
         dispatch_group_async(dg, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             string fn = filenames[ rand()%filenames.size() ];
+            
+            VFSStat st;
+            XCTAssert( host->Stat(fn.c_str(), st, 0, 0) == 0 );
+            
             VFSFilePtr file;
             XCTAssert( host->CreateFile(fn.c_str(), file, nullptr) == 0);
             XCTAssert( file->Open(VFSFile::OF_Read) == 0);
@@ -64,6 +68,7 @@ static string g_Preffix = "/.FilesTestingData/archives/";
             auto d = file->ReadFile();
             XCTAssert(d.get() != nullptr);
             XCTAssert(d->size() > 0);
+            XCTAssert(d->size() == st.size);
         });
     
     dispatch_group_wait(dg, DISPATCH_TIME_FOREVER);

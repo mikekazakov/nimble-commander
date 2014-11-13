@@ -87,7 +87,7 @@ int VFSArchiveHost::Open()
 int VFSArchiveHost::ReadArchiveListing()
 {
     assert(m_Arc != 0);
-    uint32_t aruid = 1;
+    uint32_t aruid = 0;
     VFSArchiveDir *root = new VFSArchiveDir;
     root->full_path = "/";
     root->name_in_parent  = "";
@@ -96,8 +96,8 @@ int VFSArchiveHost::ReadArchiveListing()
     VFSArchiveDir *parent_dir = root;
     struct archive_entry *aentry;
     int ret;
-    while ((ret = archive_read_next_header(m_Arc, &aentry)) == ARCHIVE_OK)
-    {
+    while ((ret = archive_read_next_header(m_Arc, &aentry)) == ARCHIVE_OK) {
+        aruid++;
         const struct stat *stat = archive_entry_stat(aentry);
         char path[1024];
         path[0] = '/';
@@ -146,7 +146,7 @@ int VFSArchiveHost::ReadArchiveListing()
             entry->name = short_name;
         }
 
-        entry->aruid = aruid++;
+        entry->aruid = aruid;
         entry->st = *stat;
         m_ArchivedFilesTotalSize += stat->st_size;
         
@@ -164,6 +164,7 @@ int VFSArchiveHost::ReadArchiveListing()
                 symlink.value = link;
             }
             m_Symlinks.emplace(entry->aruid, symlink);
+            m_NeedsPathResolving = true;
         }
     
         if(isdir) {
@@ -311,7 +312,7 @@ int VFSArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path,
     if(!_path || !_resolved_path)
         return VFSError::InvalidCall;
     
-    if( _flags & VFSHost::F_NoFollow )
+    if( !m_NeedsPathResolving || (_flags & VFSHost::F_NoFollow) )
         strcpy(_resolved_path, _path);
     else {
         int res = ResolvePath(_path, _resolved_path);
@@ -395,8 +396,9 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
         return 0;
     
     // ok, found dir, now let's find item
+    size_t short_name_len = strlen(short_name);
     for(const auto &it: i->second->entries)
-        if(it.name == short_name)
+        if(it.name.length() == short_name_len && it.name.compare(short_name) == 0)
             return &it;
     
     return 0;
@@ -514,6 +516,14 @@ void VFSArchiveHost::CommitState(unique_ptr<VFSArchiveState> _state)
     if(_state->UID() < m_LastItemUID) {
         lock_guard<mutex> lock(m_StatesLock);
         m_States.emplace_back(move(_state));
+        
+        if(m_States.size() > 32) { // purge the latest one
+            auto last = begin(m_States);
+            for(auto i = begin(m_States), e = end(m_States); i!=e; ++i)
+                if((*i)->UID() > (*last)->UID())
+                    last = i;
+            m_States.erase(last);
+        }
     }
 }
 
@@ -551,11 +561,14 @@ int VFSArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<VFSArc
     
     // consider case-insensitive comparison later
     struct archive_entry *entry;
-    while( archive_read_next_header(state->Archive(), &entry) == ARCHIVE_OK )
-        if( strcmp(path, archive_entry_pathname(entry)) == 0 ) {
+    uint32_t entry_uid = state->UID();
+    while( archive_read_next_header(state->Archive(), &entry) == ARCHIVE_OK ) {
+        entry_uid++;
+        if( entry_uid == requested_item ) {
             found = true;
             break;
         }
+    }
     
     if(!found)
         return VFSError::NotFound;

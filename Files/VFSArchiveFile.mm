@@ -34,13 +34,16 @@ int VFSArchiveFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 
     int res;
     auto host = dynamic_pointer_cast<VFSArchiveHost>(Host());
-    unique_ptr<VFSArchiveState> state;
 
     char file_path[MAXPATHLEN*2];
     res = host->ResolvePathIfNeeded(RelativePath(), file_path, /*_open_flags*/0); // VFSFile currently don't have NoFollow flag, need to merge Host and File flags
     if(res < 0)
         return res;
+
+    if(host->IsDirectory(file_path, /*_open_flags*/0, _cancel_checker))
+        return VFSError::FromErrno(EISDIR);
     
+    unique_ptr<VFSArchiveState> state;
     res = host->ArchiveStateForItem(file_path, state);
     if(res < 0)
         return res;

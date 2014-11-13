@@ -131,6 +131,7 @@ private:
     uint64_t                                m_ArchivedFilesTotalSize = 0;
     uint32_t                                m_LastItemUID = 0;
 
+    bool                                    m_NeedsPathResolving = false; // true if there are any symlinks present in archive
     map<uint32_t, Symlink>                  m_Symlinks;
     recursive_mutex                         m_SymlinksResolveLock;
     

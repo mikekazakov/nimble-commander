@@ -60,15 +60,16 @@ static CGColorRef DividerColor(bool _wnd_active)
 {
     static NSImage *def   = [NSImage imageNamed:@"tab_close.png"];
     static NSImage *hover = [NSImage imageNamed:@"tab_close_hover.png"];
+    static NSImage *press = [NSImage imageNamed:@"tab_close_press.png"];
     
     switch (type) {
-//        case MMCloseButtonImageTypeStandard:
-//            return cardCloseButton;
+        case MMCloseButtonImageTypeStandard:
+            return def;
         case MMCloseButtonImageTypeRollover:
             return hover;
-/*        case MMCloseButtonImageTypePressed:
-            return cardCloseButtonDown;
-            
+        case MMCloseButtonImageTypePressed:
+            return press;
+/*
         case MMCloseButtonImageTypeDirty:
             return cardCloseDirtyButton;
         case MMCloseButtonImageTypeDirtyRollover:

@@ -104,6 +104,9 @@
 		CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
+		CF50B6B21A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
+		CF50B6B31A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
+		CF50B6B41A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
@@ -1327,6 +1330,7 @@
 		CF4C5A5C17A7B48E00B1B061 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMask.h; sourceTree = "<group>"; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
+		CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_close_press.png; path = Resource/tab_close_press.png; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationVFSJob.mm; sourceTree = "<group>"; };
@@ -2666,6 +2670,7 @@
 		CFB5989A196E38C700D4C108 /* Art */ = {
 			isa = PBXGroup;
 			children = (
+				CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */,
 				CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */,
 				CF7C92181A0B877B00FAE649 /* tab_close.png */,
 				CF7C92131A0B865D00FAE649 /* tab_add.png */,
@@ -3152,6 +3157,7 @@
 				CF6D9D0019667E390077B146 /* TimedDummyOperationTestDialog.xib in Resources */,
 				CFB598B2196E38E400D4C108 /* pref_general_icon.png in Resources */,
 				CFB598B0196E38E400D4C108 /* pref_extedit_icon.png in Resources */,
+				CF50B6B31A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CF6D9D0119667E390077B146 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFB598B6196E38E400D4C108 /* pref_term_icon.png in Resources */,
 				CFB598B4196E38E400D4C108 /* pref_panels_icon.png in Resources */,
@@ -3209,6 +3215,7 @@
 				CF7C92191A0B877B00FAE649 /* tab_close.png in Resources */,
 				CFB598BB196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */,
+				CF50B6B21A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CFC4342716E0E1E3001B0512 /* CreateDirectorySheetController.xib in Resources */,
@@ -3266,6 +3273,7 @@
 				CFF6F36E1A13567C00011177 /* tab_close.png in Resources */,
 				CFF6F36F1A13567C00011177 /* show_oplist_hl_icon.png in Resources */,
 				CFF6F3701A13567C00011177 /* ShortcutsDefaults.plist in Resources */,
+				CF50B6B41A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFF6F3711A13567C00011177 /* Help.pdf in Resources */,
 				CFF6F3721A13567C00011177 /* MainMenu.xib in Resources */,
 				CFF6F3731A13567C00011177 /* CreateDirectorySheetController.xib in Resources */,

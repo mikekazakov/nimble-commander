@@ -19,6 +19,9 @@
 #import "PanelController.h"
 #import "Common.h"
 #import "sysinfo.h"
+#import "ActionsShortcutsManager.h"
+
+static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
 
 @implementation MainWindowController
 {
@@ -26,10 +29,12 @@
     MainWindowFilePanelState    *m_PanelState;
     MainWindowTerminalState     *m_Terminal;
     SerialQueue                  m_BigFileViewLoadingQ;
+    bool                         m_ToolbarVisible;
 }
 
 @synthesize FilePanelState = m_PanelState;
 @synthesize TerminalState = m_Terminal;
+@synthesize toolbarVisible = m_ToolbarVisible;
 
 - (id)init {
     MainWindow* window = [[MainWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
@@ -55,6 +60,8 @@
         self.ShouldCascadeWindows = NO;
         window.delegate = self;
         
+        m_ToolbarVisible = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar];
+        
         m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[self.window.contentView frame]
                                                                 Window:self.window];
         [self PushNewWindowState:m_PanelState];
@@ -68,6 +75,9 @@
                                                selector:@selector(applicationWillTerminate)
                                                    name:NSApplicationWillTerminateNotification
                                                  object:NSApplication.sharedApplication];
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:g_DefsShowToolbar options:0 context:NULL];
+        
+        
     }
     
     return self;
@@ -76,8 +86,8 @@
 -(void) dealloc
 {
     [self.window saveFrameUsingName:NSStringFromClass(self.class)];
-    
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:g_DefsShowToolbar];
     assert(m_WindowState.empty());
 }
 
@@ -185,24 +195,25 @@
             [i WindowDidEndSheet];
 }
 
-+ (bool)toolbarVisible
-{
-    return [NSUserDefaults.standardUserDefaults boolForKey:@"GeneralShowToolbar"];
-}
-
-+ (void)setToolbarVisible:(bool)visible
-{
-    [NSUserDefaults.standardUserDefaults setBool:visible forKey:@"GeneralShowToolbar"];
-}
-
 - (IBAction)OnShowToolbar:(id)sender
 {
-    MainWindowController.toolbarVisible = !MainWindowController.toolbarVisible;
-    
-    if(self.window.toolbar)
-        self.window.toolbar.visible = MainWindowController.toolbarVisible;
-    
-    [self updateTitleVisibility];
+    [NSUserDefaults.standardUserDefaults setBool:![NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar] forKey:g_DefsShowToolbar];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    // Check if defaults changed.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (object == defaults) {
+        if ([keyPath isEqualToString:g_DefsShowToolbar]) {
+            m_ToolbarVisible = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar];
+            dispatch_to_main_queue(^{
+                if(self.window.toolbar)
+                    self.window.toolbar.visible = self.toolbarVisible;
+                [self updateTitleVisibility];
+            });
+        }
+    }
 }
 
 - (void) ResignAsWindowState:(id)_state
@@ -231,7 +242,7 @@
                                               async:true];
 
     self.window.toolbar = m_WindowState.back().toolbar;
-    self.window.toolbar.visible = MainWindowController.toolbarVisible;
+    self.window.toolbar.visible = self.toolbarVisible;
     [self updateTitleVisibility];    
 }
 
@@ -245,7 +256,7 @@
         [m_WindowState.back() Assigned];
     
     self.window.toolbar = m_WindowState.back().toolbar;
-    self.window.toolbar.visible = MainWindowController.toolbarVisible;
+    self.window.toolbar.visible = self.toolbarVisible;
     [self updateTitleVisibility];
 }
 
@@ -319,6 +330,16 @@
 - (id<MainWindowStateProtocol>) topmostState
 {
     return m_WindowState.empty() ? nil : m_WindowState.back();
+}
+
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    auto tag = item.tag;
+    IF_MENU_TAG("menu.view.show_toolbar") {
+        item.title = self.toolbarVisible ? @"Hide Toolbar" : @"Show Toolbar";
+        return self.window.toolbar != nil;
+    }
+    return true;
 }
 
 @end

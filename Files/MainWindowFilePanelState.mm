@@ -207,10 +207,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     m_SeparatorLine.boxType = NSBoxSeparator;
     [self addSubview:m_SeparatorLine];
     
-    m_Toolbar = [[NSToolbar alloc] initWithIdentifier:@"filepanels_toolbar"];
+    NSString *toolbar_id = [NSString stringWithFormat:@"filepanels_toolbar_%llu", (uint64_t)((__bridge void*)self)];
+    m_Toolbar = [[NSToolbar alloc] initWithIdentifier:toolbar_id];
     m_Toolbar.delegate = self;
     m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
-    m_Toolbar.autosavesConfiguration = true;
     m_Toolbar.showsBaselineSeparator = false;
     
     NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView);

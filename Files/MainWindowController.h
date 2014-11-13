@@ -35,8 +35,7 @@
 @property (nonatomic, readonly) id<MainWindowStateProtocol> topmostState;
 
 // Toolbar support
-+ (bool)toolbarVisible; // stored in user defaults
-+ (void)setToolbarVisible:(bool)visible;
+@property (nonatomic, readonly) bool toolbarVisible;
 - (void)OnShowToolbar:(id)sender;
 
 @end

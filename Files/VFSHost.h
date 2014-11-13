@@ -58,12 +58,20 @@ public:
                        VFSCancelChecker _cancel_checker);
     
     /**
-     * Default implementation calls Stat() and then returns (st.st_mode & S_IFMT) == S_IFDIR.
+     * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFDIR.
      * On any errors returns false.
      */
     virtual bool IsDirectory(const char *_path,
                              int _flags,
                              VFSCancelChecker _cancel_checker);
+    
+    /**
+     * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFLNK.
+     * On any errors returns false.
+     */
+    virtual bool IsSymlink(const char *_path,
+                           int _flags,
+                           VFSCancelChecker _cancel_checker);
 
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> *_target,

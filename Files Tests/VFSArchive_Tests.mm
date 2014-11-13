@@ -19,12 +19,12 @@ static string g_Preffix = "/.FilesTestingData/archives/";
 
 - (void)testXNUSource_TAR
 {
-    auto host = make_shared<VFSArchiveHost>((g_Preffix+"xnu-2050.18.24.tar").c_str(),
-                                            VFSNativeHost::SharedHost());
+    auto host = make_shared<VFSArchiveHost>((g_Preffix+"xnu-2050.18.24.tar").c_str(), VFSNativeHost::SharedHost());
 
     XCTAssert( host->Open() == 0 );
     XCTAssert( host->StatTotalDirs() == 246 );
     XCTAssert( host->StatTotalRegs() == 3288 );
+    XCTAssert( host->IsDirectory("/", 0, 0) == true );
     XCTAssert( host->IsDirectory("/xnu-2050.18.24/EXTERNAL_HEADERS/mach-o/x86_64", 0, 0) == true );
     XCTAssert( host->IsDirectory("/xnu-2050.18.24/EXTERNAL_HEADERS/mach-o/x86_64/", 0, 0) == true );
     XCTAssert( host->Exists("/xnu-2050.18.24/2342423/9182391273/x86_64") == false );
@@ -72,6 +72,31 @@ static string g_Preffix = "/.FilesTestingData/archives/";
         });
     
     dispatch_group_wait(dg, DISPATCH_TIME_FOREVER);
+}
+
+// contains symlinks
+- (void)testAdiumZip
+{
+    auto host = make_shared<VFSArchiveHost>((g_Preffix+"adium.app.zip").c_str(), VFSNativeHost::SharedHost());
+    XCTAssert( host->Open() == 0 );
+    
+    VFSStat st;
+    XCTAssert( host->Stat("/Adium.app/Contents/Info.plist", st, 0, 0) == 0 );
+    XCTAssert( st.mode_bits.reg );
+    XCTAssert( st.size == 6201 );
+    XCTAssert( host->Stat("/Adium.app/Contents/Info.plist", st, VFSHost::F_NoFollow, 0) == 0 );
+    XCTAssert( st.mode_bits.reg );
+    XCTAssert( st.size == 6201 );
+    
+    XCTAssert( host->Stat("/Adium.app/Contents/Frameworks/Adium.framework/Adium", st, 0, 0) == 0 );
+    XCTAssert( st.mode_bits.reg && !st.mode_bits.chr );
+    XCTAssert( st.size == 2013068 );
+    
+    XCTAssert( host->Stat("/Adium.app/Contents/Frameworks/Adium.framework/Adium", st, VFSHost::F_NoFollow, 0) == 0 );
+    XCTAssert( st.mode_bits.reg && st.mode_bits.chr );
+    
+    XCTAssert( host->IsDirectory("/Adium.app/Contents/Frameworks/Adium.framework/Headers", 0, 0) == true );
+    XCTAssert( host->IsSymlink  ("/Adium.app/Contents/Frameworks/Adium.framework/Headers", VFSHost::F_NoFollow, 0) == true );
 }
 
 

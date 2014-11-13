@@ -94,14 +94,14 @@ int VFSArchiveHost::ReadArchiveListing()
     m_PathToDir.insert(make_pair("/", root));
 
     VFSArchiveDir *parent_dir = root;
-    struct archive_entry *entry;
+    struct archive_entry *aentry;
     int ret;
-    while ((ret = archive_read_next_header(m_Arc, &entry)) == ARCHIVE_OK)
+    while ((ret = archive_read_next_header(m_Arc, &aentry)) == ARCHIVE_OK)
     {
-        const struct stat *stat = archive_entry_stat(entry);
+        const struct stat *stat = archive_entry_stat(aentry);
         char path[1024];
         path[0] = '/';
-        strcpy(path + 1, archive_entry_pathname(entry));
+        strcpy(path + 1, archive_entry_pathname(aentry));
         
         if(strcmp(path, "/.") == 0) continue; // skip "." entry for ISO for example
 
@@ -109,6 +109,7 @@ int VFSArchiveHost::ReadArchiveListing()
         
         bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
         bool isreg = (stat->st_mode & S_IFMT) == S_IFREG;
+        bool issymlink = (stat->st_mode & S_IFMT) == S_IFLNK;
         
         char short_name[256];
         char parent_path[1024];
@@ -127,15 +128,20 @@ int VFSArchiveHost::ReadArchiveListing()
             parent_dir = FindOrBuildDir(parent_path);
                 
         VFSArchiveDirEntry *entry = 0;
+        unsigned entry_index_in_dir = 0;
         if(isdir) // check if it wasn't added before via FindOrBuildDir
-            for(auto &it: parent_dir->entries)
+            for(size_t i = 0, e = parent_dir->entries.size(); i<e; ++i) {
+                auto &it = parent_dir->entries[i];
                 if( (it.st.st_mode & S_IFMT) == S_IFDIR && it.name == short_name) {
                     entry = &it;
+                    entry_index_in_dir = (unsigned)i;
                     break;
                 }
+            }
         
         if(entry == 0) {
             parent_dir->entries.push_back(VFSArchiveDirEntry());
+            entry_index_in_dir = (unsigned)parent_dir->entries.size() - 1;
             entry = &parent_dir->entries.back();
             entry->name = short_name;
         }
@@ -144,8 +150,23 @@ int VFSArchiveHost::ReadArchiveListing()
         entry->st = *stat;
         m_ArchivedFilesTotalSize += stat->st_size;
         
-        if(isdir)
-        {
+        m_EntryByUID.emplace(entry->aruid, make_pair(parent_dir, entry_index_in_dir));
+        
+        if(issymlink) { // read any symlink values at archive opening time
+            const char *link = archive_entry_symlink(aentry);
+            Symlink symlink;
+            symlink.uid = entry->aruid;
+            if(!link || link[0] == 0) { // for invalid symlinks - mark them as invalid without resolving
+                symlink.value = "";
+                symlink.state = SymlinkState::Invalid;
+            }
+            else {
+                symlink.value = link;
+            }
+            m_Symlinks.emplace(entry->aruid, symlink);
+        }
+    
+        if(isdir) {
             // it's a directory
             if(path[strlen(path)-1] != '/') strcat(path, "/");
             if(m_PathToDir.find(path) == m_PathToDir.end())
@@ -164,7 +185,6 @@ int VFSArchiveHost::ReadArchiveListing()
         if(isreg) m_TotalRegs++;
         m_TotalFiles++;
     }
-    
     
     m_LastItemUID = aruid - 1;
     
@@ -254,35 +274,46 @@ bool VFSArchiveHost::IsDirectory(const char *_path,
                                  int _flags,
                                  VFSCancelChecker _cancel_checker)
 {
+    if(!_path) return false;
     if(_path[0] != '/') return false;
-    char tmp[MAXPATHLEN];
-    strcpy(tmp, _path);
-    if(tmp[strlen(tmp)-1] != '/' ) strcat(tmp, "/"); // directories are stored with trailing slashes
-    
-    auto it = m_PathToDir.find(tmp);
-    return it != m_PathToDir.end();
+    if(strcmp(_path, "/") == 0) return true;
+        
+    return VFSHost::IsDirectory(_path, _flags, _cancel_checker);
 }
 
 int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
 {
-    // currenty do not support symlinks in archives, so ignore NoFollow flag
-    assert(_path != 0);
+    if(!_path) return VFSError::InvalidCall;
     if(_path[0] != '/') return VFSError::NotFound;
     
-    if(strlen(_path) == 1)
-    {
+    if(strlen(_path) == 1) {
         // we have no info about root dir - dummy here
         memset(&_st, 0, sizeof(_st));
         return VFSError::Ok;
     }
     
-    auto it = FindEntry(_path);
-    if(it)
-    {
+    char resolve_buf[MAXPATHLEN*2];
+    int res = ResolvePathIfNeeded(_path, resolve_buf, _flags);
+    if(res < 0)
+        return res;
+    
+    if(auto it = FindEntry(resolve_buf)) {
         VFSStat::FromSysStat(it->st, _st);
         return VFSError::Ok;
     }
     return VFSError::NotFound;
+}
+
+int VFSArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags)
+{
+    if( _flags & VFSHost::F_NoFollow )
+        strcpy(_resolved_path, _path);
+    else {
+        int res = ResolvePath(_path, _resolved_path);
+        if(res < 0)
+            return res;
+    }
+    return VFSError::Ok;
 }
 
 int VFSArchiveHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
@@ -354,7 +385,7 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
     assert(strcmp(short_name, "..")); // no ".." resolving in VFS (currently?)
     
     auto i = m_PathToDir.find(buf);
-    if(i == m_PathToDir.end())
+    if(i == end(m_PathToDir))
         return 0;
     
     // ok, found dir, now let's find item
@@ -363,6 +394,46 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
             return &it;
     
     return 0;
+}
+
+int VFSArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
+{
+    if(!_path || _path[0] != '/')
+        return VFSError::NotFound;
+    
+    path p = _path;
+    p = p.relative_path();
+    if(p.filename() == ".") p.remove_filename();
+    path result_path = "/";
+    
+    uint32_t result_uid = 0;
+    for( auto &i: p ) {
+        result_path /= i;
+        
+        auto entry = FindEntry(result_path.c_str());
+        if(!entry)
+            return VFSError::NotFound;
+        
+        result_uid = entry->aruid;
+        
+        if( (entry->st.st_mode & S_IFMT) == S_IFLNK ) {
+            auto symlink_it = m_Symlinks.find(entry->aruid);
+            if(symlink_it == end(m_Symlinks))
+                return VFSError::NotFound;
+            
+            auto &s = symlink_it->second;
+            if(s.state == SymlinkState::Unresolved)
+                ResolveSymlink(s.uid);
+            if( s.state != SymlinkState::Resolved )
+                return VFSError::NotFound;; // current part points to nowhere
+            
+            result_path = s.target_path;
+            result_uid = s.target_uid;
+        }
+    }
+    
+    strcpy(_resolved_path, result_path.c_str());
+    return result_uid;
 }
 
 int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
@@ -492,4 +563,59 @@ struct archive* VFSArchiveHost::SpawnLibarchive()
     archive_read_support_format_iso9660(arc);
     archive_read_support_format_zip(arc);
     return arc;
+}
+
+void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
+{
+    auto iter = m_Symlinks.find(_uid);
+    if(iter == end(m_Symlinks))
+        return;
+    
+    lock_guard<recursive_mutex> lock(m_SymlinksResolveLock);
+    auto &symlink = iter->second;
+    if(symlink.state != SymlinkState::Unresolved)
+        return; // was resolved in race condition
+    
+    symlink.state = SymlinkState::Invalid;
+    
+    auto symlink_entry_iter = m_EntryByUID.find(_uid);
+    if(symlink_entry_iter == end(m_EntryByUID))
+        return;
+    
+    path dir_path = symlink_entry_iter->second.first->full_path;
+    path symlink_path = symlink.value;
+    if(symlink_path.is_relative()) {
+        path result_path = dir_path;
+//        printf("%s\n", result_path.c_str());
+        
+        // TODO: process possible ".." entries
+        // TODO: check for loops
+        for(auto &i: symlink_path) {
+            result_path /= i;
+//            printf("%s\n", result_path.c_str());
+            
+            uint32_t curr_uid = ItemUID(result_path.c_str());
+            if(curr_uid == 0 || curr_uid == _uid)
+                return;
+            
+            if( m_Symlinks.find(curr_uid) != end(m_Symlinks) ) {
+                // current entry is a symlink - needs an additional processing
+                auto &s = m_Symlinks[curr_uid];
+                if(s.state == SymlinkState::Unresolved)
+                    ResolveSymlink(s.uid);
+                
+                if( s.state != SymlinkState::Resolved )
+                    return; // current part points to nowhere
+                
+                result_path = s.target_path;
+            }
+        }
+        
+        uint32_t result_uid = ItemUID(result_path.c_str());
+        if(result_uid == 0)
+            return;
+        symlink.target_path = result_path.native();
+        symlink.target_uid = result_uid;
+        symlink.state = SymlinkState::Resolved;
+    }
 }

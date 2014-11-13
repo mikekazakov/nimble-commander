@@ -142,6 +142,17 @@ bool VFSHost::IsDirectory(const char *_path,
     return (st.mode & S_IFMT) == S_IFDIR;
 }
 
+bool VFSHost::IsSymlink(const char *_path,
+                        int _flags,
+                        VFSCancelChecker _cancel_checker)
+{
+    VFSStat st;
+    if(Stat(_path, st, _flags, _cancel_checker) < 0)
+        return false;
+    
+    return (st.mode & S_IFMT) == S_IFLNK;
+}
+
 bool VFSHost::FindLastValidItem(const char *_orig_path,
                                char *_valid_path,
                                int _flags,

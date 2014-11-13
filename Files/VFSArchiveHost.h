@@ -67,13 +67,49 @@ public:
     
     shared_ptr<const VFSArchiveHost> SharedPtr() const {return static_pointer_cast<const VFSArchiveHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSArchiveHost> SharedPtr() {return static_pointer_cast<VFSArchiveHost>(VFSHost::SharedPtr());}
+    
+    /** return VFSError, not uids returned */
+    int ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags);
+    
 private:
+    enum class SymlinkState
+    {
+        /** symlink is ok to use */
+        Resolved     = 0,
+        /** default value - never tried to resolve */
+        Unresolved   = 1,
+        /** can't resolve symlink since it point to non-existant file or if some error occured while resolving */
+        Invalid      = 2,
+        /** symlink resolving resulted in loop, thus symlink can't be used */
+        Loop         = 3
+    };
+    
+    struct Symlink
+    {
+        SymlinkState state  = SymlinkState::Unresolved;
+        string       value  = "";
+        uint32_t     uid    = 0; // uid of symlink entry itself
+        uint32_t     target_uid = 0;   // meaningful only if state == SymlinkState::Resolved
+        string       target_path = ""; // meaningful only if state == SymlinkState::Resolved
+    };
+    
+    
     int ReadArchiveListing();
     VFSArchiveDir* FindOrBuildDir(const char* _path_with_tr_sl);
+    
+    /** searches for entry in archive without any path resolving */
     const VFSArchiveDirEntry *FindEntry(const char* _path);
     
     void InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir_name);
     struct archive* SpawnLibarchive();
+    
+    /**
+     * any positive number - item's uid, good to go.
+     * negative number or zero - error
+     */
+    int ResolvePath(const char *_path, char *_resolved_path);
+    
+    void ResolveSymlink(uint32_t _uid);
     
     shared_ptr<VFSFile>                m_ArFile;
     shared_ptr<VFSArchiveMediator>     m_Mediator;
@@ -88,7 +124,11 @@ private:
     uint64_t                                m_ArchiveFileSize = 0;
     uint64_t                                m_ArchivedFilesTotalSize = 0;
     uint32_t                                m_LastItemUID = 0;
+
+    map<uint32_t, Symlink>                  m_Symlinks;
+    recursive_mutex                         m_SymlinksResolveLock;
     
+    map<uint32_t, pair<VFSArchiveDir*, uint32_t> > m_EntryByUID; // points to directory and entry No inside it
     list<unique_ptr<VFSArchiveState>>       m_States;
     mutex                                   m_StatesLock;
 };

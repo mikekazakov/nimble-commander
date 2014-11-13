@@ -616,6 +616,8 @@ struct PanelViewStateStorage
     
     for(int i = _start; i <= _end; ++i)
         m_State.Data->CustomFlagsSelectSorted(i, _select);
+    
+    [self setNeedsDisplay];
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end

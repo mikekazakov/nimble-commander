@@ -35,7 +35,6 @@ VFSNativeListing::VFSNativeListing(const char *_path, shared_ptr<VFSNativeHost> 
 
 VFSNativeListing::~VFSNativeListing()
 {
-    m_Items.clear();
 }
 
 int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
@@ -127,7 +126,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     dispatch_apply(m_Items.size(), dispatch_get_global_queue(0, 0), ^(size_t n) {
         VFSNativeListingItem *current = &m_Items[n];
         if(_checker && _checker()) return;
-        char filename[__DARWIN_MAXPATHLEN];
+        char filename[MAXPATHLEN];
         const char *entryname = current->Name();
         memcpy(filename, pathwithslashp, pathwithslash_len);
         memcpy(filename + pathwithslash_len, entryname, current->namelen+1);
@@ -162,18 +161,13 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
             }
         
         // create CFString name representation
-        current->cf_name = CFStringCreateWithBytesNoCopy(0,
-                                                         (UInt8*)entryname,
-                                                         current->namelen,
-                                                         kCFStringEncodingUTF8,
-                                                         false,
-                                                         kCFAllocatorNull);
+        current->cf_name = CFStringCreateWithUTF8StringNoCopy(entryname, current->namelen);
         
         // if we're dealing with a symlink - read it's content to know the real file path
         if( current->unix_type == DT_LNK )
         {
-            char linkpath[__DARWIN_MAXPATHLEN];
-            ssize_t sz = readlink(filename, linkpath, __DARWIN_MAXPATHLEN);
+            char linkpath[MAXPATHLEN];
+            ssize_t sz = readlink(filename, linkpath, MAXPATHLEN);
             if(sz != -1)
             {
                 linkpath[sz] = 0;

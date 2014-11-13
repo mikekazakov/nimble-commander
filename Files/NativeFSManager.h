@@ -7,7 +7,12 @@
 //
 
 #pragma once
-#include <sys/mount.h>
+
+#ifndef __OBJC__
+typedef void *NSString;
+typedef void *NSURL;
+typedef void *NSImage;
+#endif
 
 struct NativeFileSystemInfo
 {

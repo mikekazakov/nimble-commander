@@ -32,25 +32,9 @@ struct DialogResult
 // fs directory handling stuff
 bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size); // get last directory from path
 
-inline CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s)
-{
-    return CFStringCreateWithBytesNoCopy(0,
-                                         (UInt8*)_s.c_str(),
-                                         _s.length(),
-                                         kCFStringEncodingUTF8,
-                                         false,
-                                         kCFAllocatorNull);
-}
-
-inline CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s)
-{
-    return CFStringCreateWithBytesNoCopy(0,
-                                         (UInt8*)_s,
-                                         strlen(_s),
-                                         kCFStringEncodingUTF8,
-                                         false,
-                                         kCFAllocatorNull);
-}
+CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept;
+CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;
+CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noexcept;
 
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);

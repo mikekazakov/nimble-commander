@@ -30,12 +30,12 @@ static int CopyNodeAttrs(const char *_src_full_path,
      */
     
     VFSStat st;
-    int result = _src_host->Stat(_src_full_path, st, VFSHost::F_NoFollow, 0);
+    int result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, 0);
     if(result < 0)
         return result;
 
     _dst_host->SetTimes(_dst_full_path,
-                        VFSHost::F_NoFollow,
+                        VFSFlags::F_NoFollow,
                         &st.btime,
                         &st.mtime,
                         &st.ctime,
@@ -168,7 +168,7 @@ int VFSEasyCopyFile(const char *_src_full_path,
     if(result != 0)
         return result;
     
-    result = source_file->Open(VFSFile::OF_Read);
+    result = source_file->Open(VFSFlags::OF_Read);
     if(result != 0)
         return result;
     
@@ -176,8 +176,8 @@ int VFSEasyCopyFile(const char *_src_full_path,
     if(result != 0)
         return result;
     
-    result = dest_file->Open(VFSFile::OF_Write | VFSFile::OF_Create | VFSFile::OF_NoExist |
-                             VFSFile::OF_IRUsr | VFSFile::OF_IWUsr | VFSFile::OF_IRGrp);
+    result = dest_file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist |
+                             VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp);
     if(result != 0)
         return result;
     
@@ -300,7 +300,7 @@ int VFSEasyCopyNode(const char *_src_full_path,
     VFSStat st;
     int result;
     
-    result = _src_host->Stat(_src_full_path, st, VFSHost::F_NoFollow, 0);
+    result = _src_host->Stat(_src_full_path, st, VFSFlags::F_NoFollow, 0);
     if(result < 0)
         return result;
     
@@ -340,14 +340,14 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
     
     if( (ret = _file1_host->CreateFile(_file1_full_path, file1, 0)) != 0 )
         return ret;
-    if( (ret = file1->Open(VFSFile::OF_Read)) != 0 )
+    if( (ret = file1->Open(VFSFlags::OF_Read)) != 0 )
         return ret;
     if( (data1 = file1->ReadFile()) == nullptr )
         return file1->LastError();
     
     if( (ret = _file2_host->CreateFile(_file2_full_path, file2, 0)) != 0 )
         return ret;
-    if( (ret = file2->Open(VFSFile::OF_Read)) != 0 )
+    if( (ret = file2->Open(VFSFlags::OF_Read)) != 0 )
         return ret;
     if( (data2 = file2->ReadFile()) == nullptr )
         return file2->LastError();
@@ -372,7 +372,7 @@ int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
     VFSStat st;
     int result;
     
-    result = _host->Stat(_full_path, st, VFSHost::F_NoFollow, 0);
+    result = _host->Stat(_full_path, st, VFSFlags::F_NoFollow, 0);
     if(result < 0)
         return result;
     

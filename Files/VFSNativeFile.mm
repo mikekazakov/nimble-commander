@@ -35,13 +35,13 @@ int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     
     if(fs_info && fs_info->interfaces.file_lock)
         openflags |= O_SHLOCK;
-    if( (_open_flags & (VFSFile::OF_Read | VFSFile::OF_Write)) == (VFSFile::OF_Read | VFSFile::OF_Write) )
+    if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) == (VFSFlags::OF_Read | VFSFlags::OF_Write) )
         openflags |= O_RDWR;
-    else if((_open_flags & VFSFile::OF_Read) != 0) openflags |= O_RDONLY;
-    else if((_open_flags & VFSFile::OF_Write) != 0) openflags |= O_WRONLY;
+    else if((_open_flags & VFSFlags::OF_Read) != 0) openflags |= O_RDONLY;
+    else if((_open_flags & VFSFlags::OF_Write) != 0) openflags |= O_WRONLY;
     
-    if(_open_flags & VFSFile::OF_Create) openflags |= O_CREAT;
-    if(_open_flags & VFSFile::OF_NoExist) openflags |= O_EXCL;
+    if(_open_flags & VFSFlags::OF_Create) openflags |= O_CREAT;
+    if(_open_flags & VFSFlags::OF_NoExist) openflags |= O_EXCL;
     
     int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
     
@@ -53,7 +53,7 @@ int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     
     fcntl(m_FD, F_SETFL, fcntl(m_FD, F_GETFL) & ~O_NONBLOCK);
 
-    if(_open_flags & VFSFile::OF_NoCache)
+    if(_open_flags & VFSFlags::OF_NoCache)
         fcntl(m_FD, F_NOCACHE, 1);
     
     m_Position = 0;
@@ -143,7 +143,7 @@ VFSFile::ReadParadigm VFSNativeFile::GetReadParadigm() const
     if(m_FD < 0) // on not-opened files we return maximum possible value
         return VFSFile::ReadParadigm::Random;
     
-    if(m_OpenFlags & VFSFile::OF_Read)
+    if(m_OpenFlags & VFSFlags::OF_Read)
         return VFSFile::ReadParadigm::Random; // does ANY native filesystem in fact supports random read/write?
     return VFSFile::ReadParadigm::NoRead;
 }
@@ -153,7 +153,7 @@ VFSFile::WriteParadigm VFSNativeFile::GetWriteParadigm() const
     if(m_FD < 0) // on not-opened files we return maximum possible value
         return VFSFile::WriteParadigm::Random;
         
-    if(m_OpenFlags & VFSFile::OF_Write)
+    if(m_OpenFlags & VFSFlags::OF_Write)
         return VFSFile::WriteParadigm::Random; // does ANY native filesystem in fact supports random read/write?
     return VFSFile::WriteParadigm::NoWrite;
 }

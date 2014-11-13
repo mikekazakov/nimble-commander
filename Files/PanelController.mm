@@ -183,16 +183,16 @@ void panel::GenericCursorPersistance::Restore()
         }
         else if([keyPath isEqualToString:g_DefaultsGeneralShowDotDotEntry]) {
             if([defaults boolForKey:g_DefaultsGeneralShowDotDotEntry] == false)
-                m_VFSFetchingFlags |= VFSHost::F_NoDotDot;
+                m_VFSFetchingFlags |= VFSFlags::F_NoDotDot;
             else
-                m_VFSFetchingFlags &= ~VFSHost::F_NoDotDot;
+                m_VFSFetchingFlags &= ~VFSFlags::F_NoDotDot;
             [self RefreshDirectory];
         }
         else if([keyPath isEqualToString:g_DefaultsGeneralShowLocalizedFilenames]) {
             if([defaults boolForKey:g_DefaultsGeneralShowLocalizedFilenames] == true)
-                m_VFSFetchingFlags |= VFSHost::F_LoadDisplayNames;
+                m_VFSFetchingFlags |= VFSFlags::F_LoadDisplayNames;
             else
-                m_VFSFetchingFlags &= ~VFSHost::F_LoadDisplayNames;
+                m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
             [self RefreshDirectory];
         }
     }

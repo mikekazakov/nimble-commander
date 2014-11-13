@@ -31,7 +31,7 @@ static int Extract(
     if( ret < 0)
         return ret;
     
-    ret = vfs_file->Open(VFSFile::OF_Read);
+    ret = vfs_file->Open(VFSFlags::OF_Read);
     if( ret < 0)
         return ret;
     
@@ -179,7 +179,7 @@ bool TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath,
     if(_host->CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0)
         return false;
 
-    if(vfs_file->Open(VFSFile::OF_Read) < 0)
+    if(vfs_file->Open(VFSFlags::OF_Read) < 0)
         return false;
     
     char name[MAXPATHLEN];

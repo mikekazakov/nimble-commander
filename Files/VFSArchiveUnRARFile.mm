@@ -29,7 +29,7 @@ int VFSArchiveUnRARFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     if( strlen(RelativePath()) < 2 || RelativePath()[0] != '/' )
         return SetLastError(VFSError::NotFound);
     
-    if(_open_flags & VFSFile::OF_Write)
+    if(_open_flags & VFSFlags::OF_Write)
         return SetLastError(VFSError::NotSupported); // UnRAR is Read-Only
     
     auto rar_host = dynamic_pointer_cast<VFSArchiveUnRARHost>(Host());

@@ -239,7 +239,7 @@ int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelCh
     
     struct stat st;
     
-    int ret = (_flags & F_NoFollow) ? lstat(_path, &st) : stat(_path, &st);
+    int ret = (_flags & VFSFlags::F_NoFollow) ? lstat(_path, &st) : stat(_path, &st);
     
     if(ret == 0)
     {
@@ -377,7 +377,7 @@ int VFSNativeHost::SetTimes(const char *_path,
     // (that should be faster).
     
     int result = 0;
-    int flags = (_flags & VFSHost::F_NoFollow) ? FSOPT_NOFOLLOW : 0;
+    int flags = (_flags & VFSFlags::F_NoFollow) ? FSOPT_NOFOLLOW : 0;
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
     attrs.bitmapcount = ATTR_BIT_MAP_COUNT;

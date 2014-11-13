@@ -82,7 +82,7 @@ void FileDeletionOperationVFSJob::DoScan()
         VFSStat st;
         
         // currently silently ignores files which failed to stat. not sure if this is ok.
-        if( m_Host->Stat(fn.c_str(), st, VFSHost::F_NoFollow, 0) == 0 )
+        if( m_Host->Stat(fn.c_str(), st, VFSFlags::F_NoFollow, 0) == 0 )
         {
             if( (st.mode & S_IFMT) == S_IFREG )
             {

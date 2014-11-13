@@ -15,7 +15,7 @@
 VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir &_dir, const char *_path, int _flags, shared_ptr<VFSArchiveHost> _host):
     VFSListing(_path, _host)
 {
-    size_t shift = (_flags & VFSHost::F_NoDotDot) ? 0 : 1;
+    size_t shift = (_flags & VFSFlags::F_NoDotDot) ? 0 : 1;
     size_t i = 0, e = _dir.entries.size();
     m_Items.resize( _dir.entries.size() + shift);
     for(;i!=e;++i) {

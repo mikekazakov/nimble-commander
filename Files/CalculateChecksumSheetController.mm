@@ -101,7 +101,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
                 continue;
             }
             
-            rc = file->Open( VFSFile::OF_Read | VFSFile::OF_ShLock | VFSFile::OF_NoCache,
+            rc = file->Open( VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache,
                             ^{ return _q->IsStopped(); } );
             if(rc != 0) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -252,7 +252,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
     
     VFSFilePtr file;
     m_Host->CreateFile( (path(m_Path) / g_SumsFilename).c_str(), file);
-    int rc = file->Open(VFSFile::OF_Write | VFSFile::OF_NoExist | VFSFile::OF_Create | S_IWUSR | S_IRUSR | S_IRGRP );
+    int rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist | VFSFlags::OF_Create | S_IWUSR | S_IRUSR | S_IRGRP );
     if(rc < 0) {
         [[NSAlert alertWithError:VFSError::ToNSError(rc)] runModal];
         return;

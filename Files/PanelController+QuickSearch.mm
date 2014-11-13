@@ -223,7 +223,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     pers.Restore();
     
     // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
-    if((m_VFSFetchingFlags & VFSHost::F_NoDotDot) == 0 &&
+    if((m_VFSFetchingFlags & VFSFlags::F_NoDotDot) == 0 &&
        m_View.curpos == 0 &&
        m_Data.SortedDirectoryEntries().size() >= 2 &&
        m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0])->IsDotDot() )

@@ -620,7 +620,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     }
     
     VFSStat st;
-    if(m_Host->Stat(target, st, VFSHost::F_NoFollow, 0) == 0)
+    if(m_Host->Stat(target, st, VFSFlags::F_NoFollow, 0) == 0)
     { // this file already exists, will try another ones
         for(int i = 2; i < 100; ++i) {
             sprintf(target, "%s%s copy %d", m_DirPath.c_str(), filename, i);
@@ -628,7 +628,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
                 strcat(target, ".");
                 strcat(target, ext);
             }
-            if(m_Host->Stat(target, st, VFSHost::F_NoFollow, 0) != 0)
+            if(m_Host->Stat(target, st, VFSFlags::F_NoFollow, 0) != 0)
                 goto proceed;
             
         }

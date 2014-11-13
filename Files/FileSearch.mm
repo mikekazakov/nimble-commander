@@ -196,7 +196,7 @@ bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host, CFRa
     if(_in_host->CreateFile(_full_path, file, 0) != 0)
         return false;
     
-    if(file->Open(VFSFile::OF_Read) != 0)
+    if(file->Open(VFSFlags::OF_Read) != 0)
         return false;
     
     FileWindow fw;

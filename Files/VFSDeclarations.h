@@ -8,6 +8,43 @@
 
 #pragma once
 
+namespace VFSFlags
+{
+    enum {
+    
+    //  VFSFile opening-time flags
+    OF_IXOth    = 0x00000001, // = S_IXOTH
+    OF_IWOth    = 0x00000002, // = S_IWOTH
+    OF_IROth    = 0x00000004, // = S_IRWXO
+    OF_IXGrp    = 0x00000008, // = S_IXGRP
+    OF_IWGrp    = 0x00000010, // = S_IWGRP
+    OF_IRGrp    = 0x00000020, // = S_IRGRP
+    OF_IXUsr    = 0x00000040, // = S_IXUSR
+    OF_IWUsr    = 0x00000080, // = S_IWUSR
+    OF_IRUsr    = 0x00000100, // = S_IRUSR
+    OF_Read     = 0x00010000,
+    OF_Write    = 0x00020000,
+    OF_Create   = 0x00040000,
+    OF_NoExist  = 0x00080000, // POSIX O_EXCL actucally, for clarity
+    OF_ShLock   = 0x00100000, // not yet implemented
+    OF_ExLock   = 0x00200000, // not yet implemented
+    OF_NoCache  = 0x00400000, // turns off caching if supported
+    OF_Append   = 0x00800000, // appends file on writing
+    OF_Truncate = 0x01000000, // truncates files upon opening
+    
+    // Flags altering host behaviour
+    /** do not follow symlinks when resolving item name */
+    F_NoFollow  = 0x02000000,
+        
+    // Flags altering listing building
+    /** for listing. don't fetch dot-dot entry in directory listing */
+    F_NoDotDot  = 0x04000000,
+    /** for listing. ask system to provide localized display names */
+    F_LoadDisplayNames  = 0x08000000
+        
+    };
+};
+
 struct VFSStatFS
 {
     uint64_t total_bytes = 0;

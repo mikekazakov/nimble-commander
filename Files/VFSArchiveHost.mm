@@ -50,7 +50,7 @@ int VFSArchiveHost::Open()
         return VFSError::InvalidCall;
     }
     
-    res = m_ArFile->Open(VFSFile::OF_Read);
+    res = m_ArFile->Open(VFSFlags::OF_Read);
     if(res < 0)
         return res;
     
@@ -312,7 +312,7 @@ int VFSArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path,
     if(!_path || !_resolved_path)
         return VFSError::InvalidCall;
     
-    if( !m_NeedsPathResolving || (_flags & VFSHost::F_NoFollow) )
+    if( !m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) )
         strcpy(_resolved_path, _path);
     else {
         int res = ResolvePath(_path, _resolved_path);
@@ -537,7 +537,7 @@ int VFSArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<VFSArc
     
     if(!state) {
         auto file = m_ArFile->Clone();
-        int res = file->Open(VFSFile::OF_Read);
+        int res = file->Open(VFSFlags::OF_Read);
         if(res < 0)
             return res;
         

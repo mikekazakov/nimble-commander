@@ -226,7 +226,7 @@ int VFSHost::CalculateDirectoriesSizes(
                 }
                 else {
                     VFSStat stat;
-                    if(Stat(full_path, stat, VFSHost::F_NoFollow, 0) == 0)
+                    if(Stat(full_path, stat, VFSFlags::F_NoFollow, 0) == 0)
                         total_size += stat.size;
                 }
                 return true;
@@ -265,7 +265,7 @@ int VFSHost::CalculateDirectoriesSizes(
                     }
                     else {
                         VFSStat stat;
-                        if(Stat(full_path, stat, VFSHost::F_NoFollow, 0) == 0)
+                        if(Stat(full_path, stat, VFSFlags::F_NoFollow, 0) == 0)
                             total_size += stat.size;
                     }
                     return true;

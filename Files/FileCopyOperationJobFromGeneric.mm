@@ -242,7 +242,7 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     {
         shared_ptr<VFSFile> src_file;
         if(m_SrcHost->CreateFile(_src, src_file, 0) >= 0)
-            if(src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock) >= 0)
+            if(src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock) >= 0)
                 if(src_file->XAttrCount() > 0)
                     CopyXattrsFn(src_file, _dest);
     }
@@ -330,7 +330,7 @@ createsource:
     }
     
 opensource:
-    ret = src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock | VFSFile::OF_NoCache);
+    ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache);
     if(ret < 0)
     { // failed to open source file
         if(m_SkipAll) goto cleanup;

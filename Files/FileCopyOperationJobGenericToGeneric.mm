@@ -370,7 +370,7 @@ createsource:
     }
     
 opensource:
-    ret = src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock | VFSFile::OF_NoCache);
+    ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache);
     if(ret < 0)
     { // failed to open source file
         if(m_SkipAll) goto cleanup;
@@ -401,18 +401,18 @@ opensource:
         
         // decisions about what to do with existing destination
     dec_overwrite:
-        dstopenflags = VFSFile::OF_Write | VFSFile::OF_Truncate | VFSFile::OF_NoCache;
+        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
         unlink_on_stop = true;
         goto dec_end;
     dec_append:
-        dstopenflags = VFSFile::OF_Write | VFSFile::OF_Append | VFSFile::OF_NoCache;
+        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Append | VFSFlags::OF_NoCache;
         totaldestsize += dst_stat.size;
         startwriteoff = dst_stat.size;
         unlink_on_stop = false;
     dec_end:;
     } else {
         // no dest file - just create it
-        dstopenflags = VFSFile::OF_Write | VFSFile::OF_Create | VFSFile::OF_NoCache;
+        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoCache;
         unlink_on_stop = true;
     }
 
@@ -509,7 +509,7 @@ bool FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full
         return false;
     
     
-    if(m_DstHost->Stat(_dest_full_path.c_str(), dest_st, VFSHost::F_NoFollow, 0) == 0)
+    if(m_DstHost->Stat(_dest_full_path.c_str(), dest_st, VFSFlags::F_NoFollow, 0) == 0)
     {
         // this directory already exist. currently do nothing, later - update it's attrs.
         res = true;

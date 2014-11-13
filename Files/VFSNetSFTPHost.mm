@@ -239,7 +239,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     }
  
     auto dir = make_shared<VFSGenericListing>(_path, shared_from_this());
-    bool need_dot_dot = !(_flags & VFSHost::F_NoDotDot) && strcmp(_path, "/") != 0;
+    bool need_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && strcmp(_path, "/") != 0;
     
     if(need_dot_dot)
         dir->m_Items.emplace_back(); // reserve a space for dot-dot entry
@@ -255,7 +255,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
             continue; // do not process self entry
         else if( mem[0] == '.' && mem[1] == '.' && mem[2] == 0 ) // special case for dot-dot directory
         {
-            if(_flags & VFSHost::F_NoDotDot) continue;
+            if(_flags & VFSFlags::F_NoDotDot) continue;
             
             if(strcmp(_path, "/") == 0)
                 continue; // skip .. for root directory
@@ -351,7 +351,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
     rc = libssh2_sftp_stat_ex(conn->sftp,
                               _path,
                               (unsigned)strlen(_path),
-                              (_flags & F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
+                              (_flags & VFSFlags::F_NoFollow) ? LIBSSH2_SFTP_LSTAT : LIBSSH2_SFTP_STAT,
                               &attrs);
     if(rc)
         return VFSErrorForConnection(*conn);

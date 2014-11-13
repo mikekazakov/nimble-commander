@@ -35,12 +35,12 @@ int VFSNetSFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         return rc;
 
     int sftp_flags = 0;
-    if( _open_flags & VFSFile::OF_Read     ) sftp_flags |= LIBSSH2_FXF_READ;
-    if( _open_flags & VFSFile::OF_Write    ) sftp_flags |= LIBSSH2_FXF_WRITE;
-    if( _open_flags & VFSFile::OF_Append   ) sftp_flags |= LIBSSH2_FXF_APPEND;
-    if( _open_flags & VFSFile::OF_Create   ) sftp_flags |= LIBSSH2_FXF_CREAT;
-    if( _open_flags & VFSFile::OF_Truncate ) sftp_flags |= LIBSSH2_FXF_TRUNC;
-    if( _open_flags & VFSFile::OF_NoExist  ) sftp_flags |= LIBSSH2_FXF_EXCL;
+    if( _open_flags & VFSFlags::OF_Read     ) sftp_flags |= LIBSSH2_FXF_READ;
+    if( _open_flags & VFSFlags::OF_Write    ) sftp_flags |= LIBSSH2_FXF_WRITE;
+    if( _open_flags & VFSFlags::OF_Append   ) sftp_flags |= LIBSSH2_FXF_APPEND;
+    if( _open_flags & VFSFlags::OF_Create   ) sftp_flags |= LIBSSH2_FXF_CREAT;
+    if( _open_flags & VFSFlags::OF_Truncate ) sftp_flags |= LIBSSH2_FXF_TRUNC;
+    if( _open_flags & VFSFlags::OF_NoExist  ) sftp_flags |= LIBSSH2_FXF_EXCL;
     
     int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
     

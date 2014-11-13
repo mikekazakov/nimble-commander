@@ -337,8 +337,8 @@ int VFSNetFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     
     if( stat_ret == 0 &&
        ((stat.mode & S_IFMT) == S_IFREG) &&
-       (_open_flags & VFSFile::OF_Read) != 0 &&
-       (_open_flags & VFSFile::OF_Write) == 0 )
+       (_open_flags & VFSFlags::OF_Read) != 0 &&
+       (_open_flags & VFSFlags::OF_Write) == 0 )
     {
         m_URLRequest = ftp_host->BuildFullURLString(RelativePath());
         m_CURL  = ftp_host->InstanceForIOAtDir(DirName().c_str());
@@ -361,9 +361,9 @@ int VFSNetFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         return VFSError::GenericError;
     }
     else if(
-            (!(_open_flags & OF_NoExist) || stat_ret != 0) &&
-            (_open_flags & VFSFile::OF_Read)  == 0 &&
-            (_open_flags & VFSFile::OF_Write) != 0 )
+            (!(_open_flags & VFSFlags::OF_NoExist) || stat_ret != 0) &&
+            (_open_flags & VFSFlags::OF_Read)  == 0 &&
+            (_open_flags & VFSFlags::OF_Write) != 0 )
     {
 //        if()
 /*
@@ -392,7 +392,7 @@ int VFSNetFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 
         m_FilePos = 0;
         m_FileSize = 0;
-        if(_open_flags & VFSFile::OF_Append)
+        if(_open_flags & VFSFlags::OF_Append)
         {
             m_CURL->EasySetOpt(CURLOPT_APPEND, 1);
   

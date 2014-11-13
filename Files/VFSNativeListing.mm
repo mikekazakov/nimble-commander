@@ -55,7 +55,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     dirent *entp;
     
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
-    if(_flags & VFSHost::F_NoDotDot)
+    if(_flags & VFSFlags::F_NoDotDot)
         need_to_add_dot_dot = false;
     
     char pathwithslash[MAXPATHLEN]; // this buffer will be used for composing long filenames for stat()
@@ -76,7 +76,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         if(entp->d_namlen == 1 && entp->d_name[0] ==  '.') continue; // do not process self entry
         if(entp->d_namlen == 2 && entp->d_name[0] ==  '.' && entp->d_name[1] ==  '.' ) // special case for dot-dot directory
         {
-            if(_flags & VFSHost::F_NoDotDot) continue;
+            if(_flags & VFSFlags::F_NoDotDot) continue;
             need_to_add_dot_dot = false;
             
             if(strcmp(pathwithslash, "/") == 0)
@@ -191,7 +191,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     });
 
     // load display names
-    if(_flags & VFSHost::F_LoadDisplayNames)
+    if(_flags & VFSFlags::F_LoadDisplayNames)
     {
         shared_ptr<NativeFileSystemInfo> native_fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath());
         auto &dnc = DisplayNamesCache::Instance();

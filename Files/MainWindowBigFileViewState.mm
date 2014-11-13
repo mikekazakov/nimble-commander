@@ -177,7 +177,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         [proc Show];
         
         auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);
-        int res = wrapper->Open(VFSFile::OF_Read | VFSFile::OF_ShLock,
+        int res = wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock,
                                 ^{ return proc.userCancelled; },
                                 ^(uint64_t _bytes, uint64_t _total) {
                                     proc.Progress.doubleValue = double(_bytes) / double(_total);
@@ -190,7 +190,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     }
     else
     { // just open input file
-        if(origfile->Open(VFSFile::OF_Read) < 0)
+        if(origfile->Open(VFSFlags::OF_Read) < 0)
             return false;
         vfsfile = origfile;
     }

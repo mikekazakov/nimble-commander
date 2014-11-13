@@ -96,8 +96,8 @@ void FileCompressOperationJob::Do()
         m_Stats.SetMaxValue(m_SourceTotalBytes);
         
         m_DstVFS->CreateFile(m_TargetFileName, m_TargetFile, 0);
-        if(m_TargetFile->Open(VFSFile::OF_Write | VFSFile::OF_Create |
-                              VFSFile::OF_IRUsr | VFSFile::OF_IWUsr | VFSFile::OF_IRGrp) == 0)
+        if(m_TargetFile->Open(VFSFlags::OF_Write | VFSFlags::OF_Create |
+                              VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp) == 0)
         {
             m_Archive = archive_write_new();
             archive_write_set_format_zip(m_Archive);
@@ -143,7 +143,7 @@ bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
     
     sprintf(fn, "%s%s.zip", m_DstRoot, arc_pref);
     VFSStat st;
-    if(m_DstVFS->Stat(fn, st, VFSHost::F_NoFollow, 0) != 0)
+    if(m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0)
     {
         strcpy(_full_filename, fn);
         return true;
@@ -152,7 +152,7 @@ bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
     for(int i = 2; i < 100; ++i)
     {
         sprintf(fn, "%s%s %d.zip", m_DstRoot, arc_pref, i);
-        if(m_DstVFS->Stat(fn, st, VFSHost::F_NoFollow, 0) != 0)
+        if(m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0)
         {
             strcpy(_full_filename, fn);
             return true;
@@ -181,7 +181,7 @@ void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_sho
     VFSStat stat_buffer;
     
 retry_stat:
-    int stat_ret = m_SrcVFS->Stat(fullpath, stat_buffer, VFSHost::F_NoFollow, 0); // no symlinks support currently
+    int stat_ret = m_SrcVFS->Stat(fullpath, stat_buffer, VFSFlags::F_NoFollow, 0); // no symlinks support currently
     if(stat_ret == VFSError::Ok) {
         if(S_ISREG(stat_buffer.mode))
         {
@@ -284,7 +284,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
             // metadata
             VFSFilePtr src_file;
             m_SrcVFS->CreateFile(sourcepath, src_file, 0);
-            if(src_file->Open(VFSFile::OF_Read) >= 0) {
+            if(src_file->Open(VFSFlags::OF_Read) >= 0) {
                 itemname[strlen(itemname)-1] = 0; // our paths extracting routine don't works with paths like /Dir/
                 WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
             }
@@ -307,7 +307,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
             VFSFilePtr src_file;
             m_SrcVFS->CreateFile(sourcepath, src_file, 0);
             retry_open_file:;
-            if( (open_file_ret = src_file->Open(VFSFile::OF_Read | VFSFile::OF_ShLock)) == 0) {
+            if( (open_file_ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock)) == 0) {
                 entry = archive_entry_new();
                 archive_entry_set_pathname(entry, itemname);
                 VFSStat::ToSysStat(st, sst);

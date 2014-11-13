@@ -237,7 +237,7 @@ Listing::Listing(shared_ptr<Directory> _dir,
     VFSListing(_path, _host),
     m_Directory(_dir)
 {
-    size_t shift = (_flags & VFSHost::F_NoDotDot) ? 0 : 1;
+    size_t shift = (_flags & VFSFlags::F_NoDotDot) ? 0 : 1;
     if(strcmp(_path, "/") == 0)
         shift = 0; // no dot-dot dir for root dir
         

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#import "3rd_party/built/include/curl/curl.h"
+#import "../3rd_party/built/include/curl/curl.h"
 #import "Common.h"
 #import "VFSHost.h"
 #import "VFSListing.h"

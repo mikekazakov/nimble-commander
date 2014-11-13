@@ -7,8 +7,8 @@
 //
 
 #import <sys/dirent.h>
-#import "3rd_party/libarchive/archive.h"
-#import "3rd_party/libarchive/archive_entry.h"
+#import "../3rd_party/libarchive/archive.h"
+#import "../3rd_party/libarchive/archive_entry.h"
 #import "VFSArchiveHost.h"
 #import "VFSArchiveInternal.h"
 #import "VFSArchiveFile.h"

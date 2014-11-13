@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "3rd_party/built/include/libssh2.h"
-#import "3rd_party/built/include/libssh2_sftp.h"
+#import "../3rd_party/built/include/libssh2.h"
+#import "../3rd_party/built/include/libssh2_sftp.h"
 #import "VFSNetSFTPFile.h"
 #import "VFSNetSFTPHost.h"
 

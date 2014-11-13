@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "3rd_party/libarchive/archive.h"
-#import "3rd_party/libarchive/archive_entry.h"
+#import "../3rd_party/libarchive/archive.h"
+#import "../3rd_party/libarchive/archive_entry.h"
 #import "VFSArchiveFile.h"
 #import "VFSArchiveInternal.h"
 #import "AppleDoubleEA.h"

@@ -7,7 +7,7 @@
 //
 
 #define __APPLE_API_PRIVATE
-#import "3rd_party/apple_sandbox.h"
+#import "../3rd_party/apple_sandbox.h"
 #import <libproc.h>
 #import <sys/sysctl.h>
 #import <sys/resource.h>

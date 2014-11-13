@@ -20,8 +20,7 @@ const char *VFSArchiveHost::Tag = "arc_libarchive";
 
 VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
                                shared_ptr<VFSHost> _parent):
-    VFSHost(_junction_path, _parent),
-    m_Arc(0)
+    VFSHost(_junction_path, _parent)
 {
     assert(_parent);
 }
@@ -30,8 +29,6 @@ VFSArchiveHost::~VFSArchiveHost()
 {
     if(m_Arc != 0)
         archive_read_free(m_Arc);
-    for(auto &i: m_PathToDir)
-        delete i.second;
 }
 
 const char *VFSArchiveHost::FSTag() const
@@ -88,12 +85,15 @@ int VFSArchiveHost::ReadArchiveListing()
 {
     assert(m_Arc != 0);
     uint32_t aruid = 0;
-    VFSArchiveDir *root = new VFSArchiveDir;
-    root->full_path = "/";
-    root->name_in_parent  = "";
-    m_PathToDir.insert(make_pair("/", root));
 
-    VFSArchiveDir *parent_dir = root;
+    {
+    VFSArchiveDir root_dir;
+    root_dir.full_path = "/";
+    root_dir.name_in_parent  = "";
+    m_PathToDir.emplace("/", move(root_dir));
+    }
+
+    VFSArchiveDir *parent_dir = &m_PathToDir["/"s];
     struct archive_entry *aentry;
     int ret;
     while ((ret = archive_read_next_header(m_Arc, &aentry)) == ARCHIVE_OK) {
@@ -175,10 +175,10 @@ int VFSArchiveHost::ReadArchiveListing()
                 char tmp[1024];
                 strcpy(tmp, path);
                 tmp[path_len-1] = 0;
-                VFSArchiveDir *dir = new VFSArchiveDir;
-                dir->full_path = path; // full_path is with trailing slash
-                dir->name_in_parent = strrchr(tmp, '/')+1;
-                m_PathToDir.insert(make_pair(path, dir));
+                VFSArchiveDir dir;
+                dir.full_path = path; // full_path is with trailing slash
+                dir.name_in_parent = strrchr(tmp, '/')+1;
+                m_PathToDir.emplace(path, move(dir));
             }
         }
         
@@ -202,7 +202,7 @@ VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
     assert(IsPathWithTrailingSlash(_path_with_tr_sl));
     auto i = m_PathToDir.find(_path_with_tr_sl);
     if(i != m_PathToDir.end())
-        return (*i).second;
+        return &(*i).second;
     
     char entry_name[256];
     char parent_path[1024];
@@ -218,11 +218,11 @@ VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
     // TODO: need to check presense of entry_name in parent_dir
     
     InsertDummyDirInto(parent_dir, entry_name);
-    VFSArchiveDir *entry = new VFSArchiveDir;
-    entry->full_path = _path_with_tr_sl;
-    entry->name_in_parent  = entry_name;
-    auto i2 = m_PathToDir.insert(make_pair(_path_with_tr_sl, entry));
-    return (*i2.first).second;
+    VFSArchiveDir entry;
+    entry.full_path = _path_with_tr_sl;
+    entry.name_in_parent  = entry_name;
+    auto i2 = m_PathToDir.emplace(_path_with_tr_sl, move(entry));
+    return &(*i2.first).second;
 }
 
 void VFSArchiveHost::InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir_name)
@@ -339,7 +339,7 @@ int VFSArchiveHost::IterateDirectoryListing(const char *_path, function<bool(con
     
     VFSDirEnt dir;
     
-    for(const auto &it: i->second->entries)
+    for(const auto &it: i->second.entries)
         {
             strcpy(dir.name, it.name.c_str());
             dir.name_len = it.name.length();
@@ -397,7 +397,7 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
     
     // ok, found dir, now let's find item
     size_t short_name_len = strlen(short_name);
-    for(const auto &it: i->second->entries)
+    for(const auto &it: i->second.entries)
         if(it.name.length() == short_name_len && it.name.compare(short_name) == 0)
             return &it;
     

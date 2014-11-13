@@ -117,13 +117,10 @@ private:
     
     void ResolveSymlink(uint32_t _uid);
     
-    shared_ptr<VFSFile>                m_ArFile;
-    shared_ptr<VFSArchiveMediator>     m_Mediator;
-    struct archive                         *m_Arc;
-    
-    
-// TODO: change this to map<string, VFSArchiveDir>
-    map<string, VFSArchiveDir*>             m_PathToDir;
+    shared_ptr<VFSFile>                     m_ArFile;
+    shared_ptr<VFSArchiveMediator>          m_Mediator;
+    struct archive                         *m_Arc = nullptr;
+    map<string, VFSArchiveDir>              m_PathToDir;
     uint32_t                                m_TotalFiles = 0;
     uint32_t                                m_TotalDirs = 0;
     uint32_t                                m_TotalRegs = 0;

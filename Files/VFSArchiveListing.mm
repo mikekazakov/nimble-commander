@@ -12,15 +12,15 @@
 #import "Encodings.h"
 #import "Common.h"
 
-VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, shared_ptr<VFSArchiveHost> _host):
+VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir &_dir, const char *_path, int _flags, shared_ptr<VFSArchiveHost> _host):
     VFSListing(_path, _host)
 {
     size_t shift = (_flags & VFSHost::F_NoDotDot) ? 0 : 1;
-    size_t i = 0, e = _dir->entries.size();
-    m_Items.resize( _dir->entries.size() + shift);
+    size_t i = 0, e = _dir.entries.size();
+    m_Items.resize( _dir.entries.size() + shift);
     for(;i!=e;++i) {
         auto &item = m_Items[i+shift];
-        auto &entry = _dir->entries[i];
+        auto &entry = _dir.entries[i];
         item.name = entry.name;
         item.cf_name = CFStringCreateWithUTF8StdStringNoCopy(item.name);
         if(item.cf_name == 0) {

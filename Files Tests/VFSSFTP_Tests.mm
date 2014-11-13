@@ -57,7 +57,7 @@
     
     VFSFilePtr file;
     XCTAssert( host->CreateFile("/etc/debian_version", file, 0) == 0);
-    XCTAssert( file->Open( VFSFile::OF_Read ) == 0);
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == 0);
     
     auto cont = file->ReadFile();
     

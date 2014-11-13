@@ -40,7 +40,7 @@ static const char* readme = "\n\
     VFSFilePtr file;
     // basic checks
     XCTAssert( host->CreateFile("/README", file, 0) == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
     XCTAssert( file->Size() == strlen(readme) );
     auto data = file->ReadFile();
     XCTAssert( file->Eof() );
@@ -49,7 +49,7 @@ static const char* readme = "\n\
     XCTAssert( memcmp(data->data(), readme, data->size()) == 0 );
     
     XCTAssert( file->Close() == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
     
     // check over-reading
     char buf[4096];
@@ -68,20 +68,20 @@ static const char* readme = "\n\
     
     // check seeking at big distance and reading an arbitrary selected known data block
     XCTAssert( host->CreateFile("/pub/firefox/releases/28.0b9/source/firefox-28.0b9.bundle", file, 0) == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Read) == 0 );    
+    XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
     XCTAssert( file->Seek(0x23B0A820, VFSFile::Seek_Set) == 0x23B0A820 );
     XCTAssert( file->Read(buf, 16) == 16 );
     XCTAssert( memcmp(buf, "\x84\x62\x9d\xc0\x90\x38\xbb\x53\x23\xf1\xce\x45\x91\x74\x32\x2c", 16) == 0 );
     
     // check reaction on invalid requests
     XCTAssert( host->CreateFile("/iwuhdowgfuiwygfuiwgfuiwef", file, 0) == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Read) != 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Read) != 0 );
     XCTAssert( host->CreateFile("/pub", file, 0) == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Read) != 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Read) != 0 );
     XCTAssert( host->CreateFile("/pub/", file, 0) == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Read) != 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Read) != 0 );
     XCTAssert( host->CreateFile("/", file, 0) == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Read) != 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Read) != 0 );
 }
 
 - (void)test192_168_2_5
@@ -164,7 +164,7 @@ static const char* readme = "\n\
     
     VFSFilePtr file;
     XCTAssert( host->CreateFile(fn, file, 0) == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Write | VFSFile::OF_Create) == 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0 );
     XCTAssert( file->IsOpened() == true );
     XCTAssert( file->Close() == 0);
 
@@ -172,7 +172,7 @@ static const char* readme = "\n\
     XCTAssert( host->Stat(fn, stat, 0, 0) == 0);
     XCTAssert( stat.size == 0);
     
-    XCTAssert( file->Open(VFSFile::OF_Write | VFSFile::OF_Create | VFSFile::OF_NoExist) != 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoExist) != 0 );
     XCTAssert( file->IsOpened() == false );
     
     XCTAssert( host->Unlink(fn, 0) == 0 );
@@ -200,11 +200,11 @@ static const char* readme = "\n\
     const char *str = "Hello World!\n";
     const char *str2= "Underworld!\n";
     XCTAssert( host->CreateFile(fn, file, 0) == 0 );
-    XCTAssert( file->Open(VFSFile::OF_Write | VFSFile::OF_Create) == 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0 );
     XCTAssert( file->Write(str, strlen(str)) == strlen(str) );
     XCTAssert( file->Close() == 0 );
 
-    XCTAssert( file->Open(VFSFile::OF_Write | VFSFile::OF_Append) == 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Write | VFSFlags::OF_Append) == 0 );
     XCTAssert( file->Size() == strlen(str) );
     XCTAssert( file->Pos() == strlen(str) );
     XCTAssert( file->Write(str, strlen(str)) == strlen(str) );
@@ -213,7 +213,7 @@ static const char* readme = "\n\
     XCTAssert( host->Stat(fn, stat, 0, 0) == 0 );
     XCTAssert( stat.size == strlen(str)*2 );
     
-    XCTAssert( file->Open(VFSFile::OF_Write) == 0 ); // should implicitly truncating for FTP uploads
+    XCTAssert( file->Open(VFSFlags::OF_Write) == 0 ); // should implicitly truncating for FTP uploads
     XCTAssert( file->Size() == 0 );
     XCTAssert( file->Pos() == 0 );
     XCTAssert( file->Write(str2, strlen(str2)) == strlen(str2) );
@@ -222,7 +222,7 @@ static const char* readme = "\n\
     XCTAssert( host->Stat(fn, stat, 0, 0) == 0 );
     XCTAssert( stat.size == strlen(str2) );
     
-    XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
+    XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
     char buf[4096];
     XCTAssert( file->Read(buf, 4096) == strlen(str2) );
     XCTAssert( memcmp(buf, str2, strlen(str2)) == 0 );
@@ -360,7 +360,7 @@ static const char* readme = "\n\
         VFSFilePtr file;
         char buf[256];
         XCTAssert( host->CreateFile(path.c_str(), file, 0) == 0 );
-        XCTAssert( file->Open(VFSFile::OF_Read) == 0 );
+        XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
         XCTAssert( file->Read(buf, sizeof(buf)) == sizeof(buf) );
         XCTAssert( file->Close() == 0 ); // at this moment we have read only a small part of file
                                          // and Close() should tell curl to stop reading and will wait for a pending operations to be finished

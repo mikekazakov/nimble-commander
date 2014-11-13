@@ -63,7 +63,7 @@ static string g_Preffix = "/.FilesTestingData/archives/";
             
             VFSFilePtr file;
             XCTAssert( host->CreateFile(fn.c_str(), file, nullptr) == 0);
-            XCTAssert( file->Open(VFSFile::OF_Read) == 0);
+            XCTAssert( file->Open(VFSFlags::OF_Read) == 0);
             this_thread::sleep_for(5ms);
             auto d = file->ReadFile();
             XCTAssert(d.get() != nullptr);
@@ -84,7 +84,7 @@ static string g_Preffix = "/.FilesTestingData/archives/";
     XCTAssert( host->Stat("/Adium.app/Contents/Info.plist", st, 0, 0) == 0 );
     XCTAssert( st.mode_bits.reg );
     XCTAssert( st.size == 6201 );
-    XCTAssert( host->Stat("/Adium.app/Contents/Info.plist", st, VFSHost::F_NoFollow, 0) == 0 );
+    XCTAssert( host->Stat("/Adium.app/Contents/Info.plist", st, VFSFlags::F_NoFollow, 0) == 0 );
     XCTAssert( st.mode_bits.reg );
     XCTAssert( st.size == 6201 );
     
@@ -92,11 +92,11 @@ static string g_Preffix = "/.FilesTestingData/archives/";
     XCTAssert( st.mode_bits.reg && !st.mode_bits.chr );
     XCTAssert( st.size == 2013068 );
     
-    XCTAssert( host->Stat("/Adium.app/Contents/Frameworks/Adium.framework/Adium", st, VFSHost::F_NoFollow, 0) == 0 );
+    XCTAssert( host->Stat("/Adium.app/Contents/Frameworks/Adium.framework/Adium", st, VFSFlags::F_NoFollow, 0) == 0 );
     XCTAssert( st.mode_bits.reg && st.mode_bits.chr );
     
     XCTAssert( host->IsDirectory("/Adium.app/Contents/Frameworks/Adium.framework/Headers", 0, 0) == true );
-    XCTAssert( host->IsSymlink  ("/Adium.app/Contents/Frameworks/Adium.framework/Headers", VFSHost::F_NoFollow, 0) == true );
+    XCTAssert( host->IsSymlink  ("/Adium.app/Contents/Frameworks/Adium.framework/Headers", VFSFlags::F_NoFollow, 0) == true );
 }
 
 

@@ -10,6 +10,7 @@
 #import "VFSArchiveHost.h"
 #import "VFSArchiveInternal.h"
 #import "Encodings.h"
+#import "Common.h"
 
 VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_path, int _flags, shared_ptr<VFSArchiveHost> _host):
     VFSListing(_path, _host)
@@ -17,19 +18,12 @@ VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_pat
     size_t shift = (_flags & VFSHost::F_NoDotDot) ? 0 : 1;
     size_t i = 0, e = _dir->entries.size();
     m_Items.resize( _dir->entries.size() + shift);
-    for(;i!=e;++i)
-    {
+    for(;i!=e;++i) {
         auto &item = m_Items[i+shift];
-        item.name = _dir->entries[i].name;
-        item.st = _dir->entries[i].st;
-        item.cf_name = CFStringCreateWithBytesNoCopy(0,
-                                                         (UInt8*)item.name.c_str(),
-                                                         item.name.length(),
-                                                         kCFStringEncodingUTF8,
-                                                         false,
-                                                         kCFAllocatorNull);
-        if(item.cf_name == 0)
-        {
+        auto &entry = _dir->entries[i];
+        item.name = entry.name;
+        item.cf_name = CFStringCreateWithUTF8StdStringNoCopy(item.name);
+        if(item.cf_name == 0) {
             // fallback case 'coz of invalid encodings(?)
             // use our bulletproof decoder to recover anything from this trash
             unsigned short tmp[65536];
@@ -46,7 +40,6 @@ VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_pat
             item.cf_name = CFStringCreateWithCharacters(0, &tmp[0], sz);
             assert(item.cf_name);
         }
-
         item.extoffset = 0;
         for(int i = (int)item.name.length() - 1; i >= 0; --i)
             if(item.name.c_str()[i] == '.')
@@ -56,6 +49,18 @@ VFSArchiveListing::VFSArchiveListing(const VFSArchiveDir *_dir, const char *_pat
                 item.extoffset = i+1;
                 break;
             }
+        
+        item.st = entry.st;
+        item.unix_type = IFTODT(item.st.st_mode);
+        if( (item.st.st_mode & S_IFMT) == S_IFLNK ) {
+            auto symlink = _host->ResolvedSymlink(entry.aruid);
+            if(symlink) {
+                item.symlink = symlink->value.c_str();
+                if(symlink->state == VFSArchiveHost::SymlinkState::Resolved)
+                    if(auto *target_entry = _host->FindEntry(symlink->target_uid))
+                        item.st = target_entry->st;
+            }
+        }
         
         if(item.IsDir())
             item.st.st_size = VFSListingItem::InvalidSize;

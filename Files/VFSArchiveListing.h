@@ -18,12 +18,11 @@ struct VFSArchiveDir;
 struct VFSArchiveListingItem : VFSListingItem
 {
     string name; // optimize
+    const char *symlink = 0;
     struct stat st;
     CFStringRef cf_name;
     unsigned short extoffset;               // extension of a file if any. 0 if there's no extension, or position of a first char of an extention
-    
-    
-    
+    unsigned char  unix_type = 0;
     
     virtual const char     *Name()      const override { return name.c_str(); }
     virtual CFStringRef     CFName()    const override { return cf_name; }
@@ -37,11 +36,11 @@ struct VFSArchiveListingItem : VFSListingItem
     virtual uint32_t        UnixFlags() const override { return st.st_flags; }
     virtual uid_t           UnixUID()   const override { return st.st_uid; }
     virtual gid_t           UnixGID()   const override { return st.st_gid; }
-//    virtual uint8_t         UnixType()  const override { return unix_type; }
-    virtual const char     *Symlink()   const override { return 0; }
+    virtual uint8_t         UnixType()  const override { return unix_type; }
+    virtual const char     *Symlink()   const override { return symlink; }
     virtual bool            IsDir()     const override { return (st.st_mode & S_IFMT) == S_IFDIR; }
     virtual bool            IsReg()     const override { return (st.st_mode & S_IFMT) == S_IFREG;  }
-    virtual bool            IsSymlink() const override { return false; }
+    virtual bool            IsSymlink() const override { return unix_type == DT_LNK; }
     virtual bool            IsDotDot()  const override { return (name.length() == 2) && (name[0] == '.') && (name[1] == '.'); }
     virtual bool            IsHidden()  const override { return !IsDotDot() && (Name()[0] == '.'); }
     virtual bool            HasExtension()      const override { return extoffset != 0; }

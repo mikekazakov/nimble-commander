@@ -249,18 +249,20 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
                                           int _flags,
                                           VFSCancelChecker _cancel_checker)
 {
-    char path[1024];
-    strcpy(path, _path);
+    char path[MAXPATHLEN*2];
+    int res = ResolvePathIfNeeded(_path, path, _flags);
+    if(res < 0)
+        return res;
+    
     if(path[strlen(path)-1] != '/')
         strcat(path, "/");
-    
     
     auto i = m_PathToDir.find(path);
     if(i == m_PathToDir.end())
         return VFSError::NotFound;
 
     shared_ptr<VFSArchiveListing> listing = make_shared<VFSArchiveListing>
-        (i->second, path, _flags, SharedPtr());
+        (i->second, _path, _flags, SharedPtr());
     
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
@@ -306,6 +308,9 @@ int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelC
 
 int VFSArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags)
 {
+    if(!_path || !_resolved_path)
+        return VFSError::InvalidCall;
+    
     if( _flags & VFSHost::F_NoFollow )
         strcpy(_resolved_path, _path);
     else {
@@ -340,7 +345,8 @@ int VFSArchiveHost::IterateDirectoryListing(const char *_path, function<bool(con
             
             if(S_ISDIR(it.st.st_mode)) dir.type = VFSDirEnt::Dir;
             else if(S_ISREG(it.st.st_mode)) dir.type = VFSDirEnt::Reg;
-            else dir.type = VFSDirEnt::Unknown; // symlinks and other stuff are not supported currently
+            else if(S_ISLNK(it.st.st_mode)) dir.type = VFSDirEnt::Link;
+            else dir.type = VFSDirEnt::Unknown; // other stuff is not supported currently
 
             if(!_handler(dir))
                 break;
@@ -394,6 +400,19 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
             return &it;
     
     return 0;
+}
+
+const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(uint32_t _uid)
+{
+    auto entry_iter = m_EntryByUID.find(_uid);
+    if(entry_iter == end(m_EntryByUID))
+        return nullptr;
+    
+    auto dir = entry_iter->second.first;
+    auto ind = entry_iter->second.second;
+    
+    assert( ind < dir->entries.size() );
+    return &dir->entries[ind];
 }
 
 int VFSArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
@@ -618,4 +637,16 @@ void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
         symlink.target_uid = result_uid;
         symlink.state = SymlinkState::Resolved;
     }
+}
+
+const VFSArchiveHost::Symlink *VFSArchiveHost::ResolvedSymlink(uint32_t _uid)
+{
+    auto iter = m_Symlinks.find(_uid);
+    if(iter == end(m_Symlinks))
+        return nullptr;
+    
+    if(iter->second.state == SymlinkState::Unresolved)
+        ResolveSymlink(_uid);
+    
+    return &iter->second;
 }

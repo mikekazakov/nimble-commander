@@ -72,11 +72,11 @@ public:
     virtual time_t          MTime()     const { return 0; }
     virtual time_t          CTime()     const { return 0; }
     virtual time_t          BTime()     const { return 0; }
-    virtual mode_t          UnixMode()  const { return 0; }
+    virtual mode_t          UnixMode()  const { return 0; } // resolved for symlinks
     virtual uint32_t        UnixFlags() const { return 0; }
     virtual uid_t           UnixUID()   const { return 0; }
     virtual gid_t           UnixGID()   const { return 0; }
-    virtual uint8_t         UnixType()  const { return 0; }
+    virtual uint8_t         UnixType()  const { return 0; } // type is _original_ directory entry, without symlinks resolving
     virtual const char     *Symlink()   const { return ""; }
     virtual bool            IsDir()     const { return false; }
     virtual bool            IsReg()     const { return true;  }

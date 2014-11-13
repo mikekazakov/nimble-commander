@@ -71,7 +71,6 @@ public:
     /** return VFSError, not uids returned */
     int ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags);
     
-private:
     enum class SymlinkState
     {
         /** symlink is ok to use */
@@ -93,12 +92,19 @@ private:
         string       target_path = ""; // meaningful only if state == SymlinkState::Resolved
     };
     
+    /** searches for entry in archive without any path resolving */
+    const VFSArchiveDirEntry *FindEntry(const char* _path);
     
+    /** searches for entry in archive by id */
+    const VFSArchiveDirEntry *FindEntry(uint32_t _uid);
+    
+    /** find symlink and resolves it if not already. returns nullptr on error. */
+    const Symlink *ResolvedSymlink(uint32_t _uid);
+    
+private:
     int ReadArchiveListing();
     VFSArchiveDir* FindOrBuildDir(const char* _path_with_tr_sl);
     
-    /** searches for entry in archive without any path resolving */
-    const VFSArchiveDirEntry *FindEntry(const char* _path);
     
     void InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir_name);
     struct archive* SpawnLibarchive();
@@ -117,7 +123,7 @@ private:
     
     
 // TODO: change this to map<string, VFSArchiveDir>
-    map<string, VFSArchiveDir*>   m_PathToDir;
+    map<string, VFSArchiveDir*>             m_PathToDir;
     uint32_t                                m_TotalFiles = 0;
     uint32_t                                m_TotalDirs = 0;
     uint32_t                                m_TotalRegs = 0;

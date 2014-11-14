@@ -33,7 +33,11 @@ public:
      */
     virtual const char *FSTag() const;
     
-    virtual bool IsNativeFS() const { return false; }
+    /** Returns false for any VFS but native filesystem. */
+    virtual bool IsNativeFS() const noexcept;
+    
+    /** Return true if filesystem content does not change while fs is opened. Presumably only archives can be immutable, so we can use some aggressive caching for them on higher layers. */
+    virtual bool IsImmutableFS() const noexcept;
     
     /**
      * Returns a path of a filesystem root.

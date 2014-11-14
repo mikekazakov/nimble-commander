@@ -416,3 +416,8 @@ int VFSNativeHost::Rename(const char *_old_path, const char *_new_path, VFSCance
         return 0;
     return VFSError::FromErrno();
 }
+
+bool VFSNativeHost::IsNativeFS() const noexcept
+{
+    return true;
+}

@@ -29,6 +29,7 @@ public:
     int Open(); // flags will be added later
 
     
+    virtual bool IsImmutableFS() const noexcept override;
     
     virtual bool IsDirectory(const char *_path,
                              int _flags,

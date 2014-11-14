@@ -36,6 +36,11 @@ const char *VFSArchiveHost::FSTag() const
     return Tag;
 }
 
+bool VFSArchiveHost::IsImmutableFS() const noexcept
+{
+    return true;
+}
+
 int VFSArchiveHost::Open()
 {
     assert(m_Arc == 0);

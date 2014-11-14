@@ -16,19 +16,19 @@ QLVFSThumbnailsCache &QLVFSThumbnailsCache::Instance() noexcept
     return *inst;
 }
 
-NSImageRep *QLVFSThumbnailsCache::Get(const string& _path, const VFSHostPtr &_host)
+pair<bool, NSImageRep*> QLVFSThumbnailsCache::Get(const string& _path, const VFSHostPtr &_host)
 {
     lock_guard<mutex> lock(m_Lock);
     
     auto db = find_if(begin(m_Caches), end(m_Caches), [&](auto &_) { return _.host_raw == _host.get(); });
     if(db == end(m_Caches))
-        return nil;
+        return make_pair(false, nil);
   
     auto img = db->images.find(_path);
     if(img == end(db->images))
-        return nil;
+        return make_pair(false, nil);
     
-    return img->second;
+    return make_pair(true, img->second);
 }
 
 void QLVFSThumbnailsCache::Put(const string& _path, const VFSHostPtr &_host, NSImageRep *_img)

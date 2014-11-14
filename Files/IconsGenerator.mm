@@ -44,15 +44,15 @@ static bool IsImageRepEqual(NSBitmapImageRep *_img1, NSBitmapImageRep *_img2)
     return memcmp(_img1.bitmapData, _img2.bitmapData, _img1.bytesPerPlane) == 0;
 }
 
-static NSImageRep *ProduceThumbnailForVFS(const char *_path,
-                                   const char *_ext,
-                                   shared_ptr<VFSHost> _host,
+static NSImageRep *ProduceThumbnailForVFS(const string &_path,
+                                   const string &_ext,
+                                   const VFSHostPtr &_host,
                                    CGSize _sz)
 {
     NSImageRep *result = 0;
     VFSFilePtr vfs_file;
     string filename_ext;
-    if(_host->CreateFile(_path, vfs_file, 0) < 0)
+    if(_host->CreateFile(_path.c_str(), vfs_file, 0) < 0)
         return 0;
         
     if(vfs_file->Open(VFSFlags::OF_Read) < 0)
@@ -119,7 +119,24 @@ cleanup:
     return result;
 }
 
-static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, shared_ptr<VFSHost> _host)
+static NSImageRep *ProduceThumbnailForVFS_Cached(const string &_path, const string &_ext, const VFSHostPtr &_host, CGSize _sz)
+{
+    // for immutable vfs we can cache generated thumbnails for some time
+    pair<bool, NSImageRep *> thumbnail = {false, nil}; // found -> value
+    
+    if( _host->IsImmutableFS() )
+        thumbnail = QLVFSThumbnailsCache::Instance().Get(_path, _host);
+    
+    if( !thumbnail.first ) {
+        thumbnail.second = ProduceThumbnailForVFS(_path, _ext, _host, _sz);
+        if( _host->IsImmutableFS() )
+            QLVFSThumbnailsCache::Instance().Put(_path, _host, thumbnail.second);
+    }
+    
+    return thumbnail.second;
+}
+
+static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, const VFSHostPtr &_host)
 {
     VFSFilePtr vfs_file;
     if(_host->CreateFile(_path, vfs_file, 0) < 0)
@@ -137,7 +154,7 @@ static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, shared_ptr<VFS
     return obj;
 }
 
-static NSImage *ReadImageFromVFSFile(const char *_path, shared_ptr<VFSHost> _host)
+static NSImage *ReadImageFromVFSFile(const char *_path, const VFSHostPtr &_host)
 {
     VFSFilePtr vfs_file;
     if(_host->CreateFile(_path, vfs_file, 0) < 0)
@@ -152,17 +169,9 @@ static NSImage *ReadImageFromVFSFile(const char *_path, shared_ptr<VFSHost> _hos
     return [[NSImage alloc] initWithData:data];
 }
 
-static NSImageRep *ProduceBundleThumbnailForVFS(const char *_path,
-                                      const char *_ext,
-                                      shared_ptr<VFSHost> _host,
-                                      NSRect _rc)
+static NSImageRep *ProduceBundleThumbnailForVFS(const string &_path, const VFSHostPtr &_host, NSRect _rc)
 {
-    char tmp[MAXPATHLEN];
-    strcpy(tmp, _path);
-    if(tmp[strlen(tmp)-1] != '/') strcat(tmp, "/");
-    strcat(tmp, "Contents/Info.plist");
-    
-    NSDictionary *plist = ReadDictionaryFromVFSFile(tmp, _host);
+    NSDictionary *plist = ReadDictionaryFromVFSFile((path(_path) / "Contents/Info.plist").c_str(), _host);
     if(!plist)
         return 0;
     
@@ -170,17 +179,32 @@ static NSImageRep *ProduceBundleThumbnailForVFS(const char *_path,
     if(![icon_id isKindOfClass:[NSString class]])
         return 0;
     NSString *icon_str = icon_id;
+    if(!icon_str.fileSystemRepresentation)
+        return nil;
     
-    strcpy(tmp, _path);
-    if(tmp[strlen(tmp)-1] != '/') strcat(tmp, "/");
-    strcat(tmp, "Contents/Resources/");
-    strcat(tmp, [icon_str fileSystemRepresentation]);
-
-    NSImage *image = ReadImageFromVFSFile(tmp, _host);
+    path img_path = path(_path) / "Contents/Resources/" / icon_str.fileSystemRepresentation;
+    NSImage *image = ReadImageFromVFSFile(img_path.c_str(), _host);
     if(!image)
         return 0;
     
     return [image bestRepresentationForRect:_rc context:nil hints:nil];
+}
+
+static NSImageRep *ProduceBundleThumbnailForVFS_Cached(const string &_path, const VFSHostPtr &_host, NSRect _rc)
+{
+    // for immutable vfs we can cache generated thumbnails for some time
+    pair<bool, NSImageRep *> thumbnail = {false, nil}; // found -> value
+    
+    if( _host->IsImmutableFS() )
+        thumbnail = QLVFSThumbnailsCache::Instance().Get(_path, _host);
+    
+    if( !thumbnail.first ) {
+        thumbnail.second = ProduceBundleThumbnailForVFS(_path, _host, _rc);
+        if( _host->IsImmutableFS() )
+            QLVFSThumbnailsCache::Instance().Put(_path, _host, thumbnail.second);
+    }
+    
+    return thumbnail.second;
 }
 
 inline static unsigned MaximumConcurrentRunnersForVFS(const VFSHostPtr &_host)
@@ -363,10 +387,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
            _meta->extension == "app" &&
            _meta->host->ShouldProduceThumbnails())
         {
-            _meta->thumbnail = ProduceBundleThumbnailForVFS(_meta->relative_path.c_str(),
-                                                            _meta->extension.c_str(),
-                                                            _meta->host,
-                                                            m_IconSize);
+            _meta->thumbnail = ProduceBundleThumbnailForVFS_Cached(_meta->relative_path, _meta->host, m_IconSize);
             if(_meta->thumbnail && m_UpdateCallback)
                m_UpdateCallback();
         }
@@ -381,15 +402,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
            !_meta->extension.empty()
            )
         {
-            NSImageRep *thumbnail = QLVFSThumbnailsCache::Instance().Get(_meta->relative_path, _meta->host);
-            if(!thumbnail) {
-                thumbnail = ProduceThumbnailForVFS(_meta->relative_path.c_str(),
-                                                   _meta->extension.c_str(),
-                                                   _meta->host,
-                                                   m_IconSize.size);
-                QLVFSThumbnailsCache::Instance().Put(_meta->relative_path, _meta->host, thumbnail);
-            }
-            _meta->thumbnail = thumbnail;
+            _meta->thumbnail = ProduceThumbnailForVFS_Cached(_meta->relative_path, _meta->extension, _meta->host, m_IconSize.size);
             if(_meta->thumbnail && m_UpdateCallback)
                 m_UpdateCallback();
         }

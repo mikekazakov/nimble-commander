@@ -24,7 +24,7 @@ public:
     ~VFSArchiveUnRARHost();
     
     virtual const char *FSTag() const override;
-    
+    virtual bool IsImmutableFS() const noexcept override;
 
     static bool IsRarArchive(const char *_archive_native_path);
     int Open(); // flags will be added later

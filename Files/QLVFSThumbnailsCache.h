@@ -14,7 +14,9 @@ class QLVFSThumbnailsCache
 {
 public:
     static QLVFSThumbnailsCache &Instance() noexcept;
-    NSImageRep *Get(const string& _path, const VFSHostPtr &_host);
+    
+    /** return pair: <did found?, value> */
+    pair<bool, NSImageRep*> Get(const string& _path, const VFSHostPtr &_host);
     void        Put(const string& _path, const VFSHostPtr &_host, NSImageRep *_img);
     
 private:

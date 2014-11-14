@@ -55,6 +55,11 @@ const char *VFSArchiveUnRARHost::FSTag() const
     return Tag;
 }
 
+bool VFSArchiveUnRARHost::IsImmutableFS() const noexcept
+{
+    return true;
+}
+
 bool VFSArchiveUnRARHost::IsRarArchive(const char *_archive_native_path)
 {
     if(_archive_native_path == nullptr ||

@@ -379,3 +379,13 @@ bool VFSHost::Exists(const char *_path, VFSCancelChecker _cancel_checker)
     VFSStat st;
     return Stat(_path, st, 0, _cancel_checker) == 0;
 }
+
+bool VFSHost::IsImmutableFS() const noexcept
+{
+    return false;
+}
+
+bool VFSHost::IsNativeFS() const noexcept
+{
+    return false;
+}

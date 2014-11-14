@@ -63,6 +63,7 @@ struct PanelViewStateStorage
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.wantsLayer = true;
         m_ScrollDY = 0.0;
         m_DisableCurrentMomentumScroll = false;
         m_IsCurrentlyMomentumScroll = false;

@@ -12,6 +12,7 @@
 #import <sys/dirent.h>
 #import "IconsGenerator.h"
 #import "QLThumbnailsCache.h"
+#import "QLVFSThumbnailsCache.h"
 #import "WorkspaceIconsCache.h"
 #import "Common.h"
 
@@ -380,10 +381,15 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
            !_meta->extension.empty()
            )
         {
-            _meta->thumbnail = ProduceThumbnailForVFS(_meta->relative_path.c_str(),
-                                                      _meta->extension.c_str(),
-                                                      _meta->host,
-                                                      m_IconSize.size);
+            NSImageRep *thumbnail = QLVFSThumbnailsCache::Instance().Get(_meta->relative_path, _meta->host);
+            if(!thumbnail) {
+                thumbnail = ProduceThumbnailForVFS(_meta->relative_path.c_str(),
+                                                   _meta->extension.c_str(),
+                                                   _meta->host,
+                                                   m_IconSize.size);
+                QLVFSThumbnailsCache::Instance().Put(_meta->relative_path, _meta->host, thumbnail);
+            }
+            _meta->thumbnail = thumbnail;
             if(_meta->thumbnail && m_UpdateCallback)
                 m_UpdateCallback();
         }

@@ -191,6 +191,9 @@
 		CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */; };
 		CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */; };
 		CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */; };
+		CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
+		CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
+		CF50B75F1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
@@ -1385,6 +1388,8 @@
 		CF50B73D1A15173100E3D96D /* VFSGenericMemReadOnlyFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSGenericMemReadOnlyFile.h; path = vfs/VFSGenericMemReadOnlyFile.h; sourceTree = "<group>"; };
 		CF50B73E1A15173100E3D96D /* VFSSeqToRandomWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSSeqToRandomWrapper.h; path = vfs/VFSSeqToRandomWrapper.h; sourceTree = "<group>"; };
 		CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSSeqToRandomWrapper.mm; path = vfs/VFSSeqToRandomWrapper.mm; sourceTree = "<group>"; };
+		CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLVFSThumbnailsCache.mm; sourceTree = "<group>"; };
+		CF50B75C1A1607AA00E3D96D /* QLVFSThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLVFSThumbnailsCache.h; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationVFSJob.mm; sourceTree = "<group>"; };
@@ -1932,6 +1937,8 @@
 				CF29312E17D79BA100648A90 /* IconsGenerator.mm */,
 				CF3FCE071908C49400E55698 /* QLThumbnailsCache.h */,
 				CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */,
+				CF50B75C1A1607AA00E3D96D /* QLVFSThumbnailsCache.h */,
+				CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */,
 				CF14BE171931AD40008DDF6A /* WorkspaceIconsCache.h */,
 				CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */,
 			);
@@ -3557,6 +3564,7 @@
 				CF6D9C0C196678000077B146 /* TermSingleTask.mm in Sources */,
 				CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CF6D9C0D196678000077B146 /* MainWindowExternalTerminalEditorState.mm in Sources */,
+				CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
 				CF6D9C0E196678000077B146 /* OperationStats.mm in Sources */,
 				CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
 				CF6D9C0F196678000077B146 /* OperationJob.mm in Sources */,
@@ -3844,6 +3852,7 @@
 				CF9D0ED517CC961100CB8146 /* archive_write_set_format_v7tar.c in Sources */,
 				CF9D0E8717CC961100CB8146 /* archive_read_append_filter.c in Sources */,
 				CF9D0ED817CC961100CB8146 /* archive_write_set_format.c in Sources */,
+				CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
 				CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CFB060DD172E6AC4001F6949 /* Common.mm in Sources */,
 				B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */,
@@ -4131,6 +4140,7 @@
 				CFF6F2DF1A13567C00011177 /* archive_write_set_format_v7tar.c in Sources */,
 				CFF6F2E01A13567C00011177 /* archive_read_append_filter.c in Sources */,
 				CFF6F2E11A13567C00011177 /* archive_write_set_format.c in Sources */,
+				CF50B75F1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
 				CFF6F2E21A13567C00011177 /* MMTabBarStyle.mm in Sources */,
 				CFF6F2E31A13567C00011177 /* Common.mm in Sources */,
 				CFF6F2E41A13567C00011177 /* OperationStats.mm in Sources */,

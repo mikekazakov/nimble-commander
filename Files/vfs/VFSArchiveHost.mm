@@ -668,3 +668,26 @@ const VFSArchiveHost::Symlink *VFSArchiveHost::ResolvedSymlink(uint32_t _uid)
     
     return &iter->second;
 }
+
+int VFSArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, VFSCancelChecker _cancel_checker)
+{
+    auto entry = FindEntry(_symlink_path);
+    if(!entry)
+        return VFSError::NotFound;
+    
+    if( (entry->st.st_mode & S_IFMT) != S_IFLNK )
+        return VFSError::FromErrno(EINVAL);
+        
+    auto symlink_it = m_Symlinks.find(entry->aruid);
+    if(symlink_it == end(m_Symlinks))
+        return VFSError::NotFound;
+
+    auto &val = symlink_it->second.value;
+    
+    if(val.size() >= _buffer_size)
+        return VFSError::SmallBuffer;
+
+    strcpy(_buffer, val.c_str());
+    
+    return VFSError::Ok;
+}

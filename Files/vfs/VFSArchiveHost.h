@@ -49,6 +49,8 @@ public:
     
     virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
     
+    virtual int ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, VFSCancelChecker _cancel_checker) override;
+    
     virtual bool ShouldProduceThumbnails() const override;
 
     inline uint32_t StatTotalFiles() const { return m_TotalFiles; }

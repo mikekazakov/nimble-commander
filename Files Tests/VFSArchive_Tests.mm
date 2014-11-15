@@ -99,6 +99,10 @@ static const string g_Adium = g_Preffix + "adium.app.zip";
     
     XCTAssert( host->IsDirectory("/Adium.app/Contents/Frameworks/Adium.framework/Headers", 0, 0) == true );
     XCTAssert( host->IsSymlink  ("/Adium.app/Contents/Frameworks/Adium.framework/Headers", VFSFlags::F_NoFollow, 0) == true );
+    
+    char buf[MAXPATHLEN+1];
+    XCTAssert( host->ReadSymlink("/Adium.app/Contents/Frameworks/Adium.framework/Adium", buf, MAXPATHLEN, 0) == 0 );
+    XCTAssert( "Versions/Current/Adium"s == buf );
 }
 
 - (void)testAdiumZip_XAttrs

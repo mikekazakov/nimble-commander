@@ -248,23 +248,20 @@ static bool IsAppleDouble(const void *_memory_buf, size_t _memory_size)
     return true;
 }
 
-AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
-                                        size_t      _memory_size,
-                                        size_t     *_ea_count
-                                        )
+vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size)
 {
-    if(!_memory_buf || !_memory_size || !_ea_count)
-        return 0;
+    if(!_memory_buf || !_memory_size)
+        return vector<AppleDoubleEA>();
 
     if(!IsAppleDouble(_memory_buf, _memory_size))
-        return 0;
+        return vector<AppleDoubleEA>();
     
     apple_double_header_t adhdr = *(const apple_double_header_t *) _memory_buf;
     swap_adhdr(&adhdr);
   
     bool has_finfo = memcmp(adhdr.finfo, emptyfinfo, sizeof(emptyfinfo)) != 0;
     
-    AppleDoubleEA *eas = 0;
+    vector<AppleDoubleEA> eas;
     int eas_last = 0;
     
     if(adhdr.entries[0].length > FINDERINFOSIZE)
@@ -275,7 +272,7 @@ AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
         if (attrhdr.magic == ATTR_HDR_MAGIC)
         {
             int count = attrhdr.num_attrs;
-            eas = (AppleDoubleEA*) malloc( sizeof(AppleDoubleEA) * (has_finfo ? count + 1 : count) );
+            eas.resize( has_finfo ? count + 1 : count );
             
             const attr_entry_t *entry = (const attr_entry_t *)((char*)_memory_buf + sizeof(attr_header_t));
             for (int i = 0; i < count; i++)
@@ -311,8 +308,8 @@ AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
     
     if(has_finfo)
     {
-        if(!eas) // no extended attributes except FinderInfo was found
-            eas = (AppleDoubleEA*) malloc( sizeof(AppleDoubleEA) );
+        if(eas.empty()) // no extended attributes except FinderInfo was found
+            eas.resize(1);
         eas[eas_last].data = &((const apple_double_header_t *)_memory_buf)->finfo[0];
         eas[eas_last].data_sz = 32;
         eas[eas_last].name = XATTR_FINDERINFO_NAME; // "com.apple.FinderInfo"
@@ -320,9 +317,7 @@ AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
         ++eas_last;
     }
     
-    *_ea_count = eas_last;
-    
-    return eas;
+    return move(eas);
 }
 
 void *BuildAppleDoubleFromEA(shared_ptr<VFSFile> _file,

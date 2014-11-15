@@ -32,8 +32,8 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     bool                         m_ToolbarVisible;
 }
 
-@synthesize FilePanelState = m_PanelState;
-@synthesize TerminalState = m_Terminal;
+@synthesize filePanelsState = m_PanelState;
+@synthesize terminalState = m_Terminal;
 @synthesize toolbarVisible = m_ToolbarVisible;
 
 - (id)init {

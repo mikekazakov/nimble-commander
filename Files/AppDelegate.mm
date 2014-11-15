@@ -283,23 +283,18 @@
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
 {
-    BOOL has_running_ops = NO;
-    for (MainWindowController *wincont : m_MainWindows)
-    {
-        if (wincont.OperationsController.OperationsCount > 0)
-        {
-            has_running_ops = YES;
+    bool has_running_ops = false;
+    for (MainWindowController *wincont: m_MainWindows)
+        if (wincont.OperationsController.OperationsCount > 0) {
+            has_running_ops = true;
             break;
         }
-        if(wincont.TerminalState && [wincont.TerminalState IsAnythingRunning])
-        {
-            has_running_ops = YES;
+        else if(wincont.terminalState && wincont.terminalState.isAnythingRunning) {
+            has_running_ops = true;
             break;
         }
-    }
     
-    if (has_running_ops)
-    {
+    if (has_running_ops) {
         NSAlert *alert = [[NSAlert alloc] init];
         [alert setMessageText:@"The application has running operations. Do you want to stop all operations and quit?"];
         [alert addButtonWithTitle:@"Stop And Quit"];
@@ -309,10 +304,9 @@
         // If cancel is pressed.
         if (result == NSAlertSecondButtonReturn) return NSTerminateCancel;
         
-        for (MainWindowController *wincont : m_MainWindows)
-        {
+        for (MainWindowController *wincont : m_MainWindows) {
             [wincont.OperationsController Stop];
-            [wincont.TerminalState Terminate];
+            [wincont.terminalState Terminate];
         }
     }
     
@@ -427,7 +421,7 @@
     {
         [target_window makeKeyAndOrderFront:self];
         MainWindowController *contr = (MainWindowController*)[target_window windowController];
-        [contr.FilePanelState RevealEntries:std::move(filenames) inPath:common_path];
+        [contr.filePanelsState RevealEntries:std::move(filenames) inPath:common_path];
     }
 }
 

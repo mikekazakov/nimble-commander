@@ -9,7 +9,9 @@
 #import "tests_common.h"
 #import "VFS.h"
 
-static string g_Preffix = "/.FilesTestingData/archives/";
+static const string g_Preffix = "/.FilesTestingData/archives/";
+static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
+static const string g_Adium = g_Preffix + "adium.app.zip";
 
 @interface VFSArchive_Tests : XCTestCase
 
@@ -19,7 +21,7 @@ static string g_Preffix = "/.FilesTestingData/archives/";
 
 - (void)testXNUSource_TAR
 {
-    auto host = make_shared<VFSArchiveHost>((g_Preffix+"xnu-2050.18.24.tar").c_str(), VFSNativeHost::SharedHost());
+    auto host = make_shared<VFSArchiveHost>(g_XNU.c_str(), VFSNativeHost::SharedHost());
 
     XCTAssert( host->Open() == 0 );
     XCTAssert( host->StatTotalDirs() == 246 );
@@ -77,7 +79,7 @@ static string g_Preffix = "/.FilesTestingData/archives/";
 // contains symlinks
 - (void)testAdiumZip
 {
-    auto host = make_shared<VFSArchiveHost>((g_Preffix+"adium.app.zip").c_str(), VFSNativeHost::SharedHost());
+    auto host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
     XCTAssert( host->Open() == 0 );
     
     VFSStat st;
@@ -99,5 +101,31 @@ static string g_Preffix = "/.FilesTestingData/archives/";
     XCTAssert( host->IsSymlink  ("/Adium.app/Contents/Frameworks/Adium.framework/Headers", VFSFlags::F_NoFollow, 0) == true );
 }
 
+- (void)testAdiumZip_XAttrs
+{
+    auto host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+    XCTAssert( host->Open() == 0 );
+
+    VFSFilePtr file;
+    char buf[4096];
+    ssize_t sz;
+    
+    // com.apple.quarantine has a special treating, value in archive differs from a plain value returned from xattr util
+    XCTAssert( host->CreateFile("/Adium.app/Contents/MacOS/Adium", file, 0) == 0 );
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == 0 );
+    XCTAssert( file->XAttrCount() == 1 );
+    XCTAssert( (sz = file->XAttrGet("com.apple.quarantine", buf, sizeof(buf))) == 60 );
+    XCTAssert( strncmp(buf, "q/0042;50f14fe0;Safari;9A8E9C25-2CA8-4A2C-8A45-852A966494A1", sz) == 0 );
+    file.reset();
+    
+    XCTAssert( host->CreateFile("/Adium.app/Icon\r", file, 0) == 0 );
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == 0 );
+    XCTAssert( file->XAttrCount() == 2 );
+    XCTAssert( (sz = file->XAttrGet("com.apple.FinderInfo", buf, sizeof(buf))) == 32 );
+    const uint8_t finfo[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    XCTAssert( memcmp(buf, finfo, sz) == 0 );
+    file.reset();
+}
 
 @end

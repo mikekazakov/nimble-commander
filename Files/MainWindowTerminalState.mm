@@ -270,7 +270,7 @@
     [m_View setNeedsDisplay];
 }
 
-- (bool) IsAnythingRunning
+- (bool) isAnythingRunning
 {
     auto state = m_Task->State();
     return state == TermShellTask::StateProgramExternal || state == TermShellTask::StateProgramInternal;

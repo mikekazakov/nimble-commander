@@ -24,10 +24,7 @@ struct AppleDoubleEA
   * Return NULL or array of AppleDoubleEA (number of _ea_count) allocated with malloc.
   * Caller is responsible for deallocating this memory.
   */
-AppleDoubleEA *ExtractEAFromAppleDouble(const void *_memory_buf,
-                                       size_t      _memory_size,
-                                       size_t     *_ea_count
-                                       );
+vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size);
 
 void *BuildAppleDoubleFromEA(shared_ptr<VFSFile> _file,
                              size_t *_buf_sz);

@@ -34,8 +34,7 @@ public:
     virtual ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const override;
 private:
     unique_ptr<VFSArchiveState> m_State;
-    AppleDoubleEA *m_EA;
-    size_t         m_EACount;
+    vector<AppleDoubleEA> m_EA;
     ssize_t        m_Position;
     ssize_t        m_Size;
 };

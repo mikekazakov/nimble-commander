@@ -170,10 +170,10 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     MainWindowFilePanelState *owner = m_Owner;
     [owner GetFilePanelsNativePaths:current_paths];
     
-    auto main_wnd_controllers = [(AppDelegate*)[NSApplication sharedApplication].delegate GetMainWindowControllers];
+    auto main_wnd_controllers = AppDelegate.me.GetMainWindowControllers;
     for(auto ctr: main_wnd_controllers)
     {
-        MainWindowFilePanelState *state = [ctr FilePanelState];
+        MainWindowFilePanelState *state = ctr.filePanelsState;
         if(state == owner)
             continue;
         

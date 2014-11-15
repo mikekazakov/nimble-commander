@@ -13,9 +13,7 @@
 #import "AppleDoubleEA.h"
 
 VFSArchiveFile::VFSArchiveFile(const char* _relative_path, shared_ptr<VFSArchiveHost> _host):
-    VFSFile(_relative_path, _host),
-    m_EA(0),
-    m_EACount(0)
+    VFSFile(_relative_path, _host)
 {
 }
 
@@ -52,7 +50,7 @@ int VFSArchiveFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 
     // read and parse metadata(xattrs) if any
     size_t s;
-    m_EA = ExtractEAFromAppleDouble(archive_entry_mac_metadata(state->Entry(), &s), s, &m_EACount);
+    m_EA = ExtractEAFromAppleDouble(archive_entry_mac_metadata(state->Entry(), &s), s);
     
     m_Position = 0;
     m_Size = archive_entry_size(state->Entry());
@@ -70,11 +68,6 @@ int VFSArchiveFile::Close()
 {
     dynamic_pointer_cast<VFSArchiveHost>(Host())->CommitState( move(m_State) );
     m_State.reset();
-    
-    m_EACount = 0;
-    free(m_EA);
-    m_EA = 0;
-    
     return VFSError::Ok;
 }
 
@@ -127,17 +120,16 @@ ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
 
 unsigned VFSArchiveFile::XAttrCount() const
 {
-    return (unsigned)m_EACount;
+    return (unsigned)m_EA.size();
 }
 
 void VFSArchiveFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
 {
-    if(!_handler || m_EACount == 0)
+    if(!_handler || m_EA.empty())
         return;
-    assert(m_EA != 0);
     
-    for(int i = 0; i < m_EACount; ++i)
-        if( !_handler(m_EA[i].name) )
+    for(auto &i: m_EA)
+        if( !_handler(i.name) )
             break;
 }
 
@@ -146,14 +138,13 @@ ssize_t VFSArchiveFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t 
     if(!IsOpened() || !_xattr_name)
         return SetLastError(VFSError::InvalidCall);
     
-    for(int i = 0; i < m_EACount; ++i)
-        if(strcmp(m_EA[i].name, _xattr_name) == 0)
-        {
+    for(auto &i: m_EA)
+        if(strcmp(i.name, _xattr_name) == 0) {
             if(_buffer == 0)
-                return m_EA[i].data_sz;
+                return i.data_sz;
     
-            size_t sz = min(m_EA[i].data_sz, (uint32_t)_buf_size);
-            memcpy(_buffer, m_EA[i].data, sz);
+            size_t sz = min(i.data_sz, (uint32_t)_buf_size);
+            memcpy(_buffer, i.data, sz);
             return sz;
         }
 

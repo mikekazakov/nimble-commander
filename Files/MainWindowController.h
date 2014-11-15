@@ -30,8 +30,8 @@
                                           file:(const string&)_file_path;
 
 // Access to states
-@property (nonatomic, readonly) MainWindowFilePanelState* FilePanelState; // one and only one per window
-@property (nonatomic, readonly) MainWindowTerminalState* TerminalState;// zero or one per window
+@property (nonatomic, readonly) MainWindowFilePanelState*   filePanelsState;  // one and only one per window
+@property (nonatomic, readonly) MainWindowTerminalState*    terminalState;    // zero or one per window
 @property (nonatomic, readonly) id<MainWindowStateProtocol> topmostState;
 
 // Toolbar support

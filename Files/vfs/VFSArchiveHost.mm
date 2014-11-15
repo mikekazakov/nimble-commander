@@ -155,7 +155,9 @@ int VFSArchiveHost::ReadArchiveListing()
         entry->st = *stat;
         m_ArchivedFilesTotalSize += stat->st_size;
         
-        m_EntryByUID.emplace(entry->aruid, make_pair(parent_dir, entry_index_in_dir));
+        if(m_EntryByUID.size() <= entry->aruid)
+            m_EntryByUID.resize( entry->aruid+1 , make_pair(nullptr, 0) );
+        m_EntryByUID[entry->aruid] = make_pair(parent_dir, entry_index_in_dir);
         
         if(issymlink) { // read any symlink values at archive opening time
             const char *link = archive_entry_symlink(aentry);
@@ -411,12 +413,11 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
 
 const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(uint32_t _uid)
 {
-    auto entry_iter = m_EntryByUID.find(_uid);
-    if(entry_iter == end(m_EntryByUID))
+    if(!_uid || _uid >= m_EntryByUID.size())
         return nullptr;
     
-    auto dir = entry_iter->second.first;
-    auto ind = entry_iter->second.second;
+    auto dir = m_EntryByUID[_uid].first;
+    auto ind = m_EntryByUID[_uid].second;
     
     assert( ind < dir->entries.size() );
     return &dir->entries[ind];
@@ -604,6 +605,9 @@ struct archive* VFSArchiveHost::SpawnLibarchive()
 
 void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
 {
+    if(!_uid || _uid >= m_EntryByUID.size())
+        return;
+    
     auto iter = m_Symlinks.find(_uid);
     if(iter == end(m_Symlinks))
         return;
@@ -614,12 +618,8 @@ void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
         return; // was resolved in race condition
     
     symlink.state = SymlinkState::Invalid;
-    
-    auto symlink_entry_iter = m_EntryByUID.find(_uid);
-    if(symlink_entry_iter == end(m_EntryByUID))
-        return;
-    
-    path dir_path = symlink_entry_iter->second.first->full_path;
+        
+    path dir_path = m_EntryByUID[_uid].first->full_path;
     path symlink_path = symlink.value;
     if(symlink_path.is_relative()) {
         path result_path = dir_path;

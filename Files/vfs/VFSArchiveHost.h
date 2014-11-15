@@ -135,7 +135,7 @@ private:
     map<uint32_t, Symlink>                  m_Symlinks;
     recursive_mutex                         m_SymlinksResolveLock;
     
-    map<uint32_t, pair<VFSArchiveDir*, uint32_t> > m_EntryByUID; // points to directory and entry No inside it
+    vector< pair<VFSArchiveDir*, uint32_t>> m_EntryByUID; // points to directory and entry No inside it
     list<unique_ptr<VFSArchiveState>>       m_States;
     mutex                                   m_StatesLock;
 };

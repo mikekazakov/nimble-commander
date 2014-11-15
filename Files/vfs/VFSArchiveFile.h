@@ -11,7 +11,6 @@
 #import "VFSArchiveHost.h"
 #import "VFSFile.h"
 
-struct VFSArchiveMediator;
 struct AppleDoubleEA;
 
 class VFSArchiveFile : public VFSFile

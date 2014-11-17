@@ -336,7 +336,11 @@ int VFSArchiveHost::IterateDirectoryListing(const char *_path, function<bool(con
         return VFSError::NotFound;
 
     char buf[1024];
-    strcpy(buf, _path);
+
+    int ret = ResolvePathIfNeeded(_path, buf, 0);
+    if(ret < 0)
+        return ret;
+        
     if(buf[strlen(buf)-1] != '/')
         strcat(buf, "/"); // we store directories with trailing slash
     
@@ -618,17 +622,26 @@ void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
         return; // was resolved in race condition
     
     symlink.state = SymlinkState::Invalid;
+    
+    if(symlink.value == "." ||
+       symlink.value == "./") {
+        // special treating for some weird cases
+        symlink.state = SymlinkState::Loop;
+        return;
+    }
         
     path dir_path = m_EntryByUID[_uid].first->full_path;
     path symlink_path = symlink.value;
+    path result_path;
     if(symlink_path.is_relative()) {
-        path result_path = dir_path;
+        result_path = dir_path;
 //        printf("%s\n", result_path.c_str());
         
-        // TODO: process possible ".." entries
+        // TODO: process possible ".." and entries
         // TODO: check for loops
         for(auto &i: symlink_path) {
-            result_path /= i;
+            if( i != "." )
+                result_path /= i;
 //            printf("%s\n", result_path.c_str());
             
             uint32_t curr_uid = ItemUID(result_path.c_str());
@@ -647,14 +660,17 @@ void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
                 result_path = s.target_path;
             }
         }
-        
-        uint32_t result_uid = ItemUID(result_path.c_str());
-        if(result_uid == 0)
-            return;
-        symlink.target_path = result_path.native();
-        symlink.target_uid = result_uid;
-        symlink.state = SymlinkState::Resolved;
     }
+    else {
+        result_path = symlink_path;
+    }
+    
+    uint32_t result_uid = ItemUID(result_path.c_str());
+    if(result_uid == 0)
+        return;
+    symlink.target_path = result_path.native();
+    symlink.target_uid = result_uid;
+    symlink.state = SymlinkState::Resolved;
 }
 
 const VFSArchiveHost::Symlink *VFSArchiveHost::ResolvedSymlink(uint32_t _uid)

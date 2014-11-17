@@ -13,7 +13,7 @@
 #import "FileCopyOperationJobFromGeneric.h"
 #import "Common.h"
 
-#define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
+static const int g_MinPreallocSize = 4096; // will try to preallocate files only if they are larger than 4k
 
 static void AdjustFileTimes(int _target_fd, VFSStat *_with_times)
 {
@@ -67,6 +67,7 @@ void FileCopyOperationJobFromGeneric::Init(chained_strings _src_files,
     if(m_SrcDir[strlen(m_SrcDir) - 1] != '/') strcat(m_SrcDir, "/");
         
     strcpy(m_Destination, _dest);
+    if(m_Destination[strlen(m_Destination) - 1] != '/') strcat(m_Destination, "/");
 }
 
 void FileCopyOperationJobFromGeneric::Do()
@@ -114,23 +115,27 @@ void FileCopyOperationJobFromGeneric::ScanItem(const char *_full_path, const cha
     VFSStat stat_buffer;
     
 retry_stat:
-    int stat_ret = m_SrcHost->Stat(fullpath, stat_buffer, 0, 0); // no symlinks support currently
+    int stat_ret = m_SrcHost->Stat(fullpath, stat_buffer, m_Options.preserve_symlinks ? VFSFlags::F_NoFollow : 0, 0);
     
     if(stat_ret == VFSError::Ok)
     {        
         if(S_ISREG(stat_buffer.mode))
         {
-            m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
+            m_ItemFlags.push_back(ItemFlags::no_flags);
             m_ScannedItems.push_back(_short_path, _prefix);
             m_SourceNumberOfFiles++;
             m_SourceTotalBytes += stat_buffer.size;
+        }
+        else if(S_ISLNK(stat_buffer.mode)) {
+            m_ItemFlags.push_back(ItemFlags::is_symlink);
+            m_ScannedItems.push_back(_short_path, _prefix);
         }
         else if(S_ISDIR(stat_buffer.mode))
         {
 //            m_IsSingleFileCopy = false;
             char dirpath[MAXPATHLEN];
             sprintf(dirpath, "%s/", _short_path);
-            m_ItemFlags.push_back((uint8_t)ItemFlags::is_dir);
+            m_ItemFlags.push_back(ItemFlags::is_dir);
             m_ScannedItems.push_back(dirpath, _prefix);
             auto dirnode = &m_ScannedItems.back();
             m_SourceNumberOfDirectories++;
@@ -206,15 +211,51 @@ void FileCopyOperationJobFromGeneric::ProcessItem(const chained_strings::node *_
     
     if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy item into itself
     
-    if(m_ItemFlags[_number] & (int)ItemFlags::is_dir)
-    {
+    if(m_ItemFlags[_number] & ItemFlags::is_dir) {
         assert(itemname[strlen(itemname)-1] == '/');
         CopyDirectoryTo(sourcepath, destinationpath);
     }
+    else if(m_ItemFlags[_number] & ItemFlags::is_symlink)
+        CreateSymlinkTo(sourcepath, destinationpath);
     else
-    {
         CopyFileTo(sourcepath, destinationpath);
+}
+
+bool FileCopyOperationJobFromGeneric::CreateSymlinkTo(const char *_source_symlink, const char* _tagret_symlink)
+{
+    char linkpath[MAXPATHLEN];
+    int result;
+    int sz;
+    bool was_succesful = false;
+doreadlink:
+    sz = m_SrcHost->ReadSymlink(_source_symlink, linkpath, MAXPATHLEN, 0);
+    if(sz < 0)
+    {   // failed to read original symlink
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantAccessSrcFile:VFSError::ToNSError((int)sz) ForFile:_source_symlink] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto doreadlink;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
+    
+dosymlink:
+    result = symlink(linkpath, _tagret_symlink);
+    if(result != 0)
+    {   // failed to create a symlink
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation OnCopyCantOpenDestFile:ErrnoToNSError() ForFile:_tagret_symlink] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto dosymlink;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    }
+    
+    was_succesful = true;
+    
+cleanup:
+    
+    return was_succesful;
 }
 
 bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const char *_dest)
@@ -409,7 +450,7 @@ opendest: // open file descriptor for destination
     fcntl(destinationfd, F_NOCACHE, 1);
     
     // preallocate space for data since we dont want to trash our disk
-    if(preallocate_delta > MIN_PREALLOC_SIZE)
+    if(preallocate_delta > g_MinPreallocSize)
     {
         fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, preallocate_delta};
         if(fcntl(destinationfd, F_PREALLOCATE, &preallocstore) == -1)

@@ -8,10 +8,60 @@
 
 #import "tests_common.h"
 #import "VFS.h"
+#import "FileCopyOperation.h"
 
 static const string g_Preffix = "/.FilesTestingData/archives/";
 static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
 static const string g_Adium = g_Preffix + "adium.app.zip";
+
+static int VFSCompareEntries(const path& _file1_full_path,
+                             const VFSHostPtr& _file1_host,
+                             const path& _file2_full_path,
+                             const VFSHostPtr& _file2_host,
+                             int &_result)
+{
+    // not comparing flags, perm, times, xattrs, acls etc now
+    
+    VFSStat st1, st2;
+    int ret;
+    if((ret =_file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, 0)) < 0)
+        return ret;
+    
+    if((ret =_file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, 0)) < 0)
+        return ret;
+    
+    if((st1.mode & S_IFMT) != (st2.mode & S_IFMT)) {
+        _result = -1;
+        return 0;
+    }
+    
+    if( S_ISREG(st1.mode) ) {
+        if(int64_t(st1.size) - int64_t(st2.size) != 0)
+            _result = int(int64_t(st1.size) - int64_t(st2.size));
+    }
+    else if( S_ISLNK(st1.mode) ) {
+        char link1[MAXPATHLEN], link2[MAXPATHLEN];
+        if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, 0)) < 0)
+            return ret;
+        if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, 0)) < 0)
+            return ret;
+        if( strcmp(link1, link2) != 0)
+            _result = strcmp(link1, link2);
+    }
+    else if ( S_ISDIR(st1.mode) ) {
+        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+            int ret = VFSCompareEntries( _file1_full_path / _dirent.name,
+                                        _file1_host,
+                                        _file2_full_path / _dirent.name,
+                                        _file2_host,
+                                        _result);
+            if(ret != 0)
+                return false;
+            return true;
+        });
+    }
+    return 0;
+}
 
 @interface VFSArchive_Tests : XCTestCase
 
@@ -130,6 +180,53 @@ static const string g_Adium = g_Preffix + "adium.app.zip";
                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     XCTAssert( memcmp(buf, finfo, sz) == 0 );
     file.reset();
+}
+
+- (void)testAdiumZip_CopyFromVFS
+{
+    auto dir = self.makeTmpDir;
+    
+    auto host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+    XCTAssert( host->Open() == 0 );
+    
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    op = [op initWithFiles:chained_strings("Adium.app")
+                      root:"/"
+                   rootvfs:host
+                      dest:dir.c_str()
+                   options:FileCopyOperationOptions()];
+    
+
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Adium.app", host, dir / "Adium.app", VFSNativeHost::SharedHost(), result) == 0);
+    XCTAssert( result == 0 );
+    XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
+}
+
+- (path)makeTmpDir
+{
+    char dir[MAXPATHLEN];
+    sprintf(dir, "%s" __FILES_IDENTIFIER__ ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+    XCTAssert( mkdtemp(dir) != nullptr );
+    return dir;
+}
+
+- (void) waitUntilFinish:(volatile bool&)_finished
+{
+    microseconds sleeped = 0us, sleep_tresh = 60s;
+    while (!_finished)
+    {
+        this_thread::sleep_for(100us);
+        sleeped += 100us;
+        XCTAssert( sleeped < sleep_tresh);
+        if(sleeped > sleep_tresh)
+            break;
+    }
 }
 
 @end

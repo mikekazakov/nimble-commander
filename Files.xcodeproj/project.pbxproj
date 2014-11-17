@@ -1181,7 +1181,7 @@
 		B52D9A82173D329F00EC7154 /* PanelViewTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanelViewTypes.h; sourceTree = "<group>"; };
 		B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentation.h; sourceTree = "<group>"; };
 		B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentation.mm; sourceTree = "<group>"; };
-		B52EB79217228B73004ABC2E /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
+		B52EB79217228B73004ABC2E /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = Files/Defaults.plist; sourceTree = "<group>"; };
 		B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionSheetController.h; sourceTree = "<group>"; };
 		B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionSheetController.mm; sourceTree = "<group>"; };
 		B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileDeletionSheetController.xib; sourceTree = "<group>"; };
@@ -1444,7 +1444,7 @@
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
 		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
-		CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ShortcutsDefaults.plist; sourceTree = "<group>"; };
+		CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ShortcutsDefaults.plist; path = Files/ShortcutsDefaults.plist; sourceTree = "<group>"; };
 		CF7C920B1A07458900FAE649 /* MMTabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTabBarStyle.h; sourceTree = "<group>"; };
 		CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MMTabBarStyle.mm; sourceTree = "<group>"; };
 		CF7C92131A0B865D00FAE649 /* tab_add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_add.png; path = Resource/tab_add.png; sourceTree = "<group>"; };
@@ -2797,6 +2797,9 @@
 				CFDA1110177E8A15009E29F7 /* 3rd_party */,
 				CFC5121A16C4BD3D00D247EE /* Files */,
 				B51014CF170721340023FF24 /* Resources */,
+				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
+				B52EB79217228B73004ABC2E /* Defaults.plist */,
+				CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */,
 				CFC5121316C4BD3D00D247EE /* Frameworks */,
 				CFC5121216C4BD3D00D247EE /* Products */,
 				CF47A983186C607C00745C4C /* Files Tests */,
@@ -2907,9 +2910,6 @@
 				CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */,
 				CFC5122016C4BD3D00D247EE /* main.m */,
 				CFC5122216C4BD3D00D247EE /* Files-Prefix.pch */,
-				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
-				B52EB79217228B73004ABC2E /* Defaults.plist */,
-				CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -4328,6 +4328,7 @@
 				CFC5122416C4BD3D00D247EE /* en */,
 			);
 			name = Credits.rtf;
+			path = Files;
 			sourceTree = "<group>";
 		};
 		CFC5122916C4BD3D00D247EE /* MainMenu.xib */ = {

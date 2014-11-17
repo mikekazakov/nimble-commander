@@ -103,24 +103,18 @@ public:
                      int _flags,
                      VFSCancelChecker _cancel_checker);
     
-    /**
-     * Actually calls Stat and returns true if return was Ok.
-     */ 
+    /** Actually calls Stat and returns true if return was Ok. */
     virtual bool Exists(const char *_path,
                         VFSCancelChecker _cancel_checker = nullptr
                         );
     
-    /**
-     * Return zero upon succes, negative value on error.
-     */
+    /** Return zero upon succes, negative value on error. */
     virtual int ReadSymlink(const char *_symlink_path,
                             char *_buffer,
                             size_t _buffer_size,
                             VFSCancelChecker _cancel_checker);
 
-    /**
-     * Return zero upon succes, negative value on error.
-     */
+    /** Return zero upon succes, negative value on error. */
     virtual int CreateSymlink(const char *_symlink_path,
                               const char *_symlink_value,
                               VFSCancelChecker _cancel_checker);

@@ -39,11 +39,13 @@ private:
     void EraseXattrs(int _fd_in);
     void CopyXattrs(shared_ptr<VFSFile> _file, int _fd_to);
     void CopyXattrsFn(shared_ptr<VFSFile> _file, const char *_fn_to);
+    bool CreateSymlinkTo(const char *_source_symlink, const char* _tagret_symlink);
     
-    enum class ItemFlags
+    enum ItemFlags : uint8_t
     {
         no_flags    = 0b0000,
         is_dir      = 0b0001,
+        is_symlink  = 0b0010
     };
     
     enum {
@@ -65,7 +67,7 @@ private:
     
     DispatchGroup m_IOGroup;
     
-    vector<uint8_t> m_ItemFlags;    
+    vector<ItemFlags> m_ItemFlags;
     unsigned m_SourceNumberOfFiles;
     unsigned m_SourceNumberOfDirectories;
     unsigned long m_SourceTotalBytes;

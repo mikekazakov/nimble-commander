@@ -48,6 +48,7 @@ namespace configuration
     constexpr Version version                       = __FILES_VERSION_NUMBER__;
     constexpr const char *identifier                = __FILES_IDENTIFIER__;
     constexpr bool is_sandboxed                     = version <= Version::Pro;
+    constexpr bool is_for_app_store                 = version <= Version::Pro;
     constexpr bool has_psfs                         = version >= Version::Pro;
     constexpr bool has_terminal                     = version == Version::Full;
     constexpr bool has_brief_system_overview        = version >= Version::Pro;

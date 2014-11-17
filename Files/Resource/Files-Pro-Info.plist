@@ -38,7 +38,7 @@
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Files/Reveal in Files</string>
+				<string>Files Pro/Reveal in Files Pro</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>IClicked</string>

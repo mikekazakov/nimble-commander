@@ -496,44 +496,44 @@ public:
     /**
      * Returns a list of volumes in a system.
      */
-    vector<shared_ptr<NativeFileSystemInfo>> Volumes();
+    vector<shared_ptr<NativeFileSystemInfo>> Volumes() const;
     
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromPath(const string &_path);
+    shared_ptr<NativeFileSystemInfo> VolumeFromPath(const string &_path) const;
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromPath(const char* _path);
+    shared_ptr<NativeFileSystemInfo> VolumeFromPath(const char* _path) const;
     
     /**
      * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
      * so should be used very carefully only time-critical paths (this method dont make any syscalls).
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromPathFast(const string &_path);
+    shared_ptr<NativeFileSystemInfo> VolumeFromPathFast(const string &_path) const;
     
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const string &_mount_point);
+    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const string &_mount_point) const;
 
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const char *_mount_point);
+    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const char *_mount_point) const;
     
     /**
      * UpdateSpaceInformation() forces to fetch and recalculate space information contained in _volume.
      */
-    void UpdateSpaceInformation(shared_ptr<NativeFileSystemInfo> _volume);
+    void UpdateSpaceInformation(const shared_ptr<NativeFileSystemInfo> &_volume);
     
     /**
      * A very simple function with no error feedback.
@@ -560,7 +560,7 @@ private:
     void OnDidUnmount(string _on_path);
     void OnDidRename(string _old_path, string _new_path);
     
-    recursive_mutex                          m_Lock;
+    mutable recursive_mutex                  m_Lock;
     vector<shared_ptr<NativeFileSystemInfo>> m_Volumes;
     
     friend struct NativeFSManagerProxy2;

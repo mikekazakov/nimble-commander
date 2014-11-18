@@ -276,7 +276,7 @@ void NativeFSManager::OnDidMount(string _on_path)
         volume->mounted_at_path = _on_path;
         GetAllInfos(*volume.get());
         
-        m_Lock.lock();
+        lock_guard<recursive_mutex> lock(m_Lock);
         auto it = find_if(begin(m_Volumes),
                           end(m_Volumes),
                           [=] (shared_ptr<NativeFileSystemInfo>& _v) {
@@ -287,8 +287,6 @@ void NativeFSManager::OnDidMount(string _on_path)
             m_Volumes.erase(it);
         
         m_Volumes.emplace_back(volume);
-        
-        m_Lock.unlock();
     });
 }
 
@@ -340,13 +338,10 @@ void NativeFSManager::OnDidRename(string _old_path, string _new_path)
     FSEventsDirUpdate::OnVolumeDidUnmount(_old_path);
 }
 
-vector<shared_ptr<NativeFileSystemInfo>> NativeFSManager::Volumes()
+vector<shared_ptr<NativeFileSystemInfo>> NativeFSManager::Volumes() const
 {
-    m_Lock.lock();
-    auto copy = m_Volumes;
-    m_Lock.unlock();
-    
-    return copy;
+    lock_guard<recursive_mutex> lock(m_Lock);
+    return m_Volumes;
 }
 
 bool NativeFSManager::UpdateSpaceInfo(NativeFileSystemInfo &_volume)
@@ -367,24 +362,23 @@ bool NativeFSManager::UpdateSpaceInfo(NativeFileSystemInfo &_volume)
     return true;
 }
 
-void NativeFSManager::UpdateSpaceInformation(shared_ptr<NativeFileSystemInfo> _volume)
+void NativeFSManager::UpdateSpaceInformation(const shared_ptr<NativeFileSystemInfo> &_volume)
 {
     if(!_volume)
         return;
     
-    m_Lock.lock();
+    lock_guard<recursive_mutex> lock(m_Lock);
     UpdateSpaceInfo(*_volume.get());
-    m_Lock.unlock();
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(const string &_path)
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(const string &_path) const
 {
     shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
 
     if(_path.empty())
         return result;
 
-    m_Lock.lock();
+    lock_guard<recursive_mutex> lock(m_Lock);
     size_t best_fit_sz = 0;
     for(auto &vol: m_Volumes)
         if(_path.compare(0, vol->mounted_at_path.size(), vol->mounted_at_path) == 0 &&
@@ -394,54 +388,30 @@ shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(const strin
             result = vol;
         }
     
-    m_Lock.unlock();
-    
     return result;
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const string &_mount_point)
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const string &_mount_point) const
 {
-    shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
-    
-    m_Lock.lock();
-    
-    auto it = find_if(begin(m_Volumes),
-                      end(m_Volumes),
-                      [&] (shared_ptr<NativeFileSystemInfo>& _v) {
-                          return _v->mounted_at_path == _mount_point;
-                        }
-                      );
+    lock_guard<recursive_mutex> lock(m_Lock);
+    auto it = find_if(begin(m_Volumes), end(m_Volumes), [&](auto&_){ return _->mounted_at_path == _mount_point; } );
     if(it != end(m_Volumes))
-        result = *it;
-    
-    m_Lock.unlock();
-    
-    return result;
+        return *it;
+    return nullptr;
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const char *_mount_point)
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const char *_mount_point) const
 {
-    shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
     if(_mount_point == nullptr)
-        return result;
-    
-    m_Lock.lock();
-    
-    auto it = find_if(begin(m_Volumes),
-                      end(m_Volumes),
-                      [=] (shared_ptr<NativeFileSystemInfo>& _v) {
-                          return _v->mounted_at_path == _mount_point;
-                        }
-                      );
+        return nullptr;
+    lock_guard<recursive_mutex> lock(m_Lock);
+    auto it = find_if(begin(m_Volumes), end(m_Volumes), [=](auto&_){ return _->mounted_at_path == _mount_point; } );
     if(it != end(m_Volumes))
-        result = *it;
-    
-    m_Lock.unlock();
-    
-    return result;
+        return *it;
+    return nullptr;
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const string &_path)
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const string &_path) const
 {
     struct statfs info;
     if(statfs(_path.c_str(), &info) < 0)
@@ -450,7 +420,7 @@ shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const string &_
     return VolumeFromMountPoint((const char*)info.f_mntonname);
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const char* _path)
+shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const char* _path) const
 {
     struct statfs info;
     if(_path == nullptr ||

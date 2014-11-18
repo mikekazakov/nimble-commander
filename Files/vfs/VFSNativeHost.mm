@@ -225,12 +225,12 @@ cleanup:
 
 unsigned long VFSNativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
-    return FSEventsDirUpdate::Inst()->AddWatchPath(_path, _handler);
+    return FSEventsDirUpdate::Instance().AddWatchPath(_path, _handler);
 }
 
 void VFSNativeHost::StopDirChangeObserving(unsigned long _ticket)
 {
-    FSEventsDirUpdate::Inst()->RemoveWatchPathWithTicket(_ticket);
+    FSEventsDirUpdate::Instance().RemoveWatchPathWithTicket(_ticket);
 }
 
 int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)

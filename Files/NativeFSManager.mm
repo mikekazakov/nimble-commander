@@ -309,7 +309,7 @@ void NativeFSManager::OnDidUnmount(string _on_path)
     
     m_Lock.unlock();
     
-    FSEventsDirUpdate::OnVolumeDidUnmount(_on_path);
+    FSEventsDirUpdate::Instance().OnVolumeDidUnmount(_on_path);
 }
 
 void NativeFSManager::OnDidRename(string _old_path, string _new_path)
@@ -335,7 +335,7 @@ void NativeFSManager::OnDidRename(string _old_path, string _new_path)
 
     m_Lock.unlock();
 
-    FSEventsDirUpdate::OnVolumeDidUnmount(_old_path);
+    FSEventsDirUpdate::Instance().OnVolumeDidUnmount(_old_path);
 }
 
 vector<shared_ptr<NativeFileSystemInfo>> NativeFSManager::Volumes() const

@@ -12,7 +12,6 @@
 #import "Common.h"
 
 static const CFAbsoluteTime g_FSEventsLatency = 0.1;
-static FSEventsDirUpdate *g_Inst = 0;
 
 // ask FS about real file path - case sensitive etc
 // also we're getting rid of symlinks - it will be a real file
@@ -31,15 +30,14 @@ static bool GetRealPath(const char *_path_in, char *_path_out)
     return true;
 }
 
-FSEventsDirUpdate::FSEventsDirUpdate():
-    m_LastTicket(1) // no tickets #0, since it'is an error code 
+FSEventsDirUpdate::FSEventsDirUpdate()
 {
 }
 
-FSEventsDirUpdate *FSEventsDirUpdate::Inst()
+FSEventsDirUpdate &FSEventsDirUpdate::Instance()
 {
-    if(!g_Inst) g_Inst = new FSEventsDirUpdate(); // never deleting object
-    return g_Inst;
+    static auto inst = new FSEventsDirUpdate; // never deleting object
+    return *inst;
 }
 
 void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRef,
@@ -155,13 +153,12 @@ bool FSEventsDirUpdate::RemoveWatchPathWithTicket(unsigned long _ticket)
     return false;
 }
 
-void FSEventsDirUpdate::OnVolumeDidUnmount(string _on_path)
+void FSEventsDirUpdate::OnVolumeDidUnmount(const string &_on_path)
 {
     // when some volume is removed from system we force every panel to reload it's data
     // TODO: this is a brute approach, need to build a more intelligent volume monitoring machinery later
     // it should monitor paths of removed volumes and fires notification only for appropriate watches
-    FSEventsDirUpdate *me = Inst();
-    for(auto &i: me->m_Watches)
+    for(auto &i: m_Watches)
         for(auto &h: (*i).handlers)
             h.second();
 }

@@ -12,7 +12,7 @@
 class FSEventsDirUpdate
 {
 public:
-    static FSEventsDirUpdate *Inst();
+    static FSEventsDirUpdate &Instance();
  
     unsigned long AddWatchPath(const char *_path, function<void()> _handler);
     // zero returned value means error. any others - valid observation tickets
@@ -20,7 +20,7 @@ public:
     bool RemoveWatchPathWithTicket(unsigned long _ticket); // it's better to use this method
     
     // called exclusevily by NativeFSManager
-    static void OnVolumeDidUnmount(string _on_path);
+    void OnVolumeDidUnmount(const string &_on_path);
 private:
     struct WatchData
     {
@@ -29,7 +29,7 @@ private:
         vector<pair<unsigned long, function<void()>>> handlers;
     };
     vector<unique_ptr<WatchData>> m_Watches;
-    unsigned long           m_LastTicket;
+    unsigned long                 m_LastTicket = 1; // no tickets #0, since it'is an error code
         
     FSEventsDirUpdate();
     static void DiskDisappeared(DADiskRef disk, void *context);

@@ -14,13 +14,18 @@
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 - (IBAction)NewWindow:(id)sender;
-- (void) RemoveMainWindow:(MainWindowController*) _wnd;
 - (MainWindowController*) AllocateNewMainWindow;
-
+- (void) RemoveMainWindow:(MainWindowController*) _wnd;
 - (IBAction)OnMenuSendFeedback:(id)sender;
 
-- (vector<MainWindowController*>) GetMainWindowControllers;
+/**
+ * Runs a modal dialog window, which asks user if he wants to reset app settings.
+ * Returns true if defaults were actually reset.
+ */
+- (bool) askToResetDefaults;
 
+/** Returns all main windows currently present. */
+@property (nonatomic, readonly) vector<MainWindowController*> mainWindowControllers;
 
 /**
  * Equal to (AppDelegate*) ((NSApplication*)NSApp).delegate.
@@ -31,12 +36,6 @@
  * KVO-compatible property about current app skin.
  */
 @property (nonatomic, readonly) ApplicationSkin skin;
-
-/**
- * Runs a modal dialog window, which asks user if he wants to reset app settings.
- * Returns true if defaults were actually reset.
- */
-- (bool) askToResetDefaults;
 
 /**
  * Will set a progress indicator at the bottom of app icon to a specified value in [0; 1].

@@ -42,6 +42,7 @@
 @synthesize isRunningTests = m_IsRunningTests;
 @synthesize startupCWD = m_StartupCWD;
 @synthesize skin = m_Skin;
+@synthesize mainWindowControllers = m_MainWindows;
 
 - (id) init
 {
@@ -273,12 +274,9 @@
 
 - (void) RemoveMainWindow:(MainWindowController*) _wnd
 {
-    for(auto i = m_MainWindows.begin(); i < m_MainWindows.end(); ++i)
-        if(*i == _wnd)
-        {
-            m_MainWindows.erase(i);
-            break;
-        }
+    auto it = find(begin(m_MainWindows), end(m_MainWindows), _wnd);
+    if(it != end(m_MainWindows))
+        m_MainWindows.erase(it);
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
@@ -443,11 +441,6 @@
     }
     
     [m_PreferencesController showWindow:self];
-}
-
-- (vector<MainWindowController*>) GetMainWindowControllers
-{
-    return m_MainWindows;
 }
 
 - (IBAction)OnShowHelp:(id)sender

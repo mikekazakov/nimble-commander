@@ -11,6 +11,51 @@
 
 static NSString *g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 
+@interface SandboxManagerPanelDelegate : NSObject<NSOpenSavePanelDelegate>
+
+- (instancetype) initWithPath:(const string &)_path mandatory:(bool)_mandatory;
+
+@end
+
+@implementation SandboxManagerPanelDelegate
+{
+    path m_Path;
+    bool m_Mandatory;
+}
+
+- (instancetype) initWithPath:(const string &)_path mandatory:(bool)_mandatory
+{
+    self = [super init];
+    if(self) {
+        m_Mandatory = _mandatory;
+        m_Path = _path;
+        if(m_Path.filename() == ".")
+            m_Path.remove_filename();
+    }
+    return self;
+}
+
+- (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)_url
+{
+    if(!_url.fileURL)
+        return false;
+    if(!_url.path)
+        return false;
+    if(!_url.path.fileSystemRepresentation)
+        return false;
+    
+    if(!m_Mandatory)
+        return true;
+    
+    path p = _url.path.fileSystemRepresentation;
+    if(p.filename() == ".")
+        p.remove_filename();
+    
+    return p == m_Path;
+}
+
+@end
+
 SandboxManager &SandboxManager::Instance()
 {
     static SandboxManager *manager = nullptr;
@@ -79,18 +124,25 @@ bool SandboxManager::Empty() const
     return m_Bookmarks.empty();
 }
 
-bool SandboxManager::AskAccessForPathSync(const string& _path)
+bool SandboxManager::AskAccessForPathSync(const string& _path, bool _mandatory_path)
 {
+    // TODO: this stuff should work from non-main thread also.
     lock_guard<recursive_mutex> lock(m_Lock);
     
-    // TODO: this stuff should work from non-main thread also.
+    NSString *dir_string = [NSString stringWithUTF8String:_path.c_str()];
+    
+    // weird, but somehow NSOpenPanel refuses to go to ~/Documents directory by directoryURL(bug in OSX?)
+    // so also change last dir manually
+    [NSUserDefaults.standardUserDefaults setValue:dir_string forKey:@"NSNavLastRootDirectory"];
+
     NSOpenPanel * openPanel = NSOpenPanel.openPanel;
-    openPanel.message = @"Click 'OK' to allow access to files contained in the selected directory";
+    openPanel.message = @"Click 'Open' to allow access to files contained in the selected directory";
     openPanel.canChooseFiles = false;
     openPanel.canChooseDirectories = true;
     openPanel.allowsMultipleSelection = false;
-    NSURL *dir_url = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8String:_path.c_str()]];
-    openPanel.directoryURL = dir_url;
+    SandboxManagerPanelDelegate *delegate = [[SandboxManagerPanelDelegate alloc] initWithPath:_path mandatory:_mandatory_path];
+    openPanel.delegate = delegate;
+    openPanel.directoryURL = [[NSURL alloc] initFileURLWithPath:dir_string];
     long res = [openPanel runModal];
     if(res == NSModalResponseOK)
         if(NSURL *url = openPanel.URL) {
@@ -109,7 +161,7 @@ bool SandboxManager::AskAccessForPathSync(const string& _path)
                 Bookmark bm;
                 bm.data = bookmark_data;
                 bm.url = scoped_url;
-                bm.is_accessing = false;
+                bm.is_accessing = true;
                 bm.path = scoped_url.path.fileSystemRepresentation;
                 if(bm.path.filename() == ".") bm.path.remove_filename();
                 m_Bookmarks.emplace_back(bm);
@@ -154,6 +206,10 @@ bool SandboxManager::HasAccessToFolder(const path &_p) const
         if( s.length() <= p.native().length() &&
            mismatch(s.begin(), s.end(), p.native().begin()).first == s.end())
             return true;
+  
+    // special treating for /Volumes dir - can browse it by default, but not dirs inside it
+    if( p == "/Volumes")
+        return true;
     
     return false;
 }

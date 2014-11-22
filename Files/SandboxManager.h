@@ -34,7 +34,7 @@ public:
     /**
      * Will synchronously show NSOpenPanel.
      */
-    bool AskAccessForPathSync(const string& _path);
+    bool AskAccessForPathSync(const string& _path, bool _mandatory_path = true);
     
     /**
      * Removes any filesystem access granted by user.

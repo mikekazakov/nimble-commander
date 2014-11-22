@@ -17,11 +17,13 @@ static NativeFSManager *g_SharedFSManager;
 static vector<string> GetFullFSList()
 {
     struct statfs* mounts;
+    struct stat st;
     int num_mounts = getmntinfo(&mounts, MNT_WAIT);
     
     vector<string> result;
     for (int i = 0; i < num_mounts; i++)
-        result.emplace_back(mounts[i].f_mntonname);
+        if(lstat(mounts[i].f_mntonname, &st) == 0)
+            result.emplace_back(mounts[i].f_mntonname);
     
     return result;
 }

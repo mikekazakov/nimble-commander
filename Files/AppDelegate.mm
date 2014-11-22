@@ -136,7 +136,7 @@
     if(configuration::is_sandboxed) {
         auto &sm = SandboxManager::Instance();
         if(sm.Empty()) {
-            sm.AskAccessForPathSync(CommonPaths::Get(CommonPaths::Home));
+            sm.AskAccessForPathSync(CommonPaths::Get(CommonPaths::Home), false);
             if(m_MainWindows.empty())
                 [self AllocateNewMainWindow];
         }

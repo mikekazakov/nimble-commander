@@ -129,7 +129,17 @@ bool SandboxManager::AskAccessForPathSync(const string& _path, bool _mandatory_p
     // TODO: this stuff should work from non-main thread also.
     lock_guard<recursive_mutex> lock(m_Lock);
     
-    NSString *dir_string = [NSString stringWithUTF8String:_path.c_str()];
+    string req_path = _path;
+    
+    struct stat st;
+    if( lstat(req_path.c_str(), &st) == 0 && S_ISLNK(st.st_mode) ) {
+        // need to resolve symlink
+        char actualpath[MAXPATHLEN];
+        if(realpath(req_path.c_str(), actualpath))
+            req_path = actualpath;
+    }
+    
+    NSString *dir_string = [NSString stringWithUTF8String:req_path.c_str()];
     
     // weird, but somehow NSOpenPanel refuses to go to ~/Documents directory by directoryURL(bug in OSX?)
     // so also change last dir manually
@@ -140,7 +150,7 @@ bool SandboxManager::AskAccessForPathSync(const string& _path, bool _mandatory_p
     openPanel.canChooseFiles = false;
     openPanel.canChooseDirectories = true;
     openPanel.allowsMultipleSelection = false;
-    SandboxManagerPanelDelegate *delegate = [[SandboxManagerPanelDelegate alloc] initWithPath:_path mandatory:_mandatory_path];
+    SandboxManagerPanelDelegate *delegate = [[SandboxManagerPanelDelegate alloc] initWithPath:req_path mandatory:_mandatory_path];
     openPanel.delegate = delegate;
     openPanel.directoryURL = [[NSURL alloc] initFileURLWithPath:dir_string];
     long res = [openPanel runModal];
@@ -179,6 +189,14 @@ bool SandboxManager::HasAccessToFolder(const path &_p) const
     // currently doesn't accounts this and compares directly with characters
     
     auto p = _p;
+    struct stat st;
+    if( lstat(p.c_str(), &st) == 0 && S_ISLNK(st.st_mode) ) {
+        // need to resolve symlink
+        char actualpath[MAXPATHLEN];
+        if(realpath(p.c_str(), actualpath))
+            p = actualpath;
+    }
+    
     if(p.filename() == ".") p.remove_filename();
     
     // look in our bookmarks user has given

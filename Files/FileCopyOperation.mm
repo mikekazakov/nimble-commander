@@ -52,7 +52,7 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
     {
         // Set caption.
         char buff[MAXPATHLEN] = {0};
-        bool use_buff = GetDirectoryFromPath(_dest, buff, MAXPATHLEN);
+        bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
         int items_amount = _files.size();
         
         NSString *operation = _opts.docopy ? @"Copying" : @"Moving";
@@ -83,7 +83,7 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
     {
         // Set caption.
         char buff[MAXPATHLEN] = {0};
-        bool use_buff = GetDirectoryFromPath(_dest, buff, MAXPATHLEN);
+        bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
         int items_amount = _files.size();
         
         NSString *operation = _opts.docopy ? @"Copying" : @"Moving";
@@ -116,7 +116,7 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
     {
         // Set caption.
         char buff[MAXPATHLEN] = {0};
-        bool use_buff = GetDirectoryFromPath(_dest, buff, MAXPATHLEN);
+        bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
         int items_amount = _files.size();
         
         NSString *operation = _opts.docopy ? @"Copying" : @"Moving";

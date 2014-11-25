@@ -97,39 +97,6 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
     return str;
 }
 
-bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size)
-{
-    const char *second_sep = strrchr(_path, '/');
-    if (!second_sep) return false;
-    
-    // Path contains single / in the beginning.
-    if (second_sep == _path)
-    {
-        assert(_dir_size >= 2);
-        _dir_out[0] = '/';
-        _dir_out[1] = 0;
-        return true;
-    }
-    
-    // Searching for the second separator.
-    const char *first_sep = second_sep - 1;
-    for (; first_sep != _path && *first_sep != '/'; --first_sep);
-    
-    if (*first_sep != '/')
-    {
-        // Peculiar situation. Path contains only on /, and it is in the middle of the path.
-        // Assume that directory name is part of the path located to the left of the /.
-        first_sep = _path - 1;
-    }
-    
-    size_t len = second_sep - first_sep - 1;
-    assert(len + 1 <= _dir_size);
-    memcpy(_dir_out, first_sep + 1, len);
-    _dir_out[len + 1] = 0;
-    
-    return true;
-}
-
 static uint64_t InitGetTimeInNanoseconds();
 static uint64_t (*GetTimeInNanoseconds)() = InitGetTimeInNanoseconds;
 static mach_timebase_info_data_t info_data;
@@ -365,7 +332,7 @@ bool dispatch_is_main_queue() noexcept
     return NSThread.isMainThread;
 }
 
-void dispatch_to_main_queue(dispatch_block_t block)
+void dispatch_to_main_queue(dispatch_block_t block) noexcept
 {
     dispatch_async(dispatch_get_main_queue(), block);
 }
@@ -373,4 +340,35 @@ void dispatch_to_main_queue(dispatch_block_t block)
 void dispatch_or_run_in_main_queue(dispatch_block_t block)
 {
     dispatch_is_main_queue() ? block() : dispatch_to_main_queue(block);
+}
+
+MachTimeBenchmark::MachTimeBenchmark() noexcept:
+    last(machtime())
+{
+};
+
+nanoseconds MachTimeBenchmark::Delta() const
+{
+    return machtime() - last;
+}
+
+void MachTimeBenchmark::ResetNano(const char *_msg)
+{
+    auto now = machtime();
+    NSLog(@"%s%llu\n", _msg, (now - last).count());
+    last = now;
+}
+
+void MachTimeBenchmark::ResetMicro(const char *_msg)
+{
+    auto now = machtime();
+    NSLog(@"%s%llu\n", _msg, duration_cast<microseconds>(now - last).count());
+    last = now;
+}
+
+void MachTimeBenchmark::ResetMilli(const char *_msg)
+{
+    auto now = machtime();
+    NSLog(@"%s%llu\n", _msg, duration_cast<milliseconds>(now - last).count() );
+    last = now;
 }

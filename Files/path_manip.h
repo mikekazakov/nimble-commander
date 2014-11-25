@@ -28,6 +28,12 @@ bool EliminateTrailingSlashInPath(char *_path);
 bool GetFilenameFromPath(const char* _path, char *_buf);
 
 /**
+ * GetDirectoryNameFromPath returns a rightmost directory name.
+ * Assuming that path has a form /Abra/Cadabra/ or /Abra/Cadabra/1.txt, function will return Cadabra.
+ */
+bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, size_t _dir_size);
+    
+/**
  * GetDirectoryContainingItemFromPath will parse path like /Dir/wtf and return /Dir/.
  * For paths like /Dir/wtf/ will return /Dir/.
  * Will return false on relative paths.

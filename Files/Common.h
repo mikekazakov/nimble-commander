@@ -29,9 +29,6 @@ struct DialogResult
     };
 };
 
-// fs directory handling stuff
-bool GetDirectoryFromPath(const char *_path, char *_dir_out, size_t _dir_size); // get last directory from path
-
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noexcept;
@@ -42,11 +39,28 @@ void SyncMessageBoxUTF8(const char *_utf8_string);
 /** returns a value from NSTemporaryDirectory, once captured. Contains a path with a trailing slash. */
 const string &AppTemporaryDirectory() noexcept;
 
+/** returns relative Mach time in nanoseconds using mach_absolute_time. */
 nanoseconds machtime() noexcept;
 
+/** returns true if a current thread is actually a main thread (main queue). I.E. UI/Events thread. */
 bool dispatch_is_main_queue() noexcept;
-void dispatch_to_main_queue(dispatch_block_t block);
+
+/** syntax sugar for dispatch_async(dispatch_get_main_queue(), ...) call. */
+void dispatch_to_main_queue(dispatch_block_t block) noexcept;
+
+/** if current thread is main - just execute a block. otherwise - dispatch it asynchronously to main thread. */
 void dispatch_or_run_in_main_queue(dispatch_block_t block);
+
+struct MachTimeBenchmark
+{
+    MachTimeBenchmark() noexcept;
+    nanoseconds Delta() const;
+    void ResetNano (const char *_msg = "");
+    void ResetMicro(const char *_msg = "");
+    void ResetMilli(const char *_msg = "");
+private:
+    nanoseconds last;
+};
 
 #ifdef __OBJC__
 
@@ -60,34 +74,6 @@ typedef enum
 } ETruncationType;
 NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationType truncationType, NSDictionary *attributes);
 
-struct MachTimeBenchmark
-{
-    nanoseconds last;
-    inline MachTimeBenchmark() : last(machtime()) {};
-    inline nanoseconds Delta() const
-    {
-        return machtime() - last;
-    }
-    inline void ResetNano(const char *_msg = "")
-    {
-        auto now = machtime();
-        NSLog(@"%s%llu\n", _msg, (now - last).count());
-        last = now;
-    }
-    inline void ResetMicro(const char *_msg = "")
-    {
-        auto now = machtime();
-        NSLog(@"%s%llu\n", _msg, duration_cast<microseconds>(now - last).count());
-        last = now;
-    }
-    inline void ResetMilli(const char *_msg = "")
-    {
-        auto now = machtime();
-        NSLog(@"%s%llu\n", _msg, duration_cast<milliseconds>(now - last).count() );
-        last = now;
-    }
-};
-
 @interface NSView (Sugar)
 - (void) setNeedsDisplay;
 @end
@@ -98,7 +84,6 @@ struct MachTimeBenchmark
 - (void)removeObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys;
 @end
 
-
 @interface NSColor (MyAdditions)
 - (CGColorRef) copyCGColorRefSafe;
 + (NSColor *)colorWithCGColorSafe:(CGColorRef)CGColor;
@@ -107,7 +92,6 @@ struct MachTimeBenchmark
 @interface NSTimer (SafeTolerance)
 - (void) setSafeTolerance;
 @end
-
 
 @interface NSString(PerformanceAdditions)
 - (NSString*)stringByTrimmingLeadingWhitespace;

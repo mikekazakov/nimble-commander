@@ -33,8 +33,8 @@
         else
         {
             // Get directory name from path.
-            char buff[128] = {0};
-            GetDirectoryFromPath(_command->root_path, buff, 128);
+            char buff[MAXPATHLEN] = {0};
+            GetDirectoryNameFromPath(_command->root_path, buff, MAXPATHLEN);
             
             self.Caption = [NSString stringWithFormat:@"Altering attributes of %i items in \"%@\"",
                             _command->files.size(),

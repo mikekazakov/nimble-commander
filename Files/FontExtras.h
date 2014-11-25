@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <CoreText/CoreText.h>
+
 /**
  * Grabs geometry information from given font and returns it's line height.
  * Optionally returns font Ascent, Descent and Leading.

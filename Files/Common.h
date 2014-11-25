@@ -44,6 +44,10 @@ const string &AppTemporaryDirectory() noexcept;
 
 nanoseconds machtime() noexcept;
 
+bool dispatch_is_main_queue() noexcept;
+void dispatch_to_main_queue(dispatch_block_t block);
+void dispatch_or_run_in_main_queue(dispatch_block_t block);
+
 #ifdef __OBJC__
 
 void SyncMessageBoxNS(NSString *_ns_string);
@@ -123,12 +127,6 @@ struct MachTimeBenchmark
 @end
 
 inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
-
-inline bool dispatch_is_main_queue() { return [NSThread isMainThread]; }
-inline void dispatch_to_main_queue(dispatch_block_t block) { dispatch_async(dispatch_get_main_queue(), block); }
-inline void dispatch_or_run_in_main_queue(dispatch_block_t block) {
-    dispatch_is_main_queue() ? block() : dispatch_to_main_queue(block);
-}
 
 #endif
 

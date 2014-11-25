@@ -16,7 +16,7 @@ public:
     IconsGenerator();
     ~IconsGenerator();
     
-    void SetUpdateCallback(void (^_cb)()); // callback will be executed in main thread
+    void SetUpdateCallback( function<void()> _callback ); // callback will be executed in background thread
     void SetIconMode(int _mode);
     void SetIconSize(int _size);
     int IconSize() { return m_IconSize.size.height; }
@@ -74,7 +74,7 @@ private:
     
     atomic_int       m_StopWorkQueue{0};
     int              m_IconsMode = IconModeFileIconsThumbnails;
-    void             (^m_UpdateCallback)() = nil;
+    function<void()> m_UpdateCallback;
     
     void BuildGenericIcons();
     void Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _guard);

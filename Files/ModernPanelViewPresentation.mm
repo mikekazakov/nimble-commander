@@ -134,7 +134,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     
     m_Size.width = m_Size.height = 0;
 
-    m_IconCache->SetUpdateCallback(^{
+    m_IconCache->SetUpdateCallback([=]{
         dispatch_to_main_queue( ^{
             SetViewNeedsDisplay();
         });
@@ -175,7 +175,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
 
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
 {
-    m_IconCache->SetUpdateCallback(0);
+    m_IconCache->SetUpdateCallback(nullptr);
     CGColorRelease(m_BackgroundColor);
     CGColorRelease(m_RegularOddBackgroundColor);
     CGColorRelease(m_ActiveSelectedItemBackgroundColor);

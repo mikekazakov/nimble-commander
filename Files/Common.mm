@@ -359,3 +359,18 @@ const string &AppTemporaryDirectory() noexcept
     static string path = NSTemporaryDirectory().fileSystemRepresentation;
     return path;
 }
+
+bool dispatch_is_main_queue() noexcept
+{
+    return NSThread.isMainThread;
+}
+
+void dispatch_to_main_queue(dispatch_block_t block)
+{
+    dispatch_async(dispatch_get_main_queue(), block);
+}
+
+void dispatch_or_run_in_main_queue(dispatch_block_t block)
+{
+    dispatch_is_main_queue() ? block() : dispatch_to_main_queue(block);
+}

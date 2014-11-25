@@ -482,7 +482,7 @@ void IconsGenerator::SetIconSize(int _size)
     m_ExtensionIconsCache.clear();
 }
 
-void IconsGenerator::SetUpdateCallback(void (^_cb)())
+void IconsGenerator::SetUpdateCallback(function<void()> _cb)
 {
     m_UpdateCallback = _cb;
 }

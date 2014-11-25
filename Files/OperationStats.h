@@ -40,18 +40,17 @@ public:
     milliseconds GetTime() const;
     
 private:
-    nanoseconds m_StartTime;
-    nanoseconds m_PauseTime;
+    nanoseconds m_StartTime{0};
+    nanoseconds m_PauseTime{0};
     
-    volatile bool m_Started;
-    volatile int m_Paused;
+    volatile bool m_Started = false;
+    volatile int m_Paused = false;
     
-    const char *m_CurrentItem;
-    volatile bool m_CurrentItemChanged;
-    volatile uint64_t m_Value;
-    volatile uint64_t m_MaxValue;
-    
-    dispatch_queue_t m_ControlQue;
+    const char *m_CurrentItem = nullptr;
+    volatile bool m_CurrentItemChanged = false;
+    volatile uint64_t m_Value = 0;
+    volatile uint64_t m_MaxValue = 1;
+    mutable mutex     m_Lock;
     
     OperationStats(const OperationStats&) = delete;
     void operator=(const OperationStats&) = delete;

@@ -10,21 +10,11 @@
 #import "Common.h"
 
 OperationStats::OperationStats()
-:   m_StartTime(0),
-    m_PauseTime(0),
-    m_Started(false),
-    m_Paused(0),
-    m_CurrentItem(nullptr),
-    m_Value(0),
-    m_MaxValue(1),
-    m_CurrentItemChanged(false)
 {
-    m_ControlQue = dispatch_queue_create(__FILES_IDENTIFIER__".OperationStats", 0);
 }
 
 OperationStats::~OperationStats()
 {
-    dispatch_release(m_ControlQue);
 }
 
 void OperationStats::SetMaxValue(uint64_t _max_value)
@@ -82,47 +72,41 @@ bool OperationStats::IsCurrentItemChanged()
 
 void OperationStats::StartTimeTracking()
 {
-    dispatch_sync(m_ControlQue, ^{
-        assert(!m_Started);
-        m_StartTime = machtime();
-        if (m_Paused)
-            m_PauseTime = m_StartTime;
-        m_Started = true;
-    });
+    lock_guard<mutex> lock(m_Lock);
+    assert(!m_Started);
+    m_StartTime = machtime();
+    if (m_Paused)
+        m_PauseTime = m_StartTime;
+    m_Started = true;
 }
 
 void OperationStats::PauseTimeTracking()
 {
-    dispatch_sync(m_ControlQue, ^{
-        if (++m_Paused == 1)
-            m_PauseTime = machtime();
-    });
+    lock_guard<mutex> lock(m_Lock);
+    if (++m_Paused == 1)
+        m_PauseTime = machtime();
 }
 
 void OperationStats::ResumeTimeTracking()
 {
-    dispatch_sync(m_ControlQue, ^{
-        assert(m_Paused >= 1);
-        if (--m_Paused == 0)
-        {
-            auto pause_duration = machtime() - m_PauseTime;
-            m_StartTime += pause_duration;
-        }
-    });
+    lock_guard<mutex> lock(m_Lock);
+    assert(m_Paused >= 1);
+    if (--m_Paused == 0) {
+        auto pause_duration = machtime() - m_PauseTime;
+        m_StartTime += pause_duration;
+    }
 }
 
 milliseconds OperationStats::GetTime() const
 {
-    __block nanoseconds time;
-    
-    dispatch_sync(m_ControlQue, ^{
-        if (!m_Started)
-            time = 0ns;
-        else if (m_Paused)
-            time = m_PauseTime - m_StartTime;
-        else
-            time = machtime() - m_StartTime;
-    });
-    
+    lock_guard<mutex> lock(m_Lock);
+    nanoseconds time;
+    if (!m_Started)
+        time = 0ns;
+    else if (m_Paused)
+        time = m_PauseTime - m_StartTime;
+    else
+        time = machtime() - m_StartTime;
+
     return duration_cast<milliseconds>(time);
 }

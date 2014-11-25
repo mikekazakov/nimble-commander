@@ -19,7 +19,8 @@
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
 static const string g_Pref = __FILES_IDENTIFIER__".tmp.";
-static const string g_TempDir = NSTemporaryDirectory().fileSystemRepresentation;
+
+static void DoTempPurge();
 
 static int Extract(
                    const char *_vfs_path,
@@ -97,11 +98,11 @@ static int rmrf(char *path)
 
 TemporaryNativeFileStorage::TemporaryNativeFileStorage()
 {
-    m_ControlQueue = dispatch_queue_create(__FILES_IDENTIFIER__".TemporaryNativeFileStorage", NULL);
+    thread(DoTempPurge).detach();
     
-    char tmp_1st[MAXPATHLEN];
-    if(NewTempDir(tmp_1st))
-        m_SubDirs.push_back(tmp_1st);
+    auto tmp_1st = NewTempDir();
+    if(!tmp_1st.empty())
+        m_SubDirs.emplace_back(tmp_1st);
 }
 
 TemporaryNativeFileStorage::~TemporaryNativeFileStorage()
@@ -113,58 +114,51 @@ TemporaryNativeFileStorage &TemporaryNativeFileStorage::Instance()
     return *g_SharedInstance;
 }
 
-bool TemporaryNativeFileStorage::NewTempDir(char *_full_path)
+string TemporaryNativeFileStorage::NewTempDir()
 {
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%s%sXXXXXX", g_TempDir.c_str(), g_Pref.c_str());
+    sprintf(pattern_buf, "%s%sXXXXXX", AppTemporaryDirectory().c_str(), g_Pref.c_str());
     char *res = mkdtemp(pattern_buf);
     if(res == 0)
-        return false;
+        return {};
     if(pattern_buf[strlen(pattern_buf)-1] != '/')
         strcat(pattern_buf, "/");
-    strcpy(_full_path, pattern_buf);
-    return true;
+    return pattern_buf;
 }
 
 bool TemporaryNativeFileStorage::GetSubDirForFilename(const char *_filename, char *_full_path)
 {
     // check currently owned directories for being able to hold such filename (no collisions)
-    __block bool found = false;;
-    dispatch_sync(m_ControlQueue, ^{ // over-locking here. TODO: consider another algo
+    lock_guard<mutex> lock(m_SubDirsLock);
+    bool found = false;
     retry:
-        for(auto i = m_SubDirs.begin(); i != m_SubDirs.end(); ++i)
-        {
-            // check current tmp sub-directory
-            struct stat st;
-            if( lstat(i->c_str(), &st) != 0 )
-            {
-                m_SubDirs.erase(i); // remove bad temp subdirectory from our catalog
-                goto retry;
-            }
-            
-            char tmp[MAXPATHLEN];
-            strcpy(tmp, i->c_str());
-            strcat(tmp, _filename);
-            
-            // check for presence of _filename in current sub-dir
-            if( lstat(tmp, &st) != 0 )
-            {
-                // no such file, ok to use
-                strcpy(_full_path, i->c_str());
-                found = true;
-            }
+    for(auto i = begin(m_SubDirs), e = end(m_SubDirs); i != e; ++i) {
+        // check current tmp sub-directory
+        struct stat st;
+        if( lstat(i->c_str(), &st) != 0 ) {
+            m_SubDirs.erase(i); // remove bad temp subdirectory from our catalog
+            goto retry;
         }
-    });
+            
+        char tmp[MAXPATHLEN];
+        strcpy(tmp, i->c_str());
+        strcat(tmp, _filename);
+            
+        // check for presence of _filename in current sub-dir
+        if( lstat(tmp, &st) != 0 ) {
+            // no such file, ok to use
+            strcpy(_full_path, i->c_str());
+            found = true;
+        }
+    }
     
     if(found) return true;
     
     // create a new dir and return combined path
-    char newdir[MAXPATHLEN];
-    if(NewTempDir(newdir))
-    {
-        string newdirs = newdir;
-        dispatch_sync(m_ControlQueue, ^{ m_SubDirs.push_back(newdirs); });
-        strcpy(_full_path, newdir);
+    auto newdir = NewTempDir();
+    if( !newdir.empty() ) {
+        m_SubDirs.emplace_back(newdir);
+        strcpy(_full_path, newdir.c_str());
         return true;
     }
     return false; // something is very bad with whole system
@@ -376,18 +370,20 @@ static bool DoSubDirPurge(const char *_dir)
 
 static void DoTempPurge()
 {
-    DIR *dirp = opendir(g_TempDir.c_str());
+    DIR *dirp = opendir(AppTemporaryDirectory().c_str());
     if(!dirp)
         return;
     
     dirent *entp;
     while((entp = _readdir_unlocked(dirp, 1)) != NULL)
-        if( strncmp(entp->d_name, g_Pref.c_str(), g_Pref.length()) == 0 &&
-           entp->d_type == DT_DIR
+        if(
+           entp->d_namlen >= g_Pref.length() &&
+           entp->d_type == DT_DIR &&
+           strncmp(entp->d_name, g_Pref.c_str(), g_Pref.length()) == 0
            )
         {
             char fn[MAXPATHLEN];
-            strcpy(fn, g_TempDir.c_str());
+            strcpy(fn, AppTemporaryDirectory().c_str());
             strcat(fn, entp->d_name);
             strcat(fn, "/");
             
@@ -398,16 +394,9 @@ static void DoTempPurge()
     closedir(dirp);
     
     // schedule next purging in 6 hours
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 60*60*6*NSEC_PER_SEC),
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, nanoseconds(6h).count()),
                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
                    ^{
                        DoTempPurge();
                    });
-}
-
-void TemporaryNativeFileStorage::StartBackgroundPurging()
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        DoTempPurge();
-    });
 }

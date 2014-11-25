@@ -16,8 +16,6 @@
 #import "WorkspaceIconsCache.h"
 #import "Common.h"
 
-static const string g_TempDir = NSTemporaryDirectory().fileSystemRepresentation;
-
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones
 static bool CheckFileIsOK(const char* _s)
@@ -59,7 +57,7 @@ static NSImageRep *ProduceThumbnailForVFS(const string &_path,
         return 0;
     
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".ico.XXXXXX", g_TempDir.c_str());
+    sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".ico.XXXXXX", AppTemporaryDirectory().c_str());
     
     int fd = mkstemp(pattern_buf);
     if(fd < 0)

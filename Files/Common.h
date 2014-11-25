@@ -39,6 +39,9 @@ CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noex
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);
 
+/** returns a value from NSTemporaryDirectory, once captured. Contains a path with a trailing slash. */
+const string &AppTemporaryDirectory() noexcept;
+
 nanoseconds machtime() noexcept;
 
 #ifdef __OBJC__

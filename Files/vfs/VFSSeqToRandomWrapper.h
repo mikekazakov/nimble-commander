@@ -13,13 +13,13 @@
 class VFSSeqToRandomROWrapperFile : public VFSFile
 {
 public:
-    VFSSeqToRandomROWrapperFile(shared_ptr<VFSFile> _file_to_wrap);
+    VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap);
     ~VFSSeqToRandomROWrapperFile();
     
     virtual int Open(int _flags, VFSCancelChecker _cancel_checker) override;
     int Open(int _flags,
-            VFSCancelChecker _cancel_checker,
-            void (^_progress)(uint64_t _bytes_proc, uint64_t _bytes_total));
+             VFSCancelChecker _cancel_checker,
+             function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress);
     virtual int Close() override;
     
     enum {
@@ -36,10 +36,10 @@ public:
     virtual ReadParadigm GetReadParadigm() const override;
     
 private:
-    int                      m_FD;
-    ssize_t                  m_Pos;
-    ssize_t                  m_Size;
-    shared_ptr<VFSFile> m_SeqFile;
+    int                      m_FD = -1;
+    ssize_t                  m_Pos = 0;
+    ssize_t                  m_Size = 0;
+    VFSFilePtr               m_SeqFile;
     unique_ptr<uint8_t[]>    m_DataBuf; // used only when filesize <= MaxCachedInMem
-    bool                     m_Ready;
+    bool                     m_Ready = false;
 };

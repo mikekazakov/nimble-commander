@@ -188,9 +188,9 @@
 		CF50B7461A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73C1A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp */; };
 		CF50B7471A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73C1A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp */; };
 		CF50B7481A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73C1A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp */; };
-		CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */; };
-		CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */; };
-		CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */; };
+		CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp */; };
+		CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp */; };
+		CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp */; };
 		CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
 		CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
 		CF50B75F1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
@@ -224,7 +224,7 @@
 		CF6D9BE5196678000077B146 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
 		CF6D9BE6196678000077B146 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CF6D9BE7196678000077B146 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
-		CF6D9BE8196678000077B146 /* TemporaryNativeFileStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */; };
+		CF6D9BE8196678000077B146 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
 		CF6D9BE9196678000077B146 /* sysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414E1803F6A2006D6687 /* sysinfo.mm */; };
 		CF6D9BEA196678000077B146 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CF6D9BEB196678000077B146 /* NewVersionChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47F6971830CDB30060D474 /* NewVersionChecker.mm */; };
@@ -757,7 +757,7 @@
 		CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
 		CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
-		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */; };
+		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
 		CFEE8E5117748E3D00F6A254 /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEE8E4F17748E3D00F6A254 /* FontExtras.mm */; };
 		CFF0C83818FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */; };
 		CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */; };
@@ -922,7 +922,7 @@
 		CFF6F2ED1A13567C00011177 /* archive_read_support_filter_xz.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2E17CC961100CB8146 /* archive_read_support_filter_xz.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2EE1A13567C00011177 /* archive_write_set_format_cpio.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6217CC961100CB8146 /* archive_write_set_format_cpio.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2EF1A13567C00011177 /* archive_write_disk_acl.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5417CC961100CB8146 /* archive_write_disk_acl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */; };
+		CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
 		CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
 		CFF6F2F21A13567C00011177 /* sysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414E1803F6A2006D6687 /* sysinfo.mm */; };
 		CFF6F2F31A13567C00011177 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
@@ -1387,7 +1387,7 @@
 		CF50B73C1A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSGenericMemReadOnlyFile.cpp; path = vfs/VFSGenericMemReadOnlyFile.cpp; sourceTree = "<group>"; };
 		CF50B73D1A15173100E3D96D /* VFSGenericMemReadOnlyFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSGenericMemReadOnlyFile.h; path = vfs/VFSGenericMemReadOnlyFile.h; sourceTree = "<group>"; };
 		CF50B73E1A15173100E3D96D /* VFSSeqToRandomWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSSeqToRandomWrapper.h; path = vfs/VFSSeqToRandomWrapper.h; sourceTree = "<group>"; };
-		CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSSeqToRandomWrapper.mm; path = vfs/VFSSeqToRandomWrapper.mm; sourceTree = "<group>"; };
+		CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSSeqToRandomWrapper.cpp; path = vfs/VFSSeqToRandomWrapper.cpp; sourceTree = "<group>"; };
 		CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLVFSThumbnailsCache.mm; sourceTree = "<group>"; };
 		CF50B75C1A1607AA00E3D96D /* QLVFSThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLVFSThumbnailsCache.h; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
@@ -1772,7 +1772,7 @@
 		CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePanelsTabbedHolder.mm; sourceTree = "<group>"; };
 		CFE3E8501A011218009ADE5E /* MainWindowFilePanelState+TabsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+TabsSupport.h"; sourceTree = "<group>"; };
 		CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+TabsSupport.mm"; sourceTree = "<group>"; };
-		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TemporaryNativeFileStorage.mm; sourceTree = "<group>"; };
+		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryNativeFileStorage.cpp; sourceTree = "<group>"; };
 		CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileStorage.h; sourceTree = "<group>"; };
 		CFEE8E4F17748E3D00F6A254 /* FontExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontExtras.mm; sourceTree = "<group>"; };
 		CFEE8E5017748E3D00F6A254 /* FontExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontExtras.h; sourceTree = "<group>"; };
@@ -2491,10 +2491,10 @@
 				CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */,
 				CF50B73A1A15173100E3D96D /* VFSEasyOps.h */,
 				CF50B73B1A15173100E3D96D /* VFSEasyOps.mm */,
-				CF50B73C1A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp */,
 				CF50B73D1A15173100E3D96D /* VFSGenericMemReadOnlyFile.h */,
+				CF50B73C1A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp */,
 				CF50B73E1A15173100E3D96D /* VFSSeqToRandomWrapper.h */,
-				CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.mm */,
+				CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp */,
 			);
 			name = Wrapping;
 			sourceTree = "<group>";
@@ -2631,7 +2631,7 @@
 				CF4C5A5C17A7B48E00B1B061 /* FileMask.h */,
 				CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */,
 				CFCD3B6C18A9DC7300028B41 /* FileSearch.h */,
-				CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.mm */,
+				CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */,
 				CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */,
 				CF27414E1803F6A2006D6687 /* sysinfo.mm */,
 				CF27414F1803F6A2006D6687 /* sysinfo.h */,
@@ -3550,7 +3550,7 @@
 				CF6D9BE5196678000077B146 /* ObjcToCppObservingBridge.mm in Sources */,
 				CF6D9BE6196678000077B146 /* FileMask.mm in Sources */,
 				CF6D9BE7196678000077B146 /* FileSearch.mm in Sources */,
-				CF6D9BE8196678000077B146 /* TemporaryNativeFileStorage.mm in Sources */,
+				CF6D9BE8196678000077B146 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF6D9BE9196678000077B146 /* sysinfo.mm in Sources */,
 				CF6D9BEA196678000077B146 /* LSUrls.mm in Sources */,
 				CF6D9BEB196678000077B146 /* NewVersionChecker.mm in Sources */,
@@ -3610,7 +3610,7 @@
 				CF50B6FF1A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */,
 				CF6D9C2F196678010077B146 /* FileDeletionSheetController.mm in Sources */,
 				CF6D9C30196678010077B146 /* FileCompressOperation.mm in Sources */,
-				CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */,
+				CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CF6D9C31196678010077B146 /* FileCompressOperationJob.mm in Sources */,
 				CF6D9C32196678010077B146 /* BigFileView.mm in Sources */,
 				CF6D9C33196678010077B146 /* BigFileViewDataBackend.mm in Sources */,
@@ -3866,7 +3866,7 @@
 				CF9D0E9F17CC961100CB8146 /* archive_read_support_filter_xz.c in Sources */,
 				CF9D0ECE17CC961100CB8146 /* archive_write_set_format_cpio.c in Sources */,
 				CF9D0EC217CC961100CB8146 /* archive_write_disk_acl.c in Sources */,
-				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.mm in Sources */,
+				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF50B6CC1A15167800E3D96D /* VFSListing.cpp in Sources */,
@@ -3900,7 +3900,7 @@
 				CF9D0EAF17CC961100CB8146 /* archive_read.c in Sources */,
 				CF50B6FE1A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */,
 				CF9D0E7C17CC961100CB8146 /* archive_entry_sparse.c in Sources */,
-				CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */,
+				CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CF9D0ED317CC961100CB8146 /* archive_write_set_format_shar.c in Sources */,
 				CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -4154,7 +4154,7 @@
 				CFF6F2ED1A13567C00011177 /* archive_read_support_filter_xz.c in Sources */,
 				CFF6F2EE1A13567C00011177 /* archive_write_set_format_cpio.c in Sources */,
 				CFF6F2EF1A13567C00011177 /* archive_write_disk_acl.c in Sources */,
-				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.mm in Sources */,
+				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7421A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF50B6CE1A15167800E3D96D /* VFSListing.cpp in Sources */,
@@ -4188,7 +4188,7 @@
 				CFF6F3091A13567C00011177 /* archive_read.c in Sources */,
 				CF50B7001A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */,
 				CFF6F30A1A13567C00011177 /* archive_entry_sparse.c in Sources */,
-				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.mm in Sources */,
+				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFF6F30B1A13567C00011177 /* archive_write_set_format_shar.c in Sources */,
 				CFF6F30C1A13567C00011177 /* BigFileViewHistory.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,

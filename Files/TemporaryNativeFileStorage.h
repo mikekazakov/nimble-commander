@@ -27,8 +27,6 @@ public:
                        function<bool()> _cancel_checker,
                        string &_tmp_dirpath);
                        
-    static void StartBackgroundPurging(); // should be called once upon application start
-    
     static TemporaryNativeFileStorage &Instance();
 private:
     TemporaryNativeFileStorage();
@@ -37,9 +35,9 @@ private:
     TemporaryNativeFileStorage(const TemporaryNativeFileStorage&) = delete;
     void operator =(const TemporaryNativeFileStorage&) = delete;
   
-    bool NewTempDir(char *_full_path); // can run from any thread
+    string NewTempDir(); // can run from any thread
     bool GetSubDirForFilename(const char *_filename, char *_full_path); // can run from any thread
     
-    dispatch_queue_t        m_ControlQueue;
-    list<string>  m_SubDirs; // modifications should be guarded with m_ControlQueue
+    mutex           m_SubDirsLock;
+    vector<string>  m_SubDirs; // modifications should be guarded with m_ControlQueue
 };

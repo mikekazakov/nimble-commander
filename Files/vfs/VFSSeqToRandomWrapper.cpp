@@ -8,12 +8,20 @@
 
 #import "VFSSeqToRandomWrapper.h"
 #import "VFSError.h"
+#import "Common.h"
 
-VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(shared_ptr<VFSFile> _file_to_wrap):
+namespace {
+struct at_return
+{
+    inline at_return(function<void()> _f): f(_f) {};
+    inline ~at_return() { if(f) f(); }
+    function<void()> f;
+};
+}
+
+VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap):
     VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),
-    m_SeqFile(_file_to_wrap),
-    m_Ready(false),
-    m_FD(-1)
+    m_SeqFile(_file_to_wrap)
 {
 }
 
@@ -24,54 +32,44 @@ VFSSeqToRandomROWrapperFile::~VFSSeqToRandomROWrapperFile()
 
 int VFSSeqToRandomROWrapperFile::Open(int _flags,
                                       VFSCancelChecker _cancel_checker,
-                                      void (^_progress)(uint64_t _bytes_proc, uint64_t _bytes_total))
+                                      function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
 {
-    if(m_SeqFile.get() == 0)
+    at_return ggg( [=]{ m_SeqFile.reset(); } ); // ony any result wrapper won't hold any reference to VFSFile after this function ends
+    if(!m_SeqFile)
         return VFSError::InvalidCall;
     if(m_SeqFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential)
         return VFSError::InvalidCall;
     
-    if(!m_SeqFile->IsOpened())
-    {
+    if(!m_SeqFile->IsOpened()) {
         int res = m_SeqFile->Open(_flags);
         if(res < 0)
             return res;
     }
-    else
-    {
-        if(m_SeqFile->Pos() > 0)
-            return VFSError::InvalidCall;
-    }
+    else if(m_SeqFile->Pos() > 0)
+        return VFSError::InvalidCall;
     
-    if(m_SeqFile->Size() <= MaxCachedInMem)
-    {
+    if(m_SeqFile->Size() <= MaxCachedInMem) {
         // we just read a whole file into a memory buffer
         m_Pos = 0;
         m_Size = m_SeqFile->Size();
-        m_DataBuf.reset(new uint8_t[m_Size]);
+        m_DataBuf = make_unique<uint8_t[]>(m_Size);
         
         const size_t max_io = 256*1024;
         uint8_t *d = &m_DataBuf[0];
         uint8_t *e = d + m_Size;
         ssize_t res;
-        while( ( res = m_SeqFile->Read(d, MIN(e-d, max_io)) ) > 0)
-        {
+        while( ( res = m_SeqFile->Read(d, MIN(e-d, max_io)) ) > 0) {
             d += res;
 
-            if(_cancel_checker && _cancel_checker()) {
-                m_SeqFile.reset();
+            if(_cancel_checker && _cancel_checker())
                 return VFSError::Cancelled;
-            }
 
             if(_progress)
                 _progress(d - &m_DataBuf[0], m_Size);
         }
         
         if(_cancel_checker && _cancel_checker())
-        {
-            m_SeqFile.reset();
             return VFSError::Cancelled;
-        }
         
         if(res < 0)
             return (int)res;
@@ -79,14 +77,12 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
         if(res == 0 && d != e)
             return VFSError::UnexpectedEOF;
         
-        m_SeqFile.reset();
         m_Ready = true; // here we ready to go
     }
-    else
-    {
+    else {
         // we need to write it into a temp dir and delete it upon finish
         char pattern_buf[MAXPATHLEN];
-        sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".vfs.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+        sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".vfs.XXXXXX", AppTemporaryDirectory().c_str());
         
         int fd = mkstemp(pattern_buf);
         
@@ -108,17 +104,14 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
         ssize_t res_read;
         ssize_t total_wrote = 0 ;
         
-        while ( (res_read = m_SeqFile->Read(buf, MIN(bufsz, left_read))) > 0 )
-        {
+        while ( (res_read = m_SeqFile->Read(buf, MIN(bufsz, left_read))) > 0 ) {
             if(_cancel_checker && _cancel_checker())
                 return VFSError::Cancelled;
             
             ssize_t res_write;
-            while(res_read > 0)
-            {
+            while(res_read > 0) {
                 res_write = write(m_FD, buf, res_read);
-                if(res_write >= 0)
-                {
+                if(res_write >= 0) {
                     res_read -= res_write;
                     total_wrote += res_write;
                     
@@ -138,7 +131,6 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
         
         lseek(m_FD, 0, SEEK_SET);
         
-        m_SeqFile.reset();
         m_Ready = true; // here we ready to go
     }
     
@@ -154,8 +146,7 @@ int VFSSeqToRandomROWrapperFile::Close()
 {
     m_SeqFile.reset();
     m_DataBuf.reset();
-    if(m_FD >= 0)
-    {
+    if(m_FD >= 0) {
         close(m_FD);
         m_FD = -1;
     }
@@ -209,8 +200,7 @@ ssize_t VFSSeqToRandomROWrapperFile::Read(void *_buf, size_t _size)
     if(m_Pos == m_Size)
         return 0;
     
-    if(m_DataBuf)
-    {
+    if(m_DataBuf) {
         size_t to_read = MIN(m_Size - m_Pos, _size);
         memcpy(_buf, &m_DataBuf[m_Pos], to_read);
         m_Pos += to_read;
@@ -218,8 +208,7 @@ ssize_t VFSSeqToRandomROWrapperFile::Read(void *_buf, size_t _size)
 
         return to_read;
     }
-    else if(m_FD >= 0)
-    {
+    else if(m_FD >= 0) {
         size_t to_read = MIN(m_Size - m_Pos, _size);
         ssize_t res = read(m_FD, _buf, to_read);
         
@@ -242,14 +231,12 @@ ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size
     if(_pos < 0 || _pos > m_Size)
         return VFSError::InvalidCall;
     
-    if(m_DataBuf)
-    {
+    if(m_DataBuf) {
         ssize_t toread = MIN(m_Size - _pos, _size);
         memcpy(_buf, &m_DataBuf[_pos], toread);
         return toread;
     }
-    else if(m_FD >= 0)
-    {
+    else if(m_FD >= 0) {
         ssize_t toread = MIN(m_Size - _pos, _size);
         ssize_t res = pread(m_FD, _buf, toread, _pos);
         if(res >= 0)

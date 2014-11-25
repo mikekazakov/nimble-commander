@@ -65,6 +65,15 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void) doPreviewItemNative:(const string&)_path
 {
+//  NB! On Files Lite getting this error on some file types, like ".csv", ".doc", ".docx".
+//  when network client is enabled in sandbox entitlements this error is gone and everything seems to be fine.
+//  looks like some QuickLook plugins somehow relies on network functionality for it's XPC or something.
+//  may be a bug.
+//
+//    2014-11-24 15:06:05.610 Files Lite[33149:4252997] ***storageTaskManagerExistsWithIdentifier:withIdentifier failed: Error Domain=NSCocoaErrorDomain Code=4099 "Couldn’t communicate with a helper application." (The connection to service named com.apple.nsurlstorage-cache was invalidated.) UserInfo=0x608000675540 {NSDebugDescription=The connection to service named com.apple.nsurlstorage-cache was invalidated.}; {
+//        NSDebugDescription = "The connection to service named com.apple.nsurlstorage-cache was invalidated.";
+//    }
+
     self.previewItem = [NSURL fileURLWithPath:[NSString stringWithUTF8String:_path.c_str()]];
 }
 

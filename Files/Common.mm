@@ -353,3 +353,9 @@ CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noex
                                          false,
                                          kCFAllocatorNull);
 }
+
+const string &AppTemporaryDirectory() noexcept
+{
+    static string path = NSTemporaryDirectory().fileSystemRepresentation;
+    return path;
+}

@@ -168,7 +168,7 @@
     [iv addSubview:m_ProgressIndicator];
 
     // calling modules running in background
-    TemporaryNativeFileStorage::StartBackgroundPurging();
+    TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
 
     if(!configuration::is_sandboxed)
         NewVersionChecker::Go(); // we check for new versions only for non-sanboxed (say non-MAS) version

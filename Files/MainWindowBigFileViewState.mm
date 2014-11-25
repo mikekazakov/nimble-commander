@@ -178,8 +178,8 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         
         auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);
         int res = wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock,
-                                ^{ return proc.userCancelled; },
-                                ^(uint64_t _bytes, uint64_t _total) {
+                                [=]{ return proc.userCancelled; },
+                                [=](uint64_t _bytes, uint64_t _total) {
                                     proc.Progress.doubleValue = double(_bytes) / double(_total);
                                 });
         [proc Close];

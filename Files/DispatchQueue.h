@@ -17,27 +17,27 @@ public:
     /**
      * Just a form to call the long Run(..) version with dummy parameter
      */
-    void Run( void (^_block)() );
+    void Run( function<void()> _block );
     
     /**
      * Starts _block asynchronously in this queue.
      * Run will not start any task if IsStopped() is true.
      */
-    void Run( void (^_block)(shared_ptr<SerialQueueT> _que) );
+    void Run( function<void(const shared_ptr<SerialQueueT> &_que)> _block );
     
     /**
      * Run block synchronous against queue.
      * Will not run block if currently IsStopped() is true.
      * Will not call OnDry/OnWet/OnChange and will not change queue's- length.
      */
-    void RunSync(void (^_block)(shared_ptr<SerialQueueT> _que));
+    void RunSync( function<void(const shared_ptr<SerialQueueT> &_que)> _block );
 
     /**
      * Run block synchronous againt current queue, just for client's convenience.
      * Will not run block if currently IsStopped() is true.
      * Will not call OnDry/OnWet/OnChange and will not change queue's- length.
      */
-    void RunSyncHere(void (^_block)(shared_ptr<SerialQueueT> _que));
+    void RunSyncHere( function<void(const shared_ptr<SerialQueueT> &_que)> _block );
     
     /**
      * Raised IsStopped() flag so currently running task can caught it.
@@ -69,17 +69,17 @@ public:
     /**
      * Sets handler to be called when queue becomes dry (no blocks are commited or running).
      */
-    void OnDry( void (^_block)() );
+    void OnDry( function<void()> _on_dry );
     
     /**
      * Sets handler to be called when queue becomes wet (when block is commited to run in it).
      */
-    void OnWet( void (^_block)() );
+    void OnWet( function<void()> _on_wet );
     
     /**
      * Sets handler to be called when queue length is changed.
      */
-    void OnChange( void (^_block)() );
+    void OnChange( function<void()> _on_change );
     
     /**
      * Actually make_shared<SerialQueueT>().
@@ -93,11 +93,13 @@ private:
     void BecameWet();
     void Changed();
     dispatch_queue_t m_Queue;
-    atomic<int>      m_Length;
-    atomic_bool      m_Stopped;
-    void           (^m_OnDry)();
-    void           (^m_OnWet)();
-    void           (^m_OnChange)();
+    atomic_int       m_Length = {0};
+    atomic_bool      m_Stopped = {false};
+    
+    mutex            m_SignalsGuard;
+    function<void()> m_OnDry;
+    function<void()> m_OnWet;
+    function<void()> m_OnChange;
 };
 
 typedef shared_ptr<SerialQueueT> SerialQueue;
@@ -119,7 +121,7 @@ public:
     /**
      * Run _block in group on queue with prioriry specified at construction time
      */
-    void Run( void (^_block)() );
+    void Run( function<void()> _f );
     
     /**
      * Wait indefinitely until all task in group will be finished

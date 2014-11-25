@@ -85,7 +85,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
     int method = g_Algos[self.HashMethod.indexOfSelectedItem].second;
     self.Progress.doubleValue = 0;
     
-    m_WorkQue->Run(^(shared_ptr<SerialQueueT> _q) {
+    m_WorkQue->Run([=](auto &_q) {
         unique_ptr<uint8_t[]> buf(new uint8_t[chunk_sz]);
         uint64_t total_fed = 0;
         for(auto &i:m_Filenames) {

@@ -405,7 +405,7 @@ void panel::GenericCursorPersistance::Restore()
     string dirpath = m_Data.DirectoryPathWithTrailingSlash();
     auto vfs = self.VFS;
     
-    m_DirectoryReLoadingQ->Run(^(SerialQueue _q){
+    m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
         shared_ptr<VFSListing> listing;
         int ret = vfs->FetchDirectoryListing(dirpath.c_str(), &listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
         if(ret >= 0)
@@ -501,9 +501,9 @@ void panel::GenericCursorPersistance::Restore()
     };
     
     string current_dir = m_Data.DirectoryPathWithTrailingSlash();
-    __block auto dir_names = move(_filenames);
-    m_DirectorySizeCountingQ->Run( ^(SerialQueue _q){
-        self.VFS->CalculateDirectoriesSizes(move(dir_names),
+    auto dir_names = make_shared<chained_strings>(move(_filenames));
+    m_DirectorySizeCountingQ->Run([=](const SerialQueue &_q){
+        self.VFS->CalculateDirectoriesSizes(move(*dir_names),
                                                        current_dir.c_str(),
                                                        ^bool {
                                                            return _q->IsStopped();

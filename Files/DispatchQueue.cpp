@@ -12,65 +12,67 @@
 // SerialQueueT implementation
 ////////////////////////////////////////////////////////////////////////////////
 SerialQueueT::SerialQueueT(const char *_label):
-    m_Queue(dispatch_queue_create(_label, DISPATCH_QUEUE_SERIAL)),
-    m_Length(0),
-    m_Stopped(false)
+    m_Queue(dispatch_queue_create(_label, DISPATCH_QUEUE_SERIAL))
 {
     assert(m_Queue != 0);
 }
 
 SerialQueueT::~SerialQueueT()
 {
-    assert(Length() == 0);
+    Wait();
     dispatch_release(m_Queue);
 }
 
-void SerialQueueT::OnDry( void (^_block)() )
+void SerialQueueT::OnDry( function<void()> _on_dry )
 {
-    m_OnDry = _block;
+    lock_guard<mutex> lock(m_SignalsGuard);
+    m_OnDry = _on_dry;
 }
 
-void SerialQueueT::OnWet( void (^_block)() )
+void SerialQueueT::OnWet( function<void()> _on_wet )
 {
-    m_OnWet = _block;
+    lock_guard<mutex> lock(m_SignalsGuard);
+    m_OnWet = _on_wet;
 }
 
-void SerialQueueT::OnChange( void (^_block)() )
+void SerialQueueT::OnChange( function<void()> _on_change )
 {
-    m_OnChange = _block;
+    lock_guard<mutex> lock(m_SignalsGuard);
+    m_OnChange = _on_change;
 }
 
 void SerialQueueT::Stop()
 {
-    if(m_Length.load() > 0)
-        m_Stopped.store(true);
+    if(m_Length > 0)
+        m_Stopped = true;
 }
 
 bool SerialQueueT::IsStopped() const
 {
-    return m_Stopped.load();
+    return m_Stopped;
 }
 
-void SerialQueueT::Run( void (^_block)() )
+void SerialQueueT::Run( function<void()> _block )
 {
-    Run( ^(shared_ptr<SerialQueueT> _unused) { _block(); } );
+    Run( [=](const shared_ptr<SerialQueueT> &_unused) { _block(); } );
 }
 
-void SerialQueueT::Run( void (^_block)(shared_ptr<SerialQueueT>) )
+void SerialQueueT::Run( function<void(const shared_ptr<SerialQueueT> &_que)> _block )
 {
-    if(m_Stopped.load()) // won't push any the tasks until we're stopped
+    if(m_Stopped) // won't push any the tasks until we're stopped
         return;
     
     if((++m_Length) == 1)
         BecameWet();
     Changed();
     
-    auto me = shared_from_this();
+    __block auto block = move(_block);
+    __block auto me = shared_from_this();
     
     dispatch_async(m_Queue, ^{
         
-        if(me->m_Stopped.load() == false)
-            _block(me);
+        if(me->m_Stopped == false)
+            block(me);
         
         if(--(me->m_Length) == 0)
             BecameDry();
@@ -78,28 +80,29 @@ void SerialQueueT::Run( void (^_block)(shared_ptr<SerialQueueT>) )
     });
 }
 
-void SerialQueueT::RunSync(void (^_block)(shared_ptr<SerialQueueT> _que))
+void SerialQueueT::RunSync( function<void(const shared_ptr<SerialQueueT> &_que)> _block )
 {
-    if(m_Stopped.load()) // won't push any the tasks until we're stopped
+    if(m_Stopped) // won't push any the tasks until we're stopped
         return;
     
-    auto me = shared_from_this();
+    __block auto block = move(_block);
+    __block auto me = shared_from_this();
     
     dispatch_sync(m_Queue, ^{
-        _block(me);
+        block(me);
     });
 }
 
-void SerialQueueT::RunSyncHere(void (^_block)(shared_ptr<SerialQueueT> _que))
+void SerialQueueT::RunSyncHere( function<void(const shared_ptr<SerialQueueT> &_que)> _block )
 {
-    if(m_Stopped.load()) // won't push any the tasks until we're stopped
+    if(m_Stopped) // won't push any the tasks until we're stopped
         return;
     _block(shared_from_this());
 }
 
 void SerialQueueT::Wait()
 {
-    if(m_Length.load() == 0)
+    if(m_Length == 0)
         return;
     
     dispatch_sync(m_Queue, ^{});
@@ -107,31 +110,34 @@ void SerialQueueT::Wait()
 
 int SerialQueueT::Length() const
 {
-    return m_Length.load();
+    return m_Length;
 }
 
 bool SerialQueueT::Empty() const
 {
-    return m_Length.load() == 0;
+    return m_Length == 0;
 }
 
 void SerialQueueT::BecameDry()
 {
-    m_Stopped.store(false);
-    
-    if(m_OnDry != 0)
+    m_Stopped = false;
+
+    lock_guard<mutex> lock(m_SignalsGuard);
+    if(m_OnDry)
         m_OnDry();
 }
 
 void SerialQueueT::BecameWet()
 {
-    if(m_OnWet != 0)
+    lock_guard<mutex> lock(m_SignalsGuard);
+    if(m_OnWet)
         m_OnWet();
 }
 
 void SerialQueueT::Changed()
 {
-    if(m_OnChange != 0)
+    lock_guard<mutex> lock(m_SignalsGuard);
+    if(m_OnChange)
         m_OnChange();
 }
 
@@ -151,11 +157,15 @@ DispatchGroup::~DispatchGroup()
     dispatch_release(m_Group);
 }
 
-void DispatchGroup::Run( void (^_block)() )
+void DispatchGroup::Run( function<void()> _f )
 {
+    if(!_f)
+        return;
+    
+    __block auto f_copy = move(_f);
     dispatch_group_async(m_Group, m_Queue, ^{
         m_Count++;
-        _block();
+        f_copy();
         m_Count--;
     });
 }

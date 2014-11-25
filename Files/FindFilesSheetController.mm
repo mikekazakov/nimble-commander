@@ -331,7 +331,7 @@ static const int g_MaximumSearchResults = 16384;
                                   
                                   FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:it];
                                   
-                                  m_BatchQueue->Run(^{
+                                  m_BatchQueue->Run([=]{
                                       [m_FoundItemsBatch addObject:item];
                                     });
                                   
@@ -358,7 +358,7 @@ static const int g_MaximumSearchResults = 16384;
 
 - (void) UpdateByTimer:(NSTimer*)theTimer
 {
-    m_BatchQueue->Run(^{
+    m_BatchQueue->Run([=]{
         if(m_FoundItemsBatch.count == 0)
             return;
         

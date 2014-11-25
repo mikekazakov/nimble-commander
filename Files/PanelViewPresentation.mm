@@ -270,7 +270,7 @@ void PanelViewPresentation::UpdateStatFS()
 
         auto host = m_State->Data->Host();
         auto listing = m_State->Data->Listing();
-        m_StatFSQueue->Run(^{
+        m_StatFSQueue->Run([=]{
             VFSStatFS stat;
             if(host->StatFS(listing->RelativePath(), stat, 0) == 0 &&
                stat != m_StatFS // force redrawing only if statfs has in fact changed

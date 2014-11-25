@@ -84,19 +84,19 @@ static int CopyFileContentsLarge(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _
   
     // consider using variable-sized buffers depending on underlying media
     const int buffer_size = 1024*1024; // 1Mb
-    __block unique_ptr<uint8_t[]> buffer_read(new uint8_t[buffer_size]),
-                                  buffer_write(new uint8_t[buffer_size]);
+    auto buffer_read  = make_unique<uint8_t[]>(buffer_size);
+    auto buffer_write = make_unique<uint8_t[]>(buffer_size);
 
     const uint64_t src_size = _src->Size();
-    __block uint64_t total_read = 0;
-    __block uint64_t total_written = 0;
-    __block int64_t io_left_to_write = 0;
-    __block int64_t io_nread = 0;
-    __block int64_t io_nwritten = 0;
+    uint64_t total_read = 0;
+    uint64_t total_written = 0;
+    int64_t  io_left_to_write = 0;
+    int64_t  io_nread = 0;
+    int64_t  io_nwritten = 0;
 
     while(true)
     {
-        io.Run(^{
+        io.Run([&]{
             if(total_read < src_size) {
                 io_nread = _src->Read(buffer_read.get(), buffer_size);
                 if(io_nread >= 0)
@@ -104,7 +104,7 @@ static int CopyFileContentsLarge(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _
             }
         });
     
-        io.Run(^{
+        io.Run([&]{
             int64_t already_wrote = 0;
             while(io_left_to_write > 0) {
                 io_nwritten = _dst->Write(buffer_write.get() + already_wrote, io_left_to_write);

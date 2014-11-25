@@ -389,7 +389,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         
         m_SearchInFileQueue->Stop(); // we should stop current search if any
         m_SearchInFileQueue->Wait();
-        m_SearchInFileQueue->Run(^{
+        m_SearchInFileQueue->Run([=]{
             m_SearchInFile->MoveCurrentPosition(view_offset);
             m_SearchInFile->ToggleTextSearch((__bridge CFStringRef)str, encoding);
         });
@@ -400,7 +400,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
             return; // we're already performing this request now, nothing to do
     }
     
-    m_SearchInFileQueue->Run(^{
+    m_SearchInFileQueue->Run([=]{
         uint64_t offset, len;
         
         if(m_SearchInFile->IsEOF())

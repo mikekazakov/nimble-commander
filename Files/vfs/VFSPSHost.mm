@@ -331,21 +331,22 @@ vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
 void VFSPSHost::UpdateCycle()
 {
     auto weak_this = weak_ptr<VFSPSHost>(SharedPtr());
-    m_UpdateQ->Run(^(SerialQueue _q){
+    m_UpdateQ->Run([=](auto _q){
         if(_q->IsStopped())
             return;
 
         __block auto procs = GetProcs();
         if(!_q->IsStopped())
         {
+            auto me = weak_this;
             dispatch_to_main_queue(^{
-                if(!weak_this.expired())
-                    weak_this.lock()->CommitProcs(move(procs));
+                if(!me.expired())
+                    me.lock()->CommitProcs(move(procs));
             });
             
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2000000000 /* 2 sec*/), dispatch_get_main_queue(), ^{
-                if(!weak_this.expired())
-                    weak_this.lock()->UpdateCycle();
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, nanoseconds(2s).count() ), dispatch_get_main_queue(), ^{
+                if(!me.expired())
+                    me.lock()->UpdateCycle();
             });
         }
     });

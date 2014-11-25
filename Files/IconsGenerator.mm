@@ -303,7 +303,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     entry.SetCIcon(meta_no+1);
     
     auto sh_this = shared_from_this();
-    m_WorkGroup.Run(^{
+    m_WorkGroup.Run([=]{
         Runner(meta, sh_this);
     });
     

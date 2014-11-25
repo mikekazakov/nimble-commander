@@ -79,7 +79,7 @@ bool FileSearch::Go(string _from_path,
     m_FinishCallback = _finish_callback;
     m_SearchOptions = _options;
     
-    m_Queue->Run(^{
+    m_Queue->Run([=]{
         AsyncProcPrologue(_from_path, _in_host);
     });
     

@@ -228,7 +228,7 @@
 		CF6D9BE9196678000077B146 /* sysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414E1803F6A2006D6687 /* sysinfo.mm */; };
 		CF6D9BEA196678000077B146 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CF6D9BEB196678000077B146 /* NewVersionChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47F6971830CDB30060D474 /* NewVersionChecker.mm */; };
-		CF6D9BEC196678000077B146 /* DispatchQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.mm */; };
+		CF6D9BEC196678000077B146 /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.cpp */; };
 		CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CF6D9BEE196678000077B146 /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB56284194ECA1B00A3B70E /* FPSLimitedDrawer.mm */; };
 		CF6D9C02196678000077B146 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C720B195EC2DB00DE165A /* DisplayNamesCache.mm */; };
@@ -631,7 +631,7 @@
 		CF9D0EDC17CC961100CB8146 /* filter_fork_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7317CC961100CB8146 /* filter_fork_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */; };
 		CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */; };
-		CFA0B22C186412BD00501C35 /* DispatchQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.mm */; };
+		CFA0B22C186412BD00501C35 /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.cpp */; };
 		CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
 		CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
 		CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
@@ -892,7 +892,7 @@
 		CFF6F2CC1A13567C00011177 /* archive_write_add_filter_by_name.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4817CC961100CB8146 /* archive_write_add_filter_by_name.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
 		CFF6F2CE1A13567C00011177 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
-		CFF6F2D01A13567C00011177 /* DispatchQueue.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.mm */; };
+		CFF6F2D01A13567C00011177 /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.cpp */; };
 		CFF6F2D11A13567C00011177 /* archive_util.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4317CC961100CB8146 /* archive_util.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2D21A13567C00011177 /* archive_read_open_filename.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1E17CC961100CB8146 /* archive_read_open_filename.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2D31A13567C00011177 /* archive_read_support_format_7zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2F17CC961100CB8146 /* archive_read_support_format_7zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -1605,7 +1605,7 @@
 		CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperation.mm; sourceTree = "<group>"; };
 		CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationJob.mm; sourceTree = "<group>"; };
 		CF9DF217171320D40008CBAE /* CreateDirectoryOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectoryOperationJob.h; sourceTree = "<group>"; };
-		CFA0B22A186412BD00501C35 /* DispatchQueue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DispatchQueue.mm; sourceTree = "<group>"; };
+		CFA0B22A186412BD00501C35 /* DispatchQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DispatchQueue.cpp; sourceTree = "<group>"; };
 		CFA0B22B186412BD00501C35 /* DispatchQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchQueue.h; sourceTree = "<group>"; };
 		CFA0B22D18648F9A00501C35 /* PanelHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelHistory.mm; sourceTree = "<group>"; };
 		CFA0B22E18648F9A00501C35 /* PanelHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelHistory.h; sourceTree = "<group>"; };
@@ -2639,7 +2639,7 @@
 				CFDA4CCC182A17C7006EC35C /* LSUrls.mm */,
 				CF47F6961830CDB30060D474 /* NewVersionChecker.h */,
 				CF47F6971830CDB30060D474 /* NewVersionChecker.mm */,
-				CFA0B22A186412BD00501C35 /* DispatchQueue.mm */,
+				CFA0B22A186412BD00501C35 /* DispatchQueue.cpp */,
 				CFA0B22B186412BD00501C35 /* DispatchQueue.h */,
 				CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */,
 				CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */,
@@ -3554,7 +3554,7 @@
 				CF6D9BE9196678000077B146 /* sysinfo.mm in Sources */,
 				CF6D9BEA196678000077B146 /* LSUrls.mm in Sources */,
 				CF6D9BEB196678000077B146 /* NewVersionChecker.mm in Sources */,
-				CF6D9BEC196678000077B146 /* DispatchQueue.mm in Sources */,
+				CF6D9BEC196678000077B146 /* DispatchQueue.cpp in Sources */,
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
 				CF6D9BEE196678000077B146 /* FPSLimitedDrawer.mm in Sources */,
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
@@ -3835,7 +3835,7 @@
 				CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */,
 				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
-				CFA0B22C186412BD00501C35 /* DispatchQueue.mm in Sources */,
+				CFA0B22C186412BD00501C35 /* DispatchQueue.cpp in Sources */,
 				CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */,
 				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,
 				CF9D0EA017CC961100CB8146 /* archive_read_support_format_7zip.c in Sources */,
@@ -4123,7 +4123,7 @@
 				CFF6F2CC1A13567C00011177 /* archive_write_add_filter_by_name.c in Sources */,
 				CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CFF6F2CE1A13567C00011177 /* FilePanelMainSplitView.mm in Sources */,
-				CFF6F2D01A13567C00011177 /* DispatchQueue.mm in Sources */,
+				CFF6F2D01A13567C00011177 /* DispatchQueue.cpp in Sources */,
 				CFF6F2D11A13567C00011177 /* archive_util.c in Sources */,
 				CFF6F2D21A13567C00011177 /* archive_read_open_filename.c in Sources */,
 				CFF6F2D31A13567C00011177 /* archive_read_support_format_7zip.c in Sources */,

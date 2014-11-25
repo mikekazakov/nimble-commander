@@ -30,8 +30,8 @@ void PanelData::Load(shared_ptr<VFSListing> _listing)
     m_SoftFiltering.OnPanelDataLoad();
     
     // now sort our new data
-    m_SortExecGroup.Run(^{ DoRawSort(m_Listing, m_EntriesByRawName); });
-    m_SortExecGroup.Run(^{ DoSortWithHardFiltering(); });
+    m_SortExecGroup.Run([=]{ DoRawSort(m_Listing, m_EntriesByRawName); });
+    m_SortExecGroup.Run([=]{ DoSortWithHardFiltering(); });
     m_SortExecGroup.Wait();
     BuildSoftFilteringIndeces();
     // update stats

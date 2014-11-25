@@ -137,15 +137,15 @@
             return 0;
     }
     
-    __block int ret = 0;
-    auto workblock = ^(SerialQueue _q) {
+    auto ret = make_shared<int>(VFSError::Ok);
+    auto workblock = [=](const SerialQueue &_q) {
         if(!_vfs->IsDirectory(_dir.c_str(), 0, 0))
         {
-            ret = VFSError::FromErrno(ENOTDIR);
+            *ret = VFSError::FromErrno(ENOTDIR);
             return;
         }
         shared_ptr<VFSListing> listing;
-        ret = _vfs->FetchDirectoryListing(_dir.c_str(),
+        *ret = _vfs->FetchDirectoryListing(_dir.c_str(),
                                           &listing,
                                           m_VFSFetchingFlags,
                                           [&]{return _q->IsStopped();});
@@ -167,7 +167,7 @@
     if(_asynchronous == false)
     {
         m_DirectoryLoadingQ->RunSyncHere(workblock);
-        return ret;
+        return *ret;
     }
     else
     {
@@ -180,7 +180,7 @@
 {
     path initial_path = self.GetCurrentDirectoryPathRelativeToHost;
     auto initial_vfs = self.VFS;
-    m_DirectoryLoadingQ->Run(^(SerialQueue _que) {
+    m_DirectoryLoadingQ->Run([=](const SerialQueue &_que) {
         // 1st - try to locate a valid dir in current host
         path path = initial_path;
         auto vfs = initial_vfs;

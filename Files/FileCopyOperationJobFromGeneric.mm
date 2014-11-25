@@ -342,8 +342,8 @@ bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_
     bool remember_choice = false, was_successful = false, unlink_on_stop = false, adjust_dst_time = true, erase_xattrs = false;
     unsigned long dest_sz_on_stop = 0, startwriteoff = 0;
     int64_t preallocate_delta = 0;
-    __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0, totaldestsize=0;
-    __block bool io_docancel = false;
+    unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0, totaldestsize=0;
+    bool io_docancel = false;
     char *readbuf = (char*)m_Buffer1.get(), *writebuf = (char*)m_Buffer2.get();
 
 statsource:
@@ -488,8 +488,8 @@ dolseek: // find right position in destination file
     {
         if(CheckPauseOrStop()) goto cleanup;
      
-        __block ssize_t io_nread = 0;
-        m_IOGroup.Run(^{
+        ssize_t io_nread = 0;
+        m_IOGroup.Run([&]{
         doread:
             if(io_totalread < src_file->Size())
             {
@@ -507,7 +507,7 @@ dolseek: // find right position in destination file
             }
         });
 
-        m_IOGroup.Run(^{
+        m_IOGroup.Run([&]{
             unsigned long alreadywrote = 0;
             while(io_leftwrite > 0)
             {

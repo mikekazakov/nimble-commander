@@ -199,7 +199,7 @@
         if(returnCode != NSModalResponseOK)
             return;
 
-        m_DirectoryLoadingQ->Run(^{
+        m_DirectoryLoadingQ->Run([=]{
             if(sheet.server == nil)
                 return;
             
@@ -240,7 +240,7 @@
         if(returnCode != NSModalResponseOK)
             return;
         
-        m_DirectoryLoadingQ->Run(^{
+        m_DirectoryLoadingQ->Run([=]{
             if(sheet.server == nil)
                 return;
             

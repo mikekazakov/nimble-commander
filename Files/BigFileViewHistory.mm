@@ -162,7 +162,7 @@ static NSString* StorageFileName()
     assert(_entry);
     assert(_entry->last_viewed);
     assert(_entry->path);
-    m_Queue->Run(^{
+    m_Queue->Run([=]{
         m_IsDirty = true;
         for(BigFileViewHistoryEntry *e in m_History)
             if(e->path != nil &&
@@ -196,7 +196,7 @@ static NSString* StorageFileName()
 + (bool) DeleteHistory
 {
     if(g_SharedInstance != nil)
-        g_SharedInstance->m_Queue->Run(^{
+        g_SharedInstance->m_Queue->Run([]{
             g_SharedInstance->m_History = [NSMutableArray new];
             g_SharedInstance->m_IsDirty = false;
         });

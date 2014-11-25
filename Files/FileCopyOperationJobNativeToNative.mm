@@ -985,8 +985,8 @@ bool FileCopyOperationJobNativeToNative::CopyFileTo(const char *_src, const char
     bool adjust_dst_time = true, copy_xattrs = true, erase_xattrs = false, remember_choice = false,
     was_successful = false, unlink_on_stop = false;
     mode_t oldumask;
-    __block unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
-    __block bool io_docancel = false;
+    unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
+    bool io_docancel = false;
     
     m_Stats.SetCurrentItem(_src);
     
@@ -1128,8 +1128,8 @@ dolseek: // find right position in destination file
     {
         if(CheckPauseOrStop()) goto cleanup;
         
-        __block ssize_t io_nread = 0;
-        m_IOGroup.Run(^{
+        ssize_t io_nread = 0;
+        m_IOGroup.Run([&]{
         doread:
             if(io_totalread < src_stat_buffer.st_size)
             {
@@ -1147,7 +1147,7 @@ dolseek: // find right position in destination file
             }
         });
         
-        m_IOGroup.Run(^{
+        m_IOGroup.Run([&]{
             unsigned long alreadywrote = 0;
             while(io_leftwrite > 0)
             {

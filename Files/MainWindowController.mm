@@ -270,7 +270,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     if(!m_BigFileViewLoadingQ->Empty())
         return;
     
-    m_BigFileViewLoadingQ->Run(^{
+    m_BigFileViewLoadingQ->Run([=]{
         auto frame = [self.window.contentView frame];
         MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:frame];
         

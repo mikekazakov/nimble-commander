@@ -42,6 +42,12 @@ static bool IsImageRepEqual(NSBitmapImageRep *_img1, NSBitmapImageRep *_img2)
     return memcmp(_img1.bitmapData, _img2.bitmapData, _img1.bytesPerPlane) == 0;
 }
 
+static bool IsImageRepEqual(NSImageRep *_img1, NSBitmapImageRep *_img2)
+{
+    NSBitmapImageRep *img1 = [[NSBitmapImageRep alloc] initWithCGImage:[_img1 CGImageForProposedRect:0 context:0 hints:0]];
+    return IsImageRepEqual(img1, _img2);
+}
+
 static NSImageRep *ProduceThumbnailForVFS(const string &_path,
                                    const string &_ext,
                                    const VFSHostPtr &_host,
@@ -221,8 +227,6 @@ IconsGenerator::~IconsGenerator()
     m_WorkGroup.Wait();
     if(m_ControlQueue != 0)
         dispatch_release(m_ControlQueue);
-    if(m_IconsCacheQueue != 0)
-        dispatch_release(m_IconsCacheQueue);
 }
 
 void IconsGenerator::BuildGenericIcons()
@@ -284,9 +288,9 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     meta->extension = entry.HasExtension() ? entry.Extension() : "";
     if(m_IconsMode >= IconModeFileIcons && !meta->extension.empty())
     {
-        __block map<string, NSImageRep*>::const_iterator it;
-        dispatch_sync(m_IconsCacheQueue, ^{ it = m_IconsCache.find(meta->extension); });
-        if(it != m_IconsCache.end())
+        lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
+        auto it = m_ExtensionIconsCache.find(meta->extension);
+        if(it != end(m_ExtensionIconsCache))
             meta->filetype = it->second;
     }
 
@@ -328,19 +332,21 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
         // zero - if we haven't image for this extension - produce it
         if(!_meta->extension.empty())
         {
-            __block map<string, NSImageRep*>::const_iterator it;
-            dispatch_sync(m_IconsCacheQueue, ^{
-                it = m_IconsCache.find(_meta->extension);
-                if( it == m_IconsCache.end() )
-                    m_IconsCache[_meta->extension] = 0; // to exclude parallel image building
-            });
-            if( it == m_IconsCache.end() )
-                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]])
+            m_ExtensionIconsCacheLock.lock();
+            auto it = m_ExtensionIconsCache.find(_meta->extension);
+            m_ExtensionIconsCacheLock.unlock();
+            
+            if( it == end(m_ExtensionIconsCache) ) {
+                m_ExtensionIconsCacheLock.lock();
+                auto &new_icon = *m_ExtensionIconsCache.emplace(_meta->extension, nil).first; // to exclude parallel image building
+                m_ExtensionIconsCacheLock.unlock();
+                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_meta->extension]])
                 { // don't know anything about this extension - ok, ask system
                     auto rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
-                    if(!IsImageRepEqual([[NSBitmapImageRep alloc] initWithCGImage:[rep CGImageForProposedRect:0 context:0 hints:0]], m_GenericFileIconBitmap))
-                        dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = rep; });
+                    if(!IsImageRepEqual(rep, m_GenericFileIconBitmap))
+                        new_icon.second = rep;
                 }
+            }
         }
         
         // 1st - try to built a real thumbnail
@@ -408,31 +414,24 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
         if(!_meta->thumbnail && !_meta->filetype && !_meta->extension.empty())
         {
             // check if have some information in cache
-            __block map<string, NSImageRep*>::const_iterator it;
-            dispatch_sync(m_IconsCacheQueue, ^{ it = m_IconsCache.find(_meta->extension); });
+            m_ExtensionIconsCacheLock.lock();
+            auto it = m_ExtensionIconsCache.find(_meta->extension);
+            m_ExtensionIconsCacheLock.unlock();
             
-            if( it != m_IconsCache.end() )
-            {
+            if( it != m_ExtensionIconsCache.end() ) {
                 // ok, just use it. NB! this map can contain zero pointer for the cases when icon is dummy
                 _meta->filetype = it->second;
-                if(_meta->filetype != 0 && m_UpdateCallback)
+                if(_meta->filetype != nil && m_UpdateCallback)
                     m_UpdateCallback();
             }
-            else
-            {
-                // don't know anything - ok, ask system
-                NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[NSString stringWithUTF8String:_meta->extension.c_str()]];
-                if(image != nil)
-                {
+            else { // don't know anything - ok, ask system
+                m_ExtensionIconsCacheLock.lock();
+                auto &new_icon = *m_ExtensionIconsCache.emplace(_meta->extension, nil).first; // to exclude parallel image building
+                m_ExtensionIconsCacheLock.unlock();
+                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_meta->extension]]) {
                     NSImageRep *rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
-                    if(IsImageRepEqual([[NSBitmapImageRep alloc] initWithCGImage:[rep CGImageForProposedRect:0 context:0 hints:0]], m_GenericFileIconBitmap))
-                    {
-                        // dummy icon - this extension has no set icon, so just don't use it
-                        dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = 0; });
-                    }
-                    else
-                    {
-                        dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache[_meta->extension] = rep; });
+                    if(!IsImageRepEqual(rep, m_GenericFileIconBitmap)) {
+                        new_icon.second = rep;
                         _meta->filetype = rep;
                         if(m_UpdateCallback)
                             m_UpdateCallback();
@@ -443,8 +442,8 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
     }
     
     // clear unnecessary meta data
-    string().swap(_meta->extension);
-    string().swap(_meta->relative_path);
+    string(move(_meta->extension));
+    string(move(_meta->relative_path));
     _meta->host.reset();
 }
 
@@ -479,7 +478,8 @@ void IconsGenerator::SetIconSize(int _size)
     if((int)m_IconSize.size.width == _size) return;
     m_IconSize = NSMakeRect(0, 0, _size, _size);
     BuildGenericIcons();
-    dispatch_sync(m_IconsCacheQueue, ^{ m_IconsCache.clear(); });
+    lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
+    m_ExtensionIconsCache.clear();
 }
 
 void IconsGenerator::SetUpdateCallback(void (^_cb)())

@@ -71,7 +71,6 @@ private:
 
     DispatchGroup    m_WorkGroup{DispatchGroup::Background};    // working queue is concurrent
     dispatch_queue_t m_ControlQueue = dispatch_queue_create(__FILES_IDENTIFIER__".IconsGenerator.control_queue", DISPATCH_QUEUE_SERIAL);
-    dispatch_queue_t m_IconsCacheQueue = dispatch_queue_create(__FILES_IDENTIFIER__".IconsGenerator.cache_queue", DISPATCH_QUEUE_SERIAL);    
     
     atomic_int       m_StopWorkQueue{0};
     int              m_IconsMode = IconModeFileIconsThumbnails;
@@ -82,7 +81,8 @@ private:
     void StopWorkQueue();
     
     
-    map<string, NSImageRep*> m_IconsCache;
+    mutex                    m_ExtensionIconsCacheLock;
+    map<string, NSImageRep*> m_ExtensionIconsCache;
     
     
     // denied! (c) Quake3

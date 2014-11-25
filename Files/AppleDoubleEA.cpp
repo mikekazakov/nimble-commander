@@ -342,11 +342,11 @@ void *BuildAppleDoubleFromEA(shared_ptr<VFSFile> _file,
     
     assert(ret_xattr_count < max_eas); // anti-crash protection;
     
-    __block int eas_count = 0;
+    int eas_count = 0;
     
-    __block bool has_finfo = false;
+    bool has_finfo = false;
     
-    _file->XAttrIterateNames(^bool(const char *_name){
+    _file->XAttrIterateNames([&](auto _name){
             assert(eas_count < max_eas);
             file_eas[eas_count].name_len = (int)strlen(_name);
             assert(file_eas[eas_count].name_len < 256);

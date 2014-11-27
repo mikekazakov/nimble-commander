@@ -352,6 +352,11 @@ void dispatch_or_run_in_main_queue(dispatch_block_t block)
     dispatch_is_main_queue() ? block() : dispatch_to_main_queue(block);
 }
 
+void dispatch_to_background(dispatch_block_t _block) noexcept
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), _block);
+}
+
 MachTimeBenchmark::MachTimeBenchmark() noexcept:
     last(machtime())
 {

@@ -48,6 +48,9 @@ bool dispatch_is_main_queue() noexcept;
 /** syntax sugar for dispatch_async(dispatch_get_main_queue(), ...) call. */
 void dispatch_to_main_queue(dispatch_block_t _block) noexcept;
 
+/** syntax sugar for dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ...) call. */
+void dispatch_to_background(dispatch_block_t _block) noexcept;
+
 /** syntax sugar for dispatch_after(..., dispatch_get_main_queue(), _block) call. */
 void dispatch_to_main_queue_after(nanoseconds _delay, dispatch_block_t _block) noexcept;
 

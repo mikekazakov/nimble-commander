@@ -501,6 +501,15 @@
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */; };
+		CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */; };
+		CF7B20661A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */; };
+		CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */; };
+		CF7B206D1A277A27008F1492 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7B206B1A277A27008F1492 /* TrialWindowController.mm */; };
+		CF7B206E1A277A27008F1492 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7B206B1A277A27008F1492 /* TrialWindowController.mm */; };
+		CF7B206F1A277A27008F1492 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7B206B1A277A27008F1492 /* TrialWindowController.mm */; };
+		CF7B20701A277A27008F1492 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7B206C1A277A27008F1492 /* TrialWindowController.xib */; };
+		CF7B20711A277A27008F1492 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7B206C1A277A27008F1492 /* TrialWindowController.xib */; };
+		CF7B20721A277A27008F1492 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7B206C1A277A27008F1492 /* TrialWindowController.xib */; };
 		CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CF7C92141A0B865D00FAE649 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92131A0B865D00FAE649 /* tab_add.png */; };
@@ -1445,6 +1454,11 @@
 		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
 		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
 		CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ShortcutsDefaults.plist; path = Files/ShortcutsDefaults.plist; sourceTree = "<group>"; };
+		CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MASAppInstalledChecker.cpp; sourceTree = "<group>"; };
+		CF7B20641A2771D8008F1492 /* MASAppInstalledChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASAppInstalledChecker.h; sourceTree = "<group>"; };
+		CF7B206A1A277A27008F1492 /* TrialWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrialWindowController.h; sourceTree = "<group>"; };
+		CF7B206B1A277A27008F1492 /* TrialWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TrialWindowController.mm; sourceTree = "<group>"; };
+		CF7B206C1A277A27008F1492 /* TrialWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrialWindowController.xib; sourceTree = "<group>"; };
 		CF7C920B1A07458900FAE649 /* MMTabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTabBarStyle.h; sourceTree = "<group>"; };
 		CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MMTabBarStyle.mm; sourceTree = "<group>"; };
 		CF7C92131A0B865D00FAE649 /* tab_add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_add.png; path = Resource/tab_add.png; sourceTree = "<group>"; };
@@ -1987,6 +2001,9 @@
 				CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */,
 				CF7249AC1990AC2800583BC5 /* SheetController.h */,
 				CF7249AD1990AC2800583BC5 /* SheetController.mm */,
+				CF7B206A1A277A27008F1492 /* TrialWindowController.h */,
+				CF7B206B1A277A27008F1492 /* TrialWindowController.mm */,
+				CF7B206C1A277A27008F1492 /* TrialWindowController.xib */,
 			);
 			name = Controls;
 			sourceTree = "<group>";
@@ -2651,6 +2668,8 @@
 				CFC5D4A619BB4FFB005BB24A /* Hash.h */,
 				CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */,
 				CF7C93BD1A0DF8BA00FAE649 /* ByteCountFormatter.h */,
+				CF7B20641A2771D8008F1492 /* MASAppInstalledChecker.h */,
+				CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -3160,6 +3179,7 @@
 			files = (
 				CFB598BC196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */,
+				CF7B20711A277A27008F1492 /* TrialWindowController.xib in Resources */,
 				CF6D9CFF19667E390077B146 /* OperationsSummaryViewController.xib in Resources */,
 				CF6D9D0019667E390077B146 /* TimedDummyOperationTestDialog.xib in Resources */,
 				CFB598B2196E38E400D4C108 /* pref_general_icon.png in Resources */,
@@ -3218,6 +3238,7 @@
 			files = (
 				CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */,
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
+				CF7B20701A277A27008F1492 /* TrialWindowController.xib in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
 				CF7C92191A0B877B00FAE649 /* tab_close.png in Resources */,
 				CFB598BB196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
@@ -3276,6 +3297,7 @@
 			files = (
 				CFF6F36B1A13567C00011177 /* FTPConnectionSheetController.xib in Resources */,
 				CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */,
+				CF7B20721A277A27008F1492 /* TrialWindowController.xib in Resources */,
 				CFF6F36D1A13567C00011177 /* Credits.rtf in Resources */,
 				CFF6F36E1A13567C00011177 /* tab_close.png in Resources */,
 				CFF6F36F1A13567C00011177 /* show_oplist_hl_icon.png in Resources */,
@@ -3638,6 +3660,7 @@
 				CF6D9C47196678010077B146 /* PanelHistory.mm in Sources */,
 				CF6D9C48196678010077B146 /* PanelAux.mm in Sources */,
 				CF6D9C49196678010077B146 /* MainWindowFilePanelState.mm in Sources */,
+				CF7B20661A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF6D9C4A196678010077B146 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF6D9C4B196678010077B146 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CF6D9C4C196678010077B146 /* SharingService.mm in Sources */,
@@ -3665,6 +3688,7 @@
 				CF6D9C62196678010077B146 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF6D9C63196678010077B146 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF6D9C64196678010077B146 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
+				CF7B206E1A277A27008F1492 /* TrialWindowController.mm in Sources */,
 				CF6D9C65196678010077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF6D9C66196678010077B146 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF6D9C67196678010077B146 /* PreferencesWindowHotkeysTab.mm in Sources */,
@@ -3926,6 +3950,7 @@
 				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF9D0E8817CC961100CB8146 /* archive_read_data_into_fd.c in Sources */,
 				CF29313417D9915600648A90 /* rdrand.c in Sources */,
+				CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF50B6F01A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */,
 				CF039EB017911FFA00DC85D6 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */,
@@ -3953,6 +3978,7 @@
 				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
 				CF9D0E7A17CC961100CB8146 /* archive_entry_copy_stat.c in Sources */,
 				CF9D0E7817CC961100CB8146 /* archive_crypto.c in Sources */,
+				CF7B206D1A277A27008F1492 /* TrialWindowController.mm in Sources */,
 				CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */,
 				CFB56285194ECA1B00A3B70E /* FPSLimitedDrawer.mm in Sources */,
 				CF9D0E9417CC961100CB8146 /* archive_read_support_filter_all.c in Sources */,
@@ -4214,6 +4240,7 @@
 				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFF6F3241A13567C00011177 /* archive_read_data_into_fd.c in Sources */,
 				CFF6F3251A13567C00011177 /* rdrand.c in Sources */,
+				CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF50B6F21A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */,
 				CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */,
@@ -4241,6 +4268,7 @@
 				CFF6F33D1A13567C00011177 /* ObjcToCppObservingBridge.mm in Sources */,
 				CFF6F33E1A13567C00011177 /* archive_entry_copy_stat.c in Sources */,
 				CFF6F33F1A13567C00011177 /* archive_crypto.c in Sources */,
+				CF7B206F1A277A27008F1492 /* TrialWindowController.mm in Sources */,
 				CFF6F3401A13567C00011177 /* FileMask.mm in Sources */,
 				CFF6F3411A13567C00011177 /* FPSLimitedDrawer.mm in Sources */,
 				CFF6F3421A13567C00011177 /* archive_read_support_filter_all.c in Sources */,

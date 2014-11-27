@@ -26,6 +26,8 @@
 #import "MainWindowFilePanelState.h"
 #import "SandboxManager.h"
 #import "common_paths.h"
+#import "MASAppInstalledChecker.h"
+#import "TrialWindowController.h"
 
 @implementation AppDelegate
 {
@@ -173,6 +175,8 @@
 
     if(!configuration::is_sandboxed)
         NewVersionChecker::Go(); // we check for new versions only for non-sanboxed (say non-MAS) version
+    
+    [self checkIfNeedToShowNagScreen];
 }
 
 - (double) progress
@@ -470,6 +474,30 @@
 {
     NSString *url_string = @"http://filesmanager.info/downloads/latest.dmg";
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:url_string]];
+}
+
+- (void) checkIfNeedToShowNagScreen
+{
+    if(configuration::version != configuration::Version::Full)
+        return;
+    
+    dispatch_to_background(^{
+        string app_name = "Files Pro.app1";
+        string app_id   = "info.filesmanager.Files-Pro";
+        
+        if(MASAppInstalledChecker::Instance().Has(app_name, app_id))
+            return;
+        
+        // check cooldown period - 20 runs or 10 days
+        // ...
+        
+        // finally - show a nag screen
+        dispatch_to_main_queue_after(500ms, ^{
+            TrialWindowController* twc = [[TrialWindowController alloc] init];
+            [twc.window makeKeyAndOrderFront:self];
+            [twc.window makeMainWindow];
+        });
+    });
 }
 
 @end

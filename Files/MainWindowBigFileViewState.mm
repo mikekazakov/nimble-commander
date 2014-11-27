@@ -420,10 +420,8 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 
 - (void)NotifySearching
 {
-    const auto visual_spinning_delay = 100ull; // should be 100 ms of workload before user will get spinning indicator
-    
     if(!m_SearchInFileQueue->Empty())
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, visual_spinning_delay * USEC_PER_SEC), dispatch_get_main_queue(), ^{
+        dispatch_to_main_queue_after(100ms, ^{ // should be 100 ms of workload before user will get spinning indicator
                            if(!m_SearchInFileQueue->Empty()) // need to check if task was already done
                                [m_SearchIndicator startAnimation:self];
                        });

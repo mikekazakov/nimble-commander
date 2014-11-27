@@ -337,6 +337,16 @@ void dispatch_to_main_queue(dispatch_block_t block) noexcept
     dispatch_async(dispatch_get_main_queue(), block);
 }
 
+void dispatch_to_main_queue_after(nanoseconds _delay, dispatch_block_t _block) noexcept
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, _delay.count()), dispatch_get_main_queue(), _block);
+}
+
+void dispatch_after(nanoseconds _delay, dispatch_queue_t _queue, dispatch_block_t _block) noexcept
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, _delay.count()), _queue, _block);
+}
+
 void dispatch_or_run_in_main_queue(dispatch_block_t block)
 {
     dispatch_is_main_queue() ? block() : dispatch_to_main_queue(block);

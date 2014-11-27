@@ -344,7 +344,7 @@ void VFSPSHost::UpdateCycle()
                     me.lock()->CommitProcs(move(procs));
             });
             
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, nanoseconds(2s).count() ), dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue_after(2s, ^{
                 if(!me.expired())
                     me.lock()->UpdateCycle();
             });

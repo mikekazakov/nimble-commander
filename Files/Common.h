@@ -46,10 +46,16 @@ nanoseconds machtime() noexcept;
 bool dispatch_is_main_queue() noexcept;
 
 /** syntax sugar for dispatch_async(dispatch_get_main_queue(), ...) call. */
-void dispatch_to_main_queue(dispatch_block_t block) noexcept;
+void dispatch_to_main_queue(dispatch_block_t _block) noexcept;
+
+/** syntax sugar for dispatch_after(..., dispatch_get_main_queue(), _block) call. */
+void dispatch_to_main_queue_after(nanoseconds _delay, dispatch_block_t _block) noexcept;
 
 /** if current thread is main - just execute a block. otherwise - dispatch it asynchronously to main thread. */
-void dispatch_or_run_in_main_queue(dispatch_block_t block);
+void dispatch_or_run_in_main_queue(dispatch_block_t _block);
+
+/** syntax sugar around dispatch_time(), using C++ function overloading */
+void dispatch_after(nanoseconds _delay, dispatch_queue_t _queue, dispatch_block_t _block) noexcept;
 
 struct MachTimeBenchmark
 {

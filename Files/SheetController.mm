@@ -69,7 +69,7 @@
         [NSApp endSheet:self.window
              returnCode:returnCode];
     if(release_self)
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+        dispatch_to_main_queue_after(1ms, ^{
             m_Self = nil;
         });
 }

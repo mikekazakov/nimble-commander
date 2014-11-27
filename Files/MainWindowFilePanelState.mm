@@ -841,7 +841,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         // Check if the skin value was modified.
         if ([keyPath isEqualToString:g_DefsGeneralShowTabs]) {
             bool show = [defaults boolForKey:g_DefsGeneralShowTabs];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, nanoseconds(1ms).count()), dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue_after(1ms, ^{
                 m_ShowTabs = show;
                 [self updateTabBarsVisibility];
             });

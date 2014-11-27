@@ -543,16 +543,13 @@ void panel::GenericCursorPersistance::Restore()
 - (void) UpdateSpinningIndicator
 {
     bool is_anything_working = !m_DirectorySizeCountingQ->Empty() || !m_DirectoryLoadingQ->Empty() || !m_DirectoryReLoadingQ->Empty();
-    const auto visual_spinning_delay = 100ull; // in 100 ms of workload should be before user will get spinning indicator
     
     if(is_anything_working == m_IsAnythingWorksInBackground)
         return; // nothing to update;
         
     if(is_anything_working)
     {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, visual_spinning_delay * USEC_PER_SEC),
-                       dispatch_get_main_queue(),
-                       ^{
+        dispatch_to_main_queue_after(100ms, ^{ // in 100 ms of workload should be before user will get spinning indicator
                            if(m_IsAnythingWorksInBackground) // need to check if task was already done
                            {
                                [m_SpinningIndicator startAnimation:nil];

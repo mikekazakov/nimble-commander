@@ -40,6 +40,8 @@ struct PanelViewStateStorage
     
     NSScrollView               *m_RenamingEditor; // NSTextView inside
     string                      m_RenamingOriginalName;
+    int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
+    atomic_ullong               m_FieldRenamingRequestTicket; // used for delayed action to ensure that click was single, not double or more
     
     double                      m_ScrollDY;
     
@@ -47,7 +49,7 @@ struct PanelViewStateStorage
     NSPoint                     m_LButtonDownPos;
     bool                        m_IsCurrentlyMomentumScroll;
     bool                        m_DisableCurrentMomentumScroll;
-    int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
+    
     __weak id<PanelViewDelegate> m_Delegate;
     nanoseconds                 m_ActivationTime; // time when view did became a first responder
     
@@ -64,6 +66,7 @@ struct PanelViewStateStorage
     self = [super initWithFrame:frame];
     if (self) {
         self.wantsLayer = true;
+        m_FieldRenamingRequestTicket = 0;
         m_ScrollDY = 0.0;
         m_DisableCurrentMomentumScroll = false;
         m_IsCurrentlyMomentumScroll = false;
@@ -536,26 +539,26 @@ struct PanelViewStateStorage
 
 - (void) mouseUp:(NSEvent *)_event
 {
+    int click_count = (int)_event.clickCount;
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-    if(_event.clickCount <= 1 )
-    {
-        if(m_LastPotentialRenamingLBDown >= 0)
-        {
-            if(cursor_pos >= 0 && cursor_pos == m_LastPotentialRenamingLBDown)
-                [self performSelector:@selector(startFieldEditorRenamingByEvent:)
-                           withObject:_event
-                           afterDelay:NSEvent.doubleClickInterval];
+
+    if( click_count <= 1 ) {
+        if( m_LastPotentialRenamingLBDown >= 0 && m_LastPotentialRenamingLBDown == cursor_pos ) {
+            static const nanoseconds delay = milliseconds( int(NSEvent.doubleClickInterval*1000) );
+            uint64_t renaming_ticket = ++m_FieldRenamingRequestTicket;
+            dispatch_to_main_queue_after(delay, ^{
+                               if(renaming_ticket == m_FieldRenamingRequestTicket)
+                                   [self startFieldEditorRenamingByEvent:_event];
+                           });
         }
     }
-    else if(_event.clickCount == 2) // Handle double click mouse up
-    {
+    else if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 ) {
+        // Handle double-or-four-etc clicks as double-click
+        ++m_FieldRenamingRequestTicket; // to abort field editing
         if(cursor_pos >= 0 && cursor_pos == m_State.CursorPos)
             [self.delegate PanelViewDoubleClick:self atElement:cursor_pos];
-        
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
     }
-    else
 
     m_ReadyToDrag = false;
     m_LastPotentialRenamingLBDown = -1;

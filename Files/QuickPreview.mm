@@ -135,17 +135,16 @@ static const nanoseconds g_Delay = 100ms;
     uint64_t ticket = ++m_CurrentPreviewTicket;
   
     if(_host->IsNativeFS())
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_Delay.count()), dispatch_get_main_queue(), ^{
+        dispatch_to_main_queue_after(g_Delay, ^{
             if(ticket != m_CurrentPreviewTicket || m_Closed)
                 return;
             [self doPreviewItemNative:path];
         });
     else {
         VFSHostPtr host = _host;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_Delay.count()), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            if(ticket != m_CurrentPreviewTicket)
-                return;
-            [self doPreviewItemVFS:path vfs:host ticket:ticket];
+        dispatch_after(g_Delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            if(ticket == m_CurrentPreviewTicket)
+                [self doPreviewItemVFS:path vfs:host ticket:ticket];
         });
     }
 }

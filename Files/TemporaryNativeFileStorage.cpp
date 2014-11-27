@@ -394,9 +394,7 @@ static void DoTempPurge()
     closedir(dirp);
     
     // schedule next purging in 6 hours
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, nanoseconds(6h).count()),
-                   dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
-                   ^{
-                       DoTempPurge();
-                   });
+    dispatch_after(6h, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        DoTempPurge();
+    });
 }

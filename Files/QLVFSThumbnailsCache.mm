@@ -7,6 +7,7 @@
 //
 
 #include "QLVFSThumbnailsCache.h"
+#include "Common.h"
 
 static const nanoseconds g_PurgeDelay = 1min;
 
@@ -47,8 +48,7 @@ void QLVFSThumbnailsCache::Put(const string& _path, const VFSHostPtr &_host, NSI
         
         if(!m_PurgeScheduled) {
             m_PurgeScheduled = true;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_PurgeDelay.count()),
-                           dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            dispatch_after(g_PurgeDelay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                 Purge();
             });
         }
@@ -66,8 +66,7 @@ void QLVFSThumbnailsCache::Purge()
     if(m_Caches.empty())
         m_PurgeScheduled = false;
     else
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, g_PurgeDelay.count()),
-                       dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        dispatch_after(g_PurgeDelay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             Purge();
         });
 }

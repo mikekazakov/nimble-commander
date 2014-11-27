@@ -98,14 +98,14 @@
     {
         double hDifference = fabs(new_size.height - ((NSView*)[window contentView]).bounds.size.height);
         double duration = MAX(0.0005 * hDifference, 0.10); // we always want a slight animation
-
+        nanoseconds nduration(uint64_t(duration * NSEC_PER_SEC));
+        
         [NSAnimationContext beginGrouping];
         [[NSAnimationContext currentContext] setDuration:duration];
         [[window animator] setFrame:newFrame display:YES];
         [NSAnimationContext endGrouping];
         if([self.DisclosureTriangle state] == NSOnState)
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(),
-                           ^{
+            dispatch_to_main_queue_after(nduration, ^{
                                [self.DisclosureGroup setHidden:false];
                            });
     }

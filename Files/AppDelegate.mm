@@ -126,8 +126,9 @@
         menuitem("menu.go.connect.sftp").hidden = true;        
         [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
     }
-    if(!configuration::has_checksum_calculation)
-        menuitem("menu.file.calculate_checksum").hidden = true;
+    
+    menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
+    menuitem("menu.files.try_full_version").hidden = configuration::version == configuration::Version::Full;
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
@@ -463,6 +464,12 @@
         return  true;
     }
     return false;
+}
+
+- (IBAction)OnMenuTryFullVersion:(id)sender
+{
+    NSString *url_string = @"http://filesmanager.info/downloads/latest.dmg";
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:url_string]];
 }
 
 @end

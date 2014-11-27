@@ -85,6 +85,7 @@ private:
         {"menu.files.hide_others",              10030},
         {"menu.files.show_all",                 10040},
         {"menu.files.quit",                     10050},
+        {"menu.files.try_full_version",         10060},
         
         {"menu.file.newwindow",                 11000},
         {"menu.file.new_folder",                11090},

@@ -154,6 +154,7 @@ namespace panel
 - (void) HandleGoIntoDirOrOpenInSystem;
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select;
 - (void) SelectAllEntries:(bool) _select;
+- (void) invertSelection;
 - (void) UpdateBriefSystemOverview;
 - (void) CalculateSizesWithNames:(chained_strings) _filenames;
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode;

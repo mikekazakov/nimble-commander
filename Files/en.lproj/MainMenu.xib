@@ -196,6 +196,12 @@ DQ
                                     <action selector="deselectAll:" target="-1" id="901"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Invert Selection" tag="12040" alternate="YES" id="fQ2-fd-Sa6">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnMenuInvertSelection:" target="-1" id="PXn-k3-eK1"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

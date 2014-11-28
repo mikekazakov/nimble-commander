@@ -409,6 +409,10 @@
     [self SelectAllEntries:false];
 }
 
+- (IBAction)OnMenuInvertSelection:(id)sender {
+    [self invertSelection];
+}
+
 - (IBAction)OnRefreshPanel:(id)sender {
     [self RefreshDirectory];
 }

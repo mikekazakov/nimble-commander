@@ -298,6 +298,7 @@ public:
     // manupulation with user flags for directory entries
     void CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected);
     void CustomFlagsSelectAllSorted(bool _select);
+    void CustomFlagsSelectInvert();
     int  CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs);
     
     void CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id);

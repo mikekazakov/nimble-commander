@@ -572,7 +572,13 @@ void panel::GenericCursorPersistance::Restore()
 - (void) SelectAllEntries:(bool) _select
 {
     m_Data.CustomFlagsSelectAllSorted(_select);
-    [m_View setNeedsDisplay:true];
+    [m_View setNeedsDisplay];
+}
+
+- (void) invertSelection
+{
+    m_Data.CustomFlagsSelectInvert();
+    [m_View setNeedsDisplay];
 }
 
 - (void) OnPathChanged

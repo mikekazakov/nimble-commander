@@ -463,6 +463,21 @@ void PanelData::CustomFlagsSelectAllSorted(bool _select)
     UpdateStatictics();
 }
 
+void PanelData::CustomFlagsSelectInvert()
+{
+    for(auto i: m_EntriesByCustomSort) {
+        auto &ent = m_Listing->At(i);
+        if(!ent.IsDotDot()) {
+            if(ent.CFIsSelected())
+                ent.UnsetCFlag(VFSListingItem::Flags::Selected);
+            else
+                ent.SetCFlag(VFSListingItem::Flags::Selected);
+        }
+    }
+    
+    UpdateStatictics();
+}
+
 chained_strings PanelData::StringsFromSelectedEntries() const
 {
     chained_strings str;

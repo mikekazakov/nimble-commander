@@ -107,6 +107,8 @@ private:
         {"menu.edit.paste",                     12010},
         {"menu.edit.select_all",                12020},
         {"menu.edit.deselect_all",              12030},
+        {"menu.edit.invert_selection",          12040},
+
         {"menu.view.left_panel_change_folder",  13000},
         {"menu.view.right_panel_change_folder", 13010},
         {"menu.view.swap_panels",               13020},

@@ -52,6 +52,8 @@
 	<string>⌘a</string>
 	<string>menu.edit.deselect_all</string>
 	<string>⌥⌘a</string>
+	<string>menu.edit.invert_selection</string>
+	<string>^⌘a</string>
 	<string>menu.view.left_panel_change_folder</string>
 	<string></string>
 	<string>menu.view.right_panel_change_folder</string>

@@ -105,7 +105,7 @@ static void CheckForNewVersion()
 void NewVersionChecker::Go()
 {
     // go background async immediately, so don't pause startup process for any milliseconds
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_to_background(^{
         NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
         if(NSData *d = [defaults dataForKey:g_DefKey])
         {

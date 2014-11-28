@@ -482,14 +482,42 @@
         return;
     
     dispatch_to_background(^{
-        string app_name = "Files Pro.app1";
+        string app_name = "Files Pro.app";
         string app_id   = "info.filesmanager.Files-Pro";
         
         if(MASAppInstalledChecker::Instance().Has(app_name, app_id))
             return;
         
-        // check cooldown period - 20 runs or 10 days
-        // ...
+        // check cooldown criterias
+        bool usage_time_exceeds_cooldown = false;
+        NSString *def_start = @"CommonTrialFirstRunData";
+        if(NSData *d = [NSUserDefaults.standardUserDefaults dataForKey:def_start]) {
+            NSDate *first_run = (NSDate*)[NSUnarchiver unarchiveObjectWithData:d];
+            if(![first_run isKindOfClass:NSDate.class]) { // broken start date, fix and exit
+                [NSUserDefaults.standardUserDefaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:def_start];
+                return;
+            }
+            seconds cooldown = 24h * 10; // 10 days cooldown
+            NSDate *cooldown_ends = [first_run dateByAddingTimeInterval:cooldown.count()];
+            if( [cooldown_ends compare:NSDate.date] == NSOrderedAscending )
+                usage_time_exceeds_cooldown = true;
+        }
+        else
+            [NSUserDefaults.standardUserDefaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:def_start];
+  
+        bool starts_amount_exceeds_cooldown = false;
+        NSString *def_runs  = @"CommonTrialFirstRunsTotal";
+        long app_runs = [NSUserDefaults.standardUserDefaults integerForKey:def_runs];
+        if(app_runs < 0)
+            app_runs = 0;
+        if(app_runs < 20) // 20 app starts cooldown
+            [NSUserDefaults.standardUserDefaults setInteger:++app_runs forKey:def_runs];
+        else
+            starts_amount_exceeds_cooldown = true;
+
+        // if we're still running a cooldown period - don't show a nag screen
+        if(!usage_time_exceeds_cooldown && !starts_amount_exceeds_cooldown)
+            return;
         
         // finally - show a nag screen
         dispatch_to_main_queue_after(500ms, ^{

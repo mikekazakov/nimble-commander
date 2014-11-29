@@ -39,6 +39,9 @@ void SyncMessageBoxUTF8(const char *_utf8_string);
 /** returns a value from NSTemporaryDirectory, once captured. Contains a path with a trailing slash. */
 const string &AppTemporaryDirectory() noexcept;
 
+/** returns a path from main bundle, i.e. app itself. Contains a path with a trailing slash. */
+const string &AppBundleDirectory() noexcept;
+
 /** returns relative Mach time in nanoseconds using mach_absolute_time. */
 nanoseconds machtime() noexcept;
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>info.filesmanager.Files.PrivilegedIOHelper</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>PrivilegedIOHelper</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>SMAuthorizedClients</key>
+	<array>
+		<string>identifier info.filesmanager.Files and certificate leaf[subject.CN] = &quot;Mac Developer: Michael Kazakov (4VT72ZQ4R4)&quot;</string>
+	</array>
+</dict>
+</plist>

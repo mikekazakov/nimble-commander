@@ -327,6 +327,12 @@ const string &AppTemporaryDirectory() noexcept
     return path;
 }
 
+const string &AppBundleDirectory() noexcept
+{
+    static string path = string(NSBundle.mainBundle.bundleURL.path.fileSystemRepresentation) + '/';
+    return path;
+}
+
 bool dispatch_is_main_queue() noexcept
 {
     return NSThread.isMainThread;

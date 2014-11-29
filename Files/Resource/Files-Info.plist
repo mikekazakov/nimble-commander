@@ -57,5 +57,10 @@
 			</array>
 		</dict>
 	</array>
+	<key>SMPrivilegedExecutables</key>
+	<dict>
+		<key>info.filesmanager.Files.PrivilegedIOHelper</key>
+		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = &quot;Mac Developer: Michael Kazakov (4VT72ZQ4R4)&quot;</string>
+	</dict>
 </dict>
 </plist>

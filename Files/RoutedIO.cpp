@@ -8,17 +8,25 @@
 
 #include <ServiceManagement/ServiceManagement.h>
 #include <Security/Authorization.h>
+#include <Security/AuthorizationDB.h>
 #include "RoutedIO.h"
 #include "Common.h"
 #include "RoutedIOInterfaces.h"
 
-static PosixIOInterface &IOCreateProxy();
+static PosixIOInterface &IODirectCreateProxy();
+static PosixIOInterface &IOWrappedCreateProxy();
 
-PosixIOInterface &RoutedIO::Interface = IOCreateProxy();
+PosixIOInterface &RoutedIO::Direct    = IODirectCreateProxy();
+PosixIOInterface &RoutedIO::Wrapped   = IOWrappedCreateProxy();
 static const char *g_HelperLabel      = "info.filesmanager.Files.PrivilegedIOHelper";
 static CFStringRef g_HelperLabelCF    = CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
 
-static PosixIOInterface &IOCreateProxy()
+static PosixIOInterface &IODirectCreateProxy() {
+    static PosixIOInterfaceNative direct;
+    return direct;
+}
+
+static PosixIOInterface &IOWrappedCreateProxy()
 {
     if(configuration::version == configuration::Version::Full) {
         static PosixIOInterfaceRouted routed(RoutedIO::Instance());
@@ -106,6 +114,9 @@ bool RoutedIO::TurnOn()
             return false;
     }
     
+    if(!AuthenticateAsAdmin())
+        return false;
+        
     if( !IsHelperCurrent() ) {
         // we have another version of a helper app
         if( Connect() && IsHelperAlive() ) {
@@ -135,26 +146,38 @@ bool RoutedIO::TurnOn()
     return Connect();
 }
 
+bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection)
+{
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_bool(message, "auth", m_AuthenticatedAsAdmin);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(_connection, message);
+    xpc_release(message);
+    
+    bool result = false;
+    if(xpc_get_type(reply) != XPC_TYPE_ERROR)
+        if( xpc_dictionary_get_bool(reply, "ok") == true )
+            result = true;
+    
+    xpc_release(reply);
+    return result;
+}
+
 bool RoutedIO::AskToInstallHelper()
 {
     bool result = false;
     
-    AuthorizationItem authItem		= { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
-    AuthorizationRights authRights	= { 1, &authItem };
-    AuthorizationFlags flags		=	kAuthorizationFlagDefaults				|
-    kAuthorizationFlagInteractionAllowed	|
-    kAuthorizationFlagPreAuthorize			|
-    kAuthorizationFlagExtendRights;
-    
+    AuthorizationItem authItem     = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
+    AuthorizationRights authRights = { 1, &authItem };
+    AuthorizationFlags flags       = kAuthorizationFlagInteractionAllowed|kAuthorizationFlagPreAuthorize|kAuthorizationFlagExtendRights;
     AuthorizationRef authRef = NULL;
     
     /* Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper). */
     OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
     if (status != errAuthorizationSuccess) {
-//        [self appendLog:[NSString stringWithFormat:@"Failed to create AuthorizationRef. Error code: %ld", status]];
         return false;
-        
     } else {
+        m_AuthenticatedAsAdmin = true;
         /* This does all the work of verifying the helper tool against the application
          * and vice-versa. Once verification has passed, the embedded launchd.plist
          * is extracted and placed in /Library/LaunchDaemons and then loaded. The
@@ -165,6 +188,24 @@ bool RoutedIO::AskToInstallHelper()
     }
     
     return result;
+}
+
+bool RoutedIO::AuthenticateAsAdmin()
+{
+    if(m_AuthenticatedAsAdmin)
+        return true;
+    
+    AuthorizationItem authItem     = { kAuthorizationRuleAuthenticateAsAdmin, 0, NULL, 0 };
+    AuthorizationRights authRights = { 1, &authItem };
+    AuthorizationFlags flags       = kAuthorizationFlagInteractionAllowed|kAuthorizationFlagPreAuthorize|kAuthorizationFlagExtendRights;
+    
+    AuthorizationRef authRef = NULL;
+    OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
+    
+    if(status == errAuthorizationSuccess)
+        m_AuthenticatedAsAdmin = true;
+    
+    return status == errAuthorizationSuccess;
 }
 
 bool RoutedIO::Connect()
@@ -187,6 +228,11 @@ bool RoutedIO::Connect()
     });
     
     xpc_connection_resume(connection);
+
+    if(!SayImAuthenticated(connection)) {
+        xpc_connection_cancel(connection);
+        return false;
+    }
     
     m_Connection = connection;
     return true;

@@ -11,6 +11,7 @@
 // trivial wrappers
 int PosixIOInterfaceNative::open(const char *_path, int _flags, int _mode) { return ::open(_path, _flags, _mode); }
 int	PosixIOInterfaceNative::close(int _fd) { return ::close(_fd); }
+ssize_t PosixIOInterfaceNative::read(int _fildes, void *_buf, size_t _nbyte) { return ::read(_fildes, _buf, _nbyte); }
 ssize_t PosixIOInterfaceNative::write(int _fildes, const void *_buf, size_t _nbyte) { return ::write(_fildes, _buf, _nbyte); }
 DIR *PosixIOInterfaceNative::opendir(const char *_path) { return ::opendir(_path); }
 int PosixIOInterfaceNative::closedir(DIR *_dir) { return ::closedir(_dir); }
@@ -61,7 +62,6 @@ int PosixIOInterfaceRouted::stat(const char *_path, struct stat *_st)
     if(!inst.Enabled() || (conn = inst.Connection()) == nullptr)
         return PosixIOInterfaceNative::stat(_path, _st);
     
-    
     xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_string(message, "operation", "stat");
     xpc_dictionary_set_string(message, "path", _path);
@@ -99,7 +99,6 @@ int PosixIOInterfaceRouted::lstat(const char *_path, struct stat *_st)
     xpc_connection_t conn; // fallback to native on disabled routing or on helper connectity problems
     if(!inst.Enabled() || (conn = inst.Connection()) == nullptr)
         return PosixIOInterfaceNative::lstat(_path, _st);
-    
     
     xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_string(message, "operation", "lstat");

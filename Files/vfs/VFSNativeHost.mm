@@ -29,6 +29,8 @@
 
 #import "NativeFSManager.h"
 
+#import "RoutedIO.h"
+
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
@@ -235,14 +237,14 @@ void VFSNativeHost::StopDirChangeObserving(unsigned long _ticket)
 
 int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
 {
+    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
     memset(&_st, 0, sizeof(_st));
     
     struct stat st;
     
-    int ret = (_flags & VFSFlags::F_NoFollow) ? lstat(_path, &st) : stat(_path, &st);
+    int ret = (_flags & VFSFlags::F_NoFollow) ? io.lstat(_path, &st) : io.stat(_path, &st);
     
-    if(ret == 0)
-    {
+    if(ret == 0) {
         VFSStat::FromSysStat(st, _st);
         return VFSError::Ok;
     }
@@ -252,13 +254,15 @@ int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelCh
 
 int VFSNativeHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
 {
-    DIR *dirp = opendir(_path);
+    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+    
+    DIR *dirp = io.opendir(_path);
     if(dirp == 0)
         return VFSError::FromErrno();
         
     dirent *entp;
     VFSDirEnt vfs_dirent;
-    while((entp = readdir(dirp)) != NULL)
+    while((entp = io.readdir(dirp)) != NULL)
     {
         if((entp->d_namlen == 1 && entp->d_name[0] == '.') ||
            (entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.'))
@@ -272,7 +276,7 @@ int VFSNativeHost::IterateDirectoryListing(const char *_path, function<bool(cons
             break;
     }
     
-    closedir(dirp);
+    io.closedir(dirp);
     
     return VFSError::Ok;
 }

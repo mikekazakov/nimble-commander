@@ -14,6 +14,8 @@
 #import "VFSNativeHost.h"
 #import "NativeFSManager.h"
 
+#import "RoutedIO.h"
+
 VFSNativeFile::VFSNativeFile(const char* _relative_path, shared_ptr<VFSNativeHost> _host):
     VFSFile(_relative_path, _host),
     m_FD(-1),
@@ -29,6 +31,7 @@ VFSNativeFile::~VFSNativeFile()
 
 int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
+    auto &io = RoutedIO::Wrapped;
     auto fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath());
     
     int openflags = O_NONBLOCK;
@@ -45,7 +48,7 @@ int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     
     int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
     
-    m_FD = open(RelativePath(), openflags, mode);
+    m_FD = io.open(RelativePath(), openflags, mode);
     if(m_FD < 0)
     {
         return SetLastError(VFSError::FromErrno(errno));

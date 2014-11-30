@@ -22,6 +22,8 @@
 #import "VFSNativeHost.h"
 #import "Common.h"
 
+#import "RoutedIO.h"
+
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
@@ -39,15 +41,17 @@ VFSNativeListing::~VFSNativeListing()
 
 int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
 {
+    auto &io = RoutedIO::InterfaceForAccess(RelativePath(), R_OK);
+    
     m_Items.clear();
     
-    DIR *dirp = opendir(RelativePath());
+    DIR *dirp = io.opendir(RelativePath());
     if(!dirp)
         return VFSError::FromErrno(errno);
     
     if(_checker && _checker())
     {
-        closedir(dirp);
+        io.closedir(dirp);
         return VFSError::Cancelled;
     }
     
@@ -63,11 +67,11 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     if(pathwithslash[strlen(pathwithslash)-1] != '/' ) strcat(pathwithslash, "/");
     size_t pathwithslash_len = strlen(pathwithslash);
 
-    while((entp = _readdir_unlocked(dirp, 1)) != NULL)
+    while((entp = io.readdir(dirp)) != NULL)
     {
         if(_checker && _checker())
         {
-            closedir(dirp);
+            io.closedir(dirp);
             return 0;
         }
         
@@ -133,7 +137,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         
         // stat the file
         struct stat stat_buffer;
-        if(stat(filename, &stat_buffer) == 0)
+        if(io.stat(filename, &stat_buffer) == 0)
         {
             current->atime = stat_buffer.st_atimespec.tv_sec;
             current->mtime = stat_buffer.st_mtimespec.tv_sec;
@@ -168,17 +172,19 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         {
             char linkpath[MAXPATHLEN];
             ssize_t sz = readlink(filename, linkpath, MAXPATHLEN);
-            if(sz != -1)
-            {
+            if(sz != -1) {
                 linkpath[sz] = 0;
                 char *s = (char*)malloc(sz+1);
                 memcpy(s, linkpath, sz+1);
                 current->symlink = s;
             }
+            else {
+                current->symlink = strdup("");
+            }
             
             // stat the original file so we can extract some interesting info from it
             struct stat link_stat_buffer;
-            if(lstat(filename, &link_stat_buffer) == 0 &&
+            if(io.lstat(filename, &link_stat_buffer) == 0 &&
                 (link_stat_buffer.st_flags & UF_HIDDEN) )
                 current->unix_flags |= UF_HIDDEN; // current only using UF_HIDDEN flag
         }

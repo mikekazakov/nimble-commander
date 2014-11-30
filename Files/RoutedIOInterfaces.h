@@ -15,6 +15,7 @@ class PosixIOInterfaceNative : public PosixIOInterface
 public:
     virtual int open(const char *_path, int _flags, int _mode) override;
     virtual int	close(int _fd) override;
+    virtual ssize_t read(int _fildes, void *_buf, size_t _nbyte) override;
     virtual ssize_t write(int _fildes, const void *_buf, size_t _nbyte) override;
     virtual DIR *opendir(const char *_path) override;
     virtual int closedir(DIR *) override;

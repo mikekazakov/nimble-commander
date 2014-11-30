@@ -11,7 +11,13 @@
 #include <xpc/xpc.h>
 #include <syslog.h>
 #include <errno.h>
+#include <libproc.h>
 #include <stdio.h>
+
+struct ConnectionContext
+{
+    bool authenticated = false;
+};
 
 void send_reply_error(xpc_object_t _from_event, int _error)
 {
@@ -150,10 +156,28 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
         xpc_release(_peer);
         
     } else if(type == XPC_TYPE_DICTIONARY) {
+        ConnectionContext *context = (ConnectionContext*)xpc_connection_get_context(_peer);
+        if(!context) {
+            send_reply_error(_event, EINVAL);
+            return;
+        }
+
+        if( xpc_dictionary_get_bool(_event, "auth") == true ) {
+            context->authenticated = true;
+            send_reply_ok(_event);
+            return;
+        }
         
         if( const char *op = xpc_dictionary_get_string(_event, "operation") ) {
             syslog(LOG_NOTICE, "received operation request: %s", op);
-            
+
+            if(!context->authenticated) {
+                syslog(LOG_NOTICE, "non-authenticated, dropping");
+                send_reply_error(_event, EINVAL);
+                return;
+                
+            }
+
             if( ProcessOperation(op, _event) )
                 return;
         }
@@ -162,25 +186,53 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
     }
 }
 
-static void XPC_Connection_Handler(xpc_connection_t connection)  {
-    syslog(LOG_NOTICE, "Configuring message event handler for helper.");
+static bool AllowConnectionFrom(const char *_bin_path)
+{
+    if(!_bin_path)
+        return false;
     
-    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
-        XPC_Peer_Event_Handler(connection, event);
-    });
+    const char *last_sl = strrchr(_bin_path, '/');
+    if(!last_sl)
+        return false;
     
-    xpc_connection_resume(connection);
+    return strcmp(last_sl, "/Files") == 0;
 }
 
-// TODO: filter incoming connections at least with
-//xpc_connection_get_name
+static void XPC_Connection_Handler(xpc_connection_t _connection)  {
+    pid_t client_pid = xpc_connection_get_pid(_connection);
+    char client_path[1024] = {0};
+    proc_pidpath(client_pid, client_path, sizeof(client_path));
+    syslog(LOG_NOTICE, "Got an incoming connection from: %s", client_path);
+    
+    // basic check of client's path
+    // TODO: generally need to check it's singature, validity and structure
+    // http://stackoverflow.com/questions/1815506/how-to-obtain-codesigned-application-certificate-info
+    
+    if(!AllowConnectionFrom(client_path)) {
+        xpc_connection_cancel(_connection);
+        return;
+    }
+    
+    ConnectionContext *cc = new ConnectionContext;
+    xpc_connection_set_context(_connection, cc);
+    xpc_connection_set_finalizer_f(_connection, [](void *_value) {
+        ConnectionContext *context = (ConnectionContext*) _value;
+        delete context;
+    });
+    xpc_connection_set_event_handler(_connection, ^(xpc_object_t event) {
+        XPC_Peer_Event_Handler(_connection, event);
+    });
+    
+    xpc_connection_resume(_connection);
+}
 
 int main(int argc, const char *argv[])
 {
     
     syslog(LOG_NOTICE, "main() start");
-
     
+    umask(0); // no brakes!
+
     xpc_connection_t service = xpc_connection_create_mach_service("info.filesmanager.Files.PrivilegedIOHelper",
                                                                   dispatch_get_main_queue(),
                                                                   XPC_CONNECTION_MACH_SERVICE_LISTENER);

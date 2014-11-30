@@ -7,9 +7,10 @@
 //
 
 #include <mach-o/dyld.h>
+#include <sys/stat.h>
+#include <xpc/xpc.h>
 #include <syslog.h>
 #include <errno.h>
-#include <xpc/xpc.h>
 #include <stdio.h>
 
 void send_reply_error(xpc_object_t _from_event, int _error)
@@ -30,14 +31,23 @@ void send_reply_ok(xpc_object_t _from_event)
     xpc_release(reply);
 }
 
+void send_reply_fd(xpc_object_t _from_event, int _fd)
+{
+    xpc_connection_t remote = xpc_dictionary_get_remote_connection(_from_event);
+    xpc_object_t reply = xpc_dictionary_create_reply(_from_event);
+    xpc_dictionary_set_fd(reply, "fd", _fd);
+    xpc_connection_send_message(remote, reply);
+    xpc_release(reply);
+}
+
+// return true if has replied with something
 static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
 {
     if( strcmp(_operation, "heartbeat") == 0 ) {
         syslog(LOG_NOTICE, "processing heartbeat request");
         send_reply_ok(_event);
-        return true;
     }
-    if( strcmp(_operation, "removeyourself") == 0 ) {
+    else if( strcmp(_operation, "removeyourself") == 0 ) {
         char path[1024];
         uint32_t size = sizeof(path);
         _NSGetExecutablePath(path, &size);
@@ -45,15 +55,79 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
             send_reply_ok(_event);
         else
             send_reply_error(_event, errno);
-        return true;
     }
-    if( strcmp(_operation, "exit") == 0 ) {
+    else if( strcmp(_operation, "exit") == 0 ) {
         // no responce here
         syslog(LOG_NOTICE, "goodbye, cruel world!");
         exit(0);
     }
+    else if( strcmp(_operation, "open") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        xpc_object_t xpc_flags = xpc_dictionary_get_value(_event, "flags");
+        if( xpc_flags == nullptr || xpc_get_type(xpc_flags) != XPC_TYPE_INT64 )
+            return false;
+        int flags = (int)xpc_int64_get_value(xpc_flags);
+        
+        xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
+        if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
+            return false;
+        int mode = (int)xpc_int64_get_value(xpc_mode);
+        
+        int fd = open(path, flags, mode);
+        if(fd >= 0) {
+            send_reply_fd(_event, fd);
+            close(fd);
+        }
+        else {
+            send_reply_error(_event, errno);
+        }
+    }
+    else if( strcmp(_operation, "stat") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        struct stat st;
+        int ret = stat(path, &st);
+        if(ret == 0) {
+            xpc_connection_t remote = xpc_dictionary_get_remote_connection(_event);
+            xpc_object_t reply = xpc_dictionary_create_reply(_event);
+            xpc_dictionary_set_data(reply, "st", &st, sizeof(st));
+            xpc_connection_send_message(remote, reply);
+            xpc_release(reply);
+        }
+        else {
+            send_reply_error(_event, errno);
+        }
+    }
+    else if( strcmp(_operation, "lstat") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        struct stat st;
+        int ret = lstat(path, &st);
+        if(ret == 0) {
+            xpc_connection_t remote = xpc_dictionary_get_remote_connection(_event);
+            xpc_object_t reply = xpc_dictionary_create_reply(_event);
+            xpc_dictionary_set_data(reply, "st", &st, sizeof(st));
+            xpc_connection_send_message(remote, reply);
+            xpc_release(reply);
+        }
+        else {
+            send_reply_error(_event, errno);
+        }
+    }
+    else
+        return false;
     
-    return false;
+    return true;
 }
 
 static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)

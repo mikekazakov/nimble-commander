@@ -149,7 +149,7 @@
                                           &listing,
                                           m_VFSFetchingFlags,
                                           [&]{return _q->IsStopped();});
-        if(ret < 0)
+        if(*ret < 0)
             return;
         // TODO: need an ability to show errors at least        
         

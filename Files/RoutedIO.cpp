@@ -10,9 +10,25 @@
 #include <Security/Authorization.h>
 #include "RoutedIO.h"
 #include "Common.h"
+#include "RoutedIOInterfaces.h"
 
-static const char *g_HelperLabel   = "info.filesmanager.Files.PrivilegedIOHelper";
-static CFStringRef g_HelperLabelCF = CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
+static PosixIOInterface &IOCreateProxy();
+
+PosixIOInterface &RoutedIO::Interface = IOCreateProxy();
+static const char *g_HelperLabel      = "info.filesmanager.Files.PrivilegedIOHelper";
+static CFStringRef g_HelperLabelCF    = CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
+
+static PosixIOInterface &IOCreateProxy()
+{
+    if(configuration::version == configuration::Version::Full) {
+        static PosixIOInterfaceRouted routed(RoutedIO::Instance());
+        return routed;
+    }
+    else {
+        static PosixIOInterfaceNative direct;
+        return direct;
+    }
+}
 
 static unique_ptr<vector<uint8_t>> ReadFile(const char *_path)
 {
@@ -62,11 +78,6 @@ RoutedIO& RoutedIO::Instance()
 {
     static auto inst = make_unique<RoutedIO>();
     return *inst;
-}
-
-bool RoutedIO::Enabled()
-{
-    return m_Enabled;
 }
 
 bool RoutedIO::IsHelperInstalled()

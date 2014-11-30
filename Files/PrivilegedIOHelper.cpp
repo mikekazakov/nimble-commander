@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Security/Security.h>
 #include <mach-o/dyld.h>
 #include <sys/stat.h>
 #include <xpc/xpc.h>
@@ -13,6 +14,9 @@
 #include <errno.h>
 #include <libproc.h>
 #include <stdio.h>
+
+// requires that identifier is right and binary is signed by me
+static const char *g_SignatureRequirement = "identifier info.filesmanager.Files and certificate leaf[subject.CN] = \"Mac Developer: Michael Kazakov (4VT72ZQ4R4)\"";
 
 struct ConnectionContext
 {
@@ -198,17 +202,57 @@ static bool AllowConnectionFrom(const char *_bin_path)
     return strcmp(last_sl, "/Files") == 0;
 }
 
+static bool CheckSignature(const char *_bin_path)
+{
+    syslog(LOG_NOTICE, "Checking signature for: %s", _bin_path);
+    
+    if(!_bin_path)
+        return false;
+    
+    OSStatus status = 0;
+    
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (UInt8*)_bin_path, strlen(_bin_path), false);
+    if(!url)
+        return false;
+    
+    // obtain the cert info from the executable
+    SecStaticCodeRef ref = NULL;
+    status = SecStaticCodeCreateWithPath(url, kSecCSDefaultFlags, &ref);
+    CFRelease(url);
+    if (ref == NULL || status != noErr)
+        return false;
+    
+    syslog(LOG_NOTICE, "Got a SecStaticCodeRef");
+    
+    // create the requirement to check against
+    SecRequirementRef req = NULL;
+    static CFStringRef reqStr = CFStringCreateWithCString(0, g_SignatureRequirement, kCFStringEncodingUTF8);
+    status = SecRequirementCreateWithString(reqStr, kSecCSDefaultFlags, &req);
+    if(status != noErr || req == NULL) {
+        CFRelease(ref);
+        return false;
+    }
+    
+    syslog(LOG_NOTICE, "Built a SecRequirementRef");
+    
+    status = SecStaticCodeCheckValidity(ref, kSecCSCheckAllArchitectures, req);
+    
+    syslog(LOG_NOTICE, "Called SecStaticCodeCheckValidity(), verdict: %s", status == noErr ? "valid" : "not valid");
+    
+    CFRelease(ref);
+    CFRelease(req);
+    
+    return status == noErr;
+}
+
 static void XPC_Connection_Handler(xpc_connection_t _connection)  {
     pid_t client_pid = xpc_connection_get_pid(_connection);
     char client_path[1024] = {0};
     proc_pidpath(client_pid, client_path, sizeof(client_path));
     syslog(LOG_NOTICE, "Got an incoming connection from: %s", client_path);
     
-    // basic check of client's path
-    // TODO: generally need to check it's singature, validity and structure
-    // http://stackoverflow.com/questions/1815506/how-to-obtain-codesigned-application-certificate-info
-    
-    if(!AllowConnectionFrom(client_path)) {
+    if(!AllowConnectionFrom(client_path) || !CheckSignature(client_path)) {
+        syslog(LOG_NOTICE, "Client failed checking, dropping connection.");
         xpc_connection_cancel(_connection);
         return;
     }
@@ -228,6 +272,8 @@ static void XPC_Connection_Handler(xpc_connection_t _connection)  {
 
 int main(int argc, const char *argv[])
 {
+    if(getuid() != 0)
+        return EXIT_FAILURE;
     
     syslog(LOG_NOTICE, "main() start");
     

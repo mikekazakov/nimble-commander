@@ -101,6 +101,8 @@
 		CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
+		CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121916C4BD3D00D247EE /* Foundation.framework */; };
+		CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF50B6B21A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
 		CF50B6B31A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
 		CF50B6B41A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
@@ -1907,6 +1909,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */,
+				CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

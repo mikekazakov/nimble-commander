@@ -235,7 +235,7 @@ bool RoutedIO::Connect()
         xpc_type_t type = xpc_get_type(event);
         if (type == XPC_TYPE_ERROR) {
             if (event == XPC_ERROR_CONNECTION_INVALID) {
-                xpc_release(connection);
+//                xpc_release(connection);
                 m_Connection = nullptr;
             }
         }

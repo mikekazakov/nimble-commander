@@ -181,6 +181,13 @@
     [self checkIfNeedToShowNagScreen];
 }
 
+- (void) updateDockTileBadge
+{
+    // currently considering only admin mode for setting badge info
+    bool admin = RoutedIO::Instance().Enabled();
+    m_DockTile.badgeLabel = admin ? @"ADMIN" : @"";
+}
+
 - (double) progress
 {
     return m_AppProgress;
@@ -536,6 +543,8 @@
         RoutedIO::Instance().TurnOff();
     else
         RoutedIO::Instance().TurnOn();
+
+    [self updateDockTileBadge];
 }
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item

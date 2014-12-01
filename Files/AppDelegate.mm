@@ -28,6 +28,7 @@
 #import "common_paths.h"
 #import "MASAppInstalledChecker.h"
 #import "TrialWindowController.h"
+#import "RoutedIO.h"
 
 @implementation AppDelegate
 {
@@ -131,6 +132,7 @@
     
     menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
     menuitem("menu.files.try_full_version").hidden = configuration::version == configuration::Version::Full;
+    menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full;
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
@@ -526,6 +528,27 @@
             [twc.window makeMainWindow];
         });
     });
+}
+
+- (IBAction)OnMenuToggleAdminMode:(id)sender
+{
+    if( RoutedIO::Instance().Enabled() )
+        RoutedIO::Instance().TurnOff();
+    else
+        RoutedIO::Instance().TurnOn();
+}
+
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    auto tag = item.tag;
+    
+    IF_MENU_TAG("menu.files.toggle_admin_mode") {
+        bool enabled = RoutedIO::Instance().Enabled();
+        item.title = enabled ? @"Disable Admin Mode" : @"Enable Admin Mode";
+        return true;
+    }
+    
+    return true;
 }
 
 @end

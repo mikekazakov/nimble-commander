@@ -109,6 +109,9 @@ bool RoutedIO::IsHelperCurrent()
 
 bool RoutedIO::TurnOn()
 {
+    if(m_Enabled)
+        return true;
+    
     if( !IsHelperInstalled() ) {
         if( !AskToInstallHelper() )
             return false;
@@ -140,10 +143,26 @@ bool RoutedIO::TurnOn()
             if( !AskToInstallHelper() )
                 return false;
         }
+        else {
+            // helper is not current we can't ask it to remove itself. protocol/signing probs?
+            // anywhay, can go this way, no turning routing on
+            return false;
+        }
     }
     
     m_Enabled = true;
     return Connect();
+}
+
+void RoutedIO::TurnOff()
+{
+    if(m_Connection) {
+        xpc_connection_cancel(m_Connection);
+        xpc_release(m_Connection);
+        m_Connection = nullptr;
+    }
+    m_Enabled = false;
+    m_AuthenticatedAsAdmin = false;
 }
 
 bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection)
@@ -165,27 +184,22 @@ bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection)
 
 bool RoutedIO::AskToInstallHelper()
 {
-    bool result = false;
-    
-    AuthorizationItem authItem     = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
+    AuthorizationItem   authItem   = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
     AuthorizationRights authRights = { 1, &authItem };
-    AuthorizationFlags flags       = kAuthorizationFlagInteractionAllowed|kAuthorizationFlagPreAuthorize|kAuthorizationFlagExtendRights;
-    AuthorizationRef authRef = NULL;
+    AuthorizationFlags  flags      = kAuthorizationFlagInteractionAllowed|kAuthorizationFlagPreAuthorize|kAuthorizationFlagExtendRights;
+    AuthorizationRef    authRef    = NULL;
     
     /* Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper). */
     OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
-    if (status != errAuthorizationSuccess) {
+    if (status != errAuthorizationSuccess)
         return false;
-    } else {
-        m_AuthenticatedAsAdmin = true;
-        /* This does all the work of verifying the helper tool against the application
-         * and vice-versa. Once verification has passed, the embedded launchd.plist
-         * is extracted and placed in /Library/LaunchDaemons and then loaded. The
-         * executable is placed in /Library/PrivilegedHelperTools.
-         */
-        CFErrorRef error;
-        result = SMJobBless(kSMDomainSystemLaunchd, g_HelperLabelCF, authRef, &error);
-    }
+
+    m_AuthenticatedAsAdmin = true;
+    CFErrorRef error;
+    
+    bool result = SMJobBless(kSMDomainSystemLaunchd, g_HelperLabelCF, authRef, &error);
+    
+    AuthorizationFree(authRef, kAuthorizationFlagDefaults);
     
     return result;
 }

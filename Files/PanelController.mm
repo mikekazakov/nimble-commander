@@ -467,21 +467,12 @@ void panel::GenericCursorPersistance::Restore()
         return true;
     }
     
-    if(keycode == 3 ) { // 'F' button
+/*    if(keycode == 3 ) { // 'F' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
         {
-            // REMOVE ME
-//            RoutedIO::Instance().AskToInstallHelper();
-            RoutedIO::Instance().TurnOn();
-            
-            bool b1 = RoutedIO::Instance().IsHelperAlive();
-            bool b2 = RoutedIO::Instance().IsHelperAlive();
-            bool b3 = RoutedIO::Instance().IsHelperAlive();
-            int a = 10;
-            
             return true;
         }
-    }
+    }*/
     
     // handle some actions manually, to prevent annoying by menu highlighting by hotkey
     auto &shortcuts = ActionsShortcutsManager::Instance();

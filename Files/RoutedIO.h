@@ -38,22 +38,24 @@ public:
     
     bool Enabled() const noexcept;
     bool TurnOn();
-    bool AskToInstallHelper();
-    bool IsHelperInstalled();
-    bool IsHelperCurrent();
-    bool IsHelperAlive();
+    void TurnOff();
+    
     xpc_connection_t Connection();
+    bool IsHelperAlive(); // blocking I/O
     
 private:
     RoutedIO(RoutedIO&) = delete;
     void operator=(RoutedIO&) = delete;
     bool Connect();
+    bool AskToInstallHelper();
+    bool IsHelperInstalled();
+    bool IsHelperCurrent();    
     bool ConnectionAvailable();
     bool AuthenticateAsAdmin();
     bool SayImAuthenticated(xpc_connection_t _connection);
     
-    bool             m_Enabled    = false;
-    bool             m_AuthenticatedAsAdmin = false;
+    volatile bool    m_Enabled    = false;
+    volatile bool    m_AuthenticatedAsAdmin = false;
     xpc_connection_t m_Connection = nullptr;
 };
 

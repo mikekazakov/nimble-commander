@@ -59,8 +59,7 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
     }
     else if( strcmp(_operation, "removeyourself") == 0 ) {
         char path[1024];
-        uint32_t size = sizeof(path);
-        _NSGetExecutablePath(path, &size);
+        proc_pidpath(getpid(), path, sizeof(path));
         if(unlink(path) == 0)
             send_reply_ok(_event);
         else
@@ -157,7 +156,7 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
         } else if (_event == XPC_ERROR_TERMINATION_IMMINENT) {
             // Handle per-connection termination cleanup.
         }
-        xpc_release(_peer);
+//        xpc_release(_peer);
         
     } else if(type == XPC_TYPE_DICTIONARY) {
         ConnectionContext *context = (ConnectionContext*)xpc_connection_get_context(_peer);
@@ -166,9 +165,13 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
             return;
         }
 
-        if( xpc_dictionary_get_bool(_event, "auth") == true ) {
-            context->authenticated = true;
-            send_reply_ok(_event);
+        if( xpc_dictionary_get_value(_event, "auth") != nullptr ) {
+            if(xpc_dictionary_get_bool(_event, "auth") == true ) {
+                context->authenticated = true;
+                send_reply_ok(_event);
+            }
+            else
+                send_reply_error(_event, EINVAL);
             return;
         }
         

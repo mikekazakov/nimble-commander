@@ -149,9 +149,11 @@ bool RoutedIO::TurnOn()
             return false;
         }
     }
+        
+    if(Connect())
+        m_Enabled = true;
     
-    m_Enabled = true;
-    return Connect();
+    return m_Enabled;
 }
 
 void RoutedIO::TurnOff()

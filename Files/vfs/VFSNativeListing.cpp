@@ -111,7 +111,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         }
     }
     
-    closedir(dirp);
+    io.closedir(dirp);
     
     if(need_to_add_dot_dot)
     {
@@ -171,7 +171,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         if( current->unix_type == DT_LNK )
         {
             char linkpath[MAXPATHLEN];
-            ssize_t sz = readlink(filename, linkpath, MAXPATHLEN);
+            ssize_t sz = io.readlink(filename, linkpath, MAXPATHLEN);
             if(sz != -1) {
                 linkpath[sz] = 0;
                 char *s = (char*)malloc(sz+1);

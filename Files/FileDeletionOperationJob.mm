@@ -112,6 +112,7 @@ void FileDeletionOperationJob::Do()
 
 void FileDeletionOperationJob::DoScan()
 {
+    auto &io = RoutedIO::InterfaceForAccess(m_RootPath.c_str(), R_OK);
     for(auto &i: m_RequestedFiles)
     {
         if (CheckPauseOrStop()) return;
@@ -120,7 +121,7 @@ void FileDeletionOperationJob::DoScan()
         strcat(fn, i.c_str()); // TODO: optimize me
         
         struct stat st;
-        if(lstat(fn, &st) == 0)
+        if(io.lstat(fn, &st) == 0)
         {
             if((st.st_mode&S_IFMT) == S_IFREG)
             {
@@ -164,17 +165,19 @@ void FileDeletionOperationJob::DoScan()
 
 void FileDeletionOperationJob::DoScanDir(const char *_full_path, const chained_strings::node *_prefix)
 {
+    auto &io = RoutedIO::InterfaceForAccess(_full_path, R_OK);
+    
     char fn[MAXPATHLEN], *fnvar; // fnvar - is a variable part for every file in directory
     strcpy(fn, _full_path);
     strcat(fn, "/");
     fnvar = &fn[0] + strlen(fn);
     
 retry_opendir:
-    DIR *dirp = opendir(_full_path);
+    DIR *dirp = io.opendir(_full_path);
     if( dirp != 0)
     {
         dirent *entp;
-        while((entp = readdir(dirp)) != NULL)
+        while((entp = io.readdir(dirp)) != NULL)
         {
             if( (entp->d_namlen == 1 && entp->d_name[0] ==  '.' ) ||
                (entp->d_namlen == 2 && entp->d_name[0] ==  '.' && entp->d_name[1] ==  '.') )
@@ -214,7 +217,7 @@ retry_opendir:
             }
             
         }
-        closedir(dirp);
+        io.closedir(dirp);
     }
     else if (!m_SkipAll) // if (dirp != 0)
     {
@@ -249,7 +252,7 @@ bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
     if( !_is_dir )
     {
     retry_unlink:
-        ret = unlink(_full_path);
+        ret = io.unlink(_full_path);
         if( ret != 0 && !m_SkipAll )
         {
             int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path] WaitForResult];
@@ -278,11 +281,7 @@ bool FileDeletionOperationJob::DoMoveToTrash(const char *_full_path, bool _is_di
     if( [[NSFileManager defaultManager] respondsToSelector: @selector(trashItemAtURL:resultingItemURL:error:)]  )
     {
         // We're on 10.8 or later
-        // This construction is VERY slow. Thanks, Apple!
-        NSString *str = [[NSString alloc ]initWithBytesNoCopy:(void*)_full_path
-                                                    length:strlen(_full_path)
-                                                    encoding:NSUTF8StringEncoding
-                                                freeWhenDone:NO];
+        NSString *str  = [NSString stringWithUTF8String:_full_path];
         NSURL *path = [NSURL fileURLWithPath:str isDirectory:_is_dir];
         NSURL *newpath;
         NSError *error;
@@ -311,11 +310,11 @@ bool FileDeletionOperationJob::DoMoveToTrash(const char *_full_path, bool _is_di
         // We're on 10.7 or below
         FSRef ref;
         OSStatus status = FSPathMakeRefWithOptions((const UInt8 *)_full_path, kFSPathMakeRefDoNotFollowLeafSymlink, &ref, NULL);
-        assert(status == 0);
+        if(status != 0)
+            return false;
         
     retry_delete_fs:
         status = FSMoveObjectToTrashSync(&ref, NULL, kFSFileOperationDefaultOptions);
-        // do we need to free FSRef somehow???
         if(status != 0)
         {
             if (!m_SkipAll)

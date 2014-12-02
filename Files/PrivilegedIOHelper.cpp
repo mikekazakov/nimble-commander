@@ -196,6 +196,59 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
         else
             send_reply_error(_event, errno);
     }
+    else if( strcmp(_operation, "rename") == 0 ) {
+        xpc_object_t xpc_oldpath = xpc_dictionary_get_value(_event, "oldpath");
+        if( xpc_oldpath == nullptr || xpc_get_type(xpc_oldpath) != XPC_TYPE_STRING )
+            return false;
+        const char *oldpath = xpc_string_get_string_ptr(xpc_oldpath);
+
+        xpc_object_t xpc_newpath = xpc_dictionary_get_value(_event, "newpath");
+        if( xpc_newpath == nullptr || xpc_get_type(xpc_newpath) != XPC_TYPE_STRING )
+            return false;
+        const char *newpath = xpc_string_get_string_ptr(xpc_newpath);
+        
+        int result = rename(oldpath, newpath);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
+    else if( strcmp(_operation, "readlink") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        char symlink[MAXPATHLEN];
+        ssize_t result = readlink(path, symlink, MAXPATHLEN);
+        if(result < 0)
+            send_reply_error(_event, errno);
+        else {
+            symlink[result] = 0;
+            xpc_connection_t remote = xpc_dictionary_get_remote_connection(_event);
+            xpc_object_t reply = xpc_dictionary_create_reply(_event);
+            xpc_dictionary_set_string(reply, "link", symlink);
+            xpc_connection_send_message(remote, reply);
+            xpc_release(reply);
+        }
+    }
+    else if( strcmp(_operation, "symlink") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+
+        xpc_object_t xpc_value = xpc_dictionary_get_value(_event, "value");
+        if( xpc_value == nullptr || xpc_get_type(xpc_value) != XPC_TYPE_STRING )
+            return false;
+        const char *value = xpc_string_get_string_ptr(xpc_value);
+        
+        int result = symlink(value, path);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
     else
         return false;
     

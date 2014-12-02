@@ -20,6 +20,7 @@ int PosixIOInterfaceNative::open(const char *_path, int _flags, int _mode) { ret
 int	PosixIOInterfaceNative::close(int _fd) { return ::close(_fd); }
 ssize_t PosixIOInterfaceNative::read(int _fildes, void *_buf, size_t _nbyte) { return ::read(_fildes, _buf, _nbyte); }
 ssize_t PosixIOInterfaceNative::write(int _fildes, const void *_buf, size_t _nbyte) { return ::write(_fildes, _buf, _nbyte); }
+off_t PosixIOInterfaceNative::lseek(int _fd, off_t _offset, int _whence) { return ::lseek(_fd, _offset, _whence); }
 DIR *PosixIOInterfaceNative::opendir(const char *_path) { return ::opendir(_path); }
 int PosixIOInterfaceNative::closedir(DIR *_dir) { return ::closedir(_dir); }
 struct dirent *PosixIOInterfaceNative::readdir(DIR *_dir) { return ::_readdir_unlocked(_dir, 1); }
@@ -29,6 +30,9 @@ int	PosixIOInterfaceNative::mkdir(const char *_path, mode_t _mode) { return ::mk
 int	PosixIOInterfaceNative::chown(const char *_path, uid_t _uid, gid_t _gid) { return ::chown(_path, _uid, _gid); }
 int PosixIOInterfaceNative::rmdir(const char *_path) { return ::rmdir(_path); }
 int PosixIOInterfaceNative::unlink(const char *_path) { return ::unlink(_path); }
+int PosixIOInterfaceNative::rename(const char *_old, const char *_new) { return ::rename(_old, _new); }
+ssize_t PosixIOInterfaceNative::readlink(const char *_path, char *_symlink, size_t _buf_sz) { return ::readlink(_path, _symlink, _buf_sz); }
+int PosixIOInterfaceNative::symlink(const char *_value, const char *_symlink_path) { return ::symlink(_value, _symlink_path); }
 
 PosixIOInterfaceRouted::PosixIOInterfaceRouted(RoutedIO &_inst):
     inst(_inst)
@@ -47,6 +51,14 @@ int PosixIOInterfaceRouted::open(const char *_path, int _flags, int _mode)
     xpc_connection_t conn = Connection();
     if(!conn) // fallback to native on disabled routing or on helper connectity problems
         return super::open(_path, _flags, _mode);
+    
+    bool need_owner_fixup = false;
+    if( (_flags & O_CREAT) != 0 ) {
+        // need to check if call will create a new file. if so - we'll need to later chown it to ourselves to mimic this call
+        struct stat st;
+        if( this->stat(_path, &st) != 0 )
+            need_owner_fixup = true;
+    }
     
     xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
     xpc_dictionary_set_string(message, "operation", "open");
@@ -71,6 +83,10 @@ int PosixIOInterfaceRouted::open(const char *_path, int _flags, int _mode)
 
     int fd = xpc_dictionary_dup_fd(reply, "fd");
     xpc_release(reply);
+    
+    if( fd > 0 && need_owner_fixup)
+        this->chown(_path, g_UID, -1);    
+        
     return fd;
 }
 
@@ -296,6 +312,118 @@ int PosixIOInterfaceRouted::unlink(const char *_path)
     if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
         xpc_release(reply); // connection broken, faling back to native
         return super::unlink(_path);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;
+}
+
+int PosixIOInterfaceRouted::rename(const char *_old, const char *_new)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::rename(_old, _new);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "rename");
+    xpc_dictionary_set_string(message, "oldpath", _old);
+    xpc_dictionary_set_string(message, "newpath", _new);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::rename(_old, _new);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;
+}
+
+ssize_t PosixIOInterfaceRouted::readlink(const char *_path, char *_symlink, size_t _buf_sz)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::readlink(_path, _symlink, _buf_sz);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "readlink");
+    xpc_dictionary_set_string(message, "path", _path);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::readlink(_path, _symlink, _buf_sz);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    const char *value = xpc_dictionary_get_string(reply, "link");
+    if(!value) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    size_t sz = strlen(value);
+    strncpy(_symlink, value, _buf_sz);
+    
+    xpc_release(reply);
+
+    return sz;
+}
+
+int PosixIOInterfaceRouted::symlink(const char *_value, const char *_symlink_path)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::symlink(_value, _symlink_path);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "symlink");
+    xpc_dictionary_set_string(message, "path", _symlink_path);
+    xpc_dictionary_set_string(message, "value", _value);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::symlink(_value, _symlink_path);
     }
     
     if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {

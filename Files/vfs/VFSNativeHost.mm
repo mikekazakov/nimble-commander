@@ -301,7 +301,8 @@ int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker 
 
 int VFSNativeHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
 {
-    int ret = unlink(_path);
+    auto &io = RoutedIO::Default;
+    int ret = io.unlink(_path);
     if(ret == 0)
         return 0;
     return VFSError::FromErrno();
@@ -319,7 +320,8 @@ bool VFSNativeHost::IsWriteableAtPath(const char *_dir) const
 
 int VFSNativeHost::CreateDirectory(const char* _path, int _mode, VFSCancelChecker _cancel_checker)
 {
-    int ret = mkdir(_path, _mode);
+    auto &io = RoutedIO::Default;
+    int ret = io.mkdir(_path, _mode);
     if(ret == 0)
         return 0;
     return VFSError::FromErrno();
@@ -336,7 +338,8 @@ int VFSNativeHost::RemoveDirectory(const char *_path, VFSCancelChecker _cancel_c
 
 int VFSNativeHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, VFSCancelChecker _cancel_checker)
 {
-    ssize_t sz = readlink(_path, _buffer, _buffer_size);
+    auto &io = RoutedIO::Default;
+    ssize_t sz = io.readlink(_path, _buffer, _buffer_size);
     if(sz < 0)
         return VFSError::FromErrno();
     
@@ -351,7 +354,8 @@ int VFSNativeHost::CreateSymlink(const char *_symlink_path,
                                  const char *_symlink_value,
                                  VFSCancelChecker _cancel_checker)
 {
-    int result = symlink(_symlink_value, _symlink_path);
+    auto &io = RoutedIO::Default;
+    int result = io.symlink(_symlink_value, _symlink_path);
     if(result < 0)
         return VFSError::FromErrno();
     
@@ -414,7 +418,8 @@ int VFSNativeHost::SetTimes(const char *_path,
 
 int VFSNativeHost::Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker)
 {
-    int ret = rename(_old_path, _new_path);
+    auto &io = RoutedIO::Default;
+    int ret = io.rename(_old_path, _new_path);
     if(ret == 0)
         return 0;
     return VFSError::FromErrno();

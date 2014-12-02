@@ -23,6 +23,7 @@
 #import <stdlib.h>
 #import "Common.h"
 #import "common_paths.h"
+#import "RoutedIO.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
 #define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
@@ -36,17 +37,19 @@
 static bool CheckSameVolume(const char *_fn1, const char*_fn2, bool &_same, bool _fallback_second = true)
 {
     // accept only full paths
-    assert(_fn1[0]=='/');
-    assert(_fn2[0]=='/');
+    if(_fn1[0] != '/' || _fn2[0] != '/' )
+        return false;
+    
+    auto &io = RoutedIO::Default;
     
     struct stat st;
-    if(stat(_fn1, &st) == -1)
+    if(io.stat(_fn1, &st) == -1)
         return false;
  
     char fn2[MAXPATHLEN];
     strcpy(fn2, _fn2);
 
-    while(stat(fn2, &st) == -1)
+    while(io.stat(fn2, &st) == -1)
     {
         if(!_fallback_second)
             return false;
@@ -79,6 +82,8 @@ static inline bool CanBeExternalEA(const char *_short_filename)
 
 static inline bool EAHasMainFile(const char *_full_ea_path)
 {
+    auto &io = RoutedIO::Default;
+    
     char tmp[MAXPATHLEN];
     strcpy(tmp, _full_ea_path);
     
@@ -88,7 +93,7 @@ static inline bool EAHasMainFile(const char *_full_ea_path)
     strcpy(last_dst + 1, last_src + 3);
     
     struct stat st;
-    return lstat(tmp, &st) == 0;
+    return io.lstat(tmp, &st) == 0;
 }
 
 static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
@@ -202,6 +207,7 @@ FileCopyOperationJobNativeToNative::StatValueType FileCopyOperationJobNativeToNa
 
 void FileCopyOperationJobNativeToNative::ScanDestination()
 {
+    auto &io = RoutedIO::Default;
     struct stat stat_buffer;
     char destpath[MAXPATHLEN];
     
@@ -231,7 +237,7 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
     }
     
     if(m_Destination[0] == '/' &&
-       stat(m_Destination, &stat_buffer) == 0)
+       io.stat(m_Destination, &stat_buffer) == 0)
     {
         CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);        
         bool isfile = (stat_buffer.st_mode&S_IFMT) == S_IFREG;
@@ -356,6 +362,8 @@ void FileCopyOperationJobNativeToNative::BuildDestinationDirectory(const char* _
     // this algorithm iterates from left to right, but it's better to iterate right-left and then left-right
     // but this work is doing only once per MassCopyOp, so user may not even notice this issue
     
+    auto &io = RoutedIO::Default;
+    
     struct stat stat_buffer;
     char destpath[MAXPATHLEN];
     strcpy(destpath, _path);
@@ -364,10 +372,11 @@ void FileCopyOperationJobNativeToNative::BuildDestinationDirectory(const char* _
     do
     {
         *leftmost = 0;
-        if(stat(destpath, &stat_buffer) == -1)
+        if(io.stat(destpath, &stat_buffer) == -1)
         {
             // absent part - need to create it
-domkdir:    if(mkdir(destpath, 0777) == -1)
+            // TODO: why 777????????
+domkdir:    if(io.mkdir(destpath, 0777) == -1)
             {
                 int result = [[m_Operation OnDestCantCreateDir:ErrnoToNSError() ForDir:destpath] WaitForResult];
                 if (result == OperationDialogResult::Retry) goto domkdir;
@@ -400,6 +409,8 @@ void FileCopyOperationJobNativeToNative::ScanItem(const char *_full_path, const 
     // TODO: this path composing can be optimized
     // DANGER: this big buffer can cause stack overflow since ScanItem function is used recursively. FIXME!!!
     // 512Kb for threads in OSX. CHECK ME!
+
+    auto &io = RoutedIO::Default;
     char fullpath[MAXPATHLEN];
     strcpy(fullpath, m_SourceDirectory);
     strcat(fullpath, _full_path);
@@ -407,8 +418,8 @@ void FileCopyOperationJobNativeToNative::ScanItem(const char *_full_path, const 
     struct stat stat_buffer;
 retry_stat:
     int stat_ret = m_Options.preserve_symlinks ?
-        lstat(fullpath, &stat_buffer):
-         stat(fullpath, &stat_buffer);
+        io.lstat(fullpath, &stat_buffer):
+         io.stat(fullpath, &stat_buffer);
     if(stat_ret == 0)
     {
         bool issymlink  = (stat_buffer.st_mode&S_IFMT) == S_IFLNK;
@@ -443,11 +454,12 @@ retry_stat:
             m_SourceNumberOfDirectories++;
             
         retry_opendir:
-            DIR *dirp = opendir(fullpath);
+            auto &io = RoutedIO::InterfaceForAccess(fullpath, R_OK);
+            DIR *dirp = io.opendir(fullpath);
             if( dirp != 0)
             {
                 dirent *entp;
-                while((entp = readdir(dirp)) != NULL)
+                while((entp = io.readdir(dirp)) != NULL)
                 {
                     if(strcmp(entp->d_name, ".") == 0 ||
                        strcmp(entp->d_name, "..") == 0) continue; // TODO: optimize me
@@ -457,12 +469,12 @@ retry_stat:
                     ScanItem(dirpath, entp->d_name, dirnode);
                     if (CheckPauseOrStop())
                     {
-                        closedir(dirp);
+                        io.closedir(dirp);
                         return;
                     }
                 }
                 
-                closedir(dirp);
+                io.closedir(dirp);
             }
             else if (!m_SkipAll)
             {
@@ -532,6 +544,7 @@ void FileCopyOperationJobNativeToNative::ProcessItem(const chained_strings::node
 
 void FileCopyOperationJobNativeToNative::ProcessFilesRemoval()
 {
+    auto &io = RoutedIO::Default;
     for(auto i: m_FilesToDelete)
     {
         assert(i->c_str()[i->size()-1] != '/'); // sanity check
@@ -540,12 +553,13 @@ void FileCopyOperationJobNativeToNative::ProcessFilesRemoval()
         i->str_with_pref(itemname);
         strcpy(path, m_SourceDirectory);
         strcat(path, itemname);
-        unlink(path); // any error handling here?
+        io.unlink(path); // any error handling here?
     }
 }
 
 void FileCopyOperationJobNativeToNative::ProcessFoldersRemoval()
 {
+    auto &io = RoutedIO::Default;
     for(auto i = m_DirsToDelete.rbegin(); i != m_DirsToDelete.rend(); ++i)
     {
         const auto item = *i;
@@ -555,7 +569,7 @@ void FileCopyOperationJobNativeToNative::ProcessFoldersRemoval()
         item->str_with_pref(itemname);
         strcpy(path, m_SourceDirectory);
         strcat(path, itemname);
-        rmdir(path); // any error handling here?
+        io.rmdir(path); // any error handling here?
     }
 }
 
@@ -735,6 +749,7 @@ void FileCopyOperationJobNativeToNative::ProcessMoveToPathPreffix(const char *_p
 
 void FileCopyOperationJobNativeToNative::ProcessRenameToFixedPath(const char *_path, int _number)
 {
+    auto &io = RoutedIO::Default;
     m_Stats.SetCurrentItem(_path);
     
     // m_Destination is full target path - we need to rename current file to it
@@ -751,14 +766,14 @@ void FileCopyOperationJobNativeToNative::ProcessRenameToFixedPath(const char *_p
     strcpy(sourcepath, m_SourceDirectory);
     strcat(sourcepath, _path);
     
-    int ret = lstat(m_Destination, &stat_buffer);
+    int ret = io.lstat(m_Destination, &stat_buffer);
     if(ret != -1)
     {
         // Destination file already exists.
         // Check if destination and source paths reference the same file. In this case,
         // silently rename the file.
         struct stat src_stat_buffer;
-        ret = lstat(sourcepath, &src_stat_buffer);
+        ret = io.lstat(sourcepath, &src_stat_buffer);
         if (!(ret == 0 && stat_buffer.st_dev == src_stat_buffer.st_dev
             && stat_buffer.st_ino == src_stat_buffer.st_ino))
         {
@@ -771,7 +786,7 @@ void FileCopyOperationJobNativeToNative::ProcessRenameToFixedPath(const char *_p
     }
     
 retry_rename:
-    ret = rename(sourcepath, m_Destination);
+    ret = io.rename(sourcepath, m_Destination);
     if (ret != 0)
     {
         int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:m_Destination] WaitForResult];
@@ -784,6 +799,7 @@ retry_rename:
 
 void FileCopyOperationJobNativeToNative::ProcessRenameToPathPreffix(const char *_path, int _number)
 {
+    auto &io = RoutedIO::Default;
     m_Stats.SetCurrentItem(_path);
     
     // m_Destination is a directory path - we need to appen _path to it
@@ -801,14 +817,14 @@ void FileCopyOperationJobNativeToNative::ProcessRenameToPathPreffix(const char *
     if(destpath[strlen(destpath)-1] != '/' ) strcat(destpath, "/");
     strcat(destpath, _path);
     
-    int ret = lstat(destpath, &stat_buffer);
+    int ret = io.lstat(destpath, &stat_buffer);
     if(ret != -1)
     {
         // Destination file already exists.
         // Check if destination and source paths reference the same file. In this case,
         // silently rename the file.
         struct stat src_stat_buffer;
-        ret = lstat(sourcepath, &src_stat_buffer);
+        ret = io.lstat(sourcepath, &src_stat_buffer);
         if (!(ret == 0 && stat_buffer.st_dev == src_stat_buffer.st_dev
               && stat_buffer.st_ino == src_stat_buffer.st_ino))
         {
@@ -821,7 +837,7 @@ void FileCopyOperationJobNativeToNative::ProcessRenameToPathPreffix(const char *
     }
 
 retry_rename:
-    ret = rename(sourcepath, destpath);
+    ret = io.rename(sourcepath, destpath);
     if (ret != 0)
     {
         int result = [[m_Operation OnCopyWriteError:[NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil] ForFile:m_Destination] WaitForResult];
@@ -834,12 +850,14 @@ retry_rename:
 
 bool FileCopyOperationJobNativeToNative::CreateSymlinkTo(const char *_source_symlink, const char* _tagret_symlink)
 {
+    auto &io = RoutedIO::Default;
+    
     char linkpath[MAXPATHLEN];
     int result;
     ssize_t sz;
     bool was_succesful = false;
 doreadlink:
-    sz = readlink(_source_symlink, linkpath, MAXPATHLEN);    
+    sz = io.readlink(_source_symlink, linkpath, MAXPATHLEN);
     if(sz == -1)
     {   // failed to read original symlink
         if(m_SkipAll) goto cleanup;
@@ -853,7 +871,7 @@ doreadlink:
     linkpath[sz] = 0;
     
 dosymlink:
-    result = symlink(linkpath, _tagret_symlink);
+    result = io.symlink(linkpath, _tagret_symlink);
     if(result != 0)
     {   // failed to create a symlink
         if(m_SkipAll) goto cleanup;
@@ -910,13 +928,15 @@ void FileCopyOperationJobNativeToNative::CopyXattrs(int _fd_from, int _fd_to)
 
 bool FileCopyOperationJobNativeToNative::CopyDirectoryTo(const char *_src, const char *_dest)
 {
+    auto &io = RoutedIO::Default;
+    
     // TODO: need to handle errors on attributes somehow. but I don't know how.
     struct stat src_stat, dst_stat;
     bool opres = false;
     int src_fd = -1, dst_fd = -1;
 
     // check if target already exist
-    if( lstat(_dest, &dst_stat) != -1 )
+    if( io.lstat(_dest, &dst_stat) != -1 )
     {
         // target exists; check that it's a directory
 
@@ -929,7 +949,7 @@ bool FileCopyOperationJobNativeToNative::CopyDirectoryTo(const char *_src, const
     else
     {
 domkdir:
-        if(mkdir(_dest, 0777))
+        if(io.mkdir(_dest, 0777))
         {
             if(m_SkipAll) goto end;
             int result = [[m_Operation OnCopyCantCreateDir:errno ForDir:_dest] WaitForResult];
@@ -941,8 +961,8 @@ domkdir:
     }
 
     // do attributes stuff
-    if((src_fd = open(_src, O_RDONLY)) == -1) goto end;
-    if((dst_fd = open(_dest, O_RDONLY)) == -1) goto end;
+    if((src_fd = io.open(_src, O_RDONLY)) == -1) goto end;
+    if((dst_fd = io.open(_dest, O_RDONLY)) == -1) goto end;
     if(fstat(src_fd, &src_stat) != 0) goto end;
     
 
@@ -966,13 +986,14 @@ domkdir:
 
     opres = true;
 end:
-    if(src_fd != -1) close(src_fd);
-    if(dst_fd != -1) close(dst_fd);
+    if(src_fd != -1) io.close(src_fd);
+    if(dst_fd != -1) io.close(dst_fd);
     return opres;
 }
 
 bool FileCopyOperationJobNativeToNative::CopyFileTo(const char *_src, const char *_dest)
 {
+    auto &io = RoutedIO::Default;
     assert(m_WorkMode != RenameToFixedPath && m_WorkMode != RenameToPathPreffix); // sanity check
     
     // TODO: need to ask about destination volume info to exclude meaningless operations for attrs which are not supported
@@ -998,7 +1019,7 @@ opensource:
     if(fs_info && fs_info->interfaces.file_lock)
         src_open_flags |= O_SHLOCK;
     
-    if((sourcefd = open(_src, src_open_flags)) == -1)
+    if((sourcefd = io.open(_src, src_open_flags)) == -1)
     {  // failed to open source file
         if(m_SkipAll) goto cleanup;
         int result = [[m_Operation OnCopyCantAccessSrcFile:ErrnoToNSError() ForFile:_src] WaitForResult];
@@ -1026,7 +1047,7 @@ statsource: // get information about source file
     
     // stat destination
     totaldestsize = src_stat_buffer.st_size;
-    if(stat(_dest, &dst_stat_buffer) != -1)
+    if(io.stat(_dest, &dst_stat_buffer) != -1)
     { // file already exist. what should we do now?
         int result;
         if(m_SkipAll) goto cleanup;
@@ -1075,9 +1096,9 @@ statsource: // get information about source file
 opendest: // open file descriptor for destination
     oldumask = umask(0);
     if(m_Options.copy_unix_flags) // we want to copy src permissions
-        destinationfd = open(_dest, dstopenflags, src_stat_buffer.st_mode);
+        destinationfd = io.open(_dest, dstopenflags, src_stat_buffer.st_mode);
     else // open file with default permissions
-        destinationfd = open(_dest, dstopenflags, S_IRUSR | S_IWUSR | S_IRGRP);
+        destinationfd = io.open(_dest, dstopenflags, S_IRUSR | S_IWUSR | S_IRGRP);
     umask(oldumask);
     
     if(destinationfd == -1)
@@ -1191,9 +1212,12 @@ dolseek: // find right position in destination file
         CopyXattrs(sourcefd, destinationfd);
     
     // change ownage
-    if(m_Options.copy_unix_owners)
-        fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
-    
+    if(m_Options.copy_unix_owners) {
+        // TODO: we can't chown without superuser rights.
+        // need to optimize this (sometimes) meaningless call
+        io.chown(_dest, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+    }
+        
     // change flags
     if(m_Options.copy_unix_flags)
         fchflags(destinationfd, src_stat_buffer.st_flags);
@@ -1213,7 +1237,7 @@ cleanup:
         close(destinationfd);
         destinationfd = -1;
         if(unlink_on_stop)
-            unlink(_dest);
+            io.unlink(_dest);
     }
     if(destinationfd != -1) close(destinationfd);
     return was_successful;

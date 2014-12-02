@@ -8,6 +8,10 @@
 
 #include "RoutedIOInterfaces.h"
 
+// hack to access function from libc implementation directly.
+// this func does readdir but without mutex locking
+struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
+
 // trivial wrappers
 int PosixIOInterfaceNative::open(const char *_path, int _flags, int _mode) { return ::open(_path, _flags, _mode); }
 int	PosixIOInterfaceNative::close(int _fd) { return ::close(_fd); }
@@ -15,7 +19,7 @@ ssize_t PosixIOInterfaceNative::read(int _fildes, void *_buf, size_t _nbyte) { r
 ssize_t PosixIOInterfaceNative::write(int _fildes, const void *_buf, size_t _nbyte) { return ::write(_fildes, _buf, _nbyte); }
 DIR *PosixIOInterfaceNative::opendir(const char *_path) { return ::opendir(_path); }
 int PosixIOInterfaceNative::closedir(DIR *_dir) { return ::closedir(_dir); }
-struct dirent *PosixIOInterfaceNative::readdir(DIR *_dir) { return ::readdir(_dir); }
+struct dirent *PosixIOInterfaceNative::readdir(DIR *_dir) { return ::_readdir_unlocked(_dir, 1); }
 int PosixIOInterfaceNative::stat(const char *_path, struct stat *_st) { return ::stat(_path, _st); }
 int PosixIOInterfaceNative::lstat(const char *_path, struct stat *_st) { return ::lstat(_path, _st); }
 

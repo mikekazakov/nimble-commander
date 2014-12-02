@@ -11,6 +11,10 @@
 #include <xpc/xpc.h>
 
 
+/**
+ * NB!
+ * readdir call uses _readdir_unlocked (without mutex guarding) and requires that call should be performed without possible race conditions.
+ */
 class PosixIOInterface
 {
 public:

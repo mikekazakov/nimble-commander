@@ -31,10 +31,6 @@
 
 #import "RoutedIO.h"
 
-// hack to access function from libc implementation directly.
-// this func does readdir but without mutex locking
-struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
-
 const char *VFSNativeHost::Tag = "native";
 
 VFSNativeHost::VFSNativeHost():
@@ -97,7 +93,9 @@ static int CalculateDirectoriesSizesHelper(char *_path,
         return VFSError::Cancelled;
     }
     
-    DIR *dirp = opendir(_path);
+    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+    
+    DIR *dirp = io.opendir(_path);
     if( dirp == 0 )
         return VFSError::FromErrno();
     
@@ -107,7 +105,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
     _path[_path_len+1] = 0;
     char *var = _path + _path_len + 1;
     
-    while((entp = _readdir_unlocked(dirp, 1)) != NULL)
+    while((entp = io.readdir(dirp)) != NULL)
     {
         if(_checker && _checker())
         {
@@ -141,7 +139,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
                 
                 struct stat st;
                 
-                if(lstat(full_path, &st) == 0)
+                if(io.lstat(full_path, &st) == 0)
                     *_size_stock += st.st_size;
                 
                 free(full_path);
@@ -150,7 +148,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
     }
     
 cleanup:
-    closedir(dirp);
+    io.closedir(dirp);
     _path[_path_len] = 0;
     return VFSError::Ok;
 }

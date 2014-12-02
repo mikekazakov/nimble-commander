@@ -31,7 +31,7 @@ VFSNativeFile::~VFSNativeFile()
 
 int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
-    auto &io = RoutedIO::Wrapped;
+    auto &io = RoutedIO::Default;
     auto fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath());
     
     int openflags = O_NONBLOCK;

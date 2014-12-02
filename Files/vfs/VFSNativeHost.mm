@@ -327,7 +327,8 @@ int VFSNativeHost::CreateDirectory(const char* _path, int _mode, VFSCancelChecke
 
 int VFSNativeHost::RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker)
 {
-    int ret = rmdir(_path);
+    auto &io = RoutedIO::Default;
+    int ret = io.rmdir(_path);
     if(ret == 0)
         return 0;
     return VFSError::FromErrno();

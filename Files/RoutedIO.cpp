@@ -17,7 +17,7 @@ static PosixIOInterface &IODirectCreateProxy();
 static PosixIOInterface &IOWrappedCreateProxy();
 
 PosixIOInterface &RoutedIO::Direct    = IODirectCreateProxy();
-PosixIOInterface &RoutedIO::Wrapped   = IOWrappedCreateProxy();
+PosixIOInterface &RoutedIO::Default   = IOWrappedCreateProxy();
 static const char *g_HelperLabel      = "info.filesmanager.Files.PrivilegedIOHelper";
 static CFStringRef g_HelperLabelCF    = CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
 

@@ -24,6 +24,7 @@
 #import "OperationDialogAlert.h"
 #import "rdrand.h"
 #import "Common.h"
+#import "RoutedIO.h"
 
 static void Randomize(unsigned char *_data, unsigned _size)
 {
@@ -242,6 +243,7 @@ void FileDeletionOperationJob::DoFile(const char *_full_path, bool _is_dir)
 
 bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
 {
+    auto &io = RoutedIO::Default;
     int ret = -1;
     // delete. just delete.
     if( !_is_dir )
@@ -259,7 +261,7 @@ bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
     else
     {
     retry_rmdir:
-        ret = rmdir(_full_path);
+        ret = io.rmdir(_full_path);
         if( ret != 0 && !m_SkipAll )
         {
             int result = [[m_Operation DialogOnRmdirError:errno ForPath:_full_path] WaitForResult];
@@ -341,6 +343,7 @@ bool FileDeletionOperationJob::DoMoveToTrash(const char *_full_path, bool _is_di
 
 bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_dir)
 {
+    auto &io = RoutedIO::Default;
     if( !_is_dir )
     {
         // fill file content with random data
@@ -439,7 +442,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
     else
     {
     retry_rmdir:
-        if(rmdir(_full_path) != 0 )
+        if(io.rmdir(_full_path) != 0 )
         {
             if (!m_SkipAll)
             {

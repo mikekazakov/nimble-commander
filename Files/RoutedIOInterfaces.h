@@ -22,6 +22,10 @@ public:
     virtual struct dirent *readdir(DIR *) override;
     virtual int stat(const char *_path, struct stat *_st) override;
     virtual int lstat(const char *_path, struct stat *_st) override;
+    virtual int	mkdir(const char *_path, mode_t _mode) override;
+    virtual int chown(const char *_path, uid_t _uid, gid_t _gid) override;
+    virtual int rmdir(const char *_path) override;
+    virtual int unlink(const char *_path) override;
 };
 
 class PosixIOInterfaceRouted : public PosixIOInterfaceNative
@@ -33,7 +37,12 @@ public:
     virtual DIR *opendir(const char *_path) override;
     virtual int stat(const char *_path, struct stat *_st) override;
     virtual int lstat(const char *_path, struct stat *_st) override;
+    virtual int	mkdir(const char *_path, mode_t _mode) override;
+    virtual int chown(const char *_path, uid_t _uid, gid_t _gid) override;
+    virtual int rmdir(const char *_path) override;
+    virtual int unlink(const char *_path) override;    
 private:
+    xpc_connection_t Connection();
+    typedef PosixIOInterfaceNative super;
     RoutedIO &inst;
 };
-

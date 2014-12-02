@@ -18,23 +18,26 @@
 class PosixIOInterface
 {
 public:
-    virtual int open(const char *_path, int _flags, int _mode) = 0;
-    virtual int	close(int _fd) = 0;
-    virtual ssize_t read(int _fildes, void *_buf, size_t _nbyte) = 0;
-    virtual ssize_t write(int _fildes, const void *_buf, size_t _nbyte) = 0;
-    virtual DIR *opendir(const char *_path) = 0;
-    virtual struct dirent *readdir(DIR *_dir) = 0;
-    virtual int closedir(DIR *_dir) = 0;
-    virtual int stat(const char *_path, struct stat *_st) = 0;
-    virtual int lstat(const char *_path, struct stat *_st) = 0;
+    virtual int             open(const char *_path, int _flags, int _mode) = 0;
+    virtual int             close(int _fd) = 0;
+    virtual ssize_t         read(int _fildes, void *_buf, size_t _nbyte) = 0;
+    virtual ssize_t         write(int _fildes, const void *_buf, size_t _nbyte) = 0;
+    virtual DIR            *opendir(const char *_path) = 0;
+    virtual struct dirent  *readdir(DIR *_dir) = 0;
+    virtual int             closedir(DIR *_dir) = 0;
+    virtual int             stat(const char *_path, struct stat *_st) = 0;
+    virtual int             lstat(const char *_path, struct stat *_st) = 0;
+    virtual int             mkdir(const char *_path, mode_t _mode) = 0;
+    virtual int             rmdir(const char *_path) = 0;
+    virtual int             unlink(const char *_path) = 0;
+    virtual int             chown(const char *_path, uid_t _uid, gid_t _gid) = 0;
 };
 
 class RoutedIO
 {
 public:
     static PosixIOInterface &Direct;
-    static PosixIOInterface &Wrapped;
-    
+    static PosixIOInterface &Default;
     static PosixIOInterface &InterfaceForAccess(const char *_path, int _mode) noexcept;
     
     RoutedIO();
@@ -76,5 +79,5 @@ inline PosixIOInterface &RoutedIO::InterfaceForAccess(const char *_path, int _mo
     if(!Instance().Enabled())
         return Direct;
     
-    return access(_path, _mode) == 0 ? RoutedIO::Direct : RoutedIO::Wrapped;
+    return access(_path, _mode) == 0 ? RoutedIO::Direct : RoutedIO::Default;
 }

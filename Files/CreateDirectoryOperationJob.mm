@@ -12,6 +12,7 @@
 #include <sys/dirent.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "RoutedIO.h"
 
 void CreateDirectoryOperationJob::Init(const char *_path, const char *_root_path, CreateDirectoryOperation *_operation)
 {
@@ -35,6 +36,8 @@ void CreateDirectoryOperationJob::Init(const char *_path, const char *_root_path
 
 void CreateDirectoryOperationJob::Do()
 {
+    auto &io = RoutedIO::Default;
+    
     // TODO: directory access mode!!!
 
     const int maxdepth = 128; // 128 directories depth max
@@ -51,7 +54,7 @@ void CreateDirectoryOperationJob::Do()
     for(int i = 0; i < ndirs; ++i)
     {
         m_Name[ slashpos[i] ] = 0;
-        if(stat(m_Name, &stat_buffer) == -1)
+        if(io.stat(m_Name, &stat_buffer) == -1)
             absentpos[nabsent++] = i;
         m_Name[ slashpos[i] ] = '/';
     }
@@ -64,7 +67,7 @@ void CreateDirectoryOperationJob::Do()
     {
         m_Name[slashpos[absentpos[i]]] = 0;
     domkdir1:
-        if(mkdir(m_Name, 0777) == -1)
+        if(io.mkdir(m_Name, 0777) == -1)
         {
             int result = [[m_Operation DialogOnCrDirError:errno ForDir:m_Name] WaitForResult];
             if (result == OperationDialogResult::Retry)
@@ -80,7 +83,7 @@ void CreateDirectoryOperationJob::Do()
     }
     
 domkdir2:
-    if(mkdir(m_Name, 0755) == -1)
+    if(io.mkdir(m_Name, 0755) == -1)
     {
         int result = [[m_Operation DialogOnCrDirError:errno ForDir:m_Name] WaitForResult];
         if (result == OperationDialogResult::Retry)

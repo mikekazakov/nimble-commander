@@ -133,6 +133,69 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
             send_reply_error(_event, errno);
         }
     }
+    else if( strcmp(_operation, "mkdir") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
+        if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
+            return false;
+        int mode = (int)xpc_int64_get_value(xpc_mode);
+        
+        int result = mkdir(path, mode);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
+    else if( strcmp(_operation, "chown") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        xpc_object_t xpc_uid = xpc_dictionary_get_value(_event, "uid");
+        if( xpc_uid == nullptr || xpc_get_type(xpc_uid) != XPC_TYPE_INT64 )
+            return false;
+        uid_t uid = (uid_t)xpc_int64_get_value(xpc_uid);
+        
+        xpc_object_t xpc_gid = xpc_dictionary_get_value(_event, "gid");
+        if( xpc_gid == nullptr || xpc_get_type(xpc_gid) != XPC_TYPE_INT64 )
+            return false;
+        gid_t gid = (gid_t)xpc_int64_get_value(xpc_gid);
+        
+        int result = chown(path, uid, gid);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
+    else if( strcmp(_operation, "rmdir") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        int result = rmdir(path);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
+    else if( strcmp(_operation, "unlink") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        int result = unlink(path);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
     else
         return false;
     

@@ -132,6 +132,8 @@
     
     menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
     menuitem("menu.files.try_full_version").hidden = configuration::version == configuration::Version::Full;
+    menuitem("menu.files.try_full_version").title = configuration::version == configuration::Version::Lite ?
+        @"Try Full Version" : @"Download Full Version";
     menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full;
     
     // update menu with current shortcuts layout

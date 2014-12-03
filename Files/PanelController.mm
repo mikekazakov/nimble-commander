@@ -123,7 +123,6 @@ void panel::GenericCursorPersistance::Restore()
         m_DirectorySizeCountingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirsizecounting");
         m_DirectoryLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirloading");
         m_DirectoryReLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirreloading");
-        m_DelayedSelection.isvalid = false;
         m_DragDrop.last_valid_items = -1;
         
         __weak PanelController* weakself = self;

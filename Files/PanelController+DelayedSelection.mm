@@ -20,10 +20,12 @@
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     // we assume that _item_name will not contain any forward slashes
     
-    m_DelayedSelection.isvalid = true;
+    if(request.filename.empty())
+        return;
+    
     m_DelayedSelection.request_end = machtime() + request.timeout;
     m_DelayedSelection.filename = request.filename;
-    m_DelayedSelection.done = [request.done copy];
+    m_DelayedSelection.done = request.done;
     
     if(_check_now)
         [self CheckAgainstRequestedSelection];
@@ -32,14 +34,12 @@
 - (bool) CheckAgainstRequestedSelection
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
-    if(!m_DelayedSelection.isvalid)
+    if(m_DelayedSelection.filename.empty())
         return false;
     
-    if(machtime() > m_DelayedSelection.request_end)
-    {
-        m_DelayedSelection.isvalid = false;
+    if(machtime() > m_DelayedSelection.request_end) {
         m_DelayedSelection.filename.clear();
-        m_DelayedSelection.done = nil;
+        m_DelayedSelection.done = nullptr;
         return false;
     }
     
@@ -49,9 +49,8 @@
     {
         // we found this entry. regardless of appearance of this entry in current directory presentation
         // there's no reason to search for it again
-        m_DelayedSelection.isvalid = false;
-        void (^done)() = m_DelayedSelection.done;
-        m_DelayedSelection.done = nil;
+        auto done = m_DelayedSelection.done;
+        m_DelayedSelection.done = nullptr;
         
         int sortpos = m_Data.SortedIndexForRawIndex(entryindex);
         if( sortpos >= 0 )
@@ -70,9 +69,8 @@
 
 - (void) ClearSelectionRequest
 {
-    m_DelayedSelection.isvalid = false;
     m_DelayedSelection.filename.clear();
-    m_DelayedSelection.done = nil;
+    m_DelayedSelection.done = nullptr;
 }
 
 

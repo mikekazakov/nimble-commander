@@ -457,6 +457,11 @@ void VFSNetFTPHost::MakeDirectoryStructureDirty(const char *_path)
     }
 }
 
+bool VFSNetFTPHost::IsDirChangeObservingAvailable(const char *_path)
+{
+    return true;
+}
+
 unsigned long VFSNetFTPHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     if(_path == 0 || _path[0] != '/')

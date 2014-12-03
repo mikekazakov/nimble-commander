@@ -225,7 +225,7 @@ cleanup:
 
 bool VFSNativeHost::IsDirChangeObservingAvailable(const char *_path)
 {
-    if(_path)
+    if(!_path)
         return false;
     return access(_path, R_OK) == 0;
 }

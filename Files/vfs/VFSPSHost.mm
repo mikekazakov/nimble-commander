@@ -538,6 +538,11 @@ int VFSPSHost::ProcIndexFromFilepath(const char *_filepath)
     return int(it - begin(m_Data->plain_filenames));
 }
 
+bool VFSPSHost::IsDirChangeObservingAvailable(const char *_path)
+{
+    return true;
+}
+
 unsigned long VFSPSHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root

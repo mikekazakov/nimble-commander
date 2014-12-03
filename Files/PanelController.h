@@ -103,12 +103,7 @@ namespace panel
     struct
     {
         /**
-         * Turn on or off this selection mechanics
-         */
-        bool        isvalid;
-
-        /**
-         * Requested item name to select.
+         * Requested item name to select. Empty filename means that request is invalid.
          */
         string      filename;
         
@@ -120,7 +115,7 @@ namespace panel
         /**
          * Called when changed a cursor position
          */
-        void          (^done)();
+        function<void()> done;
     } m_DelayedSelection;
     
     NSPopover            *m_SelectionWithMaskPopover;

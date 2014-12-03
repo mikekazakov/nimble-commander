@@ -16,7 +16,7 @@ struct PanelControllerDelayedSelection
     /**
      * called by PanelController when succesfully changed the cursor position regarding this request.
      */
-    void          (^done)();
+    function<void()> done;
 };
 
 @interface PanelController (DelayedSelection)

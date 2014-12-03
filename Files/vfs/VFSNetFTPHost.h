@@ -72,6 +72,7 @@ public:
     virtual bool IsWriteable() const override;
     virtual bool IsWriteableAtPath(const char *_dir) const override;
     
+    virtual bool IsDirChangeObservingAvailable(const char *_path) override;    
     virtual unsigned long DirChangeObserve(const char *_path, function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    
     

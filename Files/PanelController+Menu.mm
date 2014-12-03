@@ -704,7 +704,7 @@
             PanelControllerDelayedSelection req;
             req.filename = name;
             req.timeout = 2s;
-            req.done = ^{
+            req.done = [=]{
                 [((PanelController*)ws).view startFieldEditorRenaming];
             };
             [ss ScheduleDelayedSelectionChangeFor:req
@@ -759,7 +759,7 @@
             PanelControllerDelayedSelection req;
             req.filename = name;
             req.timeout = 2s;            
-            req.done = ^{
+            req.done = [=]{
                 [((PanelController*)ws).view startFieldEditorRenaming];
             };
             [ss ScheduleDelayedSelectionChangeFor:req

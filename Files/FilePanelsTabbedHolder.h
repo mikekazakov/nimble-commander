@@ -21,4 +21,7 @@
 - (void) addPanel:(PanelView*)_panel;
 - (NSTabViewItem*) tabViewItemForController:(PanelController*)_controller;
 
+- (void) selectPreviousFilePanelTab;
+- (void) selectNextFilePanelTab;
+
 @end

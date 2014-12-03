@@ -208,40 +208,36 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     return nil;
 }
 
+- (FilePanelsTabbedHolder*) activeFilePanelsTabbedHolder
+{
+    PanelController *cur = self.activePanelController;
+    if(!cur)
+        return nil;
+    
+    if([self isLeftController:cur])
+        return m_MainSplitView.leftTabbedHolder;
+    else if([self isRightController:cur])
+        return m_MainSplitView.rightTabbedHolder;
+    
+    return nil;
+}
+
 - (void) selectPreviousFilePanelTab
 {
-    MMTabBarView *bar = self.activeTabBarView;
-    if(!bar)
+    FilePanelsTabbedHolder *th = self.activeFilePanelsTabbedHolder;
+    if(!th)
         return;
     
-    unsigned long tabs = [bar numberOfTabViewItems];
-    if(tabs == 1)
-        return;
-    
-    unsigned long now = [bar indexOfTabViewItem:bar.selectedTabViewItem];
-    if(now == NSNotFound)
-        return;
-
-    unsigned long willbe = now >= 1 ? now - 1 : tabs - 1;
-    [bar selectTabViewItem:bar.tabView.tabViewItems[willbe]];
+    [th selectPreviousFilePanelTab];
 }
 
 - (void) selectNextFilePanelTab
 {
-    MMTabBarView *bar = self.activeTabBarView;
-    if(!bar)
+    FilePanelsTabbedHolder *th = self.activeFilePanelsTabbedHolder;
+    if(!th)
         return;
-    
-    unsigned long tabs = [bar numberOfTabViewItems];
-    if(tabs == 1)
-        return;
-    
-    unsigned long now = [bar indexOfTabViewItem:bar.selectedTabViewItem];
-    if(now == NSNotFound)
-        return;
-    
-    unsigned long willbe = now + 1 < tabs ? now + 1 : 0;
-    [bar selectTabViewItem:bar.tabView.tabViewItems[willbe]];
+
+    [th selectNextFilePanelTab];
 }
 
 - (void) updateTabBarsVisibility

@@ -198,4 +198,61 @@
         [self doShowTabBar];
 }
 
+- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+{
+    NSResponder *resp = self.window.firstResponder;
+    if(!resp || ![resp isKindOfClass:NSView.class])
+        return [super performKeyEquivalent:theEvent];
+    
+    NSView *resp_view = (NSView*) resp;
+    if(![resp_view isDescendantOf:m_TabView])
+        return [super performKeyEquivalent:theEvent];
+    
+    NSString* characters = theEvent.charactersIgnoringModifiers;
+    if ( characters.length != 1 )
+        return [super performKeyEquivalent:theEvent];
+    
+    auto mod = theEvent.modifierFlags & ~(NSAlphaShiftKeyMask|NSNumericPadKeyMask|NSFunctionKeyMask);
+    auto keycode = theEvent.keyCode;
+    
+    if( keycode == 33 && (mod&NSDeviceIndependentModifierFlagsMask) == (NSShiftKeyMask|NSCommandKeyMask) ) { // '['
+        [self selectPreviousFilePanelTab];
+        return true;
+    }
+    else if( keycode == 30 && (mod&NSDeviceIndependentModifierFlagsMask) == (NSShiftKeyMask|NSCommandKeyMask) ) { // ']'
+        [self selectNextFilePanelTab];
+        return true;
+    }
+    
+    return [super performKeyEquivalent:theEvent];
+}
+
+- (void) selectPreviousFilePanelTab
+{
+    unsigned long tabs = [m_TabBar numberOfTabViewItems];
+    if(tabs == 1)
+        return;
+    
+    unsigned long now = [m_TabBar indexOfTabViewItem:m_TabBar.selectedTabViewItem];
+    if(now == NSNotFound)
+        return;
+    
+    unsigned long willbe = now >= 1 ? now - 1 : tabs - 1;
+    [m_TabBar selectTabViewItem:m_TabBar.tabView.tabViewItems[willbe]];
+}
+
+- (void) selectNextFilePanelTab
+{
+    unsigned long tabs = [m_TabBar numberOfTabViewItems];
+    if(tabs == 1)
+        return;
+    
+    unsigned long now = [m_TabBar indexOfTabViewItem:m_TabBar.selectedTabViewItem];
+    if(now == NSNotFound)
+        return;
+    
+    unsigned long willbe = now + 1 < tabs ? now + 1 : 0;
+    [m_TabBar selectTabViewItem:m_TabBar.tabView.tabViewItems[willbe]];
+}
+
 @end

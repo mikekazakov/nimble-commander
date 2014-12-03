@@ -174,6 +174,7 @@ public:
     virtual shared_ptr<VFSHostOptions> Options() const;
     
     // return value 0 means error or unsupported for this VFS
+    virtual bool IsDirChangeObservingAvailable(const char *_path);
     virtual unsigned long DirChangeObserve(const char *_path, function<void()> _handler);
     virtual void StopDirChangeObserving(unsigned long _ticket);
     

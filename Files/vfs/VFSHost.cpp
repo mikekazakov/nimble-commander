@@ -280,6 +280,11 @@ int VFSHost::CalculateDirectoriesSizes(
     return VFSError::Ok;
 }
 
+bool VFSHost::IsDirChangeObservingAvailable(const char *_path)
+{
+    return false;
+}
+
 unsigned long VFSHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     return 0;

@@ -692,10 +692,15 @@
     else
         op = [op initWithPath:name.c_str() rootpath:dir.c_str() at:self.VFS];
     
+    bool force_reload = self.VFS->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue(^{
             PanelController *ss = ws;
+            
+            if(force_reload)
+                [ss RefreshDirectory];
+            
             PanelControllerDelayedSelection req;
             req.filename = name;
             req.timeout = 2s;
@@ -742,10 +747,15 @@
     else
         op = [op initWithFiles:move(files) root:src.c_str() srcvfs:self.VFS dest:dst.c_str() dstvfs:self.VFS options:opts];
 
+    bool force_reload = self.VFS->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue(^{
             PanelController *ss = ws;
+            
+            if(force_reload)
+                [ss RefreshDirectory];
+            
             PanelControllerDelayedSelection req;
             req.filename = name;
             req.timeout = 2s;            

@@ -223,6 +223,13 @@ cleanup:
     return error;
 }
 
+bool VFSNativeHost::IsDirChangeObservingAvailable(const char *_path)
+{
+    if(_path)
+        return false;
+    return access(_path, R_OK) == 0;
+}
+
 unsigned long VFSNativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     return FSEventsDirUpdate::Instance().AddWatchPath(_path, _handler);

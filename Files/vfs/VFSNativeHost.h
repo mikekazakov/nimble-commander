@@ -43,6 +43,7 @@ public:
     
     virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker) override;
     
+    virtual bool IsDirChangeObservingAvailable(const char *_path) override;
     virtual unsigned long DirChangeObserve(const char *_path, function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
     

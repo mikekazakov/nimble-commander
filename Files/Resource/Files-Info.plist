@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>files.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>info.filesmanager.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>info.filesmanager.$(PRODUCT_NAME:rfc1034identifier)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -60,7 +60,7 @@
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>info.filesmanager.Files.PrivilegedIOHelper</key>
-		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = &quot;Mac Developer: Michael Kazakov (4VT72ZQ4R4)&quot;</string>
+		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = &quot;Developer ID Application: Mikhail Kazakov (AC5SJT236H)&quot;</string>
 	</dict>
 </dict>
 </plist>

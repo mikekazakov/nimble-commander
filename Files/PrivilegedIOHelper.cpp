@@ -16,7 +16,7 @@
 #include <stdio.h>
 
 // requires that identifier is right and binary is signed by me
-static const char *g_SignatureRequirement = "identifier info.filesmanager.Files and certificate leaf[subject.CN] = \"Mac Developer: Michael Kazakov (4VT72ZQ4R4)\"";
+static const char *g_SignatureRequirement = "identifier info.filesmanager.Files and certificate leaf[subject.CN] = \"Developer ID Application: Mikhail Kazakov (AC5SJT236H)\"";
 
 struct ConnectionContext
 {

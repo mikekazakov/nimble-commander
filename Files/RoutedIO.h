@@ -37,6 +37,7 @@ public:
     virtual int             chflags(const char *_path, u_int _flags) = 0;
     virtual ssize_t         readlink(const char *_path, char *_symlink, size_t _buf_sz) = 0;
     virtual int             symlink(const char *_value, const char *_symlink_path) = 0;
+    virtual int             link(const char *_path_exist, const char *_path_newnode) = 0;
 };
 
 class RoutedIO

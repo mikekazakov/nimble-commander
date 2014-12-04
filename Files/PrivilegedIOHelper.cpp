@@ -266,6 +266,23 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
         else
             send_reply_error(_event, errno);
     }
+    else if( strcmp(_operation, "link") == 0 ) {
+        xpc_object_t xpc_exist = xpc_dictionary_get_value(_event, "exist");
+        if( xpc_exist == nullptr || xpc_get_type(xpc_exist) != XPC_TYPE_STRING )
+            return false;
+        const char *exist = xpc_string_get_string_ptr(xpc_exist);
+        
+        xpc_object_t xpc_newnode = xpc_dictionary_get_value(_event, "newnode");
+        if( xpc_newnode == nullptr || xpc_get_type(xpc_newnode) != XPC_TYPE_STRING )
+            return false;
+        const char *newnode = xpc_string_get_string_ptr(xpc_newnode);
+        
+        int result = link(exist, newnode);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
     else
         return false;
     

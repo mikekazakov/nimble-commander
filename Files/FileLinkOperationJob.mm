@@ -8,6 +8,7 @@
 
 #import "FileLinkOperationJob.h"
 #import "OperationDialogAlert.h"
+#include "RoutedIO.h"
 
 FileLinkOperationJob::FileLinkOperationJob()
 {
@@ -41,7 +42,7 @@ void FileLinkOperationJob::Do()
 void FileLinkOperationJob::DoNewSymLink()
 {
 dotry:
-    int result = symlink(m_File, m_Link);
+    int result = RoutedIO::Default.symlink(m_File, m_Link);
 
     if(result != 0)
     {
@@ -57,7 +58,7 @@ dotry:
 void FileLinkOperationJob::DoAlterSymLink()
 {
 dounlink:
-    int result = unlink(m_Link);
+    int result = RoutedIO::Default.unlink(m_Link);
     
     if(result != 0)
     {
@@ -73,7 +74,7 @@ dounlink:
     }
     
 dosymlink:
-    result = symlink(m_File, m_Link);
+    result = RoutedIO::Default.symlink(m_File, m_Link);
     if(result != 0)
     {
         NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
@@ -88,7 +89,7 @@ dosymlink:
 void FileLinkOperationJob::DoNewHardLink()
 {
 dotry:
-    int result = link(m_File, m_Link);
+    int result = RoutedIO::Default.link(m_File, m_Link);
     
     if(result != 0)
     {

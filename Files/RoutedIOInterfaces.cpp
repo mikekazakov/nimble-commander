@@ -35,6 +35,7 @@ int PosixIOInterfaceNative::unlink(const char *_path) { return ::unlink(_path); 
 int PosixIOInterfaceNative::rename(const char *_old, const char *_new) { return ::rename(_old, _new); }
 ssize_t PosixIOInterfaceNative::readlink(const char *_path, char *_symlink, size_t _buf_sz) { return ::readlink(_path, _symlink, _buf_sz); }
 int PosixIOInterfaceNative::symlink(const char *_value, const char *_symlink_path) { return ::symlink(_value, _symlink_path); }
+int PosixIOInterfaceNative::link(const char *_path_exist, const char *_path_newnode) { return ::link(_path_exist, _path_newnode); }
 
 PosixIOInterfaceRouted::PosixIOInterfaceRouted(RoutedIO &_inst):
     inst(_inst)
@@ -467,6 +468,42 @@ int PosixIOInterfaceRouted::symlink(const char *_value, const char *_symlink_pat
     if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
         xpc_release(reply); // connection broken, faling back to native
         return super::symlink(_value, _symlink_path);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;
+}
+
+int PosixIOInterfaceRouted::link(const char *_path_exist, const char *_path_newnode)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::link(_path_exist, _path_newnode);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "link");
+    xpc_dictionary_set_string(message, "exist", _path_exist);
+    xpc_dictionary_set_string(message, "newnode", _path_newnode);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::link(_path_exist, _path_newnode);
     }
     
     if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {

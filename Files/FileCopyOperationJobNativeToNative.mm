@@ -1216,7 +1216,7 @@ dolseek: // find right position in destination file
     if(m_Options.copy_unix_owners) {
         if(io.isrouted()) // long path
             io.chown(_dest, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
-        else // short pa    th
+        else // short path
             fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
     }
     

@@ -32,6 +32,7 @@ public:
     virtual ssize_t readlink(const char *_path, char *_symlink, size_t _buf_sz) override;
     virtual int symlink(const char *_value, const char *_symlink_path) override;
     virtual int chflags(const char *_path, u_int _flags) override;
+    virtual int link(const char *_path_exist, const char *_path_newnode) override;
 };
 
 class PosixIOInterfaceRouted : public PosixIOInterfaceNative
@@ -52,6 +53,7 @@ public:
     virtual int rename(const char *_old, const char *_new) override;
     virtual ssize_t readlink(const char *_path, char *_symlink, size_t _buf_sz) override;
     virtual int symlink(const char *_value, const char *_symlink_path) override;
+    virtual int link(const char *_path_exist, const char *_path_newnode) override;    
 private:
     xpc_connection_t Connection();
     typedef PosixIOInterfaceNative super;

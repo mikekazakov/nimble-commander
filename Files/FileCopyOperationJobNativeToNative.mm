@@ -375,8 +375,7 @@ void FileCopyOperationJobNativeToNative::BuildDestinationDirectory(const char* _
         if(io.stat(destpath, &stat_buffer) == -1)
         {
             // absent part - need to create it
-            // TODO: why 777????????
-domkdir:    if(io.mkdir(destpath, 0777) == -1)
+domkdir:    if(io.mkdir(destpath, S_IXUSR|S_IXGRP|S_IXOTH|S_IRUSR|S_IRGRP|S_IROTH|S_IWUSR) == -1)
             {
                 int result = [[m_Operation OnDestCantCreateDir:ErrnoToNSError() ForDir:destpath] WaitForResult];
                 if (result == OperationDialogResult::Retry) goto domkdir;
@@ -976,7 +975,7 @@ domkdir:
     }
 
     if(m_Options.copy_unix_owners) // change ownage
-        fchown(dst_fd, src_stat.st_uid, src_stat.st_gid);
+        io.chown(_dest, src_stat.st_uid, src_stat.st_gid);
 
     if(m_Options.copy_xattrs) // copy xattrs
         CopyXattrs(src_fd, dst_fd);
@@ -1212,12 +1211,15 @@ dolseek: // find right position in destination file
         CopyXattrs(sourcefd, destinationfd);
     
     // change ownage
+    // TODO: we can't chown without superuser rights.
+    // need to optimize this (sometimes) meaningless call
     if(m_Options.copy_unix_owners) {
-        // TODO: we can't chown without superuser rights.
-        // need to optimize this (sometimes) meaningless call
-        io.chown(_dest, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+        if(io.isrouted()) // long path
+            io.chown(_dest, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+        else // short pa    th
+            fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
     }
-        
+    
     // change flags
     if(m_Options.copy_unix_flags)
         fchflags(destinationfd, src_stat_buffer.st_flags);

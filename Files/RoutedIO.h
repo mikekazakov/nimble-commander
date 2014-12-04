@@ -18,6 +18,7 @@
 class PosixIOInterface
 {
 public:
+    virtual bool            isrouted() const = 0;
     virtual int             open(const char *_path, int _flags, int _mode = 0) = 0;
     virtual int             close(int _fd) = 0;
     virtual ssize_t         read(int _fd, void *_buf, size_t _nbyte) = 0;
@@ -33,6 +34,7 @@ public:
     virtual int             unlink(const char *_path) = 0;
     virtual int             rename(const char *_old, const char *_new) = 0;
     virtual int             chown(const char *_path, uid_t _uid, gid_t _gid) = 0;
+    virtual int             chflags(const char *_path, u_int _flags) = 0;
     virtual ssize_t         readlink(const char *_path, char *_symlink, size_t _buf_sz) = 0;
     virtual int             symlink(const char *_value, const char *_symlink_path) = 0;
 };

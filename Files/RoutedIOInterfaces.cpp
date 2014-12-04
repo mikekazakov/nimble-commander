@@ -16,6 +16,7 @@ static const gid_t g_GID = getgid();
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
 // trivial wrappers
+bool PosixIOInterfaceNative::isrouted() const { return false; }
 int PosixIOInterfaceNative::open(const char *_path, int _flags, int _mode) { return ::open(_path, _flags, _mode); }
 int	PosixIOInterfaceNative::close(int _fd) { return ::close(_fd); }
 ssize_t PosixIOInterfaceNative::read(int _fildes, void *_buf, size_t _nbyte) { return ::read(_fildes, _buf, _nbyte); }
@@ -28,6 +29,7 @@ int PosixIOInterfaceNative::stat(const char *_path, struct stat *_st) { return :
 int PosixIOInterfaceNative::lstat(const char *_path, struct stat *_st) { return ::lstat(_path, _st); }
 int	PosixIOInterfaceNative::mkdir(const char *_path, mode_t _mode) { return ::mkdir(_path, _mode); }
 int	PosixIOInterfaceNative::chown(const char *_path, uid_t _uid, gid_t _gid) { return ::chown(_path, _uid, _gid); }
+int PosixIOInterfaceNative::chflags(const char *_path, u_int _flags) { return ::chflags(_path, _flags); }
 int PosixIOInterfaceNative::rmdir(const char *_path) { return ::rmdir(_path); }
 int PosixIOInterfaceNative::unlink(const char *_path) { return ::unlink(_path); }
 int PosixIOInterfaceNative::rename(const char *_old, const char *_new) { return ::rename(_old, _new); }
@@ -37,6 +39,11 @@ int PosixIOInterfaceNative::symlink(const char *_value, const char *_symlink_pat
 PosixIOInterfaceRouted::PosixIOInterfaceRouted(RoutedIO &_inst):
     inst(_inst)
 {
+}
+
+bool PosixIOInterfaceRouted::isrouted() const
+{
+    return inst.Enabled();
 }
 
 inline xpc_connection_t PosixIOInterfaceRouted::Connection()
@@ -258,6 +265,42 @@ int PosixIOInterfaceRouted::chown(const char *_path, uid_t _uid, gid_t _gid)
     }
     
     xpc_release(reply);    
+    return 0;
+}
+
+int PosixIOInterfaceRouted::chflags(const char *_path, u_int _flags)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::chflags(_path, _flags);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "chflags");
+    xpc_dictionary_set_string(message, "path", _path);
+    xpc_dictionary_set_int64 (message, "flags", _flags);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::chflags(_path, _flags);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
     return 0;
 }
 

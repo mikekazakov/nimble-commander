@@ -172,6 +172,23 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
         else
             send_reply_error(_event, errno);
     }
+    else if( strcmp(_operation, "chflags") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        xpc_object_t xpc_flags = xpc_dictionary_get_value(_event, "flags");
+        if( xpc_flags == nullptr || xpc_get_type(xpc_flags) != XPC_TYPE_INT64 )
+            return false;
+        u_int flags = (u_int)xpc_int64_get_value(xpc_flags);
+        
+        u_int result = chflags(path, flags);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
     else if( strcmp(_operation, "rmdir") == 0 ) {
         xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
         if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )

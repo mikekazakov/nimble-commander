@@ -18,14 +18,14 @@
 #include "PanelData.h"
 #include "filesysattr.h"
 #include "chained_strings.h"
-
+#include "DispatchQueue.h"
+#include "sysinfo.h"
 
 struct user_info
 {
     uid_t pw_uid;
     NSString *pw_name;
     NSString *pw_gecos;
-    inline bool operator<(const user_info &_r) const { return (signed)pw_uid < (signed)_r.pw_uid; }
 };
 
 struct group_info
@@ -33,7 +33,6 @@ struct group_info
     gid_t gr_gid;
     NSString *gr_name;
     NSString *gr_gecos;
-    inline bool operator<(const group_info &_r) const { return (signed)gr_gid < (signed)_r.gr_gid; }
 };
         
 static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
@@ -122,9 +121,17 @@ struct OtherAttrs
 - (id)init
 {
     self = [super initWithWindowNibName:@"FileSysEntryAttrSheetController"];
-    memset(m_UserDidEditFlags, 0, sizeof(m_UserDidEditFlags));
-    memset(m_UserDidEditOthers, 0, sizeof(m_UserDidEditOthers));
-    m_Result = 0;
+    if(self) {
+        
+        memset(m_UserDidEditFlags, 0, sizeof(m_UserDidEditFlags));
+        memset(m_UserDidEditOthers, 0, sizeof(m_UserDidEditOthers));
+        m_Result = 0;
+                
+        DispatchGroup dg;
+        dg.Run( [=]{ [self LoadUsers]; } );
+        dg.Run( [=]{ [self LoadGroups]; } );
+        dg.Wait();
+    }
     
     return self;
 }
@@ -266,62 +273,62 @@ struct OtherAttrs
 }
 
 - (void) LoadUsers
-{    
-    {
-        ODNode *root = [ODNode nodeWithSession:[ODSession defaultSession] name:@"/Local/Default" error:nil];
-        assert(root);
-        ODQuery *q = [ODQuery queryWithNode:root
-                             forRecordTypes:kODRecordTypeUsers
-                                  attribute:nil
-                                  matchType:0
-                                queryValues:nil
-                           returnAttributes:nil
-                             maximumResults:0
-                                      error:nil];
-        assert(q);
-        for (ODRecord *r in [q resultsAllowingPartial:NO error:nil])
-        {
-            NSArray *uid = [r valuesForAttribute:kODAttributeTypeUniqueID error:nil];
-            if([uid count] == 0) continue; // invalid response, can't handle it
-            
-            NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
-
-            user_info curr;
-            curr.pw_uid = (uid_t) [[uid objectAtIndex:0] integerValue];
-            curr.pw_name = [r recordName];
-            curr.pw_gecos = ([gecos count] > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
-            m_SystemUsers.push_back(curr);
-        }
+{
+    m_SystemUsers.clear();
+    ODNode *root = [ODNode nodeWithSession:ODSession.defaultSession name:@"/Local/Default" error:nil];
+    assert(root);
+    ODQuery *q = [ODQuery queryWithNode:root
+                         forRecordTypes:kODRecordTypeUsers
+                              attribute:nil
+                              matchType:0
+                            queryValues:nil
+                       returnAttributes:nil
+                         maximumResults:0
+                                  error:nil];
+    assert(q);
+    for (ODRecord *r in [q resultsAllowingPartial:NO error:nil]) {
+        
+        NSArray *uid = [r valuesForAttribute:kODAttributeTypeUniqueID error:nil];
+        if(uid.count == 0) continue; // invalid response, can't handle it
+        
+        NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+        
+        user_info curr;
+        curr.pw_uid = (uid_t) [uid[0] integerValue];
+        curr.pw_name = r.recordName;
+        curr.pw_gecos = (gecos.count > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
+        m_SystemUsers.emplace_back(curr);
     }
-    sort(m_SystemUsers.begin(), m_SystemUsers.end());
-    
-    {
-        ODNode *root = [ODNode nodeWithSession:[ODSession defaultSession] name:@"/Local/Default" error:nil];
-        assert(root);
-        ODQuery *q = [ODQuery queryWithNode:root
-                             forRecordTypes:kODRecordTypeGroups
-                                  attribute:nil
-                                  matchType:0
-                                queryValues:nil
-                           returnAttributes:nil
-                             maximumResults:0
-                                      error:nil];
-        assert(q);        
-        for (ODRecord *r in [q resultsAllowingPartial:NO error:nil])
-        {
-            NSArray *gid = [r valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
-            if([gid count] == 0) continue; //invalid response
-            
-            NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+    sort(begin(m_SystemUsers), end(m_SystemUsers), [](auto&_1, auto&_2){ return (signed)_1.pw_uid < (signed)_2.pw_uid; } );
+}
 
-            group_info curr;
-            curr.gr_gid = (gid_t) [[gid objectAtIndex:0] integerValue];
-            curr.gr_name = [r recordName];
-            curr.gr_gecos = ([gecos count] > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
-            m_SystemGroups.push_back(curr);
-        }
+- (void) LoadGroups
+{
+    m_SystemGroups.clear();
+    ODNode *root = [ODNode nodeWithSession:ODSession.defaultSession name:@"/Local/Default" error:nil];
+    assert(root);
+    ODQuery *q = [ODQuery queryWithNode:root
+                         forRecordTypes:kODRecordTypeGroups
+                              attribute:nil
+                              matchType:0
+                            queryValues:nil
+                       returnAttributes:nil
+                         maximumResults:0
+                                  error:nil];
+    assert(q);
+    for (ODRecord *r in [q resultsAllowingPartial:NO error:nil]) {
+        NSArray *gid = [r valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
+        if(gid.count == 0) continue; //invalid response
+        
+        NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+        
+        group_info curr;
+        curr.gr_gid = (gid_t) [gid[0] integerValue];
+        curr.gr_name = r.recordName;
+        curr.gr_gecos = (gecos.count > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
+        m_SystemGroups.emplace_back(curr);
     }
-    sort(m_SystemGroups.begin(), m_SystemGroups.end());
+    sort(begin(m_SystemGroups), end(m_SystemGroups), [](auto&_1, auto&_2){ return (signed)_1.gr_gid < (signed)_2.gr_gid; });
 }
 
 - (void)ShowSheet: (NSWindow *)_window selentries: (const PanelData*)_data handler: (FileSysEntryAttrSheetCompletionHandler) handler
@@ -335,7 +342,6 @@ struct OtherAttrs
     m_HasDirectoryEntries = _data->Stats().selected_dirs_amount > 0;
     m_Files.swap(_data->StringsFromSelectedEntries());
     strcpy(m_RootPath, _data->DirectoryPathWithTrailingSlash().c_str());
-    [self LoadUsers];
     
     [NSApp beginSheet: [self window]
        modalForWindow: _window

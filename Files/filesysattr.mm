@@ -11,9 +11,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, fsfstate _st[fsf_totalcount])
+void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, tribool _st[fsf_totalcount])
 {
-    for(int i =0; i < fsf_totalcount; ++i) _st[i] = fsf_mixed;
+    for(int i =0; i < fsf_totalcount; ++i) _st[i] = indeterminate;
     bool first = true;
     mode_t first_mode=0;
     uint32_t first_flags=0;
@@ -28,52 +28,52 @@ void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, fsfsta
         {
             if(first)
             { // set values as first found entry
-                _st[fsf_unix_usr_r] = item.UnixMode() & S_IRUSR ? fsf_on : fsf_off;
-                _st[fsf_unix_usr_w] = item.UnixMode() & S_IWUSR ? fsf_on : fsf_off;
-                _st[fsf_unix_usr_x] = item.UnixMode() & S_IXUSR ? fsf_on : fsf_off;
-                _st[fsf_unix_grp_r] = item.UnixMode() & S_IRGRP ? fsf_on : fsf_off;
-                _st[fsf_unix_grp_w] = item.UnixMode() & S_IWGRP ? fsf_on : fsf_off;
-                _st[fsf_unix_grp_x] = item.UnixMode() & S_IXGRP ? fsf_on : fsf_off;
-                _st[fsf_unix_oth_r] = item.UnixMode() & S_IROTH ? fsf_on : fsf_off;
-                _st[fsf_unix_oth_w] = item.UnixMode() & S_IWOTH ? fsf_on : fsf_off;
-                _st[fsf_unix_oth_x] = item.UnixMode() & S_IXOTH ? fsf_on : fsf_off;
-                _st[fsf_unix_suid]  = item.UnixMode() & S_ISUID ? fsf_on : fsf_off;
-                _st[fsf_unix_sgid]  = item.UnixMode() & S_ISGID ? fsf_on : fsf_off;
-                _st[fsf_unix_sticky]= item.UnixMode() & S_ISVTX ? fsf_on : fsf_off;
-                _st[fsf_uf_nodump]    = item.UnixFlags() & UF_NODUMP    ? fsf_on : fsf_off;
-                _st[fsf_uf_immutable] = item.UnixFlags() & UF_IMMUTABLE ? fsf_on : fsf_off;
-                _st[fsf_uf_append]    = item.UnixFlags() & UF_APPEND    ? fsf_on : fsf_off;
-                _st[fsf_uf_opaque]    = item.UnixFlags() & UF_OPAQUE    ? fsf_on : fsf_off;
-                _st[fsf_uf_hidden]    = item.UnixFlags() & UF_HIDDEN    ? fsf_on : fsf_off;
-                _st[fsf_sf_archived]  = item.UnixFlags() & SF_ARCHIVED  ? fsf_on : fsf_off;
-                _st[fsf_sf_immutable] = item.UnixFlags() & SF_IMMUTABLE ? fsf_on : fsf_off;
-                _st[fsf_sf_append]    = item.UnixFlags() & SF_APPEND    ? fsf_on : fsf_off;
+                _st[fsf_unix_usr_r] = item.UnixMode() & S_IRUSR;
+                _st[fsf_unix_usr_w] = item.UnixMode() & S_IWUSR;
+                _st[fsf_unix_usr_x] = item.UnixMode() & S_IXUSR;
+                _st[fsf_unix_grp_r] = item.UnixMode() & S_IRGRP;
+                _st[fsf_unix_grp_w] = item.UnixMode() & S_IWGRP;
+                _st[fsf_unix_grp_x] = item.UnixMode() & S_IXGRP;
+                _st[fsf_unix_oth_r] = item.UnixMode() & S_IROTH;
+                _st[fsf_unix_oth_w] = item.UnixMode() & S_IWOTH;
+                _st[fsf_unix_oth_x] = item.UnixMode() & S_IXOTH;
+                _st[fsf_unix_suid]  = item.UnixMode() & S_ISUID;
+                _st[fsf_unix_sgid]  = item.UnixMode() & S_ISGID;
+                _st[fsf_unix_sticky]= item.UnixMode() & S_ISVTX;
+                _st[fsf_uf_nodump]    = item.UnixFlags() & UF_NODUMP;
+                _st[fsf_uf_immutable] = item.UnixFlags() & UF_IMMUTABLE;
+                _st[fsf_uf_append]    = item.UnixFlags() & UF_APPEND;
+                _st[fsf_uf_opaque]    = item.UnixFlags() & UF_OPAQUE;
+                _st[fsf_uf_hidden]    = item.UnixFlags() & UF_HIDDEN;
+                _st[fsf_sf_archived]  = item.UnixFlags() & SF_ARCHIVED;
+                _st[fsf_sf_immutable] = item.UnixFlags() & SF_IMMUTABLE;
+                _st[fsf_sf_append]    = item.UnixFlags() & SF_APPEND;
                 first = false;
                 first_mode = item.UnixMode();
                 first_flags = item.UnixFlags();
             }
             else
             { // adjust values if current entry is not conforming
-                if((first_mode ^ item.UnixMode()) & S_IRUSR) _st[fsf_unix_usr_r] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_IWUSR) _st[fsf_unix_usr_w] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_IXUSR) _st[fsf_unix_usr_x] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_IRGRP) _st[fsf_unix_grp_r] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_IWGRP) _st[fsf_unix_grp_w] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_IXGRP) _st[fsf_unix_grp_x] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_IROTH) _st[fsf_unix_oth_r] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_IWOTH) _st[fsf_unix_oth_w] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_IXOTH) _st[fsf_unix_oth_x] = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_ISUID) _st[fsf_unix_suid]  = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_ISGID) _st[fsf_unix_sgid]  = fsf_mixed;
-                if((first_mode ^ item.UnixMode()) & S_ISVTX) _st[fsf_unix_sticky]= fsf_mixed;
-                if((first_flags ^ item.UnixFlags()) & UF_NODUMP)     _st[fsf_uf_nodump]= fsf_mixed;
-                if((first_flags ^ item.UnixFlags()) & UF_IMMUTABLE)  _st[fsf_uf_immutable]= fsf_mixed;
-                if((first_flags ^ item.UnixFlags()) & UF_APPEND)     _st[fsf_uf_append]= fsf_mixed;
-                if((first_flags ^ item.UnixFlags()) & UF_OPAQUE)     _st[fsf_uf_opaque]= fsf_mixed;
-                if((first_flags ^ item.UnixFlags()) & UF_HIDDEN)     _st[fsf_uf_hidden]= fsf_mixed;
-                if((first_flags ^ item.UnixFlags()) & SF_ARCHIVED)   _st[fsf_sf_archived]= fsf_mixed;
-                if((first_flags ^ item.UnixFlags()) & SF_IMMUTABLE)  _st[fsf_sf_immutable]= fsf_mixed;
-                if((first_flags ^ item.UnixFlags()) & SF_APPEND)     _st[fsf_sf_append]= fsf_mixed;
+                if((first_mode ^ item.UnixMode()) & S_IRUSR) _st[fsf_unix_usr_r] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_IWUSR) _st[fsf_unix_usr_w] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_IXUSR) _st[fsf_unix_usr_x] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_IRGRP) _st[fsf_unix_grp_r] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_IWGRP) _st[fsf_unix_grp_w] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_IXGRP) _st[fsf_unix_grp_x] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_IROTH) _st[fsf_unix_oth_r] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_IWOTH) _st[fsf_unix_oth_w] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_IXOTH) _st[fsf_unix_oth_x] = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_ISUID) _st[fsf_unix_suid]  = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_ISGID) _st[fsf_unix_sgid]  = indeterminate;
+                if((first_mode ^ item.UnixMode()) & S_ISVTX) _st[fsf_unix_sticky]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & UF_NODUMP)     _st[fsf_uf_nodump]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & UF_IMMUTABLE)  _st[fsf_uf_immutable]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & UF_APPEND)     _st[fsf_uf_append]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & UF_OPAQUE)     _st[fsf_uf_opaque]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & UF_HIDDEN)     _st[fsf_uf_hidden]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & SF_ARCHIVED)   _st[fsf_sf_archived]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & SF_IMMUTABLE)  _st[fsf_sf_immutable]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & SF_APPEND)     _st[fsf_sf_append]= indeterminate;
             }
         }
     }

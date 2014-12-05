@@ -35,19 +35,19 @@ struct group_info
     NSString *gr_gecos;
 };
         
-static NSInteger fsfstate_to_bs(FileSysAttrAlterCommand::fsfstate _s)
+inline static NSInteger tribool_to_state(tribool _s)
 {
-    if(_s == FileSysAttrAlterCommand::fsf_off) return NSOffState;
-    else if(_s == FileSysAttrAlterCommand::fsf_on) return NSOnState;
+    if(_s == false) return NSOffState;
+    else if(_s == true) return NSOnState;
     else return NSMixedState;
 }
 
-static FileSysAttrAlterCommand::fsfstate bs_to_fsfstate(NSButton *_b)
+inline static tribool state_to_tribool(NSButton *_b)
 {
-    NSInteger state = [_b state];
-    if(state == NSOffState) return FileSysAttrAlterCommand::fsf_off;
-    if(state == NSOnState)  return FileSysAttrAlterCommand::fsf_on;
-    return FileSysAttrAlterCommand::fsf_mixed;
+    NSInteger state = _b.state;
+    if(state == NSOffState) return false;
+    if(state == NSOnState)  return true;
+    return indeterminate;
 }
 
 // return a long-long-time-ago date in GMT+0
@@ -90,7 +90,7 @@ struct OtherAttrs
 {
     struct
     {
-        FileSysAttrAlterCommand::fsfstate fsfstate[FileSysAttrAlterCommand::fsf_totalcount];
+        tribool                           fsfstate[FileSysAttrAlterCommand::fsf_totalcount];
         uid_t                             uid;
         gid_t                             gid;
         time_t                            atime;
@@ -112,11 +112,13 @@ struct OtherAttrs
     vector<user_info>            m_SystemUsers;
     vector<group_info>           m_SystemGroups;
     chained_strings              m_Files;
-    char                              m_RootPath[MAXPATHLEN];
+    string                              m_RootPath;
 
     shared_ptr<FileSysAttrAlterCommand>    m_Result;
     FileSysEntryAttrSheetCompletionHandler m_Handler;
 }
+
+@synthesize Result = m_Result;
 
 - (id)init
 {
@@ -156,17 +158,14 @@ struct OtherAttrs
 
 - (void) PopulateControls
 {
-    [[self ProcessSubfoldersCheck] setHidden:!m_HasDirectoryEntries];
+    self.ProcessSubfoldersCheck.hidden = !m_HasDirectoryEntries;
 
 #define DOFLAG(_f, _c)\
-    [[self _c] setAllowsMixedState: m_ProcessSubfolders ? true:\
-     m_State[0].fsfstate[FileSysAttrAlterCommand::_f] == FileSysAttrAlterCommand::fsf_mixed];\
-    [[self _c] setState: m_ProcessSubfolders ?\
-     fsfstate_to_bs(m_UserDidEditFlags[FileSysAttrAlterCommand::_f] ?\
-                    m_State[1].fsfstate[FileSysAttrAlterCommand::_f] :\
-                    FileSysAttrAlterCommand::fsf_mixed) :\
-     fsfstate_to_bs(m_State[1].fsfstate[FileSysAttrAlterCommand::_f])\
-     ];
+     self._c.allowsMixedState = m_ProcessSubfolders ? true :\
+        bool(m_State[0].fsfstate[FileSysAttrAlterCommand::_f] == indeterminate);\
+    self._c.state = m_ProcessSubfolders ?\
+        tribool_to_state(m_UserDidEditFlags[FileSysAttrAlterCommand::_f] ? m_State[1].fsfstate[FileSysAttrAlterCommand::_f] : indeterminate):\
+        tribool_to_state(m_State[1].fsfstate[FileSysAttrAlterCommand::_f]);
     DOFLAG(fsf_unix_usr_r  , OwnerReadCheck);
     DOFLAG(fsf_unix_usr_w  , OwnerWriteCheck);
     DOFLAG(fsf_unix_usr_x  , OwnerExecCheck);
@@ -191,64 +190,56 @@ struct OtherAttrs
 
     // UID/GID section
     NSSize menu_pic_size;
-    menu_pic_size.width = menu_pic_size.height = [[NSFont menuFontOfSize:0] pointSize];
+    menu_pic_size.width = menu_pic_size.height = [NSFont menuFontOfSize:0].pointSize;
 
     NSImage *img_user = [NSImage imageNamed:NSImageNameUser];
-    [img_user setSize:menu_pic_size];
-    [[self UsersPopUpButton] removeAllItems];
-    for(const auto &i: m_SystemUsers)
-    {
+    img_user.size = menu_pic_size;
+    [self.UsersPopUpButton removeAllItems];
+    for(const auto &i: m_SystemUsers) {
         NSString *ent = [NSString stringWithFormat:@"%@ (%d) - %@", i.pw_name, i.pw_uid, i.pw_gecos];
-        [[self UsersPopUpButton] addItemWithTitle:ent];
-        [[[self UsersPopUpButton] lastItem] setImage:img_user];
+        [self.UsersPopUpButton addItemWithTitle:ent];
+        self.UsersPopUpButton.lastItem.image = img_user;
         
-        if(m_ProcessSubfolders)
-        {
+        if(m_ProcessSubfolders) {
             if(m_HasCommonUID && m_UserDidEditOthers[OtherAttrs::uid] && m_State[1].uid == i.pw_uid )
-                [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
+                [self.UsersPopUpButton selectItem:self.UsersPopUpButton.lastItem];
         }
-        else
-        {
+        else {
             if(m_HasCommonUID && m_State[1].uid == i.pw_uid)
-                [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
+                [self.UsersPopUpButton selectItem:self.UsersPopUpButton.lastItem];
         }
     }
     
-    if(!m_HasCommonUID || m_ProcessSubfolders)
-    {
-        [[self UsersPopUpButton] addItemWithTitle:@"[Mixed]"];
-        [[[self UsersPopUpButton] lastItem] setImage:img_user];
+    if(!m_HasCommonUID || m_ProcessSubfolders) {
+        [self.UsersPopUpButton addItemWithTitle:@"[Mixed]"];
+        self.UsersPopUpButton.lastItem.image = img_user;
         
         if(!m_ProcessSubfolders || !m_UserDidEditOthers[OtherAttrs::uid])
-            [[self UsersPopUpButton] selectItemAtIndex:[[self UsersPopUpButton] numberOfItems]-1 ];
+            [self.UsersPopUpButton selectItem:self.UsersPopUpButton.lastItem];
     }
     
     NSImage *img_group = [NSImage imageNamed:NSImageNameUserGroup];
-    [img_group setSize:menu_pic_size];
-    [[self GroupsPopUpButton] removeAllItems];
-    for(const auto &i: m_SystemGroups)
-    {
+    img_group.size = menu_pic_size;
+    [self.GroupsPopUpButton removeAllItems];
+    for(const auto &i: m_SystemGroups) {
         NSString *ent = [NSString stringWithFormat:@"%@ (%d) - %@", i.gr_name, i.gr_gid, i.gr_gecos];
-        [[self GroupsPopUpButton] addItemWithTitle:ent];
-        [[[self GroupsPopUpButton] lastItem] setImage:img_group];
-        if(m_ProcessSubfolders)
-        {
+        [self.GroupsPopUpButton addItemWithTitle:ent];
+        self.GroupsPopUpButton.lastItem.image = img_group;
+        if(m_ProcessSubfolders) {
             if(m_HasCommonGID && m_UserDidEditOthers[OtherAttrs::gid] && m_State[1].gid == i.gr_gid )
-                [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
+                [self.GroupsPopUpButton selectItem:self.GroupsPopUpButton.lastItem];
         }
-        else
-        {
+        else {
             if(m_HasCommonGID && m_State[1].gid == i.gr_gid)
-                [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
+                [self.GroupsPopUpButton selectItem:self.GroupsPopUpButton.lastItem];
         }
     }
     
-    if(!m_HasCommonGID || m_ProcessSubfolders)
-    {
-        [[self GroupsPopUpButton] addItemWithTitle:@"[Mixed]"];
-        [[[self GroupsPopUpButton] lastItem] setImage:img_group];
+    if(!m_HasCommonGID || m_ProcessSubfolders) {
+        [self.GroupsPopUpButton addItemWithTitle:@"[Mixed]"];
+        self.GroupsPopUpButton.lastItem.image = img_group;
         if(!m_ProcessSubfolders || !m_UserDidEditOthers[OtherAttrs::gid])
-            [[self GroupsPopUpButton] selectItemAtIndex:[[self GroupsPopUpButton] numberOfItems]-1 ];
+            [self.GroupsPopUpButton selectItem:self.GroupsPopUpButton.lastItem];
     }
     
     
@@ -340,7 +331,7 @@ struct OtherAttrs
     
     m_HasDirectoryEntries = _data->Stats().selected_dirs_amount > 0;
     m_Files.swap(_data->StringsFromSelectedEntries());
-    strcpy(m_RootPath, _data->DirectoryPathWithTrailingSlash().c_str());
+    m_RootPath = _data->DirectoryPathWithTrailingSlash();
     
     [NSApp beginSheet: [self window]
        modalForWindow: _window
@@ -354,27 +345,27 @@ struct OtherAttrs
 - (void)ShowSheet: (NSWindow *)_window data: (const PanelData*)_data index: (unsigned)_ind handler: (FileSysEntryAttrSheetCompletionHandler) handler
 {
     auto &item = *_data->EntryAtRawPosition(_ind);
-    typedef FileSysAttrAlterCommand abr;
-    m_State[0].fsfstate[abr::fsf_unix_usr_r] = item.UnixMode() & S_IRUSR ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_usr_w] = item.UnixMode() & S_IWUSR ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_usr_x] = item.UnixMode() & S_IXUSR ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_grp_r] = item.UnixMode() & S_IRGRP ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_grp_w] = item.UnixMode() & S_IWGRP ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_grp_x] = item.UnixMode() & S_IXGRP ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_oth_r] = item.UnixMode() & S_IROTH ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_oth_w] = item.UnixMode() & S_IWOTH ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_oth_x] = item.UnixMode() & S_IXOTH ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_suid]  = item.UnixMode() & S_ISUID ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_sgid]  = item.UnixMode() & S_ISGID ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_unix_sticky]= item.UnixMode() & S_ISVTX ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_uf_nodump]    = item.UnixFlags() & UF_NODUMP    ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_uf_immutable] = item.UnixFlags() & UF_IMMUTABLE ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_uf_append]    = item.UnixFlags() & UF_APPEND    ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_uf_opaque]    = item.UnixFlags() & UF_OPAQUE    ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_uf_hidden]    = item.UnixFlags() & UF_HIDDEN    ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_sf_archived]  = item.UnixFlags() & SF_ARCHIVED  ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_sf_immutable] = item.UnixFlags() & SF_IMMUTABLE ? abr::fsf_on : abr::fsf_off;
-    m_State[0].fsfstate[abr::fsf_sf_append]    = item.UnixFlags() & SF_APPEND    ? abr::fsf_on : abr::fsf_off;
+    typedef FileSysAttrAlterCommand _;
+    m_State[0].fsfstate[_::fsf_unix_usr_r] = item.UnixMode() & S_IRUSR;
+    m_State[0].fsfstate[_::fsf_unix_usr_w] = item.UnixMode() & S_IWUSR;
+    m_State[0].fsfstate[_::fsf_unix_usr_x] = item.UnixMode() & S_IXUSR;
+    m_State[0].fsfstate[_::fsf_unix_grp_r] = item.UnixMode() & S_IRGRP;
+    m_State[0].fsfstate[_::fsf_unix_grp_w] = item.UnixMode() & S_IWGRP;
+    m_State[0].fsfstate[_::fsf_unix_grp_x] = item.UnixMode() & S_IXGRP;
+    m_State[0].fsfstate[_::fsf_unix_oth_r] = item.UnixMode() & S_IROTH;
+    m_State[0].fsfstate[_::fsf_unix_oth_w] = item.UnixMode() & S_IWOTH;
+    m_State[0].fsfstate[_::fsf_unix_oth_x] = item.UnixMode() & S_IXOTH;
+    m_State[0].fsfstate[_::fsf_unix_suid]  = item.UnixMode() & S_ISUID;
+    m_State[0].fsfstate[_::fsf_unix_sgid]  = item.UnixMode() & S_ISGID;
+    m_State[0].fsfstate[_::fsf_unix_sticky]= item.UnixMode() & S_ISVTX;
+    m_State[0].fsfstate[_::fsf_uf_nodump]    = item.UnixFlags() & UF_NODUMP;
+    m_State[0].fsfstate[_::fsf_uf_immutable] = item.UnixFlags() & UF_IMMUTABLE;
+    m_State[0].fsfstate[_::fsf_uf_append]    = item.UnixFlags() & UF_APPEND;
+    m_State[0].fsfstate[_::fsf_uf_opaque]    = item.UnixFlags() & UF_OPAQUE;
+    m_State[0].fsfstate[_::fsf_uf_hidden]    = item.UnixFlags() & UF_HIDDEN;
+    m_State[0].fsfstate[_::fsf_sf_archived]  = item.UnixFlags() & SF_ARCHIVED;
+    m_State[0].fsfstate[_::fsf_sf_immutable] = item.UnixFlags() & SF_IMMUTABLE;
+    m_State[0].fsfstate[_::fsf_sf_append]    = item.UnixFlags() & SF_APPEND;
     m_State[0].uid = item.UnixUID();
     m_State[0].gid = item.UnixGID();
     m_State[0].atime = item.ATime();
@@ -386,7 +377,7 @@ struct OtherAttrs
 
     m_HasDirectoryEntries = item.IsDir();
     m_Files.swap(chained_strings(item.Name()));
-    strcpy(m_RootPath, _data->DirectoryPathWithTrailingSlash().c_str());
+    m_RootPath = _data->DirectoryPathWithTrailingSlash();
     
     [self LoadUsers];
     [NSApp beginSheet: [self window]
@@ -460,7 +451,7 @@ struct OtherAttrs
 #define DOFLAG(_f, _c)\
     if(sender == [self _c]) {\
      m_UserDidEditFlags[FileSysAttrAlterCommand::_f] = true;\
-     m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]); }
+     m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = state_to_tribool([self _c]); }
     DOFLAG(fsf_unix_usr_r  , OwnerReadCheck);
     DOFLAG(fsf_unix_usr_w  , OwnerWriteCheck);
     DOFLAG(fsf_unix_usr_x  , OwnerExecCheck);
@@ -553,7 +544,7 @@ struct OtherAttrs
 {
     // get control's value to secure that user will get the same picture as he see it now
 #define DOFLAG(_f, _c)\
-m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
+m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = state_to_tribool([self _c]);
     DOFLAG(fsf_unix_usr_r  , OwnerReadCheck);
     DOFLAG(fsf_unix_usr_w  , OwnerWriteCheck);
     DOFLAG(fsf_unix_usr_x  , OwnerExecCheck);
@@ -601,7 +592,7 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
         m_Result->btime = m_State[1].btime;
     m_Result->process_subdirs = m_ProcessSubfolders;
     m_Result->files.swap(m_Files);
-    strcpy(m_Result->root_path, m_RootPath);
+    m_Result->root_path = m_RootPath;
     
     [NSApp endSheet:[self window] returnCode:DialogResult::Apply];    
 }
@@ -612,11 +603,6 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
     m_Handler((int)returnCode);
     self.ME = nil; // let ARC do it's duty
     m_Handler = nil;
-}
-
-- (shared_ptr<FileSysAttrAlterCommand>) Result
-{
-    return m_Result;
 }
 
 @end

@@ -42,12 +42,6 @@ struct FileSysAttrAlterCommand
 
         fsf_totalcount
     };
-    enum fsfstate : unsigned char
-    {
-        fsf_mixed = 0, // mixed state in command will state that no change is required
-        fsf_off   = 1,
-        fsf_on    = 2
-    };
     enum fstmvals : unsigned char // we give no abitily to view and edit msec and nsec. but who cares?
     {
         fstm_year=0,
@@ -59,7 +53,7 @@ struct FileSysAttrAlterCommand
         fstm_totalcount
     };
 
-    fsfstate flags[fsf_totalcount];
+    tribool  flags[fsf_totalcount];
     bool     set_uid;
     uid_t    uid;
     bool     set_gid;
@@ -74,10 +68,10 @@ struct FileSysAttrAlterCommand
     time_t   btime;
     bool     process_subdirs;
     chained_strings files;
-    char     root_path[MAXPATHLEN];
+    string   root_path;
 
     // section that operates with selected panel items
-    static void GetCommonFSFlagsState(const PanelData& _pd, fsfstate _state[fsf_totalcount]);
+    static void GetCommonFSFlagsState(const PanelData& _pd, tribool _state[fsf_totalcount]);
     static void GetCommonFSUIDAndGID(const PanelData& _pd,
                                      uid_t &_uid,
                                      bool &_has_common_uid,

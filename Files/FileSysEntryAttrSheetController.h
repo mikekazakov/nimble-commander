@@ -14,6 +14,7 @@ struct FileSysAttrAlterCommand;
 typedef void (^FileSysEntryAttrSheetCompletionHandler)(int result);
 
 @interface FileSysEntryAttrSheetController : NSWindowController
+@property (nonatomic, readonly) shared_ptr<FileSysAttrAlterCommand> Result;
 - (IBAction)OnApply:(id)sender;
 - (IBAction)OnCancel:(id)sender;
 - (IBAction)OnATimeClear:(id)sender;
@@ -68,8 +69,5 @@ typedef void (^FileSysEntryAttrSheetCompletionHandler)(int result);
 @property (strong) IBOutlet NSDatePicker *BTimePicker;
 @property (strong) IBOutlet NSButton *ProcessSubfoldersCheck;
 @property (strong) IBOutlet NSTextField *Title;
-
-
-- (shared_ptr<FileSysAttrAlterCommand>) Result;
 
 @end

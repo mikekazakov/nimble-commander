@@ -55,7 +55,7 @@ void FileSysAttrChangeOperationJob::Do()
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
     char entryfilename[MAXPATHLEN], *entryfilename_var;
-    strcpy(entryfilename, m_Command->root_path);
+    strcpy(entryfilename, m_Command->root_path.c_str());
     entryfilename_var = &entryfilename[0] + strlen(entryfilename);
     
     m_Stats.StartTimeTracking();
@@ -83,7 +83,7 @@ void FileSysAttrChangeOperationJob::ScanDirs()
     for(auto &i: m_Command->files)
     {
         char fn[MAXPATHLEN];
-        strcpy(fn, m_Command->root_path);
+        strcpy(fn, m_Command->root_path.c_str());
         strcat(fn, i.c_str());
         
         struct stat st;
@@ -217,8 +217,8 @@ retry_stat:
     // process unix access modes
     mode_t newmode = st.st_mode;
 #define DOACCESS(_f, _c)\
-    if(m_Command->flags[FileSysAttrAlterCommand::_f] == FileSysAttrAlterCommand::fsf_on) newmode |= _c;\
-    if(m_Command->flags[FileSysAttrAlterCommand::_f] == FileSysAttrAlterCommand::fsf_off) newmode &= ~_c;
+    if(m_Command->flags[FileSysAttrAlterCommand::_f] == true) newmode |= _c;\
+    if(m_Command->flags[FileSysAttrAlterCommand::_f] == false) newmode &= ~_c;
     DOACCESS(fsf_unix_usr_r, S_IRUSR);
     DOACCESS(fsf_unix_usr_w, S_IWUSR);
     DOACCESS(fsf_unix_usr_x, S_IXUSR);
@@ -258,8 +258,8 @@ retry_chmod:
     // process file flags
     uint32_t newflags = st.st_flags;
 #define DOFLAGS(_f, _c)\
-    if(m_Command->flags[FileSysAttrAlterCommand::_f] == FileSysAttrAlterCommand::fsf_on) newflags |= _c;\
-    if(m_Command->flags[FileSysAttrAlterCommand::_f] == FileSysAttrAlterCommand::fsf_off) newflags &= ~_c;
+    if(m_Command->flags[FileSysAttrAlterCommand::_f] == true) newflags |= _c;\
+    if(m_Command->flags[FileSysAttrAlterCommand::_f] == false) newflags &= ~_c;
     DOFLAGS(fsf_uf_nodump, UF_NODUMP);
     DOFLAGS(fsf_uf_immutable, UF_IMMUTABLE);
     DOFLAGS(fsf_uf_append, UF_APPEND);

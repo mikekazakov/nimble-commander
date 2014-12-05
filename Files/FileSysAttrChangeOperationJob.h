@@ -19,7 +19,7 @@ class FileSysAttrChangeOperationJob : public OperationJob
 public:
     FileSysAttrChangeOperationJob();
     ~FileSysAttrChangeOperationJob();
-    void Init(FileSysAttrAlterCommand *_command, FileSysAttrChangeOperation *_operation);
+    void Init(shared_ptr<FileSysAttrAlterCommand> _command, FileSysAttrChangeOperation *_operation);
 
 protected:
     virtual void Do();
@@ -29,7 +29,7 @@ protected:
 private:
     void DoFile(const char *_full_path);
     
-    FileSysAttrAlterCommand *m_Command;
+    shared_ptr<FileSysAttrAlterCommand> m_Command;
     chained_strings m_Files;
     __unsafe_unretained FileSysAttrChangeOperation *m_Operation;
     bool m_SkipAllErrors;

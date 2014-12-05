@@ -30,10 +30,9 @@ FileSysAttrChangeOperationJob::FileSysAttrChangeOperationJob():
 
 FileSysAttrChangeOperationJob::~FileSysAttrChangeOperationJob()
 {
-    delete m_Command;
 }
 
-void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand *_command, FileSysAttrChangeOperation *_operation)
+void FileSysAttrChangeOperationJob::Init(shared_ptr<FileSysAttrAlterCommand> _command, FileSysAttrChangeOperation *_operation)
 {
     m_Command = _command;
     m_Operation = _operation;

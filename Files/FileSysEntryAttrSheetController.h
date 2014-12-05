@@ -70,7 +70,6 @@ typedef void (^FileSysEntryAttrSheetCompletionHandler)(int result);
 @property (strong) IBOutlet NSTextField *Title;
 
 
-- (FileSysAttrAlterCommand*) Result; // Result is allocated with malloc, and it's freeing is up to caller
-                                     // it's only available on Apply sheet result
+- (shared_ptr<FileSysAttrAlterCommand>) Result;
 
 @end

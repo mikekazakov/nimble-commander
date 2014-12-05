@@ -14,7 +14,7 @@ struct FileSysAttrAlterCommand;
 @interface FileSysAttrChangeOperation : Operation
 
 // passing with ownership, operation will free it on finish
-- (id)initWithCommand:(FileSysAttrAlterCommand*)_command;
+- (id)initWithCommand:(shared_ptr<FileSysAttrAlterCommand>)_command;
 
 - (void)Update;
 

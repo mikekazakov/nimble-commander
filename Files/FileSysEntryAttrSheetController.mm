@@ -114,7 +114,7 @@ struct OtherAttrs
     chained_strings              m_Files;
     char                              m_RootPath[MAXPATHLEN];
 
-    FileSysAttrAlterCommand           *m_Result;
+    shared_ptr<FileSysAttrAlterCommand>    m_Result;
     FileSysEntryAttrSheetCompletionHandler m_Handler;
 }
 
@@ -125,7 +125,6 @@ struct OtherAttrs
         
         memset(m_UserDidEditFlags, 0, sizeof(m_UserDidEditFlags));
         memset(m_UserDidEditOthers, 0, sizeof(m_UserDidEditOthers));
-        m_Result = 0;
                 
         DispatchGroup dg;
         dg.Run( [=]{ [self LoadUsers]; } );
@@ -584,7 +583,7 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
     [self OnTimeChange:[self BTimePicker]];
 
     // compose result
-    m_Result = new FileSysAttrAlterCommand;
+    m_Result = make_shared<FileSysAttrAlterCommand>();
     for(int i = 0; i < FileSysAttrAlterCommand::fsf_totalcount; ++i)
         m_Result->flags[i] = m_State[1].fsfstate[i];
 
@@ -615,7 +614,7 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = bs_to_fsfstate([self _c]);
     m_Handler = nil;
 }
 
-- (FileSysAttrAlterCommand*) Result
+- (shared_ptr<FileSysAttrAlterCommand>) Result
 {
     return m_Result;
 }

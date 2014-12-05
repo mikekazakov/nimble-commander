@@ -17,7 +17,7 @@
     FileSysAttrChangeOperationJob m_Job;
 }
 
-- (id)initWithCommand:(FileSysAttrAlterCommand*)_command
+- (id)initWithCommand:(shared_ptr<FileSysAttrAlterCommand>)_command
 {
     self = [super initWithJob:&m_Job];
     if (self)

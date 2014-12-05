@@ -6,6 +6,8 @@
 	<string></string>
 	<string>menu.files.preferences</string>
 	<string>⌘,</string>
+	<string>menu.files.toggle_admin_mode</string>
+	<string></string>
 	<string>menu.files.hide</string>
 	<string>⌘h</string>
 	<string>menu.files.hide_others</string>

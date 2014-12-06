@@ -20,11 +20,11 @@ public:
     FileCompressOperationJob();
     ~FileCompressOperationJob();
     
-    void Init(chained_strings _src_files,
-              const char*_src_root,
-              shared_ptr<VFSHost> _src_vfs,
-              const char* _dst_root,
-              shared_ptr<VFSHost> _dst_vfs,
+    void Init(vector<string>&& _src_files,
+              const string&_src_root,
+              VFSHostPtr _src_vfs,
+              const string&_dst_root,
+              VFSHostPtr _dst_vfs,
               FileCompressOperation *_operation);
     
     
@@ -48,12 +48,12 @@ private:
     
     
     __unsafe_unretained FileCompressOperation    *m_Operation;
-    chained_strings                 m_InitialItems;
+    vector<string>                  m_InitialItems;
     chained_strings                 m_ScannedItems;
-    char                            m_SrcRoot[MAXPATHLEN];
-    shared_ptr<VFSHost>        m_SrcVFS;
-    char                            m_DstRoot[MAXPATHLEN];
-    shared_ptr<VFSHost>        m_DstVFS;
+    string                          m_SrcRoot;
+    VFSHostPtr                      m_SrcVFS;
+    string                          m_DstRoot;
+    VFSHostPtr                      m_DstVFS;
     char                            m_TargetFileName[MAXPATHLEN];
     bool                            m_DoneScanning;
     bool m_SkipAll;

@@ -20,11 +20,11 @@
     NSString *m_ArchiveName;
 }
 
-- (id)initWithFiles:(chained_strings)_src_files
-            srcroot:(const char*)_src_root
+- (id)initWithFiles:(vector<string>&&)_src_files
+            srcroot:(const string&)_src_root
              srcvfs:(shared_ptr<VFSHost>)_src_vfs
-            dstroot:(const char*)_dst_root
-             dstvfs:(shared_ptr<VFSHost>)_dst_vfs
+            dstroot:(const string&)_dst_root
+             dstvfs:(shared_ptr<VFSHost>)_dst_vfs;
 {
     self = [super initWithJob:&m_Job];
     if (self)
@@ -33,8 +33,6 @@
         m_LastInfoUpdateTime = 0ms;
         m_HasTargetFn = false;
         m_NeedUpdateCaption = true;
-        
-//        self.Caption = @"Compressing..."; // TODO: need good title here, not a dummy
         self.Caption = @"";
     }
     return self;

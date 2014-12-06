@@ -69,20 +69,21 @@ FileCompressOperationJob::~FileCompressOperationJob()
 {
 }
 
-void FileCompressOperationJob::Init(chained_strings _src_files,
-          const char*_src_root,
-          shared_ptr<VFSHost> _src_vfs,
-          const char* _dst_root,
-          shared_ptr<VFSHost> _dst_vfs,
+void FileCompressOperationJob::Init(vector<string>&& _src_files,
+          const string&_src_root,
+          VFSHostPtr _src_vfs,
+          const string&_dst_root,
+          VFSHostPtr _dst_vfs,
           FileCompressOperation *_operation)
 {
-    m_InitialItems.swap(_src_files);
+    m_InitialItems = move(_src_files);
     m_SrcVFS = _src_vfs;
     m_DstVFS = _dst_vfs;
-    strcpy(m_SrcRoot, _src_root);
-    if(!IsPathWithTrailingSlash(m_SrcRoot)) strcat(m_SrcRoot, "/");
-    strcpy(m_DstRoot, _dst_root);
-    if(!IsPathWithTrailingSlash(m_DstRoot)) strcat(m_DstRoot, "/");
+    m_SrcRoot = _src_root;
+    if(m_SrcRoot.empty() || m_SrcRoot.back() != '/') m_SrcRoot += '/';
+    m_DstRoot = _dst_root;
+    if(m_DstRoot.empty() || m_DstRoot.back() != '/') m_DstRoot += '/';
+
     m_Operation = _operation;
 }
 
@@ -134,14 +135,12 @@ bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
     char fn[MAXPATHLEN];
     char arc_pref[MAXPATHLEN];
     
-    assert(IsPathWithTrailingSlash(m_DstRoot));
-    
     if(m_InitialItems.size() > 1)
         strcpy(arc_pref, "Archive");
     else
         strcpy(arc_pref, m_InitialItems.front().c_str());
     
-    sprintf(fn, "%s%s.zip", m_DstRoot, arc_pref);
+    sprintf(fn, "%s%s.zip", m_DstRoot.c_str(), arc_pref);
     VFSStat st;
     if(m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0)
     {
@@ -151,7 +150,7 @@ bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
 
     for(int i = 2; i < 100; ++i)
     {
-        sprintf(fn, "%s%s %d.zip", m_DstRoot, arc_pref, i);
+        sprintf(fn, "%s%s %d.zip", m_DstRoot.c_str(), arc_pref, i);
         if(m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0)
         {
             strcpy(_full_filename, fn);
@@ -175,7 +174,7 @@ void FileCompressOperationJob::ScanItems()
 void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix)
 {
     char fullpath[MAXPATHLEN];
-    strcpy(fullpath, m_SrcRoot);
+    strcpy(fullpath, m_SrcRoot.c_str());
     strcat(fullpath, _full_path);
     
     VFSStat stat_buffer;
@@ -264,7 +263,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
     _node->str_with_pref(itemname);
     
     // compose real src name
-    strcpy(sourcepath, m_SrcRoot);
+    strcpy(sourcepath, m_SrcRoot.c_str());
     strcat(sourcepath, itemname);
     
     if(m_ItemFlags[_number] & (int)ItemFlags::is_dir)

@@ -555,10 +555,10 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnCompressToOppositePanel:(id)sender
 {
-    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:StringsFromVector(m_Items)
-                                                                     srcroot:m_DirPath.c_str()
+    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
+                                                                     srcroot:m_DirPath
                                                                       srcvfs:m_CurrentController.VFS
-                                                                     dstroot:[m_OppositeController GetCurrentDirectoryPathRelativeToHost].c_str()
+                                                                     dstroot:m_OppositeController.GetCurrentDirectoryPathRelativeToHost
                                                                       dstvfs:m_OppositeController.VFS
                                  ];
     op.TargetPanel = m_OppositeController;
@@ -567,10 +567,10 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnCompressToCurrentPanel:(id)sender
 {
-    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:StringsFromVector(m_Items)
-                                                                     srcroot:m_DirPath.c_str()
+    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
+                                                                     srcroot:m_DirPath
                                                                       srcvfs:m_CurrentController.VFS
-                                                                     dstroot:m_DirPath.c_str()
+                                                                     dstroot:m_DirPath
                                                                       dstvfs:m_CurrentController.VFS
                                  ];
     op.TargetPanel = m_CurrentController;

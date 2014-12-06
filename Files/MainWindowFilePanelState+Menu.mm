@@ -122,24 +122,16 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 {
     if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed) return;
     
-    auto files = [self.activePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    auto files = self.activePanelController.selectedEntriesOrFocusedEntryFilenames;
     if(files.empty())
         return;
-    shared_ptr<VFSHost> srcvfs, dstvfs;
-    string srcroot, dstroot;
-    PanelController *target_pc;
-    srcvfs = self.activePanelController.VFS;
-    dstvfs = self.oppositePanelController.VFS;
-    srcroot = [self.activePanelController GetCurrentDirectoryPathRelativeToHost];
-    dstroot = [self.oppositePanelController GetCurrentDirectoryPathRelativeToHost];
-    target_pc = self.oppositePanelController;
-    
+
     FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(files)
-                                                                     srcroot:srcroot.c_str()
-                                                                      srcvfs:srcvfs
-                                                                     dstroot:dstroot.c_str()
-                                                                      dstvfs:dstvfs];
-    op.TargetPanel = target_pc;
+                                                                     srcroot:self.activePanelController.GetCurrentDirectoryPathRelativeToHost
+                                                                      srcvfs:self.activePanelController.VFS
+                                                                     dstroot:self.oppositePanelController.GetCurrentDirectoryPathRelativeToHost
+                                                                      dstvfs:self.oppositePanelController.VFS];
+    op.TargetPanel = self.oppositePanelController;
     [m_OperationsController AddOperation:op];
 }
 

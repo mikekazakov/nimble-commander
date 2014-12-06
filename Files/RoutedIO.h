@@ -34,7 +34,12 @@ public:
     virtual int             unlink(const char *_path) = 0;
     virtual int             rename(const char *_old, const char *_new) = 0;
     virtual int             chown(const char *_path, uid_t _uid, gid_t _gid) = 0;
+    virtual int             chmod(const char *_path, mode_t _mode) = 0;
     virtual int             chflags(const char *_path, u_int _flags) = 0;
+    virtual int             chmtime(const char *_path, time_t _time) = 0;
+    virtual int             chctime(const char *_path, time_t _time) = 0;
+    virtual int             chbtime(const char *_path, time_t _time) = 0;
+    virtual int             chatime(const char *_path, time_t _time) = 0;
     virtual ssize_t         readlink(const char *_path, char *_symlink, size_t _buf_sz) = 0;
     virtual int             symlink(const char *_value, const char *_symlink_path) = 0;
     virtual int             link(const char *_path_exist, const char *_path_newnode) = 0;

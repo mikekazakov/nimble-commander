@@ -143,15 +143,11 @@ struct OtherAttrs
     
     // Set title.
     if (m_Files.size() == 1)
-    {
         [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %@",
                                     [NSString stringWithUTF8String:m_Files.front().c_str()]]];
-    }
     else
-    {
         [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %i "
                                     "selected items", m_Files.size()]];
-    }
     
     [self PopulateControls];
 }
@@ -477,32 +473,26 @@ struct OtherAttrs
 
 - (IBAction)OnUIDSel:(id)sender
 {
-    NSInteger ind = [[self UsersPopUpButton] indexOfSelectedItem];
-    if(ind < m_SystemUsers.size())
-    {
-        m_UserDidEditOthers[OtherAttrs::uid]=true;
+    NSInteger ind = self.UsersPopUpButton.indexOfSelectedItem;
+    if(ind < m_SystemUsers.size()) {
+        m_UserDidEditOthers[OtherAttrs::uid] = true;
         m_State[1].uid = m_SystemUsers[ind].pw_uid;
     }
-    else
-    {
-        // user choosed [mixed]
-        m_UserDidEditOthers[OtherAttrs::uid]=false;
+    else {
+        m_UserDidEditOthers[OtherAttrs::uid] = false;
         m_State[1].uid = m_State[0].uid; // reset selection to original value if any
     }
 }
         
 - (IBAction)OnGIDSel:(id)sender
 {
-    NSInteger ind = [[self GroupsPopUpButton] indexOfSelectedItem];
-    if(ind < m_SystemGroups.size())
-    {
-        m_UserDidEditOthers[OtherAttrs::gid]=true;
+    NSInteger ind = self.GroupsPopUpButton.indexOfSelectedItem;
+    if(ind < m_SystemGroups.size()) {
+        m_UserDidEditOthers[OtherAttrs::gid] = true;
         m_State[1].gid = m_SystemGroups[ind].gr_gid;
     }
-    else
-    {
-        // user choosed [mixed]
-        m_UserDidEditOthers[OtherAttrs::gid]=false;
+    else { // user chose [mixed]
+        m_UserDidEditOthers[OtherAttrs::gid] = false;
         m_State[1].gid = m_State[0].gid; // reset selection to original value if any
     }
 }
@@ -544,7 +534,7 @@ struct OtherAttrs
 {
     // get control's value to secure that user will get the same picture as he see it now
 #define DOFLAG(_f, _c)\
-m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = state_to_tribool([self _c]);
+m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = state_to_tribool(self._c);
     DOFLAG(fsf_unix_usr_r  , OwnerReadCheck);
     DOFLAG(fsf_unix_usr_w  , OwnerWriteCheck);
     DOFLAG(fsf_unix_usr_x  , OwnerExecCheck);
@@ -568,10 +558,10 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = state_to_tribool([self _c]);
 #undef DOFLAG
     [self OnUIDSel:nil];
     [self OnGIDSel:nil];
-    [self OnTimeChange:[self ATimePicker]];
-    [self OnTimeChange:[self MTimePicker]];
-    [self OnTimeChange:[self CTimePicker]];
-    [self OnTimeChange:[self BTimePicker]];
+    [self OnTimeChange:self.ATimePicker];
+    [self OnTimeChange:self.MTimePicker];
+    [self OnTimeChange:self.CTimePicker];
+    [self OnTimeChange:self.BTimePicker];
 
     // compose result
     m_Result = make_shared<FileSysAttrAlterCommand>();

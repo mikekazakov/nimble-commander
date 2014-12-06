@@ -6,21 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "FileSysAttrChangeOperation.h"
 #include "FileSysAttrChangeOperationJob.h"
-#include "chained_strings.h"
-#include <sys/types.h>
-#include <sys/dirent.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <sys/time.h>
-#include <sys/xattr.h>
-#include <sys/attr.h>
-#include <sys/vnode.h>
-#include <sys/param.h>
-#include <sys/mount.h>
-#include <unistd.h>
-
-#import "FileSysAttrChangeOperation.h"
+#include "RoutedIO.h"
 
 FileSysAttrChangeOperationJob::FileSysAttrChangeOperationJob():
     m_Operation(nil),
@@ -79,6 +67,8 @@ void FileSysAttrChangeOperationJob::Do()
 
 void FileSysAttrChangeOperationJob::ScanDirs()
 {
+    auto &io = RoutedIO::Default;
+    
     // iterates on original files list, find if entry is a dir, and if so then process it recursively
     for(auto &i: m_Command->files)
     {
@@ -87,7 +77,7 @@ void FileSysAttrChangeOperationJob::ScanDirs()
         strcat(fn, i.c_str());
         
         struct stat st;
-        if(stat(fn, &st) == 0)
+        if(io.stat(fn, &st) == 0)
         {
             if((st.st_mode&S_IFMT) == S_IFREG)
             {
@@ -112,9 +102,11 @@ void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const chaine
 {
     if(CheckPauseOrStop()) return;
     
+    auto &io = RoutedIO::InterfaceForAccess(_full_path, R_OK);
+    
     char fn[MAXPATHLEN];
 retry_opendir:
-    DIR *dirp = opendir(_full_path);
+    DIR *dirp = io.opendir(_full_path);
     if( dirp == 0)
     {
         if (!m_SkipAllErrors)
@@ -136,7 +128,7 @@ retry_opendir:
     else
     {
         dirent *entp;
-        while((entp = readdir(dirp)) != NULL)
+        while((entp = io.readdir(dirp)) != NULL)
         {
             if( (entp->d_namlen == 1 && entp->d_name[0] ==  '.' ) ||
                 (entp->d_namlen == 2 && entp->d_name[0] ==  '.' && entp->d_name[1] ==  '.') )
@@ -146,7 +138,7 @@ retry_opendir:
             
             struct stat st;
 retry_stat:
-            if(stat(fn, &st) != 0)
+            if(io.stat(fn, &st) != 0)
             {
                 if (!m_SkipAllErrors)
                 {
@@ -181,21 +173,21 @@ retry_stat:
                 }
             }
         }        
-        closedir(dirp);
+        io.closedir(dirp);
     }
 }
 
 void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
 {
-    // TODO: super-user rights asking!!
+    auto &io = RoutedIO::Default;
+    
     // TODO: statfs to see if attribute is meaningful
-    // TODO: consider opening file for writing first and then use fxxx functions to change attrs - it may be faster
     // TODO: need an additional checkbox to work with symlinks.
     
     // stat current file. no stat - no change.
     struct stat st;
 retry_stat:
-    if(stat(_full_path, &st) != 0)
+    if(io.stat(_full_path, &st) != 0)
     {
         if (!m_SkipAllErrors)
         {
@@ -236,7 +228,7 @@ retry_stat:
     {
         
 retry_chmod:
-        int res = chmod(_full_path, newmode);
+        int res = io.chmod(_full_path, newmode);
         if(res != 0 && !m_SkipAllErrors)
         {
             int result = [[m_Operation DialogOnChmodError:errno
@@ -273,7 +265,7 @@ retry_chmod:
     {
         
 retry_chflags:
-        int res = chflags(_full_path, newflags);
+        int res = io.chflags(_full_path, newflags);
         if(res != 0 && !m_SkipAllErrors)
         {
             int result = [[m_Operation DialogOnChflagsError:errno
@@ -300,7 +292,7 @@ retry_chflags:
     if(newuid != st.st_uid || newgid != st.st_gid)
     {
 retry_chown:
-        int res = chown(_full_path, newuid, newgid); // NEED super-user rights here, regular rights are useless almost always
+        int res = io.chown(_full_path, newuid, newgid);
         if(res != 0 && !m_SkipAllErrors)
         {
             int result = [[m_Operation DialogOnChownError:errno
@@ -326,49 +318,45 @@ retry_chown:
 #define HANDLE_FILETIME_RESULT(label) \
     if (res != 0 && !m_SkipAllErrors) { \
         int result = [[m_Operation DialogOnFileTimeError:errno \
-                        ForFile:_full_path WithAttr:attrs.commonattr Time:time] WaitForResult]; \
+                        ForFile:_full_path WithAttr:attr Time:time] WaitForResult]; \
         if (result == OperationDialogResult::Stop) { RequestStop(); return; } \
         else if (result == OperationDialogResult::SkipAll) m_SkipAllErrors = true; \
         else if (result == OperationDialogResult::Retry) goto label; \
     }
     
-    struct attrlist attrs;
-    memset(&attrs, 0, sizeof(attrs));
-    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-
     if(m_Command->set_atime && m_Command->atime != st.st_atimespec.tv_sec)
     {
-        attrs.commonattr = ATTR_CMN_ACCTIME;
+        uint32_t attr = ATTR_CMN_ACCTIME;
         timespec time = {m_Command->atime, 0}; // yep, no msec and nsec
 retry_acctime:
-        int res = setattrlist(_full_path, &attrs, &time, sizeof(time), 0);
+        int res = io.chatime(_full_path, m_Command->atime);
         HANDLE_FILETIME_RESULT(retry_acctime);
     }
 
     if(m_Command->set_mtime && m_Command->mtime != st.st_mtimespec.tv_sec)
     {
-        attrs.commonattr = ATTR_CMN_MODTIME;
+        uint32_t attr = ATTR_CMN_MODTIME;
         timespec time = {m_Command->mtime, 0}; // yep, no msec and nsec
 retry_modtime:
-        int res = setattrlist(_full_path, &attrs, &time, sizeof(time), 0);
+        int res = io.chmtime(_full_path, m_Command->mtime);
         HANDLE_FILETIME_RESULT(retry_modtime);
     }
     
     if(m_Command->set_ctime && m_Command->ctime != st.st_ctimespec.tv_sec)
     {
-        attrs.commonattr = ATTR_CMN_CHGTIME;
+        uint32_t attr  = ATTR_CMN_CHGTIME;
         timespec time = {m_Command->ctime, 0}; // yep, no msec and nsec
 retry_chgtime:
-        int res = setattrlist(_full_path, &attrs, &time, sizeof(time), 0);
+        int res = io.chctime(_full_path, m_Command->ctime);
         HANDLE_FILETIME_RESULT(retry_chgtime);
     }
     
     if(m_Command->set_btime && m_Command->btime != st.st_birthtimespec.tv_sec)
     {
-        attrs.commonattr = ATTR_CMN_CRTIME;
+        uint32_t attr = ATTR_CMN_CRTIME;
         timespec time = {m_Command->btime, 0}; // yep, no msec and nsec
 retry_crtime:
-        int res = setattrlist(_full_path, &attrs, &time, sizeof(time), 0);
+        int res = io.chbtime(_full_path, m_Command->btime);
         HANDLE_FILETIME_RESULT(retry_crtime);
     }
     

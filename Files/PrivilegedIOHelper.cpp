@@ -183,7 +183,54 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
             return false;
         u_int flags = (u_int)xpc_int64_get_value(xpc_flags);
         
-        u_int result = chflags(path, flags);
+        int result = chflags(path, flags);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
+    else if( strcmp(_operation, "chmod") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
+        if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
+            return false;
+        mode_t mode = (mode_t)xpc_int64_get_value(xpc_mode);
+                
+        int result = chmod(path, mode);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
+    else if( strcmp(_operation, "chmtime") == 0 ||
+             strcmp(_operation, "chctime") == 0 ||
+             strcmp(_operation, "chbtime") == 0 ||
+             strcmp(_operation, "chatime") == 0 ) {
+        xpc_object_t xpc_path = xpc_dictionary_get_value(_event, "path");
+        if( xpc_path == nullptr || xpc_get_type(xpc_path) != XPC_TYPE_STRING )
+            return false;
+        const char *path = xpc_string_get_string_ptr(xpc_path);
+        
+        xpc_object_t xpc_time = xpc_dictionary_get_value(_event, "time");
+        if( xpc_time == nullptr || xpc_get_type(xpc_time) != XPC_TYPE_INT64 )
+            return false;
+        time_t timesec = (time_t)xpc_int64_get_value(xpc_time);
+        
+        struct attrlist attrs;
+        memset(&attrs, 0, sizeof(attrs));
+        attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+        if(strcmp(_operation, "chmtime") == 0)      attrs.commonattr = ATTR_CMN_MODTIME;
+        else if(strcmp(_operation, "chctime") == 0) attrs.commonattr = ATTR_CMN_CHGTIME;
+        else if(strcmp(_operation, "chbtime") == 0) attrs.commonattr = ATTR_CMN_CRTIME;
+        else if(strcmp(_operation, "chatime") == 0) attrs.commonattr = ATTR_CMN_ACCTIME;
+        
+        timespec time = {timesec, 0};
+        
+        int result = setattrlist(path, &attrs, &time, sizeof(time), 0);
         if(result == 0)
             send_reply_ok(_event);
         else

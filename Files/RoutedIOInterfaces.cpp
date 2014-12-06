@@ -36,6 +36,21 @@ int PosixIOInterfaceNative::rename(const char *_old, const char *_new) { return 
 ssize_t PosixIOInterfaceNative::readlink(const char *_path, char *_symlink, size_t _buf_sz) { return ::readlink(_path, _symlink, _buf_sz); }
 int PosixIOInterfaceNative::symlink(const char *_value, const char *_symlink_path) { return ::symlink(_value, _symlink_path); }
 int PosixIOInterfaceNative::link(const char *_path_exist, const char *_path_newnode) { return ::link(_path_exist, _path_newnode); }
+int PosixIOInterfaceNative::chmod(const char *_path, mode_t _mode) { return ::chmod(_path, _mode); }
+int PosixIOInterfaceNative::chmtime(const char *_path, time_t _time) { return ApplyTimeChange(_path, _time, ATTR_CMN_MODTIME); }
+int PosixIOInterfaceNative::chatime(const char *_path, time_t _time) { return ApplyTimeChange(_path, _time, ATTR_CMN_ACCTIME); }
+int PosixIOInterfaceNative::chctime(const char *_path, time_t _time) { return ApplyTimeChange(_path, _time, ATTR_CMN_CHGTIME); }
+int PosixIOInterfaceNative::chbtime(const char *_path, time_t _time) { return ApplyTimeChange(_path, _time, ATTR_CMN_CRTIME); }
+
+int PosixIOInterfaceNative::ApplyTimeChange(const char *_path, time_t _time, uint32_t _attr)
+{
+    struct attrlist attrs;
+    memset(&attrs, 0, sizeof(attrs));
+    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+    attrs.commonattr = _attr;
+    timespec time = {_time, 0};
+    return setattrlist(_path, &attrs, &time, sizeof(time), 0);
+}
 
 PosixIOInterfaceRouted::PosixIOInterfaceRouted(RoutedIO &_inst):
     inst(_inst)
@@ -504,6 +519,186 @@ int PosixIOInterfaceRouted::link(const char *_path_exist, const char *_path_newn
     if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
         xpc_release(reply); // connection broken, faling back to native
         return super::link(_path_exist, _path_newnode);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;
+}
+
+int PosixIOInterfaceRouted::chmod(const char *_path, mode_t _mode)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::chmod(_path, _mode);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "chmod");
+    xpc_dictionary_set_string(message, "path", _path);
+    xpc_dictionary_set_int64 (message, "mode", _mode);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::chmod(_path, _mode);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;
+}
+
+int PosixIOInterfaceRouted::chmtime(const char *_path, time_t _time)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::chmtime(_path, _time);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "chmtime");
+    xpc_dictionary_set_string(message, "path", _path);
+    xpc_dictionary_set_int64 (message, "time", _time);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::chmtime(_path, _time);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;    
+}
+
+int PosixIOInterfaceRouted::chatime(const char *_path, time_t _time)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::chatime(_path, _time);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "chatime");
+    xpc_dictionary_set_string(message, "path", _path);
+    xpc_dictionary_set_int64 (message, "time", _time);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::chatime(_path, _time);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;
+}
+
+int PosixIOInterfaceRouted::chbtime(const char *_path, time_t _time)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::chbtime(_path, _time);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "chbtime");
+    xpc_dictionary_set_string(message, "path", _path);
+    xpc_dictionary_set_int64 (message, "time", _time);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::chbtime(_path, _time);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;
+}
+
+int PosixIOInterfaceRouted::chctime(const char *_path, time_t _time)
+{
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::chctime(_path, _time);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "chctime");
+    xpc_dictionary_set_string(message, "path", _path);
+    xpc_dictionary_set_int64 (message, "time", _time);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::chctime(_path, _time);
     }
     
     if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {

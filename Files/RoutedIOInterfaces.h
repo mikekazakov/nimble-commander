@@ -33,6 +33,13 @@ public:
     virtual int symlink(const char *_value, const char *_symlink_path) override;
     virtual int chflags(const char *_path, u_int _flags) override;
     virtual int link(const char *_path_exist, const char *_path_newnode) override;
+    virtual int chmod(const char *_path, mode_t _mode) override;
+    virtual int chmtime(const char *_path, time_t _time) override;
+    virtual int chctime(const char *_path, time_t _time) override;
+    virtual int chbtime(const char *_path, time_t _time) override;
+    virtual int chatime(const char *_path, time_t _time) override;
+private:
+    int ApplyTimeChange(const char *_path, time_t _time, uint32_t _attr);
 };
 
 class PosixIOInterfaceRouted : public PosixIOInterfaceNative
@@ -53,7 +60,12 @@ public:
     virtual int rename(const char *_old, const char *_new) override;
     virtual ssize_t readlink(const char *_path, char *_symlink, size_t _buf_sz) override;
     virtual int symlink(const char *_value, const char *_symlink_path) override;
-    virtual int link(const char *_path_exist, const char *_path_newnode) override;    
+    virtual int link(const char *_path_exist, const char *_path_newnode) override;
+    virtual int chmod(const char *_path, mode_t _mode) override;
+    virtual int chmtime(const char *_path, time_t _time) override;
+    virtual int chctime(const char *_path, time_t _time) override;
+    virtual int chbtime(const char *_path, time_t _time) override;
+    virtual int chatime(const char *_path, time_t _time) override;
 private:
     xpc_connection_t Connection();
     typedef PosixIOInterfaceNative super;

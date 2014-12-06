@@ -10,7 +10,7 @@
 
 @implementation PanelController (DataAccess)
 
-- (string) GetCurrentFocusedEntryFilename
+- (string) currentFocusedEntryFilename
 {
     if(!m_View)
         return "";
@@ -21,7 +21,7 @@
     return "";
 }
 
-- (string) GetCurrentFocusedEntryFilePathRelativeToHost
+- (string) currentFocusedEntryPath
 {
     if(!m_View)
         return "";
@@ -86,7 +86,7 @@
     return m_Data.DirectoryPathWithTrailingSlash();
 }
 
-- (const shared_ptr<VFSHost>&) VFS
+- (const VFSHostPtr&) vfs
 {
     return m_Data.Host();
 }

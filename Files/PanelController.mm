@@ -302,11 +302,11 @@ void panel::GenericCursorPersistance::Restore()
     }
 
     __weak PanelController *weakself = self;
-    m_UpdatesObservationTicket = self.VFS->DirChangeObserve(_new_path.c_str(),
+    m_UpdatesObservationTicket = self.vfs->DirChangeObserve(_new_path.c_str(),
         ^{[(PanelController *)weakself RefreshDirectory];} );
     
     if(m_UpdatesObservationTicket)
-        m_UpdatesObservationHost = self.VFS;
+        m_UpdatesObservationHost = self.vfs;
 }
 
 - (bool) HandleGoToUpperDirectory
@@ -315,16 +315,16 @@ void panel::GenericCursorPersistance::Restore()
     if(cur.empty()) return false;
     if(cur == "/")
     {
-        if(self.VFS->Parent() != nullptr)
+        if(self.vfs->Parent() != nullptr)
         {
-            path junct = self.VFS->JunctionPath();
+            path junct = self.vfs->JunctionPath();
             assert(!junct.empty());
             string dir = junct.parent_path().native();
             string sel_fn = junct.filename().native();
             
-            if(self.VFS->Parent()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
+            if(self.vfs->Parent()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
                 return true; // silently reap this command, since user refuses to grant an access
-            return [self GoToDir:dir vfs:self.VFS->Parent() select_entry:sel_fn async:true] == 0;
+            return [self GoToDir:dir vfs:self.vfs->Parent() select_entry:sel_fn async:true] == 0;
         }
     }
     else
@@ -332,9 +332,9 @@ void panel::GenericCursorPersistance::Restore()
         string dir = cur.parent_path().remove_filename().native();
         string sel_fn = cur.parent_path().filename().native();
         
-        if(self.VFS->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
+        if(self.vfs->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
             return true; // silently reap this command, since user refuses to grant an access
-        return [self GoToDir:dir vfs:self.VFS select_entry:sel_fn async:true] == 0;
+        return [self GoToDir:dir vfs:self.vfs select_entry:sel_fn async:true] == 0;
     }
     return false;
 }
@@ -354,16 +354,16 @@ void panel::GenericCursorPersistance::Restore()
         
         path dir = path(m_Data.DirectoryPathWithTrailingSlash()) / entry->Name();
         
-        if(self.VFS->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir.native()])
+        if(self.vfs->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir.native()])
             return true; // silently reap this command, since user refuses to grant an access
         
-        return [self GoToDir:dir.native() vfs:self.VFS select_entry:"" async:true] == 0;
+        return [self GoToDir:dir.native() vfs:self.vfs select_entry:"" async:true] == 0;
     }
     // archive stuff here
     else if(configuration::has_archives_browsing)
     {
-        auto arhost = VFSArchiveProxy::OpenFileAsArchive(self.GetCurrentFocusedEntryFilePathRelativeToHost,
-                                                         self.VFS);
+        auto arhost = VFSArchiveProxy::OpenFileAsArchive(self.currentFocusedEntryPath,
+                                                         self.vfs);
         if(arhost)
             return [self GoToDir:"/" vfs:arhost select_entry:"" async:true] == 0;
     }
@@ -382,7 +382,7 @@ void panel::GenericCursorPersistance::Restore()
     
     // need more sophisticated executable handling here
     if(configuration::has_terminal &&
-       self.VFS->IsNativeFS() &&
+       self.vfs->IsNativeFS() &&
        IsEligbleToTryToExecuteInConsole(*entry))
     {
         auto path = self.currentDirectoryPath;
@@ -405,7 +405,7 @@ void panel::GenericCursorPersistance::Restore()
         return; //reducing overhead
     
     string dirpath = m_Data.DirectoryPathWithTrailingSlash();
-    auto vfs = self.VFS;
+    auto vfs = self.vfs;
     
     m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
         shared_ptr<VFSListing> listing;
@@ -505,7 +505,7 @@ void panel::GenericCursorPersistance::Restore()
     string current_dir = m_Data.DirectoryPathWithTrailingSlash();
     auto dir_names = make_shared<chained_strings>(move(_filenames));
     m_DirectorySizeCountingQ->Run([=](const SerialQueue &_q){
-        self.VFS->CalculateDirectoriesSizes(move(*dir_names),
+        self.vfs->CalculateDirectoriesSizes(move(*dir_names),
                                                        current_dir.c_str(),
                                                        ^bool {
                                                            return _q->IsStopped();
@@ -592,7 +592,7 @@ void panel::GenericCursorPersistance::Restore()
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
     m_History.Put(VFSPathStack(m_Data.DirectoryEntries().SharedPtr()));
-    if(self.VFS->IsNativeFS())
+    if(self.vfs->IsNativeFS())
         m_LastNativeDirectory = self.currentDirectoryPath;
 }
 
@@ -601,11 +601,10 @@ void panel::GenericCursorPersistance::Restore()
     // need to update some UI here  
     // update share button regaring current state
     m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
-                            [SharingService SharingEnabledForItem:m_View.item VFS:self.VFS];
+                            [SharingService SharingEnabledForItem:m_View.item VFS:self.vfs];
     
     // update QuickLook if any
-    [(QuickLookView *)m_QuickLook PreviewItem:self.GetCurrentFocusedEntryFilePathRelativeToHost
-                                          vfs:self.VFS];
+    [(QuickLookView *)m_QuickLook PreviewItem:self.currentFocusedEntryPath vfs:self.vfs];
 }
 
 - (void)OnShareButton:(id)sender
@@ -619,7 +618,7 @@ void panel::GenericCursorPersistance::Restore()
     
     [[SharingService new] ShowItems:move(files)
                               InDir:m_Data.DirectoryPathWithTrailingSlash()
-                              InVFS:self.VFS
+                              InVFS:self.vfs
                      RelativeToRect:[sender bounds]
                              OfView:sender
                       PreferredEdge:NSMinYEdge];
@@ -628,7 +627,7 @@ void panel::GenericCursorPersistance::Restore()
 - (void) UpdateBriefSystemOverview
 {
     [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:self.currentDirectoryPath
-                                                             host:self.VFS];
+                                                             host:self.vfs];
 }
 
 - (void) PanelViewCursorChanged:(PanelView*)_view
@@ -654,7 +653,7 @@ void panel::GenericCursorPersistance::Restore()
     
     return [self.state RequestContextMenuOn:items
                                        path:self.currentDirectoryPath.c_str()
-                                        vfs:self.VFS
+                                        vfs:self.vfs
                                      caller:self];
 }
 
@@ -667,7 +666,7 @@ void panel::GenericCursorPersistance::Restore()
 {
     if(_view.item == nil ||
        _view.item->IsDotDot() ||
-       !self.VFS->IsWriteable())
+       !self.vfs->IsWriteable())
         return false;
     return true;
 }
@@ -691,25 +690,25 @@ void panel::GenericCursorPersistance::Restore()
     opts.docopy = false;
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    if(self.VFS->IsNativeFS())
+    if(self.vfs->IsNativeFS())
         op = [op initWithFiles:chained_strings(m_View.item->Name())
                           root:self.currentDirectoryPath.c_str()
                           dest:target_fn.c_str()
                        options:opts];
-    else if( self.VFS->IsWriteable() )
+    else if( self.vfs->IsWriteable() )
         op = [op initWithFiles:chained_strings(m_View.item->Name())
                           root:self.currentDirectoryPath.c_str()
-                        srcvfs:self.VFS
+                        srcvfs:self.vfs
                           dest:target_fn.c_str()
-                        dstvfs:self.VFS
+                        dstvfs:self.vfs
                        options:opts];
     else
         return;
     
     string curr_path = self.currentDirectoryPath;
-    auto curr_vfs = self.VFS;
+    auto curr_vfs = self.vfs;
     [op AddOnFinishHandler:^{
-        if(self.currentDirectoryPath == curr_path && self.VFS == curr_vfs)
+        if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)
             dispatch_to_main_queue( ^{
                 PanelControllerDelayedSelection req;
                 req.filename = target_fn;

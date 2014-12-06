@@ -163,9 +163,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     // cur_pnl_path should be the same as m_DirPath!!!
     string cur_pnl_path = m_CurrentController.currentDirectoryPath;
     string opp_pnl_path = m_OppositeController.currentDirectoryPath;
-    bool cur_pnl_native = m_CurrentController.VFS->IsNativeFS();
-    bool cur_pnl_writable = m_CurrentController.VFS->IsWriteableAtPath(cur_pnl_path.c_str());
-    bool opp_pnl_writable = m_OppositeController.VFS->IsWriteableAtPath(opp_pnl_path.c_str());
+    bool cur_pnl_native = m_CurrentController.vfs->IsNativeFS();
+    bool cur_pnl_writable = m_CurrentController.vfs->IsWriteableAtPath(cur_pnl_path.c_str());
+    bool opp_pnl_writable = m_OppositeController.vfs->IsWriteableAtPath(opp_pnl_path.c_str());
     
     //////////////////////////////////////////////////////////////////////
     // regular Open item
@@ -517,7 +517,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnMoveToTrash:(id)sender
 {
-    assert(m_CurrentController.VFS->IsNativeFS());
+    assert(m_CurrentController.vfs->IsNativeFS());
     FileDeletionOperation *op = [[FileDeletionOperation alloc]
                                  initWithFiles:vector<string>(m_Items)
                                  type:FileDeletionOperationType::MoveToTrash
@@ -528,14 +528,14 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void)OnDeletePermanently:(id)sender
 {
     FileDeletionOperation *op = [FileDeletionOperation alloc];
-    if(m_CurrentController.VFS->IsNativeFS())
+    if(m_CurrentController.vfs->IsNativeFS())
         op = [op initWithFiles:vector<string>(m_Items)
                           type:FileDeletionOperationType::Delete
                            dir:m_DirPath];
     else
         op = [op initWithFiles:vector<string>(m_Items)
                            dir:m_DirPath
-                            at:m_CurrentController.VFS];
+                            at:m_CurrentController.vfs];
 
     [m_MainWnd AddOperation:op];
 }
@@ -557,9 +557,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 {
     FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
                                                                      srcroot:m_DirPath
-                                                                      srcvfs:m_CurrentController.VFS
+                                                                      srcvfs:m_CurrentController.vfs
                                                                      dstroot:m_OppositeController.currentDirectoryPath
-                                                                      dstvfs:m_OppositeController.VFS
+                                                                      dstvfs:m_OppositeController.vfs
                                  ];
     op.TargetPanel = m_OppositeController;
     [m_MainWnd AddOperation:op];
@@ -569,9 +569,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 {
     FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
                                                                      srcroot:m_DirPath
-                                                                      srcvfs:m_CurrentController.VFS
+                                                                      srcvfs:m_CurrentController.vfs
                                                                      dstroot:m_DirPath
-                                                                      dstvfs:m_CurrentController.VFS
+                                                                      dstvfs:m_CurrentController.vfs
                                  ];
     op.TargetPanel = m_CurrentController;
     [m_MainWnd AddOperation:op];
@@ -636,7 +636,7 @@ proceed:;
     opts.docopy = true;
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    if(m_CurrentController.VFS->IsNativeFS())
+    if(m_CurrentController.vfs->IsNativeFS())
         op = [op initWithFiles:chained_strings(m_Items[0])
                           root:m_DirPath.c_str()
                           dest:target
@@ -644,9 +644,9 @@ proceed:;
     else
         op = [op initWithFiles:chained_strings(m_Items[0])
                           root:m_DirPath.c_str()
-                        srcvfs:m_CurrentController.VFS
+                        srcvfs:m_CurrentController.vfs
                           dest:target
-                        dstvfs:m_CurrentController.VFS
+                        dstvfs:m_CurrentController.vfs
                        options:opts];
     
     char target_fn[MAXPATHLEN];

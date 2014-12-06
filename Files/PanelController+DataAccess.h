@@ -14,13 +14,13 @@
  * Copies currently focused entry name.
  * Return "" if there's no focused entry (invalid state).
  */
-- (string) GetCurrentFocusedEntryFilename;
+@property (nonatomic, readonly) string currentFocusedEntryFilename;
 
 /**
  * Copies currently focused item's full path relating to it's host.
  * Return "" if there's no focused entry (invalid state).
  */
-- (string) GetCurrentFocusedEntryFilePathRelativeToHost;
+@property (nonatomic, readonly) string currentFocusedEntryPath;
 
 /** Copies current directory path with trailing slash relating to it's host. */
 @property (nonatomic, readonly) string currentDirectoryPath;
@@ -48,6 +48,6 @@
 /**
  * Return current (topmost in vfs stack) VFS Host.
  */
-- (const shared_ptr<VFSHost>&) VFS;
+@property (nonatomic, readonly) const VFSHostPtr& vfs;
 
 @end

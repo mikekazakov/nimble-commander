@@ -603,10 +603,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     
     if(_panel == self.leftPanelController)
         [m_LeftPanelGoToButton SetCurrentPath:_panel.currentDirectoryPath
-                                           at:_panel.VFS];
+                                           at:_panel.vfs];
     if(_panel == self.rightPanelController)
         [m_RightPanelGoToButton SetCurrentPath:_panel.currentDirectoryPath
-                                            at:_panel.VFS];
+                                            at:_panel.vfs];
 }
 
 - (void) DidBecomeKeyWindow
@@ -718,7 +718,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
     // check if we're on writeable VFS
     if(!self.isPanelActive ||
-       !self.activePanelController.VFS->IsWriteable())
+       !self.activePanelController.vfs->IsWriteable())
         return;
     
     // input should be an array of filepaths
@@ -754,7 +754,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         
         Operation *op;
         
-        if(self.activePanelController.VFS->IsNativeFS())
+        if(self.activePanelController.vfs->IsNativeFS())
             op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                      root:i.first.c_str()
                                                      dest:destination.c_str()
@@ -764,7 +764,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
                                                      root:i.first.c_str()
                                                    srcvfs:VFSNativeHost::SharedHost()
                                                      dest:destination.c_str()
-                                                   dstvfs:self.activePanelController.VFS
+                                                   dstvfs:self.activePanelController.vfs
                                                   options:opts]; // vfs(native)->vfs
         
         __weak PanelController *wpc = self.activePanelController;
@@ -789,10 +789,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     _paths.clear();
     
     for(auto p: m_LeftPanelControllers)
-        if(p.VFS->IsNativeFS())
+        if(p.vfs->IsNativeFS())
             _paths.push_back(p.currentDirectoryPath);
     for(auto p: m_RightPanelControllers)
-        if(p.VFS->IsNativeFS())
+        if(p.vfs->IsNativeFS())
             _paths.push_back(p.currentDirectoryPath);
 }
 

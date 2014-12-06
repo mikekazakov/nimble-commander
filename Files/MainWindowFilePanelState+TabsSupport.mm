@@ -71,7 +71,7 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     VFSHostPtr vfs;
     if(aTabView == m_MainSplitView.leftTabbedHolder.tabView) {
         pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
-        vfs = self.leftPanelController.VFS;
+        vfs = self.leftPanelController.vfs;
         path = self.leftPanelController.currentDirectoryPath;
         
         m_LeftPanelControllers.emplace_back(pc);
@@ -79,7 +79,7 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     }
     else if(aTabView == m_MainSplitView.rightTabbedHolder.tabView) {
         pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
-        vfs = self.rightPanelController.VFS;
+        vfs = self.rightPanelController.vfs;
         path = self.rightPanelController.currentDirectoryPath;
         m_RightPanelControllers.emplace_back(pc);
         [m_MainSplitView.rightTabbedHolder addPanel:pc.view];

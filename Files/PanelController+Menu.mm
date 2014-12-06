@@ -82,23 +82,23 @@
     
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack();
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
-    IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || self.VFS->Parent() != nullptr;
+    IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || self.vfs->Parent() != nullptr;
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.file_attributes")         return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.volume_information")      return self.VFS->IsNativeFS();
+    IF_MENU_TAG("menu.command.file_attributes")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
+    IF_MENU_TAG("menu.command.volume_information")      return self.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item->IsDir();
-    IF_MENU_TAG("menu.command.external_editor")         return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.eject_volume")            return self.VFS->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
+    IF_MENU_TAG("menu.command.external_editor")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
+    IF_MENU_TAG("menu.command.eject_volume")            return self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item != nullptr;
     IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item != nullptr;
     IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item != nullptr;
-    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
-    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
-    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.VFS->IsNativeFS() || self.VFS->IsWriteable());
-    IF_MENU_TAG("menu.command.create_directory")        return self.VFS->IsWriteable();
+    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.create_directory")        return self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.file.new_folder")                 return self.VFS->IsWriteable();
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.VFS->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.new_folder")                 return self.vfs->IsWriteable();
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.vfs->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     
     return true; // will disable some items in the future
 }
@@ -177,7 +177,7 @@
         // TODO: check reachability from sandbox
         
         return [self GoToDir:path
-                         vfs:VFSNativeHost::SharedHost() // not sure if this is right, mb .VFS in case of sub-dir?
+                         vfs:VFSNativeHost::SharedHost() // not sure if this is right, mb .vfs in case of sub-dir?
                 select_entry:""
                        async:false];
     }];
@@ -313,11 +313,11 @@
 
 - (IBAction)performFindPanelAction:(id)sender {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
-    sheet.host = self.VFS;
+    sheet.host = self.vfs;
     sheet.path = self.currentDirectoryPath;
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(auto item = sheet.SelectedItem)
-            [self GoToDir:item->dir_path vfs:self.VFS select_entry:item->filename async:true];
+            [self GoToDir:item->dir_path vfs:self.vfs select_entry:item->filename async:true];
     }];
 }
 
@@ -325,7 +325,7 @@
     if(!m_View.item || m_View.item->IsDir())
         return;
     string path = m_Data.DirectoryPathWithTrailingSlash() + m_View.item->Name();
-    [(MainWindowController*)self.window.delegate RequestBigFileView:path with_fs:self.VFS];
+    [(MainWindowController*)self.window.delegate RequestBigFileView:path with_fs:self.vfs];
 }
 
 - (IBAction)DoSelectByMask:(bool)_select {
@@ -366,16 +366,16 @@
 
 - (IBAction)OnEjectVolume:(id)sender {
     auto &nfsm = NativeFSManager::Instance();
-    if(self.VFS->IsNativeFS() && nfsm.IsVolumeContainingPathEjectable(self.currentDirectoryPath))
+    if(self.vfs->IsNativeFS() && nfsm.IsVolumeContainingPathEjectable(self.currentDirectoryPath))
         nfsm.EjectVolumeContainingPath(self.currentDirectoryPath);
 }
 
 - (IBAction)OnCopyCurrentFileName:(id)sender {
-    [NSPasteboard writeSingleString:self.GetCurrentFocusedEntryFilename.c_str()];
+    [NSPasteboard writeSingleString:self.currentFocusedEntryFilename.c_str()];
 }
 
 - (IBAction)OnCopyCurrentFilePath:(id)sender {
-    [NSPasteboard writeSingleString:self.GetCurrentFocusedEntryFilePathRelativeToHost.c_str()];
+    [NSPasteboard writeSingleString:self.currentFocusedEntryPath.c_str()];
 }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender {
@@ -488,7 +488,7 @@
 }
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender {
-    if(self.VFS->IsNativeFS() == false)
+    if(self.vfs->IsNativeFS() == false)
         return;
     
     auto item = m_View.item;
@@ -523,7 +523,7 @@
     if(files->empty())
         return;
     
-    if(self.VFS->IsNativeFS()) {
+    if(self.vfs->IsNativeFS()) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
         FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
@@ -544,14 +544,14 @@
                      }
                  }];
     }
-    else if(self.VFS->IsWriteable()) {
+    else if(self.vfs->IsWriteable()) {
         FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
         [sheet ShowSheetForVFS:self.window Files:*files Handler:^(int result){
                            if (result == DialogResult::Delete) {
                                FileDeletionOperation *op = [FileDeletionOperation alloc];
                                op = [op initWithFiles:move(*files)
                                                   dir:self.currentDirectoryPath
-                                                   at:self.VFS];
+                                                   at:self.vfs];
                                op.TargetPanel = self;
                                [self.state AddOperation:op];
                            }
@@ -571,8 +571,8 @@
 
 - (IBAction)OnMoveToTrash:(id)sender
 {
-    if(self.VFS->IsNativeFS() == false &&
-       self.VFS->IsWriteable() == true )
+    if(self.vfs->IsNativeFS() == false &&
+       self.vfs->IsWriteable() == true )
     {
         // instead of trying to silently reap files on VFS like FTP (that means we'll erase it, not move to trash) -
         // forward request as a regular F8 delete
@@ -603,14 +603,14 @@
              string pdir = m_Data.DirectoryPathWithoutTrailingSlash();
              
              CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
-             if(self.VFS->IsNativeFS())
+             if(self.vfs->IsNativeFS())
                  op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
                               rootpath:pdir.c_str()
                        ];
              else
                  op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
                               rootpath:pdir.c_str()
-                                    at:self.VFS
+                                    at:self.vfs
                        ];
              op.TargetPanel = self;
              [self.state AddOperation:op];
@@ -645,7 +645,7 @@
     
     CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
                                                                                             withSizes:move(sizes)
-                                                                                               atHost:self.VFS
+                                                                                               atHost:self.vfs
                                                                                                atPath:self.currentDirectoryPath];
     [sheet beginSheetForWindow:self.window
              completionHandler:^(NSModalResponse returnCode) {
@@ -666,23 +666,23 @@
     
     // currently doing existance checking in main thread, which is bad for a slow remote vfs
     // better implement it asynchronously.
-    if( self.VFS->Exists((dir/name).c_str()) )
+    if( self.vfs->Exists((dir/name).c_str()) )
         // this file already exists, will try another ones
         for( int i = 2; ; ++i ) {
             name = [NSString stringWithFormat:@"%@ %i", stub, i].UTF8String;
-            if( !self.VFS->Exists((dir/name).c_str()) )
+            if( !self.vfs->Exists((dir/name).c_str()) )
                 break;
             if( i >= 100 )
                 return; // we're full of such filenames, no reason to go on
         }
 
     CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
-    if(self.VFS->IsNativeFS())
+    if(self.vfs->IsNativeFS())
         op = [op initWithPath:name.c_str() rootpath:dir.c_str()];
     else
-        op = [op initWithPath:name.c_str() rootpath:dir.c_str() at:self.VFS];
+        op = [op initWithPath:name.c_str() rootpath:dir.c_str() at:self.vfs];
     
-    bool force_reload = self.VFS->IsDirChangeObservingAvailable(dir.c_str()) == false;
+    bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue(^{
@@ -716,11 +716,11 @@
     
     // currently doing existance checking in main thread, which is bad for a slow remote vfs
     // better implement it asynchronously.
-    if( self.VFS->Exists((dir/name).c_str()) )
+    if( self.vfs->Exists((dir/name).c_str()) )
         // this file already exists, will try another ones
         for( int i = 2; ; ++i ) {
             name = [NSString stringWithFormat:@"%@ %i", stub, i].UTF8String;
-            if( !self.VFS->Exists((dir/name).c_str()) )
+            if( !self.vfs->Exists((dir/name).c_str()) )
                 break;
             if( i >= 100 )
                 return; // we're full of such filenames, no reason to go on
@@ -732,12 +732,12 @@
     FileCopyOperationOptions opts;
     opts.docopy = false;
     FileCopyOperation *op = [FileCopyOperation alloc];
-    if(self.VFS->IsNativeFS())
+    if(self.vfs->IsNativeFS())
         op = [op initWithFiles:move(files) root:src.c_str() dest:dst.c_str() options:opts];
     else
-        op = [op initWithFiles:move(files) root:src.c_str() srcvfs:self.VFS dest:dst.c_str() dstvfs:self.VFS options:opts];
+        op = [op initWithFiles:move(files) root:src.c_str() srcvfs:self.vfs dest:dst.c_str() dstvfs:self.vfs options:opts];
 
-    bool force_reload = self.VFS->IsDirChangeObservingAvailable(dir.c_str()) == false;
+    bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue(^{

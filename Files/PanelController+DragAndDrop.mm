@@ -273,7 +273,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     if( focus_item == nullptr || focus_item->IsDotDot() == true )
         return;
     
-    auto vfs = self.VFS;
+    auto vfs = self.vfs;
     PanelControllerDragSourceBroker *broker = [PanelControllerDragSourceBroker new];
     broker.controller = self;
     broker.vfs = vfs;
@@ -379,7 +379,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     path destination_dir = [self composeDestinationForDrag:sender];
     
     NSDragOperation result = NSDragOperationNone;
-    if(self.VFS->IsWriteable()) {
+    if(self.vfs->IsWriteable()) {
         if([sender.draggingSource isKindOfClass:PanelControllerDragSourceBroker.class]) {
             // drag is from some other panel
             PanelControllerDragSourceBroker *source = (PanelControllerDragSourceBroker *)sender.draggingSource;
@@ -398,12 +398,12 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             }
 
             // check that we dont drag an item to the same folder in other panel
-            if(source.vfs == self.VFS &&
+            if(source.vfs == self.vfs &&
                destination_dir == source.root_path)
                 result = NSDragOperationNone;
             
             // check that we dont drag a folder into itself
-            if(dragging_over_dir && source.vfs == self.VFS)
+            if(dragging_over_dir && source.vfs == self.vfs)
                 for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                         options:nil])
                     if( item.isDir && destination_dir == item.path+"/" ) { // filenames are stored without trailing slashes, so have to add it
@@ -480,7 +480,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if(files.empty())
                 return false;
             
-            if( !self.VFS->IsWriteable() )
+            if( !self.vfs->IsWriteable() )
                 return false;
             
 
@@ -492,12 +492,12 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if( opmask == NSDragOperationCopy ) {
                 FileCopyOperationOptions opts;
                 FileCopyOperation *op;
-                if(source_broker.vfs->IsNativeFS() && self.VFS->IsNativeFS())
+                if(source_broker.vfs->IsNativeFS() && self.vfs->IsNativeFS())
                     op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                              root:source_broker.root_path.c_str()
                                                              dest:destination_dir.c_str()
                                                           options:opts]; // native->native
-                else if(self.VFS->IsNativeFS())
+                else if(self.vfs->IsNativeFS())
                     op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                              root:source_broker.root_path.c_str()
                                                           rootvfs:source_broker.vfs
@@ -508,7 +508,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                              root:source_broker.root_path.c_str()
                                                            srcvfs:source_broker.vfs
                                                              dest:destination_dir.c_str()
-                                                           dstvfs:self.VFS
+                                                           dstvfs:self.vfs
                                                           options:opts]; // vfs->vfs
                 [op AddOnFinishHandler:^{
                     dispatch_to_main_queue( ^{
@@ -524,7 +524,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 FileCopyOperationOptions opts;
                 opts.docopy = false;
                 FileCopyOperation *op;
-                if( source_broker.vfs->IsNativeFS() && self.VFS->IsNativeFS() )
+                if( source_broker.vfs->IsNativeFS() && self.vfs->IsNativeFS() )
                     op = [[FileCopyOperation alloc] initWithFiles:move(files)
                                                              root:source_broker.root_path.c_str()
                                                              dest:destination_dir.c_str()
@@ -535,7 +535,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                              root:source_broker.root_path.c_str()
                                                            srcvfs:source_broker.vfs
                                                              dest:destination_dir.c_str()
-                                                           dstvfs:self.VFS
+                                                           dstvfs:self.vfs
                                                           options:opts]; // vfs->vfs
                 __weak PanelController *src_cntr = source_controller;
                 __weak PanelController *dst_cntr = self;
@@ -586,12 +586,12 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             opts.docopy = true; // TODO: support move from other apps someday?
             FileCopyOperation *op;
 
-            if(!self.VFS->IsNativeFS() && self.VFS->IsWriteable() ) // vfs->vfs path
+            if(!self.vfs->IsNativeFS() && self.vfs->IsWriteable() ) // vfs->vfs path
                 op = [[FileCopyOperation alloc] initWithFiles:move(filenames)
                                                          root:t.first.c_str()
                                                        srcvfs:VFSNativeHost::SharedHost()
                                                          dest:destination_dir.c_str()
-                                                       dstvfs:self.VFS
+                                                       dstvfs:self.vfs
                                                       options:opts];
             else // native -> native path
                 op = [[FileCopyOperation alloc] initWithFiles:move(filenames)

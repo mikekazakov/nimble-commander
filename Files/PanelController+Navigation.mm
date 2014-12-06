@@ -18,7 +18,7 @@
     
     // 1st - build current hosts stack
     vector<VFSHostPtr> curr_stack;
-    VFSHostPtr cur = self.VFS;
+    VFSHostPtr cur = self.vfs;
     while(cur) {
         curr_stack.emplace_back(cur);
         cur = cur->Parent();
@@ -179,7 +179,7 @@
 - (void) RecoverFromInvalidDirectory
 {
     path initial_path = self.currentDirectoryPath;
-    auto initial_vfs = self.VFS;
+    auto initial_vfs = self.vfs;
     m_DirectoryLoadingQ->Run([=](const SerialQueue &_que) {
         // 1st - try to locate a valid dir in current host
         path path = initial_path;

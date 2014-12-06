@@ -6,11 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
 #import "FileDeletionOperation.h"
 #import "ButtonWithOptions.h"
-#import "chained_strings.h"
 
 typedef void (^FileDeletionSheetCompletionHandler)(int result);
 
@@ -26,12 +23,12 @@ typedef void (^FileDeletionSheetCompletionHandler)(int result);
 - (id)init;
 
 - (void)ShowSheet:(NSWindow *)_window
-            Files:(chained_strings *)_files
+            Files:(const vector<string>&)_files
              Type:(FileDeletionOperationType)_type
           Handler:(FileDeletionSheetCompletionHandler)_handler;
 
 - (void)ShowSheetForVFS:(NSWindow *)_window
-                  Files:(chained_strings *)_files
+                  Files:(const vector<string>&)_files
                 Handler:(FileDeletionSheetCompletionHandler)_handler;
 
 - (FileDeletionOperationType)GetType;

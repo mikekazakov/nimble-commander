@@ -16,7 +16,7 @@ class FileDeletionOperationVFSJob : public OperationJob
 {
 public:
 
-    void Init(chained_strings _files, const path &_root, const VFSHostPtr& _host, FileDeletionOperation *_op);
+    void Init(vector<string>&& _files, const string &_root, const VFSHostPtr& _host, FileDeletionOperation *_op);
     
     
 private:
@@ -25,7 +25,7 @@ private:
     void DoScanDir(const path &_full_path, const chained_strings::node *_prefix);
     
     
-    chained_strings     m_RequestedFiles;
+    vector<string>      m_RequestedFiles;
     path                m_RootPath;
     VFSHostPtr          m_Host;
 

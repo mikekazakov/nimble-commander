@@ -14,8 +14,7 @@
 class FileDeletionOperationJob : public OperationJob
 {
 public:
-    void Init(chained_strings _files, FileDeletionOperationType _type, const char* _root,
-              FileDeletionOperation *_op);
+    void Init(vector<string>&& _files, FileDeletionOperationType _type, const string &_dir, FileDeletionOperation *_op);
     
 protected:
     virtual void Do();
@@ -26,7 +25,7 @@ protected:
     bool DoMoveToTrash(const char *_full_path, bool _is_dir);
     bool DoSecureDelete(const char *_full_path, bool _is_dir);
     
-    chained_strings m_RequestedFiles;
+    vector<string>  m_RequestedFiles;
     chained_strings m_Directories; // this container will store directories structure in direct order
     chained_strings m_ItemsToDelete; // this container will store files and directories to direct, they will use m_Directories to link path
     FileDeletionOperationType   m_Type = FileDeletionOperationType::Invalid;

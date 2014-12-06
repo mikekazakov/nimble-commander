@@ -224,7 +224,8 @@ public:
     
     const VFSListingItem*   EntryAtRawPosition(int _pos) const;
     const VFSListingItem*   EntryAtSortPosition(int _pos) const;
-    chained_strings         StringsFromSelectedEntries() const;
+    [[deprecated]] chained_strings StringsFromSelectedEntries() const;
+    vector<string>          SelectedEntriesFilenames() const;
 
     /**
      * will redirect ".." upwards

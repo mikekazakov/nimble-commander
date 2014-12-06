@@ -519,12 +519,11 @@
 
 - (void)DeleteFiles:(BOOL)_shift_behavior
 {
-    auto files = make_shared<chained_strings>(self.GetSelectedEntriesOrFocusedEntryWithoutDotDot);
+    auto files = make_shared<vector<string>>(move(self.selectedEntriesOrFocusedEntryFilenames));
     if(files->empty())
         return;
     
-    if(self.VFS->IsNativeFS())
-    {
+    if(self.VFS->IsNativeFS()) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
         FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
@@ -532,36 +531,27 @@
                                                                      : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
         
         FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-        [sheet ShowSheet:self.window Files:files.get() Type:type
-                 Handler:^(int result){
-                     if (result == DialogResult::Delete)
-                     {
+        [sheet ShowSheet:self.window Files:*files Type:type Handler:^(int result){
+                     if (result == DialogResult::Delete) {
                          FileDeletionOperationType type = [sheet GetType];
-                         
-                         string root_path = m_Data.DirectoryPathWithTrailingSlash();
-                         
-                         FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                                      initWithFiles:move(*files.get())
-                                                      type:type
-                                                      rootpath:root_path.c_str()];
+                                                  
+                         FileDeletionOperation *op = [FileDeletionOperation alloc];
+                         op = [op initWithFiles:move(*files)
+                                           type:type
+                                            dir:self.GetCurrentDirectoryPathRelativeToHost];
                          op.TargetPanel = self;
                          [self.state AddOperation:op];
                      }
                  }];
     }
-    else if(self.VFS->IsWriteable())
-    {
+    else if(self.VFS->IsWriteable()) {
         FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-        [sheet ShowSheetForVFS:self.window
-                         Files:files.get()
-                       Handler:^(int result){
-                           if (result == DialogResult::Delete)
-                           {
-                               string root_path = m_Data.DirectoryPathWithTrailingSlash();
-                               FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                                            initWithFiles:move(*files.get())
-                                                            rootpath:root_path
-                                                            at:self.VFS];
+        [sheet ShowSheetForVFS:self.window Files:*files Handler:^(int result){
+                           if (result == DialogResult::Delete) {
+                               FileDeletionOperation *op = [FileDeletionOperation alloc];
+                               op = [op initWithFiles:move(*files)
+                                                  dir:self.GetCurrentDirectoryPathRelativeToHost
+                                                   at:self.VFS];
                                op.TargetPanel = self;
                                [self.state AddOperation:op];
                            }
@@ -590,14 +580,14 @@
         return;
     }
     
-    auto files = self.GetSelectedEntriesOrFocusedEntryWithoutDotDot;
+    auto files = self.selectedEntriesOrFocusedEntryFilenames;
     if(files.empty())
         return;
     
     FileDeletionOperation *op = [[FileDeletionOperation alloc]
                                  initWithFiles:move(files)
                                  type:FileDeletionOperationType::MoveToTrash
-                                 rootpath:m_Data.DirectoryPathWithTrailingSlash().c_str()];
+                                 dir:self.GetCurrentDirectoryPathRelativeToHost];
     op.TargetPanel = self;
     [self.state AddOperation:op];
 }

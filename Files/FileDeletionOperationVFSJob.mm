@@ -9,13 +9,11 @@
 #import "FileDeletionOperationVFSJob.h"
 #import "OperationDialogAlert.h"
 
-void FileDeletionOperationVFSJob::Init(chained_strings _files,
-                                       const path &_root,
+void FileDeletionOperationVFSJob::Init(vector<string>&& _files,
+                                       const string &_root,
                                        const VFSHostPtr& _host,
                                        FileDeletionOperation *_op)
 {
-    assert(!_files.empty());
-    assert(_root.is_absolute());
     assert(_host);
     assert(!_host->IsNativeFS()); // for native FS please use direct FileDeletionOperationJob
     assert(_op);
@@ -23,6 +21,8 @@ void FileDeletionOperationVFSJob::Init(chained_strings _files,
     m_RootPath = _root;
     m_Host = _host;
     m_Operation = _op;
+    
+    assert(m_RootPath.is_absolute());
 }
 
 void FileDeletionOperationVFSJob::Do()
@@ -86,11 +86,11 @@ void FileDeletionOperationVFSJob::DoScan()
         {
             if( (st.mode & S_IFMT) == S_IFREG )
             {
-                m_ItemsToDelete.push_back(i.c_str(), i.size(), nullptr);
+                m_ItemsToDelete.push_back(i.c_str(), (unsigned)i.size(), nullptr);
             }
             else if( (st.mode & S_IFMT) == S_IFLNK )
             {
-                m_ItemsToDelete.push_back(i.c_str(), i.size(), nullptr);
+                m_ItemsToDelete.push_back(i.c_str(), (unsigned)i.size(), nullptr);
             }
             else if( (st.mode & S_IFMT) == S_IFDIR )
             {

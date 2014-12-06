@@ -64,12 +64,11 @@ static inline bool EAHasMainFile(const char *_full_ea_path)
     return lstat(tmp, &st) == 0;
 }
 
-void FileDeletionOperationJob::Init(chained_strings _files, FileDeletionOperationType _type,
-                                    const char* _root, FileDeletionOperation *_op)
+void FileDeletionOperationJob::Init(vector<string>&& _files, FileDeletionOperationType _type, const string& _dir, FileDeletionOperation *_op)
 {
-    m_RequestedFiles.swap(_files);  
+    m_RequestedFiles = move(_files);
     m_Type = _type;
-    m_RootPath = _root;
+    m_RootPath = _dir;
     if(m_RootPath.back() != '/') m_RootPath += '/';
     m_Operation = _op;
 }
@@ -131,11 +130,11 @@ void FileDeletionOperationJob::DoScan()
                     skip = true;
                 
                 if(!skip)
-                    m_ItemsToDelete.push_back(i.c_str(), i.size(), nullptr);
+                    m_ItemsToDelete.push_back(i.c_str(), (unsigned)i.size(), nullptr);
             }
             else if((st.st_mode&S_IFMT) == S_IFLNK)
             {
-                m_ItemsToDelete.push_back(i.c_str(), i.size(), nullptr);
+                m_ItemsToDelete.push_back(i.c_str(), (unsigned)i.size(), nullptr);
             }
             else if((st.st_mode&S_IFMT) == S_IFDIR)
             {
@@ -157,7 +156,7 @@ void FileDeletionOperationJob::DoScan()
                 }
 
                 // add directory itself at the end, since we need it to be deleted last of all
-                m_ItemsToDelete.push_back(tmp, i.size()+1, nullptr);
+                m_ItemsToDelete.push_back(tmp, (unsigned)i.size()+1, nullptr);
             }
         }
     }

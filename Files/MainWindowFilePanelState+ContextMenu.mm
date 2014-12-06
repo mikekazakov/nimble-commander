@@ -519,26 +519,22 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 {
     assert(m_CurrentController.VFS->IsNativeFS());
     FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                 initWithFiles:StringsFromVector(m_Items)
+                                 initWithFiles:vector<string>(m_Items)
                                  type:FileDeletionOperationType::MoveToTrash
-                                 rootpath:m_DirPath.c_str()];
+                                 dir:m_DirPath];
     [m_MainWnd AddOperation:op];
 }
 
 - (void)OnDeletePermanently:(id)sender
 {
-    chained_strings files;
-    for(auto &i:m_Items)
-        files.push_back(i, nullptr);
-    
     FileDeletionOperation *op = [FileDeletionOperation alloc];
     if(m_CurrentController.VFS->IsNativeFS())
-        op = [op initWithFiles:move(files)
+        op = [op initWithFiles:vector<string>(m_Items)
                           type:FileDeletionOperationType::Delete
-                      rootpath:m_DirPath.c_str()];
+                           dir:m_DirPath];
     else
-        op = [op initWithFiles:move(files)
-                      rootpath:m_DirPath
+        op = [op initWithFiles:vector<string>(m_Items)
+                           dir:m_DirPath
                             at:m_CurrentController.VFS];
 
     [m_MainWnd AddOperation:op];

@@ -21,22 +21,22 @@
     bool m_SingleItem;
 }
 
-- (id)initWithFiles:(chained_strings)_files
+- (id)initWithFiles:(vector<string>&&)_files
                type:(FileDeletionOperationType)_type
-           rootpath:(const char*)_path
+                dir:(const string&)_path
 {
     m_NativeJob = make_unique<FileDeletionOperationJob>();
     self = [super initWithJob:m_NativeJob.get()];
     if (self)
     {
         [self initCommon:_files rootpath:_path];
-        m_NativeJob->Init(std::move(_files), _type, _path, self);
+        m_NativeJob->Init(move(_files), _type, _path, self);
     }
     return self;
 }   
 
-- (id)initWithFiles:(chained_strings)_files
-           rootpath:(const path&)_path
+- (id)initWithFiles:(vector<string>&&)_files
+                dir:(const string&)_path
                  at:(const VFSHostPtr&)_host
 {
     m_VFSJob = make_unique<FileDeletionOperationVFSJob>();
@@ -49,7 +49,7 @@
     return self;
 }
 
-- (void)initCommon:(const chained_strings&)_files rootpath:(path)_path
+- (void)initCommon:(const vector<string>&)_files rootpath:(path)_path
 {
     m_SingleItem = _files.size() == 1;
     
@@ -61,7 +61,7 @@
                         [NSString stringWithUTF8String:_files.front().c_str()],
                         dirname];
     else
-        self.Caption = [NSString stringWithFormat:@"Deleting %i items from \"%@\"",
+        self.Caption = [NSString stringWithFormat:@"Deleting %lu items from \"%@\"",
                         _files.size(),
                         dirname];
     

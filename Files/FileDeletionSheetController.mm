@@ -7,40 +7,32 @@
 //
 
 #import "FileDeletionSheetController.h"
-
-#import "chained_strings.h"
 #import "Common.h"
-
-@interface FileDeletionSheetController ()
-- (void)windowDidLoad;
-- (void)didEndSheet:(NSWindow *)_sheet returnCode:(NSInteger)_code
-        contextInfo:(void *)_context;
-@end
 
 @implementation FileDeletionSheetController
 {
-    chained_strings *m_Files;
     FileDeletionSheetCompletionHandler m_Handler;
     FileDeletionOperationType m_DefaultType;
     FileDeletionOperationType m_ResultType;
+    
+    NSString *m_Title;
+}
+
+- (id)init
+{
+    self = [super initWithWindowNibName:@"FileDeletionSheetController"];
+    if (self) {
+        m_Title = @"";
+    }
+    
+    return self;
 }
 
 - (void)windowDidLoad
 {
     [super windowDidLoad];
     
-    NSString *label;
-    if (m_Files->size() == 1)
-    {
-        label = [NSString stringWithFormat:@"Do you wish to delete %@?",
-                 [NSString stringWithUTF8String:m_Files->front().c_str()]];
-    }
-    else
-    {
-        label = [NSString stringWithFormat:@"Do you wish to delete %i items?",
-                 m_Files->size()];
-    }
-    [self.Label setStringValue:label];
+    self.Label.stringValue = m_Title;
     
     int index;
     if (m_DefaultType == FileDeletionOperationType::MoveToTrash)
@@ -91,26 +83,29 @@
     [NSApp endSheet:self.window returnCode:DialogResult::Delete];
 }
 
-- (id)init
+- (void) buildTitle:(const vector<string>&)_files
 {
-    self = [super initWithWindowNibName:@"FileDeletionSheetController"];
-    if (self)
-    {
-    }
+    if(_files.size() == 1)
+        m_Title = [NSString stringWithFormat:@"Do you wish to delete %@?",
+                   [NSString stringWithUTF8String:_files.front().c_str()]];
+    else
+        m_Title = [NSString stringWithFormat:@"Do you wish to delete %lu items?",
+                   _files.size()];
     
-    return self;
 }
 
-- (void)ShowSheet:(NSWindow *)_window Files:(chained_strings *)_files
+- (void)ShowSheet:(NSWindow *)_window Files:(const vector<string>&)_files
              Type:(FileDeletionOperationType)_type
           Handler:(FileDeletionSheetCompletionHandler)_handler
 {
-    assert(!_files->empty());
+    assert(!_files.empty());
     assert(_handler);
     
-    m_Files = _files;
+    
     m_Handler = _handler;
     m_DefaultType = _type;
+    
+    [self buildTitle:_files];
     
     [NSApp beginSheet: [self window]
        modalForWindow: _window
@@ -120,14 +115,14 @@
 }
 
 - (void)ShowSheetForVFS:(NSWindow *)_window
-                  Files:(chained_strings *)_files
+                  Files:(const vector<string>&)_files
                 Handler:(FileDeletionSheetCompletionHandler)_handler
 {
-    assert(!_files->empty());
+    assert(!_files.empty());
     assert(_handler);
-    m_Files = _files;
     m_Handler = _handler;
-
+    [self buildTitle:_files];
+    
     [self window]; // load
     [self.DeleteButton setLabel:@"Delete Permanently" forSegment:0];
     [self.DeleteButton setSegmentCount:1];

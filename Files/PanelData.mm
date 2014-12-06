@@ -179,7 +179,7 @@ string PanelData::DirectoryPathWithoutTrailingSlash() const
 string PanelData::DirectoryPathWithTrailingSlash() const
 {
     if(m_Listing.get() == 0)
-        return "";
+        return "/";
     
     string path = m_Listing->RelativePath();
     if(path.size() > 0 && path.back() != '/')
@@ -485,6 +485,15 @@ chained_strings PanelData::StringsFromSelectedEntries() const
         if(i.CFIsSelected())
             str.push_back(i.Name(), (int)i.NameLen(), nullptr);
     return str;
+}
+
+vector<string> PanelData::SelectedEntriesFilenames() const
+{
+    vector<string> list;
+    for(auto const &i: *m_Listing)
+        if(i.CFIsSelected())
+            list.emplace_back(i.Name(), i.NameLen());
+    return list;
 }
 
 bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)

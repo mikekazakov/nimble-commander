@@ -29,6 +29,21 @@
     return m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex(m_View.curpos));
 }
 
+- (vector<string>) selectedEntriesOrFocusedEntryFilenames
+{
+    if(!m_View)
+        return {};
+    
+    if(m_Data.Stats().selected_entries_amount)
+        return m_Data.SelectedEntriesFilenames();
+    
+    auto item = m_View.item;
+    if(item && !item->IsDotDot())
+        return vector<string>{ item->Name() };
+    
+    return {};
+}
+
 - (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot
 {
     if(!m_View)

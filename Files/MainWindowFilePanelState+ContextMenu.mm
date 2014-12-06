@@ -161,8 +161,8 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void) Stuffing:(const vector<const VFSListingItem*>&) _items
 {
     // cur_pnl_path should be the same as m_DirPath!!!
-    string cur_pnl_path = [m_CurrentController GetCurrentDirectoryPathRelativeToHost];
-    string opp_pnl_path = [m_OppositeController GetCurrentDirectoryPathRelativeToHost];
+    string cur_pnl_path = m_CurrentController.currentDirectoryPath;
+    string opp_pnl_path = m_OppositeController.currentDirectoryPath;
     bool cur_pnl_native = m_CurrentController.VFS->IsNativeFS();
     bool cur_pnl_writable = m_CurrentController.VFS->IsWriteableAtPath(cur_pnl_path.c_str());
     bool opp_pnl_writable = m_OppositeController.VFS->IsWriteableAtPath(opp_pnl_path.c_str());
@@ -558,7 +558,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
                                                                      srcroot:m_DirPath
                                                                       srcvfs:m_CurrentController.VFS
-                                                                     dstroot:m_OppositeController.GetCurrentDirectoryPathRelativeToHost
+                                                                     dstroot:m_OppositeController.currentDirectoryPath
                                                                       dstvfs:m_OppositeController.VFS
                                  ];
     op.TargetPanel = m_OppositeController;
@@ -652,9 +652,9 @@ proceed:;
     char target_fn[MAXPATHLEN];
     GetFilenameFromPath(target, target_fn);
     string target_fns = target_fn;
-    string current_pan_path = m_CurrentController.GetCurrentDirectoryPathRelativeToHost;
+    string current_pan_path = m_CurrentController.currentDirectoryPath;
     [op AddOnFinishHandler:^{
-        if(m_CurrentController.GetCurrentDirectoryPathRelativeToHost == current_pan_path)
+        if(m_CurrentController.currentDirectoryPath == current_pan_path)
             dispatch_to_main_queue( ^{
                 PanelControllerDelayedSelection req;
                 req.filename = target_fns;

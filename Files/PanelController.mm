@@ -385,7 +385,7 @@ void panel::GenericCursorPersistance::Restore()
        self.VFS->IsNativeFS() &&
        IsEligbleToTryToExecuteInConsole(*entry))
     {
-        auto path = [self GetCurrentDirectoryPathRelativeToHost];
+        auto path = self.currentDirectoryPath;
         [(MainWindowController*)self.window.delegate RequestTerminalExecution:entry->Name() at:path.c_str()];
         
         return;
@@ -593,7 +593,7 @@ void panel::GenericCursorPersistance::Restore()
     [self UpdateBriefSystemOverview];
     m_History.Put(VFSPathStack(m_Data.DirectoryEntries().SharedPtr()));
     if(self.VFS->IsNativeFS())
-        m_LastNativeDirectory = self.GetCurrentDirectoryPathRelativeToHost;
+        m_LastNativeDirectory = self.currentDirectoryPath;
 }
 
 - (void) OnCursorChanged
@@ -627,7 +627,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) UpdateBriefSystemOverview
 {
-    [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:self.GetCurrentDirectoryPathRelativeToHost
+    [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:self.currentDirectoryPath
                                                              host:self.VFS];
 }
 
@@ -653,7 +653,7 @@ void panel::GenericCursorPersistance::Restore()
                 items.push_back(&i);
     
     return [self.state RequestContextMenuOn:items
-                                       path:[self GetCurrentDirectoryPathRelativeToHost].c_str()
+                                       path:self.currentDirectoryPath.c_str()
                                         vfs:self.VFS
                                      caller:self];
 }
@@ -693,12 +693,12 @@ void panel::GenericCursorPersistance::Restore()
     FileCopyOperation *op = [FileCopyOperation alloc];
     if(self.VFS->IsNativeFS())
         op = [op initWithFiles:chained_strings(m_View.item->Name())
-                          root:self.GetCurrentDirectoryPathRelativeToHost.c_str()
+                          root:self.currentDirectoryPath.c_str()
                           dest:target_fn.c_str()
                        options:opts];
     else if( self.VFS->IsWriteable() )
         op = [op initWithFiles:chained_strings(m_View.item->Name())
-                          root:self.GetCurrentDirectoryPathRelativeToHost.c_str()
+                          root:self.currentDirectoryPath.c_str()
                         srcvfs:self.VFS
                           dest:target_fn.c_str()
                         dstvfs:self.VFS
@@ -706,10 +706,10 @@ void panel::GenericCursorPersistance::Restore()
     else
         return;
     
-    string curr_path = self.GetCurrentDirectoryPathRelativeToHost;
+    string curr_path = self.currentDirectoryPath;
     auto curr_vfs = self.VFS;
     [op AddOnFinishHandler:^{
-        if(self.GetCurrentDirectoryPathRelativeToHost == curr_path && self.VFS == curr_vfs)
+        if(self.currentDirectoryPath == curr_path && self.VFS == curr_vfs)
             dispatch_to_main_queue( ^{
                 PanelControllerDelayedSelection req;
                 req.filename = target_fn;

@@ -47,7 +47,7 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 
 - (void) updateTabNameForController:(PanelController*)_controller
 {
-    path p = [_controller GetCurrentDirectoryPathRelativeToHost];
+    path p = _controller.currentDirectoryPath;
     string name = p == "/" ? p.native() : p.parent_path().filename().native();
     
     NSArray *tabs;
@@ -72,7 +72,7 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     if(aTabView == m_MainSplitView.leftTabbedHolder.tabView) {
         pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
         vfs = self.leftPanelController.VFS;
-        path = self.leftPanelController.GetCurrentDirectoryPathRelativeToHost;
+        path = self.leftPanelController.currentDirectoryPath;
         
         m_LeftPanelControllers.emplace_back(pc);
         [m_MainSplitView.leftTabbedHolder addPanel:pc.view];
@@ -80,7 +80,7 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     else if(aTabView == m_MainSplitView.rightTabbedHolder.tabView) {
         pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
         vfs = self.rightPanelController.VFS;
-        path = self.rightPanelController.GetCurrentDirectoryPathRelativeToHost;
+        path = self.rightPanelController.currentDirectoryPath;
         m_RightPanelControllers.emplace_back(pc);
         [m_MainSplitView.rightTabbedHolder addPanel:pc.view];
     }

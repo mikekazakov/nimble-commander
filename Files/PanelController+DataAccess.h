@@ -22,10 +22,8 @@
  */
 - (string) GetCurrentFocusedEntryFilePathRelativeToHost;
 
-/**
- * Copies directory path with trailing slash relating to it's host.
- */
-- (string) GetCurrentDirectoryPathRelativeToHost;
+/** Copies current directory path with trailing slash relating to it's host. */
+@property (nonatomic, readonly) string currentDirectoryPath;
 
 /**
  * Return a list of selected entries if any.

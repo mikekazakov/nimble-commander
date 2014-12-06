@@ -82,13 +82,13 @@
     
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack();
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
-    IF_MENU_TAG("menu.go.enclosing_folder")             return self.GetCurrentDirectoryPathRelativeToHost != "/" || self.VFS->Parent() != nullptr;
+    IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || self.VFS->Parent() != nullptr;
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item->IsDotDot();
     IF_MENU_TAG("menu.command.file_attributes")         return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
     IF_MENU_TAG("menu.command.volume_information")      return self.VFS->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item->IsDir();
     IF_MENU_TAG("menu.command.external_editor")         return self.VFS->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.eject_volume")            return self.VFS->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost);
+    IF_MENU_TAG("menu.command.eject_volume")            return self.VFS->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item != nullptr;
     IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item != nullptr;
     IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item != nullptr;
@@ -172,7 +172,7 @@
         else if(path[0] == '~') // relative to home
             path.replace(0, 1, CommonPaths::Get(CommonPaths::Home));
         else // sub-dir
-            path.insert(0, self.GetCurrentDirectoryPathRelativeToHost);
+            path.insert(0, self.currentDirectoryPath);
 
         // TODO: check reachability from sandbox
         
@@ -304,7 +304,7 @@
     if(!m_Data.Host()->IsNativeFS())
         return; // currently support volume info only on native fs
     
-    string path = self.GetCurrentDirectoryPathRelativeToHost;
+    string path = self.currentDirectoryPath;
     if(m_View.item && !m_View.item->IsDotDot())
         path += m_View.item->Name();
     
@@ -314,7 +314,7 @@
 - (IBAction)performFindPanelAction:(id)sender {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.host = self.VFS;
-    sheet.path = self.GetCurrentDirectoryPathRelativeToHost;
+    sheet.path = self.currentDirectoryPath;
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(auto item = sheet.SelectedItem)
             [self GoToDir:item->dir_path vfs:self.VFS select_entry:item->filename async:true];
@@ -366,8 +366,8 @@
 
 - (IBAction)OnEjectVolume:(id)sender {
     auto &nfsm = NativeFSManager::Instance();
-    if(self.VFS->IsNativeFS() && nfsm.IsVolumeContainingPathEjectable(self.GetCurrentDirectoryPathRelativeToHost))
-        nfsm.EjectVolumeContainingPath(self.GetCurrentDirectoryPathRelativeToHost);
+    if(self.VFS->IsNativeFS() && nfsm.IsVolumeContainingPathEjectable(self.currentDirectoryPath))
+        nfsm.EjectVolumeContainingPath(self.currentDirectoryPath);
 }
 
 - (IBAction)OnCopyCurrentFileName:(id)sender {
@@ -501,7 +501,7 @@
         return;
     }
     
-    string fn_path = self.GetCurrentDirectoryPathRelativeToHost + item->Name();
+    string fn_path = self.currentDirectoryPath + item->Name();
     if(ed.terminal == false) {
         if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8String:fn_path.c_str()]
                                    withApplication:ed.path
@@ -538,7 +538,7 @@
                          FileDeletionOperation *op = [FileDeletionOperation alloc];
                          op = [op initWithFiles:move(*files)
                                            type:type
-                                            dir:self.GetCurrentDirectoryPathRelativeToHost];
+                                            dir:self.currentDirectoryPath];
                          op.TargetPanel = self;
                          [self.state AddOperation:op];
                      }
@@ -550,7 +550,7 @@
                            if (result == DialogResult::Delete) {
                                FileDeletionOperation *op = [FileDeletionOperation alloc];
                                op = [op initWithFiles:move(*files)
-                                                  dir:self.GetCurrentDirectoryPathRelativeToHost
+                                                  dir:self.currentDirectoryPath
                                                    at:self.VFS];
                                op.TargetPanel = self;
                                [self.state AddOperation:op];
@@ -587,7 +587,7 @@
     FileDeletionOperation *op = [[FileDeletionOperation alloc]
                                  initWithFiles:move(files)
                                  type:FileDeletionOperationType::MoveToTrash
-                                 dir:self.GetCurrentDirectoryPathRelativeToHost];
+                                 dir:self.currentDirectoryPath];
     op.TargetPanel = self;
     [self.state AddOperation:op];
 }
@@ -646,7 +646,7 @@
     CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
                                                                                             withSizes:move(sizes)
                                                                                                atHost:self.VFS
-                                                                                               atPath:self.GetCurrentDirectoryPathRelativeToHost];
+                                                                                               atPath:self.currentDirectoryPath];
     [sheet beginSheetForWindow:self.window
              completionHandler:^(NSModalResponse returnCode) {
                  if(sheet.didSaved) {
@@ -661,7 +661,7 @@
 - (IBAction)OnQuickNewFolder:(id)sender
 {
     NSString *stub = @"untitled folder";
-    path dir = self.GetCurrentDirectoryPathRelativeToHost;
+    path dir = self.currentDirectoryPath;
     string name = stub.UTF8String;
     
     // currently doing existance checking in main thread, which is bad for a slow remote vfs
@@ -712,7 +712,7 @@
         return;
     NSString *stub = @"New Folder With Items";
     string name = stub.UTF8String;
-    path dir = self.GetCurrentDirectoryPathRelativeToHost;
+    path dir = self.currentDirectoryPath;
     
     // currently doing existance checking in main thread, which is bad for a slow remote vfs
     // better implement it asynchronously.
@@ -726,7 +726,7 @@
                 return; // we're full of such filenames, no reason to go on
         }
     
-    path src = self.GetCurrentDirectoryPathRelativeToHost;
+    path src = self.currentDirectoryPath;
     path dst = src / name / "/";
     
     FileCopyOperationOptions opts;

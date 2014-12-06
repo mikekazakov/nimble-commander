@@ -602,10 +602,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     [self updateTabNameForController:_panel];
     
     if(_panel == self.leftPanelController)
-        [m_LeftPanelGoToButton SetCurrentPath:_panel.GetCurrentDirectoryPathRelativeToHost
+        [m_LeftPanelGoToButton SetCurrentPath:_panel.currentDirectoryPath
                                            at:_panel.VFS];
     if(_panel == self.rightPanelController)
-        [m_RightPanelGoToButton SetCurrentPath:_panel.GetCurrentDirectoryPathRelativeToHost
+        [m_RightPanelGoToButton SetCurrentPath:_panel.currentDirectoryPath
                                             at:_panel.VFS];
 }
 
@@ -790,10 +790,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     
     for(auto p: m_LeftPanelControllers)
         if(p.VFS->IsNativeFS())
-            _paths.push_back(p.GetCurrentDirectoryPathRelativeToHost);
+            _paths.push_back(p.currentDirectoryPath);
     for(auto p: m_RightPanelControllers)
         if(p.VFS->IsNativeFS())
-            _paths.push_back(p.GetCurrentDirectoryPathRelativeToHost);
+            _paths.push_back(p.currentDirectoryPath);
 }
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel

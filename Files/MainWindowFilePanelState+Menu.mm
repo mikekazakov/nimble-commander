@@ -79,7 +79,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(!self.activePanelController || !self.oppositePanelController || m_MainSplitView.anyCollapsedOrOverlayed)
         return;
     
-    [self.oppositePanelController GoToDir:self.activePanelController.GetCurrentDirectoryPathRelativeToHost
+    [self.oppositePanelController GoToDir:self.activePanelController.currentDirectoryPath
                                       vfs:self.activePanelController.VFS
                              select_entry:""
                                     async:true];
@@ -103,7 +103,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 {
     string path = "";
     if(self.isPanelActive && self.activePanelController.VFS->IsNativeFS())
-        path = self.activePanelController.GetCurrentDirectoryPathRelativeToHost;
+        path = self.activePanelController.currentDirectoryPath;
     [(MainWindowController*)self.window.delegate RequestTerminal:path];
 }
 
@@ -127,9 +127,9 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         return;
 
     FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(files)
-                                                                     srcroot:self.activePanelController.GetCurrentDirectoryPathRelativeToHost
+                                                                     srcroot:self.activePanelController.currentDirectoryPath
                                                                       srcvfs:self.activePanelController.VFS
-                                                                     dstroot:self.oppositePanelController.GetCurrentDirectoryPathRelativeToHost
+                                                                     dstroot:self.oppositePanelController.currentDirectoryPath
                                                                       dstvfs:self.oppositePanelController.VFS];
     op.TargetPanel = self.oppositePanelController;
     [m_OperationsController AddOperation:op];
@@ -148,7 +148,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(!item->IsDotDot())
         source_path += item->Name();
     
-    string link_path = self.oppositePanelController.GetCurrentDirectoryPathRelativeToHost;
+    string link_path = self.oppositePanelController.currentDirectoryPath;
     
     if(!item->IsDotDot())
         link_path += item->Name();

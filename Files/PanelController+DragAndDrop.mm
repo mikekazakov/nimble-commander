@@ -355,7 +355,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                hitTestOption:PanelViewHitTest::FilenameFact];
     auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
     bool dragging_over_dir = dragging_over_item && dragging_over_item->IsDir() && DraggingIntoFoldersAllowed();
-    path destination_dir = self.GetCurrentDirectoryPathRelativeToHost;
+    path destination_dir = self.currentDirectoryPath;
     destination_dir.remove_filename();
     if(destination_dir.empty())
         destination_dir = "/";
@@ -552,7 +552,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                files.size() == 1 &&
                source_broker.vfs->IsNativeFS() ) {
                 string source_path = source_broker.root_path + files.front().c_str();
-                string dest_path = self.GetCurrentDirectoryPathRelativeToHost + files.front().c_str();
+                string dest_path = self.currentDirectoryPath + files.front().c_str();
                 [self.state.OperationsController AddOperation:
                     [[FileLinkOperation alloc] initWithNewSymbolinkLink:source_path.c_str()
                                                                linkname:dest_path.c_str()]];

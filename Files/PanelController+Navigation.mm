@@ -178,7 +178,7 @@
 
 - (void) RecoverFromInvalidDirectory
 {
-    path initial_path = self.GetCurrentDirectoryPathRelativeToHost;
+    path initial_path = self.currentDirectoryPath;
     auto initial_vfs = self.VFS;
     m_DirectoryLoadingQ->Run([=](const SerialQueue &_que) {
         // 1st - try to locate a valid dir in current host

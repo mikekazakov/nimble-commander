@@ -81,7 +81,7 @@
     }
 }
 
-- (string) GetCurrentDirectoryPathRelativeToHost
+- (string) currentDirectoryPath
 {
     return m_Data.DirectoryPathWithTrailingSlash();
 }

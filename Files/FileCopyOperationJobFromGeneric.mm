@@ -12,6 +12,7 @@
 #import <sys/xattr.h>
 #import "FileCopyOperationJobFromGeneric.h"
 #import "Common.h"
+#import "RoutedIO.h"
 
 static const int g_MinPreallocSize = 4096; // will try to preallocate files only if they are larger than 4k
 
@@ -240,7 +241,7 @@ doreadlink:
     }
     
 dosymlink:
-    result = symlink(linkpath, _tagret_symlink);
+    result = RoutedIO::Default.symlink(linkpath, _tagret_symlink);
     if(result != 0)
     {   // failed to create a symlink
         if(m_SkipAll) goto cleanup;
@@ -260,8 +261,10 @@ cleanup:
 
 bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const char *_dest)
 {
+    auto &io = RoutedIO::Default;
+    
     // TODO: existance checking, attributes, error handling and other stuff
-    mkdir(_dest, 0777);
+    io.mkdir(_dest, 0777);
     
     VFSStat src_stat_buffer;
     if(m_SrcHost->Stat(_src, src_stat_buffer, 0, 0) < 0)
@@ -273,10 +276,10 @@ bool FileCopyOperationJobFromGeneric::CopyDirectoryTo(const char *_src, const ch
     { // guard against malformed(?) archives
         mode |= S_IRWXU | S_IRGRP | S_IXGRP;
     }
-    chmod(_dest, mode);
+    io.chmod(_dest, mode);
     
     // change flags
-    chflags(_dest, src_stat_buffer.flags);
+    io.chflags(_dest, src_stat_buffer.flags);
     
     // xattr processing
     if(m_Options.copy_xattrs)
@@ -335,6 +338,7 @@ void FileCopyOperationJobFromGeneric::CopyXattrs(shared_ptr<VFSFile> _file, int 
 
 bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_dest)
 {
+    auto &io = RoutedIO::Default;
     int ret, oldumask, destinationfd = -1, dstopenflags=0;
     shared_ptr<VFSFile> src_file;
     VFSStat src_stat_buffer;
@@ -383,7 +387,7 @@ opensource:
     }
     
     totaldestsize = src_stat_buffer.size;
-    if(stat(_dest, &dst_stat_buffer) != -1) { // file already exist. what should we do now?
+    if(io.stat(_dest, &dst_stat_buffer) != -1) { // file already exist. what should we do now?
         int result;
         if(m_SkipAll) goto cleanup;
         if(m_OverwriteAll) goto decoverwrite;
@@ -430,9 +434,9 @@ opensource:
 opendest: // open file descriptor for destination
     oldumask = umask(0);
     if(m_Options.copy_unix_flags) // we want to copy src permissions
-        destinationfd = open(_dest, dstopenflags, src_stat_buffer.mode);
+        destinationfd = io.open(_dest, dstopenflags, src_stat_buffer.mode);
     else // open file with default permissions
-        destinationfd = open(_dest, dstopenflags, S_IRUSR | S_IWUSR | S_IRGRP);
+        destinationfd = io.open(_dest, dstopenflags, S_IRUSR | S_IWUSR | S_IRGRP);
     umask(oldumask);
     // TODO: non-blocking opening? current implementation may cause problems
 
@@ -549,12 +553,20 @@ dolseek: // find right position in destination file
         CopyXattrs(src_file, destinationfd);
     
     // change ownage
-    if(m_Options.copy_unix_owners)
-        fchown(destinationfd, src_stat_buffer.uid, src_stat_buffer.gid);
+    if(m_Options.copy_unix_owners) {
+        if(io.isrouted()) // long path
+            io.chown(_dest, src_stat_buffer.uid, src_stat_buffer.gid);
+        else
+            fchown(destinationfd, src_stat_buffer.uid, src_stat_buffer.gid);
+    }
     
     // change flags
-    if(m_Options.copy_unix_flags)
-        fchflags(destinationfd, src_stat_buffer.flags);
+    if(m_Options.copy_unix_flags) {
+        if(io.isrouted()) // long path
+            io.chflags(_dest, src_stat_buffer.flags);
+        else
+            fchflags(destinationfd, src_stat_buffer.flags);
+    }
     
     // adjust destination time as source
     if(m_Options.copy_file_times && adjust_dst_time)
@@ -572,7 +584,7 @@ cleanup:
         close(destinationfd);
         destinationfd = -1;
         if(unlink_on_stop)
-            unlink(_dest);
+            io.unlink(_dest);
     }
     if(destinationfd >= 0) close(destinationfd);
     return was_successful;

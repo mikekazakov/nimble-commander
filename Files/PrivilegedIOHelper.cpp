@@ -57,7 +57,7 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
         syslog(LOG_NOTICE, "processing heartbeat request");
         send_reply_ok(_event);
     }
-    else if( strcmp(_operation, "removeyourself") == 0 ) {
+    else if( strcmp(_operation, "uninstall") == 0 ) {
         char path[1024];
         proc_pidpath(getpid(), path, sizeof(path));
         if(unlink(path) == 0)

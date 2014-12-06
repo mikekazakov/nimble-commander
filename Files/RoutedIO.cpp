@@ -127,7 +127,7 @@ bool RoutedIO::TurnOn()
             xpc_connection_t connection = m_Connection;
             
             xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-            xpc_dictionary_set_string(message, "operation", "removeyourself");
+            xpc_dictionary_set_string(message, "operation", "uninstall");
             xpc_object_t reply = xpc_connection_send_message_with_reply_sync(connection, message);
             xpc_release(message);
             xpc_release(reply);

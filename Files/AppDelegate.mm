@@ -29,6 +29,7 @@
 #import "MASAppInstalledChecker.h"
 #import "TrialWindowController.h"
 #import "RoutedIO.h"
+#import "sysinfo.h"
 
 @implementation AppDelegate
 {
@@ -134,7 +135,8 @@
     menuitem("menu.files.try_full_version").hidden = configuration::version == configuration::Version::Full;
     menuitem("menu.files.try_full_version").title = configuration::version == configuration::Version::Lite ?
         @"Try Full Version" : @"Download Full Version";
-    menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full;
+    menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full ||
+        sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_10;
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);

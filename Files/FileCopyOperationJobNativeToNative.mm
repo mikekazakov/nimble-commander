@@ -1221,8 +1221,12 @@ dolseek: // find right position in destination file
     }
     
     // change flags
-    if(m_Options.copy_unix_flags)
-        fchflags(destinationfd, src_stat_buffer.st_flags);
+    if(m_Options.copy_unix_flags) {
+        if(io.isrouted()) // long path
+            io.chflags(_dest, src_stat_buffer.st_flags);
+        else
+            fchflags(destinationfd, src_stat_buffer.st_flags);
+    }
     
     // adjust destination time as source
     if(m_Options.copy_file_times && adjust_dst_time)

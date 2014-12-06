@@ -18,6 +18,14 @@
 // requires that identifier is right and binary is signed by me
 static const char *g_SignatureRequirement = "identifier info.filesmanager.Files and certificate leaf[subject.CN] = \"Developer ID Application: Mikhail Kazakov (AC5SJT236H)\"";
 
+#define syslog_error(...)   syslog(LOG_ERR, __VA_ARGS__)
+#define syslog_warning(...) syslog(LOG_WARNING, __VA_ARGS__)
+#ifdef DEBUG
+    #define syslog_notice(...)  syslog(LOG_NOTICE, __VA_ARGS__)
+#else
+    #define syslog_notice(...)
+#endif
+
 struct ConnectionContext
 {
     bool authenticated = false;
@@ -54,7 +62,7 @@ void send_reply_fd(xpc_object_t _from_event, int _fd)
 static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
 {
     if( strcmp(_operation, "heartbeat") == 0 ) {
-        syslog(LOG_NOTICE, "processing heartbeat request");
+        syslog_notice("processing heartbeat request");
         send_reply_ok(_event);
     }
     else if( strcmp(_operation, "uninstall") == 0 ) {
@@ -67,7 +75,7 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
     }
     else if( strcmp(_operation, "exit") == 0 ) {
         // no responce here
-        syslog(LOG_NOTICE, "goodbye, cruel world!");
+        syslog_notice("goodbye, cruel world!");
         exit(0);
     }
     else if( strcmp(_operation, "open") == 0 ) {
@@ -338,7 +346,7 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
 
 static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
 {
-   syslog(LOG_NOTICE, "Received event");
+   syslog_notice("Received event");
     
     xpc_type_t type = xpc_get_type(_event);
     
@@ -373,10 +381,10 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
         }
         
         if( const char *op = xpc_dictionary_get_string(_event, "operation") ) {
-            syslog(LOG_NOTICE, "received operation request: %s", op);
+            syslog_notice("received operation request: %s", op);
 
             if(!context->authenticated) {
-                syslog(LOG_NOTICE, "non-authenticated, dropping");
+                syslog_warning("non-authenticated, dropping");
                 send_reply_error(_event, EINVAL);
                 return;
                 
@@ -404,7 +412,7 @@ static bool AllowConnectionFrom(const char *_bin_path)
 
 static bool CheckSignature(const char *_bin_path)
 {
-    syslog(LOG_NOTICE, "Checking signature for: %s", _bin_path);
+    syslog_notice("Checking signature for: %s", _bin_path);
     
     if(!_bin_path)
         return false;
@@ -422,7 +430,7 @@ static bool CheckSignature(const char *_bin_path)
     if (ref == NULL || status != noErr)
         return false;
     
-    syslog(LOG_NOTICE, "Got a SecStaticCodeRef");
+    syslog_notice("Got a SecStaticCodeRef");
     
     // create the requirement to check against
     SecRequirementRef req = NULL;
@@ -433,11 +441,11 @@ static bool CheckSignature(const char *_bin_path)
         return false;
     }
     
-    syslog(LOG_NOTICE, "Built a SecRequirementRef");
+    syslog_notice("Built a SecRequirementRef");
     
     status = SecStaticCodeCheckValidity(ref, kSecCSCheckAllArchitectures, req);
     
-    syslog(LOG_NOTICE, "Called SecStaticCodeCheckValidity(), verdict: %s", status == noErr ? "valid" : "not valid");
+    syslog_notice("Called SecStaticCodeCheckValidity(), verdict: %s", status == noErr ? "valid" : "not valid");
     
     CFRelease(ref);
     CFRelease(req);
@@ -449,10 +457,10 @@ static void XPC_Connection_Handler(xpc_connection_t _connection)  {
     pid_t client_pid = xpc_connection_get_pid(_connection);
     char client_path[1024] = {0};
     proc_pidpath(client_pid, client_path, sizeof(client_path));
-    syslog(LOG_NOTICE, "Got an incoming connection from: %s", client_path);
+    syslog_notice("Got an incoming connection from: %s", client_path);
     
     if(!AllowConnectionFrom(client_path) || !CheckSignature(client_path)) {
-        syslog(LOG_NOTICE, "Client failed checking, dropping connection.");
+        syslog_warning("Client failed checking, dropping connection.");
         xpc_connection_cancel(_connection);
         return;
     }
@@ -475,7 +483,7 @@ int main(int argc, const char *argv[])
     if(getuid() != 0)
         return EXIT_FAILURE;
     
-    syslog(LOG_NOTICE, "main() start");
+    syslog_notice("main() start");
     
     umask(0); // no brakes!
 
@@ -484,18 +492,18 @@ int main(int argc, const char *argv[])
                                                                   XPC_CONNECTION_MACH_SERVICE_LISTENER);
     
     if (!service) {
-        syslog(LOG_NOTICE, "Failed to create service.");
+        syslog_error("Failed to create service.");
         exit(EXIT_FAILURE);
     }
     
-    syslog(LOG_NOTICE, "Configuring connection event handler for helper");
+    syslog_notice("Configuring connection event handler for helper");
     xpc_connection_set_event_handler(service, ^(xpc_object_t connection) {
         XPC_Connection_Handler((xpc_connection_t)connection);
     });
     
     xpc_connection_resume(service);
     
-    syslog(LOG_NOTICE, "runs dispatch_main()");
+    syslog_notice("runs dispatch_main()");
     dispatch_main();
     
     return EXIT_SUCCESS;

@@ -419,16 +419,16 @@
 
 - (IBAction)OnCalculateSizes:(id)sender {
     // suboptimal - may have regular files inside (not dirs)
-    [self CalculateSizesWithNames:self.GetSelectedEntriesOrFocusedEntryWithDotDot];
+    [self CalculateSizesWithNames:self.selectedEntriesOrFocusedEntryFilenamesWithDotDot];
 }
 
 - (IBAction)OnCalculateAllSizes:(id)sender {
-    chained_strings filenames;
+    vector<string> filenames;
     for(auto &i: *m_Data.Listing())
         if(i.IsDir() && !i.IsDotDot())
-            filenames.push_back(i.Name(), nullptr);
+            filenames.emplace_back(i.Name());
     
-    [self CalculateSizesWithNames:move(filenames)];
+    [self CalculateSizesWithNames:filenames];
 }
 
 - (IBAction)ToggleViewHiddenFiles:(id)sender{

@@ -33,17 +33,17 @@
 - (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot DEPRECATED_ATTRIBUTE;
 
 /**
- * Return a list of selected entries if any.
- * If no entries is selected - return currently selected element.
- */
-- (chained_strings) GetSelectedEntriesOrFocusedEntryWithDotDot DEPRECATED_ATTRIBUTE;
-
-/**
  * Return a list of selected entries filenames if any.
  * If no entries is selected - return currently focused element filename.
  * On case of only focused dot-dot entry return an empty list.
  */
 @property (nonatomic, readonly) vector<string> selectedEntriesOrFocusedEntryFilenames;
+
+/**
+ * Return a list of selected entries filenames if any.
+ * If no entries is selected - return currently focused element filename, including case of dot-dot.
+ */
+@property (nonatomic, readonly) vector<string> selectedEntriesOrFocusedEntryFilenamesWithDotDot;
 
 /**
  * Return current (topmost in vfs stack) VFS Host.

@@ -93,7 +93,7 @@ public:
                                 );
     
     virtual int CalculateDirectoriesSizes(
-                                        chained_strings _dirs,
+                                        const vector<string> &_dirs,
                                         const char* _root_path,
                                         VFSCancelChecker _cancel_checker,
                                         function<void(const char* _dir_sh_name, uint64_t _size)> _completion_handler);

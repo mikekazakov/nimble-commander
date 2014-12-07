@@ -44,6 +44,20 @@
     return {};
 }
 
+- (vector<string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot
+{
+    if(!m_View)
+        return {};
+    
+    if(m_Data.Stats().selected_entries_amount)
+        return m_Data.SelectedEntriesFilenames();
+    
+    if(auto item = m_View.item)
+        return vector<string>{ item->Name() };
+    
+    return {};
+}
+
 - (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot
 {
     if(!m_View)
@@ -57,24 +71,6 @@
     {
         auto item = m_View.item;
         if(item && !item->IsDotDot())
-            return chained_strings(item->Name());
-        
-        return chained_strings();
-    }
-}
-
-- (chained_strings) GetSelectedEntriesOrFocusedEntryWithDotDot
-{
-    if(!m_View)
-        return chained_strings();
-    
-    if(m_Data.Stats().selected_entries_amount)
-    {
-        return m_Data.StringsFromSelectedEntries();
-    }
-    else
-    {
-        if(auto item = m_View.item)
             return chained_strings(item->Name());
         
         return chained_strings();

@@ -648,10 +648,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (void)SavePanelPaths
 {
-    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:self.leftPanelController.lastNativeDirectoryPath.c_str()]
-                                            forKey:@"FirstPanelPath"];
-    [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:self.rightPanelController.lastNativeDirectoryPath.c_str()]
-                                            forKey:@"SecondPanelPath"];
+    if(PanelController *pc = self.leftPanelController)
+        [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:pc.lastNativeDirectoryPath.c_str()] forKey:@"FirstPanelPath"];
+    if(PanelController *pc = self.rightPanelController)
+        [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:pc.lastNativeDirectoryPath.c_str()] forKey:@"SecondPanelPath"];
 }
 
 - (bool)WindowShouldClose:(MainWindowController*)sender
@@ -741,7 +741,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(filenames.empty()) // invalid pasteboard?
         return;
     
-    string destination = self.activePanelData->DirectoryPathWithTrailingSlash();
+    string destination = self.activePanelController.currentDirectoryPath;
     
     for(auto i: filenames)
     {

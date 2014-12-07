@@ -190,7 +190,7 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
 }
 
 int VFSHost::CalculateDirectoriesSizes(
-                                    chained_strings _dirs,
+                                    const vector<string> &_dirs,
                                     const char *_root_path,
                                     VFSCancelChecker _cancel_checker,
                                     function<void(const char* _dir_sh_name, uint64_t _size)> _completion_handler
@@ -200,33 +200,22 @@ int VFSHost::CalculateDirectoriesSizes(
        _root_path[0] != '/')
         return VFSError::InvalidCall;
     
-    queue<string> look_paths;
+    queue<path> look_paths;
     int64_t total_size = 0;
     
-    if(_dirs.singleblock() &&
-       _dirs.size() == 1 &&
-       strisdotdot(_dirs.front().c_str()) )
-    { // special case for a single ".." entry
-        char path[MAXPATHLEN];
-        strcpy(path, _root_path);
-        *(strrchr(path, '/')+1) = 0;
-    
-        look_paths.emplace(path);
+    if(_dirs.size() == 1 && strisdotdot(_dirs.front()) ) { // special case for a single ".." entry
+        look_paths.emplace(_root_path);
         while(!look_paths.empty()) {
             if(_cancel_checker && _cancel_checker()) // check if we need to quit
                 return VFSError::Cancelled;
                 
             IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
-                char full_path[MAXPATHLEN];
-                strcpy(full_path, look_paths.front().c_str());
-                strcat(full_path, _dirent.name);
-                if(_dirent.type == VFSDirEnt::Dir) {
-                    strcat(full_path, "/");
-                    look_paths.emplace(full_path);
-                }
+                path full_path = look_paths.front() / _dirent.name;
+                if(_dirent.type == VFSDirEnt::Dir)
+                    look_paths.emplace(move(full_path));
                 else {
                     VFSStat stat;
-                    if(Stat(full_path, stat, VFSFlags::F_NoFollow, 0) == 0)
+                    if(Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, 0) == 0)
                         total_size += stat.size;
                 }
                 return true;
@@ -236,36 +225,21 @@ int VFSHost::CalculateDirectoriesSizes(
             
         _completion_handler("..", total_size);
     }
-    else
-    {
-        char path[MAXPATHLEN];
-        strcpy(path, _root_path);
-        if(path[ strlen(path)-1] != '/')
-            strcat(path, "/");
-        char *var = path + strlen(path);
-        
-        for(const auto &i: _dirs)
-        {
+    else { // regular dirs lookup
+        for(auto &i: _dirs) {
             total_size = 0;
-            memcpy(var, i.c_str(), i.size());
-            memcpy(var+i.size(), "/", 2);
-
-            look_paths.emplace(path);
+            look_paths.emplace(path(_root_path) / i);
             while(!look_paths.empty()) {
                 if(_cancel_checker && _cancel_checker()) // check if we need to quit
                     return VFSError::Cancelled;
                 
                 IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
-                    char full_path[MAXPATHLEN];
-                    strcpy(full_path, look_paths.front().c_str());
-                    strcat(full_path, _dirent.name);
-                    if(_dirent.type == VFSDirEnt::Dir) {
-                        strcat(full_path, "/");
-                        look_paths.emplace(full_path);
-                    }
+                    path full_path = look_paths.front() / _dirent.name;
+                    if(_dirent.type == VFSDirEnt::Dir)
+                        look_paths.emplace(move(full_path));
                     else {
                         VFSStat stat;
-                        if(Stat(full_path, stat, VFSFlags::F_NoFollow, 0) == 0)
+                        if(Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, 0) == 0)
                             total_size += stat.size;
                     }
                     return true;

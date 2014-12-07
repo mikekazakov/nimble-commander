@@ -155,7 +155,7 @@ cleanup:
 
 
 int VFSNativeHost::CalculateDirectoriesSizes(
-                                      chained_strings _dirs,
+                                      const vector<string> &_dirs,
                                       const char *_root_path, // relative to current host path
                                       VFSCancelChecker _cancel_checker,
                                       function<void(const char* _dir_sh_name, uint64_t _size)> _completion_handler
@@ -181,9 +181,7 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     
     int error = VFSError::Ok;
     
-    if(_dirs.singleblock() &&
-       _dirs.size() == 1 &&
-       strisdotdot(_dirs.front().c_str()) )
+    if(_dirs.size() == 1 && strisdotdot(_dirs.front()) )
     { // special case for a single ".." entry
         int64_t size = 0;
         int result = CalculateDirectoriesSizesHelper(path, strlen(path), &iscancelling, _cancel_checker, stat_queue, &size);

@@ -487,9 +487,9 @@ void panel::GenericCursorPersistance::Restore()
     return false;
 }
 
-- (void) CalculateSizesWithNames:(chained_strings) _filenames
+- (void) CalculateSizesWithNames:(const vector<string>&) _filenames
 {
-    auto complet = ^(const char* _sub_dir, uint64_t _size) {
+    function<void(const char*, uint64_t)> complet = [=](const char* _sub_dir, uint64_t _size) {
         string sub_dir = _sub_dir;
         dispatch_to_main_queue(^{
             panel::GenericCursorPersistance pers(m_View, m_Data);
@@ -502,15 +502,12 @@ void panel::GenericCursorPersistance::Restore()
         });
     };
     
-    string current_dir = m_Data.DirectoryPathWithTrailingSlash();
-    auto dir_names = make_shared<chained_strings>(move(_filenames));
+    string current_dir = self.currentDirectoryPath;
     m_DirectorySizeCountingQ->Run([=](const SerialQueue &_q){
-        self.vfs->CalculateDirectoriesSizes(move(*dir_names),
-                                                       current_dir.c_str(),
-                                                       ^bool {
-                                                           return _q->IsStopped();
-                                                       },
-                                                       complet);
+        self.vfs->CalculateDirectoriesSizes(_filenames,
+                                            current_dir.c_str(),
+                                            [=]{ return _q->IsStopped(); },
+                                            complet);
     });
 }
 

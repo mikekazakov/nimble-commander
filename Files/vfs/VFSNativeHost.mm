@@ -225,7 +225,7 @@ bool VFSNativeHost::IsDirChangeObservingAvailable(const char *_path)
 {
     if(!_path)
         return false;
-    return access(_path, R_OK) == 0;
+    return access(_path, R_OK) == 0; // should use _not_ routed I/O here!
 }
 
 unsigned long VFSNativeHost::DirChangeObserve(const char *_path, function<void()> _handler)

@@ -349,12 +349,12 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
         const int passes=3;
 
         struct stat st;
-        if( lstat(_full_path, &st) == 0 && (st.st_mode & S_IFMT) == S_IFLNK)
+        if( io.lstat(_full_path, &st) == 0 && (st.st_mode & S_IFMT) == S_IFLNK)
         {
             // just unlink a symlink, do not try to fill it with trash -
             // it produces fancy "Too many levels of symbolic links" error
             unlink_symlink:
-            if(unlink(_full_path) != 0)
+            if(io.unlink(_full_path) != 0)
             {
                 if (!m_SkipAll)
                 {
@@ -370,7 +370,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
         }
         
     retry_open:
-        int fd = open(_full_path, O_WRONLY|O_EXLOCK|O_NOFOLLOW);
+        int fd = io.open(_full_path, O_WRONLY|O_EXLOCK|O_NOFOLLOW);
         if(fd != -1)
         {
             // TODO: error handlings!!!
@@ -410,7 +410,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
             
         retry_unlink:
             // now delete it on file system level
-            if(unlink(_full_path) != 0)
+            if(io.unlink(_full_path) != 0)
             {
                 if (!m_SkipAll)
                 {

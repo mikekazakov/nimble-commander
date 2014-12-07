@@ -65,7 +65,7 @@ static atomic<int> g_IsCurrentlySharing(0);
     return g_IsCurrentlySharing > 0;
 }
 
-- (void) ShowItems:(chained_strings)_entries
+- (void) ShowItems:(const vector<string>&)_entries
              InDir:(string)_dir
              InVFS:(shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
@@ -78,7 +78,7 @@ static atomic<int> g_IsCurrentlySharing(0);
         NSMutableArray *items = [NSMutableArray new];
         for(auto &i:_entries)
         {
-            string path = _dir + i.c_str();
+            string path = _dir + i;
             NSString *s = [NSString stringWithUTF8String:path.c_str()];
             if(s)
             {
@@ -99,9 +99,8 @@ static atomic<int> g_IsCurrentlySharing(0);
     }
     else
     { // need to move selected entires to native fs now, so going async here
-        __block auto entries(move(_entries));
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            for(auto &i:entries)
+            for(auto &i:_entries)
             {
                 string path = _dir + i.c_str();
                 VFSStat st;

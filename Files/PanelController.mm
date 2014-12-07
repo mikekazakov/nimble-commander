@@ -17,9 +17,6 @@
 #import "FileCopyOperation.h"
 #import "SandboxManager.h"
 
-// remove me
-#import "RoutedIO.h"
-
 static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
 static NSString *g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
@@ -609,12 +606,12 @@ void panel::GenericCursorPersistance::Restore()
     if(SharingService.IsCurrentlySharing)
         return;
     
-    auto files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    auto files = self.selectedEntriesOrFocusedEntryFilenames;
     if(files.empty())
         return;
     
-    [[SharingService new] ShowItems:move(files)
-                              InDir:m_Data.DirectoryPathWithTrailingSlash()
+    [[SharingService new] ShowItems:files
+                              InDir:self.currentDirectoryPath
                               InVFS:self.vfs
                      RelativeToRect:[sender bounds]
                              OfView:sender
@@ -634,7 +631,7 @@ void panel::GenericCursorPersistance::Restore()
 
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
 {
-    const VFSListingItem* cur_focus = m_View.item;
+    auto cur_focus = m_View.item;
     if(!cur_focus || cur_focus->IsDotDot())
         return nil;
     

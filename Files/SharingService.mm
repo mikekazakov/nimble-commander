@@ -99,10 +99,11 @@ static atomic<int> g_IsCurrentlySharing(0);
     }
     else
     { // need to move selected entires to native fs now, so going async here
+        vector<string> entries = _entries;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            for(auto &i:_entries)
+            for(auto &i:entries)
             {
-                string path = _dir + i.c_str();
+                string path = _dir + i;
                 VFSStat st;
                 if(_host->IsDirectory(path.c_str(), 0, 0)) continue; // will skip any directories here
                 if(_host->Stat(path.c_str(), st, 0, 0) < 0) continue;

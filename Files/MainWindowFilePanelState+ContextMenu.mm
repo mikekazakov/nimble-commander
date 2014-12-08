@@ -655,7 +655,7 @@ proceed:;
     string current_pan_path = m_CurrentController.currentDirectoryPath;
     [op AddOnFinishHandler:^{
         if(m_CurrentController.currentDirectoryPath == current_pan_path)
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 PanelControllerDelayedSelection req;
                 req.filename = target_fns;
                 [m_CurrentController ScheduleDelayedSelectionChangeFor:req checknow:true];

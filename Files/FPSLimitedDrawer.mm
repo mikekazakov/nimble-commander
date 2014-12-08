@@ -68,7 +68,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
             if(dispatch_is_main_queue())
                 [self setupTimer];
             else
-                dispatch_to_main_queue(^{ [self setupTimer]; });
+                dispatch_to_main_queue([=]{ [self setupTimer]; });
         }
     }
     else

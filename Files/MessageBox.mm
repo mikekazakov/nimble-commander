@@ -17,7 +17,7 @@
 - (void)ShowSheetWithHandler: (NSWindow *)_for_window handler:(MessageBoxCompletionHandler)_handler
 {
     m_Handler = _handler;
-    dispatch_to_main_queue( ^(){
+    dispatch_to_main_queue( [=]{
     [self beginSheetModalForWindow:_for_window
                      modalDelegate:self
                      didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)

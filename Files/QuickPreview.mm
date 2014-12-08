@@ -85,11 +85,11 @@ static const nanoseconds g_Delay = 100ms;
     if( !dir ) {
         VFSStat st;
         if(_host->Stat(_path.c_str(), st, 0, 0) < 0) {
-            dispatch_to_main_queue( ^{ self.previewItem = nil; });
+            dispatch_to_main_queue( [=]{ self.previewItem = nil; });
             return;
         }
         if(st.size > g_MaxFileSizeForVFSQL) {
-            dispatch_to_main_queue( ^{ self.previewItem = nil; });
+            dispatch_to_main_queue( [=]{ self.previewItem = nil; });
             return;
         }
         
@@ -98,7 +98,7 @@ static const nanoseconds g_Delay = 100ms;
             return;
         NSString *fn = [NSString stringWithUTF8StdString:tmp];
         if(!m_Closed && _ticket == m_CurrentPreviewTicket)
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 if(!m_Closed)
                     self.previewItem = [NSURL fileURLWithPath:fn];
             });
@@ -108,7 +108,7 @@ static const nanoseconds g_Delay = 100ms;
         if(!path(_path).has_extension() ||
            path(_path).filename() == path(_path).extension() ) {
             if(!m_Closed)
-                dispatch_to_main_queue( ^{ self.previewItem = nil; });
+                dispatch_to_main_queue( [=]{ self.previewItem = nil; });
             return;
         }
         
@@ -117,7 +117,7 @@ static const nanoseconds g_Delay = 100ms;
             return;
         NSString *fn = [NSString stringWithUTF8StdString:tmp];
         if(!m_Closed && _ticket == m_CurrentPreviewTicket)
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 if(!m_Closed)
                     self.previewItem = [NSURL fileURLWithPath:fn];
             });
@@ -135,14 +135,14 @@ static const nanoseconds g_Delay = 100ms;
     uint64_t ticket = ++m_CurrentPreviewTicket;
   
     if(_host->IsNativeFS())
-        dispatch_to_main_queue_after(g_Delay, ^{
+        dispatch_to_main_queue_after(g_Delay, [=]{
             if(ticket != m_CurrentPreviewTicket || m_Closed)
                 return;
             [self doPreviewItemNative:path];
         });
     else {
         VFSHostPtr host = _host;
-        dispatch_after(g_Delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_after(g_Delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [=]{
             if(ticket == m_CurrentPreviewTicket)
                 [self doPreviewItemVFS:path vfs:host ticket:ticket];
         });

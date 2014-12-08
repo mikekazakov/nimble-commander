@@ -46,7 +46,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
         return;
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_to_default([=]{
         if(_host->IsDirectory(_filename.c_str(), 0, 0))
             return;
         
@@ -63,7 +63,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
             return;
         
         NSString *fn = [NSString stringWithUTF8StdString:tmp];
-        dispatch_to_main_queue( ^{
+        dispatch_to_main_queue([=]{
             
             if(!_with_app_path.empty())
             {

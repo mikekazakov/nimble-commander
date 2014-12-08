@@ -124,7 +124,7 @@ void panel::GenericCursorPersistance::Restore()
         
         __weak PanelController* weakself = self;
         auto on_change = ^{
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue([=]{
                 [(PanelController*)weakself UpdateSpinningIndicator];
             });
         };
@@ -409,7 +409,7 @@ void panel::GenericCursorPersistance::Restore()
         int ret = vfs->FetchDirectoryListing(dirpath.c_str(), &listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
         if(ret >= 0)
         {
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 panel::GenericCursorPersistance pers(m_View, m_Data);
                 
                 m_Data.ReLoad(listing);
@@ -424,7 +424,7 @@ void panel::GenericCursorPersistance::Restore()
         }
         else
         {
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 [self RecoverFromInvalidDirectory];
             });
         }
@@ -488,7 +488,7 @@ void panel::GenericCursorPersistance::Restore()
 {
     function<void(const char*, uint64_t)> complet = [=](const char* _sub_dir, uint64_t _size) {
         string sub_dir = _sub_dir;
-        dispatch_to_main_queue(^{
+        dispatch_to_main_queue([=]{
             panel::GenericCursorPersistance pers(m_View, m_Data);
             // may cause re-sorting if current sorting is by size
             if(m_Data.SetCalculatedSizeForDirectory(sub_dir.c_str(), _size))
@@ -545,7 +545,7 @@ void panel::GenericCursorPersistance::Restore()
         
     if(is_anything_working)
     {
-        dispatch_to_main_queue_after(100ms, ^{ // in 100 ms of workload should be before user will get spinning indicator
+        dispatch_to_main_queue_after(100ms, [=]{ // in 100 ms of workload should be before user will get spinning indicator
                            if(m_IsAnythingWorksInBackground) // need to check if task was already done
                            {
                                [m_SpinningIndicator startAnimation:nil];
@@ -703,7 +703,7 @@ void panel::GenericCursorPersistance::Restore()
     auto curr_vfs = self.vfs;
     [op AddOnFinishHandler:^{
         if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 PanelControllerDelayedSelection req;
                 req.filename = target_fn;
                 [self ScheduleDelayedSelectionChangeFor:req checknow:true];

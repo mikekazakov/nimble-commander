@@ -769,7 +769,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         
         __weak PanelController *wpc = self.activePanelController;
         [op AddOnFinishHandler:^{
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 if(PanelController *pc = wpc) [pc RefreshDirectory];
             });
         }];
@@ -841,7 +841,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         // Check if the skin value was modified.
         if ([keyPath isEqualToString:g_DefsGeneralShowTabs]) {
             bool show = [defaults boolForKey:g_DefsGeneralShowTabs];
-            dispatch_to_main_queue_after(1ms, ^{
+            dispatch_to_main_queue_after(1ms, [=]{
                 m_ShowTabs = show;
                 [self updateTabBarsVisibility];
             });

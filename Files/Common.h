@@ -48,20 +48,23 @@ nanoseconds machtime() noexcept;
 /** returns true if a current thread is actually a main thread (main queue). I.E. UI/Events thread. */
 bool dispatch_is_main_queue() noexcept;
 
-/** syntax sugar for dispatch_async(dispatch_get_main_queue(), ...) call. */
-void dispatch_to_main_queue(dispatch_block_t _block) noexcept;
+/** syntax sugar for dispatch_async_f(dispatch_get_main_queue(), ...) call. */
+void dispatch_to_main_queue(function<void()> _block);
 
-/** syntax sugar for dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ...) call. */
-void dispatch_to_background(dispatch_block_t _block) noexcept;
+/** syntax sugar for dispatch_async_f(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ...) call. */
+void dispatch_to_default(function<void()> _block);
 
-/** syntax sugar for dispatch_after(..., dispatch_get_main_queue(), _block) call. */
-void dispatch_to_main_queue_after(nanoseconds _delay, dispatch_block_t _block) noexcept;
+/** syntax sugar for dispatch_async_f(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ...) call. */
+void dispatch_to_background(function<void()> _block);
+
+/** syntax sugar for dispatch_after_f(..., dispatch_get_main_queue(), _block) call. */
+void dispatch_to_main_queue_after(nanoseconds _delay, function<void()> _block);
 
 /** if current thread is main - just execute a block. otherwise - dispatch it asynchronously to main thread. */
-void dispatch_or_run_in_main_queue(dispatch_block_t _block);
+void dispatch_or_run_in_main_queue(function<void()> _block);
 
 /** syntax sugar around dispatch_time(), using C++ function overloading */
-void dispatch_after(nanoseconds _delay, dispatch_queue_t _queue, dispatch_block_t _block) noexcept;
+void dispatch_after(nanoseconds _delay, dispatch_queue_t _queue, function<void()> _block);
 
 struct MachTimeBenchmark
 {

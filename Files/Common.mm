@@ -338,29 +338,41 @@ bool dispatch_is_main_queue() noexcept
     return NSThread.isMainThread;
 }
 
-void dispatch_to_main_queue(dispatch_block_t block) noexcept
+static void dispatch_run_cpp_lambda(void* context)
 {
-    dispatch_async(dispatch_get_main_queue(), block);
+    function<void()>* lambda = reinterpret_cast<function<void()>*>(context);
+    (*lambda)();
+    delete lambda;
 }
 
-void dispatch_to_main_queue_after(nanoseconds _delay, dispatch_block_t _block) noexcept
+void dispatch_to_main_queue_after(nanoseconds _delay, function<void()> _block)
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, _delay.count()), dispatch_get_main_queue(), _block);
+    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, _delay.count()), dispatch_get_main_queue(), new function<void()>( move(_block) ), &dispatch_run_cpp_lambda);
 }
 
-void dispatch_after(nanoseconds _delay, dispatch_queue_t _queue, dispatch_block_t _block) noexcept
+void dispatch_after(nanoseconds _delay, dispatch_queue_t _queue, function<void()> _block)
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, _delay.count()), _queue, _block);
+    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, _delay.count()), _queue, new function<void()>( move(_block) ), &dispatch_run_cpp_lambda);
 }
 
-void dispatch_or_run_in_main_queue(dispatch_block_t block)
+void dispatch_to_main_queue(function<void()> _block)
 {
-    dispatch_is_main_queue() ? block() : dispatch_to_main_queue(block);
+    dispatch_async_f(dispatch_get_main_queue(), new function<void()>( move(_block) ), &dispatch_run_cpp_lambda);
 }
 
-void dispatch_to_background(dispatch_block_t _block) noexcept
+void dispatch_to_default(function<void()> _block)
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), _block);
+    dispatch_async_f(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), new function<void()>( move(_block) ), &dispatch_run_cpp_lambda);
+}
+
+void dispatch_to_background(function<void()> _block)
+{
+    dispatch_async_f(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), new function<void()>( move(_block) ), &dispatch_run_cpp_lambda);
+}
+
+void dispatch_or_run_in_main_queue(function<void()> block)
+{
+    dispatch_is_main_queue() ? block() : dispatch_to_main_queue(move(block));
 }
 
 MachTimeBenchmark::MachTimeBenchmark() noexcept:

@@ -547,7 +547,7 @@ struct PanelViewStateStorage
         if( m_LastPotentialRenamingLBDown >= 0 && m_LastPotentialRenamingLBDown == cursor_pos ) {
             static const nanoseconds delay = milliseconds( int(NSEvent.doubleClickInterval*1000) );
             uint64_t renaming_ticket = ++m_FieldRenamingRequestTicket;
-            dispatch_to_main_queue_after(delay, ^{
+            dispatch_to_main_queue_after(delay,[=]{
                                if(renaming_ticket == m_FieldRenamingRequestTicket)
                                    [self startFieldEditorRenamingByEvent:_event];
                            });

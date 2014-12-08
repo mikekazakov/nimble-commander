@@ -105,7 +105,7 @@ static void CheckForNewVersion()
 void NewVersionChecker::Go()
 {
     // go background async immediately, so don't pause startup process for any milliseconds
-    dispatch_to_background(^{
+    dispatch_to_background([]{
         NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
         if(NSData *d = [defaults dataForKey:g_DefKey])
         {
@@ -126,7 +126,7 @@ void NewVersionChecker::Go()
             [defaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:g_DefKey];
         }
         
-        dispatch_after(24h + 1s, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        dispatch_after(24h + 1s, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), []{
                 Go();
                 }
             );

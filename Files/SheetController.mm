@@ -28,7 +28,7 @@
            completionHandler:(void (^)(NSModalResponse returnCode))_handler
 {
     if(!dispatch_is_main_queue()) {
-        dispatch_to_main_queue(^{
+        dispatch_to_main_queue([=]{
             [self beginSheetForWindow:_wnd completionHandler:_handler];
         });
         return;
@@ -69,7 +69,7 @@
         [NSApp endSheet:self.window
              returnCode:returnCode];
     if(release_self)
-        dispatch_to_main_queue_after(1ms, ^{
+        dispatch_to_main_queue_after(1ms, [=]{
             m_Self = nil;
         });
 }

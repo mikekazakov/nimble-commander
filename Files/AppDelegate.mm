@@ -494,7 +494,7 @@
     if(configuration::version != configuration::Version::Full)
         return;
     
-    dispatch_to_background(^{
+    dispatch_to_background([=]{
         string app_name = "Files Pro.app";
         string app_id   = "info.filesmanager.Files-Pro";
         
@@ -533,7 +533,7 @@
             return;
         
         // finally - show a nag screen
-        dispatch_to_main_queue_after(500ms, ^{
+        dispatch_to_main_queue_after(500ms, [=]{
             TrialWindowController* twc = [[TrialWindowController alloc] init];
             [twc.window makeKeyAndOrderFront:self];
             [twc.window makeMainWindow];

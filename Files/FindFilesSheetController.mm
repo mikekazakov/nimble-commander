@@ -214,7 +214,7 @@ static const int g_MaximumSearchResults = 16384;
 
 - (void) OnFinishedSearch
 {
-    dispatch_to_main_queue(^{
+    dispatch_to_main_queue([=]{
         self.SearchButton.state = NSOffState;
 
         [self UpdateByTimer:m_BatchDrainTimer];
@@ -365,7 +365,7 @@ static const int g_MaximumSearchResults = 16384;
         NSArray *temp = m_FoundItemsBatch;
         m_FoundItemsBatch = [NSMutableArray new];
         
-        dispatch_to_main_queue(^{
+        dispatch_to_main_queue([=]{
             [self.ArrayController addObjects:temp];
         });
     });

@@ -60,7 +60,7 @@ static const nanoseconds g_ShowDelay = 150ms;
     
     if(m_Running == true)
         return;
-    dispatch_to_main_queue_after(g_ShowDelay, ^{
+    dispatch_to_main_queue_after(g_ShowDelay,[=]{
         if(m_ClientClosed)
             return;
         [self showWindow:self];
@@ -79,7 +79,7 @@ static const nanoseconds g_ShowDelay = 150ms;
     if(m_Running == false)
         return;
     
-    dispatch_to_main_queue(^{ [self.window close]; });
+    dispatch_to_main_queue([=]{ [self.window close]; });
     m_Running = false;
 }
 

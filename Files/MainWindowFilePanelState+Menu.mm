@@ -276,7 +276,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
              
              if(op) {
                  [op AddOnFinishHandler:^{
-                     dispatch_to_main_queue( ^{
+                     dispatch_to_main_queue( [=]{
                          [(PanelController*)act RefreshDirectory];
                          [(PanelController*)opp RefreshDirectory];
                      });
@@ -342,7 +342,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
              if(op)
              {
                  [op AddOnFinishHandler:^{
-                     dispatch_to_main_queue( ^{
+                     dispatch_to_main_queue( [=]{
                          [(PanelController*)act RefreshDirectory];
                          [(PanelController*)opp RefreshDirectory];
                      });
@@ -404,7 +404,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
              
              if(op) {
                  [op AddOnFinishHandler:^{
-                     dispatch_to_main_queue( ^{
+                     dispatch_to_main_queue( [=]{
                          [(PanelController*)act RefreshDirectory];
                          [(PanelController*)opp RefreshDirectory];
                      });
@@ -472,7 +472,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
                      single_fn_rename = req_path.filename().native();
                  
                  [op AddOnFinishHandler:^{
-                     dispatch_to_main_queue( ^{
+                     dispatch_to_main_queue( [=]{
                          PanelController* active = act;
                          [active RefreshDirectory];
                          [(PanelController*)opp RefreshDirectory];

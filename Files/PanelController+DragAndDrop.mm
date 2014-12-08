@@ -511,7 +511,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                            dstvfs:self.vfs
                                                           options:opts]; // vfs->vfs
                 [op AddOnFinishHandler:^{
-                    dispatch_to_main_queue( ^{
+                    dispatch_to_main_queue([=]{
                         [self RefreshDirectory];
                     });
                 }];
@@ -540,7 +540,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 __weak PanelController *src_cntr = source_controller;
                 __weak PanelController *dst_cntr = self;
                 [op AddOnFinishHandler:^{
-                    dispatch_to_main_queue( ^{
+                    dispatch_to_main_queue([=]{
                         if(PanelController *pc = src_cntr) [pc RefreshDirectory];
                         if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
                     });

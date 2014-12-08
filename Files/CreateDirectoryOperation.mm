@@ -96,7 +96,7 @@
             // select new entry only if it was a short path
             PanelController *target = self.TargetPanel;
             
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 [target RefreshDirectory];
                 PanelControllerDelayedSelection req;
                 req.filename = m_OriginalPathRequest;

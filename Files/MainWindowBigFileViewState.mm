@@ -406,12 +406,12 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         if(m_SearchInFile->IsEOF())
             m_SearchInFile->MoveCurrentPosition(0);
         
-        dispatch_to_main_queue( ^{[self NotifySearching];});
+        dispatch_to_main_queue( [=]{[self NotifySearching];});
         auto result = m_SearchInFile->Search(&offset, &len, ^{return m_SearchInFileQueue->IsStopped();});
-        dispatch_to_main_queue( ^{[self NotifySearching];});
+        dispatch_to_main_queue( [=]{[self NotifySearching];});
         
         if(result == SearchInFile::Result::Found)
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 m_View.selectionInFile = CFRangeMake(offset, len);
                 [m_View ScrollToSelection];
             });
@@ -421,7 +421,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 - (void)NotifySearching
 {
     if(!m_SearchInFileQueue->Empty())
-        dispatch_to_main_queue_after(100ms, ^{ // should be 100 ms of workload before user will get spinning indicator
+        dispatch_to_main_queue_after(100ms, [=]{ // should be 100 ms of workload before user will get spinning indicator
                            if(!m_SearchInFileQueue->Empty()) // need to check if task was already done
                                [m_SearchIndicator startAnimation:self];
                        });

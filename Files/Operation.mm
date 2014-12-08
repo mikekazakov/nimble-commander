@@ -191,7 +191,7 @@ static void ReportProgress(void* _op, double _progress) {
 {
     m_Job->GetStats().PauseTimeTracking();
     
-    dispatch_to_main_queue( ^(){
+    dispatch_to_main_queue( [=]{
         // Enqueue dialog.
         [_dialog OnDialogEnqueued:self];
 

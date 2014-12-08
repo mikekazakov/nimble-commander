@@ -207,7 +207,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     if (object == defaults) {
         if ([keyPath isEqualToString:g_DefsShowToolbar]) {
             m_ToolbarVisible = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar];
-            dispatch_to_main_queue(^{
+            dispatch_to_main_queue([=]{
                 if(self.window.toolbar)
                     self.window.toolbar.visible = self.toolbarVisible;
                 [self updateTitleVisibility];
@@ -275,7 +275,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
         MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:frame];
         
         if([state OpenFile:_filepath.c_str() with_fs:_host])
-            dispatch_to_main_queue(^{
+            dispatch_to_main_queue([=]{
                 [self PushNewWindowState:state];
             });
     });

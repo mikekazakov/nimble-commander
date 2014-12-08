@@ -302,7 +302,7 @@ static CGColorRef DividerColor(bool _wnd_active)
 {
     if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
         m_DividerThickness = AppDelegate.me.skin == ApplicationSkin::Classic ? 0 : 1;
-        dispatch_to_main_queue_after(1ms, ^{ [self resizeSubviewsManually]; });
+        dispatch_to_main_queue_after(1ms, [=]{ [self resizeSubviewsManually]; });
     }
 }
 

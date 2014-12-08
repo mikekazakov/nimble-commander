@@ -163,7 +163,7 @@
     string arc_name = m_ArchiveName.UTF8String;
     PanelController *target = self.TargetPanel;
     
-    dispatch_to_main_queue( ^{
+    dispatch_to_main_queue( [=]{
         [target RefreshDirectory];
         PanelControllerDelayedSelection req;
         req.filename = arc_name;

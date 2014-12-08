@@ -28,9 +28,9 @@
                                VFSNativeHost::SharedHost()) == 0);
     
     FileDeletionOperation *op = [FileDeletionOperation alloc];
-    op = [op initWithFiles:chained_strings("Mail.app")
+    op = [op initWithFiles:vector<string>{"Mail.app"}
                       type:FileDeletionOperationType::Delete
-                  rootpath:dir];
+                       dir:dir];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];

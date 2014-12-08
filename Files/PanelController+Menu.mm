@@ -226,7 +226,7 @@
                     [alert addButtonWithTitle:@"OK"];
                     [alert runModal];
                 });
-            dispatch_to_main_queue(^{
+            dispatch_to_main_queue([=]{
                 m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
                 [self GoToDir:path vfs:host select_entry:"" async:true];
             });
@@ -264,7 +264,7 @@
                     [alert addButtonWithTitle:@"OK"];
                     [alert runModal];
                 });
-            dispatch_to_main_queue(^{
+            dispatch_to_main_queue([=]{
                 m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
                 [self GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
             });
@@ -685,7 +685,7 @@
     bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
     [op AddOnFinishHandler:^{
-        dispatch_to_main_queue(^{
+        dispatch_to_main_queue([=]{
             PanelController *ss = ws;
             
             if(force_reload)
@@ -740,7 +740,7 @@
     bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
     [op AddOnFinishHandler:^{
-        dispatch_to_main_queue(^{
+        dispatch_to_main_queue([=]{
             PanelController *ss = ws;
             
             if(force_reload)

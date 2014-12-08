@@ -105,7 +105,7 @@
         [[window animator] setFrame:newFrame display:YES];
         [NSAnimationContext endGrouping];
         if([self.DisclosureTriangle state] == NSOnState)
-            dispatch_to_main_queue_after(nduration, ^{
+            dispatch_to_main_queue_after(nduration, [=]{
                                [self.DisclosureGroup setHidden:false];
                            });
     }

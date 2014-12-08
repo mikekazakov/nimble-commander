@@ -335,16 +335,16 @@ void VFSPSHost::UpdateCycle()
         if(_q->IsStopped())
             return;
 
-        __block auto procs = GetProcs();
+        auto procs = GetProcs();
         if(!_q->IsStopped())
         {
             auto me = weak_this;
-            dispatch_to_main_queue(^{
+            dispatch_to_main_queue([=,procs=move(procs)]{
                 if(!me.expired())
                     me.lock()->CommitProcs(move(procs));
             });
             
-            dispatch_to_main_queue_after(2s, ^{
+            dispatch_to_main_queue_after(2s, [=]{
                 if(!me.expired())
                     me.lock()->UpdateCycle();
             });

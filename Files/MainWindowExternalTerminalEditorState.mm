@@ -89,7 +89,7 @@
                 [strongself->m_View.FPSDrawer invalidate];
                 
                 //            tmb.Reset("Parsed in: ");
-                dispatch_to_main_queue( ^{
+                dispatch_to_main_queue( [=]{
                     [strongself->m_View adjustSizes:false];
                     if(newtitle)
                         [strongself updateTitle];
@@ -97,7 +97,7 @@
             }
         });
         m_Task->SetOnChildDied(^{
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 if(MainWindowExternalTerminalEditorState *strongself = weakself)
                     [(MainWindowController*)strongself.window.delegate ResignAsWindowState:strongself];
             });
@@ -184,7 +184,7 @@
                  [NSString stringWithUTF8String:m_Task->TaskBinaryName()],
                  [NSString stringWithUTF8String:m_FilePath.filename().c_str()]];
     
-    dispatch_or_run_in_main_queue(^{
+    dispatch_or_run_in_main_queue([=]{
         self.window.title = title;
     });
 }

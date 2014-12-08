@@ -76,7 +76,7 @@
 
 - (void)ShowDialogForWindow:(NSWindow *)_parent
 {
-    dispatch_to_main_queue( ^(){ // really need this dispatch_async?
+    dispatch_to_main_queue( [=]{ // really need this dispatch_async?
         [NSApp beginSheet: [self window]
            modalForWindow: _parent
             modalDelegate: self

@@ -30,8 +30,8 @@
     XCTAssert( VFSEasyCopyFile(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
     
     FileDeletionOperation *op = [FileDeletionOperation alloc];
-    op = [op initWithFiles:chained_strings("mach_kernel")
-                  rootpath:"/Public/!FilesTesting"
+    op = [op initWithFiles:vector<string>{"mach_kernel"}
+                       dir:"/Public/!FilesTesting"
                         at:host];
     
     __block bool finished = false;
@@ -57,8 +57,8 @@
     XCTAssert( VFSEasyCopyNode(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
     
     FileDeletionOperation *op = [FileDeletionOperation alloc];
-    op = [op initWithFiles:chained_strings("bin")
-                  rootpath:"/Public/!FilesTesting"
+    op = [op initWithFiles:vector<string>{"bin"}
+                       dir:"/Public/!FilesTesting"
                         at:host];
     
     __block bool finished = false;

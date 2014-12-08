@@ -76,7 +76,7 @@
 - (void)windowWillClose:(NSNotification *)notification
 {
     self.window.delegate = nil;    
-    dispatch_to_main_queue_after(10ms, ^{
+    dispatch_to_main_queue_after(10ms, [=]{
         m_Self = nil;
     });
 }

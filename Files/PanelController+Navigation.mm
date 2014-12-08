@@ -154,7 +154,7 @@
         // TODO: need an ability to show errors at least        
         
         [self CancelBackgroundOperations]; // clean running operations if any
-        dispatch_or_run_in_main_queue( ^{
+        dispatch_or_run_in_main_queue([=]{
             [m_View SavePathState];
             m_Data.Load(listing);
             [m_View dataUpdated];
@@ -190,7 +190,7 @@
             if(vfs->IterateDirectoryListing(path.c_str(), [](const VFSDirEnt &_dirent) {
                     return false;
                 }) >= 0) {
-                dispatch_to_main_queue(^{
+                dispatch_to_main_queue([=]{
                     [self GoToDir:path.native()
                               vfs:vfs
                      select_entry:""
@@ -207,7 +207,7 @@
         }
         
         // we can't work on this vfs. currently for simplicity - just go home
-        dispatch_to_main_queue(^{
+        dispatch_to_main_queue([=]{
             [self GoToDir:CommonPaths::Get(CommonPaths::Home)
                       vfs:VFSNativeHost::SharedHost()
              select_entry:""

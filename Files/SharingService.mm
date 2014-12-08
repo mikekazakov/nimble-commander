@@ -99,9 +99,8 @@ static atomic<int> g_IsCurrentlySharing(0);
     }
     else
     { // need to move selected entires to native fs now, so going async here
-        vector<string> entries = _entries;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            for(auto &i:entries)
+        dispatch_to_default([=]{
+            for(auto &i:_entries)
             {
                 string path = _dir + i;
                 VFSStat st;
@@ -123,7 +122,7 @@ static atomic<int> g_IsCurrentlySharing(0);
                             [items addObject:url];
                 
                 if([items count] > 0)
-                    dispatch_to_main_queue( ^{
+                    dispatch_to_main_queue( [=]{
                         NSSharingServicePicker *sharingServicePicker = [[NSSharingServicePicker alloc] initWithItems:items];
                         sharingServicePicker.delegate = self;
                         [sharingServicePicker showRelativeToRect:_rect

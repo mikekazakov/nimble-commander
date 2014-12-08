@@ -67,7 +67,7 @@
     
     [self AddOnFinishHandler:^{
         if(self.TargetPanel != nil) {
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 [self.TargetPanel RefreshDirectory];
             });
         }

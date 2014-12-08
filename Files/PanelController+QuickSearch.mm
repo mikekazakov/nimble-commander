@@ -177,7 +177,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
         
         // automatically remove prompt after g_FastSeachDelayTresh
         __weak PanelController *wself = self;
-        dispatch_to_main_queue_after(g_FastSeachDelayTresh + 1000ns, ^{
+        dispatch_to_main_queue_after(g_FastSeachDelayTresh + 1000ns, [=]{
             if(PanelController *sself = wself)
                 if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime()) {
                     sself->m_View.quickSearchPrompt = nil;

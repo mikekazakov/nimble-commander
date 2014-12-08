@@ -129,7 +129,7 @@
             [strongself->m_View.FPSDrawer invalidate];
             
             //            tmb.Reset("Parsed in: ");
-            dispatch_to_main_queue( ^{
+            dispatch_to_main_queue( [=]{
                 [strongself->m_View adjustSizes:false];
                 if(newtitle)
                     [strongself UpdateTitle];
@@ -179,7 +179,7 @@
         title = [NSString stringWithUTF8String:cwd.c_str()];
     }
 
-    dispatch_or_run_in_main_queue(^{
+    dispatch_or_run_in_main_queue([=]{
         self.window.title = title;
     });
 }

@@ -228,7 +228,7 @@ struct PanelViewStateStorage
 {
     if (m_Presentation)
         m_Presentation->OnFrameChanged([self frame]);
-    [self cancelFieldEditor];
+    [self commitFieldEditor];
 }
 
 - (PanelData*) data
@@ -371,7 +371,7 @@ struct PanelViewStateStorage
             [del PanelViewCursorChanged:self];
     
     m_LastPotentialRenamingLBDown = -1;
-    [self cancelFieldEditor];
+    [self commitFieldEditor];
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -637,7 +637,7 @@ struct PanelViewStateStorage
 {
     m_State.ViewType = _type;
     if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
-    [self cancelFieldEditor];
+    [self commitFieldEditor];
     self.needsDisplay = true;
 }
 
@@ -818,27 +818,34 @@ struct PanelViewStateStorage
     m_RenamingOriginalName = self.item->Name();
 }
 
-- (void)cancelFieldEditor
+- (void)commitFieldEditor
 {
-    if(m_RenamingEditor)
-    {
-        [self.window makeFirstResponder:self];
+    if(m_RenamingEditor) {
+        [self.window makeFirstResponder:self]; // will implicitly call textShouldEndEditing:
         [m_RenamingEditor removeFromSuperview];
+        m_RenamingEditor = nil;
     }
+    m_RenamingOriginalName = "";
 }
 
 - (void)discardFieldEditor
 {
     m_RenamingOriginalName = "";
-    [self cancelFieldEditor];
+    if(m_RenamingEditor) {
+        [self.window makeFirstResponder:self];
+        [m_RenamingEditor removeFromSuperview];
+        m_RenamingEditor = nil;
+    }
 }
 
 - (BOOL)textShouldEndEditing:(NSText *)textObject
 {
-    assert(m_RenamingEditor != nil);
+    if(!m_RenamingEditor)
+        return true;
+    
     if(!self.item || m_RenamingOriginalName != self.item->Name())
         return true;
-        
+    
     NSTextView *tv = m_RenamingEditor.documentView;
     [self.delegate PanelViewRenamingFieldEditorFinished:self text:tv.string];
     return true;
@@ -861,9 +868,8 @@ struct PanelViewStateStorage
 
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
-    if(commandSelector == NSSelectorFromString(@"cancelOperation:"))
-    {
-        [self cancelFieldEditor];
+    if(commandSelector == NSSelectorFromString(@"cancelOperation:")) {
+        [self discardFieldEditor];
         return true;
     }
     return false;
@@ -929,7 +935,7 @@ struct PanelViewStateStorage
 
 - (void) appWillResignActive
 {
-    [self cancelFieldEditor];
+    [self commitFieldEditor];
 }
 
 - (void) windowDidBecomeKey

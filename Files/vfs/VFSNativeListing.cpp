@@ -194,7 +194,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     if(_flags & VFSFlags::F_LoadDisplayNames)
         if(auto native_fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath())) {
             auto &dnc = DisplayNamesCache::Instance();
-            dnc.lock();
+            lock_guard<mutex> lock(dnc);
             for(auto &it: m_Items)
                 if(it.IsDir() && !it.IsDotDot()) {
                     auto &dn = dnc.DisplayNameForNativeFS(native_fs_info->basic.fs_id,
@@ -208,7 +208,6 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
                         CFRetain(it.cf_displayname);
                     }
                 }
-            dnc.unlock();
         }
 
     if(_checker && _checker())

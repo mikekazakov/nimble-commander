@@ -6,29 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-
-#import <sys/types.h>
-#import <sys/dirent.h>
-#import <sys/stat.h>
-#import <sys/time.h>
-#import <sys/xattr.h>
-#import <sys/attr.h>
-#import <sys/vnode.h>
-#import <sys/param.h>
-#import <sys/mount.h>
-#import <dirent.h>
-#import <unistd.h>
-#import <stdlib.h>
-
 #import "VFSNativeHost.h"
 #import "VFSNativeListing.h"
 #import "VFSNativeFile.h"
 #import "VFSError.h"
 #import "FSEventsDirUpdate.h"
 #import "Common.h"
-
 #import "NativeFSManager.h"
-
 #import "RoutedIO.h"
 
 const char *VFSNativeHost::Tag = "native";

@@ -7,7 +7,6 @@
 //
 
 #include "DisplayNamesCache.h"
-
 #include "Common.h"
 
 static_assert(sizeof(DisplayNamesCache::DisplayName) == 32, "");

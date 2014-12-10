@@ -6,27 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/types.h>
-#import <sys/dirent.h>
-#import <sys/stat.h>
-#import <dirent.h>
-#import <stddef.h>
-#import <fcntl.h>
-#import <string.h>
-#import <memory.h>
-#import <stdlib.h>
-
 #import "DisplayNamesCache.h"
 #import "NativeFSManager.h"
 #import "VFSNativeListing.h"
 #import "VFSNativeHost.h"
 #import "Common.h"
-
 #import "RoutedIO.h"
-
-// hack to access function from libc implementation directly.
-// this func does readdir but without mutex locking
-struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
 static_assert(sizeof(VFSNativeListingItem) == 128, "");
 

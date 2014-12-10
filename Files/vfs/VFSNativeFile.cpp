@@ -7,9 +7,6 @@
 //
 
 #import <sys/xattr.h>
-#import <sys/attr.h>
-#import <unistd.h>
-#import <stdlib.h>
 #import "VFSNativeFile.h"
 #import "VFSNativeHost.h"
 #import "NativeFSManager.h"

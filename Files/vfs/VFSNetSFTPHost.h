@@ -16,7 +16,8 @@ typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
 struct VFSNetSFTPOptions : VFSHostOptions
 {
     string user;
-    string passwd;
+    string passwd; // when keypath is empty passwd is password for auth, otherwise it's a keyphrase for decrypting private key
+    string keypath; // full path to private key
     long   port = -1;
     
     bool Equal(const VFSHostOptions &_r) const override;
@@ -32,7 +33,7 @@ public:
     
     // construction
     VFSNetSFTPHost(const char *_serv_url);
-    int Open(const VFSNetSFTPOptions &_options = VFSNetSFTPOptions());
+    int Open(const VFSNetSFTPOptions &_options);
     
     const string& HomeDir() const;
 

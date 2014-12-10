@@ -27,9 +27,26 @@
     return opts;
 }
 
-- (void)testBasic {
+- (VFSNetSFTPOptions) optionsForVBoxDebian7x86_PrivKey {
+    VFSNetSFTPOptions opts;
+    opts.user = "root";
+    opts.passwd = "";
+    opts.keypath = "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root";
+    return opts;
+}
+
+- (VFSNetSFTPOptions) optionsForVBoxDebian7x86_PrivKeyPass {
+    VFSNetSFTPOptions opts;
+    opts.user = "root";
+    opts.passwd = "qwerty";
+    opts.keypath = "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root_qwerty";
+    return opts;
+}
+
+- (void)testBasicWithOpts:(VFSNetSFTPOptions)_opts
+{
     auto host = self.hostVBoxDebian7x86;
-    XCTAssert( host->Open(self.optionsForVBoxDebian7x86) == 0);
+    XCTAssert( host->Open(_opts) == 0);
     
     XCTAssert( host->HomeDir() == "/root" );
     
@@ -49,6 +66,21 @@
     
     XCTAssert( data.EntryAtSortPosition(0)->IsDir() );
     // need to check symlinks
+}
+
+- (void)testBasic
+{
+    [self testBasicWithOpts:self.optionsForVBoxDebian7x86];
+}
+
+- (void)testBasicWithPrivateKey
+{
+    [self testBasicWithOpts:self.optionsForVBoxDebian7x86_PrivKey];
+}
+
+- (void)testBasicWithPrivateKeyPass
+{
+    [self testBasicWithOpts:self.optionsForVBoxDebian7x86_PrivKeyPass];
 }
 
 - (void) testBasicRead {

@@ -65,7 +65,8 @@ static NSString *TextForCode(int _code)
         case NetSFTPCouldntResolveHost: return @"Couldn't resolve SFTP server host";
         case NetSFTPCouldntConnect:     return @"Failed to connect remote SFTP server";
         case NetSFTPCouldntEstablishSSH:return @"Failed to establish SSH session";
-        case NetSFTPCouldntAuthenticate:return @"Authentication by password failed";
+        case NetSFTPCouldntAuthenticatePassword:return @"Authentication by password failed";
+        case NetSFTPCouldntAuthenticateKey:return @"Authentication by key failed";
         case NetSFTPCouldntInitSFTP:    return @"Unable to init SFTP session";
         case NetSFTPErrorSSH:           return @"SSH error";
         case NetSFTPEOF:                return @"End of file";

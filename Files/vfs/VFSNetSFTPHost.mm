@@ -19,7 +19,7 @@ bool VFSNetSFTPOptions::Equal(const VFSHostOptions &_r) const
         return false;
     
     const VFSNetSFTPOptions& r = (const VFSNetSFTPOptions&)_r;
-    return user == r.user && passwd == r.passwd && port == r.port;
+    return user == r.user && passwd == r.passwd && keypath == r.keypath && port == r.port;
 }
 
 VFSNetSFTPHost::Connection::~Connection()
@@ -162,13 +162,24 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     if(rc)
         return VFSError::NetSFTPCouldntEstablishSSH;
     
-    if (libssh2_userauth_password_ex(connection->ssh,
-                                     m_Options->user.c_str(),
-                                     (unsigned)m_Options->user.length(),
-                                     m_Options->passwd.c_str(),
-                                     (unsigned)m_Options->passwd.length(),
-                                     NULL))
-        return VFSError::NetSFTPCouldntAuthenticate;
+    if(!m_Options->keypath.empty()) {
+        if(libssh2_userauth_publickey_fromfile_ex(connection->ssh,
+                                                  m_Options->user.c_str(),
+                                                  (unsigned)m_Options->user.length(),
+                                                  nullptr,
+                                                  m_Options->keypath.c_str(),
+                                                  m_Options->passwd.c_str()))
+            return VFSError::NetSFTPCouldntAuthenticateKey;
+    }
+    else {
+        if (libssh2_userauth_password_ex(connection->ssh,
+                                         m_Options->user.c_str(),
+                                         (unsigned)m_Options->user.length(),
+                                         m_Options->passwd.c_str(),
+                                         (unsigned)m_Options->passwd.length(),
+                                         NULL))
+            return VFSError::NetSFTPCouldntAuthenticatePassword;
+    }
 
     libssh2_session_set_blocking(connection->ssh, 1);
     

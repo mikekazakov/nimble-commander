@@ -25,7 +25,7 @@ inline static void form_path(char *_buf, const char *_directory, const char *_fi
         _buf[s1-1] = '/';
         s1++;
     }
-    strcat(_buf + s1, _filename);
+    strcpy(_buf + s1, _filename);
 }
 
 DisplayNamesCache& DisplayNamesCache::Instance()

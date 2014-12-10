@@ -10,19 +10,28 @@
 
 #include "Common.h"
 
+static_assert(sizeof(DisplayNamesCache::DisplayName) == 32, "");
+
 inline static uint64_t FSIDTo64(fsid_t _id)
 {
     return *(uint64_t*)&_id;
 }
 
+inline static void form_path(char *_buf, const char *_directory, const char *_filename)
+{
+    size_t s1 = strlen(_directory);
+    memcpy(_buf, _directory, s1);
+    if(_buf[s1-1] != '/') {
+        _buf[s1-1] = '/';
+        s1++;
+    }
+    strcat(_buf + s1, _filename);
+}
+
 DisplayNamesCache& DisplayNamesCache::Instance()
 {
-    static dispatch_once_t onceToken;
-    static unique_ptr<DisplayNamesCache> inst;
-    dispatch_once(&onceToken, ^{
-        inst = make_unique<DisplayNamesCache>();
-    });
-    return *inst;
+    static DisplayNamesCache inst;
+    return inst;
 }
 
 const DisplayNamesCache::DisplayName &DisplayNamesCache::DisplayNameForNativeFS(fsid_t _fs,
@@ -33,7 +42,7 @@ const DisplayNamesCache::DisplayName &DisplayNamesCache::DisplayNameForNativeFS(
                                                                                 )
 {
     static DisplayName dummy;
-    if(_inode == 0)
+    if(_inode == 0 || !_directory || !_c_filename || !_cf_filename || !_directory[0] || !_c_filename[0])
         return dummy;
     
     auto &map = ByFSID(FSIDTo64(_fs));
@@ -49,39 +58,43 @@ const DisplayNamesCache::DisplayName &DisplayNamesCache::DisplayNameForNativeFS(
             map.erase(it); // seems that entry was renamed, need to rebuild information
         }
     }
+
+    if(map.size() >= MaxSize) { // we're too fat, need to wipe info out
+        for(auto &i: map)
+            if(i.second.str != nullptr)
+                CFRelease(i.second.str);
+        map.clear();
+    }
     
     // get dispay name for file
     DisplayName e;
     e.filename = _c_filename;
-    e.str = nullptr;
     
-    
-    string path = _directory;
-    if(path.back() != '/') path += '/';
-    path += _c_filename;
-    
-    NSString *strpath = [NSString stringWithUTF8StdStringNoCopy:path];
+    char path[MAXPATHLEN];
+    form_path(path, _directory, _c_filename);
+
+    NSString *strpath = [NSString stringWithUTF8StringNoCopy:path];
     if(strpath == nil) {
         // can't create string for this path.
-        return map.emplace(_inode, e).first->second;
+        return map.emplace(_inode, move(e)).first->second;
     }
     
     static NSFileManager *filemanager = NSFileManager.defaultManager;
     NSString *display = [filemanager displayNameAtPath:strpath];
     if(display == nil) {
         // something strange has happen
-        return map.emplace(_inode, e).first->second;
+        return map.emplace(_inode, move(e)).first->second;
     }
     
     display = [display decomposedStringWithCanonicalMapping];
     if([display isEqualToString:(__bridge NSString *)_cf_filename]) {
         // just the same
-        return map.emplace(_inode, e).first->second;
+        return map.emplace(_inode, move(e)).first->second;
     }
     else {
         display = [display precomposedStringWithCanonicalMapping];
         e.str = (CFStringRef)CFBridgingRetain(display);
-        return map.emplace(_inode, e).first->second;
+        return map.emplace(_inode, move(e)).first->second;
     }
 }
 

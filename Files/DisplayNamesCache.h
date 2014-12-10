@@ -32,6 +32,7 @@ public:
                                               CFStringRef _cf_filename
                                               );
 private:
+    enum { MaxSize = 1024 };
     map<uint64_t, DisplayName> &ByFSID(uint64_t _id);
     vector< pair<uint64_t, map<uint64_t, DisplayName>>> m_DB;
 };

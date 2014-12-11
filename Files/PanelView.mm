@@ -348,8 +348,6 @@ struct PanelViewStateStorage
 
 - (void) setCurpos:(int)_pos
 {
-//    assert(_pos >= 0 && _pos < m_State.Data->SortedDirectoryEntries().size());
-    
     if (m_State.CursorPos == _pos) return;
 
     m_Presentation->SetCursorPos(_pos); // _pos wil be filtered here
@@ -472,7 +470,8 @@ struct PanelViewStateStorage
     if (cursor_pos == -1) return;
 
     auto click_entry = m_State.Data->EntryAtSortPosition(cursor_pos);
-    assert(click_entry);
+    if(!click_entry)
+        return;
     
     NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
     bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
@@ -603,17 +602,16 @@ struct PanelViewStateStorage
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
 {
-    
-    // we never want to select a first (dotdot) entry
-    assert(_start >= 0 && _start < m_State.Data->SortedDirectoryEntries().size());
-    assert(_end >= 0 && _end < m_State.Data->SortedDirectoryEntries().size());
-    if(_start > _end)
-    {
-        int t = _start;
-        _start = _end;
-        _end = t;
+    if(_start < 0 || _start >= m_State.Data->SortedDirectoryEntries().size() ||
+         _end < 0 || _end >= m_State.Data->SortedDirectoryEntries().size() ) {
+        NSLog(@"SelectUnselectInRange - invalid range");
+        return;
     }
     
+    if(_start > _end)
+        swap(_start, _end);
+    
+    // we never want to select a first (dotdot) entry
     if(auto i = m_State.Data->EntryAtSortPosition(_start))
         if(i->IsDotDot())
             ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff

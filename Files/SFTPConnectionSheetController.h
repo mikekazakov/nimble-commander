@@ -13,6 +13,8 @@
 @property (strong) NSString *username;
 @property (strong) NSString *password;
 @property (strong) NSString *port;
+@property (strong) NSString *keypath;
 - (IBAction)OnConnect:(id)sender;
 - (IBAction)OnClose:(id)sender;
+- (IBAction)OnChooseKey:(id)sender;
 @end

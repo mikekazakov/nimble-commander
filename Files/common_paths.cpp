@@ -9,71 +9,78 @@
 #import <pwd.h>
 #import "common_paths.h"
 
+static string ensure_tr_slash( string _str )
+{
+    if(_str.empty() || _str.back() != '/')
+        _str += '/';
+    return _str;
+}
+
 const string &CommonPaths::Get(CommonPaths::Path _path)
 {
     switch (_path) {
         case Home:
         {
-            static string path = getpwuid(getuid())->pw_dir;
+            static auto path = ensure_tr_slash(getpwuid(getuid())->pw_dir);
             return path;
         }
         
         case Documents:
         {
-            static string path = Get(CommonPaths::Home) + "/Documents";
+            static auto path = Get(CommonPaths::Home) + "/Documents/";
             return path;
         }
             
         case Desktop:
         {
-            static string path = Get(CommonPaths::Home) + "/Desktop";
+            static auto path = Get(CommonPaths::Home) + "/Desktop/";
             return path;
         }
         
         case Downloads:
         {
-            static string path = Get(CommonPaths::Home) + "/Downloads";
+            static auto path = Get(CommonPaths::Home) + "/Downloads/";
             return path;
         }
             
         case Applications:
         {
-            static string path = "/Applications/";
+            static auto path = "/Applications/"s;
             return path;
         }
          
         case Utilities:
         {
-            static string path = "/Applications/Utilities/";
+            static auto path = "/Applications/Utilities/"s;
             return path;
         }
             
         case Library:
         {
-            static string path = Get(CommonPaths::Home) + "/Library";
+            static auto path = Get(CommonPaths::Home) + "/Library/";
             return path;
         }
         
         case Movies:
         {
-            static string path = Get(CommonPaths::Home) + "/Movies";
+            static auto path = Get(CommonPaths::Home) + "/Movies/";
             return path;
         }
         
         case Music:
         {
-            static string path = Get(CommonPaths::Home) + "/Music";
+            static auto path = Get(CommonPaths::Home) + "/Music/";
             return path;
         }
             
         case Pictures:
         {
-            static string path = Get(CommonPaths::Home) + "/Pictures";
+            static auto path = Get(CommonPaths::Home) + "/Pictures/";
             return path;
         }
         
         default: assert(0);
     }
-    static string dummy;
+    static auto dummy = ""s;
     return dummy;
 }

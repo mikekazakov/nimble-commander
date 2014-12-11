@@ -175,12 +175,12 @@
 		CF50B72B1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7201A15170600E3D96D /* VFSNetFTPInternals.mm */; };
 		CF50B72C1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7201A15170600E3D96D /* VFSNetFTPInternals.mm */; };
 		CF50B72D1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7201A15170600E3D96D /* VFSNetFTPInternals.mm */; };
-		CF50B7321A15171600E3D96D /* VFSNetSFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.mm */; };
-		CF50B7331A15171600E3D96D /* VFSNetSFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.mm */; };
-		CF50B7341A15171600E3D96D /* VFSNetSFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.mm */; };
-		CF50B7351A15171600E3D96D /* VFSNetSFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7311A15171600E3D96D /* VFSNetSFTPHost.mm */; };
-		CF50B7361A15171600E3D96D /* VFSNetSFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7311A15171600E3D96D /* VFSNetSFTPHost.mm */; };
-		CF50B7371A15171600E3D96D /* VFSNetSFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7311A15171600E3D96D /* VFSNetSFTPHost.mm */; };
+		CF50B7321A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.cpp */; };
+		CF50B7331A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.cpp */; };
+		CF50B7341A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.cpp */; };
+		CF50B7351A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7311A15171600E3D96D /* VFSNetSFTPHost.cpp */; };
+		CF50B7361A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7311A15171600E3D96D /* VFSNetSFTPHost.cpp */; };
+		CF50B7371A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7311A15171600E3D96D /* VFSNetSFTPHost.cpp */; };
 		CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */; };
 		CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */; };
 		CF50B7421A15173100E3D96D /* VFSArchiveProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */; };
@@ -1413,9 +1413,9 @@
 		CF50B7201A15170600E3D96D /* VFSNetFTPInternals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetFTPInternals.mm; path = vfs/VFSNetFTPInternals.mm; sourceTree = "<group>"; };
 		CF50B7211A15170600E3D96D /* VFSNetFTPInternalsForward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetFTPInternalsForward.h; path = vfs/VFSNetFTPInternalsForward.h; sourceTree = "<group>"; };
 		CF50B72E1A15171600E3D96D /* VFSNetSFTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPFile.h; path = vfs/VFSNetSFTPFile.h; sourceTree = "<group>"; };
-		CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetSFTPFile.mm; path = vfs/VFSNetSFTPFile.mm; sourceTree = "<group>"; };
+		CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPFile.cpp; path = vfs/VFSNetSFTPFile.cpp; sourceTree = "<group>"; };
 		CF50B7301A15171600E3D96D /* VFSNetSFTPHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPHost.h; path = vfs/VFSNetSFTPHost.h; sourceTree = "<group>"; };
-		CF50B7311A15171600E3D96D /* VFSNetSFTPHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetSFTPHost.mm; path = vfs/VFSNetSFTPHost.mm; sourceTree = "<group>"; };
+		CF50B7311A15171600E3D96D /* VFSNetSFTPHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPHost.cpp; path = vfs/VFSNetSFTPHost.cpp; sourceTree = "<group>"; };
 		CF50B7381A15173100E3D96D /* VFSArchiveProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveProxy.h; path = vfs/VFSArchiveProxy.h; sourceTree = "<group>"; };
 		CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveProxy.mm; path = vfs/VFSArchiveProxy.mm; sourceTree = "<group>"; };
 		CF50B73A1A15173100E3D96D /* VFSEasyOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSEasyOps.h; path = vfs/VFSEasyOps.h; sourceTree = "<group>"; };
@@ -2394,9 +2394,9 @@
 			isa = PBXGroup;
 			children = (
 				CF50B72E1A15171600E3D96D /* VFSNetSFTPFile.h */,
-				CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.mm */,
+				CF50B72F1A15171600E3D96D /* VFSNetSFTPFile.cpp */,
 				CF50B7301A15171600E3D96D /* VFSNetSFTPHost.h */,
-				CF50B7311A15171600E3D96D /* VFSNetSFTPHost.mm */,
+				CF50B7311A15171600E3D96D /* VFSNetSFTPHost.cpp */,
 			);
 			name = SFTP;
 			sourceTree = "<group>";
@@ -3552,7 +3552,7 @@
 				CF6D9CB419667BA20077B146 /* archive_read_support_filter_all.c in Sources */,
 				CF6D9CB519667BA20077B146 /* archive_read_support_filter_bzip2.c in Sources */,
 				CF6D9CB619667BA20077B146 /* archive_read_support_filter_compress.c in Sources */,
-				CF50B7361A15171600E3D96D /* VFSNetSFTPHost.mm in Sources */,
+				CF50B7361A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
 				CF6D9CB719667BA20077B146 /* archive_read_support_filter_grzip.c in Sources */,
 				CF6D9CB819667BA20077B146 /* archive_read_support_filter_gzip.c in Sources */,
 				CFC5D4A819BB4FFB005BB24A /* Hash.cpp in Sources */,
@@ -3623,7 +3623,7 @@
 				CF6D9CEE19667BA20077B146 /* archive_write_set_format_cpio.c in Sources */,
 				CF6D9CEF19667BA20077B146 /* archive_write_set_format_gnutar.c in Sources */,
 				CF50B7141A1516E700E3D96D /* VFSNativeHost.mm in Sources */,
-				CF50B7331A15171600E3D96D /* VFSNetSFTPFile.mm in Sources */,
+				CF50B7331A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */,
 				CF6D9CF019667BA20077B146 /* archive_write_set_format_iso9660.c in Sources */,
 				CF6D9CF119667BA20077B146 /* archive_write_set_format_mtree.c in Sources */,
 				CF6D9CF219667BA20077B146 /* archive_write_set_format_pax.c in Sources */,
@@ -3842,7 +3842,7 @@
 				CF9D0E9B17CC961100CB8146 /* archive_read_support_filter_none.c in Sources */,
 				CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */,
 				CFC5D4A719BB4FFB005BB24A /* Hash.cpp in Sources */,
-				CF50B7351A15171600E3D96D /* VFSNetSFTPHost.mm in Sources */,
+				CF50B7351A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
 				CF9D0EB117CC961100CB8146 /* archive_string.c in Sources */,
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.cpp in Sources */,
 				CF9D0EAD17CC961100CB8146 /* archive_read_support_format_xar.c in Sources */,
@@ -3913,7 +3913,7 @@
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
-				CF50B7321A15171600E3D96D /* VFSNetSFTPFile.mm in Sources */,
+				CF50B7321A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */,
 				CF9D0ECF17CC961100CB8146 /* archive_write_set_format_gnutar.c in Sources */,
 				B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */,
 				CF9D0EDA17CC961100CB8146 /* archive_write.c in Sources */,
@@ -4141,7 +4141,7 @@
 				CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */,
 				CFF6F2621A13567C00011177 /* archive_read_support_filter_none.c in Sources */,
 				CFF6F2631A13567C00011177 /* Hash.cpp in Sources */,
-				CF50B7371A15171600E3D96D /* VFSNetSFTPHost.mm in Sources */,
+				CF50B7371A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
 				CFF6F2651A13567C00011177 /* archive_string.c in Sources */,
 				CFF6F2661A13567C00011177 /* FSEventsDirUpdate.cpp in Sources */,
 				CFF6F2671A13567C00011177 /* archive_read_support_format_xar.c in Sources */,
@@ -4212,7 +4212,7 @@
 				CFF6F2A81A13567C00011177 /* FileDeletionOperation.mm in Sources */,
 				CFF6F2A91A13567C00011177 /* FileDeletionOperationJob.mm in Sources */,
 				CFF6F2AC1A13567C00011177 /* OrthodoxMonospace.mm in Sources */,
-				CF50B7341A15171600E3D96D /* VFSNetSFTPFile.mm in Sources */,
+				CF50B7341A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */,
 				CFF6F2AD1A13567C00011177 /* archive_write_set_format_gnutar.c in Sources */,
 				CFF6F2AE1A13567C00011177 /* OperationDialogAlert.mm in Sources */,
 				CFF6F2AF1A13567C00011177 /* archive_write.c in Sources */,

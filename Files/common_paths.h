@@ -23,6 +23,6 @@ struct CommonPaths
         Movies
     };
     
-    // returned paths may contain or not contain trailing slash
+    // returned paths will contain a trailing slash
     static const string &Get(Path _path);
 };

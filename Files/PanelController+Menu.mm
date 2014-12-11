@@ -247,10 +247,12 @@
             string server =  sheet.server.UTF8String;
             string username = sheet.username ? sheet.username.UTF8String : "";
             string password = sheet.password ? sheet.password.UTF8String : "";
+            string keypath = sheet.keypath ? sheet.keypath.fileSystemRepresentation : "";
             
             VFSNetSFTPOptions opts;
             opts.user = username;
             opts.passwd = password;
+            opts.keypath = keypath;
             if(sheet.port.intValue != 0)
                 opts.port = sheet.port.intValue;
             

@@ -13,7 +13,7 @@
 #import "Common.h"
 #import "RoutedIO.h"
 
-static_assert(sizeof(VFSNativeListingItem) == 128, "");
+static_assert(sizeof(VFSNativeListingItem) == 136, "");
 
 VFSNativeListing::VFSNativeListing(const char *_path, shared_ptr<VFSNativeHost> _host):
     VFSListing(_path, _host)
@@ -52,10 +52,12 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     if(pathwithslash[strlen(pathwithslash)-1] != '/' ) strcat(pathwithslash, "/");
     size_t pathwithslash_len = strlen(pathwithslash);
 
-    while((entp = io.readdir(dirp)) != NULL)
-    {
-        if(_checker && _checker())
-        {
+    
+    vector< tuple<string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
+    dirents.reserve(64);
+    
+    while((entp = io.readdir(dirp)) != NULL) {
+        if(_checker && _checker()) {
             io.closedir(dirp);
             return 0;
         }
@@ -78,38 +80,33 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
                 entp->d_type = DT_DIR; // a very-very strange bugfix
         }
         
-        m_Items.emplace_back();
-        
-        VFSNativeListingItem &current = m_Items.back();
-        current.unix_type = entp->d_type;
-        current.inode  = entp->d_ino;
-        current.namelen = entp->d_namlen;
-        if(current.namelen < 14)
-        {
-            memcpy(&current.namebuf[0], &entp->d_name[0], current.namelen+1);
-        }
-        else
-        {
-            char *news = (char*)malloc(current.namelen+1);
-            memcpy(news, &entp->d_name[0], current.namelen+1);
-            *(char**)(&current.namebuf[0]) = news;
-        }
+        dirents.emplace_back(string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
     }
-    
     io.closedir(dirp);
     
-    if(need_to_add_dot_dot)
-    {
+    m_Items.reserve( dirents.size() + (need_to_add_dot_dot ? 1 : 0) );
+    
+    if(need_to_add_dot_dot) {
         // ?? do we need to handle properly the usual ".." appearance, since we have a fix-up way anyhow?
         // add ".." entry by hand
-        VFSNativeListingItem current = {};
+        m_Items.emplace_back();
+        auto &current = m_Items.back();
         current.unix_type = DT_DIR;
         current.inode  = 0;
-        current.namelen = 2;
-        memcpy(&current.namebuf[0], "..", current.namelen+1);
+        current.name = "..";
         current.size = VFSListingItem::InvalidSize;
-        m_Items.emplace_front(current);
     }
+    
+    for(auto &i: dirents) {
+        m_Items.emplace_back();
+        auto &current = m_Items.back();
+        current.name = move(get<0>(i));
+        current.inode  = get<1>(i);
+        current.unix_type = get<2>(i);
+    }
+    
+    dirents.clear();
+    dirents.shrink_to_fit();
     
     // stat files, find extenstions any any and create CFString name representations in several threads
     dispatch_apply(m_Items.size(), dispatch_get_global_queue(0, 0), ^(size_t n) {
@@ -118,12 +115,11 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         char filename[MAXPATHLEN];
         const char *entryname = current->Name();
         memcpy(filename, pathwithslashp, pathwithslash_len);
-        memcpy(filename + pathwithslash_len, entryname, current->namelen+1);
+        strcpy(filename + pathwithslash_len, current->Name());
         
         // stat the file
         struct stat stat_buffer;
-        if(io.stat(filename, &stat_buffer) == 0)
-        {
+        if(io.stat(filename, &stat_buffer) == 0) {
             current->atime = stat_buffer.st_atimespec.tv_sec;
             current->mtime = stat_buffer.st_mtimespec.tv_sec;
             current->ctime = stat_buffer.st_ctimespec.tv_sec;
@@ -143,14 +139,14 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         // here we skip possible cases like
         // filename. and .filename
         // in such cases we think there's no extension at all
-        for(int i = int(current->namelen) - 2; i > 0; --i)
+        for(int i = int(current->name.length()) - 2; i > 0; --i)
             if(entryname[i] == '.') {
                 current->extoffset = i+1;
                 break;
             }
         
         // create CFString name representation
-        current->cf_name = CFStringCreateWithUTF8StringNoCopy(entryname, current->namelen);
+        current->cf_name = CFStringCreateWithUTF8StdStringNoCopy(current->name);
         
         // if we're dealing with a symlink - read it's content to know the real file path
         if( current->unix_type == DT_LNK )

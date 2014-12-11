@@ -73,10 +73,10 @@ static string ToRealPath(const string &_from)
     XCTAssert( shell.State() == TermShellTask::StateShell);
   
     // check chdir
-    cwd = CommonPaths::Get(CommonPaths::Home) + "/Downloads";
+    cwd = CommonPaths::Get(CommonPaths::Home) + "Downloads/";
     shell.ChDir( cwd.c_str() );
     testMicrosleep( microseconds(1s).count() );
-    XCTAssert( shell.CWD() == cwd );
+    XCTAssert( shell.CWD()+"/" == cwd );
     XCTAssert( shell.State() == TermShellTask::StateShell);
     
     // test chdir in the middle of some typing
@@ -84,7 +84,7 @@ static string ToRealPath(const string &_from)
     cwd = CommonPaths::Get(CommonPaths::Home);
     shell.ChDir( cwd.c_str() );
     testMicrosleep( microseconds(1s).count() );
-    XCTAssert( shell.CWD() == cwd );
+    XCTAssert( shell.CWD()+'/' == cwd );
     XCTAssert( shell.State() == TermShellTask::StateShell);
 
     // check internal program state

@@ -58,7 +58,7 @@
     [string appendAttributedString:[[NSMutableAttributedString alloc] initWithString:s1]];
     
     NSURL* url = [NSURL URLWithString:@"https://itunes.apple.com/app/files-pro/id942443942?ls=1&mt=12"];
-    [string appendAttributedString:[self hyperlinkFromString:@"version from MacAppStore" withURL:url]];
+    [string appendAttributedString:[self hyperlinkFromString:@"version from App Store" withURL:url]];
     
     NSString *s2 = @" installed on your hard drive or delete Files manager from this computer.\n\nThis window appears only in trial version.";
     [string appendAttributedString:[[NSMutableAttributedString alloc] initWithString:s2]];

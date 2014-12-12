@@ -11,6 +11,7 @@
 struct CommonPaths
 {
     enum Path {
+        AppBundle,
         Home,
         Documents,
         Desktop,

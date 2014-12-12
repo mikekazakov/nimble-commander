@@ -485,6 +485,10 @@
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
 		CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
+		CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
+		CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
+		CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
+		CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
 		CF7249A71990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
 		CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
 		CF7249A91990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7249A61990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
@@ -3550,6 +3554,7 @@
 				CF6D9CB319667BA20077B146 /* archive_read_set_options.c in Sources */,
 				CF50B7081A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
 				CF6D9CB419667BA20077B146 /* archive_read_support_filter_all.c in Sources */,
+				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CF6D9CB519667BA20077B146 /* archive_read_support_filter_bzip2.c in Sources */,
 				CF6D9CB619667BA20077B146 /* archive_read_support_filter_compress.c in Sources */,
 				CF50B7361A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
@@ -3668,6 +3673,7 @@
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
 				CF6D9BEE196678000077B146 /* FPSLimitedDrawer.mm in Sources */,
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
+				CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CF6D9C02196678000077B146 /* DisplayNamesCache.mm in Sources */,
 				CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CF6D9C0B196678000077B146 /* ExternalEditorInfo.mm in Sources */,
@@ -4140,6 +4146,7 @@
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
 				CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */,
 				CFF6F2621A13567C00011177 /* archive_read_support_filter_none.c in Sources */,
+				CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CFF6F2631A13567C00011177 /* Hash.cpp in Sources */,
 				CF50B7371A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
 				CFF6F2651A13567C00011177 /* archive_string.c in Sources */,
@@ -4258,6 +4265,7 @@
 				CFF6F2D81A13567C00011177 /* archive_read_disk_entry_from_file.c in Sources */,
 				CFF6F2D91A13567C00011177 /* archive_write_set_format_ustar.c in Sources */,
 				CFF6F2DA1A13567C00011177 /* common_paths.cpp in Sources */,
+				CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CFF6F2DC1A13567C00011177 /* archive_ppmd7.c in Sources */,
 				CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */,
 				CFF6F2DE1A13567C00011177 /* PreferencesWindowHotkeysTab.mm in Sources */,

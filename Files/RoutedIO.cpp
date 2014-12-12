@@ -11,6 +11,7 @@
 #include <Security/AuthorizationDB.h>
 #include "RoutedIO.h"
 #include "Common.h"
+#include "common_paths.h"
 #include "RoutedIOInterfaces.h"
 
 static PosixIOInterface &IODirectCreateProxy();
@@ -74,7 +75,7 @@ static const char *InstalledPath()
 
 static const char *BundledPath()
 {
-    static string s = AppBundleDirectory() + "Contents/Library/LaunchServices/" + g_HelperLabel;
+    static string s = CommonPaths::Get(CommonPaths::AppBundle) + "Contents/Library/LaunchServices/" + g_HelperLabel;
     return s.c_str();
 }
 
@@ -109,6 +110,9 @@ bool RoutedIO::IsHelperCurrent()
 
 bool RoutedIO::TurnOn()
 {
+    if(configuration::version < configuration::Version::Full)
+        return false;
+    
     if(m_Enabled)
         return true;
     
@@ -186,6 +190,9 @@ bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection)
 
 bool RoutedIO::AskToInstallHelper()
 {
+    if(configuration::version < configuration::Version::Full)
+        return false;
+    
     AuthorizationItem   authItem   = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
     AuthorizationRights authRights = { 1, &authItem };
     AuthorizationFlags  flags      = kAuthorizationFlagInteractionAllowed|kAuthorizationFlagPreAuthorize|kAuthorizationFlagExtendRights;
@@ -208,6 +215,9 @@ bool RoutedIO::AskToInstallHelper()
 
 bool RoutedIO::AuthenticateAsAdmin()
 {
+    if(configuration::version < configuration::Version::Full)
+        return false;
+    
     if(m_AuthenticatedAsAdmin)
         return true;
     

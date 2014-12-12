@@ -9,6 +9,15 @@
 #import <pwd.h>
 #import "common_paths.h"
 
+static string GetMainBundlePath()
+{
+    CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+    char path[MAXPATHLEN];
+    bool result = CFURLGetFileSystemRepresentation(url, true, (UInt8*)path, MAXPATHLEN);
+    CFRelease(url);
+    return result ? string(path) : string("");
+}
+
 static string ensure_tr_slash( string _str )
 {
     if(_str.empty() || _str.back() != '/')
@@ -76,6 +85,12 @@ const string &CommonPaths::Get(CommonPaths::Path _path)
         case Pictures:
         {
             static auto path = Get(CommonPaths::Home) + "/Pictures/";
+            return path;
+        }
+        
+        case AppBundle:
+        {
+            static auto path = ensure_tr_slash(GetMainBundlePath());
             return path;
         }
         

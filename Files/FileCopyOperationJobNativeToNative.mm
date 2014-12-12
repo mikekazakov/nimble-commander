@@ -228,7 +228,6 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
     {
         char path[MAXPATHLEN];
         strcpy(path, CommonPaths::Get(CommonPaths::Home).c_str());
-        strcat(path, "/");
         if(strncmp(m_Destination, "~/", strlen("~/")) == 0)
             strcat(path, m_Destination + strlen("~/"));
         else

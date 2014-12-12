@@ -36,19 +36,19 @@ const string &CommonPaths::Get(CommonPaths::Path _path)
         
         case Documents:
         {
-            static auto path = Get(CommonPaths::Home) + "/Documents/";
+            static auto path = Get(CommonPaths::Home) + "Documents/";
             return path;
         }
             
         case Desktop:
         {
-            static auto path = Get(CommonPaths::Home) + "/Desktop/";
+            static auto path = Get(CommonPaths::Home) + "Desktop/";
             return path;
         }
         
         case Downloads:
         {
-            static auto path = Get(CommonPaths::Home) + "/Downloads/";
+            static auto path = Get(CommonPaths::Home) + "Downloads/";
             return path;
         }
             
@@ -66,25 +66,25 @@ const string &CommonPaths::Get(CommonPaths::Path _path)
             
         case Library:
         {
-            static auto path = Get(CommonPaths::Home) + "/Library/";
+            static auto path = Get(CommonPaths::Home) + "Library/";
             return path;
         }
         
         case Movies:
         {
-            static auto path = Get(CommonPaths::Home) + "/Movies/";
+            static auto path = Get(CommonPaths::Home) + "Movies/";
             return path;
         }
         
         case Music:
         {
-            static auto path = Get(CommonPaths::Home) + "/Music/";
+            static auto path = Get(CommonPaths::Home) + "Music/";
             return path;
         }
             
         case Pictures:
         {
-            static auto path = Get(CommonPaths::Home) + "/Pictures/";
+            static auto path = Get(CommonPaths::Home) + "Pictures/";
             return path;
         }
         

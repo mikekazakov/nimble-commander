@@ -20,13 +20,7 @@ VFSGenericListingItem::~VFSGenericListingItem()
        m_Name != nullptr) {
         free((void*)m_Name);
         m_Name = nullptr;
-    }
-    
-    if(m_NeedReleaseSymlink &&
-       m_Symlink != nullptr) {
-        free((void*)m_Symlink);
-        m_Symlink = nullptr;           
-    }
+    }    
 }
 
 VFSListing::VFSListing(const char* _relative_path, shared_ptr<VFSHost> _host):

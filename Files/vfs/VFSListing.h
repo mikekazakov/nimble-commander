@@ -9,6 +9,7 @@
 #pragma once
 
 #include "VFSDeclarations.h"
+#include "tiny_string.h"
 
 struct VFSListingAttributes
 {
@@ -131,7 +132,7 @@ struct VFSGenericListingItem : public VFSListingItem
     virtual uid_t           UnixUID()   const override { return m_UID;      }
     virtual gid_t           UnixGID()   const override { return m_GID;      }
     virtual uint8_t         UnixType()  const override { return m_Type;     }
-    virtual const char     *Symlink()   const override { return (IsSymlink() && m_Symlink == 0) ? "" : m_Symlink;  } // fix for a bad-bad vfs, remove it later!
+    virtual const char     *Symlink()   const override { return m_Type == DT_LNK ? m_Symlink.c_str() : nullptr; }
     virtual bool            IsDir()     const override { return (m_Mode & S_IFMT) == S_IFDIR;   }
     virtual bool            IsReg()     const override { return (m_Mode & S_IFMT) == S_IFREG;   }
     virtual bool            IsSymlink() const override { return m_Type == DT_LNK;               }
@@ -153,11 +154,10 @@ struct VFSGenericListingItem : public VFSListingItem
     uid_t           m_UID       = 0;
     gid_t           m_GID       = 0;
     uint8_t         m_Type      = 0;
-    const char     *m_Symlink   = 0;
+    tiny_string     m_Symlink;
     uint16_t        m_ExtOff    = 0;
     bool            m_NeedReleaseName = false;
     bool            m_NeedReleaseCFName = false;
-    bool            m_NeedReleaseSymlink = false;
 
     // helper methods
     void FindExtension()

@@ -320,13 +320,8 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
             
             // read where symlink points at
             rc = libssh2_sftp_symlink_ex(conn->sftp, path, (unsigned)strlen(path), symlink, MAXPATHLEN, LIBSSH2_SFTP_READLINK);
-            if(rc >= 0) {
-                ((VFSGenericListingItem*)&i)->m_Symlink = strdup(symlink);
-                ((VFSGenericListingItem*)&i)->m_NeedReleaseSymlink = strdup(symlink);
-            }
-            else {
-                ((VFSGenericListingItem*)&i)->m_Symlink = ""; // fallback case to return something on request
-            }
+            if(rc >= 0)
+                ((VFSGenericListingItem*)&i)->m_Symlink = symlink;
 
             // read info about real object
             LIBSSH2_SFTP_ATTRIBUTES stat;

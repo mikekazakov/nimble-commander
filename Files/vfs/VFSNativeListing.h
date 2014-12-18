@@ -15,6 +15,7 @@
 #import <stdlib.h>
 #import <time.h>
 #import "VFSListing.h"
+#import "tiny_string.h"
 
 class VFSNativeHost;
 
@@ -43,7 +44,7 @@ struct VFSNativeListingItem : VFSListingItem
     // #88
     CFStringRef    cf_displayname = 0;      // string got from DispayNamesCache or NULL, thus cf_name should be used
     // #96
-    const char     *symlink = 0;            // a pointer to symlink's value or NULL if entry is not a symlink or an error has occured
+    tiny_string    symlink;                 // symlink's value if any
     // #104
     uid_t          unix_uid = 0;            // user ID of the file
     // #108
@@ -59,7 +60,6 @@ struct VFSNativeListingItem : VFSListingItem
             CFRelease(cf_name);
         if(cf_displayname != 0)
             CFRelease(cf_displayname);
-        free((void*)symlink);
     }
     
     virtual const char     *Name()      const override { return name.c_str(); }
@@ -77,7 +77,7 @@ struct VFSNativeListingItem : VFSListingItem
     virtual uid_t           UnixUID()   const override { return unix_uid; }
     virtual gid_t           UnixGID()   const override { return unix_gid; }
     virtual uint8_t         UnixType()  const override { return unix_type; }
-    virtual const char     *Symlink()   const override { return symlink; }
+    virtual const char     *Symlink()   const override { return unix_type == DT_LNK ? symlink.c_str() : nullptr; }
     virtual bool            IsDir()     const override { return (unix_mode & S_IFMT) == S_IFDIR; }
     virtual bool            IsReg()     const override { return (unix_mode & S_IFMT) == S_IFREG;  }
     virtual bool            IsSymlink() const override { return unix_type == DT_LNK; }

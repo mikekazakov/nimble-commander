@@ -528,6 +528,9 @@
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
 		CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
+		CF89D8A61A43083100B2D9F1 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */; };
+		CF89D8A71A43083100B2D9F1 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */; };
+		CF89D8A81A43083100B2D9F1 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
@@ -1501,6 +1504,8 @@
 		CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DetailedVolumeInformationSheetController.mm; sourceTree = "<group>"; };
 		CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
 		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelData_Tests.mm; sourceTree = "<group>"; };
+		CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tiny_string.cpp; sourceTree = "<group>"; };
+		CF89D8A51A43083100B2D9F1 /* tiny_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tiny_string.h; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
 		CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeFSManager.mm; sourceTree = "<group>"; };
@@ -2676,6 +2681,8 @@
 				CFA0B2391869542200501C35 /* common_paths.h */,
 				CFE2697A16F01BA90048A393 /* chained_strings.cpp */,
 				CFE2697B16F01BAA0048A393 /* chained_strings.h */,
+				CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */,
+				CF89D8A51A43083100B2D9F1 /* tiny_string.h */,
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
 				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
 				CF07DE40176985EF00757DE1 /* EncodingsAdditions.mm */,
@@ -3787,6 +3794,7 @@
 				CF6D9BD3196677CA0077B146 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF6D9BD4196677CA0077B146 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CF6D9BD5196677CA0077B146 /* SUStandardVersionComparator.m in Sources */,
+				CF89D8A71A43083100B2D9F1 /* tiny_string.cpp in Sources */,
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF6D9BD8196677CA0077B146 /* NSUserDefaults+myColorSupport.m in Sources */,
@@ -3819,6 +3827,7 @@
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
+				CF89D8A61A43083100B2D9F1 /* tiny_string.cpp in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CF50B7011A1516C800E3D96D /* VFSArchiveUnRARHost.mm in Sources */,
 				CF9D0E9117CC961100CB8146 /* archive_read_open_memory.c in Sources */,
@@ -4378,6 +4387,7 @@
 				CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */,
 				CFF6F34A1A13567C00011177 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CFF6F34B1A13567C00011177 /* archive_write_set_format_mtree.c in Sources */,
+				CF89D8A81A43083100B2D9F1 /* tiny_string.cpp in Sources */,
 				CFF6F34C1A13567C00011177 /* archive_read_support_format_mtree.c in Sources */,
 				CFF6F34E1A13567C00011177 /* NSArray+SSYMutations.m in Sources */,
 				CFF6F34F1A13567C00011177 /* archive_entry.c in Sources */,

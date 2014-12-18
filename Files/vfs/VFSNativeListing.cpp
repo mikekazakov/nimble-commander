@@ -155,12 +155,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
             ssize_t sz = io.readlink(filename, linkpath, MAXPATHLEN);
             if(sz != -1) {
                 linkpath[sz] = 0;
-                char *s = (char*)malloc(sz+1);
-                memcpy(s, linkpath, sz+1);
-                current->symlink = s;
-            }
-            else {
-                current->symlink = strdup("");
+                current->symlink = linkpath;
             }
             
             // stat the original file so we can extract some interesting info from it

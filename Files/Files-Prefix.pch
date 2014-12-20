@@ -58,6 +58,8 @@
     #include "3rd_party/built/include/boost/logic/tribool.hpp"
     using boost::logic::tribool;
     using boost::logic::indeterminate;
+
+    #include "dispatch_cpp.h"
 #endif
 
 #include "Configuration.h"

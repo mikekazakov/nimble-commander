@@ -454,6 +454,11 @@ struct NativeFileSystemInfo
          */
         bool named_streams;
         
+        /**
+         * True if system can move files to trash for this volume for this user.
+         * NB! need to check this on AFP servers (however, AFP is dead now).
+         */
+        bool has_trash;
     } interfaces;
 
     
@@ -554,6 +559,7 @@ private:
     static bool GetInterfacesInfo(NativeFileSystemInfo &_volume);
     static bool GetVerboseInfo(NativeFileSystemInfo &_volume);
     static bool UpdateSpaceInfo(NativeFileSystemInfo &_volume);
+    static bool VolumeHasTrash(const string &_volume_path);
     
     void OnDidMount(string _on_path);
     void OnWillUnmount(string _on_path);

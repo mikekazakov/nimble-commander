@@ -11,6 +11,7 @@
 #include <sys/mount.h>
 #include "NativeFSManager.h"
 #include "FSEventsDirUpdate.h"
+#include "sysinfo.h"
 
 static NativeFSManager *g_SharedFSManager;
 
@@ -71,6 +72,34 @@ struct NativeFSManagerProxy2
 }
 @end
 
+static bool VolumeHasTrash_CarbonFileManager(const string &_volume_path)
+{
+    FSRef file;
+    int ret = FSPathMakeRef((UInt8*)_volume_path.c_str(), &file, NULL);
+    if(ret != 0)
+        return false;
+    
+    FSCatalogInfo info;
+    ret = FSGetCatalogInfo(&file, kFSCatInfoVolume, &info, 0, 0, 0);
+    if(ret != 0)
+        return false;
+    
+    ret = FSFindFolder(info.volume, kTrashFolderType, false, &file);
+    return ret == 0;
+}
+
+static bool VolumeHasTrash_NSFileManager(const string &_volume_path)
+{
+    auto url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)_volume_path.c_str(), _volume_path.length(), true);
+    NSURL *trash = [[NSFileManager defaultManager] URLForDirectory:NSTrashDirectory
+                                                          inDomain:NSUserDomainMask
+                                                 appropriateForURL:(__bridge NSURL*)url
+                                                            create:NO
+                                                             error:nil];
+    CFRelease(url);
+    return trash != nil;
+}
+
 NativeFSManager::NativeFSManager()
 {
     for(auto &i: GetFullFSList())
@@ -92,13 +121,10 @@ NativeFSManager::NativeFSManager()
 
 NativeFSManager &NativeFSManager::Instance()
 {
-    static dispatch_once_t once;
-    
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         g_SharedFSManager = new NativeFSManager();
-        assert(g_SharedFSManager != nullptr);
     });
-    
     return *g_SharedFSManager;
 }
 
@@ -222,7 +248,7 @@ bool NativeFSManager::GetInterfacesInfo(NativeFileSystemInfo &_v)
     _v.interfaces.mandatory_lock    = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_MANLOCK;
     _v.interfaces.extended_attr     = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_EXTENDED_ATTR;
     _v.interfaces.named_streams     = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_NAMEDSTREAMS;
-    
+    _v.interfaces.has_trash         = VolumeHasTrash(_v.mounted_at_path);
     return true;
 }
 
@@ -454,9 +480,8 @@ bool NativeFSManager::IsVolumeContainingPathEjectable(const string &_path)
 
 void NativeFSManager::EjectVolumeContainingPath(const string &_path)
 {
-    string path = _path;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if(auto volume = VolumeFromPath(path)) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [=]{
+        if(auto volume = VolumeFromPath(_path)) {
             DASessionRef session = DASessionCreate(kCFAllocatorDefault);
             CFURLRef url = (__bridge CFURLRef)volume->verbose.url;
             DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
@@ -467,4 +492,11 @@ void NativeFSManager::EjectVolumeContainingPath(const string &_path)
             CFRelease(session);
         }
     });
+}
+
+bool NativeFSManager::VolumeHasTrash(const string &_volume_path)
+{
+    return sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8 ?
+        VolumeHasTrash_NSFileManager(_volume_path):
+        VolumeHasTrash_CarbonFileManager(_volume_path);
 }

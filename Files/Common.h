@@ -8,7 +8,6 @@
 #pragma once
 
 #include "path_manip.h"
-#include "dispatch_cpp.h"
 
 struct DialogResult
 {

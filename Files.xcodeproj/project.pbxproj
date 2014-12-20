@@ -531,6 +531,9 @@
 		CF89D8A61A43083100B2D9F1 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */; };
 		CF89D8A71A43083100B2D9F1 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */; };
 		CF89D8A81A43083100B2D9F1 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */; };
+		CF89D8AF1A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */; };
+		CF89D8B01A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */; };
+		CF89D8B11A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
@@ -1506,6 +1509,8 @@
 		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelData_Tests.mm; sourceTree = "<group>"; };
 		CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tiny_string.cpp; sourceTree = "<group>"; };
 		CF89D8A51A43083100B2D9F1 /* tiny_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tiny_string.h; sourceTree = "<group>"; };
+		CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dispatch_cpp.cpp; sourceTree = "<group>"; };
+		CF89D8AE1A45816500B2D9F1 /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dispatch_cpp.h; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
 		CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeFSManager.mm; sourceTree = "<group>"; };
@@ -2683,6 +2688,8 @@
 				CFE2697B16F01BAA0048A393 /* chained_strings.h */,
 				CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */,
 				CF89D8A51A43083100B2D9F1 /* tiny_string.h */,
+				CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */,
+				CF89D8AE1A45816500B2D9F1 /* dispatch_cpp.h */,
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
 				CF1D17D416FAA58F0050B13F /* filesysinfo.h */,
 				CF07DE40176985EF00757DE1 /* EncodingsAdditions.mm */,
@@ -3610,6 +3617,7 @@
 				CF6D9CDD19667BA20077B146 /* archive_write_add_filter_none.c in Sources */,
 				CF6D9CDE19667BA20077B146 /* archive_write_add_filter_program.c in Sources */,
 				CF6D9CDF19667BA20077B146 /* archive_write_add_filter_uuencode.c in Sources */,
+				CF89D8B01A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */,
 				CF6D9CE019667BA20077B146 /* archive_write_add_filter_xz.c in Sources */,
 				CF6D9CE119667BA20077B146 /* archive_write_add_filter.c in Sources */,
 				CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
@@ -3877,6 +3885,7 @@
 				CF50B6C31A15167800E3D96D /* VFSError.mm in Sources */,
 				CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */,
 				CF9D0EBF17CC961100CB8146 /* archive_write_add_filter_uuencode.c in Sources */,
+				CF89D8AF1A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */,
 				CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF50B6D91A15169300E3D96D /* VFSPSFile.cpp in Sources */,
@@ -4203,6 +4212,7 @@
 				CFF6F2961A13567C00011177 /* archive_read_set_options.c in Sources */,
 				CFF6F2971A13567C00011177 /* archive_write_add_filter_b64encode.c in Sources */,
 				CFF6F2981A13567C00011177 /* FileSysEntryAttrSheetController.mm in Sources */,
+				CF89D8B11A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */,
 				CFF6F2991A13567C00011177 /* archive_write_add_filter_xz.c in Sources */,
 				CFF6F29A1A13567C00011177 /* TimedDummyOperationTestDialog.mm in Sources */,
 				CFF6F29B1A13567C00011177 /* archive_read_support_format_raw.c in Sources */,

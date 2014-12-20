@@ -47,10 +47,8 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         need_to_add_dot_dot = false;
     
     char pathwithslash[MAXPATHLEN]; // this buffer will be used for composing long filenames for stat()
-    char *pathwithslashp = &pathwithslash[0];
     strcpy(pathwithslash, RelativePath());
     if(pathwithslash[strlen(pathwithslash)-1] != '/' ) strcat(pathwithslash, "/");
-    size_t pathwithslash_len = strlen(pathwithslash);
 
     
     vector< tuple<string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
@@ -109,29 +107,27 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     dirents.shrink_to_fit();
     
     // stat files, find extenstions any any and create CFString name representations in several threads
-    dispatch_apply(m_Items.size(), dispatch_get_global_queue(0, 0), ^(size_t n) {
-        VFSNativeListingItem *current = &m_Items[n];
+    dispatch_apply(m_Items.size(), dispatch_get_global_queue(0, 0), [&](size_t n) {
         if(_checker && _checker()) return;
-        char filename[MAXPATHLEN];
-        const char *entryname = current->Name();
-        memcpy(filename, pathwithslashp, pathwithslash_len);
-        strcpy(filename + pathwithslash_len, current->Name());
+
+        VFSNativeListingItem &current = m_Items[n];
+        string filename = pathwithslash + current.name;
         
         // stat the file
         struct stat stat_buffer;
-        if(io.stat(filename, &stat_buffer) == 0) {
-            current->atime = stat_buffer.st_atimespec.tv_sec;
-            current->mtime = stat_buffer.st_mtimespec.tv_sec;
-            current->ctime = stat_buffer.st_ctimespec.tv_sec;
-            current->btime = stat_buffer.st_birthtimespec.tv_sec;
-            current->unix_mode  = stat_buffer.st_mode;
-            current->unix_flags = stat_buffer.st_flags;
-            current->unix_uid   = stat_buffer.st_uid;
-            current->unix_gid   = stat_buffer.st_gid;
+        if(io.stat(filename.c_str(), &stat_buffer) == 0) {
+            current.atime = stat_buffer.st_atimespec.tv_sec;
+            current.mtime = stat_buffer.st_mtimespec.tv_sec;
+            current.ctime = stat_buffer.st_ctimespec.tv_sec;
+            current.btime = stat_buffer.st_birthtimespec.tv_sec;
+            current.unix_mode  = stat_buffer.st_mode;
+            current.unix_flags = stat_buffer.st_flags;
+            current.unix_uid   = stat_buffer.st_uid;
+            current.unix_gid   = stat_buffer.st_gid;
             if( (stat_buffer.st_mode & S_IFMT) != S_IFDIR )
-                current->size  = stat_buffer.st_size;
+                current.size  = stat_buffer.st_size;
             else
-                current->size = VFSListingItem::InvalidSize;
+                current.size = VFSListingItem::InvalidSize;
             // add other stat info here. there's a lot more
         }
         
@@ -139,30 +135,31 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         // here we skip possible cases like
         // filename. and .filename
         // in such cases we think there's no extension at all
-        for(int i = int(current->name.length()) - 2; i > 0; --i)
+        const char *entryname = current.Name();
+        for(int i = int(current.name.length()) - 2; i > 0; --i)
             if(entryname[i] == '.') {
-                current->extoffset = i+1;
+                current.extoffset = i+1;
                 break;
             }
         
         // create CFString name representation
-        current->cf_name = CFStringCreateWithUTF8StdStringNoCopy(current->name);
+        current.cf_name = CFStringCreateWithUTF8StdStringNoCopy(current.name);
         
         // if we're dealing with a symlink - read it's content to know the real file path
-        if( current->unix_type == DT_LNK )
+        if( current.unix_type == DT_LNK )
         {
             char linkpath[MAXPATHLEN];
-            ssize_t sz = io.readlink(filename, linkpath, MAXPATHLEN);
+            ssize_t sz = io.readlink(filename.c_str(), linkpath, MAXPATHLEN);
             if(sz != -1) {
                 linkpath[sz] = 0;
-                current->symlink = linkpath;
+                current.symlink = linkpath;
             }
             
             // stat the original file so we can extract some interesting info from it
             struct stat link_stat_buffer;
-            if(io.lstat(filename, &link_stat_buffer) == 0 &&
+            if(io.lstat(filename.c_str(), &link_stat_buffer) == 0 &&
                 (link_stat_buffer.st_flags & UF_HIDDEN) )
-                current->unix_flags |= UF_HIDDEN; // current only using UF_HIDDEN flag
+                current.unix_flags |= UF_HIDDEN; // current only using UF_HIDDEN flag
         }
     });
 

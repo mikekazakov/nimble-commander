@@ -533,9 +533,14 @@
                                                                      : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
         
         FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
+        
+        if( auto vol = NativeFSManager::Instance().VolumeFromPath(self.currentDirectoryPath) )
+            if( vol->interfaces.has_trash == false )
+                sheet.allowMoveToTrash = false;
+        
         [sheet ShowSheet:self.window Files:*files Type:type Handler:^(int result){
                      if (result == DialogResult::Delete) {
-                         FileDeletionOperationType type = [sheet GetType];
+                         FileDeletionOperationType type = sheet.resultType;
                                                   
                          FileDeletionOperation *op = [FileDeletionOperation alloc];
                          op = [op initWithFiles:move(*files)
@@ -548,7 +553,9 @@
     }
     else if(self.vfs->IsWriteable()) {
         FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-        [sheet ShowSheetForVFS:self.window Files:*files Handler:^(int result){
+        sheet.allowMoveToTrash = false;
+        sheet.allowSecureDelete = false;
+        [sheet ShowSheet:self.window Files:*files Type:FileDeletionOperationType::Delete Handler:^(int result){
                            if (result == DialogResult::Delete) {
                                FileDeletionOperation *op = [FileDeletionOperation alloc];
                                op = [op initWithFiles:move(*files)

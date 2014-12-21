@@ -14,14 +14,24 @@
     FileDeletionSheetCompletionHandler m_Handler;
     FileDeletionOperationType m_DefaultType;
     FileDeletionOperationType m_ResultType;
-    
+
+    bool                        m_AllowMoveToTrash;
+    bool                        m_AllowSecureDelete;
     NSString *m_Title;
 }
+
+@synthesize allowMoveToTrash = m_AllowMoveToTrash;
+@synthesize allowSecureDelete = m_AllowSecureDelete;
+@synthesize resultType = m_ResultType;
 
 - (id)init
 {
     self = [super initWithWindowNibName:@"FileDeletionSheetController"];
     if (self) {
+        m_AllowMoveToTrash = true;
+        m_AllowSecureDelete = true;
+        m_DefaultType = FileDeletionOperationType::Delete;
+        m_ResultType = FileDeletionOperationType::Delete;
         m_Title = @"";
     }
     
@@ -34,26 +44,50 @@
     
     self.Label.stringValue = m_Title;
     
-    int index;
-    if (m_DefaultType == FileDeletionOperationType::MoveToTrash)
-        index = 0;
-    else if (m_DefaultType == FileDeletionOperationType::Delete)
-        index = 1;
-    else if (m_DefaultType == FileDeletionOperationType::SecureDelete)
-        index = 2;
-    else
-        assert(0);
+    [self.DeleteButtonMenu removeAllItems];
+    if( m_AllowMoveToTrash ) {
+        NSMenuItem *it = [[NSMenuItem alloc] init];
+        it.title = @"Move to Trash";
+        it.tag = int(FileDeletionOperationType::MoveToTrash);
+        it.action = @selector(OnMenuItem:);
+        it.target = self;
+        [self.DeleteButtonMenu addItem:it];
+    }
+    if( true ) {
+        NSMenuItem *it = [[NSMenuItem alloc] init];
+        it.title = @"Delete Permanently";
+        it.tag = int(FileDeletionOperationType::Delete);
+        it.action = @selector(OnMenuItem:);
+        it.target = self;
+        [self.DeleteButtonMenu addItem:it];        
+    }
+    if( m_AllowSecureDelete ) {
+        NSMenuItem *it = [[NSMenuItem alloc] init];
+        it.title = @"Delete Securely";
+        it.tag = int(FileDeletionOperationType::SecureDelete);
+        it.action = @selector(OnMenuItem:);
+        it.target = self;        
+        [self.DeleteButtonMenu addItem:it];        
+    }
+
+    NSMenuItem *item = [self.DeleteButtonMenu itemWithTag:int(m_DefaultType)];
+    if(!item) {
+        item = [self.DeleteButtonMenu itemWithTag:int(FileDeletionOperationType::Delete)];
+        m_DefaultType = FileDeletionOperationType::Delete;
+    }
     
-    NSMenuItem *item = self.DeleteButtonMenu.itemArray[index];
     [self.DeleteButton setLabel:item.title forSegment:0];
-    [self.DeleteButtonMenu removeItemAtIndex:index];
+    [self.DeleteButtonMenu removeItem:item];
     
     [self.DeleteButton MakeDefault];
+  
+    if( self.DeleteButtonMenu.itemArray.count == 0 )
+        [self.DeleteButton setSegmentCount:1];
 }
 
 - (void)didEndSheet:(NSWindow *)_sheet returnCode:(NSInteger)_code contextInfo:(void *)_context
 {
-    [[self window] orderOut:self];
+    [self.window orderOut:self];
     
     if(m_Handler)
         m_Handler((int)_code);
@@ -74,12 +108,7 @@
 - (IBAction)OnMenuItem:(NSMenuItem *)sender
 {
     NSInteger tag = sender.tag;
-    if (tag == 0)
-        m_ResultType = FileDeletionOperationType::MoveToTrash;
-    else if (tag == 1)
-        m_ResultType = FileDeletionOperationType::Delete;
-    else if (tag == 2)
-        m_ResultType = FileDeletionOperationType::SecureDelete;
+    m_ResultType = FileDeletionOperationType(tag);
     [NSApp endSheet:self.window returnCode:DialogResult::Delete];
 }
 
@@ -112,31 +141,6 @@
         modalDelegate: self
        didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
           contextInfo: nil];
-}
-
-- (void)ShowSheetForVFS:(NSWindow *)_window
-                  Files:(const vector<string>&)_files
-                Handler:(FileDeletionSheetCompletionHandler)_handler
-{
-    assert(!_files.empty());
-    assert(_handler);
-    m_Handler = _handler;
-    [self buildTitle:_files];
-    
-    [self window]; // load
-    [self.DeleteButton setLabel:@"Delete Permanently" forSegment:0];
-    [self.DeleteButton setSegmentCount:1];
-    
-    [NSApp beginSheet: [self window]
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo: nil];
-}
-
-- (FileDeletionOperationType)GetType
-{
-    return m_ResultType;
 }
 
 @end

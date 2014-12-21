@@ -8,19 +8,6 @@
 
 #import "FileDeletionOperationJob.h"
 #import "NativeFSManager.h"
-#import <sys/types.h>
-#import <sys/dirent.h>
-#import <sys/stat.h>
-#import <dirent.h>
-#import <sys/time.h>
-#import <sys/xattr.h>
-#import <sys/attr.h>
-#import <sys/vnode.h>
-#import <sys/param.h>
-#import <sys/mount.h>
-#import <unistd.h>
-#import <stdlib.h>
-#import <random>
 #import "OperationDialogAlert.h"
 #import "rdrand.h"
 #import "Common.h"

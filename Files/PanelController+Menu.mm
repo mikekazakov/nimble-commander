@@ -580,14 +580,22 @@
 
 - (IBAction)OnMoveToTrash:(id)sender
 {
-    if(self.vfs->IsNativeFS() == false &&
-       self.vfs->IsWriteable() == true )
-    {
-        // instead of trying to silently reap files on VFS like FTP (that means we'll erase it, not move to trash) -
-        // forward request as a regular F8 delete
-        [self OnDeleteCommand:self];
+    if(self.vfs->IsNativeFS() == false) {
+        if(self.vfs->IsWriteable() == true ) {
+            // instead of trying to silently reap files on VFS like FTP (that means we'll erase it, not move to trash) -
+            // forward request as a regular F8 delete
+            [self OnDeleteCommand:self];
+        }
         return;
     }
+    
+    if( auto vol = NativeFSManager::Instance().VolumeFromPath(self.currentDirectoryPath) )
+        if( vol->interfaces.has_trash == false ) {
+            // if user called MoveToTrash by cmd+backspace but there's no trash on this volume:
+            // show a dialog and ask him to delete a file permanently
+            [self OnDeleteCommand:self];
+            return;
+        }
     
     auto files = self.selectedEntriesOrFocusedEntryFilenames;
     if(files.empty())

@@ -75,9 +75,8 @@ static string GetLocale()
 map<string, string> TermTask::BuildEnv()
 {
     static map<string, string> env;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^
-    {
+    static once_flag once;
+    call_once(once, []{
         // do it once per app run
         string locale = GetLocale();
         if(!locale.empty())

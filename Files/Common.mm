@@ -108,8 +108,8 @@ static uint64_t GetTimeInNanosecondsScale()
 
 static uint64_t InitGetTimeInNanoseconds()
 {
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         mach_timebase_info(&info_data);
         if (info_data.denom == info_data.numer)
             GetTimeInNanoseconds = &mach_absolute_time;

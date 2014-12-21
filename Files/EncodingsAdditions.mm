@@ -280,8 +280,8 @@ int FromCFStringEncoding(int _encoding)
 const vector< pair<int, CFStringRef> >& LiteralEncodingsList()
 {
     static vector< pair<int, CFStringRef> > encodings;
-    static dispatch_once_t token = 0;
-    dispatch_once(&token, ^{
+    static once_flag token;
+    call_once(token, []{
 #define _(a) encodings.emplace_back(a, (CFStringRef)CFBridgingRetain(\
     [NSString localizedNameOfStringEncoding:CFStringConvertEncodingToNSStringEncoding(ToCFStringEncoding(a))]))
         _(ENCODING_MACOS_ROMAN_WESTERN);

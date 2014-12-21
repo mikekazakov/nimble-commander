@@ -95,8 +95,8 @@ static const int g_MaximumSearchResults = 16384;
 - (id)transformedValue:(id)value
 {
     static NSDateFormatter *formatter;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         formatter = [NSDateFormatter new];
         [formatter setLocale:[NSLocale currentLocale]];
         [formatter setDateStyle:NSDateFormatterShortStyle];	// short date

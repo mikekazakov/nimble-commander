@@ -26,7 +26,6 @@
 @end
 
 static NSString *g_FileName = @"/selectionwithmasksheet.bplist"; // bplist file name
-static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
 
 @implementation SelectionWithMaskSheetHistoryEntry
 - (id)initWithCoder:(NSCoder *)decoder {
@@ -82,13 +81,8 @@ static SelectionWithMaskSheetHistory *g_SharedHistory = nil;
 
 + (SelectionWithMaskSheetHistory*) sharedHistory
 {
-    static dispatch_once_t once;
-    
-    dispatch_once(&once, ^{
-        g_SharedHistory = [SelectionWithMaskSheetHistory new];
-    });
-    
-    return g_SharedHistory;
+    static SelectionWithMaskSheetHistory *hist = [SelectionWithMaskSheetHistory new];
+    return hist;
 }
 
 - (NSArray*) History

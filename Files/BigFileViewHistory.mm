@@ -130,9 +130,8 @@ static NSString* StorageFileName()
 
 + (BigFileViewHistory*) sharedHistory
 {
-    static dispatch_once_t once;
-    
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         g_SharedInstance = [BigFileViewHistory new];
     });
     

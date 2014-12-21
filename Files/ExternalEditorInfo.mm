@@ -232,12 +232,7 @@ static NSString* StorageFileName()
 
 + (ExternalEditorsList*) sharedList
 {
-    static dispatch_once_t once;
-    static ExternalEditorsList* list = nil;
-    dispatch_once(&once, ^{
-        list = [ExternalEditorsList new];
-    });
-    
+    static ExternalEditorsList* list = [ExternalEditorsList new];
     return list;
 }
 

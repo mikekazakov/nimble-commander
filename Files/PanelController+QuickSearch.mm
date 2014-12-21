@@ -63,8 +63,8 @@ static bool IsQuickSearchModifierForArrows(NSUInteger _modif, PanelQuickSearchMo
 static bool IsQuickSearchStringCharacter(NSString *_s)
 {
     static NSCharacterSet *chars;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         NSMutableCharacterSet *un = [NSMutableCharacterSet new];
         [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];

@@ -59,8 +59,8 @@ static NSString *g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 SandboxManager &SandboxManager::Instance()
 {
     static SandboxManager *manager = nullptr;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         manager = new SandboxManager;
         manager->LoadSecurityScopeBookmarks();
         [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification

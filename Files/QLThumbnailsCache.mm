@@ -13,11 +13,7 @@
 
 QLThumbnailsCache &QLThumbnailsCache::Instance()
 {
-    static dispatch_once_t onceToken;
-    static unique_ptr<QLThumbnailsCache> inst;
-    dispatch_once(&onceToken, ^{
-        inst = make_unique<QLThumbnailsCache>();
-    });
+    static auto inst = make_unique<QLThumbnailsCache>();
     return *inst;
 }
 

@@ -74,8 +74,8 @@ const char *VFSNetSFTPHost::FSTag() const
 VFSNetSFTPHost::VFSNetSFTPHost(const char *_serv_url):
     VFSHost(_serv_url, nullptr)
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         int rc = libssh2_init(0);
         assert(rc == 0);
     });

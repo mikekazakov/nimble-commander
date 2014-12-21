@@ -31,9 +31,9 @@ static NSArray *g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQ
 
 static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
-    static dispatch_once_t onceToken;
     static vector<string> extensions;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         bool any = false;
         
         // load from defaults

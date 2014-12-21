@@ -36,8 +36,8 @@ static bool TimeFormatIsDayFirst()
 {
     static bool day_first = true; // month is first overwise
     
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         // a very-very nasty code here - trying to parse Unicode Technical Standard #35 stuff in a quite naive way
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         dateFormatter.dateStyle = NSDateFormatterShortStyle;

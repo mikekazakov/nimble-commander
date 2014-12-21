@@ -41,8 +41,8 @@
 
 - (id) initWithFrame:(NSRect)frameRect
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         [MMTabBarView registerTabStyleClass:MMTabBarStyle.class];
     });
     

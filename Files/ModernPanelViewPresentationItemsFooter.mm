@@ -21,8 +21,8 @@ static CGColorRef g_FooterStrokeColorInact = CGColorCreateGenericRGB(225/255.0, 
 static NSString* FormHumanReadableDateTime(time_t _in)
 {
     static NSDateFormatter *date_formatter = nil;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         date_formatter = [NSDateFormatter new];
         [date_formatter setLocale:[NSLocale currentLocale]];
         [date_formatter setDateStyle:NSDateFormatterMediumStyle];	// short date
@@ -192,8 +192,8 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem*
             m_LastItemSymlink.clear();
         
         static NSMutableParagraphStyle *par1, *par2;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
+        static once_flag once;
+        call_once(once, []{
             par1 = [NSMutableParagraphStyle new];
             par1.alignment = NSRightTextAlignment;
             par1.lineBreakMode = NSLineBreakByClipping;

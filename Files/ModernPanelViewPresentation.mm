@@ -24,8 +24,8 @@
 static NSString* FormHumanReadableShortDate(time_t _in)
 {
     static NSDateFormatter *date_formatter = nil;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         date_formatter = [NSDateFormatter new];
         [date_formatter setLocale:[NSLocale currentLocale]];
         [date_formatter setDateStyle:NSDateFormatterShortStyle];	// short date
@@ -38,8 +38,8 @@ static NSString* FormHumanReadableShortDate(time_t _in)
 static NSString* FormHumanReadableShortTime(time_t _in)
 {
     static NSDateFormatter *date_formatter = nil;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         date_formatter = [NSDateFormatter new];
         [date_formatter setLocale:[NSLocale currentLocale]];
         [date_formatter setDateStyle:NSDateFormatterNoStyle];       // no date
@@ -127,8 +127,8 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     m_ItemsFooter(make_unique<ModernPanelViewPresentationItemsFooter>(this)),
     m_VolumeFooter(make_unique<ModernPanelViewPresentationVolumeFooter>())
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         m_SymlinkArrowImage = [NSImage imageNamed:@"linkarrow_icon.png"];
     });
     

@@ -33,25 +33,13 @@ static bool DraggingIntoFoldersAllowed()
 
 static NSFont *FontForDragImages()
 {
-    static dispatch_once_t once;
-    static NSFont *font = nil;
-    
-    dispatch_once(&once, ^{
-        font = [NSFont fontWithName:@"Lucida Grande" size:13];
-    });
-
+    static NSFont *font = [NSFont fontWithName:@"Lucida Grande" size:13];
     return font;
 }
 
 static NSString *FilenamesPasteboardUTI()
 {
-    static dispatch_once_t once;
-    static NSString *uti = nil;
-    dispatch_once(&once, ^{
-        CFStringRef tmp = UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData);
-        uti = (NSString*)CFBridgingRelease(tmp);
-    });
-    
+    static NSString *uti = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));
     return uti;
 }
 

@@ -486,8 +486,8 @@ int VFSPSHost::CreateFile(const char* _path,
 int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
 {
     static VFSStat::meaningT m;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         memset(&m, sizeof(m), 0);
         m.size = 1;
         m.mode = 1;

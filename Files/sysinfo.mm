@@ -126,14 +126,18 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
 bool GetMemoryInfo(MemoryInfo &_mem)
 {
     static int pagesize = 0;
-    size_t length;
+    static uint64_t memsize = 0;
     
-    // get page size (only once)
-    static dispatch_once_t once1;
-    dispatch_once(&once1, ^{
+    // get page size and hardware memory size (only once)
+    static once_flag once;
+    call_once(once, []{
         int psmib[2] = {CTL_HW, HW_PAGESIZE};
         size_t length = sizeof (pagesize);
         sysctl(psmib, 2, &pagesize, &length, NULL, 0);
+        
+        int memsizemib[2] = {CTL_HW,HW_MEMSIZE};
+        length = sizeof(memsize);
+        sysctl(memsizemib, 2, &memsize, &length, NULL, NULL);
     });
     
     // get general memory info
@@ -161,19 +165,11 @@ bool GetMemoryInfo(MemoryInfo &_mem)
     //get the swap size
 	int swapmib[2] = {CTL_VM,VM_SWAPUSAGE};
     struct xsw_usage swap_info;
-	length = sizeof(swap_info);
+	size_t length = sizeof(swap_info);
     if( sysctl(swapmib, 2, &swap_info, &length, NULL, NULL) < 0)
         return false;
     _mem.swap = swap_info.xsu_used;
     
-    // get hardware memory size (once)
-    static uint64_t memsize = 0;
-    static dispatch_once_t once2;
-    dispatch_once(&once2, ^{
-        int memsizemib[2] = {CTL_HW,HW_MEMSIZE};
-        size_t length = sizeof(memsize);
-        sysctl(memsizemib, 2, &memsize, &length, NULL, NULL);
-    });
     _mem.total_hw = memsize;
 
     return true;
@@ -196,13 +192,8 @@ bool GetCPULoad(CPULoad &_load)
     double user = 0.;
     double idle = 0.;
     
-    static unsigned int *prior = 0;
-    static unsigned int alloc_cpus = 0;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        prior = (unsigned int*) calloc(CPU_STATE_MAX * numCPUs, sizeof(unsigned int));
-        alloc_cpus = numCPUs;
-    });
+    static unsigned int *prior = (unsigned int*) calloc(CPU_STATE_MAX * numCPUs, sizeof(unsigned int));
+    static const unsigned int alloc_cpus = numCPUs;
     assert(alloc_cpus == numCPUs);
     
     for(unsigned i = 0; i < numCPUs; ++i)
@@ -236,8 +227,8 @@ bool GetCPULoad(CPULoad &_load)
 OSXVersion GetOSXVersion() noexcept
 {
     static OSXVersion version = OSXVersion::OSX_Unknown;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         if(NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"])
         {
             id prod_ver = [d objectForKey:@"ProductVersion"];
@@ -270,8 +261,8 @@ bool GetSystemOverview(SystemOverview &_overview)
     
     // get machine model once
     static NSString *human_model = @"N/A";
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static once_flag once;
+    call_once(once, []{
         char model[256];
         size_t len = 256;
         if(sysctlbyname("hw.model", model, &len, NULL, 0) == 0)

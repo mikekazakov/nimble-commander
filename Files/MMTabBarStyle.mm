@@ -161,8 +161,8 @@ static CGColorRef DividerColor(bool _wnd_active)
 - (void)updateAddButton:(MMRolloverButton *)aButton ofTabBarView:(MMTabBarView *)tabBarView
 {
     static NSImage *img;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, []{
         img = [NSImage imageNamed:@"tab_add.png"];
         [img setTemplate:true];
     });

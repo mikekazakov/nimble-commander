@@ -145,11 +145,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
 {
-    static ActionsShortcutsManager *manager = nullptr;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        manager = new ActionsShortcutsManager;
-    });
+    static ActionsShortcutsManager *manager = new ActionsShortcutsManager;
     return *manager;
 }
 

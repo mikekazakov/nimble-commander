@@ -12,11 +12,7 @@
 
 WorkspaceIconsCache& WorkspaceIconsCache::Instance()
 {
-    static dispatch_once_t onceToken;
-    static unique_ptr<WorkspaceIconsCache> inst;
-    dispatch_once(&onceToken, ^{
-        inst = make_unique<WorkspaceIconsCache>();
-    });
+    static auto inst = make_unique<WorkspaceIconsCache>();
     return *inst;
 }
 

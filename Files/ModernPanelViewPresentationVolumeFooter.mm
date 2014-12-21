@@ -58,8 +58,8 @@ void ModernPanelViewPresentationVolumeFooter::PrepareToDraw(const VFSStatFS &_st
     m_CurrentStat = _stat;
     
     static NSDictionary *attr1, *attr2;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static once_flag once;
+    call_once(once, [=]{
         NSMutableParagraphStyle *par1 = [NSMutableParagraphStyle new];
         par1.alignment = NSLeftTextAlignment;
         par1.lineBreakMode = NSLineBreakByTruncatingTail;

@@ -68,8 +68,7 @@ SandboxManager &SandboxManager::Instance()
                                                          queue:NSOperationQueue.mainQueue
                                                     usingBlock:^(NSNotification *note) {
                                                         auto &sm = SandboxManager::Instance();
-                                                        if(sm.m_BookmarksDirty)
-                                                            sm.SaveSecurityScopeBookmarks();
+                                                        sm.StopUsingBookmarks();
                                                     }];
     });
     return *manager;
@@ -100,7 +99,6 @@ void SandboxManager::LoadSecurityScopeBookmarks()
                     Bookmark bm;
                     bm.data = data;
                     bm.url = scoped_url;
-                    bm.is_accessing = true;
                     bm.path = scoped_url.path.fileSystemRepresentation;
                     m_Bookmarks.emplace_back(bm);
                 }
@@ -116,7 +114,6 @@ void SandboxManager::SaveSecurityScopeBookmarks()
     
     [NSUserDefaults.standardUserDefaults setObject:array.copy forKey:g_BookmarksKey];
     [NSUserDefaults.standardUserDefaults synchronize];
-    m_BookmarksDirty = false;
 }
 
 bool SandboxManager::Empty() const
@@ -171,11 +168,11 @@ bool SandboxManager::AskAccessForPathSync(const string& _path, bool _mandatory_p
                 Bookmark bm;
                 bm.data = bookmark_data;
                 bm.url = scoped_url;
-                bm.is_accessing = true;
                 bm.path = scoped_url.path.fileSystemRepresentation;
                 if(bm.path.filename() == ".") bm.path.remove_filename();
                 m_Bookmarks.emplace_back(bm);
-                m_BookmarksDirty = true;
+                
+                SaveSecurityScopeBookmarks();
                 
                 return HasAccessToFolder(_path);
             }
@@ -253,13 +250,17 @@ string SandboxManager::FirstFolderWithAccess() const
 void SandboxManager::ResetBookmarks()
 {
     lock_guard<recursive_mutex> lock(m_Lock);
-    if(m_Bookmarks.empty())
-        return;
     
     for(auto &i: m_Bookmarks)
-        if(i.is_accessing)
-            [i.url stopAccessingSecurityScopedResource];
+        [i.url stopAccessingSecurityScopedResource];
     
     m_Bookmarks.clear();
-    m_BookmarksDirty = true;
+    SaveSecurityScopeBookmarks();
+}
+
+void SandboxManager::StopUsingBookmarks()
+{
+    lock_guard<recursive_mutex> lock(m_Lock);
+    for(auto &i: m_Bookmarks)
+        [i.url stopAccessingSecurityScopedResource];
 }

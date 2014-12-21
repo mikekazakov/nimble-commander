@@ -47,17 +47,15 @@ private:
         NSData*data         = nil;
         NSURL *url          = nil;
         path   path         = "";
-        bool   is_accessing = false;
     };
     
     
     void LoadSecurityScopeBookmarks();
     void SaveSecurityScopeBookmarks();
-  
+    void StopUsingBookmarks();
+    
     bool HasAccessToFolder(const path &_p) const;
     
-    vector<Bookmark>    m_Bookmarks;
-    bool                m_BookmarksDirty = false;
+    vector<Bookmark>        m_Bookmarks;
     mutable recursive_mutex m_Lock;
-    
 };

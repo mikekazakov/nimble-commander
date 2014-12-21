@@ -68,14 +68,15 @@ public:
 private:
     ActionsShortcutsManager();
     ActionsShortcutsManager(const ActionsShortcutsManager&) = delete;
-    void DoInit();    
     
     void ReadDefaults(NSArray *_dict);
     void WriteDefaults(NSMutableArray *_dict) const;
     
     void ReadOverrides(NSArray *_dict);
     void WriteOverrides(NSMutableArray *_dict) const;
+    void WriteOverridesToNSDefaults() const;
     
+    void MigrateExternalPlistIfAny();
     
     // persistance holy grail is below, change id's only in emergency case:
     const vector<pair<string,int>> m_ActionsTags = {
@@ -185,7 +186,6 @@ private:
     
     map<int, ShortCut>      m_ShortCutsDefaults;
     map<int, ShortCut>      m_ShortCutsOverrides;
-    mutable bool            m_DirtyOverrides = false;
 };
 
 #define IF_MENU_TAG_TOKENPASTE(x, y) x ## y

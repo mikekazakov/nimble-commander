@@ -32,7 +32,7 @@ namespace __dispatch_cpp {
     typedef std::function<void()>       __lambda_exec;
     typedef std::function<void(size_t)> __lambda_apply;
     void __dispatch_cpp_exec_delete_lambda(void*);
-    void __dispatch_cpp_appl_lambda(void*, size_t);
+    void __dispatch_cpp_apply_lambda(void*, size_t);
 }
 
 template <class T>
@@ -58,7 +58,7 @@ inline void dispatch_apply( size_t iterations, dispatch_queue_t queue, T f )
     dispatch_apply_f(iterations,
                      queue,
                      &l,
-                     __dispatch_cpp::__dispatch_cpp_appl_lambda);
+                     __dispatch_cpp::__dispatch_cpp_apply_lambda);
 }
 
 template <class T>

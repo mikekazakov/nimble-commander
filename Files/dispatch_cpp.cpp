@@ -9,7 +9,7 @@ void __dispatch_cpp_exec_delete_lambda(void* context)
     delete l;
 }
     
-void __dispatch_cpp_appl_lambda(void* context, size_t it)
+void __dispatch_cpp_apply_lambda(void* context, size_t it)
 {
     auto l = reinterpret_cast<__lambda_apply*>(context);
     (*l)(it);

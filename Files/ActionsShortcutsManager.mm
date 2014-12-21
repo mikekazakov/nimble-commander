@@ -9,11 +9,12 @@
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "ActionsShortcutsManager.h"
 
-static NSString *g_OverridesFilename = @"/shortcuts.plist";
+static NSString *g_OverridesDefaultsKey = @"CommonHotkeysOverrides";
 
-static NSString *OverridesFullPath()
+static NSString *OverridesFullPathOld()
 {
-    return [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilename];
+    static NSString *g_OverridesFilenameOld = @"/shortcuts.plist";
+    return [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilenameOld];
 }
 
 NSString *ActionsShortcutsManager::ShortCut::ToPersString() const
@@ -135,12 +136,18 @@ bool ActionsShortcutsManager::ShortCut::operator!=(const ShortCut&_r) const
 
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
-    for(auto &i: m_ActionsTags)
-    {
+    for(auto &i: m_ActionsTags) {
         m_TagToAction[i.second] = i.first;
         m_ActionToTag[i.first]  = i.second;
     }
-    DoInit();
+    
+    NSString *defaults_fn = [NSBundle.mainBundle pathForResource:@"ShortcutsDefaults" ofType:@"plist"];
+    ReadDefaults([NSArray arrayWithContentsOfFile:defaults_fn]);
+    
+    MigrateExternalPlistIfAny();
+    
+    if(NSArray *overrides = [NSUserDefaults.standardUserDefaults objectForKey:g_OverridesDefaultsKey])
+        ReadOverrides(overrides);
 }
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
@@ -241,10 +248,11 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
 
 void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
 {
+    m_ShortCutsOverrides.clear();
+    
     if(_dict.count % 2 != 0)
         return;
-    int total_actions_read = 0;
-    m_ShortCutsOverrides.clear();
+
     for(int ind = 0; ind < _dict.count; ind += 2)
     {
         NSString *key = [_dict objectAtIndex:ind];
@@ -255,56 +263,24 @@ void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
             continue;
         
         if([obj isEqualToString:@"default"])
-        {
-            total_actions_read++;
             continue;
-        }
         
         ShortCut sc;
         if(sc.FromPersString(obj))
-        {
             m_ShortCutsOverrides[i->second] = sc;
-            total_actions_read++;
-        }
     }
-    
-    if(total_actions_read < m_ActionsTags.size())
-        m_DirtyOverrides = true;
 }
 
 void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
 {
-    for(auto &i: m_ActionsTags)
-    {
-        [_dict addObject:[NSString stringWithUTF8String:i.first.c_str()]];
-        
+    for(auto &i: m_ActionsTags) {
         int tag = i.second;
-        
         auto scover = m_ShortCutsOverrides.find(tag);
-        if(scover != m_ShortCutsOverrides.end())
+        if(scover != m_ShortCutsOverrides.end()) {
+            [_dict addObject:[NSString stringWithUTF8String:i.first.c_str()]];
             [_dict addObject:scover->second.ToPersString()];
-        else
-            [_dict addObject:@"default"];
+        }
     }
-    m_DirtyOverrides = false;
-}
-
-void ActionsShortcutsManager::DoInit()
-{
-    NSString *defaults_fn = [[NSBundle mainBundle] pathForResource:@"ShortcutsDefaults" ofType:@"plist"];
-    ReadDefaults([NSArray arrayWithContentsOfFile:defaults_fn]);
-    ReadOverrides([NSArray arrayWithContentsOfFile:OverridesFullPath()]);
-    
-    [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
-                                                    object:[NSApplication sharedApplication]
-                                                     queue:NSOperationQueue.mainQueue
-                                                usingBlock:^(NSNotification *note) {
-                                                    if(m_DirtyOverrides) {
-                                                        NSMutableArray *new_overrides = [NSMutableArray new];
-                                                        WriteOverrides(new_overrides);
-                                                        [new_overrides writeToFile:OverridesFullPath() atomically:true];
-                                                    }
-                                                }];
 }
 
 const ActionsShortcutsManager::ShortCut *ActionsShortcutsManager::ShortCutFromAction(const string &_action) const
@@ -342,18 +318,61 @@ void ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
     if(tag <= 0)
         return;
     
-    m_DirtyOverrides = true;
-    
     auto &orig = m_ShortCutsDefaults[tag];
     if(orig == _sc) {
         m_ShortCutsOverrides.erase(tag);
         return;
     }
     m_ShortCutsOverrides[tag] = _sc;
+    
+    // immediately write to NSUserDefaults
+    WriteOverridesToNSDefaults();
 }
 
 void ActionsShortcutsManager::RevertToDefaults()
 {
     m_ShortCutsOverrides.clear();
-    m_DirtyOverrides = true;
+    WriteOverridesToNSDefaults();
+}
+
+void ActionsShortcutsManager::MigrateExternalPlistIfAny()
+{
+    NSArray *old = [NSArray arrayWithContentsOfFile:OverridesFullPathOld()];
+    if(!old)
+        return;
+    if(old.count % 2 != 0)
+        return;
+
+    // store backup of migrated plist
+    rename(OverridesFullPathOld().UTF8String, [NSString stringWithFormat:@"%@_old", OverridesFullPathOld()].UTF8String);
+    
+    m_ShortCutsOverrides.clear();
+    for(int ind = 0; ind < old.count; ind += 2) {
+        NSString *key = [old objectAtIndex:ind];
+        NSString *obj = [old objectAtIndex:ind+1];
+        
+        auto i = m_ActionToTag.find(key.UTF8String);
+        if(i == m_ActionToTag.end())
+            continue;
+        
+        if([obj isEqualToString:@"default"])
+            continue;
+        
+        ShortCut sc;
+        if(sc.FromPersString(obj))
+            m_ShortCutsOverrides[i->second] = sc;
+    }
+
+    // and then write overrides to defaults
+    WriteOverridesToNSDefaults();
+    
+    m_ShortCutsOverrides.clear();
+}
+
+void ActionsShortcutsManager::WriteOverridesToNSDefaults() const
+{
+    NSMutableArray *overrides = [NSMutableArray new];
+    WriteOverrides(overrides);
+    
+    [NSUserDefaults.standardUserDefaults setObject:overrides forKey:g_OverridesDefaultsKey];
 }

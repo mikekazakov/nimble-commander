@@ -1,0 +1,93 @@
+//
+//  KeychainServices.cpp
+//  Files
+//
+//  Created by Michael G. Kazakov on 22/12/14.
+//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
+//
+
+#include <Security/Security.h>
+#include "KeychainServices.h"
+
+KeychainServices::KeychainServices()
+{
+}
+
+KeychainServices &KeychainServices::Instance()
+{
+    static auto inst = new KeychainServices;
+    return *inst;
+}
+
+bool KeychainServices::SetPassword(const string& _where, const string &_account, const string &_password)
+{
+    OSStatus result = SecKeychainAddInternetPassword(nullptr,
+                                                     UInt32(_where.length()),
+                                                     _where.c_str(),
+                                                     0,
+                                                     nullptr,
+                                                     UInt32(_account.length()),
+                                                     _account.c_str(),
+                                                     0,
+                                                     nullptr,
+                                                     0,
+                                                     kSecProtocolTypeAny,
+                                                     kSecAuthenticationTypeDefault,
+                                                     UInt32(_password.length()),
+                                                     _password.c_str(),
+                                                     nullptr);
+    if(result == errSecDuplicateItem) {
+        SecKeychainItemRef item;
+        result = SecKeychainFindInternetPassword (nullptr,
+                                                  UInt32(_where.length()),
+                                                  _where.c_str(),
+                                                  0,
+                                                  nullptr,
+                                                  UInt32(_account.length()),
+                                                  _account.c_str(),
+                                                  0,
+                                                  nullptr,
+                                                  0,
+                                                  kSecProtocolTypeAny,
+                                                  kSecAuthenticationTypeDefault,
+                                                  nullptr,
+                                                  nullptr,
+                                                  &item);
+        if( result == 0) {
+            result = SecKeychainItemModifyAttributesAndData(item,
+                                                            nullptr,
+                                                            UInt32(_password.length()),
+                                                            _password.c_str());
+            CFRelease(item);
+        }
+    }
+    
+    return result == 0;
+}
+
+bool KeychainServices::GetPassword(const string& _where, const string &_account, string &_password)
+{
+    UInt32 len = 0;
+    void *data = 0;
+    OSStatus result = SecKeychainFindInternetPassword (nullptr,
+                                                       UInt32(_where.length()),
+                                                       _where.c_str(),
+                                                       0,
+                                                       nullptr,
+                                                       UInt32(_account.length()),
+                                                       _account.c_str(),
+                                                       0,
+                                                       nullptr,
+                                                       0,
+                                                       kSecProtocolTypeAny,
+                                                       kSecAuthenticationTypeDefault,
+                                                       &len,
+                                                       &data,
+                                                       nullptr);
+    if( result == 0 ) {
+        _password.assign( (char*)data, len );
+        SecKeychainItemFreeContent(nullptr, data);
+        return true;
+    }
+    return false;
+}

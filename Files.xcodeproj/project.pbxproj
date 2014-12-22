@@ -646,6 +646,9 @@
 		CF9D0EDA17CC961100CB8146 /* archive_write.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6E17CC961100CB8146 /* archive_write.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CF9D0EDB17CC961100CB8146 /* filter_fork_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7217CC961100CB8146 /* filter_fork_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CF9D0EDC17CC961100CB8146 /* filter_fork_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7317CC961100CB8146 /* filter_fork_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
+		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
+		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */; };
 		CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */; };
 		CFA0B22C186412BD00501C35 /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.cpp */; };
@@ -1652,6 +1655,8 @@
 		CF9D0E7217CC961100CB8146 /* filter_fork_posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filter_fork_posix.c; path = 3rd_party/libarchive/filter_fork_posix.c; sourceTree = "<group>"; };
 		CF9D0E7317CC961100CB8146 /* filter_fork_windows.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filter_fork_windows.c; path = 3rd_party/libarchive/filter_fork_windows.c; sourceTree = "<group>"; };
 		CF9D0E7417CC961100CB8146 /* filter_fork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filter_fork.h; path = 3rd_party/libarchive/filter_fork.h; sourceTree = "<group>"; };
+		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
+		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
 		CF9DF212171320910008CBAE /* CreateDirectoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectoryOperation.h; sourceTree = "<group>"; };
 		CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperation.mm; sourceTree = "<group>"; };
 		CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationJob.mm; sourceTree = "<group>"; };
@@ -2735,6 +2740,8 @@
 				CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */,
 				CFD54FD21A2A01B30098A4A9 /* RoutedIOInterfaces.h */,
 				CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */,
+				CF9DBE0C1A485E7800FF735B /* KeychainServices.h */,
+				CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -3555,6 +3562,7 @@
 				CF6D9CAD19667BA20077B146 /* archive_read_extract.c in Sources */,
 				CF6D9CAE19667BA20077B146 /* archive_read_open_fd.c in Sources */,
 				CF6D9CAF19667BA20077B146 /* archive_read_open_file.c in Sources */,
+				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF6D9CB019667BA20077B146 /* archive_read_open_filename.c in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF6D9CB119667BA20077B146 /* archive_read_open_memory.c in Sources */,
@@ -3932,6 +3940,7 @@
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
 				CF50B7321A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */,
 				CF9D0ECF17CC961100CB8146 /* archive_write_set_format_gnutar.c in Sources */,
+				CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */,
 				CF9D0EDA17CC961100CB8146 /* archive_write.c in Sources */,
 				CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */,
@@ -4150,6 +4159,7 @@
 				CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */,
 				CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */,
 				CFF6F25C1A13567C00011177 /* archive_windows.c in Sources */,
+				CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CFF6F25D1A13567C00011177 /* archive_read_support_format_iso9660.c in Sources */,
 				CFF6F25E1A13567C00011177 /* MassCopySheetController.mm in Sources */,
 				CFF6F25F1A13567C00011177 /* archive_write_open_filename.c in Sources */,

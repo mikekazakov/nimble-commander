@@ -78,6 +78,55 @@ void VFSStat::ToSysStat(const VFSStat &_from, struct stat &_to)
     _to.st_birthtimespec    = _from.btime;
 }
 
+VFSHostDirObservationTicket::VFSHostDirObservationTicket() noexcept:
+    m_Ticket(0),
+    m_Host()
+{
+}
+
+VFSHostDirObservationTicket::VFSHostDirObservationTicket(unsigned long _ticket, weak_ptr<VFSHost> _host) noexcept:
+    m_Ticket(_ticket),
+    m_Host(_host)
+{
+    assert( (_ticket == 0 && _host.expired()) || (_ticket != 0 && !_host.expired()) );
+}
+
+VFSHostDirObservationTicket::VFSHostDirObservationTicket(VFSHostDirObservationTicket &&_rhs) noexcept:
+    m_Ticket(_rhs.m_Ticket),
+    m_Host(move(_rhs.m_Host))
+{
+    _rhs.m_Ticket = 0;
+}
+
+VFSHostDirObservationTicket::~VFSHostDirObservationTicket()
+{
+    reset();
+}
+
+VFSHostDirObservationTicket &VFSHostDirObservationTicket::operator=(VFSHostDirObservationTicket &&_rhs)
+{
+    reset();
+    m_Ticket = _rhs.m_Ticket;
+    m_Host = move(_rhs.m_Host);
+    _rhs.m_Ticket = 0;
+    return *this;
+}
+
+bool VFSHostDirObservationTicket::valid() const noexcept
+{
+    return m_Ticket != 0;
+}
+
+void VFSHostDirObservationTicket::reset()
+{
+    if(valid()) {
+        if(auto h = m_Host.lock())
+            h->StopDirChangeObserving(m_Ticket);
+        m_Ticket = 0;
+        m_Host.reset();
+    }
+}
+
 VFSHost::VFSHost(const char *_junction_path,
                  shared_ptr<VFSHost> _parent):
     m_JunctionPath(_junction_path ? _junction_path : ""),
@@ -259,9 +308,9 @@ bool VFSHost::IsDirChangeObservingAvailable(const char *_path)
     return false;
 }
 
-unsigned long VFSHost::DirChangeObserve(const char *_path, function<void()> _handler)
+VFSHostDirObservationTicket VFSHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
-    return 0;
+    return {};
 }
 
 void VFSHost::StopDirChangeObserving(unsigned long _ticket)

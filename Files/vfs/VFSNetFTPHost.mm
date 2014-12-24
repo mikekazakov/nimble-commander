@@ -462,10 +462,10 @@ bool VFSNetFTPHost::IsDirChangeObservingAvailable(const char *_path)
     return true;
 }
 
-unsigned long VFSNetFTPHost::DirChangeObserve(const char *_path, function<void()> _handler)
+VFSHostDirObservationTicket VFSNetFTPHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     if(_path == 0 || _path[0] != '/')
-        return 0;
+        return {};
 
     lock_guard<mutex> lock(m_UpdateHandlersLock);
     
@@ -476,7 +476,7 @@ unsigned long VFSNetFTPHost::DirChangeObserve(const char *_path, function<void()
     if(h.path.back() != '/') h.path += '/';
     h.handler = move(_handler);
     
-    return h.ticket;
+    return VFSHostDirObservationTicket(h.ticket, shared_from_this());
 }
 
 void VFSNetFTPHost::StopDirChangeObserving(unsigned long _ticket)

@@ -543,12 +543,12 @@ bool VFSPSHost::IsDirChangeObservingAvailable(const char *_path)
     return true;
 }
 
-unsigned long VFSPSHost::DirChangeObserve(const char *_path, function<void()> _handler)
+VFSHostDirObservationTicket VFSPSHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;
     m_UpdateHandlers.emplace_back(ticket, _handler);
-    return ticket;
+    return VFSHostDirObservationTicket(ticket, shared_from_this());
 }
 
 void VFSPSHost::StopDirChangeObserving(unsigned long _ticket)

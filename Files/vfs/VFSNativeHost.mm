@@ -212,9 +212,10 @@ bool VFSNativeHost::IsDirChangeObservingAvailable(const char *_path)
     return access(_path, R_OK) == 0; // should use _not_ routed I/O here!
 }
 
-unsigned long VFSNativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
+VFSHostDirObservationTicket VFSNativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
-    return FSEventsDirUpdate::Instance().AddWatchPath(_path, _handler);
+    uint64_t t = FSEventsDirUpdate::Instance().AddWatchPath(_path, _handler);
+    return t ? VFSHostDirObservationTicket(t, shared_from_this()) : VFSHostDirObservationTicket();
 }
 
 void VFSNativeHost::StopDirChangeObserving(unsigned long _ticket)

@@ -18,6 +18,26 @@ struct VFSHostOptions
     virtual bool Equal(const VFSHostOptions &_r) const;
 };
 
+class VFSHostDirObservationTicket
+{
+public:
+    VFSHostDirObservationTicket() noexcept;
+    VFSHostDirObservationTicket(unsigned long _ticket, weak_ptr<VFSHost> _host) noexcept;
+    VFSHostDirObservationTicket(VFSHostDirObservationTicket &&_rhs) noexcept;
+    ~VFSHostDirObservationTicket();
+    
+    VFSHostDirObservationTicket &operator=(VFSHostDirObservationTicket &&_rhs);
+    inline operator bool() const noexcept { return valid(); }
+    bool valid() const noexcept;
+    void reset();
+    
+private:
+    VFSHostDirObservationTicket(const VFSHostDirObservationTicket &_rhs) = delete;
+    VFSHostDirObservationTicket &operator=(const VFSHostDirObservationTicket &_rhs) = delete;
+    unsigned long       m_Ticket;
+    weak_ptr<VFSHost>   m_Host;
+};
+
 class VFSHost : public enable_shared_from_this<VFSHost>
 {
 public:
@@ -175,7 +195,9 @@ public:
     
     // return value 0 means error or unsupported for this VFS
     virtual bool IsDirChangeObservingAvailable(const char *_path);
-    virtual unsigned long DirChangeObserve(const char *_path, function<void()> _handler);
+    
+    // _handler can be called from any thread
+    virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler);
     virtual void StopDirChangeObserving(unsigned long _ticket);
     
     virtual bool ShouldProduceThumbnails() const;

@@ -73,7 +73,7 @@ public:
     virtual bool IsWriteableAtPath(const char *_dir) const override;
     
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;    
-    virtual unsigned long DirChangeObserve(const char *_path, function<void()> _handler) override;
+    virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    
     
     virtual string VerboseJunctionPath() const override;

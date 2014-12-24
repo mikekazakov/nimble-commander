@@ -58,8 +58,7 @@ namespace panel
     PanelView                   *m_View;  // create and owns
     
     // VFS changes observation
-    shared_ptr<VFSHost>         m_UpdatesObservationHost;
-    unsigned long               m_UpdatesObservationTicket;
+    VFSHostDirObservationTicket  m_UpdatesObservationTicket;
     
     // VFS listing fetch flags
     int                         m_VFSFetchingFlags;

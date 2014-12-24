@@ -112,7 +112,6 @@ void panel::GenericCursorPersistance::Restore()
 {
     self = [super init];
     if(self) {
-        m_UpdatesObservationTicket = 0;
         m_QuickSearchLastType = 0ns;
         m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
@@ -152,9 +151,6 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) dealloc
 {
-    if(m_UpdatesObservationHost)
-        m_UpdatesObservationHost->StopDirChangeObserving(m_UpdatesObservationTicket);
-
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:g_DefaultsKeys];
 }
 
@@ -289,21 +285,6 @@ void panel::GenericCursorPersistance::Restore()
     mode.sort = mode.sort != _direct ? _direct : _rev;
     [self ChangeSortingModeTo:mode];
     [self.state savePanelOptionsFor:self];
-}
-
-- (void) ResetUpdatesObservation:(string)_new_path
-{
-    if(m_UpdatesObservationHost) {
-        m_UpdatesObservationHost->StopDirChangeObserving(m_UpdatesObservationTicket);
-        m_UpdatesObservationHost.reset();
-    }
-
-    __weak PanelController *weakself = self;
-    m_UpdatesObservationTicket = self.vfs->DirChangeObserve(_new_path.c_str(),
-        ^{[(PanelController *)weakself RefreshDirectory];} );
-    
-    if(m_UpdatesObservationTicket)
-        m_UpdatesObservationHost = self.vfs;
 }
 
 - (bool) HandleGoToUpperDirectory
@@ -579,7 +560,15 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) OnPathChanged
 {
-    [self ResetUpdatesObservation:m_Data.DirectoryPathWithTrailingSlash()];
+    // update directory changes notification ticket
+    __weak PanelController *weakself = self;
+    m_UpdatesObservationTicket.reset();
+    m_UpdatesObservationTicket = self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(), [=]{
+        dispatch_to_main_queue([=]{
+            [(PanelController *)weakself RefreshDirectory];
+        });
+    });
+    
     [self ClearSelectionRequest];
     [self QuickSearchClearFiltering];
     [self.state PanelPathChanged:self];

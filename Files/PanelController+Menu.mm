@@ -29,6 +29,7 @@
 #import "CalculateChecksumSheetController.h"
 #import "FileCopyOperation.h"
 #import "NativeFSManager.h"
+#import "SavedNetworkConnectionsManager.h"
 
 @implementation PanelController (Menu)
 
@@ -230,6 +231,11 @@
                 m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
                 [self GoToDir:path vfs:host select_entry:"" async:true];
             });
+
+            // save successful connection to history
+            auto saved = make_shared<SavedNetworkConnectionsManager::FTPConnection>( opts.user, server, path, opts.port );
+            SavedNetworkConnectionsManager::Instance().InsertConnection(saved);
+            SavedNetworkConnectionsManager::Instance().SetPassword(saved, password);
         });
     }];
 }

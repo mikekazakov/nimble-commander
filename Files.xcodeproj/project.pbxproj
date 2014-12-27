@@ -649,9 +649,9 @@
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
-		CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.cpp */; };
-		CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.cpp */; };
-		CF9DBE161A48831D00FF735B /* SavedNetworkConnectionsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.cpp */; };
+		CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */; };
+		CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */; };
+		CF9DBE161A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */; };
 		CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */; };
 		CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */; };
 		CFA0B22C186412BD00501C35 /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.cpp */; };
@@ -1660,7 +1660,7 @@
 		CF9D0E7417CC961100CB8146 /* filter_fork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filter_fork.h; path = 3rd_party/libarchive/filter_fork.h; sourceTree = "<group>"; };
 		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
 		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
-		CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SavedNetworkConnectionsManager.cpp; sourceTree = "<group>"; };
+		CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SavedNetworkConnectionsManager.mm; sourceTree = "<group>"; };
 		CF9DBE131A48831D00FF735B /* SavedNetworkConnectionsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedNetworkConnectionsManager.h; sourceTree = "<group>"; };
 		CF9DF212171320910008CBAE /* CreateDirectoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectoryOperation.h; sourceTree = "<group>"; };
 		CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperation.mm; sourceTree = "<group>"; };
@@ -2588,8 +2588,8 @@
 			children = (
 				CF9DBE0C1A485E7800FF735B /* KeychainServices.h */,
 				CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */,
-				CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.cpp */,
 				CF9DBE131A48831D00FF735B /* SavedNetworkConnectionsManager.h */,
+				CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -3550,7 +3550,7 @@
 				CF6D9C9719667BA20077B146 /* archive_cmdline.c in Sources */,
 				CF6D9C9819667BA20077B146 /* archive_crypto.c in Sources */,
 				CF6D9C9919667BA20077B146 /* archive_entry_copy_bhfi.c in Sources */,
-				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.cpp in Sources */,
+				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CF6D9C9A19667BA20077B146 /* archive_entry_copy_stat.c in Sources */,
 				CF6D9C9B19667BA20077B146 /* archive_entry_link_resolver.c in Sources */,
 				CF6D9C9C19667BA20077B146 /* archive_entry_sparse.c in Sources */,
@@ -3891,7 +3891,7 @@
 				CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF2AC58E1818DD3800B0BEB4 /* path_manip.c in Sources */,
 				CF9D0E8317CC961100CB8146 /* archive_options.c in Sources */,
-				CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.cpp in Sources */,
+				CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CF9D0ED917CC961100CB8146 /* archive_write_set_options.c in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
 				CF50B6DF1A15169300E3D96D /* VFSPSListing.cpp in Sources */,
@@ -4149,7 +4149,7 @@
 				CFF6F23F1A13567C00011177 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
 				CFF6F2411A13567C00011177 /* main.m in Sources */,
 				CFF6F2421A13567C00011177 /* archive_write_open_memory.c in Sources */,
-				CF9DBE161A48831D00FF735B /* SavedNetworkConnectionsManager.cpp in Sources */,
+				CF9DBE161A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CFF6F2431A13567C00011177 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CFF6F2441A13567C00011177 /* AppDelegate.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,

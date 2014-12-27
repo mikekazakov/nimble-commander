@@ -14,6 +14,8 @@
 @property (strong) NSString *password;
 @property (strong) NSString *path;
 @property (strong) NSString *port;
+@property (strong) IBOutlet NSPopUpButton *saved;
+- (IBAction)OnSaved:(id)sender;
 
 - (IBAction)OnConnect:(id)sender;
 - (IBAction)OnClose:(id)sender;

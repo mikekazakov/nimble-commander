@@ -16,7 +16,7 @@ struct VFSNetFTPOptions : VFSHostOptions
 {
     string user;
     string passwd;
-    long   port = -1;
+    long   port = 21;
     
     bool Equal(const VFSHostOptions &_r) const override;
 };

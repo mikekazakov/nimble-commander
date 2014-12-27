@@ -18,6 +18,8 @@ public:
     
     bool GetPassword(const string& _where, const string &_account, string &_password);
     
+    bool ErasePassword(const string& _where, const string &_account);
+    
 private:
     KeychainServices();
     KeychainServices(const KeychainServices&) = delete;

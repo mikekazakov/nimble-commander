@@ -91,3 +91,28 @@ bool KeychainServices::GetPassword(const string& _where, const string &_account,
     }
     return false;
 }
+
+bool KeychainServices::ErasePassword(const string& _where, const string &_account)
+{
+    SecKeychainItemRef item;
+    OSStatus result = SecKeychainFindInternetPassword (nullptr,
+                                                       UInt32(_where.length()),
+                                                       _where.c_str(),
+                                                       0,
+                                                       nullptr,
+                                                       UInt32(_account.length()),
+                                                       _account.c_str(),
+                                                       0,
+                                                       nullptr,
+                                                       0,
+                                                       kSecProtocolTypeAny,
+                                                       kSecAuthenticationTypeDefault,
+                                                       nullptr,
+                                                       nullptr,
+                                                       &item);
+    if( result == 0) {
+        result = SecKeychainItemDelete(item);
+        CFRelease(item);
+    }
+    return result == 0;
+}

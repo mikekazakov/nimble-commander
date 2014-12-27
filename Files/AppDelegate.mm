@@ -31,9 +31,6 @@
 #import "RoutedIO.h"
 #import "sysinfo.h"
 
-#import "KeychainServices.h"
-#import "SavedNetworkConnectionsManager.h"
-
 @implementation AppDelegate
 {
     vector<MainWindowController *> m_MainWindows;
@@ -77,22 +74,6 @@
                                               forKeyPath:@"Skin"
                                                  options:0
                                                  context:NULL];
-        
-        
-        
-//        KeychainServices::Instance().SetPassword("abra://cadabra.local", "migun", "qwerty!!!");
-//        string pass;
-//        KeychainServices::Instance().GetPassword("abra://cadabra.local", "migun", pass);
-//        cout << pass;
-//   FTPConnection( const string &_user, const string &_host, const string &_path, long  _port );
-//        auto conn = make_shared<SavedNetworkConnectionsManager::FTPConnection>("migun", "192.168.2.5", "/", 21);
-//        SavedNetworkConnectionsManager::Instance().InsertConnection(conn);
-//        SavedNetworkConnectionsManager::Instance().SetPassword(conn, "!!iddqd!!");
-        SavedNetworkConnectionsManager::Instance();
-        
-        
-        
-        
     }
     return self;
 }

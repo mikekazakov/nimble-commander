@@ -201,7 +201,7 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     }
     
 cleanup:
-    dispatch_release(stat_queue);
+    //dispatch_release(stat_queue);
     return error;
 }
 

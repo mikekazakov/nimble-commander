@@ -47,7 +47,7 @@ VFSArchiveUnRARHost::VFSArchiveUnRARHost(const char *_junction_path):
 VFSArchiveUnRARHost::~VFSArchiveUnRARHost()
 {
     dispatch_sync(m_SeekCacheControl, ^{});
-    dispatch_release(m_SeekCacheControl);
+    //dispatch_release(m_SeekCacheControl);
 }
 
 const char *VFSArchiveUnRARHost::FSTag() const

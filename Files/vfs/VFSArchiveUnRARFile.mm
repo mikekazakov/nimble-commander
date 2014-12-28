@@ -97,7 +97,7 @@ int VFSArchiveUnRARFile::Close()
     if(m_FinishUnpackSemaphore) {
         dispatch_semaphore_signal(m_UnpackSemaphore);
         dispatch_semaphore_wait(m_FinishUnpackSemaphore, DISPATCH_TIME_FOREVER);
-        dispatch_release(m_FinishUnpackSemaphore);
+        //dispatch_release(m_FinishUnpackSemaphore);
         m_FinishUnpackSemaphore = 0;
     }
     
@@ -129,12 +129,12 @@ int VFSArchiveUnRARFile::Close()
     m_Entry = nullptr;
     
     if(m_UnpackSemaphore) {
-        dispatch_release(m_UnpackSemaphore);
+        //dispatch_release(m_UnpackSemaphore);
         m_UnpackSemaphore = nullptr;
     }
     
     if(m_ConsumeSemaphore) {
-        dispatch_release(m_ConsumeSemaphore);
+        //dispatch_release(m_ConsumeSemaphore);
         m_ConsumeSemaphore = nullptr;
     }
     

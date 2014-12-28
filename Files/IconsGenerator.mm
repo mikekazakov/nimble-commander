@@ -225,8 +225,8 @@ IconsGenerator::~IconsGenerator()
 {
     m_StopWorkQueue++;
     m_WorkGroup.Wait();
-    if(m_ControlQueue != 0)
-        dispatch_release(m_ControlQueue);
+    //if(m_ControlQueue != 0)
+        //dispatch_release(m_ControlQueue);
 }
 
 void IconsGenerator::BuildGenericIcons()

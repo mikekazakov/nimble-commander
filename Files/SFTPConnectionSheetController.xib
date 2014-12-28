@@ -278,7 +278,7 @@ DQ
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
                 <outlet property="initialFirstResponder" destination="zZD-vm-Gxs" id="DaY-EG-igV"/>
             </connections>
-            <point key="canvasLocation" x="261.5" y="34.5"/>
+            <point key="canvasLocation" x="-7.5" y="-20.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="fIO-4J-P0b"/>
     </objects>

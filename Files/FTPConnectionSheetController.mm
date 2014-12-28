@@ -17,7 +17,7 @@
 
 - (void) windowDidLoad
 {
-    m_SavedConnections = SavedNetworkConnectionsManager::Instance().GetFTPConnections();
+    m_SavedConnections = SavedNetworkConnectionsManager::Instance().FTPConnections();
     
     if(!m_SavedConnections.empty()) {
         self.saved.autoenablesItems = false;
@@ -72,8 +72,6 @@
         [self.saved selectItemAtIndex:0];
         while( self.saved.numberOfItems > 1 )
             [self.saved removeItemAtIndex:self.saved.numberOfItems - 1];
-
-        
     }
 }
 

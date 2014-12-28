@@ -23,8 +23,11 @@ public:
      */
     void InsertConnection(const shared_ptr<AbstractConnection> &_conn);
     
-    vector<shared_ptr<FTPConnection>> GetFTPConnections() const;
+    vector<shared_ptr<FTPConnection>> FTPConnections() const;
     void EraseAllFTPConnections();
+    
+    vector<shared_ptr<SFTPConnection>> SFTPConnections() const;
+    void EraseAllSFTPConnections();
     
     bool SetPassword(const shared_ptr<AbstractConnection> &_conn, const string& _password);
     bool GetPassword(const shared_ptr<AbstractConnection> &_conn, string& _password);
@@ -55,6 +58,19 @@ struct SavedNetworkConnectionsManager::FTPConnection : AbstractConnection
     const string path;
     const long   port;
 
+    virtual bool Equal(const AbstractConnection& _rhs) const override;
+    virtual string KeychainWhere() const override;
+    virtual string KeychainAccount() const override;
+};
+
+struct SavedNetworkConnectionsManager::SFTPConnection : AbstractConnection
+{
+    SFTPConnection( const string &_user, const string &_host, const string &_keypath, long  _port );
+    const string user;
+    const string host;
+    const string keypath;
+    const long   port;
+    
     virtual bool Equal(const AbstractConnection& _rhs) const override;
     virtual string KeychainWhere() const override;
     virtual string KeychainAccount() const override;

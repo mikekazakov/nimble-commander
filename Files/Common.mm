@@ -190,6 +190,11 @@ void SyncMessageBoxNS(NSString *_ns_string)
 
 @implementation NSString(PerformanceAdditions)
 
+- (const char *)fileSystemRepresentationSafe
+{
+    return self.length > 0 ? self.fileSystemRepresentation : "";
+}
+
 - (NSString*)stringByTrimmingLeadingWhitespace
 {
     NSInteger i = 0;

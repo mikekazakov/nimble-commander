@@ -40,7 +40,40 @@ static shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> LoadFTP(NS
     (
      [_from[@"user"] UTF8String],
      [_from[@"host"] UTF8String],
-     [_from[@"path"] UTF8String],
+     [_from[@"path"] fileSystemRepresentationSafe],
+     [_from[@"port"] longValue]
+     );
+}
+
+static NSDictionary *SaveSFTP(const SavedNetworkConnectionsManager::SFTPConnection& _conn)
+{
+    return @{
+        @"type": @"sftp",
+        @"user": [NSString stringWithUTF8StdString:_conn.user],
+        @"host": [NSString stringWithUTF8StdString:_conn.host],
+        @"keypath": [NSString stringWithUTF8StdString:_conn.keypath],
+        @"port": @(_conn.port)
+    };
+}
+
+static shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> LoadSFTP(NSDictionary *_from)
+{
+    if( !_from || !_from[@"type"] || ![_from[@"type"] isEqualTo:@"sftp"] )
+        return nullptr;
+    if( !_from[@"user"] ||
+       ![_from[@"user"] isKindOfClass:NSString.class] ||
+       !_from[@"host"] ||
+       ![_from[@"host"] isKindOfClass:NSString.class] ||
+       !_from[@"keypath"] ||
+       ![_from[@"keypath"] isKindOfClass:NSString.class] ||
+       !_from[@"port"] ||
+       ![_from[@"port"] isKindOfClass:NSNumber.class] )
+        return nullptr;
+    return make_shared<SavedNetworkConnectionsManager::SFTPConnection>
+    (
+     [_from[@"user"] UTF8String],
+     [_from[@"host"] UTF8String],
+     [_from[@"keypath"] fileSystemRepresentationSafe],
      [_from[@"port"] longValue]
      );
 }
@@ -74,6 +107,29 @@ bool SavedNetworkConnectionsManager::FTPConnection::Equal(const AbstractConnecti
         return false;
     auto &rhs = static_cast<const FTPConnection&>(_rhs);
     return user == rhs.user && host == rhs.host && path == rhs.path && port == rhs.port;
+}
+
+SavedNetworkConnectionsManager::SFTPConnection::SFTPConnection(const string &_user, const string &_host, const string &_keypath, long  _port):
+user(_user), host(_host), keypath(_keypath), port(_port)
+{
+}
+
+string SavedNetworkConnectionsManager::SFTPConnection::KeychainWhere() const
+{
+    return "sftp://" + host;
+}
+
+string SavedNetworkConnectionsManager::SFTPConnection::KeychainAccount() const
+{
+    return user;
+}
+
+bool SavedNetworkConnectionsManager::SFTPConnection::Equal(const AbstractConnection& _rhs) const
+{
+    if(!dynamic_cast<const SFTPConnection*>(&_rhs))
+        return false;
+    auto &rhs = static_cast<const SFTPConnection&>(_rhs);
+    return user == rhs.user && host == rhs.host && keypath == rhs.keypath && port == rhs.port;
 }
 
 SavedNetworkConnectionsManager &SavedNetworkConnectionsManager::Instance()
@@ -120,7 +176,8 @@ void SavedNetworkConnectionsManager::SaveConnections(const vector<shared_ptr<Abs
     for(auto &i: _conns) {
         if(auto conn = dynamic_pointer_cast<FTPConnection>(i))
             [array addObject:SaveFTP(*conn)];
-        // ...
+        else if(auto conn = dynamic_pointer_cast<SFTPConnection>(i))
+            [array addObject:SaveSFTP(*conn)];
     }
     
     [NSUserDefaults.standardUserDefaults setObject:array forKey:g_DefKey];
@@ -141,13 +198,14 @@ vector<shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>> SavedNetw
         
         if(auto ftp = LoadFTP(dict))
             result.emplace_back(ftp);
-        // else if...
+        else if(auto sftp = LoadSFTP(dict))
+            result.emplace_back(sftp);
     }
     
     return result;
 }
 
-vector<shared_ptr<SavedNetworkConnectionsManager::FTPConnection>> SavedNetworkConnectionsManager::GetFTPConnections() const
+vector<shared_ptr<SavedNetworkConnectionsManager::FTPConnection>> SavedNetworkConnectionsManager::FTPConnections() const
 {
     lock_guard<mutex> lock(m_Lock);
     vector<shared_ptr<SavedNetworkConnectionsManager::FTPConnection>> result;
@@ -164,6 +222,33 @@ void SavedNetworkConnectionsManager::EraseAllFTPConnections()
                                   end(m_Connections),
                                   [&](auto &_t) {
                                       if(auto p = dynamic_pointer_cast<FTPConnection>(_t)) {
+                                          KeychainServices::Instance().ErasePassword(p->KeychainWhere(), p->KeychainAccount());
+                                          return true;
+                                      }
+                                      return false;
+                                  }),
+                        end(m_Connections)
+                        );
+    SaveConnections(m_Connections);
+}
+
+vector<shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>> SavedNetworkConnectionsManager::SFTPConnections() const
+{
+    lock_guard<mutex> lock(m_Lock);
+    vector<shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>> result;
+    for(auto &i: m_Connections)
+        if(auto conn = dynamic_pointer_cast<SFTPConnection>(i))
+            result.emplace_back(move(conn));
+    return result;
+}
+
+void SavedNetworkConnectionsManager::EraseAllSFTPConnections()
+{
+    lock_guard<mutex> lock(m_Lock);
+    m_Connections.erase(remove_if(begin(m_Connections),
+                                  end(m_Connections),
+                                  [&](auto &_t) {
+                                      if(auto p = dynamic_pointer_cast<SFTPConnection>(_t)) {
                                           KeychainServices::Instance().ErasePassword(p->KeychainWhere(), p->KeychainAccount());
                                           return true;
                                       }

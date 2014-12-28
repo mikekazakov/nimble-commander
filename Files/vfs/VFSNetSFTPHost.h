@@ -18,7 +18,7 @@ struct VFSNetSFTPOptions : VFSHostOptions
     string user;
     string passwd; // when keypath is empty passwd is password for auth, otherwise it's a keyphrase for decrypting private key
     string keypath; // full path to private key
-    long   port = -1;
+    long   port = 22;
     
     bool Equal(const VFSHostOptions &_r) const override;
 };

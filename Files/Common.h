@@ -119,6 +119,7 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 @end
 
 @interface NSString(PerformanceAdditions)
+- (const char *)fileSystemRepresentationSafe;
 - (NSString*)stringByTrimmingLeadingWhitespace;
 + (instancetype)stringWithUTF8StdString:(const string&)stdstring;
 + (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString;

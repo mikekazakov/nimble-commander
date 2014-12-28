@@ -220,7 +220,7 @@
             auto host = make_shared<VFSNetFTPHost>(server.c_str());
             int ret = host->Open(path.c_str(), opts);
             if(ret != 0)
-                return dispatch_async(dispatch_get_main_queue(), ^{
+                return dispatch_to_main_queue([=]{
                     NSAlert *alert = [[NSAlert alloc] init];
                     alert.messageText = @"FTP connection error:";
                     alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
@@ -253,7 +253,7 @@
             string server =  sheet.server.UTF8String;
             string username = sheet.username ? sheet.username.UTF8String : "";
             string password = sheet.password ? sheet.password.UTF8String : "";
-            string keypath = sheet.keypath ? sheet.keypath.fileSystemRepresentation : "";
+            string keypath = sheet.keypath ? sheet.keypath.fileSystemRepresentationSafe : "";
             
             VFSNetSFTPOptions opts;
             opts.user = username;
@@ -265,7 +265,7 @@
             auto host = make_shared<VFSNetSFTPHost>(server.c_str());
             int ret = host->Open(opts);
             if(ret != 0)
-                return dispatch_async(dispatch_get_main_queue(), ^{
+                return dispatch_to_main_queue([=]{
                     NSAlert *alert = [[NSAlert alloc] init];
                     alert.messageText = @"SFTP connection error:";
                     alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
@@ -276,9 +276,13 @@
                 m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
                 [self GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
             });
+            
+            // save successful connection to history
+            auto saved = make_shared<SavedNetworkConnectionsManager::SFTPConnection>( opts.user, server, keypath, opts.port );
+            SavedNetworkConnectionsManager::Instance().InsertConnection(saved);
+            SavedNetworkConnectionsManager::Instance().SetPassword(saved, password);
         });
     }];
-    
 }
 
 - (IBAction)OnOpen:(id)sender { // enter

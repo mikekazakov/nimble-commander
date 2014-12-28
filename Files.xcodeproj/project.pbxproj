@@ -80,6 +80,9 @@
 		CF305DCA1946D50400840F25 /* NSArray+SSYMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC51946D50400840F25 /* NSArray+SSYMutations.m */; };
 		CF305DCB1946D50400840F25 /* NSDictionary+SimpleMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC71946D50400840F25 /* NSDictionary+SimpleMutations.m */; };
 		CF305DCC1946D50400840F25 /* NSUserDefaults+KeyPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC91946D50400840F25 /* NSUserDefaults+KeyPaths.m */; };
+		CF31207F1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
+		CF3120801A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
+		CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
 		CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
 		CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
 		CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
@@ -1338,6 +1341,8 @@
 		CF305DC71946D50400840F25 /* NSDictionary+SimpleMutations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+SimpleMutations.m"; path = "3rd_party/CategoriesObjC/NSDictionary+SimpleMutations.m"; sourceTree = "<group>"; };
 		CF305DC81946D50400840F25 /* NSUserDefaults+KeyPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSUserDefaults+KeyPaths.h"; path = "3rd_party/CategoriesObjC/NSUserDefaults+KeyPaths.h"; sourceTree = "<group>"; };
 		CF305DC91946D50400840F25 /* NSUserDefaults+KeyPaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSUserDefaults+KeyPaths.m"; path = "3rd_party/CategoriesObjC/NSUserDefaults+KeyPaths.m"; sourceTree = "<group>"; };
+		CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionsMenuDelegate.h; sourceTree = "<group>"; };
+		CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ConnectionsMenuDelegate.mm; sourceTree = "<group>"; };
 		CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileWindow.cpp; sourceTree = "<group>"; };
 		CF396AED173FA8AF00A20C42 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileWindow.h; sourceTree = "<group>"; };
 		CF396AEF173FA8C600A20C42 /* BigFileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileView.h; sourceTree = "<group>"; };
@@ -2590,6 +2595,8 @@
 				CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */,
 				CF9DBE131A48831D00FF735B /* SavedNetworkConnectionsManager.h */,
 				CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */,
+				CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */,
+				CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -3708,6 +3715,7 @@
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CF6D9C02196678000077B146 /* DisplayNamesCache.mm in Sources */,
+				CF3120801A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CF6D9C0B196678000077B146 /* ExternalEditorInfo.mm in Sources */,
 				CF6D9C0C196678000077B146 /* TermSingleTask.mm in Sources */,
@@ -3928,6 +3936,7 @@
 				CF76B313170146240066A49F /* GenericOperationView.mm in Sources */,
 				CF9D0E8217CC961100CB8146 /* archive_match.c in Sources */,
 				CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */,
+				CF31207F1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CF7249A71990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */,
 				CF9D0EC717CC961100CB8146 /* archive_write_open_file.c in Sources */,
@@ -4307,6 +4316,7 @@
 				CFF6F2DA1A13567C00011177 /* common_paths.cpp in Sources */,
 				CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CFF6F2DC1A13567C00011177 /* archive_ppmd7.c in Sources */,
+				CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */,
 				CFF6F2DE1A13567C00011177 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CFF6F2DF1A13567C00011177 /* archive_write_set_format_v7tar.c in Sources */,

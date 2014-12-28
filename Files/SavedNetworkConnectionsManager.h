@@ -23,6 +23,8 @@ public:
      */
     void InsertConnection(const shared_ptr<AbstractConnection> &_conn);
     
+    vector<shared_ptr<AbstractConnection>> Connections() const;
+    
     vector<shared_ptr<FTPConnection>> FTPConnections() const;
     void EraseAllFTPConnections();
     
@@ -30,6 +32,7 @@ public:
     void EraseAllSFTPConnections();
     
     bool SetPassword(const shared_ptr<AbstractConnection> &_conn, const string& _password);
+    bool GetPassword(const AbstractConnection &_conn, string& _password);
     bool GetPassword(const shared_ptr<AbstractConnection> &_conn, string& _password);
 private:
     SavedNetworkConnectionsManager();

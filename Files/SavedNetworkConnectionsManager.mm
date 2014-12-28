@@ -167,7 +167,12 @@ bool SavedNetworkConnectionsManager::SetPassword(const shared_ptr<AbstractConnec
 bool SavedNetworkConnectionsManager::GetPassword(const shared_ptr<AbstractConnection> &_conn, string& _password)
 {
     assert(_conn);
-    return KeychainServices::Instance().GetPassword(_conn->KeychainWhere(), _conn->KeychainAccount(), _password);
+    return GetPassword(*_conn, _password);
+}
+
+bool SavedNetworkConnectionsManager::GetPassword(const AbstractConnection &_conn, string& _password)
+{
+    return KeychainServices::Instance().GetPassword(_conn.KeychainWhere(), _conn.KeychainAccount(), _password);
 }
 
 void SavedNetworkConnectionsManager::SaveConnections(const vector<shared_ptr<AbstractConnection>> &_conns)
@@ -203,6 +208,12 @@ vector<shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>> SavedNetw
     }
     
     return result;
+}
+
+vector<shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>> SavedNetworkConnectionsManager::Connections() const
+{
+    lock_guard<mutex> lock(m_Lock);
+    return m_Connections;
 }
 
 vector<shared_ptr<SavedNetworkConnectionsManager::FTPConnection>> SavedNetworkConnectionsManager::FTPConnections() const

@@ -382,7 +382,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     // Share stuff
     {
         NSMenu *share_submenu = [NSMenu new];
-        bool eligible = (sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8) && m_Host->IsNativeFS();
+        bool eligible = m_Host->IsNativeFS();
         if(eligible)
         {
             m_ShareItemsURLs = [NSMutableArray new];

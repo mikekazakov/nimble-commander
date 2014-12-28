@@ -72,22 +72,6 @@ struct NativeFSManagerProxy2
 }
 @end
 
-static bool VolumeHasTrash_CarbonFileManager(const string &_volume_path)
-{
-    FSRef file;
-    int ret = FSPathMakeRef((UInt8*)_volume_path.c_str(), &file, NULL);
-    if(ret != 0)
-        return false;
-    
-    FSCatalogInfo info;
-    ret = FSGetCatalogInfo(&file, kFSCatInfoVolume, &info, 0, 0, 0);
-    if(ret != 0)
-        return false;
-    
-    ret = FSFindFolder(info.volume, kTrashFolderType, false, &file);
-    return ret == 0;
-}
-
 static bool VolumeHasTrash_NSFileManager(const string &_volume_path)
 {
     auto url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)_volume_path.c_str(), _volume_path.length(), true);
@@ -496,7 +480,5 @@ void NativeFSManager::EjectVolumeContainingPath(const string &_path)
 
 bool NativeFSManager::VolumeHasTrash(const string &_volume_path)
 {
-    return sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8 ?
-        VolumeHasTrash_NSFileManager(_volume_path):
-        VolumeHasTrash_CarbonFileManager(_volume_path);
+    return VolumeHasTrash_NSFileManager(_volume_path);
 }

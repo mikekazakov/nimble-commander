@@ -175,20 +175,17 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     m_RightPanelGoToButton.action = @selector(RightPanelGoToButtonAction:);
     [m_RightPanelGoToButton SetOwner:self];
     
-    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8)
-    {
-        m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
-        m_LeftPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
-        m_LeftPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
-        [m_LeftPanelShareButton sendActionOn:NSLeftMouseDownMask];
-        m_LeftPanelShareButton.refusesFirstResponder = true;
+    m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
+    m_LeftPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
+    m_LeftPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
+    [m_LeftPanelShareButton sendActionOn:NSLeftMouseDownMask];
+    m_LeftPanelShareButton.refusesFirstResponder = true;
     
-        m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
-        m_RightPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
-        m_RightPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
-        [m_RightPanelShareButton sendActionOn:NSLeftMouseDownMask];
-        m_RightPanelShareButton.refusesFirstResponder = true;
-    }
+    m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
+    m_RightPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
+    m_RightPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
+    [m_RightPanelShareButton sendActionOn:NSLeftMouseDownMask];
+    m_RightPanelShareButton.refusesFirstResponder = true;
     
     m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
     m_LeftPanelSpinningIndicator.indeterminate = YES;
@@ -248,7 +245,6 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
 {
     static NSArray *allowed_items =
-        sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8 ?
                @[ @"filepanels_left_goto_button",
                   @"filepanels_left_share_button",
                   @"filepanels_left_spinning_indicator",
@@ -257,13 +253,6 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
                   NSToolbarFlexibleSpaceItemIdentifier,
                   @"filepanels_right_spinning_indicator",
                   @"filepanels_right_share_button",
-                  @"filepanels_right_goto_button"] :
-               @[ @"filepanels_left_goto_button",
-                  @"filepanels_left_spinning_indicator",
-                  NSToolbarFlexibleSpaceItemIdentifier,
-                  @"filepanels_operations_box",
-                  NSToolbarFlexibleSpaceItemIdentifier,
-                  @"filepanels_right_spinning_indicator",
                   @"filepanels_right_goto_button"];
     return allowed_items;
 }
@@ -623,20 +612,18 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     
     // update some toolbar items' visibility
     // hardcoded for now, mb write some separate class later
-    if(m_Toolbar.visible && sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_8) {
-        if(self.window.frame.size.width < 686) {
-            if(m_Toolbar.items.count == [self toolbarAllowedItemIdentifiers:m_Toolbar].count) {
-                // need to hide spinning indicators
-                [m_Toolbar removeItemAtIndex:6];
-                [m_Toolbar removeItemAtIndex:2];
-            }
+    if(self.window.frame.size.width < 686) {
+        if(m_Toolbar.items.count == [self toolbarAllowedItemIdentifiers:m_Toolbar].count) {
+            // need to hide spinning indicators
+            [m_Toolbar removeItemAtIndex:6];
+            [m_Toolbar removeItemAtIndex:2];
         }
-        else {
-            if(m_Toolbar.items.count < [self toolbarAllowedItemIdentifiers:m_Toolbar].count) {
-                // need to show spinning indicators
-                [m_Toolbar insertItemWithItemIdentifier:@"filepanels_left_spinning_indicator" atIndex:2];
-                [m_Toolbar insertItemWithItemIdentifier:@"filepanels_right_spinning_indicator" atIndex:6];
-            }
+    }
+    else {
+        if(m_Toolbar.items.count < [self toolbarAllowedItemIdentifiers:m_Toolbar].count) {
+            // need to show spinning indicators
+            [m_Toolbar insertItemWithItemIdentifier:@"filepanels_left_spinning_indicator" atIndex:2];
+            [m_Toolbar insertItemWithItemIdentifier:@"filepanels_right_spinning_indicator" atIndex:6];
         }
     }
 }

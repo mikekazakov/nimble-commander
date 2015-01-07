@@ -208,7 +208,6 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
             }
             
         }
-        else assert(0); // sanity check
         
         m_LastInfoUpdateTime = time;
     }

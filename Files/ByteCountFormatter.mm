@@ -31,6 +31,7 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
 {
     m_SI = {' ', 'K', 'M', 'G', 'T', 'P'};
     m_B = 'B';
+    m_Bytes = {'b', 'y', 't', 'e', 's'};
 
     if(_localized) {
         NSNumberFormatter *def_formatter = [NSNumberFormatter new];
@@ -40,6 +41,20 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
             unsigned char sep = [decimal_symbol characterAtIndex:0];
             m_DecimalSeparator = (char)sep;
         }
+
+        NSString *b = NSLocalizedString(@"__BYTECOUNTFORMATTER_BYTE_POSTFIX", "One-letter byte postfix, for English is 'B'");
+        if(b.length == 1)
+            m_B = [b characterAtIndex:0];
+        
+        NSString *si = NSLocalizedString(@"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY", "SI postfixes with first symbol empty, for English is ' KMGTP'");
+        if(si.length == m_SI.size())
+            for(int i = 0; i < m_SI.size(); ++i)
+                m_SI[i] = [si characterAtIndex:i];
+
+        m_Bytes.clear();
+        NSString *bytes = NSLocalizedString(@"__BYTECOUNTFORMATTER_BYTES_WORD", "Bytes count postfix, for English is 'bytes'");
+        for(int i = 0; i < bytes.length; ++i)
+            m_Bytes.emplace_back([bytes characterAtIndex:i]);
     }
 }
 
@@ -266,23 +281,26 @@ int ByteCountFormatter::SpaceSeparated_Impl(uint64_t _sz, unsigned short _buf[64
 #define __1000_4(a) __1000_1( (a)/1000000000lu )
 #define __1000_5(a) __1000_1( (a)/1000000000000lu )
     if(_sz < 1000lu)
-        len = sprintf(buf, "%llu bytes", _sz);
+        len = sprintf(buf, "%llu ", _sz);
     else if(_sz < 1000lu * 1000lu)
-        len = sprintf(buf, "%llu %03llu bytes", __1000_2(_sz), __1000_1(_sz));
+        len = sprintf(buf, "%llu %03llu ", __1000_2(_sz), __1000_1(_sz));
     else if(_sz < 1000lu * 1000lu * 1000lu)
-        len = sprintf(buf, "%llu %03llu %03llu bytes", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
+        len = sprintf(buf, "%llu %03llu %03llu ", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
     else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu)
-        len = sprintf(buf, "%llu %03llu %03llu %03llu bytes", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
+        len = sprintf(buf, "%llu %03llu %03llu %03llu ", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
     else if(_sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu)
-        len = sprintf(buf, "%llu %03llu %03llu %03llu %03llu bytes", __1000_5(_sz), __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
+        len = sprintf(buf, "%llu %03llu %03llu %03llu %03llu ", __1000_5(_sz), __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
 #undef __1000_1
 #undef __1000_2
 #undef __1000_3
 #undef __1000_4
 #undef __1000_5
-    assert(len >= 0 && len < 64);
+    assert(len >= 0 && len < 50);
     for(int i = 0; i < len; ++i)
         _buf[i] = buf[i];
+    for(int i = 0; i < m_Bytes.size(); ++i)
+        _buf[i + len] = m_Bytes[i];
+    len += m_Bytes.size();
     return len;
 }
 

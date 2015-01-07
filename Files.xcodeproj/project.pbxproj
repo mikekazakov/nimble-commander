@@ -83,6 +83,10 @@
 		CF31207F1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
 		CF3120801A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
 		CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
+		CF3120C41A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
+		CF3120C51A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
+		CF3120C61A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
+		CF3120D51A5115DC0062185A /* Errors.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120D71A5115DC0062185A /* Errors.strings */; };
 		CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
 		CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
 		CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
@@ -96,7 +100,6 @@
 		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
-		CF47A988186C607C00745C4C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF47A986186C607C00745C4C /* InfoPlist.strings */; };
 		CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
 		CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A996186C743A00745C4C /* VFSPS_Tests.mm */; };
 		CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47F6971830CDB30060D474 /* NewVersionChecker.mm */; };
@@ -1232,7 +1235,7 @@
 		B52D9A82173D329F00EC7154 /* PanelViewTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanelViewTypes.h; sourceTree = "<group>"; };
 		B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentation.h; sourceTree = "<group>"; };
 		B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentation.mm; sourceTree = "<group>"; };
-		B52EB79217228B73004ABC2E /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = Files/Defaults.plist; sourceTree = "<group>"; };
+		B52EB79217228B73004ABC2E /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionSheetController.h; sourceTree = "<group>"; };
 		B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionSheetController.mm; sourceTree = "<group>"; };
 		B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileDeletionSheetController.xib; sourceTree = "<group>"; };
@@ -1346,6 +1349,10 @@
 		CF3120B21A507BB70062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CF3120B31A507BFC0062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Base; path = Base.lproj/Credits.rtf; sourceTree = "<group>"; };
 		CF3120B41A507C0A0062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CF3120C71A510F640062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CF3120CA1A5115D90062185A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CF3120CC1A5115DA0062185A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CF3120D61A5115DC0062185A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Errors.strings; sourceTree = "<group>"; };
 		CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileWindow.cpp; sourceTree = "<group>"; };
 		CF396AED173FA8AF00A20C42 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileWindow.h; sourceTree = "<group>"; };
 		CF396AEF173FA8C600A20C42 /* BigFileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileView.h; sourceTree = "<group>"; };
@@ -1367,7 +1374,6 @@
 		CF47A980186C607C00745C4C /* Files Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Files Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CF47A985186C607C00745C4C /* Files Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Files Tests-Info.plist"; sourceTree = "<group>"; };
-		CF47A987186C607C00745C4C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files Tests-Prefix.pch"; sourceTree = "<group>"; };
 		CF47A992186C61A600745C4C /* chained_strings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chained_strings_Tests.mm; sourceTree = "<group>"; };
 		CF47A994186C663000745C4C /* tests_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests_common.h; sourceTree = "<group>"; };
@@ -1500,7 +1506,7 @@
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
 		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
-		CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ShortcutsDefaults.plist; path = Files/ShortcutsDefaults.plist; sourceTree = "<group>"; };
+		CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ShortcutsDefaults.plist; sourceTree = "<group>"; };
 		CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MASAppInstalledChecker.cpp; sourceTree = "<group>"; };
 		CF7B20641A2771D8008F1492 /* MASAppInstalledChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASAppInstalledChecker.h; sourceTree = "<group>"; };
 		CF7B206A1A277A27008F1492 /* TrialWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrialWindowController.h; sourceTree = "<group>"; };
@@ -1976,6 +1982,10 @@
 			children = (
 				CFB5989A196E38C700D4C108 /* Art */,
 				CFB598BF196E3A0400D4C108 /* Doc */,
+				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
+				B52EB79217228B73004ABC2E /* Defaults.plist */,
+				CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */,
+				CF3120C81A510F640062185A /* Localizable.strings */,
 			);
 			name = Resources;
 			path = Files;
@@ -2296,7 +2306,6 @@
 			isa = PBXGroup;
 			children = (
 				CF47A985186C607C00745C4C /* Files Tests-Info.plist */,
-				CF47A986186C607C00745C4C /* InfoPlist.strings */,
 				CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -2372,6 +2381,7 @@
 		CF6D99A5196675FE0077B146 /* Files Full */ = {
 			isa = PBXGroup;
 			children = (
+				CF3120D71A5115DC0062185A /* Errors.strings */,
 				CF6D9D2B1966A56E0077B146 /* Files-Info.plist */,
 			);
 			name = "Files Full";
@@ -2910,9 +2920,6 @@
 				CFDA1110177E8A15009E29F7 /* 3rd_party */,
 				CFC5121A16C4BD3D00D247EE /* Files */,
 				B51014CF170721340023FF24 /* Resources */,
-				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
-				B52EB79217228B73004ABC2E /* Defaults.plist */,
-				CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */,
 				CFC5121316C4BD3D00D247EE /* Frameworks */,
 				CFC5121216C4BD3D00D247EE /* Products */,
 				CF47A983186C607C00745C4C /* Files Tests */,
@@ -3186,6 +3193,7 @@
 			buildPhases = (
 				CFD54FB81A29C4C10098A4A9 /* Sources */,
 				CFD54FB91A29C4C10098A4A9 /* Frameworks */,
+				CF3120CF1A5115DB0062185A /* Resources */,
 			);
 			buildRules = (
 			);
@@ -3296,11 +3304,17 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		CF3120CF1A5115DB0062185A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF47A97E186C607B00745C4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF47A988186C607C00745C4C /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3317,6 +3331,7 @@
 				CF50B6B31A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CF6D9D0119667E390077B146 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFB598B6196E38E400D4C108 /* pref_term_icon.png in Resources */,
+				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
 				CFB598B4196E38E400D4C108 /* pref_panels_icon.png in Resources */,
 				CFCA763419D288E300AF87A8 /* files.icns in Resources */,
 				CF6D9D0219667E390077B146 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
@@ -3373,6 +3388,7 @@
 				CF7C92191A0B877B00FAE649 /* tab_close.png in Resources */,
 				CFB598BB196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */,
+				CF3120D51A5115DC0062185A /* Errors.strings in Resources */,
 				CF50B6B21A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
@@ -3383,6 +3399,7 @@
 				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,
+				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
 				CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCD3B7D18AB64C600028B41 /* FindFilesSheetController.xib in Resources */,
 				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
@@ -3434,6 +3451,7 @@
 				CF50B6B41A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFF6F3711A13567C00011177 /* Help.pdf in Resources */,
 				CFF6F3721A13567C00011177 /* MainMenu.xib in Resources */,
+				CF3120C61A510F640062185A /* Localizable.strings in Resources */,
 				CFF6F3731A13567C00011177 /* CreateDirectorySheetController.xib in Resources */,
 				CFF6F3751A13567C00011177 /* MassCopySheetController.xib in Resources */,
 				CFF6F3AA1A135A0E00011177 /* files.icns in Resources */,
@@ -4495,18 +4513,29 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		CF47A986186C607C00745C4C /* InfoPlist.strings */ = {
+		CF3120C81A510F640062185A /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CF47A987186C607C00745C4C /* en */,
+				CF3120C71A510F640062185A /* Base */,
+				CF3120CC1A5115DA0062185A /* ru */,
 			);
-			name = InfoPlist.strings;
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		CF3120D71A5115DC0062185A /* Errors.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF3120D61A5115DC0062185A /* ru */,
+			);
+			name = Errors.strings;
+			path = Resource;
 			sourceTree = "<group>";
 		};
 		CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				CF3120B41A507C0A0062185A /* Base */,
+				CF3120CA1A5115D90062185A /* ru */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -4517,7 +4546,6 @@
 				CF3120B31A507BFC0062185A /* Base */,
 			);
 			name = Credits.rtf;
-			path = Files;
 			sourceTree = "<group>";
 		};
 		CFC5122916C4BD3D00D247EE /* MainMenu.xib */ = {

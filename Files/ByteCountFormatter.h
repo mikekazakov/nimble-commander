@@ -86,8 +86,9 @@ private:
     ByteCountFormatter(const ByteCountFormatter&) = delete;
     ByteCountFormatter& operator=(const ByteCountFormatter&) = delete;
     
-    vector<uint16_t> m_SI; // localizable in the future
-    uint16_t         m_B;  // localizable in the future
+    vector<uint16_t> m_SI; // localizable
+    uint16_t         m_B;  // localizable
+    vector<uint16_t> m_Bytes; // localizable
     
     char             m_DecimalSeparator = '.';
     unsigned short   m_DecimalSeparatorUni = '.';

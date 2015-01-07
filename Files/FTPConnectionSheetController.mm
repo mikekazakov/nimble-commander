@@ -31,7 +31,7 @@
             [self.saved addItemWithTitle:[NSString stringWithUTF8StdString:i->host]];
         
         [self.saved.menu addItem:NSMenuItem.separatorItem];
-        [self.saved addItemWithTitle:@"Clear Recent Servers..."];
+        [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
     }
 }
 

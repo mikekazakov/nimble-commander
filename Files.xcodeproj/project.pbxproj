@@ -104,7 +104,6 @@
 		CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A996186C743A00745C4C /* VFSPS_Tests.mm */; };
 		CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47F6971830CDB30060D474 /* NewVersionChecker.mm */; };
 		CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
-		CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121916C4BD3D00D247EE /* Foundation.framework */; };
@@ -478,7 +477,6 @@
 		CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
 		CF6D9D0B19667E390077B146 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA0B23518693F1100501C35 /* GoToFolderSheetController.xib */; };
 		CF6D9D0C19667E390077B146 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCD3B7B18AB64C600028B41 /* FindFilesSheetController.xib */; };
-		CF6D9D0D19667E390077B146 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */; };
 		CF6D9D0E19667E390077B146 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EAA1791166000DC85D6 /* PreferencesWindowGeneralTab.xib */; };
 		CF6D9D0F19667E390077B146 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EAF17911FFA00DC85D6 /* PreferencesWindowPanelsTab.xib */; };
 		CF6D9D1019667E390077B146 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EB41791204600DC85D6 /* PreferencesWindowViewerTab.xib */; };
@@ -751,6 +749,9 @@
 		CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
 		CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
 		CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
+		CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
+		CFCCFBB91A5D687600313845 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
+		CFCCFBBA1A5D687600313845 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1071,7 +1072,6 @@
 		CFF6F3671A13567C00011177 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CFF6F3691A13567C00011177 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
-		CFF6F36B1A13567C00011177 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */; };
 		CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF6F36D1A13567C00011177 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
 		CFF6F36E1A13567C00011177 /* tab_close.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92181A0B877B00FAE649 /* tab_close.png */; };
@@ -1382,7 +1382,6 @@
 		CF47F6971830CDB30060D474 /* NewVersionChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NewVersionChecker.mm; sourceTree = "<group>"; };
 		CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FTPConnectionSheetController.mm; sourceTree = "<group>"; };
-		CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask.mm; sourceTree = "<group>"; };
 		CF4C5A5C17A7B48E00B1B061 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMask.h; sourceTree = "<group>"; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
@@ -1786,6 +1785,7 @@
 		CFCA763519D288F500AF87A8 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = files.icns; path = Resource/Full/files.icns; sourceTree = "<group>"; };
 		CFCCFBB11A5D340000313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SFTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBB61A5D4E6100313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CalculateChecksumSheetController.xib; sourceTree = "<group>"; };
+		CFCCFBBB1A5D687600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -2212,7 +2212,7 @@
 				CFCD3B7B18AB64C600028B41 /* FindFilesSheetController.xib */,
 				CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */,
 				CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */,
-				CF4840C91927C8E10066A235 /* FTPConnectionSheetController.xib */,
+				CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */,
 				CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */,
 				CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */,
 				CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */,
@@ -3356,7 +3356,7 @@
 				CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */,
 				CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CF6D9D0C19667E390077B146 /* FindFilesSheetController.xib in Resources */,
-				CF6D9D0D19667E390077B146 /* FTPConnectionSheetController.xib in Resources */,
+				CFCCFBB91A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFB598AE196E38E400D4C108 /* pause_icon.png in Resources */,
 				CF6D9D0E19667E390077B146 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CF6D9D0F19667E390077B146 /* PreferencesWindowPanelsTab.xib in Resources */,
@@ -3381,7 +3381,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF4840CB1927C8E10066A235 /* FTPConnectionSheetController.xib in Resources */,
+				CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CF7B20701A277A27008F1492 /* TrialWindowController.xib in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
@@ -3442,7 +3442,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF6F36B1A13567C00011177 /* FTPConnectionSheetController.xib in Resources */,
+				CFCCFBBA1A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */,
 				CFF6F36D1A13567C00011177 /* Credits.rtf in Resources */,
 				CFF6F36E1A13567C00011177 /* tab_close.png in Resources */,
@@ -4570,6 +4570,14 @@
 				CFCCFBB61A5D4E6100313845 /* Base */,
 			);
 			name = CalculateChecksumSheetController.xib;
+			sourceTree = "<group>";
+		};
+		CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFBBB1A5D687600313845 /* Base */,
+			);
+			name = FTPConnectionSheetController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

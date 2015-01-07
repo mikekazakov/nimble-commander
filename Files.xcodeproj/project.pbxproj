@@ -742,14 +742,15 @@
 		CFC5D4AB19BB52D7005BB24A /* Hash_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AA19BB52D7005BB24A /* Hash_Tests.mm */; };
 		CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
 		CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
-		CFC5D4B319BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */; };
-		CFC5D4B419BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */; };
 		CFCA09E1174D071900AEC8C2 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */; };
 		CFCA763419D288E300AF87A8 /* files.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFCA763319D288E300AF87A8 /* files.icns */; };
 		CFCA763619D288F500AF87A8 /* files.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFCA763519D288F500AF87A8 /* files.icns */; };
 		CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
+		CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
+		CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
+		CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1096,7 +1097,6 @@
 		CFF6F3831A13567C00011177 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12887E17800724002816C2 /* FileLinkNewSymlinkSheetController.xib */; };
 		CFF6F3841A13567C00011177 /* pref_panels_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A1196E38E400D4C108 /* pref_panels_icon.png */; };
 		CFF6F3851A13567C00011177 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888317801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib */; };
-		CFF6F3861A13567C00011177 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */; };
 		CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A6196E38E400D4C108 /* show_oplist_icon.png */; };
 		CFF6F3881A13567C00011177 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
 		CFF6F3891A13567C00011177 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
@@ -1781,11 +1781,11 @@
 		CFC5D4AA19BB52D7005BB24A /* Hash_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Hash_Tests.mm; sourceTree = "<group>"; };
 		CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateChecksumSheetController.h; sourceTree = "<group>"; };
 		CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CalculateChecksumSheetController.mm; sourceTree = "<group>"; };
-		CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CalculateChecksumSheetController.xib; sourceTree = "<group>"; };
 		CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFCA763319D288E300AF87A8 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = files.icns; path = Resource/Lite/files.icns; sourceTree = "<group>"; };
 		CFCA763519D288F500AF87A8 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = files.icns; path = Resource/Full/files.icns; sourceTree = "<group>"; };
 		CFCCFBB11A5D340000313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SFTPConnectionSheetController.xib; sourceTree = "<group>"; };
+		CFCCFBB61A5D4E6100313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CalculateChecksumSheetController.xib; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -2218,7 +2218,7 @@
 				CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */,
 				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
 				CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */,
-				CFC5D4B019BDD59F005BB24A /* CalculateChecksumSheetController.xib */,
+				CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -3342,7 +3342,7 @@
 				CF6D9D0419667E390077B146 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CF6D9D0519667E390077B146 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */,
-				CFC5D4B419BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */,
+				CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */,
 				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
@@ -3412,7 +3412,7 @@
 				CF12888017800724002816C2 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFB598B3196E38E400D4C108 /* pref_panels_icon.png in Resources */,
 				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
-				CFC5D4B319BDD59F005BB24A /* CalculateChecksumSheetController.xib in Resources */,
+				CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFB598BD196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */,
@@ -3471,7 +3471,7 @@
 				CFF6F3831A13567C00011177 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFF6F3841A13567C00011177 /* pref_panels_icon.png in Resources */,
 				CFF6F3851A13567C00011177 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
-				CFF6F3861A13567C00011177 /* CalculateChecksumSheetController.xib in Resources */,
+				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */,
 				CFF6F3881A13567C00011177 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFF6F3891A13567C00011177 /* eject_icon.png in Resources */,
@@ -4562,6 +4562,14 @@
 				CFCCFBB11A5D340000313845 /* Base */,
 			);
 			name = SFTPConnectionSheetController.xib;
+			sourceTree = "<group>";
+		};
+		CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFBB61A5D4E6100313845 /* Base */,
+			);
+			name = CalculateChecksumSheetController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

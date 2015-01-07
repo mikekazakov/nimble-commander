@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6206.9" systemVersion="14A343f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6206.9"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CalculateChecksumSheetController">
@@ -20,7 +20,7 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="580" height="275"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
-            <value key="minSize" type="size" width="530" height="270"/>
+            <value key="maxSize" type="size" width="800" height="400"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="580" height="275"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -44,7 +44,7 @@
                         <rect key="frame" x="297" y="227" width="104" height="32"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="5cv-ib-KGD"/>
-                            <constraint firstAttribute="width" constant="92" id="cwd-mU-XjH"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="92" id="cwd-mU-XjH"/>
                         </constraints>
                         <buttonCell key="cell" type="push" title="Calculate" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="agr-rn-xaZ">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -111,7 +111,7 @@ DQ
                         <rect key="frame" x="18" y="236" width="161" height="17"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="17" id="T5i-YG-oGM"/>
-                            <constraint firstAttribute="width" constant="157" id="fSG-kS-Tah"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="157" id="fSG-kS-Tah"/>
                         </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Checksum algorithm:" id="mBW-fO-4XM">
                             <font key="font" metaFont="system"/>
@@ -120,7 +120,10 @@ DQ
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8cw-cE-L6f">
-                        <rect key="frame" x="413" y="13" width="71" height="32"/>
+                        <rect key="frame" x="372" y="13" width="97" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="85" id="FfS-oY-IIK"/>
+                        </constraints>
                         <buttonCell key="cell" type="push" title="Save" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="33R-U6-GxT">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -132,9 +135,9 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hhp-HY-cCP">
-                        <rect key="frame" x="484" y="13" width="82" height="32"/>
+                        <rect key="frame" x="469" y="13" width="97" height="32"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="70" id="EcX-49-CD6"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="85" id="EcX-49-CD6"/>
                         </constraints>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Vmd-i3-ebR">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -173,7 +176,7 @@ Gw
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
                 <outlet property="initialFirstResponder" destination="2CR-TF-U3c" id="V9s-Mb-8aO"/>
             </connections>
-            <point key="canvasLocation" x="-65" y="97.5"/>
+            <point key="canvasLocation" x="-8" y="28.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="0Qo-8u-EYU"/>
     </objects>

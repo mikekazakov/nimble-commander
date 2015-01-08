@@ -17,25 +17,31 @@
             <windowStyleMask key="styleMask" utility="YES"/>
             <windowCollectionBehavior key="collectionBehavior" participatesInCycle="YES"/>
             <windowPositionMask key="initialPositionMask" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="366" y="496" width="346" height="114"/>
+            <rect key="contentRect" x="366" y="496" width="348" height="113"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="346" height="114"/>
+                <rect key="frame" x="0.0" y="0.0" width="348" height="113"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <progressIndicator fixedFrame="YES" maxValue="1" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="eMd-A2-hct">
-                        <rect key="frame" x="20" y="47" width="306" height="20"/>
+                    <progressIndicator maxValue="1" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="eMd-A2-hct">
+                        <rect key="frame" x="20" y="49" width="308" height="20"/>
                     </progressIndicator>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" tag="777" translatesAutoresizingMaskIntoConstraints="NO" id="tu6-5n-dmE">
-                        <rect key="frame" x="20" y="77" width="308" height="17"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Label" id="8Dk-zl-22F">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" tag="777" translatesAutoresizingMaskIntoConstraints="NO" id="tu6-5n-dmE">
+                        <rect key="frame" x="18" y="76" width="312" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="308" id="8bA-K7-FLt"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="8Dk-zl-22F">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="S47-Hz-jsr">
-                        <rect key="frame" x="264" y="18" width="62" height="25"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S47-Hz-jsr">
+                        <rect key="frame" x="263" y="18" width="65" height="25"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="65" id="ecw-Rl-EN2"/>
+                        </constraints>
                         <buttonCell key="cell" type="roundTextured" title="Cancel" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bbh-xG-OBO">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="smallSystem"/>
@@ -48,11 +54,22 @@ Gw
                         </connections>
                     </button>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="tu6-5n-dmE" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="2Bw-tG-We5"/>
+                    <constraint firstItem="eMd-A2-hct" firstAttribute="trailing" secondItem="S47-Hz-jsr" secondAttribute="trailing" id="2Lf-iU-crh"/>
+                    <constraint firstItem="eMd-A2-hct" firstAttribute="leading" secondItem="tu6-5n-dmE" secondAttribute="leading" id="3bl-i1-irH"/>
+                    <constraint firstItem="eMd-A2-hct" firstAttribute="top" secondItem="tu6-5n-dmE" secondAttribute="bottom" constant="8" symbolic="YES" id="6KR-h3-rQ5"/>
+                    <constraint firstItem="S47-Hz-jsr" firstAttribute="top" secondItem="eMd-A2-hct" secondAttribute="bottom" constant="8" symbolic="YES" id="Ey7-fS-ty1"/>
+                    <constraint firstItem="tu6-5n-dmE" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" id="NJs-yS-38t"/>
+                    <constraint firstAttribute="bottom" secondItem="S47-Hz-jsr" secondAttribute="bottom" constant="20" symbolic="YES" id="bfJ-qu-jbn"/>
+                    <constraint firstAttribute="trailing" secondItem="tu6-5n-dmE" secondAttribute="trailing" constant="20" id="ydE-sP-DWh"/>
+                    <constraint firstItem="eMd-A2-hct" firstAttribute="trailing" secondItem="tu6-5n-dmE" secondAttribute="trailing" id="zcB-eX-ZR3"/>
+                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="-186" y="264"/>
+            <point key="canvasLocation" x="-186" y="263.5"/>
         </window>
     </objects>
 </document>

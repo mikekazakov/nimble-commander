@@ -483,7 +483,6 @@
 		CF6D9D1319667E390077B146 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */; };
 		CF6D9D1419667E390077B146 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */; };
 		CF6D9D1519667E390077B146 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
-		CF6D9D1619667E390077B146 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */; };
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
 		CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
@@ -715,7 +714,6 @@
 		CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */; };
 		CFB709B518DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
-		CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */; };
 		CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
@@ -755,6 +753,9 @@
 		CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */; };
 		CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */; };
 		CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */; };
+		CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */; };
+		CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */; };
+		CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1114,7 +1115,6 @@
 		CFF6F3941A13567C00011177 /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A4196E38E400D4C108 /* question_icon.png */; };
 		CFF6F3951A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857F18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
 		CFF6F3961A13567C00011177 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857818F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib */; };
-		CFF6F3971A13567C00011177 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */; };
 		CFF6F39A1A13567C00011177 /* pref_general_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A0196E38E400D4C108 /* pref_general_icon.png */; };
 		CFF6F39B1A13567C00011177 /* pref_viewer_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A3196E38E400D4C108 /* pref_viewer_icon.png */; };
 		CFF6F39C1A13567C00011177 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989E196E38E400D4C108 /* pause_icon.png */; };
@@ -1747,7 +1747,6 @@
 		CFB709B418DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJobGenericToGeneric.h; sourceTree = "<group>"; };
 		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSheetController.h; sourceTree = "<group>"; };
 		CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSheetController.mm; sourceTree = "<group>"; };
-		CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProcessSheetController.xib; sourceTree = "<group>"; };
 		CFB709C618E99B7100A83E61 /* ExternalEditorInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalEditorInfo.h; sourceTree = "<group>"; };
 		CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalEditorInfo.mm; sourceTree = "<group>"; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -1787,6 +1786,7 @@
 		CFCCFBBB1A5D687600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBC01A5D71F700313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FindFilesSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBC51A5D7F0E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/GoToFolderSheetController.xib; sourceTree = "<group>"; };
+		CFCCFBCA1A5E29EC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProcessSheetController.xib; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -2079,7 +2079,7 @@
 				B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */,
 				CFB709BD18E561F200A83E61 /* ProcessSheetController.h */,
 				CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */,
-				CFB709BF18E561F200A83E61 /* ProcessSheetController.xib */,
+				CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */,
 				CF7249AC1990AC2800583BC5 /* SheetController.h */,
 				CF7249AD1990AC2800583BC5 /* SheetController.mm */,
 				CF7B206A1A277A27008F1492 /* TrialWindowController.h */,
@@ -3367,7 +3367,7 @@
 				CF6D9D1319667E390077B146 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CF6D9D1419667E390077B146 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF6D9D1519667E390077B146 /* DetailedVolumeInformationSheetController.xib in Resources */,
-				CF6D9D1619667E390077B146 /* ProcessSheetController.xib in Resources */,
+				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CF6D99AB196676B10077B146 /* ShortcutsDefaults.plist in Resources */,
 				CF6D99AA196676AE0077B146 /* Defaults.plist in Resources */,
@@ -3429,7 +3429,7 @@
 				CFB598B9196E38E400D4C108 /* question_icon.png in Resources */,
 				CF09858118F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CF09857A18F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
-				CFB709C118E561F200A83E61 /* ProcessSheetController.xib in Resources */,
+				CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFB598B1196E38E400D4C108 /* pref_general_icon.png in Resources */,
@@ -3488,7 +3488,7 @@
 				CFF6F3941A13567C00011177 /* question_icon.png in Resources */,
 				CFF6F3951A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFF6F3961A13567C00011177 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
-				CFF6F3971A13567C00011177 /* ProcessSheetController.xib in Resources */,
+				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFF6F39A1A13567C00011177 /* pref_general_icon.png in Resources */,
@@ -4594,6 +4594,14 @@
 				CFCCFBC51A5D7F0E00313845 /* Base */,
 			);
 			name = GoToFolderSheetController.xib;
+			sourceTree = "<group>";
+		};
+		CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFBCA1A5E29EC00313845 /* Base */,
+			);
+			name = ProcessSheetController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

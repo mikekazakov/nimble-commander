@@ -482,7 +482,6 @@
 		CF6D9D1219667E390077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857F18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
 		CF6D9D1319667E390077B146 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */; };
 		CF6D9D1419667E390077B146 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */; };
-		CF6D9D1519667E390077B146 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
 		CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
@@ -527,7 +526,6 @@
 		CF7C93C31A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; };
 		CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
-		CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
 		CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF89D8A61A43083100B2D9F1 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */; };
 		CF89D8A71A43083100B2D9F1 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */; };
@@ -756,6 +754,9 @@
 		CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */; };
 		CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */; };
 		CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */; };
+		CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
+		CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
+		CFCCFBCE1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1086,7 +1087,6 @@
 		CFF6F3751A13567C00011177 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CFF6F3761A13567C00011177 /* pref_term_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A2196E38E400D4C108 /* pref_term_icon.png */; };
 		CFF6F3771A13567C00011177 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */; };
-		CFF6F3781A13567C00011177 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */; };
 		CFF6F3791A13567C00011177 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
 		CFF6F37A1A13567C00011177 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */; };
 		CFF6F37C1A13567C00011177 /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
@@ -1524,7 +1524,6 @@
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailedVolumeInformationSheetController.h; sourceTree = "<group>"; };
 		CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DetailedVolumeInformationSheetController.mm; sourceTree = "<group>"; };
-		CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
 		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelData_Tests.mm; sourceTree = "<group>"; };
 		CF89D8A41A43083100B2D9F1 /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tiny_string.cpp; sourceTree = "<group>"; };
 		CF89D8A51A43083100B2D9F1 /* tiny_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tiny_string.h; sourceTree = "<group>"; };
@@ -1787,6 +1786,7 @@
 		CFCCFBC01A5D71F700313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FindFilesSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBC51A5D7F0E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/GoToFolderSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBCA1A5E29EC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProcessSheetController.xib; sourceTree = "<group>"; };
+		CFCCFBCF1A5E2CFC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -2409,7 +2409,7 @@
 			children = (
 				CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */,
 				CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */,
-				CF859A8E16FC100F0081183E /* DetailedVolumeInformationSheetController.xib */,
+				CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */,
 			);
 			name = DetailedVolumeInformationSheetController;
 			sourceTree = "<group>";
@@ -3366,7 +3366,7 @@
 				CF6D9D1219667E390077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CF6D9D1319667E390077B146 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CF6D9D1419667E390077B146 /* PreferencesWindowHotkeysTab.xib in Resources */,
-				CF6D9D1519667E390077B146 /* DetailedVolumeInformationSheetController.xib in Resources */,
+				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CF6D99AB196676B10077B146 /* ShortcutsDefaults.plist in Resources */,
@@ -3397,7 +3397,7 @@
 				CFE2697816EF0E3E0048A393 /* MassCopySheetController.xib in Resources */,
 				CFB598B5196E38E400D4C108 /* pref_term_icon.png in Resources */,
 				CFF6053316F4572700AB3287 /* FileAlreadyExistSheetController.xib in Resources */,
-				CF859A9016FC100F0081183E /* DetailedVolumeInformationSheetController.xib in Resources */,
+				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
 				CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */,
@@ -3457,7 +3457,7 @@
 				CFF6F3AA1A135A0E00011177 /* files.icns in Resources */,
 				CFF6F3761A13567C00011177 /* pref_term_icon.png in Resources */,
 				CFF6F3771A13567C00011177 /* FileAlreadyExistSheetController.xib in Resources */,
-				CFF6F3781A13567C00011177 /* DetailedVolumeInformationSheetController.xib in Resources */,
+				CFCCFBCE1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFF6F3791A13567C00011177 /* OperationsSummaryViewController.xib in Resources */,
 				CFF6F37A1A13567C00011177 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBF1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
@@ -4602,6 +4602,14 @@
 				CFCCFBCA1A5E29EC00313845 /* Base */,
 			);
 			name = ProcessSheetController.xib;
+			sourceTree = "<group>";
+		};
+		CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFBCF1A5E2CFC00313845 /* Base */,
+			);
+			name = DetailedVolumeInformationSheetController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

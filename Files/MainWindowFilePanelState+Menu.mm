@@ -37,7 +37,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot();
     IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot() && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS() && !self.activePanelView.item->IsDir();
-    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.vfs->IsNativeFS() && !self.activePanelView.item->IsDir() && self.activePanelView.item->IsSymlink();
+    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.vfs->IsNativeFS() && self.activePanelView.item->IsSymlink();
     IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;

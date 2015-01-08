@@ -60,9 +60,7 @@
 		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
 		CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
 		CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */; };
-		CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888317801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib */; };
 		CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */; };
-		CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
 		CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
 		CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
@@ -460,8 +458,6 @@
 		CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF2AC58D1818DD3800B0BEB4 /* path_manip.c */; };
 		CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF6D9CFF19667E390077B146 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
-		CF6D9D0219667E390077B146 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888317801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib */; };
-		CF6D9D0319667E390077B146 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
 		CF6D9D0519667E390077B146 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */; };
 		CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CF6D9D0719667E390077B146 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */; };
@@ -754,6 +750,12 @@
 		CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
 		CFCCFBDC1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
 		CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
+		CFCCFBE01A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */; };
+		CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */; };
+		CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */; };
+		CFCCFBE51A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
+		CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
+		CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1086,9 +1088,7 @@
 		CFF6F3811A13567C00011177 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = B52EB79217228B73004ABC2E /* Defaults.plist */; };
 		CFF6F3821A13567C00011177 /* pref_hotkeys_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C3196E3A4400D4C108 /* pref_hotkeys_icon.png */; };
 		CFF6F3841A13567C00011177 /* pref_panels_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A1196E38E400D4C108 /* pref_panels_icon.png */; };
-		CFF6F3851A13567C00011177 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888317801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib */; };
 		CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A6196E38E400D4C108 /* show_oplist_icon.png */; };
-		CFF6F3881A13567C00011177 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
 		CFF6F3891A13567C00011177 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
 		CFF6F38A1A13567C00011177 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92131A0B865D00FAE649 /* tab_add.png */; };
 		CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
@@ -1298,10 +1298,8 @@
 		CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkNewSymlinkSheetController.mm; sourceTree = "<group>"; };
 		CF12888117801DB1002816C2 /* FileLinkAlterSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkAlterSymlinkSheetController.h; sourceTree = "<group>"; };
 		CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkAlterSymlinkSheetController.mm; sourceTree = "<group>"; };
-		CF12888317801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileLinkAlterSymlinkSheetController.xib; sourceTree = "<group>"; };
 		CF12888617803712002816C2 /* FileLinkNewHardlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkNewHardlinkSheetController.h; sourceTree = "<group>"; };
 		CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkNewHardlinkSheetController.mm; sourceTree = "<group>"; };
-		CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileLinkNewHardlinkSheetController.xib; sourceTree = "<group>"; };
 		CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WorkspaceIconsCache.mm; sourceTree = "<group>"; };
 		CF14BE171931AD40008DDF6A /* WorkspaceIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkspaceIconsCache.h; sourceTree = "<group>"; };
 		CF17D1F01A049E1700B523C9 /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindow.h; sourceTree = "<group>"; };
@@ -1769,6 +1767,8 @@
 		CFCCFBD41A5E467E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BigFileViewSheet.xib; sourceTree = "<group>"; };
 		CFCCFBD91A5E49FC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileSysEntryAttrSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBDE1A5E653600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileLinkNewSymlinkSheetController.xib; sourceTree = "<group>"; };
+		CFCCFBE31A5E673900313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileLinkAlterSymlinkSheetController.xib; sourceTree = "<group>"; };
+		CFCCFBE81A5E67F600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileLinkNewHardlinkSheetController.xib; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -2144,10 +2144,10 @@
 				CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */,
 				CF12888117801DB1002816C2 /* FileLinkAlterSymlinkSheetController.h */,
 				CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */,
-				CF12888317801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib */,
+				CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */,
 				CF12888617803712002816C2 /* FileLinkNewHardlinkSheetController.h */,
 				CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */,
-				CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */,
+				CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */,
 			);
 			name = FileLinkOperation;
 			sourceTree = "<group>";
@@ -3299,8 +3299,8 @@
 				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
 				CFB598B4196E38E400D4C108 /* pref_panels_icon.png in Resources */,
 				CFCA763419D288E300AF87A8 /* files.icns in Resources */,
-				CF6D9D0219667E390077B146 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
-				CF6D9D0319667E390077B146 /* FileLinkNewHardlinkSheetController.xib in Resources */,
+				CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
+				CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */,
 				CFB598BE196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CFB598AC196E38E400D4C108 /* linkarrow_icon.png in Resources */,
@@ -3375,10 +3375,10 @@
 				CFB598C4196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFB598B3196E38E400D4C108 /* pref_panels_icon.png in Resources */,
-				CF12888517801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
+				CFCCFBE01A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFB598BD196E38E400D4C108 /* show_oplist_icon.png in Resources */,
-				CF12888A17803715002816C2 /* FileLinkNewHardlinkSheetController.xib in Resources */,
+				CFCCFBE51A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */,
 				CF7C92141A0B865D00FAE649 /* tab_add.png in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
@@ -3433,10 +3433,10 @@
 				CFF6F3821A13567C00011177 /* pref_hotkeys_icon.png in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFF6F3841A13567C00011177 /* pref_panels_icon.png in Resources */,
-				CFF6F3851A13567C00011177 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
+				CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */,
-				CFF6F3881A13567C00011177 /* FileLinkNewHardlinkSheetController.xib in Resources */,
+				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFF6F3891A13567C00011177 /* eject_icon.png in Resources */,
 				CFF6F38A1A13567C00011177 /* tab_add.png in Resources */,
 				CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */,
@@ -4588,6 +4588,22 @@
 				CFCCFBDE1A5E653600313845 /* Base */,
 			);
 			name = FileLinkNewSymlinkSheetController.xib;
+			sourceTree = "<group>";
+		};
+		CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFBE31A5E673900313845 /* Base */,
+			);
+			name = FileLinkAlterSymlinkSheetController.xib;
+			sourceTree = "<group>";
+		};
+		CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFBE81A5E67F600313845 /* Base */,
+			);
+			name = FileLinkNewHardlinkSheetController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

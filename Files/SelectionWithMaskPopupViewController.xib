@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6206.9" systemVersion="14A343f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment defaultVersion="1070" identifier="macosx"/>
+        <deployment identifier="macosx"/>
         <development version="5100" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6206.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="SelectionWithMaskPopupViewController">
@@ -15,22 +15,22 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="237" height="96"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="240" height="81"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="PGG-CN-CJD">
-                    <rect key="frame" x="18" y="63" width="201" height="13"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PGG-CN-CJD">
+                    <rect key="frame" x="18" y="48" width="204" height="13"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="E3k-AE-JQr"/>
+                    </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="5s2-5B-fk9">
                         <font key="font" metaFont="label"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <comboBox toolTip="Use &quot;*&quot; for multiple-character wildcard, &quot;?&quot; for single-character wildcard and &quot;,&quot; to specify more than one mask." horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" id="ACk-NG-9Cm">
-                    <rect key="frame" x="20" y="31" width="200" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                <comboBox toolTip="Use &quot;*&quot; for multiple-character wildcard, &quot;?&quot; for single-character wildcard and &quot;,&quot; to specify more than one mask." horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="ACk-NG-9Cm">
+                    <rect key="frame" x="20" y="16" width="203" height="26"/>
                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Type mask here" drawsBackground="YES" usesSingleLineMode="YES" completes="NO" numberOfVisibleItems="10" id="owl-H0-mNI">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -41,7 +41,16 @@
                     </connections>
                 </comboBox>
             </subviews>
-            <point key="canvasLocation" x="37.5" y="325"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="ACk-NG-9Cm" secondAttribute="bottom" constant="20" symbolic="YES" id="73D-Gq-A9a"/>
+                <constraint firstItem="PGG-CN-CJD" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" id="BEF-X5-ewn"/>
+                <constraint firstAttribute="trailing" secondItem="PGG-CN-CJD" secondAttribute="trailing" constant="20" symbolic="YES" id="aZn-50-P0P"/>
+                <constraint firstItem="ACk-NG-9Cm" firstAttribute="leading" secondItem="PGG-CN-CJD" secondAttribute="leading" id="b4R-Bg-jYR"/>
+                <constraint firstItem="ACk-NG-9Cm" firstAttribute="top" secondItem="PGG-CN-CJD" secondAttribute="bottom" constant="8" symbolic="YES" id="iPy-LM-XrG"/>
+                <constraint firstItem="ACk-NG-9Cm" firstAttribute="trailing" secondItem="PGG-CN-CJD" secondAttribute="trailing" id="kYo-Pu-ge0"/>
+                <constraint firstItem="PGG-CN-CJD" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="wTw-L8-eB8"/>
+            </constraints>
+            <point key="canvasLocation" x="39" y="317.5"/>
         </customView>
     </objects>
 </document>

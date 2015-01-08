@@ -21,8 +21,6 @@
 		B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
 		B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5606E6917301D6F00DDA33A /* OperationStats.mm */; };
 		B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
-		B5AD9CE31706D5350099BC6D /* TimedDummyOperationTestDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */; };
-		B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
 		B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
@@ -250,9 +248,6 @@
 		CF6D9C13196678000077B146 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
 		CF6D9C14196678000077B146 /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
 		CF6D9C15196678000077B146 /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
-		CF6D9C16196678000077B146 /* TimedDummyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B310170146240066A49F /* TimedDummyOperation.mm */; };
-		CF6D9C17196678000077B146 /* TimedDummyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B312170146240066A49F /* TimedDummyOperationJob.mm */; };
-		CF6D9C18196678000077B146 /* TimedDummyOperationTestDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */; };
 		CF6D9C19196678000077B146 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
 		CF6D9C1A196678000077B146 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
 		CF6D9C1B196678000077B146 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
@@ -466,11 +461,9 @@
 		CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF2AC58D1818DD3800B0BEB4 /* path_manip.c */; };
 		CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF6D9CFF19667E390077B146 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
-		CF6D9D0019667E390077B146 /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
 		CF6D9D0119667E390077B146 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12887E17800724002816C2 /* FileLinkNewSymlinkSheetController.xib */; };
 		CF6D9D0219667E390077B146 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888317801DB2002816C2 /* FileLinkAlterSymlinkSheetController.xib */; };
 		CF6D9D0319667E390077B146 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF12888817803714002816C2 /* FileLinkNewHardlinkSheetController.xib */; };
-		CF6D9D0419667E390077B146 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */; };
 		CF6D9D0519667E390077B146 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */; };
 		CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
 		CF6D9D0719667E390077B146 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4342516E0E1E3001B0512 /* CreateDirectorySheetController.xib */; };
@@ -501,9 +494,6 @@
 		CF76B313170146240066A49F /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
 		CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
 		CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
-		CF76B318170146240066A49F /* TimedDummyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B310170146240066A49F /* TimedDummyOperation.mm */; };
-		CF76B319170146240066A49F /* TimedDummyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B312170146240066A49F /* TimedDummyOperationJob.mm */; };
-		CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */; };
@@ -760,6 +750,9 @@
 		CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD51A5E467E00313845 /* BigFileViewSheet.xib */; };
 		CFCCFBD21A5E467E00313845 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD51A5E467E00313845 /* BigFileViewSheet.xib */; };
 		CFCCFBD31A5E467E00313845 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD51A5E467E00313845 /* BigFileViewSheet.xib */; };
+		CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
+		CFCCFBD71A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
+		CFCCFBD81A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -881,13 +874,10 @@
 		CFF6F2911A13567C00011177 /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
 		CFF6F2921A13567C00011177 /* archive_write_open_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5A17CC961100CB8146 /* archive_write_open_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2931A13567C00011177 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
-		CFF6F2941A13567C00011177 /* TimedDummyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B310170146240066A49F /* TimedDummyOperation.mm */; };
-		CFF6F2951A13567C00011177 /* TimedDummyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B312170146240066A49F /* TimedDummyOperationJob.mm */; };
 		CFF6F2961A13567C00011177 /* archive_read_set_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2217CC961100CB8146 /* archive_read_set_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2971A13567C00011177 /* archive_write_add_filter_b64encode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4717CC961100CB8146 /* archive_write_add_filter_b64encode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2981A13567C00011177 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CFF6F2991A13567C00011177 /* archive_write_add_filter_xz.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5217CC961100CB8146 /* archive_write_add_filter_xz.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F29A1A13567C00011177 /* TimedDummyOperationTestDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */; };
 		CFF6F29B1A13567C00011177 /* archive_read_support_format_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3A17CC961100CB8146 /* archive_read_support_format_raw.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F29C1A13567C00011177 /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B51014D317078B2B0023FF24 /* OperationDialogController.mm */; };
 		CFF6F29D1A13567C00011177 /* archive_write_set_format_xar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6A17CC961100CB8146 /* archive_write_set_format_xar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -1089,8 +1079,6 @@
 		CFF6F3761A13567C00011177 /* pref_term_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A2196E38E400D4C108 /* pref_term_icon.png */; };
 		CFF6F3771A13567C00011177 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */; };
 		CFF6F3791A13567C00011177 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
-		CFF6F37A1A13567C00011177 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */; };
-		CFF6F37C1A13567C00011177 /* TimedDummyOperationTestDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */; };
 		CFF6F37E1A13567C00011177 /* tab_close_hover.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */; };
 		CFF6F37F1A13567C00011177 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */; };
 		CFF6F3801A13567C00011177 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
@@ -1244,9 +1232,6 @@
 		B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonWithOptions.h; sourceTree = "<group>"; };
 		B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ButtonWithOptions.m; sourceTree = "<group>"; };
 		B5A89D481746537C00EAB999 /* ApplicationSkins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationSkins.h; sourceTree = "<group>"; };
-		B5AD9CE01706D5350099BC6D /* TimedDummyOperationTestDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationTestDialog.h; sourceTree = "<group>"; };
-		B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperationTestDialog.mm; sourceTree = "<group>"; };
-		B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TimedDummyOperationTestDialog.xib; sourceTree = "<group>"; };
 		B5F00AC91711FCC200176F79 /* OperationDialogAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationDialogAlert.h; sourceTree = "<group>"; };
 		B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationDialogAlert.mm; sourceTree = "<group>"; };
 		B5F00ACF1712012C00176F79 /* OperationDialogProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OperationDialogProtocol.h; sourceTree = "<group>"; };
@@ -1496,12 +1481,7 @@
 		CF76B309170146240066A49F /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationsSummaryViewController.h; sourceTree = "<group>"; };
 		CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationsSummaryViewController.mm; sourceTree = "<group>"; };
 		CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OperationsSummaryViewController.xib; sourceTree = "<group>"; };
-		CF76B30F170146240066A49F /* TimedDummyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperation.h; sourceTree = "<group>"; };
-		CF76B310170146240066A49F /* TimedDummyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperation.mm; sourceTree = "<group>"; };
-		CF76B311170146240066A49F /* TimedDummyOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimedDummyOperationJob.h; sourceTree = "<group>"; };
-		CF76B312170146240066A49F /* TimedDummyOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TimedDummyOperationJob.mm; sourceTree = "<group>"; };
 		CF76B31A170148FF0066A49F /* FileSysEntryAttrSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysEntryAttrSheetController.h; sourceTree = "<group>"; };
-		CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileSysEntryAttrSheetController.xib; sourceTree = "<group>"; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
 		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
@@ -1788,6 +1768,7 @@
 		CFCCFBCA1A5E29EC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProcessSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBCF1A5E2CFC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBD41A5E467E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BigFileViewSheet.xib; sourceTree = "<group>"; };
+		CFCCFBD91A5E49FC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileSysEntryAttrSheetController.xib; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -1996,7 +1977,6 @@
 			children = (
 				CFAC50D41715565E00A3E5C5 /* Core */,
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
-				B5AD9CDE17030DAA0099BC6D /* Dummies */,
 				CF128875177FF6F0002816C2 /* FileLinkOperation */,
 				CFC058DD170B27D500A20CF2 /* FileSysAttrChange */,
 				CFAC50CD1714016800A3E5C5 /* FileCopyOperation */,
@@ -2087,20 +2067,6 @@
 				CF7B206C1A277A27008F1492 /* TrialWindowController.xib */,
 			);
 			name = Controls;
-			sourceTree = "<group>";
-		};
-		B5AD9CDE17030DAA0099BC6D /* Dummies */ = {
-			isa = PBXGroup;
-			children = (
-				CF76B30F170146240066A49F /* TimedDummyOperation.h */,
-				CF76B310170146240066A49F /* TimedDummyOperation.mm */,
-				CF76B311170146240066A49F /* TimedDummyOperationJob.h */,
-				CF76B312170146240066A49F /* TimedDummyOperationJob.mm */,
-				B5AD9CE01706D5350099BC6D /* TimedDummyOperationTestDialog.h */,
-				B5AD9CE11706D5350099BC6D /* TimedDummyOperationTestDialog.mm */,
-				B5AD9CE21706D5350099BC6D /* TimedDummyOperationTestDialog.xib */,
-			);
-			name = Dummies;
 			sourceTree = "<group>";
 		};
 		B5AD9CDF17030E550099BC6D /* SummaryView */ = {
@@ -2903,7 +2869,7 @@
 			children = (
 				CF76B31A170148FF0066A49F /* FileSysEntryAttrSheetController.h */,
 				CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */,
-				CF76B31C170148FF0066A49F /* FileSysEntryAttrSheetController.xib */,
+				CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */,
 				CF76B30417000C090066A49F /* filesysattr.mm */,
 				CF76B30517000C090066A49F /* filesysattr.h */,
 				CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */,
@@ -3325,7 +3291,6 @@
 				CFB598BC196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */,
 				CF6D9CFF19667E390077B146 /* OperationsSummaryViewController.xib in Resources */,
-				CF6D9D0019667E390077B146 /* TimedDummyOperationTestDialog.xib in Resources */,
 				CFB598B2196E38E400D4C108 /* pref_general_icon.png in Resources */,
 				CFB598B0196E38E400D4C108 /* pref_extedit_icon.png in Resources */,
 				CF50B6B31A14EDAF00E3D96D /* tab_close_press.png in Resources */,
@@ -3339,7 +3304,7 @@
 				CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */,
 				CFB598BE196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CFB598AC196E38E400D4C108 /* linkarrow_icon.png in Resources */,
-				CF6D9D0419667E390077B146 /* FileSysEntryAttrSheetController.xib in Resources */,
+				CFCCFBD71A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CF6D9D0519667E390077B146 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */,
 				CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
@@ -3400,9 +3365,8 @@
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
-				CF76B31E170149000066A49F /* FileSysEntryAttrSheetController.xib in Resources */,
+				CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBD1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
-				B5AD9CE41706D5350099BC6D /* TimedDummyOperationTestDialog.xib in Resources */,
 				CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */,
 				CF7C921C1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFE1088E1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib in Resources */,
@@ -3459,9 +3423,8 @@
 				CFF6F3771A13567C00011177 /* FileAlreadyExistSheetController.xib in Resources */,
 				CFCCFBCE1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFF6F3791A13567C00011177 /* OperationsSummaryViewController.xib in Resources */,
-				CFF6F37A1A13567C00011177 /* FileSysEntryAttrSheetController.xib in Resources */,
+				CFCCFBD81A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBF1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
-				CFF6F37C1A13567C00011177 /* TimedDummyOperationTestDialog.xib in Resources */,
 				CFCCFBD31A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
 				CFF6F37E1A13567C00011177 /* tab_close_hover.png in Resources */,
 				CFF6F37F1A13567C00011177 /* PreferencesWindowTerminalTab.xib in Resources */,
@@ -3752,11 +3715,8 @@
 				CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
 				CF50B6DD1A15169300E3D96D /* VFSPSHost.mm in Sources */,
 				CF6D9C15196678000077B146 /* OperationsSummaryViewController.mm in Sources */,
-				CF6D9C16196678000077B146 /* TimedDummyOperation.mm in Sources */,
 				CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
-				CF6D9C17196678000077B146 /* TimedDummyOperationJob.mm in Sources */,
 				CF50B7171A1516E700E3D96D /* VFSNativeListing.cpp in Sources */,
-				CF6D9C18196678000077B146 /* TimedDummyOperationTestDialog.mm in Sources */,
 				CF6D9C19196678000077B146 /* FileLinkOperation.mm in Sources */,
 				CF6D9C1A196678000077B146 /* FileLinkOperationJob.mm in Sources */,
 				CF6D9C1B196678000077B146 /* FileLinkNewSymlinkSheetController.mm in Sources */,
@@ -3959,13 +3919,10 @@
 				CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */,
 				CF9D0EC717CC961100CB8146 /* archive_write_open_file.c in Sources */,
 				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
-				CF76B318170146240066A49F /* TimedDummyOperation.mm in Sources */,
-				CF76B319170146240066A49F /* TimedDummyOperationJob.mm in Sources */,
 				CF9D0E9317CC961100CB8146 /* archive_read_set_options.c in Sources */,
 				CF9D0EB517CC961100CB8146 /* archive_write_add_filter_b64encode.c in Sources */,
 				CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF9D0EC017CC961100CB8146 /* archive_write_add_filter_xz.c in Sources */,
-				B5AD9CE31706D5350099BC6D /* TimedDummyOperationTestDialog.mm in Sources */,
 				CF9D0EAB17CC961100CB8146 /* archive_read_support_format_raw.c in Sources */,
 				B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */,
 				CF9D0ED617CC961100CB8146 /* archive_write_set_format_xar.c in Sources */,
@@ -4262,14 +4219,11 @@
 				CFF6F2911A13567C00011177 /* OperationsSummaryViewController.mm in Sources */,
 				CFF6F2921A13567C00011177 /* archive_write_open_file.c in Sources */,
 				CFF6F2931A13567C00011177 /* MainWindow.mm in Sources */,
-				CFF6F2941A13567C00011177 /* TimedDummyOperation.mm in Sources */,
-				CFF6F2951A13567C00011177 /* TimedDummyOperationJob.mm in Sources */,
 				CFF6F2961A13567C00011177 /* archive_read_set_options.c in Sources */,
 				CFF6F2971A13567C00011177 /* archive_write_add_filter_b64encode.c in Sources */,
 				CFF6F2981A13567C00011177 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF89D8B11A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */,
 				CFF6F2991A13567C00011177 /* archive_write_add_filter_xz.c in Sources */,
-				CFF6F29A1A13567C00011177 /* TimedDummyOperationTestDialog.mm in Sources */,
 				CFF6F29B1A13567C00011177 /* archive_read_support_format_raw.c in Sources */,
 				CFF6F29C1A13567C00011177 /* OperationDialogController.mm in Sources */,
 				CFF6F29D1A13567C00011177 /* archive_write_set_format_xar.c in Sources */,
@@ -4618,6 +4572,14 @@
 				CFCCFBD41A5E467E00313845 /* Base */,
 			);
 			name = BigFileViewSheet.xib;
+			sourceTree = "<group>";
+		};
+		CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFBD91A5E49FC00313845 /* Base */,
+			);
+			name = FileSysEntryAttrSheetController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

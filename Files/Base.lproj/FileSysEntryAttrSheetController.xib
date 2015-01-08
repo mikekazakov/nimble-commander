@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" promptedForUpgradeToXcode5="NO">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="FileSysEntryAttrSheetController">
+            <connections>
+                <outlet property="ATimePicker" destination="841" id="1003"/>
+                <outlet property="ArchivedCheck" destination="250" id="400"/>
+                <outlet property="BTimePicker" destination="1060" id="1085"/>
+                <outlet property="CTimePicker" destination="1035" id="1084"/>
+                <outlet property="GroupExecCheck" destination="115" id="141"/>
+                <outlet property="GroupReadCheck" destination="57" id="71"/>
+                <outlet property="GroupWriteCheck" destination="75" id="140"/>
+                <outlet property="GroupsPopUpButton" destination="451" id="466"/>
+                <outlet property="HiddenCheck" destination="225" id="399"/>
+                <outlet property="MTimePicker" destination="1007" id="1083"/>
+                <outlet property="NoDumpCheck" destination="218" id="395"/>
+                <outlet property="OpaqueCheck" destination="197" id="398"/>
+                <outlet property="OthersExecCheck" destination="116" id="143"/>
+                <outlet property="OthersReadCheck" destination="64" id="72"/>
+                <outlet property="OthersWriteCheck" destination="76" id="142"/>
+                <outlet property="OwnerExecCheck" destination="114" id="139"/>
+                <outlet property="OwnerReadCheck" destination="31" id="70"/>
+                <outlet property="OwnerWriteCheck" destination="74" id="138"/>
+                <outlet property="ProcessSubfoldersCheck" destination="1173" id="1183"/>
+                <outlet property="SetGIDCheck" destination="524" id="540"/>
+                <outlet property="SetUIDCheck" destination="512" id="539"/>
+                <outlet property="StickyCheck" destination="474" id="481"/>
+                <outlet property="SystemAppendCheck" destination="304" id="402"/>
+                <outlet property="SystemImmutableCheck" destination="260" id="401"/>
+                <outlet property="Title" destination="1312" id="2001"/>
+                <outlet property="UserAppendCheck" destination="237" id="397"/>
+                <outlet property="UserImmutableCheck" destination="166" id="396"/>
+                <outlet property="UsersPopUpButton" destination="423" id="439"/>
+                <outlet property="window" destination="1" id="3"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="469" height="415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <view key="contentView" id="2">
+                <rect key="frame" x="0.0" y="0.0" width="469" height="415"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5">
+                        <rect key="frame" x="261" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="zN1-8a-FMk"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnCancel:" target="-2" id="9"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="10">
+                        <rect key="frame" x="18" y="342" width="59" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="rQL-7O-cfP"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Owner:" id="11">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="15">
+                        <rect key="frame" x="18" y="322" width="59" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="LNw-d9-nXx"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Group:" id="17">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="22">
+                        <rect key="frame" x="18" y="302" width="59" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="b9T-bQ-hcC"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Others:" id="23">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="27">
+                        <rect key="frame" x="66" y="365" width="37" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Read" id="28">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="31">
+                        <rect key="frame" x="81" y="341" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="32">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1191"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="57">
+                        <rect key="frame" x="81" y="321" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="59">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1194"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="64">
+                        <rect key="frame" x="81" y="302" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="65">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1197"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="73">
+                        <rect key="frame" x="101" y="365" width="36" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Write" id="82">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="74">
+                        <rect key="frame" x="108" y="341" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="80">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1192"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="75">
+                        <rect key="frame" x="108" y="321" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="78">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1195"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="76">
+                        <rect key="frame" x="108" y="302" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="77">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1198"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="113">
+                        <rect key="frame" x="135" y="365" width="35" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Exec" id="121">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="114">
+                        <rect key="frame" x="135" y="341" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="119">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1193"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="115">
+                        <rect key="frame" x="135" y="321" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="118">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1196"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="116">
+                        <rect key="frame" x="135" y="302" width="22" height="18"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="117">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1199"/>
+                        </connections>
+                    </button>
+                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="149">
+                        <rect key="frame" x="0.0" y="291" width="469" height="5"/>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <font key="titleFont" metaFont="system"/>
+                    </box>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="166">
+                        <rect key="frame" x="18" y="189" width="204" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="pbS-Wk-ZfH"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="User immutable" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="171">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1204"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="197">
+                        <rect key="frame" x="226" y="269" width="71" height="18"/>
+                        <buttonCell key="cell" type="check" title="Opaque" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="198">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1206"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="218">
+                        <rect key="frame" x="18" y="209" width="204" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="II7-el-w2B"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="No dump" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="220">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1203"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="225">
+                        <rect key="frame" x="226" y="249" width="67" height="18"/>
+                        <buttonCell key="cell" type="check" title="Hidden" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="226">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1207"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="237">
+                        <rect key="frame" x="18" y="169" width="204" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="i1a-YV-264"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="User append-only" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="238">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1205"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="250">
+                        <rect key="frame" x="226" y="229" width="76" height="18"/>
+                        <buttonCell key="cell" type="check" title="Archived" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="251">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1208"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="259">
+                        <rect key="frame" x="-2" y="-7" width="4" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="262">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="260">
+                        <rect key="frame" x="226" y="209" width="137" height="18"/>
+                        <buttonCell key="cell" type="check" title="System immutable" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="261">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1209"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="304">
+                        <rect key="frame" x="226" y="189" width="150" height="18"/>
+                        <buttonCell key="cell" type="check" title="System append-only" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="305">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1210"/>
+                        </connections>
+                    </button>
+                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="416">
+                        <rect key="frame" x="0.0" y="160" width="469" height="5"/>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <font key="titleFont" metaFont="system"/>
+                    </box>
+                    <popUpButton verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="423">
+                        <rect key="frame" x="247" y="335" width="205" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="200" id="LK1-0G-flG"/>
+                        </constraints>
+                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="426" id="424">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" title="OtherViews" id="425">
+                                <items>
+                                    <menuItem title="Item 1" state="on" id="426"/>
+                                    <menuItem title="Item 2" id="427"/>
+                                    <menuItem title="Item 3" id="428"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <connections>
+                            <action selector="OnUIDSel:" target="-2" id="1211"/>
+                        </connections>
+                    </popUpButton>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="444">
+                        <rect key="frame" x="199" y="341" width="49" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Owner:" id="445">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="451">
+                        <rect key="frame" x="247" y="304" width="205" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="200" id="ZnJ-WP-PKq"/>
+                        </constraints>
+                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="459" id="455">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" title="OtherViews" id="456">
+                                <items>
+                                    <menuItem title="Item 1" state="on" id="459"/>
+                                    <menuItem title="Item 2" id="458"/>
+                                    <menuItem title="Item 3" id="457"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <connections>
+                            <action selector="OnGIDSel:" target="-2" id="1212"/>
+                        </connections>
+                    </popUpButton>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="452">
+                        <rect key="frame" x="201" y="310" width="47" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Group:" id="453">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="474">
+                        <rect key="frame" x="18" y="229" width="204" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="UI1-Dc-lMh"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Sticky" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="475">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1202"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="512">
+                        <rect key="frame" x="18" y="269" width="204" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="0Rj-4i-s7r"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Set UID on execution" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="513">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1200"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="524">
+                        <rect key="frame" x="18" y="249" width="204" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="IY9-EP-e5c"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Set GID on execution" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="525">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="1201"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="622">
+                        <rect key="frame" x="18" y="137" width="94" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="lPu-Xi-kr5"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Access time:" id="623">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="841">
+                        <rect key="frame" x="118" y="134" width="133" height="22"/>
+                        <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="842">
+                            <font key="font" metaFont="system"/>
+                            <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
+                                <!--1982-02-12 16:00:00 +0000-->
+                                <timeZone key="timeZone" name="US/Pacific"/>
+                            </calendarDate>
+                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <datePickerElements key="datePickerElements" year="YES" month="YES" day="YES" hour="YES" minute="YES" second="YES"/>
+                        </datePickerCell>
+                        <connections>
+                            <action selector="OnTimeChange:" target="-2" id="1213"/>
+                        </connections>
+                    </datePicker>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="900">
+                        <rect key="frame" x="253" y="127" width="36" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="Dk6-sW-MGR"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="☓" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="901">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnATimeClear:" target="-2" id="1004"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="967">
+                        <rect key="frame" x="281" y="127" width="36" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="zE7-B4-dH5"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="⚑" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="969">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnATimeSet:" target="-2" id="1005"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1006">
+                        <rect key="frame" x="18" y="112" width="94" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="E68-2S-HpR"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Modify time:" id="1016">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1007">
+                        <rect key="frame" x="118" y="109" width="133" height="22"/>
+                        <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1014">
+                            <font key="font" metaFont="system"/>
+                            <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
+                                <!--1982-02-12 16:00:00 +0000-->
+                                <timeZone key="timeZone" name="US/Pacific"/>
+                            </calendarDate>
+                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <datePickerElements key="datePickerElements" year="YES" month="YES" day="YES" hour="YES" minute="YES" second="YES"/>
+                        </datePickerCell>
+                        <connections>
+                            <action selector="OnTimeChange:" target="-2" id="1214"/>
+                        </connections>
+                    </datePicker>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1008">
+                        <rect key="frame" x="253" y="102" width="36" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="OZZ-Hc-ZRl"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="☓" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1013">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnMTimeClear:" target="-2" id="1164"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1009">
+                        <rect key="frame" x="281" y="102" width="36" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="KgG-bU-MNk"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="⚑" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1011">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnMTimeSet:" target="-2" id="1165"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1034">
+                        <rect key="frame" x="18" y="87" width="94" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="AW5-LS-GlS"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Change time:" id="1041">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1035">
+                        <rect key="frame" x="118" y="84" width="133" height="22"/>
+                        <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1040">
+                            <font key="font" metaFont="system"/>
+                            <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
+                                <!--1982-02-12 16:00:00 +0000-->
+                                <timeZone key="timeZone" name="US/Pacific"/>
+                            </calendarDate>
+                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <datePickerElements key="datePickerElements" year="YES" month="YES" day="YES" hour="YES" minute="YES" second="YES"/>
+                        </datePickerCell>
+                        <connections>
+                            <action selector="OnTimeChange:" target="-2" id="1215"/>
+                        </connections>
+                    </datePicker>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1036">
+                        <rect key="frame" x="253" y="77" width="36" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="L2k-TZ-Zjx"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="☓" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1039">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnCTimeClear:" target="-2" id="1166"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1037">
+                        <rect key="frame" x="281" y="77" width="36" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="Tsu-QG-MQw"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="⚑" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1038">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnCTimeSet:" target="-2" id="1167"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1059">
+                        <rect key="frame" x="18" y="62" width="94" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="DC2-S9-Lfx"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Create time:" id="1066">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1060">
+                        <rect key="frame" x="118" y="59" width="133" height="22"/>
+                        <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1065">
+                            <font key="font" metaFont="system"/>
+                            <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
+                                <!--1982-02-12 16:00:00 +0000-->
+                                <timeZone key="timeZone" name="US/Pacific"/>
+                            </calendarDate>
+                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <datePickerElements key="datePickerElements" year="YES" month="YES" day="YES" hour="YES" minute="YES" second="YES"/>
+                        </datePickerCell>
+                        <connections>
+                            <action selector="OnTimeChange:" target="-2" id="1216"/>
+                        </connections>
+                    </datePicker>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1061">
+                        <rect key="frame" x="253" y="52" width="36" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="ejD-fN-m1y"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="☓" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1064">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnBTimeClear:" target="-2" id="1168"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1062">
+                        <rect key="frame" x="281" y="52" width="36" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="oTe-WX-LrP"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="⚑" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1063">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnBTimeSet:" target="-2" id="1169"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1218">
+                        <rect key="frame" x="353" y="13" width="102" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="4aB-iZ-KIE"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1219">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnApply:" target="-2" id="1228"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1312">
+                        <rect key="frame" x="18" y="390" width="433" height="17"/>
+                        <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="center" title="Title" id="1313">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="1173">
+                        <rect key="frame" x="18" y="22" width="141" height="18"/>
+                        <buttonCell key="cell" type="check" title="Process subfolders" bezelStyle="regularSquare" imagePosition="left" inset="2" id="1174">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnProcessSubfolders:" target="-2" id="1184"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="1312" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="1317"/>
+                    <constraint firstAttribute="trailing" secondItem="1312" secondAttribute="trailing" constant="20" symbolic="YES" id="1318"/>
+                    <constraint firstItem="1312" firstAttribute="top" secondItem="2" secondAttribute="top" constant="8" id="1999"/>
+                    <constraint firstItem="260" firstAttribute="top" secondItem="250" secondAttribute="bottom" constant="6" symbolic="YES" id="2Xr-mN-QfZ"/>
+                    <constraint firstItem="73" firstAttribute="leading" secondItem="27" secondAttribute="trailing" constant="2" id="2aY-FO-X5b"/>
+                    <constraint firstItem="1009" firstAttribute="baseline" secondItem="1008" secondAttribute="baseline" id="2bW-vB-z6g"/>
+                    <constraint firstItem="27" firstAttribute="trailing" secondItem="31" secondAttribute="trailing" id="2tc-1q-cvv"/>
+                    <constraint firstItem="416" firstAttribute="top" secondItem="237" secondAttribute="bottom" constant="8" symbolic="YES" id="2zN-1c-dck"/>
+                    <constraint firstItem="260" firstAttribute="leading" secondItem="197" secondAttribute="leading" id="3Q1-kT-XxJ"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="304" secondAttribute="trailing" constant="20" symbolic="YES" id="3ih-BF-EmL"/>
+                    <constraint firstItem="73" firstAttribute="centerX" secondItem="74" secondAttribute="centerX" id="3ml-U8-N4V"/>
+                    <constraint firstItem="31" firstAttribute="centerY" secondItem="74" secondAttribute="centerY" id="4AA-uH-6Ze"/>
+                    <constraint firstItem="1061" firstAttribute="leading" secondItem="1060" secondAttribute="trailing" constant="8" symbolic="YES" id="4qn-Vf-oUP"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="250" secondAttribute="trailing" constant="20" symbolic="YES" id="6D0-W4-xVy"/>
+                    <constraint firstItem="1009" firstAttribute="baseline" secondItem="1006" secondAttribute="baseline" id="6PZ-Yr-YYb"/>
+                    <constraint firstItem="149" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="6Pu-qL-XU0"/>
+                    <constraint firstItem="1059" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="6tk-CZ-OkH"/>
+                    <constraint firstItem="1006" firstAttribute="top" secondItem="622" secondAttribute="bottom" constant="8" symbolic="YES" id="7Fl-uW-OCl"/>
+                    <constraint firstItem="116" firstAttribute="centerY" secondItem="22" secondAttribute="centerY" id="7cg-Yc-GAz"/>
+                    <constraint firstItem="1035" firstAttribute="leading" secondItem="1034" secondAttribute="trailing" constant="8" symbolic="YES" id="8Ta-AY-L8C"/>
+                    <constraint firstItem="512" firstAttribute="top" secondItem="149" secondAttribute="bottom" constant="8" symbolic="YES" id="8w3-oM-mR7"/>
+                    <constraint firstItem="260" firstAttribute="leading" secondItem="225" secondAttribute="leading" id="9Yt-hR-MUV"/>
+                    <constraint firstItem="1060" firstAttribute="leading" secondItem="1035" secondAttribute="leading" id="Aaf-oV-OpZ"/>
+                    <constraint firstItem="116" firstAttribute="centerY" secondItem="76" secondAttribute="centerY" id="BU6-dn-Myc"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="225" secondAttribute="trailing" constant="20" symbolic="YES" id="BYt-Vh-o6R"/>
+                    <constraint firstAttribute="bottom" secondItem="1218" secondAttribute="bottom" constant="20" symbolic="YES" id="C88-f5-F2V"/>
+                    <constraint firstItem="197" firstAttribute="leading" secondItem="512" secondAttribute="trailing" constant="8" symbolic="YES" id="DFQ-gp-zul"/>
+                    <constraint firstItem="1060" firstAttribute="leading" secondItem="1059" secondAttribute="trailing" constant="8" symbolic="YES" id="DJX-Sa-Lpd"/>
+                    <constraint firstItem="1006" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="DLW-qt-TLV"/>
+                    <constraint firstItem="1037" firstAttribute="baseline" secondItem="1036" secondAttribute="baseline" id="EC5-hn-uq7"/>
+                    <constraint firstItem="31" firstAttribute="leading" secondItem="10" secondAttribute="trailing" constant="8" symbolic="YES" id="FQi-YL-0oi"/>
+                    <constraint firstItem="304" firstAttribute="top" secondItem="260" secondAttribute="bottom" constant="6" symbolic="YES" id="FUW-Nh-ByY"/>
+                    <constraint firstItem="900" firstAttribute="leading" secondItem="841" secondAttribute="trailing" constant="8" symbolic="YES" id="GjQ-Y3-7uJ"/>
+                    <constraint firstItem="967" firstAttribute="leading" secondItem="900" secondAttribute="trailing" constant="4" id="Gw2-6x-HQB"/>
+                    <constraint firstItem="5" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="1173" secondAttribute="trailing" constant="8" symbolic="YES" id="IOQ-tY-Wp1"/>
+                    <constraint firstAttribute="trailing" secondItem="416" secondAttribute="trailing" id="IsD-5m-r1B"/>
+                    <constraint firstItem="1059" firstAttribute="baseline" secondItem="1061" secondAttribute="baseline" id="JQv-9L-c1c"/>
+                    <constraint firstItem="73" firstAttribute="top" secondItem="1312" secondAttribute="bottom" constant="8" symbolic="YES" id="JSZ-A3-d5Q"/>
+                    <constraint firstItem="237" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="JUn-yw-dpF"/>
+                    <constraint firstItem="149" firstAttribute="top" secondItem="22" secondAttribute="bottom" constant="8" symbolic="YES" id="K4X-My-aW3"/>
+                    <constraint firstItem="512" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="KXX-mk-3jV"/>
+                    <constraint firstItem="1218" firstAttribute="leading" secondItem="5" secondAttribute="trailing" constant="12" symbolic="YES" id="LOi-3F-a3n"/>
+                    <constraint firstItem="113" firstAttribute="top" secondItem="1312" secondAttribute="bottom" constant="8" symbolic="YES" id="MrA-bP-K3b"/>
+                    <constraint firstItem="304" firstAttribute="leading" secondItem="166" secondAttribute="trailing" constant="8" symbolic="YES" id="MsO-Jr-6du"/>
+                    <constraint firstItem="260" firstAttribute="leading" secondItem="304" secondAttribute="leading" id="N9G-JW-JAZ"/>
+                    <constraint firstAttribute="trailing" secondItem="1218" secondAttribute="trailing" constant="20" symbolic="YES" id="NIY-U2-8Rj"/>
+                    <constraint firstItem="1007" firstAttribute="leading" secondItem="1006" secondAttribute="trailing" constant="8" symbolic="YES" id="Ngp-yk-XxN"/>
+                    <constraint firstItem="10" firstAttribute="top" secondItem="27" secondAttribute="bottom" constant="6" id="Nhe-iB-lEX"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="197" secondAttribute="trailing" constant="20" symbolic="YES" id="O4F-hQ-fOf"/>
+                    <constraint firstItem="115" firstAttribute="centerY" secondItem="57" secondAttribute="centerY" id="OKu-FQ-kJ7"/>
+                    <constraint firstItem="73" firstAttribute="centerX" secondItem="76" secondAttribute="centerX" id="P8S-bm-6ZA"/>
+                    <constraint firstItem="73" firstAttribute="centerX" secondItem="75" secondAttribute="centerX" id="PRg-6x-te3"/>
+                    <constraint firstItem="115" firstAttribute="centerY" secondItem="15" secondAttribute="centerY" id="Qe8-HH-uug"/>
+                    <constraint firstItem="116" firstAttribute="centerY" secondItem="64" secondAttribute="centerY" id="Qy2-nl-RJq"/>
+                    <constraint firstItem="116" firstAttribute="leading" secondItem="114" secondAttribute="leading" id="R5Q-Ky-v87"/>
+                    <constraint firstItem="1060" firstAttribute="leading" secondItem="841" secondAttribute="leading" id="RB7-yz-deq"/>
+                    <constraint firstItem="1037" firstAttribute="baseline" secondItem="1035" secondAttribute="baseline" id="RWs-hn-Oc5"/>
+                    <constraint firstItem="225" firstAttribute="leading" secondItem="524" secondAttribute="trailing" constant="8" symbolic="YES" id="Ren-Jp-X8u"/>
+                    <constraint firstItem="218" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="SQX-az-qNN"/>
+                    <constraint firstItem="1218" firstAttribute="baseline" secondItem="1173" secondAttribute="baseline" id="T9T-4H-Aep"/>
+                    <constraint firstItem="166" firstAttribute="top" secondItem="218" secondAttribute="bottom" constant="6" symbolic="YES" id="UDI-o1-s1v"/>
+                    <constraint firstItem="10" firstAttribute="top" secondItem="423" secondAttribute="top" id="UZ3-4O-9HF"/>
+                    <constraint firstItem="22" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="Veg-ur-NhX"/>
+                    <constraint firstItem="1037" firstAttribute="leading" secondItem="1036" secondAttribute="trailing" constant="4" id="WUO-bg-6Ne"/>
+                    <constraint firstItem="900" firstAttribute="baseline" secondItem="622" secondAttribute="baseline" id="WUg-KP-3wb"/>
+                    <constraint firstItem="260" firstAttribute="leading" secondItem="218" secondAttribute="trailing" constant="8" symbolic="YES" id="WsM-9c-X0J"/>
+                    <constraint firstItem="451" firstAttribute="leading" secondItem="452" secondAttribute="trailing" constant="3" id="X4Q-BK-5fm"/>
+                    <constraint firstItem="1009" firstAttribute="leading" secondItem="1008" secondAttribute="trailing" constant="4" id="Xga-Ay-Jh9"/>
+                    <constraint firstItem="237" firstAttribute="top" secondItem="166" secondAttribute="bottom" constant="6" symbolic="YES" id="Xix-Dd-5Gz"/>
+                    <constraint firstItem="116" firstAttribute="leading" secondItem="113" secondAttribute="leading" id="Xn3-9f-TK2"/>
+                    <constraint firstItem="452" firstAttribute="baseline" secondItem="451" secondAttribute="baseline" id="YmZ-vI-oEi"/>
+                    <constraint firstItem="15" firstAttribute="top" secondItem="10" secondAttribute="bottom" constant="3" id="ZTY-8D-5H1"/>
+                    <constraint firstItem="416" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="a1h-sO-VgZ"/>
+                    <constraint firstItem="1009" firstAttribute="baseline" secondItem="1007" secondAttribute="baseline" id="aCL-CE-IqY"/>
+                    <constraint firstItem="1059" firstAttribute="baseline" secondItem="1062" secondAttribute="baseline" id="aJD-VG-E2j"/>
+                    <constraint firstItem="452" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="116" secondAttribute="trailing" constant="8" symbolic="YES" id="aVf-cN-dqz"/>
+                    <constraint firstItem="622" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="bDg-uS-9BH"/>
+                    <constraint firstItem="250" firstAttribute="leading" secondItem="474" secondAttribute="trailing" constant="8" symbolic="YES" id="bHr-g8-DUC"/>
+                    <constraint firstItem="64" firstAttribute="centerX" secondItem="57" secondAttribute="centerX" id="bg3-VP-MBc"/>
+                    <constraint firstItem="10" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="cCm-zc-XPh"/>
+                    <constraint firstItem="474" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="ccn-L3-Gt8"/>
+                    <constraint firstItem="57" firstAttribute="centerX" secondItem="31" secondAttribute="centerX" id="cxL-xw-icd"/>
+                    <constraint firstItem="22" firstAttribute="top" secondItem="15" secondAttribute="bottom" constant="3" id="d0h-Ww-FS2"/>
+                    <constraint firstItem="1036" firstAttribute="leading" secondItem="1035" secondAttribute="trailing" constant="8" symbolic="YES" id="dCe-P9-ctz"/>
+                    <constraint firstItem="1062" firstAttribute="leading" secondItem="1061" secondAttribute="trailing" constant="4" id="e0C-Cd-Ohu"/>
+                    <constraint firstItem="1034" firstAttribute="top" secondItem="1006" secondAttribute="bottom" constant="8" symbolic="YES" id="f3U-vk-XCF"/>
+                    <constraint firstItem="1173" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="f9s-B7-OhJ"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="260" secondAttribute="trailing" constant="20" symbolic="YES" id="fpc-wB-bcD"/>
+                    <constraint firstAttribute="trailing" secondItem="451" secondAttribute="trailing" constant="20" symbolic="YES" id="g1F-Wo-dVZ"/>
+                    <constraint firstItem="15" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="htQ-jI-2o0"/>
+                    <constraint firstItem="900" firstAttribute="baseline" secondItem="841" secondAttribute="baseline" id="isB-nb-5OL"/>
+                    <constraint firstItem="1037" firstAttribute="baseline" secondItem="1034" secondAttribute="baseline" id="jAF-mI-hVz"/>
+                    <constraint firstItem="260" firstAttribute="leading" secondItem="250" secondAttribute="leading" id="kXe-0c-byR"/>
+                    <constraint firstItem="1218" firstAttribute="baseline" secondItem="5" secondAttribute="baseline" id="ker-Nm-7ax"/>
+                    <constraint firstItem="1059" firstAttribute="baseline" secondItem="1060" secondAttribute="baseline" id="khN-2c-j8D"/>
+                    <constraint firstItem="225" firstAttribute="top" secondItem="197" secondAttribute="bottom" constant="6" symbolic="YES" id="lVo-cw-wyf"/>
+                    <constraint firstAttribute="trailing" secondItem="423" secondAttribute="trailing" constant="20" symbolic="YES" id="lcO-RO-5hx"/>
+                    <constraint firstItem="451" firstAttribute="top" secondItem="423" secondAttribute="bottom" constant="10" symbolic="YES" id="mM7-dR-ZWq"/>
+                    <constraint firstAttribute="trailing" secondItem="149" secondAttribute="trailing" id="mQa-Rt-lx6"/>
+                    <constraint firstItem="166" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="nnx-Em-0yL"/>
+                    <constraint firstItem="900" firstAttribute="baseline" secondItem="967" secondAttribute="baseline" id="o0F-VE-XzI"/>
+                    <constraint firstItem="113" firstAttribute="leading" secondItem="73" secondAttribute="trailing" constant="2" id="ojg-jn-F7v"/>
+                    <constraint firstItem="197" firstAttribute="top" secondItem="149" secondAttribute="bottom" constant="8" symbolic="YES" id="pST-rR-5Sv"/>
+                    <constraint firstItem="218" firstAttribute="top" secondItem="474" secondAttribute="bottom" constant="6" symbolic="YES" id="pc1-Zu-rPQ"/>
+                    <constraint firstItem="524" firstAttribute="top" secondItem="512" secondAttribute="bottom" constant="6" symbolic="YES" id="prs-BQ-PCj"/>
+                    <constraint firstItem="250" firstAttribute="top" secondItem="225" secondAttribute="bottom" constant="6" symbolic="YES" id="qIU-RZ-kee"/>
+                    <constraint firstItem="115" firstAttribute="centerY" secondItem="75" secondAttribute="centerY" id="qbT-pn-UNe"/>
+                    <constraint firstItem="31" firstAttribute="centerY" secondItem="10" secondAttribute="centerY" id="rUx-zv-nfa"/>
+                    <constraint firstItem="444" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="114" secondAttribute="trailing" constant="8" symbolic="YES" id="raU-MN-bMb"/>
+                    <constraint firstItem="1034" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="sPa-JK-DMB"/>
+                    <constraint firstItem="27" firstAttribute="top" secondItem="1312" secondAttribute="bottom" constant="8" symbolic="YES" id="slW-HI-uzV"/>
+                    <constraint firstItem="57" firstAttribute="leading" secondItem="15" secondAttribute="trailing" constant="8" symbolic="YES" id="tjs-60-IGs"/>
+                    <constraint firstItem="64" firstAttribute="leading" secondItem="22" secondAttribute="trailing" constant="8" symbolic="YES" id="uNm-lw-SIh"/>
+                    <constraint firstItem="1060" firstAttribute="leading" secondItem="1007" secondAttribute="leading" id="upr-nt-Fpt"/>
+                    <constraint firstItem="31" firstAttribute="centerY" secondItem="114" secondAttribute="centerY" id="v7z-Vo-d7K"/>
+                    <constraint firstItem="474" firstAttribute="top" secondItem="524" secondAttribute="bottom" constant="6" symbolic="YES" id="vAk-vC-Wyu"/>
+                    <constraint firstItem="622" firstAttribute="top" secondItem="416" secondAttribute="bottom" constant="8" symbolic="YES" id="vx6-v3-lzt"/>
+                    <constraint firstItem="423" firstAttribute="baseline" secondItem="444" secondAttribute="baseline" id="wCx-ip-1dy"/>
+                    <constraint firstItem="1059" firstAttribute="top" secondItem="1034" secondAttribute="bottom" constant="8" symbolic="YES" id="wU5-2J-ShN"/>
+                    <constraint firstItem="423" firstAttribute="leading" secondItem="444" secondAttribute="trailing" constant="3" id="xbB-WN-aso"/>
+                    <constraint firstItem="841" firstAttribute="leading" secondItem="622" secondAttribute="trailing" constant="8" symbolic="YES" id="y3K-dl-UTV"/>
+                    <constraint firstItem="1008" firstAttribute="leading" secondItem="1007" secondAttribute="trailing" constant="8" symbolic="YES" id="y7i-Cb-eQm"/>
+                    <constraint firstItem="524" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="ypo-R4-yIg"/>
+                    <constraint firstItem="116" firstAttribute="leading" secondItem="115" secondAttribute="leading" id="zkB-fG-cgl"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="4"/>
+            </connections>
+            <point key="canvasLocation" x="323.5" y="262.5"/>
+        </window>
+    </objects>
+</document>

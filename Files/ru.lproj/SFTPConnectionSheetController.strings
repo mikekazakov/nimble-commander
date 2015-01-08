@@ -1,1 +1,57 @@
-/* No Localized Strings */
+/* Class = "NSButtonCell"; title = "Connect"; ObjectID = "6LB-Tz-coo"; */
+"6LB-Tz-coo.title" = "Подключиться";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "root"; ObjectID = "9Qu-hD-qcg"; */
+"9Qu-hD-qcg.ibShadowedIsNilPlaceholder" = "root";
+
+/* Class = "NSTextFieldCell"; title = "Connect to SFTP server:"; ObjectID = "096-ee-9Lb"; */
+"096-ee-9Lb.title" = "Подключиться к SFTP серверу:";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "example.com"; ObjectID = "F0g-IE-q0P"; */
+"F0g-IE-q0P.ibShadowedIsNilPlaceholder" = "example.com";
+
+/* Class = "NSPanel"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "";
+
+/* Class = "NSTextFieldCell"; placeholderString = "path"; ObjectID = "KZu-2u-jyV"; */
+"KZu-2u-jyV.placeholderString" = "path";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "path"; ObjectID = "Kba-yc-QkI"; */
+"Kba-yc-QkI.ibShadowedIsNilPlaceholder" = "path";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "passwd"; ObjectID = "NpK-Wh-VzO"; */
+"NpK-Wh-VzO.ibShadowedIsNilPlaceholder" = "passwd";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "22"; ObjectID = "OFd-Oy-lpd"; */
+"OFd-Oy-lpd.ibShadowedIsNilPlaceholder" = "22";
+
+/* Class = "NSButtonCell"; title = "Close"; ObjectID = "OPV-XT-aia"; */
+"OPV-XT-aia.title" = "Закрыть";
+
+/* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "PlK-HB-OYW"; */
+"PlK-HB-OYW.title" = "Логин:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "22"; ObjectID = "RDb-c0-5jY"; */
+"RDb-c0-5jY.placeholderString" = "22";
+
+/* Class = "NSTextFieldCell"; title = "Key file:"; ObjectID = "XOW-Nv-JRE"; */
+"XOW-Nv-JRE.title" = "Путь к ключу:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "passwd"; ObjectID = "Xfi-d5-khm"; */
+"Xfi-d5-khm.placeholderString" = "passwd";
+
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "dGI-nd-Ybu"; */
+"dGI-nd-Ybu.title" = "Пароль:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "example.com"; ObjectID = "gyX-qm-mJx"; */
+"gyX-qm-mJx.placeholderString" = "example.com";
+
+/* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "ngl-N8-zRx"; */
+"ngl-N8-zRx.title" = "Удаленный порт:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "root"; ObjectID = "vmN-6P-k8r"; */
+"vmN-6P-k8r.placeholderString" = "root";
+
+/* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "wlG-DB-jLP"; */
+"wlG-DB-jLP.title" = "Сервер:";
+

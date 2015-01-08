@@ -118,7 +118,7 @@ DQ
                                     <action selector="OnOpen:" target="-1" id="EXV-mf-ZyI"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Open Native" tag="11020" id="NCx-aq-tJi">
+                            <menuItem title="Open in Finder" tag="11020" id="NCx-aq-tJi">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 DQ
 </string>
@@ -261,25 +261,25 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View Mode" id="880">
                                     <items>
-                                        <menuItem title="Toggle Short View Mode" tag="13050" keyEquivalent="1" id="882">
+                                        <menuItem title="Short View Mode" tag="13050" keyEquivalent="1" id="882">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleShortViewMode:" target="-1" id="888"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Toggle Medium View Mode" tag="13060" keyEquivalent="2" id="883">
+                                        <menuItem title="Medium View Mode" tag="13060" keyEquivalent="2" id="883">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleMediumViewMode:" target="-1" id="889"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Toggle Full View Mode" tag="13070" keyEquivalent="3" id="884">
+                                        <menuItem title="Full View Mode" tag="13070" keyEquivalent="3" id="884">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleFullViewMode:" target="-1" id="887"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Toggle Wide View Mode" tag="13080" keyEquivalent="4" id="885">
+                                        <menuItem title="Wide View Mode" tag="13080" keyEquivalent="4" id="885">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleWideViewMode:" target="-1" id="886"/>

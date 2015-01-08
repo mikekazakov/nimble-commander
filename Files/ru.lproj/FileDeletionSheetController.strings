@@ -1,11 +1,5 @@
-/* Class = "NSPanel"; title = "Window"; ObjectID = "1"; */
-"1.title" = "";
-
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "21"; */
 "21.title" = "Отмена";
-
-/* Class = "NSTextFieldCell"; title = "Dummy"; ObjectID = "27"; */
-"27.title" = "";
 
 /* Class = "NSSegmentedCell"; 139.ibShadowedLabels[0] = "Placeholder text"; ObjectID = "139"; */
 "139.ibShadowedLabels[0]" = "";

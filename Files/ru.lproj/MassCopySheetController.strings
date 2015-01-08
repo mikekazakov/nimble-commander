@@ -1,1 +1,30 @@
-/* No Localized Strings */
+/* Class = "NSTextFieldCell"; title = "Dummy"; ObjectID = "13"; */
+"13.title" = "";
+
+/* Class = "NSButtonCell"; title = "Copy"; ObjectID = "17"; */
+"17.title" = "Копировать";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "22"; */
+"22.title" = "Отмена";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "86"; */
+"86.title" = "";
+
+/* Class = "NSButtonCell"; title = "Preserve symbolic links"; ObjectID = "93"; */
+"93.title" = "Сохранять символические ссылки";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "106"; */
+"106.title" = "";
+
+/* Class = "NSButtonCell"; title = "Copy extended attributes"; ObjectID = "128"; */
+"128.title" = "Сохранять расширенные атрибуты";
+
+/* Class = "NSButtonCell"; title = "Copy file times"; ObjectID = "133"; */
+"133.title" = "Сохранять времена файлов";
+
+/* Class = "NSButtonCell"; title = "Copy UNIX flags"; ObjectID = "138"; */
+"138.title" = "Сохранять флаги UNIX";
+
+/* Class = "NSButtonCell"; title = "Copy UNIX ownership"; ObjectID = "144"; */
+"144.title" = "Сохранять владельцев UNIX";
+

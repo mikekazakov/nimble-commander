@@ -1,6 +1,3 @@
-/* Class = "NSPanel"; title = "Window"; ObjectID = "1"; */
-"1.title" = "";
-
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "6"; */
 "6.title" = "Отмена";
 
@@ -108,7 +105,4 @@
 
 /* Class = "NSButtonCell"; title = "Apply"; ObjectID = "1219"; */
 "1219.title" = "Применить";
-
-/* Class = "NSTextFieldCell"; title = "Title"; ObjectID = "1313"; */
-"1313.title" = "";
 

@@ -23,7 +23,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="410" height="269"/>
@@ -88,7 +88,7 @@ Gw
                     </button>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="69">
                         <rect key="frame" x="20" y="181" width="13" height="13"/>
-                        <buttonCell key="cell" type="disclosureTriangle" bezelStyle="disclosure" image="8A6E2F9F-CC1D-4EB7-B772-E1880F3A255D" imagePosition="above" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70">
+                        <buttonCell key="cell" type="disclosureTriangle" bezelStyle="disclosure" image="4616FE01-DAE6-4E8B-8EBD-EA5E518E1A34" imagePosition="above" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70">
                             <behavior key="behavior" pushIn="YES" changeBackground="YES" changeGray="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -196,7 +196,7 @@ Gw
         </window>
     </objects>
     <resources>
-        <image name="8A6E2F9F-CC1D-4EB7-B772-E1880F3A255D" width="1" height="1">
+        <image name="4616FE01-DAE6-4E8B-8EBD-EA5E518E1A34" width="1" height="1">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

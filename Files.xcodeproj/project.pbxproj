@@ -761,7 +761,8 @@
 		CFCCFBF91A5E772B00313845 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBFD1A5E772B00313845 /* FileAlreadyExistSheetController.xib */; };
 		CFCCFBFA1A5E772B00313845 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBFD1A5E772B00313845 /* FileAlreadyExistSheetController.xib */; };
 		CFCCFBFB1A5E772B00313845 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBFD1A5E772B00313845 /* FileAlreadyExistSheetController.xib */; };
-		CFCCFC2D1A5EA01B00313845 /* Errors.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC2F1A5EA01B00313845 /* Errors.strings */; };
+		CFCCFC3F1A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC411A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings */; };
+		CFCCFC441A5EB38B00313845 /* Files Tests-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1787,7 +1788,10 @@
 		CFCCFC1E1A5E891900313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileAlreadyExistSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC1F1A5E891900313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/BigFileViewSheet.strings; sourceTree = "<group>"; };
 		CFCCFC201A5E891A00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CalculateChecksumSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC2E1A5EA01B00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Errors.strings; sourceTree = "<group>"; };
+		CFCCFC401A5EB38A00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/PrivilegedIOHelper-InfoPlist.strings"; sourceTree = "<group>"; };
+		CFCCFC451A5EB38B00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
+		CFCCFC471A5EB5E600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = "Base.lproj/PrivilegedIOHelper-InfoPlist.strings"; sourceTree = "<group>"; };
+		CFCCFC481A5EB6B500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = "Base.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -2288,6 +2292,7 @@
 		CF47A984186C607C00745C4C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */,
 				CF47A985186C607C00745C4C /* Files Tests-Info.plist */,
 				CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */,
 			);
@@ -2364,7 +2369,6 @@
 		CF6D99A5196675FE0077B146 /* Files Full */ = {
 			isa = PBXGroup;
 			children = (
-				CFCCFC2F1A5EA01B00313845 /* Errors.strings */,
 				CF6D9D2B1966A56E0077B146 /* Files-Info.plist */,
 			);
 			name = "Files Full";
@@ -3057,6 +3061,7 @@
 		CFD54FA21A29C0C30098A4A9 /* PrivilegedIOHelper */ = {
 			isa = PBXGroup;
 			children = (
+				CFCCFC411A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings */,
 				CFD54FB21A29C2560098A4A9 /* PrivilegedIOHelper-Info.plist */,
 				CFD54FB31A29C2BF0098A4A9 /* PrivilegedIOHelper-Launchd.plist */,
 				CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */,
@@ -3292,6 +3297,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFCCFC3F1A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3299,6 +3305,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFCCFC441A5EB38B00313845 /* Files Tests-InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3386,7 +3393,6 @@
 				CFCCFBBD1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
 				CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */,
 				CF7C921C1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
-				CFCCFC2D1A5EA01B00313845 /* Errors.strings in Resources */,
 				CFE1088E1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
@@ -4664,13 +4670,22 @@
 			name = FileAlreadyExistSheetController.xib;
 			sourceTree = "<group>";
 		};
-		CFCCFC2F1A5EA01B00313845 /* Errors.strings */ = {
+		CFCCFC411A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				CFCCFC2E1A5EA01B00313845 /* ru */,
+				CFCCFC401A5EB38A00313845 /* ru */,
+				CFCCFC471A5EB5E600313845 /* Base */,
 			);
-			name = Errors.strings;
-			path = Resource;
+			name = "PrivilegedIOHelper-InfoPlist.strings";
+			sourceTree = "<group>";
+		};
+		CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFC451A5EB38B00313845 /* ru */,
+				CFCCFC481A5EB6B500313845 /* Base */,
+			);
+			name = "Files Tests-InfoPlist.strings";
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

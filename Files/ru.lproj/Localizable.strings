@@ -1,3 +1,12 @@
 /* Menu item titile for recents clearing action */
 "Clear Recent Servers..." = "Очистить последние серверы...";
 
+/* Bytes count postfix, for English is 'bytes' */
+"__BYTECOUNTFORMATTER_BYTES_WORD" = "байт";
+
+/* One-letter byte postfix, for English is 'B' */
+"__BYTECOUNTFORMATTER_BYTE_POSTFIX" = "б";
+
+/* SI postfixes with first symbol empty, for English is ' KMGTP' */
+"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " КМГТП";
+

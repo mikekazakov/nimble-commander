@@ -18,7 +18,6 @@
 		B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
 		B52EB79317228B73004ABC2E /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = B52EB79217228B73004ABC2E /* Defaults.plist */; };
 		B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */; };
-		B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
 		B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5606E6917301D6F00DDA33A /* OperationStats.mm */; };
 		B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
 		B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
@@ -460,7 +459,6 @@
 		CF6D9CFF19667E390077B146 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
 		CF6D9D0519667E390077B146 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFF6053116F4572700AB3287 /* FileAlreadyExistSheetController.xib */; };
 		CF6D9D0619667E390077B146 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE2697616EF0E3E0048A393 /* MassCopySheetController.xib */; };
-		CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
 		CF6D9D0E19667E390077B146 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EAA1791166000DC85D6 /* PreferencesWindowGeneralTab.xib */; };
 		CF6D9D0F19667E390077B146 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EAF17911FFA00DC85D6 /* PreferencesWindowPanelsTab.xib */; };
 		CF6D9D1019667E390077B146 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EB41791204600DC85D6 /* PreferencesWindowViewerTab.xib */; };
@@ -757,6 +755,9 @@
 		CFCCFBEA1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
 		CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
 		CFCCFBEC1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
+		CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
+		CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
+		CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1084,7 +1085,6 @@
 		CFF6F3791A13567C00011177 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
 		CFF6F37E1A13567C00011177 /* tab_close_hover.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */; };
 		CFF6F37F1A13567C00011177 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */; };
-		CFF6F3801A13567C00011177 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */; };
 		CFF6F3811A13567C00011177 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = B52EB79217228B73004ABC2E /* Defaults.plist */; };
 		CFF6F3821A13567C00011177 /* pref_hotkeys_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C3196E3A4400D4C108 /* pref_hotkeys_icon.png */; };
 		CFF6F3841A13567C00011177 /* pref_panels_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A1196E38E400D4C108 /* pref_panels_icon.png */; };
@@ -1226,7 +1226,6 @@
 		B52EB79217228B73004ABC2E /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionSheetController.h; sourceTree = "<group>"; };
 		B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionSheetController.mm; sourceTree = "<group>"; };
-		B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileDeletionSheetController.xib; sourceTree = "<group>"; };
 		B5606E6917301D6F00DDA33A /* OperationStats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OperationStats.mm; sourceTree = "<group>"; };
 		B5606E6A17301D7000DDA33A /* OperationStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationStats.h; sourceTree = "<group>"; };
 		B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonWithOptions.h; sourceTree = "<group>"; };
@@ -1769,6 +1768,7 @@
 		CFCCFBE31A5E673900313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileLinkAlterSymlinkSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBE81A5E67F600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileLinkNewHardlinkSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBED1A5E6B7E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CreateDirectorySheetController.xib; sourceTree = "<group>"; };
+		CFCCFBF21A5E6E3400313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileDeletionSheetController.xib; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -2627,7 +2627,7 @@
 				CF1100D9191B46BD00E170FC /* FileDeletionOperationVFSJob.mm */,
 				B55DB19F171B33D000E3610E /* FileDeletionSheetController.h */,
 				B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */,
-				B55DB1A1171B33D100E3610E /* FileDeletionSheetController.xib */,
+				CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */,
 			);
 			name = FileDeletionOperation;
 			sourceTree = "<group>";
@@ -3315,7 +3315,7 @@
 				CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
-				CF6D9D0819667E390077B146 /* FileDeletionSheetController.xib in Resources */,
+				CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */,
@@ -3370,7 +3370,7 @@
 				CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */,
 				CF7C921C1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFE1088E1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib in Resources */,
-				B55DB1A3171B33D100E3610E /* FileDeletionSheetController.xib in Resources */,
+				CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
 				CFB598C4196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
@@ -3428,7 +3428,7 @@
 				CFCCFBD31A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
 				CFF6F37E1A13567C00011177 /* tab_close_hover.png in Resources */,
 				CFF6F37F1A13567C00011177 /* PreferencesWindowTerminalTab.xib in Resources */,
-				CFF6F3801A13567C00011177 /* FileDeletionSheetController.xib in Resources */,
+				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFF6F3811A13567C00011177 /* Defaults.plist in Resources */,
 				CFF6F3821A13567C00011177 /* pref_hotkeys_icon.png in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
@@ -4612,6 +4612,14 @@
 				CFCCFBED1A5E6B7E00313845 /* Base */,
 			);
 			name = CreateDirectorySheetController.xib;
+			sourceTree = "<group>";
+		};
+		CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFBF21A5E6E3400313845 /* Base */,
+			);
+			name = FileDeletionSheetController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

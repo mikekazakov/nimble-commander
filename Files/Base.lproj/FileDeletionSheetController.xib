@@ -18,16 +18,16 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="361" height="103"/>
+            <rect key="contentRect" x="196" y="240" width="361" height="110"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="361" height="103"/>
+                <rect key="frame" x="0.0" y="0.0" width="361" height="110"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="20">
-                        <rect key="frame" x="119" y="6" width="97" height="32"/>
+                        <rect key="frame" x="124" y="13" width="92" height="32"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="85" id="170"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="zFu-jE-a9c"/>
                         </constraints>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -41,15 +41,15 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="26">
-                        <rect key="frame" x="18" y="66" width="325" height="17"/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="27">
+                        <rect key="frame" x="18" y="73" width="325" height="17"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Dummy" id="27">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="138" customClass="ButtonWithOptions">
-                        <rect key="frame" x="216" y="11" width="127" height="24"/>
+                        <rect key="frame" x="216" y="18" width="127" height="24"/>
                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="139">
                             <font key="font" metaFont="system"/>
                             <segments>
@@ -66,7 +66,7 @@ Gw
                     <constraint firstItem="26" firstAttribute="top" secondItem="2" secondAttribute="top" constant="20" symbolic="YES" id="28"/>
                     <constraint firstItem="26" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="31"/>
                     <constraint firstAttribute="trailing" secondItem="26" secondAttribute="trailing" constant="20" symbolic="YES" id="33"/>
-                    <constraint firstAttribute="bottom" secondItem="20" secondAttribute="bottom" constant="13" id="97"/>
+                    <constraint firstAttribute="bottom" secondItem="20" secondAttribute="bottom" constant="20" symbolic="YES" id="97"/>
                     <constraint firstItem="138" firstAttribute="top" secondItem="20" secondAttribute="top" id="141"/>
                     <constraint firstAttribute="trailing" secondItem="138" secondAttribute="trailing" constant="20" symbolic="YES" id="176"/>
                     <constraint firstItem="138" firstAttribute="leading" secondItem="20" secondAttribute="trailing" constant="8" symbolic="YES" id="177"/>
@@ -78,6 +78,8 @@ Gw
             </connections>
             <point key="canvasLocation" x="30.5" y="334.5"/>
         </window>
-        <menu autoenablesItems="NO" id="149"/>
+        <menu autoenablesItems="NO" id="149">
+            <point key="canvasLocation" x="459" y="365.5"/>
+        </menu>
     </objects>
 </document>

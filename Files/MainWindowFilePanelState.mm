@@ -165,12 +165,12 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     m_MainSplitView.rightTabbedHolder.tabBar.delegate = self;
     [self addSubview:m_MainSplitView];
     
-    m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 23)];
+    m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
     m_LeftPanelGoToButton.target = self;
     m_LeftPanelGoToButton.action = @selector(LeftPanelGoToButtonAction:);
     [m_LeftPanelGoToButton SetOwner:self];
     
-    m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 60, 23)];
+    m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
     m_RightPanelGoToButton.target = self;
     m_RightPanelGoToButton.action = @selector(RightPanelGoToButtonAction:);
     [m_RightPanelGoToButton SetOwner:self];

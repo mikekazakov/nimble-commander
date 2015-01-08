@@ -100,6 +100,15 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     }
 }
 
+static NSMenuItem *TitleItem()
+{
+    static NSImage *m = [NSImage imageNamed:NSImageNamePathTemplate];
+    
+    NSMenuItem *menuitem = [NSMenuItem new];
+    menuitem.title = @"";
+    menuitem.image = m;
+    return menuitem;
+}
 
 @implementation MainWndGoToButton
 {
@@ -129,7 +138,9 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
         self.bezelStyle = NSTexturedRoundedBezelStyle;
         self.pullsDown = true;
         self.refusesFirstResponder = true;
-        [self addItemWithTitle:@"Go to"];
+        
+        [self.menu addItem:TitleItem()];
+        [self synchronizeTitleAndSelectedItem];
         
         // grab user dir only in init, since they won't change (we presume so - if not then user has to close/open Files window)
         m_UserDirs = GetFindersFavorites();
@@ -229,7 +240,8 @@ static NSString *KeyEquivalentForUserDir(int _dir_ind)
     [self UpdateOtherPanelPaths];
     
     [self removeAllItems];
-    [self addItemWithTitle:@"Go to"];
+    [self.menu addItem:TitleItem()];
+    [self synchronizeTitleAndSelectedItem];    
     
     static const double icon_size = [NSFont systemFontSize];
 

@@ -16,7 +16,7 @@
     auto tag = item.tag;
     
     IF_MENU_TAG("menu.file.close") {
-        item.title = @"Close Window";
+        item.title = NSLocalizedString(@"Close Window", "Menu item title");
         return true;
     }
     IF_MENU_TAG("menu.file.close_window") {

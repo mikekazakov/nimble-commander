@@ -46,7 +46,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     window.restorable = YES;
     window.restorationClass = self.class;
     window.identifier = NSStringFromClass(self.class);
-    window.title = @"Files αλφα ver.";
+    window.title = @"";
     if(![window setFrameUsingName:NSStringFromClass(self.class)])
         [window center];
 
@@ -336,7 +336,9 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
 {
     auto tag = item.tag;
     IF_MENU_TAG("menu.view.show_toolbar") {
-        item.title = self.toolbarVisible ? @"Hide Toolbar" : @"Show Toolbar";
+        item.title = self.toolbarVisible ?
+            NSLocalizedString(@"Hide Toolbar", "Menu item title"):
+            NSLocalizedString(@"Show Toolbar", "Menu item title");
         return self.window.toolbar != nil;
     }
     return true;

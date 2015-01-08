@@ -10,6 +10,8 @@
                 <outlet property="HashMethod" destination="QV2-I9-9Ap" id="56P-Dm-8FF"/>
                 <outlet property="Progress" destination="b6B-oW-wWo" id="bUh-PN-vjO"/>
                 <outlet property="Table" destination="vl9-rf-iiq" id="BmT-ih-dux"/>
+                <outlet property="checksumTableColumn" destination="0Lf-ae-1tm" id="YRy-YL-4Pw"/>
+                <outlet property="filenameTableColumn" destination="mhj-G6-Q4D" id="ghG-c5-XDP"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -183,5 +185,69 @@ Gw
             <point key="canvasLocation" x="-8" y="28.5"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="0Qo-8u-EYU"/>
+        <tableColumn identifier="checksum" width="250" minWidth="150" maxWidth="1500" id="0Lf-ae-1tm">
+            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Checksum">
+                <font key="font" metaFont="smallSystem"/>
+                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+            </tableHeaderCell>
+            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="jPO-VW-Ku1">
+                <font key="font" metaFont="system"/>
+                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+            </textFieldCell>
+            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+            <prototypeCellViews>
+                <tableCellView id="kub-kp-NnR">
+                    <rect key="frame" x="1" y="1" width="116" height="17"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="01e-Yx-Pvn">
+                            <rect key="frame" x="0.0" y="0.0" width="100" height="17"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="Yt9-Kw-wt7">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
+                    <connections>
+                        <outlet property="textField" destination="01e-Yx-Pvn" id="tjW-iw-Xkw"/>
+                    </connections>
+                </tableCellView>
+            </prototypeCellViews>
+        </tableColumn>
+        <tableColumn identifier="filename" width="250" minWidth="40" maxWidth="1000" id="mhj-G6-Q4D">
+            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Filename">
+                <font key="font" metaFont="smallSystem"/>
+                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+            </tableHeaderCell>
+            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="wC9-fQ-h8A">
+                <font key="font" metaFont="system"/>
+                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+            </textFieldCell>
+            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+            <prototypeCellViews>
+                <tableCellView id="LM4-S1-0DV">
+                    <rect key="frame" x="1" y="1" width="116" height="17"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C3f-CE-qiN">
+                            <rect key="frame" x="0.0" y="0.0" width="100" height="17"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="YSv-b6-U2y">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
+                    <connections>
+                        <outlet property="textField" destination="C3f-CE-qiN" id="b7Z-32-SaN"/>
+                    </connections>
+                </tableCellView>
+            </prototypeCellViews>
+        </tableColumn>
     </objects>
 </document>

@@ -75,7 +75,7 @@ static NSString *TitleForConnection( SavedNetworkConnectionsManager::AbstractCon
         [menu insertItem:NSMenuItem.separatorItem atIndex:index];
     }
     else if(index == 3) {
-        item.title = @"Recent Connections";
+        item.title = NSLocalizedString(@"Recent Connections", "Menu item title for greyed informative element");
     }
     else if(index >= 4) {
         auto conn_num = index - 4;

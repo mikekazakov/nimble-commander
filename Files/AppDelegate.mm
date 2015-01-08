@@ -134,7 +134,8 @@
     menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
     menuitem("menu.files.try_full_version").hidden = configuration::version == configuration::Version::Full;
     menuitem("menu.files.try_full_version").title = configuration::version == configuration::Version::Lite ?
-        @"Try Full Version" : @"Download Full Version";
+        NSLocalizedString(@"Try Full Version", "Menu item title") :
+        NSLocalizedString(@"Download Full Version", "Menu item title");
     menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full ||
         sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_10;
     
@@ -312,9 +313,9 @@
     
     if (has_running_ops) {
         NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText:@"The application has running operations. Do you want to stop all operations and quit?"];
-        [alert addButtonWithTitle:@"Stop And Quit"];
-        [alert addButtonWithTitle:@"Cancel"];
+        alert.messageText = NSLocalizedString(@"The application has running operations. Do you want to stop all operations and quit?", "Asking user for quitting app with activity");
+        [alert addButtonWithTitle:NSLocalizedString(@"Stop And Quit", "Asking user for quitting app with activity - confirmation")];
+        [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
         NSInteger result = [alert runModal];
         
         // If cancel is pressed.
@@ -470,10 +471,10 @@
 - (bool)askToResetDefaults
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Are you sure want to reset settings to defaults?";
-    alert.informativeText = @"This will erase all your custom settings.";
-    [alert addButtonWithTitle:@"Ok"];
-    [alert addButtonWithTitle:@"Cancel"];
+    alert.messageText = NSLocalizedString(@"Are you sure want to reset settings to defaults?", "Asking user for confirmation on erasing custom settings - message");
+    alert.informativeText = NSLocalizedString(@"This will erase all your custom settings.", "Asking user for confirmation on erasing custom settings - informative text");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertFirstButtonReturn) {
         [NSUserDefaults.standardUserDefaults removePersistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
@@ -557,7 +558,9 @@
     
     IF_MENU_TAG("menu.files.toggle_admin_mode") {
         bool enabled = RoutedIO::Instance().Enabled();
-        item.title = enabled ? @"Disable Admin Mode" : @"Enable Admin Mode";
+        item.title = enabled ?
+            NSLocalizedString(@"Disable Admin Mode", "Menu item title for disabling an admin mode") :
+            NSLocalizedString(@"Enable Admin Mode", "Menu item title for enabling an admin mode");
         return true;
     }
     

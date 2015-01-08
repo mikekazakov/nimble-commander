@@ -86,7 +86,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
     self.Progress.doubleValue = 0;
     
     m_WorkQue->Run([=](auto &_q) {
-        unique_ptr<uint8_t[]> buf(new uint8_t[chunk_sz]);
+        auto buf = make_unique<uint8_t[]>(chunk_sz);
         uint64_t total_fed = 0;
         for(auto &i:m_Filenames) {
             if(_q->IsStopped())
@@ -152,20 +152,13 @@ const static vector<pair<NSString*,int>> g_Algos = {
     
     self.Table.delegate = self;
     self.Table.dataSource = self;
-    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"filename"];
-    column.width = 250;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Filename";
-    ((NSTableHeaderCell*)column.headerCell).alignment = NSLeftTextAlignment;
+
+    NSTableColumn *column = self.filenameTableColumn;
     [self.Table addTableColumn:column];
     
-    column = [[NSTableColumn alloc] initWithIdentifier:@"checksum"];
-    column.width = 250;
-    column.minWidth = 150;
-    column.maxWidth = 1500;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Checksum";
-    ((NSTableHeaderCell*)column.headerCell).alignment = NSLeftTextAlignment;
-
+    column = self.checksumTableColumn;
     [self.Table addTableColumn:column];
+    
     column = [[NSTableColumn alloc] initWithIdentifier:@"dummy"];
     column.width = 10;
     column.minWidth = 10;

@@ -18,6 +18,8 @@
 @property bool sumsAvailable;
 @property (nonatomic) bool didSaved;
 @property (nonatomic, readonly) string savedFilename;
+@property (strong) IBOutlet NSTableColumn *filenameTableColumn;
+@property (strong) IBOutlet NSTableColumn *checksumTableColumn;
 
 - (id)initWithFiles:(vector<string>)files
           withSizes:(vector<uint64_t>)sizes

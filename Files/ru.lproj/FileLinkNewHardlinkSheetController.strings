@@ -1,0 +1,15 @@
+/* Class = "NSPanel"; title = "Window"; ObjectID = "1"; */
+"1.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Dummy"; ObjectID = "6"; */
+"6.title" = "";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Type a hardlink name here"; ObjectID = "11"; */
+"11.placeholderString" = "Введите имя жесткой ссылки";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "17"; */
+"17.title" = "Создать";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "21"; */
+"21.title" = "Отмена";
+

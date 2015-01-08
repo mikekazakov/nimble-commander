@@ -1,0 +1,114 @@
+/* Class = "NSPanel"; title = "Window"; ObjectID = "1"; */
+"1.title" = "";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "6"; */
+"6.title" = "Отмена";
+
+/* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "11"; */
+"11.title" = "Пользователь:";
+
+/* Class = "NSTextFieldCell"; title = "Group:"; ObjectID = "17"; */
+"17.title" = "Группа:";
+
+/* Class = "NSTextFieldCell"; title = "Others:"; ObjectID = "23"; */
+"23.title" = "Остальные:";
+
+/* Class = "NSTextFieldCell"; title = "Read"; ObjectID = "28"; */
+"28.title" = "Чтение";
+
+/* Class = "NSTextFieldCell"; title = "Write"; ObjectID = "82"; */
+"82.title" = "Запись";
+
+/* Class = "NSTextFieldCell"; title = "Exec"; ObjectID = "121"; */
+"121.title" = "Выполнение";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "149"; */
+"149.title" = "";
+
+/* Class = "NSButtonCell"; title = "User immutable"; ObjectID = "171"; */
+"171.title" = "User immutable";
+
+/* Class = "NSButtonCell"; title = "Opaque"; ObjectID = "198"; */
+"198.title" = "Opaque";
+
+/* Class = "NSButtonCell"; title = "No dump"; ObjectID = "220"; */
+"220.title" = "No dump";
+
+/* Class = "NSButtonCell"; title = "Hidden"; ObjectID = "226"; */
+"226.title" = "Hidden";
+
+/* Class = "NSButtonCell"; title = "User append-only"; ObjectID = "238"; */
+"238.title" = "User append-only";
+
+/* Class = "NSButtonCell"; title = "Archived"; ObjectID = "251"; */
+"251.title" = "Archived";
+
+/* Class = "NSButtonCell"; title = "System immutable"; ObjectID = "261"; */
+"261.title" = "System immutable";
+
+/* Class = "NSButtonCell"; title = "System append-only"; ObjectID = "305"; */
+"305.title" = "System append-only";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "416"; */
+"416.title" = "";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "425"; */
+"425.title" = "";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "426"; */
+"426.title" = "";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "427"; */
+"427.title" = "";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "428"; */
+"428.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "445"; */
+"445.title" = "Владелец:";
+
+/* Class = "NSTextFieldCell"; title = "Group:"; ObjectID = "453"; */
+"453.title" = "Группа:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "456"; */
+"456.title" = "";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "457"; */
+"457.title" = "";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "458"; */
+"458.title" = "";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "459"; */
+"459.title" = "";
+
+/* Class = "NSButtonCell"; title = "Sticky"; ObjectID = "475"; */
+"475.title" = "Sticky";
+
+/* Class = "NSButtonCell"; title = "Set UID on execution"; ObjectID = "513"; */
+"513.title" = "Set UID on execution";
+
+/* Class = "NSButtonCell"; title = "Set GID on execution"; ObjectID = "525"; */
+"525.title" = "Set GID on execution";
+
+/* Class = "NSTextFieldCell"; title = "Access time:"; ObjectID = "623"; */
+"623.title" = "Время доступа:";
+
+/* Class = "NSTextFieldCell"; title = "Modify time:"; ObjectID = "1016"; */
+"1016.title" = "Время модификации:";
+
+/* Class = "NSTextFieldCell"; title = "Change time:"; ObjectID = "1041"; */
+"1041.title" = "Время изменения:";
+
+/* Class = "NSTextFieldCell"; title = "Create time:"; ObjectID = "1066"; */
+"1066.title" = "Время создания:";
+
+/* Class = "NSButtonCell"; title = "Process subfolders"; ObjectID = "1174"; */
+"1174.title" = "Обрабатывать подпапки";
+
+/* Class = "NSButtonCell"; title = "Apply"; ObjectID = "1219"; */
+"1219.title" = "Применить";
+
+/* Class = "NSTextFieldCell"; title = "Title"; ObjectID = "1313"; */
+"1313.title" = "";
+

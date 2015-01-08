@@ -1,0 +1,51 @@
+/* Class = "NSPanel"; title = "Window"; ObjectID = "1"; */
+"1.title" = "";
+
+/* Class = "NSButtonCell"; title = "Overwrite"; ObjectID = "6"; */
+"6.title" = "Переписать";
+
+/* Class = "NSButtonCell"; title = "Skip"; ObjectID = "12"; */
+"12.title" = "Пропустить";
+
+/* Class = "NSButtonCell"; title = "Append"; ObjectID = "16"; */
+"16.title" = "Дописать";
+
+/* Class = "NSButtonCell"; title = "Abort"; ObjectID = "31"; */
+"31.title" = "Отменить";
+
+/* Class = "NSButtonCell"; title = "Remember choice"; ObjectID = "38"; */
+"38.title" = "Запомнить выбор";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "49"; */
+"49.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "New:"; ObjectID = "57"; */
+"57.title" = "Новый:";
+
+/* Class = "NSTextFieldCell"; title = "Existing:"; ObjectID = "61"; */
+"61.title" = "Имеющийся:";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "73"; */
+"73.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "filesize dummy"; ObjectID = "83"; */
+"83.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "datetime dummy"; ObjectID = "88"; */
+"88.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "datetime dummy"; ObjectID = "99"; */
+"99.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "filesize dummy"; ObjectID = "105"; */
+"105.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Target filename Dummy"; ObjectID = "113"; */
+"113.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "File already exists"; ObjectID = "120"; */
+"120.title" = "Файл уже существует";
+
+/* Class = "NSButtonCell"; title = "Hide"; ObjectID = "151"; */
+"151.title" = "Скрыть";
+

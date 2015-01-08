@@ -1,0 +1,57 @@
+/* Class = "NSTextFieldCell"; title = "Connect to FTP server:"; ObjectID = "5iY-lT-uKD"; */
+"5iY-lT-uKD.title" = "Подключиться к FTP серверу:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "anonymous@domain.com"; ObjectID = "255-mx-b6a"; */
+"255-mx-b6a.placeholderString" = "";
+
+/* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "EJR-gc-SwI"; */
+"EJR-gc-SwI.title" = "Удаленный порт:";
+
+/* Class = "NSPanel"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Окно";
+
+/* Class = "NSTextFieldCell"; placeholderString = "ftp.example.com"; ObjectID = "FdQ-zx-5B7"; */
+"FdQ-zx-5B7.placeholderString" = "ftp.example.com";
+
+/* Class = "NSTextFieldCell"; placeholderString = "/"; ObjectID = "KlY-P2-CgM"; */
+"KlY-P2-CgM.placeholderString" = "/";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "anonymous"; ObjectID = "O5E-rL-Xtf"; */
+"O5E-rL-Xtf.ibShadowedIsNilPlaceholder" = "anonymous";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "21"; ObjectID = "Oei-y6-cIo"; */
+"Oei-y6-cIo.ibShadowedIsNilPlaceholder" = "21";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "ftp.example.com"; ObjectID = "P18-Nd-gLg"; */
+"P18-Nd-gLg.ibShadowedIsNilPlaceholder" = "ftp.example.com";
+
+/* Class = "NSTextFieldCell"; placeholderString = "21"; ObjectID = "Sp1-bt-rdp"; */
+"Sp1-bt-rdp.placeholderString" = "21";
+
+/* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "Spe-8u-71A"; */
+"Spe-8u-71A.title" = "Логин:";
+
+/* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "Z0v-Pw-m6u"; */
+"Z0v-Pw-m6u.title" = "Сервер:";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "anonymous@domain.com"; ObjectID = "dWk-v8-gCF"; */
+"dWk-v8-gCF.ibShadowedIsNilPlaceholder" = "anonymous@domain.com";
+
+/* Class = "NSTextFieldCell"; title = "Remote path:"; ObjectID = "hUY-J5-Twm"; */
+"hUY-J5-Twm.title" = "Удаленный путь:";
+
+/* Class = "NSButtonCell"; title = "Close"; ObjectID = "j8e-Wn-3Fa"; */
+"j8e-Wn-3Fa.title" = "Закрыть";
+
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "/"; ObjectID = "mnE-WW-WZY"; */
+"mnE-WW-WZY.ibShadowedIsNilPlaceholder" = "/";
+
+/* Class = "NSTextFieldCell"; placeholderString = "anonymous"; ObjectID = "p3m-p9-Z9X"; */
+"p3m-p9-Z9X.placeholderString" = "anonymous";
+
+/* Class = "NSButtonCell"; title = "Connect"; ObjectID = "xIA-lj-ojE"; */
+"xIA-lj-ojE.title" = "Подключиться";
+
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "ybn-fX-OGa"; */
+"ybn-fX-OGa.title" = "Пароль:";
+

@@ -88,7 +88,7 @@ Gw
                     </button>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="69">
                         <rect key="frame" x="20" y="181" width="13" height="13"/>
-                        <buttonCell key="cell" type="disclosureTriangle" bezelStyle="disclosure" image="B8BF889E-C083-4E76-9261-2FEA7D510D9B" imagePosition="above" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70">
+                        <buttonCell key="cell" type="disclosureTriangle" bezelStyle="disclosure" image="8A6E2F9F-CC1D-4EB7-B772-E1880F3A255D" imagePosition="above" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70">
                             <behavior key="behavior" pushIn="YES" changeBackground="YES" changeGray="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -196,7 +196,7 @@ Gw
         </window>
     </objects>
     <resources>
-        <image name="B8BF889E-C083-4E76-9261-2FEA7D510D9B" width="1" height="1">
+        <image name="8A6E2F9F-CC1D-4EB7-B772-E1880F3A255D" width="1" height="1">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

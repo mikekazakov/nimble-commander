@@ -1,0 +1,108 @@
+/* Class = "NSWindow"; title = "Window"; ObjectID = "1"; */
+"1.title" = "";
+
+/* Class = "NSTextFieldCell"; placeholderString = "0"; ObjectID = "2dl-Rj-gsT"; */
+"2dl-Rj-gsT.placeholderString" = "0";
+
+/* Class = "NSMenuItem"; title = "="; ObjectID = "3HI-7Z-GC3"; */
+"3HI-7Z-GC3.title" = "=";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "3im-V9-my6"; */
+"3im-V9-my6.title" = "";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "8sA-yU-MON"; */
+"8sA-yU-MON.title" = "";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "10X-cZ-a2S"; */
+"10X-cZ-a2S.title" = "";
+
+/* Class = "NSComboBoxCell"; placeholderString = "Type here a desired text to search"; ObjectID = "17I-3a-9vx"; */
+"17I-3a-9vx.placeholderString" = "Введите текст для поиска";
+
+/* Class = "NSTableColumn"; headerCell.title = "Location"; ObjectID = "A8Z-IY-14U"; */
+"A8Z-IY-14U.headerCell.title" = "Расположение";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "EnK-Kt-A7e"; */
+"EnK-Kt-A7e.title" = "";
+
+/* Class = "NSButtonCell"; title = "Whole phrase"; ObjectID = "HbZ-P4-Wk5"; */
+"HbZ-P4-Wk5.title" = "Фраза целиком";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "MOD-fH-Yh6"; */
+"MOD-fH-Yh6.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "NaU-Re-Nxc"; */
+"NaU-Re-Nxc.title" = "";
+
+/* Class = "NSMenuItem"; title = "Gb"; ObjectID = "OhY-jN-05K"; */
+"OhY-jN-05K.title" = "Гб";
+
+/* Class = "NSButtonCell"; title = "Close"; ObjectID = "PmQ-cC-ryL"; */
+"PmQ-cC-ryL.title" = "Закрыть";
+
+/* Class = "NSComboBoxCell"; placeholderString = "Mask like *, or *.txt, or *.txt, *.jpg"; ObjectID = "QoT-rJ-7t8"; */
+"QoT-rJ-7t8.placeholderString" = "Маска, например *, или *.txt, или *.txt, *.jpg";
+
+/* Class = "NSTextFieldCell"; title = "Search for files with mask:"; ObjectID = "R8e-FO-aEj"; */
+"R8e-FO-aEj.title" = "Искать файлы с маской:";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "ROy-iE-OqK"; */
+"ROy-iE-OqK.title" = "";
+
+/* Class = "NSMenuItem"; title = "b"; ObjectID = "Tt9-8O-AZV"; */
+"Tt9-8O-AZV.title" = "б";
+
+/* Class = "NSMenuItem"; title = "Kb"; ObjectID = "WY5-uo-vrc"; */
+"WY5-uo-vrc.title" = "Кб";
+
+/* Class = "NSTextFieldCell"; title = "With size:"; ObjectID = "YVt-Nt-3dl"; */
+"YVt-Nt-3dl.title" = "С размером:";
+
+/* Class = "NSMenuItem"; title = "Mb"; ObjectID = "c22-DH-E7c"; */
+"c22-DH-E7c.title" = "Мб";
+
+/* Class = "NSTableColumn"; headerCell.title = "Modify time"; ObjectID = "cGo-Vw-Uqq"; */
+"cGo-Vw-Uqq.headerCell.title" = "Время модификации";
+
+/* Class = "NSButtonCell"; title = "View"; ObjectID = "cjR-hz-P7N"; */
+"cjR-hz-P7N.title" = "Просмотр";
+
+/* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "dF0-bR-jEM"; */
+"dF0-bR-jEM.headerCell.title" = "Имя файла";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "f8y-fY-ZzM"; */
+"f8y-fY-ZzM.title" = "";
+
+/* Class = "NSButtonCell"; title = "Search for directories"; ObjectID = "ia5-oC-fH7"; */
+"ia5-oC-fH7.title" = "Искать папки";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "jtt-0L-3Vf"; */
+"jtt-0L-3Vf.title" = "";
+
+/* Class = "NSTableColumn"; headerCell.title = "Size"; ObjectID = "kY9-vv-6NZ"; */
+"kY9-vv-6NZ.headerCell.title" = "Размер";
+
+/* Class = "NSButtonCell"; title = "Look in sub-directories"; ObjectID = "lJf-WO-EGY"; */
+"lJf-WO-EGY.title" = "Искать в подпапках";
+
+/* Class = "NSButtonCell"; alternateTitle = "Stop"; ObjectID = "oef-aB-x9Q"; */
+"oef-aB-x9Q.alternateTitle" = "Стоп";
+
+/* Class = "NSButtonCell"; title = "Search"; ObjectID = "oef-aB-x9Q"; */
+"oef-aB-x9Q.title" = "Искать";
+
+/* Class = "NSButtonCell"; title = "Case sensitive"; ObjectID = "pbB-zt-FTQ"; */
+"pbB-zt-FTQ.title" = "Учитывая регистр";
+
+/* Class = "NSTextFieldCell"; title = "Containing text:"; ObjectID = "sq9-fx-uq3"; */
+"sq9-fx-uq3.title" = "Содержащие текст:";
+
+/* Class = "NSMenuItem"; title = "≤"; ObjectID = "udS-8N-4fz"; */
+"udS-8N-4fz.title" = "≤";
+
+/* Class = "NSMenuItem"; title = "≥"; ObjectID = "ydK-d2-gsz"; */
+"ydK-d2-gsz.title" = "≥";
+
+/* Class = "NSTextFieldCell"; title = "Items found:"; ObjectID = "z2i-rD-QXz"; */
+"z2i-rD-QXz.title" = "Найдено:";
+

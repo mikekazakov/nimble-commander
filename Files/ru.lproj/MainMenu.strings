@@ -289,6 +289,9 @@
 /* Class = "NSMenuItem"; title = "Show/Hide Tab Bar"; ObjectID = "NK3-hW-YDx"; */
 "NK3-hW-YDx.title" = "Показать/скрыть панель вкладок";
 
+/* Class = "NSMenuItem"; title = "Recent Connections"; ObjectID = "PPi-Oe-OXM"; */
+"PPi-Oe-OXM.title" = "Последние подключения";
+
 /* Class = "NSMenuItem"; title = "Calculate All Folders Sizes"; ObjectID = "Pq6-25-hPh"; */
 "Pq6-25-hPh.title" = "Вычислить размер всех папок";
 

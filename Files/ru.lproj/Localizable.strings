@@ -1,5 +1,44 @@
+/* Asking user for confirmation on erasing custom settings - message */
+"Are you sure want to reset settings to defaults?" = "Вы действительно хотите сбросить настройки к стандартным?";
+
+/* No comment provided by engineer. */
+"Cancel" = "Отмена";
+
 /* Menu item titile for recents clearing action */
 "Clear Recent Servers..." = "Очистить последние серверы...";
+
+/* Menu item title */
+"Close Window" = "Закрыть окно";
+
+/* Menu item title for disabling an admin mode */
+"Disable Admin Mode" = "Выключить режим администратора";
+
+/* Menu item title */
+"Download Full Version" = "Загрузить версию Full";
+
+/* Menu item title for enabling an admin mode */
+"Enable Admin Mode" = "Включить режим администратора";
+
+/* Menu item title */
+"Hide Toolbar" = "Скрыть панель инструментов";
+
+/* No comment provided by engineer. */
+"OK" = "ОК";
+
+/* Menu item title */
+"Show Toolbar" = "Показать панель инструментов";
+
+/* Asking user for quitting app with activity - confirmation */
+"Stop And Quit" = "Остановить и завершить";
+
+/* Asking user for quitting app with activity */
+"The application has running operations. Do you want to stop all operations and quit?" = "Имеются работающие операции. Вы хотите прекратить все операции и завершить приложение?";
+
+/* Asking user for confirmation on erasing custom settings - informative text */
+"This will erase all your custom settings." = "Это удалит ваши собственные настройки.";
+
+/* Menu item title */
+"Try Full Version" = "Попробовать версию Full";
 
 /* Bytes count postfix, for English is 'bytes' */
 "__BYTECOUNTFORMATTER_BYTES_WORD" = "байт";

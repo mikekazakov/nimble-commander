@@ -347,7 +347,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items"),
                           m_Items.size()];
         else
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \"%@\"", @"FilePanelsContextMenu", "Compress one item"),
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d", @"FilePanelsContextMenu", "Compress one item"),
                           [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(opp_pnl_writable) { // gray out this thing if we can't compress on opposite panel
             item.target = self;
@@ -361,7 +361,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items Here", @"FilePanelsContextMenu", "Compress some items here"),
                           m_Items.size()];
         else
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \"%@\" Here", @"FilePanelsContextMenu", "Compress one item here"),
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d Here", @"FilePanelsContextMenu", "Compress one item here"),
                           [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(cur_pnl_writable) { // gray out this thing if we can't compress on this panel
             item.target = self;
@@ -434,7 +434,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy %lu Items", @"FilePanelsContextMenu", "Copy many items"),
                           m_Items.size()];
         else
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy \"%@\"", @"FilePanelsContextMenu", "Copy one item"),
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy \u201c%@\u201d", @"FilePanelsContextMenu", "Copy one item"),
                           [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(m_Host->IsNativeFS()) {  // such thing works only on native file systems
             item.target = self;

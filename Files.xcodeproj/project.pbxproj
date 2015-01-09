@@ -763,6 +763,9 @@
 		CFCCFBFB1A5E772B00313845 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBFD1A5E772B00313845 /* FileAlreadyExistSheetController.xib */; };
 		CFCCFC3F1A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC411A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings */; };
 		CFCCFC441A5EB38B00313845 /* Files Tests-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */; };
+		CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
+		CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
+		CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1792,6 +1795,8 @@
 		CFCCFC451A5EB38B00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
 		CFCCFC471A5EB5E600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = "Base.lproj/PrivilegedIOHelper-InfoPlist.strings"; sourceTree = "<group>"; };
 		CFCCFC481A5EB6B500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = "Base.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
+		CFCCFC521A5FA85400313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
+		CFCCFC591A5FAFFD00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -1988,6 +1993,7 @@
 				B52EB79217228B73004ABC2E /* Defaults.plist */,
 				CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */,
 				CF3120C81A510F640062185A /* Localizable.strings */,
+				CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */,
 			);
 			name = Resources;
 			path = Files;
@@ -3327,6 +3333,7 @@
 				CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */,
+				CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFB598BE196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CFB598AC196E38E400D4C108 /* linkarrow_icon.png in Resources */,
 				CFCCFBD71A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
@@ -3384,6 +3391,7 @@
 				CFCCFBEA1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CFCA763619D288F500AF87A8 /* files.icns in Resources */,
 				CFCCFBF41A5E6F8A00313845 /* MassCopySheetController.xib in Resources */,
+				CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFB598B5196E38E400D4C108 /* pref_term_icon.png in Resources */,
 				CFCCFBF91A5E772B00313845 /* FileAlreadyExistSheetController.xib in Resources */,
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
@@ -3444,6 +3452,7 @@
 				CFCCFBF61A5E6F8A00313845 /* MassCopySheetController.xib in Resources */,
 				CFF6F3AA1A135A0E00011177 /* files.icns in Resources */,
 				CFF6F3761A13567C00011177 /* pref_term_icon.png in Resources */,
+				CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFCCFBFB1A5E772B00313845 /* FileAlreadyExistSheetController.xib in Resources */,
 				CFCCFBCE1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFF6F3791A13567C00011177 /* OperationsSummaryViewController.xib in Resources */,
@@ -4686,6 +4695,15 @@
 				CFCCFC481A5EB6B500313845 /* Base */,
 			);
 			name = "Files Tests-InfoPlist.strings";
+			sourceTree = "<group>";
+		};
+		CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFC521A5FA85400313845 /* Base */,
+				CFCCFC591A5FAFFD00313845 /* ru */,
+			);
+			name = FilePanelsContextMenu.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

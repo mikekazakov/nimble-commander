@@ -1,0 +1,48 @@
+/* Menu item for case when no handlers are available, for English is '<None>' */
+"<None>" = "<Нет>";
+
+/* Submenu title to choose app to always open with, for English is 'Always Open With' */
+"Always Open With" = "Всегда открывать в программе";
+
+/* Compress some items */
+"Compress %lu Items" = "Сжать %lu объектов";
+
+/* Compress some items here */
+"Compress %lu Items Here" = "Сжать %lu объектов здесь";
+
+/* Compress one item */
+"Compress “%@”" = "Сжать “%@”";
+
+/* Compress one item here */
+"Compress “%@” Here" = "Сжать “%@” здесь";
+
+/* Copy many items */
+"Copy %lu Items" = "Копировать %lu объектов";
+
+/* Copy one item */
+"Copy “%@”" = "Копировать “%@”";
+
+/* Menu item title to delete file, for English is 'Delete Permanently' */
+"Delete Permanently" = "Удалить необратимо";
+
+/* Duplicate an item */
+"Duplicate" = "Дублировать";
+
+/* Menu item title to move to trash, for English is 'Move to Trash' */
+"Move to Trash" = "Переместить в Корзину";
+
+/* Menu item title for opening a file by default, for English is 'Open' */
+"Open" = "Открыть";
+
+/* Submenu title to choose app to open with, for English is 'Open With' */
+"Open With" = "Открыть в программе";
+
+/* Menu item to choose other app to open with, for English is 'Other...' */
+"Other..." = "Выбрать программу...";
+
+/* Share submenu title */
+"Share" = "Поделиться";
+
+/* Menu item postfix marker for default apps to open with, for English is 'default' */
+"default" = "по умолчанию";
+

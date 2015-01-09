@@ -1,0 +1,33 @@
+/* No comment provided by engineer. */
+"%1$@ matches | %2$@" = "%1$@ совпадений | %2$@";
+
+/* No comment provided by engineer. */
+"1 match | %@" = "1 совпадение | %@";
+
+/* No comment provided by engineer. */
+"2 matches | %@" = "2 совпадения | %@";
+
+/* No comment provided by engineer. */
+"3 matches | %@" = "3 совпадения | %@";
+
+/* No comment provided by engineer. */
+"4 matches | %@" = "4 совпадения | %@";
+
+/* No comment provided by engineer. */
+"5 matches | %@" = "5 совпадений | %@";
+
+/* No comment provided by engineer. */
+"6 matches | %@" = "6 совпадений | %@";
+
+/* No comment provided by engineer. */
+"7 matches | %@" = "7 совпадений | %@";
+
+/* No comment provided by engineer. */
+"8 matches | %@" = "8 совпадений | %@";
+
+/* No comment provided by engineer. */
+"9 matches | %@" = "9 совпадений | %@";
+
+/* No comment provided by engineer. */
+"Not found | %@" = "Не найдено | %@";
+

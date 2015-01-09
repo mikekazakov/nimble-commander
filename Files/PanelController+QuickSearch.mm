@@ -101,6 +101,32 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     return s.decomposedStringWithCanonicalMapping;
 }
 
+static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
+{
+    if(_matches == 0)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Not found | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 1)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"1 match | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 2)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"2 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 3)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"3 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 4)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"4 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 5)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"5 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 6)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"6 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 7)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"7 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 8)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"8 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    else if(_matches == 9)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"9 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    else
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%1$@ matches | %2$@", @"FilePanelsQuickSearch", ""), [NSNumber numberWithInt:_matches], _string];
+}
+
 @implementation PanelController (QuickSearch)
 
 
@@ -165,14 +191,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     if(m_QuickSearchTypingView)
     {
         int total = (int)m_Data.EntriesBySoftFiltering().size();
-        NSString *prompt = nil;
-        if(total == 0)
-            prompt = [NSString stringWithFormat:@"Not found | %@", m_Data.SoftFiltering().text];
-        else if(total == 1)
-            prompt = [NSString stringWithFormat:@"1 match | %@", m_Data.SoftFiltering().text];
-        else
-            prompt = [NSString stringWithFormat:@"%i matches | %@", total, m_Data.SoftFiltering().text];
-        m_View.quickSearchPrompt = prompt;
+        m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
         [m_View setNeedsDisplay];
         
         // automatically remove prompt after g_FastSeachDelayTresh
@@ -237,14 +256,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
            m_Data.Listing()->At(0).IsDotDot())
             total--;
 
-        NSString *prompt = nil;
-        if(total == 0)
-            prompt = [NSString stringWithFormat:@"Not found | %@", filtering.text.text];
-        else if(total == 1)
-            prompt = [NSString stringWithFormat:@"1 match | %@", filtering.text.text];
-        else
-            prompt = [NSString stringWithFormat:@"%i matches | %@", total, filtering.text.text];
-        m_View.quickSearchPrompt = prompt;
+        m_View.quickSearchPrompt = PromptForMatchesAndString(total, filtering.text.text);
         m_View.needsDisplay = true;        
     }
     return true;

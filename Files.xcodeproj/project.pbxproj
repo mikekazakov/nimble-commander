@@ -766,6 +766,9 @@
 		CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
+		CFCCFC5E1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
+		CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
+		CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
@@ -1797,6 +1800,8 @@
 		CFCCFC481A5EB6B500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = "Base.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
 		CFCCFC521A5FA85400313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCCFC591A5FAFFD00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
+		CFCCFC611A5FBC9500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsQuickSearch.strings; sourceTree = "<group>"; };
+		CFCCFC631A5FBD9600313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsQuickSearch.strings; sourceTree = "<group>"; };
 		CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSearch.mm; sourceTree = "<group>"; };
 		CFCD3B6C18A9DC7300028B41 /* FileSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSearch.h; sourceTree = "<group>"; };
 		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
@@ -1994,6 +1999,7 @@
 				CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */,
 				CF3120C81A510F640062185A /* Localizable.strings */,
 				CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */,
+				CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */,
 			);
 			name = Resources;
 			path = Files;
@@ -3365,6 +3371,7 @@
 				CF6D9D1419667E390077B146 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
+				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CF6D99AB196676B10077B146 /* ShortcutsDefaults.plist in Resources */,
 				CF6D99AA196676AE0077B146 /* Defaults.plist in Resources */,
@@ -3405,6 +3412,7 @@
 				CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				B52EB79317228B73004ABC2E /* Defaults.plist in Resources */,
 				CFB598C4196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
+				CFCCFC5E1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFB598B3196E38E400D4C108 /* pref_panels_icon.png in Resources */,
 				CFCCFBE01A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
@@ -3484,6 +3492,7 @@
 				CFF6F3941A13567C00011177 /* question_icon.png in Resources */,
 				CFF6F3951A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFF6F3961A13567C00011177 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
+				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
@@ -4704,6 +4713,15 @@
 				CFCCFC591A5FAFFD00313845 /* ru */,
 			);
 			name = FilePanelsContextMenu.strings;
+			sourceTree = "<group>";
+		};
+		CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCCFC611A5FBC9500313845 /* Base */,
+				CFCCFC631A5FBD9600313845 /* ru */,
+			);
+			name = FilePanelsQuickSearch.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -172,7 +172,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     if(m_FilesCount > 0 || m_Host->IsNativeFS())
     {
         NSMenuItem *item = [NSMenuItem new];
-        item.title = @"Open";
+        item.title = NSLocalizedStringFromTable(@"Open", @"FilePanelsContextMenu", "Menu item title for opening a file by default, for English is 'Open'");
         item.target = self;
         item.action = @selector(OnRegularOpen:);
         [self addItem:item];
@@ -229,7 +229,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             if(m_OpenWithHandlers[i].is_default)
             {
                 NSMenuItem *item = [NSMenuItem new];
-                item.title = [NSString stringWithFormat:@"%@ (default)", m_OpenWithHandlers[i].app_name];
+                item.title = [NSString stringWithFormat:@"%@ (%@)",
+                              m_OpenWithHandlers[i].app_name,
+                              NSLocalizedStringFromTable(@"default", @"FilePanelsContextMenu",  "Menu item postfix marker for default apps to open with, for English is 'default'")];
                 item.image = m_OpenWithHandlers[i].app_icon;
                 item.tag = i;
                 item.target = self;
@@ -268,8 +270,9 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
         // separate them
         if(!any_handlers_added) {
-            [openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:@"<None>" action:nil keyEquivalent:@""]];
-            [always_openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:@"<None>" action:nil keyEquivalent:@""]];
+            NSString *title = NSLocalizedStringFromTable(@"<None>", @"FilePanelsContextMenu", "Menu item for case when no handlers are available, for English is '<None>'");
+            [openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""]];
+            [always_openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""]];
         }
         
         if(any_non_default_handlers_added || !any_handlers_added) {
@@ -279,7 +282,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         
         // let user to select program manually
         NSMenuItem *item = [NSMenuItem new];
-        item.title = @"Other...";
+        item.title = NSLocalizedStringFromTable(@"Other...", @"FilePanelsContextMenu", "Menu item to choose other app to open with, for English is 'Other...'");
         item.target = self;
         item.action = @selector(OnOpenWithOther:);
         [openwith_submenu addItem:item];
@@ -290,13 +293,13 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
         // and put this stuff into root-level menu
         NSMenuItem *openwith = [NSMenuItem new];
-        openwith.title = @"Open With";
+        openwith.title = NSLocalizedStringFromTable(@"Open With", @"FilePanelsContextMenu", "Submenu title to choose app to open with, for English is 'Open With'");
         openwith.submenu = openwith_submenu;
         openwith.keyEquivalent = @"";
         [self addItem:openwith];
         
         NSMenuItem *always_openwith = [NSMenuItem new];
-        always_openwith.title = @"Always Open With";
+        always_openwith.title = NSLocalizedStringFromTable(@"Always Open With", @"FilePanelsContextMenu", "Submenu title to choose app to always open with, for English is 'Always Open With'");
         always_openwith.submenu = always_openwith_submenu;
         always_openwith.alternate = true;
         always_openwith.keyEquivalent = @"";
@@ -312,7 +315,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         NSMenuItem *item;
         if(cur_pnl_native) {
             item = [NSMenuItem new];
-            item.title = @"Move to Trash";
+            item.title = NSLocalizedStringFromTable(@"Move to Trash", @"FilePanelsContextMenu", "Menu item title to move to trash, for English is 'Move to Trash'");
             if(cur_pnl_writable) { // gray out this thing on read-only fs
                 item.target = self;
                 item.action = @selector(OnMoveToTrash:);
@@ -322,7 +325,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         }
         
         item = [NSMenuItem new];
-        item.title = @"Delete Permanently";
+        item.title = NSLocalizedStringFromTable(@"Delete Permanently", @"FilePanelsContextMenu", "Menu item title to delete file, for English is 'Delete Permanently'");
         if(cur_pnl_writable) { // gray out this thing on read-only fs
             item.target = self;
             item.action = @selector(OnDeletePermanently:);
@@ -341,9 +344,11 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     {
         NSMenuItem *item = [NSMenuItem new];
         if(m_Items.size() > 1)
-            item.title = [NSString stringWithFormat:@"Compress %lu Items", m_Items.size()];
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items"),
+                          m_Items.size()];
         else
-            item.title = [NSString stringWithFormat:@"Compress \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \"%@\"", @"FilePanelsContextMenu", "Compress one item"),
+                          [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(opp_pnl_writable) { // gray out this thing if we can't compress on opposite panel
             item.target = self;
             item.action = @selector(OnCompressToOppositePanel:);
@@ -353,9 +358,11 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         
         item = [NSMenuItem new];
         if(m_Items.size() > 1)
-            item.title = [NSString stringWithFormat:@"Compress %lu Items Here", m_Items.size()];
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items Here", @"FilePanelsContextMenu", "Compress some items here"),
+                          m_Items.size()];
         else
-            item.title = [NSString stringWithFormat:@"Compress \"%@\" Here", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \"%@\" Here", @"FilePanelsContextMenu", "Compress one item here"),
+                          [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(cur_pnl_writable) { // gray out this thing if we can't compress on this panel
             item.target = self;
             item.action = @selector(OnCompressToCurrentPanel:);
@@ -370,7 +377,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     // Duplicate stuff
     {
         NSMenuItem *item = [NSMenuItem new];
-        item.title = @"Duplicate";
+        item.title = NSLocalizedStringFromTable(@"Duplicate", @"FilePanelsContextMenu", "Duplicate an item");
         if(m_Items.size() == 1 && cur_pnl_writable) {
             item.target = self;
             item.action = @selector(OnDuplicateItem:);
@@ -411,7 +418,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         }
         
         NSMenuItem *share_menuitem = [NSMenuItem new];
-        share_menuitem.title = @"Share";
+        share_menuitem.title = NSLocalizedStringFromTable(@"Share", @"FilePanelsContextMenu", "Share submenu title");
         share_menuitem.submenu = share_submenu;
         share_menuitem.enabled = eligible;
         [self addItem:share_menuitem];
@@ -424,9 +431,11 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     {
         NSMenuItem *item = [NSMenuItem new];
         if(m_Items.size() > 1)
-            item.title = [NSString stringWithFormat:@"Copy %lu Items", m_Items.size()];
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy %lu Items", @"FilePanelsContextMenu", "Copy many items"),
+                          m_Items.size()];
         else
-            item.title = [NSString stringWithFormat:@"Copy \"%@\"", [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
+            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy \"%@\"", @"FilePanelsContextMenu", "Copy one item"),
+                          [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
         if(m_Host->IsNativeFS()) {  // such thing works only on native file systems
             item.target = self;
             item.action = @selector(OnCopyPaths:);

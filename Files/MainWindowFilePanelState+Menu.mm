@@ -52,7 +52,8 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
                     return [resp validateMenuItem:item];
             return true;
         }
-        item.title = tabs > 1 ? @"Close Tab" : @"Close Window" ;
+        item.title = tabs > 1 ? NSLocalizedString(@"Close Tab", "Menu item title for closing current tab") :
+                                NSLocalizedString(@"Close Window", "Menu item title for closing current window");
         return true;
     }
     IF_MENU_TAG("menu.file.close_window") {
@@ -63,11 +64,12 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     IF_MENU_TAG("menu.window.show_next_tab")        return self.currentSideTabsCount > 1;
     IF_MENU_TAG("menu.view.show_tabs") {
         item.title = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsGeneralShowTabs] ?
-            @"Hide Tab Bar" : @"Show Tab Bar";
+            NSLocalizedString(@"Hide Tab Bar", "Menu item title for hiding tab bar") :
+            NSLocalizedString(@"Show Tab Bar", "Menu item title for showing tab bar");
         return true;
     }
     IF_MENU_TAG("menu.view.show_terminal") {
-        item.title = @"Show Terminal";
+        item.title = NSLocalizedString(@"Show Terminal", "Menu item title for showing terminal");
         return true;
     }
     

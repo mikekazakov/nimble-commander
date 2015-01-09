@@ -7,7 +7,10 @@
 /* Menu item titile for recents clearing action */
 "Clear Recent Servers..." = "Очистить последние серверы...";
 
-/* Menu item title */
+/* Menu item title for closing current tab */
+"Close Tab" = "Закрыть вкладку";
+
+/* (No Commment) */
 "Close Window" = "Закрыть окно";
 
 /* Menu item title for disabling an admin mode */
@@ -19,11 +22,23 @@
 /* Menu item title for enabling an admin mode */
 "Enable Admin Mode" = "Включить режим администратора";
 
+/* Menu item title for hiding tab bar */
+"Hide Tab Bar" = "Скрыть панель вкладок";
+
+/* Menu item title for hiding terminal */
+"Hide Terminal" = "Скрыть терминал";
+
 /* Menu item title */
 "Hide Toolbar" = "Скрыть панель инструментов";
 
 /* No comment provided by engineer. */
 "OK" = "ОК";
+
+/* Menu item title for showing tab bar */
+"Show Tab Bar" = "Показать панель вкладок";
+
+/* Menu item title for showing terminal */
+"Show Terminal" = "Показать терминал";
 
 /* Menu item title */
 "Show Toolbar" = "Показать панель инструментов";

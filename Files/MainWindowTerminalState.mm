@@ -299,7 +299,7 @@
 {
     auto tag = item.tag;
     IF_MENU_TAG("menu.view.show_terminal") {
-        item.title = @"Hide Terminal";
+        item.title = NSLocalizedString(@"Hide Terminal", "Menu item title for hiding terminal");
         return true;
     }
     return true;

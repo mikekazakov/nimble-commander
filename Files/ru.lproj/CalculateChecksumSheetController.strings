@@ -1,3 +1,6 @@
+/* Class = "NSTableColumn"; headerCell.title = "Checksum"; ObjectID = "0Lf-ae-1tm"; */
+"0Lf-ae-1tm.headerCell.title" = "Контр. сумма";
+
 /* Class = "NSButtonCell"; title = "Save"; ObjectID = "33R-U6-GxT"; */
 "33R-U6-GxT.title" = "Сохранить";
 
@@ -12,4 +15,7 @@
 
 /* Class = "NSTextFieldCell"; title = "Checksum algorithm:"; ObjectID = "mBW-fO-4XM"; */
 "mBW-fO-4XM.title" = "Алгоритм контрольной суммы:";
+
+/* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "mhj-G6-Q4D"; */
+"mhj-G6-Q4D.headerCell.title" = "Имя файла";
 

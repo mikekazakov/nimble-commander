@@ -13,5 +13,6 @@
 @end
 
 @interface ConnectionsMenuDelegate : NSObject<NSMenuDelegate>
+@property (strong) IBOutlet NSMenuItem *recentConnectionsMenuItem;
 
 @end

@@ -143,11 +143,13 @@ struct OtherAttrs
     
     // Set title.
     if (m_Files.size() == 1)
-        [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %@",
-                                    [NSString stringWithUTF8String:m_Files.front().c_str()]]];
+        self.Title.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for \u201c%@\u201d",
+                                                                              "Title for file attributes sheet, single item"),
+                                    [NSString stringWithUTF8String:m_Files.front().c_str()]];
     else
-        [self.Title setStringValue:[NSString stringWithFormat:@"Change file attributes for %i "
-                                    "selected items", m_Files.size()]];
+        self.Title.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for %@ selected items",
+                                                                              "Title for file attributes sheet, multiple items"),
+                                  [NSNumber numberWithInt:m_Files.size()]];
     
     [self PopulateControls];
 }
@@ -155,7 +157,8 @@ struct OtherAttrs
 - (void) PopulateControls
 {
     self.ProcessSubfoldersCheck.hidden = !m_HasDirectoryEntries;
-
+    NSString *mixed_title = NSLocalizedString(@"[Mixed]", "Combo box element available when multiple elements are selected with different values");
+    
 #define DOFLAG(_f, _c)\
      self._c.allowsMixedState = m_ProcessSubfolders ? true :\
         bool(m_State[0].fsfstate[FileSysAttrAlterCommand::_f] == indeterminate);\
@@ -207,7 +210,7 @@ struct OtherAttrs
     }
     
     if(!m_HasCommonUID || m_ProcessSubfolders) {
-        [self.UsersPopUpButton addItemWithTitle:@"[Mixed]"];
+        [self.UsersPopUpButton addItemWithTitle:mixed_title];
         self.UsersPopUpButton.lastItem.image = img_user;
         
         if(!m_ProcessSubfolders || !m_UserDidEditOthers[OtherAttrs::uid])
@@ -232,7 +235,7 @@ struct OtherAttrs
     }
     
     if(!m_HasCommonGID || m_ProcessSubfolders) {
-        [self.GroupsPopUpButton addItemWithTitle:@"[Mixed]"];
+        [self.GroupsPopUpButton addItemWithTitle:mixed_title];
         self.GroupsPopUpButton.lastItem.image = img_group;
         if(!m_ProcessSubfolders || !m_UserDidEditOthers[OtherAttrs::gid])
             [self.GroupsPopUpButton selectItem:self.GroupsPopUpButton.lastItem];

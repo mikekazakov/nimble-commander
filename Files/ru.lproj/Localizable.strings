@@ -4,6 +4,12 @@
 /* No comment provided by engineer. */
 "Cancel" = "Отмена";
 
+/* Title for file attributes sheet, multiple items */
+"Change file attributes for %@ selected items" = "Изменить файловые атрибуты для %@ выбранных объектов";
+
+/* Title for file attributes sheet, single item */
+"Change file attributes for “%@”" = "Изменить файловые атрибуты для “%@”";
+
 /* Menu item titile for recents clearing action */
 "Clear Recent Servers..." = "Очистить последние серверы...";
 
@@ -54,6 +60,9 @@
 
 /* Menu item title */
 "Try Full Version" = "Попробовать версию Full";
+
+/* Combo box element available when multiple elements are selected with different values */
+"[Mixed]" = "[Разные]";
 
 /* Bytes count postfix, for English is 'bytes' */
 "__BYTECOUNTFORMATTER_BYTES_WORD" = "байт";

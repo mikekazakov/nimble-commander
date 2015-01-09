@@ -646,6 +646,9 @@ DQ
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1312">
                         <rect key="frame" x="18" y="390" width="433" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="lessThanOrEqual" priority="999" constant="600" id="ith-1i-8dy"/>
+                        </constraints>
                         <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="center" id="1313">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>

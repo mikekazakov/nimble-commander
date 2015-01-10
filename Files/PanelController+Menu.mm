@@ -730,7 +730,7 @@
 
 - (IBAction)OnQuickNewFolder:(id)sender
 {
-    NSString *stub = @"untitled folder";
+    NSString *stub = NSLocalizedString(@"untitled folder", "Name for freshly create folder by hotkey");
     path dir = self.currentDirectoryPath;
     string name = stub.UTF8String;
     
@@ -780,7 +780,7 @@
     auto files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot];
     if(files.empty())
         return;
-    NSString *stub = @"New Folder With Items";
+    NSString *stub = NSLocalizedString(@"New Folder With Items", "Name for freshly created folder by hotkey with items");
     string name = stub.UTF8String;
     path dir = self.currentDirectoryPath;
     

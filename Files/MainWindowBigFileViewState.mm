@@ -549,7 +549,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
     auto tag = item.tag;
     IF_MENU_TAG("menu.file.close") {
-        item.title = @"Close Viewer";
+        item.title = NSLocalizedString(@"Close Viewer", "Menu item title for closing internal viewer state");
         return true;
     }
     return true;

@@ -28,3 +28,9 @@
 /* Class = "NSButtonCell"; title = "Copy UNIX ownership"; ObjectID = "144"; */
 "144.title" = "Сохранять владельцев UNIX";
 
+/* Class = "NSButtonCell"; title = "Copy"; ObjectID = "UQ3-7b-2zx"; */
+"UQ3-7b-2zx.title" = "Копировать";
+
+/* Class = "NSButtonCell"; title = "Rename"; ObjectID = "X52-kY-B6Q"; */
+"X52-kY-B6Q.title" = "Переименовать";
+

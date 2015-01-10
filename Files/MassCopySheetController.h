@@ -26,6 +26,8 @@ typedef void (^MassCopySheetCompletionHandler)(int result);
 @property (strong) IBOutlet NSButton *CopyFileTimesCheckbox;
 @property (strong) IBOutlet NSButton *CopyUNIXFlagsCheckbox;
 @property (strong) IBOutlet NSButton *CopyUnixOwnersCheckbox;
+@property (strong) IBOutlet NSButton *CopyButtonStringStub;
+@property (strong) IBOutlet NSButton *RenameButtonStringStub;
 
 
 

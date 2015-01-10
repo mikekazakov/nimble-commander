@@ -37,6 +37,9 @@
 /* Menu item title for closing current tab */
 "Close Tab" = "Закрыть вкладку";
 
+/* Menu item title for closing internal viewer state */
+"Close Viewer" = "Закрыть просмотрщик";
+
 /* (No Commment) */
 "Close Window" = "Закрыть окно";
 
@@ -45,6 +48,12 @@
 
 /* Brief System Information computer name label title */
 "Computer Name:" = "Имя компьютера:";
+
+/* Copy files sheet prompt, copying many files */
+"Copy %@ items to:" = "Копировать %@ объектов в:";
+
+/* Copy files sheet prompt, copying single file */
+"Copy “%@” to:" = "Копировать “%@” в:";
 
 /* Menu item title in file deletion sheet */
 "Delete Permanently" = "Удалить необратимо";
@@ -100,6 +109,9 @@
 /* Menu item title */
 "Hide Toolbar" = "Скрыть панель инструментов";
 
+/* No comment provided by engineer. */
+"Hide advanced settings" = "Скрыть расширенные настройки";
+
 /* Brief System Information idle label title */
 "Idle:" = "Свободно:";
 
@@ -111,6 +123,9 @@
 
 /* No comment provided by engineer. */
 "N/A" = "Н/Д";
+
+/* Name for freshly created folder by hotkey with items */
+"New Folder With Items" = "Новая папка с объектами";
 
 /* No comment provided by engineer. */
 "OK" = "ОК";
@@ -130,6 +145,12 @@
 /* Menu item title in internal viewer search */
 "Recents" = "Последние";
 
+/* Move files sheet prompt, moving many files */
+"Rename/move %@ items to:" = "Переименовать/переместить %@ объектов в:";
+
+/* Move files sheet prompt, moving single file */
+"Rename/move “%@” to:" = "Переименовать/переместить “%@” в:";
+
 /* Showing error when connecting to SFTP server */
 "SFTP connection error:" = "Ошибка подключения SFTP:";
 
@@ -147,6 +168,9 @@
 
 /* Menu item title */
 "Show Toolbar" = "Показать панель инструментов";
+
+/* No comment provided by engineer. */
+"Show advanced settings" = "Показать расширенные настройки";
 
 /* User action to stop running actions and close window */
 "Stop And Close" = "Остановить и закрыть";
@@ -219,4 +243,7 @@
 
 /* SI postfixes with first symbol empty, for English is ' KMGTP' */
 "__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " КМГТП";
+
+/* Name for freshly create folder by hotkey */
+"untitled folder" = "Новая папка";
 

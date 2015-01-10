@@ -41,23 +41,23 @@
     int amount = m_Items->size();
     assert(amount > 0);
     
-    if(m_IsCopying)
-    {
+    if(m_IsCopying) {
         if(amount > 1)
-            [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Copy %i items to:", amount]];
+            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy %@ items to:", "Copy files sheet prompt, copying many files"),
+                                                [NSNumber numberWithInt:amount]];
         else
-            [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Copy %@ to:",
-                                                  [NSString stringWithUTF8String:m_Items->front().c_str()]]];
-        [self.CopyButton setTitle:@"Copy"];
+            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy \u201c%@\u201d to:", "Copy files sheet prompt, copying single file"),
+                                                [NSString stringWithUTF8String:m_Items->front().c_str()]];
+        self.CopyButton.title = self.CopyButtonStringStub.title;
     }
-    else
-    {
+    else {
         if(amount > 1)
-            [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Rename/move %i items to:", amount]];
+            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Rename/move %@ items to:", "Move files sheet prompt, moving many files"),
+                                                [NSNumber numberWithInt:amount]];
         else
-            [self.DescriptionText setStringValue:[NSString stringWithFormat:@"Rename/move %@ to:",
-                                                  [NSString stringWithUTF8String:m_Items->front().c_str()]]];
-        [self.CopyButton setTitle:@"Rename"];
+            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Rename/move \u201c%@\u201d to:", "Move files sheet prompt, moving single file"),
+                                                [NSString stringWithUTF8String:m_Items->front().c_str()]];
+        self.CopyButton.title = self.RenameButtonStringStub.title;
     }
     
     [self OnDisclosureTriangle:self];
@@ -76,16 +76,14 @@
 - (IBAction)OnDisclosureTriangle:(id)sender
 {
     NSSize new_size;
-    if([self.DisclosureTriangle state] == NSOnState)
-    {
+    if(self.DisclosureTriangle.state == NSOnState) {
         new_size = NSMakeSize(370, 270);
-        [self.DisclosureLabel setStringValue:@"Hide advanced settings"];
+        self.DisclosureLabel.stringValue = NSLocalizedString(@"Hide advanced settings", "");
     }
-    else
-    {
+    else {
         new_size = NSMakeSize(370, 140);
-        [self.DisclosureLabel setStringValue:@"Show advanced settings"];
-        [self.DisclosureGroup setHidden:true];
+        self.DisclosureLabel.stringValue = NSLocalizedString(@"Show advanced settings", "");
+        self.DisclosureGroup.hidden = true;
     }
     
     NSWindow *window = [self window];

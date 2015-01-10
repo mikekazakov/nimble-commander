@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="MassCopySheetController">
             <connections>
                 <outlet property="CopyButton" destination="16" id="56"/>
+                <outlet property="CopyButtonStringStub" destination="LIR-Na-Bsa" id="Ph5-ZD-rGL"/>
                 <outlet property="CopyFileTimesCheckbox" destination="132" id="153"/>
                 <outlet property="CopyUNIXFlagsCheckbox" destination="137" id="154"/>
                 <outlet property="CopyUnixOwnersCheckbox" destination="143" id="155"/>
@@ -17,6 +18,7 @@
                 <outlet property="DisclosureLabel" destination="85" id="90"/>
                 <outlet property="DisclosureTriangle" destination="69" id="73"/>
                 <outlet property="PreserveSymlinksCheckbox" destination="92" id="99"/>
+                <outlet property="RenameButtonStringStub" destination="YbL-01-sYZ" id="YNC-bt-ICx"/>
                 <outlet property="TextField" destination="5" id="57"/>
                 <outlet property="window" destination="1" id="3"/>
             </connections>
@@ -88,7 +90,7 @@ Gw
                     </button>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="69">
                         <rect key="frame" x="20" y="181" width="13" height="13"/>
-                        <buttonCell key="cell" type="disclosureTriangle" bezelStyle="disclosure" image="4616FE01-DAE6-4E8B-8EBD-EA5E518E1A34" imagePosition="above" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70">
+                        <buttonCell key="cell" type="disclosureTriangle" bezelStyle="disclosure" image="EBF3DE2F-BA3F-4245-B55C-3B8D98796263" imagePosition="above" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70">
                             <behavior key="behavior" pushIn="YES" changeBackground="YES" changeGray="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -194,9 +196,27 @@ Gw
             </connections>
             <point key="canvasLocation" x="320" y="361.5"/>
         </window>
+        <button verticalHuggingPriority="750" id="LIR-Na-Bsa">
+            <rect key="frame" x="0.0" y="0.0" width="82" height="32"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <buttonCell key="cell" type="push" title="Copy" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UQ3-7b-2zx">
+                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                <font key="font" metaFont="system"/>
+            </buttonCell>
+            <point key="canvasLocation" x="233" y="577.5"/>
+        </button>
+        <button verticalHuggingPriority="750" id="YbL-01-sYZ">
+            <rect key="frame" x="0.0" y="0.0" width="82" height="32"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <buttonCell key="cell" type="push" title="Rename" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="X52-kY-B6Q">
+                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                <font key="font" metaFont="system"/>
+            </buttonCell>
+            <point key="canvasLocation" x="248" y="660.5"/>
+        </button>
     </objects>
     <resources>
-        <image name="4616FE01-DAE6-4E8B-8EBD-EA5E518E1A34" width="1" height="1">
+        <image name="EBF3DE2F-BA3F-4245-B55C-3B8D98796263" width="1" height="1">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

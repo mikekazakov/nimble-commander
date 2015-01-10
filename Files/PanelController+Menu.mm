@@ -202,9 +202,9 @@
     if(ret != 0)
         return dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = @"FTP connection error:";
+            alert.messageText = NSLocalizedString(@"FTP connection error:", "Showing error when connecting to FTP server");
             alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
-            [alert addButtonWithTitle:@"OK"];
+            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
     dispatch_to_main_queue([=]{
@@ -253,9 +253,9 @@
     if(ret != 0)
         return dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = @"SFTP connection error:";
+            alert.messageText = NSLocalizedString(@"SFTP connection error:", "Showing error when connecting to SFTP server");
             alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
-            [alert addButtonWithTitle:@"OK"];
+            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
     dispatch_to_main_queue([=]{
@@ -388,7 +388,9 @@
     
     SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc] init];
     [view setupForWindow:self.state.window];
-    view.titleLabel.stringValue = _select ? @"Select files using mask:" : @"Deselect files using mask:";
+    view.titleLabel.stringValue = _select ?
+        NSLocalizedString(@"Select files using mask:", "Title for selection with mask popup") :
+        NSLocalizedString(@"Deselect files using mask:", "Title for deselection with mask popup");
     view.handler = ^(NSString *mask) {
         [m_SelectionWithMaskPopover close];
         if( !FileMask::IsWildCard(mask) )

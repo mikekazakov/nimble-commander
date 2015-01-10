@@ -647,14 +647,12 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         return true;
     
     MessageBox *dialog = [[MessageBox alloc] init];
-    [dialog addButtonWithTitle:@"Stop And Close"];
-    [dialog addButtonWithTitle:@"Cancel"];
-    [dialog setMessageText:@"Window has running operations. Do you want to stop them and close the window?"];
-    [dialog ShowSheetWithHandler:self.window handler:^(int result) {
-        if (result == NSAlertFirstButtonReturn)
-        {
+    [dialog addButtonWithTitle:NSLocalizedString(@"Stop And Close", "User action to stop running actions and close window")];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    dialog.messageText = NSLocalizedString(@"Window has running operations. Do you want to stop them and close the window?", "Asking user to close window with some operations running");
+    [dialog beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
+        if (result == NSAlertFirstButtonReturn) {
             [m_OperationsController Stop];
-            [dialog.window orderOut:nil];
             [self.window close];
         }
     }];

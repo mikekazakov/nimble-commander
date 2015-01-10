@@ -8,10 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-typedef void (^MessageBoxCompletionHandler)(int result);
-
 @interface MessageBox : NSAlert
 
-- (void)ShowSheetWithHandler: (NSWindow *)_for_window handler:(MessageBoxCompletionHandler)_handler;
+- (void)beginSheetModalForWindow:(NSWindow *)_for_window completionHandler:(void (^)(NSModalResponse returnCode))_handler;
 
 @end

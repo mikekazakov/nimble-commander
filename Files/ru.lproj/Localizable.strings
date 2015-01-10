@@ -1,5 +1,11 @@
+/* Informing user that a new version is available */
+"A new version of Files is available!" = "Вышла новая версия Files!";
+
 /* Asking user for confirmation on erasing custom settings - message */
 "Are you sure want to reset settings to defaults?" = "Вы действительно хотите сбросить настройки к стандартным?";
+
+/* (No Commment) */
+"Are you sure you want to clear the list of recent servers?" = "Вы действительно хотите очистить список последних подключений?";
 
 /* No comment provided by engineer. */
 "Cancel" = "Отмена";
@@ -13,20 +19,35 @@
 /* Menu item titile for recents clearing action */
 "Clear Recent Servers..." = "Очистить последние серверы...";
 
+/* Asking user for granting file system access for Files */
+"Click 'Open' to allow access to files contained in the selected directory" = "Нажмите 'Открыть' чтобы разрешить доступ к выбранной директории";
+
 /* Menu item title for closing current tab */
 "Close Tab" = "Закрыть вкладку";
 
 /* (No Commment) */
 "Close Window" = "Закрыть окно";
 
+/* Informing when closing with running terminal processes */
+"Closing this window will terminate the running processes: " = "Закрытие этого окна прервет следующие процессы: ";
+
+/* Title for deselection with mask popup */
+"Deselect files using mask:" = "Снять выделение по маске:";
+
 /* Menu item title for disabling an admin mode */
 "Disable Admin Mode" = "Выключить режим администратора";
+
+/* Asking to close window with processes running */
+"Do you want to close this window?" = "Вы хотите закрыть это окно?";
 
 /* Menu item title */
 "Download Full Version" = "Загрузить версию Full";
 
 /* Menu item title for enabling an admin mode */
 "Enable Admin Mode" = "Включить режим администратора";
+
+/* Showing error when connecting to FTP server */
+"FTP connection error:" = "Ошибка подключения FTP:";
 
 /* Menu item title for hiding tab bar */
 "Hide Tab Bar" = "Скрыть панель вкладок";
@@ -40,6 +61,12 @@
 /* No comment provided by engineer. */
 "OK" = "ОК";
 
+/* Showing error when connecting to SFTP server */
+"SFTP connection error:" = "Ошибка подключения SFTP:";
+
+/* Title for selection with mask popup */
+"Select files using mask:" = "Выделить по маске:";
+
 /* Menu item title for showing tab bar */
 "Show Tab Bar" = "Показать панель вкладок";
 
@@ -49,17 +76,32 @@
 /* Menu item title */
 "Show Toolbar" = "Показать панель инструментов";
 
+/* User action to stop running actions and close window */
+"Stop And Close" = "Остановить и закрыть";
+
 /* Asking user for quitting app with activity - confirmation */
 "Stop And Quit" = "Остановить и завершить";
 
+/* User confirmation on message box */
+"Terminate And Close" = "Прервать и закрыть";
+
 /* Asking user for quitting app with activity */
-"The application has running operations. Do you want to stop all operations and quit?" = "Имеются работающие операции. Вы хотите прекратить все операции и завершить приложение?";
+"The application has running operations. Do you want to stop all operations and quit?" = "Имеются работающие операции. Прекратить все операции и завершить приложение?";
 
 /* Asking user for confirmation on erasing custom settings - informative text */
 "This will erase all your custom settings." = "Это удалит ваши собственные настройки.";
 
 /* Menu item title */
 "Try Full Version" = "Попробовать версию Full";
+
+/* Asking user to close window with some operations running */
+"Window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
+
+/* Asking user if he wants to visit a website for update */
+"Would you like to visit a website?" = "Хотели бы Вы посетить вебсайт?";
+
+/* (No Commment) */
+"You can't undo this action." = "Это операция необратима.";
 
 /* Combo box element available when multiple elements are selected with different values */
 "[Mixed]" = "[Разные]";

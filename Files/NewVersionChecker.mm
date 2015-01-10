@@ -32,11 +32,11 @@ static void GotNewVersion()
 {
     // say to user about new version
     NSAlert *alert = [NSAlert new];
-    alert.messageText = @"A new version of Files is available!";
-    alert.informativeText = @"Would you like to visit a website?";
+    alert.messageText = NSLocalizedString(@"A new version of Files is available!", "Informing user that a new version is available");
+    alert.informativeText = NSLocalizedString(@"Would you like to visit a website?", "Asking user if he wants to visit a website for update");
     alert.alertStyle = NSInformationalAlertStyle;
-    [alert addButtonWithTitle:@"OK"];
-    [alert addButtonWithTitle:@"No"];
+    [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [[alert.buttons objectAtIndex:1] setKeyEquivalent:@"\E"];
     dispatch_sync(dispatch_get_main_queue(), ^{
         if(alert.runModal == NSAlertFirstButtonReturn)

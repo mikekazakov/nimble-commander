@@ -226,9 +226,9 @@
         return true;
 
     MessageBox *dialog = [[MessageBox alloc] init];
-    dialog.messageText = @"Do you want to close this window?";
+    dialog.messageText = NSLocalizedString(@"Do you want to close this window?", "Asking to close window with processes running");
     NSMutableString *cap = [NSMutableString new];
-    [cap appendString:@"Closing this window will terminate the running processes: "];
+    [cap appendString:NSLocalizedString(@"Closing this window will terminate the running processes: ", "Informing when closing with running terminal processes")];
     for(int i = 0; i < children.size(); ++i)
     {
         [cap appendString:[NSString stringWithUTF8String:children[i].c_str()]];
@@ -237,14 +237,11 @@
     }
     [cap appendString:@"."];
     dialog.informativeText = cap;
-    [dialog addButtonWithTitle:@"Terminate And Close"];
-    [dialog addButtonWithTitle:@"Cancel"];
-    [dialog ShowSheetWithHandler:self.window handler:^(int result) {
+    [dialog addButtonWithTitle:NSLocalizedString(@"Terminate And Close", "User confirmation on message box")];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    [dialog beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
         if (result == NSAlertFirstButtonReturn)
-        {
-            [dialog.window orderOut:nil];
             [sender.window close];
-        }
     }];
     
     return false;

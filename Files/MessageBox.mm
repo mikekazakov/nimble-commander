@@ -8,31 +8,43 @@
 
 #import "MessageBox.h"
 #import "Common.h"
+#import "sysinfo.h"
 
 @implementation MessageBox
 {
-    MessageBoxCompletionHandler m_Handler;
+    id m_Self;
+    void (^m_Handler)(NSModalResponse returnCode);
 }
 
-- (void)ShowSheetWithHandler: (NSWindow *)_for_window handler:(MessageBoxCompletionHandler)_handler
+- (void)beginSheetModalForWindow:(NSWindow *)_for_window completionHandler:(void (^)(NSModalResponse returnCode))_handler
 {
-    m_Handler = _handler;
-    dispatch_to_main_queue( [=]{
-    [self beginSheetModalForWindow:_for_window
-                     modalDelegate:self
-                     didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)
-                       contextInfo:nil];
-    });
+    m_Self = self;
+    
+    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9) {
+        [super beginSheetModalForWindow:_for_window completionHandler:^(NSModalResponse returnCode) {
+            _handler(returnCode);
+            m_Self = nil;
+        }];
+    }
+    else {
+        m_Handler = _handler;
+        dispatch_to_main_queue([=]{
+            [self beginSheetModalForWindow:_for_window
+                             modalDelegate:self
+                            didEndSelector:@selector(didEndSheet:returnCode:contextInfo:)
+                               contextInfo:nil];
+        });
+    }
 }
 
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
-    [[self window] orderOut:nil];
-    if(m_Handler)
-    {
-        m_Handler((int)returnCode);
+    if(m_Handler) {
+        m_Handler(returnCode);
         m_Handler = nil;
     }
+    [self.window orderOut:nil];
+    m_Self = nil;
 }
 
 @end

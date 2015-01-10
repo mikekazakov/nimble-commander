@@ -43,7 +43,7 @@
     if(origfile->GetReadParadigm() < VFSFile::ReadParadigm::Random) {
         // we need to read a file into temporary mem/file storage to access it randomly
         ProcessSheetController *proc = [ProcessSheetController new];
-        proc.title = @"Opening file...";
+        proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
         [proc Show];
                 
         auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);

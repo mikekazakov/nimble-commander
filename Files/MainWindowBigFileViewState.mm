@@ -135,7 +135,8 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
     NSString *path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
     if(path == nil) path = @"...";
-    NSString *title = [NSString stringWithFormat:@"File View: %@", path];
+    NSString *title = [NSString stringWithFormat:NSLocalizedString(@"File View - %@", "Window title for internal file viewer"),
+                       path];
     
     // find window geometry
     NSWindow* window = [self window];
@@ -173,7 +174,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     if(origfile->GetReadParadigm() < VFSFile::ReadParadigm::Random)
     { // we need to read a file into temporary mem/file storage to access it randomly
         ProcessSheetController *proc = [ProcessSheetController new];
-        proc.title = @"Opening file...";
+        proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
         [proc Show];
         
         auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);
@@ -270,15 +271,15 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     m_ModeSelect.segmentStyle = NSSegmentStyleRounded;
     m_ModeSelect.segmentCount = 2;
     m_ModeSelect.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
-    [m_ModeSelect setLabel:@"Text" forSegment:0];
-    [m_ModeSelect setLabel:@"Hex" forSegment:1];
+    [m_ModeSelect setLabel:NSLocalizedString(@"Text", "Internal viewer mode - textual") forSegment:0];
+    [m_ModeSelect setLabel:NSLocalizedString(@"Hex", "Internal viewer mode - hexadecimal") forSegment:1];
     [m_ModeSelect setWidth:52 forSegment:0];
     [m_ModeSelect setWidth:52 forSegment:1];
     
     m_WordWrap = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 80, 20)];
     ((NSButtonCell*)m_WordWrap.cell).controlSize = NSSmallControlSize;
     m_WordWrap.buttonType = NSSwitchButton;
-    m_WordWrap.title = @"Word wrap";
+    m_WordWrap.title = NSLocalizedString(@"Word wrap", "Internal viewer checkbox to wrap words");
     m_WordWrap.target = self;
     m_WordWrap.action = @selector(WordWrapChanged:);
     m_WordWrap.font = [NSFont menuFontOfSize:10];
@@ -293,7 +294,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     m_SearchField.target = self;
     m_SearchField.action = @selector(UpdateSearchFilter:);
     m_SearchField.delegate = self;
-    [m_SearchField.cell setPlaceholderString:@"Search in file"];
+    [m_SearchField.cell setPlaceholderString:NSLocalizedString(@"Search in file", "Placeholder for search text field in internal viewer")];
     [m_SearchField.cell setSendsWholeSearchString:true];
     [m_SearchField.cell setRecentsAutosaveName:@"BigFileViewRecentSearches"];
     [m_SearchField.cell setMaximumRecents:20];
@@ -465,17 +466,23 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Search Menu"];
     NSMenuItem *item;
     
-    item = [[NSMenuItem alloc] initWithTitle:@"Case-sensitive search" action:@selector(SetCaseSensitiveSearch:) keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Case-sensitive search", "Menu item option in internal viewer search")
+                                      action:@selector(SetCaseSensitiveSearch:)
+                               keyEquivalent:@""];
     item.state = [NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewCaseSensitiveSearch"];
     item.target = self;
     [menu insertItem:item atIndex:0];
 
-    item = [[NSMenuItem alloc] initWithTitle:@"Find whole phrase" action:@selector(SetWholePhrasesSearch:) keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Find whole phrase", "Menu item option in internal viewer search")
+                                      action:@selector(SetWholePhrasesSearch:)
+                               keyEquivalent:@""];
     item.state = [NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewWholePhraseSearch"];
     item.target = self;
     [menu insertItem:item atIndex:1];
     
-    item = [[NSMenuItem alloc] initWithTitle:@"Clear Recents" action:NULL keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Clear Recents", "Menu item title in internal viewer search")
+                                      action:NULL
+                               keyEquivalent:@""];
     item.tag = NSSearchFieldClearRecentsMenuItemTag;
     [menu insertItem:item atIndex:2];
     
@@ -483,11 +490,15 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     item.tag = NSSearchFieldRecentsTitleMenuItemTag;
     [menu insertItem:item atIndex:3];
     
-    item = [[NSMenuItem alloc] initWithTitle:@"Recent Searches" action:NULL keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Recent Searches", "Menu item title in internal viewer search")
+                                      action:NULL
+                               keyEquivalent:@""];
     item.tag = NSSearchFieldRecentsTitleMenuItemTag;
     [menu insertItem:item atIndex:4];
     
-    item = [[NSMenuItem alloc] initWithTitle:@"Recents" action:NULL keyEquivalent:@""];
+    item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Recents", "Menu item title in internal viewer search")
+                                      action:NULL
+                               keyEquivalent:@""];
     item.tag = NSSearchFieldRecentsMenuItemTag;
     [menu insertItem:item atIndex:5];
     

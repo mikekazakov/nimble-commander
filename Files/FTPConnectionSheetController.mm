@@ -23,7 +23,7 @@
         self.saved.autoenablesItems = false;
         
         NSMenuItem *pref = [[NSMenuItem alloc] init];
-        pref.title = @"Recent Servers";
+        pref.title = NSLocalizedString(@"Recent Servers", "Menu item title, disabled - only as separator");
         pref.enabled = false;
         [self.saved.menu addItem:pref];
         

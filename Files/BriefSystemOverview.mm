@@ -133,69 +133,69 @@ static NSTextField *CreateStockTF()
     
     ////////////////////////////////////////////////////////////////////////////////// Title
     NSTextField *title = CreateStockTF();
-    [title setStringValue:@"Brief System Information"];
-    [title setAlignment:NSCenterTextAlignment];
-    [title setFont:[NSFont boldSystemFontOfSize:13]];
+    title.stringValue = NSLocalizedString(@"Brief System Information", "Brief System Information overlay title");
+    title.alignment = NSCenterTextAlignment;
+    title.font = [NSFont boldSystemFontOfSize:13];
     [self addSubview:title];
     
     ////////////////////////////////////////////////////////////////////////////////// CPU
     NSBox *cpu_box = [[NSBox alloc] initWithFrame:NSRect()];
     {
-        [cpu_box setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [cpu_box setTitlePosition:NSAtTop];
-        [cpu_box setContentViewMargins:{2, 2}];
-        [cpu_box setBorderType:NSLineBorder];
-        [cpu_box setTitle:@"CPU"];
+        cpu_box.translatesAutoresizingMaskIntoConstraints = NO;
+        cpu_box.titlePosition = NSAtTop;
+        cpu_box.contentViewMargins = {2, 2};
+        cpu_box.borderType = NSLineBorder;
+        cpu_box.title = NSLocalizedString(@"CPU", "Brief System Information cpu box title");
         [self addSubview:cpu_box];
         
         NSBox *line1 = [[NSBox alloc] initWithFrame:NSRect()];
-        [line1 setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [line1 setBoxType:NSBoxCustom];
-        [line1 setBorderColor:box_sep_color];
+        line1.translatesAutoresizingMaskIntoConstraints = NO;
+        line1.boxType = NSBoxCustom;
+        line1.borderColor = box_sep_color;
         [cpu_box addSubview:line1];
 
         NSBox *line2 = [[NSBox alloc] initWithFrame:NSRect()];
-        [line2 setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [line2 setBoxType:NSBoxCustom];
-        [line2 setBorderColor:box_sep_color ];
+        line2.translatesAutoresizingMaskIntoConstraints = NO;
+        line2.boxType = NSBoxCustom;
+        line2.borderColor = box_sep_color;
         [cpu_box addSubview:line2];
         
         auto cpu_sysload_title = CreateStockTF();
-        [cpu_sysload_title setStringValue:@"System:"];
-        [cpu_sysload_title setFont: text_font];
+        cpu_sysload_title.stringValue = NSLocalizedString(@"System:", "Brief System Information system label title");
+        cpu_sysload_title.font = text_font;
         [cpu_box addSubview:cpu_sysload_title];
 
         auto cpu_usrload_title = CreateStockTF();
-        [cpu_usrload_title setStringValue:@"User:"];
-        [cpu_usrload_title setFont: text_font];
+        cpu_usrload_title.stringValue = NSLocalizedString(@"User:", "Brief System Information user label title");
+        cpu_usrload_title.font = text_font;
         [cpu_box addSubview:cpu_usrload_title];
 
         auto cpu_idle_title = CreateStockTF();
-        [cpu_idle_title setStringValue:@"Idle:"];
-        [cpu_idle_title setFont: text_font];
+        cpu_idle_title.stringValue = NSLocalizedString(@"Idle:", "Brief System Information idle label title");
+        cpu_idle_title.font = text_font;
         [cpu_box addSubview:cpu_idle_title];
 
         m_TextCPULoadSystem = CreateStockTF();
-        [m_TextCPULoadSystem setAlignment:NSRightTextAlignment];
-        [m_TextCPULoadSystem setFont: text_font];
-        [m_TextCPULoadSystem setTextColor:[NSColor colorWithCalibratedRed:1.00 green:0.15 blue:0.10 alpha:1.0]];
+        m_TextCPULoadSystem.alignment = NSRightTextAlignment;
+        m_TextCPULoadSystem.font = text_font;
+        m_TextCPULoadSystem.textColor = [NSColor colorWithCalibratedRed:1.00 green:0.15 blue:0.10 alpha:1.0];
         [cpu_box addSubview:m_TextCPULoadSystem];
     
         m_TextCPULoadUser = CreateStockTF();
-        [m_TextCPULoadUser setAlignment:NSRightTextAlignment];
-        [m_TextCPULoadUser setFont: text_font];
-        [m_TextCPULoadUser setTextColor:[NSColor colorWithCalibratedRed:0.10 green:0.15 blue:1.00 alpha:1.0]];
+        m_TextCPULoadUser.alignment = NSRightTextAlignment;
+        m_TextCPULoadUser.font = text_font;
+        m_TextCPULoadUser.textColor = [NSColor colorWithCalibratedRed:0.10 green:0.15 blue:1.00 alpha:1.0];
         [cpu_box addSubview:m_TextCPULoadUser];
     
         m_TextCPULoadIdle = CreateStockTF();
-        [m_TextCPULoadIdle setAlignment:NSRightTextAlignment];
-        [m_TextCPULoadIdle setFont: text_font];
+        m_TextCPULoadIdle.alignment = NSRightTextAlignment;
+        m_TextCPULoadIdle.font = text_font;
         [cpu_box addSubview:m_TextCPULoadIdle];
     
         NSDictionary *cpu_box_views = NSDictionaryOfVariableBindings(m_TextCPULoadSystem, m_TextCPULoadUser, m_TextCPULoadIdle, cpu_sysload_title, cpu_usrload_title, cpu_idle_title, line1, line2);
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_sysload_title]-(==8)-[m_TextCPULoadSystem]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_usrload_title]-(==8)-[m_TextCPULoadUser]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
-        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_idle_title]-(==8)-[m_TextCPULoadIdle]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
+        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_sysload_title]-(==8)-[m_TextCPULoadSystem(>=60)]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
+        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_usrload_title]-(==8)-[m_TextCPULoadUser(>=60)]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
+        [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==8)-[cpu_idle_title]-(==8)-[m_TextCPULoadIdle(>=60)]-(==8)-|" options:0 metrics:nil views:cpu_box_views]];
         [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line1]-(==1)-|" options:0 metrics:nil views:cpu_box_views]];
         [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[line2]-(==1)-|" options:0 metrics:nil views:cpu_box_views]];
         [cpu_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[cpu_sysload_title]-(<=1)-[line1(==1)]-(==7)-[cpu_usrload_title]-(<=1)-[line2(==1)]-(==7)-[cpu_idle_title]" options:0 metrics:nil views:cpu_box_views]];
@@ -207,53 +207,53 @@ static NSTextField *CreateStockTF()
     ////////////////////////////////////////////////////////////////////////////////// RAM
     NSBox *ram_box = [[NSBox alloc] initWithFrame:NSRect()];
     {
-        [ram_box setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [ram_box setTitlePosition:NSAtTop];
-        [ram_box setContentViewMargins:{2, 2}];
-        [ram_box setBorderType:NSLineBorder];
-        [ram_box setTitle:@"RAM"];
+        ram_box.translatesAutoresizingMaskIntoConstraints = NO;
+        ram_box.titlePosition = NSAtTop;
+        ram_box.contentViewMargins = {2, 2};
+        ram_box.borderType = NSLineBorder;
+        ram_box.title = NSLocalizedString(@"RAM", "Brief System Information ram box title");
         [self addSubview:ram_box];
     
         NSBox *line1 = [[NSBox alloc] initWithFrame:NSRect()];
-        [line1 setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [line1 setBoxType:NSBoxCustom];
-        [line1 setBorderColor:box_sep_color];
+        line1.translatesAutoresizingMaskIntoConstraints = NO;
+        line1.boxType = NSBoxCustom;
+        line1.borderColor = box_sep_color;
         [ram_box addSubview:line1];
         
         NSBox *line2 = [[NSBox alloc] initWithFrame:NSRect()];
-        [line2 setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [line2 setBoxType:NSBoxCustom];
-        [line2 setBorderColor:box_sep_color ];
+        line2.translatesAutoresizingMaskIntoConstraints = NO;
+        line2.boxType = NSBoxCustom;
+        line2.borderColor = box_sep_color;
         [ram_box addSubview:line2];
         
         auto ram_total_title = CreateStockTF();
-        [ram_total_title setStringValue:@"Total:"];
-        [ram_total_title setFont: text_font];
+        ram_total_title.stringValue = NSLocalizedString(@"Total:", "Brief System Information total label title");
+        ram_total_title.font = text_font;
         [ram_box addSubview:ram_total_title];
 
         auto ram_used_title = CreateStockTF();
-        [ram_used_title setStringValue:@"Used:"];
-        [ram_used_title setFont: text_font];
+        ram_used_title.stringValue = NSLocalizedString(@"Used:", "Brief System Information used label title");
+        ram_used_title.font = text_font;
         [ram_box addSubview:ram_used_title];
 
         auto ram_swap_title = CreateStockTF();
-        [ram_swap_title setStringValue:@"Swap:"];
-        [ram_swap_title setFont: text_font];
+        ram_swap_title.stringValue = NSLocalizedString(@"Swap:", "Brief System Information swap label title");
+        ram_swap_title.font = text_font;
         [ram_box addSubview:ram_swap_title];
     
         m_TextMemTotal = CreateStockTF();
-        [m_TextMemTotal setAlignment:NSRightTextAlignment];
-        [m_TextMemTotal setFont: text_font];
+        m_TextMemTotal.alignment = NSRightTextAlignment;
+        m_TextMemTotal.font = text_font;
         [ram_box addSubview:m_TextMemTotal];
 
         m_TextMemUsed = CreateStockTF();
-        [m_TextMemUsed setAlignment:NSRightTextAlignment];
-        [m_TextMemUsed setFont: text_font];
+        m_TextMemUsed.alignment = NSRightTextAlignment;
+        m_TextMemUsed.font = text_font;
         [ram_box addSubview:m_TextMemUsed];
 
         m_TextMemSwap = CreateStockTF();
-        [m_TextMemSwap setAlignment:NSRightTextAlignment];
-        [m_TextMemSwap setFont: text_font];
+        m_TextMemSwap.alignment = NSRightTextAlignment;
+        m_TextMemSwap.font = text_font;
         [ram_box addSubview:m_TextMemSwap];
     
         NSDictionary *ram_box_views = NSDictionaryOfVariableBindings(m_TextMemTotal, m_TextMemUsed, m_TextMemSwap, ram_total_title, ram_used_title, ram_swap_title, line1, line2);
@@ -271,53 +271,53 @@ static NSTextField *CreateStockTF()
     ////////////////////////////////////////////////////////////////////////////////// SYSTEM
     NSBox *system_box = [[NSBox alloc] initWithFrame:NSRect()];
     {
-        [system_box setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [system_box setTitlePosition:NSAtTop];
-        [system_box setContentViewMargins:{2, 2}];
-        [system_box setBorderType:NSLineBorder];
-        [system_box setTitle:@"General"];
+        system_box.translatesAutoresizingMaskIntoConstraints = NO;
+        system_box.titlePosition = NSAtTop;
+        system_box.contentViewMargins = {2, 2};
+        system_box.borderType = NSLineBorder;
+        system_box.title = NSLocalizedString(@"General", "Brief System Information general box title");
         [self addSubview:system_box];
     
         NSBox *line1 = [[NSBox alloc] initWithFrame:NSRect()];
-        [line1 setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [line1 setBoxType:NSBoxCustom];
-        [line1 setBorderColor:box_sep_color];
+        line1.translatesAutoresizingMaskIntoConstraints = NO;
+        line1.boxType = NSBoxCustom;
+        line1.borderColor = box_sep_color;
         [system_box addSubview:line1];
         
         NSBox *line2 = [[NSBox alloc] initWithFrame:NSRect()];
-        [line2 setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [line2 setBoxType:NSBoxCustom];
-        [line2 setBorderColor:box_sep_color ];
+        line2.translatesAutoresizingMaskIntoConstraints = NO;
+        line2.boxType = NSBoxCustom;
+        line2.borderColor = box_sep_color;
         [system_box addSubview:line2];
         
         auto model_title = CreateStockTF();
-        [model_title setStringValue:@"Mac Model:"];
-        [model_title setFont: text_font];
+        model_title.stringValue = NSLocalizedString(@"Mac Model:", "Brief System Information mac model label title");
+        model_title.font = text_font;
         [system_box addSubview:model_title];
         
         auto computer_title = CreateStockTF();
-        [computer_title setStringValue:@"Computer Name:"];
-        [computer_title setFont: text_font];
+        computer_title.stringValue = NSLocalizedString(@"Computer Name:", "Brief System Information computer name label title");
+        computer_title.font = text_font;
         [system_box addSubview:computer_title];
         
         auto user_title = CreateStockTF();
-        [user_title setStringValue:@"User Name:"];
-        [user_title setFont: text_font];
+        user_title.stringValue = NSLocalizedString(@"User Name:", "Brief System Information user name label title");
+        user_title.font = text_font;
         [system_box addSubview:user_title];
         
         m_TextMachineModel = CreateStockTF();
-        [m_TextMachineModel setAlignment:NSRightTextAlignment];
-        [m_TextMachineModel setFont: text_font];
+        m_TextMachineModel.alignment = NSRightTextAlignment;
+        m_TextMachineModel.font = text_font;
         [system_box addSubview:m_TextMachineModel];
     
         m_TextComputerName = CreateStockTF();
-        [m_TextComputerName setAlignment:NSRightTextAlignment];
-        [m_TextComputerName setFont: text_font];
+        m_TextComputerName.alignment = NSRightTextAlignment;
+        m_TextComputerName.font = text_font;
         [system_box addSubview:m_TextComputerName];
     
         m_TextUserName = CreateStockTF();
-        [m_TextUserName setAlignment:NSRightTextAlignment];
-        [m_TextUserName setFont: text_font];
+        m_TextUserName.alignment = NSRightTextAlignment;
+        m_TextUserName.font = text_font;
         [system_box addSubview:m_TextUserName];
         
         NSDictionary *system_box_views = NSDictionaryOfVariableBindings(m_TextMachineModel, m_TextComputerName, m_TextUserName, line1, line2, model_title, computer_title, user_title);
@@ -336,53 +336,53 @@ static NSTextField *CreateStockTF()
     ////////////////////////////////////////////////////////////////////////////////// SYSTEM
     NSBox *storage_box = [[NSBox alloc] initWithFrame:NSRect()];
     {
-        [storage_box setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [storage_box setTitlePosition:NSAtTop];
-        [storage_box setContentViewMargins:{2, 2}];
-        [storage_box setBorderType:NSLineBorder];
-        [storage_box setTitle:@"Storage"];
+        storage_box.translatesAutoresizingMaskIntoConstraints = NO;
+        storage_box.titlePosition = NSAtTop;
+        storage_box.contentViewMargins = {2, 2};
+        storage_box.borderType = NSLineBorder;
+        storage_box.title = NSLocalizedString(@"Storage", "Brief System Information storage box title");
         [self addSubview:storage_box];
     
         NSBox *line1 = [[NSBox alloc] initWithFrame:NSRect()];
-        [line1 setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [line1 setBoxType:NSBoxCustom];
-        [line1 setBorderColor:box_sep_color];
+        line1.translatesAutoresizingMaskIntoConstraints = NO;
+        line1.boxType = NSBoxCustom;
+        line1.borderColor = box_sep_color;
         [storage_box addSubview:line1];
         
         NSBox *line2 = [[NSBox alloc] initWithFrame:NSRect()];
-        [line2 setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [line2 setBoxType:NSBoxCustom];
-        [line2 setBorderColor:box_sep_color ];
+        line2.translatesAutoresizingMaskIntoConstraints = NO;
+        line2.boxType = NSBoxCustom;
+        line2.borderColor = box_sep_color;
         [storage_box addSubview:line2];
         
         auto vol_title = CreateStockTF();
-        [vol_title setStringValue:@"Volume Name:"];
-        [vol_title setFont: text_font];
+        vol_title.stringValue = NSLocalizedString(@"Volume Name:", "Brief System Information volume name label title");
+        vol_title.font = text_font;
         [storage_box addSubview:vol_title];
         
         auto bytes_title = CreateStockTF();
-        [bytes_title setStringValue:@"Total Bytes:"];
-        [bytes_title setFont: text_font];
+        bytes_title.stringValue = NSLocalizedString(@"Total Bytes:", "Brief System Information total bytes label title");
+        bytes_title.font = text_font;
         [storage_box addSubview:bytes_title];
         
         auto free_title = CreateStockTF();
-        [free_title setStringValue:@"Free Bytes:"];
-        [free_title setFont: text_font];
+        free_title.stringValue = NSLocalizedString(@"Free Bytes:", "Brief System Information free bytes label title");
+        free_title.font = text_font;
         [storage_box addSubview:free_title];
         
         m_TextVolumeName = CreateStockTF();
-        [m_TextVolumeName setAlignment:NSRightTextAlignment];
-        [m_TextVolumeName setFont: text_font];
+        m_TextVolumeName.alignment = NSRightTextAlignment;
+        m_TextVolumeName.font = text_font;
         [storage_box addSubview:m_TextVolumeName];
     
         m_TextVolumeTotalBytes = CreateStockTF();
-        [m_TextVolumeTotalBytes setAlignment:NSRightTextAlignment];
-        [m_TextVolumeTotalBytes setFont: text_font];
+        m_TextVolumeTotalBytes.alignment = NSRightTextAlignment;
+        m_TextVolumeTotalBytes.font = text_font;
         [storage_box addSubview:m_TextVolumeTotalBytes];
     
         m_TextVolumeAvailBytes = CreateStockTF();
-        [m_TextVolumeAvailBytes setAlignment:NSRightTextAlignment];
-        [m_TextVolumeAvailBytes setFont: text_font];
+        m_TextVolumeAvailBytes.alignment = NSRightTextAlignment;
+        m_TextVolumeAvailBytes.font = text_font;
         [storage_box addSubview:m_TextVolumeAvailBytes];
     
         NSDictionary *storage_views = NSDictionaryOfVariableBindings(line1, line2, vol_title, bytes_title, free_title, m_TextVolumeName, m_TextVolumeTotalBytes, m_TextVolumeAvailBytes);
@@ -400,17 +400,44 @@ static NSTextField *CreateStockTF()
     NSDictionary *views = NSDictionaryOfVariableBindings(title, system_box, cpu_box, ram_box, storage_box);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[title]-[system_box(==90)]-[cpu_box(==90)]-[storage_box(==90)]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[system_box]-[ram_box(==90)]" options:0 metrics:nil views:views]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:system_box attribute:NSLayoutAttributeLeading
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:cpu_box
+                                                     attribute:NSLayoutAttributeLeading
+                                                    multiplier:1
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:system_box
+                                                     attribute:NSLayoutAttributeLeading
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:storage_box
+                                                     attribute:NSLayoutAttributeLeading
+                                                    multiplier:1
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:system_box
+                                                     attribute:NSLayoutAttributeTrailing
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:ram_box
+                                                     attribute:NSLayoutAttributeTrailing
+                                                    multiplier:1
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:system_box
+                                                     attribute:NSLayoutAttributeTrailing
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:storage_box
+                                                     attribute:NSLayoutAttributeTrailing
+                                                    multiplier:1
+                                                      constant:0]];
     if(m_IsRight) {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[title(==272)]" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[system_box(==272)]" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[storage_box(==272)]" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[cpu_box(==128)]-(==16)-[ram_box(==128)]" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[title(>=272)]" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[system_box(>=272)]" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[storage_box(>=272)]" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[cpu_box(>=128)]-(==16)-[ram_box(>=128)]" options:0 metrics:nil views:views]];
     }
     else {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[title(==272)]-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[system_box(==272)]-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[storage_box(==272)]-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[cpu_box(==128)]-(==16)-[ram_box(==128)]-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[title(>=272)]-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[system_box(>=272)]-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[storage_box(>=272)]-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[cpu_box(>=128)]-(==16)-[ram_box(>=128)]-|" options:0 metrics:nil views:views]];
     }
 }
 
@@ -433,23 +460,23 @@ static NSTextField *CreateStockTF()
 
 - (void) UpdateControls
 {
-    [m_TextCPULoadSystem setStringValue:[NSString stringWithFormat:@"%.2f %%", m_CPULoad.system*100.]];
-    [m_TextCPULoadUser setStringValue:[NSString stringWithFormat:@"%.2f %%", m_CPULoad.user*100.]];
-    [m_TextCPULoadIdle setStringValue:[NSString stringWithFormat:@"%.2f %%", m_CPULoad.idle*100.]];
+    m_TextCPULoadSystem.stringValue = [NSString stringWithFormat:@"%.2f %%", m_CPULoad.system*100.];
+    m_TextCPULoadUser.stringValue = [NSString stringWithFormat:@"%.2f %%", m_CPULoad.user*100.];
+    m_TextCPULoadIdle.stringValue = [NSString stringWithFormat:@"%.2f %%", m_CPULoad.idle*100.];
     auto &f = ByteCountFormatter::Instance();
-    [m_TextMemTotal setStringValue:f.ToNSString(m_MemoryInfo.total_hw, ByteCountFormatter::Adaptive8)];
-    [m_TextMemUsed setStringValue:f.ToNSString(m_MemoryInfo.used, ByteCountFormatter::Adaptive8)];
-    [m_TextMemSwap setStringValue:f.ToNSString(m_MemoryInfo.swap, ByteCountFormatter::Adaptive8)];
-    [m_TextMachineModel setStringValue:m_Overview.human_model];
-    [m_TextComputerName setStringValue:m_Overview.computer_name];
-    [m_TextUserName setStringValue:m_Overview.user_full_name];
+    m_TextMemTotal.stringValue = f.ToNSString(m_MemoryInfo.total_hw, ByteCountFormatter::Adaptive8);
+    m_TextMemUsed.stringValue = f.ToNSString(m_MemoryInfo.used, ByteCountFormatter::Adaptive8);
+    m_TextMemSwap.stringValue = f.ToNSString(m_MemoryInfo.swap, ByteCountFormatter::Adaptive8);
+    m_TextMachineModel.stringValue = m_Overview.human_model;
+    m_TextComputerName.stringValue = m_Overview.computer_name;
+    m_TextUserName.stringValue = m_Overview.user_full_name;
     if(!m_StatFS.volume_name.empty())
-        [m_TextVolumeName setStringValue:[NSString stringWithUTF8String:m_StatFS.volume_name.c_str()]];
+        m_TextVolumeName.stringValue = [NSString stringWithUTF8String:m_StatFS.volume_name.c_str()];
     else
-        [m_TextVolumeName setStringValue:@"N/A"];
+        m_TextVolumeName.stringValue = NSLocalizedString(@"N/A", "");
     
-    [m_TextVolumeTotalBytes setStringValue:[m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.total_bytes]]];
-    [m_TextVolumeAvailBytes setStringValue:[m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.avail_bytes]]];
+    m_TextVolumeTotalBytes.stringValue = [m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.total_bytes]];
+    m_TextVolumeAvailBytes.stringValue = [m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.avail_bytes]];
 }
 
 - (void) UpdateVFSTarget:(const string&)_path host:(shared_ptr<VFSHost>)_host

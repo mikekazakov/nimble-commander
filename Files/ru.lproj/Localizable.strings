@@ -7,8 +7,17 @@
 /* (No Commment) */
 "Are you sure you want to clear the list of recent servers?" = "Вы действительно хотите очистить список последних подключений?";
 
+/* Brief System Information overlay title */
+"Brief System Information" = "Краткий обзор системы";
+
+/* Brief System Information cpu box title */
+"CPU" = "ЦП";
+
 /* No comment provided by engineer. */
 "Cancel" = "Отмена";
+
+/* Menu item option in internal viewer search */
+"Case-sensitive search" = "Поиск с учетом регистра";
 
 /* Title for file attributes sheet, multiple items */
 "Change file attributes for %@ selected items" = "Изменить файловые атрибуты для %@ выбранных объектов";
@@ -18,6 +27,9 @@
 
 /* Menu item titile for recents clearing action */
 "Clear Recent Servers..." = "Очистить последние серверы...";
+
+/* Menu item title in internal viewer search */
+"Clear Recents" = "Очистить недавние поиски";
 
 /* Asking user for granting file system access for Files */
 "Click 'Open' to allow access to files contained in the selected directory" = "Нажмите 'Открыть' чтобы разрешить доступ к выбранной директории";
@@ -31,6 +43,15 @@
 /* Informing when closing with running terminal processes */
 "Closing this window will terminate the running processes: " = "Закрытие этого окна прервет следующие процессы: ";
 
+/* Brief System Information computer name label title */
+"Computer Name:" = "Имя компьютера:";
+
+/* Menu item title in file deletion sheet */
+"Delete Permanently" = "Удалить необратимо";
+
+/* Menu item title in file deletion sheet */
+"Delete Securely" = "Удалить безопасно";
+
 /* Title for deselection with mask popup */
 "Deselect files using mask:" = "Снять выделение по маске:";
 
@@ -39,6 +60,12 @@
 
 /* Asking to close window with processes running */
 "Do you want to close this window?" = "Вы хотите закрыть это окно?";
+
+/* Asking user to delete multiple files */
+"Do you wish to delete %@ items?" = "Вы хотите удалить %@ объектов?";
+
+/* Asking user to delete a file */
+"Do you wish to delete “%@”?" = "Вы хотите удалить “%@”?";
 
 /* Menu item title */
 "Download Full Version" = "Загрузить версию Full";
@@ -49,6 +76,21 @@
 /* Showing error when connecting to FTP server */
 "FTP connection error:" = "Ошибка подключения FTP:";
 
+/* Window title for internal file viewer */
+"File View - %@" = "Просмотр файла - %@";
+
+/* Menu item option in internal viewer search */
+"Find whole phrase" = "Искать фразу целиком";
+
+/* Brief System Information free bytes label title */
+"Free Bytes:" = "Свободно байт:";
+
+/* Brief System Information general box title */
+"General" = "Основное";
+
+/* Internal viewer mode - hexadecimal */
+"Hex" = "Hex";
+
 /* Menu item title for hiding tab bar */
 "Hide Tab Bar" = "Скрыть панель вкладок";
 
@@ -58,11 +100,41 @@
 /* Menu item title */
 "Hide Toolbar" = "Скрыть панель инструментов";
 
+/* Brief System Information idle label title */
+"Idle:" = "Свободно:";
+
+/* Brief System Information mac model label title */
+"Mac Model:" = "Модель Mac:";
+
+/* Menu item title in file deletion sheet */
+"Move to Trash" = "Переместить в Корзину";
+
+/* No comment provided by engineer. */
+"N/A" = "Н/Д";
+
 /* No comment provided by engineer. */
 "OK" = "ОК";
 
+/* Title for process sheet when opening a vfs file */
+"Opening file..." = "Открытие файла...";
+
+/* Brief System Information ram box title */
+"RAM" = "Память";
+
+/* Menu item title in internal viewer search */
+"Recent Searches" = "Недавние поиски";
+
+/* Menu item title, disabled - only as separator */
+"Recent Servers" = "Последние серверы";
+
+/* Menu item title in internal viewer search */
+"Recents" = "Последние";
+
 /* Showing error when connecting to SFTP server */
 "SFTP connection error:" = "Ошибка подключения SFTP:";
+
+/* Placeholder for search text field in internal viewer */
+"Search in file" = "Искать в файле";
 
 /* Title for selection with mask popup */
 "Select files using mask:" = "Выделить по маске:";
@@ -82,8 +154,20 @@
 /* Asking user for quitting app with activity - confirmation */
 "Stop And Quit" = "Остановить и завершить";
 
+/* Brief System Information storage box title */
+"Storage" = "Хранилище";
+
+/* Brief System Information swap label title */
+"Swap:" = "Своп:";
+
+/* Brief System Information system label title */
+"System:" = "Система:";
+
 /* User confirmation on message box */
 "Terminate And Close" = "Прервать и закрыть";
+
+/* Internal viewer mode - textual */
+"Text" = "Текст";
 
 /* Asking user for quitting app with activity */
 "The application has running operations. Do you want to stop all operations and quit?" = "Имеются работающие операции. Прекратить все операции и завершить приложение?";
@@ -91,11 +175,32 @@
 /* Asking user for confirmation on erasing custom settings - informative text */
 "This will erase all your custom settings." = "Это удалит ваши собственные настройки.";
 
+/* Brief System Information total bytes label title */
+"Total Bytes:" = "Всего байт:";
+
+/* Brief System Information total label title */
+"Total:" = "Всего:";
+
 /* Menu item title */
 "Try Full Version" = "Попробовать версию Full";
 
+/* Brief System Information used label title */
+"Used:" = "Используемая:";
+
+/* Brief System Information user name label title */
+"User Name:" = "Имя пользователя:";
+
+/* Brief System Information user label title */
+"User:" = "Пользователь:";
+
+/* Brief System Information volume name label title */
+"Volume Name:" = "Название тома:";
+
 /* Asking user to close window with some operations running */
 "Window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
+
+/* Internal viewer checkbox to wrap words */
+"Word wrap" = "Переносить слова";
 
 /* Asking user if he wants to visit a website for update */
 "Would you like to visit a website?" = "Хотели бы Вы посетить вебсайт?";

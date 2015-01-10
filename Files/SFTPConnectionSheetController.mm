@@ -41,7 +41,7 @@ static const auto g_SSHdir = CommonPaths::Get(CommonPaths::Home) + ".ssh/";
         self.saved.autoenablesItems = false;
         
         NSMenuItem *pref = [[NSMenuItem alloc] init];
-        pref.title = @"Recent Servers";
+        pref.title = NSLocalizedString(@"Recent Servers", "Menu item title, disabled - only as separator");
         pref.enabled = false;
         [self.saved.menu addItem:pref];
         
@@ -49,7 +49,7 @@ static const auto g_SSHdir = CommonPaths::Get(CommonPaths::Home) + ".ssh/";
             [self.saved addItemWithTitle:[NSString stringWithUTF8StdString:i->host]];
         
         [self.saved.menu addItem:NSMenuItem.separatorItem];
-        [self.saved addItemWithTitle:@"Clear Recent Servers..."];
+        [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
     }
 }
 

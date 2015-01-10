@@ -47,7 +47,7 @@
     [self.DeleteButtonMenu removeAllItems];
     if( m_AllowMoveToTrash ) {
         NSMenuItem *it = [[NSMenuItem alloc] init];
-        it.title = @"Move to Trash";
+        it.title = NSLocalizedString(@"Move to Trash", "Menu item title in file deletion sheet");
         it.tag = int(FileDeletionOperationType::MoveToTrash);
         it.action = @selector(OnMenuItem:);
         it.target = self;
@@ -55,7 +55,7 @@
     }
     if( true ) {
         NSMenuItem *it = [[NSMenuItem alloc] init];
-        it.title = @"Delete Permanently";
+        it.title = NSLocalizedString(@"Delete Permanently", "Menu item title in file deletion sheet");
         it.tag = int(FileDeletionOperationType::Delete);
         it.action = @selector(OnMenuItem:);
         it.target = self;
@@ -63,7 +63,7 @@
     }
     if( m_AllowSecureDelete ) {
         NSMenuItem *it = [[NSMenuItem alloc] init];
-        it.title = @"Delete Securely";
+        it.title = NSLocalizedString(@"Delete Securely", "Menu item title in file deletion sheet");
         it.tag = int(FileDeletionOperationType::SecureDelete);
         it.action = @selector(OnMenuItem:);
         it.target = self;        
@@ -115,11 +115,11 @@
 - (void) buildTitle:(const vector<string>&)_files
 {
     if(_files.size() == 1)
-        m_Title = [NSString stringWithFormat:@"Do you wish to delete %@?",
+        m_Title = [NSString stringWithFormat:NSLocalizedString(@"Do you wish to delete \u201c%@\u201d?", "Asking user to delete a file"),
                    [NSString stringWithUTF8String:_files.front().c_str()]];
     else
-        m_Title = [NSString stringWithFormat:@"Do you wish to delete %lu items?",
-                   _files.size()];
+        m_Title = [NSString stringWithFormat:NSLocalizedString(@"Do you wish to delete %@ items?", "Asking user to delete multiple files"),
+                   [NSNumber numberWithUnsignedLong:_files.size()]];
     
 }
 

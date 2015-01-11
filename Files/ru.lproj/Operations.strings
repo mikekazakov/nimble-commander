@@ -7,8 +7,26 @@
 /* (No Commment) */
 "Abort" = "Прервать";
 
+/* Title of attributes change operation for multiple files */
+"Altering attributes of %@ items in “%@”" = "Изменение атрибутов %1$@ объектов в “%2$@”";
+
+/* Title of attributes change operation for single file */
+"Altering attributes of “%@”" = "Изменение атрибутов “%@”";
+
 /* Operation title for symlink altering */
 "Altering symbolic link" = "Изменение символической ссылки";
+
+/* Informative text to setting access time */
+"Can't set access time\nError: %@\nFile: %@" = "Невозможно установить время доступа\nОшибка: %1$@\nФайл: %2$@";
+
+/* Informative text to setting change time */
+"Can't set change time\nError: %@\nFile: %@" = "Невозможно установить время изменения\nОшибка: %1$@\nФайл: %2$@";
+
+/* Informative text to setting creation time */
+"Can't set creation time\nError: %@\nFile: %@" = "Невозможно установить время создания\nОшибка: %1$@\nФайл: %2$@";
+
+/* Informative text to setting modify time */
+"Can't set modification time\nError: %@\nFile: %@" = "Невозможно установить время модификации\nОшибка: %1$@\nФайл: %2$@";
 
 /* Operation title prefix for copying */
 "Copying" = "Копирование";
@@ -28,8 +46,26 @@
 /* Generic informative error text */
 "Error: %@" = "Ошибка: %@";
 
+/* (No Commment) */
+"Error: %@\nDirectory: %@" = "Ошибка: %1$@\nДиректория: %2$@";
+
+/* Informative text on chown failure dialog */
+"Error: %@\nFile: %@" = "Ошибка: %1$@\nФайл: %2$@";
+
+/* Informative text on chflags failure dialog */
+"Error: %@\nFile: %@\nFlags: %@" = "Ошибка: %1$@\nФайл: %2$@\nФлаги: %3$@";
+
+/* Informative text on chmod failure dialog */
+"Error: %@\nFile: %@\nMode: %@" = "Ошибка: %1$@\nФайл: %2$@\nРежим: %3$@";
+
 /* Error informative text with path */
 "Error: %@\nPath: %@" = "Ошибка: %1$@\nПуть: %2$@";
+
+/* Error dialog title on file access failure */
+"Failed to access a file" = "Отсутствует доступ к файлу";
+
+/* Error dialog title on directory access failure */
+"Failed to access directory" = "Отсутствует доступ к папке";
 
 /* Title on error when source file is inaccessible */
 "Failed to access file" = "Отсутствует доступ к файлу";
@@ -49,8 +85,20 @@
 /* Title on error when destination file can't be opened */
 "Failed to open destination file" = "Не удалось открыть целевой файл";
 
+/* Error dialog title on chflags failure */
+"Failed to perform chflags" = "Не удалось выполнить chflags";
+
+/* Error dialog title on chmod failure */
+"Failed to perform chmod" = "Не удалось выполнить chmod";
+
+/* Error dialog title on chown failure */
+"Failed to perform chown" = "Не удалось выполнить chown";
+
 /* Error when reading failed */
 "Failed to read a file" = "Не удалось прочитать файл";
+
+/* Error dialog title on time setting failure */
+"Failed to set file time" = "Не удалось установить время файла";
 
 /* Error when writing failed */
 "Failed to write a file" = "Не удалось записать файл";
@@ -61,7 +109,7 @@
 /* Operaration title prefix for moving */
 "Moving" = "Перенос";
 
-/* Title for processing a single item */
+/* (No Commment) */
 "Processing “%@”" = "Обработка “%@”";
 
 /* User action button title */

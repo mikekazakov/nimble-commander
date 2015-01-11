@@ -172,7 +172,7 @@ void FileCopyOperationJobGenericToGeneric::BuildDirectories(const path &_dir, co
         int ret = _host->CreateDirectory(i->c_str(), 0755, 0);
         if(ret != 0)
         {
-            int result = [[m_Operation OnDestCantCreateDir:VFSError::ToNSError(ret) ForDir:i->c_str()] WaitForResult];
+            int result = [[m_Operation OnCantCreateDir:VFSError::ToNSError(ret) ForDir:i->c_str()] WaitForResult];
             if (result == OperationDialogResult::Retry) goto mkdir;
             if (result == OperationDialogResult::Stop) { RequestStop(); return; }
         }
@@ -521,7 +521,7 @@ bool FileCopyOperationJobGenericToGeneric::CopyDirectoryTo(const path &_src_full
         if(ret < 0)
         {
             if(m_SkipAll) goto end;
-            int result = [[m_Operation OnDestCantCreateDir:VFSError::ToNSError(ret) ForDir:_dest_full_path.c_str()] WaitForResult];
+            int result = [[m_Operation OnCantCreateDir:VFSError::ToNSError(ret) ForDir:_dest_full_path.c_str()] WaitForResult];
             if(result == OperationDialogResult::Retry) goto domkdir;
             if(result == OperationDialogResult::Skip) goto end;
             if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto end;}

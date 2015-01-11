@@ -58,8 +58,7 @@ struct FileCopyOperationOptions
 
 - (void)Update;
 
-- (OperationDialogAlert *)OnDestCantCreateDir:(NSError*)_error ForDir:(const char *)_path;
-- (OperationDialogAlert *)OnCopyCantCreateDir:(int)_error ForDir:(const char *)_path;
+- (OperationDialogAlert *)OnCantCreateDir:(NSError*)_error ForDir:(const char *)_path;
 - (OperationDialogAlert *)OnCopyCantAccessSrcFile:(NSError*)_error ForFile:(const char *)_path;
 - (OperationDialogAlert *)OnCopyCantOpenDestFile:(NSError*)_error ForFile:(const char *)_path;
 - (OperationDialogAlert *)OnCopyReadError:(NSError*)_error ForFile:(const char *)_path;

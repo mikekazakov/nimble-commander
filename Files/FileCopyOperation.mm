@@ -15,6 +15,7 @@
 
 static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 {
+    // TODO: localize!
     if(_time < 60) // seconds
     {
         sprintf(_out, "%llu s", _time);
@@ -31,6 +32,29 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
     {
         sprintf(_out, "%llu d", (_time + 43200)/86400lu);
     }
+}
+
+static NSString *OpTitlePreffix(bool _copying)
+{
+    return _copying ?
+        NSLocalizedStringFromTable(@"Copying", @"Operations", "Operation title prefix for copying") :
+        NSLocalizedStringFromTable(@"Moving", @"Operations", "Operaration title prefix for moving");;
+}
+
+static NSString *OpTitleForSingleItem(bool _copying, NSString *_item, NSString *_to)
+{
+    return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ \u201c%@\u201d to \u201c%@\u201d", @"Operations", "Title for copying or moving a single item"),
+            OpTitlePreffix(_copying),
+            _item,
+            _to];
+}
+
+static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_to)
+{
+    return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ %@ items to \u201c%@\u201d", @"Operations", "Title for copying or moving a multiple items"),
+            OpTitlePreffix(_copying),
+            [NSNumber numberWithInt:_items],
+            _to];
 }
 
 @implementation FileCopyOperation
@@ -54,18 +78,12 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
         char buff[MAXPATHLEN] = {0};
         bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
         int items_amount = _files.size();
-        
-        NSString *operation = _opts.docopy ? @"Copying" : @"Moving";
+        NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _dest)];
         if (items_amount == 1)
-            self.Caption = [NSString stringWithFormat:@"%@ \"%@\" to \"%@\"",
-                            operation,
-                            [NSString stringWithUTF8String:_files.front().c_str()],
-                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+            self.Caption = OpTitleForSingleItem(_opts.docopy, [NSString stringWithUTF8String:_files.front().c_str()], to);
         else
-            self.Caption = [NSString stringWithFormat:@"Copying %i items to \"%@\"",
-                            items_amount,
-                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
-
+            self.Caption = OpTitleForMultipleItems(_opts.docopy, items_amount, to);
+        
         m_NativeToNativeJob->Init(move(_files), _root, _dest, _opts, self);
     }
     return self;
@@ -85,18 +103,11 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
         char buff[MAXPATHLEN] = {0};
         bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
         int items_amount = _files.size();
-        
-        NSString *operation = _opts.docopy ? @"Copying" : @"Moving";
+        NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _dest)];
         if (items_amount == 1)
-            self.Caption = [NSString stringWithFormat:@"%@ \"%@\" to \"%@\"",
-                            operation,
-                            [NSString stringWithUTF8String:_files.front().c_str()],
-                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+            self.Caption = OpTitleForSingleItem(_opts.docopy, [NSString stringWithUTF8String:_files.front().c_str()], to);
         else
-            self.Caption = [NSString stringWithFormat:@"%@ %i items to \"%@\"",
-                            operation,
-                            items_amount,
-                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+            self.Caption = OpTitleForMultipleItems(_opts.docopy, items_amount, to);
         
         m_GenericToNativeJob->Init(move(_files), _root, _vfs, _dest, _opts, self);
     }
@@ -118,18 +129,11 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
         char buff[MAXPATHLEN] = {0};
         bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
         int items_amount = _files.size();
-        
-        NSString *operation = _opts.docopy ? @"Copying" : @"Moving";
+        NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _dest)];
         if (items_amount == 1)
-            self.Caption = [NSString stringWithFormat:@"%@ \"%@\" to \"%@\"",
-                            operation,
-                            [NSString stringWithUTF8String:_files.front().c_str()],
-                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+            self.Caption = OpTitleForSingleItem(_opts.docopy, [NSString stringWithUTF8String:_files.front().c_str()], to);
         else
-            self.Caption = [NSString stringWithFormat:@"%@ %i items to \"%@\"",
-                            operation,
-                            items_amount,
-                            [NSString stringWithUTF8String:(use_buff ? buff : _dest)]];
+            self.Caption = OpTitleForMultipleItems(_opts.docopy, items_amount, to);
         
         m_GenericToGenericJob->Init(move(_files),
                                     _root,
@@ -198,15 +202,12 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
         {
             const char *file = stats.GetCurrentItem();
             if (!file)
-            {
                 self.ShortInfo = @"";
-            }
             else
-            {
-                self.ShortInfo = [NSString stringWithFormat:@"Processing \"%@\"",
+                self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
+                                                                                       @"Operations",
+                                                                                       "Title for processing a single item"),
                                   [NSString stringWithUTF8String:file]];
-            }
-            
         }
         
         m_LastInfoUpdateTime = time;
@@ -237,6 +238,7 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
         if (copy_speed)
             FormHumanReadableTimeRepresentation(eta_value, eta);
 
+        // TODO: localize!
         auto &f = ByteCountFormatter::Instance();
         if (copy_speed)
             self.ShortInfo = [NSString stringWithFormat:@"%@ of %@ - %@/s - %s",
@@ -278,6 +280,7 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
         if (copy_speed)
             FormHumanReadableTimeRepresentation(eta_value, eta);
         
+        // TODO: localize!
         auto &f = ByteCountFormatter::Instance();
         if (copy_speed)
             self.ShortInfo = [NSString stringWithFormat:@"%@ of %@ - %@/s - %s",
@@ -297,35 +300,25 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 
 - (bool) IsSingleFileCopy
 {
-    if(!m_NativeToNativeJob.get()) return false;
+    if(!m_NativeToNativeJob) return false;
     return m_NativeToNativeJob->IsSingleFileCopy();
 }
 
-- (OperationDialogAlert *)OnDestCantCreateDir:(NSError*)_error ForDir:(const char *)_path
+- (NSString*) buildInformativeStringForError:(NSError*)_error onPath:(const char *)_path
+{
+    return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nPath: %@", @"Operations", "Error informative text with path"),
+            _error.localizedDescription,
+            [NSString stringWithUTF8String:_path]];
+}
+
+- (OperationDialogAlert *)OnCantCreateDir:(NSError*)_error ForDir:(const char *)_path;
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
                                    initRetrySkipSkipAllAbortHide:NO];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to create directory"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               _error.localizedDescription, [NSString stringWithUTF8String:_path]]];
-    
-    [self EnqueueDialog:alert];
-    
-    return alert;
-}
-
-- (OperationDialogAlert *)OnCopyCantCreateDir:(int)_error ForDir:(const char *)_path
-{
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
-    
-    [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to create directory"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
-                               strerror(_error), [NSString stringWithUTF8String:_path]]];
-
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to create directory", @"Operations", "Error sheet prompt on dir creation")];
+    [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
     [self EnqueueDialog:alert];
     
     return alert;
@@ -337,11 +330,8 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to access file"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               [_error localizedDescription],
-                               [NSString stringWithUTF8String:_path]]];
-    
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access file", @"Operations", "Title on error when source file is inaccessible")];
+    [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
     [self EnqueueDialog:alert];
     
     return alert;
@@ -353,9 +343,8 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to open file"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               [_error localizedDescription], [NSString stringWithUTF8String:_path]]];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to open destination file", @"Operations", "Title on error when destination file can't be opened")];
+    [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
     
     [self EnqueueDialog:alert];
     
@@ -368,10 +357,8 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Read error"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               [_error localizedDescription],
-                               [NSString stringWithUTF8String:_path]]];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to read a file", @"Operations", "Error when reading failed")];
+    [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
     
     [self EnqueueDialog:alert];
     
@@ -384,10 +371,8 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Write error"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               [_error localizedDescription],
-                               [NSString stringWithUTF8String:_path]]];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to write a file", @"Operations", "Error when writing failed")];
+    [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
     
     [self EnqueueDialog:alert];
     
@@ -420,13 +405,21 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
     // TODO:
     // why we use here a different dialog, not one that used on copy operation?
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
-    [alert AddButtonWithTitle:@"Rewrite" andResult:OperationDialogResult::Continue];
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+    [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Rewrite", @"Operations", "User action button title to rewrite a file")
+                    andResult:OperationDialogResult::Continue];
+    [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Abort", @"Operations", "User action button title to abort an operation")
+                    andResult:OperationDialogResult::Stop];
+    [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Hide", @"Operations", "User action button title to hide an error sheet")
+                    andResult:OperationDialogResult::None];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Destination already exists. Do you want to rewrite it?"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Destination: %@\nSource: %@",
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Destination already exists. Do you want to rewrite it?",
+                                                     @"Operations",
+                                                     "Title for error wheen when destination file already exists")];
+    
+    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Destination: %@\nSource: %@",
+                                                                                    @"Operations",
+                                                                                    "Informative text on case when destination file already exists"),
                                [NSString stringWithUTF8String:_dest],
                                [NSString stringWithUTF8String:_src]]];
     

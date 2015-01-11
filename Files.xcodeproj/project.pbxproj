@@ -785,6 +785,9 @@
 		CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
 		CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
 		CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
+		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
+		CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
+		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */; };
 		CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
@@ -1830,6 +1833,8 @@
 		CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DataAccess.mm"; sourceTree = "<group>"; };
 		CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = 3rd_party/built/lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		CFD7E4E6190FD61E0064D249 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = 3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
+		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
+		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDA110D177E83F8009E29F7 /* BigFileViewHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewHistory.h; sourceTree = "<group>"; };
 		CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewHistory.mm; sourceTree = "<group>"; };
 		CFDA4CCB182A17C7006EC35C /* LSUrls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSUrls.h; sourceTree = "<group>"; };
@@ -2000,6 +2005,7 @@
 				CF3120C81A510F640062185A /* Localizable.strings */,
 				CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */,
 				CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */,
+				CFD9F94D1A623E4E001B3F33 /* Operations.strings */,
 			);
 			name = Resources;
 			path = Files;
@@ -3377,6 +3383,7 @@
 				CF6D99AA196676AE0077B146 /* Defaults.plist in Resources */,
 				CF7249AA1990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF7C92151A0B865D00FAE649 /* tab_add.png in Resources */,
+				CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */,
 				CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3429,6 +3436,7 @@
 				CF039EAC1791166000DC85D6 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CF039EB117911FFA00DC85D6 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF039EB61791204600DC85D6 /* PreferencesWindowViewerTab.xib in Resources */,
+				CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */,
 				CF7249A91990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFB598B9196E38E400D4C108 /* question_icon.png in Resources */,
 				CF09858118F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
@@ -3498,6 +3506,7 @@
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFF6F39A1A13567C00011177 /* pref_general_icon.png in Resources */,
 				CFF6F39B1A13567C00011177 /* pref_viewer_icon.png in Resources */,
+				CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */,
 				CFF6F39C1A13567C00011177 /* pause_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4722,6 +4731,15 @@
 				CFCCFC631A5FBD9600313845 /* ru */,
 			);
 			name = FilePanelsQuickSearch.strings;
+			sourceTree = "<group>";
+		};
+		CFD9F94D1A623E4E001B3F33 /* Operations.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFD9F94C1A623E4E001B3F33 /* Base */,
+				CFD9F9531A62415C001B3F33 /* ru */,
+			);
+			name = Operations.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

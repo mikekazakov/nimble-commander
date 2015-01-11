@@ -376,7 +376,7 @@ void FileCopyOperationJobNativeToNative::BuildDestinationDirectory(const char* _
             // absent part - need to create it
 domkdir:    if(io.mkdir(destpath, S_IXUSR|S_IXGRP|S_IXOTH|S_IRUSR|S_IRGRP|S_IROTH|S_IWUSR) == -1)
             {
-                int result = [[m_Operation OnDestCantCreateDir:ErrnoToNSError() ForDir:destpath] WaitForResult];
+                int result = [[m_Operation OnCantCreateDir:ErrnoToNSError() ForDir:destpath] WaitForResult];
                 if (result == OperationDialogResult::Retry) goto domkdir;
                 if (result == OperationDialogResult::Stop) { RequestStop(); return; }
             }
@@ -950,7 +950,7 @@ domkdir:
         if(io.mkdir(_dest, 0777))
         {
             if(m_SkipAll) goto end;
-            int result = [[m_Operation OnCopyCantCreateDir:errno ForDir:_dest] WaitForResult];
+            int result = [[m_Operation OnCantCreateDir:ErrnoToNSError() ForDir:_dest] WaitForResult];
             if(result == OperationDialogResult::Retry) goto domkdir;
             if(result == OperationDialogResult::Skip) goto end;
             if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto end;}

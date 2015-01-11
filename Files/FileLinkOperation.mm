@@ -19,10 +19,10 @@
                        linkname: (const char*) _name
 {
     self = [super initWithJob:&m_Job];
-    if (self)
-    {
+    if (self) {
         m_Job.Init(_source, _name, FileLinkOperationJob::Mode::CreateSymLink, self);
-        self.Caption = @"Creating a new symbolic link";
+        self.Caption = NSLocalizedStringFromTable(@"Creating a new symbolic link", @"Operations",
+                                                  "Operation title for symlink creation");
     }
     return self;
 }
@@ -31,10 +31,10 @@
                              linkname: (const char*) _name
 {
     self = [super initWithJob:&m_Job];
-    if (self)
-    {
+    if (self) {
         m_Job.Init(_source, _name, FileLinkOperationJob::Mode::AlterSymlink, self);
-        self.Caption = @"Altering symbolic link";
+        self.Caption = NSLocalizedStringFromTable(@"Altering symbolic link", @"Operations",
+                                                  "Operation title for symlink altering");
     }
     return self;
 }
@@ -43,59 +43,61 @@
                   linkname: (const char*) _name
 {
     self = [super initWithJob:&m_Job];
-    if (self)
-    {
+    if (self) {
         m_Job.Init(_source, _name, FileLinkOperationJob::Mode::CreateHardLink, self);
-        self.Caption = @"Creating a new hard link";        
+        self.Caption = NSLocalizedStringFromTable(@"Creating a new hard link", @"Operations",
+                                                  "Operation title for hardlink creation");
     }
     return self;
 }
 
-- (OperationDialogAlert *)DialogNewSymlinkError:(NSError*)_error
+- (OperationDialogAlert *)errorDialogWithRetryAbortHide:(NSError*)_error andTitle:(NSString*)_title
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
-    
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to create a symbolic link"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedDescription]]];
-    [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
-    
+    [alert SetMessageText:_title];
+    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@", @"Operations",
+                                                                                    "Generic informative error text"),
+                               _error.localizedDescription]];
+    [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Retry", @"Operations", "User action button title")
+                    andResult:OperationDialogResult::Retry];
+    [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Abort", @"Operations", "User action button title")
+                    andResult:OperationDialogResult::Stop];
+    [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Hide", @"Operations", "User action button title")
+                    andResult:OperationDialogResult::None];
+    return alert;
+}
+
+- (OperationDialogAlert *)DialogNewSymlinkError:(NSError*)_error
+{
+    OperationDialogAlert *alert = [self errorDialogWithRetryAbortHide:_error
+                                                             andTitle:NSLocalizedStringFromTable(@"Failed to create a symbolic link",
+                                                                                                 @"Operations",
+                                                                                                 "Error dialog title on symlink creation failure")
+                                   ];
     [self EnqueueDialog:alert];
-    
     return alert;
 }
 
 - (OperationDialogAlert *)DialogAlterSymlinkError:(NSError*)_error
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
-    
-    [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to alter a symbolic link"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedDescription]]];
-    [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
-    
+    OperationDialogAlert *alert = [self errorDialogWithRetryAbortHide:_error
+                                                             andTitle:NSLocalizedStringFromTable(@"Failed to alter a symbolic link",
+                                                                                                 @"Operations",
+                                                                                                 "Error dialog title on symlink altering failure")
+                                   ];
     [self EnqueueDialog:alert];
-    
     return alert;
 }
 
 - (OperationDialogAlert *)DialogNewHardlinkError:(NSError*)_error
 {
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
-    
-    [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to create a hard link"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedDescription]]];
-    [alert AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-    [alert AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-    [alert AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
-    
+    OperationDialogAlert *alert = [self errorDialogWithRetryAbortHide:_error
+                                                             andTitle:NSLocalizedStringFromTable(@"Failed to create a hard link",
+                                                                                                 @"Operations",
+                                                                                                 "Error dialog title on hardlink creation failure")
+                                   ];
     [self EnqueueDialog:alert];
-    
     return alert;
 }
 

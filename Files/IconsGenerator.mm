@@ -451,7 +451,7 @@ void IconsGenerator::StopWorkQueue()
 {
     m_StopWorkQueue++;
     auto sh_this = shared_from_this();
-    dispatch_async(m_ControlQueue, ^{
+    m_ControlQueue.async(^{
         m_WorkGroup.Wait();
         sh_this->m_StopWorkQueue--;
     });

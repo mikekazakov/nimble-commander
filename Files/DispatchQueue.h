@@ -92,7 +92,7 @@ private:
     void BecameDry();
     void BecameWet();
     void Changed();
-    dispatch_queue_t m_Queue;
+    dispatch_queue   m_Queue;
     atomic_int       m_Length = {0};
     atomic_bool      m_Stopped = {false};
     

@@ -12,15 +12,13 @@
 // SerialQueueT implementation
 ////////////////////////////////////////////////////////////////////////////////
 SerialQueueT::SerialQueueT(const char *_label):
-    m_Queue(dispatch_queue_create(_label, DISPATCH_QUEUE_SERIAL))
+    m_Queue(_label)
 {
-    assert(m_Queue != 0);
 }
 
 SerialQueueT::~SerialQueueT()
 {
     Wait();
-    dispatch_release(m_Queue);
 }
 
 void SerialQueueT::OnDry( function<void()> _on_dry )
@@ -69,7 +67,7 @@ void SerialQueueT::Run( function<void(const shared_ptr<SerialQueueT> &_que)> _bl
     __block auto block = move(_block);
     __block auto me = shared_from_this();
     
-    dispatch_async(m_Queue, ^{
+    m_Queue.async(^{
         
         if(me->m_Stopped == false)
             block(me);
@@ -88,7 +86,7 @@ void SerialQueueT::RunSync( function<void(const shared_ptr<SerialQueueT> &_que)>
     __block auto block = move(_block);
     __block auto me = shared_from_this();
     
-    dispatch_sync(m_Queue, ^{
+    m_Queue.sync(^{
         block(me);
     });
 }
@@ -105,7 +103,7 @@ void SerialQueueT::Wait()
     if(m_Length == 0)
         return;
     
-    dispatch_sync(m_Queue, ^{});
+    m_Queue.sync(^{});
 }
 
 int SerialQueueT::Length() const

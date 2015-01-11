@@ -66,14 +66,14 @@ const shared_ptr<VFSNativeHost> &VFSNativeHost::SharedHost()
 // return false on error or cancellation
 static int CalculateDirectoriesSizesHelper(char *_path,
                                       size_t _path_len,
-                                      bool *_iscancelling,
+                                      bool &_iscancelling,
                                       VFSCancelChecker _checker,
-                                      dispatch_queue_t _stat_queue,
-                                      int64_t *_size_stock)
+                                      dispatch_queue &_stat_queue,
+                                      int64_t &_size_stock)
 {
     if(_checker && _checker())
     {
-        *_iscancelling = true;
+        _iscancelling = true;
         return VFSError::Cancelled;
     }
     
@@ -93,7 +93,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
     {
         if(_checker && _checker())
         {
-            *_iscancelling = true;
+            _iscancelling = true;
             goto cleanup;
         }
         
@@ -110,7 +110,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
                                       _checker,
                                       _stat_queue,
                                       _size_stock);
-            if(*_iscancelling)
+            if(_iscancelling)
                 goto cleanup;
         }
         else if(entp->d_type == DT_REG || entp->d_type == DT_LNK)
@@ -118,13 +118,13 @@ static int CalculateDirectoriesSizesHelper(char *_path,
             char *full_path = (char*) malloc(_path_len + entp->d_namlen + 2);
             memcpy(full_path, _path, _path_len + entp->d_namlen + 2);
             
-            dispatch_async(_stat_queue, ^{
-                if(*_iscancelling) return;
+            _stat_queue.async([&,full_path=full_path]{
+                if(_iscancelling) return;
                 
                 struct stat st;
                 
                 if(io.lstat(full_path, &st) == 0)
-                    *_size_stock += st.st_size;
+                    _size_stock += st.st_size;
                 
                 free(full_path);
             });
@@ -161,15 +161,15 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     if(path[strlen(path)-1] != '/') strcat(path, "/");
     char *var = path + strlen(path);
     
-    dispatch_queue_t stat_queue = dispatch_queue_create(__FILES_IDENTIFIER__".VFSNativeHost.CalculateDirectoriesSizes", 0);
+    dispatch_queue stat_queue(__FILES_IDENTIFIER__".VFSNativeHost.CalculateDirectoriesSizes");
     
     int error = VFSError::Ok;
     
     if(_dirs.size() == 1 && strisdotdot(_dirs.front()) )
     { // special case for a single ".." entry
         int64_t size = 0;
-        int result = CalculateDirectoriesSizesHelper(path, strlen(path), &iscancelling, _cancel_checker, stat_queue, &size);
-        dispatch_sync(stat_queue, ^{});
+        int result = CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
+        stat_queue.sync([]{});
         if(iscancelling || (_cancel_checker && _cancel_checker())) // check if we need to quit
             goto cleanup;
         if(result >= 0)
@@ -185,11 +185,11 @@ int VFSNativeHost::CalculateDirectoriesSizes(
         
         int result = CalculateDirectoriesSizesHelper(path,
                                                 strlen(path),
-                                                &iscancelling,
+                                                iscancelling,
                                                 _cancel_checker,
                                                 stat_queue,
-                                                &total_size);
-        dispatch_sync(stat_queue, ^{});
+                                                total_size);
+        stat_queue.sync([]{});
         
         if(iscancelling || (_cancel_checker && _cancel_checker())) // check if we need to quit
             goto cleanup;
@@ -201,7 +201,6 @@ int VFSNativeHost::CalculateDirectoriesSizes(
     }
     
 cleanup:
-    //dispatch_release(stat_queue);
     return error;
 }
 

@@ -15,9 +15,6 @@
 - (id)initWithPath:(const char*)_path rootpath:(const char*)_rootpath;
 - (id)initWithPath:(const char*)_path rootpath:(const char*)_rootpath at:(const VFSHostPtr&)_host;
 
-- (OperationDialogAlert *)DialogOnCrDirError:(int)_error
-                                      ForDir:(const char *)_path;
-- (OperationDialogAlert *)DialogOnCrDirVFSError:(int)_error
-                                         ForDir:(const char *)_path;
+- (OperationDialogAlert *)dialogOnDirCreationFailed:(NSError*)_error forDir:(const char *)_path;
 
 @end

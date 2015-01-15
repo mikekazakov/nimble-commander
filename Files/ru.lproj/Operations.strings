@@ -37,6 +37,9 @@
 /* Operation title for symlink creation */
 "Creating a new symbolic link" = "Создание символической ссылки";
 
+/* Operation title prefix for directory creation */
+"Creating directory “%@”" = "Создание папки “%@”";
+
 /* Title for error wheen when destination file already exists */
 "Destination already exists. Do you want to rewrite it?" = "Итоговый файл уже существует. Вы хотите переписать его?";
 
@@ -58,7 +61,7 @@
 /* Informative text on chmod failure dialog */
 "Error: %@\nFile: %@\nMode: %@" = "Ошибка: %1$@\nФайл: %2$@\nРежим: %3$@";
 
-/* Error informative text with path */
+/* (No Commment) */
 "Error: %@\nPath: %@" = "Ошибка: %1$@\nПуть: %2$@";
 
 /* Error dialog title on file access failure */
@@ -79,7 +82,7 @@
 /* Error dialog title on symlink creation failure */
 "Failed to create a symbolic link" = "Не удалось создать символическую ссылку";
 
-/* Error sheet prompt on dir creation */
+/* (No Commment) */
 "Failed to create directory" = "Не удалось создать папку";
 
 /* Title on error when destination file can't be opened */

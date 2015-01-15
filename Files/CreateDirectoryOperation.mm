@@ -12,6 +12,15 @@
 #import "PanelController.h"
 #import "Common.h"
 
+static NSString *OperationTitleFromPath(const char *_path)
+{
+    return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Creating directory \u201c%@\u201d",
+                                                                 @"Operations",
+                                                                 "Operation title prefix for directory creation"),
+            [NSString stringWithUTF8String:_path]
+            ];
+}
+
 @implementation CreateDirectoryOperation
 {
     unique_ptr<CreateDirectoryOperationJob> m_NativeJob;
@@ -25,13 +34,11 @@
 {
     m_NativeJob = make_unique<CreateDirectoryOperationJob>();
     self = [super initWithJob:m_NativeJob.get()];
-    if (self)
-    {
+    if (self) {
         m_OriginalPathRequest = _path;
         m_OperationStart = machtime();
         m_NativeJob->Init(_path, _rootpath, self);
-        self.Caption = [NSString stringWithFormat:@"Creating directory \"%@\"",
-                        [NSString stringWithUTF8String:_path]];
+        self.Caption = OperationTitleFromPath(_path);
     }
     return self;
 }
@@ -40,44 +47,30 @@
 {
     m_VFSJob = make_unique<CreateDirectoryOperationVFSJob>();
     self = [super initWithJob:m_VFSJob.get()];
-    if (self)
-    {
+    if (self) {
         m_OriginalPathRequest = _path;
         m_OperationStart = machtime();
         m_VFSJob->Init(_path, _rootpath, _host, self);
-        self.Caption = [NSString stringWithFormat:@"Creating directory \"%@\"",
-                        [NSString stringWithUTF8String:_path]];
+        self.Caption = OperationTitleFromPath(_path);
     }
     return self;
 }
 
-- (OperationDialogAlert *)DialogOnCrDirError:(int)_error
-                                      ForDir:(const char *)_path
+- (OperationDialogAlert *)dialogOnDirCreationFailed:(NSError*)_error forDir:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
                                    initRetrySkipSkipAllAbortHide:NO];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to create directory"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %s\nPath: %@",
-                               strerror(_error), [NSString stringWithUTF8String:_path]]];
-    
-    [self EnqueueDialog:alert];
-    
-    return alert;
-}
-
-- (OperationDialogAlert *)DialogOnCrDirVFSError:(int)_error
-                                         ForDir:(const char *)_path
-{
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:NO];
-    
-    [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to create directory"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               VFSError::ToNSError(_error).localizedDescription,
-                               [NSString stringWithUTF8String:_path]]];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to create directory",
+                                                     @"Operations",
+                                                     "Error dialog title on directory creating failure")];
+    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nPath: %@",
+                                                                                    @"Operations",
+                                                                                    "Error dialog informative text on directory creating failure"),
+                               _error.localizedDescription,
+                               [NSString stringWithUTF8String:_path]]
+     ];
     
     [self EnqueueDialog:alert];
     

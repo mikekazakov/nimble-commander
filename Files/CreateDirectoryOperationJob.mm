@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "RoutedIO.h"
+#include "Common.h"
 
 void CreateDirectoryOperationJob::Init(const char *_path, const char *_root_path, CreateDirectoryOperation *_operation)
 {
@@ -69,7 +70,7 @@ void CreateDirectoryOperationJob::Do()
     domkdir1:
         if(io.mkdir(m_Name, 0777) == -1)
         {
-            int result = [[m_Operation DialogOnCrDirError:errno ForDir:m_Name] WaitForResult];
+            int result = [[m_Operation dialogOnDirCreationFailed:ErrnoToNSError() forDir:m_Name] WaitForResult];
             if (result == OperationDialogResult::Retry)
                 goto domkdir1;
             if (result == OperationDialogResult::Stop)
@@ -85,7 +86,7 @@ void CreateDirectoryOperationJob::Do()
 domkdir2:
     if(io.mkdir(m_Name, 0755) == -1)
     {
-        int result = [[m_Operation DialogOnCrDirError:errno ForDir:m_Name] WaitForResult];
+        int result = [[m_Operation dialogOnDirCreationFailed:ErrnoToNSError() forDir:m_Name] WaitForResult];
         if (result == OperationDialogResult::Retry)
             goto domkdir2;
         if (result == OperationDialogResult::Stop)

@@ -55,7 +55,7 @@ void CreateDirectoryOperationVFSJob::Do()
         int ret = m_Host->CreateDirectory(i->c_str(), 0640, 0);
         if(ret != 0)
         {
-            int result = [[m_Operation DialogOnCrDirVFSError:ret ForDir:i->c_str()] WaitForResult];
+            int result = [[m_Operation dialogOnDirCreationFailed:VFSError::ToNSError(ret) forDir:i->c_str()] WaitForResult];
             if (result == OperationDialogResult::Retry)
                 goto mkdir;
             if (result == OperationDialogResult::Stop)

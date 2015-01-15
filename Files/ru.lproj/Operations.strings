@@ -37,8 +37,17 @@
 /* Operation title for symlink creation */
 "Creating a new symbolic link" = "Создание символической ссылки";
 
-/* Operation title prefix for directory creation */
+/* Operation title for directory creation */
 "Creating directory “%@”" = "Создание папки “%@”";
+
+/* Error dialog button - delete file permanently */
+"Delete Permanently" = "Удалить необратимо";
+
+/* Operation title for multiple items deletion */
+"Deleting %@ items from “%@”" = "Удаление %1$@ объектов из “%2$@”";
+
+/* Operation title for single item deletion */
+"Deleting “%@” from “%@”" = "Удаление “%1$@” из “%2$@”";
 
 /* Title for error wheen when destination file already exists */
 "Destination already exists. Do you want to rewrite it?" = "Итоговый файл уже существует. Вы хотите переписать его?";
@@ -64,14 +73,11 @@
 /* (No Commment) */
 "Error: %@\nPath: %@" = "Ошибка: %1$@\nПуть: %2$@";
 
-/* Error dialog title on file access failure */
+/* (No Commment) */
+"Failed to access a directory" = "Отсутствует доступ к папке";
+
+/* (No Commment) */
 "Failed to access a file" = "Отсутствует доступ к файлу";
-
-/* Error dialog title on directory access failure */
-"Failed to access directory" = "Отсутствует доступ к папке";
-
-/* Title on error when source file is inaccessible */
-"Failed to access file" = "Отсутствует доступ к файлу";
 
 /* Error dialog title on symlink altering failure */
 "Failed to alter a symbolic link" = "Не удалось изменить символическую ссылку";
@@ -84,6 +90,15 @@
 
 /* (No Commment) */
 "Failed to create directory" = "Не удалось создать папку";
+
+/* Error dialog title when can't delete a directory */
+"Failed to delete a directory" = "Не удалось удалить папку";
+
+/* Error dialog title when can't delete a file */
+"Failed to delete a file" = "Не удалось удалить файл";
+
+/* Error dialog title when can't move item to trash */
+"Failed to move an item to Trash" = "Не удалось переместить объект в Корзину";
 
 /* Title on error when destination file can't be opened */
 "Failed to open destination file" = "Не удалось открыть целевой файл";
@@ -100,6 +115,9 @@
 /* Error when reading failed */
 "Failed to read a file" = "Не удалось прочитать файл";
 
+/* Error dialog title when can't securely delete a file */
+"Failed to securely delete a file" = "Не удалось безопасно удалить файл";
+
 /* Error dialog title on time setting failure */
 "Failed to set file time" = "Не удалось установить время файла";
 
@@ -115,9 +133,15 @@
 /* (No Commment) */
 "Processing “%@”" = "Обработка “%@”";
 
-/* User action button title */
+/* (No Commment) */
 "Retry" = "Повторить";
 
 /* User action button title to rewrite a file */
 "Rewrite" = "Переписать";
+
+/* Error dialog button - skip current item */
+"Skip" = "Пропустить";
+
+/* Error dialog button - skipp all items with errors */
+"Skip All" = "Пропустить все";
 

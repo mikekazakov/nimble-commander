@@ -163,7 +163,7 @@
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] initRetrySkipSkipAllAbortHide:YES];
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access directory",
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access a directory",
                                                      @"Operations",
                                                      "Error dialog title on directory access failure")];
     [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nDirectory: %@",

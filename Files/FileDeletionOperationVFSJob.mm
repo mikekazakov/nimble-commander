@@ -44,7 +44,7 @@ void FileDeletionOperationVFSJob::Do()
             int ret = m_Host->RemoveDirectory(path.c_str(), 0);
             if(ret != 0 && !m_SkipAll)
             {
-                int result = [[m_Operation DialogOnVFSRmdirError:ret For:path.c_str()] WaitForResult];
+                int result = [[m_Operation DialogOnRmdirError:VFSError::ToNSError(ret) ForPath:path.c_str()] WaitForResult];
                 if (result == OperationDialogResult::Retry) goto retry_unlink;
                 else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
                 else if (result == OperationDialogResult::Stop) RequestStop();
@@ -56,7 +56,7 @@ void FileDeletionOperationVFSJob::Do()
             int ret = m_Host->Unlink(path.c_str(), 0);
             if(ret != 0 && !m_SkipAll)
             {
-                int result = [[m_Operation DialogOnVFSUnlinkError:ret For:path.c_str()] WaitForResult];
+                int result = [[m_Operation DialogOnUnlinkError:VFSError::ToNSError(ret) ForPath:path.c_str()] WaitForResult];
                 if (result == OperationDialogResult::Retry) goto retry_unlink;
                 else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
                 else if (result == OperationDialogResult::Stop) RequestStop();
@@ -129,7 +129,7 @@ retry_iterate:;
     });
     if(ret != 0 && !m_SkipAll)
     {
-        int result = [[m_Operation DialogOnVFSIterError:ret ForDir:_full_path.c_str()] WaitForResult];
+        int result = [[m_Operation DialogOnOpendirError:VFSError::ToNSError(ret) ForDir:_full_path.c_str()] WaitForResult];
         if (result == OperationDialogResult::Retry) goto retry_iterate;
         else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
         else if (result == OperationDialogResult::Stop) RequestStop();

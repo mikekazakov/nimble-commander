@@ -136,8 +136,8 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 - (NSMenuItem *)itemContainingItemWithTagHierarchical:(NSInteger)tag;
 @end
 
-inline NSError* ErrnoToNSError() { return [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil]; }
-inline NSError* ErrnoToNSError(int _error) { return [NSError errorWithDomain:NSPOSIXErrorDomain code:_error userInfo:nil]; }
+NSError* ErrnoToNSError(int _error);
+inline NSError* ErrnoToNSError() { return ErrnoToNSError(errno); }
 
 #endif
 

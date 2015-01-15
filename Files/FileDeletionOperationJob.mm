@@ -207,7 +207,7 @@ retry_opendir:
     }
     else if (!m_SkipAll) // if (dirp != 0)
     {
-        int result = [[m_Operation DialogOnOpendirError:errno ForDir:_full_path] WaitForResult];
+        int result = [[m_Operation DialogOnOpendirError:ErrnoToNSError() ForDir:_full_path] WaitForResult];
         if (result == OperationDialogResult::Retry) goto retry_opendir;
         else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
         else if (result == OperationDialogResult::Stop) RequestStop();
@@ -241,7 +241,7 @@ bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
         ret = io.unlink(_full_path);
         if( ret != 0 && !m_SkipAll )
         {
-            int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path] WaitForResult];
+            int result = [[m_Operation DialogOnUnlinkError:ErrnoToNSError() ForPath:_full_path] WaitForResult];
             if (result == OperationDialogResult::Retry) goto retry_unlink;
             else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
             else if (result == OperationDialogResult::Stop) RequestStop();
@@ -253,7 +253,7 @@ bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
         ret = io.rmdir(_full_path);
         if( ret != 0 && !m_SkipAll )
         {
-            int result = [[m_Operation DialogOnRmdirError:errno ForPath:_full_path] WaitForResult];
+            int result = [[m_Operation DialogOnRmdirError:ErrnoToNSError() ForPath:_full_path] WaitForResult];
             if (result == OperationDialogResult::Retry) goto retry_rmdir;
             else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
             else if (result == OperationDialogResult::Stop) RequestStop();
@@ -310,7 +310,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
             {
                 if (!m_SkipAll)
                 {
-                    int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path]
+                    int result = [[m_Operation DialogOnUnlinkError:ErrnoToNSError() ForPath:_full_path]
                                   WaitForResult];
                     if (result == OperationDialogResult::Retry) goto unlink_symlink;
                     else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
@@ -344,7 +344,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
                     {
                         if (!m_SkipAll)
                         {
-                            int result = [[m_Operation DialogOnUnlinkError:errno
+                            int result = [[m_Operation DialogOnSecureRewriteError:ErrnoToNSError()
                                                                    ForPath:_full_path]
                                           WaitForResult];
                             if (result == OperationDialogResult::Retry) goto retry_write;
@@ -366,7 +366,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
             {
                 if (!m_SkipAll)
                 {
-                    int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path]
+                    int result = [[m_Operation DialogOnUnlinkError:ErrnoToNSError() ForPath:_full_path]
                                   WaitForResult];
                     if (result == OperationDialogResult::Retry) goto retry_unlink;
                     else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
@@ -379,7 +379,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
         {
             if (!m_SkipAll)
             {
-                int result = [[m_Operation DialogOnUnlinkError:errno ForPath:_full_path]
+                int result = [[m_Operation DialogOnSecureRewriteError:ErrnoToNSError() ForPath:_full_path]
                               WaitForResult];
                 if (result == OperationDialogResult::Retry) goto retry_open;
                 else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
@@ -396,7 +396,7 @@ bool FileDeletionOperationJob::DoSecureDelete(const char *_full_path, bool _is_d
         {
             if (!m_SkipAll)
             {
-                int result = [[m_Operation DialogOnRmdirError:errno ForPath:_full_path]
+                int result = [[m_Operation DialogOnRmdirError:ErrnoToNSError() ForPath:_full_path]
                               WaitForResult];
                 if (result == OperationDialogResult::Retry) goto retry_rmdir;
                 else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;

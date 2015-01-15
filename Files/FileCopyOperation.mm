@@ -330,7 +330,7 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
                                    initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access file", @"Operations", "Title on error when source file is inaccessible")];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access a file", @"Operations", "Title on error when source file is inaccessible")];
     [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
     [self EnqueueDialog:alert];
     

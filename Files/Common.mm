@@ -372,3 +372,8 @@ void MachTimeBenchmark::ResetMilli(const char *_msg)
     NSLog(@"%s%llu\n", _msg, duration_cast<milliseconds>(now - last).count() );
     last = now;
 }
+
+NSError* ErrnoToNSError(int _error)
+{
+    return [NSError errorWithDomain:NSPOSIXErrorDomain code:_error userInfo:nil];
+}

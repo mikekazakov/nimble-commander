@@ -16,7 +16,7 @@ static NSString *OperationTitleFromPath(const char *_path)
 {
     return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Creating directory \u201c%@\u201d",
                                                                  @"Operations",
-                                                                 "Operation title prefix for directory creation"),
+                                                                 "Operation title for directory creation"),
             [NSString stringWithUTF8String:_path]
             ];
 }

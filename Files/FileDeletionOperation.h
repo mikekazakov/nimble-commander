@@ -40,14 +40,9 @@ enum class FileDeletionOperationType // do not change ordering, there's a raw va
 
 - (void)Update;
 
-- (OperationDialogAlert *)DialogOnOpendirError:(int)_error ForDir:(const char *)_path;
-- (OperationDialogAlert *)DialogOnStatError:(int)_error ForPath:(const char *)_path;
-- (OperationDialogAlert *)DialogOnUnlinkError:(int)_error ForPath:(const char *)_path;
-- (OperationDialogAlert *)DialogOnRmdirError:(int)_error ForPath:(const char *)_path;
+- (OperationDialogAlert *)DialogOnOpendirError:(NSError*)_error ForDir:(const char *)_path;
+- (OperationDialogAlert *)DialogOnUnlinkError:(NSError*)_error ForPath:(const char *)_path;
+- (OperationDialogAlert *)DialogOnRmdirError:(NSError*)_error ForPath:(const char *)_path;
 - (OperationDialogAlert *)DialogOnTrashItemError:(NSError *)_error ForPath:(const char *)_path;
-- (OperationDialogAlert *)DialogOnSecureRewriteError:(int)_error ForPath:(const char *)_path;
-
-- (OperationDialogAlert *)DialogOnVFSIterError:(int)_error ForDir:(const char *)_path;
-- (OperationDialogAlert *)DialogOnVFSUnlinkError:(int)_error For:(const char *)_path;
-- (OperationDialogAlert *)DialogOnVFSRmdirError:(int)_error For:(const char *)_path;
+- (OperationDialogAlert *)DialogOnSecureRewriteError:(NSError *)_error ForPath:(const char *)_path;
 @end

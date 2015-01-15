@@ -94,7 +94,7 @@
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] initRetrySkipSkipAllAbortHide:true];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to access directory"];
+    [alert SetMessageText:@"Failed to access a directory"];
     [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
                                [_error localizedDescription],
                                [NSString stringWithUTF8String:_path]]];

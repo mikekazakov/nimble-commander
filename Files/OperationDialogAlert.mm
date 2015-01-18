@@ -86,8 +86,7 @@ const int MaxButtonsCount = 6;
 - (id)init
 {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         m_Alert = [[NSAlert alloc] init];
         m_ButtonsCount = 0;
     }
@@ -96,18 +95,31 @@ const int MaxButtonsCount = 6;
 
 - (id)initRetrySkipSkipAllAbortHide:(BOOL)_enable_skip
 {
+    
     self = [self init];
-    if (self)
-    {
-        [self AddButtonWithTitle:@"Retry" andResult:OperationDialogResult::Retry];
-        if (_enable_skip)
-        {
-            [self AddButtonWithTitle:@"Skip" andResult:OperationDialogResult::Skip];
-            [self AddButtonWithTitle:@"Skip All" andResult:OperationDialogResult::SkipAll];
-
+    if (self) {
+        [self AddButtonWithTitle:NSLocalizedStringFromTable(@"Retry",
+                                                            @"Operations",
+                                                            "Error dialog button title")
+                       andResult:OperationDialogResult::Retry];
+        if (_enable_skip) {
+            [self AddButtonWithTitle:NSLocalizedStringFromTable(@"Skip",
+                                                                @"Operations",
+                                                                "Error dialog button title")
+                           andResult:OperationDialogResult::Skip];
+            [self AddButtonWithTitle:NSLocalizedStringFromTable(@"Skip All",
+                                                                @"Operations",
+                                                                "Error dialog button title")
+                           andResult:OperationDialogResult::SkipAll];
         }
-        [self AddButtonWithTitle:@"Abort" andResult:OperationDialogResult::Stop];
-        [self AddButtonWithTitle:@"Hide" andResult:OperationDialogResult::None];
+        [self AddButtonWithTitle:NSLocalizedStringFromTable(@"Abort",
+                                                            @"Operations",
+                                                            "Error dialog button title")
+                       andResult:OperationDialogResult::Stop];
+        [self AddButtonWithTitle:NSLocalizedStringFromTable(@"Hide",
+                                                            @"Operations",
+                                                            "Error dialog button title")
+                       andResult:OperationDialogResult::None];
     }
     return self;
 }

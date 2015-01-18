@@ -29,6 +29,7 @@
         self.FSAccessResetButton.hidden = true;
         self.FSAccessLabel.hidden = true;
     }
+    [self.view layoutSubtreeIfNeeded];    
 }
 
 -(NSString*)identifier{

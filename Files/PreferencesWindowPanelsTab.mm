@@ -96,6 +96,8 @@
         it.title = ByteCountFormatter::Instance().ToNSString(magic_size, (ByteCountFormatter::Type)it.tag);
     for(NSMenuItem *it in self.selectionSizeFormatCombo.itemArray)
         it.title = ByteCountFormatter::Instance().ToNSString(magic_size, (ByteCountFormatter::Type)it.tag);
+  
+    [self.view layoutSubtreeIfNeeded];
 }
 
 -(NSString*)identifier{

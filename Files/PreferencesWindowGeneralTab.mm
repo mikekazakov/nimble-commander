@@ -38,7 +38,9 @@
     return [NSImage imageNamed:@"pref_general_icon"];
 }
 -(NSString*)toolbarItemLabel{
-    return @"General";
+    return NSLocalizedStringFromTable(@"General",
+                                      @"Preferences",
+                                      "General preferences tab title");
 }
 
 - (IBAction)ResetToDefaults:(id)sender
@@ -49,10 +51,14 @@
 - (IBAction)OnFSAccessReset:(id)sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Are you sure want to reset granted file system access?";
-    alert.informativeText = @"This will cause Files to ask you for access upon need.";
-    [alert addButtonWithTitle:@"Ok"];
-    [alert addButtonWithTitle:@"Cancel"];
+    alert.messageText = NSLocalizedStringFromTable(@"Are you sure want to reset granted filesystem access?",
+                                                   @"Preferences",
+                                                   "Message text asking if user really wants to reset current file system access");
+    alert.informativeText = NSLocalizedStringFromTable(@"This will cause Files to ask you for access upon need.",
+                                                       @"Preferences",
+                                                       "Informative text saying that Files will ask for filesystem access when need it");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertFirstButtonReturn)
         SandboxManager::Instance().ResetBookmarks();

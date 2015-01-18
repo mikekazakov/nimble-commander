@@ -28,6 +28,36 @@
 /* Informative text to setting modify time */
 "Can't set modification time\nError: %@\nFile: %@" = "Невозможно установить время модификации\nОшибка: %1$@\nФайл: %2$@";
 
+/* Operation title for compression */
+"Compressing %@ items to “%@”" = "Сжатие %1$@ объектов в “%2$@”";
+
+/* Operation title for compression */
+"Compressing 1 item to “%@”" = "Сжатие 1 объекта в “%@”";
+
+/* Operation title for compression */
+"Compressing 2 items to “%@”" = "Сжатие 2 объектов в “%@”";
+
+/* Operation title for compression */
+"Compressing 3 items to “%@”" = "Сжатие 3 объектов в “%@”";
+
+/* Operation title for compression */
+"Compressing 4 items to “%@”" = "Сжатие 4 объектов в “%@”";
+
+/* Operation title for compression */
+"Compressing 5 items to “%@”" = "Сжатие 5 объектов в “%@”";
+
+/* Operation title for compression */
+"Compressing 6 items to “%@”" = "Сжатие 6 объектов в “%@”";
+
+/* Operation title for compression */
+"Compressing 7 items to “%@”" = "Сжатие 7 объектов в “%@”";
+
+/* Operation title for compression */
+"Compressing 8 items to “%@”" = "Сжатие 8 объектов в “%@”";
+
+/* Operation title for compression */
+"Compressing 9 items to “%@”" = "Сжатие 9 объектов в “%@”";
+
 /* Operation title prefix for copying */
 "Copying" = "Копирование";
 
@@ -124,11 +154,20 @@
 /* Error when writing failed */
 "Failed to write a file" = "Не удалось записать файл";
 
+/* Title on error when archive target can't be written */
+"Failed to write an archive" = "Не удалось записать архив";
+
+/* Title on information dialog about 4Gb file limit */
+"Files currently can't compress items larger than 4Gb.\nThis file will be skipped:\n%@" = "Files на данный момент не поддерживает архивирование файлов больше 4Гб.\nЭтот файл будет пропущен:\n%@";
+
 /* (No Commment) */
 "Hide" = "Скрыть";
 
 /* Operaration title prefix for moving */
 "Moving" = "Перенос";
+
+/* Operation title for compression */
+"Preparing to compress to “%@”" = "Подготовка к сжатию в “%@”";
 
 /* (No Commment) */
 "Processing “%@”" = "Обработка “%@”";

@@ -11,6 +11,61 @@
 #import "Common.h"
 #import "PanelController.h"
 
+static NSString *OpTitle(unsigned _amount, NSString *_target)
+{
+    if(_amount == 1)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 1 item to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                        _target];
+    else if(_amount == 2)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 2 items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                _target];
+    else if(_amount == 3)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 3 items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                _target];
+    else if(_amount == 4)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 4 items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                _target];
+    else if(_amount == 5)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 5 items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                _target];
+    else if(_amount == 6)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 6 items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                _target];
+    else if(_amount == 7)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 7 items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                _target];
+    else if(_amount == 8)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 8 items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                _target];
+    else if(_amount == 9)
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 9 items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                _target];
+    else
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing %@ items to \u201c%@\u201d",
+                                                                     @"Operations",
+                                                                     "Operation title for compression"),
+                [NSNumber numberWithUnsignedInt:_amount],
+                _target];
+}
+
 @implementation FileCompressOperation
 {
     FileCompressOperationJob m_Job;
@@ -60,24 +115,19 @@
     milliseconds time = stats.GetTime();
     
     // titles stuff
-    if(m_NeedUpdateCaption)
-    {
+    if(m_NeedUpdateCaption) {
         if(!m_HasTargetFn)
             [self ExtractTargetFn];
             
-        if(m_HasTargetFn)
-        {
+        if(m_HasTargetFn) {
             if(!m_Job.IsDoneScanning()) {
-                self.Caption = [NSString stringWithFormat:@"Preparing to compress to \"%@\"", m_ArchiveName];
+                self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Preparing to compress to \u201c%@\u201d",
+                                                                                     @"Operations",
+                                                                                     "Operation title for compression"),
+                                m_ArchiveName];
             }
             else {
-                NSNumberFormatter *fmt = [NSNumberFormatter new];
-                [fmt setNumberStyle:NSNumberFormatterDecimalStyle];
-                
-                self.Caption = [NSString stringWithFormat:@"Compressing %@ %@ to \"%@\"",
-                                [fmt stringFromNumber:[NSNumber numberWithLong:m_Job.FilesAmount()]],
-                                m_Job.FilesAmount() > 1 ? @"items" : @"item",
-                                m_ArchiveName];
+                self.Caption = OpTitle(m_Job.FilesAmount(), m_ArchiveName);
                 m_NeedUpdateCaption = false;
             }
         }
@@ -92,15 +142,16 @@
 - (OperationDialogAlert *)OnCantAccessSourceDir:(NSError*)_error forPath:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] initRetrySkipSkipAllAbortHide:true];
-    
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to access a directory"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               [_error localizedDescription],
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access a directory",
+                                                     @"Operations",
+                                                     "Error dialog title when can't traverse a directory")];
+    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nDirectory: %@",
+                                                                                    @"Operations",
+                                                                                    "Informative text on error dialog when can't access a directory"),
+                               _error.localizedDescription,
                                [NSString stringWithUTF8String:_path]]];
-    
     [self EnqueueDialog:alert];
-    
     return alert;
 }
 
@@ -109,9 +160,13 @@
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] initRetrySkipSkipAllAbortHide:true];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to access item"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               [_error localizedDescription],
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access a file",
+                                                     @"Operations",
+                                                     "Title on error when source file is inaccessible")];
+    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nPath: %@",
+                                                                                    @"Operations",
+                                                                                    "Informative text on error dialog when can't access a file"),
+                               _error.localizedDescription,
                                [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
@@ -124,9 +179,13 @@
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] initRetrySkipSkipAllAbortHide:true];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to read item's data"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@\nPath: %@",
-                               [_error localizedDescription],
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to read a file",
+                                                     @"Operations",
+                                                     "Title on error when source file can't be read")];
+    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nPath: %@",
+                                                                                    @"Operations",
+                                                                                    "Informative text on error dialog when can't read a file"),
+                               _error.localizedDescription,
                                [NSString stringWithUTF8String:_path]]];
     
     [self EnqueueDialog:alert];
@@ -139,8 +198,13 @@
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] initRetrySkipSkipAllAbortHide:true];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:@"Failed to write archive"];
-    [alert SetInformativeText:[NSString stringWithFormat:@"Error: %@", [_error localizedDescription]]];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to write an archive",
+                                                     @"Operations",
+                                                     "Title on error when archive target can't be written")];
+    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@",
+                                                                                    @"Operations",
+                                                                                    "Informative text on error dialog when can't write an archive"),
+                               _error.localizedDescription]];
     [self EnqueueDialog:alert];
     
     return alert;
@@ -148,9 +212,10 @@
 
 - (void) SayAbout4Gb:(const char*) _path
 {
-    SyncMessageBoxNS([NSString stringWithFormat:@"Sorry, currently Files can't compress items larger than 4Gb.\nThis file will be skipped:\n%@",
-                      [NSString stringWithUTF8String:_path] ]
-                     );
+    SyncMessageBoxNS([NSString stringWithFormat:NSLocalizedStringFromTable(@"Files currently can't compress items larger than 4Gb.\nThis file will be skipped:\n%@",
+                                                                           @"Operations",
+                                                                           "Title on information dialog about 4Gb file limit"),
+                      [NSString stringWithUTF8String:_path]]);
 }
 
 - (void) OnFinish

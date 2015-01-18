@@ -3,6 +3,7 @@
     <dependencies>
         <deployment version="1080" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowGeneralTab">
@@ -19,9 +20,9 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8" userLabel="Static Text - Skin">
-                    <rect key="frame" x="18" y="82" width="174" height="17"/>
+                    <rect key="frame" x="18" y="82" width="179" height="17"/>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="170" id="EwU-6U-w5U"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="EwU-6U-w5U"/>
                     </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Application appearance:" id="14">
                         <font key="font" metaFont="system"/>
@@ -30,7 +31,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9">
-                    <rect key="frame" x="196" y="76" width="135" height="26"/>
+                    <rect key="frame" x="201" y="76" width="135" height="26"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="130" id="7qz-8Y-mjg"/>
                     </constraints>
@@ -49,7 +50,7 @@
                     </connections>
                 </popUpButton>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                    <rect key="frame" x="192" y="45" width="145" height="32"/>
+                    <rect key="frame" x="197" y="45" width="145" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="130" id="Uvv-7h-B38"/>
                     </constraints>
@@ -62,9 +63,9 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="55">
-                    <rect key="frame" x="18" y="55" width="174" height="17"/>
+                    <rect key="frame" x="18" y="55" width="179" height="17"/>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="170" id="WRW-Mf-BIz"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="WRW-Mf-BIz"/>
                     </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Settings:" id="56">
                         <font key="font" metaFont="system"/>
@@ -73,9 +74,9 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mE6-dr-OKl">
-                    <rect key="frame" x="18" y="28" width="174" height="17"/>
+                    <rect key="frame" x="18" y="28" width="179" height="17"/>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="170" id="Wx1-FM-SzG"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="Wx1-FM-SzG"/>
                     </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Granted filesystem access:" id="q8n-Mc-Nho">
                         <font key="font" metaFont="system"/>
@@ -84,7 +85,7 @@
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8tk-ZS-HXz">
-                    <rect key="frame" x="192" y="18" width="92" height="32"/>
+                    <rect key="frame" x="197" y="18" width="92" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="8tX-8H-w09"/>
                     </constraints>
@@ -109,6 +110,7 @@
                 <constraint firstItem="8" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" symbolic="YES" id="dp5-W5-Y3X"/>
                 <constraint firstItem="8" firstAttribute="trailing" secondItem="55" secondAttribute="trailing" id="f8z-Bi-VzO"/>
                 <constraint firstItem="55" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="gzh-KN-5Td"/>
+                <constraint firstAttribute="centerX" secondItem="9" secondAttribute="leading" id="iwD-yk-yQh"/>
                 <constraint firstItem="9" firstAttribute="leading" secondItem="8" secondAttribute="trailing" constant="8" symbolic="YES" id="ohQ-ha-Mzw"/>
                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8tk-ZS-HXz" secondAttribute="trailing" constant="20" symbolic="YES" id="rRE-74-ng4"/>
                 <constraint firstItem="8" firstAttribute="baseline" secondItem="9" secondAttribute="baseline" id="slQ-t7-f4C"/>

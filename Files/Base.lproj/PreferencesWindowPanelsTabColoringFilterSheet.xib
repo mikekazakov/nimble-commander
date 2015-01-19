@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTabColoringFilterSheet">
+            <connections>
+                <outlet property="directory" destination="uZb-lm-Ykt" id="PoL-a8-AYB"/>
+                <outlet property="executable" destination="ws4-r0-08h" id="JPK-uN-ZKh"/>
+                <outlet property="hidden" destination="nQl-I1-fjK" id="whh-Za-5L5"/>
+                <outlet property="mask" destination="tbt-Rd-vdG" id="qPs-KH-IQo"/>
+                <outlet property="regular" destination="c9N-ZL-MoZ" id="wCP-UA-fsV"/>
+                <outlet property="selected" destination="hW0-DO-LPU" id="65u-xC-MLI"/>
+                <outlet property="symlink" destination="ImY-Y2-Tf4" id="NK4-u9-i3r"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="294" height="213"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="294" height="213"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Oay-51-Ivb">
+                        <rect key="frame" x="188" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="euD-l5-tOB"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Ok" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gIg-Vl-0HW">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnOK:" target="-2" id="kiP-L1-cah"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="uZb-lm-Ykt">
+                        <rect key="frame" x="134" y="112" width="142" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="4hb-2v-Jz1"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Directory" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="mixed" allowsMixedState="YES" inset="2" id="XPG-7b-9P8">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="ImY-Y2-Tf4">
+                        <rect key="frame" x="134" y="94" width="142" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="PD6-RW-5li"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Symbolic link" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="mixed" allowsMixedState="YES" inset="2" id="BgY-7f-vUa">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="c9N-ZL-MoZ">
+                        <rect key="frame" x="134" y="76" width="142" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="7Hy-P4-XZF"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Regular file" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="mixed" allowsMixedState="YES" inset="2" id="oDn-pT-U2H">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tbt-Rd-vdG">
+                        <rect key="frame" x="137" y="171" width="108" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="108" id="LOn-qg-848"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="eQr-1z-eDo">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SBy-5i-7e2">
+                        <rect key="frame" x="18" y="150" width="113" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="108" id="4xa-D1-IlK"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Flags:" id="yJQ-ob-3Ua">
+                            <font key="font" metaFont="cellTitle"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="nQl-I1-fjK">
+                        <rect key="frame" x="134" y="130" width="142" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="umg-0q-VHQ"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Hidden" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="mixed" allowsMixedState="YES" inset="2" id="MwK-gY-7TL">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="hW0-DO-LPU">
+                        <rect key="frame" x="134" y="58" width="142" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="rmD-PL-yHq"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Selected" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="mixed" allowsMixedState="YES" inset="2" id="Uaf-z8-1YE">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                    </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mYI-El-ng4">
+                        <rect key="frame" x="18" y="173" width="113" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="108" id="T4Q-QG-MHf"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Filename mask:" id="Phl-ru-7YI">
+                            <font key="font" metaFont="cellTitle"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="ws4-r0-08h">
+                        <rect key="frame" x="134" y="148" width="142" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="JP0-89-8i1"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Executable" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="mixed" allowsMixedState="YES" inset="2" id="rmY-Vd-0Fr">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="ws4-r0-08h" firstAttribute="leading" secondItem="nQl-I1-fjK" secondAttribute="leading" id="3az-PV-eez"/>
+                    <constraint firstItem="uZb-lm-Ykt" firstAttribute="leading" secondItem="nQl-I1-fjK" secondAttribute="leading" id="3hE-0e-4Fp"/>
+                    <constraint firstAttribute="bottom" secondItem="Oay-51-Ivb" secondAttribute="bottom" constant="20" symbolic="YES" id="465-de-Gfx"/>
+                    <constraint firstAttribute="trailing" secondItem="ws4-r0-08h" secondAttribute="trailing" constant="20" symbolic="YES" id="4YE-Ps-1fJ"/>
+                    <constraint firstItem="Oay-51-Ivb" firstAttribute="top" secondItem="hW0-DO-LPU" secondAttribute="bottom" constant="20" symbolic="YES" id="7u7-Td-ixC"/>
+                    <constraint firstItem="ws4-r0-08h" firstAttribute="leading" secondItem="tbt-Rd-vdG" secondAttribute="leading" id="AUw-HF-QJ4"/>
+                    <constraint firstItem="ws4-r0-08h" firstAttribute="baseline" secondItem="SBy-5i-7e2" secondAttribute="baseline" id="Aws-AZ-qG4"/>
+                    <constraint firstAttribute="trailing" secondItem="uZb-lm-Ykt" secondAttribute="trailing" constant="20" symbolic="YES" id="Ddn-36-2NZ"/>
+                    <constraint firstItem="ws4-r0-08h" firstAttribute="top" secondItem="tbt-Rd-vdG" secondAttribute="bottom" constant="8" symbolic="YES" id="EPt-dN-CHC"/>
+                    <constraint firstItem="tbt-Rd-vdG" firstAttribute="leading" secondItem="mYI-El-ng4" secondAttribute="trailing" constant="8" symbolic="YES" id="Epe-Qa-5D2"/>
+                    <constraint firstAttribute="centerX" secondItem="tbt-Rd-vdG" secondAttribute="leading" constant="10" id="H2k-99-Bij"/>
+                    <constraint firstItem="nQl-I1-fjK" firstAttribute="top" secondItem="ws4-r0-08h" secondAttribute="bottom" constant="6" symbolic="YES" id="IbT-WJ-Hka"/>
+                    <constraint firstItem="c9N-ZL-MoZ" firstAttribute="leading" secondItem="ImY-Y2-Tf4" secondAttribute="leading" id="MYp-Ga-R3C"/>
+                    <constraint firstAttribute="trailing" secondItem="Oay-51-Ivb" secondAttribute="trailing" constant="20" symbolic="YES" id="OcJ-jV-eG0"/>
+                    <constraint firstAttribute="trailing" secondItem="ImY-Y2-Tf4" secondAttribute="trailing" constant="20" symbolic="YES" id="R9l-6h-c2A"/>
+                    <constraint firstAttribute="trailing" secondItem="nQl-I1-fjK" secondAttribute="trailing" constant="20" symbolic="YES" id="VQG-ts-TVh"/>
+                    <constraint firstItem="mYI-El-ng4" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="XBW-mS-2A9"/>
+                    <constraint firstAttribute="trailing" secondItem="hW0-DO-LPU" secondAttribute="trailing" constant="20" symbolic="YES" id="Ynq-aF-DqH"/>
+                    <constraint firstItem="ws4-r0-08h" firstAttribute="leading" secondItem="SBy-5i-7e2" secondAttribute="trailing" constant="8" symbolic="YES" id="ZZt-z4-TIs"/>
+                    <constraint firstItem="uZb-lm-Ykt" firstAttribute="top" secondItem="nQl-I1-fjK" secondAttribute="bottom" constant="6" symbolic="YES" id="bF1-H0-eDG"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="tbt-Rd-vdG" secondAttribute="trailing" constant="20" symbolic="YES" id="ccW-ac-Lsi"/>
+                    <constraint firstItem="ImY-Y2-Tf4" firstAttribute="top" secondItem="uZb-lm-Ykt" secondAttribute="bottom" constant="6" symbolic="YES" id="fQF-VY-V1s"/>
+                    <constraint firstItem="tbt-Rd-vdG" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="jZ8-s7-2xC"/>
+                    <constraint firstAttribute="trailing" secondItem="c9N-ZL-MoZ" secondAttribute="trailing" constant="20" id="k9J-Qy-sfm"/>
+                    <constraint firstItem="c9N-ZL-MoZ" firstAttribute="top" secondItem="ImY-Y2-Tf4" secondAttribute="bottom" constant="6" symbolic="YES" id="kNL-fx-pyk"/>
+                    <constraint firstItem="tbt-Rd-vdG" firstAttribute="baseline" secondItem="mYI-El-ng4" secondAttribute="baseline" id="o4j-Y4-9C6"/>
+                    <constraint firstItem="hW0-DO-LPU" firstAttribute="leading" secondItem="c9N-ZL-MoZ" secondAttribute="leading" id="tBJ-fx-VBe"/>
+                    <constraint firstItem="SBy-5i-7e2" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="tQH-Bb-pHK"/>
+                    <constraint firstItem="ImY-Y2-Tf4" firstAttribute="leading" secondItem="uZb-lm-Ykt" secondAttribute="leading" id="we8-Tj-gGB"/>
+                    <constraint firstItem="hW0-DO-LPU" firstAttribute="top" secondItem="c9N-ZL-MoZ" secondAttribute="bottom" constant="6" symbolic="YES" id="xHX-uH-VTT"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="137" y="336.5"/>
+        </window>
+    </objects>
+</document>

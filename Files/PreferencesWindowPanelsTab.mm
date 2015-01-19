@@ -44,49 +44,65 @@
     
     NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"name"];
     column.width = 100;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Name";
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Name",
+                                                                                     @"Preferences",
+                                                                                     "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.classicColoringRulesTable addTableColumn:column];
     
     column = [[NSTableColumn alloc] initWithIdentifier:@"unfocused"];
     column.width = 60;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Regular";
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Regular",
+                                                                                     @"Preferences",
+                                                                                     "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.classicColoringRulesTable addTableColumn:column];
     
     column = [[NSTableColumn alloc] initWithIdentifier:@"focused"];
     column.width = 60;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Focused";
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Focused",
+                                                                                     @"Preferences",
+                                                                                     "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.classicColoringRulesTable addTableColumn:column];
     
     column = [[NSTableColumn alloc] initWithIdentifier:@"filter"];
     column.width = 60;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Filter";
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Filter",
+                                                                                     @"Preferences",
+                                                                                     "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.classicColoringRulesTable addTableColumn:column];
     
     column = [[NSTableColumn alloc] initWithIdentifier:@"name"];
     column.width = 100;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Name";
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Name",
+                                                                                     @"Preferences",
+                                                                                     "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.modernColoringRulesTable addTableColumn:column];
     
     column = [[NSTableColumn alloc] initWithIdentifier:@"regular"];
     column.width = 60;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Regular";
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Regular",
+                                                                                     @"Preferences",
+                                                                                     "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.modernColoringRulesTable addTableColumn:column];
     
     column = [[NSTableColumn alloc] initWithIdentifier:@"selected"];
     column.width = 60;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Selected";
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Selected",
+                                                                                     @"Preferences",
+                                                                                     "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.modernColoringRulesTable addTableColumn:column];
     
     column = [[NSTableColumn alloc] initWithIdentifier:@"filter"];
     column.width = 60;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Filter";
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Filter",
+                                                                                     @"Preferences",
+                                                                                     "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.modernColoringRulesTable addTableColumn:column];
     
@@ -107,7 +123,9 @@
     return [NSImage imageNamed:@"pref_panels_icon.png"];
 }
 -(NSString*)toolbarItemLabel{
-    return @"Panels";
+    return NSLocalizedStringFromTable(@"Panels",
+                                      @"Preferences",
+                                      "General preferences tab title");
 }
 
 - (IBAction)OnSetModernFont:(id)sender
@@ -189,7 +207,9 @@
         }
         if([tableColumn.identifier isEqualToString:@"filter"]) {
             NSButton *bt = [[NSButton alloc] initWithFrame:NSRect()];
-            bt.title = @"edit";
+            bt.title = NSLocalizedStringFromTable(@"edit",
+                                                  @"Preferences",
+                                                  "Coloring rules edit button title");
             bt.buttonType = NSMomentaryPushInButton;
             bt.bezelStyle = NSRoundedBezelStyle;
             ((NSButtonCell*)bt.cell).controlSize = NSMiniControlSize;
@@ -224,7 +244,9 @@
         }
         if([tableColumn.identifier isEqualToString:@"filter"]) {
             NSButton *bt = [[NSButton alloc] initWithFrame:NSRect()];
-            bt.title = @"edit";
+            bt.title = NSLocalizedStringFromTable(@"edit",
+                                                  @"Preferences",
+                                                  "Coloring rules edit button title");
             bt.buttonType = NSMomentaryPushInButton;
             bt.bezelStyle = NSRoundedBezelStyle;
             ((NSButtonCell*)bt.cell).controlSize = NSMiniControlSize;

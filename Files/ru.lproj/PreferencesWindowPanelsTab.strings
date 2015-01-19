@@ -1,9 +1,23 @@
+/* Class = "NSMenuItem"; title = "2"; ObjectID = "3Qc-aM-Mil"; */
+"3Qc-aM-Mil.title" = "2";
+
+/* Class = "NSTextFieldCell"; title = "Selection size format:"; ObjectID = "3TY-zr-HZN"; */
+"3TY-zr-HZN.title" = "Формат размера выделения:";
 
 /* Class = "NSTabViewItem"; label = "Classic"; ObjectID = "4"; */
 "4.label" = "Classic";
 
+/* Class = "NSMenuItem"; title = "Disabled"; ObjectID = "4aj-lb-702"; */
+"4aj-lb-702.title" = "Отключен";
+
+/* Class = "NSMenuItem"; title = "No modifiers"; ObjectID = "4uL-sd-1Qi"; */
+"4uL-sd-1Qi.title" = "Без модификаторов";
+
 /* Class = "NSTabViewItem"; label = "Modern"; ObjectID = "5"; */
 "5.label" = "Modern";
+
+/* Class = "NSTabViewItem"; label = "Quick Search"; ObjectID = "7ue-46-YVg"; */
+"7ue-46-YVg.label" = "Быстрый поиск";
 
 /* Class = "NSTabViewItem"; label = "Common"; ObjectID = "21"; */
 "21.label" = "Общее";
@@ -22,6 +36,9 @@
 
 /* Class = "NSButtonCell"; title = "Font"; ObjectID = "39"; */
 "39.title" = "Шрифт";
+
+/* Class = "NSMenuItem"; title = "2"; ObjectID = "55C-aO-FHR"; */
+"55C-aO-FHR.title" = "2";
 
 /* Class = "NSTextFieldCell"; title = "Regular background:"; ObjectID = "83"; */
 "83.title" = "Обычный фон:";
@@ -59,47 +76,23 @@
 /* Class = "NSTextFieldCell"; title = "Delete (F8):"; ObjectID = "774"; */
 "774.title" = "Удаление (F8):";
 
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "792"; */
-"792.title" = "OtherViews";
-
 /* Class = "NSMenuItem"; title = "Delete Securely"; ObjectID = "793"; */
 "793.title" = "Удалить безопасно";
 
-/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "794"; */
+/* Class = "NSMenuItem"; title = "Delete Permanently"; ObjectID = "794"; */
 "794.title" = "Удалить необратимо";
 
 /* Class = "NSMenuItem"; title = "Move To Trash"; ObjectID = "795"; */
 "795.title" = "Переместить в Корзину";
 
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "797"; */
-"797.title" = "OtherViews";
-
 /* Class = "NSMenuItem"; title = "Delete Securely"; ObjectID = "798"; */
 "798.title" = "Удалить безопасно";
 
-/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "799"; */
+/* Class = "NSMenuItem"; title = "Delete Permanently"; ObjectID = "799"; */
 "799.title" = "Удалить необратимо";
 
 /* Class = "NSMenuItem"; title = "Move To Trash"; ObjectID = "800"; */
 "800.title" = "Переместить в Корзину";
-
-/* Class = "NSMenuItem"; title = "2"; ObjectID = "3Qc-aM-Mil"; */
-"3Qc-aM-Mil.title" = "2";
-
-/* Class = "NSTextFieldCell"; title = "Selection size format:"; ObjectID = "3TY-zr-HZN"; */
-"3TY-zr-HZN.title" = "Формат размера выделения:";
-
-/* Class = "NSMenuItem"; title = "Disabled"; ObjectID = "4aj-lb-702"; */
-"4aj-lb-702.title" = "Отключен";
-
-/* Class = "NSMenuItem"; title = "No modifiers"; ObjectID = "4uL-sd-1Qi"; */
-"4uL-sd-1Qi.title" = "Без модификаторов";
-
-/* Class = "NSMenuItem"; title = "2"; ObjectID = "55C-aO-FHR"; */
-"55C-aO-FHR.title" = "2";
-
-/* Class = "NSTabViewItem"; label = "Quick Search"; ObjectID = "7ue-46-YVg"; */
-"7ue-46-YVg.label" = "Быстрый поиск";
 
 /* Class = "NSButtonCell"; title = "Show other windows' paths in folder changing menu"; ObjectID = "CIY-eD-NSg"; */
 "CIY-eD-NSg.title" = "Показывать пути других окон в меню смены папки";
@@ -200,7 +193,7 @@
 /* Class = "NSButtonCell"; title = "Soft filtering"; ObjectID = "qmw-Ul-eSK"; */
 "qmw-Ul-eSK.title" = "Мягкая фильтрация";
 
-/* Class = "NSButtonCell"; title = "Show \"..\" entry in directory listing"; ObjectID = "tmQ-Kf-Ylo"; */
+/* Class = "NSButtonCell"; title = "Show “..” entry in directory listing"; ObjectID = "tmQ-Kf-Ylo"; */
 "tmQ-Kf-Ylo.title" = "Показывать объект “..” в листинге папки";
 
 /* Class = "NSMenuItem"; title = "Beginning"; ObjectID = "wWO-qC-fR7"; */
@@ -211,3 +204,4 @@
 
 /* Class = "NSMenuItem"; title = "0"; ObjectID = "z9X-bm-wWv"; */
 "z9X-bm-wWv.title" = "0";
+

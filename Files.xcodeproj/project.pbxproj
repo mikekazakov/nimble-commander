@@ -38,7 +38,6 @@
 		CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
 		CF039EB017911FFA00DC85D6 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */; };
 		CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */; };
-		CF039EB61791204600DC85D6 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EB41791204600DC85D6 /* PreferencesWindowViewerTab.xib */; };
 		CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB8179142A900DC85D6 /* NSUserDefaults+myColorSupport.m */; };
 		CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0519DB17E9C98A00590C74 /* PanelAux.mm */; };
 		CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */; };
@@ -460,7 +459,6 @@
 		CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF2AC58D1818DD3800B0BEB4 /* path_manip.c */; };
 		CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF6D9CFF19667E390077B146 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
-		CF6D9D1019667E390077B146 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EB41791204600DC85D6 /* PreferencesWindowViewerTab.xib */; };
 		CF6D9D1119667E390077B146 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857818F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib */; };
 		CF6D9D1219667E390077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857F18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
 		CF6D9D1319667E390077B146 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE1088C1946CBAF00DABC5C /* PreferencesWindowTerminalTab.xib */; };
@@ -788,6 +786,9 @@
 		CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
 		CFD83ADA1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
 		CFD83ADB1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
+		CFD83AE01A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */; };
+		CFD83AE11A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */; };
+		CFD83AE21A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -1112,7 +1113,6 @@
 		CFF6F38D1A13567C00011177 /* pref_extedit_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989F196E38E400D4C108 /* pref_extedit_icon.png */; };
 		CFF6F38E1A13567C00011177 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */; };
 		CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
-		CFF6F3921A13567C00011177 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EB41791204600DC85D6 /* PreferencesWindowViewerTab.xib */; };
 		CFF6F3941A13567C00011177 /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A4196E38E400D4C108 /* question_icon.png */; };
 		CFF6F3951A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857F18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
 		CFF6F3961A13567C00011177 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09857818F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib */; };
@@ -1268,7 +1268,6 @@
 		CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowPanelsTab.mm; sourceTree = "<group>"; };
 		CF039EB21791204600DC85D6 /* PreferencesWindowViewerTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowViewerTab.h; sourceTree = "<group>"; };
 		CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowViewerTab.mm; sourceTree = "<group>"; };
-		CF039EB41791204600DC85D6 /* PreferencesWindowViewerTab.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowViewerTab.xib; sourceTree = "<group>"; };
 		CF039EB71791429300DC85D6 /* NSUserDefaults+myColorSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSUserDefaults+myColorSupport.h"; sourceTree = "<group>"; };
 		CF039EB8179142A900DC85D6 /* NSUserDefaults+myColorSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+myColorSupport.m"; sourceTree = "<group>"; };
 		CF0519DA17E9C98A00590C74 /* PanelAux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelAux.h; sourceTree = "<group>"; };
@@ -1840,6 +1839,8 @@
 		CFD83AD81A6D62CC002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFD83ADC1A6D6736002EE49B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowPanelsTabColoringFilterSheet.xib; sourceTree = "<group>"; };
 		CFD83ADF1A6D682F002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowPanelsTabColoringFilterSheet.strings; sourceTree = "<group>"; };
+		CFD83AE31A6D6E51002EE49B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowViewerTab.xib; sourceTree = "<group>"; };
+		CFD83AE61A6D78C4002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowViewerTab.strings; sourceTree = "<group>"; };
 		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDA110D177E83F8009E29F7 /* BigFileViewHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewHistory.h; sourceTree = "<group>"; };
@@ -2082,7 +2083,7 @@
 				CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */,
 				CF039EB21791204600DC85D6 /* PreferencesWindowViewerTab.h */,
 				CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */,
-				CF039EB41791204600DC85D6 /* PreferencesWindowViewerTab.xib */,
+				CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */,
 				CF09857618F2E922006E6410 /* PreferencesWindowExternalEditorsTab.h */,
 				CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */,
 				CF09857818F2E922006E6410 /* PreferencesWindowExternalEditorsTab.xib */,
@@ -3378,7 +3379,7 @@
 				CFCCFBB91A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFB598AE196E38E400D4C108 /* pause_icon.png in Resources */,
 				CF007C541A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CF6D9D1019667E390077B146 /* PreferencesWindowViewerTab.xib in Resources */,
+				CFD83AE11A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
 				CFB598B8196E38E400D4C108 /* pref_viewer_icon.png in Resources */,
 				CF6D9D1119667E390077B146 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CF6D9D1219667E390077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
@@ -3445,7 +3446,7 @@
 				CFA3D7CE196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF007C531A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CF039EB61791204600DC85D6 /* PreferencesWindowViewerTab.xib in Resources */,
+				CFD83AE01A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
 				CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */,
 				CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFB598B9196E38E400D4C108 /* question_icon.png in Resources */,
@@ -3506,7 +3507,7 @@
 				CFF6F38E1A13567C00011177 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF007C551A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CFF6F3921A13567C00011177 /* PreferencesWindowViewerTab.xib in Resources */,
+				CFD83AE21A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
 				CFD83ADB1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFF6F3941A13567C00011177 /* question_icon.png in Resources */,
 				CFF6F3951A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
@@ -4770,6 +4771,15 @@
 				CFD83ADF1A6D682F002EE49B /* ru */,
 			);
 			name = PreferencesWindowPanelsTabColoringFilterSheet.xib;
+			sourceTree = "<group>";
+		};
+		CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFD83AE31A6D6E51002EE49B /* Base */,
+				CFD83AE61A6D78C4002EE49B /* ru */,
+			);
+			name = PreferencesWindowViewerTab.xib;
 			sourceTree = "<group>";
 		};
 		CFD9F94D1A623E4E001B3F33 /* Operations.strings */ = {

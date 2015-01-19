@@ -43,6 +43,8 @@
             [self.DefaultEncoding selectItemWithTitle:(__bridge NSString*)i.second];
             break;
         }
+    
+    [self.view layoutSubtreeIfNeeded];    
 }
 
 -(NSString*)identifier{

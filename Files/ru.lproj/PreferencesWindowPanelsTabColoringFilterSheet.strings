@@ -1,9 +1,5 @@
-
 /* Class = "NSButtonCell"; title = "Symbolic link"; ObjectID = "BgY-7f-vUa"; */
 "BgY-7f-vUa.title" = "Символическая ссылка";
-
-/* Class = "NSPanel"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
-"F0z-JX-Cv5.title" = "";
 
 /* Class = "NSButtonCell"; title = "Hidden"; ObjectID = "MwK-gY-7TL"; */
 "MwK-gY-7TL.title" = "Скрытый";
@@ -28,3 +24,4 @@
 
 /* Class = "NSTextFieldCell"; title = "Flags:"; ObjectID = "yJQ-ob-3Ua"; */
 "yJQ-ob-3Ua.title" = "Флаги:";
+

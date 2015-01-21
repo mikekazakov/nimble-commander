@@ -1,4 +1,3 @@
-
 /* Class = "NSTabViewItem"; label = "Common"; ObjectID = "4"; */
 "4.label" = "Общее";
 
@@ -86,7 +85,7 @@
 /* Class = "NSMenuItem"; title = "64 Kb"; ObjectID = "617"; */
 "617.title" = "64 Кб";
 
-/* Class = "NSMenuItem"; title = "128Kb"; ObjectID = "618"; */
+/* Class = "NSMenuItem"; title = "128 Kb"; ObjectID = "618"; */
 "618.title" = "128 Кб";
 
 /* Class = "NSMenuItem"; title = "256 Kb"; ObjectID = "636"; */
@@ -100,3 +99,4 @@
 
 /* Class = "NSButtonCell"; title = "Check com.apple.TextEncoding"; ObjectID = "dec-0H-tCg"; */
 "dec-0H-tCg.title" = "Проверять com.apple.TextEncoding";
+

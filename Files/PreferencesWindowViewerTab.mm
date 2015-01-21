@@ -38,8 +38,7 @@
         default_encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
     for(const auto &i: encodings::LiteralEncodingsList())
-        if(i.first == default_encoding)
-        {
+        if(i.first == default_encoding) {
             [self.DefaultEncoding selectItemWithTitle:(__bridge NSString*)i.second];
             break;
         }
@@ -54,7 +53,9 @@
     return [NSImage imageNamed:@"pref_viewer_icon"];
 }
 -(NSString*)toolbarItemLabel{
-    return @"Viewer";
+    return NSLocalizedStringFromTable(@"Viewer",
+                                      @"Preferences",
+                                      "General preferences tab title");
 }
 
 - (IBAction) OnSetModernFont:(id)sender
@@ -102,8 +103,7 @@
 - (IBAction)DefaultEncodingChanged:(id)sender
 {
     for(const auto &i: encodings::LiteralEncodingsList())
-        if([(__bridge NSString*)i.second isEqualToString:[[self.DefaultEncoding selectedItem] title]])
-        {
+        if([(__bridge NSString*)i.second isEqualToString:[[self.DefaultEncoding selectedItem] title]]) {
             NSString *encoding_name = [NSString stringWithUTF8String:encodings::NameFromEncoding(i.first)];
             [[NSUserDefaults standardUserDefaults] setObject:encoding_name forKey:@"BigFileViewDefaultEncoding"];
             break;
@@ -112,12 +112,17 @@
 
 - (IBAction)ClearHistory:(id)sender
 {
-    NSAlert *alert = [NSAlert alertWithMessageText:@"Are you sure want to clear saved file states?"
-                                     defaultButton:@"Ok"
-                                   alternateButton:@"Cancel"
-                                       otherButton:nil
-                         informativeTextWithFormat:@"This will erase stored positions, encodings, selections etc."];
-    if([alert runModal] == NSAlertDefaultReturn)
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedStringFromTable(@"Are you sure want to clear saved file states?",
+                                                   @"Preferences",
+                                                   "Message text asking if user really wants to clear saved viewer file states");
+    alert.informativeText = NSLocalizedStringFromTable(@"This will erase stored positions, encodings, selections etc.",
+                                                       @"Preferences",
+                                                       "Informative text when asking user to clear saved file state");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
+    [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
+    if([alert runModal] == NSAlertFirstButtonReturn)
         [BigFileViewHistory DeleteHistory];
 }
 

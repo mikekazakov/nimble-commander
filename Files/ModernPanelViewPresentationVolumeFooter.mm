@@ -79,7 +79,9 @@ void ModernPanelViewPresentationVolumeFooter::PrepareToDraw(const VFSStatFS &_st
     m_VolumeName = [[NSAttributedString alloc] initWithString:name_str
                                                    attributes:attr1];
     
-    NSString *avail = [NSString stringWithFormat:@"%@ available", ByteCountFormatter::Instance().ToNSString(m_CurrentStat.avail_bytes, ByteCountFormatter::Adaptive6)];
+    NSString *avail = [NSString stringWithFormat:NSLocalizedString(@"%@ available",
+                                                                   "Panels bottom volume bar, showing amount of bytes available"),
+                              ByteCountFormatter::Instance().ToNSString(m_CurrentStat.avail_bytes, ByteCountFormatter::Adaptive6)];
     m_FreeSpace = [[NSAttributedString alloc] initWithString:avail
                                                   attributes:attr2];
 }

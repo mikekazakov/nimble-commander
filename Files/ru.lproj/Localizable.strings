@@ -1,3 +1,6 @@
+/* Panels bottom volume bar, showing amount of bytes available */
+"%@ available" = "%@ доступно";
+
 /* Informing user that a new version is available */
 "A new version of Files is available!" = "Вышла новая версия Files!";
 
@@ -159,6 +162,36 @@
 
 /* Title for selection with mask popup */
 "Select files using mask:" = "Выделить по маске:";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in %@ files" = "Выделено %1$@ в %2$@ файлах";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 1 file" = "Выделено %@ в 1 файле";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 2 files" = "Выделено %@ в 2 файлах";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 3 files" = "Выделено %@ в 3 файлах";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 4 files" = "Выделено %@ в 4 файлах";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 5 files" = "Выделено %@ в 5 файлах";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 6 files" = "Выделено %@ в 6 файлах";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 7 files" = "Выделено %@ в 7 файлах";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 8 files" = "Выделено %@ в 8 файлах";
+
+/* Informative text for a bottom information bar in panels, showing size of selection */
+"Selected %@ in 9 files" = "Выделено %@ в 9 файлах";
 
 /* Menu item title for showing tab bar */
 "Show Tab Bar" = "Показать панель вкладок";

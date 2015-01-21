@@ -52,12 +52,48 @@ ModernPanelViewPresentationItemsFooter::ModernPanelViewPresentationItemsFooter(M
 
 NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
 {
-    // TODO: localization support
-    NSString *postfix = _total_files > 1 ? @"files" : @"file";
-    return [NSString stringWithFormat:@"Selected %@ in %d %@",
-                   ByteCountFormatter::Instance().ToNSString(_sz, m_Parent->SelectionSizeFormat()),
-            _total_files,
-            postfix];
+    NSString *bytes = ByteCountFormatter::Instance().ToNSString(_sz, m_Parent->SelectionSizeFormat());
+    if(_total_files == 1)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 1 file",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 2)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 2 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 3)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 3 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 4)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 4 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 5)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 5 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 6)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 6 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 7)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 7 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 8)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 8 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 9)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 9 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in %@ files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes,
+                [NSNumber numberWithInt:_total_files]];
 }
 
 void ModernPanelViewPresentationItemsFooter::SetFont(NSFont *_font)

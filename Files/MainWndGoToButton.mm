@@ -312,6 +312,8 @@ static NSMenuItem *TitleItem()
         [self.menu addItem:NSMenuItem.separatorItem];
         for(const auto &i: m_OtherPanelsPaths)
         {
+            if(!i.visible_path) // NB! this is a temp bugfix for a strange bug: SOMETIMES visible_path is nil, which can't be
+                continue;
             NSMenuItem *menuitem = [NSMenuItem new];
             menuitem.title = i.visible_path;
             [self.menu addItem:menuitem];

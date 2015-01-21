@@ -31,6 +31,7 @@
     self.TableView.DoubleAction = @selector(OnTableDoubleClick:);
     self.TableView.dataSource = self;
     [self.TableView registerForDraggedTypes:@[MyPrivateTableViewDataType]];
+    [self.view layoutSubtreeIfNeeded];    
 }
 
 -(NSString*)identifier{
@@ -40,7 +41,9 @@
     return [NSImage imageNamed:@"pref_extedit_icon"];
 }
 -(NSString*)toolbarItemLabel{
-    return @"Editors";
+    return NSLocalizedStringFromTable(@"Editors",
+                                      @"Preferences",
+                                      "General preferences tab title");
 }
 
 - (NSMutableArray *) ExtEditors

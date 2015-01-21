@@ -30,6 +30,7 @@
     if(!m_Font) m_Font = [NSFont fontWithName:@"Menlo-Regular" size:13];
 
     [self updateFontVisibleName];
+    [self.view layoutSubtreeIfNeeded];
 }
 
 -(NSString*)identifier{
@@ -39,7 +40,9 @@
     return [NSImage imageNamed:@"pref_term_icon"];
 }
 -(NSString*)toolbarItemLabel{
-    return @"Terminal";
+    return NSLocalizedStringFromTable(@"Terminal",
+                                      @"Preferences",
+                                      "General preferences tab title");
 }
 
 - (void) updateFontVisibleName

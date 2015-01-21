@@ -135,12 +135,18 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentatio
         {
             char buf[32];
             memset(buf, 0, sizeof(buf));
-            
-            if( !_dirent.IsDotDot()) strcpy(buf, "Folder");
-            else                      strcpy(buf, "    Up");
-            
+            if( !_dirent.IsDotDot()) {
+                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_FOLDER_WORD", "Fixed-length (6 chars) string for folders, for English is 'Folder'").UTF8String;
+                strcpy(buf, st.c_str());
+            }
+            else {
+                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_UP_WORD", "Fixed-length (6 chars) string for upper-dir, for English is '    Up'").UTF8String;
+                strcpy(buf, st.c_str());
+            }
+            oms::StringBuf<32> tmp;
+            tmp.FromUTF8(buf, strlen(buf));
             oms::StringBuf<6> r;
-            r.FromChars((uint8_t*)buf, 6);
+            r.FromUniChars(tmp.Chars(), min(tmp.Size(), uint16_t(6)));
             return r;
         }
     }
@@ -172,17 +178,56 @@ static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelSortMode::Mo
     return r;
 }
 
-oms::StringBuf<128> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, bool _space_prefix_and_postfix) const
+oms::StringBuf<256> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files) const
 {
     // TODO: localization support
     char buf_bytes[256];
     ByteCountFormatter::Instance().ToUTF8(_sz, (unsigned char*)buf_bytes, 256, SelectionSizeFormat());
     
-    char buf[128] = {0};
-    const char *postfix = _total_files > 1 ? "files" : "file";
-    const char *space = _space_prefix_and_postfix ? " " : "";
-    sprintf(buf, "%s%s in %d %s%s", space, buf_bytes, _total_files, postfix, space);
-    oms::StringBuf<128> out;
+    char buf[256] = {0};
+    
+    if(_total_files == 1) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 1 file", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else if(_total_files == 2) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 2 files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else if(_total_files == 3) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 3 files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else if(_total_files == 4) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 4 files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else if(_total_files == 5) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 5 files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else if(_total_files == 6) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 6 files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else if(_total_files == 7) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 7 files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else if(_total_files == 8) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 8 files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else if(_total_files == 9) {
+        static string fmt = " "s + NSLocalizedString(@"%s in 9 files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes);
+    }
+    else {
+        static string fmt = " "s + NSLocalizedString(@"%s in %d files", "Total files size in panel's bottom info bar").UTF8String + " "s;
+        sprintf(buf, fmt.c_str(), buf_bytes, _total_files);
+    }
+    
+    oms::StringBuf<256> out;
     out.FromUTF8(buf, strlen(buf));
     return out;
 }
@@ -711,7 +756,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         
         if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 14)
         { // process selection if any
-            auto str = FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_selected_entries, m_State->Data->Stats().selected_entries_amount, true);
+            auto str = FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_selected_entries, m_State->Data->Stats().selected_entries_amount);
             str.TrimEllipsisLeft(m_SymbWidth - 2);
             
             int symbs = str.Space();
@@ -723,7 +768,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         
         if(m_SymbWidth > 14)
         { // process bytes in directory
-            auto str = FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_raw_reg_files, (int)m_State->Data->Stats().raw_reg_files_amount, true);
+            auto str = FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_raw_reg_files, (int)m_State->Data->Stats().raw_reg_files_amount);
             str.TrimEllipsisLeft(m_SymbWidth - 2);
             
             int symbs = str.Space();
@@ -737,7 +782,8 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             char bytes[256], buf[1024];
             UpdateStatFS();
             ByteCountFormatter::Instance().ToUTF8(StatFS().avail_bytes, (unsigned char*)bytes, 256, ByteCountFormatter::Adaptive6);
-            sprintf(buf, " %s: %s available ", StatFS().volume_name.c_str(), bytes);
+            static string fmt = " "s + NSLocalizedString(@"%s: %s available", "Volume information bar, showing volume name and free space").UTF8String + " "s;
+            sprintf(buf, fmt.c_str(), StatFS().volume_name.c_str(), bytes);
             oms::StringBuf<1024> str;
             str.FromUTF8(buf, strlen(buf));
             str.TrimEllipsisLeft(m_SymbWidth - 2);

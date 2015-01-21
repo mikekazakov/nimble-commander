@@ -55,7 +55,7 @@ private:
     void CalcLayout(NSSize _from_px_size);
     oms::StringBuf<6> FormHumanReadableSizeRepresentation(unsigned long _sz) const;
     oms::StringBuf<6> FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent) const;
-    oms::StringBuf<128> FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files, bool _space_prefix_and_postfix) const;
+    oms::StringBuf<256> FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files) const;
     
     array<int, 3>   ColumnWidthsShort() const;
     array<int, 2>   ColumnWidthsMedium() const;

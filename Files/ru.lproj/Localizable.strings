@@ -1,6 +1,39 @@
 /* Panels bottom volume bar, showing amount of bytes available */
 "%@ available" = "%@ доступно";
 
+/* Total files size in panel's bottom info bar */
+"%s in %d files" = "%s в %d файлах";
+
+/* Total files size in panel's bottom info bar */
+"%s in 1 file" = "%s в 1 файле";
+
+/* Total files size in panel's bottom info bar */
+"%s in 2 files" = "%s в 2 файлах";
+
+/* Total files size in panel's bottom info bar */
+"%s in 3 files" = "%s в 3 файлах";
+
+/* Total files size in panel's bottom info bar */
+"%s in 4 files" = "%s в 4 файлах";
+
+/* Total files size in panel's bottom info bar */
+"%s in 5 files" = "%s в 5 файлах";
+
+/* Total files size in panel's bottom info bar */
+"%s in 6 files" = "%s в 6 файлах";
+
+/* Total files size in panel's bottom info bar */
+"%s in 7 files" = "%s в 7 файлах";
+
+/* Total files size in panel's bottom info bar */
+"%s in 8 files" = "%s в 8 файлах";
+
+/* Total files size in panel's bottom info bar */
+"%s in 9 files" = "%s в 9 файлах";
+
+/* Volume information bar, showing volume name and free space */
+"%s: %s available" = "%1$s: %2$s доступно";
+
 /* Informing user that a new version is available */
 "A new version of Files is available!" = "Вышла новая версия Files!";
 
@@ -276,6 +309,12 @@
 
 /* SI postfixes with first symbol empty, for English is ' KMGTP' */
 "__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " КМГТП";
+
+/* Fixed-length (6 chars) string for folders, for English is 'Folder' */
+"__CLASSICPRESENTATION_FOLDER_WORD" = " Папка";
+
+/* Fixed-length (6 chars) string for upper-dir, for English is '    Up' */
+"__CLASSICPRESENTATION_UP_WORD" = "Наверх";
 
 /* Name for freshly create folder by hotkey */
 "untitled folder" = "Новая папка";

@@ -1,9 +1,8 @@
+/* Class = "NSButtonCell"; title = "Files only"; ObjectID = "9X5-ZX-4rg"; */
+"9X5-ZX-4rg.title" = "Только файлы";
 
 /* Class = "NSTextFieldCell"; title = "Arguments:"; ObjectID = "84y-na-X1l"; */
 "84y-na-X1l.title" = "Аргументы:";
-
-/* Class = "NSButtonCell"; title = "Files only"; ObjectID = "9X5-ZX-4rg"; */
-"9X5-ZX-4rg.title" = "Только файлы";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "BxS-J4-CBs"; */
 "BxS-J4-CBs.title" = "Отмена";
@@ -34,3 +33,4 @@
 
 /* Class = "NSTextFieldCell"; title = "Application path:"; ObjectID = "xCy-eR-Fzk"; */
 "xCy-eR-Fzk.title" = "Путь приложения:";
+

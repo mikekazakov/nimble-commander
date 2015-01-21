@@ -63,7 +63,9 @@
     return [NSImage imageNamed:@"pref_hotkeys_icon"];
 }
 -(NSString*)toolbarItemLabel{
-    return @"Hotkeys";
+    return NSLocalizedStringFromTable(@"Hotkeys",
+                                      @"Preferences",
+                                      "General preferences tab title");
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -122,10 +124,14 @@
 - (IBAction)OnDefaults:(id)sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Are you sure want to reset hotkeys to defaults?";
-    alert.informativeText = @"This will clear any custom set hotkeys.";
-    [alert addButtonWithTitle:@"Ok"];
-    [alert addButtonWithTitle:@"Cancel"];
+    alert.messageText = NSLocalizedStringFromTable(@"Are you sure want to reset hotkeys to defaults?",
+                                                   @"Preferences",
+                                                   "Message text asking if user really wants to reset hotkeys to defaults");
+    alert.informativeText = NSLocalizedStringFromTable(@"This will clear any custom set hotkeys.",
+                                                       @"Preferences",
+                                                       "Informative text when user wants to reset hotkeys to defaults");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertFirstButtonReturn) {
         ActionsShortcutsManager::Instance().RevertToDefaults();

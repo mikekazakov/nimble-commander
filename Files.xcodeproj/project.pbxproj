@@ -457,7 +457,6 @@
 		CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF2AC58D1818DD3800B0BEB4 /* path_manip.c */; };
 		CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF6D9CFF19667E390077B146 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
-		CF6D9D1419667E390077B146 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */; };
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
 		CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
@@ -636,7 +635,6 @@
 		CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
 		CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
 		CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
-		CFA3D7CE196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */; };
 		CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */; };
 		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
@@ -715,6 +713,9 @@
 		CFCABCD51A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */; };
 		CFCABCD61A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */; };
 		CFCABCD71A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */; };
+		CFCABCDC1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */; };
+		CFCABCDD1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */; };
+		CFCABCDE1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */; };
 		CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
@@ -1113,7 +1114,6 @@
 		CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CFF6F38C1A13567C00011177 /* linkarrow_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989D196E38E400D4C108 /* linkarrow_icon.png */; };
 		CFF6F38D1A13567C00011177 /* pref_extedit_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989F196E38E400D4C108 /* pref_extedit_icon.png */; };
-		CFF6F38E1A13567C00011177 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */; };
 		CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
 		CFF6F3941A13567C00011177 /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A4196E38E400D4C108 /* question_icon.png */; };
 		CFF6F39A1A13567C00011177 /* pref_general_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A0196E38E400D4C108 /* pref_general_icon.png */; };
@@ -1681,7 +1681,6 @@
 		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowHotkeysTab.h; sourceTree = "<group>"; };
 		CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowHotkeysTab.mm; sourceTree = "<group>"; };
-		CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowHotkeysTab.xib; sourceTree = "<group>"; };
 		CFA58397170EA3C400E508CF /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperation.h; sourceTree = "<group>"; };
 		CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperation.mm; sourceTree = "<group>"; };
 		CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperationJob.mm; sourceTree = "<group>"; };
@@ -1770,6 +1769,8 @@
 		CFCABCD41A6FB6F0008C222E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowExternalEditorsTabNewEditorSheet.strings; sourceTree = "<group>"; };
 		CFCABCD81A6FC008008C222E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowTerminalTab.xib; sourceTree = "<group>"; };
 		CFCABCDB1A6FC074008C222E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowTerminalTab.strings; sourceTree = "<group>"; };
+		CFCABCDF1A6FC4AF008C222E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowHotkeysTab.xib; sourceTree = "<group>"; };
+		CFCABCE21A6FC4D5008C222E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowHotkeysTab.strings; sourceTree = "<group>"; };
 		CFCCFBB11A5D340000313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SFTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBB61A5D4E6100313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CalculateChecksumSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBBB1A5D687600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FTPConnectionSheetController.xib; sourceTree = "<group>"; };
@@ -2098,7 +2099,7 @@
 				CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */,
 				CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */,
 				CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */,
-				CFA3D7CC196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib */,
+				CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -3387,7 +3388,7 @@
 				CFCABCC81A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCABCCF1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCABCD61A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
-				CF6D9D1419667E390077B146 /* PreferencesWindowHotkeysTab.xib in Resources */,
+				CFCABCDD1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
@@ -3446,7 +3447,7 @@
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
 				CFB598AB196E38E400D4C108 /* linkarrow_icon.png in Resources */,
 				CFB598AF196E38E400D4C108 /* pref_extedit_icon.png in Resources */,
-				CFA3D7CE196286CD006A30A1 /* PreferencesWindowHotkeysTab.xib in Resources */,
+				CFCABCDC1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF007C531A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CFD83AE01A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
@@ -3507,7 +3508,7 @@
 				CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */,
 				CFF6F38C1A13567C00011177 /* linkarrow_icon.png in Resources */,
 				CFF6F38D1A13567C00011177 /* pref_extedit_icon.png in Resources */,
-				CFF6F38E1A13567C00011177 /* PreferencesWindowHotkeysTab.xib in Resources */,
+				CFCABCDE1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF007C551A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CFD83AE21A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
@@ -4612,6 +4613,15 @@
 				CFCABCDB1A6FC074008C222E /* ru */,
 			);
 			name = PreferencesWindowTerminalTab.xib;
+			sourceTree = "<group>";
+		};
+		CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFCABCDF1A6FC4AF008C222E /* Base */,
+				CFCABCE21A6FC4D5008C222E /* ru */,
+			);
+			name = PreferencesWindowHotkeysTab.xib;
 			sourceTree = "<group>";
 		};
 		CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */ = {

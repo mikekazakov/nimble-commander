@@ -1,7 +1,3 @@
-
-/* Class = "NSButtonCell"; title = "Change..."; ObjectID = "10R-Vq-CP2"; */
-"10R-Vq-CP2.title" = "Изменить...";
-
 /* Class = "NSTextFieldCell"; title = "ANSI Colors"; ObjectID = "2Kw-RY-4u0"; */
 "2Kw-RY-4u0.title" = "Цвета ANSI";
 
@@ -13,6 +9,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Font"; ObjectID = "9LW-aK-nMs"; */
 "9LW-aK-nMs.title" = "Шрифт";
+
+/* Class = "NSButtonCell"; title = "Change..."; ObjectID = "10R-Vq-CP2"; */
+"10R-Vq-CP2.title" = "Изменить...";
 
 /* Class = "NSTextFieldCell"; title = "Bright"; ObjectID = "AD2-zv-RsG"; */
 "AD2-zv-RsG.title" = "Яркие";
@@ -91,3 +90,4 @@
 
 /* Class = "NSColorWell"; ibShadowedToolTip = "Blue (4)"; ObjectID = "zOX-2h-pbe"; */
 "zOX-2h-pbe.ibShadowedToolTip" = "Синий (4)";
+

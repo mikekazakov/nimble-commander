@@ -170,6 +170,11 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
                 filtering.text = RemoveLastCharacterWithNormalization(filtering.text);
             else
                 return false;
+            
+            if(filtering.text.length == 0) {
+                [self QuickSearchClearFiltering];
+                return true;
+            }
         }
         
         filtering.type = m_QuickSearchWhere;
@@ -227,6 +232,11 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
                 filtering.text.text = RemoveLastCharacterWithNormalization(filtering.text.text);
             else
                 return false;
+            
+            if(filtering.text.text.length == 0) {
+                [self QuickSearchClearFiltering];
+                return true;
+            }
         }
     }
     

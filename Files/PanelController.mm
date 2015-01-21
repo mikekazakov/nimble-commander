@@ -435,6 +435,11 @@ void panel::GenericCursorPersistance::Restore()
         [self OnFileViewCommand:self];
         return true;
     }
+    if(keycode == 51 &&
+       (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0
+       ) { // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
+        return [self HandleGoToUpperDirectory];
+    }
     if(keycode == 53) { // Esc button
         [self CancelBackgroundOperations];
         [self.state CloseOverlay:self];

@@ -51,22 +51,18 @@ static NSString* FormHumanReadableShortTime(time_t _in)
 
 NSString* ModernPanelViewPresentation::FileSizeToString(const VFSListingItem &_dirent)
 {
-    if( _dirent.IsDir() )
-    {
-        if( _dirent.Size() != VFSListingItem::InvalidSize)
-        {
+    if( _dirent.IsDir() ) {
+        if( _dirent.Size() != VFSListingItem::InvalidSize) {
             return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), FileSizeFormat());
         }
-        else
-        {
+        else {
             if(_dirent.IsDotDot())
-                return @"Up";
+                return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD", "Upper-level in directory, for English is 'Up'");
             else
-                return @"Folder";
+                return NSLocalizedString(@"__MODERNPRESENTATION_FOLDER_WORD", "Folders dummy string when size is not available, for English is 'Folder'");
         }
     }
-    else
-    {
+    else {
         return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), FileSizeFormat());
     }
 }

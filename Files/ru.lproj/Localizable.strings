@@ -316,6 +316,12 @@
 /* Fixed-length (6 chars) string for upper-dir, for English is '    Up' */
 "__CLASSICPRESENTATION_UP_WORD" = "Наверх";
 
+/* Folders dummy string when size is not available, for English is 'Folder' */
+"__MODERNPRESENTATION_FOLDER_WORD" = "Папка";
+
+/* Upper-level in directory, for English is 'Up' */
+"__MODERNPRESENTATION_UP_WORD" = "Наверх";
+
 /* Name for freshly create folder by hotkey */
 "untitled folder" = "Новая папка";
 

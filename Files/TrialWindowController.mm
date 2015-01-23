@@ -49,8 +49,7 @@
     self.versionTextField.stringValue = [NSString stringWithFormat:@"Version %@ (%@)",
                                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
                                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
-    self.copyrightTextField.stringValue = @"Copyright © 2013-2014 Michael Kazakov";
-    
+    self.copyrightTextField.stringValue = [NSBundle.mainBundle.infoDictionary objectForKey:@"NSHumanReadableCopyright"];
     
     NSMutableAttributedString* string = [[NSMutableAttributedString alloc] init];
     

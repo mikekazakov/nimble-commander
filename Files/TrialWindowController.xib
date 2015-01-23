@@ -56,7 +56,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3JH-XP-eH4">
-                        <rect key="frame" x="226" y="198" width="278" height="17"/>
+                        <rect key="frame" x="226" y="184" width="278" height="31"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="pUx-rG-ZPQ">
                             <font key="font" metaFont="label"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

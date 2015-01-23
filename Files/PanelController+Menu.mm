@@ -298,6 +298,11 @@
 
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
+    if(!sender ||
+       ![sender isKindOfClass:NSMenuItem.class] ||
+       !((NSMenuItem*)sender).representedObject ||
+       ![((NSMenuItem*)sender).representedObject isKindOfClass:ConnectionsMenuDelegateInfoWrapper.class])
+        return;
     ConnectionsMenuDelegateInfoWrapper *wr = ((NSMenuItem*)sender).representedObject;
     if(auto ftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::FTPConnection>(wr.object)) {
         string passwd;

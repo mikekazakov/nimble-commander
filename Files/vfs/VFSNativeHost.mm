@@ -118,7 +118,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
             char *full_path = (char*) malloc(_path_len + entp->d_namlen + 2);
             memcpy(full_path, _path, _path_len + entp->d_namlen + 2);
             
-            _stat_queue.async([&,full_path=full_path]{
+            _stat_queue.async([&,full_path]{
                 if(_iscancelling) return;
                 
                 struct stat st;

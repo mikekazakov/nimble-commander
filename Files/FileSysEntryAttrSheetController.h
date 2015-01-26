@@ -54,6 +54,8 @@ typedef void (^FileSysEntryAttrSheetCompletionHandler)(int result);
 @property (strong) IBOutlet NSButton *NoDumpCheck;
 @property (strong) IBOutlet NSButton *UserImmutableCheck;
 @property (strong) IBOutlet NSButton *UserAppendCheck;
+@property (strong) IBOutlet NSButton *UserCompressedCheck;
+@property (strong) IBOutlet NSButton *UserTrackedCheck;
 @property (strong) IBOutlet NSButton *OpaqueCheck;
 @property (strong) IBOutlet NSButton *HiddenCheck;
 @property (strong) IBOutlet NSButton *ArchivedCheck;

@@ -257,6 +257,7 @@ retry_chmod:
     DOFLAGS(fsf_uf_append, UF_APPEND);
     DOFLAGS(fsf_uf_opaque, UF_OPAQUE);
     DOFLAGS(fsf_uf_hidden, UF_HIDDEN);
+    DOFLAGS(fsf_uf_tracked, UF_TRACKED);
     DOFLAGS(fsf_sf_archived, SF_ARCHIVED);
     DOFLAGS(fsf_sf_immutable, SF_IMMUTABLE);
     DOFLAGS(fsf_sf_append, SF_APPEND);

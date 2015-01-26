@@ -159,33 +159,39 @@ struct OtherAttrs
     self.ProcessSubfoldersCheck.hidden = !m_HasDirectoryEntries;
     NSString *mixed_title = NSLocalizedString(@"[Mixed]", "Combo box element available when multiple elements are selected with different values");
     
-#define DOFLAG(_f, _c)\
-     self._c.allowsMixedState = m_ProcessSubfolders ? true :\
-        bool(m_State[0].fsfstate[FileSysAttrAlterCommand::_f] == indeterminate);\
-    self._c.state = m_ProcessSubfolders ?\
-        tribool_to_state(m_UserDidEditFlags[FileSysAttrAlterCommand::_f] ? m_State[1].fsfstate[FileSysAttrAlterCommand::_f] : indeterminate):\
-        tribool_to_state(m_State[1].fsfstate[FileSysAttrAlterCommand::_f]);
-    DOFLAG(fsf_unix_usr_r  , OwnerReadCheck);
-    DOFLAG(fsf_unix_usr_w  , OwnerWriteCheck);
-    DOFLAG(fsf_unix_usr_x  , OwnerExecCheck);
-    DOFLAG(fsf_unix_grp_r  , GroupReadCheck);
-    DOFLAG(fsf_unix_grp_w  , GroupWriteCheck);
-    DOFLAG(fsf_unix_grp_x  , GroupExecCheck);
-    DOFLAG(fsf_unix_oth_r  , OthersReadCheck);
-    DOFLAG(fsf_unix_oth_w  , OthersWriteCheck);
-    DOFLAG(fsf_unix_oth_x  , OthersExecCheck);
-    DOFLAG(fsf_unix_suid   , SetUIDCheck);
-    DOFLAG(fsf_unix_sgid   , SetGIDCheck);
-    DOFLAG(fsf_unix_sticky , StickyCheck);
-    DOFLAG(fsf_uf_nodump   , NoDumpCheck);
-    DOFLAG(fsf_uf_immutable, UserImmutableCheck);
-    DOFLAG(fsf_uf_append   , UserAppendCheck);
-    DOFLAG(fsf_uf_opaque   , OpaqueCheck);
-    DOFLAG(fsf_uf_hidden   , HiddenCheck);
-    DOFLAG(fsf_sf_archived , ArchivedCheck);
-    DOFLAG(fsf_sf_immutable, SystemImmutableCheck);
-    DOFLAG(fsf_sf_append   , SystemAppendCheck);
-#undef DOFLAG
+    typedef FileSysAttrAlterCommand _;
+    auto doflag = [=](_::fsflags flag, NSButton *ctrl) {
+        ctrl.allowsMixedState = m_ProcessSubfolders ?
+            true :
+            indeterminate(m_State[0].fsfstate[flag]);
+        ctrl.state = m_ProcessSubfolders ?
+            tribool_to_state(m_UserDidEditFlags[flag] ?
+                             m_State[1].fsfstate[flag] :
+                             indeterminate):
+            tribool_to_state(m_State[1].fsfstate[flag]);
+    };
+    doflag(_::fsf_unix_usr_r  , _OwnerReadCheck);
+    doflag(_::fsf_unix_usr_w  , _OwnerWriteCheck);
+    doflag(_::fsf_unix_usr_x  , _OwnerExecCheck);
+    doflag(_::fsf_unix_grp_r  , _GroupReadCheck);
+    doflag(_::fsf_unix_grp_w  , _GroupWriteCheck);
+    doflag(_::fsf_unix_grp_x  , _GroupExecCheck);
+    doflag(_::fsf_unix_oth_r  , _OthersReadCheck);
+    doflag(_::fsf_unix_oth_w  , _OthersWriteCheck);
+    doflag(_::fsf_unix_oth_x  , _OthersExecCheck);
+    doflag(_::fsf_unix_suid   , _SetUIDCheck);
+    doflag(_::fsf_unix_sgid   , _SetGIDCheck);
+    doflag(_::fsf_unix_sticky , _StickyCheck);
+    doflag(_::fsf_uf_nodump   , _NoDumpCheck);
+    doflag(_::fsf_uf_immutable, _UserImmutableCheck);
+    doflag(_::fsf_uf_append   , _UserAppendCheck);
+    doflag(_::fsf_uf_opaque   , _OpaqueCheck);
+    doflag(_::fsf_uf_hidden   , _HiddenCheck);
+    doflag(_::fsf_uf_compressed,_UserCompressedCheck);
+    doflag(_::fsf_uf_tracked  , _UserTrackedCheck);
+    doflag(_::fsf_sf_archived , _ArchivedCheck);
+    doflag(_::fsf_sf_immutable, _SystemImmutableCheck);
+    doflag(_::fsf_sf_append   , _SystemAppendCheck);
 
     // UID/GID section
     NSSize menu_pic_size;
@@ -362,6 +368,8 @@ struct OtherAttrs
     m_State[0].fsfstate[_::fsf_uf_append]    = item.UnixFlags() & UF_APPEND;
     m_State[0].fsfstate[_::fsf_uf_opaque]    = item.UnixFlags() & UF_OPAQUE;
     m_State[0].fsfstate[_::fsf_uf_hidden]    = item.UnixFlags() & UF_HIDDEN;
+    m_State[0].fsfstate[_::fsf_uf_compressed]= item.UnixFlags() & UF_COMPRESSED;
+    m_State[0].fsfstate[_::fsf_uf_tracked]   = item.UnixFlags() & UF_TRACKED;
     m_State[0].fsfstate[_::fsf_sf_archived]  = item.UnixFlags() & SF_ARCHIVED;
     m_State[0].fsfstate[_::fsf_sf_immutable] = item.UnixFlags() & SF_IMMUTABLE;
     m_State[0].fsfstate[_::fsf_sf_append]    = item.UnixFlags() & SF_APPEND;
@@ -468,6 +476,7 @@ struct OtherAttrs
     DOFLAG(fsf_uf_append   , UserAppendCheck);
     DOFLAG(fsf_uf_opaque   , OpaqueCheck);
     DOFLAG(fsf_uf_hidden   , HiddenCheck);
+    DOFLAG(fsf_uf_tracked  , UserTrackedCheck);
     DOFLAG(fsf_sf_archived , ArchivedCheck);
     DOFLAG(fsf_sf_immutable, SystemImmutableCheck);
     DOFLAG(fsf_sf_append   , SystemAppendCheck);
@@ -555,6 +564,7 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = state_to_tribool(self._c);
     DOFLAG(fsf_uf_append   , UserAppendCheck);
     DOFLAG(fsf_uf_opaque   , OpaqueCheck);
     DOFLAG(fsf_uf_hidden   , HiddenCheck);
+    DOFLAG(fsf_uf_tracked  , UserTrackedCheck);    
     DOFLAG(fsf_sf_archived , ArchivedCheck);
     DOFLAG(fsf_sf_immutable, SystemImmutableCheck);
     DOFLAG(fsf_sf_append   , SystemAppendCheck);

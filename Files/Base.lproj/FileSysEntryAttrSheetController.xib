@@ -33,7 +33,9 @@
                 <outlet property="SystemImmutableCheck" destination="260" id="401"/>
                 <outlet property="Title" destination="1312" id="2001"/>
                 <outlet property="UserAppendCheck" destination="237" id="397"/>
+                <outlet property="UserCompressedCheck" destination="ASx-2K-dy2" id="1TT-vx-H9h"/>
                 <outlet property="UserImmutableCheck" destination="166" id="396"/>
+                <outlet property="UserTrackedCheck" destination="zd2-GC-23k" id="lRN-m9-f0k"/>
                 <outlet property="UsersPopUpButton" destination="423" id="439"/>
                 <outlet property="window" destination="1" id="3"/>
             </connections>
@@ -43,10 +45,10 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="469" height="415"/>
+            <rect key="contentRect" x="196" y="240" width="469" height="467"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="469" height="415"/>
+                <rect key="frame" x="0.0" y="0.0" width="469" height="467"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5">
@@ -66,7 +68,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="10">
-                        <rect key="frame" x="18" y="342" width="59" height="17"/>
+                        <rect key="frame" x="18" y="394" width="59" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="rQL-7O-cfP"/>
                         </constraints>
@@ -77,7 +79,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="15">
-                        <rect key="frame" x="18" y="322" width="59" height="17"/>
+                        <rect key="frame" x="18" y="374" width="59" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="LNw-d9-nXx"/>
                         </constraints>
@@ -88,7 +90,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="22">
-                        <rect key="frame" x="18" y="302" width="59" height="17"/>
+                        <rect key="frame" x="18" y="354" width="59" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="b9T-bQ-hcC"/>
                         </constraints>
@@ -99,7 +101,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="27">
-                        <rect key="frame" x="66" y="365" width="37" height="17"/>
+                        <rect key="frame" x="66" y="417" width="37" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Read" id="28">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -107,7 +109,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="31">
-                        <rect key="frame" x="81" y="341" width="22" height="18"/>
+                        <rect key="frame" x="81" y="393" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="32">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -117,7 +119,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="57">
-                        <rect key="frame" x="81" y="321" width="22" height="18"/>
+                        <rect key="frame" x="81" y="373" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="59">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -127,7 +129,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="64">
-                        <rect key="frame" x="81" y="302" width="22" height="18"/>
+                        <rect key="frame" x="81" y="354" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="65">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -137,7 +139,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="73">
-                        <rect key="frame" x="101" y="365" width="36" height="17"/>
+                        <rect key="frame" x="101" y="417" width="36" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Write" id="82">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -145,7 +147,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="74">
-                        <rect key="frame" x="108" y="341" width="22" height="18"/>
+                        <rect key="frame" x="108" y="393" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="80">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -155,7 +157,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="75">
-                        <rect key="frame" x="108" y="321" width="22" height="18"/>
+                        <rect key="frame" x="108" y="373" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="78">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -165,7 +167,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="76">
-                        <rect key="frame" x="108" y="302" width="22" height="18"/>
+                        <rect key="frame" x="108" y="354" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="77">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -175,7 +177,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="113">
-                        <rect key="frame" x="135" y="365" width="35" height="17"/>
+                        <rect key="frame" x="135" y="417" width="35" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Exec" id="121">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -183,7 +185,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="114">
-                        <rect key="frame" x="135" y="341" width="22" height="18"/>
+                        <rect key="frame" x="135" y="393" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="119">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -193,7 +195,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="115">
-                        <rect key="frame" x="135" y="321" width="22" height="18"/>
+                        <rect key="frame" x="135" y="373" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="118">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -203,7 +205,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="116">
-                        <rect key="frame" x="135" y="302" width="22" height="18"/>
+                        <rect key="frame" x="135" y="354" width="22" height="18"/>
                         <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="117">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -213,13 +215,13 @@ Gw
                         </connections>
                     </button>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="149">
-                        <rect key="frame" x="0.0" y="291" width="469" height="5"/>
+                        <rect key="frame" x="0.0" y="343" width="469" height="5"/>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <font key="titleFont" metaFont="system"/>
                     </box>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="166">
-                        <rect key="frame" x="18" y="189" width="204" height="18"/>
+                        <rect key="frame" x="18" y="241" width="204" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="pbS-Wk-ZfH"/>
                         </constraints>
@@ -232,7 +234,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="197">
-                        <rect key="frame" x="226" y="269" width="71" height="18"/>
+                        <rect key="frame" x="226" y="321" width="71" height="18"/>
                         <buttonCell key="cell" type="check" title="Opaque" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="198">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -242,7 +244,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="218">
-                        <rect key="frame" x="18" y="209" width="204" height="18"/>
+                        <rect key="frame" x="18" y="261" width="204" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="II7-el-w2B"/>
                         </constraints>
@@ -255,7 +257,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="225">
-                        <rect key="frame" x="226" y="249" width="67" height="18"/>
+                        <rect key="frame" x="226" y="301" width="67" height="18"/>
                         <buttonCell key="cell" type="check" title="Hidden" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="226">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -265,7 +267,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="237">
-                        <rect key="frame" x="18" y="169" width="204" height="18"/>
+                        <rect key="frame" x="18" y="221" width="204" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="i1a-YV-264"/>
                         </constraints>
@@ -278,7 +280,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="250">
-                        <rect key="frame" x="226" y="229" width="76" height="18"/>
+                        <rect key="frame" x="226" y="281" width="76" height="18"/>
                         <buttonCell key="cell" type="check" title="Archived" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="251">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -288,7 +290,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="259">
-                        <rect key="frame" x="-2" y="-7" width="4" height="17"/>
+                        <rect key="frame" x="-2" y="0.0" width="4" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="262">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -296,7 +298,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="260">
-                        <rect key="frame" x="226" y="209" width="137" height="18"/>
+                        <rect key="frame" x="226" y="261" width="137" height="18"/>
                         <buttonCell key="cell" type="check" title="System immutable" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="261">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -306,7 +308,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="304">
-                        <rect key="frame" x="226" y="189" width="150" height="18"/>
+                        <rect key="frame" x="226" y="241" width="150" height="18"/>
                         <buttonCell key="cell" type="check" title="System append-only" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="305">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -316,13 +318,13 @@ Gw
                         </connections>
                     </button>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="416">
-                        <rect key="frame" x="0.0" y="160" width="469" height="5"/>
+                        <rect key="frame" x="0.0" y="172" width="469" height="5"/>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <font key="titleFont" metaFont="system"/>
                     </box>
                     <popUpButton verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="423">
-                        <rect key="frame" x="247" y="335" width="205" height="26"/>
+                        <rect key="frame" x="247" y="387" width="205" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="200" id="LK1-0G-flG"/>
                         </constraints>
@@ -342,7 +344,7 @@ Gw
                         </connections>
                     </popUpButton>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="444">
-                        <rect key="frame" x="199" y="341" width="49" height="17"/>
+                        <rect key="frame" x="199" y="393" width="49" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Owner:" id="445">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -350,7 +352,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="451">
-                        <rect key="frame" x="247" y="304" width="205" height="26"/>
+                        <rect key="frame" x="247" y="356" width="205" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="200" id="ZnJ-WP-PKq"/>
                         </constraints>
@@ -370,7 +372,7 @@ Gw
                         </connections>
                     </popUpButton>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="452">
-                        <rect key="frame" x="201" y="310" width="47" height="17"/>
+                        <rect key="frame" x="201" y="362" width="47" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Group:" id="453">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -378,7 +380,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="474">
-                        <rect key="frame" x="18" y="229" width="204" height="18"/>
+                        <rect key="frame" x="18" y="281" width="204" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="UI1-Dc-lMh"/>
                         </constraints>
@@ -391,7 +393,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="512">
-                        <rect key="frame" x="18" y="269" width="204" height="18"/>
+                        <rect key="frame" x="18" y="321" width="204" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="0Rj-4i-s7r"/>
                         </constraints>
@@ -404,7 +406,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="524">
-                        <rect key="frame" x="18" y="249" width="204" height="18"/>
+                        <rect key="frame" x="18" y="301" width="204" height="18"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="IY9-EP-e5c"/>
                         </constraints>
@@ -417,7 +419,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="622">
-                        <rect key="frame" x="18" y="137" width="94" height="17"/>
+                        <rect key="frame" x="18" y="149" width="94" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="lPu-Xi-kr5"/>
                         </constraints>
@@ -428,7 +430,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="841">
-                        <rect key="frame" x="118" y="134" width="133" height="22"/>
+                        <rect key="frame" x="118" y="146" width="133" height="22"/>
                         <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="842">
                             <font key="font" metaFont="system"/>
                             <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -444,7 +446,7 @@ Gw
                         </connections>
                     </datePicker>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="900">
-                        <rect key="frame" x="253" y="127" width="36" height="32"/>
+                        <rect key="frame" x="253" y="139" width="36" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="Dk6-sW-MGR"/>
                         </constraints>
@@ -457,7 +459,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="967">
-                        <rect key="frame" x="281" y="127" width="36" height="32"/>
+                        <rect key="frame" x="281" y="139" width="36" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="zE7-B4-dH5"/>
                         </constraints>
@@ -470,7 +472,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1006">
-                        <rect key="frame" x="18" y="112" width="94" height="17"/>
+                        <rect key="frame" x="18" y="124" width="94" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="E68-2S-HpR"/>
                         </constraints>
@@ -481,7 +483,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1007">
-                        <rect key="frame" x="118" y="109" width="133" height="22"/>
+                        <rect key="frame" x="118" y="121" width="133" height="22"/>
                         <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1014">
                             <font key="font" metaFont="system"/>
                             <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -497,7 +499,7 @@ Gw
                         </connections>
                     </datePicker>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1008">
-                        <rect key="frame" x="253" y="102" width="36" height="32"/>
+                        <rect key="frame" x="253" y="114" width="36" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="OZZ-Hc-ZRl"/>
                         </constraints>
@@ -510,7 +512,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1009">
-                        <rect key="frame" x="281" y="102" width="36" height="32"/>
+                        <rect key="frame" x="281" y="114" width="36" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="KgG-bU-MNk"/>
                         </constraints>
@@ -523,7 +525,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1034">
-                        <rect key="frame" x="18" y="87" width="94" height="17"/>
+                        <rect key="frame" x="18" y="99" width="94" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="AW5-LS-GlS"/>
                         </constraints>
@@ -534,7 +536,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1035">
-                        <rect key="frame" x="118" y="84" width="133" height="22"/>
+                        <rect key="frame" x="118" y="96" width="133" height="22"/>
                         <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1040">
                             <font key="font" metaFont="system"/>
                             <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -550,7 +552,7 @@ Gw
                         </connections>
                     </datePicker>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1036">
-                        <rect key="frame" x="253" y="77" width="36" height="32"/>
+                        <rect key="frame" x="253" y="89" width="36" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="L2k-TZ-Zjx"/>
                         </constraints>
@@ -563,7 +565,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1037">
-                        <rect key="frame" x="281" y="77" width="36" height="32"/>
+                        <rect key="frame" x="281" y="89" width="36" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="Tsu-QG-MQw"/>
                         </constraints>
@@ -576,7 +578,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1059">
-                        <rect key="frame" x="18" y="62" width="94" height="17"/>
+                        <rect key="frame" x="18" y="74" width="94" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="DC2-S9-Lfx"/>
                         </constraints>
@@ -587,7 +589,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1060">
-                        <rect key="frame" x="118" y="59" width="133" height="22"/>
+                        <rect key="frame" x="118" y="71" width="133" height="22"/>
                         <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1065">
                             <font key="font" metaFont="system"/>
                             <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -603,7 +605,7 @@ Gw
                         </connections>
                     </datePicker>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1061">
-                        <rect key="frame" x="253" y="52" width="36" height="32"/>
+                        <rect key="frame" x="253" y="64" width="36" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="ejD-fN-m1y"/>
                         </constraints>
@@ -616,7 +618,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1062">
-                        <rect key="frame" x="281" y="52" width="36" height="32"/>
+                        <rect key="frame" x="281" y="64" width="36" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="oTe-WX-LrP"/>
                         </constraints>
@@ -645,7 +647,7 @@ DQ
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1312">
-                        <rect key="frame" x="18" y="390" width="433" height="17"/>
+                        <rect key="frame" x="18" y="442" width="433" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="lessThanOrEqual" priority="999" constant="600" id="ith-1i-8dy"/>
                         </constraints>
@@ -665,16 +667,40 @@ DQ
                             <action selector="OnProcessSubfolders:" target="-2" id="1184"/>
                         </connections>
                     </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="ASx-2K-dy2">
+                        <rect key="frame" x="18" y="181" width="204" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="Ow6-CG-CIH"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="User compressed" bezelStyle="regularSquare" imagePosition="left" enabled="NO" allowsMixedState="YES" inset="2" id="eue-2Z-nXq">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="zd2-GC-23k">
+                        <rect key="frame" x="18" y="201" width="204" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="P29-hD-cUl"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="User tracked" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="hRc-N9-NhG">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnFlag:" target="-2" id="qdx-d6-45R"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="1312" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="1317"/>
                     <constraint firstAttribute="trailing" secondItem="1312" secondAttribute="trailing" constant="20" symbolic="YES" id="1318"/>
                     <constraint firstItem="1312" firstAttribute="top" secondItem="2" secondAttribute="top" constant="8" id="1999"/>
+                    <constraint firstItem="ASx-2K-dy2" firstAttribute="top" secondItem="zd2-GC-23k" secondAttribute="bottom" constant="6" symbolic="YES" id="12c-RF-v2m"/>
+                    <constraint firstItem="ASx-2K-dy2" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="2Oo-z7-5Fa"/>
                     <constraint firstItem="260" firstAttribute="top" secondItem="250" secondAttribute="bottom" constant="6" symbolic="YES" id="2Xr-mN-QfZ"/>
                     <constraint firstItem="73" firstAttribute="leading" secondItem="27" secondAttribute="trailing" constant="2" id="2aY-FO-X5b"/>
                     <constraint firstItem="1009" firstAttribute="baseline" secondItem="1008" secondAttribute="baseline" id="2bW-vB-z6g"/>
                     <constraint firstItem="27" firstAttribute="trailing" secondItem="31" secondAttribute="trailing" id="2tc-1q-cvv"/>
-                    <constraint firstItem="416" firstAttribute="top" secondItem="237" secondAttribute="bottom" constant="8" symbolic="YES" id="2zN-1c-dck"/>
                     <constraint firstItem="260" firstAttribute="leading" secondItem="197" secondAttribute="leading" id="3Q1-kT-XxJ"/>
                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="304" secondAttribute="trailing" constant="20" symbolic="YES" id="3ih-BF-EmL"/>
                     <constraint firstItem="73" firstAttribute="centerX" secondItem="74" secondAttribute="centerX" id="3ml-U8-N4V"/>
@@ -709,8 +735,10 @@ DQ
                     <constraint firstItem="149" firstAttribute="top" secondItem="22" secondAttribute="bottom" constant="8" symbolic="YES" id="K4X-My-aW3"/>
                     <constraint firstItem="512" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="KXX-mk-3jV"/>
                     <constraint firstItem="1218" firstAttribute="leading" secondItem="5" secondAttribute="trailing" constant="12" symbolic="YES" id="LOi-3F-a3n"/>
+                    <constraint firstItem="416" firstAttribute="top" secondItem="ASx-2K-dy2" secondAttribute="bottom" constant="8" symbolic="YES" id="M8X-Dn-zGp"/>
                     <constraint firstItem="113" firstAttribute="top" secondItem="1312" secondAttribute="bottom" constant="8" symbolic="YES" id="MrA-bP-K3b"/>
                     <constraint firstItem="304" firstAttribute="leading" secondItem="166" secondAttribute="trailing" constant="8" symbolic="YES" id="MsO-Jr-6du"/>
+                    <constraint firstItem="zd2-GC-23k" firstAttribute="top" secondItem="237" secondAttribute="bottom" constant="6" symbolic="YES" id="Mzg-Zh-c3S"/>
                     <constraint firstItem="260" firstAttribute="leading" secondItem="304" secondAttribute="leading" id="N9G-JW-JAZ"/>
                     <constraint firstAttribute="trailing" secondItem="1218" secondAttribute="trailing" constant="20" symbolic="YES" id="NIY-U2-8Rj"/>
                     <constraint firstItem="1007" firstAttribute="leading" secondItem="1006" secondAttribute="trailing" constant="8" symbolic="YES" id="Ngp-yk-XxN"/>
@@ -769,6 +797,7 @@ DQ
                     <constraint firstItem="166" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="nnx-Em-0yL"/>
                     <constraint firstItem="900" firstAttribute="baseline" secondItem="967" secondAttribute="baseline" id="o0F-VE-XzI"/>
                     <constraint firstItem="113" firstAttribute="leading" secondItem="73" secondAttribute="trailing" constant="2" id="ojg-jn-F7v"/>
+                    <constraint firstItem="zd2-GC-23k" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="pQg-4i-MZ0"/>
                     <constraint firstItem="197" firstAttribute="top" secondItem="149" secondAttribute="bottom" constant="8" symbolic="YES" id="pST-rR-5Sv"/>
                     <constraint firstItem="218" firstAttribute="top" secondItem="474" secondAttribute="bottom" constant="6" symbolic="YES" id="pc1-Zu-rPQ"/>
                     <constraint firstItem="524" firstAttribute="top" secondItem="512" secondAttribute="bottom" constant="6" symbolic="YES" id="prs-BQ-PCj"/>
@@ -796,7 +825,7 @@ DQ
             <connections>
                 <outlet property="delegate" destination="-2" id="4"/>
             </connections>
-            <point key="canvasLocation" x="323.5" y="262.5"/>
+            <point key="canvasLocation" x="386.5" y="376.5"/>
         </window>
     </objects>
 </document>

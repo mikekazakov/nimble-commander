@@ -45,6 +45,8 @@ void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, triboo
                 _st[fsf_uf_append]    = item.UnixFlags() & UF_APPEND;
                 _st[fsf_uf_opaque]    = item.UnixFlags() & UF_OPAQUE;
                 _st[fsf_uf_hidden]    = item.UnixFlags() & UF_HIDDEN;
+                _st[fsf_uf_compressed]= item.UnixFlags() & UF_COMPRESSED;
+                _st[fsf_uf_tracked]   = item.UnixFlags() & UF_TRACKED;
                 _st[fsf_sf_archived]  = item.UnixFlags() & SF_ARCHIVED;
                 _st[fsf_sf_immutable] = item.UnixFlags() & SF_IMMUTABLE;
                 _st[fsf_sf_append]    = item.UnixFlags() & SF_APPEND;
@@ -71,9 +73,13 @@ void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, triboo
                 if((first_flags ^ item.UnixFlags()) & UF_APPEND)     _st[fsf_uf_append]= indeterminate;
                 if((first_flags ^ item.UnixFlags()) & UF_OPAQUE)     _st[fsf_uf_opaque]= indeterminate;
                 if((first_flags ^ item.UnixFlags()) & UF_HIDDEN)     _st[fsf_uf_hidden]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & UF_COMPRESSED) _st[fsf_uf_compressed]= indeterminate;
+                if((first_flags ^ item.UnixFlags()) & UF_TRACKED)    _st[fsf_uf_tracked]= indeterminate;
                 if((first_flags ^ item.UnixFlags()) & SF_ARCHIVED)   _st[fsf_sf_archived]= indeterminate;
                 if((first_flags ^ item.UnixFlags()) & SF_IMMUTABLE)  _st[fsf_sf_immutable]= indeterminate;
                 if((first_flags ^ item.UnixFlags()) & SF_APPEND)     _st[fsf_sf_append]= indeterminate;
+                
+
             }
         }
     }

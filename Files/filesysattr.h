@@ -13,37 +13,39 @@ class PanelData;
 
 struct FileSysAttrAlterCommand
 {
-    enum fsflags : unsigned char
-    {
+    enum fsflags {
         fsf_unix_usr_r=0, // R for owner
-        fsf_unix_usr_w=1, // W for owner
-        fsf_unix_usr_x=2, // X for owner
-        fsf_unix_grp_r=3, // R for group
-        fsf_unix_grp_w=4, // W for group
-        fsf_unix_grp_x=5, // X for group
-        fsf_unix_oth_r=6, // R for other
-        fsf_unix_oth_w=7, // W for other
-        fsf_unix_oth_x=8, // X for other
-        fsf_unix_suid=9,  // set user id on execution
-        fsf_unix_sgid=10, // set group id on execution
-        fsf_unix_sticky=11,//S_ISVTX, will require super-user rights to alter it
-        fsf_uf_nodump=12, // Do not dump the file
+        fsf_unix_usr_w, // W for owner
+        fsf_unix_usr_x, // X for owner
+        fsf_unix_grp_r, // R for group
+        fsf_unix_grp_w, // W for group
+        fsf_unix_grp_x, // X for group
+        fsf_unix_oth_r, // R for other
+        fsf_unix_oth_w, // W for other
+        fsf_unix_oth_x, // X for other
+        fsf_unix_suid,  // set user id on execution
+        fsf_unix_sgid, // set group id on execution
+        fsf_unix_sticky,//S_ISVTX, will require super-user rights to alter it
+        fsf_uf_nodump, // Do not dump the file
         
         // may be set or unset by either the owner of a file or the super-user:
-        fsf_uf_immutable=13,// The file may not be changed
-        fsf_uf_append=14,   // The file may only be appended to
-        fsf_uf_opaque=15,   // The directory is opaque when viewed through a union stack
-        fsf_uf_hidden=16,   // The file or directory is not intended to be displayed to the user
+        fsf_uf_immutable,// The file may not be changed
+        fsf_uf_append,   // The file may only be appended to
+        fsf_uf_opaque,   // The directory is opaque when viewed through a union stack
+        fsf_uf_hidden,   // The file or directory is not intended to be displayed to the user
+        fsf_uf_compressed,// hfs-compression set on
+        fsf_uf_tracked,  // document file is tracked
         
         // may only be set or unset by the super-user:
-        fsf_sf_archived=17, // The file has been archived.
-        fsf_sf_immutable=18,// The file may not be changed.
-        fsf_sf_append=19,   // The file may only be appended to.
+        fsf_sf_archived, // The file has been archived.
+        fsf_sf_immutable,// The file may not be changed.
+        fsf_sf_append,   // The file may only be appended to.
 
+        
+        
         fsf_totalcount
     };
-    enum fstmvals : unsigned char // we give no abitily to view and edit msec and nsec. but who cares?
-    {
+    enum fstmvals { // we give no abitily to view and edit msec and nsec. but who cares?
         fstm_year=0,
         fstm_mon=1,
         fstm_day=2,

@@ -49,6 +49,7 @@ int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInfo
         _c->fmt.path_from_id =              CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_PATH_FROM_ID);
         _c->fmt.no_volume_sizes =           CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_NO_VOLUME_SIZES);
         _c->fmt.object_ids_64bit =          CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_64BIT_OBJECT_IDS);
+        _c->fmt.decmpfs_compression =       CAPAB(VOL_CAPABILITIES_FORMAT, VOL_CAP_FMT_DECMPFS_COMPRESSION);
         _c->intr.search_fs =                CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_SEARCHFS);
         _c->intr.attr_list =                CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_ATTRLIST);
         _c->intr.nfs_export =               CAPAB(VOL_CAPABILITIES_INTERFACES, VOL_CAP_INT_NFSEXPORT);

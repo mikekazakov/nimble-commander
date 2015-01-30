@@ -475,6 +475,9 @@
 		CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
 		CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
+		CF76F4881A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76F4861A7BCDB400B29512 /* FileCopyOperationJob.mm */; };
+		CF76F4891A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76F4861A7BCDB400B29512 /* FileCopyOperationJob.mm */; };
+		CF76F48A1A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76F4861A7BCDB400B29512 /* FileCopyOperationJob.mm */; };
 		CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CF7AB36118BEE93E00D71B0D /* ShortcutsDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */; };
 		CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */; };
@@ -1488,6 +1491,8 @@
 		CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OperationsSummaryViewController.xib; sourceTree = "<group>"; };
 		CF76B31A170148FF0066A49F /* FileSysEntryAttrSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysEntryAttrSheetController.h; sourceTree = "<group>"; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
+		CF76F4861A7BCDB400B29512 /* FileCopyOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJob.mm; sourceTree = "<group>"; };
+		CF76F4871A7BCDB400B29512 /* FileCopyOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperationJob.h; sourceTree = "<group>"; };
 		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
 		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
 		CF7AB36018BEE93E00D71B0D /* ShortcutsDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ShortcutsDefaults.plist; sourceTree = "<group>"; };
@@ -2696,6 +2701,8 @@
 				CFCCFBF81A5E6F8A00313845 /* MassCopySheetController.xib */,
 				CFAC50CE1714018C00A3E5C5 /* FileCopyOperation.h */,
 				CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */,
+				CF76F4871A7BCDB400B29512 /* FileCopyOperationJob.h */,
+				CF76F4861A7BCDB400B29512 /* FileCopyOperationJob.mm */,
 				CFAC50D21714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.h */,
 				CFAC50D11714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm */,
 				CF09827017DEDC3700F0871C /* FileCopyOperationJobFromGeneric.h */,
@@ -3663,6 +3670,7 @@
 				CF6D9CC319667BA20077B146 /* archive_read_support_format_by_code.c in Sources */,
 				CF50B6E01A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CF50B7261A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
+				CF76F4891A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */,
 				CF6D9CC419667BA20077B146 /* archive_read_support_format_cab.c in Sources */,
 				CF6D9CC519667BA20077B146 /* archive_read_support_format_cpio.c in Sources */,
 				CF6D9CC619667BA20077B146 /* archive_read_support_format_empty.c in Sources */,
@@ -3909,6 +3917,7 @@
 				CF50B72B1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */,
 				CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */,
 				CF09856A18EDBFB0006E6410 /* TermTaskCommon.mm in Sources */,
+				CF76F4881A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */,
 				CFE3829119CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */,
@@ -4258,6 +4267,7 @@
 				CF50B7271A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
 				CFF6F2761A13567C00011177 /* filesysinfo.mm in Sources */,
 				CFF6F2771A13567C00011177 /* SUStandardVersionComparator.m in Sources */,
+				CF76F48A1A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */,
 				CF50B7061A1516C800E3D96D /* VFSArchiveUnRARInternals.mm in Sources */,
 				CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,

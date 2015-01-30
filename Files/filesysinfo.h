@@ -34,6 +34,7 @@ struct VolumeCapabilitiesInformation
         bool path_from_id;
         bool no_volume_sizes;
         bool object_ids_64bit;
+        bool decmpfs_compression;
     } fmt;
     struct
     {

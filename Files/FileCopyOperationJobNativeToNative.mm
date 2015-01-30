@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import "FileCopyOperationJob.h"
 #import "FileCopyOperationJobNativeToNative.h"
 #import "filesysinfo.h"
 #import "NativeFSManager.h"
@@ -26,7 +27,6 @@
 #import "RoutedIO.h"
 
 #define BUFFER_SIZE (512*1024) // 512kb
-#define MIN_PREALLOC_SIZE (4096) // will try to preallocate files only if they are larger than 4k
 
 // assumes that _fn1 is a valid file/dir name, or will return false immediately
 // if _fn2 is not a valid path name will look at _fallback_second.
@@ -1010,11 +1010,11 @@ bool FileCopyOperationJobNativeToNative::CopyFileTo(const char *_src, const char
     m_Stats.SetCurrentItem(_src);
     
     // getting fs_info for every single file is suboptimal. need to optimize it.
-    auto fs_info = NativeFSManager::Instance().VolumeFromPath(_src);
+    auto src_fs_info = NativeFSManager::Instance().VolumeFromPath(_src);
     
 opensource:
     int src_open_flags = O_RDONLY|O_NONBLOCK;
-    if(fs_info && fs_info->interfaces.file_lock)
+    if(src_fs_info && src_fs_info->interfaces.file_lock)
         src_open_flags |= O_SHLOCK;
     
     if((sourcefd = io.open(_src, src_open_flags)) == -1)
@@ -1110,26 +1110,22 @@ opendest: // open file descriptor for destination
     }
     
     fcntl(destinationfd, F_NOCACHE, 1); // caching is meaningless here?
-    // preallocate space for data since we dont want to trash our disk
-    if(preallocate_delta > MIN_PREALLOC_SIZE)
-    {
-        fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, preallocate_delta};
-        if(fcntl(destinationfd, F_PREALLOCATE, &preallocstore) == -1)
-        {
-            preallocstore.fst_flags = F_ALLOCATEALL;
-            fcntl(destinationfd, F_PREALLOCATE, &preallocstore);
-        }
-    }
     
-dotruncate: // set right size for destination file
-    if(ftruncate(destinationfd, totaldestsize) == -1)
-    {   // failed to set dest file size
-        if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
-        if(result == OperationDialogResult::Retry) goto dotruncate;
-        if(result == OperationDialogResult::Skip) goto cleanup;
-        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    if( FileCopyOperationJob::ShouldPreallocateSpace(preallocate_delta, destinationfd) ) {
+        // tell systme to preallocate space for data since we dont want to trash our disk
+        FileCopyOperationJob::PreallocateSpace(preallocate_delta, destinationfd);
+        
+        // set right size for destination file for preallocating itself
+    dotruncate:
+        if( ftruncate(destinationfd, totaldestsize) == -1 ) {
+            // failed to set dest file size
+            if(m_SkipAll) goto cleanup;
+            int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
+            if(result == OperationDialogResult::Retry) goto dotruncate;
+            if(result == OperationDialogResult::Skip) goto cleanup;
+            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+        }
     }
     
 dolseek: // find right position in destination file

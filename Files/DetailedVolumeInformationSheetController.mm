@@ -75,7 +75,8 @@ static NSString* Bool2ToString(const bool b[2])
                            "\tVOL_CAP_FMT_HIDDEN_FILES: %@\n"
                            "\tVOL_CAP_FMT_PATH_FROM_ID: %@\n"
                            "\tVOL_CAP_FMT_NO_VOLUME_SIZES: %@\n"
-                           "\tVOL_CAP_FMT_64BIT_OBJECT_IDS: %@\n",
+                           "\tVOL_CAP_FMT_64BIT_OBJECT_IDS: %@\n"
+                           "\tVOL_CAP_FMT_DECMPFS_COMPRESSION: %@\n",
                            m_Capabilities.fmt.persistent_objects_ids ? @"yes" : @"no",
                            m_Capabilities.fmt.symbolic_links ? @"yes" : @"no",
                            m_Capabilities.fmt.hard_links ? @"yes" : @"no",
@@ -92,7 +93,8 @@ static NSString* Bool2ToString(const bool b[2])
                            m_Capabilities.fmt.hidden_files ? @"yes" : @"no",
                            m_Capabilities.fmt.path_from_id ? @"yes" : @"no",
                            m_Capabilities.fmt.no_volume_sizes ? @"yes" : @"no",
-                           m_Capabilities.fmt.object_ids_64bit ? @"yes" : @"no"
+                           m_Capabilities.fmt.object_ids_64bit ? @"yes" : @"no",
+                           m_Capabilities.fmt.decmpfs_compression ? @"yes" : @"no"
                            ];
     NSString *formatint = [NSString stringWithFormat:
                            @"Format interfaces:\n"

@@ -10,11 +10,10 @@
 #import <sys/dirent.h>
 #import <sys/stat.h>
 #import <sys/xattr.h>
+#import "FileCopyOperationJob.h"
 #import "FileCopyOperationJobFromGeneric.h"
 #import "Common.h"
 #import "RoutedIO.h"
-
-static const int g_MinPreallocSize = 4096; // will try to preallocate files only if they are larger than 4k
 
 static void AdjustFileTimes(int _target_fd, VFSStat *_with_times)
 {
@@ -453,26 +452,21 @@ opendest: // open file descriptor for destination
     // turn off caching for destination file
     fcntl(destinationfd, F_NOCACHE, 1);
     
-    // preallocate space for data since we dont want to trash our disk
-    if(preallocate_delta > g_MinPreallocSize)
-    {
-        fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, preallocate_delta};
-        if(fcntl(destinationfd, F_PREALLOCATE, &preallocstore) == -1)
-        {
-            preallocstore.fst_flags = F_ALLOCATEALL;
-            fcntl(destinationfd, F_PREALLOCATE, &preallocstore);
+    if( FileCopyOperationJob::ShouldPreallocateSpace(preallocate_delta, destinationfd) ) {
+        // tell systme to preallocate space for data since we dont want to trash our disk
+        FileCopyOperationJob::PreallocateSpace(preallocate_delta, destinationfd);
+
+        // set right size for destination file
+    dotruncate:
+        if(ftruncate(destinationfd, totaldestsize) == -1) {
+            // failed to set dest file size
+            if(m_SkipAll) goto cleanup;
+            int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
+            if(result == OperationDialogResult::Retry) goto dotruncate;
+            if(result == OperationDialogResult::Skip) goto cleanup;
+            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
         }
-    }
-    
-dotruncate: // set right size for destination file
-    if(ftruncate(destinationfd, totaldestsize) == -1)
-    {   // failed to set dest file size
-        if(m_SkipAll) goto cleanup;
-        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
-        if(result == OperationDialogResult::Retry) goto dotruncate;
-        if(result == OperationDialogResult::Skip) goto cleanup;
-        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
     }
     
 dolseek: // find right position in destination file

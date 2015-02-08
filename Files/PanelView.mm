@@ -790,11 +790,8 @@ struct PanelViewStateStorage
     }
     tv.selectedRange = sel_range;
     tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
-    tv.verticallyResizable = false;
-    tv.horizontallyResizable = true;
-    tv.autoresizingMask = NSViewWidthSizable;
-    tv.textContainer.widthTracksTextView = true;
-    tv.textContainer.heightTracksTextView = true;
+    tv.verticallyResizable = tv.horizontallyResizable = true;
+    tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     tv.richText = false;
     tv.importsGraphics = false;
     tv.allowsImageEditing = false;
@@ -805,6 +802,8 @@ struct PanelViewStateStorage
     NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
     ps.lineBreakMode = NSLineBreakByClipping;
     tv.defaultParagraphStyle = ps;
+    tv.textContainer.widthTracksTextView = tv.textContainer.heightTracksTextView = false;
+    tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
     
     m_RenamingEditor.documentView = tv;
     

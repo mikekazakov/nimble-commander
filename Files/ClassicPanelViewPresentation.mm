@@ -878,7 +878,6 @@ void ClassicPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int
     
     NSTextView *tv = _editor.documentView;
     tv.font = (__bridge NSFont*) m_FontCache->BaseFont();
-    tv.maxSize = NSMakeSize(FLT_MAX, rc.size.height);
     tv.textContainerInset = NSMakeSize(0, 0);
     tv.textContainer.lineFragmentPadding = line_padding;
 }

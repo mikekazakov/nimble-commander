@@ -75,6 +75,9 @@ class PanelViewPresentation;
 - (void) SavePathState;
 - (void) LoadPathState;
 
+/**
+ * _text can be nil.
+ */
 - (void) setQuickSearchPrompt:(NSString*)_text;
 
 - (void) disableCurrentMomentumScroll;

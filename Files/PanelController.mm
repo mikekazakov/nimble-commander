@@ -400,6 +400,7 @@ void panel::GenericCursorPersistance::Restore()
                     pers.Restore();
 
                 [self OnCursorChanged];
+                [self QuickSearchUpdate];
                 [m_View setNeedsDisplay];
             });
         }

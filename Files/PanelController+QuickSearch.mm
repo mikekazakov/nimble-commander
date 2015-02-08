@@ -205,11 +205,27 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
             if(PanelController *sself = wself)
                 if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime()) {
                     sself->m_View.quickSearchPrompt = nil;
-                    sself->m_View.needsDisplay = true;
                 }
         });
     }
     return true;
+}
+
+- (void)QuickSearchHardUpdateTypingUI
+{
+    if(!m_QuickSearchTypingView)
+        return;
+    
+    auto filtering = m_Data.HardFiltering();
+    if(!filtering.text.text) {
+        m_View.quickSearchPrompt = nil;
+    }
+    else {
+        int total = (int)m_Data.SortedDirectoryEntries().size();
+        if(total > 0 && m_Data.Listing()->At(0).IsDotDot())
+            total--;
+        m_View.quickSearchPrompt = PromptForMatchesAndString(total, filtering.text.text);
+    }
 }
 
 - (bool)HandleQuickSearchHard: (NSString*) _key
@@ -258,17 +274,9 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
        m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0])->IsDotDot() )
         m_View.curpos = 1;
     
+    [self QuickSearchHardUpdateTypingUI];
     [m_View setNeedsDisplay];
     
-    if(m_QuickSearchTypingView) { // update typing UI
-        int total = (int)m_Data.SortedDirectoryEntries().size();
-        if(total > 0 &&
-           m_Data.Listing()->At(0).IsDotDot())
-            total--;
-
-        m_View.quickSearchPrompt = PromptForMatchesAndString(total, filtering.text.text);
-        m_View.needsDisplay = true;        
-    }
     return true;
 }
 
@@ -327,6 +335,12 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
         }
     
     return false;
+}
+
+- (void) QuickSearchUpdate
+{
+    if(!m_QuickSearchIsSoftFiltering)
+        [self QuickSearchHardUpdateTypingUI];
 }
 
 @end

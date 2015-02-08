@@ -881,6 +881,7 @@ struct PanelViewStateStorage
 - (void) setQuickSearchPrompt:(NSString*)_text
 {
     m_Presentation->SetQuickSearchPrompt(_text);
+    [self setNeedsDisplay];
 }
 
 - (void) disableCurrentMomentumScroll

@@ -133,6 +133,20 @@ const string& VFSNetSFTPHost::HomeDir() const
     return m_HomeDir;
 }
 
+void VFSNetSFTPHost::SpawnSSH2_KbdCallback(const char *name, int name_len,
+                         const char *instruction, int instruction_len,
+                         int num_prompts,
+                         const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
+                         LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
+                         void **abstract)
+{
+    VFSNetSFTPHost *_this = *(VFSNetSFTPHost **)abstract;
+    if (num_prompts == 1) {
+        responses[0].text = strdup(_this->m_Options->passwd.c_str());
+        responses[0].length = (unsigned)_this->m_Options->passwd.length();
+    }
+}
+
 int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
 {
     assert(m_Options);
@@ -153,8 +167,7 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     int optval = 1;
     setsockopt(connection->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval));
 
-    
-    connection->ssh = libssh2_session_init();
+    connection->ssh = libssh2_session_init_ex(NULL, NULL, NULL, this);
     if(!connection->ssh)
         return VFSError::GenericError;
     
@@ -172,12 +185,23 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
             return VFSError::NetSFTPCouldntAuthenticateKey;
     }
     else {
-        if (libssh2_userauth_password_ex(connection->ssh,
-                                         m_Options->user.c_str(),
-                                         (unsigned)m_Options->user.length(),
-                                         m_Options->passwd.c_str(),
-                                         (unsigned)m_Options->passwd.length(),
-                                         NULL))
+        char *authlist = libssh2_userauth_list(connection->ssh, m_Options->user.c_str(), (unsigned)m_Options->user.length());
+        bool has_keyboard_interactive = strstr(authlist, "keyboard-interactive");
+        
+        int ret = LIBSSH2_ERROR_AUTHENTICATION_FAILED;
+        if( has_keyboard_interactive ) // if supported - use keyboard interactive first
+            ret = libssh2_userauth_keyboard_interactive_ex(connection->ssh,
+                                                           m_Options->user.c_str(),
+                                                           (unsigned)m_Options->user.length(),
+                                                           &SpawnSSH2_KbdCallback);
+        if( ret ) // if no luck - use just password
+            ret = libssh2_userauth_password_ex(connection->ssh,
+                                               m_Options->user.c_str(),
+                                               (unsigned)m_Options->user.length(),
+                                               m_Options->passwd.c_str(),
+                                               (unsigned)m_Options->passwd.length(),
+                                               NULL);
+        if ( ret )
             return VFSError::NetSFTPCouldntAuthenticatePassword;
     }
 

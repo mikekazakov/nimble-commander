@@ -12,6 +12,8 @@
 
 typedef struct _LIBSSH2_SFTP    LIBSSH2_SFTP;
 typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
+typedef struct _LIBSSH2_USERAUTH_KBDINT_PROMPT LIBSSH2_USERAUTH_KBDINT_PROMPT;
+typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONSE;
 
 struct VFSNetSFTPOptions : VFSHostOptions
 {
@@ -90,6 +92,9 @@ public:
 private:
     struct AutoConnectionReturn;
     
+    static void SpawnSSH2_KbdCallback(const char *name, int name_len, const char *instruction, int instruction_len,
+                                      int num_prompts, const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
+                                    LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses, void **abstract);
     int SpawnSSH2(unique_ptr<Connection> &_t);
     int SpawnSFTP(unique_ptr<Connection> &_t);
     

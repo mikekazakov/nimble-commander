@@ -28,12 +28,12 @@ struct AdditionalPath
     NSString *visible_path; // may be truncated in the middle for convenience
 };
 
-static NSMutableArray *GetFindersFavorites()
+static vector<NSURL*> GetFindersFavorites()
 {
     // thanks Adam Strzelecki nanoant.com
     // https://gist.github.com/nanoant/1244807
     
-    NSMutableArray *result = [NSMutableArray new];
+    vector<NSURL*> result;
     
     UInt32 seed;
     LSSharedFileListRef sflRef = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
@@ -52,32 +52,30 @@ static NSMutableArray *GetFindersFavorites()
             
             if([url.scheme isEqualToString:@"file"] &&
                [url.resourceSpecifier rangeOfString:@".cannedSearch/"].location == NSNotFound)
-                [result addObject: url];
+                result.emplace_back(url);
             CFRelease(urlRef);
         }
 	}
     
 	CFRelease(sflRef);
     
-    return result.count > 0 ? result : nil;
+    return result;
 }
 
-static NSURL *URLFromCommonPath(CommonPaths::Path _p)
+static vector<NSURL*> GetHardcodedFavorites()
 {
-    NSString *str = [NSString stringWithUTF8String:CommonPaths::Get(_p).c_str()];
-    return [NSURL fileURLWithPath:str isDirectory:true];
-}
-
-static NSMutableArray *GetHardcodedFavorites()
-{
-    NSMutableArray *result = [NSMutableArray arrayWithCapacity:10];
-    [result addObject:URLFromCommonPath(CommonPaths::Home)];
-    [result addObject:URLFromCommonPath(CommonPaths::Desktop)];
-    [result addObject:URLFromCommonPath(CommonPaths::Documents)];
-    [result addObject:URLFromCommonPath(CommonPaths::Downloads)];
-    [result addObject:URLFromCommonPath(CommonPaths::Movies)];
-    [result addObject:URLFromCommonPath(CommonPaths::Music)];
-    [result addObject:URLFromCommonPath(CommonPaths::Pictures)];
+    auto url = [](CommonPaths::Path _p) {
+        return [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:CommonPaths::Get(_p)]
+                          isDirectory:true];
+    };
+    vector<NSURL*> result;
+    result.emplace_back(url(CommonPaths::Home));
+    result.emplace_back(url(CommonPaths::Desktop));
+    result.emplace_back(url(CommonPaths::Documents));
+    result.emplace_back(url(CommonPaths::Downloads));
+    result.emplace_back(url(CommonPaths::Movies));
+    result.emplace_back(url(CommonPaths::Music));
+    result.emplace_back(url(CommonPaths::Pictures));
     return result;
 }
 
@@ -112,7 +110,7 @@ static NSMenuItem *TitleItem()
 
 @implementation MainWndGoToButton
 {
-    NSMutableArray  *m_UserDirs;       // array of NSUrls
+    vector<NSURL*> m_FinderFavorites;
     vector<shared_ptr<NativeFileSystemInfo>> m_Volumes;
     vector<AdditionalPath> m_OtherPanelsPaths;
     
@@ -138,14 +136,8 @@ static NSMenuItem *TitleItem()
         self.bezelStyle = NSTexturedRoundedBezelStyle;
         self.pullsDown = true;
         self.refusesFirstResponder = true;
-        
         [self.menu addItem:TitleItem()];
         [self synchronizeTitleAndSelectedItem];
-        
-        // grab user dir only in init, since they won't change (we presume so - if not then user has to close/open Files window)
-        m_UserDirs = GetFindersFavorites();
-        if(m_UserDirs == NULL) // something bad happened, fallback to hardcoded version
-            m_UserDirs = GetHardcodedFavorites(); // (not sure if this will be ever called)
     }
     
     return self;
@@ -167,6 +159,10 @@ static NSMenuItem *TitleItem()
     for(auto &i: NativeFSManager::Instance().Volumes())
         if(i->mount_flags.dont_browse == false)
             m_Volumes.emplace_back(i);
+    
+    m_FinderFavorites = GetFindersFavorites();
+    if(m_FinderFavorites.empty()) // something bad happened, fallback to hardcoded version
+        m_FinderFavorites = GetHardcodedFavorites(); // (not sure if this will be ever called)
 }
 
 - (void) UpdateOtherPanelPaths
@@ -223,19 +219,19 @@ static NSMenuItem *TitleItem()
 {
     NSInteger n = self.indexOfSelectedItem - 1;
     NSString *s = nil;
-    if(n >= 0 && n < m_UserDirs.count)
-        s = ((NSURL*)[m_UserDirs objectAtIndex:n]).path;
-    else if( n - m_UserDirs.count - 1 < m_Volumes.size() )
-        s = m_Volumes[n - m_UserDirs.count - 1]->verbose.mounted_at_path;
-    else if( n - m_UserDirs.count - m_Volumes.size() - 2 < m_OtherPanelsPaths.size())
-        s = m_OtherPanelsPaths[n - m_UserDirs.count - m_Volumes.size() - 2].path;
+    if(n >= 0 && n < m_FinderFavorites.size())
+        s = m_FinderFavorites[n].path;
+    else if( n - m_FinderFavorites.size() - 1 < m_Volumes.size() )
+        s = m_Volumes[n - m_FinderFavorites.size() - 1]->verbose.mounted_at_path;
+    else if( n - m_FinderFavorites.size() - m_Volumes.size() - 2 < m_OtherPanelsPaths.size())
+        s = m_OtherPanelsPaths[n - m_FinderFavorites.size() - m_Volumes.size() - 2].path;
 
     if(s == nil || s.length == 0 || s.fileSystemRepresentation == nullptr) return "";
     return s.fileSystemRepresentation;
 }
 
 - (void) WillPopUp:(NSNotification *) notification
-{    
+{
     [self UpdateUrls];
     [self UpdateOtherPanelPaths];
     
@@ -249,7 +245,7 @@ static NSMenuItem *TitleItem()
     NSMenuItem *common_item = nil;
 
     int userdir_ind = 0;
-    for (NSURL *url in m_UserDirs)
+    for (NSURL *url: m_FinderFavorites)
     {
         NSError *error;
         NSString *name;
@@ -307,13 +303,9 @@ static NSMenuItem *TitleItem()
         }
     }
     
-    if(!m_OtherPanelsPaths.empty())
-    {
+    if(!m_OtherPanelsPaths.empty()) {
         [self.menu addItem:NSMenuItem.separatorItem];
-        for(const auto &i: m_OtherPanelsPaths)
-        {
-            if(!i.visible_path) // NB! this is a temp bugfix for a strange bug: SOMETIMES visible_path is nil, which can't be
-                continue;
+        for(const auto &i: m_OtherPanelsPaths) {
             NSMenuItem *menuitem = [NSMenuItem new];
             menuitem.title = i.visible_path;
             [self.menu addItem:menuitem];

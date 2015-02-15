@@ -24,7 +24,7 @@
         return true;
     }
     
-    return true;
+    return [super validateMenuItem:item];
 }
 
 - (IBAction)OnFileCloseWindow:(id)sender { /* dummy, never called */ }

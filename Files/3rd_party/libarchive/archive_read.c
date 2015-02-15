@@ -101,15 +101,16 @@ archive_read_new(void)
 {
 	struct archive_read *a;
 
-	a = (struct archive_read *)malloc(sizeof(*a));
+	a = (struct archive_read *)calloc(1, sizeof(*a));
 	if (a == NULL)
 		return (NULL);
-	memset(a, 0, sizeof(*a));
 	a->archive.magic = ARCHIVE_READ_MAGIC;
 
 	a->archive.state = ARCHIVE_STATE_NEW;
 	a->entry = archive_entry_new2(&a->archive);
 	a->archive.vtable = archive_read_vtable();
+
+	a->passphrases.last = &a->passphrases.first;
 
 	return (&a->archive);
 }
@@ -194,10 +195,12 @@ client_skip_proxy(struct archive_read_filter *self, int64_t request)
 				ask = skip_limit;
 			get = (self->archive->client.skipper)
 				(&self->archive->archive, self->data, ask);
-			if (get == 0)
-				return (total);
-			request -= get;
 			total += get;
+			if (get == 0 || get == request)
+				return (total);
+			if (get > request)
+				return ARCHIVE_FATAL;
+			request -= get;
 		}
 	} else if (self->archive->client.seeker != NULL
 		&& request > 64 * 1024) {
@@ -230,8 +233,11 @@ client_seek_proxy(struct archive_read_filter *self, int64_t offset, int whence)
 	 * other libarchive code that assumes a successful forward
 	 * seek means it can also seek backwards.
 	 */
-	if (self->archive->client.seeker == NULL)
+	if (self->archive->client.seeker == NULL) {
+		archive_set_error(&self->archive->archive, ARCHIVE_ERRNO_MISC,
+		    "Current client reader does not support seeking a device");
 		return (ARCHIVE_FAILED);
+	}
 	return (self->archive->client.seeker)(&self->archive->archive,
 	    self->data, offset, whence);
 }
@@ -454,7 +460,7 @@ archive_read_open1(struct archive *_a)
 {
 	struct archive_read *a = (struct archive_read *)_a;
 	struct archive_read_filter *filter, *tmp;
-	int slot, e;
+	int slot, e = ARCHIVE_OK;
 	unsigned int i;
 
 	archive_check_magic(_a, ARCHIVE_READ_MAGIC, ARCHIVE_STATE_NEW,
@@ -544,13 +550,13 @@ archive_read_open1(struct archive *_a)
 static int
 choose_filters(struct archive_read *a)
 {
-	int number_bidders, i, bid, best_bid;
+	int number_bidders, i, bid, best_bid, n;
 	struct archive_read_filter_bidder *bidder, *best_bidder;
 	struct archive_read_filter *filter;
 	ssize_t avail;
 	int r;
 
-	for (;;) {
+	for (n = 0; n < 25; ++n) {
 		number_bidders = sizeof(a->bidders) / sizeof(a->bidders[0]);
 
 		best_bid = 0;
@@ -596,6 +602,9 @@ choose_filters(struct archive_read *a)
 			return (ARCHIVE_FATAL);
 		}
 	}
+	archive_set_error(&a->archive, ARCHIVE_ERRNO_FILE_FORMAT,
+	    "Input requires too many filters for decoding");
+	return (ARCHIVE_FATAL);
 }
 
 /*
@@ -744,6 +753,59 @@ archive_read_header_position(struct archive *_a)
 	archive_check_magic(_a, ARCHIVE_READ_MAGIC,
 	    ARCHIVE_STATE_ANY, "archive_read_header_position");
 	return (a->header_position);
+}
+
+/*
+ * Returns 1 if the archive contains at least one encrypted entry.
+ * If the archive format not support encryption at all
+ * ARCHIVE_READ_FORMAT_ENCRYPTION_UNSUPPORTED is returned.
+ * If for any other reason (e.g. not enough data read so far)
+ * we cannot say whether there are encrypted entries, then
+ * ARCHIVE_READ_FORMAT_ENCRYPTION_DONT_KNOW is returned.
+ * In general, this function will return values below zero when the
+ * reader is uncertain or totally uncapable of encryption support.
+ * When this function returns 0 you can be sure that the reader
+ * supports encryption detection but no encrypted entries have
+ * been found yet.
+ *
+ * NOTE: If the metadata/header of an archive is also encrypted, you
+ * cannot rely on the number of encrypted entries. That is why this
+ * function does not return the number of encrypted entries but#
+ * just shows that there are some.
+ */
+int
+archive_read_has_encrypted_entries(struct archive *_a)
+{
+	struct archive_read *a = (struct archive_read *)_a;
+	int format_supports_encryption = archive_read_format_capabilities(_a)
+			& (ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA | ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_METADATA);
+
+	if (!_a || !format_supports_encryption) {
+		/* Format in general doesn't support encryption */
+		return ARCHIVE_READ_FORMAT_ENCRYPTION_UNSUPPORTED;
+	}
+
+	/* A reader potentially has read enough data now. */
+	if (a->format && a->format->has_encrypted_entries) {
+		return (a->format->has_encrypted_entries)(a);
+	}
+
+	/* For any other reason we cannot say how many entries are there. */
+	return ARCHIVE_READ_FORMAT_ENCRYPTION_DONT_KNOW;
+}
+
+/*
+ * Returns a bitmask of capabilities that are supported by the archive format reader.
+ * If the reader has no special capabilities, ARCHIVE_READ_FORMAT_CAPS_NONE is returned.
+ */
+int
+archive_read_format_capabilities(struct archive *_a)
+{
+	struct archive_read *a = (struct archive_read *)_a;
+	if (a && a->format && a->format->format_capabilties) {
+		return (a->format->format_capabilties)(a);
+	}
+	return ARCHIVE_READ_FORMAT_CAPS_NONE;
 }
 
 /*
@@ -987,6 +1049,7 @@ static int
 _archive_read_free(struct archive *_a)
 {
 	struct archive_read *a = (struct archive_read *)_a;
+	struct archive_read_passphrase *p;
 	int i, n;
 	int slots;
 	int r = ARCHIVE_OK;
@@ -1022,6 +1085,18 @@ _archive_read_free(struct archive *_a)
 			if (r1 < r)
 				r = r1;
 		}
+	}
+
+	/* Release passphrase list. */
+	p = a->passphrases.first;
+	while (p != NULL) {
+		struct archive_read_passphrase *np = p->next;
+
+		/* A passphrase should be cleaned. */
+		memset(p->passphrase, 0, strlen(p->passphrase));
+		free(p->passphrase);
+		free(p);
+		p = np;
 	}
 
 	archive_string_free(&a->archive.error_string);
@@ -1094,7 +1169,9 @@ __archive_read_register_format(struct archive_read *a,
     int (*read_data)(struct archive_read *, const void **, size_t *, int64_t *),
     int (*read_data_skip)(struct archive_read *),
     int64_t (*seek_data)(struct archive_read *, int64_t, int),
-    int (*cleanup)(struct archive_read *))
+    int (*cleanup)(struct archive_read *),
+    int (*format_capabilities)(struct archive_read *),
+    int (*has_encrypted_entries)(struct archive_read *))
 {
 	int i, number_slots;
 
@@ -1117,6 +1194,8 @@ __archive_read_register_format(struct archive_read *a,
 			a->formats[i].cleanup = cleanup;
 			a->formats[i].data = format_data;
 			a->formats[i].name = name;
+			a->formats[i].format_capabilties = format_capabilities;
+			a->formats[i].has_encrypted_entries = has_encrypted_entries;
 			return (ARCHIVE_OK);
 		}
 	}
@@ -1394,6 +1473,8 @@ __archive_read_filter_consume(struct archive_read_filter * filter,
 {
 	int64_t skipped;
 
+	if (request < 0)
+		return ARCHIVE_FATAL;
 	if (request == 0)
 		return 0;
 
@@ -1557,10 +1638,9 @@ __archive_read_filter_seek(struct archive_read_filter *filter, int64_t offset,
 			client->dataset[++cursor].begin_position = r;
 		}
 		offset -= client->dataset[cursor].begin_position;
-		if (offset < 0)
-			offset = 0;
-		else if (offset > client->dataset[cursor].total_size - 1)
-			offset = client->dataset[cursor].total_size - 1;
+		if (offset < 0
+		    || offset > client->dataset[cursor].total_size)
+			return ARCHIVE_FATAL;
 		if ((r = client_seek_proxy(filter, offset, SEEK_SET)) < 0)
 			return r;
 		break;

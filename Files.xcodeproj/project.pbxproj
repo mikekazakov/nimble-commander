@@ -195,6 +195,9 @@
 		CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
 		CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
 		CF50B75F1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
+		CF540FDD1A90822A003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
+		CF540FDE1A90822F003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
+		CF540FDF1A908236003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
@@ -350,110 +353,6 @@
 		CF6D9C9119667A640077B146 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C9019667A640077B146 /* Quartz.framework */; };
 		CF6D9C9319667A850077B146 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C9219667A850077B146 /* libSystem.dylib */; };
 		CF6D9C9419667BA20077B146 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
-		CF6D9C9519667BA20077B146 /* archive_acl.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF417CC961100CB8146 /* archive_acl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9619667BA20077B146 /* archive_check_magic.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF517CC961100CB8146 /* archive_check_magic.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9719667BA20077B146 /* archive_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF717CC961100CB8146 /* archive_cmdline.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9819667BA20077B146 /* archive_crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFA17CC961100CB8146 /* archive_crypto.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9919667BA20077B146 /* archive_entry_copy_bhfi.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFC17CC961100CB8146 /* archive_entry_copy_bhfi.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9A19667BA20077B146 /* archive_entry_copy_stat.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFD17CC961100CB8146 /* archive_entry_copy_stat.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9B19667BA20077B146 /* archive_entry_link_resolver.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFE17CC961100CB8146 /* archive_entry_link_resolver.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9C19667BA20077B146 /* archive_entry_sparse.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0117CC961100CB8146 /* archive_entry_sparse.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9D19667BA20077B146 /* archive_entry_stat.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0217CC961100CB8146 /* archive_entry_stat.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9E19667BA20077B146 /* archive_entry_strmode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0317CC961100CB8146 /* archive_entry_strmode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9C9F19667BA20077B146 /* archive_entry_xattr.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0417CC961100CB8146 /* archive_entry_xattr.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA019667BA20077B146 /* archive_entry.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0517CC961100CB8146 /* archive_entry.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA119667BA20077B146 /* archive_getdate.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0717CC961100CB8146 /* archive_getdate.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA219667BA20077B146 /* archive_match.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0817CC961100CB8146 /* archive_match.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA319667BA20077B146 /* archive_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0A17CC961100CB8146 /* archive_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA419667BA20077B146 /* archive_pathmatch.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0B17CC961100CB8146 /* archive_pathmatch.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA519667BA20077B146 /* archive_ppmd7.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1017CC961100CB8146 /* archive_ppmd7.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA619667BA20077B146 /* archive_rb.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1217CC961100CB8146 /* archive_rb.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA719667BA20077B146 /* archive_read_append_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1417CC961100CB8146 /* archive_read_append_filter.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA819667BA20077B146 /* archive_read_data_into_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1517CC961100CB8146 /* archive_read_data_into_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CA919667BA20077B146 /* archive_read_disk_entry_from_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1617CC961100CB8146 /* archive_read_disk_entry_from_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CAA19667BA20077B146 /* archive_read_disk_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1717CC961100CB8146 /* archive_read_disk_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CAB19667BA20077B146 /* archive_read_disk_set_standard_lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1917CC961100CB8146 /* archive_read_disk_set_standard_lookup.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CAC19667BA20077B146 /* archive_read_disk_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1A17CC961100CB8146 /* archive_read_disk_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CAD19667BA20077B146 /* archive_read_extract.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1B17CC961100CB8146 /* archive_read_extract.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CAE19667BA20077B146 /* archive_read_open_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1C17CC961100CB8146 /* archive_read_open_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CAF19667BA20077B146 /* archive_read_open_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1D17CC961100CB8146 /* archive_read_open_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB019667BA20077B146 /* archive_read_open_filename.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1E17CC961100CB8146 /* archive_read_open_filename.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB119667BA20077B146 /* archive_read_open_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1F17CC961100CB8146 /* archive_read_open_memory.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB219667BA20077B146 /* archive_read_set_format.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2117CC961100CB8146 /* archive_read_set_format.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB319667BA20077B146 /* archive_read_set_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2217CC961100CB8146 /* archive_read_set_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB419667BA20077B146 /* archive_read_support_filter_all.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2317CC961100CB8146 /* archive_read_support_filter_all.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB519667BA20077B146 /* archive_read_support_filter_bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2417CC961100CB8146 /* archive_read_support_filter_bzip2.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB619667BA20077B146 /* archive_read_support_filter_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2517CC961100CB8146 /* archive_read_support_filter_compress.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB719667BA20077B146 /* archive_read_support_filter_grzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2617CC961100CB8146 /* archive_read_support_filter_grzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB819667BA20077B146 /* archive_read_support_filter_gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2717CC961100CB8146 /* archive_read_support_filter_gzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CB919667BA20077B146 /* archive_read_support_filter_lrzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2817CC961100CB8146 /* archive_read_support_filter_lrzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CBA19667BA20077B146 /* archive_read_support_filter_lzop.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2917CC961100CB8146 /* archive_read_support_filter_lzop.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CBB19667BA20077B146 /* archive_read_support_filter_none.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2A17CC961100CB8146 /* archive_read_support_filter_none.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CBC19667BA20077B146 /* archive_read_support_filter_program.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2B17CC961100CB8146 /* archive_read_support_filter_program.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CBD19667BA20077B146 /* archive_read_support_filter_rpm.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2C17CC961100CB8146 /* archive_read_support_filter_rpm.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CBE19667BA20077B146 /* archive_read_support_filter_uu.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2D17CC961100CB8146 /* archive_read_support_filter_uu.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CBF19667BA20077B146 /* archive_read_support_filter_xz.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2E17CC961100CB8146 /* archive_read_support_filter_xz.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC019667BA20077B146 /* archive_read_support_format_7zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2F17CC961100CB8146 /* archive_read_support_format_7zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC119667BA20077B146 /* archive_read_support_format_all.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3017CC961100CB8146 /* archive_read_support_format_all.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC219667BA20077B146 /* archive_read_support_format_ar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3117CC961100CB8146 /* archive_read_support_format_ar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC319667BA20077B146 /* archive_read_support_format_by_code.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3217CC961100CB8146 /* archive_read_support_format_by_code.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC419667BA20077B146 /* archive_read_support_format_cab.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3317CC961100CB8146 /* archive_read_support_format_cab.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC519667BA20077B146 /* archive_read_support_format_cpio.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3417CC961100CB8146 /* archive_read_support_format_cpio.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC619667BA20077B146 /* archive_read_support_format_empty.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3517CC961100CB8146 /* archive_read_support_format_empty.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC719667BA20077B146 /* archive_read_support_format_iso9660.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3617CC961100CB8146 /* archive_read_support_format_iso9660.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC819667BA20077B146 /* archive_read_support_format_lha.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3717CC961100CB8146 /* archive_read_support_format_lha.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CC919667BA20077B146 /* archive_read_support_format_mtree.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3817CC961100CB8146 /* archive_read_support_format_mtree.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CCA19667BA20077B146 /* archive_read_support_format_rar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3917CC961100CB8146 /* archive_read_support_format_rar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CCB19667BA20077B146 /* archive_read_support_format_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3A17CC961100CB8146 /* archive_read_support_format_raw.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CCC19667BA20077B146 /* archive_read_support_format_tar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3B17CC961100CB8146 /* archive_read_support_format_tar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CCD19667BA20077B146 /* archive_read_support_format_xar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3C17CC961100CB8146 /* archive_read_support_format_xar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CCE19667BA20077B146 /* archive_read_support_format_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3D17CC961100CB8146 /* archive_read_support_format_zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CCF19667BA20077B146 /* archive_read.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3E17CC961100CB8146 /* archive_read.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD019667BA20077B146 /* archive_string_sprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4017CC961100CB8146 /* archive_string_sprintf.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD119667BA20077B146 /* archive_string.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4117CC961100CB8146 /* archive_string.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD219667BA20077B146 /* archive_util.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4317CC961100CB8146 /* archive_util.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD319667BA20077B146 /* archive_virtual.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4417CC961100CB8146 /* archive_virtual.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD419667BA20077B146 /* archive_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4517CC961100CB8146 /* archive_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD519667BA20077B146 /* archive_write_add_filter_b64encode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4717CC961100CB8146 /* archive_write_add_filter_b64encode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD619667BA20077B146 /* archive_write_add_filter_by_name.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4817CC961100CB8146 /* archive_write_add_filter_by_name.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD719667BA20077B146 /* archive_write_add_filter_bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4917CC961100CB8146 /* archive_write_add_filter_bzip2.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD819667BA20077B146 /* archive_write_add_filter_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4A17CC961100CB8146 /* archive_write_add_filter_compress.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CD919667BA20077B146 /* archive_write_add_filter_grzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4B17CC961100CB8146 /* archive_write_add_filter_grzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CDA19667BA20077B146 /* archive_write_add_filter_gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4C17CC961100CB8146 /* archive_write_add_filter_gzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CDB19667BA20077B146 /* archive_write_add_filter_lrzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4D17CC961100CB8146 /* archive_write_add_filter_lrzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CDC19667BA20077B146 /* archive_write_add_filter_lzop.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4E17CC961100CB8146 /* archive_write_add_filter_lzop.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CDD19667BA20077B146 /* archive_write_add_filter_none.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4F17CC961100CB8146 /* archive_write_add_filter_none.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CDE19667BA20077B146 /* archive_write_add_filter_program.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5017CC961100CB8146 /* archive_write_add_filter_program.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CDF19667BA20077B146 /* archive_write_add_filter_uuencode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5117CC961100CB8146 /* archive_write_add_filter_uuencode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE019667BA20077B146 /* archive_write_add_filter_xz.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5217CC961100CB8146 /* archive_write_add_filter_xz.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE119667BA20077B146 /* archive_write_add_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5317CC961100CB8146 /* archive_write_add_filter.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE219667BA20077B146 /* archive_write_disk_acl.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5417CC961100CB8146 /* archive_write_disk_acl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE319667BA20077B146 /* archive_write_disk_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5517CC961100CB8146 /* archive_write_disk_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE419667BA20077B146 /* archive_write_disk_set_standard_lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5717CC961100CB8146 /* archive_write_disk_set_standard_lookup.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE519667BA20077B146 /* archive_write_disk_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5817CC961100CB8146 /* archive_write_disk_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE619667BA20077B146 /* archive_write_open_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5917CC961100CB8146 /* archive_write_open_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE719667BA20077B146 /* archive_write_open_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5A17CC961100CB8146 /* archive_write_open_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE819667BA20077B146 /* archive_write_open_filename.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5B17CC961100CB8146 /* archive_write_open_filename.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CE919667BA20077B146 /* archive_write_open_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5C17CC961100CB8146 /* archive_write_open_memory.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CEA19667BA20077B146 /* archive_write_set_format_7zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5E17CC961100CB8146 /* archive_write_set_format_7zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CEB19667BA20077B146 /* archive_write_set_format_ar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5F17CC961100CB8146 /* archive_write_set_format_ar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CEC19667BA20077B146 /* archive_write_set_format_by_name.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6017CC961100CB8146 /* archive_write_set_format_by_name.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CED19667BA20077B146 /* archive_write_set_format_cpio_newc.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6117CC961100CB8146 /* archive_write_set_format_cpio_newc.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CEE19667BA20077B146 /* archive_write_set_format_cpio.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6217CC961100CB8146 /* archive_write_set_format_cpio.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CEF19667BA20077B146 /* archive_write_set_format_gnutar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6317CC961100CB8146 /* archive_write_set_format_gnutar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF019667BA20077B146 /* archive_write_set_format_iso9660.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6417CC961100CB8146 /* archive_write_set_format_iso9660.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF119667BA20077B146 /* archive_write_set_format_mtree.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6517CC961100CB8146 /* archive_write_set_format_mtree.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF219667BA20077B146 /* archive_write_set_format_pax.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6617CC961100CB8146 /* archive_write_set_format_pax.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF319667BA20077B146 /* archive_write_set_format_shar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6717CC961100CB8146 /* archive_write_set_format_shar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF419667BA20077B146 /* archive_write_set_format_ustar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6817CC961100CB8146 /* archive_write_set_format_ustar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF519667BA20077B146 /* archive_write_set_format_v7tar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6917CC961100CB8146 /* archive_write_set_format_v7tar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF619667BA20077B146 /* archive_write_set_format_xar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6A17CC961100CB8146 /* archive_write_set_format_xar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF719667BA20077B146 /* archive_write_set_format_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6B17CC961100CB8146 /* archive_write_set_format_zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF819667BA20077B146 /* archive_write_set_format.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6C17CC961100CB8146 /* archive_write_set_format.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CF919667BA20077B146 /* archive_write_set_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6D17CC961100CB8146 /* archive_write_set_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CFA19667BA20077B146 /* archive_write.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6E17CC961100CB8146 /* archive_write.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF6D9CFB19667BA20077B146 /* filter_fork_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7217CC961100CB8146 /* filter_fork_posix.c */; };
-		CF6D9CFC19667BA20077B146 /* filter_fork_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7317CC961100CB8146 /* filter_fork_windows.c */; };
 		CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF2AC58D1818DD3800B0BEB4 /* path_manip.c */; };
 		CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF6D9CFF19667E390077B146 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF76B30B170146240066A49F /* OperationsSummaryViewController.xib */; };
@@ -514,110 +413,6 @@
 		CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; };
-		CF9D0E7517CC961100CB8146 /* archive_acl.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF417CC961100CB8146 /* archive_acl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7617CC961100CB8146 /* archive_check_magic.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF517CC961100CB8146 /* archive_check_magic.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7717CC961100CB8146 /* archive_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF717CC961100CB8146 /* archive_cmdline.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7817CC961100CB8146 /* archive_crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFA17CC961100CB8146 /* archive_crypto.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7917CC961100CB8146 /* archive_entry_copy_bhfi.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFC17CC961100CB8146 /* archive_entry_copy_bhfi.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7A17CC961100CB8146 /* archive_entry_copy_stat.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFD17CC961100CB8146 /* archive_entry_copy_stat.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7B17CC961100CB8146 /* archive_entry_link_resolver.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFE17CC961100CB8146 /* archive_entry_link_resolver.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7C17CC961100CB8146 /* archive_entry_sparse.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0117CC961100CB8146 /* archive_entry_sparse.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7D17CC961100CB8146 /* archive_entry_stat.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0217CC961100CB8146 /* archive_entry_stat.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7E17CC961100CB8146 /* archive_entry_strmode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0317CC961100CB8146 /* archive_entry_strmode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E7F17CC961100CB8146 /* archive_entry_xattr.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0417CC961100CB8146 /* archive_entry_xattr.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8017CC961100CB8146 /* archive_entry.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0517CC961100CB8146 /* archive_entry.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0717CC961100CB8146 /* archive_getdate.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8217CC961100CB8146 /* archive_match.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0817CC961100CB8146 /* archive_match.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8317CC961100CB8146 /* archive_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0A17CC961100CB8146 /* archive_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8417CC961100CB8146 /* archive_pathmatch.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0B17CC961100CB8146 /* archive_pathmatch.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8517CC961100CB8146 /* archive_ppmd7.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1017CC961100CB8146 /* archive_ppmd7.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8617CC961100CB8146 /* archive_rb.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1217CC961100CB8146 /* archive_rb.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8717CC961100CB8146 /* archive_read_append_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1417CC961100CB8146 /* archive_read_append_filter.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8817CC961100CB8146 /* archive_read_data_into_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1517CC961100CB8146 /* archive_read_data_into_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8917CC961100CB8146 /* archive_read_disk_entry_from_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1617CC961100CB8146 /* archive_read_disk_entry_from_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8A17CC961100CB8146 /* archive_read_disk_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1717CC961100CB8146 /* archive_read_disk_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8B17CC961100CB8146 /* archive_read_disk_set_standard_lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1917CC961100CB8146 /* archive_read_disk_set_standard_lookup.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8C17CC961100CB8146 /* archive_read_disk_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1A17CC961100CB8146 /* archive_read_disk_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8D17CC961100CB8146 /* archive_read_extract.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1B17CC961100CB8146 /* archive_read_extract.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8E17CC961100CB8146 /* archive_read_open_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1C17CC961100CB8146 /* archive_read_open_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E8F17CC961100CB8146 /* archive_read_open_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1D17CC961100CB8146 /* archive_read_open_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1E17CC961100CB8146 /* archive_read_open_filename.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9117CC961100CB8146 /* archive_read_open_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1F17CC961100CB8146 /* archive_read_open_memory.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9217CC961100CB8146 /* archive_read_set_format.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2117CC961100CB8146 /* archive_read_set_format.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9317CC961100CB8146 /* archive_read_set_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2217CC961100CB8146 /* archive_read_set_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9417CC961100CB8146 /* archive_read_support_filter_all.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2317CC961100CB8146 /* archive_read_support_filter_all.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9517CC961100CB8146 /* archive_read_support_filter_bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2417CC961100CB8146 /* archive_read_support_filter_bzip2.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9617CC961100CB8146 /* archive_read_support_filter_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2517CC961100CB8146 /* archive_read_support_filter_compress.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9717CC961100CB8146 /* archive_read_support_filter_grzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2617CC961100CB8146 /* archive_read_support_filter_grzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9817CC961100CB8146 /* archive_read_support_filter_gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2717CC961100CB8146 /* archive_read_support_filter_gzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9917CC961100CB8146 /* archive_read_support_filter_lrzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2817CC961100CB8146 /* archive_read_support_filter_lrzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9A17CC961100CB8146 /* archive_read_support_filter_lzop.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2917CC961100CB8146 /* archive_read_support_filter_lzop.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9B17CC961100CB8146 /* archive_read_support_filter_none.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2A17CC961100CB8146 /* archive_read_support_filter_none.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9C17CC961100CB8146 /* archive_read_support_filter_program.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2B17CC961100CB8146 /* archive_read_support_filter_program.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9D17CC961100CB8146 /* archive_read_support_filter_rpm.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2C17CC961100CB8146 /* archive_read_support_filter_rpm.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9E17CC961100CB8146 /* archive_read_support_filter_uu.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2D17CC961100CB8146 /* archive_read_support_filter_uu.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0E9F17CC961100CB8146 /* archive_read_support_filter_xz.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2E17CC961100CB8146 /* archive_read_support_filter_xz.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA017CC961100CB8146 /* archive_read_support_format_7zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2F17CC961100CB8146 /* archive_read_support_format_7zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA117CC961100CB8146 /* archive_read_support_format_all.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3017CC961100CB8146 /* archive_read_support_format_all.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA217CC961100CB8146 /* archive_read_support_format_ar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3117CC961100CB8146 /* archive_read_support_format_ar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA317CC961100CB8146 /* archive_read_support_format_by_code.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3217CC961100CB8146 /* archive_read_support_format_by_code.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA417CC961100CB8146 /* archive_read_support_format_cab.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3317CC961100CB8146 /* archive_read_support_format_cab.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA517CC961100CB8146 /* archive_read_support_format_cpio.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3417CC961100CB8146 /* archive_read_support_format_cpio.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA617CC961100CB8146 /* archive_read_support_format_empty.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3517CC961100CB8146 /* archive_read_support_format_empty.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA717CC961100CB8146 /* archive_read_support_format_iso9660.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3617CC961100CB8146 /* archive_read_support_format_iso9660.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA817CC961100CB8146 /* archive_read_support_format_lha.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3717CC961100CB8146 /* archive_read_support_format_lha.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EA917CC961100CB8146 /* archive_read_support_format_mtree.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3817CC961100CB8146 /* archive_read_support_format_mtree.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EAA17CC961100CB8146 /* archive_read_support_format_rar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3917CC961100CB8146 /* archive_read_support_format_rar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EAB17CC961100CB8146 /* archive_read_support_format_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3A17CC961100CB8146 /* archive_read_support_format_raw.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EAC17CC961100CB8146 /* archive_read_support_format_tar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3B17CC961100CB8146 /* archive_read_support_format_tar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EAD17CC961100CB8146 /* archive_read_support_format_xar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3C17CC961100CB8146 /* archive_read_support_format_xar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EAE17CC961100CB8146 /* archive_read_support_format_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3D17CC961100CB8146 /* archive_read_support_format_zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EAF17CC961100CB8146 /* archive_read.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3E17CC961100CB8146 /* archive_read.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB017CC961100CB8146 /* archive_string_sprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4017CC961100CB8146 /* archive_string_sprintf.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB117CC961100CB8146 /* archive_string.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4117CC961100CB8146 /* archive_string.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4317CC961100CB8146 /* archive_util.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB317CC961100CB8146 /* archive_virtual.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4417CC961100CB8146 /* archive_virtual.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB417CC961100CB8146 /* archive_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4517CC961100CB8146 /* archive_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB517CC961100CB8146 /* archive_write_add_filter_b64encode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4717CC961100CB8146 /* archive_write_add_filter_b64encode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4817CC961100CB8146 /* archive_write_add_filter_by_name.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB717CC961100CB8146 /* archive_write_add_filter_bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4917CC961100CB8146 /* archive_write_add_filter_bzip2.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB817CC961100CB8146 /* archive_write_add_filter_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4A17CC961100CB8146 /* archive_write_add_filter_compress.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EB917CC961100CB8146 /* archive_write_add_filter_grzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4B17CC961100CB8146 /* archive_write_add_filter_grzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EBA17CC961100CB8146 /* archive_write_add_filter_gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4C17CC961100CB8146 /* archive_write_add_filter_gzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EBB17CC961100CB8146 /* archive_write_add_filter_lrzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4D17CC961100CB8146 /* archive_write_add_filter_lrzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EBC17CC961100CB8146 /* archive_write_add_filter_lzop.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4E17CC961100CB8146 /* archive_write_add_filter_lzop.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EBD17CC961100CB8146 /* archive_write_add_filter_none.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4F17CC961100CB8146 /* archive_write_add_filter_none.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EBE17CC961100CB8146 /* archive_write_add_filter_program.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5017CC961100CB8146 /* archive_write_add_filter_program.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EBF17CC961100CB8146 /* archive_write_add_filter_uuencode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5117CC961100CB8146 /* archive_write_add_filter_uuencode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC017CC961100CB8146 /* archive_write_add_filter_xz.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5217CC961100CB8146 /* archive_write_add_filter_xz.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC117CC961100CB8146 /* archive_write_add_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5317CC961100CB8146 /* archive_write_add_filter.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC217CC961100CB8146 /* archive_write_disk_acl.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5417CC961100CB8146 /* archive_write_disk_acl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC317CC961100CB8146 /* archive_write_disk_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5517CC961100CB8146 /* archive_write_disk_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC417CC961100CB8146 /* archive_write_disk_set_standard_lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5717CC961100CB8146 /* archive_write_disk_set_standard_lookup.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC517CC961100CB8146 /* archive_write_disk_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5817CC961100CB8146 /* archive_write_disk_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC617CC961100CB8146 /* archive_write_open_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5917CC961100CB8146 /* archive_write_open_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC717CC961100CB8146 /* archive_write_open_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5A17CC961100CB8146 /* archive_write_open_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC817CC961100CB8146 /* archive_write_open_filename.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5B17CC961100CB8146 /* archive_write_open_filename.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EC917CC961100CB8146 /* archive_write_open_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5C17CC961100CB8146 /* archive_write_open_memory.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ECA17CC961100CB8146 /* archive_write_set_format_7zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5E17CC961100CB8146 /* archive_write_set_format_7zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ECB17CC961100CB8146 /* archive_write_set_format_ar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5F17CC961100CB8146 /* archive_write_set_format_ar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ECC17CC961100CB8146 /* archive_write_set_format_by_name.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6017CC961100CB8146 /* archive_write_set_format_by_name.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ECD17CC961100CB8146 /* archive_write_set_format_cpio_newc.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6117CC961100CB8146 /* archive_write_set_format_cpio_newc.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ECE17CC961100CB8146 /* archive_write_set_format_cpio.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6217CC961100CB8146 /* archive_write_set_format_cpio.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ECF17CC961100CB8146 /* archive_write_set_format_gnutar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6317CC961100CB8146 /* archive_write_set_format_gnutar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED017CC961100CB8146 /* archive_write_set_format_iso9660.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6417CC961100CB8146 /* archive_write_set_format_iso9660.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED117CC961100CB8146 /* archive_write_set_format_mtree.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6517CC961100CB8146 /* archive_write_set_format_mtree.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED217CC961100CB8146 /* archive_write_set_format_pax.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6617CC961100CB8146 /* archive_write_set_format_pax.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED317CC961100CB8146 /* archive_write_set_format_shar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6717CC961100CB8146 /* archive_write_set_format_shar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED417CC961100CB8146 /* archive_write_set_format_ustar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6817CC961100CB8146 /* archive_write_set_format_ustar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED517CC961100CB8146 /* archive_write_set_format_v7tar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6917CC961100CB8146 /* archive_write_set_format_v7tar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED617CC961100CB8146 /* archive_write_set_format_xar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6A17CC961100CB8146 /* archive_write_set_format_xar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED717CC961100CB8146 /* archive_write_set_format_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6B17CC961100CB8146 /* archive_write_set_format_zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED817CC961100CB8146 /* archive_write_set_format.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6C17CC961100CB8146 /* archive_write_set_format.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0ED917CC961100CB8146 /* archive_write_set_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6D17CC961100CB8146 /* archive_write_set_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EDA17CC961100CB8146 /* archive_write.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6E17CC961100CB8146 /* archive_write.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EDB17CC961100CB8146 /* filter_fork_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7217CC961100CB8146 /* filter_fork_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CF9D0EDC17CC961100CB8146 /* filter_fork_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7317CC961100CB8146 /* filter_fork_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -830,250 +625,146 @@
 		CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */; };
 		CFF6F23B1A13567C00011177 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C720B195EC2DB00DE165A /* DisplayNamesCache.mm */; };
 		CFF6F23D1A13567C00011177 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
-		CFF6F23E1A13567C00011177 /* archive_entry_xattr.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0417CC961100CB8146 /* archive_entry_xattr.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F23F1A13567C00011177 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */; };
 		CFF6F2411A13567C00011177 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122016C4BD3D00D247EE /* main.m */; };
-		CFF6F2421A13567C00011177 /* archive_write_open_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5C17CC961100CB8146 /* archive_write_open_memory.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2431A13567C00011177 /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
 		CFF6F2441A13567C00011177 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
 		CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
-		CFF6F2461A13567C00011177 /* archive_read_support_filter_bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2417CC961100CB8146 /* archive_read_support_filter_bzip2.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2471A13567C00011177 /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123416C5284800D247EE /* PanelData.mm */; };
 		CFF6F2481A13567C00011177 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CFF6F2491A13567C00011177 /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
-		CFF6F24A1A13567C00011177 /* archive_getdate.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0717CC961100CB8146 /* archive_getdate.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F24B1A13567C00011177 /* TermTaskCommon.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09856818EDBFB0006E6410 /* TermTaskCommon.mm */; };
 		CFF6F24D1A13567C00011177 /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3828F19CEFBA0005C8958 /* BigFileViewSheet.mm */; };
 		CFF6F24E1A13567C00011177 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
 		CFF6F24F1A13567C00011177 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
 		CFF6F2501A13567C00011177 /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
 		CFF6F2511A13567C00011177 /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
-		CFF6F2521A13567C00011177 /* archive_read_open_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1F17CC961100CB8146 /* archive_read_open_memory.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2541A13567C00011177 /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CFF6F2551A13567C00011177 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */; };
-		CFF6F2561A13567C00011177 /* archive_read_support_filter_uu.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2D17CC961100CB8146 /* archive_read_support_filter_uu.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2571A13567C00011177 /* archive_read_support_format_tar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3B17CC961100CB8146 /* archive_read_support_format_tar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2581A13567C00011177 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */; };
 		CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
 		CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
-		CFF6F25C1A13567C00011177 /* archive_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4517CC961100CB8146 /* archive_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F25D1A13567C00011177 /* archive_read_support_format_iso9660.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3617CC961100CB8146 /* archive_read_support_format_iso9660.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F25E1A13567C00011177 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697516EF0E3E0048A393 /* MassCopySheetController.mm */; };
-		CFF6F25F1A13567C00011177 /* archive_write_open_filename.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5B17CC961100CB8146 /* archive_write_open_filename.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
 		CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
-		CFF6F2621A13567C00011177 /* archive_read_support_filter_none.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2A17CC961100CB8146 /* archive_read_support_filter_none.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2631A13567C00011177 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4A519BB4FFB005BB24A /* Hash.cpp */; };
-		CFF6F2651A13567C00011177 /* archive_string.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4117CC961100CB8146 /* archive_string.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2661A13567C00011177 /* FSEventsDirUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.cpp */; };
-		CFF6F2671A13567C00011177 /* archive_read_support_format_xar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3C17CC961100CB8146 /* archive_read_support_format_xar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2681A13567C00011177 /* archive_read_support_format_rar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3917CC961100CB8146 /* archive_read_support_format_rar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F26A1A13567C00011177 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D516F38805000AF870 /* Encodings.cpp */; };
 		CFF6F26B1A13567C00011177 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFF6F26C1A13567C00011177 /* path_manip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF2AC58D1818DD3800B0BEB4 /* path_manip.c */; };
-		CFF6F26D1A13567C00011177 /* archive_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0A17CC961100CB8146 /* archive_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F26E1A13567C00011177 /* archive_write_set_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6D17CC961100CB8146 /* archive_write_set_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2701A13567C00011177 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
 		CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CFF6F2731A13567C00011177 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */; };
 		CFF6F2741A13567C00011177 /* TermScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.mm */; };
-		CFF6F2751A13567C00011177 /* archive_write_set_format_7zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5E17CC961100CB8146 /* archive_write_set_format_7zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2761A13567C00011177 /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CFF6F2771A13567C00011177 /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */; };
 		CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
 		CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
-		CFF6F27C1A13567C00011177 /* archive_entry_copy_bhfi.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFC17CC961100CB8146 /* archive_entry_copy_bhfi.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F27D1A13567C00011177 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */; };
-		CFF6F27E1A13567C00011177 /* archive_write_add_filter_uuencode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5117CC961100CB8146 /* archive_write_add_filter_uuencode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F27F1A13567C00011177 /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
-		CFF6F2811A13567C00011177 /* archive_read_support_filter_rpm.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2C17CC961100CB8146 /* archive_read_support_filter_rpm.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2821A13567C00011177 /* archive_entry_link_resolver.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFE17CC961100CB8146 /* archive_entry_link_resolver.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
 		CFF6F2841A13567C00011177 /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011C16FCF361004E260D /* OperationsController.mm */; };
 		CFF6F2851A13567C00011177 /* OperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528011E16FCF361004E260D /* OperationJob.mm */; };
-		CFF6F2861A13567C00011177 /* filter_fork_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7217CC961100CB8146 /* filter_fork_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2871A13567C00011177 /* archive_read_support_format_all.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3017CC961100CB8146 /* archive_read_support_format_all.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2881A13567C00011177 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B528012016FCF361004E260D /* Operation.mm */; };
 		CFF6F2891A13567C00011177 /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
 		CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29312E17D79BA100648A90 /* IconsGenerator.mm */; };
 		CFF6F28B1A13567C00011177 /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
-		CFF6F28C1A13567C00011177 /* archive_match.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0817CC961100CB8146 /* archive_match.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CFF6F2901A13567C00011177 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
 		CFF6F2911A13567C00011177 /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
-		CFF6F2921A13567C00011177 /* archive_write_open_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5A17CC961100CB8146 /* archive_write_open_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2931A13567C00011177 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
-		CFF6F2961A13567C00011177 /* archive_read_set_options.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2217CC961100CB8146 /* archive_read_set_options.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2971A13567C00011177 /* archive_write_add_filter_b64encode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4717CC961100CB8146 /* archive_write_add_filter_b64encode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2981A13567C00011177 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
-		CFF6F2991A13567C00011177 /* archive_write_add_filter_xz.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5217CC961100CB8146 /* archive_write_add_filter_xz.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F29B1A13567C00011177 /* archive_read_support_format_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3A17CC961100CB8146 /* archive_read_support_format_raw.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F29C1A13567C00011177 /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B51014D317078B2B0023FF24 /* OperationDialogController.mm */; };
-		CFF6F29D1A13567C00011177 /* archive_write_set_format_xar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6A17CC961100CB8146 /* archive_write_set_format_xar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F29F1A13567C00011177 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CFF6F2A01A13567C00011177 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
-		CFF6F2A11A13567C00011177 /* archive_read_support_format_ar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3117CC961100CB8146 /* archive_read_support_format_ar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2A21A13567C00011177 /* archive_read_disk_set_standard_lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1917CC961100CB8146 /* archive_read_disk_set_standard_lookup.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2A31A13567C00011177 /* archive_write_add_filter_gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4C17CC961100CB8146 /* archive_write_add_filter_gzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2A41A13567C00011177 /* archive_write_add_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5317CC961100CB8146 /* archive_write_add_filter.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2A51A13567C00011177 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
-		CFF6F2A61A13567C00011177 /* archive_string_sprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4017CC961100CB8146 /* archive_string_sprintf.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2A71A13567C00011177 /* NSDictionary+SimpleMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC71946D50400840F25 /* NSDictionary+SimpleMutations.m */; };
 		CFF6F2A81A13567C00011177 /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */; };
 		CFF6F2A91A13567C00011177 /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFF6F2AC1A13567C00011177 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
-		CFF6F2AD1A13567C00011177 /* archive_write_set_format_gnutar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6317CC961100CB8146 /* archive_write_set_format_gnutar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2AE1A13567C00011177 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
-		CFF6F2AF1A13567C00011177 /* archive_write.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6E17CC961100CB8146 /* archive_write.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2B01A13567C00011177 /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF213171320910008CBAE /* CreateDirectoryOperation.mm */; };
-		CFF6F2B11A13567C00011177 /* archive_write_set_format_by_name.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6017CC961100CB8146 /* archive_write_set_format_by_name.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2B31A13567C00011177 /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */; };
-		CFF6F2B41A13567C00011177 /* archive_read_extract.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1B17CC961100CB8146 /* archive_read_extract.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2B51A13567C00011177 /* archive_pathmatch.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0B17CC961100CB8146 /* archive_pathmatch.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2B71A13567C00011177 /* archive_read_disk_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1A17CC961100CB8146 /* archive_read_disk_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2B81A13567C00011177 /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFF6F2B91A13567C00011177 /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */; };
 		CFF6F2BA1A13567C00011177 /* FileCopyOperationJobNativeToNative.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm */; };
-		CFF6F2BB1A13567C00011177 /* archive_write_add_filter_bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4917CC961100CB8146 /* archive_write_add_filter_bzip2.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2BC1A13567C00011177 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */; };
-		CFF6F2BE1A13567C00011177 /* archive_read_set_format.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2117CC961100CB8146 /* archive_read_set_format.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2BF1A13567C00011177 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
-		CFF6F2C01A13567C00011177 /* archive_write_set_format_pax.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6617CC961100CB8146 /* archive_write_set_format_pax.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2C11A13567C00011177 /* archive_write_set_format_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6B17CC961100CB8146 /* archive_write_set_format_zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2C21A13567C00011177 /* archive_entry_stat.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0217CC961100CB8146 /* archive_entry_stat.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2C31A13567C00011177 /* archive_read_open_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1C17CC961100CB8146 /* archive_read_open_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2C41A13567C00011177 /* archive_write_disk_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5817CC961100CB8146 /* archive_write_disk_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
-		CFF6F2C61A13567C00011177 /* archive_entry_strmode.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0317CC961100CB8146 /* archive_entry_strmode.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2C71A13567C00011177 /* archive_read_support_format_empty.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3517CC961100CB8146 /* archive_read_support_format_empty.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2C81A13567C00011177 /* archive_check_magic.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF517CC961100CB8146 /* archive_check_magic.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
 		CFF6F2CB1A13567C00011177 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FF181537A800D82455 /* FileCompressOperation.mm */; };
-		CFF6F2CC1A13567C00011177 /* archive_write_add_filter_by_name.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4817CC961100CB8146 /* archive_write_add_filter_by_name.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
 		CFF6F2CE1A13567C00011177 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
 		CFF6F2D01A13567C00011177 /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22A186412BD00501C35 /* DispatchQueue.cpp */; };
-		CFF6F2D11A13567C00011177 /* archive_util.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4317CC961100CB8146 /* archive_util.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2D21A13567C00011177 /* archive_read_open_filename.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1E17CC961100CB8146 /* archive_read_open_filename.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2D31A13567C00011177 /* archive_read_support_format_7zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2F17CC961100CB8146 /* archive_read_support_format_7zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2D41A13567C00011177 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0519DB17E9C98A00590C74 /* PanelAux.mm */; };
 		CFF6F2D51A13567C00011177 /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
-		CFF6F2D71A13567C00011177 /* archive_read_support_format_cpio.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3417CC961100CB8146 /* archive_read_support_format_cpio.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2D81A13567C00011177 /* archive_read_disk_entry_from_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1617CC961100CB8146 /* archive_read_disk_entry_from_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2D91A13567C00011177 /* archive_write_set_format_ustar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6817CC961100CB8146 /* archive_write_set_format_ustar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2DA1A13567C00011177 /* common_paths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2381869542200501C35 /* common_paths.cpp */; };
-		CFF6F2DC1A13567C00011177 /* archive_ppmd7.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1017CC961100CB8146 /* archive_ppmd7.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
 		CFF6F2DE1A13567C00011177 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
-		CFF6F2DF1A13567C00011177 /* archive_write_set_format_v7tar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6917CC961100CB8146 /* archive_write_set_format_v7tar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2E01A13567C00011177 /* archive_read_append_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1417CC961100CB8146 /* archive_read_append_filter.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2E11A13567C00011177 /* archive_write_set_format.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6C17CC961100CB8146 /* archive_write_set_format.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2E21A13567C00011177 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CFF6F2E31A13567C00011177 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFF6F2E41A13567C00011177 /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5606E6917301D6F00DDA33A /* OperationStats.mm */; };
 		CFF6F2E51A13567C00011177 /* PanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */; };
-		CFF6F2E71A13567C00011177 /* archive_write_set_format_ar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5F17CC961100CB8146 /* archive_write_set_format_ar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2E81A13567C00011177 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFF6F2E91A13567C00011177 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
-		CFF6F2EA1A13567C00011177 /* archive_rb.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1217CC961100CB8146 /* archive_rb.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2EB1A13567C00011177 /* ClassicPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */; };
 		CFF6F2EC1A13567C00011177 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
-		CFF6F2ED1A13567C00011177 /* archive_read_support_filter_xz.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2E17CC961100CB8146 /* archive_read_support_filter_xz.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2EE1A13567C00011177 /* archive_write_set_format_cpio.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6217CC961100CB8146 /* archive_write_set_format_cpio.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2EF1A13567C00011177 /* archive_write_disk_acl.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5417CC961100CB8146 /* archive_write_disk_acl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
 		CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
 		CFF6F2F21A13567C00011177 /* sysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414E1803F6A2006D6687 /* sysinfo.mm */; };
 		CFF6F2F31A13567C00011177 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
 		CFF6F2F41A13567C00011177 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
-		CFF6F2F51A13567C00011177 /* archive_acl.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF417CC961100CB8146 /* archive_acl.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2F61A13567C00011177 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
 		CFF6F2F71A13567C00011177 /* FileCopyOperationJobFromGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09826F17DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm */; };
 		CFF6F2F81A13567C00011177 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
 		CFF6F2F91A13567C00011177 /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */; };
-		CFF6F2FA1A13567C00011177 /* archive_read_support_format_by_code.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3217CC961100CB8146 /* archive_read_support_format_by_code.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2FB1A13567C00011177 /* archive_write_open_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5917CC961100CB8146 /* archive_write_open_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F2FC1A13567C00011177 /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */; };
 		CFF6F2FD1A13567C00011177 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
-		CFF6F2FE1A13567C00011177 /* filter_fork_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E7317CC961100CB8146 /* filter_fork_windows.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F2FF1A13567C00011177 /* archive_read_support_filter_grzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2617CC961100CB8146 /* archive_read_support_filter_grzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3001A13567C00011177 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */; };
 		CFF6F3011A13567C00011177 /* TermShellTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */; };
 		CFF6F3021A13567C00011177 /* MainWindowBigFileViewState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */; };
-		CFF6F3041A13567C00011177 /* archive_read_support_filter_lrzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2817CC961100CB8146 /* archive_read_support_filter_lrzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3051A13567C00011177 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
-		CFF6F3061A13567C00011177 /* archive_read_support_filter_lzop.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2917CC961100CB8146 /* archive_read_support_filter_lzop.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3071A13567C00011177 /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE40176985EF00757DE1 /* EncodingsAdditions.mm */; };
 		CFF6F3081A13567C00011177 /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEE8E4F17748E3D00F6A254 /* FontExtras.cpp */; };
-		CFF6F3091A13567C00011177 /* archive_read.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3E17CC961100CB8146 /* archive_read.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F30A1A13567C00011177 /* archive_entry_sparse.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0117CC961100CB8146 /* archive_entry_sparse.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F30B1A13567C00011177 /* archive_write_set_format_shar.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6717CC961100CB8146 /* archive_write_set_format_shar.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F30C1A13567C00011177 /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */; };
 		CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CFF6F30F1A13567C00011177 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
-		CFF6F3101A13567C00011177 /* archive_write_add_filter_grzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4B17CC961100CB8146 /* archive_write_add_filter_grzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F3111A13567C00011177 /* archive_cmdline.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DF717CC961100CB8146 /* archive_cmdline.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3121A13567C00011177 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
 		CFF6F3131A13567C00011177 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
 		CFF6F3141A13567C00011177 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857318EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm */; };
-		CFF6F3151A13567C00011177 /* archive_read_support_format_cab.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3317CC961100CB8146 /* archive_read_support_format_cab.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F3171A13567C00011177 /* archive_read_support_filter_program.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2B17CC961100CB8146 /* archive_read_support_filter_program.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
 		CFF6F3191A13567C00011177 /* FileDeletionOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100D9191B46BD00E170FC /* FileDeletionOperationVFSJob.mm */; };
 		CFF6F31A1A13567C00011177 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */; };
-		CFF6F31B1A13567C00011177 /* archive_write_set_format_cpio_newc.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6117CC961100CB8146 /* archive_write_set_format_cpio_newc.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F31C1A13567C00011177 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */; };
-		CFF6F31D1A13567C00011177 /* archive_write_add_filter_lzop.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4E17CC961100CB8146 /* archive_write_add_filter_lzop.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249AD1990AC2800583BC5 /* SheetController.mm */; };
-		CFF6F3201A13567C00011177 /* archive_write_add_filter_none.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4F17CC961100CB8146 /* archive_write_add_filter_none.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
-		CFF6F3221A13567C00011177 /* archive_read_support_filter_gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2717CC961100CB8146 /* archive_read_support_filter_gzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
-		CFF6F3241A13567C00011177 /* archive_read_data_into_fd.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1517CC961100CB8146 /* archive_read_data_into_fd.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3251A13567C00011177 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
 		CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */; };
 		CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
-		CFF6F3281A13567C00011177 /* archive_read_support_format_lha.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3717CC961100CB8146 /* archive_read_support_format_lha.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F3291A13567C00011177 /* archive_virtual.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4417CC961100CB8146 /* archive_virtual.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F32A1A13567C00011177 /* archive_read_support_filter_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2517CC961100CB8146 /* archive_read_support_filter_compress.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F32B1A13567C00011177 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CFF6F32C1A13567C00011177 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
-		CFF6F32D1A13567C00011177 /* archive_read_support_format_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3D17CC961100CB8146 /* archive_read_support_format_zip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F32E1A13567C00011177 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
-		CFF6F3301A13567C00011177 /* archive_read_disk_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1717CC961100CB8146 /* archive_read_disk_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3311A13567C00011177 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */; };
-		CFF6F3321A13567C00011177 /* archive_write_add_filter_program.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5017CC961100CB8146 /* archive_write_add_filter_program.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3331A13567C00011177 /* NSUserDefaults+myColorSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB8179142A900DC85D6 /* NSUserDefaults+myColorSupport.m */; };
-		CFF6F3341A13567C00011177 /* archive_write_add_filter_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4A17CC961100CB8146 /* archive_write_add_filter_compress.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3351A13567C00011177 /* NewVersionChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47F6971830CDB30060D474 /* NewVersionChecker.mm */; };
 		CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
-		CFF6F3371A13567C00011177 /* archive_write_disk_set_standard_lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5717CC961100CB8146 /* archive_write_disk_set_standard_lookup.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3381A13567C00011177 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */; };
-		CFF6F33A1A13567C00011177 /* archive_write_add_filter_lrzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E4D17CC961100CB8146 /* archive_write_add_filter_lrzip.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F33B1A13567C00011177 /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709B318DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm */; };
-		CFF6F33C1A13567C00011177 /* archive_write_set_format_iso9660.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6417CC961100CB8146 /* archive_write_set_format_iso9660.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F33D1A13567C00011177 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
-		CFF6F33E1A13567C00011177 /* archive_entry_copy_stat.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFD17CC961100CB8146 /* archive_entry_copy_stat.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F33F1A13567C00011177 /* archive_crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0DFA17CC961100CB8146 /* archive_crypto.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3401A13567C00011177 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CFF6F3411A13567C00011177 /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB56284194ECA1B00A3B70E /* FPSLimitedDrawer.mm */; };
-		CFF6F3421A13567C00011177 /* archive_read_support_filter_all.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E2317CC961100CB8146 /* archive_read_support_filter_all.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
-		CFF6F3451A13567C00011177 /* archive_write_disk_posix.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E5517CC961100CB8146 /* archive_write_disk_posix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFF6F3471A13567C00011177 /* FileCompressOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.mm */; };
-		CFF6F3481A13567C00011177 /* archive_read_open_file.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E1D17CC961100CB8146 /* archive_read_open_file.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFF6F34A1A13567C00011177 /* NSUserDefaults+KeyPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC91946D50400840F25 /* NSUserDefaults+KeyPaths.m */; };
-		CFF6F34B1A13567C00011177 /* archive_write_set_format_mtree.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E6517CC961100CB8146 /* archive_write_set_format_mtree.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		CFF6F34C1A13567C00011177 /* archive_read_support_format_mtree.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E3817CC961100CB8146 /* archive_read_support_format_mtree.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F34E1A13567C00011177 /* NSArray+SSYMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC51946D50400840F25 /* NSArray+SSYMutations.m */; };
-		CFF6F34F1A13567C00011177 /* archive_entry.c in Sources */ = {isa = PBXBuildFile; fileRef = CF9D0E0517CC961100CB8146 /* archive_entry.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		CFF6F3501A13567C00011177 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
 		CFF6F3521A13567C00011177 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09856E18EEA8CF006E6410 /* TermSingleTask.mm */; };
 		CFF6F3541A13567C00011177 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
@@ -1134,6 +825,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
 			remoteInfo = Files;
+		};
+		CF540EBD1A90804D003CD7A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF540EB21A90804C003CD7A7;
+			remoteInfo = archivelib_LIB;
 		};
 		CF653C5518C3934200502920 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1445,6 +1143,7 @@
 		CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSSeqToRandomWrapper.cpp; path = vfs/VFSSeqToRandomWrapper.cpp; sourceTree = "<group>"; };
 		CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLVFSThumbnailsCache.mm; sourceTree = "<group>"; };
 		CF50B75C1A1607AA00E3D96D /* QLVFSThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLVFSThumbnailsCache.h; sourceTree = "<group>"; };
+		CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = archivelib_LIB.xcodeproj; path = 3rd_party/libarchive/archivelib_LIB/archivelib_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationVFSJob.mm; sourceTree = "<group>"; };
@@ -1530,136 +1229,6 @@
 		CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSSFTP_Tests.mm; sourceTree = "<group>"; };
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask_Tests.mm; sourceTree = "<group>"; };
-		CF9D0DF317CC961100CB8146 /* archive_acl_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_acl_private.h; path = 3rd_party/libarchive/archive_acl_private.h; sourceTree = "<group>"; };
-		CF9D0DF417CC961100CB8146 /* archive_acl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_acl.c; path = 3rd_party/libarchive/archive_acl.c; sourceTree = "<group>"; };
-		CF9D0DF517CC961100CB8146 /* archive_check_magic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_check_magic.c; path = 3rd_party/libarchive/archive_check_magic.c; sourceTree = "<group>"; };
-		CF9D0DF617CC961100CB8146 /* archive_cmdline_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_cmdline_private.h; path = 3rd_party/libarchive/archive_cmdline_private.h; sourceTree = "<group>"; };
-		CF9D0DF717CC961100CB8146 /* archive_cmdline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_cmdline.c; path = 3rd_party/libarchive/archive_cmdline.c; sourceTree = "<group>"; };
-		CF9D0DF817CC961100CB8146 /* archive_crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_crc32.h; path = 3rd_party/libarchive/archive_crc32.h; sourceTree = "<group>"; };
-		CF9D0DF917CC961100CB8146 /* archive_crypto_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_crypto_private.h; path = 3rd_party/libarchive/archive_crypto_private.h; sourceTree = "<group>"; };
-		CF9D0DFA17CC961100CB8146 /* archive_crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_crypto.c; path = 3rd_party/libarchive/archive_crypto.c; sourceTree = "<group>"; };
-		CF9D0DFB17CC961100CB8146 /* archive_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_endian.h; path = 3rd_party/libarchive/archive_endian.h; sourceTree = "<group>"; };
-		CF9D0DFC17CC961100CB8146 /* archive_entry_copy_bhfi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_entry_copy_bhfi.c; path = 3rd_party/libarchive/archive_entry_copy_bhfi.c; sourceTree = "<group>"; };
-		CF9D0DFD17CC961100CB8146 /* archive_entry_copy_stat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_entry_copy_stat.c; path = 3rd_party/libarchive/archive_entry_copy_stat.c; sourceTree = "<group>"; };
-		CF9D0DFE17CC961100CB8146 /* archive_entry_link_resolver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_entry_link_resolver.c; path = 3rd_party/libarchive/archive_entry_link_resolver.c; sourceTree = "<group>"; };
-		CF9D0DFF17CC961100CB8146 /* archive_entry_locale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_entry_locale.h; path = 3rd_party/libarchive/archive_entry_locale.h; sourceTree = "<group>"; };
-		CF9D0E0017CC961100CB8146 /* archive_entry_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_entry_private.h; path = 3rd_party/libarchive/archive_entry_private.h; sourceTree = "<group>"; };
-		CF9D0E0117CC961100CB8146 /* archive_entry_sparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_entry_sparse.c; path = 3rd_party/libarchive/archive_entry_sparse.c; sourceTree = "<group>"; };
-		CF9D0E0217CC961100CB8146 /* archive_entry_stat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_entry_stat.c; path = 3rd_party/libarchive/archive_entry_stat.c; sourceTree = "<group>"; };
-		CF9D0E0317CC961100CB8146 /* archive_entry_strmode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_entry_strmode.c; path = 3rd_party/libarchive/archive_entry_strmode.c; sourceTree = "<group>"; };
-		CF9D0E0417CC961100CB8146 /* archive_entry_xattr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_entry_xattr.c; path = 3rd_party/libarchive/archive_entry_xattr.c; sourceTree = "<group>"; };
-		CF9D0E0517CC961100CB8146 /* archive_entry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_entry.c; path = 3rd_party/libarchive/archive_entry.c; sourceTree = "<group>"; };
-		CF9D0E0617CC961100CB8146 /* archive_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_entry.h; path = 3rd_party/libarchive/archive_entry.h; sourceTree = "<group>"; };
-		CF9D0E0717CC961100CB8146 /* archive_getdate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_getdate.c; path = 3rd_party/libarchive/archive_getdate.c; sourceTree = "<group>"; };
-		CF9D0E0817CC961100CB8146 /* archive_match.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_match.c; path = 3rd_party/libarchive/archive_match.c; sourceTree = "<group>"; };
-		CF9D0E0917CC961100CB8146 /* archive_options_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_options_private.h; path = 3rd_party/libarchive/archive_options_private.h; sourceTree = "<group>"; };
-		CF9D0E0A17CC961100CB8146 /* archive_options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_options.c; path = 3rd_party/libarchive/archive_options.c; sourceTree = "<group>"; };
-		CF9D0E0B17CC961100CB8146 /* archive_pathmatch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_pathmatch.c; path = 3rd_party/libarchive/archive_pathmatch.c; sourceTree = "<group>"; };
-		CF9D0E0C17CC961100CB8146 /* archive_pathmatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_pathmatch.h; path = 3rd_party/libarchive/archive_pathmatch.h; sourceTree = "<group>"; };
-		CF9D0E0D17CC961100CB8146 /* archive_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_platform.h; path = 3rd_party/libarchive/archive_platform.h; sourceTree = "<group>"; };
-		CF9D0E0E17CC961100CB8146 /* archive_ppmd_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_ppmd_private.h; path = 3rd_party/libarchive/archive_ppmd_private.h; sourceTree = "<group>"; };
-		CF9D0E0F17CC961100CB8146 /* archive_ppmd7_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_ppmd7_private.h; path = 3rd_party/libarchive/archive_ppmd7_private.h; sourceTree = "<group>"; };
-		CF9D0E1017CC961100CB8146 /* archive_ppmd7.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_ppmd7.c; path = 3rd_party/libarchive/archive_ppmd7.c; sourceTree = "<group>"; };
-		CF9D0E1117CC961100CB8146 /* archive_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_private.h; path = 3rd_party/libarchive/archive_private.h; sourceTree = "<group>"; };
-		CF9D0E1217CC961100CB8146 /* archive_rb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_rb.c; path = 3rd_party/libarchive/archive_rb.c; sourceTree = "<group>"; };
-		CF9D0E1317CC961100CB8146 /* archive_rb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_rb.h; path = 3rd_party/libarchive/archive_rb.h; sourceTree = "<group>"; };
-		CF9D0E1417CC961100CB8146 /* archive_read_append_filter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_append_filter.c; path = 3rd_party/libarchive/archive_read_append_filter.c; sourceTree = "<group>"; };
-		CF9D0E1517CC961100CB8146 /* archive_read_data_into_fd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_data_into_fd.c; path = 3rd_party/libarchive/archive_read_data_into_fd.c; sourceTree = "<group>"; };
-		CF9D0E1617CC961100CB8146 /* archive_read_disk_entry_from_file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_disk_entry_from_file.c; path = 3rd_party/libarchive/archive_read_disk_entry_from_file.c; sourceTree = "<group>"; };
-		CF9D0E1717CC961100CB8146 /* archive_read_disk_posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_disk_posix.c; path = 3rd_party/libarchive/archive_read_disk_posix.c; sourceTree = "<group>"; };
-		CF9D0E1817CC961100CB8146 /* archive_read_disk_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_read_disk_private.h; path = 3rd_party/libarchive/archive_read_disk_private.h; sourceTree = "<group>"; };
-		CF9D0E1917CC961100CB8146 /* archive_read_disk_set_standard_lookup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_disk_set_standard_lookup.c; path = 3rd_party/libarchive/archive_read_disk_set_standard_lookup.c; sourceTree = "<group>"; };
-		CF9D0E1A17CC961100CB8146 /* archive_read_disk_windows.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_disk_windows.c; path = 3rd_party/libarchive/archive_read_disk_windows.c; sourceTree = "<group>"; };
-		CF9D0E1B17CC961100CB8146 /* archive_read_extract.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_extract.c; path = 3rd_party/libarchive/archive_read_extract.c; sourceTree = "<group>"; };
-		CF9D0E1C17CC961100CB8146 /* archive_read_open_fd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_open_fd.c; path = 3rd_party/libarchive/archive_read_open_fd.c; sourceTree = "<group>"; };
-		CF9D0E1D17CC961100CB8146 /* archive_read_open_file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_open_file.c; path = 3rd_party/libarchive/archive_read_open_file.c; sourceTree = "<group>"; };
-		CF9D0E1E17CC961100CB8146 /* archive_read_open_filename.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_open_filename.c; path = 3rd_party/libarchive/archive_read_open_filename.c; sourceTree = "<group>"; };
-		CF9D0E1F17CC961100CB8146 /* archive_read_open_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_open_memory.c; path = 3rd_party/libarchive/archive_read_open_memory.c; sourceTree = "<group>"; };
-		CF9D0E2017CC961100CB8146 /* archive_read_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_read_private.h; path = 3rd_party/libarchive/archive_read_private.h; sourceTree = "<group>"; };
-		CF9D0E2117CC961100CB8146 /* archive_read_set_format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_set_format.c; path = 3rd_party/libarchive/archive_read_set_format.c; sourceTree = "<group>"; };
-		CF9D0E2217CC961100CB8146 /* archive_read_set_options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_set_options.c; path = 3rd_party/libarchive/archive_read_set_options.c; sourceTree = "<group>"; };
-		CF9D0E2317CC961100CB8146 /* archive_read_support_filter_all.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_all.c; path = 3rd_party/libarchive/archive_read_support_filter_all.c; sourceTree = "<group>"; };
-		CF9D0E2417CC961100CB8146 /* archive_read_support_filter_bzip2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_bzip2.c; path = 3rd_party/libarchive/archive_read_support_filter_bzip2.c; sourceTree = "<group>"; };
-		CF9D0E2517CC961100CB8146 /* archive_read_support_filter_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_compress.c; path = 3rd_party/libarchive/archive_read_support_filter_compress.c; sourceTree = "<group>"; };
-		CF9D0E2617CC961100CB8146 /* archive_read_support_filter_grzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_grzip.c; path = 3rd_party/libarchive/archive_read_support_filter_grzip.c; sourceTree = "<group>"; };
-		CF9D0E2717CC961100CB8146 /* archive_read_support_filter_gzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_gzip.c; path = 3rd_party/libarchive/archive_read_support_filter_gzip.c; sourceTree = "<group>"; };
-		CF9D0E2817CC961100CB8146 /* archive_read_support_filter_lrzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_lrzip.c; path = 3rd_party/libarchive/archive_read_support_filter_lrzip.c; sourceTree = "<group>"; };
-		CF9D0E2917CC961100CB8146 /* archive_read_support_filter_lzop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_lzop.c; path = 3rd_party/libarchive/archive_read_support_filter_lzop.c; sourceTree = "<group>"; };
-		CF9D0E2A17CC961100CB8146 /* archive_read_support_filter_none.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_none.c; path = 3rd_party/libarchive/archive_read_support_filter_none.c; sourceTree = "<group>"; };
-		CF9D0E2B17CC961100CB8146 /* archive_read_support_filter_program.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_program.c; path = 3rd_party/libarchive/archive_read_support_filter_program.c; sourceTree = "<group>"; };
-		CF9D0E2C17CC961100CB8146 /* archive_read_support_filter_rpm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_rpm.c; path = 3rd_party/libarchive/archive_read_support_filter_rpm.c; sourceTree = "<group>"; };
-		CF9D0E2D17CC961100CB8146 /* archive_read_support_filter_uu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_uu.c; path = 3rd_party/libarchive/archive_read_support_filter_uu.c; sourceTree = "<group>"; };
-		CF9D0E2E17CC961100CB8146 /* archive_read_support_filter_xz.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_xz.c; path = 3rd_party/libarchive/archive_read_support_filter_xz.c; sourceTree = "<group>"; };
-		CF9D0E2F17CC961100CB8146 /* archive_read_support_format_7zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_7zip.c; path = 3rd_party/libarchive/archive_read_support_format_7zip.c; sourceTree = "<group>"; };
-		CF9D0E3017CC961100CB8146 /* archive_read_support_format_all.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_all.c; path = 3rd_party/libarchive/archive_read_support_format_all.c; sourceTree = "<group>"; };
-		CF9D0E3117CC961100CB8146 /* archive_read_support_format_ar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_ar.c; path = 3rd_party/libarchive/archive_read_support_format_ar.c; sourceTree = "<group>"; };
-		CF9D0E3217CC961100CB8146 /* archive_read_support_format_by_code.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_by_code.c; path = 3rd_party/libarchive/archive_read_support_format_by_code.c; sourceTree = "<group>"; };
-		CF9D0E3317CC961100CB8146 /* archive_read_support_format_cab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_cab.c; path = 3rd_party/libarchive/archive_read_support_format_cab.c; sourceTree = "<group>"; };
-		CF9D0E3417CC961100CB8146 /* archive_read_support_format_cpio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_cpio.c; path = 3rd_party/libarchive/archive_read_support_format_cpio.c; sourceTree = "<group>"; };
-		CF9D0E3517CC961100CB8146 /* archive_read_support_format_empty.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_empty.c; path = 3rd_party/libarchive/archive_read_support_format_empty.c; sourceTree = "<group>"; };
-		CF9D0E3617CC961100CB8146 /* archive_read_support_format_iso9660.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_iso9660.c; path = 3rd_party/libarchive/archive_read_support_format_iso9660.c; sourceTree = "<group>"; };
-		CF9D0E3717CC961100CB8146 /* archive_read_support_format_lha.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_lha.c; path = 3rd_party/libarchive/archive_read_support_format_lha.c; sourceTree = "<group>"; };
-		CF9D0E3817CC961100CB8146 /* archive_read_support_format_mtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_mtree.c; path = 3rd_party/libarchive/archive_read_support_format_mtree.c; sourceTree = "<group>"; };
-		CF9D0E3917CC961100CB8146 /* archive_read_support_format_rar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_rar.c; path = 3rd_party/libarchive/archive_read_support_format_rar.c; sourceTree = "<group>"; };
-		CF9D0E3A17CC961100CB8146 /* archive_read_support_format_raw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_raw.c; path = 3rd_party/libarchive/archive_read_support_format_raw.c; sourceTree = "<group>"; };
-		CF9D0E3B17CC961100CB8146 /* archive_read_support_format_tar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_tar.c; path = 3rd_party/libarchive/archive_read_support_format_tar.c; sourceTree = "<group>"; };
-		CF9D0E3C17CC961100CB8146 /* archive_read_support_format_xar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_xar.c; path = 3rd_party/libarchive/archive_read_support_format_xar.c; sourceTree = "<group>"; };
-		CF9D0E3D17CC961100CB8146 /* archive_read_support_format_zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_format_zip.c; path = 3rd_party/libarchive/archive_read_support_format_zip.c; sourceTree = "<group>"; };
-		CF9D0E3E17CC961100CB8146 /* archive_read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read.c; path = 3rd_party/libarchive/archive_read.c; sourceTree = "<group>"; };
-		CF9D0E3F17CC961100CB8146 /* archive_string_composition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_string_composition.h; path = 3rd_party/libarchive/archive_string_composition.h; sourceTree = "<group>"; };
-		CF9D0E4017CC961100CB8146 /* archive_string_sprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_string_sprintf.c; path = 3rd_party/libarchive/archive_string_sprintf.c; sourceTree = "<group>"; };
-		CF9D0E4117CC961100CB8146 /* archive_string.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_string.c; path = 3rd_party/libarchive/archive_string.c; sourceTree = "<group>"; };
-		CF9D0E4217CC961100CB8146 /* archive_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_string.h; path = 3rd_party/libarchive/archive_string.h; sourceTree = "<group>"; };
-		CF9D0E4317CC961100CB8146 /* archive_util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_util.c; path = 3rd_party/libarchive/archive_util.c; sourceTree = "<group>"; };
-		CF9D0E4417CC961100CB8146 /* archive_virtual.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_virtual.c; path = 3rd_party/libarchive/archive_virtual.c; sourceTree = "<group>"; };
-		CF9D0E4517CC961100CB8146 /* archive_windows.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_windows.c; path = 3rd_party/libarchive/archive_windows.c; sourceTree = "<group>"; };
-		CF9D0E4617CC961100CB8146 /* archive_windows.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_windows.h; path = 3rd_party/libarchive/archive_windows.h; sourceTree = "<group>"; };
-		CF9D0E4717CC961100CB8146 /* archive_write_add_filter_b64encode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_b64encode.c; path = 3rd_party/libarchive/archive_write_add_filter_b64encode.c; sourceTree = "<group>"; };
-		CF9D0E4817CC961100CB8146 /* archive_write_add_filter_by_name.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_by_name.c; path = 3rd_party/libarchive/archive_write_add_filter_by_name.c; sourceTree = "<group>"; };
-		CF9D0E4917CC961100CB8146 /* archive_write_add_filter_bzip2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_bzip2.c; path = 3rd_party/libarchive/archive_write_add_filter_bzip2.c; sourceTree = "<group>"; };
-		CF9D0E4A17CC961100CB8146 /* archive_write_add_filter_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_compress.c; path = 3rd_party/libarchive/archive_write_add_filter_compress.c; sourceTree = "<group>"; };
-		CF9D0E4B17CC961100CB8146 /* archive_write_add_filter_grzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_grzip.c; path = 3rd_party/libarchive/archive_write_add_filter_grzip.c; sourceTree = "<group>"; };
-		CF9D0E4C17CC961100CB8146 /* archive_write_add_filter_gzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_gzip.c; path = 3rd_party/libarchive/archive_write_add_filter_gzip.c; sourceTree = "<group>"; };
-		CF9D0E4D17CC961100CB8146 /* archive_write_add_filter_lrzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_lrzip.c; path = 3rd_party/libarchive/archive_write_add_filter_lrzip.c; sourceTree = "<group>"; };
-		CF9D0E4E17CC961100CB8146 /* archive_write_add_filter_lzop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_lzop.c; path = 3rd_party/libarchive/archive_write_add_filter_lzop.c; sourceTree = "<group>"; };
-		CF9D0E4F17CC961100CB8146 /* archive_write_add_filter_none.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_none.c; path = 3rd_party/libarchive/archive_write_add_filter_none.c; sourceTree = "<group>"; };
-		CF9D0E5017CC961100CB8146 /* archive_write_add_filter_program.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_program.c; path = 3rd_party/libarchive/archive_write_add_filter_program.c; sourceTree = "<group>"; };
-		CF9D0E5117CC961100CB8146 /* archive_write_add_filter_uuencode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_uuencode.c; path = 3rd_party/libarchive/archive_write_add_filter_uuencode.c; sourceTree = "<group>"; };
-		CF9D0E5217CC961100CB8146 /* archive_write_add_filter_xz.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_xz.c; path = 3rd_party/libarchive/archive_write_add_filter_xz.c; sourceTree = "<group>"; };
-		CF9D0E5317CC961100CB8146 /* archive_write_add_filter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter.c; path = 3rd_party/libarchive/archive_write_add_filter.c; sourceTree = "<group>"; };
-		CF9D0E5417CC961100CB8146 /* archive_write_disk_acl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_disk_acl.c; path = 3rd_party/libarchive/archive_write_disk_acl.c; sourceTree = "<group>"; };
-		CF9D0E5517CC961100CB8146 /* archive_write_disk_posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_disk_posix.c; path = 3rd_party/libarchive/archive_write_disk_posix.c; sourceTree = "<group>"; };
-		CF9D0E5617CC961100CB8146 /* archive_write_disk_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_write_disk_private.h; path = 3rd_party/libarchive/archive_write_disk_private.h; sourceTree = "<group>"; };
-		CF9D0E5717CC961100CB8146 /* archive_write_disk_set_standard_lookup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_disk_set_standard_lookup.c; path = 3rd_party/libarchive/archive_write_disk_set_standard_lookup.c; sourceTree = "<group>"; };
-		CF9D0E5817CC961100CB8146 /* archive_write_disk_windows.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_disk_windows.c; path = 3rd_party/libarchive/archive_write_disk_windows.c; sourceTree = "<group>"; };
-		CF9D0E5917CC961100CB8146 /* archive_write_open_fd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_open_fd.c; path = 3rd_party/libarchive/archive_write_open_fd.c; sourceTree = "<group>"; };
-		CF9D0E5A17CC961100CB8146 /* archive_write_open_file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_open_file.c; path = 3rd_party/libarchive/archive_write_open_file.c; sourceTree = "<group>"; };
-		CF9D0E5B17CC961100CB8146 /* archive_write_open_filename.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_open_filename.c; path = 3rd_party/libarchive/archive_write_open_filename.c; sourceTree = "<group>"; };
-		CF9D0E5C17CC961100CB8146 /* archive_write_open_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_open_memory.c; path = 3rd_party/libarchive/archive_write_open_memory.c; sourceTree = "<group>"; };
-		CF9D0E5D17CC961100CB8146 /* archive_write_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_write_private.h; path = 3rd_party/libarchive/archive_write_private.h; sourceTree = "<group>"; };
-		CF9D0E5E17CC961100CB8146 /* archive_write_set_format_7zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_7zip.c; path = 3rd_party/libarchive/archive_write_set_format_7zip.c; sourceTree = "<group>"; };
-		CF9D0E5F17CC961100CB8146 /* archive_write_set_format_ar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_ar.c; path = 3rd_party/libarchive/archive_write_set_format_ar.c; sourceTree = "<group>"; };
-		CF9D0E6017CC961100CB8146 /* archive_write_set_format_by_name.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_by_name.c; path = 3rd_party/libarchive/archive_write_set_format_by_name.c; sourceTree = "<group>"; };
-		CF9D0E6117CC961100CB8146 /* archive_write_set_format_cpio_newc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_cpio_newc.c; path = 3rd_party/libarchive/archive_write_set_format_cpio_newc.c; sourceTree = "<group>"; };
-		CF9D0E6217CC961100CB8146 /* archive_write_set_format_cpio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_cpio.c; path = 3rd_party/libarchive/archive_write_set_format_cpio.c; sourceTree = "<group>"; };
-		CF9D0E6317CC961100CB8146 /* archive_write_set_format_gnutar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_gnutar.c; path = 3rd_party/libarchive/archive_write_set_format_gnutar.c; sourceTree = "<group>"; };
-		CF9D0E6417CC961100CB8146 /* archive_write_set_format_iso9660.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_iso9660.c; path = 3rd_party/libarchive/archive_write_set_format_iso9660.c; sourceTree = "<group>"; };
-		CF9D0E6517CC961100CB8146 /* archive_write_set_format_mtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_mtree.c; path = 3rd_party/libarchive/archive_write_set_format_mtree.c; sourceTree = "<group>"; };
-		CF9D0E6617CC961100CB8146 /* archive_write_set_format_pax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_pax.c; path = 3rd_party/libarchive/archive_write_set_format_pax.c; sourceTree = "<group>"; };
-		CF9D0E6717CC961100CB8146 /* archive_write_set_format_shar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_shar.c; path = 3rd_party/libarchive/archive_write_set_format_shar.c; sourceTree = "<group>"; };
-		CF9D0E6817CC961100CB8146 /* archive_write_set_format_ustar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_ustar.c; path = 3rd_party/libarchive/archive_write_set_format_ustar.c; sourceTree = "<group>"; };
-		CF9D0E6917CC961100CB8146 /* archive_write_set_format_v7tar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_v7tar.c; path = 3rd_party/libarchive/archive_write_set_format_v7tar.c; sourceTree = "<group>"; };
-		CF9D0E6A17CC961100CB8146 /* archive_write_set_format_xar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_xar.c; path = 3rd_party/libarchive/archive_write_set_format_xar.c; sourceTree = "<group>"; };
-		CF9D0E6B17CC961100CB8146 /* archive_write_set_format_zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_zip.c; path = 3rd_party/libarchive/archive_write_set_format_zip.c; sourceTree = "<group>"; };
-		CF9D0E6C17CC961100CB8146 /* archive_write_set_format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format.c; path = 3rd_party/libarchive/archive_write_set_format.c; sourceTree = "<group>"; };
-		CF9D0E6D17CC961100CB8146 /* archive_write_set_options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_options.c; path = 3rd_party/libarchive/archive_write_set_options.c; sourceTree = "<group>"; };
-		CF9D0E6E17CC961100CB8146 /* archive_write.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write.c; path = 3rd_party/libarchive/archive_write.c; sourceTree = "<group>"; };
-		CF9D0E6F17CC961100CB8146 /* archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive.h; path = 3rd_party/libarchive/archive.h; sourceTree = "<group>"; };
-		CF9D0E7017CC961100CB8146 /* config_freebsd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config_freebsd.h; path = 3rd_party/libarchive/config_freebsd.h; sourceTree = "<group>"; };
-		CF9D0E7117CC961100CB8146 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = 3rd_party/libarchive/config.h; sourceTree = "<group>"; };
-		CF9D0E7217CC961100CB8146 /* filter_fork_posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filter_fork_posix.c; path = 3rd_party/libarchive/filter_fork_posix.c; sourceTree = "<group>"; };
-		CF9D0E7317CC961100CB8146 /* filter_fork_windows.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filter_fork_windows.c; path = 3rd_party/libarchive/filter_fork_windows.c; sourceTree = "<group>"; };
-		CF9D0E7417CC961100CB8146 /* filter_fork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filter_fork.h; path = 3rd_party/libarchive/filter_fork.h; sourceTree = "<group>"; };
 		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
 		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
 		CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SavedNetworkConnectionsManager.mm; sourceTree = "<group>"; };
@@ -1937,6 +1506,7 @@
 				CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */,
 				CF6D9C7619667A180077B146 /* libboost_system.a in Frameworks */,
 				CF6D9C7719667A180077B146 /* libcurl.a in Frameworks */,
+				CF540FDE1A90822F003CD7A7 /* libarchivelib_LIB.a in Frameworks */,
 				CF6D9C7419667A090077B146 /* libUnRAR_LIB.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1964,6 +1534,7 @@
 				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
 				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
 				CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */,
+				CF540FDD1A90822A003CD7A7 /* libarchivelib_LIB.a in Frameworks */,
 				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
 				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
 				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
@@ -2002,6 +1573,7 @@
 				CFF6F3631A13567C00011177 /* Quartz.framework in Frameworks */,
 				CFF6F3641A13567C00011177 /* libUnRAR_LIB.a in Frameworks */,
 				CFF6F3651A13567C00011177 /* libMMTabBarView_LIB.a in Frameworks */,
+				CF540FDF1A908236003CD7A7 /* libarchivelib_LIB.a in Frameworks */,
 				CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */,
 				CFF6F3671A13567C00011177 /* libz.a in Frameworks */,
 				CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */,
@@ -2347,6 +1919,14 @@
 			name = PanelMainWindowState;
 			sourceTree = "<group>";
 		};
+		CF540EBA1A90804C003CD7A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CF653C3A18C38CD700502920 /* UnRAR */ = {
 			isa = PBXGroup;
 			children = (
@@ -2468,143 +2048,6 @@
 				CF653C3A18C38CD700502920 /* UnRAR */,
 			);
 			name = Archive;
-			sourceTree = "<group>";
-		};
-		CF9D0CEE17CC957700CB8146 /* archivelib */ = {
-			isa = PBXGroup;
-			children = (
-				CF9D0DF317CC961100CB8146 /* archive_acl_private.h */,
-				CF9D0DF417CC961100CB8146 /* archive_acl.c */,
-				CF9D0DF517CC961100CB8146 /* archive_check_magic.c */,
-				CF9D0DF617CC961100CB8146 /* archive_cmdline_private.h */,
-				CF9D0DF717CC961100CB8146 /* archive_cmdline.c */,
-				CF9D0DF817CC961100CB8146 /* archive_crc32.h */,
-				CF9D0DF917CC961100CB8146 /* archive_crypto_private.h */,
-				CF9D0DFA17CC961100CB8146 /* archive_crypto.c */,
-				CF9D0DFB17CC961100CB8146 /* archive_endian.h */,
-				CF9D0DFC17CC961100CB8146 /* archive_entry_copy_bhfi.c */,
-				CF9D0DFD17CC961100CB8146 /* archive_entry_copy_stat.c */,
-				CF9D0DFE17CC961100CB8146 /* archive_entry_link_resolver.c */,
-				CF9D0DFF17CC961100CB8146 /* archive_entry_locale.h */,
-				CF9D0E0017CC961100CB8146 /* archive_entry_private.h */,
-				CF9D0E0117CC961100CB8146 /* archive_entry_sparse.c */,
-				CF9D0E0217CC961100CB8146 /* archive_entry_stat.c */,
-				CF9D0E0317CC961100CB8146 /* archive_entry_strmode.c */,
-				CF9D0E0417CC961100CB8146 /* archive_entry_xattr.c */,
-				CF9D0E0517CC961100CB8146 /* archive_entry.c */,
-				CF9D0E0617CC961100CB8146 /* archive_entry.h */,
-				CF9D0E0717CC961100CB8146 /* archive_getdate.c */,
-				CF9D0E0817CC961100CB8146 /* archive_match.c */,
-				CF9D0E0917CC961100CB8146 /* archive_options_private.h */,
-				CF9D0E0A17CC961100CB8146 /* archive_options.c */,
-				CF9D0E0B17CC961100CB8146 /* archive_pathmatch.c */,
-				CF9D0E0C17CC961100CB8146 /* archive_pathmatch.h */,
-				CF9D0E0D17CC961100CB8146 /* archive_platform.h */,
-				CF9D0E0E17CC961100CB8146 /* archive_ppmd_private.h */,
-				CF9D0E0F17CC961100CB8146 /* archive_ppmd7_private.h */,
-				CF9D0E1017CC961100CB8146 /* archive_ppmd7.c */,
-				CF9D0E1117CC961100CB8146 /* archive_private.h */,
-				CF9D0E1217CC961100CB8146 /* archive_rb.c */,
-				CF9D0E1317CC961100CB8146 /* archive_rb.h */,
-				CF9D0E1417CC961100CB8146 /* archive_read_append_filter.c */,
-				CF9D0E1517CC961100CB8146 /* archive_read_data_into_fd.c */,
-				CF9D0E1617CC961100CB8146 /* archive_read_disk_entry_from_file.c */,
-				CF9D0E1717CC961100CB8146 /* archive_read_disk_posix.c */,
-				CF9D0E1817CC961100CB8146 /* archive_read_disk_private.h */,
-				CF9D0E1917CC961100CB8146 /* archive_read_disk_set_standard_lookup.c */,
-				CF9D0E1A17CC961100CB8146 /* archive_read_disk_windows.c */,
-				CF9D0E1B17CC961100CB8146 /* archive_read_extract.c */,
-				CF9D0E1C17CC961100CB8146 /* archive_read_open_fd.c */,
-				CF9D0E1D17CC961100CB8146 /* archive_read_open_file.c */,
-				CF9D0E1E17CC961100CB8146 /* archive_read_open_filename.c */,
-				CF9D0E1F17CC961100CB8146 /* archive_read_open_memory.c */,
-				CF9D0E2017CC961100CB8146 /* archive_read_private.h */,
-				CF9D0E2117CC961100CB8146 /* archive_read_set_format.c */,
-				CF9D0E2217CC961100CB8146 /* archive_read_set_options.c */,
-				CF9D0E2317CC961100CB8146 /* archive_read_support_filter_all.c */,
-				CF9D0E2417CC961100CB8146 /* archive_read_support_filter_bzip2.c */,
-				CF9D0E2517CC961100CB8146 /* archive_read_support_filter_compress.c */,
-				CF9D0E2617CC961100CB8146 /* archive_read_support_filter_grzip.c */,
-				CF9D0E2717CC961100CB8146 /* archive_read_support_filter_gzip.c */,
-				CF9D0E2817CC961100CB8146 /* archive_read_support_filter_lrzip.c */,
-				CF9D0E2917CC961100CB8146 /* archive_read_support_filter_lzop.c */,
-				CF9D0E2A17CC961100CB8146 /* archive_read_support_filter_none.c */,
-				CF9D0E2B17CC961100CB8146 /* archive_read_support_filter_program.c */,
-				CF9D0E2C17CC961100CB8146 /* archive_read_support_filter_rpm.c */,
-				CF9D0E2D17CC961100CB8146 /* archive_read_support_filter_uu.c */,
-				CF9D0E2E17CC961100CB8146 /* archive_read_support_filter_xz.c */,
-				CF9D0E2F17CC961100CB8146 /* archive_read_support_format_7zip.c */,
-				CF9D0E3017CC961100CB8146 /* archive_read_support_format_all.c */,
-				CF9D0E3117CC961100CB8146 /* archive_read_support_format_ar.c */,
-				CF9D0E3217CC961100CB8146 /* archive_read_support_format_by_code.c */,
-				CF9D0E3317CC961100CB8146 /* archive_read_support_format_cab.c */,
-				CF9D0E3417CC961100CB8146 /* archive_read_support_format_cpio.c */,
-				CF9D0E3517CC961100CB8146 /* archive_read_support_format_empty.c */,
-				CF9D0E3617CC961100CB8146 /* archive_read_support_format_iso9660.c */,
-				CF9D0E3717CC961100CB8146 /* archive_read_support_format_lha.c */,
-				CF9D0E3817CC961100CB8146 /* archive_read_support_format_mtree.c */,
-				CF9D0E3917CC961100CB8146 /* archive_read_support_format_rar.c */,
-				CF9D0E3A17CC961100CB8146 /* archive_read_support_format_raw.c */,
-				CF9D0E3B17CC961100CB8146 /* archive_read_support_format_tar.c */,
-				CF9D0E3C17CC961100CB8146 /* archive_read_support_format_xar.c */,
-				CF9D0E3D17CC961100CB8146 /* archive_read_support_format_zip.c */,
-				CF9D0E3E17CC961100CB8146 /* archive_read.c */,
-				CF9D0E3F17CC961100CB8146 /* archive_string_composition.h */,
-				CF9D0E4017CC961100CB8146 /* archive_string_sprintf.c */,
-				CF9D0E4117CC961100CB8146 /* archive_string.c */,
-				CF9D0E4217CC961100CB8146 /* archive_string.h */,
-				CF9D0E4317CC961100CB8146 /* archive_util.c */,
-				CF9D0E4417CC961100CB8146 /* archive_virtual.c */,
-				CF9D0E4517CC961100CB8146 /* archive_windows.c */,
-				CF9D0E4617CC961100CB8146 /* archive_windows.h */,
-				CF9D0E4717CC961100CB8146 /* archive_write_add_filter_b64encode.c */,
-				CF9D0E4817CC961100CB8146 /* archive_write_add_filter_by_name.c */,
-				CF9D0E4917CC961100CB8146 /* archive_write_add_filter_bzip2.c */,
-				CF9D0E4A17CC961100CB8146 /* archive_write_add_filter_compress.c */,
-				CF9D0E4B17CC961100CB8146 /* archive_write_add_filter_grzip.c */,
-				CF9D0E4C17CC961100CB8146 /* archive_write_add_filter_gzip.c */,
-				CF9D0E4D17CC961100CB8146 /* archive_write_add_filter_lrzip.c */,
-				CF9D0E4E17CC961100CB8146 /* archive_write_add_filter_lzop.c */,
-				CF9D0E4F17CC961100CB8146 /* archive_write_add_filter_none.c */,
-				CF9D0E5017CC961100CB8146 /* archive_write_add_filter_program.c */,
-				CF9D0E5117CC961100CB8146 /* archive_write_add_filter_uuencode.c */,
-				CF9D0E5217CC961100CB8146 /* archive_write_add_filter_xz.c */,
-				CF9D0E5317CC961100CB8146 /* archive_write_add_filter.c */,
-				CF9D0E5417CC961100CB8146 /* archive_write_disk_acl.c */,
-				CF9D0E5517CC961100CB8146 /* archive_write_disk_posix.c */,
-				CF9D0E5617CC961100CB8146 /* archive_write_disk_private.h */,
-				CF9D0E5717CC961100CB8146 /* archive_write_disk_set_standard_lookup.c */,
-				CF9D0E5817CC961100CB8146 /* archive_write_disk_windows.c */,
-				CF9D0E5917CC961100CB8146 /* archive_write_open_fd.c */,
-				CF9D0E5A17CC961100CB8146 /* archive_write_open_file.c */,
-				CF9D0E5B17CC961100CB8146 /* archive_write_open_filename.c */,
-				CF9D0E5C17CC961100CB8146 /* archive_write_open_memory.c */,
-				CF9D0E5D17CC961100CB8146 /* archive_write_private.h */,
-				CF9D0E5E17CC961100CB8146 /* archive_write_set_format_7zip.c */,
-				CF9D0E5F17CC961100CB8146 /* archive_write_set_format_ar.c */,
-				CF9D0E6017CC961100CB8146 /* archive_write_set_format_by_name.c */,
-				CF9D0E6117CC961100CB8146 /* archive_write_set_format_cpio_newc.c */,
-				CF9D0E6217CC961100CB8146 /* archive_write_set_format_cpio.c */,
-				CF9D0E6317CC961100CB8146 /* archive_write_set_format_gnutar.c */,
-				CF9D0E6417CC961100CB8146 /* archive_write_set_format_iso9660.c */,
-				CF9D0E6517CC961100CB8146 /* archive_write_set_format_mtree.c */,
-				CF9D0E6617CC961100CB8146 /* archive_write_set_format_pax.c */,
-				CF9D0E6717CC961100CB8146 /* archive_write_set_format_shar.c */,
-				CF9D0E6817CC961100CB8146 /* archive_write_set_format_ustar.c */,
-				CF9D0E6917CC961100CB8146 /* archive_write_set_format_v7tar.c */,
-				CF9D0E6A17CC961100CB8146 /* archive_write_set_format_xar.c */,
-				CF9D0E6B17CC961100CB8146 /* archive_write_set_format_zip.c */,
-				CF9D0E6C17CC961100CB8146 /* archive_write_set_format.c */,
-				CF9D0E6D17CC961100CB8146 /* archive_write_set_options.c */,
-				CF9D0E6E17CC961100CB8146 /* archive_write.c */,
-				CF9D0E6F17CC961100CB8146 /* archive.h */,
-				CF9D0E7017CC961100CB8146 /* config_freebsd.h */,
-				CF9D0E7117CC961100CB8146 /* config.h */,
-				CF9D0E7217CC961100CB8146 /* filter_fork_posix.c */,
-				CF9D0E7317CC961100CB8146 /* filter_fork_windows.c */,
-				CF9D0E7417CC961100CB8146 /* filter_fork.h */,
-			);
-			name = archivelib;
 			sourceTree = "<group>";
 		};
 		CF9D0EE017CE11A000CB8146 /* Wrapping */ = {
@@ -3118,7 +2561,7 @@
 				CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */,
 				CFDA4CD1182CBA51006EC35C /* sparkle */,
 				CF29313117D9914700648A90 /* rdrand */,
-				CF9D0CEE17CC957700CB8146 /* archivelib */,
+				CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
 				CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */,
 				CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */,
@@ -3295,6 +2738,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = CF540EBA1A90804C003CD7A7 /* Products */;
+					ProjectRef = CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */;
+				},
+				{
 					ProductGroup = CF7C924B1A0B97EC00FAE649 /* Products */;
 					ProjectRef = CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */;
 				},
@@ -3315,6 +2762,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libarchivelib_LIB.a;
+			remoteRef = CF540EBD1A90804D003CD7A7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CF653C5618C3934200502920 /* libUnRAR_LIB.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -3608,137 +3062,33 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF6D9C9419667BA20077B146 /* rdrand.c in Sources */,
-				CF6D9C9519667BA20077B146 /* archive_acl.c in Sources */,
-				CF6D9C9619667BA20077B146 /* archive_check_magic.c in Sources */,
-				CF6D9C9719667BA20077B146 /* archive_cmdline.c in Sources */,
-				CF6D9C9819667BA20077B146 /* archive_crypto.c in Sources */,
-				CF6D9C9919667BA20077B146 /* archive_entry_copy_bhfi.c in Sources */,
 				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
-				CF6D9C9A19667BA20077B146 /* archive_entry_copy_stat.c in Sources */,
-				CF6D9C9B19667BA20077B146 /* archive_entry_link_resolver.c in Sources */,
-				CF6D9C9C19667BA20077B146 /* archive_entry_sparse.c in Sources */,
-				CF6D9C9D19667BA20077B146 /* archive_entry_stat.c in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
-				CF6D9C9E19667BA20077B146 /* archive_entry_strmode.c in Sources */,
-				CF6D9C9F19667BA20077B146 /* archive_entry_xattr.c in Sources */,
 				CF50B72C1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */,
-				CF6D9CA019667BA20077B146 /* archive_entry.c in Sources */,
-				CF6D9CA119667BA20077B146 /* archive_getdate.c in Sources */,
-				CF6D9CA219667BA20077B146 /* archive_match.c in Sources */,
-				CF6D9CA319667BA20077B146 /* archive_options.c in Sources */,
-				CF6D9CA419667BA20077B146 /* archive_pathmatch.c in Sources */,
 				CFE3829219CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
-				CF6D9CA519667BA20077B146 /* archive_ppmd7.c in Sources */,
-				CF6D9CA619667BA20077B146 /* archive_rb.c in Sources */,
 				CF50B7021A1516C800E3D96D /* VFSArchiveUnRARHost.mm in Sources */,
 				CF50B7291A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
-				CF6D9CA719667BA20077B146 /* archive_read_append_filter.c in Sources */,
-				CF6D9CA819667BA20077B146 /* archive_read_data_into_fd.c in Sources */,
-				CF6D9CA919667BA20077B146 /* archive_read_disk_entry_from_file.c in Sources */,
-				CF6D9CAA19667BA20077B146 /* archive_read_disk_posix.c in Sources */,
-				CF6D9CAB19667BA20077B146 /* archive_read_disk_set_standard_lookup.c in Sources */,
-				CF6D9CAC19667BA20077B146 /* archive_read_disk_windows.c in Sources */,
-				CF6D9CAD19667BA20077B146 /* archive_read_extract.c in Sources */,
-				CF6D9CAE19667BA20077B146 /* archive_read_open_fd.c in Sources */,
-				CF6D9CAF19667BA20077B146 /* archive_read_open_file.c in Sources */,
 				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
-				CF6D9CB019667BA20077B146 /* archive_read_open_filename.c in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
-				CF6D9CB119667BA20077B146 /* archive_read_open_memory.c in Sources */,
-				CF6D9CB219667BA20077B146 /* archive_read_set_format.c in Sources */,
-				CF6D9CB319667BA20077B146 /* archive_read_set_options.c in Sources */,
 				CF50B7081A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
-				CF6D9CB419667BA20077B146 /* archive_read_support_filter_all.c in Sources */,
 				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
-				CF6D9CB519667BA20077B146 /* archive_read_support_filter_bzip2.c in Sources */,
-				CF6D9CB619667BA20077B146 /* archive_read_support_filter_compress.c in Sources */,
 				CF50B7361A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
-				CF6D9CB719667BA20077B146 /* archive_read_support_filter_grzip.c in Sources */,
-				CF6D9CB819667BA20077B146 /* archive_read_support_filter_gzip.c in Sources */,
 				CFC5D4A819BB4FFB005BB24A /* Hash.cpp in Sources */,
-				CF6D9CB919667BA20077B146 /* archive_read_support_filter_lrzip.c in Sources */,
-				CF6D9CBA19667BA20077B146 /* archive_read_support_filter_lzop.c in Sources */,
-				CF6D9CBB19667BA20077B146 /* archive_read_support_filter_none.c in Sources */,
-				CF6D9CBC19667BA20077B146 /* archive_read_support_filter_program.c in Sources */,
-				CF6D9CBD19667BA20077B146 /* archive_read_support_filter_rpm.c in Sources */,
-				CF6D9CBE19667BA20077B146 /* archive_read_support_filter_uu.c in Sources */,
-				CF6D9CBF19667BA20077B146 /* archive_read_support_filter_xz.c in Sources */,
 				CFC20B4D198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
-				CF6D9CC019667BA20077B146 /* archive_read_support_format_7zip.c in Sources */,
-				CF6D9CC119667BA20077B146 /* archive_read_support_format_all.c in Sources */,
-				CF6D9CC219667BA20077B146 /* archive_read_support_format_ar.c in Sources */,
-				CF6D9CC319667BA20077B146 /* archive_read_support_format_by_code.c in Sources */,
 				CF50B6E01A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CF50B7261A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
 				CF76F4891A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */,
-				CF6D9CC419667BA20077B146 /* archive_read_support_format_cab.c in Sources */,
-				CF6D9CC519667BA20077B146 /* archive_read_support_format_cpio.c in Sources */,
-				CF6D9CC619667BA20077B146 /* archive_read_support_format_empty.c in Sources */,
-				CF6D9CC719667BA20077B146 /* archive_read_support_format_iso9660.c in Sources */,
 				CF50B7051A1516C800E3D96D /* VFSArchiveUnRARInternals.mm in Sources */,
-				CF6D9CC819667BA20077B146 /* archive_read_support_format_lha.c in Sources */,
-				CF6D9CC919667BA20077B146 /* archive_read_support_format_mtree.c in Sources */,
-				CF6D9CCA19667BA20077B146 /* archive_read_support_format_rar.c in Sources */,
 				CF50B6EE1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */,
-				CF6D9CCB19667BA20077B146 /* archive_read_support_format_raw.c in Sources */,
-				CF6D9CCC19667BA20077B146 /* archive_read_support_format_tar.c in Sources */,
-				CF6D9CCD19667BA20077B146 /* archive_read_support_format_xar.c in Sources */,
-				CF6D9CCE19667BA20077B146 /* archive_read_support_format_zip.c in Sources */,
-				CF6D9CCF19667BA20077B146 /* archive_read.c in Sources */,
 				CF50B6C41A15167800E3D96D /* VFSError.mm in Sources */,
-				CF6D9CD019667BA20077B146 /* archive_string_sprintf.c in Sources */,
-				CF6D9CD119667BA20077B146 /* archive_string.c in Sources */,
 				CF50B6F41A1516B000E3D96D /* VFSArchiveListing.mm in Sources */,
-				CF6D9CD219667BA20077B146 /* archive_util.c in Sources */,
 				CF50B6DA1A15169300E3D96D /* VFSPSFile.cpp in Sources */,
-				CF6D9CD319667BA20077B146 /* archive_virtual.c in Sources */,
-				CF6D9CD419667BA20077B146 /* archive_windows.c in Sources */,
-				CF6D9CD519667BA20077B146 /* archive_write_add_filter_b64encode.c in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
-				CF6D9CD619667BA20077B146 /* archive_write_add_filter_by_name.c in Sources */,
-				CF6D9CD719667BA20077B146 /* archive_write_add_filter_bzip2.c in Sources */,
-				CF6D9CD819667BA20077B146 /* archive_write_add_filter_compress.c in Sources */,
-				CF6D9CD919667BA20077B146 /* archive_write_add_filter_grzip.c in Sources */,
-				CF6D9CDA19667BA20077B146 /* archive_write_add_filter_gzip.c in Sources */,
-				CF6D9CDB19667BA20077B146 /* archive_write_add_filter_lrzip.c in Sources */,
-				CF6D9CDC19667BA20077B146 /* archive_write_add_filter_lzop.c in Sources */,
-				CF6D9CDD19667BA20077B146 /* archive_write_add_filter_none.c in Sources */,
-				CF6D9CDE19667BA20077B146 /* archive_write_add_filter_program.c in Sources */,
-				CF6D9CDF19667BA20077B146 /* archive_write_add_filter_uuencode.c in Sources */,
 				CF89D8B01A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */,
-				CF6D9CE019667BA20077B146 /* archive_write_add_filter_xz.c in Sources */,
-				CF6D9CE119667BA20077B146 /* archive_write_add_filter.c in Sources */,
 				CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
-				CF6D9CE219667BA20077B146 /* archive_write_disk_acl.c in Sources */,
-				CF6D9CE319667BA20077B146 /* archive_write_disk_posix.c in Sources */,
 				CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */,
-				CF6D9CE419667BA20077B146 /* archive_write_disk_set_standard_lookup.c in Sources */,
-				CF6D9CE519667BA20077B146 /* archive_write_disk_windows.c in Sources */,
-				CF6D9CE619667BA20077B146 /* archive_write_open_fd.c in Sources */,
-				CF6D9CE719667BA20077B146 /* archive_write_open_file.c in Sources */,
-				CF6D9CE819667BA20077B146 /* archive_write_open_filename.c in Sources */,
-				CF6D9CE919667BA20077B146 /* archive_write_open_memory.c in Sources */,
-				CF6D9CEA19667BA20077B146 /* archive_write_set_format_7zip.c in Sources */,
-				CF6D9CEB19667BA20077B146 /* archive_write_set_format_ar.c in Sources */,
-				CF6D9CEC19667BA20077B146 /* archive_write_set_format_by_name.c in Sources */,
-				CF6D9CED19667BA20077B146 /* archive_write_set_format_cpio_newc.c in Sources */,
-				CF6D9CEE19667BA20077B146 /* archive_write_set_format_cpio.c in Sources */,
-				CF6D9CEF19667BA20077B146 /* archive_write_set_format_gnutar.c in Sources */,
 				CF50B7141A1516E700E3D96D /* VFSNativeHost.mm in Sources */,
 				CF50B7331A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */,
-				CF6D9CF019667BA20077B146 /* archive_write_set_format_iso9660.c in Sources */,
-				CF6D9CF119667BA20077B146 /* archive_write_set_format_mtree.c in Sources */,
-				CF6D9CF219667BA20077B146 /* archive_write_set_format_pax.c in Sources */,
-				CF6D9CF319667BA20077B146 /* archive_write_set_format_shar.c in Sources */,
-				CF6D9CF419667BA20077B146 /* archive_write_set_format_ustar.c in Sources */,
-				CF6D9CF519667BA20077B146 /* archive_write_set_format_v7tar.c in Sources */,
-				CF6D9CF619667BA20077B146 /* archive_write_set_format_xar.c in Sources */,
-				CF6D9CF719667BA20077B146 /* archive_write_set_format_zip.c in Sources */,
-				CF6D9CF819667BA20077B146 /* archive_write_set_format.c in Sources */,
-				CF6D9CF919667BA20077B146 /* archive_write_set_options.c in Sources */,
-				CF6D9CFA19667BA20077B146 /* archive_write.c in Sources */,
-				CF6D9CFB19667BA20077B146 /* filter_fork_posix.c in Sources */,
-				CF6D9CFC19667BA20077B146 /* filter_fork_windows.c in Sources */,
 				CF50B7471A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */,
 				CF6D9C6E1966780D0077B146 /* shared_mutex.cpp in Sources */,
@@ -3903,19 +3253,15 @@
 			files = (
 				CF3C720C195EC2DB00DE165A /* DisplayNamesCache.mm in Sources */,
 				CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */,
-				CF9D0E7F17CC961100CB8146 /* archive_entry_xattr.c in Sources */,
 				CFF0C83818FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
 				CFC5122116C4BD3D00D247EE /* main.m in Sources */,
-				CF9D0EC917CC961100CB8146 /* archive_write_open_memory.c in Sources */,
 				CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */,
 				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
-				CF9D0E9517CC961100CB8146 /* archive_read_support_filter_bzip2.c in Sources */,
 				CFC5123616C5284800D247EE /* PanelData.mm in Sources */,
 				CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */,
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
 				CF50B72B1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */,
-				CF9D0E8117CC961100CB8146 /* archive_getdate.c in Sources */,
 				CF09856A18EDBFB0006E6410 /* TermTaskCommon.mm in Sources */,
 				CF76F4881A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */,
 				CFE3829119CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
@@ -3925,43 +3271,30 @@
 				CF89D8A61A43083100B2D9F1 /* tiny_string.cpp in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CF50B7011A1516C800E3D96D /* VFSArchiveUnRARHost.mm in Sources */,
-				CF9D0E9117CC961100CB8146 /* archive_read_open_memory.c in Sources */,
 				CF50B7281A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
 				CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */,
 				CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */,
-				CF9D0E9E17CC961100CB8146 /* archive_read_support_filter_uu.c in Sources */,
-				CF9D0EAC17CC961100CB8146 /* archive_read_support_format_tar.c in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
 				CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */,
-				CF9D0EB417CC961100CB8146 /* archive_windows.c in Sources */,
-				CF9D0EA717CC961100CB8146 /* archive_read_support_format_iso9660.c in Sources */,
 				CFE2697716EF0E3E0048A393 /* MassCopySheetController.mm in Sources */,
-				CF9D0EC817CC961100CB8146 /* archive_write_open_filename.c in Sources */,
 				CF50B7071A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
 				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */,
-				CF9D0E9B17CC961100CB8146 /* archive_read_support_filter_none.c in Sources */,
 				CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */,
 				CFC5D4A719BB4FFB005BB24A /* Hash.cpp in Sources */,
 				CF50B7351A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
-				CF9D0EB117CC961100CB8146 /* archive_string.c in Sources */,
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.cpp in Sources */,
-				CF9D0EAD17CC961100CB8146 /* archive_read_support_format_xar.c in Sources */,
-				CF9D0EAA17CC961100CB8146 /* archive_read_support_format_rar.c in Sources */,
 				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
 				CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF2AC58E1818DD3800B0BEB4 /* path_manip.c in Sources */,
-				CF9D0E8317CC961100CB8146 /* archive_options.c in Sources */,
 				CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
-				CF9D0ED917CC961100CB8146 /* archive_write_set_options.c in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
 				CF50B6DF1A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */,
-				CF9D0ECA17CC961100CB8146 /* archive_write_set_format_7zip.c in Sources */,
 				CF50B7251A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
 				CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */,
@@ -3969,121 +3302,71 @@
 				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
 				CF50B6ED1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */,
-				CF9D0E7917CC961100CB8146 /* archive_entry_copy_bhfi.c in Sources */,
 				CF50B6C31A15167800E3D96D /* VFSError.mm in Sources */,
 				CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */,
-				CF9D0EBF17CC961100CB8146 /* archive_write_add_filter_uuencode.c in Sources */,
 				CF89D8AF1A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */,
 				CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF50B6D91A15169300E3D96D /* VFSPSFile.cpp in Sources */,
-				CF9D0E9D17CC961100CB8146 /* archive_read_support_filter_rpm.c in Sources */,
 				CF50B6F31A1516B000E3D96D /* VFSArchiveListing.mm in Sources */,
-				CF9D0E7B17CC961100CB8146 /* archive_entry_link_resolver.c in Sources */,
 				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				B528012316FCF361004E260D /* OperationsController.mm in Sources */,
 				B528012416FCF361004E260D /* OperationJob.mm in Sources */,
-				CF9D0EDB17CC961100CB8146 /* filter_fork_posix.c in Sources */,
-				CF9D0EA117CC961100CB8146 /* archive_read_support_format_all.c in Sources */,
 				B528012516FCF361004E260D /* Operation.mm in Sources */,
 				CF76B30617000C090066A49F /* filesysattr.mm in Sources */,
 				CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */,
 				CF76B313170146240066A49F /* GenericOperationView.mm in Sources */,
-				CF9D0E8217CC961100CB8146 /* archive_match.c in Sources */,
 				CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */,
 				CF31207F1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CF7249A71990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */,
-				CF9D0EC717CC961100CB8146 /* archive_write_open_file.c in Sources */,
 				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
-				CF9D0E9317CC961100CB8146 /* archive_read_set_options.c in Sources */,
-				CF9D0EB517CC961100CB8146 /* archive_write_add_filter_b64encode.c in Sources */,
 				CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */,
-				CF9D0EC017CC961100CB8146 /* archive_write_add_filter_xz.c in Sources */,
-				CF9D0EAB17CC961100CB8146 /* archive_read_support_format_raw.c in Sources */,
 				B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */,
-				CF9D0ED617CC961100CB8146 /* archive_write_set_format_xar.c in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */,
-				CF9D0EA217CC961100CB8146 /* archive_read_support_format_ar.c in Sources */,
-				CF9D0E8B17CC961100CB8146 /* archive_read_disk_set_standard_lookup.c in Sources */,
-				CF9D0EBA17CC961100CB8146 /* archive_write_add_filter_gzip.c in Sources */,
-				CF9D0EC117CC961100CB8146 /* archive_write_add_filter.c in Sources */,
 				CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */,
-				CF9D0EB017CC961100CB8146 /* archive_string_sprintf.c in Sources */,
 				CF305DCB1946D50400840F25 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF50B7131A1516E700E3D96D /* VFSNativeHost.mm in Sources */,
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
 				CF50B7321A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */,
-				CF9D0ECF17CC961100CB8146 /* archive_write_set_format_gnutar.c in Sources */,
 				CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */,
-				CF9D0EDA17CC961100CB8146 /* archive_write.c in Sources */,
 				CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */,
-				CF9D0ECC17CC961100CB8146 /* archive_write_set_format_by_name.c in Sources */,
 				CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */,
-				CF9D0E8D17CC961100CB8146 /* archive_read_extract.c in Sources */,
-				CF9D0E8417CC961100CB8146 /* archive_pathmatch.c in Sources */,
-				CF9D0E8C17CC961100CB8146 /* archive_read_disk_windows.c in Sources */,
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,
 				CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */,
 				CFAC50D31714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm in Sources */,
-				CF9D0EB717CC961100CB8146 /* archive_write_add_filter_bzip2.c in Sources */,
 				CF50B7461A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
-				CF9D0E9217CC961100CB8146 /* archive_read_set_format.c in Sources */,
 				CF50B7431A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */,
-				CF9D0ED217CC961100CB8146 /* archive_write_set_format_pax.c in Sources */,
-				CF9D0ED717CC961100CB8146 /* archive_write_set_format_zip.c in Sources */,
-				CF9D0E7D17CC961100CB8146 /* archive_entry_stat.c in Sources */,
-				CF9D0E8E17CC961100CB8146 /* archive_read_open_fd.c in Sources */,
 				CF50B6EA1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */,
-				CF9D0EC517CC961100CB8146 /* archive_write_disk_windows.c in Sources */,
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
-				CF9D0E7E17CC961100CB8146 /* archive_entry_strmode.c in Sources */,
-				CF9D0EA617CC961100CB8146 /* archive_read_support_format_empty.c in Sources */,
-				CF9D0E7617CC961100CB8146 /* archive_check_magic.c in Sources */,
 				CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */,
-				CF9D0EB617CC961100CB8146 /* archive_write_add_filter_by_name.c in Sources */,
 				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
 				CFA0B22C186412BD00501C35 /* DispatchQueue.cpp in Sources */,
-				CF9D0EB217CC961100CB8146 /* archive_util.c in Sources */,
-				CF9D0E9017CC961100CB8146 /* archive_read_open_filename.c in Sources */,
-				CF9D0EA017CC961100CB8146 /* archive_read_support_format_7zip.c in Sources */,
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
 				CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
-				CF9D0EA517CC961100CB8146 /* archive_read_support_format_cpio.c in Sources */,
-				CF9D0E8917CC961100CB8146 /* archive_read_disk_entry_from_file.c in Sources */,
-				CF9D0ED417CC961100CB8146 /* archive_write_set_format_ustar.c in Sources */,
 				CFA0B23A1869542200501C35 /* common_paths.cpp in Sources */,
 				CFD54FD31A2A01B30098A4A9 /* RoutedIOInterfaces.cpp in Sources */,
-				CF9D0E8517CC961100CB8146 /* archive_ppmd7.c in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
 				CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */,
-				CF9D0ED517CC961100CB8146 /* archive_write_set_format_v7tar.c in Sources */,
-				CF9D0E8717CC961100CB8146 /* archive_read_append_filter.c in Sources */,
-				CF9D0ED817CC961100CB8146 /* archive_write_set_format.c in Sources */,
 				CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
 				CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CFB060DD172E6AC4001F6949 /* Common.mm in Sources */,
 				B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */,
 				B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */,
-				CF9D0ECB17CC961100CB8146 /* archive_write_set_format_ar.c in Sources */,
 				CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */,
 				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
-				CF9D0E8617CC961100CB8146 /* archive_rb.c in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
-				CF9D0E9F17CC961100CB8146 /* archive_read_support_filter_xz.c in Sources */,
-				CF9D0ECE17CC961100CB8146 /* archive_write_set_format_cpio.c in Sources */,
-				CF9D0EC217CC961100CB8146 /* archive_write_disk_acl.c in Sources */,
 				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
@@ -4093,100 +3376,63 @@
 				CF2741501803F6A2006D6687 /* sysinfo.mm in Sources */,
 				CF7C93BE1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
 				CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */,
-				CF9D0E7517CC961100CB8146 /* archive_acl.c in Sources */,
 				CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */,
 				CF09827117DEDC3700F0871C /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */,
 				CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */,
-				CF9D0EA317CC961100CB8146 /* archive_read_support_format_by_code.c in Sources */,
-				CF9D0EC617CC961100CB8146 /* archive_write_open_fd.c in Sources */,
 				CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */,
 				CF50B6C61A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6CF1A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
-				CF9D0EDC17CC961100CB8146 /* filter_fork_windows.c in Sources */,
-				CF9D0E9717CC961100CB8146 /* archive_read_support_filter_grzip.c in Sources */,
 				CF50B7101A1516E700E3D96D /* VFSNativeFile.cpp in Sources */,
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
 				CFB3E4831844ACD700D375E2 /* TermShellTask.mm in Sources */,
 				CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */,
-				CF9D0E9917CC961100CB8146 /* archive_read_support_filter_lrzip.c in Sources */,
 				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
-				CF9D0E9A17CC961100CB8146 /* archive_read_support_filter_lzop.c in Sources */,
 				CF07DE41176985EF00757DE1 /* EncodingsAdditions.mm in Sources */,
 				CFEE8E5117748E3D00F6A254 /* FontExtras.cpp in Sources */,
-				CF9D0EAF17CC961100CB8146 /* archive_read.c in Sources */,
 				CF50B6FE1A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */,
-				CF9D0E7C17CC961100CB8146 /* archive_entry_sparse.c in Sources */,
 				CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
-				CF9D0ED317CC961100CB8146 /* archive_write_set_format_shar.c in Sources */,
 				CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */,
-				CF9D0EB917CC961100CB8146 /* archive_write_add_filter_grzip.c in Sources */,
-				CF9D0E7717CC961100CB8146 /* archive_cmdline.c in Sources */,
 				CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */,
 				CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CF09857418EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm in Sources */,
-				CF9D0EA417CC961100CB8146 /* archive_read_support_format_cab.c in Sources */,
-				CF9D0E9C17CC961100CB8146 /* archive_read_support_filter_program.c in Sources */,
 				CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF1100DB191B46BD00E170FC /* FileDeletionOperationVFSJob.mm in Sources */,
 				CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
-				CF9D0ECD17CC961100CB8146 /* archive_write_set_format_cpio_newc.c in Sources */,
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,
-				CF9D0EBC17CC961100CB8146 /* archive_write_add_filter_lzop.c in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF7249AE1990AC2800583BC5 /* SheetController.mm in Sources */,
-				CF9D0EBD17CC961100CB8146 /* archive_write_add_filter_none.c in Sources */,
 				CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */,
-				CF9D0E9817CC961100CB8146 /* archive_read_support_filter_gzip.c in Sources */,
 				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
-				CF9D0E8817CC961100CB8146 /* archive_read_data_into_fd.c in Sources */,
 				CF29313417D9915600648A90 /* rdrand.c in Sources */,
 				CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF50B6F01A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */,
 				CF039EB017911FFA00DC85D6 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */,
-				CF9D0EA817CC961100CB8146 /* archive_read_support_format_lha.c in Sources */,
-				CF9D0EB317CC961100CB8146 /* archive_virtual.c in Sources */,
-				CF9D0E9617CC961100CB8146 /* archive_read_support_filter_compress.c in Sources */,
 				CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */,
-				CF9D0EAE17CC961100CB8146 /* archive_read_support_format_zip.c in Sources */,
 				CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */,
 				CF50B6C91A15167800E3D96D /* VFSHost.cpp in Sources */,
-				CF9D0E8A17CC961100CB8146 /* archive_read_disk_posix.c in Sources */,
 				CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */,
-				CF9D0EBE17CC961100CB8146 /* archive_write_add_filter_program.c in Sources */,
 				CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */,
-				CF9D0EB817CC961100CB8146 /* archive_write_add_filter_compress.c in Sources */,
 				CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
-				CF9D0EC417CC961100CB8146 /* archive_write_disk_set_standard_lookup.c in Sources */,
 				CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF50B7221A15170600E3D96D /* VFSNetFTPCache.mm in Sources */,
-				CF9D0EBB17CC961100CB8146 /* archive_write_add_filter_lrzip.c in Sources */,
 				CFB709B518DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm in Sources */,
-				CF9D0ED017CC961100CB8146 /* archive_write_set_format_iso9660.c in Sources */,
 				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
-				CF9D0E7A17CC961100CB8146 /* archive_entry_copy_stat.c in Sources */,
-				CF9D0E7817CC961100CB8146 /* archive_crypto.c in Sources */,
 				CF7B206D1A277A27008F1492 /* TrialWindowController.mm in Sources */,
 				CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */,
 				CFB56285194ECA1B00A3B70E /* FPSLimitedDrawer.mm in Sources */,
-				CF9D0E9417CC961100CB8146 /* archive_read_support_filter_all.c in Sources */,
 				CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
-				CF9D0EC317CC961100CB8146 /* archive_write_disk_posix.c in Sources */,
 				CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */,
 				CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */,
-				CF9D0E8F17CC961100CB8146 /* archive_read_open_file.c in Sources */,
 				CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */,
 				CF305DCC1946D50400840F25 /* NSUserDefaults+KeyPaths.m in Sources */,
-				CF9D0ED117CC961100CB8146 /* archive_write_set_format_mtree.c in Sources */,
-				CF9D0EA917CC961100CB8146 /* archive_read_support_format_mtree.c in Sources */,
 				CF305DCA1946D50400840F25 /* NSArray+SSYMutations.m in Sources */,
-				CF9D0E8017CC961100CB8146 /* archive_entry.c in Sources */,
 				CF27414917FF04EF006D6687 /* SharingService.mm in Sources */,
 				CF09857018EEA8CF006E6410 /* TermSingleTask.mm in Sources */,
 			);
@@ -4206,20 +3452,16 @@
 			files = (
 				CFF6F23B1A13567C00011177 /* DisplayNamesCache.mm in Sources */,
 				CFF6F23D1A13567C00011177 /* MainWindowFilePanelState+Menu.mm in Sources */,
-				CFF6F23E1A13567C00011177 /* archive_entry_xattr.c in Sources */,
 				CFF6F23F1A13567C00011177 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
 				CFF6F2411A13567C00011177 /* main.m in Sources */,
-				CFF6F2421A13567C00011177 /* archive_write_open_memory.c in Sources */,
 				CF9DBE161A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CFF6F2431A13567C00011177 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CFF6F2441A13567C00011177 /* AppDelegate.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
-				CFF6F2461A13567C00011177 /* archive_read_support_filter_bzip2.c in Sources */,
 				CFF6F2471A13567C00011177 /* PanelData.mm in Sources */,
 				CFF6F2481A13567C00011177 /* ActionsShortcutsManager.mm in Sources */,
 				CFF6F2491A13567C00011177 /* PanelView.mm in Sources */,
 				CF50B72D1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */,
-				CFF6F24A1A13567C00011177 /* archive_getdate.c in Sources */,
 				CFF6F24B1A13567C00011177 /* TermTaskCommon.mm in Sources */,
 				CFF6F24D1A13567C00011177 /* BigFileViewSheet.mm in Sources */,
 				CFF6F24E1A13567C00011177 /* FontCache.cpp in Sources */,
@@ -4227,43 +3469,30 @@
 				CFF6F2501A13567C00011177 /* MainWindowController.mm in Sources */,
 				CFF6F2511A13567C00011177 /* PanelController.mm in Sources */,
 				CF50B7031A1516C800E3D96D /* VFSArchiveUnRARHost.mm in Sources */,
-				CFF6F2521A13567C00011177 /* archive_read_open_memory.c in Sources */,
 				CF50B72A1A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
 				CFF6F2541A13567C00011177 /* MessageBox.mm in Sources */,
 				CFF6F2551A13567C00011177 /* MainWindowTerminalState.mm in Sources */,
-				CFF6F2561A13567C00011177 /* archive_read_support_filter_uu.c in Sources */,
-				CFF6F2571A13567C00011177 /* archive_read_support_format_tar.c in Sources */,
 				CFF6F2581A13567C00011177 /* CreateDirectorySheetController.mm in Sources */,
 				CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */,
 				CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */,
 				CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */,
-				CFF6F25C1A13567C00011177 /* archive_windows.c in Sources */,
 				CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */,
-				CFF6F25D1A13567C00011177 /* archive_read_support_format_iso9660.c in Sources */,
 				CFF6F25E1A13567C00011177 /* MassCopySheetController.mm in Sources */,
-				CFF6F25F1A13567C00011177 /* archive_write_open_filename.c in Sources */,
 				CF50B7091A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
 				CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */,
-				CFF6F2621A13567C00011177 /* archive_read_support_filter_none.c in Sources */,
 				CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CFF6F2631A13567C00011177 /* Hash.cpp in Sources */,
 				CF50B7371A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
-				CFF6F2651A13567C00011177 /* archive_string.c in Sources */,
 				CFF6F2661A13567C00011177 /* FSEventsDirUpdate.cpp in Sources */,
-				CFF6F2671A13567C00011177 /* archive_read_support_format_xar.c in Sources */,
-				CFF6F2681A13567C00011177 /* archive_read_support_format_rar.c in Sources */,
 				CFF6F26A1A13567C00011177 /* Encodings.cpp in Sources */,
 				CFF6F26B1A13567C00011177 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFF6F26C1A13567C00011177 /* path_manip.c in Sources */,
-				CFF6F26D1A13567C00011177 /* archive_options.c in Sources */,
-				CFF6F26E1A13567C00011177 /* archive_write_set_options.c in Sources */,
 				CFF6F2701A13567C00011177 /* TermParser.mm in Sources */,
 				CF50B6E11A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */,
 				CFF6F2731A13567C00011177 /* FileAlreadyExistSheetController.mm in Sources */,
 				CFF6F2741A13567C00011177 /* TermScreen.mm in Sources */,
-				CFF6F2751A13567C00011177 /* archive_write_set_format_7zip.c in Sources */,
 				CF50B7271A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
 				CFF6F2761A13567C00011177 /* filesysinfo.mm in Sources */,
 				CFF6F2771A13567C00011177 /* SUStandardVersionComparator.m in Sources */,
@@ -4272,120 +3501,70 @@
 				CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
 				CF50B6EF1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */,
-				CFF6F27C1A13567C00011177 /* archive_entry_copy_bhfi.c in Sources */,
 				CF50B6C51A15167800E3D96D /* VFSError.mm in Sources */,
 				CFF6F27D1A13567C00011177 /* ExternalEditorInfo.mm in Sources */,
-				CFF6F27E1A13567C00011177 /* archive_write_add_filter_uuencode.c in Sources */,
 				CFF6F27F1A13567C00011177 /* PanelController+DelayedSelection.mm in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF50B6DB1A15169300E3D96D /* VFSPSFile.cpp in Sources */,
-				CFF6F2811A13567C00011177 /* archive_read_support_filter_rpm.c in Sources */,
 				CF50B6F51A1516B000E3D96D /* VFSArchiveListing.mm in Sources */,
-				CFF6F2821A13567C00011177 /* archive_entry_link_resolver.c in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
 				CFF6F2841A13567C00011177 /* OperationsController.mm in Sources */,
 				CFF6F2851A13567C00011177 /* OperationJob.mm in Sources */,
-				CFF6F2861A13567C00011177 /* filter_fork_posix.c in Sources */,
-				CFF6F2871A13567C00011177 /* archive_read_support_format_all.c in Sources */,
 				CFF6F2881A13567C00011177 /* Operation.mm in Sources */,
 				CFF6F2891A13567C00011177 /* filesysattr.mm in Sources */,
 				CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */,
 				CFF6F28B1A13567C00011177 /* GenericOperationView.mm in Sources */,
-				CFF6F28C1A13567C00011177 /* archive_match.c in Sources */,
 				CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */,
 				CFF6F2901A13567C00011177 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFF6F2911A13567C00011177 /* OperationsSummaryViewController.mm in Sources */,
-				CFF6F2921A13567C00011177 /* archive_write_open_file.c in Sources */,
 				CFF6F2931A13567C00011177 /* MainWindow.mm in Sources */,
-				CFF6F2961A13567C00011177 /* archive_read_set_options.c in Sources */,
-				CFF6F2971A13567C00011177 /* archive_write_add_filter_b64encode.c in Sources */,
 				CFF6F2981A13567C00011177 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF89D8B11A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */,
-				CFF6F2991A13567C00011177 /* archive_write_add_filter_xz.c in Sources */,
-				CFF6F29B1A13567C00011177 /* archive_read_support_format_raw.c in Sources */,
 				CFF6F29C1A13567C00011177 /* OperationDialogController.mm in Sources */,
-				CFF6F29D1A13567C00011177 /* archive_write_set_format_xar.c in Sources */,
 				CFF6F29F1A13567C00011177 /* LSUrls.mm in Sources */,
 				CFF6F2A01A13567C00011177 /* FileSysAttrChangeOperation.mm in Sources */,
-				CFF6F2A11A13567C00011177 /* archive_read_support_format_ar.c in Sources */,
-				CFF6F2A21A13567C00011177 /* archive_read_disk_set_standard_lookup.c in Sources */,
-				CFF6F2A31A13567C00011177 /* archive_write_add_filter_gzip.c in Sources */,
-				CFF6F2A41A13567C00011177 /* archive_write_add_filter.c in Sources */,
 				CFF6F2A51A13567C00011177 /* FileSysAttrChangeOperationJob.mm in Sources */,
-				CFF6F2A61A13567C00011177 /* archive_string_sprintf.c in Sources */,
 				CFF6F2A71A13567C00011177 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF50B7151A1516E700E3D96D /* VFSNativeHost.mm in Sources */,
 				CFF6F2A81A13567C00011177 /* FileDeletionOperation.mm in Sources */,
 				CFF6F2A91A13567C00011177 /* FileDeletionOperationJob.mm in Sources */,
 				CFF6F2AC1A13567C00011177 /* OrthodoxMonospace.mm in Sources */,
 				CF50B7341A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */,
-				CFF6F2AD1A13567C00011177 /* archive_write_set_format_gnutar.c in Sources */,
 				CFF6F2AE1A13567C00011177 /* OperationDialogAlert.mm in Sources */,
-				CFF6F2AF1A13567C00011177 /* archive_write.c in Sources */,
 				CFF6F2B01A13567C00011177 /* CreateDirectoryOperation.mm in Sources */,
-				CFF6F2B11A13567C00011177 /* archive_write_set_format_by_name.c in Sources */,
 				CFF6F2B31A13567C00011177 /* CreateDirectoryOperationJob.mm in Sources */,
-				CFF6F2B41A13567C00011177 /* archive_read_extract.c in Sources */,
-				CFF6F2B51A13567C00011177 /* archive_pathmatch.c in Sources */,
-				CFF6F2B71A13567C00011177 /* archive_read_disk_windows.c in Sources */,
 				CFF6F2B81A13567C00011177 /* PanelController+DragAndDrop.mm in Sources */,
 				CFF6F2B91A13567C00011177 /* FileCopyOperation.mm in Sources */,
 				CFF6F2BA1A13567C00011177 /* FileCopyOperationJobNativeToNative.mm in Sources */,
-				CFF6F2BB1A13567C00011177 /* archive_write_add_filter_bzip2.c in Sources */,
 				CF50B7481A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CFF6F2BC1A13567C00011177 /* FileDeletionSheetController.mm in Sources */,
-				CFF6F2BE1A13567C00011177 /* archive_read_set_format.c in Sources */,
 				CF50B7451A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				CFF6F2BF1A13567C00011177 /* shared_mutex.cpp in Sources */,
-				CFF6F2C01A13567C00011177 /* archive_write_set_format_pax.c in Sources */,
-				CFF6F2C11A13567C00011177 /* archive_write_set_format_zip.c in Sources */,
-				CFF6F2C21A13567C00011177 /* archive_entry_stat.c in Sources */,
-				CFF6F2C31A13567C00011177 /* archive_read_open_fd.c in Sources */,
 				CF50B6EC1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */,
-				CFF6F2C41A13567C00011177 /* archive_write_disk_windows.c in Sources */,
 				CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */,
-				CFF6F2C61A13567C00011177 /* archive_entry_strmode.c in Sources */,
-				CFF6F2C71A13567C00011177 /* archive_read_support_format_empty.c in Sources */,
-				CFF6F2C81A13567C00011177 /* archive_check_magic.c in Sources */,
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */,
 				CFF6F2CB1A13567C00011177 /* FileCompressOperation.mm in Sources */,
-				CFF6F2CC1A13567C00011177 /* archive_write_add_filter_by_name.c in Sources */,
 				CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CFF6F2CE1A13567C00011177 /* FilePanelMainSplitView.mm in Sources */,
 				CFF6F2D01A13567C00011177 /* DispatchQueue.cpp in Sources */,
-				CFF6F2D11A13567C00011177 /* archive_util.c in Sources */,
-				CFF6F2D21A13567C00011177 /* archive_read_open_filename.c in Sources */,
-				CFF6F2D31A13567C00011177 /* archive_read_support_format_7zip.c in Sources */,
 				CFF6F2D41A13567C00011177 /* PanelAux.mm in Sources */,
 				CFF6F2D51A13567C00011177 /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
-				CFF6F2D71A13567C00011177 /* archive_read_support_format_cpio.c in Sources */,
-				CFF6F2D81A13567C00011177 /* archive_read_disk_entry_from_file.c in Sources */,
-				CFF6F2D91A13567C00011177 /* archive_write_set_format_ustar.c in Sources */,
 				CFF6F2DA1A13567C00011177 /* common_paths.cpp in Sources */,
 				CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
-				CFF6F2DC1A13567C00011177 /* archive_ppmd7.c in Sources */,
 				CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */,
 				CFF6F2DE1A13567C00011177 /* PreferencesWindowHotkeysTab.mm in Sources */,
-				CFF6F2DF1A13567C00011177 /* archive_write_set_format_v7tar.c in Sources */,
-				CFF6F2E01A13567C00011177 /* archive_read_append_filter.c in Sources */,
-				CFF6F2E11A13567C00011177 /* archive_write_set_format.c in Sources */,
 				CF50B75F1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
 				CFF6F2E21A13567C00011177 /* MMTabBarStyle.mm in Sources */,
 				CFF6F2E31A13567C00011177 /* Common.mm in Sources */,
 				CFF6F2E41A13567C00011177 /* OperationStats.mm in Sources */,
 				CFF6F2E51A13567C00011177 /* PanelViewPresentation.mm in Sources */,
-				CFF6F2E71A13567C00011177 /* archive_write_set_format_ar.c in Sources */,
 				CFF6F2E81A13567C00011177 /* ProcessSheetController.mm in Sources */,
 				CFF6F2E91A13567C00011177 /* SFTPConnectionSheetController.mm in Sources */,
-				CFF6F2EA1A13567C00011177 /* archive_rb.c in Sources */,
 				CFF6F2EB1A13567C00011177 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFF6F2EC1A13567C00011177 /* FilePanelsTabbedHolder.mm in Sources */,
-				CFF6F2ED1A13567C00011177 /* archive_read_support_filter_xz.c in Sources */,
-				CFF6F2EE1A13567C00011177 /* archive_write_set_format_cpio.c in Sources */,
-				CFF6F2EF1A13567C00011177 /* archive_write_disk_acl.c in Sources */,
 				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7421A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
@@ -4395,100 +3574,63 @@
 				CFF6F2F21A13567C00011177 /* sysinfo.mm in Sources */,
 				CFF6F2F31A13567C00011177 /* ByteCountFormatter.mm in Sources */,
 				CFF6F2F41A13567C00011177 /* FileWindow.cpp in Sources */,
-				CFF6F2F51A13567C00011177 /* archive_acl.c in Sources */,
 				CFF6F2F61A13567C00011177 /* BigFileView.mm in Sources */,
 				CFF6F2F71A13567C00011177 /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CFF6F2F81A13567C00011177 /* BigFileViewHex.mm in Sources */,
 				CFF6F2F91A13567C00011177 /* BigFileViewText.mm in Sources */,
-				CFF6F2FA1A13567C00011177 /* archive_read_support_format_by_code.c in Sources */,
-				CFF6F2FB1A13567C00011177 /* archive_write_open_fd.c in Sources */,
 				CFF6F2FC1A13567C00011177 /* BigFileViewDataBackend.mm in Sources */,
 				CF50B6C81A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6D11A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CFF6F2FD1A13567C00011177 /* DataBlockAnalysis.mm in Sources */,
-				CFF6F2FE1A13567C00011177 /* filter_fork_windows.c in Sources */,
-				CFF6F2FF1A13567C00011177 /* archive_read_support_filter_grzip.c in Sources */,
 				CF50B7121A1516E700E3D96D /* VFSNativeFile.cpp in Sources */,
 				CFF6F3001A13567C00011177 /* MainWindowFilePanelState.mm in Sources */,
 				CFF6F3011A13567C00011177 /* TermShellTask.mm in Sources */,
 				CFF6F3021A13567C00011177 /* MainWindowBigFileViewState.mm in Sources */,
-				CFF6F3041A13567C00011177 /* archive_read_support_filter_lrzip.c in Sources */,
 				CFF6F3051A13567C00011177 /* SearchInFile.mm in Sources */,
-				CFF6F3061A13567C00011177 /* archive_read_support_filter_lzop.c in Sources */,
 				CFF6F3071A13567C00011177 /* EncodingsAdditions.mm in Sources */,
 				CFF6F3081A13567C00011177 /* FontExtras.cpp in Sources */,
-				CFF6F3091A13567C00011177 /* archive_read.c in Sources */,
 				CF50B7001A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */,
-				CFF6F30A1A13567C00011177 /* archive_entry_sparse.c in Sources */,
 				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
-				CFF6F30B1A13567C00011177 /* archive_write_set_format_shar.c in Sources */,
 				CFF6F30C1A13567C00011177 /* BigFileViewHistory.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CFF6F30F1A13567C00011177 /* FileLinkOperation.mm in Sources */,
-				CFF6F3101A13567C00011177 /* archive_write_add_filter_grzip.c in Sources */,
-				CFF6F3111A13567C00011177 /* archive_cmdline.c in Sources */,
 				CFF6F3121A13567C00011177 /* FileLinkOperationJob.mm in Sources */,
 				CFF6F3131A13567C00011177 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFF6F3141A13567C00011177 /* MainWindowExternalTerminalEditorState.mm in Sources */,
-				CFF6F3151A13567C00011177 /* archive_read_support_format_cab.c in Sources */,
-				CFF6F3171A13567C00011177 /* archive_read_support_filter_program.c in Sources */,
 				CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CFF6F3191A13567C00011177 /* FileDeletionOperationVFSJob.mm in Sources */,
 				CFF6F31A1A13567C00011177 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
-				CFF6F31B1A13567C00011177 /* archive_write_set_format_cpio_newc.c in Sources */,
 				CFF6F31C1A13567C00011177 /* FileLinkNewHardlinkSheetController.mm in Sources */,
-				CFF6F31D1A13567C00011177 /* archive_write_add_filter_lzop.c in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */,
-				CFF6F3201A13567C00011177 /* archive_write_add_filter_none.c in Sources */,
 				CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */,
-				CFF6F3221A13567C00011177 /* archive_read_support_filter_gzip.c in Sources */,
 				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
-				CFF6F3241A13567C00011177 /* archive_read_data_into_fd.c in Sources */,
 				CFF6F3251A13567C00011177 /* rdrand.c in Sources */,
 				CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF50B6F21A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */,
 				CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */,
-				CFF6F3281A13567C00011177 /* archive_read_support_format_lha.c in Sources */,
-				CFF6F3291A13567C00011177 /* archive_virtual.c in Sources */,
-				CFF6F32A1A13567C00011177 /* archive_read_support_filter_compress.c in Sources */,
 				CFF6F32B1A13567C00011177 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFF6F32C1A13567C00011177 /* PanelController+Menu.mm in Sources */,
-				CFF6F32D1A13567C00011177 /* archive_read_support_format_zip.c in Sources */,
 				CFF6F32E1A13567C00011177 /* FindFilesSheetController.mm in Sources */,
 				CF50B6CB1A15167800E3D96D /* VFSHost.cpp in Sources */,
-				CFF6F3301A13567C00011177 /* archive_read_disk_posix.c in Sources */,
 				CFF6F3311A13567C00011177 /* PreferencesWindowViewerTab.mm in Sources */,
-				CFF6F3321A13567C00011177 /* archive_write_add_filter_program.c in Sources */,
 				CFF6F3331A13567C00011177 /* NSUserDefaults+myColorSupport.m in Sources */,
-				CFF6F3341A13567C00011177 /* archive_write_add_filter_compress.c in Sources */,
 				CFF6F3351A13567C00011177 /* NewVersionChecker.mm in Sources */,
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
-				CFF6F3371A13567C00011177 /* archive_write_disk_set_standard_lookup.c in Sources */,
 				CFF6F3381A13567C00011177 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF50B7241A15170600E3D96D /* VFSNetFTPCache.mm in Sources */,
-				CFF6F33A1A13567C00011177 /* archive_write_add_filter_lrzip.c in Sources */,
 				CFF6F33B1A13567C00011177 /* FileCopyOperationJobGenericToGeneric.mm in Sources */,
-				CFF6F33C1A13567C00011177 /* archive_write_set_format_iso9660.c in Sources */,
 				CFF6F33D1A13567C00011177 /* ObjcToCppObservingBridge.mm in Sources */,
-				CFF6F33E1A13567C00011177 /* archive_entry_copy_stat.c in Sources */,
-				CFF6F33F1A13567C00011177 /* archive_crypto.c in Sources */,
 				CFF6F3401A13567C00011177 /* FileMask.mm in Sources */,
 				CFF6F3411A13567C00011177 /* FPSLimitedDrawer.mm in Sources */,
-				CFF6F3421A13567C00011177 /* archive_read_support_filter_all.c in Sources */,
 				CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
-				CFF6F3451A13567C00011177 /* archive_write_disk_posix.c in Sources */,
 				CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */,
 				CFF6F3471A13567C00011177 /* FileCompressOperationJob.mm in Sources */,
-				CFF6F3481A13567C00011177 /* archive_read_open_file.c in Sources */,
 				CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */,
 				CFF6F34A1A13567C00011177 /* NSUserDefaults+KeyPaths.m in Sources */,
-				CFF6F34B1A13567C00011177 /* archive_write_set_format_mtree.c in Sources */,
 				CF89D8A81A43083100B2D9F1 /* tiny_string.cpp in Sources */,
-				CFF6F34C1A13567C00011177 /* archive_read_support_format_mtree.c in Sources */,
 				CFF6F34E1A13567C00011177 /* NSArray+SSYMutations.m in Sources */,
-				CFF6F34F1A13567C00011177 /* archive_entry.c in Sources */,
 				CFF6F3501A13567C00011177 /* SharingService.mm in Sources */,
 				CFF6F3521A13567C00011177 /* TermSingleTask.mm in Sources */,
 			);

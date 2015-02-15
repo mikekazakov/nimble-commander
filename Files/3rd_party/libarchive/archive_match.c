@@ -580,6 +580,7 @@ add_pattern_from_file(struct archive_match *a, struct match_list *mlist,
 		return (ARCHIVE_FATAL);
 	}
 	r = archive_read_support_format_raw(ar);
+	r = archive_read_support_format_empty(ar);
 	if (r != ARCHIVE_OK) {
 		archive_copy_error(&(a->archive), ar);
 		archive_read_free(ar);
@@ -596,9 +597,13 @@ add_pattern_from_file(struct archive_match *a, struct match_list *mlist,
 	}
 	r = archive_read_next_header(ar, &ae);
 	if (r != ARCHIVE_OK) {
-		archive_copy_error(&(a->archive), ar);
 		archive_read_free(ar);
-		return (r);
+		if (r == ARCHIVE_EOF) {
+			return (ARCHIVE_OK);
+		} else {
+			archive_copy_error(&(a->archive), ar);
+			return (r);
+		}
 	}
 
 	archive_string_init(&as);
@@ -1152,7 +1157,7 @@ set_timefilter_pathname_mbs(struct archive_match *a, int timetype,
 {
 	/* NOTE: stat() on Windows cannot handle nano seconds. */
 	HANDLE h;
-	WIN32_FIND_DATA d;
+	WIN32_FIND_DATAA d;
 
 	if (path == NULL || *path == '\0') {
 		archive_set_error(&(a->archive), EINVAL, "pathname is empty");

@@ -47,7 +47,7 @@ __FBSDID("$FreeBSD$");
 #endif
 
 #include "archive.h"
-#include "archive_crypto_private.h"
+#include "archive_digest_private.h"
 #include "archive_endian.h"
 #include "archive_entry.h"
 #include "archive_entry_locale.h"
@@ -2154,7 +2154,7 @@ file_gen_utility_names(struct archive_write *a, struct file *file)
 		file->parentdir.length = len;
 		archive_string_copy(&(file->basename), &(file->parentdir));
 		archive_string_empty(&(file->parentdir));
-		file->parentdir.s = '\0';
+		*file->parentdir.s = '\0';
 		return (r);
 	}
 

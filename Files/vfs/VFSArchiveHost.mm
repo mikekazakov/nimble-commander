@@ -595,7 +595,6 @@ struct archive* VFSArchiveHost::SpawnLibarchive()
     archive_read_support_filter_all(arc);
     archive_read_support_format_ar(arc);
     archive_read_support_format_cpio(arc);
-    archive_read_support_format_empty(arc);
     archive_read_support_format_lha(arc);
     archive_read_support_format_mtree(arc);
     archive_read_support_format_tar(arc);
@@ -603,7 +602,9 @@ struct archive* VFSArchiveHost::SpawnLibarchive()
     archive_read_support_format_7zip(arc);
     archive_read_support_format_cab(arc);
     archive_read_support_format_iso9660(arc);
-    archive_read_support_format_zip(arc);
+    archive_read_support_format_warc(arc);
+    archive_read_support_format_xar(arc);
+    archive_read_support_format_zip_seekable(arc);
     return arc;
 }
 

@@ -57,6 +57,8 @@
 #define	HAVE_SHA512 1
 #endif
 
+#define HAVE_ARC4RANDOM_BUF 1
+
 //#define	HAVE_BSDXML_H 1
 #define	HAVE_BZLIB_H 1
 #define	HAVE_CHFLAGS 1
@@ -158,7 +160,10 @@
 #define	HAVE_WMEMCPY 1
 #define	HAVE_ZLIB_H 1
 #define	TIME_WITH_SYS_TIME 1
+#define HAVE_SYS_ACL_H 1
 
+
+#define HAVE_COPYFILE_H 1
 
 #define HAVE_LZMA_H 1
 /* FreeBSD 4 and earlier lack intmax_t/uintmax_t */

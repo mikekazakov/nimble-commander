@@ -47,7 +47,7 @@
 
 /* Get appropriate definitions of standard POSIX-style types. */
 /* These should match the types used in 'struct stat' */
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__WATCOMC__)
 # define	__LA_INT64_T	__int64
 # if defined(_SSIZE_T_DEFINED) || defined(_SSIZE_T_)
 #  define	__LA_SSIZE_T	ssize_t
@@ -130,8 +130,18 @@ __LA_DECL int		archive_version_number(void);
 /*
  * Textual name/version of the library, useful for version displays.
  */
-#define	ARCHIVE_VERSION_STRING "libarchive 3.1.2"
+#define	ARCHIVE_VERSION_ONLY_STRING "3.1.2"
+#define	ARCHIVE_VERSION_STRING "libarchive " ARCHIVE_VERSION_ONLY_STRING
 __LA_DECL const char *	archive_version_string(void);
+
+/*
+ * Detailed textual name/version of the library and its dependencies.
+ * This has the form:
+ *    "libarchive x.y.z zlib/a.b.c liblzma/d.e.f ... etc ..."
+ * the list of libraries described here will vary depending on how
+ * libarchive was compiled.
+ */
+__LA_DECL const char *	archive_version_details(void);
 
 /* Declare our basic types. */
 struct archive;
@@ -208,6 +218,13 @@ typedef int archive_switch_callback(struct archive *, void *_client_data1,
 			    void *_client_data2);
 
 /*
+ * Returns a passphrase used for encryption or decryption, NULL on nothing
+ * to do and give it up.
+ */
+typedef const char *archive_passphrase_callback(struct archive *,
+			    void *_client_data);
+
+/*
  * Codes to identify various stream filters.
  */
 #define	ARCHIVE_FILTER_NONE	0
@@ -223,6 +240,7 @@ typedef int archive_switch_callback(struct archive *, void *_client_data1,
 #define	ARCHIVE_FILTER_LRZIP	10
 #define	ARCHIVE_FILTER_LZOP	11
 #define	ARCHIVE_FILTER_GRZIP	12
+#define	ARCHIVE_FILTER_LZ4	13
 
 #if ARCHIVE_VERSION_NUMBER < 4000000
 #define	ARCHIVE_COMPRESSION_NONE	ARCHIVE_FILTER_NONE
@@ -284,6 +302,31 @@ typedef int archive_switch_callback(struct archive *, void *_client_data1,
 #define	ARCHIVE_FORMAT_CAB			0xC0000
 #define	ARCHIVE_FORMAT_RAR			0xD0000
 #define	ARCHIVE_FORMAT_7ZIP			0xE0000
+#define	ARCHIVE_FORMAT_WARC			0xF0000
+
+/*
+ * Codes returned by archive_read_format_capabilities().
+ *
+ * This list can be extended with values between 0 and 0xffff.
+ * The original purpose of this list was to let different archive
+ * format readers expose their general capabilities in terms of
+ * encryption.
+ */
+#define ARCHIVE_READ_FORMAT_CAPS_NONE (0) /* no special capabilities */
+#define ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA (1<<0)  /* reader can detect encrypted data */
+#define ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_METADATA (1<<1)  /* reader can detect encryptable metadata (pathname, mtime, etc.) */
+
+/*
+ * Codes returned by archive_read_has_encrypted_entries().
+ *
+ * In case the archive does not support encryption detection at all
+ * ARCHIVE_READ_FORMAT_ENCRYPTION_UNSUPPORTED is returned. If the reader
+ * for some other reason (e.g. not enough bytes read) cannot say if
+ * there are encrypted entries, ARCHIVE_READ_FORMAT_ENCRYPTION_DONT_KNOW
+ * is returned.
+ */
+#define ARCHIVE_READ_FORMAT_ENCRYPTION_UNSUPPORTED -2
+#define ARCHIVE_READ_FORMAT_ENCRYPTION_DONT_KNOW -1
 
 /*-
  * Basic outline for reading an archive:
@@ -342,6 +385,7 @@ __LA_DECL int archive_read_support_filter_compress(struct archive *);
 __LA_DECL int archive_read_support_filter_gzip(struct archive *);
 __LA_DECL int archive_read_support_filter_grzip(struct archive *);
 __LA_DECL int archive_read_support_filter_lrzip(struct archive *);
+__LA_DECL int archive_read_support_filter_lz4(struct archive *);
 __LA_DECL int archive_read_support_filter_lzip(struct archive *);
 __LA_DECL int archive_read_support_filter_lzma(struct archive *);
 __LA_DECL int archive_read_support_filter_lzop(struct archive *);
@@ -369,8 +413,17 @@ __LA_DECL int archive_read_support_format_mtree(struct archive *);
 __LA_DECL int archive_read_support_format_rar(struct archive *);
 __LA_DECL int archive_read_support_format_raw(struct archive *);
 __LA_DECL int archive_read_support_format_tar(struct archive *);
+__LA_DECL int archive_read_support_format_warc(struct archive *);
 __LA_DECL int archive_read_support_format_xar(struct archive *);
+/* archive_read_support_format_zip() enables both streamable and seekable
+ * zip readers. */
 __LA_DECL int archive_read_support_format_zip(struct archive *);
+/* Reads Zip archives as stream from beginning to end.  Doesn't
+ * correctly handle SFX ZIP files or ZIP archives that have been modified
+ * in-place. */
+__LA_DECL int archive_read_support_format_zip_streamable(struct archive *);
+/* Reads starting from central directory; requires seekable input. */
+__LA_DECL int archive_read_support_format_zip_seekable(struct archive *);
 
 /* Functions to manually set the format and filters to be used. This is
  * useful to bypass the bidding process when the format and filters to use
@@ -466,6 +519,32 @@ __LA_DECL int archive_read_next_header2(struct archive *,
  */
 __LA_DECL __LA_INT64_T		 archive_read_header_position(struct archive *);
 
+/*
+ * Returns 1 if the archive contains at least one encrypted entry.
+ * If the archive format not support encryption at all
+ * ARCHIVE_READ_FORMAT_ENCRYPTION_UNSUPPORTED is returned.
+ * If for any other reason (e.g. not enough data read so far)
+ * we cannot say whether there are encrypted entries, then
+ * ARCHIVE_READ_FORMAT_ENCRYPTION_DONT_KNOW is returned.
+ * In general, this function will return values below zero when the
+ * reader is uncertain or totally uncapable of encryption support.
+ * When this function returns 0 you can be sure that the reader
+ * supports encryption detection but no encrypted entries have
+ * been found yet.
+ *
+ * NOTE: If the metadata/header of an archive is also encrypted, you
+ * cannot rely on the number of encrypted entries. That is why this
+ * function does not return the number of encrypted entries but#
+ * just shows that there are some.
+ */
+__LA_DECL int	archive_read_has_encrypted_entries(struct archive *);
+
+/*
+ * Returns a bitmask of capabilities that are supported by the archive format reader.
+ * If the reader has no special capabilities, ARCHIVE_READ_FORMAT_CAPS_NONE is returned.
+ */
+__LA_DECL int		 archive_read_format_capabilities(struct archive *);
+
 /* Read data from the body of an entry.  Similar to read(2). */
 __LA_DECL __LA_SSIZE_T		 archive_read_data(struct archive *,
 				    void *, size_t);
@@ -509,6 +588,14 @@ __LA_DECL int archive_read_set_option(struct archive *_a,
 /* Apply option string to both the format and the filter. */
 __LA_DECL int archive_read_set_options(struct archive *_a,
 			    const char *opts);
+
+/*
+ * Add a decryption passphrase.
+ */
+__LA_DECL int archive_read_add_passphrase(struct archive *, const char *);
+__LA_DECL int archive_read_set_passphrase_callback(struct archive *,
+			    void *client_data, archive_passphrase_callback *);
+
 
 /*-
  * Convenience function to recreate the current entry (whose header
@@ -643,6 +730,7 @@ __LA_DECL int archive_write_add_filter_compress(struct archive *);
 __LA_DECL int archive_write_add_filter_grzip(struct archive *);
 __LA_DECL int archive_write_add_filter_gzip(struct archive *);
 __LA_DECL int archive_write_add_filter_lrzip(struct archive *);
+__LA_DECL int archive_write_add_filter_lz4(struct archive *);
 __LA_DECL int archive_write_add_filter_lzip(struct archive *);
 __LA_DECL int archive_write_add_filter_lzma(struct archive *);
 __LA_DECL int archive_write_add_filter_lzop(struct archive *);
@@ -670,10 +758,12 @@ __LA_DECL int archive_write_set_format_mtree_classic(struct archive *);
 /* TODO: int archive_write_set_format_old_tar(struct archive *); */
 __LA_DECL int archive_write_set_format_pax(struct archive *);
 __LA_DECL int archive_write_set_format_pax_restricted(struct archive *);
+__LA_DECL int archive_write_set_format_raw(struct archive *);
 __LA_DECL int archive_write_set_format_shar(struct archive *);
 __LA_DECL int archive_write_set_format_shar_dump(struct archive *);
 __LA_DECL int archive_write_set_format_ustar(struct archive *);
 __LA_DECL int archive_write_set_format_v7tar(struct archive *);
+__LA_DECL int archive_write_set_format_warc(struct archive *);
 __LA_DECL int archive_write_set_format_xar(struct archive *);
 __LA_DECL int archive_write_set_format_zip(struct archive *);
 __LA_DECL int archive_write_zip_set_compression_deflate(struct archive *);
@@ -739,6 +829,13 @@ __LA_DECL int archive_write_set_option(struct archive *_a,
 /* Apply option string to both the format and the filter. */
 __LA_DECL int archive_write_set_options(struct archive *_a,
 			    const char *opts);
+
+/*
+ * Set a encryption passphrase.
+ */
+__LA_DECL int archive_write_set_passphrase(struct archive *_a, const char *p);
+__LA_DECL int archive_write_set_passphrase_callback(struct archive *,
+			    void *client_data, archive_passphrase_callback *);
 
 /*-
  * ARCHIVE_WRITE_DISK API
@@ -861,6 +958,8 @@ __LA_DECL int  archive_read_disk_set_atime_restored(struct archive *);
 #define	ARCHIVE_READDISK_MAC_COPYFILE		(0x0004)
 /* Default: Do not traverse mount points. */
 #define	ARCHIVE_READDISK_NO_TRAVERSE_MOUNTS	(0x0008)
+/* Default: Xattrs are read from disk. */
+#define	ARCHIVE_READDISK_NO_XATTR		(0x0010)
 
 __LA_DECL int  archive_read_disk_set_behavior(struct archive *,
 		    int flags);
@@ -878,6 +977,10 @@ __LA_DECL int	archive_read_disk_set_matching(struct archive *,
 __LA_DECL int	archive_read_disk_set_metadata_filter_callback(struct archive *,
 		    int (*_metadata_filter_func)(struct archive *, void *,
 		    	struct archive_entry *), void *_client_data);
+
+/* Simplified cleanup interface;
+ * This calls archive_read_free() or archive_write_free() as needed. */
+__LA_DECL int	archive_free(struct archive *);
 
 /*
  * Accessor functions to read/set various information in
@@ -1024,6 +1127,10 @@ __LA_DECL int	archive_match_include_uname_w(struct archive *,
 __LA_DECL int	archive_match_include_gname(struct archive *, const char *);
 __LA_DECL int	archive_match_include_gname_w(struct archive *,
 		    const wchar_t *);
+
+/* Utility functions */
+/* Convenience function to sort a NULL terminated list of strings */
+__LA_DECL int archive_utility_string_sort(char **);
 
 #ifdef __cplusplus
 }

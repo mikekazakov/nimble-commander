@@ -609,6 +609,10 @@ archive_read_disk_set_behavior(struct archive *_a, int flags)
 		a->traverse_mount_points = 0;
 	else
 		a->traverse_mount_points = 1;
+	if (flags & ARCHIVE_READDISK_NO_XATTR)
+		a->suppress_xattr = 1;
+	else
+		a->suppress_xattr = 0;
 	return (r);
 }
 
@@ -974,7 +978,7 @@ next_entry(struct archive_read_disk *a, struct tree *t,
 		t->initial_filesystem_id = t->current_filesystem_id;
 	if (!a->traverse_mount_points) {
 		if (t->initial_filesystem_id != t->current_filesystem_id)
-			return (ARCHIVE_RETRY);
+			descend = 0;
 	}
 	t->descend = descend;
 
@@ -1973,7 +1977,7 @@ tree_dup(int fd)
 	static volatile int can_dupfd_cloexec = 1;
 
 	if (can_dupfd_cloexec) {
-		new_fd = fcntl(fd, F_DUPFD_CLOEXEC);
+		new_fd = fcntl(fd, F_DUPFD_CLOEXEC, 0);
 		if (new_fd != -1)
 			return (new_fd);
 		/* Linux 2.6.18 - 2.6.23 declare F_DUPFD_CLOEXEC,

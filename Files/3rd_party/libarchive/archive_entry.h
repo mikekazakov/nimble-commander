@@ -48,7 +48,7 @@
 #endif
 
 /* Get a suitable 64-bit integer type. */
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__WATCOMC__)
 # define	__LA_INT64_T	__int64
 #else
 #include <unistd.h>
@@ -63,7 +63,7 @@
 #if ARCHIVE_VERSION_NUMBER >= 3999000
 /* Switch to plain 'int' for libarchive 4.0.  It's less broken than 'mode_t' */
 # define	__LA_MODE_T	int
-#elif defined(_WIN32) && !defined(__CYGWIN__) && !defined(__BORLANDC__)
+#elif defined(_WIN32) && !defined(__CYGWIN__) && !defined(__BORLANDC__) && !defined(__WATCOMC__)
 # define	__LA_MODE_T	unsigned short
 #else
 # define	__LA_MODE_T	mode_t
@@ -208,8 +208,10 @@ __LA_DECL void		 archive_entry_fflags(struct archive_entry *,
 __LA_DECL const char	*archive_entry_fflags_text(struct archive_entry *);
 __LA_DECL __LA_INT64_T	 archive_entry_gid(struct archive_entry *);
 __LA_DECL const char	*archive_entry_gname(struct archive_entry *);
+__LA_DECL const char	*archive_entry_gname_utf8(struct archive_entry *);
 __LA_DECL const wchar_t	*archive_entry_gname_w(struct archive_entry *);
 __LA_DECL const char	*archive_entry_hardlink(struct archive_entry *);
+__LA_DECL const char	*archive_entry_hardlink_utf8(struct archive_entry *);
 __LA_DECL const wchar_t	*archive_entry_hardlink_w(struct archive_entry *);
 __LA_DECL __LA_INT64_T	 archive_entry_ino(struct archive_entry *);
 __LA_DECL __LA_INT64_T	 archive_entry_ino64(struct archive_entry *);
@@ -220,6 +222,7 @@ __LA_DECL long		 archive_entry_mtime_nsec(struct archive_entry *);
 __LA_DECL int		 archive_entry_mtime_is_set(struct archive_entry *);
 __LA_DECL unsigned int	 archive_entry_nlink(struct archive_entry *);
 __LA_DECL const char	*archive_entry_pathname(struct archive_entry *);
+__LA_DECL const char	*archive_entry_pathname_utf8(struct archive_entry *);
 __LA_DECL const wchar_t	*archive_entry_pathname_w(struct archive_entry *);
 __LA_DECL __LA_MODE_T	 archive_entry_perm(struct archive_entry *);
 __LA_DECL dev_t		 archive_entry_rdev(struct archive_entry *);
@@ -231,10 +234,15 @@ __LA_DECL __LA_INT64_T	 archive_entry_size(struct archive_entry *);
 __LA_DECL int		 archive_entry_size_is_set(struct archive_entry *);
 __LA_DECL const char	*archive_entry_strmode(struct archive_entry *);
 __LA_DECL const char	*archive_entry_symlink(struct archive_entry *);
+__LA_DECL const char	*archive_entry_symlink_utf8(struct archive_entry *);
 __LA_DECL const wchar_t	*archive_entry_symlink_w(struct archive_entry *);
 __LA_DECL __LA_INT64_T	 archive_entry_uid(struct archive_entry *);
 __LA_DECL const char	*archive_entry_uname(struct archive_entry *);
+__LA_DECL const char	*archive_entry_uname_utf8(struct archive_entry *);
 __LA_DECL const wchar_t	*archive_entry_uname_w(struct archive_entry *);
+__LA_DECL int archive_entry_is_data_encrypted(struct archive_entry *);
+__LA_DECL int archive_entry_is_metadata_encrypted(struct archive_entry *);
+__LA_DECL int archive_entry_is_encrypted(struct archive_entry *);
 
 /*
  * Set fields in an archive_entry.
@@ -268,16 +276,19 @@ __LA_DECL const wchar_t *archive_entry_copy_fflags_text_w(struct archive_entry *
 	    const wchar_t *);
 __LA_DECL void	archive_entry_set_gid(struct archive_entry *, __LA_INT64_T);
 __LA_DECL void	archive_entry_set_gname(struct archive_entry *, const char *);
+__LA_DECL void	archive_entry_set_gname_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_gname(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_gname_w(struct archive_entry *, const wchar_t *);
 __LA_DECL int	archive_entry_update_gname_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_set_hardlink(struct archive_entry *, const char *);
+__LA_DECL void	archive_entry_set_hardlink_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_hardlink(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_hardlink_w(struct archive_entry *, const wchar_t *);
 __LA_DECL int	archive_entry_update_hardlink_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_set_ino(struct archive_entry *, __LA_INT64_T);
 __LA_DECL void	archive_entry_set_ino64(struct archive_entry *, __LA_INT64_T);
 __LA_DECL void	archive_entry_set_link(struct archive_entry *, const char *);
+__LA_DECL void	archive_entry_set_link_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_link(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_link_w(struct archive_entry *, const wchar_t *);
 __LA_DECL int	archive_entry_update_link_utf8(struct archive_entry *, const char *);
@@ -286,6 +297,7 @@ __LA_DECL void	archive_entry_set_mtime(struct archive_entry *, time_t, long);
 __LA_DECL void  archive_entry_unset_mtime(struct archive_entry *);
 __LA_DECL void	archive_entry_set_nlink(struct archive_entry *, unsigned int);
 __LA_DECL void	archive_entry_set_pathname(struct archive_entry *, const char *);
+__LA_DECL void	archive_entry_set_pathname_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_pathname(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_pathname_w(struct archive_entry *, const wchar_t *);
 __LA_DECL int	archive_entry_update_pathname_utf8(struct archive_entry *, const char *);
@@ -298,14 +310,18 @@ __LA_DECL void	archive_entry_unset_size(struct archive_entry *);
 __LA_DECL void	archive_entry_copy_sourcepath(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_sourcepath_w(struct archive_entry *, const wchar_t *);
 __LA_DECL void	archive_entry_set_symlink(struct archive_entry *, const char *);
+__LA_DECL void	archive_entry_set_symlink_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_symlink(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_symlink_w(struct archive_entry *, const wchar_t *);
 __LA_DECL int	archive_entry_update_symlink_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_set_uid(struct archive_entry *, __LA_INT64_T);
 __LA_DECL void	archive_entry_set_uname(struct archive_entry *, const char *);
+__LA_DECL void	archive_entry_set_uname_utf8(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_uname(struct archive_entry *, const char *);
 __LA_DECL void	archive_entry_copy_uname_w(struct archive_entry *, const wchar_t *);
 __LA_DECL int	archive_entry_update_uname_utf8(struct archive_entry *, const char *);
+__LA_DECL void	archive_entry_set_is_data_encrypted(struct archive_entry *, char is_encrypted);
+__LA_DECL void	archive_entry_set_is_metadata_encrypted(struct archive_entry *, char is_encrypted);
 /*
  * Routines to bulk copy fields to/from a platform-native "struct
  * stat."  Libarchive used to just store a struct stat inside of each

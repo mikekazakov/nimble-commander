@@ -34,6 +34,9 @@
 /* Class = "NSTextFieldCell"; placeholderString = "22"; ObjectID = "RDb-c0-5jY"; */
 "RDb-c0-5jY.placeholderString" = "22";
 
+/* Class = "NSButtonCell"; title = "🔑"; ObjectID = "Vpg-ZM-qSO"; */
+"Vpg-ZM-qSO.title" = "🔑";
+
 /* Class = "NSTextFieldCell"; title = "Key file:"; ObjectID = "XOW-Nv-JRE"; */
 "XOW-Nv-JRE.title" = "Путь к ключу:";
 
@@ -48,6 +51,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "ngl-N8-zRx"; */
 "ngl-N8-zRx.title" = "Удаленный порт:";
+
+/* Class = "NSMenuItem"; title = "🕟"; ObjectID = "o40-dU-l2e"; */
+"o40-dU-l2e.title" = "🕟";
 
 /* Class = "NSTextFieldCell"; placeholderString = "root"; ObjectID = "vmN-6P-k8r"; */
 "vmN-6P-k8r.placeholderString" = "root";

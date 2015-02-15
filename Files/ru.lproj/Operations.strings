@@ -85,7 +85,7 @@
 /* Informative text on case when destination file already exists */
 "Destination: %@\nSource: %@" = "Итоговый путь: %1$@\nИсходный путь: %2$@";
 
-/* Generic informative error text */
+/* (No Commment) */
 "Error: %@" = "Ошибка: %@";
 
 /* (No Commment) */
@@ -142,7 +142,7 @@
 /* Error dialog title on chown failure */
 "Failed to perform chown" = "Не удалось выполнить chown";
 
-/* Error when reading failed */
+/* (No Commment) */
 "Failed to read a file" = "Не удалось прочитать файл";
 
 /* Error dialog title when can't securely delete a file */
@@ -156,9 +156,6 @@
 
 /* Title on error when archive target can't be written */
 "Failed to write an archive" = "Не удалось записать архив";
-
-/* Title on information dialog about 4Gb file limit */
-"Files currently can't compress items larger than 4Gb.\nThis file will be skipped:\n%@" = "Files на данный момент не поддерживает архивирование файлов больше 4Гб.\nЭтот файл будет пропущен:\n%@";
 
 /* (No Commment) */
 "Hide" = "Скрыть";
@@ -178,9 +175,9 @@
 /* User action button title to rewrite a file */
 "Rewrite" = "Переписать";
 
-/* Error dialog button - skip current item */
+/* (No Commment) */
 "Skip" = "Пропустить";
 
-/* Error dialog button - skipp all items with errors */
+/* (No Commment) */
 "Skip All" = "Пропустить все";
 

@@ -91,11 +91,35 @@
 /* Class = "NSTextFieldCell"; title = "Access time:"; ObjectID = "623"; */
 "623.title" = "Время доступа:";
 
+/* Class = "NSButtonCell"; title = "☓"; ObjectID = "901"; */
+"901.title" = "☓";
+
+/* Class = "NSButtonCell"; title = "⚑"; ObjectID = "969"; */
+"969.title" = "⚑";
+
+/* Class = "NSButtonCell"; title = "⚑"; ObjectID = "1011"; */
+"1011.title" = "⚑";
+
+/* Class = "NSButtonCell"; title = "☓"; ObjectID = "1013"; */
+"1013.title" = "☓";
+
 /* Class = "NSTextFieldCell"; title = "Modify time:"; ObjectID = "1016"; */
 "1016.title" = "Время модификации:";
 
+/* Class = "NSButtonCell"; title = "⚑"; ObjectID = "1038"; */
+"1038.title" = "⚑";
+
+/* Class = "NSButtonCell"; title = "☓"; ObjectID = "1039"; */
+"1039.title" = "☓";
+
 /* Class = "NSTextFieldCell"; title = "Change time:"; ObjectID = "1041"; */
 "1041.title" = "Время изменения:";
+
+/* Class = "NSButtonCell"; title = "⚑"; ObjectID = "1063"; */
+"1063.title" = "⚑";
+
+/* Class = "NSButtonCell"; title = "☓"; ObjectID = "1064"; */
+"1064.title" = "☓";
 
 /* Class = "NSTextFieldCell"; title = "Create time:"; ObjectID = "1066"; */
 "1066.title" = "Время создания:";
@@ -105,4 +129,10 @@
 
 /* Class = "NSButtonCell"; title = "Apply"; ObjectID = "1219"; */
 "1219.title" = "Применить";
+
+/* Class = "NSButtonCell"; title = "User compressed"; ObjectID = "eue-2Z-nXq"; */
+"eue-2Z-nXq.title" = "User compressed";
+
+/* Class = "NSButtonCell"; title = "User tracked"; ObjectID = "hRc-N9-NhG"; */
+"hRc-N9-NhG.title" = "User tracked";
 

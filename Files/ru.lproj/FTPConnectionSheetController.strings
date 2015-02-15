@@ -40,6 +40,9 @@
 /* Class = "NSTextFieldCell"; title = "Remote path:"; ObjectID = "hUY-J5-Twm"; */
 "hUY-J5-Twm.title" = "Удаленный путь:";
 
+/* Class = "NSMenuItem"; title = "🕟"; ObjectID = "hut-K2-4Ca"; */
+"hut-K2-4Ca.title" = "🕟";
+
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "j8e-Wn-3Fa"; */
 "j8e-Wn-3Fa.title" = "Закрыть";
 

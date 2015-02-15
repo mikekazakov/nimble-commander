@@ -30,6 +30,7 @@
 #import "TrialWindowController.h"
 #import "RoutedIO.h"
 #import "sysinfo.h"
+#import "AppStoreRatings.h"
 
 @implementation AppDelegate
 {
@@ -182,6 +183,8 @@
 
     if(!configuration::is_sandboxed)
         NewVersionChecker::Go(); // we check for new versions only for non-sanboxed (say non-MAS) version
+    if(configuration::is_for_app_store) // if we're building for AppStore - check if we want to ask user for rating
+        AppStoreRatings::Instance().Go();
     
     [self checkIfNeedToShowNagScreen];
 }

@@ -11,14 +11,17 @@
 #ifdef __cplusplus
 
 #if   defined(__FILES_VER_LITE__)
-    #define __FILES_VERSION_NUMBER__ ::configuration::Version::Lite
-    #define __FILES_IDENTIFIER__ "info.filesmanager.Files-Lite"
+    #define __FILES_VERSION_NUMBER__        ::configuration::Version::Lite
+    #define __FILES_IDENTIFIER__            "info.filesmanager.Files-Lite"
+    #define __FILES_APPSTORE_IDENTIFIER__   "905202937"
 #elif defined(__FILES_VER_PRO__)
-    #define __FILES_VERSION_NUMBER__ ::configuration::Version::Pro
-    #define __FILES_IDENTIFIER__ "info.filesmanager.Files-Pro"
+    #define __FILES_VERSION_NUMBER__        ::configuration::Version::Pro
+    #define __FILES_IDENTIFIER__            "info.filesmanager.Files-Pro"
+    #define __FILES_APPSTORE_IDENTIFIER__   "942443942"
 #elif defined(__FILES_VER_FULL__)
-    #define __FILES_VERSION_NUMBER__ ::configuration::Version::Full
-    #define __FILES_IDENTIFIER__ "info.filesmanager.Files"
+    #define __FILES_VERSION_NUMBER__        ::configuration::Version::Full
+    #define __FILES_IDENTIFIER__            "info.filesmanager.Files"
+    #define __FILES_APPSTORE_IDENTIFIER__   ""
 #else
     #error Invalid build configuration - no version type specified
 #endif
@@ -47,6 +50,7 @@ namespace configuration
     
     constexpr Version version                       = __FILES_VERSION_NUMBER__;
     constexpr const char *identifier                = __FILES_IDENTIFIER__;
+    constexpr const char *appstore_id               = __FILES_APPSTORE_IDENTIFIER__;
     constexpr bool is_sandboxed                     = version <= Version::Pro;
     constexpr bool is_for_app_store                 = version <= Version::Pro;
     constexpr bool has_psfs                         = version >= Version::Pro;

@@ -210,14 +210,6 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
     return alert;
 }
 
-- (void) SayAbout4Gb:(const char*) _path
-{
-    SyncMessageBoxNS([NSString stringWithFormat:NSLocalizedStringFromTable(@"Files currently can't compress items larger than 4Gb.\nThis file will be skipped:\n%@",
-                                                                           @"Operations",
-                                                                           "Title on information dialog about 4Gb file limit"),
-                      [NSString stringWithUTF8String:_path]]);
-}
-
 - (void) OnFinish
 {
     [super OnFinish];    

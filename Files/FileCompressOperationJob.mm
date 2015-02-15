@@ -184,14 +184,9 @@ retry_stat:
     if(stat_ret == VFSError::Ok) {
         if(S_ISREG(stat_buffer.mode))
         {
-            if(stat_buffer.size < 0xFFFFFFFFul)
-            { // currently we don't support Zip64 so maximum file size we can handle is 4Gb
-                m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
-                m_ScannedItems.push_back(_short_path, _prefix);
-                m_SourceTotalBytes += stat_buffer.size;
-            }
-            else
-                [m_Operation SayAbout4Gb:fullpath];
+            m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
+            m_ScannedItems.push_back(_short_path, _prefix);
+            m_SourceTotalBytes += stat_buffer.size;
         }
         else if(S_ISDIR(stat_buffer.mode))
         {

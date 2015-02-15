@@ -23,5 +23,4 @@
 - (OperationDialogAlert *)OnCantAccessSourceDir:(NSError*)_error forPath:(const char *)_path;
 - (OperationDialogAlert *)OnReadError:(NSError*)_error forPath:(const char *)_path;
 - (OperationDialogAlert *)OnWriteError:(NSError*)_error;
-- (void) SayAbout4Gb:(const char*) _path;
 @end

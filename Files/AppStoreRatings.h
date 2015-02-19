@@ -33,9 +33,9 @@ private:
     
     RatingState State();
     void SetState(RatingState _state);
-    unsigned Runs();
-    void SetRuns(unsigned _runs);
-    unsigned DaysUsed();
+    int Runs();
+    void SetRuns(int _runs);
+    int DaysUsed();
     void SetLaterDate();
     bool IsLaterDue();
     

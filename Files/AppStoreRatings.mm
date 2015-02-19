@@ -124,23 +124,23 @@ void AppStoreRatings::SetState(RatingState _state)
     [NSUserDefaults.standardUserDefaults setInteger:(int)_state forKey:g_StateKey];
 }
 
-unsigned AppStoreRatings::Runs()
+int AppStoreRatings::Runs()
 {
-    return (unsigned)[NSUserDefaults.standardUserDefaults integerForKey:g_RunsKey];
+    return (int)[NSUserDefaults.standardUserDefaults integerForKey:g_RunsKey];
 }
 
-void AppStoreRatings::SetRuns(unsigned _runs)
+void AppStoreRatings::SetRuns(int _runs)
 {
     [NSUserDefaults.standardUserDefaults setInteger:_runs forKey:g_RunsKey];
 }
 
-unsigned AppStoreRatings::DaysUsed()
+int AppStoreRatings::DaysUsed()
 {
     if(NSData *d = [NSUserDefaults.standardUserDefaults dataForKey:g_FirstKey]) {
         NSDate *first_run = (NSDate*)[NSUnarchiver unarchiveObjectWithData:d];
         if([first_run isKindOfClass:NSDate.class]) {
             NSTimeInterval diff = first_run.timeIntervalSinceNow;
-            return unsigned(duration_cast<hours>(seconds(long(-diff))).count() / 24);
+            return int(duration_cast<hours>(seconds(long(-diff))).count() / 24);
         }
     }
     

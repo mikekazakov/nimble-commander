@@ -280,7 +280,7 @@ void FileCopyOperationJobGenericToGeneric::ProcessItem(const chained_strings::no
                 destinationpath /= *i++;
     }
 
-    if(sourcepath == destinationpath)
+    if(m_SrcHost == m_DstHost && sourcepath == destinationpath)
         return;
     
     if(destinationpath.filename() == ".")

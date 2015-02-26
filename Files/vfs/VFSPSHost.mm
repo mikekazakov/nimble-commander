@@ -591,3 +591,15 @@ string VFSPSHost::VerboseJunctionPath() const
 {
     return "[psfs]:";
 }
+
+int VFSPSHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
+{
+    _stat.volume_name = "Processes List";
+    _stat.avail_bytes = _stat.free_bytes = 0;
+    
+    lock_guard<mutex> lock(m_Lock);
+    int total_size = 0;
+    for_each( begin(m_Data->files), end(m_Data->files), [&](auto &i){ total_size += i.length(); } );
+    _stat.total_bytes = total_size;
+    return 0;
+}

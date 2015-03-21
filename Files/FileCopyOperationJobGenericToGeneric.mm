@@ -43,6 +43,9 @@ void FileCopyOperationJobGenericToGeneric::Init(chained_strings _src_files,
     
     m_OrigSrcHost = _src_host;
     m_OrigDstHost = _dst_host;
+    
+    if(m_Options.force_overwrite)
+        m_OverwriteAll = true;    
 }
 
 void FileCopyOperationJobGenericToGeneric::Do()

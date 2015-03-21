@@ -141,6 +141,9 @@ void FileCopyOperationJobNativeToNative::Init(chained_strings _files, // passing
     m_Options = _opts;
     strcpy(m_Destination, _dest);
     strcpy(m_SourceDirectory, _root);
+    
+    if(m_Options.force_overwrite)
+        m_OverwriteAll = true;
 }
 
 void FileCopyOperationJobNativeToNative::Do()
@@ -1006,6 +1009,7 @@ bool FileCopyOperationJobNativeToNative::CopyFileTo(const char *_src, const char
     mode_t oldumask;
     unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
     bool io_docancel = false;
+    bool need_dst_truncate = false;
     
     m_Stats.SetCurrentItem(_src);
     
@@ -1070,6 +1074,7 @@ statsource: // get information about source file
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
         preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size;
+        need_dst_truncate = true;
         goto decend;
     decappend:
         dstopenflags = O_WRONLY;
@@ -1115,8 +1120,13 @@ opendest: // open file descriptor for destination
         // tell systme to preallocate space for data since we dont want to trash our disk
         FileCopyOperationJob::PreallocateSpace(preallocate_delta, destinationfd);
         
-        // set right size for destination file for preallocating itself
+        // truncate is needed for actual preallocation
+        need_dst_truncate = true;
+    }
+    
+    if( need_dst_truncate ) {
     dotruncate:
+        // set right size for destination file for preallocating itself
         if( ftruncate(destinationfd, totaldestsize) == -1 ) {
             // failed to set dest file size
             if(m_SkipAll) goto cleanup;
@@ -1127,6 +1137,7 @@ opendest: // open file descriptor for destination
             if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
         }
     }
+    
     
 dolseek: // find right position in destination file
     if(startwriteoff > 0 && lseek(destinationfd, startwriteoff, SEEK_SET) == -1)

@@ -28,7 +28,8 @@ struct FileCopyOperationOptions
     bool copy_xattrs = true;
     bool copy_file_times = true;
     bool copy_unix_flags = true;
-    bool copy_unix_owners = true;    
+    bool copy_unix_owners = true;
+    bool force_overwrite = false;
 };
 
 @interface FileCopyOperation : Operation

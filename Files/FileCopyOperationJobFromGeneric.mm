@@ -68,6 +68,9 @@ void FileCopyOperationJobFromGeneric::Init(chained_strings _src_files,
         
     strcpy(m_Destination, _dest);
     if(m_Destination[strlen(m_Destination) - 1] != '/') strcat(m_Destination, "/");
+    
+    if(m_Options.force_overwrite)
+        m_OverwriteAll = true;    
 }
 
 void FileCopyOperationJobFromGeneric::Do()
@@ -348,7 +351,8 @@ bool FileCopyOperationJobFromGeneric::CopyFileTo(const char *_src, const char *_
     unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0, totaldestsize=0;
     bool io_docancel = false;
     char *readbuf = (char*)m_Buffer1.get(), *writebuf = (char*)m_Buffer2.get();
-
+    bool need_dst_truncate = false;
+    
 statsource:
     ret = m_SrcHost->Stat(_src, src_stat_buffer, 0, 0);
     if(ret < 0)
@@ -410,6 +414,7 @@ opensource:
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
         preallocate_delta = src_stat_buffer.size - dst_stat_buffer.st_size;
+        need_dst_truncate = true;
         goto decend;
     decappend:
         dstopenflags = O_WRONLY;
@@ -456,8 +461,13 @@ opendest: // open file descriptor for destination
         // tell systme to preallocate space for data since we dont want to trash our disk
         FileCopyOperationJob::PreallocateSpace(preallocate_delta, destinationfd);
 
-        // set right size for destination file
+        // truncate is needed for actual preallocation
+        need_dst_truncate = true;
+    }
+    
+    if( need_dst_truncate ) {
     dotruncate:
+        // set right size for destination file
         if(ftruncate(destinationfd, totaldestsize) == -1) {
             // failed to set dest file size
             if(m_SkipAll) goto cleanup;

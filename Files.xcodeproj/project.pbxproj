@@ -447,6 +447,7 @@
 		CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
 		CFAA2AB2196BA56B0036B388 /* TermShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */; };
 		CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
+		CFABC4AD1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; };
 		CFAC50D01714018C00A3E5C5 /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */; };
 		CFAC50D31714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAC50D11714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm */; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
@@ -1278,6 +1279,7 @@
 		CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermShellTask_Tests.mm; sourceTree = "<group>"; };
 		CFAADAB01930E02200D30699 /* PanelController+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+Menu.h"; sourceTree = "<group>"; };
 		CFAADAB11930E02200D30699 /* PanelController+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+Menu.mm"; sourceTree = "<group>"; };
+		CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeCopy_Tests.mm; sourceTree = "<group>"; };
 		CFAC50CE1714018C00A3E5C5 /* FileCopyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCopyOperation.h; sourceTree = "<group>"; };
 		CFAC50CF1714018C00A3E5C5 /* FileCopyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperation.mm; sourceTree = "<group>"; };
 		CFAC50D11714027F00A3E5C5 /* FileCopyOperationJobNativeToNative.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCopyOperationJobNativeToNative.mm; sourceTree = "<group>"; };
@@ -1899,6 +1901,7 @@
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
 				CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */,
+				CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */,
 				CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */,
 				CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */,
 				CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */,
@@ -3069,6 +3072,7 @@
 				CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */,
 				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
 				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
+				CFABC4AD1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm in Sources */,
 				CF7C93C31A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm in Sources */,
 				CFB1E08319F8ED4300AD567A /* Encodings_Tests.mm in Sources */,
 				CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */,

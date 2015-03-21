@@ -275,6 +275,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
  
     auto dir = make_shared<VFSGenericListing>(_path, shared_from_this());
     bool need_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && strcmp(_path, "/") != 0;
+    bool need_dummy_dot_dot = need_dot_dot;
     
     if(need_dot_dot)
         dir->m_Items.emplace_back(); // reserve a space for dot-dot entry
@@ -296,6 +297,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
                 continue; // skip .. for root directory
             
             isdotdot = true;
+            need_dummy_dot_dot = false;
         }
         else { // all other cases
             dir->m_Items.emplace_back();
@@ -333,6 +335,19 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     }
     
     libssh2_sftp_closedir(sftp_handle);
+    
+    if( need_dummy_dot_dot ) {
+        auto &it = dir->m_Items[0];
+        it.m_Name = strdup("..");
+        it.m_NameLen = strlen("..");
+        it.m_CFName = CFStringCreateWithCString(0, "..", kCFStringEncodingUTF8);
+        it.m_NeedReleaseName = true;
+        it.m_NeedReleaseCFName = true;
+        it.m_Mode = S_IFDIR|S_IRWXU;
+        it.m_Type = DT_DIR;
+        it.m_Size = VFSListingItem::InvalidSize;
+        it.FindExtension();
+    }
 
     // check for a symlinks and read additional info
     for(auto &i: *dir ){

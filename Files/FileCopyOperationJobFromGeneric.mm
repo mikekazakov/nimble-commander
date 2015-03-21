@@ -413,8 +413,9 @@ opensource:
         erase_xattrs = true;
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
-        preallocate_delta = src_stat_buffer.size - dst_stat_buffer.st_size;
-        need_dst_truncate = true;
+        preallocate_delta = int64_t(src_stat_buffer.size) - dst_stat_buffer.st_size;
+        if(src_stat_buffer.size < dst_stat_buffer.st_size)
+            need_dst_truncate = true;
         goto decend;
     decappend:
         dstopenflags = O_WRONLY;

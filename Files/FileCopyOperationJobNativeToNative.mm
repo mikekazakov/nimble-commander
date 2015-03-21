@@ -1074,7 +1074,8 @@ statsource: // get information about source file
         unlink_on_stop = true;
         dest_sz_on_stop = 0;
         preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size;
-        need_dst_truncate = true;
+        if(src_stat_buffer.st_size < dst_stat_buffer.st_size)
+            need_dst_truncate = true;
         goto decend;
     decappend:
         dstopenflags = O_WRONLY;

@@ -64,6 +64,55 @@
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
 
+- (void)testOverwriteBugRegressionReversion
+{
+    // reversion of testOverwriteBugRegression
+    auto dir = self.makeTmpDir;
+    auto dst = dir / "dest.zzz";
+    auto host = VFSNativeHost::SharedHost();
+    int result;
+    
+    __block bool finished = false;
+    
+    {
+        FileCopyOperationOptions opts;
+        opts.docopy = true;
+        FileCopyOperation *op = [FileCopyOperation alloc];
+        op = [op initWithFiles:chained_strings("overwrite_test_small.zzz")
+                          root:(g_DataPref / "operations/copying/").c_str()
+                          dest:dst.c_str()
+                       options:opts];
+        
+        [op AddOnFinishHandler:^{ finished = true; }];
+        [op Start];
+        [self waitUntilFinish:finished];
+    }
+    
+    XCTAssert( VFSEasyCompareFiles((g_DataPref / "operations/copying/overwrite_test_small.zzz").c_str(), host, dst.c_str(), host, result) == 0 );
+    XCTAssert( result == 0);
+    
+    finished = false;
+    {
+        FileCopyOperationOptions opts;
+        opts.docopy = true;
+        opts.force_overwrite = true;
+        FileCopyOperation *op = [FileCopyOperation alloc];
+        op = [op initWithFiles:chained_strings("overwrite_test_big.zzz")
+                          root:(g_DataPref / "operations/copying/").c_str()
+                          dest:dst.c_str()
+                       options:opts];
+        
+        [op AddOnFinishHandler:^{ finished = true; }];
+        [op Start];
+        [self waitUntilFinish:finished];
+    }
+    
+    XCTAssert( VFSEasyCompareFiles((g_DataPref / "operations/copying/overwrite_test_big.zzz").c_str(), host, dst.c_str(), host, result) == 0 );
+    XCTAssert( result == 0);
+    
+    XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
+}
+
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];

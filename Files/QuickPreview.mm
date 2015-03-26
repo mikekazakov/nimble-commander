@@ -65,16 +65,11 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void) doPreviewItemNative:(const string&)_path
 {
-//  NB! On Files Lite getting this error on some file types, like ".csv", ".doc", ".docx".
-//  when network client is enabled in sandbox entitlements this error is gone and everything seems to be fine.
-//  looks like some QuickLook plugins somehow relies on network functionality for it's XPC or something.
-//  may be a bug.
-//
-//    2014-11-24 15:06:05.610 Files Lite[33149:4252997] ***storageTaskManagerExistsWithIdentifier:withIdentifier failed: Error Domain=NSCocoaErrorDomain Code=4099 "Couldn’t communicate with a helper application." (The connection to service named com.apple.nsurlstorage-cache was invalidated.) UserInfo=0x608000675540 {NSDebugDescription=The connection to service named com.apple.nsurlstorage-cache was invalidated.}; {
-//        NSDebugDescription = "The connection to service named com.apple.nsurlstorage-cache was invalidated.";
-//    }
-
-    self.previewItem = [NSURL fileURLWithPath:[NSString stringWithUTF8String:_path.c_str()]];
+    NSString *fn = [NSString stringWithUTF8StdString:_path];
+    if(!fn)
+        return;
+    
+    self.previewItem = [NSURL fileURLWithPath:fn];
 }
 
 - (void) doPreviewItemVFS:(const string&)_path vfs:(const VFSHostPtr&)_host ticket:(uint64_t)_ticket
@@ -97,7 +92,7 @@ static const nanoseconds g_Delay = 100ms;
         if(!tnfs.CopySingleFile(_path, _host, tmp))
             return;
         NSString *fn = [NSString stringWithUTF8StdString:tmp];
-        if(!m_Closed && _ticket == m_CurrentPreviewTicket)
+        if(!m_Closed && fn && _ticket == m_CurrentPreviewTicket)
             dispatch_to_main_queue( [=]{
                 if(!m_Closed)
                     self.previewItem = [NSURL fileURLWithPath:fn];
@@ -116,7 +111,7 @@ static const nanoseconds g_Delay = 100ms;
         if(!tnfs.CopyDirectory(_path, _host, g_MaxFileSizeForVFSQL, nullptr, tmp))
             return;
         NSString *fn = [NSString stringWithUTF8StdString:tmp];
-        if(!m_Closed && _ticket == m_CurrentPreviewTicket)
+        if(!m_Closed && fn &&_ticket == m_CurrentPreviewTicket)
             dispatch_to_main_queue( [=]{
                 if(!m_Closed)
                     self.previewItem = [NSURL fileURLWithPath:fn];

@@ -265,12 +265,15 @@ bool FileDeletionOperationJob::DoDelete(const char *_full_path, bool _is_dir)
 bool FileDeletionOperationJob::DoMoveToTrash(const char *_full_path, bool _is_dir)
 {
     NSString *str  = [NSString stringWithUTF8String:_full_path];
+    if(!str)
+        return false;
+    
     NSURL *path = [NSURL fileURLWithPath:str isDirectory:_is_dir];
     NSURL *newpath;
     NSError *error;
-    // Available in OS X v10.8 and later
+
 retry_delete:
-    if(![[NSFileManager defaultManager] trashItemAtURL:path resultingItemURL:&newpath error:&error])
+    if(![NSFileManager.defaultManager trashItemAtURL:path resultingItemURL:&newpath error:&error])
     {
         if (!m_SkipAll)
         {

@@ -65,7 +65,7 @@ static NSString *TitleForConnection( SavedNetworkConnectionsManager::AbstractCon
     if(m_Connections.empty())
         return 2;
     else
-        return m_Connections.size() + 4;
+        return m_Connections.size()*2 + 4;
 }
 
 - (BOOL)menu:(NSMenu*)menu updateItem:(NSMenuItem*)item atIndex:(NSInteger)index shouldCancel:(BOOL)shouldCancel
@@ -79,20 +79,29 @@ static NSString *TitleForConnection( SavedNetworkConnectionsManager::AbstractCon
         [menu insertItem:[self.recentConnectionsMenuItem copy] atIndex:index];
     }
     else if(index >= 4) {
-        auto conn_num = index - 4;
+        auto conn_num = (index - 4) / 2;
         if(conn_num >= m_Connections.size())
             return true;
         auto &c = m_Connections.at(conn_num);
-        item.title = TitleForConnection(*c);
+
         item.indentationLevel = 1;
+        item.title = TitleForConnection(*c);
         item.representedObject = [[ConnectionsMenuDelegateInfoWrapper alloc] initWithConnection:c];
-//clang gone mad, so mute nonsence warning
+
+        //clang gone mad, so mute nonsence warning
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
-        item.action = @selector(OnGoToSavedConnectionItem:);
+        if(index % 2 == 0) {
+            item.action = @selector(OnGoToSavedConnectionItem:);
+        }
+        else {
+            item.title = [NSString stringWithFormat:@"♻ %@", item.title];
+            item.keyEquivalentModifierMask = NSAlternateKeyMask;
+            item.alternate = true;
+            item.action = @selector(OnDeleteSavedConnectionItem:);
+        }
 #pragma clang diagnostic pop
     }
-    
     return true;
 }
 

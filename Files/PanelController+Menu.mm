@@ -331,6 +331,24 @@
     }
 }
 
+- (IBAction) OnDeleteSavedConnectionItem:(id)sender
+{
+    if(!sender ||
+       ![sender isKindOfClass:NSMenuItem.class] ||
+       !((NSMenuItem*)sender).representedObject ||
+       ![((NSMenuItem*)sender).representedObject isKindOfClass:ConnectionsMenuDelegateInfoWrapper.class])
+        return;
+    ConnectionsMenuDelegateInfoWrapper *wr = ((NSMenuItem*)sender).representedObject;    
+    
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure want to delete this connection?", "Asking user if he really wants to delete information about a stored connection");
+    alert.informativeText = NSLocalizedString(@"You can't undo this action.", "");
+    [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"No", "")];
+    if([alert runModal] == NSAlertFirstButtonReturn)
+        SavedNetworkConnectionsManager::Instance().RemoveConnection(wr.object);
+}
+
 - (IBAction)OnOpen:(id)sender { // enter
     [self HandleGoIntoDirOrOpenInSystem];
 }

@@ -19,9 +19,16 @@ public:
     
     /**
      * inserts a connection in front of connections list.
-     * remove duplicates if any
+     * remove duplicates if any.
+     * saving changes immediately.
      */
     void InsertConnection(const shared_ptr<AbstractConnection> &_conn);
+    
+    /**
+     * removes connection from a stored list if found idential or equal one.
+     * saving changes immediately.
+     */
+    void RemoveConnection(const shared_ptr<AbstractConnection> &_conn);
     
     vector<shared_ptr<AbstractConnection>> Connections() const;
     

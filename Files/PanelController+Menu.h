@@ -11,6 +11,7 @@
 @interface PanelController (Menu)
 
 - (IBAction)OnGoToSavedConnectionItem:(id)sender;
+- (IBAction)OnDeleteSavedConnectionItem:(id)sender;
 - (IBAction)OnFileViewCommand:(id)sender;
 
 @end

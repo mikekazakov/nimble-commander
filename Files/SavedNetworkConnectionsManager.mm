@@ -158,6 +158,20 @@ void SavedNetworkConnectionsManager::InsertConnection(const shared_ptr<AbstractC
     SaveConnections(m_Connections);
 }
 
+void SavedNetworkConnectionsManager::RemoveConnection(const shared_ptr<AbstractConnection> &_conn)
+{
+    assert(_conn);
+    lock_guard<mutex> lock(m_Lock);
+    m_Connections.erase(remove_if(begin(m_Connections),
+                                  end(m_Connections),
+                                  [&](auto &_t) {
+                                      return _t == _conn || _t->Equal(*_conn);
+                                  }),
+                        end(m_Connections)
+                        );
+    SaveConnections(m_Connections);
+}
+
 bool SavedNetworkConnectionsManager::SetPassword(const shared_ptr<AbstractConnection> &_conn, const string& _password)
 {
     assert(_conn);

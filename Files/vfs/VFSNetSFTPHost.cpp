@@ -494,9 +494,9 @@ int VFSNetSFTPHost::StatFS(const char *_path,
     if(rc < 0)
         return VFSErrorForConnection(*conn);
     
-    _stat.total_bytes = statfs.f_blocks * statfs.f_bsize;
-    _stat.avail_bytes = statfs.f_bavail * statfs.f_bsize;
-    _stat.free_bytes  = statfs.f_ffree  * statfs.f_bsize;
+    _stat.total_bytes = statfs.f_blocks * statfs.f_frsize;
+    _stat.avail_bytes = statfs.f_bavail * statfs.f_frsize;
+    _stat.free_bytes  = statfs.f_ffree  * statfs.f_frsize;
     _stat.volume_name.clear(); // mb some dummy name here?
     
     return 0;

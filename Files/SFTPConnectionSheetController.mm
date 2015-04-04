@@ -66,6 +66,7 @@ static const auto g_SSHdir = CommonPaths::Get(CommonPaths::Home) + ".ssh/";
         return;
     
     auto conn = m_SavedConnections[ind];
+    self.title = [NSString stringWithUTF8StdString:conn->title];
     self.server = [NSString stringWithUTF8StdString:conn->host];
     self.username = [NSString stringWithUTF8StdString:conn->user];
     self.keypath = [NSString stringWithUTF8StdString:conn->keypath];

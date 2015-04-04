@@ -52,8 +52,10 @@ private:
 
 struct SavedNetworkConnectionsManager::AbstractConnection
 {
-    AbstractConnection();
+    AbstractConnection(const string &_title);
     virtual ~AbstractConnection();
+    
+    const string title; // arbitrary and should not be used in Equal() comparison
     
     virtual bool Equal(const AbstractConnection& _rhs) const = 0;
     virtual string KeychainWhere() const = 0;
@@ -62,7 +64,7 @@ struct SavedNetworkConnectionsManager::AbstractConnection
 
 struct SavedNetworkConnectionsManager::FTPConnection : AbstractConnection
 {
-    FTPConnection( const string &_user, const string &_host, const string &_path, long  _port );
+    FTPConnection( const string &_title, const string &_user, const string &_host, const string &_path, long  _port );
     const string user;
     const string host;
     const string path;
@@ -75,7 +77,7 @@ struct SavedNetworkConnectionsManager::FTPConnection : AbstractConnection
 
 struct SavedNetworkConnectionsManager::SFTPConnection : AbstractConnection
 {
-    SFTPConnection( const string &_user, const string &_host, const string &_keypath, long  _port );
+    SFTPConnection( const string &_title, const string &_user, const string &_host, const string &_keypath, long  _port );
     const string user;
     const string host;
     const string keypath;

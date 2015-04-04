@@ -195,10 +195,16 @@
         [self HandleGoIntoDirOrArchive];
 }
 
-- (void) GoToFTPWithOptions:(const VFSNetFTPOptions&)_opts server:(const string&)_server path:(const string&)_path
+- (void) GoToFTPWithConnection:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_connection
+                      password:(const string&)_passwd
 {
-    auto host = make_shared<VFSNetFTPHost>(_server.c_str());
-    int ret = host->Open(_path.c_str(), _opts);
+    VFSNetFTPOptions opts;
+    opts.user = _connection->user;
+    opts.passwd = _passwd;
+    opts.port = _connection->port;
+    
+    auto host = make_shared<VFSNetFTPHost>(_connection->host.c_str());
+    int ret = host->Open(_connection->path.c_str(), opts);
     if(ret != 0)
         return dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
@@ -209,47 +215,49 @@
         });
     dispatch_to_main_queue([=]{
         m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-        [self GoToDir:_path vfs:host select_entry:"" async:true];
+        [self GoToDir:_connection->path vfs:host select_entry:"" async:true];
     });
     
     // save successful connection to history
-    auto saved = make_shared<SavedNetworkConnectionsManager::FTPConnection>( _opts.user, _server, _path, _opts.port );
-    SavedNetworkConnectionsManager::Instance().InsertConnection(saved);
-    SavedNetworkConnectionsManager::Instance().SetPassword(saved, _opts.passwd);
+    SavedNetworkConnectionsManager::Instance().InsertConnection(_connection);
+    SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
 }
 
 - (IBAction) OnGoToFTP:(id)sender {
     FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(returnCode != NSModalResponseOK)
+        if(returnCode != NSModalResponseOK || sheet.server == nil)
             return;
-
+        
+        string server = sheet.server.UTF8String;
+        string title = sheet.title.UTF8String ? sheet.title.UTF8String : "";
+        string username = sheet.username ? sheet.username.UTF8String : "";
+        string password = sheet.password ? sheet.password.UTF8String : "";
+        string path = sheet.path ? sheet.path.UTF8String : "/";
+        if(path.empty() || path[0] != '/')
+            path = "/";
+        long port = 21;
+        if(sheet.port.intValue != 0)
+            port = sheet.port.intValue;
+        auto conn = make_shared<SavedNetworkConnectionsManager::FTPConnection>( title, username, server, path, port );
+        
         m_DirectoryLoadingQ->Run([=]{
-            if(sheet.server == nil)
-                return;
-            
-            string server =  sheet.server.UTF8String;
-            string username = sheet.username ? sheet.username.UTF8String : "";
-            string password = sheet.password ? sheet.password.UTF8String : "";
-            string path = sheet.path ? sheet.path.UTF8String : "/";
-            if(path.empty() || path[0] != '/')
-                path = "/";
-            
-            VFSNetFTPOptions opts;
-            opts.user = username;
-            opts.passwd = password;
-            if(sheet.port.intValue != 0)
-                opts.port = sheet.port.intValue;
-            
-            [self GoToFTPWithOptions:opts server:server path:path];
+            [self GoToFTPWithConnection:conn password:password];
         });
     }];
 }
 
-- (void) GoToSFTPWithOptions:(const VFSNetSFTPOptions&)_opts server:(const string&)_server
+- (void) GoToSFTPWithConnection:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_connection
+                         password:(const string&)_passwd
 {
-    auto host = make_shared<VFSNetSFTPHost>(_server.c_str());
-    int ret = host->Open(_opts);
+    VFSNetSFTPOptions opts;
+    opts.user = _connection->user;
+    opts.passwd = _passwd;
+    opts.port = _connection->port;
+    opts.keypath = _connection->keypath;
+
+    auto host = make_shared<VFSNetSFTPHost>(_connection->host.c_str());
+    int ret = host->Open(opts);
     if(ret != 0)
         return dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
@@ -264,34 +272,28 @@
     });
     
     // save successful connection to history
-    auto saved = make_shared<SavedNetworkConnectionsManager::SFTPConnection>( _opts.user, _server, _opts.keypath, _opts.port );
-    SavedNetworkConnectionsManager::Instance().InsertConnection(saved);
-    SavedNetworkConnectionsManager::Instance().SetPassword(saved, _opts.passwd);
+    SavedNetworkConnectionsManager::Instance().InsertConnection(_connection);
+    SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
 }
 
 - (IBAction) OnGoToSFTP:(id)sender {
     SFTPConnectionSheetController *sheet = [SFTPConnectionSheetController new];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(returnCode != NSModalResponseOK)
+        if(returnCode != NSModalResponseOK || sheet.server == nil)
             return;
         
+        string server = sheet.server.UTF8String;
+        string title = sheet.title ? sheet.title.UTF8String : "";
+        string username = sheet.username ? sheet.username.UTF8String : "";
+        string password = sheet.password ? sheet.password.UTF8String : "";
+        string keypath = sheet.keypath ? sheet.keypath.fileSystemRepresentationSafe : "";
+        long port = 22;
+        if(sheet.port.intValue != 0)
+            port = sheet.port.intValue;
+
+        auto conn = make_shared<SavedNetworkConnectionsManager::SFTPConnection>( title, username, server, keypath, port );
         m_DirectoryLoadingQ->Run([=]{
-            if(sheet.server == nil)
-                return;
-            
-            string server =  sheet.server.UTF8String;
-            string username = sheet.username ? sheet.username.UTF8String : "";
-            string password = sheet.password ? sheet.password.UTF8String : "";
-            string keypath = sheet.keypath ? sheet.keypath.fileSystemRepresentationSafe : "";
-            
-            VFSNetSFTPOptions opts;
-            opts.user = username;
-            opts.passwd = password;
-            opts.keypath = keypath;
-            if(sheet.port.intValue != 0)
-                opts.port = sheet.port.intValue;
-            
-            [self GoToSFTPWithOptions:opts server:server];
+            [self GoToSFTPWithConnection:conn password:password];
         });
     }];
 }
@@ -308,25 +310,16 @@
         string passwd;
         if(!SavedNetworkConnectionsManager::Instance().GetPassword(wr.object, passwd))
             return;
-        VFSNetFTPOptions opts;
-        opts.user = ftp->user;
-        opts.passwd = passwd;
-        opts.port = ftp->port;
         m_DirectoryLoadingQ->Run([=]{
-            [self GoToFTPWithOptions:opts server:ftp->host path:ftp->path];
+            [self GoToFTPWithConnection:ftp password:passwd];
         });
     }
     else if(auto sftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::SFTPConnection>(wr.object)) {
         string passwd;
         if(!SavedNetworkConnectionsManager::Instance().GetPassword(wr.object, passwd))
             return;
-        VFSNetSFTPOptions opts;
-        opts.user = sftp->user;
-        opts.passwd = passwd;
-        opts.port = sftp->port;
-        opts.keypath = sftp->keypath;
         m_DirectoryLoadingQ->Run([=]{
-            [self GoToSFTPWithOptions:opts server:sftp->host];
+            [self GoToSFTPWithConnection:sftp password:passwd];
         });
     }
 }

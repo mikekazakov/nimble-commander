@@ -525,7 +525,7 @@
 		CF540EAA1A90804C003CD7A7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0620;
 				ORGANIZATIONNAME = "MIchael Kazakov";
 				TargetAttributes = {
 					CF540EB11A90804C003CD7A7 = {
@@ -752,6 +752,7 @@
 		CF540EB71A90804C003CD7A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -767,6 +768,7 @@
 		CF540EB81A90804C003CD7A7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

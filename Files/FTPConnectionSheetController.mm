@@ -48,6 +48,7 @@
         return;
     
     auto conn = m_SavedConnections[ind];
+    self.title = [NSString stringWithUTF8StdString:conn->title];
     self.server = [NSString stringWithUTF8StdString:conn->host];
     self.username = [NSString stringWithUTF8StdString:conn->user];
     self.path = [NSString stringWithUTF8StdString:conn->path];

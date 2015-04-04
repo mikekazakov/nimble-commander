@@ -9,6 +9,7 @@
 #import "SheetController.h"
 
 @interface SFTPConnectionSheetController : SheetController
+@property (strong) NSString *title;
 @property (strong) NSString *server;
 @property (strong) NSString *username;
 @property (strong) NSString *password;

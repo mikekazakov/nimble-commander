@@ -12,10 +12,21 @@
 
 static NSString *g_DefKey = @"FilePanelsSavedNetworkConnections";
 
+inline static string TitleFromStoredConnectionIfAny(NSDictionary *_from)
+{
+    id t = _from[@"title"];
+    if( !t )
+        return "";
+    if( ![t isKindOfClass:NSString.class] )
+        return "";
+    return [t UTF8String];
+}
+
 static NSDictionary *SaveFTP(const SavedNetworkConnectionsManager::FTPConnection& _conn)
 {
     return @{
         @"type": @"ftp",
+        @"title": [NSString stringWithUTF8StdString:_conn.title],
         @"user": [NSString stringWithUTF8StdString:_conn.user],
         @"host": [NSString stringWithUTF8StdString:_conn.host],
         @"path": [NSString stringWithUTF8StdString:_conn.path],
@@ -38,6 +49,7 @@ static shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> LoadFTP(NS
         return nullptr;
     return make_shared<SavedNetworkConnectionsManager::FTPConnection>
     (
+     TitleFromStoredConnectionIfAny(_from),
      [_from[@"user"] UTF8String],
      [_from[@"host"] UTF8String],
      [_from[@"path"] fileSystemRepresentationSafe],
@@ -49,6 +61,7 @@ static NSDictionary *SaveSFTP(const SavedNetworkConnectionsManager::SFTPConnecti
 {
     return @{
         @"type": @"sftp",
+        @"title": [NSString stringWithUTF8StdString:_conn.title],
         @"user": [NSString stringWithUTF8StdString:_conn.user],
         @"host": [NSString stringWithUTF8StdString:_conn.host],
         @"keypath": [NSString stringWithUTF8StdString:_conn.keypath],
@@ -71,6 +84,7 @@ static shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> LoadSFTP(N
         return nullptr;
     return make_shared<SavedNetworkConnectionsManager::SFTPConnection>
     (
+     TitleFromStoredConnectionIfAny(_from),
      [_from[@"user"] UTF8String],
      [_from[@"host"] UTF8String],
      [_from[@"keypath"] fileSystemRepresentationSafe],
@@ -78,7 +92,8 @@ static shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> LoadSFTP(N
      );
 }
 
-SavedNetworkConnectionsManager::AbstractConnection::AbstractConnection()
+SavedNetworkConnectionsManager::AbstractConnection::AbstractConnection(const string &_title):
+    title(_title)
 {
 }
 
@@ -86,7 +101,8 @@ SavedNetworkConnectionsManager::AbstractConnection::~AbstractConnection()
 {
 }
 
-SavedNetworkConnectionsManager::FTPConnection::FTPConnection(const string &_user, const string &_host, const string &_path, long  _port):
+SavedNetworkConnectionsManager::FTPConnection::FTPConnection(const string &_title, const string &_user, const string &_host, const string &_path, long  _port):
+    AbstractConnection(_title),
     user(_user), host(_host), path(_path), port(_port)
 {
 }
@@ -109,8 +125,9 @@ bool SavedNetworkConnectionsManager::FTPConnection::Equal(const AbstractConnecti
     return user == rhs.user && host == rhs.host && path == rhs.path && port == rhs.port;
 }
 
-SavedNetworkConnectionsManager::SFTPConnection::SFTPConnection(const string &_user, const string &_host, const string &_keypath, long  _port):
-user(_user), host(_host), keypath(_keypath), port(_port)
+SavedNetworkConnectionsManager::SFTPConnection::SFTPConnection(const string &_title, const string &_user, const string &_host, const string &_keypath, long  _port):
+    AbstractConnection(_title),
+    user(_user), host(_host), keypath(_keypath), port(_port)
 {
 }
 

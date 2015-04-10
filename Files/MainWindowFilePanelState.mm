@@ -168,12 +168,14 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
     m_LeftPanelGoToButton.target = self;
     m_LeftPanelGoToButton.action = @selector(LeftPanelGoToButtonAction:);
-    [m_LeftPanelGoToButton SetOwner:self];
+    m_LeftPanelGoToButton.owner = self;
+    m_LeftPanelGoToButton.isRight = false;
     
     m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
     m_RightPanelGoToButton.target = self;
     m_RightPanelGoToButton.action = @selector(RightPanelGoToButtonAction:);
-    [m_RightPanelGoToButton SetOwner:self];
+    m_RightPanelGoToButton.owner = self;
+    m_RightPanelGoToButton.isRight = true;
     
     m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
     m_LeftPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
@@ -391,20 +393,12 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
                                  async:true];
 }
 
-- (IBAction)LeftPanelGoto:(id)sender{
-    NSPoint p = NSMakePoint(0, self.frame.size.height);
-    p = [self convertPoint:p toView:nil];
-    p = [self.window convertRectToScreen:NSMakeRect(p.x, p.y, 1, 1)].origin;
-    [m_LeftPanelGoToButton SetAnchorPoint:p IsRight:false];
-    [m_LeftPanelGoToButton performClick:self];
+- (IBAction)LeftPanelGoto:(id)sender {
+    [m_LeftPanelGoToButton popUp];
 }
 
-- (IBAction)RightPanelGoto:(id)sender{
-    NSPoint p = NSMakePoint(self.frame.size.width, self.frame.size.height);
-    p = [self convertPoint:p toView:nil];
-    p = [self.window convertRectToScreen:NSMakeRect(p.x, p.y, 1, 1)].origin;
-    [m_RightPanelGoToButton SetAnchorPoint:p IsRight:true];
-    [m_RightPanelGoToButton performClick:self];
+- (IBAction)RightPanelGoto:(id)sender {
+    [m_RightPanelGoToButton popUp];
 }
 
 - (bool) isPanelActive
@@ -588,14 +582,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(_panel == self.activePanelController)
         [self UpdateTitle];
     
-    [self updateTabNameForController:_panel];
-    
-    if(_panel == self.leftPanelController)
-        [m_LeftPanelGoToButton SetCurrentPath:_panel.currentDirectoryPath
-                                           at:_panel.vfs];
-    if(_panel == self.rightPanelController)
-        [m_RightPanelGoToButton SetCurrentPath:_panel.currentDirectoryPath
-                                            at:_panel.vfs];
+    [self updateTabNameForController:_panel];    
 }
 
 - (void) DidBecomeKeyWindow

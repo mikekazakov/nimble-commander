@@ -13,6 +13,7 @@
 #import "MainWindowController.h"
 #import "common_paths.h"
 #import "NativeFSManager.h"
+#import "PanelController.h"
 
 static size_t CommonCharsInPath(NSURL *_url, NSString *_path1)
 {
@@ -114,7 +115,7 @@ static NSMenuItem *TitleItem()
     vector<shared_ptr<NativeFileSystemInfo>> m_Volumes;
     vector<AdditionalPath> m_OtherPanelsPaths;
     
-    NSString           *m_CurrentPath;
+    NSString           *m_CurrentPath; // todo: switch to plain path
     weak_ptr<VFSHost>   m_CurrentVFS;
     
     NSPoint   m_AnchorPoint;
@@ -123,13 +124,15 @@ static NSMenuItem *TitleItem()
     __weak MainWindowFilePanelState *m_Owner;
 }
 
+@synthesize owner = m_Owner;
+@synthesize isRight = m_IsRight;
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {        
         [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(WillPopUp:)
+                                               selector:@selector(willPopUp:)
                                                    name:@"NSPopUpButtonWillPopUpNotification"
                                                  object:self];
         
@@ -230,8 +233,9 @@ static NSMenuItem *TitleItem()
     return s.fileSystemRepresentation;
 }
 
-- (void) WillPopUp:(NSNotification *) notification
+- (void)willPopUp:(NSNotification *) notification
 {
+    [self updateCurrentPanelPath];
     [self UpdateUrls];
     [self UpdateOtherPanelPaths];
     
@@ -324,6 +328,23 @@ static NSMenuItem *TitleItem()
     m_CurrentVFS = _vfs;
 }
 
+- (void)updateCurrentPanelPath
+{
+    m_CurrentPath = @"";
+    m_CurrentVFS.reset();
+    
+    auto *state = (MainWindowFilePanelState *) m_Owner;
+    if(!state)
+        return;
+    
+    auto *panel = m_IsRight ? state.rightPanelController : state.leftPanelController;
+    if(!panel)
+        return;
+    
+    m_CurrentPath = [NSString stringWithUTF8StdString:panel.currentDirectoryPath];
+    m_CurrentVFS = panel.vfs;
+}
+
 - (void)menuDidClose:(NSMenu *)menu
 {
     for(NSMenuItem* i in self.menu.itemArray)
@@ -334,6 +355,8 @@ static NSMenuItem *TitleItem()
 {
     if(self.window != nil)
         return NSZeroRect;
+    
+    // if we're here - then this button is not contained in a window - toolbar is hidden
     
     NSSize sz = self.menu.size;
     
@@ -350,10 +373,28 @@ static NSMenuItem *TitleItem()
     return rc;
 }
 
-- (void) SetAnchorPoint: (NSPoint)_point IsRight:(bool) _is_right
+- (void) popUp
 {
-    m_AnchorPoint = _point;
-    m_IsRight = _is_right;
+    auto *state = (MainWindowFilePanelState *) m_Owner;
+    if(!state) {
+        m_AnchorPoint = NSMakePoint(0, 0);
+        return;
+    }
+    
+    if(m_IsRight) {
+        NSPoint p = NSMakePoint(state.frame.size.width, state.frame.size.height);
+        p = [state convertPoint:p toView:nil];
+        p = [state.window convertRectToScreen:NSMakeRect(p.x, p.y, 1, 1)].origin;
+        m_AnchorPoint = p;
+    }
+    else {
+        NSPoint p = NSMakePoint(0, state.frame.size.height);
+        p = [state convertPoint:p toView:nil];
+        p = [state.window convertRectToScreen:NSMakeRect(p.x, p.y, 1, 1)].origin;
+        m_AnchorPoint = p;
+    }
+    
+    [self performClick:self];
 }
 
 @end

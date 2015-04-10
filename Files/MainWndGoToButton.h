@@ -13,9 +13,9 @@
 
 @interface MainWndGoToButton : NSPopUpButton<NSMenuDelegate>
 @property (nonatomic, readonly) string path;
+@property (nonatomic) __weak MainWindowFilePanelState *owner;
+@property (nonatomic) bool isRight;
 
-- (void) SetCurrentPath: (const string&)_path at:(VFSHostPtr)_vfs;
-- (void) SetOwner:(MainWindowFilePanelState*) _owner;
-- (void) SetAnchorPoint: (NSPoint)_point IsRight:(bool) _is_right; // screen coordinates
+- (void) popUp;
 
 @end

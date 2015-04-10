@@ -373,24 +373,44 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (IBAction)LeftPanelGoToButtonAction:(id)sender
 {
-    if(![PanelController ensureCanGoToNativeFolderSync:m_LeftPanelGoToButton.path])
+    auto *selection = m_LeftPanelGoToButton.selection;
+    if(!selection)
         return;
+    
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    [self.leftPanelController GoToDir:m_LeftPanelGoToButton.path
-                                  vfs:VFSNativeHost::SharedHost()
-                         select_entry:""
-                                async:true];
+    
+    if([selection isKindOfClass:MainWndGoToButtonSelectionVFSPath.class]) {
+        MainWndGoToButtonSelectionVFSPath *vfspath = (MainWndGoToButtonSelectionVFSPath *)selection;
+        VFSHostPtr host = vfspath.vfs.lock();
+        if(!host)
+            return;
+        
+        if(host->IsNativeFS() && ![PanelController ensureCanGoToNativeFolderSync:vfspath.path])
+            return;
+        
+        [self.leftPanelController GoToDir:vfspath.path vfs:host select_entry:"" async:true];
+    }
 }
 
 - (IBAction)RightPanelGoToButtonAction:(id)sender
 {
-    if(![PanelController ensureCanGoToNativeFolderSync:m_RightPanelGoToButton.path])
+    auto *selection = m_RightPanelGoToButton.selection;
+    if(!selection)
         return;
+    
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    [self.rightPanelController GoToDir:m_RightPanelGoToButton.path
-                                   vfs:VFSNativeHost::SharedHost()
-                          select_entry:""
-                                 async:true];
+    
+    if([selection isKindOfClass:MainWndGoToButtonSelectionVFSPath.class]) {
+        MainWndGoToButtonSelectionVFSPath *vfspath = (MainWndGoToButtonSelectionVFSPath *)selection;
+        VFSHostPtr host = vfspath.vfs.lock();
+        if(!host)
+            return;
+        
+        if(host->IsNativeFS() && ![PanelController ensureCanGoToNativeFolderSync:vfspath.path])
+            return;
+        
+        [self.rightPanelController GoToDir:vfspath.path vfs:host select_entry:"" async:true];
+    }
 }
 
 - (IBAction)LeftPanelGoto:(id)sender {
@@ -756,16 +776,14 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
 }
 
-- (void)GetFilePanelsNativePaths:(vector<string> &)_paths
+- (vector<tuple<string, VFSHostPtr> >)filePanelsCurrentPaths
 {
-    _paths.clear();
-    
+    vector<tuple<string, VFSHostPtr> > r;
     for(auto p: m_LeftPanelControllers)
-        if(p.vfs->IsNativeFS())
-            _paths.push_back(p.currentDirectoryPath);
+        r.emplace_back( p.currentDirectoryPath, p.vfs);
     for(auto p: m_RightPanelControllers)
-        if(p.vfs->IsNativeFS())
-            _paths.push_back(p.currentDirectoryPath);
+        r.emplace_back( p.currentDirectoryPath, p.vfs);
+    return r;
 }
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel

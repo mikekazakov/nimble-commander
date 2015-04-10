@@ -10,6 +10,7 @@
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
 #import "MainWindowStateProtocol.h"
 #import "chained_strings.h"
+#import "VFS.h"
 
 class PanelData;
 @class Operation;
@@ -57,7 +58,7 @@ class PanelData;
 - (void)PanelPathChanged:(PanelController*)_panel;
 - (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path;
 
-- (void)GetFilePanelsNativePaths:(vector<string> &)_paths;
+@property (readonly) vector< tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
 
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel;

@@ -6,15 +6,22 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "VFS.h"
 
 @class MainWindowFilePanelState;
 
+@interface MainWndGoToButtonSelection : NSObject
+@end
+
+@interface MainWndGoToButtonSelectionVFSPath : MainWndGoToButtonSelection
+@property string path;
+@property VFSHostWeakPtr vfs;
+@end
+
 @interface MainWndGoToButton : NSPopUpButton<NSMenuDelegate>
-@property (nonatomic, readonly) string path;
 @property (nonatomic) __weak MainWindowFilePanelState *owner;
 @property (nonatomic) bool isRight;
+@property (nonatomic, readonly) MainWndGoToButtonSelection *selection;
 
 - (void) popUp;
 

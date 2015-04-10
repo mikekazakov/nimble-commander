@@ -141,6 +141,7 @@ class VFSFile;
 class VFSPath;
 
 typedef shared_ptr<VFSHost>         VFSHostPtr;
+typedef weak_ptr<VFSHost>           VFSHostWeakPtr;
 typedef shared_ptr<VFSHostOptions>  VFSHostOptionsPtr;
 typedef shared_ptr<VFSFile>         VFSFilePtr;
 typedef function<bool()>            VFSCancelChecker;

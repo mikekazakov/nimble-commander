@@ -143,6 +143,8 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
 @end
 @implementation MainWndGoToButtonSelectionVFSPath
 @end
+@implementation MainWndGoToButtonSelectionSavedNetworkConnection
+@end
 
 @implementation MainWndGoToButton
 {
@@ -283,13 +285,17 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     [self synchronizeTitleAndSelectedItem];
     
     static const auto icon_size = NSMakeSize(NSFont.systemFontSize, NSFont.systemFontSize);
-
+    static auto network_image = []{
+        NSImage *m = [NSImage imageNamed:NSImageNameNetwork];
+        m.size = icon_size;
+        return m;
+    }();
+    
     size_t common_path_max = 0;
     NSMenuItem *common_item = nil;
 
-    int userdir_ind = 0;
-
     // Finder Favorites
+    int userdir_ind = 0;
     for (NSURL *url: m_FinderFavorites) {
         NSString *name;
         [url getResourceValue:&name forKey:NSURLLocalizedNameKey error:nil];
@@ -312,9 +318,8 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
             common_item = menuitem;
         }
 
-        menuitem.keyEquivalent = KeyEquivalentForUserDir(userdir_ind);
+        menuitem.keyEquivalent = KeyEquivalentForUserDir(userdir_ind++);
         menuitem.keyEquivalentModifierMask = 0;
-        ++userdir_ind;
     }
 
     [menu addItem:NSMenuItem.separatorItem];
@@ -336,6 +341,30 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
         if(common_path > common_path_max) {
             common_path_max = common_path;
             common_item = menuitem;
+        }
+    }
+    
+    // Recent Network Connections
+    if( true /* some checks from defaults*/) {
+        auto connections = SavedNetworkConnectionsManager::Instance().Connections();
+        int max = 4; // read this from defaults later
+        if(connections.size() > max)
+            connections.resize(max);
+        
+        if(!connections.empty()) {
+            [menu addItem:NSMenuItem.separatorItem];
+        
+            for(auto &c:connections) {
+                NSMenuItem *menuitem = [NSMenuItem new];
+                menuitem.title = [NSString stringWithUTF8StdString:SavedNetworkConnectionsManager::Instance().TitleForConnection(c)];
+                menuitem.image = network_image;
+                
+                MainWndGoToButtonSelectionSavedNetworkConnection *info = [MainWndGoToButtonSelectionSavedNetworkConnection new];
+                info.connection = c;
+                menuitem.representedObject = info;
+                
+                [menu addItem:menuitem];
+            }
         }
     }
     

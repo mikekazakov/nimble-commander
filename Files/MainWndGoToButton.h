@@ -7,6 +7,7 @@
 //
 
 #import "VFS.h"
+#import "SavedNetworkConnectionsManager.h"
 
 @class MainWindowFilePanelState;
 
@@ -16,6 +17,10 @@
 @interface MainWndGoToButtonSelectionVFSPath : MainWndGoToButtonSelection
 @property string path;
 @property VFSHostWeakPtr vfs;
+@end
+
+@interface MainWndGoToButtonSelectionSavedNetworkConnection : MainWndGoToButtonSelection
+@property shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> connection;
 @end
 
 @interface MainWndGoToButton : NSPopUpButton<NSMenuDelegate>

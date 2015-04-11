@@ -41,6 +41,8 @@ public:
     bool SetPassword(const shared_ptr<AbstractConnection> &_conn, const string& _password);
     bool GetPassword(const AbstractConnection &_conn, string& _password);
     bool GetPassword(const shared_ptr<AbstractConnection> &_conn, string& _password);
+    
+    string TitleForConnection(const shared_ptr<AbstractConnection> &_conn);
 private:
     SavedNetworkConnectionsManager();
     static void SaveConnections(const vector<shared_ptr<AbstractConnection>> &_conns);

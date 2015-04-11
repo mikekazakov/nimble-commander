@@ -379,8 +379,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     
-    if([selection isKindOfClass:MainWndGoToButtonSelectionVFSPath.class]) {
-        MainWndGoToButtonSelectionVFSPath *vfspath = (MainWndGoToButtonSelectionVFSPath *)selection;
+    if(auto vfspath = objc_cast<MainWndGoToButtonSelectionVFSPath>(selection)) {
         VFSHostPtr host = vfspath.vfs.lock();
         if(!host)
             return;
@@ -389,6 +388,9 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
             return;
         
         [self.leftPanelController GoToDir:vfspath.path vfs:host select_entry:"" async:true];
+    }
+    else if(auto info = objc_cast<MainWndGoToButtonSelectionSavedNetworkConnection>(selection)) {
+        [self.leftPanelController GoToSavedConnection:info.connection];
     }
 }
 
@@ -400,8 +402,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     
-    if([selection isKindOfClass:MainWndGoToButtonSelectionVFSPath.class]) {
-        MainWndGoToButtonSelectionVFSPath *vfspath = (MainWndGoToButtonSelectionVFSPath *)selection;
+    if(auto vfspath = objc_cast<MainWndGoToButtonSelectionVFSPath>(selection)) {
         VFSHostPtr host = vfspath.vfs.lock();
         if(!host)
             return;
@@ -410,6 +411,9 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
             return;
         
         [self.rightPanelController GoToDir:vfspath.path vfs:host select_entry:"" async:true];
+    }
+    else if(auto info = objc_cast<MainWndGoToButtonSelectionSavedNetworkConnection>(selection)) {
+        [self.rightPanelController GoToSavedConnection:info.connection];
     }
 }
 

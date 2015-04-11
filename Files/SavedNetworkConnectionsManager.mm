@@ -300,3 +300,21 @@ void SavedNetworkConnectionsManager::EraseAllSFTPConnections()
                         );
     SaveConnections(m_Connections);
 }
+
+string SavedNetworkConnectionsManager::TitleForConnection(const shared_ptr<AbstractConnection> &_conn)
+{
+    if(!_conn)
+        return "";
+    
+    string title_prefix = _conn->title.empty() ? "" : _conn->title + " - ";
+    if(auto ftp = dynamic_cast<SavedNetworkConnectionsManager::FTPConnection*>(_conn.get())) {
+        if(!ftp->user.empty())
+            return title_prefix + "ftp://" + ftp->user + "@" + ftp->host;
+        else
+            return title_prefix + "ftp://" + ftp->host;
+    }
+    if(auto sftp = dynamic_cast<SavedNetworkConnectionsManager::SFTPConnection*>(_conn.get())) {
+        return title_prefix + "sftp://" + sftp->user + sftp->host;
+    }
+    return "";
+}

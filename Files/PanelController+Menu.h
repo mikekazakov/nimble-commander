@@ -7,10 +7,12 @@
 //
 
 #import "PanelController.h"
+#import "SavedNetworkConnectionsManager.h"
 
 @interface PanelController (Menu)
 
 - (IBAction)OnGoToSavedConnectionItem:(id)sender;
+- (void)GoToSavedConnection:(shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>)connection;
 - (IBAction)OnDeleteSavedConnectionItem:(id)sender;
 - (IBAction)OnFileViewCommand:(id)sender;
 

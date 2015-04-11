@@ -298,6 +298,29 @@
     }];
 }
 
+- (void)GoToSavedConnection:(shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>)connection
+{
+    if(!connection)
+        return;
+    
+    if(auto ftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::FTPConnection>(connection)) {
+        string passwd;
+        if(!SavedNetworkConnectionsManager::Instance().GetPassword(connection, passwd))
+            return;
+        m_DirectoryLoadingQ->Run([=]{
+            [self GoToFTPWithConnection:ftp password:passwd];
+        });
+    }
+    else if(auto sftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::SFTPConnection>(connection)) {
+        string passwd;
+        if(!SavedNetworkConnectionsManager::Instance().GetPassword(connection, passwd))
+            return;
+        m_DirectoryLoadingQ->Run([=]{
+            [self GoToSFTPWithConnection:sftp password:passwd];
+        });
+    }
+}
+
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
     if(!sender ||
@@ -305,23 +328,9 @@
        !((NSMenuItem*)sender).representedObject ||
        ![((NSMenuItem*)sender).representedObject isKindOfClass:ConnectionsMenuDelegateInfoWrapper.class])
         return;
+    
     ConnectionsMenuDelegateInfoWrapper *wr = ((NSMenuItem*)sender).representedObject;
-    if(auto ftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::FTPConnection>(wr.object)) {
-        string passwd;
-        if(!SavedNetworkConnectionsManager::Instance().GetPassword(wr.object, passwd))
-            return;
-        m_DirectoryLoadingQ->Run([=]{
-            [self GoToFTPWithConnection:ftp password:passwd];
-        });
-    }
-    else if(auto sftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::SFTPConnection>(wr.object)) {
-        string passwd;
-        if(!SavedNetworkConnectionsManager::Instance().GetPassword(wr.object, passwd))
-            return;
-        m_DirectoryLoadingQ->Run([=]{
-            [self GoToSFTPWithConnection:sftp password:passwd];
-        });
-    }
+    [self GoToSavedConnection:wr.object];
 }
 
 - (IBAction) OnDeleteSavedConnectionItem:(id)sender

@@ -10,32 +10,6 @@
 #import "Common.h"
 #import "PanelController.h"
 
-static NSString *TitleForConnection( SavedNetworkConnectionsManager::AbstractConnection &_conn )
-{
-    NSString *title_prefix = _conn.title.empty() ?
-        @"" :
-        [NSString stringWithFormat:@"%@ - ",[NSString stringWithUTF8StdString:_conn.title]];
-    
-    if(auto ftp = dynamic_cast<SavedNetworkConnectionsManager::FTPConnection*>(&_conn)) {
-        if(!ftp->user.empty())
-          return [NSString stringWithFormat:@"%@ftp://%@@%@",
-                  title_prefix,
-                  [NSString stringWithUTF8StdString:ftp->user],
-                  [NSString stringWithUTF8StdString:ftp->host]];
-        else
-            return [NSString stringWithFormat:@"%@ftp://%@",
-                    title_prefix,
-                    [NSString stringWithUTF8StdString:ftp->host]];
-    }
-    if(auto ftp = dynamic_cast<SavedNetworkConnectionsManager::SFTPConnection*>(&_conn)) {
-        return [NSString stringWithFormat:@"%@sftp://%@@%@",
-                title_prefix,
-                [NSString stringWithUTF8StdString:ftp->user],
-                [NSString stringWithUTF8StdString:ftp->host]];
-    }
-    return @"";
-}
-
 @interface ConnectionsMenuDelegateInfoWrapper()
 - (id) initWithConnection:(const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> &)_conn;
 @end
@@ -92,7 +66,7 @@ static NSString *TitleForConnection( SavedNetworkConnectionsManager::AbstractCon
         auto &c = m_Connections.at(conn_num);
 
         item.indentationLevel = 1;
-        item.title = TitleForConnection(*c);
+        item.title = [NSString stringWithUTF8StdString:SavedNetworkConnectionsManager::Instance().TitleForConnection(c)];
         item.representedObject = [[ConnectionsMenuDelegateInfoWrapper alloc] initWithConnection:c];
 
         //clang gone mad, so mute nonsence warning

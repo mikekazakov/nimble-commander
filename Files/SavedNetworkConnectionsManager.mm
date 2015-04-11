@@ -221,22 +221,19 @@ void SavedNetworkConnectionsManager::SaveConnections(const vector<shared_ptr<Abs
 
 vector<shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>> SavedNetworkConnectionsManager::LoadConnections()
 {
-    NSArray *connections = [NSUserDefaults.standardUserDefaults objectForKey:g_DefKey];
-    if(!connections || ![connections isKindOfClass:NSArray.class])
+    auto connections = objc_cast<NSArray>([NSUserDefaults.standardUserDefaults objectForKey:g_DefKey]);
+    if(!connections)
         return {};
 
     vector<shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>> result;
     
-    for(id obj: connections) {
-        if(![obj isKindOfClass:NSDictionary.class])
-            continue;
-        NSDictionary *dict = obj;
-        
-        if(auto ftp = LoadFTP(dict))
-            result.emplace_back(ftp);
-        else if(auto sftp = LoadSFTP(dict))
-            result.emplace_back(sftp);
-    }
+    for(id obj: connections)
+        if( auto dict = objc_cast<NSDictionary>(obj) ) {
+            if(auto ftp = LoadFTP(dict))
+                result.emplace_back(ftp);
+            else if(auto sftp = LoadSFTP(dict))
+                result.emplace_back(sftp);
+        }
     
     return result;
 }

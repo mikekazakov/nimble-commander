@@ -66,19 +66,14 @@ static void CheckForNewVersion()
     if(!data)
         return;
     
-    id obj = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:0 error:0];
-    if([obj isKindOfClass:NSDictionary.class])
-    {
-        NSDictionary *dict = obj;
-        id version_id = [dict objectForKey:@"Version"];
-        id build_id = [dict objectForKey:@"Build"];
-        if(version_id != nil &&
-           build_id != nil &&
-           [version_id isKindOfClass:NSString.class] &&
-           [build_id isKindOfClass:NSString.class] )
-        {
-            NSString *version_str = version_id;
-            NSString *build_str = build_id;
+    if(auto dict = objc_cast<NSDictionary>([NSPropertyListSerialization
+                                            propertyListWithData:data
+                                            options:NSPropertyListImmutable
+                                            format:0
+                                            error:0])) {
+        auto version_str = objc_cast<NSString>([dict objectForKey:@"Version"]);
+        auto build_str = objc_cast<NSString>([dict objectForKey:@"Build"]);
+        if( version_str && build_str ) {
             NSString *current_build = [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"];
             NSString *current_ver = [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"];
             if(current_build && current_ver)

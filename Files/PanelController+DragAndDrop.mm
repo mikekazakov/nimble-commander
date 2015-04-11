@@ -368,9 +368,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     
     NSDragOperation result = NSDragOperationNone;
     if(self.vfs->IsWriteable()) {
-        if([sender.draggingSource isKindOfClass:PanelControllerDragSourceBroker.class]) {
+        if( auto source = objc_cast<PanelControllerDragSourceBroker>(sender.draggingSource) ) {
             // drag is from some other panel
-            PanelControllerDragSourceBroker *source = (PanelControllerDragSourceBroker *)sender.draggingSource;
             valid_items = (int)source.items.size();
             if(source.controller == self && !dragging_over_dir) {
                 result = NSDragOperationNone; // we can't drag into the same dir on the same panel
@@ -454,9 +453,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     path destination_dir = [self composeDestinationForDrag:sender];
     
     if(id idsource = sender.draggingSource) {
-        if([idsource isKindOfClass:PanelControllerDragSourceBroker.class]) {
+        if( auto source_broker = objc_cast<PanelControllerDragSourceBroker>(idsource) ) {
             // we're dragging something here from another PanelView, lets understand what actually
-            PanelControllerDragSourceBroker *source_broker = (PanelControllerDragSourceBroker *)idsource;
             PanelController *source_controller = source_broker.controller;
             auto opmask = sender.draggingSourceOperationMask;
 

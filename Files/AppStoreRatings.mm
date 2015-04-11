@@ -136,13 +136,11 @@ void AppStoreRatings::SetRuns(int _runs)
 
 int AppStoreRatings::DaysUsed()
 {
-    if(NSData *d = [NSUserDefaults.standardUserDefaults dataForKey:g_FirstKey]) {
-        NSDate *first_run = (NSDate*)[NSUnarchiver unarchiveObjectWithData:d];
-        if([first_run isKindOfClass:NSDate.class]) {
+    if(NSData *d = [NSUserDefaults.standardUserDefaults dataForKey:g_FirstKey])
+        if(auto first_run = objc_cast<NSDate>([NSUnarchiver unarchiveObjectWithData:d])) {
             NSTimeInterval diff = first_run.timeIntervalSinceNow;
             return int(duration_cast<hours>(seconds(long(-diff))).count() / 24);
         }
-    }
     
     [NSUserDefaults.standardUserDefaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:g_FirstKey];
     return 0;
@@ -156,11 +154,9 @@ void AppStoreRatings::SetLaterDate()
 
 bool AppStoreRatings::IsLaterDue()
 {
-    if(NSData *d = [NSUserDefaults.standardUserDefaults dataForKey:g_LaterKey]) {
-        NSDate *due = (NSDate*)[NSUnarchiver unarchiveObjectWithData:d];
-        if([due isKindOfClass:NSDate.class])
+    if(NSData *d = [NSUserDefaults.standardUserDefaults dataForKey:g_LaterKey])
+        if(auto due = objc_cast<NSDate>([NSUnarchiver unarchiveObjectWithData:d]))
             return due.timeIntervalSinceNow < 0;
-    }
     
     SetLaterDate();
     return false;

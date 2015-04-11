@@ -109,9 +109,7 @@ struct PanelViewStateStorage
     if(delegate)
     {
         id<PanelViewDelegate> del = m_Delegate;
-        if([del isKindOfClass:NSResponder.class])
-        {
-            NSResponder *r = (NSResponder*)del;
+        if(auto r = objc_cast<NSResponder>(del)) {
             NSResponder *current = self.nextResponder;
             super.nextResponder = r;
             r.nextResponder = current;
@@ -157,9 +155,7 @@ struct PanelViewStateStorage
 
 - (void)setNextResponder:(NSResponder *)newNextResponder
 {
-    if(self.delegate && [self.delegate isKindOfClass:NSResponder.class])
-    {
-        NSResponder *r = (NSResponder*)self.delegate;
+    if( auto r = objc_cast<NSResponder>(self.delegate) ) {
         r.nextResponder = newNextResponder;
         return;
     }

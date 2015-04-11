@@ -153,9 +153,7 @@ static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, const VFSHostP
         return 0;
     
     id obj = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:0 error:0];
-    if(![obj isKindOfClass:[NSDictionary class]])
-        return 0;
-    return obj;
+    return objc_cast<NSDictionary>(obj);
 }
 
 static NSImage *ReadImageFromVFSFile(const char *_path, const VFSHostPtr &_host)
@@ -179,10 +177,9 @@ static NSImageRep *ProduceBundleThumbnailForVFS(const string &_path, const VFSHo
     if(!plist)
         return 0;
     
-    id icon_id = [plist objectForKey:@"CFBundleIconFile"];
-    if(![icon_id isKindOfClass:[NSString class]])
-        return 0;
-    NSString *icon_str = icon_id;
+    auto icon_str = objc_cast<NSString>([plist objectForKey:@"CFBundleIconFile"]);
+    if(!icon_str)
+        return nil;
     if(!icon_str.fileSystemRepresentation)
         return nil;
     

@@ -259,11 +259,7 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     auto *sel = self.selectedItem;
     if(!sel)
         return nil;
-    id rep = sel.representedObject;
-    if(!rep)
-        return nil;
-    assert([rep isKindOfClass:MainWndGoToButtonSelection.class]);
-    return rep;
+    return objc_cast<MainWndGoToButtonSelection>( sel.representedObject );
 }
 
 - (int) countCommonCharsWithPath:(const string&)_str inVFS:(const VFSHostPtr&)_vfs

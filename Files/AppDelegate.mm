@@ -424,9 +424,7 @@
     NSWindow *target_window = nil;
     for(NSWindow *wnd in NSApplication.sharedApplication.orderedWindows)
         if(wnd != nil &&
-           wnd.windowController != nil &&
-           [wnd.windowController isKindOfClass:[MainWindowController class]])
-        {
+           objc_cast<MainWindowController>(wnd.windowController) != nil) {
             target_window = wnd;
             break;
         }
@@ -509,8 +507,8 @@
         bool usage_time_exceeds_cooldown = false;
         NSString *def_start = @"CommonTrialFirstRunData";
         if(NSData *d = [NSUserDefaults.standardUserDefaults dataForKey:def_start]) {
-            NSDate *first_run = (NSDate*)[NSUnarchiver unarchiveObjectWithData:d];
-            if(![first_run isKindOfClass:NSDate.class]) { // broken start date, fix and exit
+            NSDate *first_run = objc_cast<NSDate>([NSUnarchiver unarchiveObjectWithData:d]);
+            if( !first_run ) { // broken start date, fix and exit
                 [NSUserDefaults.standardUserDefaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:def_start];
                 return;
             }

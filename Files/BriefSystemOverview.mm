@@ -98,9 +98,7 @@ static NSTextField *CreateStockTF()
 - (void) UpdateAlignment
 {
     bool was_right = m_IsRight;
-    if(self.superview != nil && [self.superview isKindOfClass:[NSSplitView class]])
-    {
-        NSSplitView *s = (NSSplitView *)self.superview;
+    if(auto *s = objc_cast<NSSplitView>(self.superview)) {
         NSArray *v = [s subviews];
         unsigned long ind = [v indexOfObject:self];
         if(ind == 0)

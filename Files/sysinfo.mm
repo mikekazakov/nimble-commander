@@ -29,6 +29,7 @@
 //#import <stdint.h>
 //#import <libproc.h>
 #import "sysinfo.h"
+#import "Common.h"
 
 namespace sysinfo
 {
@@ -230,20 +231,15 @@ OSXVersion GetOSXVersion() noexcept
     static once_flag once;
     call_once(once, []{
         if(NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"])
-        {
-            id prod_ver = [d objectForKey:@"ProductVersion"];
-            if(prod_ver != nil && [prod_ver isKindOfClass:NSString.class])
-            {
-                NSString *prod_ver_s = prod_ver;
-                if([prod_ver_s hasPrefix:@"10.10"])     version = OSXVersion::OSX_10;
-                else if([prod_ver_s hasPrefix:@"10.9"]) version = OSXVersion::OSX_9;
-                else if([prod_ver_s hasPrefix:@"10.8"]) version = OSXVersion::OSX_8;
-                else if([prod_ver_s hasPrefix:@"10.7"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver_s hasPrefix:@"10.6"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver_s hasPrefix:@"10.5"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver_s hasPrefix:@"10.4"]) version = OSXVersion::OSX_Old;
+            if( auto prod_ver = objc_cast<NSString>([d objectForKey:@"ProductVersion"]) ) {
+                if([prod_ver hasPrefix:@"10.10"])     version = OSXVersion::OSX_10;
+                else if([prod_ver hasPrefix:@"10.9"]) version = OSXVersion::OSX_9;
+                else if([prod_ver hasPrefix:@"10.8"]) version = OSXVersion::OSX_8;
+                else if([prod_ver hasPrefix:@"10.7"]) version = OSXVersion::OSX_Old;
+                else if([prod_ver hasPrefix:@"10.6"]) version = OSXVersion::OSX_Old;
+                else if([prod_ver hasPrefix:@"10.5"]) version = OSXVersion::OSX_Old;
+                else if([prod_ver hasPrefix:@"10.4"]) version = OSXVersion::OSX_Old;
             }
-        }
     });
     return version;
 }

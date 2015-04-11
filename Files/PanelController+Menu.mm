@@ -323,24 +323,19 @@
 
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
-    if(!sender ||
-       ![sender isKindOfClass:NSMenuItem.class] ||
-       !((NSMenuItem*)sender).representedObject ||
-       ![((NSMenuItem*)sender).representedObject isKindOfClass:ConnectionsMenuDelegateInfoWrapper.class])
-        return;
-    
-    ConnectionsMenuDelegateInfoWrapper *wr = ((NSMenuItem*)sender).representedObject;
-    [self GoToSavedConnection:wr.object];
+    auto menuitem = objc_cast<NSMenuItem>(sender);
+    if(!menuitem) return;
+    auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject);
+    if(!rep) return;
+    [self GoToSavedConnection:rep.object];
 }
 
 - (IBAction) OnDeleteSavedConnectionItem:(id)sender
 {
-    if(!sender ||
-       ![sender isKindOfClass:NSMenuItem.class] ||
-       !((NSMenuItem*)sender).representedObject ||
-       ![((NSMenuItem*)sender).representedObject isKindOfClass:ConnectionsMenuDelegateInfoWrapper.class])
-        return;
-    ConnectionsMenuDelegateInfoWrapper *wr = ((NSMenuItem*)sender).representedObject;    
+    auto menuitem = objc_cast<NSMenuItem>(sender);
+    if(!menuitem) return;
+    auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject);
+    if(!rep) return;
     
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure want to delete this connection?", "Asking user if he really wants to delete information about a stored connection");
@@ -348,7 +343,7 @@
     [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"No", "")];
     if([alert runModal] == NSAlertFirstButtonReturn)
-        SavedNetworkConnectionsManager::Instance().RemoveConnection(wr.object);
+        SavedNetworkConnectionsManager::Instance().RemoveConnection(rep.object);
 }
 
 - (IBAction)OnOpen:(id)sender { // enter

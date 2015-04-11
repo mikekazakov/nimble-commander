@@ -12,6 +12,7 @@
 #import "PanelController.h"
 #import "PanelView.h"
 #import "MMTabBarStyle.h"
+#import "Common.h"
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
 
@@ -146,7 +147,7 @@
     if(!it)
         return nil;
     
-    assert( [it.view isKindOfClass:PanelView.class] );
+    assert( objc_cast<PanelView>(it.view) );
     
     return (PanelView*)it.view;
 }

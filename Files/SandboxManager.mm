@@ -8,6 +8,7 @@
 
 #include "SandboxManager.h"
 #include "AppDelegate.h"
+#include "Common.h"
 
 static NSString *g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 
@@ -78,16 +79,12 @@ void SandboxManager::LoadSecurityScopeBookmarks()
 {
     assert(m_Bookmarks.empty());
     
-    id bookmarks_id = [NSUserDefaults.standardUserDefaults objectForKey:g_BookmarksKey];
-    if(!bookmarks_id ||
-       ![bookmarks_id isKindOfClass:NSArray.class])
+    auto bookmarks = objc_cast<NSArray>([NSUserDefaults.standardUserDefaults objectForKey:g_BookmarksKey]);
+    if(!bookmarks)
         return;
-    
-    NSArray *bookmarks = (NSArray *)bookmarks_id;
+
     for(id obj: bookmarks)
-        if(obj != nil &&
-           [obj isKindOfClass:NSData.class]) {
-            NSData *data = obj;
+        if( auto *data = objc_cast<NSData>(obj) ) {
             NSURL *scoped_url = [NSURL URLByResolvingBookmarkData:data
                                                           options:NSURLBookmarkResolutionWithoutMounting|NSURLBookmarkResolutionWithSecurityScope
                                                     relativeToURL:nil

@@ -191,7 +191,7 @@ static CGColorRef DividerColor(bool _wnd_active)
     if(m_BasicViews[0])
         return m_BasicViews[0];
     assert( self.subviews.count == 2 );
-    assert( [self.subviews[0] isKindOfClass:FilePanelsTabbedHolder.class] );
+    assert( objc_cast<FilePanelsTabbedHolder>(self.subviews[0]) );
     return self.subviews[0];
 }
 
@@ -200,7 +200,7 @@ static CGColorRef DividerColor(bool _wnd_active)
     if(m_BasicViews[1])
         return m_BasicViews[1];
     assert( self.subviews.count == 2 );
-    assert( [self.subviews[1] isKindOfClass:FilePanelsTabbedHolder.class] );
+    assert( objc_cast<FilePanelsTabbedHolder>(self.subviews[1]) );
     return self.subviews[1];
 }
 

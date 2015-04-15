@@ -110,6 +110,10 @@
 	<integer>1</integer>
 	<key>FilePanelsGeneralSelectionSizeFormat</key>
 	<integer>0</integer>
+	<key>FilePanelsGeneralGoToConnectionsLimit</key>
+	<integer>5</integer>
+	<key>FilePanelsGeneralGoToShowConnections</key>
+	<true/>
 	<key>FilePanelsModernFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABoAAAD//kwAdQBjAGkAZABhAEcAcgBhAG4AZABlAAAAhAFmDYQBYwCYAZgAmACG</data>
 	<key>FilePanelsModernColoringRules</key>

@@ -15,6 +15,10 @@
 #import "NativeFSManager.h"
 #import "PanelController.h"
 
+static NSString *g_ConnLimitKey = @"FilePanelsGeneralGoToConnectionsLimit";
+static NSString *g_ConnShowKey  = @"FilePanelsGeneralGoToShowConnections";
+static NSString *g_ShowOthersKey = @"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu";
+
 // TODO: make this less stupid
 struct AdditionalPath
 {
@@ -204,8 +208,8 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
 {
     m_OtherPanelsPaths.clear();
     
-    bool append = [[NSUserDefaults standardUserDefaults] boolForKey:@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu"];
-    if(!append) return;
+    if(![NSUserDefaults.standardUserDefaults boolForKey:g_ShowOthersKey])
+        return;
     
     MainWindowFilePanelState *owner = m_Owner;
     vector<tuple<string,VFSHostPtr>> current_panels_paths = owner.filePanelsCurrentPaths;
@@ -281,11 +285,6 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     [self synchronizeTitleAndSelectedItem];
     
     static const auto icon_size = NSMakeSize(NSFont.systemFontSize, NSFont.systemFontSize);
-    static auto network_image = []{
-        NSImage *m = [NSImage imageNamed:NSImageNameNetwork];
-        m.size = icon_size;
-        return m;
-    }();
     
     size_t common_path_max = 0;
     NSMenuItem *common_item = nil;
@@ -341,11 +340,18 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     }
     
     // Recent Network Connections
-    if( true /* some checks from defaults*/) {
+    if( [NSUserDefaults.standardUserDefaults boolForKey:g_ConnShowKey] ) {
+        static auto network_image = []{
+            NSImage *m = [NSImage imageNamed:NSImageNameNetwork];
+            m.size = icon_size;
+            return m;
+        }();
+        
         auto connections = SavedNetworkConnectionsManager::Instance().Connections();
-        int max = 4; // read this from defaults later
-        if(connections.size() > max)
-            connections.resize(max);
+
+        auto limit = max([NSUserDefaults.standardUserDefaults integerForKey:g_ConnLimitKey], 0l);
+        if(connections.size() > limit)
+            connections.resize(limit);
         
         if(!connections.empty()) {
             [menu addItem:NSMenuItem.separatorItem];

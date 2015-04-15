@@ -127,6 +127,9 @@
 /* Class = "NSMenuItem"; title = "3"; ObjectID = "LJx-1n-t6m"; */
 "LJx-1n-t6m.title" = "3";
 
+/* Class = "NSButtonCell"; title = "Show"; ObjectID = "MQi-kD-j8V"; */
+"MQi-kD-j8V.title" = "Показывать";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "OFN-Un-idF"; */
 "OFN-Un-idF.title" = "OtherViews";
 
@@ -195,6 +198,9 @@
 
 /* Class = "NSButtonCell"; title = "Show “..” entry in directory listing"; ObjectID = "tmQ-Kf-Ylo"; */
 "tmQ-Kf-Ylo.title" = "Показывать объект “..” в листинге папки";
+
+/* Class = "NSTextFieldCell"; title = "network connections in folder changing menu"; ObjectID = "uQC-rR-RVO"; */
+"uQC-rR-RVO.title" = "сетевых соединений в меню смены папки";
 
 /* Class = "NSMenuItem"; title = "Beginning"; ObjectID = "wWO-qC-fR7"; */
 "wWO-qC-fR7.title" = "В начале";

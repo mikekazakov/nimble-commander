@@ -7,7 +7,7 @@
 /* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "EJR-gc-SwI"; */
 "EJR-gc-SwI.title" = "Удаленный порт:";
 
-/* Class = "NSPanel"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "Окно";
 
 /* Class = "NSTextFieldCell"; placeholderString = "ftp.example.com"; ObjectID = "FdQ-zx-5B7"; */
@@ -31,8 +31,14 @@
 /* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "Spe-8u-71A"; */
 "Spe-8u-71A.title" = "Логин:";
 
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "Xwj-Vw-t6b"; */
+"Xwj-Vw-t6b.ibShadowedIsNilPlaceholder" = "произвольное название";
+
 /* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "Z0v-Pw-m6u"; */
 "Z0v-Pw-m6u.title" = "Сервер:";
+
+/* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "dA5-HK-3gm"; */
+"dA5-HK-3gm.title" = "Название:";
 
 /* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "anonymous@domain.com"; ObjectID = "dWk-v8-gCF"; */
 "dWk-v8-gCF.ibShadowedIsNilPlaceholder" = "anonymous@domain.com";

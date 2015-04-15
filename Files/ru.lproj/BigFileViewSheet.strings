@@ -1,7 +1,7 @@
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "5rO-0k-5gI"; */
 "5rO-0k-5gI.title" = "Закрыть";
 
-/* Class = "NSPanel"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "Окно";
 
 /* Class = "NSSegmentedCell"; sc3-Hr-k27.ibShadowedLabels[0] = "Text"; ObjectID = "sc3-Hr-k27"; */

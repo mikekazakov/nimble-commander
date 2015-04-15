@@ -37,6 +37,9 @@
 /* Informing user that a new version is available */
 "A new version of Files is available!" = "Вышла новая версия Files!";
 
+/* Asking user if he really wants to delete information about a stored connection */
+"Are you sure want to delete this connection?" = "Вы действительно хотите удалить это соединение?";
+
 /* Asking user for confirmation on erasing custom settings - message */
 "Are you sure want to reset settings to defaults?" = "Вы действительно хотите сбросить настройки к стандартным?";
 
@@ -162,6 +165,9 @@
 
 /* Name for freshly created folder by hotkey with items */
 "New Folder With Items" = "Новая папка с объектами";
+
+/* No comment provided by engineer. */
+"No" = "Нет";
 
 /* No comment provided by engineer. */
 "OK" = "ОК";
@@ -294,6 +300,9 @@
 
 /* Asking user if he wants to visit a website for update */
 "Would you like to visit a website?" = "Хотели бы Вы посетить вебсайт?";
+
+/* No comment provided by engineer. */
+"Yes" = "Да";
 
 /* (No Commment) */
 "You can't undo this action." = "Это операция необратима.";

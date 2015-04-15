@@ -1,4 +1,4 @@
-/* Class = "NSPanel"; title = "Window"; ObjectID = "1"; */
+/* Class = "NSWindow"; title = "Window"; ObjectID = "1"; */
 "1.title" = "";
 
 /* Class = "NSButtonCell"; title = "Go"; ObjectID = "DTg-xe-1S8"; */

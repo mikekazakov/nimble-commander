@@ -10,7 +10,7 @@
 /* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "example.com"; ObjectID = "F0g-IE-q0P"; */
 "F0g-IE-q0P.ibShadowedIsNilPlaceholder" = "example.com";
 
-/* Class = "NSPanel"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "";
 
 /* Class = "NSTextFieldCell"; placeholderString = "path"; ObjectID = "KZu-2u-jyV"; */
@@ -34,6 +34,9 @@
 /* Class = "NSTextFieldCell"; placeholderString = "22"; ObjectID = "RDb-c0-5jY"; */
 "RDb-c0-5jY.placeholderString" = "22";
 
+/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "TCG-Oh-q7e"; */
+"TCG-Oh-q7e.ibShadowedIsNilPlaceholder" = "произвольное название";
+
 /* Class = "NSButtonCell"; title = "🔑"; ObjectID = "Vpg-ZM-qSO"; */
 "Vpg-ZM-qSO.title" = "🔑";
 
@@ -54,6 +57,9 @@
 
 /* Class = "NSMenuItem"; title = "🕟"; ObjectID = "o40-dU-l2e"; */
 "o40-dU-l2e.title" = "🕟";
+
+/* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "tlj-88-5gd"; */
+"tlj-88-5gd.title" = "Название:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "root"; ObjectID = "vmN-6P-k8r"; */
 "vmN-6P-k8r.placeholderString" = "root";

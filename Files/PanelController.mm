@@ -673,19 +673,19 @@ void panel::GenericCursorPersistance::Restore()
        [_filename isEqualToString:m_View.item->NSName()])
         return;
     
-    string target_fn = _filename.fileSystemRepresentation;
+    string target_fn = _filename.fileSystemRepresentationSafe;
     
     FileCopyOperationOptions opts;
     opts.docopy = false;
     
     FileCopyOperation *op = [FileCopyOperation alloc];
     if(self.vfs->IsNativeFS())
-        op = [op initWithFiles:chained_strings(m_View.item->Name())
+        op = [op initWithFiles:vector<string>( 1, m_View.item->Name() )
                           root:self.currentDirectoryPath.c_str()
                           dest:target_fn.c_str()
                        options:opts];
     else if( self.vfs->IsWriteable() )
-        op = [op initWithFiles:chained_strings(m_View.item->Name())
+        op = [op initWithFiles:vector<string>( 1, m_View.item->Name() )
                           root:self.currentDirectoryPath.c_str()
                         srcvfs:self.vfs
                           dest:target_fn.c_str()

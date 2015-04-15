@@ -8,23 +8,22 @@
 
 #pragma once
 
-#import "OperationJob.h"
 #import "FileCopyOperation.h"
+#import "FileCopyOperationJob.h"
 #import "chained_strings.h"
 #import "DispatchQueue.h"
 
-class FileCopyOperationJobNativeToNative : public OperationJob
+class FileCopyOperationJobNativeToNative : public FileCopyOperationJob
 {
 public:
     FileCopyOperationJobNativeToNative();
     ~FileCopyOperationJobNativeToNative();
 
-    void Init(chained_strings _files,
+    void Init(vector<string> _filenames,
                              const char *_root,               // dir in where files are located
                              const char *_dest,                // where to copy
                              FileCopyOperationOptions _opts,
                              FileCopyOperation *_op
-              
                              );
 
     bool IsSingleFileCopy() const;
@@ -101,7 +100,7 @@ private:
     void CopyXattrs(int _fd_from, int _fd_to);
     
     __unsafe_unretained FileCopyOperation *m_Operation = nil;
-    chained_strings m_InitialItems;
+    
     chained_strings m_ScannedItems;
     
     vector<uint8_t> m_ItemFlags;
@@ -115,8 +114,11 @@ private:
     unsigned long m_SourceTotalBytes = 0;
     unsigned long m_TotalCopied = 0;
     WorkMode m_WorkMode = Unknown;
-    void *m_Buffer1 = nullptr;
-    void *m_Buffer2 = nullptr;
+    
+    static const int m_BufferSize = 1*1024*1024; // 1Mb
+    unique_ptr<uint8_t[]> m_Buffer1 = make_unique<uint8_t[]>(m_BufferSize);
+    unique_ptr<uint8_t[]> m_Buffer2 = make_unique<uint8_t[]>(m_BufferSize);
+    
     DispatchGroup m_IOGroup;
     bool m_SkipAll = false;
     bool m_OverwriteAll = false;

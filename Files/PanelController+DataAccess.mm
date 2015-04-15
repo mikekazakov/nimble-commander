@@ -58,25 +58,6 @@
     return {};
 }
 
-- (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot
-{
-    if(!m_View)
-        return chained_strings();    
-    
-    if(m_Data.Stats().selected_entries_amount)
-    {
-        return m_Data.StringsFromSelectedEntries();
-    }
-    else
-    {
-        auto item = m_View.item;
-        if(item && !item->IsDotDot())
-            return chained_strings(item->Name());
-        
-        return chained_strings();
-    }
-}
-
 - (string) currentDirectoryPath
 {
     return m_Data.DirectoryPathWithTrailingSlash();

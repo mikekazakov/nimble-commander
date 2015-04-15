@@ -6,7 +6,9 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-class FileCopyOperationJob
+#import "OperationJob.h"
+
+class FileCopyOperationJob  : public OperationJob
 {
 public:
     
@@ -15,4 +17,6 @@ public:
     // PreallocateSpace assumes following ftruncate, meaningless otherwise
     static void PreallocateSpace(int64_t _preallocate_delta, int _file_des);
     
+protected:
+    vector<string> m_InitialItems;
 };

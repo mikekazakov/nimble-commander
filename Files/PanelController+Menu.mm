@@ -797,7 +797,7 @@
 
 - (IBAction)OnQuickNewFolderWithSelection:(id)sender
 {
-    auto files = [self GetSelectedEntriesOrFocusedEntryWithoutDotDot];
+    auto files = self.selectedEntriesOrFocusedEntryFilenames;
     if(files.empty())
         return;
     NSString *stub = NSLocalizedString(@"New Folder With Items", "Name for freshly created folder by hotkey with items");

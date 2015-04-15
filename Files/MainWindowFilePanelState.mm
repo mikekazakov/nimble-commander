@@ -739,24 +739,19 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     
     string destination = self.activePanelController.currentDirectoryPath;
     
-    for(auto i: filenames)
-    {
-        chained_strings files;
-        for(auto j: i.second)
-            files.push_back(j.c_str(), (int)j.length(), nullptr);
-        
+    for(auto i: filenames) {        
         FileCopyOperationOptions opts;
         opts.docopy = true;
         
         Operation *op;
         
         if(self.activePanelController.vfs->IsNativeFS())
-            op = [[FileCopyOperation alloc] initWithFiles:move(files)
+            op = [[FileCopyOperation alloc] initWithFiles:i.second
                                                      root:i.first.c_str()
                                                      dest:destination.c_str()
                                                   options:opts]; // native->native
         else
-            op = [[FileCopyOperation alloc] initWithFiles:move(files)
+            op = [[FileCopyOperation alloc] initWithFiles:i.second
                                                      root:i.first.c_str()
                                                    srcvfs:VFSNativeHost::SharedHost()
                                                      dest:destination.c_str()

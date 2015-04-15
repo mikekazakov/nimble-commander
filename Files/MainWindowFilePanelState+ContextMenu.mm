@@ -646,12 +646,12 @@ proceed:;
     
     FileCopyOperation *op = [FileCopyOperation alloc];
     if(m_CurrentController.vfs->IsNativeFS())
-        op = [op initWithFiles:chained_strings(m_Items[0])
+        op = [op initWithFiles:vector<string>(1, m_Items[0])
                           root:m_DirPath.c_str()
                           dest:target
                        options:opts];
     else
-        op = [op initWithFiles:chained_strings(m_Items[0])
+        op = [op initWithFiles:vector<string>(1, m_Items[0])
                           root:m_DirPath.c_str()
                         srcvfs:m_CurrentController.vfs
                           dest:target

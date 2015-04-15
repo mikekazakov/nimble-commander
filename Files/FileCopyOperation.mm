@@ -65,7 +65,7 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
     milliseconds m_LastInfoUpdateTime;
 }
 
-- (id)initWithFiles:(chained_strings)_files
+- (id)initWithFiles:(vector<string>)_files
                root:(const char*)_root
                dest:(const char*)_dest
             options:(const FileCopyOperationOptions&)_opts
@@ -77,19 +77,18 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
         // Set caption.
         char buff[MAXPATHLEN] = {0};
         bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
-        int items_amount = _files.size();
         NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _dest)];
-        if (items_amount == 1)
+        if ( _files.size() == 1)
             self.Caption = OpTitleForSingleItem(_opts.docopy, [NSString stringWithUTF8String:_files.front().c_str()], to);
         else
-            self.Caption = OpTitleForMultipleItems(_opts.docopy, items_amount, to);
+            self.Caption = OpTitleForMultipleItems(_opts.docopy, (int)_files.size(), to);
         
         m_NativeToNativeJob->Init(move(_files), _root, _dest, _opts, self);
     }
     return self;
 }
 
-- (id)initWithFiles:(chained_strings)_files
+- (id)initWithFiles:(vector<string>)_files
                root:(const char*)_root
             rootvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
@@ -102,7 +101,7 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
         // Set caption.
         char buff[MAXPATHLEN] = {0};
         bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
-        int items_amount = _files.size();
+        int items_amount = (int)_files.size();
         NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _dest)];
         if (items_amount == 1)
             self.Caption = OpTitleForSingleItem(_opts.docopy, [NSString stringWithUTF8String:_files.front().c_str()], to);
@@ -114,7 +113,7 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
     return self;
 }
 
-- (id)initWithFiles:(chained_strings)_files
+- (id)initWithFiles:(vector<string>)_files
                root:(const char*)_root
              srcvfs:(shared_ptr<VFSHost>)_vfs
                dest:(const char*)_dest
@@ -128,7 +127,7 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
         // Set caption.
         char buff[MAXPATHLEN] = {0};
         bool use_buff = GetDirectoryNameFromPath(_dest, buff, MAXPATHLEN);
-        int items_amount = _files.size();
+        int items_amount = (int)_files.size();
         NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _dest)];
         if (items_amount == 1)
             self.Caption = OpTitleForSingleItem(_opts.docopy, [NSString stringWithUTF8String:_files.front().c_str()], to);

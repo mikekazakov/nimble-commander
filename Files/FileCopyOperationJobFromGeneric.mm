@@ -50,7 +50,7 @@ FileCopyOperationJobFromGeneric::~FileCopyOperationJobFromGeneric()
 {
 }
 
-void FileCopyOperationJobFromGeneric::Init(chained_strings _src_files,
+void FileCopyOperationJobFromGeneric::Init(vector<string> _filenames,
           const char *_src_root,               // dir in where files are located
           shared_ptr<VFSHost> _src_host,  // src host to deal with
           const char *_dest,                   // where to copy
@@ -60,7 +60,7 @@ void FileCopyOperationJobFromGeneric::Init(chained_strings _src_files,
 {
     assert(_src_host.get());
     m_Operation = _op;
-    m_InitialItems.swap(_src_files);
+    m_InitialItems = move(_filenames);
     m_Options = _opts;
     m_SrcHost = _src_host;
     strcpy(m_SrcDir, _src_root);

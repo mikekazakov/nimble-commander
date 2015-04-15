@@ -13,7 +13,7 @@
 @implementation MassCopySheetController
 {
     MassCopySheetCompletionHandler m_Handler;
-    chained_strings *m_Items;
+    shared_ptr<vector<string>> m_Items;
     NSString *m_InitialPath;
     bool m_IsCopying;
 }
@@ -38,7 +38,7 @@
     }
     
     
-    int amount = m_Items->size();
+    int amount = (int)m_Items->size();
     assert(amount > 0);
     
     if(m_IsCopying) {
@@ -115,7 +115,7 @@
     [window setMaxSize:NSMakeSize(800, newFrame.size.height+10)];
 }
 
-- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(chained_strings*)_items handler:(MassCopySheetCompletionHandler)_handler
+- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(shared_ptr<vector<string>>)_items handler:(MassCopySheetCompletionHandler)_handler
 {
     m_Handler = _handler;
     m_InitialPath = _path;

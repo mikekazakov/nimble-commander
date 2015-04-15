@@ -26,8 +26,6 @@
 #import "common_paths.h"
 #import "RoutedIO.h"
 
-#define BUFFER_SIZE (512*1024) // 512kb
-
 // assumes that _fn1 is a valid file/dir name, or will return false immediately
 // if _fn2 is not a valid path name will look at _fallback_second.
 //  if _fallback_second is true this routine will go upper to the root until the valid path is reached
@@ -117,19 +115,13 @@ static void AdjustFileTimes(int _target_fd, struct stat *_with_times)
 
 FileCopyOperationJobNativeToNative::FileCopyOperationJobNativeToNative()
 {
-    // in xattr operations we'll use our big Buf1 and Buf2 - they should be quite enough
-    // in OS X 10.4-10.6 maximum size of xattr value was 4Kb
-    // in OS X 10.7(or in 10.8?) it was increased to 128Kb
-    assert( BUFFER_SIZE >= 128 * 1024 ); // should be enough to hold any xattr value
 }
 
 FileCopyOperationJobNativeToNative::~FileCopyOperationJobNativeToNative()
 {
-    if(m_Buffer1) { free(m_Buffer1); m_Buffer1 = 0; }
-    if(m_Buffer2) { free(m_Buffer2); m_Buffer2 = 0; }
 }
 
-void FileCopyOperationJobNativeToNative::Init(chained_strings _files, // passing ownage to Job
+void FileCopyOperationJobNativeToNative::Init(vector<string> _filenames,
                          const char *_root,               // dir in where files are located
                          const char *_dest,                // where to copy
                          FileCopyOperationOptions _opts,
@@ -137,7 +129,7 @@ void FileCopyOperationJobNativeToNative::Init(chained_strings _files, // passing
                          )
 {
     m_Operation = _op;
-    m_InitialItems.swap(_files);
+    m_InitialItems = move(_filenames);
     m_Options = _opts;
     strcpy(m_Destination, _dest);
     strcpy(m_SourceDirectory, _root);
@@ -171,15 +163,10 @@ void FileCopyOperationJobNativeToNative::Do()
     {
         assert(m_WorkMode == RenameToFixedPath || m_WorkMode == RenameToPathPreffix);
         // renaming is trivial, don't scan source deeply - we need just a top level
-        m_ScannedItems.swap(m_InitialItems);
+        for(auto &i:m_InitialItems)
+            m_ScannedItems.push_back(i, nullptr);
+        
         m_Stats.SetMaxValue(m_ScannedItems.size());
-    }
-
-    if(m_WorkMode == CopyToFixedPath || m_WorkMode == CopyToPathPreffix || m_WorkMode == MoveToFixedPath || m_WorkMode == MoveToPathPreffix  )
-    {
-        // allocate buffers and queues only when we'll need them
-        m_Buffer1 = malloc(BUFFER_SIZE);
-        m_Buffer2 = malloc(BUFFER_SIZE);
     }
 
     ProcessItems();
@@ -893,8 +880,8 @@ cleanup:
 void FileCopyOperationJobNativeToNative::EraseXattrs(int _fd_in)
 {
     assert(m_Buffer1);
-    char *xnames = (char*) m_Buffer1;
-    ssize_t xnamesizes = flistxattr(_fd_in, xnames, BUFFER_SIZE, 0);
+    char *xnames = (char*) m_Buffer1.get();
+    ssize_t xnamesizes = flistxattr(_fd_in, xnames, m_BufferSize, 0);
     if(xnamesizes > 0)
     { // iterate and remove
         char *s = xnames, *e = xnames + xnamesizes;
@@ -912,16 +899,16 @@ void FileCopyOperationJobNativeToNative::CopyXattrs(int _fd_from, int _fd_to)
     ssize_t xnamesizes;
 
     assert(m_Buffer1 != 0);
-    xnames = (char*) m_Buffer1;
-    xnamesizes = flistxattr(_fd_from, xnames, BUFFER_SIZE, 0);
+    xnames = (char*) m_Buffer1.get();
+    xnamesizes = flistxattr(_fd_from, xnames, m_BufferSize, 0);
     if(xnamesizes > 0)
     { // iterate and copy
         char *s = xnames, *e = xnames + xnamesizes;
         while(s < e)
         {
-            ssize_t xattrsize = fgetxattr(_fd_from, s, m_Buffer2, BUFFER_SIZE, 0, 0);
+            ssize_t xattrsize = fgetxattr(_fd_from, s, m_Buffer2.get(), m_BufferSize, 0, 0);
             if(xattrsize >= 0) // xattr can be zero-length, just a tag itself
-                fsetxattr(_fd_to, s, m_Buffer2, xattrsize, 0, 0);
+                fsetxattr(_fd_to, s, m_Buffer2.get(), xattrsize, 0, 0);
             s += strlen(s)+1;
         }
     }
@@ -1000,7 +987,7 @@ bool FileCopyOperationJobNativeToNative::CopyFileTo(const char *_src, const char
     // TODO: need to ask about destination volume info to exclude meaningless operations for attrs which are not supported
     // TODO: need to adjust buffer sizes and writing calls to preffered volume's I/O size
     struct stat src_stat_buffer, dst_stat_buffer;
-    char *readbuf = (char*)m_Buffer1, *writebuf = (char*)m_Buffer2;
+    char *readbuf = (char*)m_Buffer1.get(), *writebuf = (char*)m_Buffer2.get();
     int dstopenflags=0, sourcefd=-1, destinationfd=-1, fcntlret;
     int64_t preallocate_delta = 0;    
     unsigned long startwriteoff = 0, totaldestsize = 0, dest_sz_on_stop = 0;
@@ -1160,7 +1147,7 @@ dolseek: // find right position in destination file
         doread:
             if(io_totalread < src_stat_buffer.st_size)
             {
-                io_nread = read(sourcefd, readbuf, BUFFER_SIZE);
+                io_nread = read(sourcefd, readbuf, m_BufferSize);
                 if(io_nread == -1)
                 {
                     if(m_SkipAll) {io_docancel = true; return;}

@@ -33,7 +33,11 @@ typedef void (^MassCopySheetCompletionHandler)(int result);
 
 @property (strong) IBOutlet NSBox *DisclosureGroup;
 
-- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(chained_strings*)_items handler:(MassCopySheetCompletionHandler)_handler;
+- (void)ShowSheet:(NSWindow *)_window
+         initpath:(NSString*)_path
+        iscopying:(bool)_iscopying
+            items:(shared_ptr<vector<string>>)_items
+          handler:(MassCopySheetCompletionHandler)_handler;
 // if _iscopying is false than dialog will think that user attempt to rename/move files
 - (void)FillOptions:(FileCopyOperationOptions*) _opts;
 

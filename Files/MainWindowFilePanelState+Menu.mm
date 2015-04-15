@@ -236,14 +236,14 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     __weak PanelController *act = self.activePanelController;
     __weak PanelController *opp = self.oppositePanelController;
     
-    auto files = make_shared<chained_strings>([self.activePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
-    if(files->empty())
+    auto filenames_vector = make_shared<vector<string>>(self.activePanelController.selectedEntriesOrFocusedEntryFilenames);
+    if(filenames_vector->empty())
         return;
     
     string dest_path = destination->DirectoryPathWithTrailingSlash();
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:nsdirpath iscopying:true items:files.get() handler:^(int _ret)
+    [mc ShowSheet:self.window initpath:nsdirpath iscopying:true items:filenames_vector handler:^(int _ret)
      {
          path root_path = source->DirectoryPathWithTrailingSlash();
          path req_path = mc.TextField.stringValue.fileSystemRepresentation;
@@ -255,19 +255,19 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
              
              FileCopyOperation *op = [FileCopyOperation alloc];
              if(source->Host()->IsNativeFS() && destination->Host()->IsNativeFS())
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames_vector.get())
                                    root:root_path.c_str()
                                    dest:req_path.c_str()
                                 options:opts];
              else if(destination->Host()->IsNativeFS() && req_path.is_absolute() )
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames_vector.get())
                                    root:root_path.c_str()
                                 rootvfs:source->Host()
                                    dest:req_path.c_str()
                                 options:opts];
              else if( ( req_path.is_absolute() && destination->Host()->IsWriteable()) ||
                      (!req_path.is_absolute() && source->Host()->IsWriteable() )      )
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames_vector.get())
                                    root:root_path.c_str()
                                  srcvfs:source->Host()
                                    dest:req_path.c_str()
@@ -304,10 +304,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(!item || item->IsDotDot())
         return;
     
-    auto files = make_shared<chained_strings>(item->Name());
+    auto filenames = make_shared< vector<string> >(1, item->Name());
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:files.get() handler:^(int _ret)
+    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:filenames handler:^(int _ret)
      {
          path root_path = self.activePanelData->DirectoryPathWithTrailingSlash();
          path req_path = mc.TextField.stringValue.fileSystemRepresentation;
@@ -320,19 +320,19 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
              FileCopyOperation *op = [FileCopyOperation alloc];
              if(source->Host()->IsNativeFS() &&
                 ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ) )
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames.get())
                                    root:root_path.c_str()
                                    dest:req_path.c_str()
                                 options:opts];
              else if(destination->Host()->IsNativeFS() && req_path.is_absolute() )
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames.get())
                                    root:root_path.c_str()
                                 rootvfs:source->Host()
                                    dest:req_path.c_str()
                                 options:opts];
              else if( (destination->Host()->IsWriteable() && req_path.is_absolute()) ||
                      (source->Host()->IsWriteable()      &&!req_path.is_absolute())  )
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames.get())
                                    root:root_path.c_str()
                                  srcvfs:source->Host()
                                    dest:req_path.c_str()
@@ -368,15 +368,13 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(!source->Host()->IsWriteable())
         return;
     
-    auto files = make_shared<chained_strings>([self.activePanelController GetSelectedEntriesOrFocusedEntryWithoutDotDot]);
-    if(files->empty())
-        return;
+    auto filenames = make_shared<vector<string>>(self.activePanelController.selectedEntriesOrFocusedEntryFilenames);
     
     string dest_path = destination->DirectoryPathWithTrailingSlash();
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:nsdirpath iscopying:false items:files.get() handler:^(int _ret)
+    [mc ShowSheet:self.window initpath:nsdirpath iscopying:false items:filenames handler:^(int _ret)
      {
          path root_path = source->DirectoryPathWithTrailingSlash();
          path req_path = mc.TextField.stringValue.fileSystemRepresentation;
@@ -389,12 +387,12 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
              FileCopyOperation *op = [FileCopyOperation alloc];
              if(source->Host()->IsNativeFS() &&
                 ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ) )
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames.get())
                                    root:root_path.c_str()
                                    dest:req_path.c_str()
                                 options:opts];
              else if( destination->Host()->IsWriteable() )
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames.get())
                                    root:root_path.c_str()
                                  srcvfs:source->Host()
                                    dest:req_path.c_str()
@@ -437,10 +435,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(!item || item->IsDotDot())
         return;
     
-    auto files = make_shared<chained_strings>(item->Name());
-    
+    auto filenames = make_shared< vector<string> >(1, item->Name());
+        
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:files.get() handler:^(int _ret)
+    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:filenames handler:^(int _ret)
      {
          path root_path = source->DirectoryPathWithTrailingSlash();
          path req_path = mc.TextField.stringValue.fileSystemRepresentation;
@@ -454,12 +452,12 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
              
              if(source->Host()->IsNativeFS() &&
                 ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ))
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames.get())
                                    root:root_path.c_str()
                                    dest:req_path.c_str()
                                 options:opts];
              else if( destination->Host()->IsWriteable() )
-                 op = [op initWithFiles:move(*files.get())
+                 op = [op initWithFiles:move(*filenames.get())
                                    root:root_path.c_str()
                                  srcvfs:source->Host()
                                    dest:req_path.c_str()

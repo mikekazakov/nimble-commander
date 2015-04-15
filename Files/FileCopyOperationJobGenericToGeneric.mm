@@ -17,7 +17,7 @@ FileCopyOperationJobGenericToGeneric::~FileCopyOperationJobGenericToGeneric()
 {
 }
 
-void FileCopyOperationJobGenericToGeneric::Init(chained_strings _src_files,
+void FileCopyOperationJobGenericToGeneric::Init(vector<string> _src_files,
                                                 const path &_src_root,               // dir in where files are located
                                                 shared_ptr<VFSHost> _src_host,       // src host to deal with
                                                 const path &_dest,                   // where to copy
@@ -66,7 +66,8 @@ void FileCopyOperationJobGenericToGeneric::Do()
     else
     {
         // no need for deep scanning
-        m_ScannedItems.swap(m_InitialItems);
+        for(auto &i:m_InitialItems)
+            m_ScannedItems.push_back(i, nullptr);
     }
     if(CheckPauseOrStop()) { SetStopped(); return; }
     

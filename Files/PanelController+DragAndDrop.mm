@@ -458,10 +458,10 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             PanelController *source_controller = source_broker.controller;
             auto opmask = sender.draggingSourceOperationMask;
 
-            chained_strings files;
+            vector<string> files;
             for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                     options:nil])
-                files.push_back(item.filename, nullptr);
+                files.emplace_back(item.filename);
 
             if(files.empty())
                 return false;
@@ -561,26 +561,20 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             files[root].emplace_back(filename);
         }
 
-        for(auto &t: files)
-        {
-            chained_strings filenames;
-            for(auto &s: t.second)
-                filenames.push_back(s, nullptr);
-            
-            
+        for(auto &t: files) {            
             FileCopyOperationOptions opts;
             opts.docopy = true; // TODO: support move from other apps someday?
             FileCopyOperation *op;
 
             if(!self.vfs->IsNativeFS() && self.vfs->IsWriteable() ) // vfs->vfs path
-                op = [[FileCopyOperation alloc] initWithFiles:move(filenames)
+                op = [[FileCopyOperation alloc] initWithFiles:t.second
                                                          root:t.first.c_str()
                                                        srcvfs:VFSNativeHost::SharedHost()
                                                          dest:destination_dir.c_str()
                                                        dstvfs:self.vfs
                                                       options:opts];
             else // native -> native path
-                op = [[FileCopyOperation alloc] initWithFiles:move(filenames)
+                op = [[FileCopyOperation alloc] initWithFiles:t.second
                                                          root:t.first.c_str()
                                                          dest:destination_dir.c_str()
                                                       options:opts];

@@ -26,13 +26,6 @@
 @property (nonatomic, readonly) string currentDirectoryPath;
 
 /**
- * Return a list of selected entries if any.
- * If no entries is selected - return currently selected element if it is not dot-dot.
- * If it is dot-dot returns 0.
- */
-- (chained_strings) GetSelectedEntriesOrFocusedEntryWithoutDotDot DEPRECATED_ATTRIBUTE;
-
-/**
  * Return a list of selected entries filenames if any.
  * If no entries is selected - return currently focused element filename.
  * On case of only focused dot-dot entry return an empty list.

@@ -8,20 +8,19 @@
 
 #pragma once
 
-#import <vector>
-#import "OperationJob.h"
 #import "FileCopyOperation.h"
+#import "FileCopyOperationJob.h"
 #import "DispatchQueue.h"
 #import "VFS.h"
 
 // copy from generic vfs host to native file system
-class FileCopyOperationJobGenericToGeneric : public OperationJob
+class FileCopyOperationJobGenericToGeneric : public FileCopyOperationJob
 {
 public:
     FileCopyOperationJobGenericToGeneric();
     ~FileCopyOperationJobGenericToGeneric();
     
-    void Init(chained_strings _src_files,
+    void Init(vector<string> _src_files,
               const path &_src_root,               // dir in where files are located
               shared_ptr<VFSHost> _src_host,       // src host to deal with
               const path &_dest,                   // where to copy
@@ -113,7 +112,6 @@ private:
     
     __unsafe_unretained FileCopyOperation  *m_Operation;
     FileCopyOperationOptions                m_Options;
-    chained_strings                         m_InitialItems;
     chained_strings                         m_ScannedItems;
     const chained_strings::node             *m_CurrentlyProcessingItem;
 

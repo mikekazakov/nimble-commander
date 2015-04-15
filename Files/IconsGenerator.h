@@ -44,9 +44,10 @@ private:
     {
         uint64_t    file_size;
         mode_t      unix_mode;
-        string extension;
-        string relative_path;
-        shared_ptr<VFSHost> host;
+        time_t      mtime;
+        string      extension;
+        string      relative_path;
+        VFSHostPtr  host;
         
         NSImageRep *generic;   // just folder or document icon
         
@@ -77,7 +78,7 @@ private:
     function<void()> m_UpdateCallback;
     
     void BuildGenericIcons();
-    void Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _guard);
+    void Runner(shared_ptr<Meta> _meta);
     void StopWorkQueue();
     
     

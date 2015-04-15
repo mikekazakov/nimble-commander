@@ -248,8 +248,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     assert(dispatch_is_main_queue()); // STA api design
     
     auto &entry = _listing.At(_no);
-    if(entry.CIcon() > 0)
-    {
+    if( entry.CIcon() > 0 ) {
         int number = entry.CIcon() - 1;
         const auto it = m_Icons.find(number);
         // sanity check - not founding meta with such number means sanity breach in calling module
@@ -257,13 +256,22 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         
         const auto &meta = it->second;
         
-        if(meta->thumbnail != nil) return meta->thumbnail;
-        if(meta->filetype  != nil) return meta->filetype;
-        assert(meta->generic != nil);
-        return meta->generic;
+        // check if Icon meta stored here is outdated
+        if( meta->file_size == entry.Size() &&
+           meta->mtime == entry.MTime() ) {
+            
+            // short path - return a stored icon from stash
+            if(meta->thumbnail != nil)
+                return meta->thumbnail;
+            if(meta->filetype  != nil)
+                return meta->filetype;
+            
+            assert(meta->generic != nil);
+            return meta->generic;
+        }
     }
     
-    // no icon - first request for this entry
+    // long path: no icon - first request for this entry (or mb entry changed)
     // need to collect the appropriate info and put request into generating queue
     
     if(m_LastIconID == MaxIcons ||
@@ -271,12 +279,13 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         return entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
 
     unsigned short meta_no = m_LastIconID++;
-    auto ins_it = m_Icons.insert(make_pair( meta_no, make_shared<Meta>()));
+    auto ins_it = m_Icons.emplace( meta_no, make_shared<Meta>() );
     assert(ins_it.second == true); // another sanity check
     auto meta = ins_it.first->second;
     
     meta->file_size = entry.Size();
     meta->unix_mode = entry.UnixMode();
+    meta->mtime = entry.MTime();
     meta->host = _listing.Host();
     meta->relative_path = entry.IsDotDot() ?
                         _listing.RelativePath() :
@@ -303,9 +312,8 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         
     entry.SetCIcon(meta_no+1);
     
-    auto sh_this = shared_from_this();
-    m_WorkGroup.Run([=]{
-        Runner(meta, sh_this);
+    m_WorkGroup.Run([=,guard=shared_from_this()]{
+        Runner(meta);
     });
     
     if(meta->thumbnail) return meta->thumbnail;
@@ -313,7 +321,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     return meta->generic;
 }
 
-void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _guard)
+void IconsGenerator::Runner(shared_ptr<Meta> _meta)
 {
     if(m_StopWorkQueue > 0)
         return;
@@ -439,8 +447,10 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, shared_ptr<IconsGenerator> _
     }
     
     // clear unnecessary meta data
-    string(move(_meta->extension));
-    string(move(_meta->relative_path));
+    _meta->extension.clear();
+    _meta->extension.shrink_to_fit();
+    _meta->relative_path.clear();
+    _meta->relative_path.shrink_to_fit();    
     _meta->host.reset();
 }
 

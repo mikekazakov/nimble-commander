@@ -29,7 +29,7 @@
         FileCopyOperationOptions opts;
         opts.docopy = true;
         FileCopyOperation *op = [FileCopyOperation alloc];
-        op = [op initWithFiles:chained_strings("overwrite_test_big.zzz")
+        op = [op initWithFiles:vector<string>(1, "overwrite_test_big.zzz")
                           root:(g_DataPref / "operations/copying/").c_str()
                           dest:dst.c_str()
                        options:opts];
@@ -48,7 +48,7 @@
         opts.docopy = true;
         opts.force_overwrite = true;
         FileCopyOperation *op = [FileCopyOperation alloc];
-        op = [op initWithFiles:chained_strings("overwrite_test_small.zzz")
+        op = [op initWithFiles:vector<string>(1, "overwrite_test_small.zzz")
                           root:(g_DataPref / "operations/copying/").c_str()
                           dest:dst.c_str()
                        options:opts];
@@ -78,7 +78,7 @@
         FileCopyOperationOptions opts;
         opts.docopy = true;
         FileCopyOperation *op = [FileCopyOperation alloc];
-        op = [op initWithFiles:chained_strings("overwrite_test_small.zzz")
+        op = [op initWithFiles:vector<string>(1, "overwrite_test_small.zzz")
                           root:(g_DataPref / "operations/copying/").c_str()
                           dest:dst.c_str()
                        options:opts];
@@ -97,7 +97,7 @@
         opts.docopy = true;
         opts.force_overwrite = true;
         FileCopyOperation *op = [FileCopyOperation alloc];
-        op = [op initWithFiles:chained_strings("overwrite_test_big.zzz")
+        op = [op initWithFiles:vector<string>(1, "overwrite_test_big.zzz")
                           root:(g_DataPref / "operations/copying/").c_str()
                           dest:dst.c_str()
                        options:opts];

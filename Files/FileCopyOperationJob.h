@@ -18,5 +18,7 @@ public:
     static void PreallocateSpace(int64_t _preallocate_delta, int _file_des);
     
 protected:
-    vector<string> m_InitialItems;
+    vector<string>  m_InitialItems;
+    string          m_InitialSource;
+    string          m_InitialDestination;
 };

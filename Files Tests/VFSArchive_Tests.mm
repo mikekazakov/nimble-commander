@@ -216,7 +216,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( host->Open() == 0 );
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("Adium.app")
+    op = [op initWithFiles:vector<string>(1, "Adium.app")
                       root:"/"
                    rootvfs:host
                       dest:dir.c_str()

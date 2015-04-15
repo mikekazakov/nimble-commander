@@ -122,8 +122,8 @@ FileCopyOperationJobNativeToNative::~FileCopyOperationJobNativeToNative()
 }
 
 void FileCopyOperationJobNativeToNative::Init(vector<string> _filenames,
-                         const char *_root,               // dir in where files are located
-                         const char *_dest,                // where to copy
+                         const string &_root,               // dir in where files are located
+                         const string &_dest,                // where to copy
                          FileCopyOperationOptions _opts,
                          FileCopyOperation *_op
                          )
@@ -131,8 +131,9 @@ void FileCopyOperationJobNativeToNative::Init(vector<string> _filenames,
     m_Operation = _op;
     m_InitialItems = move(_filenames);
     m_Options = _opts;
-    strcpy(m_Destination, _dest);
-    strcpy(m_SourceDirectory, _root);
+    m_InitialSource = _root;
+    m_InitialDestination = _dest;
+    m_Destination = m_InitialDestination;
     
     if(m_Options.force_overwrite)
         m_OverwriteAll = true;
@@ -147,7 +148,7 @@ void FileCopyOperationJobNativeToNative::Do()
     if(CheckPauseOrStop()) { SetStopped(); return; }
 
     auto dest_volume = NativeFSManager::Instance().VolumeFromPathFast(m_Destination);
-    auto source_volume = NativeFSManager::Instance().VolumeFromPathFast(m_SourceDirectory);
+    auto source_volume = NativeFSManager::Instance().VolumeFromPathFast(m_InitialSource);
     assert(dest_volume && source_volume);
     m_SourceHasExternalEAs = source_volume->interfaces.extended_attr == false;
     m_DestinationHasExternalEAs = dest_volume->interfaces.extended_attr == false;
@@ -199,62 +200,58 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
 {
     auto &io = RoutedIO::Default;
     struct stat stat_buffer;
-    char destpath[MAXPATHLEN];
     
     // check if destination begins with "../" or "~/" - then substitute it with appropriate paths
-    if(strncmp(m_Destination, "..", strlen("..")) == 0)
-    {
+    if( m_InitialDestination.compare(0, 2, "..") == 0 ) {
         char path[MAXPATHLEN];
-        bool b = GetDirectoryContainingItemFromPath(m_SourceDirectory, path);
+        bool b = GetDirectoryContainingItemFromPath(m_InitialSource.c_str(), path);
         assert(b);
         
-        if(strncmp(m_Destination, "../", strlen("../")) == 0)
-            strcat(path, m_Destination + strlen("../"));
+        if( m_InitialDestination.compare(0, 3, "../") == 0 )
+            strcat(path, m_InitialDestination.c_str() + 3);
         else
-            strcat(path, m_Destination + strlen(".."));
-        strcpy(m_Destination, path);
+            strcat(path, m_InitialDestination.c_str() + 2);
+        m_Destination = path;
     }
-    else if(strncmp(m_Destination, "~", strlen("~")) == 0)
-    {
+    else if( m_InitialDestination.compare(0, 1, "~") == 0 ) {
         char path[MAXPATHLEN];
         strcpy(path, CommonPaths::Get(CommonPaths::Home).c_str());
-        if(strncmp(m_Destination, "~/", strlen("~/")) == 0)
-            strcat(path, m_Destination + strlen("~/"));
+        if( m_InitialDestination.compare(0, 2, "~/") == 0 )
+            strcat(path, m_InitialDestination.c_str() + 2);
         else
-            strcat(path, m_Destination + strlen("~"));
-        strcpy(m_Destination, path);
+            strcat(path, m_InitialDestination.c_str() + 1);
+        m_Destination = path;
     }
+    else
+        m_Destination = m_InitialDestination;
+    
+    assert(!m_Destination.empty());
     
     if(m_Destination[0] == '/' &&
-       io.stat(m_Destination, &stat_buffer) == 0)
-    {
-        CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);        
+       io.stat(m_Destination.c_str(), &stat_buffer) == 0) {
+        CheckSameVolume(m_InitialSource.c_str(), m_Destination.c_str(), m_SameVolume);
         bool isfile = (stat_buffer.st_mode&S_IFMT) == S_IFREG;
         bool isdir  = (stat_buffer.st_mode&S_IFMT) == S_IFDIR;
         
-        if(isfile)
-        {
-            if(m_Options.docopy)
-            {
+        if(isfile) {
+            if(m_Options.docopy) {
                 m_WorkMode = CopyToFixedPath;
             }
-            else
-            {
-                if(m_SameVolume) m_WorkMode = RenameToFixedPath;
-                else             m_WorkMode = MoveToFixedPath;
+            else {
+                if(m_SameVolume)
+                    m_WorkMode = RenameToFixedPath;
+                else
+                    m_WorkMode = MoveToFixedPath;
             }
         }
-        else if(isdir)
-        {   
-            if(m_Destination[strlen(m_Destination)-1] != '/')
-                strcat(m_Destination, "/"); // add slash at the end
+        else if(isdir) {
+            if( m_Destination.back() != '/' )
+                m_Destination.append("/"); // add slash at the end
 
-            if(m_Options.docopy)
-            {
+            if(m_Options.docopy) {
                 m_WorkMode = CopyToPathPreffix;
             }
-            else
-            {
+            else {
                 if(m_SameVolume) m_WorkMode = RenameToPathPreffix;
                 else             m_WorkMode = MoveToPathPreffix;
             }
@@ -262,50 +259,41 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
         else
             assert(0); //TODO: implement handling of this weird cases (like copying to a device)
     }
-    else
-    { // ok, it's not a valid entry, now we have to analyze what user wants from us
+    else {
+        // ok, it's not a valid entry, now we have to analyze what user wants from us
         // and try to combine the right m_Destination
-        if(strchr(m_Destination, '/') == 0)
-        {
+        if( m_Destination.find('/') == string::npos ) {
             // there's no directories mentions in destination path, let's treat destination as an regular absent file
             // let's think that this destination file should be located in source directory
             // TODO: add CheckSameVolume
-            strcpy(destpath, m_SourceDirectory);
-            strcat(destpath, m_Destination);
-            strcpy(m_Destination, destpath);
+            m_Destination = m_InitialSource + m_Destination;
             
             m_SameVolume = true;
-            if(m_Options.docopy) m_WorkMode = CopyToFixedPath;
-            else            m_WorkMode = RenameToFixedPath;
+            if(m_Options.docopy)    m_WorkMode = CopyToFixedPath;
+            else                    m_WorkMode = RenameToFixedPath;
         }
-        else
-        {
-            if(IsPathWithTrailingSlash(m_Destination))
-            {
+        else {
+            if( m_Destination.back() == '/' ) {
                 // user want to copy/rename/move file(s) to some directory, like "Abra/Carabra/" or "/bin/abra/"
-                if(m_Destination[0] != '/')
-                { // relative to source directory
-                    strcpy(destpath, m_SourceDirectory);
-                    strcat(destpath, m_Destination);
-                    strcpy(m_Destination, destpath);
+                if( m_Destination.front() != '/' ) {
+                    // relative to source directory
+                    m_Destination = m_InitialSource + m_Destination;
 
                     // check if the volume is the same
                     // TODO: there can be some CRAZY situations when user wants to do someting with directory that
                     // contains a mounting point with another filesystem. but for now let's think that is not valid.
                     // for the future - algo should have a flag about nested filesystems and process them carefully later
-                    CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);
+                    CheckSameVolume(m_InitialSource.c_str(), m_Destination.c_str(), m_SameVolume);
                 }
-                else
-                { // absolute path                
-                    CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);// TODO: look up
+                else {
+                    // absolute path
+                    CheckSameVolume(m_InitialSource.c_str(), m_Destination.c_str(), m_SameVolume);// TODO: look up
                 }
 
-                if(m_Options.docopy)
-                {
+                if(m_Options.docopy) {
                     m_WorkMode = CopyToPathPreffix;
                 }
-                else
-                {
+                else {
                     if(m_SameVolume)  m_WorkMode = RenameToPathPreffix;
                     else              m_WorkMode = MoveToPathPreffix;
                 }
@@ -314,25 +302,21 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
                 BuildDestinationDirectory(m_Destination);
                 if(CheckPauseOrStop()) return;
             }
-            else
-            { // user want to copy/rename/move file(s) to some filename, like "Abra/Carabra" or "/bin/abra"
-                if(m_Destination[0] != '/')
-                { // relative to source directory
-                    strcpy(destpath, m_SourceDirectory);
-                    strcat(destpath, m_Destination);
-                    strcpy(m_Destination, destpath);
+            else {
+                // user want to copy/rename/move file(s) to some filename, like "Abra/Carabra" or "/bin/abra"
+                if( m_Destination.front() != '/' ) {
+                    // relative to source directory
+                    m_Destination = m_InitialSource + m_Destination;
                 }
-                else
-                { // absolute path
+                else {
+                    // absolute path
                 }
-                CheckSameVolume(m_SourceDirectory, m_Destination, m_SameVolume);// TODO: look up
+                CheckSameVolume(m_InitialSource.c_str(), m_Destination.c_str(), m_SameVolume);// TODO: look up
 
-                if(m_Options.docopy)
-                {
+                if(m_Options.docopy) {
                     m_WorkMode = CopyToFixedPath;
                 }
-                else
-                {
+                else {
                     if(m_SameVolume) m_WorkMode = RenameToFixedPath;
                     else             m_WorkMode = MoveToFixedPath;
                 }
@@ -345,27 +329,24 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
     }
 }
 
-void FileCopyOperationJobNativeToNative::BuildDestinationDirectory(const char* _path)
+void FileCopyOperationJobNativeToNative::BuildDestinationDirectory(const string &_path)
 {
     // TODO: not very efficient implementation, it does many redundant stat calls
     // this algorithm iterates from left to right, but it's better to iterate right-left and then left-right
     // but this work is doing only once per MassCopyOp, so user may not even notice this issue
-    
+    static const mode_t new_dir_mode = S_IXUSR|S_IXGRP|S_IXOTH|S_IRUSR|S_IRGRP|S_IROTH|S_IWUSR;
     auto &io = RoutedIO::Default;
     
     struct stat stat_buffer;
     char destpath[MAXPATHLEN];
-    strcpy(destpath, _path);
+    strcpy(destpath, _path.c_str());
     char* leftmost = strchr(destpath+1, '/');
     assert(leftmost != 0);
-    do
-    {
+    do {
         *leftmost = 0;
-        if(io.stat(destpath, &stat_buffer) == -1)
-        {
+        if(io.stat(destpath, &stat_buffer) == -1) {
             // absent part - need to create it
-domkdir:    if(io.mkdir(destpath, S_IXUSR|S_IXGRP|S_IXOTH|S_IRUSR|S_IRGRP|S_IROTH|S_IWUSR) == -1)
-            {
+domkdir:    if(io.mkdir(destpath, new_dir_mode) == -1) {
                 int result = [[m_Operation OnCantCreateDir:ErrnoToNSError() ForDir:destpath] WaitForResult];
                 if (result == OperationDialogResult::Retry) goto domkdir;
                 if (result == OperationDialogResult::Stop) { RequestStop(); return; }
@@ -400,7 +381,7 @@ void FileCopyOperationJobNativeToNative::ScanItem(const char *_full_path, const 
 
     auto &io = RoutedIO::Default;
     char fullpath[MAXPATHLEN];
-    strcpy(fullpath, m_SourceDirectory);
+    strcpy(fullpath, m_InitialSource.c_str());
     strcat(fullpath, _full_path);
 
     struct stat stat_buffer;
@@ -539,7 +520,7 @@ void FileCopyOperationJobNativeToNative::ProcessFilesRemoval()
         
         char itemname[MAXPATHLEN], path[MAXPATHLEN];
         i->str_with_pref(itemname);
-        strcpy(path, m_SourceDirectory);
+        strcpy(path, m_InitialSource.c_str());
         strcat(path, itemname);
         io.unlink(path); // any error handling here?
     }
@@ -555,7 +536,7 @@ void FileCopyOperationJobNativeToNative::ProcessFoldersRemoval()
         
         char itemname[MAXPATHLEN], path[MAXPATHLEN];
         item->str_with_pref(itemname);
-        strcpy(path, m_SourceDirectory);
+        strcpy(path, m_InitialSource.c_str());
         strcat(path, itemname);
         io.rmdir(path); // any error handling here?
     }
@@ -563,35 +544,28 @@ void FileCopyOperationJobNativeToNative::ProcessFoldersRemoval()
 
 void FileCopyOperationJobNativeToNative::ProcessCopyToPathPreffix(const char *_path, int _number)
 {
-    char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];    
-    if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir)
-    {
-        assert(IsPathWithTrailingSlash(m_Destination));
-        assert(IsPathWithTrailingSlash(_path));
+    assert(IsPathWithTrailingSlash(m_Destination.c_str()));
+    
+    char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
+    
+    // compose real src name
+    strcpy(sourcepath, m_InitialSource.c_str());
+    strcat(sourcepath, _path);
+    
+    // compose dest name
+    strcpy(destinationpath, m_Destination.c_str());
+    strcat(destinationpath, _path);
+    
+    if(strcmp(sourcepath, destinationpath) == 0)
+        return; // do not try to do a meaningless operation
+    
+    if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir) {
+        assert(IsPathWithTrailingSlash(_path)); // sanity check
         
-        strcpy(destinationpath, m_Destination);
-        strcat(destinationpath, _path);
-        
-        strcpy(sourcepath, m_SourceDirectory);
-        strcat(sourcepath, _path);
-        
-        if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy directory into itself        
         CopyDirectoryTo(sourcepath, destinationpath);
     }
-    else
-    {
-        assert(_path[strlen(_path)-1] != '/'); // sanity check
-        
-        // compose real src name
-        strcpy(sourcepath, m_SourceDirectory);
-        strcat(sourcepath, _path);
-        
-        // compose dest name
-        assert(IsPathWithTrailingSlash(m_Destination)); // just a sanity check.
-        strcpy(destinationpath, m_Destination);
-        strcat(destinationpath, _path);
-        
-        if(strcmp(sourcepath, destinationpath) == 0) return; // do not try to copy file into itself
+    else {
+        assert(!IsPathWithTrailingSlash(_path)); // sanity check
         
         if(m_Options.preserve_symlinks && (m_ItemFlags[_number] & (uint8_t)ItemFlags::is_symlink))
             CreateSymlinkTo(sourcepath, destinationpath);
@@ -603,46 +577,41 @@ void FileCopyOperationJobNativeToNative::ProcessCopyToPathPreffix(const char *_p
 void FileCopyOperationJobNativeToNative::ProcessCopyToFixedPath(const char *_path, int _number)
 {
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
-    if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir)
-    {
-        assert(!IsPathWithTrailingSlash(m_Destination));
+    if(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir) {
+        assert(!IsPathWithTrailingSlash(m_Destination.c_str()));
         assert(IsPathWithTrailingSlash(_path));
         
-        strcpy(destinationpath, m_Destination);
+        strcpy(destinationpath, m_Destination.c_str());
         // here we need to find if user wanted just to copy a single top-level directory
         // if so - don't touch destination name. otherwise - add an original path there
-        if(m_IsSingleEntryCopy)
-        {
+        if(m_IsSingleEntryCopy) {
             // for top level we need to just leave path without changes - skip top level's entry name
             // for nested entries we need to cut first part of a path
             if(*(strchr(_path, '/')+1) != 0)
                 strcat(destinationpath, strchr(_path, '/'));
         }
-        else
-        {
+        else {
             strcat(destinationpath, "/");
             strcat(destinationpath, _path);
         }
         
-        strcpy(sourcepath, m_SourceDirectory);
+        strcpy(sourcepath, m_InitialSource.c_str());
         strcat(sourcepath, _path);
         
         CopyDirectoryTo(sourcepath, destinationpath);
     }
-    else
-    {   
-        assert(_path[strlen(_path)-1] != '/'); // sanity check
+    else {
+        assert(!IsPathWithTrailingSlash(_path)); // sanity check
         
         // compose real src name
-        strcpy(sourcepath, m_SourceDirectory);
+        strcpy(sourcepath, m_InitialSource.c_str());
         strcat(sourcepath, _path);
         
         // compose dest name
-        strcpy(destinationpath, m_Destination);
+        strcpy(destinationpath, m_Destination.c_str());
         // here we need to find if user wanted just to copy a single top-level directory
         // if so - don't touch destination name. otherwise - add an original path there
-        if(m_IsSingleEntryCopy)
-        {
+        if(m_IsSingleEntryCopy) {
             // for top level we need to just leave path without changes - skip top level's entry name
             // for nested entries we need to cut first part of a path
             if(strchr(_path, '/') != 0)
@@ -662,32 +631,28 @@ void FileCopyOperationJobNativeToNative::ProcessMoveToFixedPath(const char *_pat
 {
     // m_Destination is a file name
     char sourcepath[MAXPATHLEN];
-    if(!(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir))
-    {
+
+    // compose real src name
+    strcpy(sourcepath, m_InitialSource.c_str());
+    strcat(sourcepath, _path);
+    
+    if( !(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir) ) {
         assert(!IsPathWithTrailingSlash(_path)); // sanity check
-        // compose real src name
-        strcpy(sourcepath, m_SourceDirectory);
-        strcat(sourcepath, _path);
-        
         
         bool result = (m_Options.preserve_symlinks && (m_ItemFlags[_number] & (uint8_t)ItemFlags::is_symlink)) ?
-            CreateSymlinkTo(sourcepath, m_Destination):
-            CopyFileTo(sourcepath, m_Destination);
+            CreateSymlinkTo(sourcepath, m_Destination.c_str()):
+            CopyFileTo(sourcepath, m_Destination.c_str());
         
+        // put files in deletion list only if copying was successful
         if( result )
             m_FilesToDelete.push_back(m_CurrentlyProcessingItem);
-            // put files in deletion list only if copying was successful        
     }
-    else
-    {
+    else {
         assert(IsPathWithTrailingSlash(_path)); // sanity check
-        // compose real src name
-        strcpy(sourcepath, m_SourceDirectory);
-        strcat(sourcepath, _path);
 
-        if(CopyDirectoryTo(sourcepath, m_Destination))
+        // put dirs in deletion list only if copying was successful
+        if(CopyDirectoryTo(sourcepath, m_Destination.c_str()))
             m_DirsToDelete.push_back(m_CurrentlyProcessingItem);
-            // put dirs in deletion list only if copying was successful
     }
 }
 
@@ -695,20 +660,20 @@ void FileCopyOperationJobNativeToNative::ProcessMoveToPathPreffix(const char *_p
 {
     // m_Destination is a directory path
     char sourcepath[MAXPATHLEN], destinationpath[MAXPATHLEN];
+
+    // compose real src name
+    strcpy(sourcepath, m_InitialSource.c_str());
+    strcat(sourcepath, _path);
     
-    if(!(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir))
-    {
+    // compose dest name
+    strcpy(destinationpath, m_Destination.c_str());
+    strcat(destinationpath, _path);
+    assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen
+    
+    if( !(m_ItemFlags[_number] & (uint8_t)ItemFlags::is_dir) ) {
         assert(!IsPathWithTrailingSlash(_path)); // sanity check
-        // compose real src name
-        strcpy(sourcepath, m_SourceDirectory);
-        strcat(sourcepath, _path);
-    
-        // compose dest name
-        assert(IsPathWithTrailingSlash(m_Destination)); // just a sanity check.
-        strcpy(destinationpath, m_Destination);
-        strcat(destinationpath, _path);
-        assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen
-    
+        assert(IsPathWithTrailingSlash(m_Destination.c_str())); // just a sanity check.
+        
         bool result = (m_Options.preserve_symlinks && (m_ItemFlags[_number] & (uint8_t)ItemFlags::is_symlink)) ?
             CreateSymlinkTo(sourcepath, destinationpath):
             CopyFileTo(sourcepath, destinationpath);
@@ -717,18 +682,9 @@ void FileCopyOperationJobNativeToNative::ProcessMoveToPathPreffix(const char *_p
         if( result )
             m_FilesToDelete.push_back(m_CurrentlyProcessingItem);
     }
-    else
-    {
+    else {
         assert(IsPathWithTrailingSlash(_path)); // sanity check
-        // compose real src name
-        strcpy(sourcepath, m_SourceDirectory);
-        strcat(sourcepath, _path);
-        
-        // compose dest name
-        assert(IsPathWithTrailingSlash(m_Destination)); // just a sanity check.
-        strcpy(destinationpath, m_Destination);
-        strcat(destinationpath, _path);
-        assert(strcmp(sourcepath, destinationpath) != 0); // this situation should never happen
+        assert(IsPathWithTrailingSlash(m_Destination.c_str())); // just a sanity check.
         
         if(CopyDirectoryTo(sourcepath, destinationpath))
             m_DirsToDelete.push_back(m_CurrentlyProcessingItem);
@@ -739,45 +695,43 @@ void FileCopyOperationJobNativeToNative::ProcessRenameToFixedPath(const char *_p
 {
     auto &io = RoutedIO::Default;
     m_Stats.SetCurrentItem(_path);
+
+    // sanity checks
+    assert(!IsPathWithTrailingSlash(m_Destination.c_str()));
+    assert(_path[0] != 0);
+    assert(_path[0] != '/');
+    
     
     // m_Destination is full target path - we need to rename current file to it
     // assuming that we're working on same valume
     char sourcepath[MAXPATHLEN];
-    struct stat stat_buffer;
-    
-     // sanity checks
-    assert(m_Destination[strlen(m_Destination)-1] != '/');
-    assert(_path[0] != 0);
-    assert(_path[0] != '/');
     
     // compose real src name
-    strcpy(sourcepath, m_SourceDirectory);
+    strcpy(sourcepath, m_InitialSource.c_str());
     strcat(sourcepath, _path);
     
-    int ret = io.lstat(m_Destination, &stat_buffer);
-    if(ret != -1)
-    {
+    struct stat dst_stat_buffer;
+    int ret = io.lstat(m_Destination.c_str(), &dst_stat_buffer);
+    if(ret != -1) {
         // Destination file already exists.
         // Check if destination and source paths reference the same file. In this case,
         // silently rename the file.
         struct stat src_stat_buffer;
         ret = io.lstat(sourcepath, &src_stat_buffer);
-        if (!(ret == 0 && stat_buffer.st_dev == src_stat_buffer.st_dev
-            && stat_buffer.st_ino == src_stat_buffer.st_ino))
-        {
+        if( !(ret == 0 &&
+              dst_stat_buffer.st_dev == src_stat_buffer.st_dev &&
+              dst_stat_buffer.st_ino == src_stat_buffer.st_ino ) ) {
             // Ask what to do.
-            int result = [[m_Operation OnRenameDestinationExists:m_Destination Source:sourcepath]
+            int result = [[m_Operation OnRenameDestinationExists:m_Destination.c_str() Source:sourcepath]
                           WaitForResult];
-            
             if (result == OperationDialogResult::Stop) { RequestStop(); return; }
         }
     }
     
 retry_rename:
-    ret = io.rename(sourcepath, m_Destination);
-    if (ret != 0)
-    {
-        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:m_Destination] WaitForResult];
+    ret = io.rename(sourcepath, m_Destination.c_str());
+    if (ret != 0) {
+        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:m_Destination.c_str()] WaitForResult];
         if (result == OperationDialogResult::Retry) goto retry_rename;
         else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
     }
@@ -792,43 +746,40 @@ void FileCopyOperationJobNativeToNative::ProcessRenameToPathPreffix(const char *
     
     // m_Destination is a directory path - we need to appen _path to it
     char sourcepath[MAXPATHLEN], destpath[MAXPATHLEN];
-    struct stat stat_buffer;
 
     assert(_path[0] != 0);
     assert(_path[0] != '/');
         
     // compose real src name
-    strcpy(sourcepath, m_SourceDirectory);
+    strcpy(sourcepath, m_InitialSource.c_str());
     strcat(sourcepath, _path);
     
-    strcpy(destpath, m_Destination);
-    if(destpath[strlen(destpath)-1] != '/' ) strcat(destpath, "/");
+    strcpy(destpath, m_Destination.c_str());
+    if( !IsPathWithTrailingSlash(destpath) ) strcat(destpath, "/");
     strcat(destpath, _path);
     
-    int ret = io.lstat(destpath, &stat_buffer);
-    if(ret != -1)
-    {
+    struct stat dst_stat_buffer;
+    int ret = io.lstat(destpath, &dst_stat_buffer);
+    if(ret != -1) {
         // Destination file already exists.
         // Check if destination and source paths reference the same file. In this case,
         // silently rename the file.
         struct stat src_stat_buffer;
         ret = io.lstat(sourcepath, &src_stat_buffer);
-        if (!(ret == 0 && stat_buffer.st_dev == src_stat_buffer.st_dev
-              && stat_buffer.st_ino == src_stat_buffer.st_ino))
-        {
+        if ( !(ret == 0 &&
+               dst_stat_buffer.st_dev == src_stat_buffer.st_dev &&
+               dst_stat_buffer.st_ino == src_stat_buffer.st_ino) ) {
             // Ask what to do.
             int result = [[m_Operation OnRenameDestinationExists:destpath Source:sourcepath]
                           WaitForResult];
-            
             if (result == OperationDialogResult::Stop) { RequestStop(); return; }
         }
     }
 
 retry_rename:
     ret = io.rename(sourcepath, destpath);
-    if (ret != 0)
-    {
-        int result = [[m_Operation OnCopyWriteError:[NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil] ForFile:m_Destination] WaitForResult];
+    if (ret != 0) {
+        int result = [[m_Operation OnCopyWriteError:[NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil] ForFile:m_Destination.c_str()] WaitForResult];
         if (result == OperationDialogResult::Retry) goto retry_rename;
         else if (result == OperationDialogResult::Stop) { RequestStop(); return; }
     }

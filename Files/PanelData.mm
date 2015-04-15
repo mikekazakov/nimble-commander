@@ -222,12 +222,12 @@ string PanelData::VerboseDirectoryFullPath() const
 struct SortPredLess
 {
 private:
-    shared_ptr<VFSListing>          ind_tar;
+    const VFSListing&               ind_tar;
     PanelSortMode                   sort_mode;
     CFStringCompareFlags            str_comp_flags;
 public:
-    SortPredLess(shared_ptr<VFSListing> _items, PanelSortMode sort_mode):
-        ind_tar(_items),
+    SortPredLess(const shared_ptr<VFSListing> &_items, PanelSortMode sort_mode):
+        ind_tar(*_items),
         sort_mode(sort_mode)
     {
         str_comp_flags = (sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
@@ -237,8 +237,8 @@ public:
     
   	bool operator()(unsigned _1, unsigned _2) const
     {
-        const auto &val1 = (*ind_tar)[_1];
-        const auto &val2 = (*ind_tar)[_2];
+        const auto &val1 = ind_tar[_1];
+        const auto &val2 = ind_tar[_2];
         
         if(sort_mode.sep_dirs)
         {

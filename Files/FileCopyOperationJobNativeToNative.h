@@ -20,8 +20,8 @@ public:
     ~FileCopyOperationJobNativeToNative();
 
     void Init(vector<string> _filenames,
-                             const char *_root,               // dir in where files are located
-                             const char *_dest,                // where to copy
+                             const string &_root,              // dir in where files are located
+                             const string &_dest,                // where to copy
                              FileCopyOperationOptions _opts,
                              FileCopyOperation *_op
                              );
@@ -88,7 +88,7 @@ private:
     
     void ProcessFilesRemoval();
     void ProcessFoldersRemoval();
-    void BuildDestinationDirectory(const char* _path);
+    void BuildDestinationDirectory(const string &_path);
     
     // does copying. _src and _dest should be a full paths
     // return true if copying was successful
@@ -107,8 +107,7 @@ private:
     vector<const chained_strings::node *> m_FilesToDelete; // used for move work mode
     vector<const chained_strings::node *> m_DirsToDelete; // used for move work mode
     const chained_strings::node *m_CurrentlyProcessingItem = nullptr;
-    char m_SourceDirectory[MAXPATHLEN];
-    char m_Destination[MAXPATHLEN];
+    string m_Destination;
     unsigned m_SourceNumberOfFiles = 0;
     unsigned m_SourceNumberOfDirectories = 0;
     unsigned long m_SourceTotalBytes = 0;

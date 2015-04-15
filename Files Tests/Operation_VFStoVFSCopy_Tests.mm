@@ -77,7 +77,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:fn2 at:host];
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("kernel")
+    op = [op initWithFiles:vector<string>(1, "kernel")
                       root:"/System/Library/Kernels/"
                     srcvfs:VFSNativeHost::SharedHost()
                       dest:"/Public/!FilesTesting/"
@@ -108,7 +108,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings(files)
+    op = [op initWithFiles:vector<string>(begin(files), end(files))
                       root:"/Applications/Mail.app/Contents"
                     srcvfs:VFSNativeHost::SharedHost()
                       dest:"/Public/!FilesTesting/"
@@ -141,7 +141,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("bin")
+    op = [op initWithFiles:vector<string>(1, "bin")
                       root:"/"
                     srcvfs:VFSNativeHost::SharedHost()
                       dest:"/Public/!FilesTesting/"
@@ -168,7 +168,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     auto dir = self.makeTmpDir;
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("Mail.app")
+    op = [op initWithFiles:vector<string>(1, "Mail.app")
                       root:"/Applications/"
                     srcvfs:VFSNativeHost::SharedHost()
                       dest:dir.c_str()
@@ -198,7 +198,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     path dst_dir = path(dir) / "Some" / "Absent" / "Dir" / "Is" / "Here";
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("Mail.app")
+    op = [op initWithFiles:vector<string>(1, "Mail.app")
                       root:"/Applications/"
                     srcvfs:VFSNativeHost::SharedHost()
                       dest:dst_dir.c_str()
@@ -233,7 +233,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
                                host) == 0);
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("Mail.app")
+    op = [op initWithFiles:vector<string>(1, "Mail.app")
                       root:dir.c_str()
                     srcvfs:host
                       dest:"SomeDirectoryName/"
@@ -264,7 +264,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
                                host) == 0);
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("Mail.app")
+    op = [op initWithFiles:vector<string>(1, "Mail.app")
                       root:dir.c_str()
                     srcvfs:host
                       dest:"Mail2.app"
@@ -295,7 +295,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:fn3 at:host];
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("kernel")
+    op = [op initWithFiles:vector<string>(1, "kernel")
                       root:"/System/Library/Kernels/"
                     srcvfs:VFSNativeHost::SharedHost()
                       dest:"/Public/!FilesTesting/"
@@ -313,7 +313,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     
     op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("kernel")
+    op = [op initWithFiles:vector<string>(1, "kernel")
                       root:"/Public/!FilesTesting/"
                     srcvfs:host
                       dest:fn3
@@ -345,7 +345,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     FileCopyOperationOptions opts;
     opts.docopy = false;
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("Mail.app")
+    op = [op initWithFiles:vector<string>(1, "Mail.app")
                       root:dir.c_str()
                     srcvfs:host
                       dest:dir2.c_str()
@@ -375,7 +375,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     FileCopyOperationOptions opts;
     opts.docopy = false;
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:chained_strings("Mail.app")
+    op = [op initWithFiles:vector<string>(1, "Mail.app")
                       root:dir.c_str()
                     srcvfs:host
                       dest:"Mail2.app"

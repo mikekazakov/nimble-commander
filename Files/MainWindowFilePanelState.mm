@@ -291,33 +291,24 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
                              types:(NSArray *)types
 {
     if([types containsObject:NSFilenamesPboardType])
-        return [self WriteFilesnamesPBoard:pboard];
+        return [self writeFilesnamesPBoard:pboard];
         
     if([types containsObject:(__bridge NSString *)kUTTypeFileURL])
-        return [self WriteURLSPBoard:pboard];
+        return [self writeURLSPBoard:pboard];
     
     return NO;
 }
 
-- (bool)WriteFilesnamesPBoard:(NSPasteboard *)pboard
+- (bool)writeFilesnamesPBoard:(NSPasteboard *)pboard
 {
     if(!self.isPanelActive ||
-       !self.activePanelData->Host()->IsNativeFS())
+       !self.activePanelController.vfs->IsNativeFS())
         return false;
     
     NSMutableArray *filenames = [NSMutableArray new];
-    
-    PanelData *pd = self.activePanelData;
-    string dir_path = pd->DirectoryPathWithTrailingSlash();
-    if(pd->Stats().selected_entries_amount > 0) {
-        for(auto &i: pd->StringsFromSelectedEntries())
-            [filenames addObject:[NSString stringWithUTF8String:(dir_path + i.c_str()).c_str()]];
-    }
-    else {
-        auto const *item = self.activePanelView.item;
-        if(item && !item->IsDotDot())
-            [filenames addObject:[NSString stringWithUTF8String:(dir_path + item->Name()).c_str()]];
-    }
+    auto dir = self.activePanelController.currentDirectoryPath;
+    for(auto &i: self.activePanelController.selectedEntriesOrFocusedEntryFilenames)
+            [filenames addObject:[NSString stringWithUTF8StdString:dir + i]];
     
     if(filenames.count == 0)
         return false;
@@ -327,25 +318,16 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     return [pboard setPropertyList:filenames forType:NSFilenamesPboardType] == TRUE;
 }
 
-- (bool)WriteURLSPBoard:(NSPasteboard *)pboard
+- (bool)writeURLSPBoard:(NSPasteboard *)pboard
 {
     if(!self.isPanelActive ||
-       !self.activePanelData->Host()->IsNativeFS())
+       !self.activePanelController.vfs->IsNativeFS())
         return false;
     
     NSMutableArray *fileurls = [NSMutableArray new];
-    
-    PanelData *pd = self.activePanelData;
-    string dir_path = pd->DirectoryPathWithTrailingSlash();
-    if(pd->Stats().selected_entries_amount > 0) {
-        for(auto &i: pd->StringsFromSelectedEntries())
-            [fileurls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:(dir_path + i.c_str()).c_str()]]];
-    }
-    else {
-        auto const *item = self.activePanelView.item;
-        if(item && !item->IsDotDot())
-            [fileurls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:(dir_path + item->Name()).c_str()]]];
-    }
+    auto dir = self.activePanelController.currentDirectoryPath;
+    for(auto &i: self.activePanelController.selectedEntriesOrFocusedEntryFilenames)
+        [fileurls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8StdString:dir + i]]];
     
     if(fileurls.count == 0)
         return false;
@@ -771,7 +753,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (IBAction)copy:(id)sender
 {
-    [self WriteFilesnamesPBoard:NSPasteboard.generalPasteboard];
+    [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
     // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
 }
 

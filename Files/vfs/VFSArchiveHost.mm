@@ -547,6 +547,9 @@ int VFSArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<VFSArc
     
     if(!state) {
         auto file = m_ArFile->Clone();
+        if(!file)
+            return VFSError::NotSupported;
+        
         int res = file->Open(VFSFlags::OF_Read);
         if(res < 0)
             return res;

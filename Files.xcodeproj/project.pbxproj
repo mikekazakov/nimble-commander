@@ -626,6 +626,9 @@
 		CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
 		CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
+		CFE5DDA41ADF9E63008F1108 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE5DDA21ADF9E63008F1108 /* IdleSleepPreventer.cpp */; };
+		CFE5DDA51ADF9E63008F1108 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE5DDA21ADF9E63008F1108 /* IdleSleepPreventer.cpp */; };
+		CFE5DDA61ADF9E63008F1108 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE5DDA21ADF9E63008F1108 /* IdleSleepPreventer.cpp */; };
 		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
 		CFEE8E5117748E3D00F6A254 /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEE8E4F17748E3D00F6A254 /* FontExtras.cpp */; };
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
@@ -1474,6 +1477,8 @@
 		CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePanelsTabbedHolder.mm; sourceTree = "<group>"; };
 		CFE3E8501A011218009ADE5E /* MainWindowFilePanelState+TabsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+TabsSupport.h"; sourceTree = "<group>"; };
 		CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+TabsSupport.mm"; sourceTree = "<group>"; };
+		CFE5DDA21ADF9E63008F1108 /* IdleSleepPreventer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdleSleepPreventer.cpp; sourceTree = "<group>"; };
+		CFE5DDA31ADF9E63008F1108 /* IdleSleepPreventer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdleSleepPreventer.h; sourceTree = "<group>"; };
 		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryNativeFileStorage.cpp; sourceTree = "<group>"; };
 		CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileStorage.h; sourceTree = "<group>"; };
 		CFEE8E4F17748E3D00F6A254 /* FontExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontExtras.cpp; sourceTree = "<group>"; };
@@ -2266,6 +2271,8 @@
 				CF5410161A90DA99003CD7A7 /* AppStoreRatingsSheetController.h */,
 				CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */,
 				CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */,
+				CFE5DDA31ADF9E63008F1108 /* IdleSleepPreventer.h */,
+				CFE5DDA21ADF9E63008F1108 /* IdleSleepPreventer.cpp */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -3245,6 +3252,7 @@
 				CF6D9C58196678010077B146 /* ModernPanelViewPresentation.mm in Sources */,
 				CF6D9C59196678010077B146 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF6D9C5A196678010077B146 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
+				CFE5DDA51ADF9E63008F1108 /* IdleSleepPreventer.cpp in Sources */,
 				CF6D9C5B196678010077B146 /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CF6D9C5C196678010077B146 /* OrthodoxMonospace.mm in Sources */,
 				CF6D9C5D196678010077B146 /* IconsGenerator.mm in Sources */,
@@ -3436,6 +3444,7 @@
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF7249AE1990AC2800583BC5 /* SheetController.mm in Sources */,
+				CFE5DDA41ADF9E63008F1108 /* IdleSleepPreventer.cpp in Sources */,
 				CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */,
 				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF29313417D9915600648A90 /* rdrand.c in Sources */,
@@ -3638,6 +3647,7 @@
 				CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */,
 				CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */,
 				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CFE5DDA61ADF9E63008F1108 /* IdleSleepPreventer.cpp in Sources */,
 				CFF6F3251A13567C00011177 /* rdrand.c in Sources */,
 				CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF50B6F21A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */,

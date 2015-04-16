@@ -10,6 +10,7 @@
 #define Directories_OperationJob_h
 
 #import "OperationStats.h"
+#import "IdleSleepPreventer.h"
 
 @class Operation;
 
@@ -77,6 +78,9 @@ private:
     // Requests internal thread to stop execution.
     // Internal thread only reads this variable.
     volatile bool m_RequestStop = false;
+    
+    // preventing system from idle when any Job object is present
+    unique_ptr<IdleSleepPreventer::Promise> m_NoIdlePromise;
     
     __weak Operation *m_BaseOperation;
     

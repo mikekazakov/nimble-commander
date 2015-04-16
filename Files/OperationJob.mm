@@ -9,7 +9,8 @@
 #import "OperationJob.h"
 #import "Operation.h"
 
-OperationJob::OperationJob()
+OperationJob::OperationJob():
+    m_NoIdlePromise( IdleSleepPreventer::Instance().GetPromise() )
 {
 }
 

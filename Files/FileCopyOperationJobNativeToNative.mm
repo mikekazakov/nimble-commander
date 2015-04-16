@@ -6,22 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <sys/xattr.h>
 #import "FileCopyOperationJob.h"
 #import "FileCopyOperationJobNativeToNative.h"
 #import "filesysinfo.h"
 #import "NativeFSManager.h"
-#import <sys/types.h>
-#import <sys/dirent.h>
-#import <sys/stat.h>
-#import <dirent.h>
-#import <sys/time.h>
-#import <sys/xattr.h>
-#import <sys/attr.h>
-#import <sys/vnode.h>
-#import <sys/param.h>
-#import <sys/mount.h>
-#import <unistd.h>
-#import <stdlib.h>
 #import "Common.h"
 #import "common_paths.h"
 #import "RoutedIO.h"
@@ -145,7 +134,7 @@ void FileCopyOperationJobNativeToNative::Do()
     
     // this will analyze what user wants from us
     ScanDestination();
-    if(CheckPauseOrStop()) { SetStopped(); return; }
+    if(m_WorkMode == Unknown || CheckPauseOrStop()) { SetStopped(); return; }
 
     auto dest_volume = NativeFSManager::Instance().VolumeFromPathFast(m_Destination);
     auto source_volume = NativeFSManager::Instance().VolumeFromPathFast(m_InitialSource);
@@ -257,7 +246,7 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
             }
         }
         else
-            assert(0); //TODO: implement handling of this weird cases (like copying to a device)
+            m_WorkMode = Unknown;
     }
     else {
         // ok, it's not a valid entry, now we have to analyze what user wants from us
@@ -364,10 +353,8 @@ void FileCopyOperationJobNativeToNative::ScanItems()
         m_IsSingleFileCopy = false;
     
     // iterate in original filenames
-    for(const auto&i: m_InitialItems)
-    {
+    for(const auto&i: m_InitialItems) {
         ScanItem(i.c_str(), i.c_str(), 0);
-
         if(CheckPauseOrStop()) return;
     }
 }
@@ -830,14 +817,11 @@ cleanup:
 
 void FileCopyOperationJobNativeToNative::EraseXattrs(int _fd_in)
 {
-    assert(m_Buffer1);
     char *xnames = (char*) m_Buffer1.get();
     ssize_t xnamesizes = flistxattr(_fd_in, xnames, m_BufferSize, 0);
-    if(xnamesizes > 0)
-    { // iterate and remove
+    if(xnamesizes > 0) { // iterate and remove
         char *s = xnames, *e = xnames + xnamesizes;
-        while(s < e)
-        {
+        while(s < e) {
             fremovexattr(_fd_in, s, 0);
             s += strlen(s)+1;
         }
@@ -846,19 +830,13 @@ void FileCopyOperationJobNativeToNative::EraseXattrs(int _fd_in)
 
 void FileCopyOperationJobNativeToNative::CopyXattrs(int _fd_from, int _fd_to)
 {
-    char *xnames;
-    ssize_t xnamesizes;
-
-    assert(m_Buffer1 != 0);
-    xnames = (char*) m_Buffer1.get();
-    xnamesizes = flistxattr(_fd_from, xnames, m_BufferSize, 0);
-    if(xnamesizes > 0)
-    { // iterate and copy
+    char *xnames = (char*) m_Buffer1.get();
+    ssize_t xnamesizes = flistxattr(_fd_from, xnames, m_BufferSize, 0);
+    if(xnamesizes > 0) { // iterate and copy
         char *s = xnames, *e = xnames + xnamesizes;
-        while(s < e)
-        {
+        while(s < e) {
             ssize_t xattrsize = fgetxattr(_fd_from, s, m_Buffer2.get(), m_BufferSize, 0, 0);
-            if(xattrsize >= 0) // xattr can be zero-length, just a tag itself
+            if( xattrsize >= 0 ) // xattr can be zero-length, just a tag itself
                 fsetxattr(_fd_to, s, m_Buffer2.get(), xattrsize, 0, 0);
             s += strlen(s)+1;
         }

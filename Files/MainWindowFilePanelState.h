@@ -44,7 +44,8 @@ class PanelData;
     NSToolbar            *m_Toolbar;
     NSResponder          *m_LastResponder;
     
-    bool m_ShowTabs;    
+    bool                m_ShowTabs;
+    bool                m_GoToForceActivation;
 }
 
 

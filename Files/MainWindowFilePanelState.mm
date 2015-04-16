@@ -33,6 +33,7 @@
 static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
 static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
+static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 
 @implementation MainWindowFilePanelState
 
@@ -45,6 +46,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         m_ShowTabs = [defaults boolForKey:g_DefsGeneralShowTabs];
+        m_GoToForceActivation = [defaults boolForKey:g_DefsGoToActivation];
         
         m_OperationsController = [[OperationsController alloc] init];
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController
@@ -361,6 +363,9 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     
+    if( !self.leftPanelController.isActive && m_GoToForceActivation )
+        [self ActivatePanelByController:self.leftPanelController];
+    
     if(auto vfspath = objc_cast<MainWndGoToButtonSelectionVFSPath>(selection)) {
         VFSHostPtr host = vfspath.vfs.lock();
         if(!host)
@@ -383,6 +388,9 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         return;
     
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
+    
+    if( !self.rightPanelController.isActive && m_GoToForceActivation )
+        [self ActivatePanelByController:self.rightPanelController];
     
     if(auto vfspath = objc_cast<MainWndGoToButtonSelectionVFSPath>(selection)) {
         VFSHostPtr host = vfspath.vfs.lock();

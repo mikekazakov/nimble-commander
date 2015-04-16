@@ -684,14 +684,15 @@ struct PanelViewStateStorage
     [self OnCursorPositionChanged];
 }
 
-- (void)directoryChangedWithFocusedFilename:(const char*)_focused_filename
+- (void)directoryChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load
 {
     m_State.ItemsDisplayOffset = 0;
     m_State.CursorPos = -1;
     
-    [self LoadPathState];
+    if(_load)
+        [self LoadPathState];
     
-    int cur = m_State.Data->SortedIndexForName(_focused_filename);
+    int cur = m_State.Data->SortedIndexForName(_focused_filename.c_str());
     if(cur >= 0) {
         m_Presentation->SetCursorPos(cur);
         [self OnCursorPositionChanged];

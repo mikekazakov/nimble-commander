@@ -302,7 +302,7 @@ void panel::GenericCursorPersistance::Restore()
             
             if(self.vfs->Parent()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
                 return true; // silently reap this command, since user refuses to grant an access
-            return [self GoToDir:dir vfs:self.vfs->Parent() select_entry:sel_fn async:true] == 0;
+            return [self GoToDir:dir vfs:self.vfs->Parent() select_entry:sel_fn loadPreviousState:true async:true] == 0;
         }
     }
     else
@@ -312,7 +312,7 @@ void panel::GenericCursorPersistance::Restore()
         
         if(self.vfs->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
             return true; // silently reap this command, since user refuses to grant an access
-        return [self GoToDir:dir vfs:self.vfs select_entry:sel_fn async:true] == 0;
+        return [self GoToDir:dir vfs:self.vfs select_entry:sel_fn loadPreviousState:true async:true] == 0;
     }
     return false;
 }

@@ -59,9 +59,9 @@ class PanelViewPresentation;
 
 /**
  * called by controlled when a directory has been entirely changed in PanelData.
- * possibly focusing some file, may be nullptr.
+ * possibly focusing some file, may be "".
  */
-- (void) directoryChangedWithFocusedFilename:(const char*)_focused_filename;
+- (void) directoryChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load;
 
 /**
  * called by controller to inform that internals of panel data object has changed (possibly reloaded).

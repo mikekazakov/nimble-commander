@@ -114,6 +114,7 @@
         [self GoToDir:_stack.path()
                   vfs:res_stack.back()
          select_entry:""
+    loadPreviousState:true
                 async:true];
 }
 
@@ -122,25 +123,35 @@
    select_entry:(string)_filename
           async:(bool)_asynchronous
 {
+    return [self GoToDir:_dir
+                     vfs:_vfs
+            select_entry:_filename
+       loadPreviousState:false
+                   async:_asynchronous];
+}
+
+- (int) GoToDir:(string)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(string)_filename
+loadPreviousState:(bool)_load_state
+          async:(bool)_asynchronous
+{
     if(_dir.empty() || _dir.front() != '/' || !_vfs)
         return VFSError::InvalidCall;
     
-    if(_asynchronous == false)
-    {
+    if(_asynchronous == false) {
         assert(dispatch_is_main_queue());
         m_DirectoryLoadingQ->Stop();
         m_DirectoryLoadingQ->Wait();
     }
-    else
-    {
+    else {
         if(!m_DirectoryLoadingQ->Empty())
             return 0;
     }
     
     auto ret = make_shared<int>(VFSError::Ok);
     auto workblock = [=](const SerialQueue &_q) {
-        if(!_vfs->IsDirectory(_dir.c_str(), 0, 0))
-        {
+        if(!_vfs->IsDirectory(_dir.c_str(), 0, 0)) {
             *ret = VFSError::FromErrno(ENOTDIR);
             return;
         }
@@ -158,19 +169,17 @@
             [m_View SavePathState];
             m_Data.Load(listing);
             [m_View dataUpdated];
-            [m_View directoryChangedWithFocusedFilename:_filename.c_str()];
+            [m_View directoryChangedWithFocusedFilename:_filename loadPreviousState:_load_state];
             [m_View setNeedsDisplay];
             [self OnPathChanged];
         });
     };
     
-    if(_asynchronous == false)
-    {
+    if(_asynchronous == false) {
         m_DirectoryLoadingQ->RunSyncHere(workblock);
         return *ret;
     }
-    else
-    {
+    else {
         m_DirectoryLoadingQ->Run(workblock);
         return 0;
     }

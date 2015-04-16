@@ -151,12 +151,23 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     shared_ptr<VFSHost>         m_VFS;
     vector<PanelDraggingItem*>  m_Items;
     unsigned                    m_Count;
-    bool                        m_OldStyleDone;
+    bool                        m_FilenamesPasteboardDone;
+    bool                        m_FilenamesPasteboardEnabled;
 }
 
 @synthesize vfs = m_VFS;
 @synthesize count = m_Count;
 @synthesize items = m_Items;
+
+- (id)init
+{
+    self = [super init];
+    if(self) {
+        m_FilenamesPasteboardDone = false;
+        m_FilenamesPasteboardEnabled = true;
+    }
+    return self;
+}
 
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
 {
@@ -183,16 +194,16 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 {
     // OldStyleDone means that we already pushed the whole files list at once
     // in this case any other items should be simply ignored
-    if(m_OldStyleDone)
+    if(m_FilenamesPasteboardDone)
         return;
     
-    if([type isEqualToString:FilenamesPasteboardUTI()])
+    if(m_FilenamesPasteboardEnabled && [type isEqualToString:FilenamesPasteboardUTI()])
     { // old style is turned on by some special conditions
         NSMutableArray *ar = [NSMutableArray new];
         for(auto &i: m_Items)
             [ar addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:i.path.c_str()]]];
         [sender writeObjects:ar];
-        m_OldStyleDone = true;
+        m_FilenamesPasteboardDone = true;
     }
     else if ([type isEqualToString:(NSString *)kPasteboardTypeFileURLPromise])
     {
@@ -220,11 +231,13 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
         [item setString:[NSString stringWithUTF8String:dest.c_str()]
                 forType:type];
+        m_FilenamesPasteboardEnabled = false;
     }
     else if([type isEqualToString:(NSString *)kUTTypeFileURL])
     {
         NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:item.path.c_str()]];
         [url writeToPasteboard:sender];
+        m_FilenamesPasteboardEnabled = false;
     }
 }
 

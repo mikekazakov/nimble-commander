@@ -32,9 +32,9 @@ static NSString *FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode
     }
 }
 
-void ModernPanelViewPresentationHeader::SetFont(NSFont *_font)
+ModernPanelViewPresentationHeader::ModernPanelViewPresentationHeader()
 {
-    m_Font = _font;
+    m_Font = [NSFont systemFontOfSize:13];
     m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
     m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
     m_LastHeaderPath = ""; // flush cache if any

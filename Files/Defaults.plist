@@ -116,10 +116,39 @@
 	<true/>
 	<key>FilePanelsGeneralGoToForceActivation</key>
 	<true/>
-	<key>FilePanelsModernFont</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABoAAAD//kwAdQBjAGkAZABhAEcAcgBhAG4AZABlAAAAhAFmDYQBYwCYAZgAmACG</data>
-	<key>FilePanelsModernColoringRules</key>
+	<key>FilePanelsModernFontSize</key>
+	<integer>13</integer>
+	<key>FilePanels_Modern_RegularBackground</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEBAYY=</data>
+	<key>FilePanels_Modern_AlternativeBackground</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg/Pycj+D8/JyP4Pz8nI/AYY=</data>
+	<key>FilePanels_Modern_ColoringRules</key>
 	<array>
+		<dict>
+			<key>filter</key>
+			<dict>
+				<key>hidden</key>
+				<integer>2</integer>
+				<key>symlink</key>
+				<integer>2</integer>
+				<key>mask</key>
+				<string></string>
+				<key>executable</key>
+				<integer>2</integer>
+				<key>directory</key>
+				<integer>2</integer>
+				<key>selected</key>
+				<integer>1</integer>
+				<key>reg</key>
+				<integer>2</integer>
+			</dict>
+			<key>focused</key>
+			<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQAAAYY=</data>
+			<key>name</key>
+			<string>selected</string>
+			<key>regular</key>
+			<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQAAAYY=</data>
+		</dict>
 		<dict>
 			<key>filter</key>
 			<dict>
@@ -138,7 +167,7 @@
 				<key>reg</key>
 				<integer>2</integer>
 			</dict>
-			<key>actsel</key>
+			<key>focused</key>
 			<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg5qZGT+DmpkZP4OamRk/AYY=</data>
 			<key>name</key>
 			<string>hidden</string>
@@ -163,7 +192,7 @@
 				<key>reg</key>
 				<integer>2</integer>
 			</dict>
-			<key>actsel</key>
+			<key>focused</key>
 			<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEBAYY=</data>
 			<key>name</key>
 			<string>other</string>
@@ -171,16 +200,10 @@
 			<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAAAAYY=</data>
 		</dict>
 	</array>
-	<key>FilePanelsModernBackgroundColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEBAYY=</data>
-	<key>FilePanelsModernAlternativeBackgroundColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg/HwcD+D9vV1P4P7+no/AYY=</data>
-	<key>FilePanelsModernActiveSelectedBackgroundColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg62sLD6D6ejoPoPU01M/AYY=</data>
-	<key>FilePanelsModernInactiveSelectedBackgroundColor</key>
+	<key>FilePanels_Modern_ActiveCursor</key>
+	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg8HAQD2DoaCgPoPR0FA/AYY=</data>
+	<key>FilePanels_Modern_InactiveCursor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg9XUVD+D1dRUP4PV1FQ/AYY=</data>
-	<key>FilePanelsModernCursorFrameColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAAAAYY=</data>
 	<key>FilePanelsModernIconsMode</key>
 	<integer>2</integer>
 	<key>FilePanelsClassicFont</key>

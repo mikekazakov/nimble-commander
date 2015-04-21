@@ -21,7 +21,7 @@ struct ModernPanelViewPresentationItemsColoringFilter
 {
     string                                      name;
     NSColor                                     *regular = NSColor.blackColor; // all others state text color
-    NSColor                                     *actsel  = NSColor.blackColor; // active and selected text color
+    NSColor                                     *focused = NSColor.blackColor; // focused text color
     PanelViewPresentationItemsColoringFilter    filter;
     NSDictionary *Archive() const;
     static ModernPanelViewPresentationItemsColoringFilter Unarchive(NSDictionary *_dict);
@@ -52,11 +52,11 @@ public:
     NSString* FileSizeToString(const VFSListingItem &_dirent);
 private:
     struct ColoringAttrs {
-        NSDictionary *active_selected;
+        NSDictionary *focused;
         NSDictionary *regular;
-        NSDictionary *active_selected_size;
+        NSDictionary *focused_size;
         NSDictionary *regular_size;
-        NSDictionary *active_selected_time;
+        NSDictionary *focused_time;
         NSDictionary *regular_time;
     };
     
@@ -79,12 +79,11 @@ private:
     void BuildAppearance();
     const ColoringAttrs& AttrsForItem(const VFSListingItem& _item) const;
     
-    void DrawCursor(CGContextRef _context, NSRect _rc);
-    
     NSFont *m_Font;
     double m_FontAscent;
     double m_FontHeight;
     double m_LineHeight; // full height of a row with gaps
+    double m_LineTextBaseline;
     double m_SizeColumWidth;
     double m_DateColumnWidth;
     double m_TimeColumnWidth;
@@ -95,11 +94,10 @@ private:
     NSRect m_ItemsArea;
     int m_ItemsPerColumn;
     
-    CGColorRef  m_BackgroundColor;
-    CGColorRef  m_RegularOddBackgroundColor;
-    CGColorRef  m_ActiveSelectedItemBackgroundColor;
-    CGColorRef  m_InactiveSelectedItemBackgroundColor;
-    CGColorRef  m_CursorFrameColor;
+    CGColorRef  m_RegularBackground;
+    CGColorRef  m_OddBackground;
+    CGColorRef  m_ActiveCursor;
+    CGColorRef  m_InactiveCursor;
     CGColorRef  m_ColumnDividerColor;
     vector<ModernPanelViewPresentationItemsColoringFilter> m_ColoringRules;
     vector<ColoringAttrs> m_ColoringAttrs;

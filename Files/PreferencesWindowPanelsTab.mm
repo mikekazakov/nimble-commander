@@ -12,6 +12,7 @@
 #import "ModernPanelViewPresentation.h"
 #import "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #import "ByteCountFormatter.h"
+#import "Common.h"
 
 #define MyPrivateTableViewDataTypeClassic @"PreferencesWindowPanelsTabPrivateTableViewDataTypeClassic"
 #define MyPrivateTableViewDataTypeModern @"PreferencesWindowPanelsTabPrivateTableViewDataTypeModern"
@@ -19,7 +20,6 @@
 @implementation PreferencesWindowPanelsTab
 {
     NSFont *m_ClassicFont;
-    NSFont *m_ModernFont;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -128,26 +128,6 @@
                                       "General preferences tab title");
 }
 
-- (IBAction)OnSetModernFont:(id)sender
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    m_ModernFont = [defaults fontForKey:@"FilePanelsModernFont"];
-    if(!m_ModernFont) m_ModernFont = [NSFont fontWithName:@"Lucida Grande" size:13];
-
-    NSFontManager *fontManager = NSFontManager.sharedFontManager;
-    fontManager.target = self;
-    fontManager.action = @selector(ChangeModernFont:);
-    [fontManager setSelectedFont:m_ModernFont isMultiple:NO];
-    [fontManager orderFrontFontPanel:self];
-}
-
-- (void)ChangeModernFont:(id)sender
-{
-    m_ModernFont = [sender convertFont:m_ModernFont];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setFont:m_ModernFont forKey:@"FilePanelsModernFont"];
-}
-
 - (IBAction)OnSetClassicFont:(id)sender
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -238,7 +218,7 @@
         }
         if([tableColumn.identifier isEqualToString:@"selected"]) {
             NSColorWell *cw = [[NSColorWell alloc] initWithFrame:NSRect()];
-            cw.color = [NSUnarchiver unarchiveObjectWithData:[d objectForKey:@"actsel"]];
+            cw.color = [NSUnarchiver unarchiveObjectWithData:[d objectForKey:@"focused"]];
             [cw addObserver:self forKeyPath:@"color" options:0 context:NULL];
             return cw;
         }
@@ -353,7 +333,7 @@
                     if( [rv viewAtColumn:1] == cw )
                         filt.regular = cw.color;
                     if( [rv viewAtColumn:2] == cw )
-                        filt.actsel = cw.color;
+                        filt.focused = cw.color;
                     [arr replaceObjectAtIndex:row_no withObject:filt.Archive()];
                     self.modernColoringRules = arr;
                 }
@@ -364,8 +344,8 @@
 
 - (void) classicColoringFilterClicked:(id)sender
 {
-    if(sender && [sender isKindOfClass:NSButton.class]) {
-        NSTableRowView *rv = (NSTableRowView *)((NSButton *)sender).superview;
+    if( auto button = objc_cast<NSButton>(sender) ) {
+        NSTableRowView *rv = (NSTableRowView *)button.superview;
         long row_no = [((NSTableView*)rv.superview) rowForView:rv];
 
         __block auto filt = ClassicPanelViewPresentationItemsColoringFilter::Unarchive([self.classicColoringRules objectAtIndex:row_no]);
@@ -384,8 +364,8 @@
 
 - (void) modernColoringFilterClicked:(id)sender
 {
-    if(sender && [sender isKindOfClass:NSButton.class]) {
-        NSTableRowView *rv = (NSTableRowView *)((NSButton *)sender).superview;
+    if( auto button = objc_cast<NSButton>(sender) ) {
+        NSTableRowView *rv = (NSTableRowView *)button.superview;
         long row_no = [((NSTableView*)rv.superview) rowForView:rv];
         
         __block auto filt = ModernPanelViewPresentationItemsColoringFilter::Unarchive([self.modernColoringRules objectAtIndex:row_no]);
@@ -495,12 +475,12 @@
 
 - (NSArray*)modernColoringRules
 {
-    return [NSUserDefaults.standardUserDefaults objectForKey:@"FilePanelsModernColoringRules"];
+    return [NSUserDefaults.standardUserDefaults objectForKey:@"FilePanels_Modern_ColoringRules"];
 }
 
 - (void) setModernColoringRules:(NSArray *)modernColoringRules
 {
-    [NSUserDefaults.standardUserDefaults setObject:modernColoringRules forKey:@"FilePanelsModernColoringRules"];
+    [NSUserDefaults.standardUserDefaults setObject:modernColoringRules forKey:@"FilePanels_Modern_ColoringRules"];
 }
 
 - (IBAction)OnAddNewModernColoringRule:(id)sender

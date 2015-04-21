@@ -66,6 +66,12 @@
     
 }
 
-
+- (NSArray *)arrayForKeyPath:(NSString *)aKey
+{
+    NSArray *arr = [self valueForKeyPath:aKey];
+    if( ![arr isKindOfClass:NSArray.class] )
+        return nil;
+    return arr;
+}
 
 @end

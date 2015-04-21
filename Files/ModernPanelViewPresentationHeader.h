@@ -15,7 +15,7 @@ class ModernPanelViewPresentation;
 class ModernPanelViewPresentationHeader
 {
 public:
-    void SetFont(NSFont *_font);
+    ModernPanelViewPresentationHeader();
     void Draw(const string& _path, // a path to draw
               bool _active,       // is panel active now?
               bool _wnd_active,   // is window active now?

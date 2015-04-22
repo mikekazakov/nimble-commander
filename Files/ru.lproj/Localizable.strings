@@ -71,7 +71,7 @@
 "Clear Recents" = "Очистить недавние поиски";
 
 /* Asking user for granting file system access for Files */
-"Click 'Open' to allow access to files contained in the selected directory" = "Нажмите 'Открыть' чтобы разрешить доступ к выбранной директории";
+"Click \'Open\' to allow access to files contained in the selected directory" = "Нажмите \'Открыть\' чтобы разрешить доступ к выбранной директории";
 
 /* Menu item title for closing current tab */
 "Close Tab" = "Закрыть вкладку";
@@ -305,7 +305,7 @@
 "Yes" = "Да";
 
 /* (No Commment) */
-"You can't undo this action." = "Это операция необратима.";
+"You can\'t undo this action." = "Это операция необратима.";
 
 /* Combo box element available when multiple elements are selected with different values */
 "[Mixed]" = "[Разные]";

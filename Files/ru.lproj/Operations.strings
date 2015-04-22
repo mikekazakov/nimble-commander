@@ -17,16 +17,16 @@
 "Altering symbolic link" = "Изменение символической ссылки";
 
 /* Informative text to setting access time */
-"Can't set access time\nError: %@\nFile: %@" = "Невозможно установить время доступа\nОшибка: %1$@\nФайл: %2$@";
+"Can\'t set access time\nError: %@\nFile: %@" = "Невозможно установить время доступа\nОшибка: %1$@\nФайл: %2$@";
 
 /* Informative text to setting change time */
-"Can't set change time\nError: %@\nFile: %@" = "Невозможно установить время изменения\nОшибка: %1$@\nФайл: %2$@";
+"Can\'t set change time\nError: %@\nFile: %@" = "Невозможно установить время изменения\nОшибка: %1$@\nФайл: %2$@";
 
 /* Informative text to setting creation time */
-"Can't set creation time\nError: %@\nFile: %@" = "Невозможно установить время создания\nОшибка: %1$@\nФайл: %2$@";
+"Can\'t set creation time\nError: %@\nFile: %@" = "Невозможно установить время создания\nОшибка: %1$@\nФайл: %2$@";
 
 /* Informative text to setting modify time */
-"Can't set modification time\nError: %@\nFile: %@" = "Невозможно установить время модификации\nОшибка: %1$@\nФайл: %2$@";
+"Can\'t set modification time\nError: %@\nFile: %@" = "Невозможно установить время модификации\nОшибка: %1$@\nФайл: %2$@";
 
 /* Operation title for compression */
 "Compressing %@ items to “%@”" = "Сжатие %1$@ объектов в “%2$@”";

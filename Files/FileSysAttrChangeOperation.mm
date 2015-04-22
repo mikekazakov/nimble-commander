@@ -134,19 +134,19 @@
                                                      "Error dialog title on time setting failure")];
     NSString *fmt = @"";
     switch (_attr) {
-        case ATTR_CMN_ACCTIME:fmt = NSLocalizedStringFromTable(@"Can\'t set access time\nError: %@\nFile: %@",
+        case ATTR_CMN_ACCTIME:fmt = NSLocalizedStringFromTable(@"Can’t set access time\nError: %@\nFile: %@",
                                                                @"Operations",
                                                                "Informative text to setting access time");
             break;
-        case ATTR_CMN_MODTIME:fmt = NSLocalizedStringFromTable(@"Can\'t set modification time\nError: %@\nFile: %@",
+        case ATTR_CMN_MODTIME:fmt = NSLocalizedStringFromTable(@"Can’t set modification time\nError: %@\nFile: %@",
                                                                @"Operations",
                                                                "Informative text to setting modify time");
             break;
-        case ATTR_CMN_CHGTIME:fmt = NSLocalizedStringFromTable(@"Can\'t set change time\nError: %@\nFile: %@",
+        case ATTR_CMN_CHGTIME:fmt = NSLocalizedStringFromTable(@"Can’t set change time\nError: %@\nFile: %@",
                                                                @"Operations",
                                                                "Informative text to setting change time");
             break;
-        case ATTR_CMN_CRTIME:fmt = NSLocalizedStringFromTable(@"Can\'t set creation time\nError: %@\nFile: %@",
+        case ATTR_CMN_CRTIME:fmt = NSLocalizedStringFromTable(@"Can’t set creation time\nError: %@\nFile: %@",
                                                               @"Operations",
                                                               "Informative text to setting creation time");
             break;

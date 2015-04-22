@@ -4,7 +4,10 @@
 /* Title for copying or moving a single item */
 "%@ “%@” to “%@”" = "%@ “%@” в “%@”";
 
-/* (No Commment) */
+/* Error dialog button - abort operation
+   Error dialog button title
+   User action button title
+   User action button title to abort an operation */
 "Abort" = "Прервать";
 
 /* Title of attributes change operation for multiple files */
@@ -106,7 +109,8 @@
 /* (No Commment) */
 "Failed to access a directory" = "Отсутствует доступ к папке";
 
-/* (No Commment) */
+/* Error dialog title on file access failure
+   Title on error when source file is inaccessible */
 "Failed to access a file" = "Отсутствует доступ к файлу";
 
 /* Error dialog title on symlink altering failure */
@@ -118,7 +122,8 @@
 /* Error dialog title on symlink creation failure */
 "Failed to create a symbolic link" = "Не удалось создать символическую ссылку";
 
-/* (No Commment) */
+/* Error dialog title on directory creating failure
+   Error sheet prompt on dir creation */
 "Failed to create directory" = "Не удалось создать папку";
 
 /* Error dialog title when can't delete a directory */
@@ -142,7 +147,8 @@
 /* Error dialog title on chown failure */
 "Failed to perform chown" = "Не удалось выполнить chown";
 
-/* (No Commment) */
+/* Error when reading failed
+   Title on error when source file can't be read */
 "Failed to read a file" = "Не удалось прочитать файл";
 
 /* Error dialog title when can't securely delete a file */
@@ -157,7 +163,10 @@
 /* Title on error when archive target can't be written */
 "Failed to write an archive" = "Не удалось записать архив";
 
-/* (No Commment) */
+/* Error dialog button - hide dialog
+   Error dialog button title
+   User action button title
+   User action button title to hide an error sheet */
 "Hide" = "Скрыть";
 
 /* Operaration title prefix for moving */
@@ -166,18 +175,24 @@
 /* Operation title for compression */
 "Preparing to compress to “%@”" = "Подготовка к сжатию в “%@”";
 
-/* (No Commment) */
+/* Operation info for file deletion
+   Operation short info
+   Title for processing a single item */
 "Processing “%@”" = "Обработка “%@”";
 
-/* (No Commment) */
+/* Error dialog button - retry an attempt
+   Error dialog button title
+   User action button title */
 "Retry" = "Повторить";
 
 /* User action button title to rewrite a file */
 "Rewrite" = "Переписать";
 
-/* (No Commment) */
+/* Error dialog button - skip current item
+   Error dialog button title */
 "Skip" = "Пропустить";
 
-/* (No Commment) */
+/* Error dialog button - skipp all items with errors
+   Error dialog button title */
 "Skip All" = "Пропустить все";
 

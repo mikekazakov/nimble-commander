@@ -43,7 +43,8 @@
 /* Asking user for confirmation on erasing custom settings - message */
 "Are you sure want to reset settings to defaults?" = "Вы действительно хотите сбросить настройки к стандартным?";
 
-/* (No Commment) */
+/* Asking user for confirmation for clearing recent connections
+   Asking user if he want to clear recent connections */
 "Are you sure you want to clear the list of recent servers?" = "Вы действительно хотите очистить список последних подключений?";
 
 /* Brief System Information overlay title */
@@ -71,7 +72,7 @@
 "Clear Recents" = "Очистить недавние поиски";
 
 /* Asking user for granting file system access for Files */
-"Click \'Open\' to allow access to files contained in the selected directory" = "Нажмите \'Открыть\' чтобы разрешить доступ к выбранной директории";
+"Click ’Open’ to allow access to files contained in the selected directory" = "Нажмите ’Открыть’ чтобы разрешить доступ к выбранной директории";
 
 /* Menu item title for closing current tab */
 "Close Tab" = "Закрыть вкладку";
@@ -79,7 +80,8 @@
 /* Menu item title for closing internal viewer state */
 "Close Viewer" = "Закрыть просмотрщик";
 
-/* (No Commment) */
+/* Menu item title
+   Menu item title for closing current window */
 "Close Window" = "Закрыть окно";
 
 /* Informing when closing with running terminal processes */
@@ -304,8 +306,9 @@
 /* No comment provided by engineer. */
 "Yes" = "Да";
 
-/* (No Commment) */
-"You can\'t undo this action." = "Это операция необратима.";
+/* Informating user that action can't be reverted
+   Informing user that action can't be reverted */
+"You can’t undo this action." = "Вы не сможете отменить эту операцию.";
 
 /* Combo box element available when multiple elements are selected with different values */
 "[Mixed]" = "[Разные]";

@@ -34,9 +34,6 @@
 /* Class = "NSMenuItem"; title = "Generic Icons"; ObjectID = "30"; */
 "30.title" = "Типовые значки";
 
-/* Class = "NSButtonCell"; title = "Font"; ObjectID = "39"; */
-"39.title" = "Шрифт";
-
 /* Class = "NSMenuItem"; title = "2"; ObjectID = "55C-aO-FHR"; */
 "55C-aO-FHR.title" = "2";
 
@@ -46,14 +43,11 @@
 /* Class = "NSTextFieldCell"; title = "Alternative background:"; ObjectID = "99"; */
 "99.title" = "Альтернативный фон:";
 
-/* Class = "NSTextFieldCell"; title = "Active&selected background:"; ObjectID = "114"; */
-"114.title" = "Активный и выбранный фон:";
+/* Class = "NSTextFieldCell"; title = "Active cursor:"; ObjectID = "114"; */
+"114.title" = "Активный фон курсора:";
 
-/* Class = "NSTextFieldCell"; title = "Inactive&selected background:"; ObjectID = "142"; */
-"142.title" = "Неактивный и выбранный фон:";
-
-/* Class = "NSTextFieldCell"; title = "Cursor frame:"; ObjectID = "154"; */
-"154.title" = "Рамка курсора:";
+/* Class = "NSTextFieldCell"; title = "Inactive cursor:"; ObjectID = "142"; */
+"142.title" = "Неактивный фон курсора:";
 
 /* Class = "NSTextFieldCell"; title = "Icons mode:"; ObjectID = "169"; */
 "169.title" = "Режим значков:";
@@ -94,7 +88,7 @@
 /* Class = "NSMenuItem"; title = "Move To Trash"; ObjectID = "800"; */
 "800.title" = "Переместить в Корзину";
 
-/* Class = "NSButtonCell"; title = "Show other windows' paths in folder changing menu"; ObjectID = "CIY-eD-NSg"; */
+/* Class = "NSButtonCell"; title = "Show other windows’ paths in folder changing menu"; ObjectID = "CIY-eD-NSg"; */
 "CIY-eD-NSg.title" = "Показывать пути других окон в меню смены папки";
 
 /* Class = "NSButtonCell"; title = "Allow dragging into folders"; ObjectID = "CRv-aQ-f4K"; */
@@ -186,6 +180,9 @@
 
 /* Class = "NSButtonCell"; title = "-"; ObjectID = "jIX-LC-Sgl"; */
 "jIX-LC-Sgl.title" = "-";
+
+/* Class = "NSTextFieldCell"; title = "Text size:"; ObjectID = "kxt-pe-M7D"; */
+"kxt-pe-M7D.title" = "Размер текста:";
 
 /* Class = "NSButtonCell"; title = "Show volume information bar"; ObjectID = "nz9-v0-Dc6"; */
 "nz9-v0-Dc6.title" = "Показывать информацию о томе";

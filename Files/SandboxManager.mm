@@ -140,7 +140,7 @@ bool SandboxManager::AskAccessForPathSync(const string& _path, bool _mandatory_p
     [NSUserDefaults.standardUserDefaults setValue:dir_string forKey:@"NSNavLastRootDirectory"];
 
     NSOpenPanel * openPanel = NSOpenPanel.openPanel;
-    openPanel.message = NSLocalizedString(@"Click \'Open\' to allow access to files contained in the selected directory",
+    openPanel.message = NSLocalizedString(@"Click ’Open’ to allow access to files contained in the selected directory",
                                           "Asking user for granting file system access for Files");
     openPanel.canChooseFiles = false;
     openPanel.canChooseDirectories = true;

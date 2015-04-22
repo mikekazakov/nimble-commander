@@ -83,7 +83,7 @@ static const auto g_SSHdir = CommonPaths::Get(CommonPaths::Home) + ".ssh/";
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user if he want to clear recent connections");
-    alert.informativeText = NSLocalizedString(@"You can\'t undo this action.", "Informating user that action can't be reverted");
+    alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informating user that action can't be reverted");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     if(alert.runModal == NSAlertFirstButtonReturn) {

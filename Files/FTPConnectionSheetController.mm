@@ -65,7 +65,7 @@
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user for confirmation for clearing recent connections");
-    alert.informativeText = NSLocalizedString(@"You can\'t undo this action.", "Informing user that action can't be reverted");
+    alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informing user that action can't be reverted");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     if(alert.runModal == NSAlertFirstButtonReturn) {

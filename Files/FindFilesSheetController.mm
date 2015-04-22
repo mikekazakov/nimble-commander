@@ -185,6 +185,28 @@ static const int g_MaximumSearchResults = 16384;
     self.TextComboBox.usesDataSource = true;
     self.TextComboBox.dataSource = self;
     self.TextComboBox.stringValue = m_TextHistory[0];
+  
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(comboBoxWillPopUp:)
+                                               name:@"NSComboBoxWillPopUpNotification"
+                                             object:self.MaskComboBox];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(comboBoxWillDismiss:)
+                                               name:@"NSComboBoxWillDismissNotification"
+                                             object:self.MaskComboBox];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(comboBoxWillPopUp:)
+                                               name:@"NSComboBoxWillPopUpNotification"
+                                             object:self.TextComboBox];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(comboBoxWillDismiss:)
+                                               name:@"NSComboBoxWillDismissNotification"
+                                             object:self.TextComboBox];
+}
+
+- (void) dealloc
+{
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox;
@@ -438,6 +460,19 @@ static const int g_MaximumSearchResults = 16384;
 - (void)focusSize:(id)sender
 {
     [self.window makeFirstResponder:self.SizeTextField];
+}
+
+// Workaround about combox' menu forcing Search by selecting item from list with Return key
+- (void)comboBoxWillPopUp:(NSNotification *)notification
+{
+    self.SearchButton.keyEquivalent = @"";
+}
+
+- (void)comboBoxWillDismiss:(NSNotification *)notification
+{
+    dispatch_to_main_queue_after(10ms, [=]{
+        self.SearchButton.keyEquivalent = @"\r";
+    });
 }
 
 @end

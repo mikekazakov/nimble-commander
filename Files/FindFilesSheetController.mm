@@ -42,7 +42,7 @@ static const int g_MaximumSearchResults = 16384;
     self = [super init];
     if(self) {
         m_Data = _item;
-        m_Location = [NSString stringWithUTF8StdStringNoCopy:m_Data.dir_path];
+        m_Location = [NSString stringWithUTF8StdStringNoCopy:m_Data.rel_path];
         m_Filename = [NSString stringWithUTF8StdStringNoCopy:m_Data.filename];
     }
     return self;
@@ -158,13 +158,13 @@ static const int g_MaximumSearchResults = 16384;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    self.TableView.ColumnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
+    self.TableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];
     self.TableView.delegate = self;
-    self.TableView.Target = self;
-    self.TableView.DoubleAction = @selector(doubleClick:);
+    self.TableView.target = self;
+    self.TableView.doubleAction = @selector(doubleClick:);
     
-    self.ArrayController.SortDescriptors = @[
+    self.ArrayController.sortDescriptors = @[
                                              [NSSortDescriptor sortDescriptorWithKey:@"location" ascending:YES],
                                              [NSSortDescriptor sortDescriptorWithKey:@"filename" ascending:YES],
                                              [NSSortDescriptor sortDescriptorWithKey:@"size" ascending:YES],
@@ -173,7 +173,7 @@ static const int g_MaximumSearchResults = 16384;
     
     for(const auto &i: encodings::LiteralEncodingsList()) {
         NSMenuItem *item = [NSMenuItem new];
-        item.Title = (__bridge NSString*)i.second;
+        item.title = (__bridge NSString*)i.second;
         item.tag = i.first;
         [self.EncodingsPopUp.menu addItem:item];
     }
@@ -319,14 +319,21 @@ static const int g_MaximumSearchResults = 16384;
                                   FindFilesSheetControllerFoundItem it;
                                   it.filename = _filename;
                                   it.dir_path = _in_path;
+                                  
                                   it.full_filename = it.dir_path;
                                   if(it.full_filename.back() != '/') it.full_filename += '/';
                                   it.full_filename += it.filename;
                                   if(it.dir_path != "/" && it.dir_path.back() == '/') it.dir_path.pop_back();
+                                  
                                   it.content_pos = _cont_pos;
-                                  memset(&it.st, 0, sizeof(it.st));
-                         
+                                  
+                                  it.rel_path = it.dir_path;
+                                  if(it.rel_path.back() != '/') it.rel_path.push_back('/');
+                                  if(m_Path.length() > 1 && it.rel_path.find(m_Path) == 0)
+                                      it.rel_path.replace(0, m_Path.length(), "./");
+                                  
                                   // sync op - bad. better move it off the searching thread
+                                  memset(&it.st, 0, sizeof(it.st));
                                   m_Host->Stat(it.full_filename.c_str(), it.st, 0, 0);
                                   
                                   FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:it];
@@ -416,6 +423,21 @@ static const int g_MaximumSearchResults = 16384;
                      completionHandler:^(NSModalResponse returnCode) {}];
         }
     });
+}
+
+- (void)focusContainingText:(id)sender
+{
+    [self.window makeFirstResponder:self.TextComboBox];
+}
+
+- (void)focusMask:(id)sender
+{
+    [self.window makeFirstResponder:self.MaskComboBox];
+}
+
+- (void)focusSize:(id)sender
+{
+    [self.window makeFirstResponder:self.SizeTextField];
 }
 
 @end

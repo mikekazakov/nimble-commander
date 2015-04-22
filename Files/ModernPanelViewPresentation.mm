@@ -21,7 +21,7 @@
 #import "ModernPanelViewPresentationVolumeFooter.h"
 #import "ByteCountFormatter.h"
 
-static auto g_FontSizeKey = @"FilePanelsModernFontSize";
+static auto g_FontSizeKey = @"FilePanels_Modern_FontSize";
 
 static NSString* FormHumanReadableShortDate(time_t _in)
 {
@@ -181,9 +181,6 @@ void ModernPanelViewPresentation::BuildGeometry()
     m_Font = [NSFont systemFontOfSize:[NSUserDefaults.standardUserDefaults integerForKey:g_FontSizeKey]];
     if(!m_Font) m_Font = [NSFont systemFontOfSize:13];
     if(!m_Font) m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
-    
-//    m_Header->SetFont(m_Font);
-    m_ItemsFooter->SetFont(m_Font);
     
     // Height of a single file line calculated from the font.
     m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);

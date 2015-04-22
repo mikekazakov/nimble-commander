@@ -116,7 +116,7 @@
 	<true/>
 	<key>FilePanelsGeneralGoToForceActivation</key>
 	<true/>
-	<key>FilePanelsModernFontSize</key>
+	<key>FilePanels_Modern_FontSize</key>
 	<integer>13</integer>
 	<key>FilePanels_Modern_RegularBackground</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEBAYY=</data>

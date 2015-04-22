@@ -422,6 +422,9 @@
 		CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; };
+		CF9C51B51AE756EE008645C7 /* FindFilesSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9C51B41AE756EE008645C7 /* FindFilesSheet.mm */; };
+		CF9C51B61AE756EE008645C7 /* FindFilesSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9C51B41AE756EE008645C7 /* FindFilesSheet.mm */; };
+		CF9C51B71AE756EE008645C7 /* FindFilesSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9C51B41AE756EE008645C7 /* FindFilesSheet.mm */; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -1247,6 +1250,8 @@
 		CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSSFTP_Tests.mm; sourceTree = "<group>"; };
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask_Tests.mm; sourceTree = "<group>"; };
+		CF9C51B31AE756EE008645C7 /* FindFilesSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindFilesSheet.h; sourceTree = "<group>"; };
+		CF9C51B41AE756EE008645C7 /* FindFilesSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindFilesSheet.mm; sourceTree = "<group>"; };
 		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
 		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
 		CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SavedNetworkConnectionsManager.mm; sourceTree = "<group>"; };
@@ -1825,6 +1830,8 @@
 				CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */,
 				CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */,
 				CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */,
+				CF9C51B31AE756EE008645C7 /* FindFilesSheet.h */,
+				CF9C51B41AE756EE008645C7 /* FindFilesSheet.mm */,
 				CFCD3B7918AB64C600028B41 /* FindFilesSheetController.h */,
 				CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */,
 				CFCCFBC11A5D71F700313845 /* FindFilesSheetController.xib */,
@@ -3118,6 +3125,7 @@
 				CF50B6F41A1516B000E3D96D /* VFSArchiveListing.mm in Sources */,
 				CF50B6DA1A15169300E3D96D /* VFSPSFile.cpp in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
+				CF9C51B61AE756EE008645C7 /* FindFilesSheet.mm in Sources */,
 				CF89D8B01A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */,
 				CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */,
@@ -3360,6 +3368,7 @@
 				CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */,
 				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */,
+				CF9C51B51AE756EE008645C7 /* FindFilesSheet.mm in Sources */,
 				B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */,
@@ -3513,6 +3522,7 @@
 				CFF6F2541A13567C00011177 /* MessageBox.mm in Sources */,
 				CFF6F2551A13567C00011177 /* MainWindowTerminalState.mm in Sources */,
 				CFF6F2581A13567C00011177 /* CreateDirectorySheetController.mm in Sources */,
+				CF9C51B71AE756EE008645C7 /* FindFilesSheet.mm in Sources */,
 				CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */,
 				CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */,
 				CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */,

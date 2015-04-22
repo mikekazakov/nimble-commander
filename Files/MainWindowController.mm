@@ -57,7 +57,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     
     if(self = [super initWithWindow:window]) {
         m_BigFileViewLoadingQ = SerialQueueT::Make(__FILES_IDENTIFIER__".bigfileviewloading");
-        self.ShouldCascadeWindows = NO;
+        self.shouldCascadeWindows = NO;
         window.delegate = self;
         
         m_ToolbarVisible = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar];

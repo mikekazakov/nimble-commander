@@ -27,8 +27,8 @@
 {
     [super loadView];
     
-    self.TableView.Target = self;
-    self.TableView.DoubleAction = @selector(OnTableDoubleClick:);
+    self.TableView.target = self;
+    self.TableView.doubleAction = @selector(OnTableDoubleClick:);
     self.TableView.dataSource = self;
     [self.TableView registerForDraggedTypes:@[MyPrivateTableViewDataType]];
     [self.view layoutSubtreeIfNeeded];    

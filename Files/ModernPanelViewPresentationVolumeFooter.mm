@@ -14,7 +14,7 @@ static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 
 ModernPanelViewPresentationVolumeFooter::ModernPanelViewPresentationVolumeFooter()
 {
-    m_Font = [NSFont fontWithName:@"Lucida Grande" size:11];
+    m_Font = [NSFont systemFontOfSize:11];
     m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
     m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
 }

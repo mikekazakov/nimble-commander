@@ -20,8 +20,6 @@ class ModernPanelViewPresentationItemsFooter
 public:
     ModernPanelViewPresentationItemsFooter(ModernPanelViewPresentation *_parent);
     
-    void SetFont(NSFont *_font);
-    
     void Draw(const VFSListingItem* _current_item,
               const PanelDataStatistics &_stats,
               PanelViewType _view_type,

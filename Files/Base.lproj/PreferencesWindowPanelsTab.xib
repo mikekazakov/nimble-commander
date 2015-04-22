@@ -974,7 +974,7 @@
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="36" name="selectedTag" keyPath="values.FilePanelsModernFontSize" id="96Q-X4-cJO"/>
+                                            <binding destination="36" name="selectedTag" keyPath="values.FilePanels_Modern_FontSize" id="QOS-lr-buG"/>
                                         </connections>
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="upc-EL-Sxy">

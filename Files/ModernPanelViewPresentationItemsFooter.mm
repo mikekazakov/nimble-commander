@@ -48,6 +48,19 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 ModernPanelViewPresentationItemsFooter::ModernPanelViewPresentationItemsFooter(ModernPanelViewPresentation *_parent):
     m_Parent(_parent)
 {
+    m_Font = [NSFont systemFontOfSize:13];
+    m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
+    m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
+    
+    NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];
+    NSString *max_footer_datetime = [NSString stringWithFormat:@"%@A", FormHumanReadableDateTime(777600)];
+    m_DateTimeWidth = ceil([max_footer_datetime sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    
+    m_SizeWidth = ceil([@"999999" sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
+    
+    // flush caches
+    m_LastStatistics = PanelDataStatistics();
+    m_LastItemName.clear();
 }
 
 NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
@@ -94,23 +107,6 @@ NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles
                                                             "Informative text for a bottom information bar in panels, showing size of selection"),
                 bytes,
                 [NSNumber numberWithInt:_total_files]];
-}
-
-void ModernPanelViewPresentationItemsFooter::SetFont(NSFont *_font)
-{
-    m_Font = _font;
-    m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
-    m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
-    
-    NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];
-    NSString *max_footer_datetime = [NSString stringWithFormat:@"%@A", FormHumanReadableDateTime(777600)];
-    m_DateTimeWidth = ceil([max_footer_datetime sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
-    
-    m_SizeWidth = ceil([@"999999" sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
-    
-    // flush caches
-    m_LastStatistics = PanelDataStatistics();
-    m_LastItemName.clear();
 }
 
 void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem* _current_entry,

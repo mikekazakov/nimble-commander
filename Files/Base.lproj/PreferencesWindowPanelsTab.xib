@@ -746,7 +746,7 @@
                                         </constraints>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanels_Modern_AlternativeBackground" id="dPa-Cl-9aO">
+                                            <binding destination="36" name="value" keyPath="values.FilePanels_Modern_RegularBackground" id="hbN-v4-Mzd">
                                                 <dictionary key="options">
                                                     <string key="NSValueTransformerName">NSUnarchiveFromData</string>
                                                 </dictionary>

@@ -7,6 +7,7 @@
 //
 
 #import "PanelController+DataAccess.h"
+#import "common_paths.h"
 
 @implementation PanelController (DataAccess)
 
@@ -66,6 +67,24 @@
 - (const VFSHostPtr&) vfs
 {
     return m_Data.Host();
+}
+
+- (string) expandPath:(const string&)_ref
+{
+    if( _ref.empty() )
+        return {};
+    
+    if( _ref.front() == '/' ) // absolute path
+        return _ref;
+    
+    if( _ref.front() == '~' ) { // relative to home
+        string r = _ref;
+        r.replace(0, 1, CommonPaths::Get(CommonPaths::Home));
+        return r;
+    }
+
+    // sub-dir
+    return self.currentDirectoryPath + _ref;
 }
 
 @end

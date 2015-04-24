@@ -43,4 +43,9 @@
  */
 @property (nonatomic, readonly) const VFSHostPtr& vfs;
 
+/**
+ * Expands path with replacting ./ or ~/
+ */
+- (string) expandPath:(const string&)_ref;
+
 @end

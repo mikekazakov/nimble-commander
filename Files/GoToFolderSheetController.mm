@@ -14,7 +14,7 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 
 @implementation GoToFolderSheetController
 {
-    function<int()> m_Handler; // return VFS error code
+    function<void()> m_Handler; // return VFS error code
 }
 
 - (id)init
@@ -36,7 +36,7 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
     [self controlTextDidChange:nil];
 }
 
-- (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<int()>)_handler
+- (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<void()>)_handler
 {
     m_Handler = _handler;
     [_window beginSheet:self.window
@@ -46,15 +46,18 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 
 - (IBAction)OnGo:(id)sender
 {
-    int ret = m_Handler();
-    if(ret == 0) {
+    m_Handler();
+}
+
+- (void)tellLoadingResult:(int)_code
+{
+    if(_code == 0) {
         [NSUserDefaults.standardUserDefaults setValue:self.Text.stringValue forKey:g_LastGoToKey];
         [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
         m_Handler = nullptr;
     }
-    else {
-        // show error here
-        self.Error.stringValue = VFSError::ToNSError(ret).localizedDescription;
+    else { // show error here
+        self.Error.stringValue = VFSError::ToNSError(_code).localizedDescription;
     }
 }
 

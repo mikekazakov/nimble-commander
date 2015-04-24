@@ -136,10 +136,25 @@
 loadPreviousState:(bool)_load_state
           async:(bool)_asynchronous
 {
-    if(_dir.empty() || _dir.front() != '/' || !_vfs)
+    auto c = make_shared<PanelControllerGoToDirContext>();
+    c->RequestedDirectory = _dir;
+    c->VFS = _vfs;
+    c->RequestFocusedEntry = _filename;
+    c->LoadPreviousViewState = _load_state;
+    c->PerformAsynchronous = _asynchronous;
+    
+    return [self GoToDirWithContext:c];
+}
+
+- (int) GoToDirWithContext:(shared_ptr<PanelControllerGoToDirContext>)_context
+{
+    auto &c = _context;
+    if(c->RequestedDirectory.empty() ||
+       c->RequestedDirectory.front() != '/' ||
+       !c->VFS)
         return VFSError::InvalidCall;
     
-    if(_asynchronous == false) {
+    if(c->PerformAsynchronous == false) {
         assert(dispatch_is_main_queue());
         m_DirectoryLoadingQ->Stop();
         m_DirectoryLoadingQ->Wait();
@@ -149,18 +164,25 @@ loadPreviousState:(bool)_load_state
             return 0;
     }
     
-    auto ret = make_shared<int>(VFSError::Ok);
     auto workblock = [=](const SerialQueue &_q) {
-        if(!_vfs->IsDirectory(_dir.c_str(), 0, 0)) {
-            *ret = VFSError::FromErrno(ENOTDIR);
+        if(!c->VFS->IsDirectory(c->RequestedDirectory.c_str(), 0, 0)) {
+            c->LoadingResultCode = VFSError::FromErrno(ENOTDIR);
+            if( c->LoadingResultCallback )
+                c->LoadingResultCallback( c->LoadingResultCode );            
             return;
         }
+        
         shared_ptr<VFSListing> listing;
-        *ret = _vfs->FetchDirectoryListing(_dir.c_str(),
-                                          &listing,
-                                          m_VFSFetchingFlags,
-                                          [&]{return _q->IsStopped();});
-        if(*ret < 0)
+        c->LoadingResultCode = c->VFS->FetchDirectoryListing(c->RequestedDirectory.c_str(),
+                                                                    &listing,
+                                                                    m_VFSFetchingFlags,
+                                                                    [&] {
+                                                                        return _q->IsStopped();
+                                                                    });
+        if( c->LoadingResultCallback )
+            c->LoadingResultCallback( c->LoadingResultCode );
+            
+        if( c->LoadingResultCode < 0 )
             return;
         // TODO: need an ability to show errors at least        
         
@@ -169,15 +191,16 @@ loadPreviousState:(bool)_load_state
             [m_View SavePathState];
             m_Data.Load(listing);
             [m_View dataUpdated];
-            [m_View directoryChangedWithFocusedFilename:_filename loadPreviousState:_load_state];
+            [m_View directoryChangedWithFocusedFilename:c->RequestFocusedEntry
+                                      loadPreviousState:c->LoadPreviousViewState];
             [m_View setNeedsDisplay];
             [self OnPathChanged];
         });
     };
     
-    if(_asynchronous == false) {
+    if(c->PerformAsynchronous == false) {
         m_DirectoryLoadingQ->RunSyncHere(workblock);
-        return *ret;
+        return c->LoadingResultCode;
     }
     else {
         m_DirectoryLoadingQ->Run(workblock);

@@ -8,12 +8,39 @@
 
 #import "PanelController.h"
 
+class PanelControllerGoToDirContext
+{
+public:
+    /* required */
+    string              RequestedDirectory      = "";
+    VFSHostPtr          VFS                     = nullptr;
+    
+    /* optional */
+    string              RequestFocusedEntry     = "";
+    bool                PerformAsynchronous     = true;
+    bool                LoadPreviousViewState   = false;
+    
+    /**
+     * This will be called from a thread which is loading a vfs listing with
+     * vfs result code.
+     * This thread may be main or background depending on PerformAsynchronous.
+     * Will be called on any error canceling process or with 0 on successful loading.
+     */
+    function<void(int)> LoadingResultCallback    = nullptr;
+    
+    /**
+     * Return code of a VFS->FetchDirectoryListing will be placed here.
+     */
+    int                 LoadingResultCode        = 0;
+};
+
 @interface PanelController (Navigation)
 
-// TODO:
-// wrap parameters into some request context object
+- (int) GoToDirWithContext:(shared_ptr<PanelControllerGoToDirContext>)_context;
+
 
 // will not load previous view state if any
+// don't use the following methds. use GoToDirWithContext instead.
 - (int) GoToDir:(string)_dir
             vfs:(VFSHostPtr)_vfs
    select_entry:(string)_filename

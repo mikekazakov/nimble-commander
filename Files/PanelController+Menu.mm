@@ -168,20 +168,20 @@
 - (IBAction)OnGoToFolder:(id)sender {
     GoToFolderSheetController *sheet = [GoToFolderSheetController new];
     [sheet showSheetWithParentWindow:self.window handler:[=]{
-        string path = sheet.Text.stringValue.fileSystemRepresentation;
-        assert(!path.empty());
-        if(path[0] == '/'); // absolute path
-        else if(path[0] == '~') // relative to home
-            path.replace(0, 1, CommonPaths::Get(CommonPaths::Home));
-        else // sub-dir
-            path.insert(0, self.currentDirectoryPath);
-
-        // TODO: check reachability from sandbox
         
-        return [self GoToDir:path
-                         vfs:VFSNativeHost::SharedHost() // not sure if this is right, mb .vfs in case of sub-dir?
-                select_entry:""
-                       async:false];
+        auto c = make_shared<PanelControllerGoToDirContext>();
+        c->RequestedDirectory = [self expandPath:sheet.Text.stringValue.fileSystemRepresentationSafe];
+        c->VFS = VFSNativeHost::SharedHost();
+        c->PerformAsynchronous = true;
+        c->LoadingResultCallback = [=](int _code) {
+            dispatch_to_main_queue( [=]{
+                [sheet tellLoadingResult:_code];
+            });
+        };
+
+        // TODO: check reachability from sandbox        
+        
+        [self GoToDirWithContext:c];        
     }];
 }
 

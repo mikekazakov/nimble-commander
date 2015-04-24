@@ -10,7 +10,9 @@
 
 @interface GoToFolderSheetController : NSWindowController <NSTextFieldDelegate>
 
-- (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<int()>)_handler;
+- (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<void()>)_handler;
+
+- (void)tellLoadingResult:(int)_code;
 
 - (IBAction)OnGo:(id)sender;
 - (IBAction)OnCancel:(id)sender;

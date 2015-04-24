@@ -14,7 +14,7 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 
 @implementation GoToFolderSheetController
 {
-    int (^m_Handler)(); // return VFS error code
+    function<int()> m_Handler; // return VFS error code
 }
 
 - (id)init
@@ -29,55 +29,43 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 {
     [super windowDidLoad];
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if(NSString *last = [defaults stringForKey:g_LastGoToKey])
-        [self.Text setStringValue:last];
+    if(NSString *last = [NSUserDefaults.standardUserDefaults stringForKey:g_LastGoToKey])
+        self.Text.stringValue = last;
     
-    [self.Text setDelegate:self];
+    self.Text.delegate = self;
     [self controlTextDidChange:nil];
 }
 
-- (void)ShowSheet:(NSWindow *)_window handler:(int (^)())_handler
+- (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<int()>)_handler
 {
     m_Handler = _handler;
-    [NSApp beginSheet: [self window]
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo: nil];
-}
-
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [[self window] orderOut:self];
+    [_window beginSheet:self.window
+      completionHandler:^(NSModalResponse returnCode){}
+     ];
 }
 
 - (IBAction)OnGo:(id)sender
 {
     int ret = m_Handler();
-    if(ret == 0)
-    {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setValue:self.Text.stringValue forKey:g_LastGoToKey];
-
-        [NSApp endSheet:[self window] returnCode:DialogResult::OK];
-        m_Handler = nil;
+    if(ret == 0) {
+        [NSUserDefaults.standardUserDefaults setValue:self.Text.stringValue forKey:g_LastGoToKey];
+        [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
+        m_Handler = nullptr;
     }
-    else
-    {
+    else {
         // show error here
-        [self.Error setStringValue:[VFSError::ToNSError(ret) localizedDescription]];
+        self.Error.stringValue = VFSError::ToNSError(ret).localizedDescription;
     }
 }
 
 - (IBAction)OnCancel:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:DialogResult::Cancel];
+    [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification
 {
-    [self.GoButton setEnabled:self.Text.stringValue.length > 0];
+    self.GoButton.enabled = self.Text.stringValue.length > 0;
 }
 
 @end

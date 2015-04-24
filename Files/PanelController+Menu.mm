@@ -167,7 +167,7 @@
 
 - (IBAction)OnGoToFolder:(id)sender {
     GoToFolderSheetController *sheet = [GoToFolderSheetController new];
-    [sheet ShowSheet:self.window handler:^int(){
+    [sheet showSheetWithParentWindow:self.window handler:[=]{
         string path = sheet.Text.stringValue.fileSystemRepresentation;
         assert(!path.empty());
         if(path[0] == '/'); // absolute path

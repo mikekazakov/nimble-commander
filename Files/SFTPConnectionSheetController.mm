@@ -70,14 +70,20 @@ static const auto g_SSHdir = CommonPaths::Get(CommonPaths::Home) + ".ssh/";
         return;
     
     auto conn = m_SavedConnections[ind];
-    self.title = [NSString stringWithUTF8StdString:conn->title];
-    self.server = [NSString stringWithUTF8StdString:conn->host];
-    self.username = [NSString stringWithUTF8StdString:conn->user];
-    self.keypath = [NSString stringWithUTF8StdString:conn->keypath];
-    self.port = [NSString stringWithFormat:@"%li", conn->port];
+    [self fillInfoFromStoredConnection:conn];
+}
+
+- (void)fillInfoFromStoredConnection:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_conn
+{
+    [self window];
+    self.title = [NSString stringWithUTF8StdString:_conn->title];
+    self.server = [NSString stringWithUTF8StdString:_conn->host];
+    self.username = [NSString stringWithUTF8StdString:_conn->user];
+    self.keypath = [NSString stringWithUTF8StdString:_conn->keypath];
+    self.port = [NSString stringWithFormat:@"%li", _conn->port];
     
     string password;
-    if(SavedNetworkConnectionsManager::Instance().GetPassword(conn, password))
+    if(SavedNetworkConnectionsManager::Instance().GetPassword(_conn, password))
         self.password = [NSString stringWithUTF8StdString:password];
     else
         self.password = @"";

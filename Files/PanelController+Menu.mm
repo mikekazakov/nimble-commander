@@ -224,8 +224,11 @@
     SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
 }
 
-- (IBAction) OnGoToFTP:(id)sender {
+- (void) showGoToFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_current
+{
     FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
+    if(_current)
+        [sheet fillInfoFromStoredConnection:_current];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode != NSModalResponseOK || sheet.server == nil)
             return;
@@ -246,6 +249,12 @@
             [self GoToFTPWithConnection:conn password:password];
         });
     }];
+    
+}
+
+- (IBAction) OnGoToFTP:(id)sender
+{
+    [self showGoToFTPSheet:nullptr];
 }
 
 - (void) GoToSFTPWithConnection:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_connection
@@ -277,8 +286,11 @@
     SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
 }
 
-- (IBAction) OnGoToSFTP:(id)sender {
+- (void) showGoToSFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_current; // current may be nullptr
+{
     SFTPConnectionSheetController *sheet = [SFTPConnectionSheetController new];
+    if(_current)
+        [sheet fillInfoFromStoredConnection:_current];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode != NSModalResponseOK || sheet.server == nil)
             return;
@@ -297,6 +309,12 @@
             [self GoToSFTPWithConnection:conn password:password];
         });
     }];
+    
+}
+
+- (IBAction) OnGoToSFTP:(id)sender
+{
+    [self showGoToSFTPSheet:nullptr];
 }
 
 - (void)GoToSavedConnection:(shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>)connection
@@ -331,18 +349,28 @@
 
 - (IBAction) OnDeleteSavedConnectionItem:(id)sender
 {
-    auto menuitem = objc_cast<NSMenuItem>(sender);
-    if(!menuitem) return;
-    auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject);
-    if(!rep) return;
-    
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure want to delete this connection?", "Asking user if he really wants to delete information about a stored connection");
-    alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "");
-    [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
-    [alert addButtonWithTitle:NSLocalizedString(@"No", "")];
-    if([alert runModal] == NSAlertFirstButtonReturn)
-        SavedNetworkConnectionsManager::Instance().RemoveConnection(rep.object);
+    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
+        if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) ) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = NSLocalizedString(@"Are you sure want to delete this connection?", "Asking user if he really wants to delete information about a stored connection");
+            alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "");
+            [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
+            [alert addButtonWithTitle:NSLocalizedString(@"No", "")];
+            if([alert runModal] == NSAlertFirstButtonReturn)
+                SavedNetworkConnectionsManager::Instance().RemoveConnection(rep.object);
+        }
+}
+
+- (IBAction)OnEditSavedConnectionItem:(id)sender
+{
+    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
+        if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) )
+            if( auto conn = rep.object ) {
+                if(auto ftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::FTPConnection>(conn))
+                    [self showGoToFTPSheet:ftp];
+                else if(auto sftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::SFTPConnection>(conn))
+                    [self showGoToSFTPSheet:sftp];
+            }
 }
 
 - (IBAction)OnOpen:(id)sender { // enter

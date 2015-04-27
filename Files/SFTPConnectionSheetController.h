@@ -7,7 +7,7 @@
 //
 
 #import "SheetController.h"
-
+#import "SavedNetworkConnectionsManager.h"
 @interface SFTPConnectionSheetController : SheetController
 @property (strong) NSString *title;
 @property (strong) NSString *server;
@@ -20,4 +20,5 @@
 - (IBAction)OnConnect:(id)sender;
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnChooseKey:(id)sender;
+- (void)fillInfoFromStoredConnection:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_conn;
 @end

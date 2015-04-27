@@ -46,7 +46,7 @@
     if(m_Connections.empty())
         return 2;
     else
-        return m_Connections.size()*2 + 4;
+        return m_Connections.size()*3 + 4;
 }
 
 - (BOOL)menu:(NSMenu*)menu updateItem:(NSMenuItem*)item atIndex:(NSInteger)index shouldCancel:(BOOL)shouldCancel
@@ -60,7 +60,8 @@
         [menu insertItem:[self.recentConnectionsMenuItem copy] atIndex:index];
     }
     else if(index >= 4) {
-        auto conn_num = (index - 4) / 2;
+        auto menu_ind = index - 4;
+        auto conn_num = menu_ind / 3;
         if(conn_num >= m_Connections.size())
             return true;
         auto &c = m_Connections.at(conn_num);
@@ -72,14 +73,20 @@
         //clang gone mad, so mute nonsence warning
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
-        if(index % 2 == 0) {
+        if(menu_ind % 3 == 0) {
             item.action = @selector(OnGoToSavedConnectionItem:);
         }
-        else {
+        else if(menu_ind % 3 == 1) {
             item.title = [NSString stringWithFormat:@"♻ %@", item.title];
             item.keyEquivalentModifierMask = NSAlternateKeyMask;
             item.alternate = true;
             item.action = @selector(OnDeleteSavedConnectionItem:);
+        }
+        else {
+            item.title = [NSString stringWithFormat:@"%@...", item.title];
+            item.keyEquivalentModifierMask = NSShiftKeyMask;
+            item.alternate = true;
+            item.action = @selector(OnEditSavedConnectionItem:);
         }
 #pragma clang diagnostic pop
     }

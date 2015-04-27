@@ -79,9 +79,11 @@
     
     if( self.vfs->IsNativeFS() &&
        _ref.front() == '~' ) { // relative to home
+        auto ref = _ref.substr(1);
         path p = path(CommonPaths::Get(CommonPaths::Home));
-        p.remove_filename();
-        p /= _ref.substr(1);
+        if(!ref.empty())
+            p.remove_filename();
+        p /= ref;
         return p.native();
     }
 

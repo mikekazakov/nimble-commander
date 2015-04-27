@@ -27,8 +27,12 @@
         pref.enabled = false;
         [self.saved.menu addItem:pref];
         
-        for(auto &i: m_SavedConnections)
-            [self.saved addItemWithTitle:[NSString stringWithUTF8StdString:i->host]];
+        for(auto &i: m_SavedConnections) {
+            NSMenuItem *it = [NSMenuItem new];
+            auto title = SavedNetworkConnectionsManager::Instance().TitleForConnection(i);
+            it.title = [NSString stringWithUTF8StdString:title];
+            [self.saved.menu addItem:it];
+        }
         
         [self.saved.menu addItem:NSMenuItem.separatorItem];
         [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];

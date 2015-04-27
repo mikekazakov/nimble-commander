@@ -84,11 +84,15 @@
         p /= _ref.substr(1);
         return p.native();
     }
-    
-    // TODO: paths like "./Downloads/etc"
 
     // sub-dir
-    return self.currentDirectoryPath + _ref;
+    path p = self.currentDirectoryPath;    
+    if( _ref.find("./", 0, 2) == 0 )
+        p /= _ref.substr(2);
+    else
+        p /= _ref;
+    
+    return p.native();
 }
 
 @end

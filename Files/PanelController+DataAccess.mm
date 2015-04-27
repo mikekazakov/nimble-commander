@@ -77,11 +77,15 @@
     if( _ref.front() == '/' ) // absolute path
         return _ref;
     
-    if( _ref.front() == '~' ) { // relative to home
-        string r = _ref;
-        r.replace(0, 1, CommonPaths::Get(CommonPaths::Home));
-        return r;
+    if( self.vfs->IsNativeFS() &&
+       _ref.front() == '~' ) { // relative to home
+        path p = path(CommonPaths::Get(CommonPaths::Home));
+        p.remove_filename();
+        p /= _ref.substr(1);
+        return p.native();
     }
+    
+    // TODO: paths like "./Downloads/etc"
 
     // sub-dir
     return self.currentDirectoryPath + _ref;

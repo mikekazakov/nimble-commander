@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "PanelController.h"
 
 @interface GoToFolderSheetController : NSWindowController <NSTextFieldDelegate>
 
@@ -20,5 +21,6 @@
 @property (strong) IBOutlet NSTextField *Text;
 @property (strong) IBOutlet NSTextField *Error;
 @property (strong) IBOutlet NSButton *GoButton;
+@property (strong) PanelController      *panel;
 
 @end

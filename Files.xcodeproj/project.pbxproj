@@ -2735,7 +2735,7 @@
 		CFC5120916C4BD3D00D247EE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF47A97F186C607B00745C4C = {
@@ -4147,7 +4147,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				METAL_ENABLE_DEBUG_INFO = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -4186,7 +4186,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				METAL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -4233,7 +4233,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = Files/3rd_party/built/include/;
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -4279,7 +4279,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = Files/3rd_party/built/include/;
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-std=c++1y",
@@ -4330,7 +4330,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = "";
 				PRODUCT_NAME = Files;
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -4371,7 +4371,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = "";
 				PRODUCT_NAME = Files;
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -4493,7 +4493,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = "";
 				PRODUCT_NAME = "Files Pro";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -4535,7 +4535,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = "";
 				PRODUCT_NAME = "Files Pro";
 				RUN_CLANG_STATIC_ANALYZER = NO;

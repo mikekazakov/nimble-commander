@@ -167,11 +167,12 @@
 
 - (IBAction)OnGoToFolder:(id)sender {
     GoToFolderSheetController *sheet = [GoToFolderSheetController new];
+    sheet.panel = self;
     [sheet showSheetWithParentWindow:self.window handler:[=]{
         
         auto c = make_shared<PanelControllerGoToDirContext>();
         c->RequestedDirectory = [self expandPath:sheet.Text.stringValue.fileSystemRepresentationSafe];
-        c->VFS = VFSNativeHost::SharedHost();
+        c->VFS = self.vfs;
         c->PerformAsynchronous = true;
         c->LoadingResultCallback = [=](int _code) {
             dispatch_to_main_queue( [=]{
@@ -323,11 +324,9 @@
 
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
-    auto menuitem = objc_cast<NSMenuItem>(sender);
-    if(!menuitem) return;
-    auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject);
-    if(!rep) return;
-    [self GoToSavedConnection:rep.object];
+    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
+        if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) )
+            [self GoToSavedConnection:rep.object];
 }
 
 - (IBAction) OnDeleteSavedConnectionItem:(id)sender

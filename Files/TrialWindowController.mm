@@ -93,7 +93,7 @@
     
     // next make the text appear with an underline
     [attrString addAttribute:
-     NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSSingleUnderlineStyle] range:range];
+     NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:range];
     
     [attrString endEditing];
     

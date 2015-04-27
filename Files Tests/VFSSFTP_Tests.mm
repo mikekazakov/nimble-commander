@@ -19,6 +19,10 @@
     return make_shared<VFSNetSFTPHost>("debian7x86.local");
 }
 
+- (shared_ptr<VFSNetSFTPHost>) hostVBoxUbuntu1404x64 {
+    return make_shared<VFSNetSFTPHost>("192.168.2.171");
+}
+
 - (VFSNetSFTPOptions) optionsForVBoxDebian7x86 {
     VFSNetSFTPOptions opts;
     opts.user = "root";
@@ -98,5 +102,38 @@
     
     file->Close();
 }
+
+- (void) testBasicUbuntu1404
+{
+    { // auth with private key
+        VFSNetSFTPOptions opts;
+        opts.user = "r2d2";
+        opts.keypath = "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2";
+        auto host = self.hostVBoxUbuntu1404x64;
+        XCTAssert( host->Open(opts) == 0);
+        XCTAssert( host->HomeDir() == "/home/r2d2" );
+    }
+    
+    { // auth with encrypted private key
+    VFSNetSFTPOptions opts;
+    opts.user = "r2d2";
+    opts.passwd = "qwerty";
+    opts.keypath = "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2_qwerty";
+    auto host = self.hostVBoxUbuntu1404x64;
+    XCTAssert( host->Open(opts) == 0);
+    XCTAssert( host->HomeDir() == "/home/r2d2" );
+    }
+    
+    { // auth with login-password pair
+        VFSNetSFTPOptions opts;
+        opts.user = "r2d2";
+        opts.passwd = "r2d2";
+        auto host = self.hostVBoxUbuntu1404x64;
+        XCTAssert( host->Open(opts) == 0);
+        XCTAssert( host->HomeDir() == "/home/r2d2" );
+    }
+}
+
+
 
 @end

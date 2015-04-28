@@ -235,6 +235,9 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
         if( !e.IsDir() )
             continue;
         
+        if( e.NSName().length < range.length )
+            continue;
+        
         auto compare = [e.NSName() compare:prefix
                                    options:NSCaseInsensitiveSearch
                                      range:range];

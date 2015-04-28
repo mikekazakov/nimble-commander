@@ -22,6 +22,8 @@
 	<string>⇧⌘n</string>
 	<string>menu.file.new_folder_with_selection</string>
 	<string>^⌘n</string>
+	<string>menu.file.new_file</string>
+	<string>⌥⌘n</string>
 	<string>menu.file.new_tab</string>
 	<string>⌘t</string>
 	<string>menu.file.open</string>

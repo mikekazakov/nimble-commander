@@ -92,6 +92,7 @@ private:
         {"menu.file.newwindow",                 11000},
         {"menu.file.new_folder",                11090},
         {"menu.file.new_folder_with_selection", 11100},
+        {"menu.file.new_file",                  11120},
         {"menu.file.new_tab",                   11110},
         {"menu.file.open",                      11010},
         {"menu.file.open_native",               11020},

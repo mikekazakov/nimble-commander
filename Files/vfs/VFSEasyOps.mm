@@ -388,3 +388,20 @@ int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
     else
         return _host->Unlink(_full_path, 0);
 }
+
+int VFSEasyCreateEmptyFile(const char *_path, VFSHostPtr _vfs)
+{
+    VFSFilePtr file;
+    int ret = _vfs->CreateFile(_path, file, 0);
+    if( ret != 0 )
+        return ret;
+    
+    using namespace VFSFlags;
+    
+    ret = file->Open(OF_IRUsr | OF_IRGrp | OF_IROth | OF_IWUsr |
+                     OF_Write | OF_Create);
+    if( ret != 0 )
+        return ret;
+    
+    return file->Close();
+}

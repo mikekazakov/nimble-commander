@@ -15,7 +15,7 @@ namespace VFSFlags
     //  VFSFile opening-time flags
     OF_IXOth    = 0x00000001, // = S_IXOTH
     OF_IWOth    = 0x00000002, // = S_IWOTH
-    OF_IROth    = 0x00000004, // = S_IRWXO
+    OF_IROth    = 0x00000004, // = S_IROTH
     OF_IXGrp    = 0x00000008, // = S_IXGRP
     OF_IWGrp    = 0x00000010, // = S_IWGRP
     OF_IRGrp    = 0x00000020, // = S_IRGRP

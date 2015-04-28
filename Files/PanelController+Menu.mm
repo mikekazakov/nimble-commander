@@ -779,14 +779,14 @@
 {
     NSString *stub = NSLocalizedString(@"untitled folder", "Name for freshly create folder by hotkey");
     path dir = self.currentDirectoryPath;
-    string name = stub.UTF8String;
+    string name = stub.fileSystemRepresentationSafe;
     
     // currently doing existance checking in main thread, which is bad for a slow remote vfs
     // better implement it asynchronously.
     if( self.vfs->Exists((dir/name).c_str()) )
         // this file already exists, will try another ones
         for( int i = 2; ; ++i ) {
-            name = [NSString stringWithFormat:@"%@ %i", stub, i].UTF8String;
+            name = [NSString stringWithFormat:@"%@ %i", stub, i].fileSystemRepresentationSafe;
             if( !self.vfs->Exists((dir/name).c_str()) )
                 break;
             if( i >= 100 )
@@ -828,7 +828,7 @@
     if(files.empty())
         return;
     NSString *stub = NSLocalizedString(@"New Folder With Items", "Name for freshly created folder by hotkey with items");
-    string name = stub.UTF8String;
+    string name = stub.fileSystemRepresentationSafe;
     path dir = self.currentDirectoryPath;
     
     // currently doing existance checking in main thread, which is bad for a slow remote vfs
@@ -836,7 +836,7 @@
     if( self.vfs->Exists((dir/name).c_str()) )
         // this file already exists, will try another ones
         for( int i = 2; ; ++i ) {
-            name = [NSString stringWithFormat:@"%@ %i", stub, i].UTF8String;
+            name = [NSString stringWithFormat:@"%@ %i", stub, i].fileSystemRepresentationSafe;
             if( !self.vfs->Exists((dir/name).c_str()) )
                 break;
             if( i >= 100 )
@@ -875,6 +875,64 @@
     }];
     
     [self.state AddOperation:op];
+}
+
+- (IBAction)OnQuickNewFile:(id)sender
+{
+    path dir = self.currentDirectoryPath;
+    VFSHostPtr vfs = self.vfs;
+    bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
+    __weak PanelController *ws = self;
+    
+    dispatch_to_background([=]{
+        NSString *stub = NSLocalizedString(@"untitled.txt", "Name for freshly created file by hotkey");
+        string name = stub.fileSystemRepresentationSafe;
+        
+        if( self.vfs->Exists((dir/name).c_str()) )
+            // this file already exists, will try another ones
+            for( int i = 2; ; ++i ) {
+                path p = stub.fileSystemRepresentationSafe;
+                if( p.has_extension() ) {
+                    auto ext = p.extension();
+                    p.replace_extension();
+                    name = p.native() + " " + to_string(i) + ext.native();
+                }
+                else
+                    name = p.native() + " " + to_string(i);
+                
+                if( !self.vfs->Exists( (dir/name).c_str() ) )
+                    break;
+                if( i >= 100 )
+                    return; // we're full of such filenames, no reason to go on
+            }
+        
+        auto path = dir / name;
+        int ret = VFSEasyCreateEmptyFile(path.c_str(), vfs);
+        if( ret != 0)
+            return dispatch_to_main_queue([=]{
+                NSAlert *alert = [[NSAlert alloc] init];
+                alert.messageText = NSLocalizedString(@"Failed to create an empty file:", "Showing error when trying to create an empty file");
+                alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
+                [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+                [alert runModal];
+            });
+        
+        dispatch_to_main_queue([=]{
+            PanelController *ss = ws;
+            
+            if(force_reload)
+                [ss RefreshDirectory];
+            
+            PanelControllerDelayedSelection req;
+            req.filename = name;
+            req.timeout = 2s;
+            req.done = [=]{
+                [((PanelController*)ws).view startFieldEditorRenaming];
+            };
+            [ss ScheduleDelayedSelectionChangeFor:req
+                                         checknow:true];
+        });
+    });
 }
 
 @end

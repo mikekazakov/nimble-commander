@@ -15,7 +15,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Delayed cursors movement support
 
-- (void) ScheduleDelayedSelectionChangeFor:(PanelControllerDelayedSelection)request checknow:(bool)_check_now;
+- (void) ScheduleDelayedSelectionChangeFor:(PanelControllerDelayedSelection)request;
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     // we assume that _item_name will not contain any forward slashes
@@ -27,7 +27,7 @@
     m_DelayedSelection.filename = request.filename;
     m_DelayedSelection.done = request.done;
     
-    if(_check_now)
+    if(request.check_now)
         [self CheckAgainstRequestedSelection];
 }
 

@@ -478,7 +478,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
                          [(PanelController*)opp RefreshDirectory];
                          PanelControllerDelayedSelection req;
                          req.filename = single_fn_rename;
-                         [active ScheduleDelayedSelectionChangeFor:req checknow:true];
+                         [active ScheduleDelayedSelectionChangeFor:req];
                      });
                  }];
                  [m_OperationsController AddOperation:op];

@@ -12,6 +12,7 @@ struct PanelControllerDelayedSelection
 {
     string          filename;
     milliseconds    timeout = 500ms;
+    bool            check_now = true;
 
     /**
      * called by PanelController when succesfully changed the cursor position regarding this request.
@@ -31,8 +32,7 @@ struct PanelControllerDelayedSelection
  * If on any checking it will be found that time for request has went out - it will be removed (500ms is just ok for _time_out_in_ms).
  * Will also deselect any currenly selected items.
  */
-- (void) ScheduleDelayedSelectionChangeFor:(PanelControllerDelayedSelection)request
-                                  checknow:(bool)_check_now;
+- (void) ScheduleDelayedSelectionChangeFor:(PanelControllerDelayedSelection)request;
 
 /**
  * Private PanelController method.

@@ -674,8 +674,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
         if(!_entries.empty()) {
             PanelControllerDelayedSelection req;
             req.filename = _entries.front().c_str();
-            [panel ScheduleDelayedSelectionChangeFor:req
-                                            checknow:true];
+            [panel ScheduleDelayedSelectionChangeFor:req];
         }
         
         for(auto &i: _entries)

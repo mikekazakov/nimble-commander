@@ -224,8 +224,7 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
         [target RefreshDirectory];
         PanelControllerDelayedSelection req;
         req.filename = arc_name;
-        [target ScheduleDelayedSelectionChangeFor:req
-                                         checknow:true];
+        [target ScheduleDelayedSelectionChangeFor:req];
     });
 }
 

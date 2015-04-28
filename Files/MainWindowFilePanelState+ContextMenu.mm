@@ -667,7 +667,7 @@ proceed:;
             dispatch_to_main_queue( [=]{
                 PanelControllerDelayedSelection req;
                 req.filename = target_fns;
-                [m_CurrentController ScheduleDelayedSelectionChangeFor:req checknow:true];
+                [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
             });
         }
      ];

@@ -701,7 +701,7 @@ void panel::GenericCursorPersistance::Restore()
             dispatch_to_main_queue( [=]{
                 PanelControllerDelayedSelection req;
                 req.filename = target_fn;
-                [self ScheduleDelayedSelectionChangeFor:req checknow:true];
+                [self ScheduleDelayedSelectionChangeFor:req];
                 [self RefreshDirectory];
             } );
     }];

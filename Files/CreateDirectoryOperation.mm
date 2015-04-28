@@ -93,8 +93,7 @@ static NSString *OperationTitleFromPath(const char *_path)
                 [target RefreshDirectory];
                 PanelControllerDelayedSelection req;
                 req.filename = m_OriginalPathRequest;
-                [target ScheduleDelayedSelectionChangeFor:req
-                                                 checknow:true];
+                [target ScheduleDelayedSelectionChangeFor:req];
                 });
         }
     }

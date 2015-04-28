@@ -769,8 +769,7 @@
                  if(sheet.didSaved) {
                      PanelControllerDelayedSelection req;
                      req.filename = sheet.savedFilename;
-                     [self ScheduleDelayedSelectionChangeFor:req
-                                                    checknow:true];
+                     [self ScheduleDelayedSelectionChangeFor:req];
                  }
              }];
 }
@@ -814,8 +813,7 @@
             req.done = [=]{
                 [((PanelController*)ws).view startFieldEditorRenaming];
             };
-            [ss ScheduleDelayedSelectionChangeFor:req
-                                         checknow:true];
+            [ss ScheduleDelayedSelectionChangeFor:req];
         });
     }];
     
@@ -869,8 +867,7 @@
             req.done = [=]{
                 [((PanelController*)ws).view startFieldEditorRenaming];
             };
-            [ss ScheduleDelayedSelectionChangeFor:req
-                                         checknow:true];
+            [ss ScheduleDelayedSelectionChangeFor:req];
         });
     }];
     
@@ -929,8 +926,7 @@
             req.done = [=]{
                 [((PanelController*)ws).view startFieldEditorRenaming];
             };
-            [ss ScheduleDelayedSelectionChangeFor:req
-                                         checknow:true];
+            [ss ScheduleDelayedSelectionChangeFor:req];
         });
     });
 }

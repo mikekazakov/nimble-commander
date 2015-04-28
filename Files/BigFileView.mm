@@ -115,7 +115,7 @@ const static double g_BorderWidth = 1.0;
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
     m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewModernFont"]);
-    m_ForegroundColor = [defaults colorForKey:@"BigFileViewModernTextColor"].copyCGColorRefSafe;
+    m_ForegroundColor = [defaults colorForKey:@"BigFileViewModernTextColor"].copyCGColor;
     m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernSelectionColor"]);
     m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernBackgroundColor"]);
     m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewModernShouldSmoothFonts"];
@@ -126,7 +126,7 @@ const static double g_BorderWidth = 1.0;
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewClassicFont"]);
-    m_ForegroundColor = [defaults colorForKey:@"BigFileViewClassicTextColor"].copyCGColorRefSafe;
+    m_ForegroundColor = [defaults colorForKey:@"BigFileViewClassicTextColor"].copyCGColor;
     m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicSelectionColor"]);
     m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicBackgroundColor"]);
     m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewClassicShouldSmoothFonts"];
@@ -149,7 +149,7 @@ const static double g_BorderWidth = 1.0;
             m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernSelectionColor"]);
         else if([keyPath isEqualToString:@"BigFileViewModernTextColor"]) {
             CFRelease(m_ForegroundColor);
-            m_ForegroundColor = [defaults colorForKey:@"BigFileViewModernTextColor"].copyCGColorRefSafe;
+            m_ForegroundColor = [defaults colorForKey:@"BigFileViewModernTextColor"].copyCGColor;
             m_ViewImpl->OnFontSettingsChanged();
         }
         else if([keyPath isEqualToString:@"BigFileViewModernFont"]) {
@@ -169,7 +169,7 @@ const static double g_BorderWidth = 1.0;
             m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicSelectionColor"]);
         else if([keyPath isEqualToString:@"BigFileViewClassicTextColor"]) {
             CFRelease(m_ForegroundColor);
-            m_ForegroundColor = [defaults colorForKey:@"BigFileViewClassicTextColor"].copyCGColorRefSafe;
+            m_ForegroundColor = [defaults colorForKey:@"BigFileViewClassicTextColor"].copyCGColor;
             m_ViewImpl->OnFontSettingsChanged();
         }
         else if([keyPath isEqualToString:@"BigFileViewClassicFont"]) {

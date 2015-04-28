@@ -161,21 +161,10 @@ void SyncMessageBoxNS(NSString *_ns_string)
 @end
 
 @implementation NSColor (MyAdditions)
-- (CGColorRef) copyCGColorRefSafe
-{
-    const NSInteger numberOfComponents = [self numberOfComponents];
-    CGFloat components[numberOfComponents];
-    CGColorSpaceRef colorSpace = [[self colorSpace] CGColorSpace];
-        
-    [self getComponents:(CGFloat *)&components];
-        
-    return CGColorCreate(colorSpace, components);
-}
 
-+ (NSColor *)colorWithCGColorSafe:(CGColorRef)CGColor
+- (CGColorRef) copyCGColor
 {
-    if (CGColor == NULL) return nil;
-    return [NSColor colorWithCIColor:[CIColor colorWithCGColor:CGColor]];
+    return CGColorCreateCopy( self.CGColor );
 }
 
 @end
@@ -183,8 +172,7 @@ void SyncMessageBoxNS(NSString *_ns_string)
 @implementation NSTimer (SafeTolerance)
 - (void) setSafeTolerance
 {
-    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9)
-        self.tolerance = self.timeInterval/10.;
+    self.tolerance = self.timeInterval/10.;
 }
 @end
 

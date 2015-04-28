@@ -300,13 +300,10 @@ vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
         if(!configuration::is_for_app_store)
             curr.sandboxed = sandbox_check(curr.pid, NULL, SANDBOX_FILTER_NONE) != 0;
         
-        if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9)
-        {
-            curr.rusage_avail = false;
-            memset(&curr.rusage, 0, sizeof(curr.rusage));
-            if(proc_pid_rusage(curr.pid, RUSAGE_INFO_V2, (void**)&curr.rusage) == 0)
-                curr.rusage_avail = true;
-        }
+        curr.rusage_avail = false;
+        memset(&curr.rusage, 0, sizeof(curr.rusage));
+        if(proc_pid_rusage(curr.pid, RUSAGE_INFO_V2, (void**)&curr.rusage) == 0)
+            curr.rusage_avail = true;
         
         char pidpath[1024] = {0};
         proc_pidpath(curr.pid, pidpath, sizeof(pidpath));
@@ -419,8 +416,7 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
     result += "Image file: "s + (_info.bin_path.empty() ? "N/A" : _info.bin_path) + "\n";
     result += "Arguments: "s + (_info.arguments.empty() ? "N/A" : _info.arguments) + "\n";
     
-    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_9 &&
-       _info.rusage_avail)
+    if( _info.rusage_avail )
     {
         auto bread = to_string(_info.rusage.ri_diskio_bytesread);
         auto bwritten = to_string(_info.rusage.ri_diskio_byteswritten);

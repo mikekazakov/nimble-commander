@@ -251,16 +251,16 @@ void ModernPanelViewPresentation::BuildAppearance()
     
     // Colors
     if(m_RegularBackground) CGColorRelease(m_RegularBackground);
-    m_RegularBackground = [defaults colorForKey:@"FilePanels_Modern_RegularBackground"].copyCGColorRefSafe;
+    m_RegularBackground = [defaults colorForKey:@"FilePanels_Modern_RegularBackground"].copyCGColor;
 
     if(m_OddBackground) CGColorRelease(m_OddBackground);
-    m_OddBackground = [defaults colorForKey:@"FilePanels_Modern_AlternativeBackground"].copyCGColorRefSafe;
+    m_OddBackground = [defaults colorForKey:@"FilePanels_Modern_AlternativeBackground"].copyCGColor;
     
     if(m_ActiveCursor) CGColorRelease(m_ActiveCursor);
-    m_ActiveCursor = [defaults colorForKey:@"FilePanels_Modern_ActiveCursor"].copyCGColorRefSafe;
+    m_ActiveCursor = [defaults colorForKey:@"FilePanels_Modern_ActiveCursor"].copyCGColor;
     
     if(m_InactiveCursor) CGColorRelease(m_InactiveCursor);
-    m_InactiveCursor = [defaults colorForKey:@"FilePanels_Modern_InactiveCursor"].copyCGColorRefSafe;
+    m_InactiveCursor = [defaults colorForKey:@"FilePanels_Modern_InactiveCursor"].copyCGColor;
     
     m_ColumnDividerColor = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0); // hard-coded for now
     

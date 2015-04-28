@@ -122,8 +122,7 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 @end
 
 @interface NSColor (MyAdditions)
-- (CGColorRef) copyCGColorRefSafe;
-+ (NSColor *)colorWithCGColorSafe:(CGColorRef)CGColor;
+@property (readonly) CGColorRef copyCGColor;
 @end
 
 @interface NSTimer (SafeTolerance)

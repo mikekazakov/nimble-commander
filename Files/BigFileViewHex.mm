@@ -328,7 +328,7 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
     CGPoint text_pos = TextAnchor();
     
     NSDictionary *text_attr =@{NSFontAttributeName:(NSFont*)[m_View TextFont],
-                               NSForegroundColorAttributeName:[NSColor colorWithCGColorSafe:[m_View TextForegroundColor]]};
+                               NSForegroundColorAttributeName:[NSColor colorWithCGColor:[m_View TextForegroundColor]]};
     
     size_t first_row = m_RowsOffset;
     if(m_SmoothOffset.y < 0 && first_row > 0)

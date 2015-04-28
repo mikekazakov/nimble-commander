@@ -126,6 +126,9 @@
 /* Showing error when connecting to FTP server */
 "FTP connection error:" = "Ошибка подключения FTP:";
 
+/* Showing error when trying to create an empty file */
+"Failed to create an empty file:" = "Не удалось создать пустой файл:";
+
 /* Window title for internal file viewer */
 "File View - %@" = "Просмотр файла - %@";
 
@@ -336,4 +339,7 @@
 
 /* Name for freshly create folder by hotkey */
 "untitled folder" = "Новая папка";
+
+/* Name for freshly created file by hotkey */
+"untitled.txt" = "новый файл.txt";
 

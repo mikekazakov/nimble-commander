@@ -2,7 +2,7 @@
 "5iY-lT-uKD.title" = "Подключиться к FTP серверу:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "anonymous@domain.com"; ObjectID = "255-mx-b6a"; */
-"255-mx-b6a.placeholderString" = "";
+"255-mx-b6a.placeholderString" = "anonymous@domain.com";
 
 /* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "EJR-gc-SwI"; */
 "EJR-gc-SwI.title" = "Удаленный порт:";

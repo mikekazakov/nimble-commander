@@ -268,6 +268,9 @@
 /* Class = "NSMenuItem"; title = "Compress"; ObjectID = "CEQ-U0-LN9"; */
 "CEQ-U0-LN9.title" = "Сжать";
 
+/* Class = "NSMenuItem"; title = "New File"; ObjectID = "FeM-q9-Bc2"; */
+"FeM-q9-Bc2.title" = "Новый файл";
+
 /* Class = "NSMenuItem"; title = "Calculate Folders Sizes"; ObjectID = "GcS-df-Z23"; */
 "GcS-df-Z23.title" = "Вычислить размер папок";
 

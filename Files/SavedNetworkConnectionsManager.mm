@@ -311,7 +311,7 @@ string SavedNetworkConnectionsManager::TitleForConnection(const shared_ptr<Abstr
             return title_prefix + "ftp://" + ftp->host;
     }
     if(auto sftp = dynamic_cast<SavedNetworkConnectionsManager::SFTPConnection*>(_conn.get())) {
-        return title_prefix + "sftp://" + sftp->user + sftp->host;
+        return title_prefix + "sftp://" + sftp->user + "@" + sftp->host;
     }
     return "";
 }

@@ -38,14 +38,10 @@ static shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> LoadFTP(NS
 {
     if( !_from || !_from[@"type"] || ![_from[@"type"] isEqualTo:@"ftp"] )
         return nullptr;
-    if( !_from[@"user"] ||
-        ![_from[@"user"] isKindOfClass:NSString.class] ||
-        !_from[@"host"] ||
-        ![_from[@"host"] isKindOfClass:NSString.class] ||
-        !_from[@"path"] ||
-        ![_from[@"path"] isKindOfClass:NSString.class] ||
-        !_from[@"port"] ||
-        ![_from[@"port"] isKindOfClass:NSNumber.class] )
+    if( !objc_cast<NSString>(_from[@"user"]) ||
+        !objc_cast<NSString>(_from[@"host"]) ||
+        !objc_cast<NSString>(_from[@"path"]) ||
+        !objc_cast<NSNumber>(_from[@"port"]) )
         return nullptr;
     return make_shared<SavedNetworkConnectionsManager::FTPConnection>
     (
@@ -73,14 +69,10 @@ static shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> LoadSFTP(N
 {
     if( !_from || !_from[@"type"] || ![_from[@"type"] isEqualTo:@"sftp"] )
         return nullptr;
-    if( !_from[@"user"] ||
-       ![_from[@"user"] isKindOfClass:NSString.class] ||
-       !_from[@"host"] ||
-       ![_from[@"host"] isKindOfClass:NSString.class] ||
-       !_from[@"keypath"] ||
-       ![_from[@"keypath"] isKindOfClass:NSString.class] ||
-       !_from[@"port"] ||
-       ![_from[@"port"] isKindOfClass:NSNumber.class] )
+    if( !objc_cast<NSString>(_from[@"user"])    ||
+        !objc_cast<NSString>(_from[@"host"])    ||
+        !objc_cast<NSString>(_from[@"keypath"]) ||
+        !objc_cast<NSNumber>(_from[@"port"])    )
         return nullptr;
     return make_shared<SavedNetworkConnectionsManager::SFTPConnection>
     (

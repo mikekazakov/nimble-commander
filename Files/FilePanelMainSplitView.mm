@@ -14,6 +14,9 @@
 #import "AppDelegate.h"
 #import "Common.h"
 
+static const auto g_MidGuideGap = 24.;
+static const auto g_MinPanelWidth = 120;
+
 static CGColorRef DividerColor(bool _wnd_active)
 {
     static CGColorRef act = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
@@ -63,6 +66,10 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)dividerIndex
 {
+    auto mid = floor(self.frame.size.width / 2.);
+    if( proposedPosition > mid - g_MidGuideGap && proposedPosition < mid + g_MidGuideGap)
+        return mid;
+    
     m_Prop = proposedPosition / self.frame.size.width;
     
     if(AppDelegate.me.skin == ApplicationSkin::Modern)
@@ -117,12 +124,12 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    return splitView.frame.size.width - 100;
+    return splitView.frame.size.width - g_MinPanelWidth;
 }
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    return 100;
+    return g_MinPanelWidth;
 }
 
 - (void)drawDividerInRect:(NSRect)rect

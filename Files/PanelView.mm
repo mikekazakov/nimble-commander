@@ -256,6 +256,8 @@ struct PanelViewStateStorage
 
 - (void) HandlePrevFile
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     
     m_Presentation->MoveCursorToPrevItem();
@@ -268,6 +270,8 @@ struct PanelViewStateStorage
 
 - (void) HandleNextFile
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextItem();
     
@@ -277,6 +281,8 @@ struct PanelViewStateStorage
 
 - (void) HandlePrevPage
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToPrevPage();
 
@@ -286,6 +292,8 @@ struct PanelViewStateStorage
 
 - (void) HandleNextPage
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextPage();
 
@@ -295,6 +303,8 @@ struct PanelViewStateStorage
 
 - (void) HandlePrevColumn
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToPrevColumn();
     
@@ -304,6 +314,8 @@ struct PanelViewStateStorage
 
 - (void) HandleNextColumn
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextColumn();
 
@@ -313,6 +325,8 @@ struct PanelViewStateStorage
 
 - (void) HandleFirstFile;
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToFirstItem();
 
@@ -322,6 +336,8 @@ struct PanelViewStateStorage
 
 - (void) HandleLastFile;
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToLastItem();
 
@@ -331,6 +347,8 @@ struct PanelViewStateStorage
 
 - (void) HandleInsert
 {
+    assert( dispatch_is_main_queue() );
+    
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextItem();
     
@@ -344,6 +362,8 @@ struct PanelViewStateStorage
 
 - (void) setCurpos:(int)_pos
 {
+    assert( dispatch_is_main_queue() );
+    
     if (m_State.CursorPos == _pos) return;
 
     m_Presentation->SetCursorPos(_pos); // _pos wil be filtered here
@@ -353,11 +373,13 @@ struct PanelViewStateStorage
 
 - (int) curpos
 {
+    assert( dispatch_is_main_queue() );
     return m_State.CursorPos;
 }
 
 - (void) OnCursorPositionChanged
 {
+    assert( dispatch_is_main_queue() );
     [m_FPSLimitedDrawer invalidate];
     
     if(id<PanelViewDelegate> del = self.delegate)
@@ -598,6 +620,7 @@ struct PanelViewStateStorage
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
 {
+    assert( dispatch_is_main_queue() );
     if(_start < 0 || _start >= m_State.Data->SortedDirectoryEntries().size() ||
          _end < 0 || _end >= m_State.Data->SortedDirectoryEntries().size() ) {
         NSLog(@"SelectUnselectInRange - invalid range");
@@ -620,6 +643,7 @@ struct PanelViewStateStorage
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end
 {
+    assert( dispatch_is_main_queue() );
     if(m_CursorSelectionType == CursorSelectionType::No)
         return;
     [self SelectUnselectInRange:_start
@@ -642,6 +666,7 @@ struct PanelViewStateStorage
 
 - (void) SavePathState
 {
+    assert( dispatch_is_main_queue() );
     if(!m_State.Data)
         return;
     
@@ -662,6 +687,7 @@ struct PanelViewStateStorage
 
 - (void) LoadPathState
 {
+    assert( dispatch_is_main_queue() );
     if(!m_State.Data)
         return;
     
@@ -686,6 +712,7 @@ struct PanelViewStateStorage
 
 - (void)directoryChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load
 {
+    assert( dispatch_is_main_queue() );
     m_State.ItemsDisplayOffset = 0;
     m_State.CursorPos = -1;
     
@@ -871,6 +898,7 @@ struct PanelViewStateStorage
 
 - (void) dataUpdated
 {
+    assert( dispatch_is_main_queue() );
     if(!self.item || m_RenamingOriginalName != self.item->Name())
         [self discardFieldEditor];
 }

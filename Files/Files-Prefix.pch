@@ -53,6 +53,9 @@
     using namespace std;
     using namespace std::chrono;
 
+    #include <experimental/optional>
+    using namespace std::experimental;
+
     #include "3rd_party/built/include/boost/filesystem.hpp"
     using boost::filesystem::path;
 

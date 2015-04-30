@@ -3,6 +3,9 @@
 #import "sysinfo.h"
 #import "AppDelegate.h"
 
+// REMOVE THIS WHEN CLANG WILL HAVE IT INSIDE DEFAULT LIB
+bad_optional_access::~bad_optional_access() noexcept = default;
+
 static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)
 {
     if ([str length] <= maxCharacters)

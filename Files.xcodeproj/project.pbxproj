@@ -208,6 +208,12 @@
 		CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
+		CF5682671AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
+		CF5682681AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
+		CF5682691AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
+		CF56826A1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */; };
+		CF56826B1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */; };
+		CF56826C1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
@@ -1171,6 +1177,9 @@
 		CF5410221A90E15F003CD7A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AppStoreRatingsSheetController.xib; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
+		CF5682641AF3581600C48E28 /* MassRenameSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassRenameSheetController.h; sourceTree = "<group>"; };
+		CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassRenameSheetController.mm; sourceTree = "<group>"; };
+		CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassRenameSheetController.xib; sourceTree = "<group>"; };
 		CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationVFSJob.mm; sourceTree = "<group>"; };
 		CF5913CA191BD422003007F1 /* CreateDirectoryOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectoryOperationVFSJob.h; sourceTree = "<group>"; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
@@ -1853,6 +1862,9 @@
 				CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */,
 				CF8E667C1AF106B900E31DFF /* MassRename.h */,
 				CF8E667B1AF106B900E31DFF /* MassRename.mm */,
+				CF5682641AF3581600C48E28 /* MassRenameSheetController.h */,
+				CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */,
+				CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -2900,6 +2912,7 @@
 				CFCABCDD1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
+				CF56826B1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CF6D99AB196676B10077B146 /* ShortcutsDefaults.plist in Resources */,
@@ -2937,6 +2950,7 @@
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
+				CF56826A1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */,
 				CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBD1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
 				CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */,
@@ -3027,6 +3041,7 @@
 				CFF6F3941A13567C00011177 /* question_icon.png in Resources */,
 				CFCABCD01A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCABCC91A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
+				CF56826C1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */,
 				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
@@ -3114,6 +3129,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF6D9C9419667BA20077B146 /* rdrand.c in Sources */,
+				CF5682681AF3581600C48E28 /* MassRenameSheetController.mm in Sources */,
 				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF50B72C1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */,
@@ -3349,6 +3365,7 @@
 				CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
 				CF50B6DF1A15169300E3D96D /* VFSPSListing.cpp in Sources */,
+				CF5682671AF3581600C48E28 /* MassRenameSheetController.mm in Sources */,
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */,
@@ -3513,6 +3530,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFF6F23B1A13567C00011177 /* DisplayNamesCache.mm in Sources */,
+				CF5682691AF3581600C48E28 /* MassRenameSheetController.mm in Sources */,
 				CFF6F23D1A13567C00011177 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFF6F23F1A13567C00011177 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
 				CFF6F2411A13567C00011177 /* main.m in Sources */,

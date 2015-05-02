@@ -115,6 +115,9 @@
                                     <action selector="OnFileNewTab:" target="-1" id="0BJ-hc-Wat"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="vIX-94-J58">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
                             <menuItem title="Open" tag="11010" id="72">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 DQ
@@ -142,6 +145,9 @@ DQ
                                     <action selector="OnFileOpenInOppositePanel:" target="-1" id="DYJ-vB-ePl"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="S1o-rN-BPZ">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
                             <menuItem title="Calculate Folders Sizes" tag="11030" id="GcS-df-Z23">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -158,6 +164,12 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnCalculateChecksum:" target="-1" id="eOO-mt-7dI"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Batch Rename" id="eNR-di-9fG">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnBatchRename:" target="-1" id="s6w-14-YkW"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="79">

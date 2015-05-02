@@ -180,3 +180,43 @@ optional<string> MassRename::AddText::Apply(const string& _filename, const FileI
     
     return str;
 }
+
+void MassRename::ResetActions()
+{
+    m_Actions.clear();
+}
+
+void MassRename::AddAction( const MassRename::Action &_a )
+{
+    m_Actions.emplace_back(_a);
+}
+
+vector<string> MassRename::Rename(const VFSListing& _listing, const vector<unsigned>& _inds)
+{
+    vector<string> filenames;
+    vector<FileInfo> infos;
+    
+    unsigned num = 0;
+    for( auto i: _inds ) {
+        auto &e = _listing[i];
+        
+        FileInfo fi;
+        fi.size = e.Size();
+        fi.number = num++;
+        infos.emplace_back(fi);
+        
+        filenames.emplace_back(e.Name());
+    }
+    
+    for(size_t i = 0, e = filenames.size(); i != e; ++i) {
+        
+        for( auto &a: m_Actions ) {
+            auto newstr = a.Apply(filenames[i], infos[i]);
+            
+            if(newstr)
+                filenames[i] = newstr.value();
+        }
+    }
+    
+    return filenames;
+}

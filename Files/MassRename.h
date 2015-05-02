@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "PanelData.h"
+
 // - replace text
 // - replace with regexp
 // - add text
@@ -15,7 +17,8 @@
 // - add sequence
 // - add modification date
 // - add creation date
-// - add ext program output
+// - trim?
+// - add ext program output?
 
 class MassRename
 {
@@ -42,16 +45,19 @@ public:
     struct FileInfo
     {
         // filesize, date, #index etc
-        
+        unsigned number;
+        uint64_t size;
         
         
     };
     
+    void ResetActions();
+    void AddAction( const Action &_a );
+    
+    vector<string> Rename(const VFSListing& _listing, const vector<unsigned>& _inds);
     
 private:
-    
-
-    vector<Action> m_Actions;
+    vector<Action>                      m_Actions;
 };
 
 class MassRename::Action
@@ -103,8 +109,7 @@ public:
                 const string& _replace_with,
                 ApplyTo _where,
                 ReplaceMode _mode,
-                bool _case_sensitive
-                );
+                bool _case_sensitive);
     optional<string> Apply(const string& _filename, const FileInfo &_info) const;
     
 private:

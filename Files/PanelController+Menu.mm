@@ -32,6 +32,9 @@
 #import "SavedNetworkConnectionsManager.h"
 #import "ConnectionsMenuDelegate.h"
 
+#import "MassRename.h"
+#import "MassRenameSheetController.h"
+
 @implementation PanelController (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
@@ -929,6 +932,42 @@
             [ss ScheduleDelayedSelectionChangeFor:req];
         });
     });
+}
+
+- (IBAction)OnBatchRename:(id)sender
+{
+   vector<unsigned> inds;
+    
+    for( auto ind: self.data.SortedDirectoryEntries() ) {
+        auto e = self.data.EntryAtRawPosition(ind);
+        if( !e || !e->CFIsSelected() || e->IsDotDot() )
+            continue;
+        inds.emplace_back(ind);
+    }
+
+/*    MassRename mr;
+    mr.AddAction( MassRename::AddText("!",
+                                      MassRename::ApplyTo::FullName,
+                                      MassRename::Position::Beginning) );
+    mr.AddAction( MassRename::AddText("_",
+                                      MassRename::ApplyTo::Extension,
+                                      MassRename::Position::Beginning) );
+    mr.AddAction( MassRename::ReplaceText("jpg", "png",
+                                          MassRename::ApplyTo::Extension,
+                                          MassRename::ReplaceText::ReplaceMode::EveryOccurrence,
+                                          false) );
+    auto newnames = mr.Rename(*self.data.Listing(), inds);
+    
+    for(auto &s:newnames)
+        NSLog(@"%@", [NSString stringWithUTF8StdString:s]);*/
+    
+//    auto sheet = [MassRenameSheetController new];
+    auto sheet = [[MassRenameSheetController alloc] initWithListing:self.data.Listing()
+                                                         andIndeces:inds];
+    [sheet beginSheetForWindow:self.window
+             completionHandler:^(NSModalResponse returnCode) {
+                 
+             }];
 }
 
 @end

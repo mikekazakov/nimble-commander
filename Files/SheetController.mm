@@ -12,7 +12,6 @@
 
 @implementation SheetController
 {
-    void (^m_Handler)(NSModalResponse returnCode);
     __strong SheetController *m_Self;
 }
 
@@ -37,11 +36,7 @@
     assert(_handler != nil);
     m_Self = self;
     
-    m_Handler = [_handler copy];
-    [_wnd beginSheet:self.window completionHandler:^(NSModalResponse returnCode) {
-        m_Handler(returnCode);
-        m_Handler = nil;
-    }];
+    [_wnd beginSheet:self.window completionHandler:_handler];
 }
 
 - (void) endSheet:(NSModalResponse)returnCode

@@ -56,6 +56,11 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     vector<NSView*>                 m_ActionViews;
     shared_ptr<const VFSListing>    m_Listing;
     vector<unsigned>                m_Indeces;
+  
+    
+    
+    vector<NSTextField*>            m_LabelsBefore;
+    vector<NSTextField*>            m_LabelsAfter;
 }
 
 
@@ -66,6 +71,30 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     if(self) {
         m_Listing = _listing;
         m_Indeces = _inds;
+        
+        for(auto i: m_Indeces) {
+            auto &e = m_Listing->At(i);
+            
+            {
+                NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+                tf.stringValue = e.NSName().copy;
+                tf.bordered = false;
+                tf.editable = true;
+                tf.drawsBackground = false;
+                m_LabelsBefore.emplace_back(tf);
+            }
+
+            {
+                NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+                tf.stringValue = e.NSName().copy;
+                tf.bordered = false;
+                tf.editable = true;
+                tf.drawsBackground = false;
+                m_LabelsAfter.emplace_back(tf);
+            }
+            
+            
+        }
     }
     return self;
     
@@ -78,12 +107,15 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     
     m_ActionViews.emplace_back( CopyView(self.referenceAddText) );
     m_ActionViews.emplace_back( CopyView(self.referenceAddText) );    
+
     
-    
+    self.SplitView.delegate = self;
     self.ActionsTable.dataSource = self;
     self.ActionsTable.delegate = self;
     [self.ActionsTable sizeLastColumnToFit];
-    self.SplitView.delegate = self;
+
+    self.FilenamesTable.delegate = self;
+    self.FilenamesTable.dataSource = self;
 }
 
 - (IBAction)OnCancel:(id)sender
@@ -93,10 +125,10 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    if( tableView == self.ActionsTable ) {
+    if( tableView == self.ActionsTable )
         return m_ActionViews.size();
-        
-    }
+    if( tableView == self.FilenamesTable )
+        return m_Indeces.size();
     return 0;
 }
 
@@ -104,9 +136,22 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
+//    NSScrollView
+    
     if( tableView == self.ActionsTable ) {
         assert( row >= 0 && row < m_ActionViews.size() );
         return m_ActionViews[row];
+    }
+    if( tableView == self.FilenamesTable ) {
+        if( [tableColumn.identifier isEqualToString:@"original"] ) {
+            assert( row >= 0 && row < m_LabelsBefore.size() );
+            return m_LabelsBefore[row];
+        }
+        if( [tableColumn.identifier isEqualToString:@"renamed"] ) {
+            assert( row >= 0 && row < m_LabelsAfter.size() );
+            return m_LabelsAfter[row];
+        }
+
     }
 
     return nil;
@@ -117,6 +162,9 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     if( tableView == self.ActionsTable ) {
         assert( row >= 0 && row < m_ActionViews.size() );
         return m_ActionViews[row].bounds.size.height;
+    }
+    if( tableView == self.FilenamesTable ) {
+        return 16;
     }
     return 10;
 }
@@ -146,29 +194,14 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     objc_cast<NSView>(sender.subviews[1]).frameSize = right;
 }
 
-
 - (IBAction)OnActonChanged:(id)sender
 {
-/*    for(auto i: m_ActionViews) {
-        if(auto v = objc_cast<MassRenameSheetAddText>(i)){
-            NSLog( @"%@", v.textToAdd.stringValue );
-            
-            
-            
-        }
-        
-    }*/
-    
-    NSLog(@"---");
     auto mr = [self buildRenameScriptFromUI];
 
 //    MachTimeBenchmark mtb;
     auto newnames = mr.Rename(*m_Listing, m_Indeces);
-//    mtb.ResetMilli();
-    
-    for(auto &s:newnames)
-        NSLog(@"%@", [NSString stringWithUTF8StdString:s]);
-    
+    for(size_t i = 0, e = newnames.size(); i!=e; ++i)
+        m_LabelsAfter[i].stringValue = [NSString stringWithUTF8StdString:newnames[i]];
 }
 
 - (MassRename) buildRenameScriptFromUI

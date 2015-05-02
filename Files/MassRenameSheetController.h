@@ -28,6 +28,7 @@
 @property (strong) IBOutlet MassRenameSheetAddText *referenceAddText;
 @property (strong) IBOutlet NSTableView *ActionsTable;
 @property (strong) IBOutlet NSSplitView *SplitView;
+@property (strong) IBOutlet NSTableView *FilenamesTable;
 
 - (IBAction)OnActonChanged:(id)sender;
 

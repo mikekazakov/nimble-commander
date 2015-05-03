@@ -28,6 +28,7 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     return nil;
 }
 
+// hack around NSTableView behaviour
 @interface MassRenameSheetActionsTableView : NSTableView
 @end
 @implementation MassRenameSheetActionsTableView
@@ -35,6 +36,20 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
                               forEvent:(NSEvent *)event
 {
     return true;
+}
+@end
+
+// hack around NSSegmentedControl behaviour
+// this allows connected menu to popup instantly (because no action is returned for menu button)
+@interface MassRenamePlusMinusButtonsCell : NSSegmentedCell
+@end
+@implementation MassRenamePlusMinusButtonsCell
+- (SEL)action
+{
+    if( [self menuForSegment:self.selectedSegment] )
+        return nil;
+    else
+        return super.action;
 }
 @end
 
@@ -109,13 +124,8 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     m_ActionViews.emplace_back( CopyView(self.referenceAddText) );    
 
     
-    self.SplitView.delegate = self;
-    self.ActionsTable.dataSource = self;
-    self.ActionsTable.delegate = self;
     [self.ActionsTable sizeLastColumnToFit];
-
-    self.FilenamesTable.delegate = self;
-    self.FilenamesTable.dataSource = self;
+    [self.PlusMinusButtons setMenu:self.PlusMenu forSegment:0];
 }
 
 - (IBAction)OnCancel:(id)sender
@@ -194,6 +204,14 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     objc_cast<NSView>(sender.subviews[1]).frameSize = right;
 }
 
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    if( objc_cast<NSTableView>(notification.object) == self.ActionsTable ) {
+        bool minus_enabled = self.ActionsTable.selectedRow >= 0;
+        [self.PlusMinusButtons setEnabled:minus_enabled forSegment:1];
+    }
+}
+
 - (IBAction)OnActonChanged:(id)sender
 {
     auto mr = [self buildRenameScriptFromUI];
@@ -202,6 +220,31 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     auto newnames = mr.Rename(*m_Listing, m_Indeces);
     for(size_t i = 0, e = newnames.size(); i!=e; ++i)
         m_LabelsAfter[i].stringValue = [NSString stringWithUTF8StdString:newnames[i]];
+}
+
+- (IBAction)OnPlusMinusClicked:(id)sender
+{
+    if( self.PlusMinusButtons.selectedSegment == 1 ) {
+        auto selected_row = self.ActionsTable.selectedRow;
+        if(selected_row >= 0 && selected_row < m_ActionViews.size()) {
+            // remove action from UI
+            [self.ActionsTable removeRowsAtIndexes:[NSIndexSet indexSetWithIndex:selected_row]
+                                     withAnimation:NSTableViewAnimationEffectFade|NSTableViewAnimationSlideLeft];
+            // remove corresponding action view from our direct list
+            m_ActionViews.erase( next(begin(m_ActionViews), selected_row) );
+            
+            // update data
+            [self OnActonChanged:self];
+        }
+        
+    }
+}
+
+- (IBAction)OnPlusMenuAddText:(id)sender
+{
+    m_ActionViews.emplace_back( CopyView(self.referenceAddText) );
+    [self.ActionsTable insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:m_ActionViews.size()-1]
+                             withAnimation:NSTableViewAnimationEffectFade|NSTableViewAnimationSlideRight];
 }
 
 - (MassRename) buildRenameScriptFromUI

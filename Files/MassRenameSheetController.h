@@ -29,7 +29,10 @@
 @property (strong) IBOutlet NSTableView *ActionsTable;
 @property (strong) IBOutlet NSSplitView *SplitView;
 @property (strong) IBOutlet NSTableView *FilenamesTable;
+@property (strong) IBOutlet NSSegmentedControl *PlusMinusButtons;
+@property (strong) IBOutlet NSMenu *PlusMenu;
 
 - (IBAction)OnActonChanged:(id)sender;
+- (IBAction)OnPlusMinusClicked:(id)sender;
 
 @end

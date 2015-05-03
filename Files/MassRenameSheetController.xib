@@ -9,6 +9,8 @@
             <connections>
                 <outlet property="ActionsTable" destination="ug7-Qj-GVY" id="xR7-yD-kRY"/>
                 <outlet property="FilenamesTable" destination="9L3-ba-GOA" id="1tJ-0f-yqR"/>
+                <outlet property="PlusMenu" destination="haI-In-19n" id="o8N-hE-Xcf"/>
+                <outlet property="PlusMinusButtons" destination="gCf-6u-FX7" id="Jy0-NS-Zwh"/>
                 <outlet property="SplitView" destination="VS3-ma-xTV" id="Vwa-nt-BG0"/>
                 <outlet property="referenceAddText" destination="ecH-Wn-whR" id="cUk-F8-1R1"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
@@ -23,7 +25,7 @@
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="-5" width="645" height="328"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VS3-ma-xTV">
                         <rect key="frame" x="20" y="61" width="605" height="247"/>
@@ -32,20 +34,20 @@
                                 <rect key="frame" x="0.0" y="0.0" width="236" height="247"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <subviews>
-                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tCJ-Kq-Xyd">
-                                        <rect key="frame" x="0.0" y="20" width="236" height="227"/>
-                                        <clipView key="contentView" drawsBackground="NO" id="E7N-XD-gMV">
+                                    <scrollView misplaced="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tCJ-Kq-Xyd">
+                                        <rect key="frame" x="0.0" y="0.0" width="2" height="2"/>
+                                        <clipView key="contentView" misplaced="YES" drawsBackground="NO" id="E7N-XD-gMV">
                                             <rect key="frame" x="1" y="17" width="238" height="117"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" id="ug7-Qj-GVY" customClass="MassRenameSheetActionsTableView">
-                                                    <rect key="frame" x="0.0" y="0.0" width="119" height="0.0"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="43" height="0.0"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
-                                                        <tableColumn width="231" minWidth="40" maxWidth="1000" id="khk-H8-9aC">
+                                                        <tableColumn width="40" minWidth="40" maxWidth="1000" id="khk-H8-9aC">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -59,7 +61,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="pxP-hc-pIB">
-                                                                    <rect key="frame" x="1" y="1" width="231" height="17"/>
+                                                                    <rect key="frame" x="1" y="1" width="40" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OHr-Tl-HNM">
@@ -78,11 +80,15 @@
                                                             </prototypeCellViews>
                                                         </tableColumn>
                                                     </tableColumns>
+                                                    <connections>
+                                                        <outlet property="dataSource" destination="-2" id="41o-RE-A8C"/>
+                                                        <outlet property="delegate" destination="-2" id="WR9-t3-obp"/>
+                                                    </connections>
                                                 </tableView>
                                             </subviews>
                                             <nil key="backgroundColor"/>
                                         </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Xdv-4C-E2i">
+                                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="Xdv-4C-E2i">
                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
@@ -91,16 +97,6 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>
-                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gCf-6u-FX7">
-                                        <rect key="frame" x="0.0" y="-1" width="57" height="23"/>
-                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="XNd-Xr-S0N">
-                                            <font key="font" metaFont="system"/>
-                                            <segments>
-                                                <segment image="NSAddTemplate" imageScaling="none"/>
-                                                <segment image="NSRemoveTemplate" imageScaling="none" enabled="NO" tag="1"/>
-                                            </segments>
-                                        </segmentedCell>
-                                    </segmentedControl>
                                     <button horizontalHuggingPriority="1" verticalHuggingPriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="4Nn-aL-boL">
                                         <rect key="frame" x="56" y="-1" width="180" height="23"/>
                                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" alignment="center" refusesFirstResponder="YES" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="S1n-NU-Q3M">
@@ -108,6 +104,19 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                     </button>
+                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gCf-6u-FX7">
+                                        <rect key="frame" x="0.0" y="-1" width="57" height="23"/>
+                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="XNd-Xr-S0N" customClass="MassRenamePlusMinusButtonsCell">
+                                            <font key="font" metaFont="system"/>
+                                            <segments>
+                                                <segment image="NSAddTemplate" imageScaling="none"/>
+                                                <segment image="NSRemoveTemplate" imageScaling="none" enabled="NO" tag="1"/>
+                                            </segments>
+                                        </segmentedCell>
+                                        <connections>
+                                            <action selector="OnPlusMinusClicked:" target="-2" id="nXt-at-dhV"/>
+                                        </connections>
+                                    </segmentedControl>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="4Nn-aL-boL" secondAttribute="bottom" id="0az-pD-Znf"/>
@@ -130,7 +139,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="gP8-JL-GMX" viewBased="YES" id="9L3-ba-GOA">
-                                            <rect key="frame" x="0.0" y="0.0" width="300" height="0.0"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="366" height="0.0"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -233,6 +242,10 @@
                                                     </prototypeCellViews>
                                                 </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <outlet property="dataSource" destination="-2" id="54i-ZU-5sP"/>
+                                                <outlet property="delegate" destination="-2" id="LNl-VM-3hZ"/>
+                                            </connections>
                                         </tableView>
                                     </subviews>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -259,6 +272,9 @@
                             <real value="250"/>
                             <real value="250"/>
                         </holdingPriorities>
+                        <connections>
+                            <outlet property="delegate" destination="-2" id="kjF-gy-IIH"/>
+                        </connections>
                     </splitView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mJJ-6u-nSe">
                         <rect key="frame" x="548" y="13" width="83" height="32"/>
@@ -403,8 +419,22 @@ Gw
             <connections>
                 <action selector="OnActonChanged:" target="-1" id="ahk-WG-7Uh"/>
             </connections>
-            <point key="canvasLocation" x="364.5" y="757"/>
+            <point key="canvasLocation" x="357.5" y="721"/>
         </customView>
+        <menu id="haI-In-19n">
+            <items>
+                <menuItem title="Insert action:" enabled="NO" id="r4C-TA-yYn">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Add Text" indentationLevel="1" id="Bmn-b4-GBt">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="OnPlusMenuAddText:" target="-2" id="3dX-ZC-Jfh"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="579" y="704.5"/>
+        </menu>
     </objects>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>

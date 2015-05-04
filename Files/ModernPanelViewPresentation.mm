@@ -247,7 +247,7 @@ void ModernPanelViewPresentation::BuildAppearance()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     // Icon mode
-    m_IconCache->SetIconMode((int)[defaults integerForKey:@"FilePanelsModernIconsMode"]);
+    m_IconCache->SetIconMode( (IconsGenerator::IconMode)[defaults integerForKey:@"FilePanelsModernIconsMode"] );
     
     // Colors
     if(m_RegularBackground) CGColorRelease(m_RegularBackground);

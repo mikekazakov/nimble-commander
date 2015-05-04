@@ -13,24 +13,25 @@
 class IconsGenerator : public enable_shared_from_this<IconsGenerator>
 {
 public:
+    enum class IconMode
+    {
+        Generic         = 0,
+        Icons           = 1,
+        Thumbnails      = 2,
+        IconModesCount  = 3
+    };
+        
     IconsGenerator();
     ~IconsGenerator();
     
     void SetUpdateCallback( function<void()> _callback ); // callback will be executed in background thread
-    void SetIconMode(int _mode);
+    void SetIconMode(IconMode _mode);
     void SetIconSize(int _size);
     int IconSize() { return m_IconSize.size.height; }
     
     NSImageRep *ImageFor(unsigned _no, VFSListing &_listing);
-    void Flush(); // should be called on every directory changes thus loosing generating icons' ID
+    void Flush(); // should be called on every directory changes thus loosing generated icons' ID
     
-    enum IconMode
-    {
-        IconModeGeneric = 0,
-        IconModeFileIcons,
-        IconModeFileIconsThumbnails,
-        IconModesCount
-    };
     
 private:
     enum {MaxIcons = 65535,
@@ -38,8 +39,6 @@ private:
         MaxFileSizeForThumbnailNonNative = 1*1024*1024 // ?
     };
 
-    
-    
     struct Meta
     {
         uint64_t    file_size;
@@ -54,12 +53,10 @@ private:
         NSImageRep *filetype;  // icon generated from file's extension or taken from a bundle
         
         NSImageRep *thumbnail; // the best - thumbnail generated from file's content
-        
-        
     };
     
-    map<unsigned short, shared_ptr<Meta>> m_Icons;
-    unsigned int m_LastIconID = 0;
+    // goal: remove shared_ptr here
+    vector<shared_ptr<Meta>> m_Icons;
     NSRect m_IconSize = NSMakeRect(0, 0, 16, 16);
 
     
@@ -74,7 +71,7 @@ private:
     dispatch_queue   m_ControlQueue{__FILES_IDENTIFIER__".IconsGenerator.control_queue"};
     
     atomic_int       m_StopWorkQueue{0};
-    int              m_IconsMode = IconModeFileIconsThumbnails;
+    IconMode         m_IconsMode = IconMode::Thumbnails;
     function<void()> m_UpdateCallback;
     
     void BuildGenericIcons();

@@ -250,11 +250,9 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     auto &entry = _listing.At(_no);
     if( entry.CIcon() > 0 ) {
         int number = entry.CIcon() - 1;
-        const auto it = m_Icons.find(number);
         // sanity check - not founding meta with such number means sanity breach in calling module
-        assert(it != m_Icons.end());
-        
-        const auto &meta = it->second;
+        assert( number < m_Icons.size() );
+        const auto &meta = m_Icons[number];
         
         // check if Icon meta stored here is outdated
         if( meta->file_size == entry.Size() &&
@@ -274,14 +272,13 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     // long path: no icon - first request for this entry (or mb entry changed)
     // need to collect the appropriate info and put request into generating queue
     
-    if(m_LastIconID == MaxIcons ||
+    if(m_Icons.size() >= MaxIcons ||
        m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_listing.Host()) )
         return entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
 
-    unsigned short meta_no = m_LastIconID++;
-    auto ins_it = m_Icons.emplace( meta_no, make_shared<Meta>() );
-    assert(ins_it.second == true); // another sanity check
-    auto meta = ins_it.first->second;
+    unsigned short meta_no = m_Icons.size();
+    m_Icons.emplace_back( make_shared<Meta>() );
+    auto meta = m_Icons.back();
     
     meta->file_size = entry.Size();
     meta->unix_mode = entry.UnixMode();
@@ -292,7 +289,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
                         _listing.ComposeFullPathForEntry(_no);
     meta->generic = entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
     meta->extension = entry.HasExtension() ? entry.Extension() : "";
-    if(m_IconsMode >= IconModeFileIcons && !meta->extension.empty())
+    if(m_IconsMode >= IconMode::Icons && !meta->extension.empty())
     {
         lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
         auto it = m_ExtensionIconsCache.find(meta->extension);
@@ -301,12 +298,12 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     }
 
     // check if we already have thumbnail built
-    if(m_IconsMode == IconModeFileIconsThumbnails && meta->host->IsNativeFS())
+    if(m_IconsMode == IconMode::Thumbnails && meta->host->IsNativeFS())
         if(NSImageRep *th = QLThumbnailsCache::Instance().ThumbnailIfHas(meta->relative_path))
             meta->thumbnail = th;
  
     // check if we already have icon built
-    if(m_IconsMode >= IconModeFileIcons && meta->host->IsNativeFS())
+    if(m_IconsMode >= IconMode::Icons && meta->host->IsNativeFS())
         if(NSImageRep *th = WorkspaceIconsCache::Instance().IconIfHas(meta->relative_path))
             meta->filetype = th;
         
@@ -355,7 +352,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta)
         }
         
         // 1st - try to built a real thumbnail
-        if(m_IconsMode == IconModeFileIconsThumbnails &&
+        if(m_IconsMode == IconMode::Thumbnails &&
            (_meta->unix_mode & S_IFMT) != S_IFDIR &&
            _meta->file_size > 0 &&
            _meta->file_size <= MaxFileSizeForThumbnailNative &&
@@ -376,7 +373,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta)
         
         // 2nd - if we haven't built a real thumbnail - try an extention instead
         if(_meta->thumbnail == nil &&
-           m_IconsMode >= IconModeFileIcons &&
+           m_IconsMode >= IconMode::Icons &&
            CheckFileIsOK(_meta->relative_path.c_str()) // possible redundant call here. not good.
            )
         {
@@ -392,7 +389,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta)
     else
     {
         // special case for for bundles
-        if(m_IconsMode == IconModeFileIconsThumbnails &&
+        if(m_IconsMode == IconMode::Thumbnails &&
            _meta->extension == "app" &&
            _meta->host->ShouldProduceThumbnails())
         {
@@ -403,7 +400,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta)
         
         if(// false &&
            _meta->thumbnail == 0 &&
-           m_IconsMode == IconModeFileIconsThumbnails &&
+           m_IconsMode == IconMode::Thumbnails &&
            (_meta->unix_mode & S_IFMT) != S_IFDIR &&
            _meta->file_size > 0 &&
            _meta->file_size <= MaxFileSizeForThumbnailNonNative &&
@@ -464,11 +461,11 @@ void IconsGenerator::StopWorkQueue()
     });
 }
 
-void IconsGenerator::SetIconMode(int _mode)
+void IconsGenerator::SetIconMode(IconMode _mode)
 {
     assert(dispatch_is_main_queue()); // STA api design
-    assert(_mode >= 0 && _mode < IconModesCount);
-    m_IconsMode = (IconMode)_mode;
+    assert(_mode >= IconMode::Generic && _mode < IconMode::IconModesCount);
+    m_IconsMode = _mode;
 }
 
 void IconsGenerator::Flush()
@@ -476,7 +473,6 @@ void IconsGenerator::Flush()
     assert(dispatch_is_main_queue()); // STA api design
     StopWorkQueue();
     m_Icons.clear();
-    m_LastIconID = 0;
 }
 
 void IconsGenerator::SetIconSize(int _size)

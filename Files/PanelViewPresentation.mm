@@ -311,3 +311,7 @@ void PanelViewPresentation::LoadSizeFormats()
     m_FileSizeFormat = (ByteCountFormatter::Type)[NSUserDefaults.standardUserDefaults integerForKey:@"FilePanelsGeneralFileSizeFormat"];
     m_SelectionSizeFormat = (ByteCountFormatter::Type)[NSUserDefaults.standardUserDefaults integerForKey:@"FilePanelsGeneralSelectionSizeFormat"];
 }
+
+void PanelViewPresentation::OnDirectoryChanged()
+{
+}

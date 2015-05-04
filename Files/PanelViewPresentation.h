@@ -41,6 +41,7 @@ public:
     
     virtual void Draw(NSRect _dirty_rect) = 0;
     virtual void OnFrameChanged(NSRect _frame) = 0;
+    virtual void OnDirectoryChanged();
     
     virtual NSRect GetItemColumnsRect() = 0;
     
@@ -81,7 +82,6 @@ protected:
     
     inline PanelView *View() { return m_View; }
 private:
-    virtual void OnDirectoryChanged() {}
     void LoadSizeFormats();
 
     VFSStatFS                      m_StatFS;

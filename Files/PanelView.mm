@@ -733,6 +733,7 @@ struct PanelViewStateStorage
     
     [self disableCurrentMomentumScroll];
     [self discardFieldEditor];
+    m_Presentation->OnDirectoryChanged();
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender

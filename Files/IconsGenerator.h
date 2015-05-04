@@ -68,16 +68,13 @@ private:
     NSBitmapImageRep *m_GenericFolderIconBitmap;
 
     DispatchGroup    m_WorkGroup{DispatchGroup::Background};    // working queue is concurrent
-    dispatch_queue   m_ControlQueue{__FILES_IDENTIFIER__".IconsGenerator.control_queue"};
+    atomic_ulong     m_Generation{0};
     
-    atomic_int       m_StopWorkQueue{0};
     IconMode         m_IconsMode = IconMode::Thumbnails;
     function<void()> m_UpdateCallback;
     
     void BuildGenericIcons();
-    void Runner(shared_ptr<Meta> _meta);
-    void StopWorkQueue();
-    
+    void Runner(shared_ptr<Meta> _meta, unsigned long _my_generation);    
     
     mutex                    m_ExtensionIconsCacheLock;
     map<string, NSImageRep*> m_ExtensionIconsCache;

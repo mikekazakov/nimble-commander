@@ -220,10 +220,8 @@ IconsGenerator::IconsGenerator()
 
 IconsGenerator::~IconsGenerator()
 {
-    m_StopWorkQueue++;
+    m_Generation++;
     m_WorkGroup.Wait();
-    //if(m_ControlQueue != 0)
-        //dispatch_release(m_ControlQueue);
 }
 
 void IconsGenerator::BuildGenericIcons()
@@ -309,8 +307,8 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         
     entry.SetCIcon(meta_no+1);
     
-    m_WorkGroup.Run([=,guard=shared_from_this()]{
-        Runner(meta);
+    m_WorkGroup.Run([=,guard=shared_from_this(),gen=m_Generation.load()]{
+        Runner(meta,gen);
     });
     
     if(meta->thumbnail) return meta->thumbnail;
@@ -318,9 +316,9 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     return meta->generic;
 }
 
-void IconsGenerator::Runner(shared_ptr<Meta> _meta)
+void IconsGenerator::Runner(shared_ptr<Meta> _meta, unsigned long _my_generation)
 {
-    if(m_StopWorkQueue > 0)
+    if(_my_generation != m_Generation)
         return;
     
 //    assert(_meta->thumbnail == nil); // may be already set before
@@ -368,7 +366,7 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta)
             }
         }
         
-        if(m_StopWorkQueue > 0)
+        if(_my_generation != m_Generation)
             return;
         
         // 2nd - if we haven't built a real thumbnail - try an extention instead
@@ -451,16 +449,6 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta)
     _meta->host.reset();
 }
 
-void IconsGenerator::StopWorkQueue()
-{
-    m_StopWorkQueue++;
-    auto sh_this = shared_from_this();
-    m_ControlQueue.async(^{
-        m_WorkGroup.Wait();
-        sh_this->m_StopWorkQueue--;
-    });
-}
-
 void IconsGenerator::SetIconMode(IconMode _mode)
 {
     assert(dispatch_is_main_queue()); // STA api design
@@ -471,7 +459,7 @@ void IconsGenerator::SetIconMode(IconMode _mode)
 void IconsGenerator::Flush()
 {
     assert(dispatch_is_main_queue()); // STA api design
-    StopWorkQueue();
+    m_Generation++;
     m_Icons.clear();
 }
 

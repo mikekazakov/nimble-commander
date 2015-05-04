@@ -15,6 +15,11 @@
 
 @implementation VFSSFTP_Tests
 
+- (shared_ptr<VFSNetSFTPHost>) hostNASQnap {
+    return make_shared<VFSNetSFTPHost>("192.168.2.5");
+}
+
+
 - (shared_ptr<VFSNetSFTPHost>) hostVBoxDebian7x86 {
     return make_shared<VFSNetSFTPHost>("debian7x86.local");
 }
@@ -85,6 +90,26 @@
 - (void)testBasicWithPrivateKeyPass
 {
     [self testBasicWithOpts:self.optionsForVBoxDebian7x86_PrivKeyPass];
+}
+
+- (void)testInvalidPWD_Debian
+{
+    VFSNetSFTPOptions opts;
+    opts.user = "wiufhiwhf";
+    opts.passwd = "u3hf8973h89fh";
+    opts.port = -1;
+    auto host = self.hostVBoxDebian7x86;
+    XCTAssert( host->Open(opts) != 0);
+}
+
+- (void)testInvalidPWD_NAS
+{
+    VFSNetSFTPOptions opts;
+    opts.user = "wiufhiwhf";
+    opts.passwd = "u3hf8973h89fh";
+    opts.port = -1;
+    auto host = self.hostNASQnap;
+    XCTAssert( host->Open(opts) != 0);
 }
 
 - (void) testBasicRead {

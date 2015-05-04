@@ -186,7 +186,8 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     }
     else {
         char *authlist = libssh2_userauth_list(connection->ssh, m_Options->user.c_str(), (unsigned)m_Options->user.length());
-        bool has_keyboard_interactive = strstr(authlist, "keyboard-interactive");
+        bool has_keyboard_interactive = authlist != nullptr &&
+                                        strstr(authlist, "keyboard-interactive") != nullptr;
         
         int ret = LIBSSH2_ERROR_AUTHENTICATION_FAILED;
         if( has_keyboard_interactive ) // if supported - use keyboard interactive first

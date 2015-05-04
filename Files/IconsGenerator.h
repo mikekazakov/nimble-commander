@@ -24,7 +24,7 @@ public:
     IconsGenerator();
     ~IconsGenerator();
     
-    void SetUpdateCallback( function<void()> _callback ); // callback will be executed in background thread
+    void SetUpdateCallback( function<void()> _callback ); // callback will be executed in main thread
     void SetIconMode(IconMode _mode);
     void SetIconSize(int _size);
     int IconSize() { return m_IconSize.size.height; }
@@ -39,24 +39,36 @@ private:
         MaxFileSizeForThumbnailNonNative = 1*1024*1024 // ?
     };
 
-    struct Meta
+    struct IconStorage
     {
+        uint64_t    file_size;
+        time_t      mtime;
+        NSImageRep *generic;   // just folder or document icon
+        NSImageRep *filetype;  // icon generated from file's extension or taken from a bundle
+        NSImageRep *thumbnail; // the best - thumbnail generated from file's content
+        NSImageRep *Any() const;
+    };
+    
+    struct BuildRequest
+    {
+        unsigned long generation;
         uint64_t    file_size;
         mode_t      unix_mode;
         time_t      mtime;
         string      extension;
         string      relative_path;
         VFSHostPtr  host;
-        
-        NSImageRep *generic;   // just folder or document icon
-        
         NSImageRep *filetype;  // icon generated from file's extension or taken from a bundle
-        
         NSImageRep *thumbnail; // the best - thumbnail generated from file's content
     };
     
-    // goal: remove shared_ptr here
-    vector<shared_ptr<Meta>> m_Icons;
+    struct BuildResult
+    {
+        NSImageRep *filetype;
+        NSImageRep *thumbnail;
+    };
+    
+    vector<IconStorage> m_Icons;
     NSRect m_IconSize = NSMakeRect(0, 0, 16, 16);
 
     
@@ -67,14 +79,14 @@ private:
     NSBitmapImageRep *m_GenericFileIconBitmap;
     NSBitmapImageRep *m_GenericFolderIconBitmap;
 
-    DispatchGroup    m_WorkGroup{DispatchGroup::Background};    // working queue is concurrent
+    DispatchGroup    m_WorkGroup{DispatchGroup::Low};    // working queue is concurrent
     atomic_ulong     m_Generation{0};
     
     IconMode         m_IconsMode = IconMode::Thumbnails;
     function<void()> m_UpdateCallback;
     
     void BuildGenericIcons();
-    void Runner(shared_ptr<Meta> _meta, unsigned long _my_generation);    
+    optional<BuildResult> Runner(const BuildRequest &_req);
     
     mutex                    m_ExtensionIconsCacheLock;
     map<string, NSImageRep*> m_ExtensionIconsCache;

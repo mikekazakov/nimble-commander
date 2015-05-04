@@ -213,6 +213,15 @@ inline static unsigned MaximumConcurrentRunnersForVFS(const VFSHostPtr &_host)
     return _host->IsNativeFS() ? 32 : 6;
 }
 
+inline NSImageRep *IconsGenerator::IconStorage::Any() const
+{
+    if(thumbnail)
+        return thumbnail;
+    if(filetype)
+        return filetype;
+    return generic;
+}
+
 IconsGenerator::IconsGenerator()
 {
     BuildGenericIcons();
@@ -250,21 +259,12 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         int number = entry.CIcon() - 1;
         // sanity check - not founding meta with such number means sanity breach in calling module
         assert( number < m_Icons.size() );
-        const auto &meta = m_Icons[number];
+        const auto &is = m_Icons[number];
         
         // check if Icon meta stored here is outdated
-        if( meta->file_size == entry.Size() &&
-           meta->mtime == entry.MTime() ) {
-            
-            // short path - return a stored icon from stash
-            if(meta->thumbnail != nil)
-                return meta->thumbnail;
-            if(meta->filetype  != nil)
-                return meta->filetype;
-            
-            assert(meta->generic != nil);
-            return meta->generic;
-        }
+        if( is.file_size == entry.Size() &&
+           is.mtime == entry.MTime() )
+            return is.Any(); // short path - return a stored icon from stash
     }
     
     // long path: no icon - first request for this entry (or mb entry changed)
@@ -274,73 +274,93 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
        m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_listing.Host()) )
         return entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
 
-    unsigned short meta_no = m_Icons.size();
-    m_Icons.emplace_back( make_shared<Meta>() );
-    auto meta = m_Icons.back();
-    
-    meta->file_size = entry.Size();
-    meta->unix_mode = entry.UnixMode();
-    meta->mtime = entry.MTime();
-    meta->host = _listing.Host();
-    meta->relative_path = entry.IsDotDot() ?
-                        _listing.RelativePath() :
-                        _listing.ComposeFullPathForEntry(_no);
-    meta->generic = entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
-    meta->extension = entry.HasExtension() ? entry.Extension() : "";
-    if(m_IconsMode >= IconMode::Icons && !meta->extension.empty())
-    {
+    // build IconStorage
+    unsigned short is_no = m_Icons.size();
+    m_Icons.emplace_back();
+    auto &is = m_Icons.back();
+    is.file_size = entry.Size();
+    is.mtime = entry.MTime();
+    is.generic = entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
+    if( m_IconsMode >= IconMode::Icons && entry.HasExtension() ) {
         lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
-        auto it = m_ExtensionIconsCache.find(meta->extension);
+        auto it = m_ExtensionIconsCache.find(entry.Extension());
         if(it != end(m_ExtensionIconsCache))
-            meta->filetype = it->second;
+            is.filetype = it->second;
     }
-
+    
+    auto rel_path = entry.IsDotDot() ? _listing.RelativePath() : _listing.ComposeFullPathForEntry(_no);
+    bool is_native_fs = _listing.Host()->IsNativeFS();
+    
     // check if we already have thumbnail built
-    if(m_IconsMode == IconMode::Thumbnails && meta->host->IsNativeFS())
-        if(NSImageRep *th = QLThumbnailsCache::Instance().ThumbnailIfHas(meta->relative_path))
-            meta->thumbnail = th;
+    if(m_IconsMode == IconMode::Thumbnails && is_native_fs)
+        if(NSImageRep *th = QLThumbnailsCache::Instance().ThumbnailIfHas(rel_path))
+            is.thumbnail = th;
  
     // check if we already have icon built
-    if(m_IconsMode >= IconMode::Icons && meta->host->IsNativeFS())
-        if(NSImageRep *th = WorkspaceIconsCache::Instance().IconIfHas(meta->relative_path))
-            meta->filetype = th;
+    if(m_IconsMode >= IconMode::Icons && is_native_fs)
+        if(NSImageRep *th = WorkspaceIconsCache::Instance().IconIfHas(rel_path))
+            is.filetype = th;
         
-    entry.SetCIcon(meta_no+1);
+    entry.SetCIcon(is_no+1);
     
-    m_WorkGroup.Run([=,guard=shared_from_this(),gen=m_Generation.load()]{
-        Runner(meta,gen);
+//  build BuildRequest
+    BuildRequest br;
+    br.generation = m_Generation;
+    br.file_size = is.file_size;
+    br.mtime = is.mtime;
+    br.unix_mode = entry.UnixMode();
+    br.host = _listing.Host();
+    br.extension = entry.Extension();
+    br.relative_path = rel_path;
+    br.filetype = is.filetype;
+    br.thumbnail = is.thumbnail;
+    
+    m_WorkGroup.Run([=,guard=shared_from_this(),request=move(br)] () {
+        auto gen = request.generation;
+        auto opt_res = Runner(request);
+        if( !opt_res ||
+           gen != m_Generation ||
+           (!opt_res->filetype && !opt_res->thumbnail) )
+            return;
+        
+        dispatch_to_main_queue([=,guard=shared_from_this(),res=opt_res.value()] {
+            if( gen != m_Generation )
+                return;
+            assert( is_no < m_Icons.size() ); // consistancy check
+
+            if(res.filetype)
+                m_Icons[is_no].filetype = res.filetype;
+            if(res.thumbnail)
+                m_Icons[is_no].thumbnail = res.thumbnail;
+            if(m_UpdateCallback)
+                m_UpdateCallback();
+        });
     });
-    
-    if(meta->thumbnail) return meta->thumbnail;
-    if(meta->filetype)  return meta->filetype;
-    return meta->generic;
+
+    return is.Any();
 }
 
-void IconsGenerator::Runner(shared_ptr<Meta> _meta, unsigned long _my_generation)
+optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest &_req)
 {
-    if(_my_generation != m_Generation)
-        return;
+    if(_req.generation != m_Generation)
+        return nullopt;
     
-//    assert(_meta->thumbnail == nil); // may be already set before
-//    assert(_meta->filetype  == nil); // generic may be already set using icons cache
-    assert(_meta->generic   != nil);
+    BuildResult result;
     
-    if(_meta->host->IsNativeFS())
-    {
+    if( _req.host->IsNativeFS() ) {
         // playing inside a real FS, that can be reached via QL framework
         
         // zero - if we haven't image for this extension - produce it
-        if(!_meta->extension.empty())
-        {
+        if( !_req.extension.empty() ) {
             m_ExtensionIconsCacheLock.lock();
-            auto it = m_ExtensionIconsCache.find(_meta->extension);
+            auto it = m_ExtensionIconsCache.find(_req.extension);
             m_ExtensionIconsCacheLock.unlock();
             
             if( it == end(m_ExtensionIconsCache) ) {
                 m_ExtensionIconsCacheLock.lock();
-                auto &new_icon = *m_ExtensionIconsCache.emplace(_meta->extension, nil).first; // to exclude parallel image building
+                auto &new_icon = *m_ExtensionIconsCache.emplace(_req.extension, nil).first; // to exclude parallel image building
                 m_ExtensionIconsCacheLock.unlock();
-                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_meta->extension]])
+                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_req.extension]])
                 { // don't know anything about this extension - ok, ask system
                     auto rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
                     if(!IsImageRepEqual(rep, m_GenericFileIconBitmap))
@@ -349,104 +369,75 @@ void IconsGenerator::Runner(shared_ptr<Meta> _meta, unsigned long _my_generation
             }
         }
         
+        if(_req.generation != m_Generation)
+            return nullopt;
+                
         // 1st - try to built a real thumbnail
         if(m_IconsMode == IconMode::Thumbnails &&
-           (_meta->unix_mode & S_IFMT) != S_IFDIR &&
-           _meta->file_size > 0 &&
-           _meta->file_size <= MaxFileSizeForThumbnailNative &&
-           CheckFileIsOK(_meta->relative_path.c_str())
-           )
-        {
-            NSImageRep *tn = QLThumbnailsCache::Instance().ProduceThumbnail(_meta->relative_path, m_IconSize.size);
-            if(tn != nil && tn != _meta->thumbnail)
-            {
-                _meta->thumbnail = tn;
-                if(m_UpdateCallback)
-                    m_UpdateCallback();
-            }
+           (_req.unix_mode & S_IFMT) != S_IFDIR &&
+           _req.file_size > 0 &&
+           _req.file_size <= MaxFileSizeForThumbnailNative &&
+           CheckFileIsOK(_req.relative_path.c_str())
+           ) {
+            NSImageRep *tn = QLThumbnailsCache::Instance().ProduceThumbnail(_req.relative_path, m_IconSize.size);
+            if(tn != nil && tn != _req.thumbnail)
+                result.thumbnail = tn;
         }
         
-        if(_my_generation != m_Generation)
-            return;
+        if(_req.generation != m_Generation)
+            return nullopt;
         
         // 2nd - if we haven't built a real thumbnail - try an extention instead
-        if(_meta->thumbnail == nil &&
+        if(_req.thumbnail == nil &&
            m_IconsMode >= IconMode::Icons &&
-           CheckFileIsOK(_meta->relative_path.c_str()) // possible redundant call here. not good.
-           )
-        {
-            NSImageRep *icon = WorkspaceIconsCache::Instance().ProduceIcon(_meta->relative_path, m_IconSize.size);
-            if(icon != nil && icon != _meta->filetype)
-            {
-                _meta->filetype = icon;
-                if(m_UpdateCallback)
-                    m_UpdateCallback();
-            }
+           CheckFileIsOK(_req.relative_path.c_str()) // possible redundant call here. not good.
+           ) {
+            NSImageRep *icon = WorkspaceIconsCache::Instance().ProduceIcon(_req.relative_path, m_IconSize.size);
+            if(icon != nil && icon != _req.filetype)
+                result.filetype = icon;
         }
     }
-    else
-    {
+    else {
         // special case for for bundles
         if(m_IconsMode == IconMode::Thumbnails &&
-           _meta->extension == "app" &&
-           _meta->host->ShouldProduceThumbnails())
-        {
-            _meta->thumbnail = ProduceBundleThumbnailForVFS_Cached(_meta->relative_path, _meta->host, m_IconSize);
-            if(_meta->thumbnail && m_UpdateCallback)
-               m_UpdateCallback();
-        }
+           _req.extension == "app" &&
+           _req.host->ShouldProduceThumbnails())
+            result.thumbnail = ProduceBundleThumbnailForVFS_Cached(_req.relative_path, _req.host, m_IconSize);
         
         if(// false &&
-           _meta->thumbnail == 0 &&
+           _req.thumbnail == 0 &&
            m_IconsMode == IconMode::Thumbnails &&
-           (_meta->unix_mode & S_IFMT) != S_IFDIR &&
-           _meta->file_size > 0 &&
-           _meta->file_size <= MaxFileSizeForThumbnailNonNative &&
-           _meta->host->ShouldProduceThumbnails() &&
-           !_meta->extension.empty()
-           )
-        {
-            _meta->thumbnail = ProduceThumbnailForVFS_Cached(_meta->relative_path, _meta->extension, _meta->host, m_IconSize.size);
-            if(_meta->thumbnail && m_UpdateCallback)
-                m_UpdateCallback();
-        }
+           (_req.unix_mode & S_IFMT) != S_IFDIR &&
+           _req.file_size > 0 &&
+           _req.file_size <= MaxFileSizeForThumbnailNonNative &&
+           _req.host->ShouldProduceThumbnails() &&
+           !_req.extension.empty() )
+            result.thumbnail = ProduceThumbnailForVFS_Cached(_req.relative_path, _req.extension, _req.host, m_IconSize.size);
         
-        if(!_meta->thumbnail && !_meta->filetype && !_meta->extension.empty())
-        {
+        if(!_req.thumbnail && !_req.filetype && !_req.extension.empty()) {
             // check if have some information in cache
             m_ExtensionIconsCacheLock.lock();
-            auto it = m_ExtensionIconsCache.find(_meta->extension);
+            auto it = m_ExtensionIconsCache.find(_req.extension);
             m_ExtensionIconsCacheLock.unlock();
             
-            if( it != m_ExtensionIconsCache.end() ) {
-                // ok, just use it. NB! this map can contain zero pointer for the cases when icon is dummy
-                _meta->filetype = it->second;
-                if(_meta->filetype != nil && m_UpdateCallback)
-                    m_UpdateCallback();
-            }
+            if( it != m_ExtensionIconsCache.end() )
+                result.filetype = it->second; // ok, just use it. NB! this map can contain zero pointer for the cases when icon is dummy
             else { // don't know anything - ok, ask system
                 m_ExtensionIconsCacheLock.lock();
-                auto &new_icon = *m_ExtensionIconsCache.emplace(_meta->extension, nil).first; // to exclude parallel image building
+                auto &new_icon = *m_ExtensionIconsCache.emplace(_req.extension, nil).first; // to exclude parallel image building
                 m_ExtensionIconsCacheLock.unlock();
-                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_meta->extension]]) {
+                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_req.extension]]) {
                     NSImageRep *rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
                     if(!IsImageRepEqual(rep, m_GenericFileIconBitmap)) {
                         new_icon.second = rep;
-                        _meta->filetype = rep;
-                        if(m_UpdateCallback)
-                            m_UpdateCallback();
+                        result.filetype = rep;
                     }
                 }
             }
         }
     }
     
-    // clear unnecessary meta data
-    _meta->extension.clear();
-    _meta->extension.shrink_to_fit();
-    _meta->relative_path.clear();
-    _meta->relative_path.shrink_to_fit();    
-    _meta->host.reset();
+    return result;
 }
 
 void IconsGenerator::SetIconMode(IconMode _mode)

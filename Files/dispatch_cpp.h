@@ -72,6 +72,15 @@ inline void dispatch_async( dispatch_queue_t queue, T f )
 }
 
 template <class T>
+inline void dispatch_group_async( dispatch_group_t group, dispatch_queue_t queue, T f )
+{
+    dispatch_group_async_f(group,
+                           queue,
+                           new __dispatch_cpp::__lambda_exec( std::move(f) ),
+                           __dispatch_cpp::__dispatch_cpp_exec_delete_lambda);
+}
+
+template <class T>
 inline void dispatch_sync( dispatch_queue_t queue, T f )
 {
     dispatch_sync_f(queue,

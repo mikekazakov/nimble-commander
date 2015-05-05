@@ -7,6 +7,7 @@
 //
 
 #include "DispatchQueue.h"
+#include "dispatch_cpp.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // SerialQueueT implementation
@@ -160,12 +161,7 @@ void DispatchGroup::Run( function<void()> _f )
     if(!_f)
         return;
     
-    __block auto f_copy = move(_f);
-    dispatch_group_async(m_Group, m_Queue, ^{
-        m_Count++;
-        f_copy();
-        m_Count--;
-    });
+    dispatch_group_async( m_Group, m_Queue, move(_f) );
 }
 
 void DispatchGroup::Wait()

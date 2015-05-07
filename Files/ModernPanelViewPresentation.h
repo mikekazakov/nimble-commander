@@ -9,10 +9,10 @@
 #import "PanelViewPresentation.h"
 #import "PanelViewPresentationItemsColoringFilter.h"
 #import "ObjcToCppObservingBridge.h"
+#import "IconsGenerator.h"
 
 @class PanelView;
 class ModernPanelViewPresentationIconCache;
-class IconsGenerator;
 class ModernPanelViewPresentationHeader;
 class ModernPanelViewPresentationItemsFooter;
 class ModernPanelViewPresentationVolumeFooter;
@@ -107,7 +107,7 @@ private:
     ObjcToCppObservingBlockBridge *m_GeometryObserver;
     ObjcToCppObservingBlockBridge *m_AppearanceObserver;
     
-    shared_ptr<IconsGenerator> m_IconCache;
+    IconsGenerator m_IconCache;
     unique_ptr<ModernPanelViewPresentationHeader> m_Header;
     unique_ptr<ModernPanelViewPresentationItemsFooter> m_ItemsFooter;
     unique_ptr<ModernPanelViewPresentationVolumeFooter> m_VolumeFooter;

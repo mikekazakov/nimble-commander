@@ -10,7 +10,7 @@
 #import "DispatchQueue.h"
 #import "VFS.h"
 
-class IconsGenerator : public enable_shared_from_this<IconsGenerator>
+class IconsGenerator
 {
 public:
     enum class IconMode
@@ -27,7 +27,7 @@ public:
     void SetUpdateCallback( function<void()> _callback ); // callback will be executed in main thread
     void SetIconMode(IconMode _mode);
     void SetIconSize(int _size);
-    int IconSize() { return m_IconSize.size.height; }
+    int IconSize() const { return m_IconSize.size.height; }
     
     NSImageRep *ImageFor(unsigned _no, VFSListing &_listing);
     void Flush(); // should be called on every directory changes thus loosing generated icons' ID
@@ -70,10 +70,7 @@ private:
     
     vector<IconStorage> m_Icons;
     NSRect m_IconSize = NSMakeRect(0, 0, 16, 16);
-
     
-    NSImage *m_GenericFileIconImage;
-    NSImage *m_GenericFolderIconImage;
     NSImageRep *m_GenericFileIcon;
     NSImageRep *m_GenericFolderIcon;
     NSBitmapImageRep *m_GenericFileIconBitmap;

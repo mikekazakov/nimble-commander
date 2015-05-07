@@ -236,17 +236,13 @@ IconsGenerator::~IconsGenerator()
 void IconsGenerator::BuildGenericIcons()
 {
     // Load predefined directory icon.
-    NSImage *image = [NSImage imageNamed:NSImageNameFolder];
-    assert(image);
-    m_GenericFolderIconImage = image;
-    m_GenericFolderIcon = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+    static NSImage *folder_image = [NSImage imageNamed:NSImageNameFolder];
+    m_GenericFolderIcon = [folder_image bestRepresentationForRect:m_IconSize context:nil hints:nil];
     m_GenericFolderIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFolderIcon CGImageForProposedRect:0 context:0 hints:0]];
     
     // Load predefined generic document file icon.
-    image = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-    assert(image);
-    m_GenericFileIconImage = image;
-    m_GenericFileIcon = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+    static NSImage *image_file = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
+    m_GenericFileIcon = [image_file bestRepresentationForRect:m_IconSize context:nil hints:nil];
     m_GenericFileIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFileIcon CGImageForProposedRect:0 context:0 hints:0]];
 }
 
@@ -315,7 +311,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     br.filetype = is.filetype;
     br.thumbnail = is.thumbnail;
     
-    m_WorkGroup.Run([=,guard=shared_from_this(),request=move(br)] () {
+    m_WorkGroup.Run([=,request=move(br)] () {
         auto gen = request.generation;
         auto opt_res = Runner(request);
         if( !opt_res ||
@@ -323,7 +319,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
            (!opt_res->filetype && !opt_res->thumbnail) )
             return;
         
-        dispatch_to_main_queue([=,guard=shared_from_this(),res=opt_res.value()] {
+        dispatch_to_main_queue([=,res=opt_res.value()] {
             if( gen != m_Generation )
                 return;
             assert( is_no < m_Icons.size() ); // consistancy check
@@ -466,5 +462,6 @@ void IconsGenerator::SetIconSize(int _size)
 
 void IconsGenerator::SetUpdateCallback(function<void()> _cb)
 {
-    m_UpdateCallback = _cb;
+    assert(dispatch_is_main_queue()); // STA api design
+    m_UpdateCallback = move(_cb);
 }

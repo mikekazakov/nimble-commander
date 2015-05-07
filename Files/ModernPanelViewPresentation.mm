@@ -107,7 +107,6 @@ static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 NSImage *ModernPanelViewPresentation::m_SymlinkArrowImage = nil;
 
 ModernPanelViewPresentation::ModernPanelViewPresentation():
-    m_IconCache(make_shared<IconsGenerator>()),
     m_RegularBackground(0),
     m_OddBackground(0),
     m_ActiveCursor(0),
@@ -124,7 +123,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
     
     m_Size.width = m_Size.height = 0;
 
-    m_IconCache->SetUpdateCallback([=]{
+    m_IconCache.SetUpdateCallback([=]{
         SetViewNeedsDisplay();
     });
     BuildGeometry();
@@ -162,7 +161,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
 
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
 {
-    m_IconCache->SetUpdateCallback(nullptr);
+    m_IconCache.SetUpdateCallback(nullptr);
     CGColorRelease(m_RegularBackground);
     CGColorRelease(m_OddBackground);
     CGColorRelease(m_ActiveCursor);
@@ -214,7 +213,7 @@ void ModernPanelViewPresentation::BuildGeometry()
             icon_size = m_FontHeight;
     }
     
-    m_IconCache->SetIconSize( icon_size );
+    m_IconCache.SetIconSize( icon_size );
 
     NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];
     
@@ -245,7 +244,7 @@ void ModernPanelViewPresentation::BuildAppearance()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     // Icon mode
-    m_IconCache->SetIconMode( (IconsGenerator::IconMode)[defaults integerForKey:@"FilePanelsModernIconsMode"] );
+    m_IconCache.SetIconMode( (IconsGenerator::IconMode)[defaults integerForKey:@"FilePanelsModernIconsMode"] );
     
     // Colors
     if(m_RegularBackground) CGColorRelease(m_RegularBackground);
@@ -361,7 +360,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     
     ///////////////////////////////////////////////////////////////////////////////
     // Draw items in columns.        
-    const double icon_size = m_IconCache->IconSize();
+    const double icon_size = m_IconCache.IconSize();
     const double start_y = m_ItemsArea.origin.y + 1;
     double full_view_max_date_width = 0;
     double full_wide_view_max_time_width = 0;
@@ -484,7 +483,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 [item->NSDisplayName() drawWithRect:rect options:0 attributes:item_text_attr];
             
             // Draw icon
-            NSImageRep *image_rep = m_IconCache->ImageFor(m_State->Data->RawIndexForSortIndex(i), (VFSListing&)entries); // UGLY anti-const hack
+            NSImageRep *image_rep = m_IconCache.ImageFor(m_State->Data->RawIndexForSortIndex(i), (VFSListing&)entries); // UGLY anti-const hack
             NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
                                           item_start_y + floor((m_LineHeight - icon_size) / 2. - 0.5),
                                           icon_size,
@@ -670,7 +669,7 @@ ModernPanelViewPresentation::ItemLayout ModernPanelViewPresentation::LayoutItem(
 
     const double column_width = floor((m_ItemsArea.size.width - (columns - 1))/columns);
     const double row_height   = m_LineHeight;
-    const double icon_size    = m_IconCache->IconSize();
+    const double icon_size    = m_IconCache.IconSize();
     
     il.whole_area.size.width    = column_width;
     il.whole_area.size.height   = row_height;
@@ -731,7 +730,7 @@ int ModernPanelViewPresentation::GetMaxItemsPerColumn() const
 
 void ModernPanelViewPresentation::OnDirectoryChanged()
 {
-    m_IconCache->Flush();
+    m_IconCache.Flush();
 }
 
 double ModernPanelViewPresentation::GetSingleItemHeight()

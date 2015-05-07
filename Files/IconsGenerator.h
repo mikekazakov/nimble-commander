@@ -27,7 +27,7 @@ public:
     void SetUpdateCallback( function<void()> _callback ); // callback will be executed in main thread
     void SetIconMode(IconMode _mode);
     void SetIconSize(int _size);
-    int IconSize() const { return m_IconSize.size.height; }
+    int IconSize() const { return m_IconSize; }
     
     NSImageRep *ImageFor(unsigned _no, VFSListing &_listing);
     void Flush(); // should be called on every directory changes thus loosing generated icons' ID
@@ -68,28 +68,25 @@ private:
         NSImageRep *thumbnail;
     };
     
-    vector<IconStorage> m_Icons;
-    NSRect m_IconSize = NSMakeRect(0, 0, 16, 16);
-    
-    NSImageRep *m_GenericFileIcon;
-    NSImageRep *m_GenericFolderIcon;
-    NSBitmapImageRep *m_GenericFileIconBitmap;
-    NSBitmapImageRep *m_GenericFolderIconBitmap;
-
-    DispatchGroup    m_WorkGroup{DispatchGroup::Low};    // working queue is concurrent
-    atomic_ulong     m_Generation{0};
-    
-    IconMode         m_IconsMode = IconMode::Thumbnails;
-    function<void()> m_UpdateCallback;
-    
     void BuildGenericIcons();
     optional<BuildResult> Runner(const BuildRequest &_req);
-    
-    mutex                    m_ExtensionIconsCacheLock;
-    map<string, NSImageRep*> m_ExtensionIconsCache;
-    
-    
-    // denied! (c) Quake3
     IconsGenerator(const IconsGenerator&) = delete;
     void operator=(const IconsGenerator&) = delete;
+    
+    
+    vector<IconStorage>     m_Icons;
+    int                     m_IconSize = 16;
+    IconMode                m_IconsMode = IconMode::Thumbnails;
+
+    atomic_ulong            m_Generation{0};
+    DispatchGroup           m_WorkGroup{DispatchGroup::Low};
+    function<void()>        m_UpdateCallback;
+    
+    NSImageRep             *m_GenericFileIcon;
+    NSImageRep             *m_GenericFolderIcon;
+    NSBitmapImageRep       *m_GenericFileIconBitmap;
+    NSBitmapImageRep       *m_GenericFolderIconBitmap;
+
+    mutex                   m_ExtensionIconsCacheLock;
+    map<string,NSImageRep*> m_ExtensionIconsCache;
 };

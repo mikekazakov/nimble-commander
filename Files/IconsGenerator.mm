@@ -237,12 +237,12 @@ void IconsGenerator::BuildGenericIcons()
 {
     // Load predefined directory icon.
     static NSImage *folder_image = [NSImage imageNamed:NSImageNameFolder];
-    m_GenericFolderIcon = [folder_image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+    m_GenericFolderIcon = [folder_image bestRepresentationForRect:NSMakeRect(0, 0, m_IconSize, m_IconSize) context:nil hints:nil];
     m_GenericFolderIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFolderIcon CGImageForProposedRect:0 context:0 hints:0]];
     
     // Load predefined generic document file icon.
     static NSImage *image_file = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-    m_GenericFileIcon = [image_file bestRepresentationForRect:m_IconSize context:nil hints:nil];
+    m_GenericFileIcon = [image_file bestRepresentationForRect:NSMakeRect(0, 0, m_IconSize, m_IconSize) context:nil hints:nil];
     m_GenericFileIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFileIcon CGImageForProposedRect:0 context:0 hints:0]];
 }
 
@@ -307,7 +307,7 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     br.unix_mode = entry.UnixMode();
     br.host = _listing.Host();
     br.extension = entry.Extension();
-    br.relative_path = rel_path;
+    br.relative_path = move(rel_path);
     br.filetype = is.filetype;
     br.thumbnail = is.thumbnail;
     
@@ -358,7 +358,7 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
                 m_ExtensionIconsCacheLock.unlock();
                 if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_req.extension]])
                 { // don't know anything about this extension - ok, ask system
-                    auto rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+                    auto rep = [image bestRepresentationForRect:NSMakeRect(0, 0, m_IconSize, m_IconSize) context:nil hints:nil];
                     if(!IsImageRepEqual(rep, m_GenericFileIconBitmap))
                         new_icon.second = rep;
                 }
@@ -375,7 +375,7 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
            _req.file_size <= MaxFileSizeForThumbnailNative &&
            CheckFileIsOK(_req.relative_path.c_str())
            ) {
-            NSImageRep *tn = QLThumbnailsCache::Instance().ProduceThumbnail(_req.relative_path, m_IconSize.size);
+            NSImageRep *tn = QLThumbnailsCache::Instance().ProduceThumbnail(_req.relative_path,  NSMakeSize(m_IconSize, m_IconSize));
             if(tn != nil && tn != _req.thumbnail)
                 result.thumbnail = tn;
         }
@@ -388,7 +388,7 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
            m_IconsMode >= IconMode::Icons &&
            CheckFileIsOK(_req.relative_path.c_str()) // possible redundant call here. not good.
            ) {
-            NSImageRep *icon = WorkspaceIconsCache::Instance().ProduceIcon(_req.relative_path, m_IconSize.size);
+            NSImageRep *icon = WorkspaceIconsCache::Instance().ProduceIcon(_req.relative_path, NSMakeSize(m_IconSize, m_IconSize));
             if(icon != nil && icon != _req.filetype)
                 result.filetype = icon;
         }
@@ -398,7 +398,7 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
         if(m_IconsMode == IconMode::Thumbnails &&
            _req.extension == "app" &&
            _req.host->ShouldProduceThumbnails())
-            result.thumbnail = ProduceBundleThumbnailForVFS_Cached(_req.relative_path, _req.host, m_IconSize);
+            result.thumbnail = ProduceBundleThumbnailForVFS_Cached(_req.relative_path, _req.host, NSMakeRect(0, 0, m_IconSize, m_IconSize));
         
         if(// false &&
            _req.thumbnail == 0 &&
@@ -408,7 +408,7 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
            _req.file_size <= MaxFileSizeForThumbnailNonNative &&
            _req.host->ShouldProduceThumbnails() &&
            !_req.extension.empty() )
-            result.thumbnail = ProduceThumbnailForVFS_Cached(_req.relative_path, _req.extension, _req.host, m_IconSize.size);
+            result.thumbnail = ProduceThumbnailForVFS_Cached(_req.relative_path, _req.extension, _req.host, NSMakeSize(m_IconSize, m_IconSize));
         
         if(!_req.thumbnail && !_req.filetype && !_req.extension.empty()) {
             // check if have some information in cache
@@ -423,7 +423,7 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
                 auto &new_icon = *m_ExtensionIconsCache.emplace(_req.extension, nil).first; // to exclude parallel image building
                 m_ExtensionIconsCacheLock.unlock();
                 if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_req.extension]]) {
-                    NSImageRep *rep = [image bestRepresentationForRect:m_IconSize context:nil hints:nil];
+                    NSImageRep *rep = [image bestRepresentationForRect:NSMakeRect(0, 0, m_IconSize, m_IconSize) context:nil hints:nil];
                     if(!IsImageRepEqual(rep, m_GenericFileIconBitmap)) {
                         new_icon.second = rep;
                         result.filetype = rep;
@@ -453,8 +453,8 @@ void IconsGenerator::Flush()
 void IconsGenerator::SetIconSize(int _size)
 {
     assert(dispatch_is_main_queue()); // STA api design
-    if((int)m_IconSize.size.width == _size) return;
-    m_IconSize = NSMakeRect(0, 0, _size, _size);
+    if(m_IconSize == _size) return;
+    m_IconSize = _size;
     BuildGenericIcons();
     lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
     m_ExtensionIconsCache.clear();

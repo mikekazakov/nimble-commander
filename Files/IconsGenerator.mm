@@ -210,7 +210,7 @@ static NSImageRep *ProduceBundleThumbnailForVFS_Cached(const string &_path, cons
 
 inline static unsigned MaximumConcurrentRunnersForVFS(const VFSHostPtr &_host)
 {
-    return _host->IsNativeFS() ? 32 : 6;
+    return _host->IsNativeFS() ? 64 : 6;
 }
 
 inline NSImageRep *IconsGenerator::IconStorage::Any() const
@@ -371,7 +371,7 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
         
         if(_req.generation != m_Generation)
             return nullopt;
-                
+        
         // 1st - try to built a real thumbnail
         if(m_IconsMode == IconMode::Thumbnails &&
            (_req.unix_mode & S_IFMT) != S_IFDIR &&

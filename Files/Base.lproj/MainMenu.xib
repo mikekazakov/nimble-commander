@@ -37,12 +37,6 @@
                                     <action selector="OnMenuSendFeedback:" target="-1" id="893"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Download Full Version..." tag="10060" id="Si2-qa-RDP">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="OnMenuTryFullVersion:" target="-1" id="0Ib-bh-X7A"/>
-                                </connections>
-                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="143">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -164,12 +158,6 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnCalculateChecksum:" target="-1" id="eOO-mt-7dI"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Batch Rename" id="eNR-di-9fG">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="OnBatchRename:" target="-1" id="s6w-14-YkW"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="79">

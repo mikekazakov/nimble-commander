@@ -78,7 +78,8 @@ private:
     int                     m_IconSize = 16;
     IconMode                m_IconsMode = IconMode::Thumbnails;
 
-    atomic_ulong            m_Generation{0};
+    shared_ptr<atomic_ulong>m_GenerationSh = make_shared<atomic_ulong>(0);
+    atomic_ulong           &m_Generation = *m_GenerationSh;
     DispatchGroup           m_WorkGroup{DispatchGroup::Low};
     function<void()>        m_UpdateCallback;
     

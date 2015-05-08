@@ -311,26 +311,29 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     br.filetype = is.filetype;
     br.thumbnail = is.thumbnail;
     
+    const auto act_gen = m_GenerationSh;
+    const auto curr_gen = br.generation;
+    
     m_WorkGroup.Run([=,request=move(br)] () {
-        auto gen = request.generation;
-        auto opt_res = Runner(request);
-        if( !opt_res ||
-           gen != m_Generation ||
-           (!opt_res->filetype && !opt_res->thumbnail) )
-            return;
+        // went to background worker thread
         
-        dispatch_to_main_queue([=,res=opt_res.value()] {
-            if( gen != m_Generation )
-                return;
-            assert( is_no < m_Icons.size() ); // consistancy check
-
-            if(res.filetype)
-                m_Icons[is_no].filetype = res.filetype;
-            if(res.thumbnail)
-                m_Icons[is_no].thumbnail = res.thumbnail;
-            if(m_UpdateCallback)
-                m_UpdateCallback();
-        });
+        if(auto opt_res = Runner(request))
+            if(curr_gen == *act_gen &&
+               (opt_res->filetype || opt_res->thumbnail) )
+                dispatch_to_main_queue([=,res=opt_res.value()] {
+                    // returned to main thread
+                    
+                    if( curr_gen != *act_gen )
+                        return;
+                    assert( is_no < m_Icons.size() ); // consistancy check
+                    
+                    if(res.filetype)
+                        m_Icons[is_no].filetype = res.filetype;
+                    if(res.thumbnail)
+                        m_Icons[is_no].thumbnail = res.thumbnail;
+                    if(m_UpdateCallback)
+                        m_UpdateCallback();
+                });
     });
 
     return is.Any();

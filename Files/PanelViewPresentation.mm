@@ -277,6 +277,7 @@ void PanelViewPresentation::UpdateStatFS()
                )
             {
                 assert(dispatch_is_main_queue() == false);
+                // POSSIBLE DEADLOCK HERE
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     m_StatFS = stat;
                     SetViewNeedsDisplay();

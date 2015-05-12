@@ -14,9 +14,10 @@
 #import "RoutedIO.h"
 
 static_assert(sizeof(VFSNativeListingItem) == 136, "");
+static_assert(sizeof(VFSNativeListing)==64, "");
 
-VFSNativeListing::VFSNativeListing(const char *_path, shared_ptr<VFSNativeHost> _host):
-    VFSListing(_path, _host)
+VFSNativeListing::VFSNativeListing(const char *_path):
+    VFSListing(_path, VFSNativeHost::SharedHost())
 {
 }
 
@@ -26,9 +27,9 @@ VFSNativeListing::~VFSNativeListing()
 
 int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
 {
-    auto &io = RoutedIO::InterfaceForAccess(RelativePath(), R_OK);
+    assert(!m_Items);
     
-    m_Items.clear();
+    auto &io = RoutedIO::InterfaceForAccess(RelativePath(), R_OK);
     
     DIR *dirp = io.opendir(RelativePath());
     if(!dirp)
@@ -82,22 +83,22 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     }
     io.closedir(dirp);
     
-    m_Items.reserve( dirents.size() + (need_to_add_dot_dot ? 1 : 0) );
+    m_Count = unsigned( dirents.size() + (need_to_add_dot_dot ? 1 : 0) );
+    m_Items = make_unique<VFSNativeListingItem[]>( m_Count );
     
     if(need_to_add_dot_dot) {
         // ?? do we need to handle properly the usual ".." appearance, since we have a fix-up way anyhow?
         // add ".." entry by hand
-        m_Items.emplace_back();
-        auto &current = m_Items.back();
+        auto &current = m_Items[0];
         current.unix_type = DT_DIR;
         current.inode  = 0;
         current.name = "..";
         current.size = VFSListingItem::InvalidSize;
     }
     
-    for(auto &i: dirents) {
-        m_Items.emplace_back();
-        auto &current = m_Items.back();
+    for(size_t n = 0, e = dirents.size(); n!=e; ++n ) {
+        auto &i = dirents[n];
+        auto &current = m_Items[n];
         current.name = move(get<0>(i));
         current.inode  = get<1>(i);
         current.unix_type = get<2>(i);
@@ -107,7 +108,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     dirents.shrink_to_fit();
     
     // stat files, find extenstions any any and create CFString name representations in several threads
-    dispatch_apply(m_Items.size(), dispatch_get_global_queue(0, 0), [&](size_t n) {
+    dispatch_apply(m_Count, dispatch_get_global_queue(0, 0), [&](size_t n) {
         if(_checker && _checker()) return;
 
         VFSNativeListingItem &current = m_Items[n];
@@ -168,7 +169,8 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
         if(auto native_fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath())) {
             auto &dnc = DisplayNamesCache::Instance();
             lock_guard<mutex> lock(dnc);
-            for(auto &it: m_Items)
+            for(unsigned n = 0, e = m_Count; n != e; ++n) {
+                auto &it = m_Items[n];
                 if(it.IsDir() && !it.IsDotDot()) {
                     auto &dn = dnc.DisplayNameForNativeFS(native_fs_info->basic.fs_id,
                                                           it.Inode(),
@@ -181,6 +183,7 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
                         CFRetain(it.cf_displayname);
                     }
                 }
+            }
         }
 
     if(_checker && _checker())
@@ -191,17 +194,17 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
 
 VFSListingItem& VFSNativeListing::At(size_t _position)
 {
-    assert(_position < m_Items.size());
+    assert(_position < m_Count);
     return m_Items[_position];
 }
 
 const VFSListingItem& VFSNativeListing::At(size_t _position) const
 {
-    assert(_position < m_Items.size());
+    assert(_position < m_Count);
     return m_Items[_position];
 }
 
 int VFSNativeListing::Count() const
 {
-    return (int)m_Items.size();
+    return (int)m_Count;
 }

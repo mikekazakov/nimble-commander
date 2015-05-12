@@ -94,7 +94,7 @@ struct VFSNativeListingItem : VFSListingItem
 class VFSNativeListing : public VFSListing
 {
 public:
-    VFSNativeListing(const char *_path, shared_ptr<VFSNativeHost> _host);
+    VFSNativeListing(const char *_path);
     ~VFSNativeListing();
     
     
@@ -104,6 +104,6 @@ public:
     virtual const VFSListingItem& At(size_t _position) const override;
     virtual int Count() const override;
 
-    
-    vector<VFSNativeListingItem> m_Items;
+    unsigned                           m_Count = 0;
+    unique_ptr<VFSNativeListingItem[]> m_Items;
 };

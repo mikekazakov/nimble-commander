@@ -580,7 +580,7 @@ void panel::GenericCursorPersistance::Restore()
     [self.state PanelPathChanged:self];
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
-    m_History.Put(VFSPathStack(m_Data.DirectoryEntries().SharedPtr()));
+    m_History.Put(VFSPathStack(m_Data.Listing()));
     if(self.vfs->IsNativeFS())
         m_LastNativeDirectory = self.currentDirectoryPath;
 }

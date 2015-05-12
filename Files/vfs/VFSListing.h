@@ -178,10 +178,10 @@ struct VFSGenericListingItem : public VFSListingItem
 // hold an items listing
 // perform access operations
 // support partial updates by callers code
-class VFSListing : public enable_shared_from_this<VFSListing>
+class VFSListing
 {
 public:
-    VFSListing(const char* _relative_path, shared_ptr<VFSHost> _host);
+    VFSListing(const char* _relative_path, const shared_ptr<VFSHost> &_host);
     virtual ~VFSListing();
     
     // generic virtual access - overloaded by descendants
@@ -198,11 +198,9 @@ public:
     
     
     // common stuff
-    inline shared_ptr<VFSListing> SharedPtr() { return shared_from_this(); }
-    inline shared_ptr<VFSListing> SharedPtr() const { return ((VFSListing*)this)->shared_from_this(); }
     string ComposeFullPathForEntry(size_t _entry_position) const;
     
-    const char *RelativePath() const;
+    const char *RelativePath() const noexcept;
     const shared_ptr<VFSHost>& Host() const;
     
     
@@ -241,8 +239,8 @@ public:
     
     
 private:
-    string m_RelativePath;
-    shared_ptr<VFSHost> m_Host;
+    string      m_RelativePath;
+    VFSHostPtr  m_Host;
     
     // forbid copying
     VFSListing(const VFSListing&) = delete;

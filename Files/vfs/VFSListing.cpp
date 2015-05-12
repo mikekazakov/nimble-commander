@@ -9,6 +9,8 @@
 #import "VFSListing.h"
 #import "Common.h"
 
+static_assert( sizeof(VFSListing)==48, "");
+
 VFSGenericListingItem::~VFSGenericListingItem()
 {
     if(m_NeedReleaseCFName &&
@@ -23,7 +25,7 @@ VFSGenericListingItem::~VFSGenericListingItem()
     }    
 }
 
-VFSListing::VFSListing(const char* _relative_path, shared_ptr<VFSHost> _host):
+VFSListing::VFSListing(const char* _relative_path, const shared_ptr<VFSHost> &_host):
     m_RelativePath(_relative_path),
     m_Host(_host)
 {
@@ -35,7 +37,7 @@ VFSListing::~VFSListing()
 {
 }
 
-const char *VFSListing::RelativePath() const
+const char *VFSListing::RelativePath() const noexcept
 {
     return m_RelativePath.c_str();    
 }

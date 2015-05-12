@@ -32,7 +32,7 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
                                          int _flags,
                                          VFSCancelChecker _cancel_checker)
 {
-    auto listing = make_shared<VFSNativeListing>(_path, SharedPtr());
+    auto listing = make_shared<VFSNativeListing>(_path);
     
     int result = listing->LoadListingData(_flags, _cancel_checker);
     if(result != VFSError::Ok)

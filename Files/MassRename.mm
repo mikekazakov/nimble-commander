@@ -98,6 +98,7 @@ MassRename::ReplaceText::ReplaceText(const string& _replace_what,
     m_What([NSString stringWithUTF8StdString:_replace_what]),
     m_With([NSString stringWithUTF8StdString:_replace_with])
 {
+    /* TODO: in case of performance problems - implement a "dumb" algo for straight std::strings when _what and _with contains only ASCII symbols - no need to dive into NSString stuff  */
 }
 
 optional<string> MassRename::ReplaceText::Apply(const string& _filename, const FileInfo &_info) const
@@ -148,7 +149,7 @@ optional<string> MassRename::ReplaceText::Apply(const string& _filename, const F
     else if( m_Mode == ReplaceMode::WholeText ) {
         auto newstr = [str stringByReplacingCharactersInRange:part
                                                    withString:m_With];
-        make_optional<string>(newstr.fileSystemRepresentationSafe);
+        return make_optional<string>(newstr.fileSystemRepresentationSafe);
     }
     
     return nullopt;
@@ -209,7 +210,6 @@ vector<string> MassRename::Rename(const VFSListing& _listing, const vector<unsig
     }
     
     for(size_t i = 0, e = filenames.size(); i != e; ++i) {
-        
         for( auto &a: m_Actions ) {
             auto newstr = a.Apply(filenames[i], infos[i]);
             

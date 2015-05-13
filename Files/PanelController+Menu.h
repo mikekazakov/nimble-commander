@@ -19,4 +19,6 @@
 - (IBAction)OnEditSavedConnectionItem:(id)sender;
 - (IBAction)OnFileViewCommand:(id)sender;
 
+- (IBAction)OnBatchRename:(id)sender;
+
 @end

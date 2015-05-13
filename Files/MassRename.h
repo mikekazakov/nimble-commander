@@ -13,6 +13,7 @@
 // - replace text
 // - replace with regexp
 // - add text
+// - copy text (char/range)
 // - change text
 // - add sequence
 // - add modification date

@@ -17,6 +17,14 @@
 @property (readonly, nonatomic) MassRename::Position addWhere;
 @end
 
+@interface MassRenameSheetReplaceText : NSControl<NSTextFieldDelegate>
+@property (readonly, nonatomic) const string &what;
+@property (readonly, nonatomic) const string &with;
+@property (readonly, nonatomic) bool caseSensitive;
+@property (readonly, nonatomic) MassRename::ApplyTo replaceIn;
+@property (readonly, nonatomic) MassRename::ReplaceText::ReplaceMode mode;
+@end
+
 @interface MassRenameSheetController : SheetController<NSTableViewDataSource,NSTableViewDelegate,NSSplitViewDelegate>
 
 - (instancetype) initWithListing:(shared_ptr<const VFSListing>)_listing
@@ -25,6 +33,7 @@
 
 - (IBAction)OnCancel:(id)sender;
 
+@property (strong) IBOutlet MassRenameSheetReplaceText *referenceReplaceText;
 @property (strong) IBOutlet MassRenameSheetAddText *referenceAddText;
 @property (strong) IBOutlet NSTableView *ActionsTable;
 @property (strong) IBOutlet NSSplitView *SplitView;

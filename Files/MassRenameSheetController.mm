@@ -216,10 +216,12 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 {
     auto mr = [self buildRenameScriptFromUI];
 
-//    MachTimeBenchmark mtb;
+    MachTimeBenchmark mtb;
     auto newnames = mr.Rename(*m_Listing, m_Indeces);
     for(size_t i = 0, e = newnames.size(); i!=e; ++i)
         m_LabelsAfter[i].stringValue = [NSString stringWithUTF8StdString:newnames[i]];
+    
+    mtb.ResetMicro("permute in: ");
 }
 
 - (IBAction)OnPlusMinusClicked:(id)sender
@@ -236,15 +238,34 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
             // update data
             [self OnActonChanged:self];
         }
-        
     }
 }
 
 - (IBAction)OnPlusMenuAddText:(id)sender
 {
-    m_ActionViews.emplace_back( CopyView(self.referenceAddText) );
-    [self.ActionsTable insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:m_ActionViews.size()-1]
+    [self AddNewActionRegardingTableSelection:CopyView(self.referenceAddText)];
+}
+
+- (IBAction)OnPlusMenuReplaceText:(id)sender
+{
+    [self AddNewActionRegardingTableSelection:CopyView(self.referenceReplaceText)];
+}
+
+- (void) AddNewActionRegardingTableSelection:(NSView*)_action_view
+{
+    NSUInteger insert_pos = 0;
+    if( self.ActionsTable.selectedRow < 0 ) {
+        insert_pos = m_ActionViews.size();
+        m_ActionViews.emplace_back(_action_view);
+    }
+    else {
+        insert_pos = self.ActionsTable.selectedRow;
+        m_ActionViews.insert( next(begin(m_ActionViews), self.ActionsTable.selectedRow), _action_view);
+    }
+    
+    [self.ActionsTable insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:insert_pos]
                              withAnimation:NSTableViewAnimationEffectFade|NSTableViewAnimationSlideRight];
+    
 }
 
 - (MassRename) buildRenameScriptFromUI
@@ -252,9 +273,10 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     MassRename mr;
     
     for(auto i: m_ActionViews) {
-        if(auto v = objc_cast<MassRenameSheetAddText>(i)) {
+        if(auto v = objc_cast<MassRenameSheetAddText>(i))
             mr.AddAction( MassRename::AddText(v.text, v.addIn, v.addWhere) );
-        }
+        else if( auto v = objc_cast<MassRenameSheetReplaceText>(i) )
+            mr.AddAction( MassRename::ReplaceText(v.what, v.with, v.replaceIn, v.mode, v.caseSensitive) );
     }
     
     return mr;
@@ -262,7 +284,7 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 
 @end
 
-//////////////////////////////////////////////////////////////////////////////// Action Views
+//////////////////////////////////////////////////////////////////////////////// MassRenameSheetAddText
 
 @implementation MassRenameSheetAddText
 {
@@ -282,7 +304,7 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 {
     [super viewWillMoveToSuperview:_view];
     if( !m_TextToAdd ) {
-        m_TextToAdd = (NSTextField*)FindViewWithIdentifier(self, @"text_to_add");
+        m_TextToAdd = (NSTextField*)FindViewWithIdentifier(self, @"add_text");
         m_TextToAdd.action = @selector(OnTextChanged:);
         m_TextToAdd.target = self;
         m_TextToAdd.delegate = self;
@@ -330,6 +352,116 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
         return;
     m_ValAddWhere = new_v;
     [self fireAction];
+}
+
+@end
+
+//////////////////////////////////////////////////////////////////////////////// MassRenameSheetReplaceText
+
+@implementation MassRenameSheetReplaceText
+{
+    NSPopUpButton                          *m_ReplaceIn;
+    NSPopUpButton                          *m_Mode;
+    NSButton                               *m_Senstive;
+    NSTextField                            *m_What;
+    NSTextField                            *m_With;
+    
+    string                                  m_ValWhat;
+    string                                  m_ValWith;
+    bool                                    m_ValSensitive;
+    MassRename::ApplyTo                     m_ValIn;
+    MassRename::ReplaceText::ReplaceMode    m_ValMode;
+}
+
+@synthesize what = m_ValWhat;
+@synthesize with = m_ValWith;
+@synthesize caseSensitive = m_ValSensitive;
+@synthesize replaceIn = m_ValIn;
+@synthesize mode = m_ValMode;
+
+- (void)viewWillMoveToSuperview:(NSView *)_view
+{
+    [super viewWillMoveToSuperview:_view];
+    if( !m_What ) {
+        m_What = objc_cast<NSTextField>(FindViewWithIdentifier(self, @"replace_what"));
+        m_What.action = @selector(OnWhatChanged:);
+        m_What.target = self;
+        m_What.delegate = self;
+    }
+    if( !m_With ) {
+        m_With = objc_cast<NSTextField>(FindViewWithIdentifier(self, @"replace_with"));
+        m_With.action = @selector(OnWithChanged:);
+        m_With.target = self;
+        m_With.delegate = self;
+    }
+    if( !m_ReplaceIn ) {
+        m_ReplaceIn = objc_cast<NSPopUpButton>(FindViewWithIdentifier(self, @"replace_in"));
+        m_ReplaceIn.action = @selector(OnInChanged:);
+        m_ReplaceIn.target = self;
+    }
+    if( !m_Mode ) {
+        m_Mode = objc_cast<NSPopUpButton>(FindViewWithIdentifier(self, @"replace_mode"));
+        m_Mode.action = @selector(OnModeChanged:);
+        m_Mode.target = self;
+    }
+    if( !m_Senstive ) {
+        m_Senstive = objc_cast<NSButton>( FindViewWithIdentifier(self, @"replace_casesens"));
+        m_Senstive.action = @selector(OnSensChanged:);
+        m_Senstive.target = self;
+    }
+}
+
+- (IBAction)OnInChanged:(id)sender
+{
+    auto new_v = MassRename::ApplyTo(m_ReplaceIn.selectedTag);
+    if(new_v == m_ValIn)
+        return;
+    m_ValIn = new_v;
+    [self fireAction];
+}
+
+- (IBAction)OnModeChanged:(id)sender
+{
+    auto new_v = MassRename::ReplaceText::ReplaceMode(m_Mode.selectedTag);
+    if(new_v == m_ValMode)
+        return;
+    m_ValMode = new_v;
+    [self fireAction];
+}
+
+- (IBAction)OnSensChanged:(id)sender
+{
+    bool checked = m_Senstive.state == NSOnState;
+    if( checked == m_ValSensitive )
+        return;
+    m_ValSensitive = checked;
+    [self fireAction];
+}
+
+- (IBAction)OnWhatChanged:(id)sender
+{
+    const char *new_text = m_What.stringValue ? m_What.stringValue.fileSystemRepresentationSafe : "";
+    if( m_ValWhat == new_text )
+        return;
+    m_ValWhat = new_text;
+    [self fireAction];
+}
+
+- (IBAction)OnWithChanged:(id)sender
+{
+    const char *new_text = m_With.stringValue ? m_With.stringValue.fileSystemRepresentationSafe : "";
+    if( m_ValWith == new_text )
+        return;
+    m_ValWith = new_text;
+    [self fireAction];
+}
+
+- (void)controlTextDidChange:(NSNotification *)notification
+{
+    if( objc_cast<NSTextField>(notification.object) == m_With )
+        [self OnWithChanged:m_With];
+    else if( objc_cast<NSTextField>(notification.object) == m_What )
+        [self OnWhatChanged:m_What];
 }
 
 @end

@@ -90,6 +90,9 @@
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
 		CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
+		CF43D27B1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */; };
+		CF43D27C1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */; };
+		CF43D27D1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */; };
 		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
@@ -1089,6 +1092,7 @@
 		CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/shared_mutex/shared_mutex.cpp; sourceTree = "<group>"; };
 		CF3FCE0C190EB96000E55698 /* shared_mutex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shared_mutex; path = 3rd_party/shared_mutex/shared_mutex; sourceTree = "<group>"; };
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
+		CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassRenameSheetActionViews.mm; sourceTree = "<group>"; };
 		CF47A980186C607C00745C4C /* Files Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Files Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CF47A985186C607C00745C4C /* Files Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Files Tests-Info.plist"; sourceTree = "<group>"; };
@@ -1864,6 +1868,7 @@
 				CF8E667B1AF106B900E31DFF /* MassRename.mm */,
 				CF5682641AF3581600C48E28 /* MassRenameSheetController.h */,
 				CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */,
+				CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */,
 				CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */,
 			);
 			name = Views;
@@ -3278,6 +3283,7 @@
 				CF6D9C4F196678010077B146 /* QuickPreview.mm in Sources */,
 				CF6D9C50196678010077B146 /* BriefSystemOverview.mm in Sources */,
 				CF6D9C51196678010077B146 /* FilePanelMainSplitView.mm in Sources */,
+				CF43D27C1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */,
 				CF50B6CA1A15167800E3D96D /* VFSHost.cpp in Sources */,
 				CF6D9C52196678010077B146 /* MainWndGoToButton.mm in Sources */,
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
@@ -3478,6 +3484,7 @@
 				CF09857418EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF1100DB191B46BD00E170FC /* FileDeletionOperationVFSJob.mm in Sources */,
+				CF43D27B1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */,
 				CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
@@ -3679,6 +3686,7 @@
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CFF6F30F1A13567C00011177 /* FileLinkOperation.mm in Sources */,
 				CFF6F3121A13567C00011177 /* FileLinkOperationJob.mm in Sources */,
+				CF43D27D1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */,
 				CFF6F3131A13567C00011177 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFF6F3141A13567C00011177 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,

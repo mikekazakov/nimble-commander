@@ -11,7 +11,7 @@
 #import "MassRename.h"
 
 static auto g_MyPrivateTableViewDataType = @"MassRenameSheetControllerTableDataViewType";
-static const auto g_MinActionsPaneWidth = 240.;
+static const auto g_MinActionsPaneWidth = 260.;
 static const auto g_MinFilenamesPaneWidth = 200.;
 
 
@@ -20,14 +20,6 @@ static NSView *CopyView(NSView *v)
     NSData *arc = [NSKeyedArchiver archivedDataWithRootObject:v];
     NSView *copy = [NSKeyedUnarchiver unarchiveObjectWithData:arc];
     return copy;
-}
-
-static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
-{
-    for (NSView *view in v.subviews)
-        if ([view.identifier isEqualToString:identifier])
-            return view;
-    return nil;
 }
 
 // hack around NSTableView behaviour
@@ -67,17 +59,6 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
         return super.action;
 }
 @end
-
-@interface NSControl(fire)
-- (void) fireAction;
-@end
-@implementation NSControl(fire)
-- (void) fireAction
-{
-    [self sendAction:self.action to:self.target];
-}
-@end
-
 
 //////////////////////////////////////////////////////////////////////////////// MassRenameSheetController
 
@@ -267,6 +248,11 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     [self AddNewActionRegardingTableSelection:CopyView(self.referenceReplaceText)];
 }
 
+- (IBAction)OnPlusMenuAddSequence:(id)sender
+{
+    [self AddNewActionRegardingTableSelection:CopyView(self.referenceInsertSequence)];
+}
+
 - (void) AddNewActionRegardingTableSelection:(NSView*)_action_view
 {
     NSUInteger insert_pos = 0;
@@ -282,6 +268,8 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     [self.ActionsTable insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:insert_pos]
                              withAnimation:NSTableViewAnimationEffectFade|NSTableViewAnimationSlideRight];
     
+    // update data
+    [self OnActonChanged:self];
 }
 
 - (MassRename) buildRenameScriptFromUI
@@ -293,6 +281,8 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
             mr.AddAction( MassRename::AddText(v.text, v.addIn, v.addWhere) );
         else if( auto v = objc_cast<MassRenameSheetReplaceText>(i) )
             mr.AddAction( MassRename::ReplaceText(v.what, v.with, v.replaceIn, v.mode, v.caseSensitive) );
+        else if( auto v = objc_cast<MassRenameSheetInsertSequence>(i) )
+            mr.AddAction( MassRename::AddSeq(v.insertIn, v.insertWhere, v.start, v.step, v.width, v.prefix, v.suffix) );        
     }
     
     return mr;
@@ -350,184 +340,4 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 
 @end
 
-//////////////////////////////////////////////////////////////////////////////// MassRenameSheetAddText
 
-@implementation MassRenameSheetAddText
-{
-    NSPopUpButton          *m_AddIn;
-    NSPopUpButton          *m_AddWhere;
-    NSTextField            *m_TextToAdd;
-    string                  m_ValTextToAdd;
-    MassRename::ApplyTo     m_ValAddIn;
-    MassRename::Position    m_ValAddWhere;
-}
-
-@synthesize text = m_ValTextToAdd;
-@synthesize addIn = m_ValAddIn;
-@synthesize addWhere = m_ValAddWhere;
-
-- (void)viewWillMoveToSuperview:(NSView *)_view
-{
-    [super viewWillMoveToSuperview:_view];
-    if( !m_TextToAdd ) {
-        m_TextToAdd = (NSTextField*)FindViewWithIdentifier(self, @"add_text");
-        m_TextToAdd.action = @selector(OnTextChanged:);
-        m_TextToAdd.target = self;
-        m_TextToAdd.delegate = self;
-    }
-    if( !m_AddIn ) {
-        m_AddIn = (NSPopUpButton*)FindViewWithIdentifier(self, @"add_in");
-        m_AddIn.action = @selector(OnInChanged:);
-        m_AddIn.target = self;
-    }
-    if( !m_AddWhere ) {
-        m_AddWhere = (NSPopUpButton*)FindViewWithIdentifier(self, @"add_where");
-        m_AddWhere.action = @selector(OnWhereChanged:);
-        m_AddWhere.target = self;
-    }
-}
-
-- (void)controlTextDidChange:(NSNotification *)notification
-{
-    if( auto tf = objc_cast<NSTextField>(notification.object) )
-        [self OnTextChanged:tf];
-}
-
-- (IBAction)OnTextChanged:(id)sender
-{
-    const char *new_text = m_TextToAdd.stringValue ? m_TextToAdd.stringValue.fileSystemRepresentationSafe : "";
-    if( m_ValTextToAdd == new_text )
-        return;
-    m_ValTextToAdd = new_text;
-    [self fireAction];
-}
-
-- (IBAction)OnInChanged:(id)sender
-{
-    auto new_v = MassRename::ApplyTo(m_AddIn.selectedTag);
-    if(new_v == m_ValAddIn)
-        return;
-    m_ValAddIn = new_v;
-    [self fireAction];
-}
-
-- (IBAction)OnWhereChanged:(id)sender
-{
-    auto new_v = MassRename::Position(m_AddWhere.selectedTag);
-    if(new_v == m_ValAddWhere)
-        return;
-    m_ValAddWhere = new_v;
-    [self fireAction];
-}
-
-@end
-
-//////////////////////////////////////////////////////////////////////////////// MassRenameSheetReplaceText
-
-@implementation MassRenameSheetReplaceText
-{
-    NSPopUpButton                          *m_ReplaceIn;
-    NSPopUpButton                          *m_Mode;
-    NSButton                               *m_Senstive;
-    NSTextField                            *m_What;
-    NSTextField                            *m_With;
-    
-    string                                  m_ValWhat;
-    string                                  m_ValWith;
-    bool                                    m_ValSensitive;
-    MassRename::ApplyTo                     m_ValIn;
-    MassRename::ReplaceText::ReplaceMode    m_ValMode;
-}
-
-@synthesize what = m_ValWhat;
-@synthesize with = m_ValWith;
-@synthesize caseSensitive = m_ValSensitive;
-@synthesize replaceIn = m_ValIn;
-@synthesize mode = m_ValMode;
-
-- (void)viewWillMoveToSuperview:(NSView *)_view
-{
-    [super viewWillMoveToSuperview:_view];
-    if( !m_What ) {
-        m_What = objc_cast<NSTextField>(FindViewWithIdentifier(self, @"replace_what"));
-        m_What.action = @selector(OnWhatChanged:);
-        m_What.target = self;
-        m_What.delegate = self;
-    }
-    if( !m_With ) {
-        m_With = objc_cast<NSTextField>(FindViewWithIdentifier(self, @"replace_with"));
-        m_With.action = @selector(OnWithChanged:);
-        m_With.target = self;
-        m_With.delegate = self;
-    }
-    if( !m_ReplaceIn ) {
-        m_ReplaceIn = objc_cast<NSPopUpButton>(FindViewWithIdentifier(self, @"replace_in"));
-        m_ReplaceIn.action = @selector(OnInChanged:);
-        m_ReplaceIn.target = self;
-    }
-    if( !m_Mode ) {
-        m_Mode = objc_cast<NSPopUpButton>(FindViewWithIdentifier(self, @"replace_mode"));
-        m_Mode.action = @selector(OnModeChanged:);
-        m_Mode.target = self;
-    }
-    if( !m_Senstive ) {
-        m_Senstive = objc_cast<NSButton>( FindViewWithIdentifier(self, @"replace_casesens"));
-        m_Senstive.action = @selector(OnSensChanged:);
-        m_Senstive.target = self;
-    }
-}
-
-- (IBAction)OnInChanged:(id)sender
-{
-    auto new_v = MassRename::ApplyTo(m_ReplaceIn.selectedTag);
-    if(new_v == m_ValIn)
-        return;
-    m_ValIn = new_v;
-    [self fireAction];
-}
-
-- (IBAction)OnModeChanged:(id)sender
-{
-    auto new_v = MassRename::ReplaceText::ReplaceMode(m_Mode.selectedTag);
-    if(new_v == m_ValMode)
-        return;
-    m_ValMode = new_v;
-    [self fireAction];
-}
-
-- (IBAction)OnSensChanged:(id)sender
-{
-    bool checked = m_Senstive.state == NSOnState;
-    if( checked == m_ValSensitive )
-        return;
-    m_ValSensitive = checked;
-    [self fireAction];
-}
-
-- (IBAction)OnWhatChanged:(id)sender
-{
-    const char *new_text = m_What.stringValue ? m_What.stringValue.fileSystemRepresentationSafe : "";
-    if( m_ValWhat == new_text )
-        return;
-    m_ValWhat = new_text;
-    [self fireAction];
-}
-
-- (IBAction)OnWithChanged:(id)sender
-{
-    const char *new_text = m_With.stringValue ? m_With.stringValue.fileSystemRepresentationSafe : "";
-    if( m_ValWith == new_text )
-        return;
-    m_ValWith = new_text;
-    [self fireAction];
-}
-
-- (void)controlTextDidChange:(NSNotification *)notification
-{
-    if( objc_cast<NSTextField>(notification.object) == m_With )
-        [self OnWithChanged:m_With];
-    else if( objc_cast<NSTextField>(notification.object) == m_What )
-        [self OnWhatChanged:m_What];
-}
-
-@end

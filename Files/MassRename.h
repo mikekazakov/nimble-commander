@@ -27,6 +27,7 @@ public:
     class Action;
     class ReplaceText;
     class AddText;
+    class AddSeq;
     
     
     enum class ApplyTo
@@ -133,4 +134,25 @@ private:
     string m_What;
     ApplyTo m_Where;
     Position m_At;
+};
+
+class MassRename::AddSeq
+{
+public:
+    AddSeq(ApplyTo _where,
+           Position _at,
+           long _start,
+           long _step,
+           int _width,
+           const string &_prefix,
+           const string &_suffix);
+    optional<string> Apply(const string& _filename, const FileInfo &_info) const;
+private:
+    ApplyTo     m_Where;
+    Position    m_At;
+    long        m_Start;
+    long        m_Step;
+    int         m_Width;
+    string      m_Prefix;
+    string      m_Suffix;
 };

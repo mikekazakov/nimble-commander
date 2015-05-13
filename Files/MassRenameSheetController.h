@@ -25,6 +25,16 @@
 @property (readonly, nonatomic) MassRename::ReplaceText::ReplaceMode mode;
 @end
 
+@interface MassRenameSheetInsertSequence : NSControl<NSTextFieldDelegate>
+@property (readonly, nonatomic) const string &prefix;
+@property (readonly, nonatomic) const string &suffix;
+@property (readonly, nonatomic) MassRename::ApplyTo insertIn;
+@property (readonly, nonatomic) MassRename::Position insertWhere;
+@property (readonly, nonatomic) long start;
+@property (readonly, nonatomic) long step;
+@property (readonly, nonatomic) int width;
+@end
+
 @interface MassRenameSheetController : SheetController<NSTableViewDataSource,NSTableViewDelegate,NSSplitViewDelegate>
 
 - (instancetype) initWithListing:(shared_ptr<const VFSListing>)_listing
@@ -33,6 +43,7 @@
 
 - (IBAction)OnCancel:(id)sender;
 
+@property (strong) IBOutlet MassRenameSheetInsertSequence *referenceInsertSequence;
 @property (strong) IBOutlet MassRenameSheetReplaceText *referenceReplaceText;
 @property (strong) IBOutlet MassRenameSheetAddText *referenceAddText;
 @property (strong) IBOutlet NSTableView *ActionsTable;

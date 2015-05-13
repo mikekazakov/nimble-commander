@@ -86,6 +86,8 @@ static optional<NSRange> Find(const string &_str, MassRename::ApplyTo _what)
     return nullopt;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MassRename::ReplaceText
 MassRename::ReplaceText::ReplaceText(const string& _replace_what,
                                      const string& _replace_with,
                                      ApplyTo _where,
@@ -155,6 +157,8 @@ optional<string> MassRename::ReplaceText::Apply(const string& _filename, const F
     return nullopt;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MassRename::AddText
 MassRename::AddText::AddText(const string& _add_what,
                              ApplyTo _where,
                              Position _at):
@@ -182,6 +186,49 @@ optional<string> MassRename::AddText::Apply(const string& _filename, const FileI
     return str;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MassRename::AddSeq
+MassRename::AddSeq::AddSeq(ApplyTo _where,
+                           Position _at,
+                           long _start,
+                           long _step,
+                           int _width,
+                           const string &_prefix,
+                           const string &_suffix):
+    m_Where(_where),
+    m_At(_at),
+    m_Start(_start),
+    m_Step(_step),
+    m_Width(_width),
+    m_Prefix(_prefix),
+    m_Suffix(_suffix)
+{
+}
+
+optional<string> MassRename::AddSeq::Apply(const string& _filename, const FileInfo &_info) const
+{
+    auto part_if_any = Find(_filename, m_Where);
+    if( !part_if_any )
+        return nullopt;
+    auto part = part_if_any.value();
+    assert( part.location != NSNotFound );
+
+    char *buf = (char*)alloca(m_Prefix.length() + m_Suffix.length() + m_Width + 32); // no heap allocs, for great justice!
+    if(!buf)
+        return nullopt;
+    
+    sprintf( buf, "%s%0*ld%s", m_Prefix.c_str(), m_Width, m_Start + m_Step*_info.number, m_Suffix.c_str() );
+    
+    string str = _filename;
+    if( m_At == Position::Beginning )
+        str.insert( part.location, buf );
+    else
+        str.insert( part.location + part.length, buf);
+    return str;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MassRename
 void MassRename::ResetActions()
 {
     m_Actions.clear();

@@ -219,7 +219,9 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 @implementation MassRenameSheetInsertSequence
 {
     NSTextField            *m_Start;
+    NSStepper              *m_StartSt;
     NSTextField            *m_Step;
+    NSStepper              *m_StepSt;
     NSTextField            *m_Prefix;
     NSTextField            *m_Suffix;
     NSPopUpButton          *m_Width;
@@ -255,6 +257,14 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     return self;
 }
 
+- (NSNumberFormatter*)formatter
+{
+    NSNumberFormatter *fmt = [[NSNumberFormatter alloc] init];
+    fmt.numberStyle = NSNumberFormatterDecimalStyle;
+    fmt.usesGroupingSeparator = false;
+    return fmt;
+}
+
 - (void)viewWillMoveToSuperview:(NSView *)_view
 {
     [super viewWillMoveToSuperview:_view];
@@ -264,6 +274,16 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
         m_Start.action = @selector(OnStartChanged:);
         m_Start.target = self;
         m_Start.delegate = self;
+        m_Start.formatter = self.formatter;
+    }
+    if( !m_StartSt ) {
+        m_StartSt = objc_cast<NSStepper>(FindViewWithIdentifier(self, @"seq_init_st"));
+        m_StartSt.minValue = -1000000000.;
+        m_StartSt.maxValue =  1000000000.;
+        m_StartSt.increment = 1.;
+        m_StartSt.integerValue = m_ValStart;
+        m_StartSt.action = @selector(OnStartChanged:);
+        m_StartSt.target = self;
     }
     if( !m_Step ) {
         m_Step = objc_cast<NSTextField>(FindViewWithIdentifier(self, @"seq_step"));
@@ -271,6 +291,16 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
         m_Step.action = @selector(OnStepChanged:);
         m_Step.target = self;
         m_Step.delegate = self;
+        m_Step.formatter = self.formatter;
+    }
+    if( !m_StepSt ) {
+        m_StepSt = objc_cast<NSStepper>(FindViewWithIdentifier(self, @"seq_step_st"));
+        m_StepSt.minValue = -1000.;
+        m_StepSt.maxValue =  1000;
+        m_StepSt.increment = 1.;
+        m_StepSt.integerValue = m_ValStep;
+        m_StepSt.action = @selector(OnStepChanged:);
+        m_StepSt.target = self;
     }
     if( !m_Prefix ) {
         m_Prefix = objc_cast<NSTextField>(FindViewWithIdentifier(self, @"seq_prefix"));
@@ -336,20 +366,24 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 
 - (IBAction)OnStartChanged:(id)sender
 {
-    long start = m_Start.integerValue;
+    long start = [sender integerValue];
     if( m_ValStart == start )
         return;
     m_ValStart = start;
     [self fireAction];
+    m_Start.integerValue = m_ValStart;
+    m_StartSt.integerValue = m_ValStart;
 }
 
 - (IBAction)OnStepChanged:(id)sender
 {
-    long step = m_Step.integerValue;
+    long step = [sender integerValue];
     if( m_ValStep == step )
         return;
     m_ValStep = step;
     [self fireAction];
+    m_Step.integerValue = m_ValStep;
+    m_StepSt.integerValue = m_ValStep;
 }
 
 - (IBAction)OnPrefixChanged:(id)sender

@@ -10,8 +10,10 @@
 #import "Common.h"
 #import "MassRename.h"
 
+static auto g_MyPrivateTableViewDataType = @"MassRenameSheetControllerTableDataViewType";
 static const auto g_MinActionsPaneWidth = 240.;
 static const auto g_MinFilenamesPaneWidth = 200.;
+
 
 static NSView *CopyView(NSView *v)
 {
@@ -125,7 +127,10 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 
     
     [self.ActionsTable sizeLastColumnToFit];
+    [self.ActionsTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
     [self.PlusMinusButtons setMenu:self.PlusMenu forSegment:0];
+    
+    [self.ActionsTable reloadData];
 }
 
 - (IBAction)OnCancel:(id)sender
@@ -146,8 +151,6 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
-//    NSScrollView
-    
     if( tableView == self.ActionsTable ) {
         assert( row >= 0 && row < m_ActionViews.size() );
         return m_ActionViews[row];
@@ -280,6 +283,56 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
     }
     
     return mr;
+}
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
+    if(aTableView == self.ActionsTable)
+        return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+    return NSDragOperationNone;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
+{
+    if(aTableView == self.ActionsTable) {
+        [pboard declareTypes:@[g_MyPrivateTableViewDataType] owner:self];
+        [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes] forType:g_MyPrivateTableViewDataType];
+        return true;
+    }
+    return false;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView
+       acceptDrop:(id<NSDraggingInfo>)info
+              row:(NSInteger)drag_to
+    dropOperation:(NSTableViewDropOperation)operation
+{
+    if(aTableView == self.ActionsTable) {
+        NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:[info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType]];
+        NSInteger drag_from = inds.firstIndex;
+        
+        if(drag_to == drag_from || // same index, above
+           drag_to == drag_from + 1) // same index, below
+            return false;
+        
+        if(drag_from < drag_to)
+            drag_to--;
+
+        assert(drag_from < m_ActionViews.size());
+        assert(drag_to < m_ActionViews.size());
+
+        auto v = m_ActionViews[drag_from];
+        m_ActionViews.erase( next(begin(m_ActionViews),drag_from) );
+        m_ActionViews.insert( next(begin(m_ActionViews),drag_to), v );
+        
+        [self.ActionsTable reloadData];
+        dispatch_to_main_queue([=]{
+            [self OnActonChanged:self];
+        });
+        return true;
+    }
+
+    return false;
 }
 
 @end

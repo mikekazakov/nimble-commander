@@ -171,6 +171,10 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
         return;
     m_ValMode = new_v;
     [self fireAction];
+
+    auto is_whole = m_ValMode == MassRename::ReplaceText::ReplaceMode::WholeText;
+    m_Senstive.enabled = !is_whole;
+    m_What.enabled = !is_whole;
 }
 
 - (IBAction)OnSensChanged:(id)sender

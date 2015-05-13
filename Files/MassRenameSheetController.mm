@@ -99,7 +99,7 @@ static NSView *CopyView(NSView *v)
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
                 tf.stringValue = e.NSName().copy;
                 tf.bordered = false;
-                tf.editable = true;
+                tf.editable = false;
                 tf.drawsBackground = false;
                 m_LabelsAfter.emplace_back(tf);
             }
@@ -115,15 +115,12 @@ static NSView *CopyView(NSView *v)
 {
     [super windowDidLoad];
     
+    m_ActionViews.emplace_back( CopyView(self.referenceReplaceText) );
     
-    m_ActionViews.emplace_back( CopyView(self.referenceAddText) );
-    m_ActionViews.emplace_back( CopyView(self.referenceAddText) );    
 
-    
     [self.ActionsTable sizeLastColumnToFit];
     [self.ActionsTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
     [self.PlusMinusButtons setMenu:self.PlusMenu forSegment:0];
-    
     [self.ActionsTable reloadData];
 }
 

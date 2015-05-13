@@ -39,6 +39,19 @@ static NSView *FindViewWithIdentifier(NSView *v, NSString *identifier)
 {
     return true;
 }
+- (void)mouseDown:(NSEvent *)theEvent {
+    
+    NSInteger clickedRow = [self rowAtPoint:[self convertPoint:theEvent.locationInWindow fromView:nil]];
+    bool selected = false;
+    if(clickedRow >= 0)
+        selected = [self isRowSelected:clickedRow];
+    
+    [super mouseDown:theEvent];
+    
+    if( selected )
+        [self deselectRow:clickedRow];
+}
+
 @end
 
 // hack around NSSegmentedControl behaviour

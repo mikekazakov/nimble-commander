@@ -198,6 +198,11 @@ DQ
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="Lif-vO-73o"/>
+                            <menuItem title="Cut" keyEquivalent="x" id="fSQ-n4-7Mg">
+                                <connections>
+                                    <action selector="cut:" target="-1" id="0hB-aq-wiq"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Copy" tag="12000" keyEquivalent="c" id="197">
                                 <connections>
                                     <action selector="copy:" target="-1" id="224"/>

@@ -151,7 +151,16 @@ bool BatchRename::ParsePlaceholder( NSString *_ph )
                 position += v.value().second;
                 continue;
             }
-
+            case 'C':
+            {
+                position++;
+                auto v = ParsePlaceholder_Counter(_ph, position);
+                if( !v )
+                    break;
+                AddInsertCounter(v.value().first);
+                position += v.value().second;
+                continue;
+            }
         }
         return false;
     }
@@ -182,6 +191,61 @@ static optional<pair<unsigned short, short>> EatUShort( NSString *s, const unsig
     return make_pair(r, short(n));
 }
 
+// parsed short -> characters consumed
+static optional<pair<int, short>> EatInt( NSString *s, const unsigned long pos )
+{
+    const auto l = s.length;
+    if( pos == l )
+        return nullopt;
+
+    auto n = 0ul;
+    bool minus = false;
+    
+    auto c = [s characterAtIndex:pos+n];
+    if( c == '-' ) {
+        minus = true;
+        n++;
+    }
+
+    if( pos+n == l )
+        return nullopt;
+    
+    c = [s characterAtIndex:pos+n];
+    if(c < '0' || c > '9')
+        return nullopt;
+    
+    int r = 0;
+    do {
+        c = [s characterAtIndex:pos+n];
+        if( c < '0' || c > '9' )
+            break;
+        r = r*10 + c - '0';
+        n++;
+    } while( pos+n < l );
+    
+    return make_pair(r * (minus ? -1 : 1), short(n));
+}
+
+static optional<pair<int, short>> EatIntWithPreffix( NSString *s, const unsigned long pos, char prefix )
+{
+    const auto l = s.length;
+    auto n = 0;
+    if( n+pos == l )
+        return nullopt;
+    
+    auto c = [s characterAtIndex:pos + n];
+    if( c != prefix )
+        return nullopt;
+    
+    n++;
+    auto num_if = EatInt( s, pos + n );
+    if(!num_if)
+        return nullopt;
+    
+    return make_pair(num_if->first, short(num_if->second+1));
+}
+
+
 //[N] old file name, WITHOUT extension
 //[N1] The first character of the original name
 //[N2-5] Characters 2 to 5 from the old name (totals to 4 characters). Double byte characters (e.g. Chinese, Japanese) are counted as 1 character! The first letter is accessed with '1'.
@@ -197,10 +261,8 @@ optional<pair<BatchRename::TextExtraction, int>> BatchRename::ParsePlaceholder_T
 {
 //    static NSCharacterSet *myc = [NSCharacterSet characterSetWithCharactersInString:@"0123456789,- "];
     const auto l = _ph.length;
-    if( l == _pos ) { // [N]
-//        AddInsertName({});
+    if( l == _pos ) // [N]
         return make_pair( TextExtraction(), 0);
-    }
     
     auto zero_flag = false, minus_flag = false, space_flag = false;
     
@@ -346,6 +408,52 @@ optional<pair<BatchRename::TextExtraction, int>> BatchRename::ParsePlaceholder_T
     return nullopt;
 }
 
+// maximum possible construction: [C10+1/15:5]
+//[C] Paste counter, as defined in Define counter field
+//[C10+5:3] Paste counter, define counter settings directly. In this example, start at 10, step by 5, use 3 digits width.
+//Partial definitions like [C10] or [C+5] or [C:3] are also accepted.
+//Hint: The fields in Define counter will be ignored if you specify options directly in the [C] field.
+//[C+1/100] New: Fractional number: Paste counter, but increase it only every n files (in this example: every 100 files).
+//Can be used to move a specific number of files to a subdirectory,e.g. [C+1/100]\[N]
+
+// not yet:
+//[Caa+1] Paste counter, define counter settings directly. In this example, start at aa, step 1 letter, use 2 digits (defined by 'aa' width)
+//[C:a] Paste counter, determine digits width automatically, depending on the number of files. Combinations like [C10+10:a] are also allowed.
+optional<pair<BatchRename::Counter, int>> BatchRename::ParsePlaceholder_Counter( NSString *_ph, unsigned long _pos,
+                                                                                long _default_start, long _default_step, int _default_width, unsigned _default_stripe)
+{
+    Counter counter;
+    counter.start = _default_start;
+    counter.step = _default_step;
+    counter.width = _default_width;
+    counter.stripe = _default_stripe;
+    
+    const auto l = _ph.length;
+    if( l == _pos ) // [C]
+        return make_pair( counter, 0);
+    
+    auto n = 0;
+    if( auto start = EatInt(_ph, _pos+n) ) {
+        counter.start = start->first;
+        n += start->second;
+    }
+    if( auto step = EatIntWithPreffix(_ph, _pos+n, '+') ) {
+        counter.step = step->first;
+        n += step->second;
+    }
+    if( auto stripe = EatIntWithPreffix(_ph, _pos+n, '/') ) {
+        counter.stripe = stripe->first;
+        n += stripe->second;
+    }
+    if( auto width = EatIntWithPreffix(_ph, _pos+n, ':') ) {
+        counter.width = width->first;
+        if(counter.width > 30)
+            counter.width = 30;
+        n += width->second;
+    }
+    
+    return make_pair(counter, n);
+}
 
 NSString *BatchRename::ExtractText(NSString *_from, const TextExtraction &_te)
 {
@@ -403,6 +511,19 @@ NSString *BatchRename::ExtractText(NSString *_from, const TextExtraction &_te)
     return nil;
 }
 
+NSString *BatchRename::FormatCounter(const Counter &_c, int _file_number)
+{
+    if(_c.stripe == 0)
+        return @"";
+    
+    char *buf = (char*)alloca(_c.width + 32); // no heap allocs, for great justice!
+    if(!buf)
+        return @"";
+    
+    sprintf( buf, "%0*ld", _c.width,  _c.start + _c.step*(_file_number / _c.stripe) );
+    return [NSString stringWithUTF8String:buf];
+}
+
 static inline NSString *StringByTransform(NSString *_s, BatchRename::CaseTransform _ct)
 {
     switch (_ct) {
@@ -436,6 +557,9 @@ NSString *BatchRename::Rename( const FileInfo &_fi, int _number ) const
             case ActionType::Extension:
                 next = ExtractText(_fi.extension, m_ActionsExtension[step.index]);
                 break;
+            case ActionType::Counter:
+                next = FormatCounter(m_ActionsCounter[step.index], _number);
+                break;
             case ActionType::OpenBracket:
                 next = @"[";
                 break;
@@ -456,7 +580,6 @@ NSString *BatchRename::Rename( const FileInfo &_fi, int _number ) const
                 break;
             case ActionType::Capitalized:
                 case_transform = CaseTransform::Capitalized;
-                
             default:
                 break;
         }

@@ -133,9 +133,67 @@
                       a.to_last == 14);
         }
     }
+}
+
+- (void)testCounterPlaceholders
+{ // [C.....
+
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"-763+3/99:7", 0);
+        XCTAssert(v);
+        if( v ) {
+            XCTAssert( v.value().second == 11 );
+            auto a = v.value().first;
+            XCTAssert(a.start == -763 &&
+                      a.step == 3 &&
+                      a.stripe == 99 &&
+                      a.width == 7);
+        }
+    }
     
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"-763", 0);
+        XCTAssert(v);
+        if( v ) {
+            XCTAssert( v.value().second == 4 );
+            auto a = v.value().first;
+            XCTAssert(a.start == -763);
+        }
+    }
     
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"763", 0);
+        XCTAssert(v);
+        if( v ) {
+            XCTAssert( v.value().second == 3 );
+            auto a = v.value().first;
+            XCTAssert(a.start == 763);
+        }
+    }
     
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"+-13", 0);
+        XCTAssert(v);
+        if( v ) {
+            XCTAssert( v.value().second == 4 );
+            auto a = v.value().first;
+            XCTAssert(a.step == -13);
+        }
+    }
+
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"/71", 0);
+        XCTAssert(v);
+        if( v ) {
+            XCTAssert( v.value().second == 3 );
+            auto a = v.value().first;
+            XCTAssert(a.stripe == 71);
+        }
+    }
+    
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@":12", 0);
+        XCTAssert(v);
+        if( v ) {
+            XCTAssert( v.value().second == 3 );
+            auto a = v.value().first;
+            XCTAssert(a.width == 12);
+        }
+    }
 }
 
 - (void)testTextExtraction

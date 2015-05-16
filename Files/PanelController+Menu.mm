@@ -35,6 +35,7 @@
 #import "MassRename.h"
 #import "MassRenameSheetController.h"
 #import "BatchRename.h"
+#import "BatchRenameSheetController.h"
 
 @implementation PanelController (Menu)
 
@@ -977,12 +978,23 @@
     MachTimeBenchmark mtb;
     for(auto &i: fis) {
         auto v = br.Rename(i, 0);
-        NSLog(@"%@", v);
+//        NSLog(@"%@", v);
         
     }
     
     mtb.ResetMicro();
     
+  
+    
+    BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithListing:self.data.Listing()
+                                                                                 andIndeces:inds];
+    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        
+    }];
+    
+//    [self.window beginSheet:sheet.window completionHandler:^(NSModalResponse returnCode) {
+        
+//    }];
     
     
 }

@@ -26,11 +26,11 @@
 //[G] Grandparent directory (usage: see [P]).
 // + [E] Extension
 // + [E1-2] Characters 1-2 from the extension (same ranges as in [N] definition)
-//[C] Paste counter, as defined in Define counter field
-//[C10+5:3] Paste counter, define counter settings directly. In this example, start at 10, step by 5, use 3 digits width.
-//Partial definitions like [C10] or [C+5] or [C:3] are also accepted.
+// + [C] Paste counter, as defined in Define counter field
+// + [C10+5:3] Paste counter, define counter settings directly. In this example, start at 10, step by 5, use 3 digits width.
+// + Partial definitions like [C10] or [C+5] or [C:3] are also accepted.
 //Hint: The fields in Define counter will be ignored if you specify options directly in the [C] field.
-//[C+1/100] New: Fractional number: Paste counter, but increase it only every n files (in this example: every 100 files).
+// + [C+1/100] New: Fractional number: Paste counter, but increase it only every n files (in this example: every 100 files).
 //Can be used to move a specific number of files to a subdirectory,e.g. [C+1/100]\[N]
 //[Caa+1] Paste counter, define counter settings directly. In this example, start at aa, step 1 letter, use 2 digits (defined by 'aa' width)
 //[C:a] Paste counter, determine digits width automatically, depending on the number of files. Combinations like [C10+10:a] are also allowed.
@@ -84,6 +84,14 @@ public:
         bool zero_flag = false;
     };
     
+    struct Counter
+    {
+        long start;
+        long step;
+        unsigned stripe;
+        unsigned width;
+    };
+    
     struct MaskDecomposition
     {
         NSString *string    = nil;
@@ -109,7 +117,10 @@ public:
     
     static optional<vector<MaskDecomposition>> DecomposeMaskIntoPlaceholders(NSString *_mask);
     static optional<pair<TextExtraction, int>> ParsePlaceholder_TextExtraction( NSString *_ph, unsigned long _pos ); // action and number of chars eaten if no errors
+    static optional<pair<Counter, int>> ParsePlaceholder_Counter( NSString *_ph, unsigned long _pos,
+                                                                 long _default_start=1, long _default_step=1, int _default_width = 1, unsigned _default_stripe = 1); // action and number of chars eaten if no errors
     static NSString *ExtractText(NSString *_from, const TextExtraction &_te);
+    static NSString *FormatCounter(const Counter &_c, int _file_number);
     
     bool BuildActionsScript( NSString *_mask );
     
@@ -130,7 +141,8 @@ private:
         UnchangedCase,
         Uppercase,
         Lowercase,
-        Capitalized
+        Capitalized,
+        Counter
     };
 
     
@@ -153,6 +165,12 @@ private:
         m_Steps.emplace_back( ActionType::Extension, m_ActionsExtension.size() );
         m_ActionsExtension.emplace_back( t );
     }
+
+    void AddInsertCounter(const Counter &t) {
+        m_Steps.emplace_back( ActionType::Counter, m_ActionsCounter.size() );
+        m_ActionsCounter.emplace_back( t );
+        
+    }
     
     
     bool ParsePlaceholder( NSString *_ph );
@@ -162,6 +180,8 @@ private:
     vector<NSString*>       m_ActionsStatic;
     vector<TextExtraction>  m_ActionsName;
     vector<TextExtraction>  m_ActionsExtension;
+    vector<Counter>         m_ActionsCounter;
+
     
 };
 

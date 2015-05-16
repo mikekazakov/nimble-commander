@@ -103,6 +103,8 @@
         auto &e = m_Listing->At(i);
         
         BatchRename::FileInfo fi;
+        fi.mod_time = e.MTime();
+        localtime_r(&fi.mod_time, &fi.mod_time_tm);
         fi.filename = e.NSName().copy;
         
         static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];

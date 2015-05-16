@@ -40,10 +40,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sm-cZ-ZcL">
-                        <rect key="frame" x="20" y="289" width="160" height="22"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="160" id="PvR-So-v8p"/>
-                        </constraints>
+                        <rect key="frame" x="20" y="289" width="460" height="22"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="[N].[E]" drawsBackground="YES" id="XsB-hj-Wer">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -166,6 +163,7 @@ Gw
                     <constraint firstItem="3sm-cZ-ZcL" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="fMe-VS-YpU"/>
                     <constraint firstItem="RV2-6w-I75" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="jKl-vD-kia"/>
                     <constraint firstItem="3sm-cZ-ZcL" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="sGC-Bs-atd"/>
+                    <constraint firstAttribute="trailing" secondItem="3sm-cZ-ZcL" secondAttribute="trailing" constant="20" symbolic="YES" id="wtl-fu-Lhx"/>
                     <constraint firstAttribute="bottom" secondItem="uV6-QM-UnT" secondAttribute="bottom" constant="20" symbolic="YES" id="xRj-du-GhK"/>
                 </constraints>
             </view>

@@ -71,8 +71,7 @@ bool BatchRename::BuildActionsScript( NSString *_mask )
     
     for(auto &di: decomposition) {
         if( !di.is_placeholder ) {
-            m_Steps.emplace_back( ActionType::Static, m_ActionsStatic.size() );
-            m_ActionsStatic.emplace_back( di.string );
+            AddStaticText(di.string);
         }
         else {
             if(!ParsePlaceholder(di.string)) {
@@ -130,6 +129,42 @@ bool BatchRename::ParsePlaceholder( NSString *_ph )
             case 'A':
                 position++;
                 m_Steps.emplace_back( ActionType::Filename );
+                continue;
+            case 's':
+                position++;
+                m_Steps.emplace_back( ActionType::TimeSeconds );
+                continue;
+            case 'm':
+                position++;
+                m_Steps.emplace_back( ActionType::TimeMinutes );
+                continue;
+            case 'h':
+                position++;
+                m_Steps.emplace_back( ActionType::TimeHours );
+                continue;
+            case 'D':
+                position++;
+                m_Steps.emplace_back( ActionType::TimeDay );
+                continue;
+            case 'M':
+                position++;
+                m_Steps.emplace_back( ActionType::TimeMonth );
+                continue;
+            case 'y':
+                position++;
+                m_Steps.emplace_back( ActionType::TimeYear2 );
+                continue;
+            case 'Y':
+                position++;
+                m_Steps.emplace_back( ActionType::TimeYear4 );
+                continue;
+            case 'd':
+                position++;
+                m_Steps.emplace_back( ActionType::Date );
+                continue;
+            case 't':
+                position++;
+                m_Steps.emplace_back( ActionType::Time );
                 continue;
             case 'N':
             {
@@ -538,6 +573,90 @@ static inline NSString *StringByTransform(NSString *_s, BatchRename::CaseTransfo
     };
 }
 
+static NSString* FormatTimeSeconds(const struct tm &_t)
+{
+    char buf[16];
+    sprintf(buf, "%2.2d", _t.tm_sec);
+    return [NSString stringWithUTF8String:buf];
+}
+
+static NSString* FormatTimeMinutes(const struct tm &_t)
+{
+    char buf[16];
+    sprintf(buf, "%2.2d", _t.tm_min);
+    return [NSString stringWithUTF8String:buf];
+}
+
+static NSString* FormatTimeHours(const struct tm &_t)
+{
+    char buf[16];
+    sprintf(buf, "%2.2d", _t.tm_hour);
+    return [NSString stringWithUTF8String:buf];
+}
+
+static NSString* FormatTimeDay(const struct tm &_t)
+{
+    char buf[16];
+    sprintf(buf, "%2.2d", _t.tm_mday);
+    return [NSString stringWithUTF8String:buf];
+}
+
+static NSString* FormatTimeMonth(const struct tm &_t)
+{
+    char buf[16];
+    sprintf(buf, "%2.2d", _t.tm_mon + 1);
+    return [NSString stringWithUTF8String:buf];
+}
+
+static NSString* FormatTimeYear2(const struct tm &_t)
+{
+    char buf[16];
+    if(_t.tm_year >= 100)
+        sprintf(buf, "%2.2d", _t.tm_year - 100);
+    else
+        sprintf(buf, "%2.2d", _t.tm_year);
+    return [NSString stringWithUTF8String:buf];
+}
+
+static NSString* FormatTimeYear4(const struct tm &_t)
+{
+    char buf[16];
+    sprintf(buf, "%4.4d", _t.tm_year + 1900);
+    return [NSString stringWithUTF8String:buf];
+}
+
+static NSString* FormatDate(time_t _t)
+{
+    static auto formatter = []() {
+        NSDateFormatter *fmt = [NSDateFormatter new];
+        fmt.dateStyle = NSDateFormatterShortStyle;
+        fmt.timeStyle = NSDateFormatterNoStyle;
+        return fmt;
+    }();
+    
+    NSMutableString *str = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_t]].mutableCopy;
+    [str replaceOccurrencesOfString:@"/" withString:@"-" options:0 range:NSMakeRange(0,str.length)];
+    [str replaceOccurrencesOfString:@"\\" withString:@"-" options:0 range:NSMakeRange(0,str.length)];
+    [str replaceOccurrencesOfString:@":" withString:@"-" options:0 range:NSMakeRange(0,str.length)];
+    return str;
+}
+
+static NSString* FormatTime(time_t _t)
+{
+    static auto formatter = []() {
+        NSDateFormatter *fmt = [NSDateFormatter new];
+        fmt.dateStyle = NSDateFormatterNoStyle;
+        fmt.timeStyle = NSDateFormatterShortStyle;
+        return fmt;
+    }();
+    
+    NSMutableString *str = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_t]].mutableCopy;
+    [str replaceOccurrencesOfString:@"/" withString:@"." options:0 range:NSMakeRange(0,str.length)];
+    [str replaceOccurrencesOfString:@"\\" withString:@"." options:0 range:NSMakeRange(0,str.length)];
+    [str replaceOccurrencesOfString:@":" withString:@"." options:0 range:NSMakeRange(0,str.length)];
+    return str;
+}
+
 NSString *BatchRename::Rename( const FileInfo &_fi, int _number ) const
 {
     NSMutableString *str = [[NSMutableString alloc] initWithCapacity:64];
@@ -568,6 +687,33 @@ NSString *BatchRename::Rename( const FileInfo &_fi, int _number ) const
                 break;
             case ActionType::Filename:
                 next = _fi.filename;
+                break;
+            case ActionType::TimeSeconds:
+                next = FormatTimeSeconds(_fi.mod_time_tm);
+                break;
+            case ActionType::TimeMinutes:
+                next = FormatTimeMinutes(_fi.mod_time_tm);
+                break;
+            case ActionType::TimeHours:
+                next = FormatTimeHours(_fi.mod_time_tm);
+                break;
+            case ActionType::TimeDay:
+                next = FormatTimeDay(_fi.mod_time_tm);
+                break;
+            case ActionType::TimeMonth:
+                next = FormatTimeMonth(_fi.mod_time_tm);
+                break;
+            case ActionType::TimeYear2:
+                next = FormatTimeYear2(_fi.mod_time_tm);
+                break;
+            case ActionType::TimeYear4:
+                next = FormatTimeYear4(_fi.mod_time_tm);
+                break;
+            case ActionType::Date:
+                next = FormatDate(_fi.mod_time);
+                break;
+            case ActionType::Time:
+                next = FormatTime(_fi.mod_time);
                 break;
             case ActionType::UnchangedCase:
                 case_transform = CaseTransform::Unchanged;

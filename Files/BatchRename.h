@@ -34,15 +34,15 @@
 //Can be used to move a specific number of files to a subdirectory,e.g. [C+1/100]\[N]
 //[Caa+1] Paste counter, define counter settings directly. In this example, start at aa, step 1 letter, use 2 digits (defined by 'aa' width)
 //[C:a] Paste counter, determine digits width automatically, depending on the number of files. Combinations like [C10+10:a] are also allowed.
-//[d] Paste date as defined in current country settings. / is replaced by a dash
-//[Y] Paste year in 4 digit form
-//[y] Paste year in 2 digit form
-//[M] Paste month, always 2 digit
-//[D] Paste day, always 2 digit
-//[t] Paste time, as defined in current country settings. : is replaced by a dot.
-//[h] Paste hours, always in 24 hour 2 digit format
-//[m] Paste minutes, always in 2 digit format
-//[s] Paste seconds, always in 2 digit format
+// + [d] Paste date as defined in current country settings. / is replaced by a dash
+// + [Y] Paste year in 4 digit form
+// + [y] Paste year in 2 digit form
+// + [M] Paste month, always 2 digit
+// + [D] Paste day, always 2 digit
+// + [t] Paste time, as defined in current country settings. : is replaced by a dot.
+// + [h] Paste hours, always in 24 hour 2 digit format
+// + [m] Paste minutes, always in 2 digit format
+// + [s] Paste seconds, always in 2 digit format
 // + [U] All characters after this position in uppercase
 // + [L] All characters after this position in lowercase
 // + [F] First letter of each word uppercase after this position, all others lowercase
@@ -105,6 +105,9 @@ public:
         NSString *filename;     // filename.txt
         NSString *name;         // filename
         NSString *extension;    // txt
+        time_t mod_time;
+        struct tm mod_time_tm;
+        
     };
     
     enum class CaseTransform
@@ -142,7 +145,16 @@ private:
         Uppercase,
         Lowercase,
         Capitalized,
-        Counter
+        Counter,
+        TimeSeconds,
+        TimeMinutes,
+        TimeHours,
+        TimeDay,
+        TimeMonth,
+        TimeYear2,
+        TimeYear4,
+        Time,
+        Date
     };
 
     
@@ -154,8 +166,11 @@ private:
         Step(ActionType t):type(t), index(-1){}
     };
     
+    void AddStaticText(NSString *s) {
+        m_Steps.emplace_back( ActionType::Static, m_ActionsStatic.size() );
+        m_ActionsStatic.emplace_back( s );
+    }
 
-    
     void AddInsertName(const TextExtraction &t) {
         m_Steps.emplace_back( ActionType::Name, m_ActionsName.size() );
         m_ActionsName.emplace_back( t );

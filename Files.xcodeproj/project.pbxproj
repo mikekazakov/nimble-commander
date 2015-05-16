@@ -219,6 +219,10 @@
 		CF56826C1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
+		CF5C1E211B04A0E4005DE19F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */; };
+		CF5C1E221B04A0E4005DE19F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */; };
+		CF5C1E231B04A0E4005DE19F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */; };
+		CF5C1E281B05B679005DE19F /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
@@ -1187,6 +1191,9 @@
 		CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationVFSJob.mm; sourceTree = "<group>"; };
 		CF5913CA191BD422003007F1 /* CreateDirectoryOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectoryOperationVFSJob.h; sourceTree = "<group>"; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
+		CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRename.mm; sourceTree = "<group>"; };
+		CF5C1E201B04A0E4005DE19F /* BatchRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchRename.h; sourceTree = "<group>"; };
+		CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRename_Tests.mm; sourceTree = "<group>"; };
 		CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnRAR_LIB.xcodeproj; path = 3rd_party/unrar/UnRAR_LIB/UnRAR_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
 		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
@@ -1864,6 +1871,8 @@
 				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
 				CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */,
 				CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */,
+				CF5C1E201B04A0E4005DE19F /* BatchRename.h */,
+				CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */,
 				CF8E667C1AF106B900E31DFF /* MassRename.h */,
 				CF8E667B1AF106B900E31DFF /* MassRename.mm */,
 				CF5682641AF3581600C48E28 /* MassRenameSheetController.h */,
@@ -1950,6 +1959,7 @@
 				CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */,
 				CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */,
 				CF8E66831AF1307300E31DFF /* MassRename_Tests.mm */,
+				CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
 			path = "Files Tests";
@@ -3118,6 +3128,7 @@
 				CF8E66841AF1307300E31DFF /* MassRename_Tests.mm in Sources */,
 				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
 				CFABC4AD1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm in Sources */,
+				CF5C1E281B05B679005DE19F /* BatchRename_Tests.mm in Sources */,
 				CF7C93C31A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm in Sources */,
 				CFB1E08319F8ED4300AD567A /* Encodings_Tests.mm in Sources */,
 				CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */,
@@ -3323,6 +3334,7 @@
 				CF6D9BD8196677CA0077B146 /* NSUserDefaults+myColorSupport.m in Sources */,
 				CF6D9BD9196677CA0077B146 /* ButtonWithOptions.m in Sources */,
 				CF6D9BDA196677CA0077B146 /* main.m in Sources */,
+				CF5C1E221B04A0E4005DE19F /* BatchRename.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3388,6 +3400,7 @@
 				CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF5410191A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */,
+				CF5C1E211B04A0E4005DE19F /* BatchRename.mm in Sources */,
 				CF50B6D91A15169300E3D96D /* VFSPSFile.cpp in Sources */,
 				CF50B6F31A1516B000E3D96D /* VFSArchiveListing.mm in Sources */,
 				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
@@ -3726,6 +3739,7 @@
 				CFF6F34E1A13567C00011177 /* NSArray+SSYMutations.m in Sources */,
 				CFF6F3501A13567C00011177 /* SharingService.mm in Sources */,
 				CFF6F3521A13567C00011177 /* TermSingleTask.mm in Sources */,
+				CF5C1E231B04A0E4005DE19F /* BatchRename.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

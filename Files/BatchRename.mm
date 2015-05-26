@@ -62,6 +62,9 @@ optional<vector<BatchRename::MaskDecomposition>> BatchRename::DecomposeMaskIntoP
 
 bool BatchRename::BuildActionsScript( NSString *_mask )
 {
+    if(!_mask || !_mask.length)
+        return false;
+    
     auto opt_decomposition = DecomposeMaskIntoPlaceholders( _mask );
     if( !opt_decomposition )
         return false;

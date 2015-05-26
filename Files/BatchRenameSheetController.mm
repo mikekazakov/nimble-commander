@@ -14,7 +14,6 @@
 @implementation BatchRenameSheetController
 {
     vector<NSView*>                 m_ActionViews;
-    shared_ptr<const VFSListing>    m_Listing;
     vector<unsigned>                m_Indeces;
     vector<BatchRename::FileInfo>   m_FileInfos;
     
@@ -27,17 +26,16 @@
 }
 
 
-- (instancetype) initWithListing:(shared_ptr<const VFSListing>)_listing
+- (instancetype) initWithListing:(const VFSListing&)_listing
                       andIndeces:(vector<unsigned>)_inds
 {
     self = [[BatchRenameSheetController alloc] init];
     if(self) {
         assert(!_inds.empty());
-        m_Listing = _listing;
         m_Indeces = _inds;
         
         for( auto i: m_Indeces ) {
-            auto &e = m_Listing->At(i);
+            auto &e = _listing.At(i);
             
             BatchRename::FileInfo fi;
             fi.mod_time = e.MTime();
@@ -61,7 +59,7 @@
         
         
         for(auto i: m_Indeces) {
-            auto &e = m_Listing->At(i);
+            auto &e = _listing.At(i);
             
             {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];

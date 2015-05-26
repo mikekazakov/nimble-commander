@@ -53,7 +53,7 @@ public:
                        VFSCancelChecker _cancel_checker) override;
     
     virtual int FetchDirectoryListing(const char *_path,
-                                      shared_ptr<VFSListing> *_target,
+                                      unique_ptr<VFSListing> &_target,
                                       int _flags,
                                       VFSCancelChecker _cancel_checker) override;
     

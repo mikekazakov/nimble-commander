@@ -231,7 +231,7 @@ VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindOrBuildDirectory(const string
 }
 
 int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
-                                               shared_ptr<VFSListing> *_target,
+                                               unique_ptr<VFSListing> &_target,
                                                int _flags,
                                                VFSCancelChecker _cancel_checker)
 {
@@ -239,12 +239,12 @@ int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
     if(!dir)
         return VFSError::NotFound;
 
-    auto listing = make_shared<VFSArchiveUnRARListing>(*dir, _path, _flags, SharedPtr());
+    auto listing = make_unique<VFSArchiveUnRARListing>(*dir, _path, _flags, SharedPtr());
     
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     
-    *_target = listing;
+    _target = move(listing);
     
     return VFSError::Ok;
 }

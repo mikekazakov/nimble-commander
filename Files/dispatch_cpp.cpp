@@ -2,10 +2,10 @@
 
 namespace __dispatch_cpp {
     
-void __dispatch_cpp_exec_delete_lambda(void* context)
+void __dispatch_cpp_exec_delete_callable(void*context)
 {
-    auto l = reinterpret_cast<__lambda_exec*>(context);
-    (*l)();
+    auto l = reinterpret_cast<__callable_exec_base*>(context);
+    l->exec();
     delete l;
 }
     

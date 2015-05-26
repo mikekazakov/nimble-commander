@@ -217,7 +217,7 @@ int VFSNetFTPHost::Stat(const char *_path,
 }
 
 int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
-                                         shared_ptr<VFSListing> *_target,
+                                         unique_ptr<VFSListing> &_target,
                                          int _flags,
                                          VFSCancelChecker _cancel_checker)
 {
@@ -227,8 +227,8 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
         return result;
     
     assert(dir);
-    auto listing = make_shared<Listing>(dir, _path, _flags, SharedPtr());
-    *_target = listing;
+    auto listing = make_unique<Listing>(dir, _path, _flags, SharedPtr());
+    _target = move(listing);
     return 0;
 }
 

@@ -531,7 +531,7 @@
 
 - (IBAction)OnCalculateAllSizes:(id)sender {
     vector<string> filenames;
-    for(auto &i: *m_Data.Listing())
+    for(auto &i: m_Data.Listing())
         if(i.IsDir() && !i.IsDotDot())
             filenames.emplace_back(i.Name());
     

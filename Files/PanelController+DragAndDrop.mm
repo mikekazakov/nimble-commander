@@ -287,7 +287,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     if(focus_item->CFIsSelected() == false)
         vfs_items.push_back(focus_item);
     else
-        for(auto &i: *m_Data.Listing())
+        for(auto &i: m_Data.Listing())
             if(i.CFIsSelected())         // get all selected from listing
                 vfs_items.push_back(&i);
     

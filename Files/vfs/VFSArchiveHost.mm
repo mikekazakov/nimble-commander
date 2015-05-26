@@ -253,7 +253,7 @@ int VFSArchiveHost::CreateFile(const char* _path,
 }
 
 int VFSArchiveHost::FetchDirectoryListing(const char *_path,
-                                          shared_ptr<VFSListing> *_target,
+                                          unique_ptr<VFSListing> &_target,
                                           int _flags,
                                           VFSCancelChecker _cancel_checker)
 {
@@ -269,13 +269,12 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
     if(i == m_PathToDir.end())
         return VFSError::NotFound;
 
-    shared_ptr<VFSArchiveListing> listing = make_shared<VFSArchiveListing>
-        (i->second, _path, _flags, SharedPtr());
+    auto listing = make_unique<VFSArchiveListing>(i->second, _path, _flags, SharedPtr());
     
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     
-    *_target = listing;
+    _target = move(listing);
     
     return VFSError::Ok;
 }

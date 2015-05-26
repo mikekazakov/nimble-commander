@@ -53,7 +53,7 @@ bool SerialQueueT::IsStopped() const
 
 void SerialQueueT::Run( function<void()> _block )
 {
-    Run( [=](const shared_ptr<SerialQueueT> &_unused) { _block(); } );
+    Run( [_block = move(_block)](const shared_ptr<SerialQueueT> &_unused) { _block(); } );
 }
 
 void SerialQueueT::Run( function<void(const shared_ptr<SerialQueueT> &_que)> _block )

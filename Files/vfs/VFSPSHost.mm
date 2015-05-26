@@ -434,7 +434,7 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
 }
 
 int VFSPSHost::FetchDirectoryListing(const char *_path,
-                                  shared_ptr<VFSListing> *_target,
+                                  unique_ptr<VFSListing> &_target,
                                   int _flags,
                                   VFSCancelChecker _cancel_checker)
 {
@@ -443,7 +443,7 @@ int VFSPSHost::FetchDirectoryListing(const char *_path,
     if(!_path || strcmp(_path, "/") != 0)
         return VFSError::NotFound;
     
-    *_target = make_shared<VFSPSListing>(_path, SharedPtr(), m_Data);
+    _target = make_unique<VFSPSListing>(_path, SharedPtr(), m_Data);
 
     return VFSError::Ok;
 }

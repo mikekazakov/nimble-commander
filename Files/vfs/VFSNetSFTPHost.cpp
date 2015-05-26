@@ -258,7 +258,7 @@ in_addr_t VFSNetSFTPHost::InetAddr() const
 }
 
 int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
-                                          shared_ptr<VFSListing> *_target,
+                                          unique_ptr<VFSListing> &_target,
                                           int _flags,
                                           VFSCancelChecker _cancel_checker)
 {
@@ -274,7 +274,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
         return VFSErrorForConnection(*conn);
     }
  
-    auto dir = make_shared<VFSGenericListing>(_path, shared_from_this());
+    auto dir = make_unique<VFSGenericListing>(_path, shared_from_this());
     bool need_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && strcmp(_path, "/") != 0;
     bool need_dummy_dot_dot = need_dot_dot;
     
@@ -375,7 +375,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
         }
     }
     
-    *_target = dir;
+    _target = move(dir);
     
     return 0;
 }

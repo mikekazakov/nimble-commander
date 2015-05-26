@@ -23,7 +23,7 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 @implementation GoToFolderSheetController
 {
     function<void()>        m_Handler; // return VFS error code
-    shared_ptr<VFSListing>  m_LastListing;
+    unique_ptr<VFSListing>  m_LastListing;
 }
 
 - (id)init
@@ -195,7 +195,7 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 }
 
 // sync operation with simple caching
-- (shared_ptr<VFSListing>) listingFromDir:(const string&)_path
+- (VFSListing*) listingFromDir:(const string&)_path
 {
     if( _path.empty() )
         return nullptr;
@@ -206,16 +206,16 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
     
     if(m_LastListing &&
        m_LastListing->RelativePath() == path)
-        return m_LastListing;
+        return m_LastListing.get();
     
-    shared_ptr<VFSListing> listing;
+    unique_ptr<VFSListing> listing;
     int ret = self.panel.vfs->FetchDirectoryListing(path.c_str(),
-                                                    &listing,
+                                                    listing,
                                                     VFSFlags::F_NoDotDot,
                                                     nullptr);
     if( ret == 0 ) {
-        m_LastListing = listing;
-        return m_LastListing;
+        m_LastListing = move(listing);
+        return m_LastListing.get();
     } else
         return nullptr;
 }

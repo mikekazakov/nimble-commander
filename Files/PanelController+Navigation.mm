@@ -172,9 +172,9 @@ loadPreviousState:(bool)_load_state
             return;
         }
         
-        shared_ptr<VFSListing> listing;
+        unique_ptr<VFSListing> listing;
         c->LoadingResultCode = c->VFS->FetchDirectoryListing(c->RequestedDirectory.c_str(),
-                                                                    &listing,
+                                                                    listing,
                                                                     m_VFSFetchingFlags,
                                                                     [&] {
                                                                         return _q->IsStopped();
@@ -187,9 +187,9 @@ loadPreviousState:(bool)_load_state
         // TODO: need an ability to show errors at least        
         
         [self CancelBackgroundOperations]; // clean running operations if any
-        dispatch_or_run_in_main_queue([=]{
+        dispatch_or_run_in_main_queue([=,listing=move(listing)]()mutable {
             [m_View SavePathState];
-            m_Data.Load(listing);
+            m_Data.Load(move(listing));
             [m_View dataUpdated];
             [m_View directoryChangedWithFocusedFilename:c->RequestFocusedEntry
                                       loadPreviousState:c->LoadPreviousViewState];

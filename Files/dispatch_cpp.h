@@ -57,18 +57,30 @@ private:
 // implementation details
 
 namespace __dispatch_cpp {
-    typedef std::function<void()>       __lambda_exec;
     typedef std::function<void(size_t)> __lambda_apply;
-    void __dispatch_cpp_exec_delete_lambda(void*);
     void __dispatch_cpp_apply_lambda(void*, size_t);
+    
+    struct __callable_exec_base {
+        inline virtual ~__callable_exec_base() {};
+        virtual void exec() = 0;
+    };
+    
+    template<class T>
+    struct __callable_exec_inst : __callable_exec_base {
+        inline __callable_exec_inst(T &&o):o(move(o)){};
+        void exec() override { o(); }
+        T o;
+    };
+    
+    void __dispatch_cpp_exec_delete_callable(void*);
 }
 
 template <class T>
 inline void dispatch_async( dispatch_queue_t queue, T f )
 {
     dispatch_async_f(queue,
-                     new __dispatch_cpp::__lambda_exec( std::move(f) ),
-                     __dispatch_cpp::__dispatch_cpp_exec_delete_lambda);
+                     new __dispatch_cpp::__callable_exec_inst<T>( move(f) ),
+                     __dispatch_cpp::__dispatch_cpp_exec_delete_callable);
 }
 
 template <class T>
@@ -76,16 +88,16 @@ inline void dispatch_group_async( dispatch_group_t group, dispatch_queue_t queue
 {
     dispatch_group_async_f(group,
                            queue,
-                           new __dispatch_cpp::__lambda_exec( std::move(f) ),
-                           __dispatch_cpp::__dispatch_cpp_exec_delete_lambda);
+                           new __dispatch_cpp::__callable_exec_inst<T>( move(f) ),
+                           __dispatch_cpp::__dispatch_cpp_exec_delete_callable);
 }
 
 template <class T>
 inline void dispatch_sync( dispatch_queue_t queue, T f )
 {
     dispatch_sync_f(queue,
-                    new __dispatch_cpp::__lambda_exec( std::move(f) ),
-                    __dispatch_cpp::__dispatch_cpp_exec_delete_lambda);
+                    new __dispatch_cpp::__callable_exec_inst<T>( move(f) ),
+                    __dispatch_cpp::__dispatch_cpp_exec_delete_callable);
 }
 
 template <class T>
@@ -103,24 +115,24 @@ inline void dispatch_after( std::chrono::nanoseconds when, dispatch_queue_t queu
 {
     dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, when.count()),
                      queue,
-                     new __dispatch_cpp::__lambda_exec( std::move(f) ),
-                     __dispatch_cpp::__dispatch_cpp_exec_delete_lambda);
+                     new __dispatch_cpp::__callable_exec_inst<T>( move(f) ),
+                     __dispatch_cpp::__dispatch_cpp_exec_delete_callable);
 }
 
 template <class T>
 inline void dispatch_barrier_async( dispatch_queue_t queue, T f )
 {
     dispatch_barrier_async_f(queue,
-                             new __dispatch_cpp::__lambda_exec( std::move(f) ),
-                             __dispatch_cpp::__dispatch_cpp_exec_delete_lambda);
+                             new __dispatch_cpp::__callable_exec_inst<T>( move(f) ),
+                             __dispatch_cpp::__dispatch_cpp_exec_delete_callable);
 }
 
 template <class T>
 inline void dispatch_barrier_sync( dispatch_queue_t queue, T f )
 {
     dispatch_barrier_sync_f(queue,
-                            new __dispatch_cpp::__lambda_exec( std::move(f) ),
-                            __dispatch_cpp::__dispatch_cpp_exec_delete_lambda);
+                            new __dispatch_cpp::__callable_exec_inst<T>( move(f) ),
+                            __dispatch_cpp::__dispatch_cpp_exec_delete_callable);
 }
 
 template <class T>

@@ -33,7 +33,7 @@ public:
     };
     
     VFSPathStack();
-    VFSPathStack(shared_ptr<VFSListing> _listing);
+    VFSPathStack(const VFSListing &_listing);
     VFSPathStack(const VFSPathStack&_r);
     VFSPathStack(VFSPathStack&&_r);
     

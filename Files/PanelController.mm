@@ -386,14 +386,14 @@ void panel::GenericCursorPersistance::Restore()
     auto vfs = self.vfs;
     
     m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
-        shared_ptr<VFSListing> listing;
-        int ret = vfs->FetchDirectoryListing(dirpath.c_str(), &listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
+        unique_ptr<VFSListing> listing;
+        int ret = vfs->FetchDirectoryListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
         if(ret >= 0)
         {
-            dispatch_to_main_queue( [=]{
+            dispatch_to_main_queue( [=,listing=move(listing)]() mutable {
                 panel::GenericCursorPersistance pers(m_View, m_Data);
                 
-                m_Data.ReLoad(listing);
+                m_Data.ReLoad(move(listing));
                 [m_View dataUpdated];
                 
                 if(![self CheckAgainstRequestedSelection])
@@ -643,7 +643,7 @@ void panel::GenericCursorPersistance::Restore()
     if(m_Data.Stats().selected_entries_amount == 0 || !cur_focus->CFIsSelected())
         items.push_back(cur_focus); // use focused item solely
     else
-        for(auto &i: *m_Data.Listing()) // use selected items
+        for(auto &i: m_Data.Listing()) // use selected items
             if(i.CFIsSelected())
                 items.push_back(&i);
     

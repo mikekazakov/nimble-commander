@@ -28,11 +28,11 @@ const char *VFSNativeHost::FSTag() const
 }
 
 int VFSNativeHost::FetchDirectoryListing(const char *_path,
-                                         shared_ptr<VFSListing> *_target,
+                                         unique_ptr<VFSListing> &_target,
                                          int _flags,
                                          VFSCancelChecker _cancel_checker)
 {
-    auto listing = make_shared<VFSNativeListing>(_path);
+    auto listing = make_unique<VFSNativeListing>(_path);
     
     int result = listing->LoadListingData(_flags, _cancel_checker);
     if(result != VFSError::Ok)
@@ -41,7 +41,7 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     
-    *_target = listing;
+    _target = move(listing);
     
     return VFSError::Ok;
 }

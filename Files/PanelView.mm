@@ -670,9 +670,7 @@ struct PanelViewStateStorage
     if(!m_State.Data)
         return;
     
-    auto listing = m_State.Data->Listing();
-    if(listing.get() == nullptr)
-        return;
+    auto &listing = m_State.Data->Listing();
     
     auto item = self.item;
     if(item == nullptr)
@@ -691,9 +689,7 @@ struct PanelViewStateStorage
     if(!m_State.Data)
         return;
     
-    auto listing = m_State.Data->Listing();
-    if(listing.get() == nullptr)
-        return;
+    auto &listing = m_State.Data->Listing();
     
     auto path = VFSPathStack(listing);
     auto it = m_States.find(hash<VFSPathStack>()(path));

@@ -207,11 +207,11 @@ public:
     // PanelData is solely sync class - it does not give a fuck about concurrency,
     // any parallelism should be done by callers (i.e. controller)
     // just like Metallica:
-    void Load(shared_ptr<VFSListing> _listing);
-    void ReLoad(shared_ptr<VFSListing> _listing);
+    void Load(unique_ptr<VFSListing> _listing);
+    void ReLoad(unique_ptr<VFSListing> _listing);
 
     const shared_ptr<VFSHost>     &Host() const;
-    const shared_ptr<VFSListing>  &Listing() const;
+    const VFSListing&       Listing() const;
     
     const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
@@ -315,8 +315,6 @@ private:
     PanelData(const PanelData&) = delete;
     void operator=(const PanelData&) = delete;
     
-    // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to raw sort mode
-    static void DoRawSort(shared_ptr<VFSListing> _from, DirSortIndT &_to);
     void DoSortWithHardFiltering();
     void CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected);
     void ClearSelectedFlagsFromHiddenElements();
@@ -325,7 +323,7 @@ private:
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-    shared_ptr<VFSListing> m_Listing;
+    unique_ptr<VFSListing>  m_Listing;
 
     DirSortIndT             m_EntriesByRawName;    // sorted with raw strcmp comparison
     DirSortIndT             m_EntriesByCustomSort; // custom defined sort

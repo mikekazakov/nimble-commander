@@ -34,11 +34,11 @@ VFSPathStack::VFSPathStack()
 {
 }
 
-VFSPathStack::VFSPathStack(shared_ptr<VFSListing> _listing)
+VFSPathStack::VFSPathStack(const VFSListing &_listing)
 {
     // 1st - calculate host's depth
     int depth = 0;
-    VFSHost* curr_host = _listing->Host().get();
+    VFSHost* curr_host = _listing.Host().get();
     while(curr_host != nullptr) {
         depth++;
         curr_host = curr_host->Parent().get();
@@ -49,7 +49,7 @@ VFSPathStack::VFSPathStack(shared_ptr<VFSListing> _listing)
     
     // build vfs stack
     m_Stack.resize(depth);
-    curr_host = _listing->Host().get();
+    curr_host = _listing.Host().get();
     do {
         m_Stack[depth-1].fs_tag = curr_host->FSTag();
         m_Stack[depth-1].junction = curr_host->JunctionPath();
@@ -60,7 +60,7 @@ VFSPathStack::VFSPathStack(shared_ptr<VFSListing> _listing)
     } while(curr_host != nullptr);
     
     // remember relative path we're at
-    m_Path = _listing->RelativePath();
+    m_Path = _listing.RelativePath();
 }
 
 VFSPathStack::VFSPathStack(const VFSPathStack&_r):

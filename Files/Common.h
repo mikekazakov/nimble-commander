@@ -74,7 +74,11 @@ inline void dispatch_to_main_queue_after(nanoseconds _delay, T _block)
 }
 
 /** if current thread is main - just execute a block. otherwise - dispatch it asynchronously to main thread. */
-void dispatch_or_run_in_main_queue(function<void()> _block);
+template <class T>
+inline void dispatch_or_run_in_main_queue(T _block)
+{
+    dispatch_is_main_queue() ? _block() : dispatch_to_main_queue(move(_block));
+}
 
 struct MachTimeBenchmark
 {

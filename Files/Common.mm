@@ -328,11 +328,6 @@ bool dispatch_is_main_queue() noexcept
     return NSThread.isMainThread;
 }
 
-void dispatch_or_run_in_main_queue(function<void()> block)
-{
-    dispatch_is_main_queue() ? block() : dispatch_to_main_queue(move(block));
-}
-
 MachTimeBenchmark::MachTimeBenchmark() noexcept:
     last(machtime())
 {

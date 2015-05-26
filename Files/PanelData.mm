@@ -4,6 +4,8 @@
 #import "chained_strings.h"
 #import "FileMask.h"
 
+static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to);
+
 static inline PanelSortMode DefaultSortMode()
 {
     PanelSortMode mode;
@@ -15,22 +17,22 @@ static inline PanelSortMode DefaultSortMode()
 
 PanelData::PanelData():
     m_SortExecGroup(DispatchGroup::High),
-    m_Listing(make_shared<VFSListing>("", VFSHost::DummyHost())),
+    m_Listing(make_unique<VFSListing>("", VFSHost::DummyHost())),
     m_CustomSortMode(DefaultSortMode())
 {
 }
 
-void PanelData::Load(shared_ptr<VFSListing> _listing)
+void PanelData::Load(unique_ptr<VFSListing> _listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
-    m_Listing = _listing;
+    m_Listing = move(_listing);
     
     m_HardFiltering.text.OnPanelDataLoad();
     m_SoftFiltering.OnPanelDataLoad();
     
     // now sort our new data
-    m_SortExecGroup.Run([=]{ DoRawSort(m_Listing, m_EntriesByRawName); });
+    m_SortExecGroup.Run([=]{ DoRawSort(*m_Listing, m_EntriesByRawName); });
     m_SortExecGroup.Run([=]{ DoSortWithHardFiltering(); });
     m_SortExecGroup.Wait();
     BuildSoftFilteringIndeces();
@@ -38,13 +40,13 @@ void PanelData::Load(shared_ptr<VFSListing> _listing)
     UpdateStatictics();
 }
 
-void PanelData::ReLoad(shared_ptr<VFSListing> _listing)
+void PanelData::ReLoad(unique_ptr<VFSListing> _listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
     // sort new entries by raw c name for sync-swapping needs
     DirSortIndT dirbyrawcname;
-    DoRawSort(_listing, dirbyrawcname);
+    DoRawSort(*_listing, dirbyrawcname);
     
     // transfer custom data to new array using sorted indeces arrays
     size_t dst_i = 0, dst_e = _listing->Count(),
@@ -77,7 +79,7 @@ void PanelData::ReLoad(shared_ptr<VFSListing> _listing)
     }
     
     // put a new data in a place
-    m_Listing = _listing;
+    m_Listing = move(_listing);
     m_EntriesByRawName.swap(dirbyrawcname);
     
     // now sort our new data with custom sortings
@@ -91,9 +93,9 @@ const shared_ptr<VFSHost> &PanelData::Host() const
     return m_Listing->Host();
 }
 
-const shared_ptr<VFSListing> &PanelData::Listing() const
+const VFSListing &PanelData::Listing() const
 {
-    return m_Listing;
+    return *m_Listing;
 }
 
 const VFSListing& PanelData::DirectoryEntries() const
@@ -226,8 +228,8 @@ private:
     PanelSortMode                   sort_mode;
     CFStringCompareFlags            str_comp_flags;
 public:
-    SortPredLess(const shared_ptr<VFSListing> &_items, PanelSortMode sort_mode):
-        ind_tar(*_items),
+    SortPredLess(const VFSListing &_items, PanelSortMode sort_mode):
+        ind_tar(_items),
         sort_mode(sort_mode)
     {
         str_comp_flags = (sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
@@ -304,22 +306,22 @@ public:
     }
 };
 
-void PanelData::DoRawSort(shared_ptr<VFSListing> _from, PanelData::DirSortIndT &_to)
+// this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to raw sort mode
+static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to)
 {
-    if(_from->Count() == 0) {
+    if(_from.Count() == 0) {
         _to.clear();
         return;
     }
   
-    _to.resize(_from->Count());
+    _to.resize(_from.Count());
 
     unsigned index = 0;
     generate( begin(_to), end(_to), [&]{return index++;} );
     
-    const VFSListing *from = _from.get();
     sort(begin(_to),
          end(_to),
-         [=](unsigned _1, unsigned _2) { return strcmp(from->At(_1).Name(), from->At(_2).Name()) < 0; }
+         [&_from](unsigned _1, unsigned _2) { return strcmp(_from.At(_1).Name(), _from.At(_2).Name()) < 0; }
          );
 }
 
@@ -697,7 +699,7 @@ void PanelData::DoSortWithHardFiltering()
        m_CustomSortMode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
     
-    SortPredLess pred(m_Listing, m_CustomSortMode);
+    SortPredLess pred(*m_Listing, m_CustomSortMode);
     DirSortIndT::iterator start = begin(m_EntriesByCustomSort);
     
     // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir

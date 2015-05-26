@@ -98,11 +98,6 @@ const VFSListing &PanelData::Listing() const
     return *m_Listing;
 }
 
-const VFSListing& PanelData::DirectoryEntries() const
-{
-    return *m_Listing.get();
-}
-
 const PanelData::DirSortIndT& PanelData::SortedDirectoryEntries() const
 {
     return m_EntriesByCustomSort;

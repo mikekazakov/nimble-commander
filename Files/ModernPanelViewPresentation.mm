@@ -316,7 +316,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     assert(m_State->CursorPos < (int)m_State->Data->SortedDirectoryEntries().size());
     assert(m_State->ItemsDisplayOffset >= 0);
     
-    auto &entries = m_State->Data->DirectoryEntries();
+    auto &entries = m_State->Data->Listing();
     const int items_per_column = GetMaxItemsPerColumn();
     const int columns_count = GetNumberOfItemColumns();
     const bool active = View().active;

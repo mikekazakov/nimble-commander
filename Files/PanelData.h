@@ -213,7 +213,6 @@ public:
     const shared_ptr<VFSHost>     &Host() const;
     const VFSListing&       Listing() const;
     
-    const VFSListing&       DirectoryEntries() const;
     const DirSortIndT&      SortedDirectoryEntries() const;
     
     

@@ -462,8 +462,8 @@ struct PanelViewStateStorage
                 { // need to look at a first file (next to dotdot) for current representation if any.
                     if(m_State.Data->SortedDirectoryEntries().size() > 1)
                     { // using [1] item
-                        const auto &item = m_State.Data->DirectoryEntries()[ m_State.Data->SortedDirectoryEntries()[1] ];
-                        if(item.CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
+                        const auto item = m_State.Data->EntryAtSortPosition(1);
+                        if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
                         else                     m_CursorSelectionType = CursorSelectionType::Selection;
                     }
                     else

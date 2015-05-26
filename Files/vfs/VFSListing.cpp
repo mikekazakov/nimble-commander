@@ -49,7 +49,7 @@ const shared_ptr<VFSHost> &VFSListing::Host() const
 
 VFSListingItem& VFSListing::At(size_t _position)
 {
-    assert(0);
+    throw out_of_range("invalid listing index");
     static VFSListingItem i;
     return i;
 }

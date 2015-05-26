@@ -21,7 +21,7 @@ void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, triboo
 //    const auto &entries = _pd.DirectoryEntries();
 //    auto i = entries.begin(), e = entries.end();
 //    for(;i!=e;++i)
-    for(const auto &item: _pd.DirectoryEntries())
+    for(const auto &item: _pd.Listing())
     {
 //        const auto &item = *i;
         if(item.CFIsSelected())
@@ -94,7 +94,7 @@ void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
     bool first = true;
     _has_common_uid = false;
     _has_common_gid = false;
-    for(const auto &i : _pd.DirectoryEntries())
+    for(const auto &i : _pd.Listing())
     {
         if(i.CFIsSelected())
         {
@@ -130,7 +130,7 @@ void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
     for(int i = 0; i < fstm_totalcount; ++i)
         _atimes[i] = _mtimes[i] = _ctimes[i] = _btimes[i] = -1;
 
-    for(const auto &i : _pd.DirectoryEntries())
+    for(const auto &i : _pd.Listing())
     {
         if(i.CFIsSelected())
         {
@@ -219,7 +219,7 @@ void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
 {
     bool first = true;
     _has_common_atime = _has_common_mtime = _has_common_ctime = _has_common_btime = false;    
-    for(const auto &i : _pd.DirectoryEntries())
+    for(const auto &i : _pd.Listing())
         if(i.CFIsSelected())
         {
             if(first)

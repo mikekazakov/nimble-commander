@@ -602,7 +602,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         full_columns_width[0] + full_columns_width[1] + 1,
         full_columns_width[0] + full_columns_width[1] + full_columns_width[2] + 2};
     
-    auto &raw_entries = m_State->Data->DirectoryEntries();
+    auto &listing = m_State->Data->Listing();
     auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
     int path_name_start_pos = 0, path_name_end_pos = 0;
     int selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
@@ -620,7 +620,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         n < max_files_to_show && i < sorted_entries.size();
         ++n, ++i)
     {
-        const auto& current = raw_entries[ sorted_entries[i] ];
+        const auto& current = listing[ sorted_entries[i] ];
         if(current.CFDisplayName() == current.CFName())
             // entry has no altered display name, so just use it's real filename
             fn.FromUTF8(current.Name(), current.NameLen());
@@ -689,7 +689,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     // draw header and footer data
     {
         const VFSListingItem *current_entry = 0;
-        if(m_State->CursorPos >= 0) current_entry = &raw_entries[sorted_entries[m_State->CursorPos]];
+        if(m_State->CursorPos >= 0) current_entry = &listing[sorted_entries[m_State->CursorPos]];
         oms::StringBuf<14> time_info;
         oms::StringBuf<6> size_info;
         oms::StringBuf<256> footer_entry;

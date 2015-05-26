@@ -27,6 +27,9 @@
 - (IBAction)OnInsertNamePlaceholder:(id)sender;
 - (IBAction)OnInsertNameRangePlaceholder:(id)sender;
 - (IBAction)OnInsertCounterPlaceholder:(id)sender;
+- (IBAction)OnInsertExtensionPlaceholder:(id)sender;
+- (IBAction)OnInsertDatePlaceholder:(id)sender;
+- (IBAction)OnInsertTimePlaceholder:(id)sender;
 
 
 @end

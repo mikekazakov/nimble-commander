@@ -187,6 +187,21 @@
     [self InsertStringIntoMask:@"[C]"];
 }
 
+- (IBAction)OnInsertExtensionPlaceholder:(id)sender
+{
+    [self InsertStringIntoMask:@"[E]"];
+}
+
+- (IBAction)OnInsertDatePlaceholder:(id)sender
+{
+    [self InsertStringIntoMask:@"[YMD]"];
+}
+
+- (IBAction)OnInsertTimePlaceholder:(id)sender
+{
+    [self InsertStringIntoMask:@"[hms]"];
+}
+
 - (NSRange)currentMaskSelection
 {
     if( self.FilenameMask.currentEditor )

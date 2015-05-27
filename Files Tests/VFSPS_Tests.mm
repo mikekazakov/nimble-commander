@@ -17,8 +17,8 @@
 - (void)testBasic
 {
     auto host = make_shared<VFSPSHost>();
-    shared_ptr<VFSListing> list;
-    host->FetchDirectoryListing("/", &list, 0, 0);
+    unique_ptr<VFSListing> list;
+    host->FetchDirectoryListing("/", list, 0, 0);
 
     bool has_launchd = false;
     bool has_kernel_task = false;

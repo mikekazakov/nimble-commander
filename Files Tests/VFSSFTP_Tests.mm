@@ -59,15 +59,15 @@
     
     XCTAssert( host->HomeDir() == "/root" );
     
-    shared_ptr<VFSListing> listing;
-    XCTAssert( host->FetchDirectoryListing("/", &listing, 0, 0) == 0);
+    unique_ptr<VFSListing> listing;
+    XCTAssert( host->FetchDirectoryListing("/", listing, 0, 0) == 0);
     
     if(!listing)
         return;
     
     PanelData data;
-    data.Load(listing);
-    XCTAssert( data.DirectoryEntries().Count() == 22);
+    data.Load(move(listing));
+    XCTAssert( data.Listing().Count() == 22);
     XCTAssert( "bin"s == data.EntryAtSortPosition(0)->Name() );
     XCTAssert( "var"s == data.EntryAtSortPosition(19)->Name() );
     XCTAssert( "initrd.img"s == data.EntryAtSortPosition(20)->Name() );

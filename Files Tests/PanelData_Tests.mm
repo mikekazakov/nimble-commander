@@ -41,14 +41,14 @@ struct DummyVFSTestListing : public VFSListing
 
 - (void)testBasic
 {
-    auto listing = make_shared<DummyVFSTestListing>();
+    auto listing = make_unique<DummyVFSTestListing>();
     listing->items.emplace_back(@"..");
     listing->items.emplace_back(@"some filename");
     listing->items.emplace_back(@"another filename");
     listing->items.emplace_back(@"even written with какие-то буквы");
     
     PanelData data;
-    data.Load(listing);
+    data.Load(move(listing));
     
     // testing raw C sorting facility
     for(int i = 0; i < listing->items.size(); ++i)
@@ -67,7 +67,7 @@ struct DummyVFSTestListing : public VFSListing
 
 - (void)testSortingWithCases
 {
-    auto listing = make_shared<DummyVFSTestListing>();
+    auto listing = make_unique<DummyVFSTestListing>();
     listing->items.emplace_back(@"аааа");
     listing->items.emplace_back(@"бббб");
     listing->items.emplace_back(@"АААА");
@@ -78,7 +78,7 @@ struct DummyVFSTestListing : public VFSListing
     sorting.sort = PanelSortMode::SortByName;
     sorting.case_sens = false;
     data.SetSortMode(sorting);
-    data.Load(listing);
+    data.Load(move(listing));
     
     XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 0);
     XCTAssert(data.SortedIndexForName(listing->items[2].Name()) == 1);
@@ -95,7 +95,7 @@ struct DummyVFSTestListing : public VFSListing
 
 - (void)testHardFiltering
 {
-    auto listing = make_shared<DummyVFSTestListing>();
+    auto listing = make_unique<DummyVFSTestListing>();
     // just my home dir below
     listing->items.emplace_back(@"..");
     listing->items.emplace_back(@".cache");
@@ -125,9 +125,9 @@ struct DummyVFSTestListing : public VFSListing
     listing->items.emplace_back(@"Pictures");
     listing->items.emplace_back(@"Public");
 
-    auto empty_listing = make_shared<DummyVFSTestListing>();
+    auto empty_listing = make_unique<DummyVFSTestListing>();
     
-    auto almost_empty_listing = make_shared<DummyVFSTestListing>();
+    auto almost_empty_listing = make_unique<DummyVFSTestListing>();
     almost_empty_listing->items.emplace_back(@"какой-то файл");
     
     PanelData data;
@@ -139,7 +139,7 @@ struct DummyVFSTestListing : public VFSListing
     filtering.show_hidden = true;
     data.SetHardFiltering(filtering);
     
-    data.Load(listing);
+    data.Load(move(listing));
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName(".Trash") >= 0);
     XCTAssert(data.SortedIndexForName("Games") >= 0);
@@ -166,17 +166,46 @@ struct DummyVFSTestListing : public VFSListing
     XCTAssert(data.SortedDirectoryEntries().size() == 1);
     
     // now test what will happen on empty listing
-    data.Load(empty_listing);
+    data.Load(move(empty_listing));
     XCTAssert(data.SortedIndexForName("..") < 0);
 
     // now test what will happen on almost empty listing (will became empty after filtering)
-    data.Load(almost_empty_listing);
+    data.Load(move(almost_empty_listing));
     XCTAssert(data.SortedIndexForName("..") < 0);
     
     // now more comples situations
     filtering.text.text = @"IC";
     data.SetHardFiltering(filtering);
-    data.Load(listing);
+    listing = make_unique<DummyVFSTestListing>();
+    // just my home dir below
+    listing->items.emplace_back(@"..");
+    listing->items.emplace_back(@".cache");
+    listing->items.emplace_back(@".config");
+    listing->items.emplace_back(@".cups");
+    listing->items.emplace_back(@".dropbox");
+    listing->items.emplace_back(@".dvdcss");
+    listing->items.emplace_back(@".local");
+    listing->items.emplace_back(@".mplayer");
+    listing->items.emplace_back(@".ssh");
+    listing->items.emplace_back(@".subversion");
+    listing->items.emplace_back(@".Trash");
+    listing->items.emplace_back(@"Applications");
+    listing->items.emplace_back(@"Another app");
+    listing->items.emplace_back(@"Another app number two");
+    listing->items.emplace_back(@"Applications (Parallels)");
+    listing->items.emplace_back(@"что-то на русском языке");
+    listing->items.emplace_back(@"ЕЩЕ РУССКИЙ ЯЗЫК");
+    listing->items.emplace_back(@"Desktop");
+    listing->items.emplace_back(@"Documents");
+    listing->items.emplace_back(@"Downloads");
+    listing->items.emplace_back(@"Dropbox");
+    listing->items.emplace_back(@"Games");
+    listing->items.emplace_back(@"Library");
+    listing->items.emplace_back(@"Movies");
+    listing->items.emplace_back(@"Music");
+    listing->items.emplace_back(@"Pictures");
+    listing->items.emplace_back(@"Public");
+    data.Load(move(listing));
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName("Music") >= 0);
     XCTAssert(data.SortedIndexForName("Pictures") >= 0);

@@ -97,7 +97,9 @@ uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, function<void()> _ha
     
     FSEventStreamContext context = {0, w.get(), NULL, NULL, NULL};
     CFStringRef path = CFStringCreateWithBytes(0, (const UInt8*)dirpath.c_str(), dirpath.length(), kCFStringEncodingUTF8, false);
-
+    if(!path)
+        return 0;
+    
     void *ar[1] = {(void*)path};
     CFArrayRef pathsToWatch = CFArrayCreate(0, (const void**)ar, 1, &kCFTypeArrayCallBacks);
         

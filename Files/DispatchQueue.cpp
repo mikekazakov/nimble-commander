@@ -160,8 +160,12 @@ void DispatchGroup::Run( function<void()> _f )
 {
     if(!_f)
         return;
-    
-    dispatch_group_async( m_Group, m_Queue, move(_f) );
+
+    m_Count++;
+    dispatch_group_async( m_Group, m_Queue, [this, _f=move(_f)]{
+        _f();
+        m_Count--;
+    });
 }
 
 void DispatchGroup::Wait()

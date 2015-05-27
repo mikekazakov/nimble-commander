@@ -50,6 +50,12 @@ struct DummyVFSTestListing : public VFSListing
     PanelData data;
     data.Load(move(listing));
     
+    listing = make_unique<DummyVFSTestListing>();
+    listing->items.emplace_back(@"..");
+    listing->items.emplace_back(@"some filename");
+    listing->items.emplace_back(@"another filename");
+    listing->items.emplace_back(@"even written with какие-то буквы");
+    
     // testing raw C sorting facility
     for(int i = 0; i < listing->items.size(); ++i)
         XCTAssert(data.RawIndexForName(listing->items[i].Name()) == i);
@@ -80,6 +86,11 @@ struct DummyVFSTestListing : public VFSListing
     data.SetSortMode(sorting);
     data.Load(move(listing));
     
+    listing = make_unique<DummyVFSTestListing>();
+    listing->items.emplace_back(@"аааа");
+    listing->items.emplace_back(@"бббб");
+    listing->items.emplace_back(@"АААА");
+    listing->items.emplace_back(@"ББББ");
     XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 0);
     XCTAssert(data.SortedIndexForName(listing->items[2].Name()) == 1);
     XCTAssert(data.SortedIndexForName(listing->items[1].Name()) == 2);
@@ -205,6 +216,7 @@ struct DummyVFSTestListing : public VFSListing
     listing->items.emplace_back(@"Music");
     listing->items.emplace_back(@"Pictures");
     listing->items.emplace_back(@"Public");
+    auto count = listing->Count();
     data.Load(move(listing));
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName("Music") >= 0);
@@ -237,7 +249,7 @@ struct DummyVFSTestListing : public VFSListing
     filtering.show_hidden = true;
     data.SetHardFiltering(filtering);
     XCTAssert(data.SortedIndexForName("..") == 0);
-    XCTAssert(data.SortedDirectoryEntries().size() == listing->Count());
+    XCTAssert(data.SortedDirectoryEntries().size() == count);
 }
 
 

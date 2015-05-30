@@ -155,7 +155,7 @@ Gw
                         <font key="titleFont" metaFont="system"/>
                     </box>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RwK-OL-6hu">
-                        <rect key="frame" x="18" y="404" width="192" height="17"/>
+                        <rect key="frame" x="18" y="404" width="170" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rename pattern" id="HSQ-qr-5xS">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -163,7 +163,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p5V-M1-8GC">
-                        <rect key="frame" x="20" y="372" width="182" height="26"/>
+                        <rect key="frame" x="20" y="372" width="191" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="170" id="GJb-SC-TOk"/>
                         </constraints>
@@ -175,7 +175,7 @@ Gw
                         <connections>
                             <action selector="OnFilenameMaskChanged:" target="-2" id="vQ5-pE-9aa"/>
                             <outlet property="delegate" destination="-2" id="Kt7-xk-caN"/>
-                            <outlet property="nextKeyView" destination="cgN-Ss-qHc" id="qQN-0y-7q0"/>
+                            <outlet property="nextKeyView" destination="EKb-UU-Za4" id="d4J-xt-28Q"/>
                         </connections>
                     </comboBox>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bEk-Py-Bb5">
@@ -255,17 +255,6 @@ Gw
                             <action selector="OnInsertTimePlaceholder:" target="-2" id="xqK-tc-dBX"/>
                         </connections>
                     </button>
-                    <button toolTip="^A" translatesAutoresizingMaskIntoConstraints="NO" id="cgN-Ss-qHc">
-                        <rect key="frame" x="202" y="375" width="11" height="21"/>
-                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSAddTemplate" imagePosition="only" alignment="center" inset="2" id="kti-CE-eSn">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="OnInsertMenu:" target="-2" id="Ypx-M5-4wN"/>
-                            <outlet property="nextKeyView" destination="EKb-UU-Za4" id="4U2-1n-DMT"/>
-                        </connections>
-                    </button>
                     <button toolTip="^E" horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nQr-DT-yTz">
                         <rect key="frame" x="113" y="344" width="100" height="28"/>
                         <constraints>
@@ -280,9 +269,22 @@ Gw
                             <outlet property="nextKeyView" destination="AKG-zR-ewH" id="gj3-bf-gP5"/>
                         </connections>
                     </button>
+                    <button toolTip="^A" translatesAutoresizingMaskIntoConstraints="NO" id="cgN-Ss-qHc">
+                        <rect key="frame" x="194" y="407" width="11" height="11"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="11" id="W02-bx-BRy"/>
+                        </constraints>
+                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSAddTemplate" imagePosition="only" alignment="center" inset="2" id="kti-CE-eSn">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnInsertMenu:" target="-2" id="Ypx-M5-4wN"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="cgN-Ss-qHc" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="top" id="02l-yj-uTM"/>
+                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="p5V-M1-8GC" secondAttribute="trailing" constant="8" symbolic="YES" id="0R0-AJ-4r9"/>
                     <constraint firstItem="nQr-DT-yTz" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="bottom" constant="8" id="1uc-ND-29h"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="AKG-zR-ewH" secondAttribute="trailing" constant="8" symbolic="YES" id="37p-6N-HAp"/>
                     <constraint firstItem="RV2-6w-I75" firstAttribute="top" secondItem="lDD-R1-mor" secondAttribute="bottom" constant="8" symbolic="YES" id="3rI-uL-gka"/>
@@ -296,9 +298,9 @@ Gw
                     <constraint firstAttribute="trailing" secondItem="RV2-6w-I75" secondAttribute="trailing" constant="20" symbolic="YES" id="JM2-IA-V2N"/>
                     <constraint firstItem="p5V-M1-8GC" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Mwh-AN-76r"/>
                     <constraint firstItem="E2t-ZL-Mbg" firstAttribute="trailing" secondItem="EKb-UU-Za4" secondAttribute="trailing" id="NV9-oE-19S"/>
-                    <constraint firstItem="cgN-Ss-qHc" firstAttribute="leading" secondItem="p5V-M1-8GC" secondAttribute="trailing" constant="3" id="Nxc-qD-dzX"/>
                     <constraint firstItem="EKb-UU-Za4" firstAttribute="width" secondItem="nQr-DT-yTz" secondAttribute="width" id="TnJ-XU-fg5"/>
                     <constraint firstItem="bEk-Py-Bb5" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="Urr-Hx-E1x"/>
+                    <constraint firstItem="cgN-Ss-qHc" firstAttribute="leading" secondItem="RwK-OL-6hu" secondAttribute="trailing" constant="8" symbolic="YES" id="VHF-Kl-2UH"/>
                     <constraint firstItem="9Ue-xA-mhT" firstAttribute="leading" secondItem="stf-ED-JLt" secondAttribute="trailing" constant="8" symbolic="YES" id="XUr-Xy-Mmp"/>
                     <constraint firstAttribute="trailing" secondItem="uV6-QM-UnT" secondAttribute="trailing" constant="20" symbolic="YES" id="Zyk-6N-Fo8"/>
                     <constraint firstItem="uV6-QM-UnT" firstAttribute="top" secondItem="RV2-6w-I75" secondAttribute="bottom" constant="20" symbolic="YES" id="f85-2a-uP4"/>
@@ -311,16 +313,15 @@ Gw
                     <constraint firstItem="9Ue-xA-mhT" firstAttribute="leading" secondItem="AKG-zR-ewH" secondAttribute="leading" id="joX-eq-d0S"/>
                     <constraint firstItem="E2t-ZL-Mbg" firstAttribute="top" secondItem="EKb-UU-Za4" secondAttribute="bottom" constant="4" id="kBJ-JD-3up"/>
                     <constraint firstItem="9Ue-xA-mhT" firstAttribute="leading" secondItem="nQr-DT-yTz" secondAttribute="leading" id="kHU-Uy-I0n"/>
-                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="cgN-Ss-qHc" secondAttribute="trailing" constant="3" id="lFX-ey-kxb"/>
                     <constraint firstItem="stf-ED-JLt" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="lVm-dC-8rn"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="9Ue-xA-mhT" secondAttribute="trailing" constant="8" symbolic="YES" id="mAc-4v-Ikr"/>
-                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="RwK-OL-6hu" secondAttribute="trailing" constant="8" symbolic="YES" id="mzU-XC-yqZ"/>
-                    <constraint firstItem="cgN-Ss-qHc" firstAttribute="centerY" secondItem="p5V-M1-8GC" secondAttribute="centerY" id="qs6-JW-nSv"/>
                     <constraint firstItem="EKb-UU-Za4" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="bottom" constant="8" id="tfm-EE-Kdz"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="nQr-DT-yTz" secondAttribute="trailing" constant="8" symbolic="YES" id="tiT-1P-uMr"/>
                     <constraint firstItem="RwK-OL-6hu" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="v1d-I2-R19"/>
+                    <constraint firstItem="cgN-Ss-qHc" firstAttribute="centerY" secondItem="RwK-OL-6hu" secondAttribute="centerY" id="vQz-ki-cZl"/>
                     <constraint firstAttribute="bottom" secondItem="uV6-QM-UnT" secondAttribute="bottom" constant="20" symbolic="YES" id="xRj-du-GhK"/>
                     <constraint firstItem="stf-ED-JLt" firstAttribute="top" secondItem="E2t-ZL-Mbg" secondAttribute="bottom" constant="4" id="y82-LP-s1n"/>
+                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="cgN-Ss-qHc" secondAttribute="trailing" constant="11" id="zQH-KR-E1k"/>
                 </constraints>
             </view>
             <connections>
@@ -331,48 +332,308 @@ Gw
         </window>
         <menu id="GFK-z0-FZ4">
             <items>
-                <menuItem title="Item 1" id="WIA-nR-vup">
+                <menuItem title="Insert Name" id="ASO-kr-YQ9">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Insert Name" id="n9d-vl-7sS">
+                        <items>
+                            <menuItem title="[N] Name" tag="101" id="MaD-CZ-ZOf">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="aPu-jk-emA"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Nx] xth character of the name" tag="102" id="kfE-p8-aQp">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="9TQ-jO-dJL"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Nx-y] Characters x to y" tag="103" id="0ZZ-ek-ffd">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="V81-rT-d9o"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Nx,y] y characters starting at character x" tag="104" id="c6B-wg-whY">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="mEC-2w-tCB"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Nx-] Characters starting at character x" tag="105" id="tHH-ES-kVx">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="kEa-hA-gKv"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[N0x-y] Characters x-y, padding with zeroes" tag="106" id="5PB-nw-ruW">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="iZL-nO-mhD"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[N x-y] Characters x-y, padding with spaces" tag="107" id="gxe-Qo-9SB">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="nMI-S2-9ld"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[N-x,y] y characters starting at the x-last character" tag="108" id="M2c-fE-A0U">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="aPZ-gx-Fab"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[N-x-y] Characters from the x-last to the y-last character" tag="109" id="IYS-tn-zus">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="OL6-5G-jQP"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Nx--y] Characters from the x to the y-last character" tag="110" id="69b-el-fdg">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="McY-si-c7W"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[N-x-] Characters from the x-last character" tag="111" id="7zz-h6-nzq">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="mdW-Pq-dC4"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
                 </menuItem>
-                <menuItem title="Item 2" id="1hO-VU-hcg">
+                <menuItem title="Insert Extension" id="elx-8C-kN3">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Insert Extension" id="6UV-CG-7gE">
+                        <items>
+                            <menuItem title="[E] Extension" tag="201" id="cq6-JT-R4R">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="PID-6g-sNO"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Ex] xth character of the extension" tag="202" id="soN-u5-8B9">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="eHr-h8-9ix"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Ex-y] Characters x to y" tag="203" id="Zbw-tQ-Old">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="1Om-kR-UJ9"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Ex,y] y characters starting at character x" tag="204" id="tLd-t3-eny">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="zk8-27-dZj"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Ex-] Characters starting at character x" tag="205" id="G5S-W3-9F5">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Lge-ci-LEo"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[E0x-y] Characters x-y, padding with zeroes" tag="206" id="5OS-Hh-oit">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="k2v-Mq-l72"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[E x-y] Characters x-y, padding with spaces" tag="207" id="sCN-Ho-nlG">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="A89-3q-a01"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[E-x,y] y characters starting at the x-last character" tag="208" id="s97-nv-BwD">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="VDm-2A-NU7"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[E-x-y] Characters from the x-last to the y-last character" tag="209" id="kay-ak-msL">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="PuI-Bf-Ncm"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Ex--y] Characters from the x to the y-last character" tag="210" id="nwO-dk-fvy">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="q8p-kn-9bB"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[E-x-] Characters from the x-last character" tag="211" id="ekj-0V-KuY">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="6e2-Cy-K7A"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
                 </menuItem>
-                <menuItem title="Item 3" id="kvw-xq-DTc">
+                <menuItem title="Insert Time" id="QeP-e1-ydC">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Insert Time" id="lQb-OZ-81W">
+                        <items>
+                            <menuItem title="[d] Localized date" tag="301" id="Jak-d8-5mU">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Dfm-KQ-SdC"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Y] Year in 4 digit form" tag="302" id="SsN-Yk-hdY">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="jNR-z3-5ic"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[y] Year in 2 digit form" tag="303" id="EzQ-Su-4rt">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="wR6-RP-QfI"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[M] Month in 2 digit form" tag="304" id="8b6-Qd-Tet">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="sI4-bf-Up8"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[D] Day in 2 digit form" tag="305" id="Mli-E6-Dh0">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="cDa-6S-aUS"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[t] Localized time" tag="306" id="X2x-oo-kdd">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="7dY-WO-yvs"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[h] Hours in 2 digit 24 hour format" tag="307" id="Rke-70-QSJ">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="QBO-MQ-eAN"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[m] Minutes in 2 digit format" tag="308" id="aDt-Fx-JbE">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Uv2-1J-yLA"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[s] Seconds in 2 digit format" tag="309" id="7gT-UX-y3n">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="FyM-Zn-MtV"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Insert Counter" id="kuO-PY-Bmo">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Insert Counter" id="fuD-37-ihS">
+                        <items>
+                            <menuItem title="[C] Default counter" tag="501" id="IZE-i9-JNf">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="xlw-vP-pqO"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Cx] Counter starting at x" tag="502" id="X4f-xK-DKi">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="vR3-O2-PFJ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Cx+y] -&quot;&quot;-, stepping by y " tag="503" id="liV-eL-4oU">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="rgm-Fa-hZe"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Cx+y/z] -&quot;&quot;-, every z files" tag="504" id="Pt4-fB-yzE">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Xip-ZL-wk8"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[Cx+y/z:w] -&quot;&quot;-, with width w" tag="505" id="cc4-5O-bUq">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="wJF-e6-Gb9"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
                 </menuItem>
                 <menuItem title="Change Case" id="bGP-Wa-nkX">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Change Case" id="xj4-zP-B43">
                         <items>
-                            <menuItem title="[U] UPPERCASE" id="dZA-6P-0fW">
+                            <menuItem title="[U] UPPERCASE" tag="401" id="dZA-6P-0fW">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="OnInsertUppercasePlaceholder:" target="-2" id="vCl-Sy-cAK"/>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="XMZ-fK-Ibl"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[L] lowercase" id="uzo-Ra-fdB">
+                            <menuItem title="[L] lowercase" tag="402" id="uzo-Ra-fdB">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="OnInsertLowercasePlaceholder:" target="-2" id="1n5-gt-mzQ"/>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Tgs-SC-Yus"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[F] Capitalize Each Word" id="GtS-TG-NfX">
+                            <menuItem title="[F] Capitalize Each Word" tag="403" id="GtS-TG-NfX">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="OnInsertCapitalizePlaceholder:" target="-2" id="MCd-xe-pG2"/>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="xTG-3U-hBk"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[n] Original case" id="ih7-k0-Ocn">
+                            <menuItem title="[n] Original case" tag="404" id="ih7-k0-Ocn">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="OnInsertOriginalCasePlaceholder:" target="-2" id="9Ba-bB-6Ej"/>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="O87-Pi-eD3"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Other" id="XRV-Nj-PD1">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Other" id="WWQ-5i-QHP">
+                        <items>
+                            <menuItem title="[A] Full name" tag="601" id="ecy-XB-j1i">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Mog-RQ-OYO"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[[] Opening square bracket" tag="602" id="twO-ES-XWZ">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="IGk-TC-5Qs"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[]] Closing square bracket" tag="603" id="cS1-vL-FvU">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="7ls-0Q-zWE"/>
                                 </connections>
                             </menuItem>
                         </items>
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-106" y="628.5"/>
+            <point key="canvasLocation" x="120.5" y="587.5"/>
         </menu>
     </objects>
     <resources>

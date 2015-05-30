@@ -33,10 +33,6 @@
 - (IBAction)OnInsertDatePlaceholder:(id)sender;
 - (IBAction)OnInsertTimePlaceholder:(id)sender;
 - (IBAction)OnInsertMenu:(id)sender;
-- (IBAction)OnInsertUppercasePlaceholder:(id)sender;
-- (IBAction)OnInsertLowercasePlaceholder:(id)sender;
-- (IBAction)OnInsertCapitalizePlaceholder:(id)sender;
-- (IBAction)OnInsertOriginalCasePlaceholder:(id)sender;
-
+- (IBAction)OnInsertPlaceholderFromMenu:(id)sender;
 
 @end

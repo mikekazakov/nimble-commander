@@ -208,24 +208,63 @@
     [self.InsertPlaceholderMenu popUpMenuPositioningItem:nil atLocation:NSMakePoint(NSMaxX(r), NSMaxY(r)) inView:nil];
 }
 
-- (IBAction)OnInsertUppercasePlaceholder:(id)sender
+- (IBAction)OnInsertPlaceholderFromMenu:(id)sender
 {
-    [self InsertStringIntoMask:@"[U]"];
-}
-
-- (IBAction)OnInsertLowercasePlaceholder:(id)sender
-{
-    [self InsertStringIntoMask:@"[L]"];    
-}
-
-- (IBAction)OnInsertCapitalizePlaceholder:(id)sender
-{
-    [self InsertStringIntoMask:@"[F]"];
-}
-
-- (IBAction)OnInsertOriginalCasePlaceholder:(id)sender
-{
-    [self InsertStringIntoMask:@"[n]"];
+    if(auto item = objc_cast<NSMenuItem>(sender)) {
+        switch (item.tag) {
+            case 101: [self InsertStringIntoMask:@"[N]"];       break;
+            case 102: [self InsertStringIntoMask:@"[N1]"];      break;
+            case 103: [self InsertStringIntoMask:@"[N2-5]"];    break;
+            case 104: [self InsertStringIntoMask:@"[N2,5]"];    break;
+            case 105: [self InsertStringIntoMask:@"[N2-]"];     break;
+            case 106: [self InsertStringIntoMask:@"[N02-9]"];   break;
+            case 107: [self InsertStringIntoMask:@"[N 2-9]"];   break;
+            case 108: [self InsertStringIntoMask:@"[N-8,5]"];   break;
+            case 109: [self InsertStringIntoMask:@"[N-8-5]"];   break;
+            case 110: [self InsertStringIntoMask:@"[N2--5]"];   break;
+            case 111: [self InsertStringIntoMask:@"[N-5-]"];    break;
+            // ----
+            case 201: [self InsertStringIntoMask:@"[E]"];       break;
+            case 202: [self InsertStringIntoMask:@"[E1]"];      break;
+            case 203: [self InsertStringIntoMask:@"[E2-5]"];    break;
+            case 204: [self InsertStringIntoMask:@"[E2,5]"];    break;
+            case 205: [self InsertStringIntoMask:@"[E2-]"];     break;
+            case 206: [self InsertStringIntoMask:@"[E02-9]"];   break;
+            case 207: [self InsertStringIntoMask:@"[E 2-9]"];   break;
+            case 208: [self InsertStringIntoMask:@"[E-8,5]"];   break;
+            case 209: [self InsertStringIntoMask:@"[E-8-5]"];   break;
+            case 210: [self InsertStringIntoMask:@"[E2--5]"];   break;
+            case 211: [self InsertStringIntoMask:@"[E-5-]"];    break;
+            // ----
+            case 301: [self InsertStringIntoMask:@"[d]"];       break;
+            case 302: [self InsertStringIntoMask:@"[Y]"];       break;
+            case 303: [self InsertStringIntoMask:@"[y]"];       break;
+            case 304: [self InsertStringIntoMask:@"[M]"];       break;
+            case 305: [self InsertStringIntoMask:@"[D]"];       break;
+            case 306: [self InsertStringIntoMask:@"[t]"];       break;
+            case 307: [self InsertStringIntoMask:@"[h]"];       break;
+            case 308: [self InsertStringIntoMask:@"[m]"];       break;
+            case 309: [self InsertStringIntoMask:@"[s]"];       break;
+            // ----
+            case 401: [self InsertStringIntoMask:@"[U]"];       break;
+            case 402: [self InsertStringIntoMask:@"[L]"];       break;
+            case 403: [self InsertStringIntoMask:@"[F]"];       break;
+            case 404: [self InsertStringIntoMask:@"[n]"];       break;
+            // ----
+            case 501: [self InsertStringIntoMask:@"[C]"];       break;
+            case 502: [self InsertStringIntoMask:@"[C10]"];     break;
+            case 503: [self InsertStringIntoMask:@"[C10+2]"];   break;
+            case 504: [self InsertStringIntoMask:@"[C10+2/1]"]; break;
+            case 505:[self InsertStringIntoMask:@"[C10+2/1:5]"];break;
+            // ----
+            case 601: [self InsertStringIntoMask:@"[A]"];       break;
+            case 602: [self InsertStringIntoMask:@"[[]"];       break;
+            case 603: [self InsertStringIntoMask:@"[]]"];       break;
+            // ----
+            default:
+                break;
+        }
+    }
 }
 
 - (NSRange)currentMaskSelection

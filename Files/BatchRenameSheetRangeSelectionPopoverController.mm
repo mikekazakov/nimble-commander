@@ -58,4 +58,10 @@
         m_Selection = self.textField.currentEditor.selectedRange;
 }
 
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    self.textField.stringValue = self.string;
+    
+}
+
 @end

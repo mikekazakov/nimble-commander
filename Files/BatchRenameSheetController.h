@@ -21,6 +21,8 @@
 //@property (strong) IBOutlet NSTextField *FilenameMask;
 @property (strong) IBOutlet NSComboBox *FilenameMask;
 @property (strong) IBOutlet NSButton *InsertNameRangePlaceholderButton;
+@property (strong) IBOutlet NSButton *InsertPlaceholderMenuButton;
+@property (strong) IBOutlet NSMenu *InsertPlaceholderMenu;
 
 
 - (IBAction)OnFilenameMaskChanged:(id)sender;
@@ -30,6 +32,11 @@
 - (IBAction)OnInsertExtensionPlaceholder:(id)sender;
 - (IBAction)OnInsertDatePlaceholder:(id)sender;
 - (IBAction)OnInsertTimePlaceholder:(id)sender;
+- (IBAction)OnInsertMenu:(id)sender;
+- (IBAction)OnInsertUppercasePlaceholder:(id)sender;
+- (IBAction)OnInsertLowercasePlaceholder:(id)sender;
+- (IBAction)OnInsertCapitalizePlaceholder:(id)sender;
+- (IBAction)OnInsertOriginalCasePlaceholder:(id)sender;
 
 
 @end

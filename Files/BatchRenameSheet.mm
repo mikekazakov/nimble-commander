@@ -41,7 +41,10 @@
             [self.windowController OnInsertTimePlaceholder:self];
             return true;
         }
-        
+        if( keycode == kVK_ANSI_A ) { // ctrl+a
+            [self.windowController OnInsertMenu:self];
+            return true;
+        }
     }
     return [super performKeyEquivalent:event];
 }

@@ -202,6 +202,32 @@
     [self InsertStringIntoMask:@"[hms]"];
 }
 
+- (IBAction)OnInsertMenu:(id)sender
+{
+    NSRect r = [self.window convertRectToScreen:self.InsertPlaceholderMenuButton.frame];
+    [self.InsertPlaceholderMenu popUpMenuPositioningItem:nil atLocation:NSMakePoint(NSMaxX(r), NSMaxY(r)) inView:nil];
+}
+
+- (IBAction)OnInsertUppercasePlaceholder:(id)sender
+{
+    [self InsertStringIntoMask:@"[U]"];
+}
+
+- (IBAction)OnInsertLowercasePlaceholder:(id)sender
+{
+    [self InsertStringIntoMask:@"[L]"];    
+}
+
+- (IBAction)OnInsertCapitalizePlaceholder:(id)sender
+{
+    [self InsertStringIntoMask:@"[F]"];
+}
+
+- (IBAction)OnInsertOriginalCasePlaceholder:(id)sender
+{
+    [self InsertStringIntoMask:@"[n]"];
+}
+
 - (NSRange)currentMaskSelection
 {
     if( self.FilenameMask.currentEditor )
@@ -236,6 +262,10 @@
 
 - (void)SetNewMask:(NSString*)_str
 {
+    [self.FilenameMask.undoManager registerUndoWithTarget:self
+                                                 selector:@selector(SetNewMask:)
+                                                   object:self.FilenameMask.stringValue];
+
     self.FilenameMask.stringValue = _str;
     [self OnFilenameMaskChanged:self.FilenameMask];
 }

@@ -10,6 +10,8 @@
                 <outlet property="FilenameMask" destination="p5V-M1-8GC" id="HO9-Rk-BnH"/>
                 <outlet property="FilenamesTable" destination="C9n-Is-tq6" id="dDn-80-S5s"/>
                 <outlet property="InsertNameRangePlaceholderButton" destination="E2t-ZL-Mbg" id="ryR-Ke-XJo"/>
+                <outlet property="InsertPlaceholderMenu" destination="GFK-z0-FZ4" id="1r1-bY-aWb"/>
+                <outlet property="InsertPlaceholderMenuButton" destination="cgN-Ss-qHc" id="w0m-T0-QH1"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -18,20 +20,20 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="BatchRenameSheetController" animationBehavior="default" id="F0z-JX-Cv5" customClass="BatchRenameSheet">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="550" height="441"/>
+            <rect key="contentRect" x="196" y="240" width="578" height="441"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="550" height="441"/>
+                <rect key="frame" x="0.0" y="0.0" width="578" height="441"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RV2-6w-I75">
-                        <rect key="frame" x="20" y="61" width="510" height="220"/>
+                        <rect key="frame" x="20" y="61" width="538" height="220"/>
                         <clipView key="contentView" id="Dto-5V-GUq">
                             <rect key="frame" x="1" y="17" width="238" height="117"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="W7g-Hk-VQP" viewBased="YES" id="C9n-Is-tq6">
-                                    <rect key="frame" x="0.0" y="0.0" width="508" height="0.0"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="536" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -69,7 +71,7 @@
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn identifier="renamed" width="386" minWidth="40" maxWidth="1000" id="cxN-S7-SiU">
+                                        <tableColumn identifier="renamed" width="414" minWidth="40" maxWidth="1000" id="cxN-S7-SiU">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Renamed">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -83,7 +85,7 @@
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView id="hPp-mk-KlD">
-                                                    <rect key="frame" x="120" y="1" width="386" height="17"/>
+                                                    <rect key="frame" x="120" y="1" width="414" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="83D-g1-R6J">
@@ -128,7 +130,7 @@
                         </tableHeaderView>
                     </scrollView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uV6-QM-UnT">
-                        <rect key="frame" x="444" y="13" width="92" height="32"/>
+                        <rect key="frame" x="472" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="NIB-L5-ibd"/>
                         </constraints>
@@ -144,7 +146,7 @@ Gw
                         </connections>
                     </button>
                     <box horizontalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="lDD-R1-mor">
-                        <rect key="frame" x="226" y="289" width="5" height="140"/>
+                        <rect key="frame" x="214" y="289" width="5" height="140"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="140" id="CIX-ok-9tY"/>
                         </constraints>
@@ -153,7 +155,7 @@ Gw
                         <font key="titleFont" metaFont="system"/>
                     </box>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RwK-OL-6hu">
-                        <rect key="frame" x="18" y="404" width="204" height="17"/>
+                        <rect key="frame" x="18" y="404" width="192" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rename pattern" id="HSQ-qr-5xS">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -161,11 +163,11 @@ Gw
                         </textFieldCell>
                     </textField>
                     <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p5V-M1-8GC">
-                        <rect key="frame" x="20" y="372" width="203" height="26"/>
+                        <rect key="frame" x="20" y="372" width="182" height="26"/>
                         <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="GJb-SC-TOk"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="170" id="GJb-SC-TOk"/>
                         </constraints>
-                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="nw9-lR-fRc">
+                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" completes="NO" numberOfVisibleItems="5" id="nw9-lR-fRc">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -173,10 +175,11 @@ Gw
                         <connections>
                             <action selector="OnFilenameMaskChanged:" target="-2" id="vQ5-pE-9aa"/>
                             <outlet property="delegate" destination="-2" id="Kt7-xk-caN"/>
+                            <outlet property="nextKeyView" destination="cgN-Ss-qHc" id="qQN-0y-7q0"/>
                         </connections>
                     </comboBox>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bEk-Py-Bb5">
-                        <rect key="frame" x="235" y="404" width="109" height="17"/>
+                        <rect key="frame" x="223" y="404" width="109" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Search &amp; replace" id="J7t-S7-amS">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -194,6 +197,7 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnInsertNamePlaceholder:" target="-2" id="vdn-hY-37F"/>
+                            <outlet property="nextKeyView" destination="E2t-ZL-Mbg" id="YSh-OE-6q5"/>
                         </connections>
                     </button>
                     <button toolTip="^R" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="E2t-ZL-Mbg">
@@ -207,6 +211,7 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnInsertNameRangePlaceholder:" target="-2" id="aXF-JT-Skc"/>
+                            <outlet property="nextKeyView" destination="stf-ED-JLt" id="Jyt-uw-Rv8"/>
                         </connections>
                     </button>
                     <button toolTip="^C" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="stf-ED-JLt">
@@ -220,22 +225,10 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnInsertCounterPlaceholder:" target="-2" id="qDP-ah-Uji"/>
+                            <outlet property="nextKeyView" destination="nQr-DT-yTz" id="YkC-JZ-gdx"/>
                         </connections>
                     </button>
-                    <button toolTip="^E" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nQr-DT-yTz">
-                        <rect key="frame" x="113" y="344" width="100" height="28"/>
-                        <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="9Kp-1l-64u"/>
-                        </constraints>
-                        <buttonCell key="cell" type="push" title="[E] Extension" bezelStyle="rounded" alignment="left" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fkf-IO-A7D">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="smallSystem"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="OnInsertExtensionPlaceholder:" target="-2" id="Oo2-WJ-ebS"/>
-                        </connections>
-                    </button>
-                    <button toolTip="^D" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AKG-zR-ewH">
+                    <button toolTip="^D" horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AKG-zR-ewH">
                         <rect key="frame" x="113" y="322" width="100" height="28"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="OE8-dA-OCl"/>
@@ -246,9 +239,10 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnInsertDatePlaceholder:" target="-2" id="FSb-Uw-n1y"/>
+                            <outlet property="nextKeyView" destination="9Ue-xA-mhT" id="4hz-hn-gXs"/>
                         </connections>
                     </button>
-                    <button toolTip="^T" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9Ue-xA-mhT">
+                    <button toolTip="^T" horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9Ue-xA-mhT">
                         <rect key="frame" x="113" y="300" width="100" height="28"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="jhF-0C-jcb"/>
@@ -261,9 +255,36 @@ Gw
                             <action selector="OnInsertTimePlaceholder:" target="-2" id="xqK-tc-dBX"/>
                         </connections>
                     </button>
+                    <button toolTip="^A" translatesAutoresizingMaskIntoConstraints="NO" id="cgN-Ss-qHc">
+                        <rect key="frame" x="202" y="375" width="11" height="21"/>
+                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSAddTemplate" imagePosition="only" alignment="center" inset="2" id="kti-CE-eSn">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnInsertMenu:" target="-2" id="Ypx-M5-4wN"/>
+                            <outlet property="nextKeyView" destination="EKb-UU-Za4" id="4U2-1n-DMT"/>
+                        </connections>
+                    </button>
+                    <button toolTip="^E" horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nQr-DT-yTz">
+                        <rect key="frame" x="113" y="344" width="100" height="28"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="9Kp-1l-64u"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="[E] Extension" bezelStyle="rounded" alignment="left" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fkf-IO-A7D">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnInsertExtensionPlaceholder:" target="-2" id="Oo2-WJ-ebS"/>
+                            <outlet property="nextKeyView" destination="AKG-zR-ewH" id="gj3-bf-gP5"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="cgN-Ss-qHc" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="top" id="02l-yj-uTM"/>
                     <constraint firstItem="nQr-DT-yTz" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="bottom" constant="8" id="1uc-ND-29h"/>
+                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="AKG-zR-ewH" secondAttribute="trailing" constant="8" symbolic="YES" id="37p-6N-HAp"/>
                     <constraint firstItem="RV2-6w-I75" firstAttribute="top" secondItem="lDD-R1-mor" secondAttribute="bottom" constant="8" symbolic="YES" id="3rI-uL-gka"/>
                     <constraint firstItem="AKG-zR-ewH" firstAttribute="leading" secondItem="E2t-ZL-Mbg" secondAttribute="trailing" constant="8" symbolic="YES" id="7Se-sg-fMP"/>
                     <constraint firstItem="RwK-OL-6hu" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="8L7-Y0-eh5"/>
@@ -275,9 +296,10 @@ Gw
                     <constraint firstAttribute="trailing" secondItem="RV2-6w-I75" secondAttribute="trailing" constant="20" symbolic="YES" id="JM2-IA-V2N"/>
                     <constraint firstItem="p5V-M1-8GC" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Mwh-AN-76r"/>
                     <constraint firstItem="E2t-ZL-Mbg" firstAttribute="trailing" secondItem="EKb-UU-Za4" secondAttribute="trailing" id="NV9-oE-19S"/>
+                    <constraint firstItem="cgN-Ss-qHc" firstAttribute="leading" secondItem="p5V-M1-8GC" secondAttribute="trailing" constant="3" id="Nxc-qD-dzX"/>
+                    <constraint firstItem="EKb-UU-Za4" firstAttribute="width" secondItem="nQr-DT-yTz" secondAttribute="width" id="TnJ-XU-fg5"/>
                     <constraint firstItem="bEk-Py-Bb5" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="Urr-Hx-E1x"/>
                     <constraint firstItem="9Ue-xA-mhT" firstAttribute="leading" secondItem="stf-ED-JLt" secondAttribute="trailing" constant="8" symbolic="YES" id="XUr-Xy-Mmp"/>
-                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="p5V-M1-8GC" secondAttribute="trailing" constant="8" symbolic="YES" id="ZZT-eN-21m"/>
                     <constraint firstAttribute="trailing" secondItem="uV6-QM-UnT" secondAttribute="trailing" constant="20" symbolic="YES" id="Zyk-6N-Fo8"/>
                     <constraint firstItem="uV6-QM-UnT" firstAttribute="top" secondItem="RV2-6w-I75" secondAttribute="bottom" constant="20" symbolic="YES" id="f85-2a-uP4"/>
                     <constraint firstItem="9Ue-xA-mhT" firstAttribute="top" secondItem="AKG-zR-ewH" secondAttribute="bottom" constant="4" id="fAN-DS-0g9"/>
@@ -286,10 +308,16 @@ Gw
                     <constraint firstItem="RV2-6w-I75" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="jKl-vD-kia"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="12" symbolic="YES" id="jOh-5N-p8f"/>
                     <constraint firstItem="AKG-zR-ewH" firstAttribute="top" secondItem="nQr-DT-yTz" secondAttribute="bottom" constant="4" id="jS5-V9-sFd"/>
+                    <constraint firstItem="9Ue-xA-mhT" firstAttribute="leading" secondItem="AKG-zR-ewH" secondAttribute="leading" id="joX-eq-d0S"/>
                     <constraint firstItem="E2t-ZL-Mbg" firstAttribute="top" secondItem="EKb-UU-Za4" secondAttribute="bottom" constant="4" id="kBJ-JD-3up"/>
+                    <constraint firstItem="9Ue-xA-mhT" firstAttribute="leading" secondItem="nQr-DT-yTz" secondAttribute="leading" id="kHU-Uy-I0n"/>
+                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="cgN-Ss-qHc" secondAttribute="trailing" constant="3" id="lFX-ey-kxb"/>
                     <constraint firstItem="stf-ED-JLt" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="lVm-dC-8rn"/>
+                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="9Ue-xA-mhT" secondAttribute="trailing" constant="8" symbolic="YES" id="mAc-4v-Ikr"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="RwK-OL-6hu" secondAttribute="trailing" constant="8" symbolic="YES" id="mzU-XC-yqZ"/>
+                    <constraint firstItem="cgN-Ss-qHc" firstAttribute="centerY" secondItem="p5V-M1-8GC" secondAttribute="centerY" id="qs6-JW-nSv"/>
                     <constraint firstItem="EKb-UU-Za4" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="bottom" constant="8" id="tfm-EE-Kdz"/>
+                    <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="nQr-DT-yTz" secondAttribute="trailing" constant="8" symbolic="YES" id="tiT-1P-uMr"/>
                     <constraint firstItem="RwK-OL-6hu" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="v1d-I2-R19"/>
                     <constraint firstAttribute="bottom" secondItem="uV6-QM-UnT" secondAttribute="bottom" constant="20" symbolic="YES" id="xRj-du-GhK"/>
                     <constraint firstItem="stf-ED-JLt" firstAttribute="top" secondItem="E2t-ZL-Mbg" secondAttribute="bottom" constant="4" id="y82-LP-s1n"/>
@@ -299,7 +327,55 @@ Gw
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
                 <outlet property="initialFirstResponder" destination="p5V-M1-8GC" id="SIA-Kt-X1q"/>
             </connections>
-            <point key="canvasLocation" x="289" y="370.5"/>
+            <point key="canvasLocation" x="286" y="252.5"/>
         </window>
+        <menu id="GFK-z0-FZ4">
+            <items>
+                <menuItem title="Item 1" id="WIA-nR-vup">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Item 2" id="1hO-VU-hcg">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Item 3" id="kvw-xq-DTc">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Change Case" id="bGP-Wa-nkX">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Change Case" id="xj4-zP-B43">
+                        <items>
+                            <menuItem title="[U] UPPERCASE" id="dZA-6P-0fW">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertUppercasePlaceholder:" target="-2" id="vCl-Sy-cAK"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[L] lowercase" id="uzo-Ra-fdB">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertLowercasePlaceholder:" target="-2" id="1n5-gt-mzQ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[F] Capitalize Each Word" id="GtS-TG-NfX">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertCapitalizePlaceholder:" target="-2" id="MCd-xe-pG2"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="[n] Original case" id="ih7-k0-Ocn">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnInsertOriginalCasePlaceholder:" target="-2" id="9Ba-bB-6Ej"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="-106" y="628.5"/>
+        </menu>
     </objects>
+    <resources>
+        <image name="NSAddTemplate" width="11" height="11"/>
+    </resources>
 </document>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BatchRenameSheetRangeSelectionPopoverController">
@@ -37,6 +37,7 @@
                     </textFieldCell>
                     <connections>
                         <outlet property="delegate" destination="-2" id="SJy-Ab-VKP"/>
+                        <outlet property="nextKeyView" destination="7bC-vC-ezf" id="n9n-JQ-DOW"/>
                     </connections>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7bC-vC-ezf">
@@ -53,6 +54,7 @@ DQ
                     </buttonCell>
                     <connections>
                         <action selector="OnOK:" target="-2" id="h0D-IA-bWK"/>
+                        <outlet property="nextKeyView" destination="z3v-qz-nrV" id="xnl-bB-L8d"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="z3v-qz-nrV">
@@ -69,6 +71,7 @@ Gw
                     </buttonCell>
                     <connections>
                         <action selector="OnCancel:" target="-2" id="TkN-3C-vNE"/>
+                        <outlet property="nextKeyView" destination="WiN-fU-zvB" id="vGa-mh-DYy"/>
                     </connections>
                 </button>
             </subviews>

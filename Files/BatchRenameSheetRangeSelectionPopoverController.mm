@@ -47,6 +47,11 @@
         [v close];
 }
 
+- (void)popoverWillShow:(NSNotification *)notification
+{
+    self.view.window.initialFirstResponder = self.textField;
+}
+
 - (void)popoverDidClose:(NSNotification *)notification
 {
     ((NSPopover*)notification.object).contentViewController = nil; // here we are

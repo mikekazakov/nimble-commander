@@ -562,6 +562,16 @@ NSString *BatchRename::FormatCounter(const Counter &_c, int _file_number)
     return [NSString stringWithUTF8String:buf];
 }
 
+void BatchRename::SetReplacingOptions( NSString *_search_for, NSString *_replace_with, bool _case_sensitive, bool _only_first, bool _search_in_ext, bool _use_regexp)
+{
+    m_SearchReplace.search_for = _search_for;
+    m_SearchReplace.replace_with = _replace_with;
+    m_SearchReplace.case_sensitive = _case_sensitive;
+    m_SearchReplace.only_first = _only_first;
+    m_SearchReplace.search_in_ext = _search_in_ext;
+    m_SearchReplace.use_regexp = _use_regexp;
+}
+
 static inline NSString *StringByTransform(NSString *_s, BatchRename::CaseTransform _ct)
 {
     switch (_ct) {
@@ -660,12 +670,47 @@ static NSString* FormatTime(time_t _t)
     return str;
 }
 
+NSString *BatchRename::DoSearchReplace(const ReplaceOptions &_opts, NSString *_source)
+{
+    if(_opts.search_for == nil || _opts.search_for.length == 0 || _opts.replace_with == nil )
+        return _source;
+    
+    NSStringCompareOptions opts = 0;
+    
+    if(!_opts.case_sensitive) opts |= NSCaseInsensitiveSearch;
+    if(_opts.use_regexp)      opts |= NSRegularExpressionSearch;
+    
+    NSRange range = NSMakeRange(0, _source.length);
+    if(!_opts.search_in_ext) {
+        static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
+        auto r = [_source rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
+        bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _source.length - 1);
+        if(has_ext)
+            range = NSMakeRange(0, r.location);
+    }
+    
+    
+    NSString *result = _source;
+    if(!_opts.only_first) {
+        result = [_source stringByReplacingOccurrencesOfString:_opts.search_for
+                                                    withString:_opts.replace_with
+                                                       options:opts
+                                                         range:range];
+    }
+    else {
+        auto r = [_source rangeOfString:_opts.search_for options:opts range:range];
+        if(r.location != NSNotFound)
+            result = [_source stringByReplacingCharactersInRange:r withString:_opts.replace_with];
+    }
+    
+    return result;
+}
+
 NSString *BatchRename::Rename( const FileInfo &_fi, int _number ) const
 {
     NSMutableString *str = [[NSMutableString alloc] initWithCapacity:64];
     
     CaseTransform case_transform = CaseTransform::Unchanged;
-    
     
     for(auto step: m_Steps) {
         NSString *next = nil;
@@ -739,5 +784,8 @@ NSString *BatchRename::Rename( const FileInfo &_fi, int _number ) const
         }
     }
     
-    return str;
+    NSString *after_replacing = DoSearchReplace(m_SearchReplace, str);
+    
+    return after_replacing;
+    //return str;
 }

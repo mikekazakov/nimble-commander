@@ -126,6 +126,14 @@ public:
     static NSString *FormatCounter(const Counter &_c, int _file_number);
     
     bool BuildActionsScript( NSString *_mask );
+    void SetReplacingOptions(NSString *_search_for,
+                             NSString *_replace_with,
+                             bool _case_sensitive,
+                             bool _only_first,
+                             bool _search_in_ext,
+                             bool _use_regexp);
+    
+    
     
     NSString *Rename( const FileInfo &_fi, int _number ) const;
     
@@ -187,6 +195,8 @@ private:
         
     }
     
+    struct ReplaceOptions;
+    static NSString *DoSearchReplace(const ReplaceOptions &_opts, NSString *_source);
     
     bool ParsePlaceholder( NSString *_ph );
 
@@ -197,6 +207,15 @@ private:
     vector<TextExtraction>  m_ActionsExtension;
     vector<Counter>         m_ActionsCounter;
 
+    struct ReplaceOptions {
+        NSString *search_for = @"";
+        NSString *replace_with = @"";
+        bool case_sensitive = false;
+        bool only_first = false;
+        bool search_in_ext = true;
+        bool use_regexp = false;
+    }                       m_SearchReplace;
+    
     
 };
 

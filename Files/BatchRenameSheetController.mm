@@ -31,7 +31,10 @@
 {
     self = [[BatchRenameSheetController alloc] init];
     if(self) {
-        assert(!_inds.empty());
+//        assert(!_inds.empty());
+        if(_inds.empty())
+            throw logic_error("empty files list");
+            
         m_Indeces = _inds;
         
         for( auto i: m_Indeces ) {
@@ -126,9 +129,23 @@
 
 - (IBAction)OnFilenameMaskChanged:(id)sender
 {
+    [self UpdateRename];
+}
+
+- (void) UpdateRename
+{
     NSString *filename_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
+
+    NSString *search_for = self.SearchForComboBox.stringValue ? self.SearchForComboBox.stringValue : @"";
+    NSString *replace_with = self.ReplaceWithComboBox.stringValue ? self.ReplaceWithComboBox.stringValue : @"";
+    bool search_case_sens = self.SearchCaseSensitive.state == NSOnState;
+    bool search_once = self.SearchOnlyOnce.state == NSOnState;
+    bool search_in_ext = self.SearchInExtension.state == NSOnState;
+    bool search_regexp = self.SearchWithRegExp.state == NSOnState;
     
     BatchRename br;
+    br.SetReplacingOptions(search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
+    
     if(!br.BuildActionsScript(filename_mask))
     {
         for(auto &l:m_LabelsAfter)
@@ -137,9 +154,8 @@
     }
     else {
         vector<NSString*> newnames;
-
+        
         MachTimeBenchmark mtb;
-//        for(auto &i: fis)
         for(size_t i = 0, e = m_FileInfos.size(); i!=e; ++i)
             newnames.emplace_back(br.Rename(m_FileInfos[i], (int)i));
         mtb.ResetMicro();
@@ -210,7 +226,7 @@
 
 - (IBAction)OnInsertPlaceholderFromMenu:(id)sender
 {
-    if(auto item = objc_cast<NSMenuItem>(sender)) {
+    if(auto item = objc_cast<NSMenuItem>(sender))
         switch (item.tag) {
             case 101: [self InsertStringIntoMask:@"[N]"];       break;
             case 102: [self InsertStringIntoMask:@"[N1]"];      break;
@@ -260,11 +276,22 @@
             case 601: [self InsertStringIntoMask:@"[A]"];       break;
             case 602: [self InsertStringIntoMask:@"[[]"];       break;
             case 603: [self InsertStringIntoMask:@"[]]"];       break;
-            // ----
-            default:
-                break;
         }
-    }
+}
+
+- (IBAction)OnSearchForChanged:(id)sender
+{
+    [self UpdateRename];
+}
+
+- (IBAction)OnReplaceWithChanged:(id)sender
+{
+    [self UpdateRename];
+}
+
+- (IBAction)OnSearchReplaceOptionsChanged:(id)sender
+{
+    [self UpdateRename];
 }
 
 - (NSRange)currentMaskSelection
@@ -313,6 +340,10 @@
 {
     if( objc_cast<NSTextField>(notification.object) == self.FilenameMask )
         [self OnFilenameMaskChanged:self.FilenameMask];
+    else if( objc_cast<NSTextField>(notification.object) == self.ReplaceWithComboBox )
+        [self OnReplaceWithChanged:self.ReplaceWithComboBox];
+    else if( objc_cast<NSTextField>(notification.object) == self.SearchForComboBox )
+        [self OnSearchForChanged:self.SearchForComboBox];
 }
 
 @end

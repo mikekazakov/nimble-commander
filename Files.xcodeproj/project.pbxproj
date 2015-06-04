@@ -864,6 +864,9 @@
 		CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF6F3AA1A135A0E00011177 /* files.icns in Resources */ = {isa = PBXBuildFile; fileRef = CFF6F3A91A135A0E00011177 /* files.icns */; };
 		CFF6F3AB1A135D4800011177 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
+		CFFE09C81B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
+		CFFE09C91B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
+		CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1547,6 +1550,8 @@
 		CFF6F3A61A13586600011177 /* Files-Pro-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Files-Pro-Info.plist"; path = "Resource/Files-Pro-Info.plist"; sourceTree = "<group>"; };
 		CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Pro.entitlements"; path = "Resource/Files-Pro.entitlements"; sourceTree = "<group>"; };
 		CFF6F3A91A135A0E00011177 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = files.icns; path = Resource/Pro/files.icns; sourceTree = "<group>"; };
+		CFFE09C61B200CE40091ED4F /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
+		CFFE09C71B200CE40091ED4F /* Application.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Application.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2595,6 +2600,8 @@
 				B5A23000171E81AA00D9C1A6 /* Controls */,
 				CF6D9D321966AC220077B146 /* Configuration.h */,
 				B5A89D481746537C00EAB999 /* ApplicationSkins.h */,
+				CFFE09C61B200CE40091ED4F /* Application.h */,
+				CFFE09C71B200CE40091ED4F /* Application.mm */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
 				CFC5122716C4BD3D00D247EE /* AppDelegate.mm */,
 				CF73C59C16DE0D2900F3D44F /* MessageBox.h */,
@@ -3372,6 +3379,7 @@
 				CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */,
 				CF6D9C6D196678010077B146 /* MessageBox.mm in Sources */,
 				CF6D9BD2196677CA0077B146 /* NSArray+SSYMutations.m in Sources */,
+				CFFE09C91B200CE40091ED4F /* Application.mm in Sources */,
 				CF6D9BD3196677CA0077B146 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF6D9BD4196677CA0077B146 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CF6D9BD5196677CA0077B146 /* SUStandardVersionComparator.m in Sources */,
@@ -3518,6 +3526,7 @@
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF50B6CC1A15167800E3D96D /* VFSListing.cpp in Sources */,
 				CF50B6DC1A15169300E3D96D /* VFSPSHost.mm in Sources */,
+				CFFE09C81B200CE40091ED4F /* Application.mm in Sources */,
 				CF50B7161A1516E700E3D96D /* VFSNativeListing.cpp in Sources */,
 				CF2741501803F6A2006D6687 /* sysinfo.mm in Sources */,
 				CF7C93BE1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
@@ -3783,6 +3792,7 @@
 				CFF6F33D1A13567C00011177 /* ObjcToCppObservingBridge.mm in Sources */,
 				CFF6F3401A13567C00011177 /* FileMask.mm in Sources */,
 				CFF6F3411A13567C00011177 /* FPSLimitedDrawer.mm in Sources */,
+				CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */,
 				CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */,
 				CFF6F3471A13567C00011177 /* FileCompressOperationJob.mm in Sources */,

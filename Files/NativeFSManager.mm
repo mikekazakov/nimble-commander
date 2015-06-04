@@ -75,6 +75,8 @@ struct NativeFSManagerProxy2
 static bool VolumeHasTrash_NSFileManager(const string &_volume_path)
 {
     auto url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)_volume_path.c_str(), _volume_path.length(), true);
+    if(!url)
+        return false;
     NSURL *trash = [[NSFileManager defaultManager] URLForDirectory:NSTrashDirectory
                                                           inDomain:NSUserDomainMask
                                                  appropriateForURL:(__bridge NSURL*)url

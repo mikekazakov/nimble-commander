@@ -18,8 +18,15 @@
 - (IBAction)OnCancel:(id)sender;
 
 @property (strong) IBOutlet NSTableView *FilenamesTable;
-//@property (strong) IBOutlet NSTextField *FilenameMask;
 @property (strong) IBOutlet NSComboBox *FilenameMask;
+@property (strong) IBOutlet NSComboBox *SearchForComboBox;
+@property (strong) IBOutlet NSComboBox *ReplaceWithComboBox;
+@property (strong) IBOutlet NSButton *SearchCaseSensitive;
+@property (strong) IBOutlet NSButton *SearchOnlyOnce;
+@property (strong) IBOutlet NSButton *SearchInExtension;
+@property (strong) IBOutlet NSButton *SearchWithRegExp;
+
+
 @property (strong) IBOutlet NSButton *InsertNameRangePlaceholderButton;
 @property (strong) IBOutlet NSButton *InsertPlaceholderMenuButton;
 @property (strong) IBOutlet NSMenu *InsertPlaceholderMenu;
@@ -34,5 +41,9 @@
 - (IBAction)OnInsertTimePlaceholder:(id)sender;
 - (IBAction)OnInsertMenu:(id)sender;
 - (IBAction)OnInsertPlaceholderFromMenu:(id)sender;
+
+- (IBAction)OnSearchForChanged:(id)sender;
+- (IBAction)OnReplaceWithChanged:(id)sender;
+- (IBAction)OnSearchReplaceOptionsChanged:(id)sender;
 
 @end

@@ -11,6 +11,21 @@
 #import "Common.h"
 #import "BatchRenameSheetRangeSelectionPopoverController.h"
 
+@interface BatchRenameSheetControllerNilNumberValueTransformer : NSValueTransformer
+@end
+
+@implementation BatchRenameSheetControllerNilNumberValueTransformer
++(Class)transformedValueClass {
+    return [NSNumber class];
+}
+-(id)transformedValue:(id)value {
+    if (value == nil)
+        return @0;
+    else
+        return value;
+}
+@end
+
 @implementation BatchRenameSheetController
 {
     vector<NSView*>                 m_ActionViews;
@@ -23,8 +38,13 @@
     vector<NSTextField*>            m_LabelsAfter;
     
     NSPopover                      *m_Popover;
+    int                             m_CounterStartsAt;
+    int                             m_CounterStepsBy;
 }
 
+
+@synthesize CounterStartsAt = m_CounterStartsAt;
+@synthesize CounterStepsBy = m_CounterStepsBy;
 
 - (instancetype) initWithListing:(const VFSListing&)_listing
                       andIndeces:(vector<unsigned>)_inds
@@ -84,6 +104,9 @@
             
             
         }
+        
+        m_CounterStartsAt = 1;
+        m_CounterStepsBy = 1;
     }
     return self;
     
@@ -147,6 +170,7 @@
     BatchRename br;
     br.SetReplacingOptions(search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
     br.SetCaseTransform(ct);
+    br.SetDefaultCounter(m_CounterStartsAt, m_CounterStepsBy, 1, (unsigned)self.CounterDigits.selectedTag);
     
     if(!br.BuildActionsScript(filename_mask))
     {
@@ -301,6 +325,11 @@
     [self UpdateRename];
 }
 
+- (IBAction)OnCounterSettingsChanged:(id)sender
+{
+    [self UpdateRename];
+}
+
 - (NSRange)currentMaskSelection
 {
     if( self.FilenameMask.currentEditor )
@@ -351,6 +380,8 @@
         [self OnReplaceWithChanged:self.ReplaceWithComboBox];
     else if( objc_cast<NSTextField>(notification.object) == self.SearchForComboBox )
         [self OnSearchForChanged:self.SearchForComboBox];
+    else
+        [self UpdateRename];        
 }
 
 @end

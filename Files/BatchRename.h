@@ -121,7 +121,7 @@ public:
     static optional<vector<MaskDecomposition>> DecomposeMaskIntoPlaceholders(NSString *_mask);
     static optional<pair<TextExtraction, int>> ParsePlaceholder_TextExtraction( NSString *_ph, unsigned long _pos ); // action and number of chars eaten if no errors
     static optional<pair<Counter, int>> ParsePlaceholder_Counter( NSString *_ph, unsigned long _pos,
-                                                                 long _default_start=1, long _default_step=1, int _default_width = 1, unsigned _default_stripe = 1); // action and number of chars eaten if no errors
+                                                                 long _default_start, long _default_step, int _default_width, unsigned _default_stripe); // action and number of chars eaten if no errors
     static NSString *ExtractText(NSString *_from, const TextExtraction &_te);
     static NSString *FormatCounter(const Counter &_c, int _file_number);
     
@@ -133,7 +133,7 @@ public:
                              bool _search_in_ext,
                              bool _use_regexp);
     void SetCaseTransform(CaseTransform _ct);
-    
+    void SetDefaultCounter(long _start, long _step, unsigned _stripe, unsigned _width);
     
     
     NSString *Rename( const FileInfo &_fi, int _number ) const;
@@ -209,15 +209,22 @@ private:
     vector<Counter>         m_ActionsCounter;
 
     struct ReplaceOptions {
-        NSString *search_for = @"";
-        NSString *replace_with = @"";
-        bool case_sensitive = false;
-        bool only_first = false;
-        bool search_in_ext = true;
-        bool use_regexp = false;
+        NSString           *search_for = @"";
+        NSString           *replace_with = @"";
+        bool                case_sensitive = false;
+        bool                only_first = false;
+        bool                search_in_ext = true;
+        bool                use_regexp = false;
     }                       m_SearchReplace;
     
     CaseTransform           m_CaseTransform = CaseTransform::Unchanged;
+
+    struct {
+        long                start = 1;
+        long                step = 1;
+        unsigned            stripe = 1;
+        unsigned            width = 1;
+    }                       m_DefaultCounter;
 };
 
 inline BatchRename::Range::Range():

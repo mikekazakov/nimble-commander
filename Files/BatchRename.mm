@@ -192,7 +192,7 @@ bool BatchRename::ParsePlaceholder( NSString *_ph )
             case 'C':
             {
                 position++;
-                auto v = ParsePlaceholder_Counter(_ph, position);
+                auto v = ParsePlaceholder_Counter(_ph, position, m_DefaultCounter.start, m_DefaultCounter.step, m_DefaultCounter.width,     m_DefaultCounter.stripe);
                 if( !v )
                     break;
                 AddInsertCounter(v.value().first);
@@ -570,6 +570,14 @@ void BatchRename::SetReplacingOptions( NSString *_search_for, NSString *_replace
     m_SearchReplace.only_first = _only_first;
     m_SearchReplace.search_in_ext = _search_in_ext;
     m_SearchReplace.use_regexp = _use_regexp;
+}
+
+void BatchRename::SetDefaultCounter(long _start, long _step, unsigned _stripe, unsigned _width)
+{
+    m_DefaultCounter.start = _start;
+    m_DefaultCounter.step = _step;
+    m_DefaultCounter.stripe = _stripe;
+    m_DefaultCounter.width = _width;
 }
 
 void BatchRename::SetCaseTransform(CaseTransform _ct)

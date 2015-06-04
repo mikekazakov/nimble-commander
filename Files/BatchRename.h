@@ -132,6 +132,7 @@ public:
                              bool _only_first,
                              bool _search_in_ext,
                              bool _use_regexp);
+    void SetCaseTransform(CaseTransform _ct);
     
     
     
@@ -216,7 +217,7 @@ private:
         bool use_regexp = false;
     }                       m_SearchReplace;
     
-    
+    CaseTransform           m_CaseTransform = CaseTransform::Unchanged;
 };
 
 inline BatchRename::Range::Range():

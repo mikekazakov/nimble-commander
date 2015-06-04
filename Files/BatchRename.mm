@@ -572,6 +572,11 @@ void BatchRename::SetReplacingOptions( NSString *_search_for, NSString *_replace
     m_SearchReplace.use_regexp = _use_regexp;
 }
 
+void BatchRename::SetCaseTransform(CaseTransform _ct)
+{
+    m_CaseTransform = _ct;
+}
+
 static inline NSString *StringByTransform(NSString *_s, BatchRename::CaseTransform _ct)
 {
     switch (_ct) {
@@ -785,7 +790,6 @@ NSString *BatchRename::Rename( const FileInfo &_fi, int _number ) const
     }
     
     NSString *after_replacing = DoSearchReplace(m_SearchReplace, str);
-    
-    return after_replacing;
-    //return str;
+    NSString *after_case_trans= StringByTransform(after_replacing, m_CaseTransform);
+    return after_case_trans;
 }

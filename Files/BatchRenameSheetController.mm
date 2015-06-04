@@ -142,9 +142,11 @@
     bool search_once = self.SearchOnlyOnce.state == NSOnState;
     bool search_in_ext = self.SearchInExtension.state == NSOnState;
     bool search_regexp = self.SearchWithRegExp.state == NSOnState;
+    BatchRename::CaseTransform ct = (BatchRename::CaseTransform)self.CaseProcessing.selectedTag;
     
     BatchRename br;
     br.SetReplacingOptions(search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
+    br.SetCaseTransform(ct);
     
     if(!br.BuildActionsScript(filename_mask))
     {
@@ -290,6 +292,11 @@
 }
 
 - (IBAction)OnSearchReplaceOptionsChanged:(id)sender
+{
+    [self UpdateRename];
+}
+
+- (IBAction)OnCaseProcessingChanged:(id)sender
 {
     [self UpdateRename];
 }

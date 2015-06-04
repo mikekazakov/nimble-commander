@@ -25,6 +25,7 @@
 @property (strong) IBOutlet NSButton *SearchOnlyOnce;
 @property (strong) IBOutlet NSButton *SearchInExtension;
 @property (strong) IBOutlet NSButton *SearchWithRegExp;
+@property (strong) IBOutlet NSPopUpButton *CaseProcessing;
 
 
 @property (strong) IBOutlet NSButton *InsertNameRangePlaceholderButton;
@@ -45,5 +46,6 @@
 - (IBAction)OnSearchForChanged:(id)sender;
 - (IBAction)OnReplaceWithChanged:(id)sender;
 - (IBAction)OnSearchReplaceOptionsChanged:(id)sender;
+- (IBAction)OnCaseProcessingChanged:(id)sender;
 
 @end

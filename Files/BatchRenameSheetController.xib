@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BatchRenameSheetController">
             <connections>
+                <outlet property="CaseProcessing" destination="uwD-i0-8RE" id="5NY-2a-pwN"/>
                 <outlet property="FilenameMask" destination="p5V-M1-8GC" id="HO9-Rk-BnH"/>
                 <outlet property="FilenamesTable" destination="C9n-Is-tq6" id="dDn-80-S5s"/>
                 <outlet property="InsertNameRangePlaceholderButton" destination="E2t-ZL-Mbg" id="ryR-Ke-XJo"/>
@@ -404,13 +405,16 @@ Gw
                             <font key="font" metaFont="smallSystem"/>
                             <menu key="menu" id="BzW-nA-bwg">
                                 <items>
-                                    <menuItem title="Unchanged" id="ars-b9-93l" userLabel="Unchanged"/>
-                                    <menuItem title="UPPERCASE" id="NeK-ph-pA8"/>
-                                    <menuItem title="lowercase" id="riM-Tn-gc8"/>
-                                    <menuItem title="Capitalize Each Word" id="vvU-hD-Eb6"/>
+                                    <menuItem title="Unchanged" state="on" id="ars-b9-93l" userLabel="Unchanged"/>
+                                    <menuItem title="UPPERCASE" tag="1" id="NeK-ph-pA8"/>
+                                    <menuItem title="lowercase" tag="2" id="riM-Tn-gc8"/>
+                                    <menuItem title="Capitalize Each Word" tag="3" id="vvU-hD-Eb6"/>
                                 </items>
                             </menu>
                         </popUpButtonCell>
+                        <connections>
+                            <action selector="OnCaseProcessingChanged:" target="-2" id="Ue6-Hr-pIU"/>
+                        </connections>
                     </popUpButton>
                 </subviews>
                 <constraints>

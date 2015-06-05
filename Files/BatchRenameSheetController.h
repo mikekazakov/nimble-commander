@@ -52,4 +52,8 @@
 - (IBAction)OnCaseProcessingChanged:(id)sender;
 - (IBAction)OnCounterSettingsChanged:(id)sender;
 
+- (void)FocusRenamePattern;
+- (void)FocusSearchFor;
+- (void)FocusReplaceWith;
+
 @end

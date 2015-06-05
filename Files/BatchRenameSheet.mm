@@ -45,6 +45,18 @@
             [self.windowController OnInsertMenu:self];
             return true;
         }
+        if( keycode == kVK_ANSI_P ) { // ctrl+p
+            [self.windowController FocusRenamePattern];
+            return true;
+        }
+        if( keycode == kVK_ANSI_S ) { // ctrl+s
+            [self.windowController FocusSearchFor];
+            return true;
+        }
+        if( keycode == kVK_ANSI_W ) { // ctrl+w
+            [self.windowController FocusReplaceWith];
+            return true;
+        }        
     }
     return [super performKeyEquivalent:event];
 }

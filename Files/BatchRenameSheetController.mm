@@ -330,6 +330,22 @@
     [self UpdateRename];
 }
 
+// TODO: refactor
+- (void)FocusRenamePattern
+{
+    [self.window makeFirstResponder:self.FilenameMask];
+}
+
+- (void)FocusSearchFor
+{
+    [self.window makeFirstResponder:self.SearchForComboBox];
+}
+
+- (void)FocusReplaceWith
+{
+    [self.window makeFirstResponder:self.ReplaceWithComboBox];
+}
+
 - (NSRange)currentMaskSelection
 {
     if( self.FilenameMask.currentEditor )

@@ -170,7 +170,7 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p5V-M1-8GC">
+                    <comboBox toolTip="^P" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p5V-M1-8GC">
                         <rect key="frame" x="20" y="372" width="191" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="170" id="GJb-SC-TOk"/>
@@ -261,6 +261,7 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnInsertTimePlaceholder:" target="-2" id="xqK-tc-dBX"/>
+                            <outlet property="nextKeyView" destination="SI4-vS-Egd" id="ak8-uY-NkH"/>
                         </connections>
                     </button>
                     <button toolTip="^E" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nQr-DT-yTz">
@@ -306,7 +307,7 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SI4-vS-Egd">
+                    <comboBox toolTip="^S" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SI4-vS-Egd">
                         <rect key="frame" x="300" y="372" width="116" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="V20-pX-rlP"/>
@@ -319,9 +320,10 @@ Gw
                         <connections>
                             <action selector="OnSearchForChanged:" target="-2" id="xGO-OZ-Pnc"/>
                             <outlet property="delegate" destination="-2" id="mYY-aY-NJ5"/>
+                            <outlet property="nextKeyView" destination="RBI-rU-SES" id="7Vq-fs-DEL"/>
                         </connections>
                     </comboBox>
-                    <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RBI-rU-SES">
+                    <comboBox toolTip="^W" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RBI-rU-SES">
                         <rect key="frame" x="300" y="347" width="116" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="HMn-or-k2K"/>
@@ -334,6 +336,7 @@ Gw
                         <connections>
                             <action selector="OnReplaceWithChanged:" target="-2" id="osq-Fu-AJB"/>
                             <outlet property="delegate" destination="-2" id="SaR-RL-gh4"/>
+                            <outlet property="nextKeyView" destination="LEA-CX-gfa" id="Qzp-Dv-GEq"/>
                         </connections>
                     </comboBox>
                     <box horizontalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="LYl-8z-bLW">
@@ -347,22 +350,24 @@ Gw
                     </box>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="LEA-CX-gfa">
                         <rect key="frame" x="242" y="332" width="36" height="18"/>
-                        <buttonCell key="cell" type="check" title="Aa" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="KaF-N0-6UU">
+                        <buttonCell key="cell" type="check" title="Aa" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="KaF-N0-6UU">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
                         </buttonCell>
                         <connections>
                             <action selector="OnSearchReplaceOptionsChanged:" target="-2" id="CJx-dw-9XV"/>
+                            <outlet property="nextKeyView" destination="0yW-rZ-IWN" id="se9-06-HxW"/>
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="0yW-rZ-IWN">
                         <rect key="frame" x="281" y="332" width="35" height="18"/>
-                        <buttonCell key="cell" type="check" title="1x" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="Hbd-mI-Y1C">
+                        <buttonCell key="cell" type="check" title="1x" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="Hbd-mI-Y1C">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
                         </buttonCell>
                         <connections>
                             <action selector="OnSearchReplaceOptionsChanged:" target="-2" id="7wk-uN-Ar6"/>
+                            <outlet property="nextKeyView" destination="Q1g-bb-QBM" id="yB9-FA-dsh"/>
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="Q1g-bb-QBM">
@@ -373,16 +378,18 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnSearchReplaceOptionsChanged:" target="-2" id="lk3-LX-dif"/>
+                            <outlet property="nextKeyView" destination="wTa-vH-MEJ" id="LXb-Uf-16Q"/>
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="wTa-vH-MEJ">
                         <rect key="frame" x="358" y="332" width="57" height="18"/>
-                        <buttonCell key="cell" type="check" title="RegEx" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="r4R-K5-WtL">
+                        <buttonCell key="cell" type="check" title="RegEx" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="r4R-K5-WtL">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
                         </buttonCell>
                         <connections>
                             <action selector="OnSearchReplaceOptionsChanged:" target="-2" id="KCI-ML-cya"/>
+                            <outlet property="nextKeyView" destination="uwD-i0-8RE" id="sfL-ER-aK4"/>
                         </connections>
                     </button>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="dSZ-xi-lzy">
@@ -415,6 +422,7 @@ Gw
                         </popUpButtonCell>
                         <connections>
                             <action selector="OnCaseProcessingChanged:" target="-2" id="Ue6-Hr-pIU"/>
+                            <outlet property="nextKeyView" destination="hC6-px-Drj" id="5dq-zh-Cye"/>
                         </connections>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="A64-6a-qQA">
@@ -449,6 +457,7 @@ Gw
                                 </dictionary>
                             </binding>
                             <outlet property="delegate" destination="-2" id="7xN-eP-9Wr"/>
+                            <outlet property="nextKeyView" destination="cC1-qI-LZv" id="oZt-QP-CJr"/>
                         </connections>
                     </textField>
                     <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rN7-QI-0PH">
@@ -523,6 +532,7 @@ Gw
                                 </dictionary>
                             </binding>
                             <outlet property="delegate" destination="-2" id="HAb-b1-ACA"/>
+                            <outlet property="nextKeyView" destination="NX6-my-Ja7" id="sRr-h8-cBJ"/>
                         </connections>
                     </textField>
                 </subviews>
@@ -630,7 +640,7 @@ Gw
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
                 <outlet property="initialFirstResponder" destination="p5V-M1-8GC" id="SIA-Kt-X1q"/>
             </connections>
-            <point key="canvasLocation" x="83.5" y="209.5"/>
+            <point key="canvasLocation" x="93.5" y="-37.5"/>
         </window>
         <menu id="GFK-z0-FZ4">
             <items>

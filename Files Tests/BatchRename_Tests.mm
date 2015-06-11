@@ -138,7 +138,7 @@
 - (void)testCounterPlaceholders
 { // [C.....
 
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"-763+3/99:7", 0);
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"-763+3/99:7", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 11 );
@@ -150,7 +150,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"-763", 0);
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"-763", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 4 );
@@ -159,7 +159,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"763", 0);
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"763", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 3 );
@@ -168,7 +168,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"+-13", 0);
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"+-13", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 4 );
@@ -177,7 +177,7 @@
         }
     }
 
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"/71", 0);
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"/71", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 3 );
@@ -186,7 +186,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@":12", 0);
+    {   const auto v = BatchRename::ParsePlaceholder_Counter(@":12", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 3 );

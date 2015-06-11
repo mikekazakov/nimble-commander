@@ -210,6 +210,9 @@
 		CF54101F1A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
+		CF55CDD21B299843001B4F91 /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */; };
+		CF55CDD31B299843001B4F91 /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */; };
+		CF55CDD41B299843001B4F91 /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5682671AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
 		CF5682681AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
@@ -235,9 +238,6 @@
 		CF5C1E411B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
 		CF5C1E421B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
 		CF5C1E431B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
-		CF5C1E461B089FDB005DE19F /* BatchRenameSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E451B089FDB005DE19F /* BatchRenameSheet.mm */; };
-		CF5C1E471B089FDB005DE19F /* BatchRenameSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E451B089FDB005DE19F /* BatchRenameSheet.mm */; };
-		CF5C1E481B089FDB005DE19F /* BatchRenameSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E451B089FDB005DE19F /* BatchRenameSheet.mm */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
@@ -1201,6 +1201,8 @@
 		CF5410161A90DA99003CD7A7 /* AppStoreRatingsSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStoreRatingsSheetController.h; sourceTree = "<group>"; };
 		CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppStoreRatingsSheetController.mm; sourceTree = "<group>"; };
 		CF5410221A90E15F003CD7A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AppStoreRatingsSheetController.xib; sourceTree = "<group>"; };
+		CF55CDD01B299843001B4F91 /* SheetWithHotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SheetWithHotkeys.h; sourceTree = "<group>"; };
+		CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SheetWithHotkeys.mm; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF5682641AF3581600C48E28 /* MassRenameSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassRenameSheetController.h; sourceTree = "<group>"; };
@@ -1218,8 +1220,6 @@
 		CF5C1E3B1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchRenameSheetRangeSelectionPopoverController.h; sourceTree = "<group>"; };
 		CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRenameSheetRangeSelectionPopoverController.mm; sourceTree = "<group>"; };
 		CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BatchRenameSheetRangeSelectionPopoverController.xib; sourceTree = "<group>"; };
-		CF5C1E441B089FDB005DE19F /* BatchRenameSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchRenameSheet.h; sourceTree = "<group>"; };
-		CF5C1E451B089FDB005DE19F /* BatchRenameSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRenameSheet.mm; sourceTree = "<group>"; };
 		CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnRAR_LIB.xcodeproj; path = 3rd_party/unrar/UnRAR_LIB/UnRAR_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
 		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
@@ -1777,6 +1777,8 @@
 				CF7B206A1A277A27008F1492 /* TrialWindowController.h */,
 				CF7B206B1A277A27008F1492 /* TrialWindowController.mm */,
 				CF7B206C1A277A27008F1492 /* TrialWindowController.xib */,
+				CF55CDD01B299843001B4F91 /* SheetWithHotkeys.h */,
+				CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */,
 			);
 			name = Controls;
 			sourceTree = "<group>";
@@ -2026,8 +2028,6 @@
 			children = (
 				CF5C1E201B04A0E4005DE19F /* BatchRename.h */,
 				CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */,
-				CF5C1E441B089FDB005DE19F /* BatchRenameSheet.h */,
-				CF5C1E451B089FDB005DE19F /* BatchRenameSheet.mm */,
 				CF5C1E2F1B075057005DE19F /* BatchRenameSheetController.h */,
 				CF5C1E301B075057005DE19F /* BatchRenameSheetController.mm */,
 				CF5C1E311B075057005DE19F /* BatchRenameSheetController.xib */,
@@ -3206,7 +3206,6 @@
 				CF50B7291A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
 				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
-				CF5C1E471B089FDB005DE19F /* BatchRenameSheet.mm in Sources */,
 				CF50B7081A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
 				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CF50B7361A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
@@ -3389,6 +3388,7 @@
 				CF6D9BD8196677CA0077B146 /* NSUserDefaults+myColorSupport.m in Sources */,
 				CF6D9BD9196677CA0077B146 /* ButtonWithOptions.m in Sources */,
 				CF5C1E3F1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
+				CF55CDD31B299843001B4F91 /* SheetWithHotkeys.mm in Sources */,
 				CF6D9BDA196677CA0077B146 /* main.m in Sources */,
 				CF5C1E221B04A0E4005DE19F /* BatchRename.mm in Sources */,
 			);
@@ -3405,6 +3405,7 @@
 				CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */,
 				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
+				CF55CDD21B299843001B4F91 /* SheetWithHotkeys.mm in Sources */,
 				CFC5123616C5284800D247EE /* PanelData.mm in Sources */,
 				CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */,
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
@@ -3545,7 +3546,6 @@
 				CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */,
 				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
 				CF07DE41176985EF00757DE1 /* EncodingsAdditions.mm in Sources */,
-				CF5C1E461B089FDB005DE19F /* BatchRenameSheet.mm in Sources */,
 				CFEE8E5117748E3D00F6A254 /* FontExtras.cpp in Sources */,
 				CF50B6FE1A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */,
 				CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
@@ -3619,7 +3619,6 @@
 				CFF6F2441A13567C00011177 /* AppDelegate.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFF6F2471A13567C00011177 /* PanelData.mm in Sources */,
-				CF5C1E481B089FDB005DE19F /* BatchRenameSheet.mm in Sources */,
 				CFF6F2481A13567C00011177 /* ActionsShortcutsManager.mm in Sources */,
 				CFF6F2491A13567C00011177 /* PanelView.mm in Sources */,
 				CF50B72D1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */,
@@ -3802,6 +3801,7 @@
 				CFF6F34E1A13567C00011177 /* NSArray+SSYMutations.m in Sources */,
 				CFF6F3501A13567C00011177 /* SharingService.mm in Sources */,
 				CF5C1E401B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
+				CF55CDD41B299843001B4F91 /* SheetWithHotkeys.mm in Sources */,
 				CFF6F3521A13567C00011177 /* TermSingleTask.mm in Sources */,
 				CF5C1E231B04A0E4005DE19F /* BatchRename.mm in Sources */,
 			);

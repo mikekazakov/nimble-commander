@@ -10,6 +10,7 @@
 #import "BatchRename.h"
 #import "Common.h"
 #import "BatchRenameSheetRangeSelectionPopoverController.h"
+#import "SheetWithHotkeys.h"
 
 @interface BatchRenameSheetControllerNilNumberValueTransformer : NSValueTransformer
 @end
@@ -117,6 +118,23 @@
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     
     [self InsertStringIntoMask:@"[N].[E]"];
+    
+    // wire up hotkeys
+    SheetWithHotkeys *sheet = (SheetWithHotkeys *)self.window;
+    sheet.onCtrlA = [sheet makeActionHotkey:@selector(OnInsertMenu:)];
+    sheet.onCtrlC = [sheet makeActionHotkey:@selector(OnInsertCounterPlaceholder:)];
+    sheet.onCtrlD = [sheet makeActionHotkey:@selector(OnInsertDatePlaceholder:)];
+    sheet.onCtrlE = [sheet makeActionHotkey:@selector(OnInsertExtensionPlaceholder:)];
+    sheet.onCtrlG = [sheet makeClickHotkey:self.CounterDigits];
+    sheet.onCtrlL = [sheet makeClickHotkey:self.SearchCaseSensitive];
+    sheet.onCtrlN = [sheet makeActionHotkey:@selector(OnInsertNamePlaceholder:)];
+    sheet.onCtrlO = [sheet makeClickHotkey:self.SearchOnlyOnce];
+    sheet.onCtrlP = [sheet makeFocusHotkey:self.FilenameMask];
+    sheet.onCtrlR = [sheet makeActionHotkey:@selector(OnInsertNameRangePlaceholder:)];
+    sheet.onCtrlS = [sheet makeFocusHotkey:self.SearchForComboBox];
+    sheet.onCtrlT = [sheet makeActionHotkey:@selector(OnInsertTimePlaceholder:)];
+    sheet.onCtrlU = [sheet makeClickHotkey:self.CaseProcessing];
+    sheet.onCtrlW = [sheet makeFocusHotkey:self.ReplaceWithComboBox];
 }
 
 - (IBAction)OnCancel:(id)sender
@@ -328,22 +346,6 @@
 - (IBAction)OnCounterSettingsChanged:(id)sender
 {
     [self UpdateRename];
-}
-
-// TODO: refactor
-- (void)FocusRenamePattern
-{
-    [self.window makeFirstResponder:self.FilenameMask];
-}
-
-- (void)FocusSearchFor
-{
-    [self.window makeFirstResponder:self.SearchForComboBox];
-}
-
-- (void)FocusReplaceWith
-{
-    [self.window makeFirstResponder:self.ReplaceWithComboBox];
 }
 
 - (NSRange)currentMaskSelection

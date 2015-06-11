@@ -945,51 +945,16 @@
         if( !e || !e->CFIsSelected() || e->IsDotDot() )
             continue;
         inds.emplace_back(ind);
-    }
-
-    vector<BatchRename::FileInfo> fis;
-    for( auto i: inds ) {
-        auto e = self.data.EntryAtRawPosition(i);
-        
-        BatchRename::FileInfo fi;
-        fi.filename = e->NSName().copy;
-        
-        static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
-        auto r = [fi.filename rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
-        bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != fi.filename.length - 1);
-        if(has_ext) {
-            fi.name = [fi.filename substringWithRange:NSMakeRange(0, r.location)];
-            fi.extension = [fi.filename substringWithRange:NSMakeRange( r.location + 1, fi.filename.length - r.location - 1)];
-        }
-        else {
-            fi.name = fi.filename;
-            fi.extension = @"";
-        }
-        
-        fis.emplace_back(fi);
-    }
-
-    BatchRename br;
-    if(!br.BuildActionsScript(@"[A]текст[N1]_[FN2-]###.[[E]]")) {
-        NSLog(@"failed to parse");
-        return;
-    }
-    
-    MachTimeBenchmark mtb;
-    for(auto &i: fis) {
-        auto v = br.Rename(i, 0);
-//        NSLog(@"%@", v);
-        
-    }
-    
-    mtb.ResetMicro();
-    
-  
+    }  
     
     BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithListing:self.data.Listing()
                                                                                  andIndeces:inds];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        
+        if(returnCode == NSModalResponseOK) {
+            
+            for(auto &i: sheet.filenamesDestination)
+                NSLog(@"%@", [NSString stringWithUTF8StdString:i]);
+        }
     }];
     
 //    [self.window beginSheet:sheet.window completionHandler:^(NSModalResponse returnCode) {

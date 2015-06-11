@@ -29,11 +29,7 @@
 
 @implementation BatchRenameSheetController
 {
-    vector<NSView*>                 m_ActionViews;
-    vector<unsigned>                m_Indeces;
     vector<BatchRename::FileInfo>   m_FileInfos;
-    
-    
     
     vector<NSTextField*>            m_LabelsBefore;
     vector<NSTextField*>            m_LabelsAfter;
@@ -41,27 +37,30 @@
     NSPopover                      *m_Popover;
     int                             m_CounterStartsAt;
     int                             m_CounterStepsBy;
+    
+    vector<string>                  m_ResultSource;
+    vector<string>                  m_ResultDestination;
 }
 
 
 @synthesize CounterStartsAt = m_CounterStartsAt;
 @synthesize CounterStepsBy = m_CounterStepsBy;
+@synthesize filenamesSource = m_ResultSource;
+@synthesize filenamesDestination = m_ResultDestination;
 
 - (instancetype) initWithListing:(const VFSListing&)_listing
                       andIndeces:(vector<unsigned>)_inds
 {
     self = [[BatchRenameSheetController alloc] init];
     if(self) {
-//        assert(!_inds.empty());
         if(_inds.empty())
             throw logic_error("empty files list");
-            
-        m_Indeces = _inds;
         
-        for( auto i: m_Indeces ) {
+        for( auto i: _inds ) {
             auto &e = _listing.At(i);
             
             BatchRename::FileInfo fi;
+            fi.parent_path = [NSString stringWithUTF8String:_listing.RelativePath()];
             fi.mod_time = e.MTime();
             localtime_r(&fi.mod_time, &fi.mod_time_tm);
             fi.filename = e.NSName().copy;
@@ -79,10 +78,11 @@
             }
             
             m_FileInfos.emplace_back(fi);
+            m_ResultSource.emplace_back( string(_listing.RelativePath()) +  e.Name() );
         }
         
         
-        for(auto i: m_Indeces) {
+        for(auto i: _inds) {
             auto &e = _listing.At(i);
             
             {
@@ -116,8 +116,8 @@
     [super windowDidLoad];
     
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-    
     [self InsertStringIntoMask:@"[N].[E]"];
+    self.isValidRenaming = true;
     
     // wire up hotkeys
     SheetWithHotkeys *sheet = (SheetWithHotkeys *)self.window;
@@ -145,7 +145,7 @@
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     if( tableView == self.FilenamesTable )
-        return m_Indeces.size();
+        return m_LabelsBefore.size();
     return 0;
 }
 
@@ -194,20 +194,51 @@
     {
         for(auto &l:m_LabelsAfter)
             l.stringValue = @"<Error!>";
+        self.isValidRenaming = false;
         return;
     }
     else {
         vector<NSString*> newnames;
         
-        MachTimeBenchmark mtb;
+//        MachTimeBenchmark mtb;
         for(size_t i = 0, e = m_FileInfos.size(); i!=e; ++i)
             newnames.emplace_back(br.Rename(m_FileInfos[i], (int)i));
-        mtb.ResetMicro();
+//        mtb.ResetMicro();
         
         for(size_t i = 0, e = newnames.size(); i!=e; ++i)
             m_LabelsAfter[i].stringValue = newnames[i];
     }
     
+    self.isValidRenaming = true;
+    
+    // check duplicate names here
+    for(size_t i = 0, e = m_FileInfos.size(); i!=e; ++i) {
+        
+        bool is_valid = true;
+        
+        NSString *fn1 = m_LabelsAfter[i].stringValue;
+        if(fn1.length == 0) {
+            is_valid = false;
+        }
+        else { // very inefficient duplicates search
+            for(size_t j = 0; j!=e; ++j)
+                if(i != j) {
+                    NSString *fn2 = m_LabelsAfter[j].stringValue;
+                    if( [fn1 isEqualToString:fn2] ) {
+                        is_valid = false;
+                        break;
+                    }
+                }
+        }
+        
+        if( !is_valid ) {
+            m_LabelsAfter[i].textColor = NSColor.redColor;
+            self.isValidRenaming = false;
+        }
+        else {
+            m_LabelsAfter[i].textColor = NSColor.blackColor;
+        }
+    }
 }
 
 - (IBAction)OnInsertNamePlaceholder:(id)sender
@@ -400,6 +431,22 @@
         [self OnSearchForChanged:self.SearchForComboBox];
     else
         [self UpdateRename];        
+}
+
+- (void) buildResultDestinations
+{
+    m_ResultDestination.clear();
+    for( size_t i = 0, e = m_FileInfos.size(); i != e; ++i ) {
+        m_ResultDestination.emplace_back(string( m_FileInfos[i].parent_path.fileSystemRepresentationSafe ) +
+                                         m_LabelsAfter[i].stringValue.fileSystemRepresentationSafe);
+    }
+}
+
+- (IBAction)OnOK:(id)sender
+{
+    [self UpdateRename];
+    [self buildResultDestinations];
+    [self endSheet:NSModalResponseOK];
 }
 
 @end

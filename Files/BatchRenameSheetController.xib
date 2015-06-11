@@ -14,6 +14,7 @@
                 <outlet property="InsertNameRangePlaceholderButton" destination="E2t-ZL-Mbg" id="ryR-Ke-XJo"/>
                 <outlet property="InsertPlaceholderMenu" destination="GFK-z0-FZ4" id="1r1-bY-aWb"/>
                 <outlet property="InsertPlaceholderMenuButton" destination="cgN-Ss-qHc" id="w0m-T0-QH1"/>
+                <outlet property="OkButton" destination="7gw-eT-fiP" id="Fdo-I0-qqt"/>
                 <outlet property="ReplaceWithComboBox" destination="RBI-rU-SES" id="Vqs-Wh-24a"/>
                 <outlet property="SearchCaseSensitive" destination="LEA-CX-gfa" id="Is4-g0-TZE"/>
                 <outlet property="SearchForComboBox" destination="SI4-vS-Egd" id="qi8-EM-fPR"/>
@@ -137,22 +138,6 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uV6-QM-UnT">
-                        <rect key="frame" x="495" y="13" width="92" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="NIB-L5-ibd"/>
-                        </constraints>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BUk-IP-bgH">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="OnCancel:" target="-2" id="43x-JD-c9d"/>
-                        </connections>
-                    </button>
                     <box horizontalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="lDD-R1-mor">
                         <rect key="frame" x="214" y="289" width="5" height="140"/>
                         <constraints>
@@ -506,6 +491,7 @@ Gw
                         </popUpButtonCell>
                         <connections>
                             <action selector="OnCounterSettingsChanged:" target="-2" id="mAs-ar-oUy"/>
+                            <outlet property="nextKeyView" destination="uV6-QM-UnT" id="dVm-dB-6kE"/>
                         </connections>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q35-59-7UF">
@@ -535,6 +521,42 @@ Gw
                             <outlet property="nextKeyView" destination="NX6-my-Ja7" id="sRr-h8-cBJ"/>
                         </connections>
                     </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7gw-eT-fiP">
+                        <rect key="frame" x="495" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="5D9-DQ-UPX"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Ok" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21D-xw-gDg">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnOK:" target="-2" id="bZi-pK-Mpp"/>
+                            <binding destination="-2" name="enabled" keyPath="self.isValidRenaming" id="QPI-XI-LlJ"/>
+                            <outlet property="nextKeyView" destination="p5V-M1-8GC" id="6wd-F7-aGb"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uV6-QM-UnT">
+                        <rect key="frame" x="403" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="NIB-L5-ibd"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BUk-IP-bgH">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnCancel:" target="-2" id="43x-JD-c9d"/>
+                            <outlet property="nextKeyView" destination="7gw-eT-fiP" id="oni-fb-ONv"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="p5V-M1-8GC" secondAttribute="trailing" constant="8" symbolic="YES" id="0R0-AJ-4r9"/>
@@ -591,7 +613,6 @@ Gw
                     <constraint firstItem="NX6-my-Ja7" firstAttribute="baseline" secondItem="q35-59-7UF" secondAttribute="baseline" id="XqF-GL-PSh"/>
                     <constraint firstItem="LYl-8z-bLW" firstAttribute="leading" secondItem="dSZ-xi-lzy" secondAttribute="trailing" constant="8" symbolic="YES" id="ZfG-Tc-3gU"/>
                     <constraint firstItem="kwm-1U-2b1" firstAttribute="leading" secondItem="lDD-R1-mor" secondAttribute="trailing" constant="8" symbolic="YES" id="ZfY-jx-mca"/>
-                    <constraint firstAttribute="trailing" secondItem="uV6-QM-UnT" secondAttribute="trailing" constant="20" symbolic="YES" id="Zyk-6N-Fo8"/>
                     <constraint firstItem="Kch-iv-6zs" firstAttribute="trailing" secondItem="XbC-0N-Ybp" secondAttribute="trailing" id="a6U-bm-MGH"/>
                     <constraint firstItem="hC6-px-Drj" firstAttribute="top" secondItem="A64-6a-qQA" secondAttribute="bottom" constant="8" id="abL-hG-gMB"/>
                     <constraint firstItem="EVu-PB-uIn" firstAttribute="baseline" secondItem="hC6-px-Drj" secondAttribute="baseline" id="aiy-A1-zLT"/>
@@ -609,6 +630,7 @@ Gw
                     <constraint firstItem="EKb-UU-Za4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="gWt-UI-ley"/>
                     <constraint firstItem="0yW-rZ-IWN" firstAttribute="leading" secondItem="LEA-CX-gfa" secondAttribute="trailing" constant="8" symbolic="YES" id="heV-Sr-bF0"/>
                     <constraint firstItem="LYl-8z-bLW" firstAttribute="leading" secondItem="SI4-vS-Egd" secondAttribute="trailing" constant="8" symbolic="YES" id="ibN-Cg-o3s"/>
+                    <constraint firstItem="7gw-eT-fiP" firstAttribute="leading" secondItem="uV6-QM-UnT" secondAttribute="trailing" constant="12" symbolic="YES" id="jHc-IN-FP6"/>
                     <constraint firstItem="RV2-6w-I75" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="jKl-vD-kia"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="12" symbolic="YES" id="jOh-5N-p8f"/>
                     <constraint firstItem="AKG-zR-ewH" firstAttribute="top" secondItem="nQr-DT-yTz" secondAttribute="bottom" constant="4" id="jS5-V9-sFd"/>
@@ -620,8 +642,10 @@ Gw
                     <constraint firstItem="stf-ED-JLt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="lVm-dC-8rn"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="9Ue-xA-mhT" secondAttribute="trailing" constant="8" symbolic="YES" id="mAc-4v-Ikr"/>
                     <constraint firstItem="RV2-6w-I75" firstAttribute="top" secondItem="LYl-8z-bLW" secondAttribute="bottom" constant="8" symbolic="YES" id="nN7-iC-OWe"/>
+                    <constraint firstAttribute="trailing" secondItem="7gw-eT-fiP" secondAttribute="trailing" constant="20" symbolic="YES" id="pVq-qf-M0M"/>
                     <constraint firstAttribute="trailing" secondItem="rN7-QI-0PH" secondAttribute="trailing" constant="20" symbolic="YES" id="pYB-Gk-Hsd"/>
                     <constraint firstItem="XbC-0N-Ybp" firstAttribute="baseline" secondItem="RBI-rU-SES" secondAttribute="baseline" id="qqM-hI-i1Q"/>
+                    <constraint firstAttribute="bottom" secondItem="7gw-eT-fiP" secondAttribute="bottom" constant="20" symbolic="YES" id="sEc-GR-kJ3"/>
                     <constraint firstItem="EKb-UU-Za4" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="bottom" constant="8" id="tfm-EE-Kdz"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="nQr-DT-yTz" secondAttribute="trailing" constant="8" symbolic="YES" id="tiT-1P-uMr"/>
                     <constraint firstItem="RwK-OL-6hu" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="v1d-I2-R19"/>

@@ -102,6 +102,7 @@ public:
     
     struct FileInfo
     {
+        NSString *parent_path;  // /Users/migun/
         NSString *filename;     // filename.txt
         NSString *name;         // filename
         NSString *extension;    // txt

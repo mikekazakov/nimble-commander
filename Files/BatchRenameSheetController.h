@@ -27,14 +27,17 @@
 @property (strong) IBOutlet NSButton *SearchWithRegExp;
 @property (strong) IBOutlet NSPopUpButton *CaseProcessing;
 @property (strong) IBOutlet NSPopUpButton *CounterDigits;
-
-
 @property (strong) IBOutlet NSButton *InsertNameRangePlaceholderButton;
 @property (strong) IBOutlet NSButton *InsertPlaceholderMenuButton;
 @property (strong) IBOutlet NSMenu *InsertPlaceholderMenu;
-
 @property (nonatomic, readwrite) int CounterStartsAt;
 @property (nonatomic, readwrite) int CounterStepsBy;
+
+@property (readonly) vector<string> &filenamesSource;       // full path
+@property (readonly) vector<string> &filenamesDestination;
+@property bool isValidRenaming;
+@property (strong) IBOutlet NSButton *OkButton;
+
 
 - (IBAction)OnFilenameMaskChanged:(id)sender;
 - (IBAction)OnInsertNamePlaceholder:(id)sender;
@@ -52,5 +55,6 @@
 - (IBAction)OnCaseProcessingChanged:(id)sender;
 - (IBAction)OnCounterSettingsChanged:(id)sender;
 
+- (IBAction)OnOK:(id)sender;
 
 @end

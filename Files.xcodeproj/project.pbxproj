@@ -213,6 +213,9 @@
 		CF55CDD21B299843001B4F91 /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */; };
 		CF55CDD31B299843001B4F91 /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */; };
 		CF55CDD41B299843001B4F91 /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */; };
+		CF55CDDB1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */; };
+		CF55CDDC1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */; };
+		CF55CDDD1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5682671AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
 		CF5682681AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
@@ -867,6 +870,9 @@
 		CFFE09C81B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09C91B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
+		CFFE104C1B2BF72E0057FD0F /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE104A1B2BF72E0057FD0F /* BatchRenameOperationJob.mm */; };
+		CFFE104D1B2BF72E0057FD0F /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE104A1B2BF72E0057FD0F /* BatchRenameOperationJob.mm */; };
+		CFFE104E1B2BF72E0057FD0F /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE104A1B2BF72E0057FD0F /* BatchRenameOperationJob.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1203,6 +1209,8 @@
 		CF5410221A90E15F003CD7A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AppStoreRatingsSheetController.xib; sourceTree = "<group>"; };
 		CF55CDD01B299843001B4F91 /* SheetWithHotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SheetWithHotkeys.h; sourceTree = "<group>"; };
 		CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SheetWithHotkeys.mm; sourceTree = "<group>"; };
+		CF55CDD91B29F1DE001B4F91 /* BatchRenameOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchRenameOperation.h; sourceTree = "<group>"; };
+		CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRenameOperation.mm; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF5682641AF3581600C48E28 /* MassRenameSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassRenameSheetController.h; sourceTree = "<group>"; };
@@ -1552,6 +1560,8 @@
 		CFF6F3A91A135A0E00011177 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = files.icns; path = Resource/Pro/files.icns; sourceTree = "<group>"; };
 		CFFE09C61B200CE40091ED4F /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
 		CFFE09C71B200CE40091ED4F /* Application.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Application.mm; sourceTree = "<group>"; };
+		CFFE104A1B2BF72E0057FD0F /* BatchRenameOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRenameOperationJob.mm; sourceTree = "<group>"; };
+		CFFE104B1B2BF72E0057FD0F /* BatchRenameOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchRenameOperationJob.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1695,6 +1705,7 @@
 				CF9DF215171320980008CBAE /* CreateDirectoryOperation */,
 				CFA58396170EA35E00E508CF /* FileDeletionOperation */,
 				CFCD87FD1815377100D82455 /* FileCompressOperation */,
+				CF55CDD81B29EF52001B4F91 /* BatchRenameOperation */,
 			);
 			name = Operation;
 			sourceTree = "<group>";
@@ -2021,6 +2032,17 @@
 				CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CF55CDD81B29EF52001B4F91 /* BatchRenameOperation */ = {
+			isa = PBXGroup;
+			children = (
+				CF55CDD91B29F1DE001B4F91 /* BatchRenameOperation.h */,
+				CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */,
+				CFFE104B1B2BF72E0057FD0F /* BatchRenameOperationJob.h */,
+				CFFE104A1B2BF72E0057FD0F /* BatchRenameOperationJob.mm */,
+			);
+			name = BatchRenameOperation;
 			sourceTree = "<group>";
 		};
 		CF5C1E491B089FF1005DE19F /* BatchRename */ = {
@@ -3196,6 +3218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF55CDDC1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */,
 				CF6D9C9419667BA20077B146 /* rdrand.c in Sources */,
 				CF5682681AF3581600C48E28 /* MassRenameSheetController.mm in Sources */,
 				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
@@ -3333,6 +3356,7 @@
 				CF6D9C41196678010077B146 /* PanelController+Navigation.mm in Sources */,
 				CF6D9C42196678010077B146 /* PanelController+DataAccess.mm in Sources */,
 				CF6D9C43196678010077B146 /* PanelController+DelayedSelection.mm in Sources */,
+				CFFE104D1B2BF72E0057FD0F /* BatchRenameOperationJob.mm in Sources */,
 				CF6D9C44196678010077B146 /* PanelController+QuickSearch.mm in Sources */,
 				CF6D9C45196678010077B146 /* PanelController+DragAndDrop.mm in Sources */,
 				CF6D9C46196678010077B146 /* PanelController+Menu.mm in Sources */,
@@ -3525,6 +3549,7 @@
 				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
+				CF55CDDB1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */,
 				CF50B6CC1A15167800E3D96D /* VFSListing.cpp in Sources */,
 				CF50B6DC1A15169300E3D96D /* VFSPSHost.mm in Sources */,
 				CFFE09C81B200CE40091ED4F /* Application.mm in Sources */,
@@ -3537,6 +3562,7 @@
 				CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */,
 				CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */,
 				CFE0E66F17F7D16A00BCF557 /* BigFileViewDataBackend.mm in Sources */,
+				CFFE104C1B2BF72E0057FD0F /* BatchRenameOperationJob.mm in Sources */,
 				CF50B6C61A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6CF1A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
@@ -3609,6 +3635,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF55CDDD1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */,
 				CFF6F23B1A13567C00011177 /* DisplayNamesCache.mm in Sources */,
 				CF5682691AF3581600C48E28 /* MassRenameSheetController.mm in Sources */,
 				CFF6F23D1A13567C00011177 /* MainWindowFilePanelState+Menu.mm in Sources */,
@@ -3746,6 +3773,7 @@
 				CFF6F2FC1A13567C00011177 /* BigFileViewDataBackend.mm in Sources */,
 				CF50B6C81A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6D11A15167800E3D96D /* VFSPath.cpp in Sources */,
+				CFFE104E1B2BF72E0057FD0F /* BatchRenameOperationJob.mm in Sources */,
 				CFF6F2FD1A13567C00011177 /* DataBlockAnalysis.mm in Sources */,
 				CF50B7121A1516E700E3D96D /* VFSNativeFile.cpp in Sources */,
 				CFF6F3001A13567C00011177 /* MainWindowFilePanelState.mm in Sources */,

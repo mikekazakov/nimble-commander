@@ -31,11 +31,9 @@
 #import "NativeFSManager.h"
 #import "SavedNetworkConnectionsManager.h"
 #import "ConnectionsMenuDelegate.h"
-
-#import "MassRename.h"
-#import "MassRenameSheetController.h"
 #import "BatchRename.h"
 #import "BatchRenameSheetController.h"
+#import "BatchRenameOperation.h"
 
 @implementation PanelController (Menu)
 
@@ -938,30 +936,28 @@
 
 - (IBAction)OnBatchRename:(id)sender
 {
-   vector<unsigned> inds;
+    vector<unsigned> inds;
     
     for( auto ind: self.data.SortedDirectoryEntries() ) {
         auto e = self.data.EntryAtRawPosition(ind);
         if( !e || !e->CFIsSelected() || e->IsDotDot() )
             continue;
         inds.emplace_back(ind);
-    }  
+    }
+    auto vfs = self.vfs;
     
     BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithListing:self.data.Listing()
                                                                                  andIndeces:inds];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode == NSModalResponseOK) {
-            
-            for(auto &i: sheet.filenamesDestination)
-                NSLog(@"%@", [NSString stringWithUTF8StdString:i]);
+            auto src_paths = sheet.filenamesSource;
+            auto dst_paths = sheet.filenamesDestination;
+            BatchRenameOperation *op = [[BatchRenameOperation alloc] initWithOriginalFilepaths:move(src_paths)
+                                                                              renamedFilepaths:move(dst_paths)
+                                                                                           vfs:vfs];
+            [self.state AddOperation:op];
         }
-    }];
-    
-//    [self.window beginSheet:sheet.window completionHandler:^(NSModalResponse returnCode) {
-        
-//    }];
-    
-    
+    }];    
 }
 
 @end

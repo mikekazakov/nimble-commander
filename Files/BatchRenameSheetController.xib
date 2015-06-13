@@ -48,7 +48,7 @@
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn identifier="original" width="116" minWidth="40" maxWidth="1000" id="h8h-hP-2GO">
+                                        <tableColumn identifier="original" width="200" minWidth="100" maxWidth="1000" id="h8h-hP-2GO">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Original">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -62,7 +62,7 @@
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView id="j9Z-xy-uF2">
-                                                    <rect key="frame" x="1" y="1" width="116" height="17"/>
+                                                    <rect key="frame" x="1" y="1" width="200" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ppe-pg-3Bt">
@@ -80,7 +80,7 @@
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn identifier="renamed" width="437" minWidth="40" maxWidth="1000" id="cxN-S7-SiU">
+                                        <tableColumn identifier="renamed" width="437" minWidth="100" maxWidth="1000" id="cxN-S7-SiU">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Renamed">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -125,7 +125,7 @@
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="220" id="Dfk-kC-HXc"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="460" id="et3-6v-8YS"/>
                         </constraints>
-                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Gbo-xT-gIn">
+                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="Gbo-xT-gIn">
                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>

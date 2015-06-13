@@ -91,6 +91,7 @@
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;
+                ((NSTextFieldCell*)tf.cell).lineBreakMode = NSLineBreakByTruncatingTail;
                 m_LabelsBefore.emplace_back(tf);
             }
             
@@ -100,6 +101,7 @@
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;
+                ((NSTextFieldCell*)tf.cell).lineBreakMode = NSLineBreakByTruncatingTail;
                 m_LabelsAfter.emplace_back(tf);
             }
             

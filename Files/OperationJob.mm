@@ -27,11 +27,27 @@ void OperationJob::Start()
     m_State = StateRunning;
     
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, ^
+    dispatch_async(queue, [=]
     {
-        Do();
-        
-        assert(IsFinished());
+        try
+        {
+            Do();
+        }
+        catch(exception &e)
+        {
+            cout << "Operation exception caught: " << e.what() << endl;
+        }
+        catch(exception *e)
+        {
+            cout << "Operation exception caught: " << e->what() << endl;
+        }
+        catch(...)
+        {
+            cout << "Caught an unhandled Operation exception!" << endl;
+        }
+
+        if(!IsFinished())
+            throw logic_error("IsFinished() is not true after operation's Do() returned control");
     });
 }
 

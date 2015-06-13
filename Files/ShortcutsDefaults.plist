@@ -154,6 +154,8 @@
 	<string>⌘e</string>
 	<string>menu.command.compress</string>
 	<string></string>
+	<string>menu.command.batch_rename</string>
+	<string>^m</string>
 	<string>menu.command.copy_to</string>
 	<string></string>
 	<string>menu.command.copy_as</string>

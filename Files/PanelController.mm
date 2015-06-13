@@ -457,12 +457,11 @@ void panel::GenericCursorPersistance::Restore()
         }
     }*/
     
-    if(keycode == 46 ) { // 'M' button
+/*    if(keycode == 46 ) { // 'M' button
         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-            [self OnBatchRename:self];
             return true;
         }
-    }
+    }*/
     
     // handle some actions manually, to prevent annoying by menu highlighting by hotkey
     auto &shortcuts = ActionsShortcutsManager::Instance();

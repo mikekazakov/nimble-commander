@@ -33,4 +33,5 @@ private:
     
     VFSHostPtr      m_VFS;
     __unsafe_unretained BatchRenameOperation *m_Operation;
+    bool            m_SkipAll = false;
 };

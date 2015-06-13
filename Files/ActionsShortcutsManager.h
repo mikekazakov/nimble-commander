@@ -162,6 +162,7 @@ private:
         {"menu.command.external_editor",        15081},
         {"menu.command.eject_volume",           15090},
         {"menu.command.compress",               15100},
+        {"menu.command.batch_rename",           15220},
         {"menu.command.copy_to",                15110},
         {"menu.command.copy_as",                15120},
         {"menu.command.move_to",                15130},

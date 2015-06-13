@@ -944,6 +944,12 @@
             continue;
         inds.emplace_back(ind);
     }
+    if(inds.empty()) {
+        if(!self.view.item || self.view.item->IsDotDot() || self.view.curpos < 0)
+            return;
+        inds.emplace_back(self.data.RawIndexForSortIndex(self.view.curpos));
+    }
+    
     auto vfs = self.vfs;
     
     BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithListing:self.data.Listing()

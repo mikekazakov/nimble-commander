@@ -8,6 +8,7 @@
 
 #import "BatchRenameOperation.h"
 #import "BatchRenameOperationJob.h"
+#import "Common.h"
 
 @implementation BatchRenameOperation
 {
@@ -25,5 +26,21 @@
     return self;
 }
 
+- (OperationDialogAlert *)DialogOnRenameError:(NSError*)_error source:(const string&)_source destination:(const string&)_destination
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc] initRetrySkipSkipAllAbortHide:true];
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to rename an item",
+                                                     @"Operations",
+                                                     "Error dialog title when can't rename an item when batch renaming")];
+    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nOriginal path: %@\nNew path: %@",
+                                                                                    @"Operations",
+                                                                                    "Informative text on error dialog when can't rename an item when batch renaming"),
+                               _error.localizedDescription,
+                               [NSString stringWithUTF8StdString:_source],
+                               [NSString stringWithUTF8StdString:_destination]]];
+    [self EnqueueDialog:alert];
+    return alert;
+}
 
 @end

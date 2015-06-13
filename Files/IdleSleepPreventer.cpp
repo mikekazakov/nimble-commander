@@ -36,7 +36,7 @@ void IdleSleepPreventer::Add()
     m_Promises++;
     
     if( m_ID == kIOPMNullAssertionID ) {
-        static CFStringRef reason = CFSTR("Files performing operations");
+        static CFStringRef reason = CFSTR("Files is performing an operation");
         IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep,
                                     kIOPMAssertionLevelOn,
                                     reason,

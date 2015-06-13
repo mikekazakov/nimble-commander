@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "BatchRenameOperationJob.h"
-
+#import "BatchRenameOperationJob.h"
+#import "BatchRenameOperation.h"
 
 BatchRenameOperationJob::BatchRenameOperationJob()
 {
@@ -41,9 +41,20 @@ void BatchRenameOperationJob::Do()
 
 void BatchRenameOperationJob::ProcessItem(const string &_orig, const string &_renamed)
 {
+    if(_orig == _renamed)
+        return;
+    
     int ret = 0;
-    
+retry_rename:
     ret = m_VFS->Rename(_orig.c_str(), _renamed.c_str(), nullptr);
-    // error handling
+    if(ret != 0) { // failed to rename
+        if(m_SkipAll) goto cleanup;
+        int result = [[m_Operation DialogOnRenameError:VFSError::ToNSError(ret) source:_orig destination:_renamed] WaitForResult];
+        if(result == OperationDialogResult::Retry) goto retry_rename;
+        if(result == OperationDialogResult::Skip) goto cleanup;
+        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+    }
     
+cleanup:;
 }

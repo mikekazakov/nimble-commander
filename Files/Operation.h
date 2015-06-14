@@ -26,7 +26,7 @@ class OperationJob;
  * Flag that show that Progress not appropriate currently.
  * It is ON by default at is set to OFF when Progress become greater than zero
  */
-@property (nonatomic) BOOL IsIndeterminate;
+@property (nonatomic) bool IsIndeterminate;
 
 /**
  * Caption of the operation.
@@ -44,7 +44,7 @@ class OperationJob;
  * The paused state of the operation.
  *
  */
-@property (nonatomic) BOOL IsPaused;
+@property (nonatomic) bool IsPaused;
 
 /**
  * Number of pending dialogs.
@@ -82,22 +82,22 @@ class OperationJob;
 - (void)Resume;
 - (void)Stop;
 
-- (BOOL)IsStarted;
+- (bool)IsStarted;
 
 /**
  * Returns true if the operation finished execution.
  */
-- (BOOL)IsFinished;
+- (bool)IsFinished;
 
 /**
  * Returns true if the operation finished successfully (it completed all required actions).
  */
-- (BOOL)IsCompleted;
+- (bool)IsCompleted;
 
 /**
  * Returns true if operation was stopped (it finished before it could complete all required actions).
  */
-- (BOOL)IsStopped;
+- (bool)IsStopped;
 
 /**
  * Should be called from job's inner thread.
@@ -133,8 +133,6 @@ class OperationJob;
  * Will execute _handler upon succesful finish. It will be exectuted in background thread.
  */
 - (void)AddOnFinishHandler:(void (^)())_handler;
-
-- (void) setProgress:(float)Progress;
 
 - (NSString*) ProduceDescriptionStringForBytesProcess;
 @end

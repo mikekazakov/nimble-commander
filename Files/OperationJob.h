@@ -17,14 +17,12 @@
 class OperationJob
 {
 public:
-    enum State
+    enum class State
     {
-        StateReady,
-        StateRunning,
-        StateStopped,
-        StateCompleted,
-        
-        StatesCount
+        Ready,
+        Running,
+        Stopped,
+        Completed
     };
     
     OperationJob();
@@ -69,7 +67,7 @@ protected:
     
 private:
     // Current state of the job.
-    volatile State m_State = StateReady;
+    volatile State m_State = State::Ready;
     
     // Indicates that internal thread should pause execution.
     // Internal thread only reads this variable.

@@ -21,10 +21,10 @@ OperationJob::~OperationJob()
 
 void OperationJob::Start()
 {
-    assert(m_State == StateReady);
-    if (m_State != StateReady) return;
+    assert(m_State == State::Ready);
+    if (m_State != State::Ready) return;
     
-    m_State = StateRunning;
+    m_State = State::Running;
     
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, [=]
@@ -68,7 +68,7 @@ void OperationJob::RequestStop()
 
 bool OperationJob::IsFinished() const
 {
-    return m_State == StateStopped || m_State == StateCompleted;
+    return m_State == State::Stopped || m_State == State::Completed;
 }
 
 bool OperationJob::IsPaused() const
@@ -93,16 +93,16 @@ OperationStats& OperationJob::GetStats()
 
 void OperationJob::SetStopped()
 {
-    assert(m_State == StateRunning);
+    assert(m_State == State::Running);
     
-    m_State = StateStopped;
+    m_State = State::Stopped;
 }
 
 void OperationJob::SetCompleted()
 {
-    assert(m_State == StateRunning);
+    assert(m_State == State::Running);
     
-    m_State = StateCompleted;
+    m_State = State::Completed;
     
     [(Operation*)m_BaseOperation OnFinish];
 }

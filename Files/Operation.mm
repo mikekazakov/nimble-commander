@@ -35,41 +35,60 @@ static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 }
 
 // informing AppDelegate about frontmost operation's progress
-static vector<void*> g_AllOperations;
-static mutex         g_AllOperationsMutex;
-
-static inline bool IsFrontmostOperation(void* _op) {
-    assert(!g_AllOperations.empty());
-    return g_AllOperations.front() == _op;
-}
-
-static void AddOperation(void* _op) {
-    lock_guard<mutex> guard(g_AllOperationsMutex);
-    g_AllOperations.emplace_back(_op);
-}
-
-static void RemoveOperation(void* _op) {
-    if(IsFrontmostOperation(_op))
-        ((AppDelegate*)[NSApplication.sharedApplication delegate]).progress = -1;
+struct OperationsProgressReporter
+{
+private:
+    static vector<void*> g_AllOperations;
+    static mutex         g_AllOperationsMutex;
     
-    lock_guard<mutex> guard(g_AllOperationsMutex);
-    g_AllOperations.erase(find(begin(g_AllOperations),
-                               end(g_AllOperations),
-                               _op));
-}
+    static inline bool IsFrontmostOperation(void* _op) {
+        if(g_AllOperations.empty())
+            return false;
+        return g_AllOperations.front() == _op;
+    }
 
-static void ReportProgress(void* _op, double _progress) {
-    if(IsFrontmostOperation(_op))
-        ((AppDelegate*)[NSApplication.sharedApplication delegate]).progress = _progress;
-}
+public:
+    static void Register(void* _op) {
+        lock_guard<mutex> guard(g_AllOperationsMutex);
+        g_AllOperations.emplace_back(_op);
+    }
+    
+    static void Unregister(void* _op) {
+        lock_guard<mutex> guard(g_AllOperationsMutex);
+        if(IsFrontmostOperation(_op))
+            AppDelegate.me.progress = -1;
+        
+        auto it = find(begin(g_AllOperations), end(g_AllOperations), _op);
+        if(it != end(g_AllOperations))
+            g_AllOperations.erase(it);
+    }
+    
+    static void Report(void* _op, double _progress) {
+        lock_guard<mutex> guard(g_AllOperationsMutex);
+        if(IsFrontmostOperation(_op))
+            AppDelegate.me.progress = _progress;
+    }
+};
+
+vector<void*> OperationsProgressReporter::g_AllOperations;
+mutex         OperationsProgressReporter::g_AllOperationsMutex;
 
 @implementation Operation
 {
-    OperationJob *m_Job;
+    OperationJob        *m_Job;
     vector<id<OperationDialogProtocol>> m_Dialogs;
-    vector<void(^)()> m_Handlers;
-    bool m_Init;
+    vector<void(^)()>   m_Handlers;
+    float               m_Progress;
+    bool                m_IsPaused;
+    bool                m_IsIndeterminate;
+    
+    PanelController    *m_TargetPanel; // REMOVE ME LATER. MOVE TO CALLBACKS!!
 }
+
+@synthesize IsPaused = m_IsPaused;
+@synthesize Progress = m_Progress;
+@synthesize TargetPanel = m_TargetPanel;
+@synthesize IsIndeterminate = m_IsIndeterminate;
 
 - (milliseconds) ElapsedTime
 {
@@ -81,12 +100,12 @@ static void ReportProgress(void* _op, double _progress) {
     return m_Job->GetStats();
 }
 
-- (void)setIsPaused:(BOOL)IsPaused
+- (void)setIsPaused:(bool)IsPaused
 {
-    if(_IsPaused == IsPaused)
+    if(m_IsPaused == IsPaused)
         return;
 
-    _IsPaused = IsPaused;
+    m_IsPaused = IsPaused;
     if (IsPaused)
         m_Job->Pause();
     else
@@ -99,29 +118,28 @@ static void ReportProgress(void* _op, double _progress) {
     if (self)
     {
         m_Job = _job;
-        _TargetPanel = nil;
-        _Progress = 0;
-        _IsIndeterminate = true;
-        m_Init = true;
+        m_TargetPanel = nil;
+        m_Progress = 0;
+        m_IsIndeterminate = true;
+        m_IsPaused = false;
         
-        _job->SetBaseOperation(self);
+        m_Job->SetBaseOperation(self);
         
-        AddOperation((__bridge void*)self);
+        OperationsProgressReporter::Register((__bridge void*)self);
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if(m_Init)
-        RemoveOperation((__bridge void*)self);
+    OperationsProgressReporter::Unregister((__bridge void*)self);
 }
 
 - (void)Update
 {
     OperationStats &stats = m_Job->GetStats();
     float progress = stats.GetProgress();
-    if (_Progress != progress)
+    if (m_Progress != progress)
         self.Progress = progress;
     
 
@@ -133,7 +151,7 @@ static void ReportProgress(void* _op, double _progress) {
 
 - (void)Start
 {
-    if (m_Job->GetState() == OperationJob::StateReady)
+    if (m_Job->GetState() == OperationJob::State::Ready)
         m_Job->Start();
 }
 
@@ -160,24 +178,24 @@ static void ReportProgress(void* _op, double _progress) {
     m_Handlers.clear(); // erase all hanging (possibly strong) links to self
 }
 
-- (BOOL)IsStarted
+- (bool)IsStarted
 {
-    return m_Job->GetState() != OperationJob::StateReady;
+    return m_Job->GetState() != OperationJob::State::Ready;
 }
 
-- (BOOL)IsFinished
+- (bool)IsFinished
 {
     return m_Job->IsFinished();
 }
 
-- (BOOL)IsCompleted
+- (bool)IsCompleted
 {
-    return m_Job->GetState() == OperationJob::StateCompleted;
+    return m_Job->GetState() == OperationJob::State::Completed;
 }
 
-- (BOOL)IsStopped
+- (bool)IsStopped
 {
-    return m_Job->GetState() == OperationJob::StateStopped;
+    return m_Job->GetState() == OperationJob::State::Stopped;
 }
 
 - (bool)DialogShown
@@ -277,12 +295,12 @@ static void ReportProgress(void* _op, double _progress) {
 }
 
 
-- (void) setProgress:(float)Progress
+- (void)setProgress:(float)Progress
 {
-    ReportProgress((__bridge void*)self, Progress);
+    OperationsProgressReporter::Report((__bridge void*)self, Progress);
     
-    _Progress = Progress;
-    if(_IsIndeterminate == true && Progress > 0.0001f)
+    m_Progress = Progress;
+    if(m_IsIndeterminate == true && Progress > 0.0001f)
         self.IsIndeterminate = false;
 }
 

@@ -90,7 +90,7 @@ void FileDeletionOperationJob::Do()
         m_Stats.AddValue(1);
     }
     
-    m_Stats.SetCurrentItem(0);
+    m_Stats.SetCurrentItem("");
     
     if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();

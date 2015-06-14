@@ -66,7 +66,7 @@ void FileDeletionOperationVFSJob::Do()
         m_Stats.AddValue(1);        
     }
     
-    m_Stats.SetCurrentItem(nullptr);
+    m_Stats.SetCurrentItem("");
     
     if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();

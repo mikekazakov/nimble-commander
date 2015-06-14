@@ -22,8 +22,8 @@ public:
     // Retruns value in range from 0 to 1. Equals to current value divided by max value.
     float GetProgress() const;
     
-    void SetCurrentItem(const char *_item);
-    const char *GetCurrentItem() const;
+    void SetCurrentItem(string _item);
+    string GetCurrentItem() const;
     // Return true if item was changed after the previous call to IsCurrentItemChanged.
     // Clears changed status when called.
     bool IsCurrentItemChanged();
@@ -40,17 +40,16 @@ public:
     milliseconds GetTime() const;
     
 private:
-    nanoseconds m_StartTime{0};
-    nanoseconds m_PauseTime{0};
-    
-    volatile bool m_Started = false;
-    volatile int m_Paused = false;
-    
-    const char *m_CurrentItem = nullptr;
-    volatile bool m_CurrentItemChanged = false;
-    volatile uint64_t m_Value = 0;
-    volatile uint64_t m_MaxValue = 1;
-    mutable mutex     m_Lock;
+    nanoseconds     m_StartTime{0};
+    nanoseconds     m_PauseTime{0};
+    atomic_bool     m_Started{false};
+    atomic_int      m_Paused{0};
+    atomic_ulong    m_Value{0};
+    atomic_ulong    m_MaxValue{1};
+    mutable mutex   m_Lock;
+
+    string          m_CurrentItem;
+    volatile bool   m_CurrentItemChanged = false;
     
     OperationStats(const OperationStats&) = delete;
     void operator=(const OperationStats&) = delete;

@@ -258,7 +258,7 @@ void FileCopyOperationJobGenericToGeneric::ProcessItems()
         if(CheckPauseOrStop()) return;
     }
     
-    m_Stats.SetCurrentItem(nullptr);
+    m_Stats.SetCurrentItem("");
     
     ProcessFilesRemoval();
     ProcessFoldersRemoval();    

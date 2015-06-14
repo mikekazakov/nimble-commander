@@ -61,7 +61,7 @@ void FileSysAttrChangeOperationJob::Do()
         m_Stats.AddValue(1);
     }
     
-    m_Stats.SetCurrentItem(0);
+    m_Stats.SetCurrentItem("");
     SetCompleted();
 }
 

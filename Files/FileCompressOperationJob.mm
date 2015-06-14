@@ -245,7 +245,7 @@ void FileCompressOperationJob::ProcessItems()
         if(CheckPauseOrStop()) return;
     }
     
-    m_Stats.SetCurrentItem(nullptr);    
+    m_Stats.SetCurrentItem("");
 }
 
 void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, int _number)

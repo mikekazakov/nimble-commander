@@ -474,7 +474,7 @@ void FileCopyOperationJobNativeToNative::ProcessItems()
         if(CheckPauseOrStop()) return;
     }
 
-    m_Stats.SetCurrentItem(nullptr);
+    m_Stats.SetCurrentItem("");
     
     if(!m_FilesToDelete.empty())
         ProcessFilesRemoval();

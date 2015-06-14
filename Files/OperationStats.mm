@@ -54,14 +54,16 @@ float OperationStats::GetProgress() const
     return (float)m_Value/m_MaxValue;
 }
 
-void OperationStats::SetCurrentItem(const char *_item)
+void OperationStats::SetCurrentItem(string _item)
 {
-    m_CurrentItem = _item;
+    lock_guard<mutex> lock(m_Lock);
+    m_CurrentItem = move(_item);
     m_CurrentItemChanged = true;
 }
 
-const char *OperationStats::GetCurrentItem() const
+string OperationStats::GetCurrentItem() const
 {
+    lock_guard<mutex> lock(m_Lock);
     return m_CurrentItem;
 }
 

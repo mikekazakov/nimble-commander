@@ -36,14 +36,14 @@ void BatchRenameOperationJob::Do()
     for(size_t i = 0, e = m_SrcPaths.size(); i!=e; ++i) {
         if(CheckPauseOrStop()) { SetStopped(); return; }
 
-        m_Stats.SetCurrentItem(m_SrcPaths[i].c_str());
+        m_Stats.SetCurrentItem(m_SrcPaths[i]);
         
         ProcessItem(m_SrcPaths[i], m_DstPaths[i]);
         
         m_Stats.AddValue(1);
     }
     
-    m_Stats.SetCurrentItem(nullptr);
+    m_Stats.SetCurrentItem("");
     if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();
 }

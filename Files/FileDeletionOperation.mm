@@ -85,14 +85,14 @@
         self.Progress = progress;
     
     if (stats.IsCurrentItemChanged()) {
-        const char *item = stats.GetCurrentItem();
-        if (!item)
+        auto item = stats.GetCurrentItem();
+        if (item.empty())
             self.ShortInfo = @"";
         else
             self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
                                                                                    @"Operations",
                                                                                    "Operation info for file deletion"),
-                              [NSString stringWithUTF8String:item]];
+                              [NSString stringWithUTF8StdString:item]];
     }
 }
 

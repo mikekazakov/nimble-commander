@@ -74,6 +74,12 @@
             });
         }
     }];
+    
+    __weak FileDeletionOperation* wself = self;
+    self.Stats.SetOnCurrentItemChanged([wself]{
+        if(FileDeletionOperation* sself = wself)
+            [sself updateShortInfo];
+    });
 }
 
 - (void)Update
@@ -82,18 +88,19 @@
     
     float progress = stats.GetProgress();
     if (self.Progress != progress)
-        self.Progress = progress;
-    
-    if (stats.IsCurrentItemChanged()) {
-        auto item = stats.GetCurrentItem();
-        if (item.empty())
-            self.ShortInfo = @"";
-        else
-            self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
-                                                                                   @"Operations",
-                                                                                   "Operation info for file deletion"),
-                              [NSString stringWithUTF8StdString:item]];
-    }
+        self.Progress = progress;    
+}
+
+- (void)updateShortInfo
+{
+    auto item = self.Stats.GetCurrentItem();
+    if (item.empty())
+        self.ShortInfo = @"";
+    else
+        self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
+                                                                               @"Operations",
+                                                                               "Operation info for file deletion"),
+                          [NSString stringWithUTF8StdString:item]];
 }
 
 - (OperationDialogAlert *)DialogOnOpendirError:(NSError*)_error ForDir:(const char *)_path

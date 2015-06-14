@@ -28,28 +28,33 @@
                         _src_paths.size()];
         
         m_Job.Init(move(_src_paths), move(_dst_paths), _src_vfs, self);
+        
+        __weak BatchRenameOperation* wself = self;
+        self.Stats.SetOnCurrentItemChanged([wself]{
+            if(BatchRenameOperation* sself = wself)
+                [sself updateShortInfo];
+        });
     }
     return self;
 }
 
+- (void)updateShortInfo
+{
+    auto item = self.Stats.GetCurrentItem();
+    if (item.empty())
+        self.ShortInfo = @"";
+    else
+        self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
+                                                                               @"Operations",
+                                                                               "Operation info for batch file renaming"),
+                          [NSString stringWithUTF8StdString:item]];
+}
+
 - (void)Update
 {
-    OperationStats &stats = m_Job.GetStats();
-    
-    float progress = stats.GetProgress();
+    float progress = self.Stats.GetProgress();
     if (self.Progress != progress)
         self.Progress = progress;
-
-    if (stats.IsCurrentItemChanged()) {
-        auto item = stats.GetCurrentItem();
-        if (item.empty())
-            self.ShortInfo = @"";
-        else
-            self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
-                                                                                   @"Operations",
-                                                                                   "Operation info for batch file renaming"),
-                              [NSString stringWithUTF8StdString:item]];
-    }
 }
 
 - (OperationDialogAlert *)DialogOnRenameError:(NSError*)_error source:(const string&)_source destination:(const string&)_destination

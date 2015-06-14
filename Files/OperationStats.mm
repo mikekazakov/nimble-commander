@@ -57,8 +57,11 @@ float OperationStats::GetProgress() const
 void OperationStats::SetCurrentItem(string _item)
 {
     lock_guard<mutex> lock(m_Lock);
-    m_CurrentItem = move(_item);
-    m_CurrentItemChanged = true;
+    if( m_CurrentItem != _item ) {
+        m_CurrentItem = move(_item);
+        if( m_OnCurrentItemChanged )
+            dispatch_to_main_queue( m_OnCurrentItemChanged );
+    }
 }
 
 string OperationStats::GetCurrentItem() const
@@ -67,17 +70,17 @@ string OperationStats::GetCurrentItem() const
     return m_CurrentItem;
 }
 
-bool OperationStats::IsCurrentItemChanged()
+void OperationStats::SetOnCurrentItemChanged(function<void()> _callback)
 {
-    bool changed = m_CurrentItemChanged;
-    if (changed) m_CurrentItemChanged = false;
-    return changed;
+    lock_guard<mutex> lock(m_Lock);
+    m_OnCurrentItemChanged = move(_callback);
 }
 
 void OperationStats::StartTimeTracking()
 {
+    if(m_Started)
+        return;
     lock_guard<mutex> lock(m_Lock);
-    assert(!m_Started);
     m_StartTime = machtime();
     if (m_Paused)
         m_PauseTime = m_StartTime;
@@ -94,7 +97,8 @@ void OperationStats::PauseTimeTracking()
 void OperationStats::ResumeTimeTracking()
 {
     lock_guard<mutex> lock(m_Lock);
-    assert(m_Paused >= 1);
+    if(m_Paused == 0)
+        return;
     if (--m_Paused == 0) {
         auto pause_duration = machtime() - m_PauseTime;
         m_StartTime += pause_duration;

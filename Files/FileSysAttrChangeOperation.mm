@@ -39,9 +39,27 @@
                             [NSNumber numberWithUnsignedLong:_command->files.size()],
                             [NSString stringWithUTF8String:buff]];
         }
-            
+        
+        __weak FileSysAttrChangeOperation* wself = self;
+        self.Stats.SetOnCurrentItemChanged([wself]{
+            if(FileSysAttrChangeOperation* sself = wself)
+                [sself updateShortInfo];
+        });
     }
     return self;
+}
+
+- (void)updateShortInfo
+{
+    auto item = self.Stats.GetCurrentItem();
+    if (item.empty())
+        self.ShortInfo = @"";
+    else
+        self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
+                                                                                @"Operations",
+                                                                                "Operation short info"),
+                          [NSString stringWithUTF8StdString:item]];
+    
 }
 
 - (void)Update
@@ -50,17 +68,6 @@
     float progress = stats.GetProgress();
     if (self.Progress != progress)
         self.Progress = progress;
-    
-    if (stats.IsCurrentItemChanged()) {
-        auto item = stats.GetCurrentItem();
-        if (item.empty())
-            self.ShortInfo = @"";
-        else
-            self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
-                                                                                   @"Operations",
-                                                                                   "Operation short info"),
-                              [NSString stringWithUTF8StdString:item]];
-    }
 }
 
 - (OperationDialogAlert *)DialogOnChmodError:(int)_error

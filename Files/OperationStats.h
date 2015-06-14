@@ -24,9 +24,7 @@ public:
     
     void SetCurrentItem(string _item);
     string GetCurrentItem() const;
-    // Return true if item was changed after the previous call to IsCurrentItemChanged.
-    // Clears changed status when called.
-    bool IsCurrentItemChanged();
+    void SetOnCurrentItemChanged(function<void()> _callback); // _callback will be called from main thread
     
     void StartTimeTracking();
     // Pauses the time tracking. Keeps track of how many times it was invoked.
@@ -42,14 +40,14 @@ public:
 private:
     nanoseconds     m_StartTime{0};
     nanoseconds     m_PauseTime{0};
-    atomic_bool     m_Started{false};
-    atomic_int      m_Paused{0};
+    volatile bool   m_Started{false};
+    volatile int    m_Paused{0};
     atomic_ulong    m_Value{0};
     atomic_ulong    m_MaxValue{1};
     mutable mutex   m_Lock;
 
     string          m_CurrentItem;
-    volatile bool   m_CurrentItemChanged = false;
+    function<void()>m_OnCurrentItemChanged;
     
     OperationStats(const OperationStats&) = delete;
     void operator=(const OperationStats&) = delete;

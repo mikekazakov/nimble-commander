@@ -76,6 +76,11 @@ static void ReportProgress(void* _op, double _progress) {
     return m_Job->GetStats().GetTime();
 }
 
+- (OperationStats&) Stats
+{
+    return m_Job->GetStats();
+}
+
 - (void)setIsPaused:(BOOL)IsPaused
 {
     if(_IsPaused == IsPaused)

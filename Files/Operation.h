@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "OperationDialogProtocol.h"
 
-
+class OperationStats;
 class OperationJob;
 @class OperationDialogController;
 @class PanelController;
@@ -63,6 +63,11 @@ class OperationJob;
  * Time spent on pause state is not accounted.
  */
 @property (nonatomic, readonly) milliseconds ElapsedTime;
+
+/**
+ * Just a shortpath to Job->GetStats()
+ */
+@property (nonatomic, readonly) OperationStats& Stats;
 
 - (id)initWithJob:(OperationJob *)_job;
 

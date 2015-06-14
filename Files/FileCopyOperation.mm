@@ -84,6 +84,12 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
             self.Caption = OpTitleForMultipleItems(_opts.docopy, (int)_files.size(), to);
         
         m_NativeToNativeJob->Init(move(_files), _root, _dest, _opts, self);
+        
+        __weak FileCopyOperation* wself = self;
+        self.Stats.SetOnCurrentItemChanged([wself]{
+            if(FileCopyOperation* sself = wself)
+                [sself Update];
+        });
     }
     return self;
 }
@@ -197,7 +203,7 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
                                   f.ToNSString(stats.GetMaxValue(), ByteCountFormatter::Adaptive6),
                                   f.ToNSString(copy_speed, ByteCountFormatter::Adaptive6)];
         }
-        else if (stats.IsCurrentItemChanged() && value_type == FileCopyOperationJobNativeToNative::StatValueFiles)
+        else if (value_type == FileCopyOperationJobNativeToNative::StatValueFiles)
         {
             auto file = stats.GetCurrentItem();
             if (file.empty())

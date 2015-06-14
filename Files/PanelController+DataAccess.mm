@@ -45,6 +45,32 @@
     return {};
 }
 
+- (vector<unsigned>) selectedEntriesOrFocusedEntryIndeces
+{
+    vector<unsigned> inds;
+    auto &d = self.data;
+    for( auto ind: d.SortedDirectoryEntries() ) {
+        auto e = d.EntryAtRawPosition(ind);
+        if( !e || !e->CFIsSelected() || e->IsDotDot() )
+            continue;
+        inds.emplace_back(ind);
+    }
+    
+    if( inds.empty() ) {
+        if(!self.view.item ||
+           self.view.item->IsDotDot() ||
+           self.view.curpos < 0)
+            return {};
+
+        auto i = d.RawIndexForSortIndex(self.view.curpos);
+        if(i < 0)
+            return {};
+        
+        inds.emplace_back( i );
+    }
+    return inds;
+}
+
 - (vector<string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot
 {
     if(!m_View)

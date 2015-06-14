@@ -19,8 +19,8 @@ OperationStats::~OperationStats()
 
 void OperationStats::SetMaxValue(uint64_t _max_value)
 {
-//    assert(_max_value);
-    assert(m_Value <= _max_value);
+    if(m_Value > _max_value)
+        throw logic_error("OperationStats::SetMaxValue _max_value is less than current m_Value");
     
     m_MaxValue = _max_value;
 }
@@ -32,14 +32,16 @@ uint64_t OperationStats::GetMaxValue() const
 
 void OperationStats::SetValue(uint64_t _value)
 {
+    if(_value > m_MaxValue)
+        throw logic_error("OperationStats::SetValue _value is greater than m_MaxValue");
     m_Value = _value;
-    assert(m_Value <= m_MaxValue);
 }
 
 void OperationStats::AddValue(uint64_t _value)
 {
     m_Value += _value;
-    assert(m_Value <= m_MaxValue);
+    if(m_Value > m_MaxValue)
+        throw logic_error("OperationStats::AddValue m_Value is greater than m_MaxValue");
 }
 
 uint64_t OperationStats::GetValue() const

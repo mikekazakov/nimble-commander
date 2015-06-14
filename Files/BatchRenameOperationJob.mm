@@ -29,12 +29,21 @@ void BatchRenameOperationJob::Do()
     if(m_SrcPaths.size() != m_DstPaths.size())
         throw logic_error("invalid parameters in BatchRenameOperationJob");
     
+    m_Stats.StartTimeTracking();
+    m_Stats.SetMaxValue(m_SrcPaths.size());
+    
     
     for(size_t i = 0, e = m_SrcPaths.size(); i!=e; ++i) {
         if(CheckPauseOrStop()) { SetStopped(); return; }
+
+        m_Stats.SetCurrentItem(m_SrcPaths[i].c_str());
+        
         ProcessItem(m_SrcPaths[i], m_DstPaths[i]);
+        
+        m_Stats.AddValue(1);
     }
     
+    m_Stats.SetCurrentItem(nullptr);
     if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();
 }

@@ -21,9 +21,35 @@
 {
     self = [super initWithJob:&m_Job];
     if (self) {
+        
+        self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Batch renaming %u items",
+                                                                             @"Operations",
+                                                                             "Operation title batch renaming"),
+                        _src_paths.size()];
+        
         m_Job.Init(move(_src_paths), move(_dst_paths), _src_vfs, self);
     }
     return self;
+}
+
+- (void)Update
+{
+    OperationStats &stats = m_Job.GetStats();
+    
+    float progress = stats.GetProgress();
+    if (self.Progress != progress)
+        self.Progress = progress;
+
+    if (stats.IsCurrentItemChanged()) {
+        const char *item = stats.GetCurrentItem();
+        if (!item)
+            self.ShortInfo = @"";
+        else
+            self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
+                                                                                   @"Operations",
+                                                                                   "Operation info for batch file renaming"),
+                              [NSString stringWithUTF8String:item]];
+    }
 }
 
 - (OperationDialogAlert *)DialogOnRenameError:(NSError*)_error source:(const string&)_source destination:(const string&)_destination

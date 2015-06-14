@@ -936,19 +936,9 @@
 
 - (IBAction)OnBatchRename:(id)sender
 {
-    vector<unsigned> inds;
-    
-    for( auto ind: self.data.SortedDirectoryEntries() ) {
-        auto e = self.data.EntryAtRawPosition(ind);
-        if( !e || !e->CFIsSelected() || e->IsDotDot() )
-            continue;
-        inds.emplace_back(ind);
-    }
-    if(inds.empty()) {
-        if(!self.view.item || self.view.item->IsDotDot() || self.view.curpos < 0)
-            return;
-        inds.emplace_back(self.data.RawIndexForSortIndex(self.view.curpos));
-    }
+    vector<unsigned> inds = self.selectedEntriesOrFocusedEntryIndeces;
+    if(inds.empty())
+        return;
     
     auto vfs = self.vfs;
     

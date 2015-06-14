@@ -33,6 +33,12 @@
 @property (nonatomic, readonly) vector<string> selectedEntriesOrFocusedEntryFilenames;
 
 /**
+ * Like previous, but returns indeces in listing.
+ * Order of items will obey current sorting.
+ */
+@property (nonatomic, readonly) vector<unsigned> selectedEntriesOrFocusedEntryIndeces;
+
+/**
  * Return a list of selected entries filenames if any.
  * If no entries is selected - return currently focused element filename, including case of dot-dot.
  */

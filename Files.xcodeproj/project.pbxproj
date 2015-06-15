@@ -238,9 +238,6 @@
 		CF5C1E3E1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
 		CF5C1E3F1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
 		CF5C1E401B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
-		CF5C1E411B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
-		CF5C1E421B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
-		CF5C1E431B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
@@ -532,6 +529,9 @@
 		CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFC044E11B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
+		CFC044E21B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
+		CFC044E31B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
+		CFC044E41B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
 		CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */; };
@@ -1230,7 +1230,6 @@
 		CF5C1E311B075057005DE19F /* BatchRenameSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BatchRenameSheetController.xib; sourceTree = "<group>"; };
 		CF5C1E3B1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchRenameSheetRangeSelectionPopoverController.h; sourceTree = "<group>"; };
 		CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRenameSheetRangeSelectionPopoverController.mm; sourceTree = "<group>"; };
-		CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BatchRenameSheetRangeSelectionPopoverController.xib; sourceTree = "<group>"; };
 		CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnRAR_LIB.xcodeproj; path = 3rd_party/unrar/UnRAR_LIB/UnRAR_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
 		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
@@ -1398,6 +1397,7 @@
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFC044DA1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
 		CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
+		CFC044E51B2F318500969A5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BatchRenameSheetRangeSelectionPopoverController.xib; sourceTree = "<group>"; };
 		CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
 		CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
 		CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
@@ -2062,7 +2062,7 @@
 				CF5C1E311B075057005DE19F /* BatchRenameSheetController.xib */,
 				CF5C1E3B1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.h */,
 				CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */,
-				CF5C1E3D1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib */,
+				CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */,
 			);
 			name = BatchRename;
 			sourceTree = "<group>";
@@ -2968,7 +2968,7 @@
 				CFCA763419D288E300AF87A8 /* files.icns in Resources */,
 				CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
-				CF5C1E421B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
+				CFC044E31B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */,
 				CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFB598BE196E38E400D4C108 /* show_oplist_icon.png in Resources */,
@@ -3074,7 +3074,7 @@
 				CFCABCCE1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCABCC71A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
-				CF5C1E411B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
+				CFC044E21B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFB598B1196E38E400D4C108 /* pref_general_icon.png in Resources */,
@@ -3101,7 +3101,7 @@
 				CFCCFBEC1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CFCCFBF61A5E6F8A00313845 /* MassCopySheetController.xib in Resources */,
 				CFF6F3AA1A135A0E00011177 /* files.icns in Resources */,
-				CF5C1E431B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
+				CFC044E41B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFF6F3761A13567C00011177 /* pref_term_icon.png in Resources */,
 				CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFCCFBFB1A5E772B00313845 /* FileAlreadyExistSheetController.xib in Resources */,
@@ -3930,6 +3930,14 @@
 				CFB8FA291A93A5500009315A /* ru */,
 			);
 			name = AppStoreRatingsSheetController.xib;
+			sourceTree = "<group>";
+		};
+		CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFC044E51B2F318500969A5E /* Base */,
+			);
+			name = BatchRenameSheetRangeSelectionPopoverController.xib;
 			sourceTree = "<group>";
 		};
 		CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */ = {

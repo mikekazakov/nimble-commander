@@ -42,7 +42,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="W7g-Hk-VQP" viewBased="YES" id="C9n-Is-tq6">
-                                    <rect key="frame" x="0.0" y="0.0" width="559" height="0.0"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="643" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -521,7 +521,7 @@
                             <outlet property="nextKeyView" destination="NX6-my-Ja7" id="sRr-h8-cBJ"/>
                         </connections>
                     </textField>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7gw-eT-fiP">
+                    <button toolTip="⌘↩" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7gw-eT-fiP">
                         <rect key="frame" x="495" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="5D9-DQ-UPX"/>

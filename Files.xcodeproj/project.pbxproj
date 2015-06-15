@@ -529,6 +529,9 @@
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
+		CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
+		CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
+		CFC044E11B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
 		CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */; };
 		CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */; };
@@ -1393,6 +1396,8 @@
 		CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalEditorInfo.mm; sourceTree = "<group>"; };
 		CFB8FA291A93A5500009315A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/AppStoreRatingsSheetController.strings; sourceTree = "<group>"; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		CFC044DA1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
+		CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
 		CFC058D9170B27C200A20CF2 /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
 		CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
 		CFC058DE170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
@@ -1790,6 +1795,8 @@
 				CF7B206C1A277A27008F1492 /* TrialWindowController.xib */,
 				CF55CDD01B299843001B4F91 /* SheetWithHotkeys.h */,
 				CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */,
+				CFC044DA1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.h */,
+				CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */,
 			);
 			name = Controls;
 			sourceTree = "<group>";
@@ -3268,6 +3275,7 @@
 				CF6D9BE2196678000077B146 /* NativeFSManager.mm in Sources */,
 				CF50B6EB1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */,
 				CF6D9BE3196678000077B146 /* DataBlockAnalysis.mm in Sources */,
+				CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CF6D9BE4196678000077B146 /* SearchInFile.mm in Sources */,
 				CF6D9BE5196678000077B146 /* ObjcToCppObservingBridge.mm in Sources */,
 				CF6D9BE6196678000077B146 /* FileMask.mm in Sources */,
@@ -3439,6 +3447,7 @@
 				CFE3829119CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
 				CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */,
 				CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */,
+				CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF89D8A61A43083100B2D9F1 /* tiny_string.cpp in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
@@ -3685,6 +3694,7 @@
 				CFF6F2761A13567C00011177 /* filesysinfo.mm in Sources */,
 				CFF6F2771A13567C00011177 /* SUStandardVersionComparator.m in Sources */,
 				CF76F48A1A7BCDB400B29512 /* FileCopyOperationJob.mm in Sources */,
+				CFC044E11B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CF50B7061A1516C800E3D96D /* VFSArchiveUnRARInternals.mm in Sources */,
 				CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,

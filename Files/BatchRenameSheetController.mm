@@ -6,11 +6,13 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "BatchRenameSheetController.h"
 #import "BatchRename.h"
 #import "Common.h"
 #import "BatchRenameSheetRangeSelectionPopoverController.h"
 #import "SheetWithHotkeys.h"
+#import "SimpleComboBoxPersistentDataSource.h"
 
 @interface BatchRenameSheetControllerNilNumberValueTransformer : NSValueTransformer
 @end
@@ -40,6 +42,10 @@
     
     vector<string>                  m_ResultSource;
     vector<string>                  m_ResultDestination;
+    
+    SimpleComboBoxPersistentDataSource *m_RenamePatternDataSource;
+    SimpleComboBoxPersistentDataSource *m_SearchForDataSource;
+    SimpleComboBoxPersistentDataSource *m_ReplaceWithDataSource;
 }
 
 
@@ -120,6 +126,22 @@
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     [self InsertStringIntoMask:@"[N].[E]"];
     self.isValidRenaming = true;
+
+    // set up data sources for comboboxes
+    m_RenamePatternDataSource = [[SimpleComboBoxPersistentDataSource alloc] initWithPlistPath:
+                                 [NSFileManager.defaultManager.applicationSupportDirectory stringByAppendingString:@"/batchrenamesheet_lastpatterns.bplist"]];
+    self.FilenameMask.usesDataSource = true;
+    self.FilenameMask.dataSource = m_RenamePatternDataSource;
+
+    m_SearchForDataSource = [[SimpleComboBoxPersistentDataSource alloc] initWithPlistPath:
+                             [NSFileManager.defaultManager.applicationSupportDirectory stringByAppendingString:@"/batchrenamesheet_lastsearches.bplist"]];
+    self.SearchForComboBox.usesDataSource = true;
+    self.SearchForComboBox.dataSource = m_SearchForDataSource;
+    
+    m_ReplaceWithDataSource = [[SimpleComboBoxPersistentDataSource alloc] initWithPlistPath:
+                               [NSFileManager.defaultManager.applicationSupportDirectory stringByAppendingString:@"/batchrenamesheet_lastreplaces.bplist"]];
+    self.ReplaceWithComboBox.usesDataSource = true;
+    self.ReplaceWithComboBox.dataSource = m_ReplaceWithDataSource;
     
     // wire up hotkeys
     SheetWithHotkeys *sheet = (SheetWithHotkeys *)self.window;
@@ -448,6 +470,11 @@
 {
     [self UpdateRename];
     [self buildResultDestinations];
+    
+    [m_RenamePatternDataSource reportEnteredItem:self.FilenameMask.stringValue];
+    [m_SearchForDataSource reportEnteredItem:self.SearchForComboBox.stringValue];
+    [m_ReplaceWithDataSource reportEnteredItem:self.ReplaceWithComboBox.stringValue];
+    
     [self endSheet:NSModalResponseOK];
 }
 

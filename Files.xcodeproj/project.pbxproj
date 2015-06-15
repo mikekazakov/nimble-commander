@@ -431,7 +431,6 @@
 		CF89D8B01A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */; };
 		CF89D8B11A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
-		CF8E66841AF1307300E31DFF /* MassRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E66831AF1307300E31DFF /* MassRename_Tests.mm */; };
 		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
 		CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */; };
@@ -1284,7 +1283,6 @@
 		CF89D8AE1A45816500B2D9F1 /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dispatch_cpp.h; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
-		CF8E66831AF1307300E31DFF /* MassRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassRename_Tests.mm; sourceTree = "<group>"; };
 		CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeFSManager.mm; sourceTree = "<group>"; };
 		CF8F29CB188FEE490095D6F9 /* NativeFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFSManager.h; sourceTree = "<group>"; };
 		CF9066B219AB51B3001DC687 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
@@ -1981,7 +1979,6 @@
 				CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */,
 				CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */,
 				CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */,
-				CF8E66831AF1307300E31DFF /* MassRename_Tests.mm */,
 				CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
@@ -3179,7 +3176,6 @@
 				CF1100E2191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm in Sources */,
 				CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */,
 				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
-				CF8E66841AF1307300E31DFF /* MassRename_Tests.mm in Sources */,
 				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
 				CFABC4AD1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm in Sources */,
 				CF5C1E281B05B679005DE19F /* BatchRename_Tests.mm in Sources */,

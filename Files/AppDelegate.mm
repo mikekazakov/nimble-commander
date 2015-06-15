@@ -108,6 +108,8 @@
         menuitem("menu.command.file_attributes").hidden = true;
     if(!configuration::has_detailed_volume_information)
         menuitem("menu.command.volume_information").hidden = true;
+    if(!configuration::has_batch_rename)
+        menuitem("menu.command.batch_rename").hidden = true;
     // fix for a hanging separator in Lite version
     // BAD, BAD approach with hardcoded standalone tag!
     // need to write a mech to hide separators if surrounding menu items became hidden

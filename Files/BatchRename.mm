@@ -87,8 +87,6 @@ bool BatchRename::BuildActionsScript( NSString *_mask )
         
         
     }
-    
-    int a = 10;
 
     // need to clean action on failed parsing
     return ok;

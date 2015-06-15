@@ -64,5 +64,6 @@ namespace configuration
     constexpr bool has_fs_links_manipulation        = version >= Version::Pro;
     constexpr bool has_network_connectivity         = version >= Version::Pro;
     constexpr bool has_checksum_calculation         = version >= Version::Pro;
+    constexpr bool has_batch_rename                 = version >= Version::Pro;
 }
 #endif

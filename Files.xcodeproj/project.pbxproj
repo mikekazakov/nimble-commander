@@ -90,9 +90,6 @@
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
 		CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
-		CF43D27B1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */; };
-		CF43D27C1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */; };
-		CF43D27D1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */; };
 		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
@@ -217,12 +214,6 @@
 		CF55CDDC1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */; };
 		CF55CDDD1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
-		CF5682671AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
-		CF5682681AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
-		CF5682691AF3581600C48E28 /* MassRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */; };
-		CF56826A1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */; };
-		CF56826B1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */; };
-		CF56826C1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
 		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
 		CF5C1E211B04A0E4005DE19F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */; };
@@ -440,9 +431,6 @@
 		CF89D8B01A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */; };
 		CF89D8B11A45816500B2D9F1 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF89D8AD1A45816500B2D9F1 /* dispatch_cpp.cpp */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
-		CF8E667D1AF106B900E31DFF /* MassRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E667B1AF106B900E31DFF /* MassRename.mm */; };
-		CF8E667E1AF106B900E31DFF /* MassRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E667B1AF106B900E31DFF /* MassRename.mm */; };
-		CF8E667F1AF106B900E31DFF /* MassRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E667B1AF106B900E31DFF /* MassRename.mm */; };
 		CF8E66841AF1307300E31DFF /* MassRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E66831AF1307300E31DFF /* MassRename_Tests.mm */; };
 		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
@@ -1123,7 +1111,6 @@
 		CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/shared_mutex/shared_mutex.cpp; sourceTree = "<group>"; };
 		CF3FCE0C190EB96000E55698 /* shared_mutex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shared_mutex; path = 3rd_party/shared_mutex/shared_mutex; sourceTree = "<group>"; };
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
-		CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassRenameSheetActionViews.mm; sourceTree = "<group>"; };
 		CF47A980186C607C00745C4C /* Files Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Files Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CF47A985186C607C00745C4C /* Files Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Files Tests-Info.plist"; sourceTree = "<group>"; };
@@ -1216,9 +1203,6 @@
 		CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRenameOperation.mm; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
-		CF5682641AF3581600C48E28 /* MassRenameSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassRenameSheetController.h; sourceTree = "<group>"; };
-		CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassRenameSheetController.mm; sourceTree = "<group>"; };
-		CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassRenameSheetController.xib; sourceTree = "<group>"; };
 		CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateDirectoryOperationVFSJob.mm; sourceTree = "<group>"; };
 		CF5913CA191BD422003007F1 /* CreateDirectoryOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDirectoryOperationVFSJob.h; sourceTree = "<group>"; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
@@ -1300,8 +1284,6 @@
 		CF89D8AE1A45816500B2D9F1 /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dispatch_cpp.h; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
-		CF8E667B1AF106B900E31DFF /* MassRename.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassRename.mm; sourceTree = "<group>"; };
-		CF8E667C1AF106B900E31DFF /* MassRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassRename.h; sourceTree = "<group>"; };
 		CF8E66831AF1307300E31DFF /* MassRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MassRename_Tests.mm; sourceTree = "<group>"; };
 		CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeFSManager.mm; sourceTree = "<group>"; };
 		CF8F29CB188FEE490095D6F9 /* NativeFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFSManager.h; sourceTree = "<group>"; };
@@ -1920,12 +1902,6 @@
 				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
 				CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */,
 				CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */,
-				CF8E667C1AF106B900E31DFF /* MassRename.h */,
-				CF8E667B1AF106B900E31DFF /* MassRename.mm */,
-				CF5682641AF3581600C48E28 /* MassRenameSheetController.h */,
-				CF5682651AF3581600C48E28 /* MassRenameSheetController.mm */,
-				CF43D27A1B03305D00331387 /* MassRenameSheetActionViews.mm */,
-				CF5682661AF3581600C48E28 /* MassRenameSheetController.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -3003,7 +2979,6 @@
 				CFCABCDD1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
-				CF56826B1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CF6D99AB196676B10077B146 /* ShortcutsDefaults.plist in Resources */,
@@ -3043,7 +3018,6 @@
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF76B315170146240066A49F /* OperationsSummaryViewController.xib in Resources */,
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
-				CF56826A1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */,
 				CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBD1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
 				CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */,
@@ -3136,7 +3110,6 @@
 				CFF6F3941A13567C00011177 /* question_icon.png in Resources */,
 				CFCABCD01A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCABCC91A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
-				CF56826C1AF3581600C48E28 /* MassRenameSheetController.xib in Resources */,
 				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
@@ -3227,7 +3200,6 @@
 			files = (
 				CF55CDDC1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */,
 				CF6D9C9419667BA20077B146 /* rdrand.c in Sources */,
-				CF5682681AF3581600C48E28 /* MassRenameSheetController.mm in Sources */,
 				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF50B72C1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */,
@@ -3295,7 +3267,6 @@
 				CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CF6D9C0B196678000077B146 /* ExternalEditorInfo.mm in Sources */,
 				CF6D9C0C196678000077B146 /* TermSingleTask.mm in Sources */,
-				CF8E667E1AF106B900E31DFF /* MassRename.mm in Sources */,
 				CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CF6D9C0D196678000077B146 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
@@ -3379,7 +3350,6 @@
 				CF6D9C4F196678010077B146 /* QuickPreview.mm in Sources */,
 				CF6D9C50196678010077B146 /* BriefSystemOverview.mm in Sources */,
 				CF6D9C51196678010077B146 /* FilePanelMainSplitView.mm in Sources */,
-				CF43D27C1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */,
 				CF50B6CA1A15167800E3D96D /* VFSHost.cpp in Sources */,
 				CF6D9C52196678010077B146 /* MainWndGoToButton.mm in Sources */,
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
@@ -3474,7 +3444,6 @@
 				CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
 				CF50B6DF1A15169300E3D96D /* VFSPSListing.cpp in Sources */,
-				CF5682671AF3581600C48E28 /* MassRenameSheetController.mm in Sources */,
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */,
@@ -3592,7 +3561,6 @@
 				CF09857418EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF1100DB191B46BD00E170FC /* FileDeletionOperationVFSJob.mm in Sources */,
-				CF43D27B1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */,
 				CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
@@ -3613,7 +3581,6 @@
 				CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */,
 				CF47F6981830CDB30060D474 /* NewVersionChecker.mm in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
-				CF8E667D1AF106B900E31DFF /* MassRename.mm in Sources */,
 				CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF50B7221A15170600E3D96D /* VFSNetFTPCache.mm in Sources */,
 				CFB709B518DFF01A00A83E61 /* FileCopyOperationJobGenericToGeneric.mm in Sources */,
@@ -3646,7 +3613,6 @@
 			files = (
 				CF55CDDD1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */,
 				CFF6F23B1A13567C00011177 /* DisplayNamesCache.mm in Sources */,
-				CF5682691AF3581600C48E28 /* MassRenameSheetController.mm in Sources */,
 				CFF6F23D1A13567C00011177 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFF6F23F1A13567C00011177 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
 				CFF6F2411A13567C00011177 /* main.m in Sources */,
@@ -3714,7 +3680,6 @@
 				CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */,
 				CFF6F28B1A13567C00011177 /* GenericOperationView.mm in Sources */,
 				CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */,
-				CF8E667F1AF106B900E31DFF /* MassRename.mm in Sources */,
 				CFF6F2901A13567C00011177 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFF6F2911A13567C00011177 /* OperationsSummaryViewController.mm in Sources */,
 				CFF6F2931A13567C00011177 /* MainWindow.mm in Sources */,
@@ -3798,7 +3763,6 @@
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CFF6F30F1A13567C00011177 /* FileLinkOperation.mm in Sources */,
 				CFF6F3121A13567C00011177 /* FileLinkOperationJob.mm in Sources */,
-				CF43D27D1B03305D00331387 /* MassRenameSheetActionViews.mm in Sources */,
 				CFF6F3131A13567C00011177 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFF6F3141A13567C00011177 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,

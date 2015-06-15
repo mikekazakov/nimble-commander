@@ -104,6 +104,7 @@
     IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.file.new_folder")                 return self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.vfs->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.batch_rename")            return self.vfs->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     
     return true; // will disable some items in the future
 }

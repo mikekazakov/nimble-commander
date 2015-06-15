@@ -44,8 +44,7 @@
         stuff(kVK_ANSI_T, onCtrlT);
         stuff(kVK_ANSI_U, onCtrlU);
         stuff(kVK_ANSI_V, onCtrlV);
-        stuff(kVK_ANSI_W, onCtrlW
-              );
+        stuff(kVK_ANSI_W, onCtrlW);
         stuff(kVK_ANSI_X, onCtrlX);
         stuff(kVK_ANSI_Y, onCtrlY);
         stuff(kVK_ANSI_Z, onCtrlZ);
@@ -61,7 +60,10 @@
         if( SheetWithHotkeys* sself = wself ) {
             id ctrl = sself.windowController;
             if( ctrl && [ctrl respondsToSelector:_action] ) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
                 [ctrl performSelector:_action withObject:sself];
+#pragma clang diagnostic pop                
             }
         }
     };

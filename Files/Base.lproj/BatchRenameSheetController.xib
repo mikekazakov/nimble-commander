@@ -582,6 +582,7 @@ Gw
                     <constraint firstItem="nQr-DT-yTz" firstAttribute="leading" secondItem="EKb-UU-Za4" secondAttribute="trailing" constant="8" symbolic="YES" id="DPA-uU-nlY"/>
                     <constraint firstItem="SI4-vS-Egd" firstAttribute="leading" secondItem="Kch-iv-6zs" secondAttribute="trailing" constant="3" id="DWT-u8-pKw"/>
                     <constraint firstItem="cC1-qI-LZv" firstAttribute="leading" secondItem="AjF-Fc-xi5" secondAttribute="trailing" constant="8" symbolic="YES" id="Di8-ge-DZC"/>
+                    <constraint firstItem="stf-ED-JLt" firstAttribute="leading" secondItem="E2t-ZL-Mbg" secondAttribute="leading" id="Djf-XP-fam"/>
                     <constraint firstItem="p5V-M1-8GC" firstAttribute="top" secondItem="RwK-OL-6hu" secondAttribute="bottom" constant="8" symbolic="YES" id="Dp0-iG-dRD"/>
                     <constraint firstItem="wTa-vH-MEJ" firstAttribute="top" secondItem="RBI-rU-SES" secondAttribute="bottom" constant="4" id="FlN-5d-Pv3"/>
                     <constraint firstItem="A64-6a-qQA" firstAttribute="leading" secondItem="LYl-8z-bLW" secondAttribute="trailing" constant="8" symbolic="YES" id="Fw2-nv-3GR"/>
@@ -646,6 +647,7 @@ Gw
                     <constraint firstAttribute="trailing" secondItem="rN7-QI-0PH" secondAttribute="trailing" constant="20" symbolic="YES" id="pYB-Gk-Hsd"/>
                     <constraint firstItem="XbC-0N-Ybp" firstAttribute="baseline" secondItem="RBI-rU-SES" secondAttribute="baseline" id="qqM-hI-i1Q"/>
                     <constraint firstAttribute="bottom" secondItem="7gw-eT-fiP" secondAttribute="bottom" constant="20" symbolic="YES" id="sEc-GR-kJ3"/>
+                    <constraint firstItem="stf-ED-JLt" firstAttribute="leading" secondItem="EKb-UU-Za4" secondAttribute="leading" id="scy-VP-ETp"/>
                     <constraint firstItem="EKb-UU-Za4" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="bottom" constant="8" id="tfm-EE-Kdz"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="nQr-DT-yTz" secondAttribute="trailing" constant="8" symbolic="YES" id="tiT-1P-uMr"/>
                     <constraint firstItem="RwK-OL-6hu" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="v1d-I2-R19"/>
@@ -664,7 +666,7 @@ Gw
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
                 <outlet property="initialFirstResponder" destination="p5V-M1-8GC" id="SIA-Kt-X1q"/>
             </connections>
-            <point key="canvasLocation" x="93.5" y="-37.5"/>
+            <point key="canvasLocation" x="-35.5" y="-90.5"/>
         </window>
         <menu id="GFK-z0-FZ4">
             <items>

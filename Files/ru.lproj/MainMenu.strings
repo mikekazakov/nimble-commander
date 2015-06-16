@@ -304,9 +304,6 @@
 /* Class = "NSMenuItem"; title = "Connect To..."; ObjectID = "R1g-do-NyV"; */
 "R1g-do-NyV.title" = "Подключиться к...";
 
-/* Class = "NSMenuItem"; title = "Download Full Version..."; ObjectID = "Si2-qa-RDP"; */
-"Si2-qa-RDP.title" = "Загрузить полную версию...";
-
 /* Class = "NSMenuItem"; title = "Show Previous Tab"; ObjectID = "ViK-AU-jLn"; */
 "ViK-AU-jLn.title" = "Показать предыдущую вкладку";
 

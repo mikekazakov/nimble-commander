@@ -19,17 +19,8 @@
 /* Operation title for symlink altering */
 "Altering symbolic link" = "Изменение символической ссылки";
 
-/* Informative text to setting access time */
-"Can\'t set access time\nError: %@\nFile: %@" = "Невозможно установить время доступа\nОшибка: %1$@\nФайл: %2$@";
-
-/* Informative text to setting change time */
-"Can\'t set change time\nError: %@\nFile: %@" = "Невозможно установить время изменения\nОшибка: %1$@\nФайл: %2$@";
-
-/* Informative text to setting creation time */
-"Can\'t set creation time\nError: %@\nFile: %@" = "Невозможно установить время создания\nОшибка: %1$@\nФайл: %2$@";
-
-/* Informative text to setting modify time */
-"Can\'t set modification time\nError: %@\nFile: %@" = "Невозможно установить время модификации\nОшибка: %1$@\nФайл: %2$@";
+/* Operation title batch renaming */
+"Batch renaming %u items" = "Групповое переименование %u объектов";
 
 /* Operation title for compression */
 "Compressing %@ items to “%@”" = "Сжатие %1$@ объектов в “%2$@”";
@@ -103,10 +94,21 @@
 /* Informative text on chmod failure dialog */
 "Error: %@\nFile: %@\nMode: %@" = "Ошибка: %1$@\nФайл: %2$@\nРежим: %3$@";
 
-/* (No Commment) */
+/* Informative text on error dialog when can't rename an item when batch renaming */
+"Error: %@\nOriginal path: %@\nNew path: %@" = "Ошибка: %1$@\nИсходный путь: %2$@\nНовый путь: %3$@";
+
+/* Error dialog informative text on directory creating failure
+   Error informative text with path
+   Informative text on error dialog when can't access a file
+   Informative text on error dialog when can't delete a directory
+   Informative text on error dialog when can't delete a file
+   Informative text on error dialog when can't read a file
+   Informative text on error dialog when can't securely delete an item
+   Informative text on error dialog when can't trash an item */
 "Error: %@\nPath: %@" = "Ошибка: %1$@\nПуть: %2$@";
 
-/* (No Commment) */
+/* Error dialog title on directory access failure
+   Error dialog title when can't traverse a directory */
 "Failed to access a directory" = "Отсутствует доступ к папке";
 
 /* Error dialog title on file access failure
@@ -151,6 +153,9 @@
    Title on error when source file can't be read */
 "Failed to read a file" = "Не удалось прочитать файл";
 
+/* Error dialog title when can't rename an item when batch renaming */
+"Failed to rename an item" = "Не удалось переименовать объект";
+
 /* Error dialog title when can't securely delete a file */
 "Failed to securely delete a file" = "Не удалось безопасно удалить файл";
 
@@ -175,7 +180,8 @@
 /* Operation title for compression */
 "Preparing to compress to “%@”" = "Подготовка к сжатию в “%@”";
 
-/* Operation info for file deletion
+/* Operation info for batch file renaming
+   Operation info for file deletion
    Operation short info
    Title for processing a single item */
 "Processing “%@”" = "Обработка “%@”";

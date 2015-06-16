@@ -27,10 +27,6 @@ struct FindFilesSheetControllerFoundItem
 - (IBAction)OnSearch:(id)sender;
 - (IBAction)OnFileView:(id)sender;
 
-- (void)focusMask:(id)sender;
-- (void)focusContainingText:(id)sender;
-- (void)focusSize:(id)sender;
-
 @property (nonatomic) VFSHostPtr host;
 @property (nonatomic) string path;
 

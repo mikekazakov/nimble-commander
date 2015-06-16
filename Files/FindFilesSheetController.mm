@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import "SheetWithHotkeys.h"
 #import "FindFilesSheetController.h"
 #import "Encodings.h"
 #import "FileSearch.h"
@@ -202,6 +203,12 @@ static const int g_MaximumSearchResults = 16384;
                                            selector:@selector(comboBoxWillDismiss:)
                                                name:@"NSComboBoxWillDismissNotification"
                                              object:self.TextComboBox];
+    
+    // wire up hotkeys
+    SheetWithHotkeys *sheet = (SheetWithHotkeys *)self.window;
+    sheet.onCtrlT = [sheet makeFocusHotkey:self.TextComboBox];
+    sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
+    sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];
 }
 
 - (void) dealloc
@@ -445,21 +452,6 @@ static const int g_MaximumSearchResults = 16384;
                      completionHandler:^(NSModalResponse returnCode) {}];
         }
     });
-}
-
-- (void)focusContainingText:(id)sender
-{
-    [self.window makeFirstResponder:self.TextComboBox];
-}
-
-- (void)focusMask:(id)sender
-{
-    [self.window makeFirstResponder:self.MaskComboBox];
-}
-
-- (void)focusSize:(id)sender
-{
-    [self.window makeFirstResponder:self.SizeTextField];
 }
 
 // Workaround about combox' menu forcing Search by selecting item from list with Return key

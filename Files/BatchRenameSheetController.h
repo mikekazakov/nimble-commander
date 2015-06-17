@@ -26,6 +26,7 @@
 @property (strong) IBOutlet NSButton *SearchInExtension;
 @property (strong) IBOutlet NSButton *SearchWithRegExp;
 @property (strong) IBOutlet NSPopUpButton *CaseProcessing;
+@property (strong) IBOutlet NSButton *CaseProcessingWithExtension;
 @property (strong) IBOutlet NSPopUpButton *CounterDigits;
 @property (strong) IBOutlet NSButton *InsertNameRangePlaceholderButton;
 @property (strong) IBOutlet NSButton *InsertPlaceholderMenuButton;

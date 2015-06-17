@@ -578,9 +578,10 @@ void BatchRename::SetDefaultCounter(long _start, long _step, unsigned _stripe, u
     m_DefaultCounter.width = _width;
 }
 
-void BatchRename::SetCaseTransform(CaseTransform _ct)
+void BatchRename::SetCaseTransform(CaseTransform _ct, bool _apply_to_ext)
 {
     m_CaseTransform = _ct;
+    m_CaseTransformWithExt = _apply_to_ext;
 }
 
 static inline NSString *StringByTransform(NSString *_s, BatchRename::CaseTransform _ct)
@@ -595,6 +596,26 @@ static inline NSString *StringByTransform(NSString *_s, BatchRename::CaseTransfo
         default:
             return _s;
     };
+}
+
+static NSString *StringByTransform(NSString *_s, BatchRename::CaseTransform _ct, bool _apply_to_ext)
+{
+    if(_apply_to_ext)
+        return StringByTransform(_s, _ct);
+    
+    if(_ct == BatchRename::CaseTransform::Unchanged)
+        return _s;
+    
+    static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
+    auto r = [_s rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
+    bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _s.length - 1);
+    if(!has_ext)
+        return StringByTransform(_s, _ct);
+    
+    NSString *name = [_s substringWithRange:NSMakeRange(0, r.location)];
+    NSString *extension = [_s substringWithRange:NSMakeRange(r.location, _s.length - r.location)];
+  
+    return [StringByTransform(name, _ct) stringByAppendingString:extension];
 }
 
 static NSString* FormatTimeSeconds(const struct tm &_t)
@@ -796,6 +817,6 @@ NSString *BatchRename::Rename( const FileInfo &_fi, int _number ) const
     }
     
     NSString *after_replacing = DoSearchReplace(m_SearchReplace, str);
-    NSString *after_case_trans= StringByTransform(after_replacing, m_CaseTransform);
+    NSString *after_case_trans= StringByTransform(after_replacing, m_CaseTransform, m_CaseTransformWithExt);
     return after_case_trans;
 }

@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="BatchRenameSheetController">
             <connections>
                 <outlet property="CaseProcessing" destination="uwD-i0-8RE" id="5NY-2a-pwN"/>
+                <outlet property="CaseProcessingWithExtension" destination="EZL-Q4-lw0" id="cqb-vV-vNk"/>
                 <outlet property="CounterDigits" destination="NX6-my-Ja7" id="F5u-VD-Qgn"/>
                 <outlet property="FilenameMask" destination="p5V-M1-8GC" id="HO9-Rk-BnH"/>
                 <outlet property="FilenamesTable" destination="C9n-Is-tq6" id="dDn-80-S5s"/>
@@ -374,7 +375,7 @@
                         </buttonCell>
                         <connections>
                             <action selector="OnSearchReplaceOptionsChanged:" target="-2" id="KCI-ML-cya"/>
-                            <outlet property="nextKeyView" destination="uwD-i0-8RE" id="sfL-ER-aK4"/>
+                            <outlet property="nextKeyView" destination="EZL-Q4-lw0" id="Y5N-bt-pfF"/>
                         </connections>
                     </button>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="dSZ-xi-lzy">
@@ -557,6 +558,17 @@ Gw
                             <outlet property="nextKeyView" destination="7gw-eT-fiP" id="oni-fb-ONv"/>
                         </connections>
                     </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="EZL-Q4-lw0">
+                        <rect key="frame" x="231" y="287" width="36" height="18"/>
+                        <buttonCell key="cell" type="check" title="[E]" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="ql9-1w-xJV">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnCaseProcessingChanged:" target="-2" id="HGb-8L-hJo"/>
+                            <outlet property="nextKeyView" destination="uwD-i0-8RE" id="U4Z-CC-m3m"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="p5V-M1-8GC" secondAttribute="trailing" constant="8" symbolic="YES" id="0R0-AJ-4r9"/>
@@ -566,7 +578,6 @@ Gw
                     <constraint firstItem="RV2-6w-I75" firstAttribute="top" secondItem="lDD-R1-mor" secondAttribute="bottom" constant="8" symbolic="YES" id="3rI-uL-gka"/>
                     <constraint firstItem="EVu-PB-uIn" firstAttribute="trailing" secondItem="AjF-Fc-xi5" secondAttribute="trailing" id="4Cz-Ea-KBi"/>
                     <constraint firstItem="Kch-iv-6zs" firstAttribute="leading" secondItem="lDD-R1-mor" secondAttribute="trailing" constant="8" symbolic="YES" id="5Fh-IW-RKF"/>
-                    <constraint firstItem="LYl-8z-bLW" firstAttribute="leading" secondItem="uwD-i0-8RE" secondAttribute="trailing" constant="8" symbolic="YES" id="5em-yh-Eqg"/>
                     <constraint firstItem="cC1-qI-LZv" firstAttribute="baseline" secondItem="AjF-Fc-xi5" secondAttribute="baseline" id="64O-OX-2nz"/>
                     <constraint firstItem="A64-6a-qQA" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="6In-xl-Vrb"/>
                     <constraint firstItem="0yW-rZ-IWN" firstAttribute="top" secondItem="RBI-rU-SES" secondAttribute="bottom" constant="4" id="6cy-l9-VJ3"/>
@@ -574,6 +585,7 @@ Gw
                     <constraint firstItem="AKG-zR-ewH" firstAttribute="leading" secondItem="E2t-ZL-Mbg" secondAttribute="trailing" constant="8" symbolic="YES" id="7Se-sg-fMP"/>
                     <constraint firstItem="AjF-Fc-xi5" firstAttribute="trailing" secondItem="q35-59-7UF" secondAttribute="trailing" id="81I-l8-iFg"/>
                     <constraint firstItem="RwK-OL-6hu" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="8L7-Y0-eh5"/>
+                    <constraint firstItem="LYl-8z-bLW" firstAttribute="leading" secondItem="uwD-i0-8RE" secondAttribute="trailing" constant="8" symbolic="YES" id="8Ui-lJ-37J"/>
                     <constraint firstItem="xAD-RZ-OFK" firstAttribute="leading" secondItem="cC1-qI-LZv" secondAttribute="trailing" constant="8" symbolic="YES" id="8pk-qd-4J0"/>
                     <constraint firstItem="bEk-Py-Bb5" firstAttribute="leading" secondItem="lDD-R1-mor" secondAttribute="trailing" constant="8" symbolic="YES" id="8z5-V0-gU0"/>
                     <constraint firstItem="rN7-QI-0PH" firstAttribute="leading" secondItem="hC6-px-Drj" secondAttribute="trailing" constant="8" symbolic="YES" id="9kU-HP-pfe"/>
@@ -592,7 +604,6 @@ Gw
                     <constraint firstAttribute="trailing" secondItem="RV2-6w-I75" secondAttribute="trailing" constant="20" symbolic="YES" id="JM2-IA-V2N"/>
                     <constraint firstItem="p5V-M1-8GC" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Mwh-AN-76r"/>
                     <constraint firstItem="wTa-vH-MEJ" firstAttribute="leading" secondItem="Q1g-bb-QBM" secondAttribute="trailing" constant="8" symbolic="YES" id="NG4-C8-Qkm"/>
-                    <constraint firstItem="uwD-i0-8RE" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lDD-R1-mor" secondAttribute="trailing" constant="8" symbolic="YES" id="NTx-l6-TJW"/>
                     <constraint firstItem="E2t-ZL-Mbg" firstAttribute="trailing" secondItem="EKb-UU-Za4" secondAttribute="trailing" id="NV9-oE-19S"/>
                     <constraint firstItem="LYl-8z-bLW" firstAttribute="leading" secondItem="bEk-Py-Bb5" secondAttribute="trailing" constant="8" symbolic="YES" id="OOs-dp-31H"/>
                     <constraint firstItem="Q1g-bb-QBM" firstAttribute="top" secondItem="RBI-rU-SES" secondAttribute="bottom" constant="4" id="OZJ-NX-ZYo"/>
@@ -641,11 +652,14 @@ Gw
                     <constraint firstItem="E2t-ZL-Mbg" firstAttribute="top" secondItem="EKb-UU-Za4" secondAttribute="bottom" constant="4" id="kBJ-JD-3up"/>
                     <constraint firstItem="9Ue-xA-mhT" firstAttribute="leading" secondItem="nQr-DT-yTz" secondAttribute="leading" id="kHU-Uy-I0n"/>
                     <constraint firstItem="stf-ED-JLt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="lVm-dC-8rn"/>
+                    <constraint firstItem="EZL-Q4-lw0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lDD-R1-mor" secondAttribute="trailing" constant="8" symbolic="YES" id="lb2-9T-gjd"/>
                     <constraint firstItem="lDD-R1-mor" firstAttribute="leading" secondItem="9Ue-xA-mhT" secondAttribute="trailing" constant="8" symbolic="YES" id="mAc-4v-Ikr"/>
                     <constraint firstItem="RV2-6w-I75" firstAttribute="top" secondItem="LYl-8z-bLW" secondAttribute="bottom" constant="8" symbolic="YES" id="nN7-iC-OWe"/>
+                    <constraint firstItem="EZL-Q4-lw0" firstAttribute="centerY" secondItem="uwD-i0-8RE" secondAttribute="centerY" id="ocZ-BH-4sK"/>
                     <constraint firstAttribute="trailing" secondItem="7gw-eT-fiP" secondAttribute="trailing" constant="20" symbolic="YES" id="pVq-qf-M0M"/>
                     <constraint firstAttribute="trailing" secondItem="rN7-QI-0PH" secondAttribute="trailing" constant="20" symbolic="YES" id="pYB-Gk-Hsd"/>
                     <constraint firstItem="XbC-0N-Ybp" firstAttribute="baseline" secondItem="RBI-rU-SES" secondAttribute="baseline" id="qqM-hI-i1Q"/>
+                    <constraint firstItem="uwD-i0-8RE" firstAttribute="leading" secondItem="EZL-Q4-lw0" secondAttribute="trailing" constant="8" symbolic="YES" id="rXo-cR-VrL"/>
                     <constraint firstAttribute="bottom" secondItem="7gw-eT-fiP" secondAttribute="bottom" constant="20" symbolic="YES" id="sEc-GR-kJ3"/>
                     <constraint firstItem="stf-ED-JLt" firstAttribute="leading" secondItem="EKb-UU-Za4" secondAttribute="leading" id="scy-VP-ETp"/>
                     <constraint firstItem="EKb-UU-Za4" firstAttribute="top" secondItem="p5V-M1-8GC" secondAttribute="bottom" constant="8" id="tfm-EE-Kdz"/>

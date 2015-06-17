@@ -133,7 +133,7 @@ public:
                              bool _only_first,
                              bool _search_in_ext,
                              bool _use_regexp);
-    void SetCaseTransform(CaseTransform _ct);
+    void SetCaseTransform(CaseTransform _ct, bool _apply_to_ext);
     void SetDefaultCounter(long _start, long _step, unsigned _stripe, unsigned _width);
     
     
@@ -219,6 +219,7 @@ private:
     }                       m_SearchReplace;
     
     CaseTransform           m_CaseTransform = CaseTransform::Unchanged;
+    bool                    m_CaseTransformWithExt = false;
 
     struct {
         long                start = 1;

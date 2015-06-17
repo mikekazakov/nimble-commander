@@ -212,10 +212,11 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     bool search_in_ext = self.SearchInExtension.state == NSOnState;
     bool search_regexp = self.SearchWithRegExp.state == NSOnState;
     BatchRename::CaseTransform ct = (BatchRename::CaseTransform)self.CaseProcessing.selectedTag;
+    bool ct_with_ext = self.CaseProcessingWithExtension.state == NSOnState;
     
     BatchRename br;
     br.SetReplacingOptions(search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
-    br.SetCaseTransform(ct);
+    br.SetCaseTransform(ct, ct_with_ext);
     br.SetDefaultCounter(m_CounterStartsAt, m_CounterStepsBy, 1, (unsigned)self.CounterDigits.selectedTag);
     
     if(!br.BuildActionsScript(filename_mask))

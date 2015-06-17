@@ -375,7 +375,9 @@ void VFSPSHost::CommitProcs(vector<ProcInfo> _procs)
     for(auto &i: newdata->procs)
     {
         newdata->files.push_back(ProcInfoIntoFile(i, newdata));
-        newdata->plain_filenames.push_back( to_string(i.pid) + " - " + i.name + ".txt" );
+        char filename[MAXPATHLEN];
+        sprintf(filename, "%5i - %s.txt", i.pid, i.name.c_str());
+        newdata->plain_filenames.emplace_back(filename);
     }
     
     m_Data = newdata;

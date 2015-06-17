@@ -14,6 +14,8 @@
 #import "SheetWithHotkeys.h"
 #import "SimpleComboBoxPersistentDataSource.h"
 
+static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTableViewDataType";
+
 @interface BatchRenameSheetControllerNilNumberValueTransformer : NSValueTransformer
 @end
 
@@ -127,6 +129,8 @@
     [self InsertStringIntoMask:@"[N].[E]"];
     self.isValidRenaming = true;
 
+    [self.FilenamesTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
+    
     // set up data sources for comboboxes
     m_RenamePatternDataSource = [[SimpleComboBoxPersistentDataSource alloc] initWithPlistPath:
                                  [NSFileManager.defaultManager.applicationSupportDirectory stringByAppendingString:@"/batchrenamesheet_lastpatterns.bplist"]];
@@ -455,6 +459,52 @@
         [self OnSearchForChanged:self.SearchForComboBox];
     else
         [self UpdateRename];        
+}
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
+    return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
+{
+    [pboard declareTypes:@[g_MyPrivateTableViewDataType] owner:self];
+    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes] forType:g_MyPrivateTableViewDataType];
+    return true;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView
+       acceptDrop:(id<NSDraggingInfo>)info
+              row:(NSInteger)drag_to
+    dropOperation:(NSTableViewDropOperation)operation
+{
+    NSData* data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
+    NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSInteger drag_from = inds.firstIndex;
+    
+    if(drag_to == drag_from || // same index, above
+       drag_to == drag_from + 1) // same index, below
+        return false;
+    
+    if( drag_from < drag_to )
+        drag_to--;
+    if( drag_to >= m_LabelsBefore.size()  ||
+        drag_from >= m_LabelsBefore.size() )
+        return false;
+    
+    // don't forget to swap items in ALL containers!
+    swap(m_FileInfos[drag_to],          m_FileInfos[drag_from]);
+    swap(m_LabelsBefore[drag_to],       m_LabelsBefore[drag_from]);
+    swap(m_LabelsAfter[drag_to],        m_LabelsAfter[drag_from]);
+    swap(m_ResultSource[drag_to],       m_ResultSource[drag_from]);
+    
+    [self.FilenamesTable reloadData];
+    
+    dispatch_to_main_queue([=]{
+        [self UpdateRename];
+    });
+    
+    return true;
 }
 
 - (void) buildResultDestinations

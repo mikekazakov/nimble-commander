@@ -292,6 +292,9 @@
 /* Class = "NSMenuItem"; title = "Show/Hide Tab Bar"; ObjectID = "NK3-hW-YDx"; */
 "NK3-hW-YDx.title" = "Показать/скрыть панель вкладок";
 
+/* Class = "NSMenuItem"; title = "Batch Rename..."; ObjectID = "PDv-pQ-u5w"; */
+"PDv-pQ-u5w.title" = "Групповое переименование...";
+
 /* Class = "NSMenuItem"; title = "Recent Connections"; ObjectID = "PPi-Oe-OXM"; */
 "PPi-Oe-OXM.title" = "Последние подключения";
 
@@ -366,6 +369,9 @@
 
 /* Class = "NSMenuItem"; title = "Show Next Tab"; ObjectID = "t1q-Im-cLd"; */
 "t1q-Im-cLd.title" = "Показать следующую вкладку";
+
+/* Class = "NSMenuItem"; title = "Root"; ObjectID = "tbO-TV-6y7"; */
+"tbO-TV-6y7.title" = "Корень";
 
 /* Class = "NSMenu"; title = "Connect To..."; ObjectID = "vG4-7z-hXO"; */
 "vG4-7z-hXO.title" = "Подключиться к...";

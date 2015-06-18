@@ -1,6 +1,3 @@
-/* Class = "NSWindow"; title = "Window"; ObjectID = "1"; */
-"1.title" = "";
-
 /* Class = "NSTextFieldCell"; placeholderString = "0"; ObjectID = "2dl-Rj-gsT"; */
 "2dl-Rj-gsT.placeholderString" = "0";
 
@@ -10,7 +7,7 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "3im-V9-my6"; */
 "3im-V9-my6.title" = "";
 
-/* Class = "NSComboBox"; ibShadowedToolTip = "⌘M"; ObjectID = "4kJ-ln-DDa"; */
+/* Class = "NSComboBox"; ibShadowedToolTip = "^M"; ObjectID = "4kJ-ln-DDa"; */
 "4kJ-ln-DDa.ibShadowedToolTip" = "^M";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "8sA-yU-MON"; */
@@ -25,7 +22,7 @@
 /* Class = "NSTableColumn"; headerCell.title = "Location"; ObjectID = "A8Z-IY-14U"; */
 "A8Z-IY-14U.headerCell.title" = "Расположение";
 
-/* Class = "NSComboBox"; ibShadowedToolTip = "⌘T"; ObjectID = "CJi-sh-esy"; */
+/* Class = "NSComboBox"; ibShadowedToolTip = "^T"; ObjectID = "CJi-sh-esy"; */
 "CJi-sh-esy.ibShadowedToolTip" = "^T";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "EnK-Kt-A7e"; */
@@ -64,7 +61,7 @@
 /* Class = "NSTextFieldCell"; title = "With size:"; ObjectID = "YVt-Nt-3dl"; */
 "YVt-Nt-3dl.title" = "С размером:";
 
-/* Class = "NSTextField"; ibShadowedToolTip = "⌘S"; ObjectID = "a2f-4v-JJC"; */
+/* Class = "NSTextField"; ibShadowedToolTip = "^S"; ObjectID = "a2f-4v-JJC"; */
 "a2f-4v-JJC.ibShadowedToolTip" = "^S";
 
 /* Class = "NSMenuItem"; title = "Mb"; ObjectID = "c22-DH-E7c"; */

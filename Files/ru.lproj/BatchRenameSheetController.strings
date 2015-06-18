@@ -232,6 +232,9 @@
 /* Class = "NSTextFieldCell"; title = "Replace with:"; ObjectID = "q54-cJ-xHR"; */
 "q54-cJ-xHR.title" = "Заменить на:";
 
+/* Class = "NSButtonCell"; title = "[E]"; ObjectID = "ql9-1w-xJV"; */
+"ql9-1w-xJV.title" = "[E]";
+
 /* Class = "NSButtonCell"; title = "RegEx"; ObjectID = "r4R-K5-WtL"; */
 "r4R-K5-WtL.title" = "RegExp";
 

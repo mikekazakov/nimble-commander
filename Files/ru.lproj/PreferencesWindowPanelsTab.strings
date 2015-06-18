@@ -100,9 +100,6 @@
 /* Class = "NSTextFieldCell"; title = "Key modifier:"; ObjectID = "EBC-2p-BQv"; */
 "EBC-2p-BQv.title" = "Модификатор клавиш:";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "Edx-36-h0s"; */
-"Edx-36-h0s.title" = "Box";
-
 /* Class = "NSButtonCell"; title = "+"; ObjectID = "FGS-3P-rLE"; */
 "FGS-3P-rLE.title" = "+";
 
@@ -111,6 +108,9 @@
 
 /* Class = "NSTextFieldCell"; title = "File size format:"; ObjectID = "Fdh-DS-9r8"; */
 "Fdh-DS-9r8.title" = "Формат размера файла:";
+
+/* Class = "NSButtonCell"; title = "Use ~ to go Home"; ObjectID = "GBa-AA-rRO"; */
+"GBa-AA-rRO.title" = "Использовать ~ для перехода в Личное";
 
 /* Class = "NSMenuItem"; title = "Ending"; ObjectID = "GOP-4J-s2Y"; */
 "GOP-4J-s2Y.title" = "В конце";

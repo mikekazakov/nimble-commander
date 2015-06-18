@@ -149,6 +149,7 @@ private:
         {"menu.go.processes_list",              14120},
         {"menu.go.connect.ftp",                 14130},
         {"menu.go.connect.sftp",                14140},
+        {"menu.go.root",                        14150},
         
         {"menu.command.system_overview",        15000},
         {"menu.command.volume_information",     15010},

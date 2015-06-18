@@ -165,6 +165,12 @@
     [self GoToDir:CommonPaths::Get(CommonPaths::Library) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
+- (IBAction)OnGoToRoot:(id)sender {
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Root)])
+        return;
+    [self GoToDir:CommonPaths::Get(CommonPaths::Root) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+}
+
 - (IBAction)OnGoToProcessesList:(id)sender {
     [self GoToDir:"/" vfs:VFSPSHost::GetSharedOrNew() select_entry:"" async:true];
 }

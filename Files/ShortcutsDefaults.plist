@@ -130,6 +130,8 @@
 	<string></string>
 	<string>menu.go.connect.sftp</string>
 	<string></string>
+	<string>menu.go.root</string>
+	<string></string>
 	<string>menu.command.system_overview</string>
 	<string>⌘l</string>
 	<string>menu.command.volume_information</string>

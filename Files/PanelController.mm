@@ -444,11 +444,16 @@ void panel::GenericCursorPersistance::Restore()
            (modif & (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
            [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneraluseTildeAsHomeShortcut]
            ) { // Tilde to go Home
-            auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
+            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
             return true;
         }
-        
+        if( unicode == '/' &&
+           (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 ) {
+            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
+            [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+            return true;
+        }
         /*    if(keycode == 3 ) { // 'F' button
          if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
          {

@@ -93,6 +93,12 @@ const string &CommonPaths::Get(CommonPaths::Path _path)
             static auto path = ensure_tr_slash(GetMainBundlePath());
             return path;
         }
+            
+        case Root:
+        {
+            static auto path = "/"s;
+            return path;
+        }
         
         default: assert(0);
     }

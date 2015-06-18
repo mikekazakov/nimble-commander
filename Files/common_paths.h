@@ -21,7 +21,8 @@ struct CommonPaths
         Library,
         Pictures,
         Music,
-        Movies
+        Movies,
+        Root
     };
     
     // returned paths will contain a trailing slash

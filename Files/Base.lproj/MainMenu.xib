@@ -455,6 +455,12 @@ DQ
                                     <action selector="OnGoToUtilities:" target="-1" id="k7t-uR-adI"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Root" tag="14150" id="tbO-TV-6y7">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnGoToRoot:" target="-1" id="icL-ES-NQs"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Processes List" tag="14120" keyEquivalent="p" id="ooW-Y5-gXA">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>

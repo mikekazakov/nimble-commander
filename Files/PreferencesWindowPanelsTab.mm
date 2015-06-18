@@ -113,6 +113,15 @@
     for(NSMenuItem *it in self.selectionSizeFormatCombo.itemArray)
         it.title = ByteCountFormatter::Instance().ToNSString(magic_size, (ByteCountFormatter::Type)it.tag);
   
+    auto stackview = self.CommonOptionsStackView;
+    [stackview layoutSubtreeIfNeeded];
+    self.CommonOptionsScrollView.documentView = stackview;
+    [self.CommonOptionsScrollView addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[stackview]-0-|"
+                                             options:0
+                                             metrics:nil
+                                               views:NSDictionaryOfVariableBindings(stackview)]];
+    
     [self.view layoutSubtreeIfNeeded];
 }
 

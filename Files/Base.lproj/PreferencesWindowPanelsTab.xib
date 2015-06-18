@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
             <connections>
+                <outlet property="CommonOptionsScrollView" destination="y2K-Vy-fyD" id="yue-zs-mLC"/>
+                <outlet property="CommonOptionsStackView" destination="cMG-5Y-D3j" id="ouA-ed-14d"/>
                 <outlet property="classicColoringRulesTable" destination="ICM-ex-rxA" id="KJi-E0-LlZ"/>
                 <outlet property="fileSizeFormatCombo" destination="wNP-w9-Qcg" id="DMg-8s-IWg"/>
                 <outlet property="modernColoringRulesTable" destination="vjI-ps-c9i" id="yie-nn-1y7"/>
@@ -29,101 +31,8 @@
                                 <rect key="frame" x="10" y="33" width="435" height="267"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="760">
-                                        <rect key="frame" x="18" y="248" width="399" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Ignore directories when selecting with mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask" id="769"/>
-                                        </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
-                                        <rect key="frame" x="18" y="208" width="399" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show other windows’ paths in folder changing menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu" id="TNv-P7-9uV"/>
-                                        </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
-                                        <rect key="frame" x="18" y="228" width="399" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Allow dragging into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAllowDraggingIntoFolders" id="D5D-qS-Cv2"/>
-                                        </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="O3v-fq-9DO">
-                                        <rect key="frame" x="18" y="188" width="57" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="MQi-kD-j8V">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralGoToShowConnections" id="252-YQ-wKF"/>
-                                        </connections>
-                                    </button>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jkP-c6-fJK">
-                                        <rect key="frame" x="76" y="187" width="24" height="22"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="24" id="HQG-EQ-EV1"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" drawsBackground="YES" usesSingleLineMode="YES" id="Tvn-tO-bka">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralGoToConnectionsLimit" id="0gk-5O-41o"/>
-                                            <binding destination="36" name="enabled" keyPath="values.FilePanelsGeneralGoToShowConnections" id="D3A-Fc-I7d"/>
-                                        </connections>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dB8-J7-xZw">
-                                        <rect key="frame" x="101" y="189" width="285" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="network connections in folder changing menu" id="uQC-rR-RVO">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
-                                        <rect key="frame" x="18" y="168" width="399" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show “..” entry in directory listing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tmQ-Kf-Ylo">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowDotDotEntry" id="QwH-3H-ODO"/>
-                                        </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="zSi-y5-IGC">
-                                        <rect key="frame" x="18" y="128" width="399" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show volume information bar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="nz9-v0-Dc6">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowVolumeInformationBar" id="ean-d2-Api"/>
-                                        </connections>
-                                    </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="lg9-3W-PJz">
-                                        <rect key="frame" x="18" y="148" width="399" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show localized filenames" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Tdz-Yw-NMY">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowLocalizedFilenames" id="71K-og-ztz"/>
-                                        </connections>
-                                    </button>
-                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="789">
-                                        <rect key="frame" x="206" y="40" width="159" height="26"/>
+                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="789">
+                                        <rect key="frame" x="206" y="45" width="159" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="RRV-dn-ebU"/>
                                         </constraints>
@@ -148,8 +57,8 @@
                                             <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsDeleteBehavior" id="841"/>
                                         </connections>
                                     </popUpButton>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="771">
-                                        <rect key="frame" x="18" y="21" width="184" height="17"/>
+                                    <textField verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="771">
+                                        <rect key="frame" x="18" y="26" width="184" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="9Np-0t-NWf"/>
                                         </constraints>
@@ -159,8 +68,8 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="790">
-                                        <rect key="frame" x="206" y="15" width="159" height="26"/>
+                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="790">
+                                        <rect key="frame" x="206" y="20" width="159" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="zAo-Cy-cfx"/>
                                         </constraints>
@@ -185,8 +94,8 @@
                                             <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsShiftDeleteBehavior" id="842"/>
                                         </connections>
                                     </popUpButton>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qvH-9U-kwb">
-                                        <rect key="frame" x="18" y="96" width="184" height="17"/>
+                                    <textField verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qvH-9U-kwb">
+                                        <rect key="frame" x="18" y="101" width="184" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="OhA-zl-fu5"/>
                                         </constraints>
@@ -196,8 +105,8 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wNP-w9-Qcg" userLabel="File size format combo">
-                                        <rect key="frame" x="206" y="90" width="159" height="26"/>
+                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wNP-w9-Qcg" userLabel="File size format combo">
+                                        <rect key="frame" x="206" y="95" width="159" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="WJ0-rW-zeJ"/>
                                         </constraints>
@@ -219,8 +128,8 @@
                                             <binding destination="36" name="selectedTag" keyPath="values.FilePanelsGeneralFileSizeFormat" id="ReW-79-6kB"/>
                                         </connections>
                                     </popUpButton>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M7w-Ea-gHV">
-                                        <rect key="frame" x="18" y="71" width="184" height="17"/>
+                                    <textField verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M7w-Ea-gHV">
+                                        <rect key="frame" x="18" y="76" width="184" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="81e-Si-5B7"/>
                                         </constraints>
@@ -230,8 +139,8 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xmO-TZ-Bgm" userLabel="Seletion size format combo">
-                                        <rect key="frame" x="206" y="65" width="159" height="26"/>
+                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xmO-TZ-Bgm" userLabel="Seletion size format combo">
+                                        <rect key="frame" x="206" y="70" width="159" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="6BZ-QO-z6b"/>
                                         </constraints>
@@ -259,8 +168,8 @@
                                             <binding destination="36" name="selectedTag" keyPath="values.FilePanelsGeneralSelectionSizeFormat" id="ImY-ku-Aqk"/>
                                         </connections>
                                     </popUpButton>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="770">
-                                        <rect key="frame" x="18" y="46" width="184" height="17"/>
+                                    <textField verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="770">
+                                        <rect key="frame" x="18" y="51" width="184" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="CVY-G1-VpX"/>
                                         </constraints>
@@ -270,67 +179,60 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Edx-36-h0s">
-                                        <rect key="frame" x="20" y="119" width="395" height="5"/>
-                                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <font key="titleFont" metaFont="system"/>
-                                    </box>
+                                    <scrollView ambiguous="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y2K-Vy-fyD">
+                                        <rect key="frame" x="17" y="126" width="401" height="138"/>
+                                        <clipView key="contentView" ambiguous="YES" id="ApI-OF-Cih">
+                                            <rect key="frame" x="1" y="1" width="166" height="79"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o5N-ve-aUy">
+                                                    <rect key="frame" x="0.0" y="0.0" width="166" height="79"/>
+                                                </view>
+                                            </subviews>
+                                        </clipView>
+                                        <constraints>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="YUE-S1-e7F"/>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="138" id="i63-3r-g19"/>
+                                        </constraints>
+                                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="LoN-sC-Dw0">
+                                            <rect key="frame" x="1" y="80" width="166" height="15"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="gNb-Yv-gEz">
+                                            <rect key="frame" x="167" y="1" width="15" height="79"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                    </scrollView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="y2K-Vy-fyD" firstAttribute="top" secondItem="22" secondAttribute="top" constant="3" id="0Oa-QH-w5L"/>
+                                    <constraint firstItem="qvH-9U-kwb" firstAttribute="top" secondItem="y2K-Vy-fyD" secondAttribute="bottom" constant="8" symbolic="YES" id="1Mp-4Q-iep"/>
                                     <constraint firstItem="770" firstAttribute="top" secondItem="M7w-Ea-gHV" secondAttribute="bottom" constant="8" symbolic="YES" id="53C-Mu-HyS"/>
                                     <constraint firstItem="770" firstAttribute="trailing" secondItem="M7w-Ea-gHV" secondAttribute="trailing" id="6EJ-GX-GzI"/>
-                                    <constraint firstItem="760" firstAttribute="top" secondItem="22" secondAttribute="top" constant="3" id="6Ep-wA-Emt"/>
-                                    <constraint firstItem="O3v-fq-9DO" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="6z0-TQ-AJC"/>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="9AP-jH-SXf"/>
                                     <constraint firstItem="qvH-9U-kwb" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="9wR-Ni-cih"/>
-                                    <constraint firstItem="Edx-36-h0s" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="Aa2-5h-XNH"/>
-                                    <constraint firstAttribute="trailing" secondItem="lg9-3W-PJz" secondAttribute="trailing" constant="20" symbolic="YES" id="Aa9-zy-oxM"/>
                                     <constraint firstItem="xmO-TZ-Bgm" firstAttribute="leading" secondItem="M7w-Ea-gHV" secondAttribute="trailing" constant="8" symbolic="YES" id="AeM-Pd-ATT"/>
                                     <constraint firstItem="789" firstAttribute="leading" secondItem="770" secondAttribute="trailing" constant="8" symbolic="YES" id="DbI-fe-boB"/>
-                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="EEp-3P-EQd"/>
                                     <constraint firstItem="771" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="Era-Di-SUP"/>
-                                    <constraint firstItem="O3v-fq-9DO" firstAttribute="top" secondItem="A0a-2e-yUq" secondAttribute="bottom" constant="6" symbolic="YES" id="FG1-fp-mmO"/>
                                     <constraint firstItem="M7w-Ea-gHV" firstAttribute="top" secondItem="qvH-9U-kwb" secondAttribute="bottom" constant="8" symbolic="YES" id="H8C-HU-o0z"/>
-                                    <constraint firstAttribute="trailing" secondItem="zSi-y5-IGC" secondAttribute="trailing" constant="20" symbolic="YES" id="IXb-FN-h5K"/>
+                                    <constraint firstItem="y2K-Vy-fyD" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="17" id="JBj-ck-NMt"/>
                                     <constraint firstItem="770" firstAttribute="baseline" secondItem="789" secondAttribute="baseline" id="KLV-ud-cvn"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="789" secondAttribute="trailing" constant="20" symbolic="YES" id="KYG-Po-rqR"/>
-                                    <constraint firstAttribute="trailing" secondItem="760" secondAttribute="trailing" constant="20" symbolic="YES" id="O0f-OW-euc"/>
-                                    <constraint firstAttribute="trailing" secondItem="Edx-36-h0s" secondAttribute="trailing" constant="20" symbolic="YES" id="Pc5-ir-FQo"/>
-                                    <constraint firstItem="dB8-J7-xZw" firstAttribute="leading" secondItem="jkP-c6-fJK" secondAttribute="trailing" constant="3" id="Qhs-ZO-lH8"/>
                                     <constraint firstItem="770" firstAttribute="trailing" secondItem="qvH-9U-kwb" secondAttribute="trailing" id="Qhy-Ay-pES"/>
                                     <constraint firstItem="xmO-TZ-Bgm" firstAttribute="leading" secondItem="M7w-Ea-gHV" secondAttribute="trailing" constant="8" symbolic="YES" id="QiC-L3-3xA"/>
                                     <constraint firstItem="770" firstAttribute="trailing" secondItem="771" secondAttribute="trailing" id="QnC-3n-zsW"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xmO-TZ-Bgm" secondAttribute="trailing" constant="20" symbolic="YES" id="RcP-FA-6qI"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="wNP-w9-Qcg" secondAttribute="trailing" constant="20" symbolic="YES" id="SA5-LD-3RS"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="dB8-J7-xZw" secondAttribute="trailing" constant="20" symbolic="YES" id="Sbt-CO-2gU"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="790" secondAttribute="trailing" constant="20" symbolic="YES" id="TPL-Vf-98d"/>
                                     <constraint firstItem="770" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="TgA-g3-CW3"/>
-                                    <constraint firstItem="zSi-y5-IGC" firstAttribute="top" secondItem="lg9-3W-PJz" secondAttribute="bottom" constant="6" symbolic="YES" id="TwG-nJ-tU4"/>
                                     <constraint firstItem="wNP-w9-Qcg" firstAttribute="baseline" secondItem="qvH-9U-kwb" secondAttribute="baseline" id="VWr-fP-YfK"/>
-                                    <constraint firstItem="s1m-K3-6d7" firstAttribute="top" secondItem="O3v-fq-9DO" secondAttribute="bottom" constant="6" symbolic="YES" id="WKM-ko-4NM"/>
-                                    <constraint firstAttribute="trailing" secondItem="bG0-HE-nN2" secondAttribute="trailing" constant="20" symbolic="YES" id="Z9Z-D7-2RM"/>
-                                    <constraint firstItem="jkP-c6-fJK" firstAttribute="leading" secondItem="O3v-fq-9DO" secondAttribute="trailing" constant="3" id="ZJ2-GC-ACZ"/>
-                                    <constraint firstItem="qvH-9U-kwb" firstAttribute="top" secondItem="Edx-36-h0s" secondAttribute="bottom" constant="8" symbolic="YES" id="ZlZ-kc-mzi"/>
-                                    <constraint firstItem="760" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="a90-R8-nrZ"/>
                                     <constraint firstItem="M7w-Ea-gHV" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="aeV-fV-s2B"/>
                                     <constraint firstItem="771" firstAttribute="top" secondItem="770" secondAttribute="bottom" constant="8" symbolic="YES" id="bBL-6A-sx1"/>
-                                    <constraint firstItem="A0a-2e-yUq" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="e7Z-Ka-p12"/>
                                     <constraint firstItem="789" firstAttribute="leading" secondItem="770" secondAttribute="trailing" constant="8" symbolic="YES" id="fe8-Rg-sO0"/>
-                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="top" secondItem="760" secondAttribute="bottom" constant="6" symbolic="YES" id="gUq-2u-hVu"/>
-                                    <constraint firstAttribute="trailing" secondItem="A0a-2e-yUq" secondAttribute="trailing" constant="20" symbolic="YES" id="hWe-Aj-4pd"/>
-                                    <constraint firstItem="jkP-c6-fJK" firstAttribute="baseline" secondItem="O3v-fq-9DO" secondAttribute="baseline" id="iZd-nE-krE"/>
-                                    <constraint firstAttribute="trailing" secondItem="s1m-K3-6d7" secondAttribute="trailing" constant="20" symbolic="YES" id="keK-HS-KpL"/>
-                                    <constraint firstItem="O3v-fq-9DO" firstAttribute="baseline" secondItem="dB8-J7-xZw" secondAttribute="baseline" id="odn-tv-K9l"/>
                                     <constraint firstItem="790" firstAttribute="leading" secondItem="771" secondAttribute="trailing" constant="8" symbolic="YES" id="qAA-ap-wej"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="top" secondItem="s1m-K3-6d7" secondAttribute="bottom" constant="6" symbolic="YES" id="r58-Fk-a8b"/>
-                                    <constraint firstItem="Edx-36-h0s" firstAttribute="top" secondItem="zSi-y5-IGC" secondAttribute="bottom" constant="8" symbolic="YES" id="sFP-bD-4sR"/>
                                     <constraint firstItem="790" firstAttribute="baseline" secondItem="771" secondAttribute="baseline" id="sgz-n7-sLK"/>
-                                    <constraint firstItem="A0a-2e-yUq" firstAttribute="top" secondItem="bG0-HE-nN2" secondAttribute="bottom" constant="6" symbolic="YES" id="tbs-gA-yRf"/>
                                     <constraint firstItem="wNP-w9-Qcg" firstAttribute="leading" secondItem="qvH-9U-kwb" secondAttribute="trailing" constant="8" symbolic="YES" id="vBc-e0-E1Q"/>
-                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="w7d-rF-SjO"/>
+                                    <constraint firstAttribute="trailing" secondItem="y2K-Vy-fyD" secondAttribute="trailing" constant="17" id="wys-nt-jVy"/>
                                     <constraint firstItem="xmO-TZ-Bgm" firstAttribute="baseline" secondItem="M7w-Ea-gHV" secondAttribute="baseline" id="yZX-DO-rbc"/>
-                                    <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="ydI-kZ-HSp"/>
                                 </constraints>
                             </view>
                         </tabViewItem>
@@ -1043,8 +945,154 @@
                 <constraint firstAttribute="bottom" secondItem="3" secondAttribute="bottom" constant="20" symbolic="YES" id="tIh-RM-Thd"/>
                 <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" constant="12" symbolic="YES" id="wy0-Nt-R2A"/>
             </constraints>
-            <point key="canvasLocation" x="378.5" y="234.5"/>
+            <point key="canvasLocation" x="415.5" y="153.5"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="36"/>
+        <stackView orientation="vertical" alignment="left" spacing="5" hasEqualSpacing="YES" horizontalStackHuggingPriority="1000" horizontalHuggingPriority="249" verticalHuggingPriority="249" id="cMG-5Y-D3j">
+            <rect key="frame" x="0.0" y="0.0" width="378" height="159"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <edgeInsets key="edgeInsets" left="2" right="2" top="2" bottom="2"/>
+            <beginningViews>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="760">
+                    <rect key="frame" x="18" y="248" width="399" height="18"/>
+                    <buttonCell key="cell" type="check" title="Ignore directories when selecting with mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask" id="769"/>
+                    </connections>
+                </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
+                    <rect key="frame" x="18" y="228" width="399" height="18"/>
+                    <buttonCell key="cell" type="check" title="Allow dragging into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAllowDraggingIntoFolders" id="D5D-qS-Cv2"/>
+                    </connections>
+                </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="fDV-xp-PQf">
+                    <rect key="frame" x="-2" y="-2" width="187" height="18"/>
+                    <buttonCell key="cell" type="check" title="Use ~ to go Home" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GBa-AA-rRO">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralUseTildeAsHomeShotcut" id="Psc-ig-GRc"/>
+                    </connections>
+                </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
+                    <rect key="frame" x="18" y="208" width="399" height="18"/>
+                    <buttonCell key="cell" type="check" title="Show other windows’ paths in folder changing menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu" id="TNv-P7-9uV"/>
+                    </connections>
+                </button>
+                <stackView orientation="horizontal" alignment="centerY" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="g0x-BO-igL">
+                    <rect key="frame" x="0.0" y="0.0" width="374" height="251"/>
+                    <beginningViews>
+                        <button translatesAutoresizingMaskIntoConstraints="NO" id="O3v-fq-9DO">
+                            <rect key="frame" x="18" y="188" width="57" height="18"/>
+                            <buttonCell key="cell" type="check" title="Show" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="MQi-kD-j8V">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <binding destination="36" name="value" keyPath="values.FilePanelsGeneralGoToShowConnections" id="252-YQ-wKF"/>
+                            </connections>
+                        </button>
+                        <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jkP-c6-fJK">
+                            <rect key="frame" x="76" y="187" width="24" height="22"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="24" id="HQG-EQ-EV1"/>
+                            </constraints>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" drawsBackground="YES" usesSingleLineMode="YES" id="Tvn-tO-bka">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                            <connections>
+                                <binding destination="36" name="value" keyPath="values.FilePanelsGeneralGoToConnectionsLimit" id="0gk-5O-41o"/>
+                                <binding destination="36" name="enabled" keyPath="values.FilePanelsGeneralGoToShowConnections" id="D3A-Fc-I7d"/>
+                            </connections>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dB8-J7-xZw">
+                            <rect key="frame" x="101" y="189" width="285" height="17"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="network connections in folder changing menu" id="uQC-rR-RVO">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </beginningViews>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
+                    <rect key="frame" x="18" y="168" width="399" height="18"/>
+                    <buttonCell key="cell" type="check" title="Show “..” entry in directory listing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tmQ-Kf-Ylo">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowDotDotEntry" id="QwH-3H-ODO"/>
+                    </connections>
+                </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="lg9-3W-PJz">
+                    <rect key="frame" x="18" y="148" width="399" height="18"/>
+                    <buttonCell key="cell" type="check" title="Show localized filenames" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Tdz-Yw-NMY">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowLocalizedFilenames" id="71K-og-ztz"/>
+                    </connections>
+                </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="zSi-y5-IGC">
+                    <rect key="frame" x="18" y="128" width="399" height="18"/>
+                    <buttonCell key="cell" type="check" title="Show volume information bar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="nz9-v0-Dc6">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowVolumeInformationBar" id="ean-d2-Api"/>
+                    </connections>
+                </button>
+            </beginningViews>
+            <visibilityPriorities>
+                <integer value="1000"/>
+                <integer value="1000"/>
+                <integer value="1000"/>
+                <integer value="1000"/>
+                <integer value="1000"/>
+                <integer value="1000"/>
+                <integer value="1000"/>
+                <integer value="1000"/>
+            </visibilityPriorities>
+            <customSpacing>
+                <real value="3.4028234663852886e+38"/>
+                <real value="3.4028234663852886e+38"/>
+                <real value="3.4028234663852886e+38"/>
+                <real value="3.4028234663852886e+38"/>
+                <real value="3.4028234663852886e+38"/>
+                <real value="3.4028234663852886e+38"/>
+                <real value="3.4028234663852886e+38"/>
+                <real value="3.4028234663852886e+38"/>
+            </customSpacing>
+            <point key="canvasLocation" x="394" y="464.5"/>
+        </stackView>
     </objects>
 </document>

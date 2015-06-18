@@ -285,6 +285,16 @@ void SyncMessageBoxNS(NSString *_ns_string)
     return [self itemContainingItemWithTagHierarchicalRec:tag withParent:nil];
 }
 
+- (void)performActionForItemWithTagHierarchical:(NSInteger)tag
+{
+    if( auto it = [self itemWithTagHierarchical:tag] )
+        if( auto parent = it.menu ) {
+            auto ind = [parent indexOfItem:it];
+            if( ind > 0 )
+                [parent performActionForItemAtIndex:ind];
+        }
+}
+
 @end
 
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept

@@ -17,17 +17,18 @@
 #import "FileCopyOperation.h"
 #import "SandboxManager.h"
 
-static NSString *g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
-static NSString *g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
-static NSString *g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
-static NSString *g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
-static NSString *g_DefaultsGeneralShowDotDotEntry       = @"FilePanelsGeneralShowDotDotEntry";
-static NSString *g_DefaultsGeneralShowLocalizedFilenames= @"FilePanelsGeneralShowLocalizedFilenames";
-static NSString *g_DefaultsGeneralIgnoreDirsOnMaskSel   = @"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask";
-static NSArray *g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuickSearchSoftFiltering,
-                                   g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView,
-                                   g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
-                                   g_DefaultsGeneralShowLocalizedFilenames];
+static auto g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
+static auto g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
+static auto g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
+static auto g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
+static auto g_DefaultsGeneralShowDotDotEntry       = @"FilePanelsGeneralShowDotDotEntry";
+static auto g_DefaultsGeneralShowLocalizedFilenames= @"FilePanelsGeneralShowLocalizedFilenames";
+static auto g_DefaultsGeneralIgnoreDirsOnMaskSel   = @"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask";
+static auto g_DefaultsGeneraluseTildeAsHomeShortcut =  @"FilePanelsGeneralUseTildeAsHomeShotcut";
+static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuickSearchSoftFiltering,
+                               g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView,
+                               g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
+                               g_DefaultsGeneralShowLocalizedFilenames];
 
 static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
@@ -417,63 +418,72 @@ void panel::GenericCursorPersistance::Restore()
 {
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
     
-    if([self QuickSearchProcessKeyDown:event])
-        return true;
-    
     NSString*  const character   = event.charactersIgnoringModifiers;
-    if ( character.length != 1 )
-        return false;
-    
-    NSUInteger const modif       = event.modifierFlags;
-    unichar const unicode        = [character characterAtIndex:0];
-    unsigned short const keycode = event.keyCode;
-    
-    if(unicode == NSTabCharacter) { // Tab button
-        [self.state HandleTabButton];
-        return true;
-    }
-    if(unicode == 0x20) { // Space button
-        [self OnFileViewCommand:self];
-        return true;
-    }
-    if(keycode == 51 &&
-       (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0
-       ) { // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
-        return [self HandleGoToUpperDirectory];
-    }
-    if(keycode == 53) { // Esc button
-        [self CancelBackgroundOperations];
-        [self.state CloseOverlay:self];
-        m_BriefSystemOverview = nil;
-        m_QuickLook = nil;
-        [self QuickSearchClearFiltering];
-        return true;
-    }
-    
-/*    if(keycode == 3 ) { // 'F' button
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
-        {
+    if ( character.length > 0 ) {
+        NSUInteger const modif       = event.modifierFlags;
+        unichar const unicode        = [character characterAtIndex:0];
+        unsigned short const keycode = event.keyCode;
+        
+        if(unicode == NSTabCharacter) { // Tab button
+            [self.state HandleTabButton];
             return true;
         }
-    }*/
-    
-/*    if(keycode == 46 ) { // 'M' button
-        if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
+        if(unicode == 0x20) { // Space button
+            [self OnFileViewCommand:self];
             return true;
         }
-    }*/
+        if(keycode == 53) { // Esc button
+            [self CancelBackgroundOperations];
+            [self.state CloseOverlay:self];
+            m_BriefSystemOverview = nil;
+            m_QuickLook = nil;
+            [self QuickSearchClearFiltering];
+            return true;
+        }
+        if( unicode == '~' &&
+           (modif & (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
+           [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneraluseTildeAsHomeShortcut]
+           ) { // Tilde to go Home
+            auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
+            [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+            return true;
+        }
+        
+        /*    if(keycode == 3 ) { // 'F' button
+         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
+         {
+         return true;
+         }
+         }*/
+        
+        /*    if(keycode == 46 ) { // 'M' button
+         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
+         return true;
+         }
+         }*/
+        
+        // handle some actions manually, to prevent annoying by menu highlighting by hotkey
+        auto &shortcuts = ActionsShortcutsManager::Instance();
+        if(shortcuts.ShortCutFromAction("menu.file.open")->IsKeyDown(unicode, keycode, modif)) {
+            [self HandleGoIntoDirOrOpenInSystem];
+            return true;
+        }
+        if(shortcuts.ShortCutFromAction("menu.file.open_native")->IsKeyDown(unicode, keycode, modif)) {
+            [self HandleOpenInSystem];
+            return true;
+        }
+        
+        // try to process this keypress with QuickSearch
+        if([self QuickSearchProcessKeyDown:event])
+            return true;
+        
+        if(keycode == 51 && // backspace
+           (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0
+           ) { // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
+            return [self HandleGoToUpperDirectory];
+        }
+    }
     
-    // handle some actions manually, to prevent annoying by menu highlighting by hotkey
-    auto &shortcuts = ActionsShortcutsManager::Instance();
-    if(shortcuts.ShortCutFromAction("menu.file.open")->IsKeyDown(unicode, keycode, modif)) {
-        [self HandleGoIntoDirOrOpenInSystem];
-        return true;
-    }
-    if(shortcuts.ShortCutFromAction("menu.file.open_native")->IsKeyDown(unicode, keycode, modif)) {
-        [self HandleOpenInSystem];
-        return true;
-    }
-
     return false;
 }
 

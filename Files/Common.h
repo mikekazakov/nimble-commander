@@ -149,6 +149,7 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 @interface NSMenu(Hierarchical)
 - (NSMenuItem *)itemWithTagHierarchical:(NSInteger)tag;
 - (NSMenuItem *)itemContainingItemWithTagHierarchical:(NSInteger)tag;
+- (void)performActionForItemWithTagHierarchical:(NSInteger)tag;
 @end
 
 NSError* ErrnoToNSError(int _error);

@@ -106,6 +106,8 @@
 	<string>sh,pl,rb,py</string>
 	<key>FilePanelsGeneralAllowDraggingIntoFolders</key>
 	<true/>
+	<key>FilePanelsGeneralUseTildeAsHomeShotcut</key>
+	<true/>
 	<key>FilePanelsGeneralFileSizeFormat</key>
 	<integer>1</integer>
 	<key>FilePanelsGeneralSelectionSizeFormat</key>

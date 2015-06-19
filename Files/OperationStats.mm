@@ -57,14 +57,14 @@ float OperationStats::GetProgress() const
 void OperationStats::SetCurrentItem(string _item)
 {
     lock_guard<mutex> lock(m_Lock);
-    if( m_CurrentItem != _item ) {
-        m_CurrentItem = move(_item);
+    if( *m_CurrentItem != _item ) {
+        m_CurrentItem = make_shared<string>(move(_item));
         if( m_OnCurrentItemChanged )
             dispatch_to_main_queue( m_OnCurrentItemChanged );
     }
 }
 
-string OperationStats::GetCurrentItem() const
+shared_ptr<const string> OperationStats::GetCurrentItem() const
 {
     lock_guard<mutex> lock(m_Lock);
     return m_CurrentItem;

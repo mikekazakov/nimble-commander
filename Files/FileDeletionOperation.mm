@@ -94,13 +94,13 @@
 - (void)updateShortInfo
 {
     auto item = self.Stats.GetCurrentItem();
-    if (item.empty())
+    if (item->empty())
         self.ShortInfo = @"";
     else
         self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
                                                                                @"Operations",
                                                                                "Operation info for file deletion"),
-                          [NSString stringWithUTF8StdString:item]];
+                          [NSString stringWithUTF8StdString:*item]];
 }
 
 - (OperationDialogAlert *)DialogOnOpendirError:(NSError*)_error ForDir:(const char *)_path

@@ -52,13 +52,13 @@
 - (void)updateShortInfo
 {
     auto item = self.Stats.GetCurrentItem();
-    if (item.empty())
+    if (item->empty())
         self.ShortInfo = @"";
     else
         self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
                                                                                 @"Operations",
                                                                                 "Operation short info"),
-                          [NSString stringWithUTF8StdString:item]];
+                          [NSString stringWithUTF8StdString:*item]];
     
 }
 

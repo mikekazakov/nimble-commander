@@ -206,13 +206,13 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
         else if (value_type == FileCopyOperationJobNativeToNative::StatValueFiles)
         {
             auto file = stats.GetCurrentItem();
-            if (file.empty())
+            if (file->empty())
                 self.ShortInfo = @"";
             else
                 self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Processing \u201c%@\u201d",
                                                                                        @"Operations",
                                                                                        "Title for processing a single item"),
-                                  [NSString stringWithUTF8StdString:file]];
+                                  [NSString stringWithUTF8StdString:*file]];
         }
         
         m_LastInfoUpdateTime = time;

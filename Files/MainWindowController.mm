@@ -53,8 +53,6 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
     [window setContentBorderThickness:40 forEdge:NSMinYEdge];
     
-    [self updateTitleVisibility];
-    
     if(self = [super initWithWindow:window]) {
         m_BigFileViewLoadingQ = SerialQueueT::Make(__FILES_IDENTIFIER__".bigfileviewloading");
         self.shouldCascadeWindows = NO;
@@ -111,19 +109,30 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     completionHandler(window, nil);
 }
 
-- (void) updateTitleVisibility
+- (bool)currentStateNeedWindowTitle
 {
-    if(sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_10)
-        return;
-    if([self.topmostState respondsToSelector:@selector(needsWindowTitle)] &&
-       [self.topmostState needsWindowTitle]) {
-        self.window.titleVisibility = NSWindowTitleVisible;
-        return;
-    }
+    auto state = self.topmostState;
+    if(state && [state respondsToSelector:@selector(needsWindowTitle)] && [state needsWindowTitle])
+        return true;
+    return false;
+}
+
+- (void) updateTitleAndToolbarVisibilityWith:(NSToolbar *)_toolbar toolbarVisible:(bool)_toolbar_visible needsTitle:(bool)_needs_title
+{
+    auto frame = self.window.frame;
+    [NSAnimationContext beginGrouping];
     
-    bool has_toolbar = self.window.toolbar != nil;
-    bool toolbar_visible = has_toolbar ? self.window.toolbar.isVisible : false;
-    self.window.titleVisibility = has_toolbar && toolbar_visible ? NSWindowTitleHidden : NSWindowTitleVisible;
+    self.window.toolbar = _toolbar;
+    if(self.window.toolbar)
+        self.window.toolbar.visible = _toolbar_visible;
+    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_10)
+        self.window.titleVisibility = _needs_title ? NSWindowTitleVisible :
+        ( (_toolbar && _toolbar_visible) ? NSWindowTitleHidden : NSWindowTitleVisible );
+    
+    [self.window setFrame:frame display:true animate:false];
+    
+    [NSAnimationContext endGrouping];
+    m_ToolbarVisible = _toolbar_visible;
 }
 
 - (void)applicationWillTerminate
@@ -206,12 +215,8 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (object == defaults) {
         if ([keyPath isEqualToString:g_DefsShowToolbar]) {
-            m_ToolbarVisible = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar];
-            dispatch_to_main_queue([=]{
-                if(self.window.toolbar)
-                    self.window.toolbar.visible = self.toolbarVisible;
-                [self updateTitleVisibility];
-            });
+            bool visible = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar];
+            [self updateTitleAndToolbarVisibilityWith:self.window.toolbar toolbarVisible:visible needsTitle:self.currentStateNeedWindowTitle];
         }
     }
 }
@@ -241,9 +246,9 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
                                        select_entry:""
                                               async:true];
 
-    self.window.toolbar = m_WindowState.back().toolbar;
-    self.window.toolbar.visible = self.toolbarVisible;
-    [self updateTitleVisibility];    
+    [self updateTitleAndToolbarVisibilityWith:m_WindowState.back().toolbar
+                               toolbarVisible:self.toolbarVisible
+                                   needsTitle:self.currentStateNeedWindowTitle];
 }
 
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
@@ -255,9 +260,9 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
         [m_WindowState.back() Assigned];
     
-    self.window.toolbar = m_WindowState.back().toolbar;
-    self.window.toolbar.visible = self.toolbarVisible;
-    [self updateTitleVisibility];
+    [self updateTitleAndToolbarVisibilityWith:m_WindowState.back().toolbar
+                               toolbarVisible:self.toolbarVisible
+                                   needsTitle:self.currentStateNeedWindowTitle];
 }
 
 - (OperationsController*) OperationsController

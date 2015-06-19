@@ -62,7 +62,7 @@ public:
     inline TermState State() const { return m_State; }
     
     /**
-     * Current working directory. Without trailing slash, in form: /Users/migun.
+     * Current working directory. With trailing slash, in form: /Users/migun/.
      * Return string by value to minimize potential chance to get race condition.
      */
     inline string CWD() const { return m_CWD; }
@@ -86,6 +86,7 @@ public:
     
     
 private:
+    bool IsCurrentWD(const char *_what) const;
     void ProcessBashPrompt(const void *_d, int _sz);
     void SetState(TermState _new_state);
     void ShellDied();

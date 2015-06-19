@@ -220,9 +220,11 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
         tmp[strlen(tmp)-1] = 0;
     
     m_CWD = tmp;
+    if( m_CWD.empty() || m_CWD.back() != '/' )
+        m_CWD += '/';
     
     if(m_OnBashPrompt)
-        m_OnBashPrompt(tmp);
+        m_OnBashPrompt(m_CWD.c_str());
     
     if(m_State == TermState::StateProgramExternal ||
        m_State == TermState::StateProgramInternal )
@@ -333,13 +335,13 @@ void TermShellTask::ChDir(const char *_new_cwd)
     if(m_State != StateShell)
         return;
     
+    if(IsCurrentWD(_new_cwd))
+        return; // do nothing if current working directory is the same as requested
+    
     char new_cwd[MAXPATHLEN];
     strcpy(new_cwd, _new_cwd);
     if(IsPathWithTrailingSlash(new_cwd) && strlen(new_cwd) > 1) // cd command don't like trailing slashes
-        new_cwd[strlen(new_cwd)-1] = 0;
-    
-    if(m_CWD == new_cwd) // do nothing if current working directory is the same as requested
-        return;
+       new_cwd[strlen(new_cwd)-1] = 0;
     
     if(!IsDirectoryAvailableForBrowsing(new_cwd)) // file I/O here
         return;
@@ -351,6 +353,17 @@ void TermShellTask::ChDir(const char *_new_cwd)
     WriteChildInput(" cd '", 5);
     WriteChildInput(new_cwd, (int)strlen(new_cwd));
     WriteChildInput("'\n", 2);
+}
+
+bool TermShellTask::IsCurrentWD(const char *_what) const
+{
+    char cwd[MAXPATHLEN];
+    strcpy(cwd, _what);
+    
+    if(!IsPathWithTrailingSlash(cwd))
+        strcat(cwd, "/");
+    
+    return m_CWD == cwd;
 }
 
 void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *_parameters)
@@ -370,7 +383,7 @@ void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *
         if(IsPathWithTrailingSlash(cwd) && strlen(cwd) > 1) // cd command don't like trailing slashes
             cwd[strlen(cwd)-1] = 0;
         
-        if(m_CWD == cwd)
+        if(IsCurrentWD(cwd))
         {
             cwd[0] = 0;
         }

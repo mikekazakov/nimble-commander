@@ -229,22 +229,28 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
 
     bool is_terminal_resigning = m_WindowState.back() == m_Terminal;
     
-    if([m_WindowState.back() respondsToSelector:@selector(Resigned)])
-        [m_WindowState.back() Resigned];
+    if([self.topmostState respondsToSelector:@selector(Resigned)])
+        [self.topmostState Resigned];
     m_WindowState.pop_back();
     
     self.window.contentView = m_WindowState.back().windowContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
-    if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
-        [m_WindowState.back() Assigned];
+    if([self.topmostState respondsToSelector:@selector(Assigned)])
+        [self.topmostState Assigned];
     
     // here we need to synchonize cwd in terminal and cwd in active file panel
-    if(m_WindowState.back() == m_PanelState && is_terminal_resigning && m_PanelState.isPanelActive)
-        [m_PanelState.activePanelController GoToDir:m_Terminal.CWD
-                                                vfs:VFSNativeHost::SharedHost()
-                                       select_entry:""
-                                              async:true];
+    if(self.topmostState == m_PanelState && is_terminal_resigning && m_PanelState.isPanelActive) {
+        if( auto pc = m_PanelState.activePanelController ){
+            auto cwd = m_Terminal.CWD;
+            if( !pc.vfs->IsNativeFS() || pc.currentDirectoryPath != cwd ) {
+                auto cnt = make_shared<PanelControllerGoToDirContext>();
+                cnt->VFS = VFSNativeHost::SharedHost();
+                cnt->RequestedDirectory = cwd;
+                [pc GoToDirWithContext:cnt];
+            }
+        }
+    }
 
     [self updateTitleAndToolbarVisibilityWith:m_WindowState.back().toolbar
                                toolbarVisible:self.toolbarVisible

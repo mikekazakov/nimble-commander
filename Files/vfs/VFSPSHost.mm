@@ -601,3 +601,8 @@ int VFSPSHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _can
     _stat.total_bytes = total_size;
     return 0;
 }
+
+bool VFSPSHost::ShouldProduceThumbnails() const
+{
+    return false;
+}

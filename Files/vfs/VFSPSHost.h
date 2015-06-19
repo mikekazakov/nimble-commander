@@ -43,6 +43,7 @@ public:
     virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
     virtual string VerboseJunctionPath() const override;    
+    bool ShouldProduceThumbnails() const override;    
     
     /**
      * Since there's no meaning for having more than one of this FS - this is a caching creation.

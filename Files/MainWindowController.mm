@@ -225,15 +225,15 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
 {
     assert(_state != m_PanelState);
     assert(m_WindowState.size() > 1);
-    assert(m_WindowState.back() == _state);
+    assert(self.topmostState == _state);
 
-    bool is_terminal_resigning = m_WindowState.back() == m_Terminal;
+    bool is_terminal_resigning = self.topmostState == m_Terminal;
     
     if([self.topmostState respondsToSelector:@selector(Resigned)])
         [self.topmostState Resigned];
     m_WindowState.pop_back();
     
-    self.window.contentView = m_WindowState.back().windowContentView;
+    self.window.contentView = self.topmostState.windowContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
     if([self.topmostState respondsToSelector:@selector(Assigned)])
@@ -252,7 +252,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
         }
     }
 
-    [self updateTitleAndToolbarVisibilityWith:m_WindowState.back().toolbar
+    [self updateTitleAndToolbarVisibilityWith:self.topmostState.toolbar
                                toolbarVisible:self.toolbarVisible
                                    needsTitle:self.currentStateNeedWindowTitle];
 }
@@ -260,13 +260,13 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
 {
     m_WindowState.push_back(_state);
-    self.window.contentView = m_WindowState.back().windowContentView;
+    self.window.contentView = self.topmostState.windowContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
-    if([m_WindowState.back() respondsToSelector:@selector(Assigned)])
-        [m_WindowState.back() Assigned];
+    if([self.topmostState respondsToSelector:@selector(Assigned)])
+        [self.topmostState Assigned];
     
-    [self updateTitleAndToolbarVisibilityWith:m_WindowState.back().toolbar
+    [self updateTitleAndToolbarVisibilityWith:self.topmostState.toolbar
                                toolbarVisible:self.toolbarVisible
                                    needsTitle:self.currentStateNeedWindowTitle];
 }

@@ -10,7 +10,7 @@
 
 #import "MainWindowStateProtocol.h"
 
-@interface MainWindowTerminalState : NSScrollView<MainWindowStateProtocol>
+@interface MainWindowTerminalState : NSView<MainWindowStateProtocol>
 
 @property (nonatomic, readonly) bool isAnythingRunning;
 

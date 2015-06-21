@@ -92,16 +92,8 @@
                     [(MainWindowController*)strongself.window.delegate ResignAsWindowState:strongself];
             });
         });
-        
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"Terminal" options:0 context:nil];
-        
     }
     return self;
-}
-
-- (void) dealloc
-{
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Terminal"];    
 }
 
 - (NSView*) windowContentView
@@ -120,16 +112,6 @@
     
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self updateTitle];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    if(object == defaults && [keyPath isEqualToString:@"Terminal"])
-    {
-//        [m_View reloadSettings]; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        [self frameDidChange]; // handle with care - it will cause geometry recalculating
-    }
 }
 
 - (void) updateTitle

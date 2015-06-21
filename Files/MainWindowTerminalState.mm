@@ -15,16 +15,16 @@
 #import "MessageBox.h"
 #import "FontCache.h"
 #import "ActionsShortcutsManager.h"
+#import "TermScrollView.h"
 
 #import "Common.h"
 #import "common_paths.h"
 
 @implementation MainWindowTerminalState
 {
+    TermScrollView             *m_TermScrollView;    
     unique_ptr<TermShellTask>    m_Task;
-    unique_ptr<TermScreen>  m_Screen;
     unique_ptr<TermParser>  m_Parser;
-    TermView        *m_View;
     char            m_InitalWD[MAXPATHLEN];
 }
 
@@ -35,57 +35,25 @@
     {
         strcpy(m_InitalWD, CommonPaths::Get(CommonPaths::Home).c_str());
         
-        m_View = [[TermView alloc] initWithFrame:self.frame];
-        self.documentView = m_View;
-        self.hasVerticalScroller = true;
-        self.borderType = NSNoBorder;
-        self.verticalScrollElasticity = NSScrollElasticityNone;
-        self.scrollsDynamically = true;
-        self.contentView.copiesOnScroll = false;
-        self.contentView.canDrawConcurrently = false;
-        self.contentView.drawsBackground = false;
+        m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds];
+        m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_TermScrollView];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
+
         
         m_Task.reset(new TermShellTask);
         auto task_ptr = m_Task.get();
-        m_Screen.reset(new TermScreen(floor(frameRect.size.width / m_View.fontCache.Width()),
-                                      floor(frameRect.size.height / m_View.fontCache.Height())));
-        m_Parser = make_unique<TermParser>(*m_Screen,
+        m_Parser = make_unique<TermParser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
                                                task_ptr->WriteChildInput(_d, _sz);
                                            });
-        [m_View AttachToScreen:m_Screen.get()];
-        [m_View AttachToParser:m_Parser.get()];
-        
-        
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(frameDidChange)
-                                                   name:NSViewFrameDidChangeNotification
-                                                 object:self];
-        
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"Terminal" options:0 context:nil];
-        
-        m_View.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addConstraints:
-         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_View(>=100)]-0-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:NSDictionaryOfVariableBindings(m_View)]];
-        [self addConstraint:
-         [NSLayoutConstraint constraintWithItem:m_View
-                                      attribute:NSLayoutAttributeHeight
-                                      relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                         toItem:self.contentView
-                                      attribute:NSLayoutAttributeHeight
-                                     multiplier:1
-                                       constant:0]];
+        m_Parser->SetTaskScreenResize([=](int sx, int sy) {
+            task_ptr->ResizeWindow(sx, sy);
+        });
+        [m_TermScrollView.view AttachToParser:m_Parser.get()];
     }
     return self;
-}
-
-- (void) dealloc
-{
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Terminal"];
 }
 
 - (NSView*) windowContentView
@@ -98,16 +66,6 @@
     return nil;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    if(object == defaults && [keyPath isEqualToString:@"Terminal"])
-    {
-        [m_View reloadSettings];
-        [self frameDidChange]; // handle with care - it will cause geometry recalculating
-    }
-}
-
 - (void) SetInitialWD:(const char*)_wd
 {
     if(_wd && strlen(_wd) > 0)
@@ -118,17 +76,15 @@
 {
     // need right CWD here
     if(m_Task->State() == TermShellTask::StateInactive)
-        m_Task->Launch(m_InitalWD, m_Screen->Width(), m_Screen->Height());
+        m_Task->Launch(m_InitalWD, m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
     
     __weak MainWindowTerminalState *weakself = self;
     
     m_Task->SetOnChildOutput(^(const void* _d, int _sz){
-        if(MainWindowTerminalState *strongself = weakself)
-        {
+        if(MainWindowTerminalState *strongself = weakself) {
             bool newtitle = false;
-            strongself->m_Screen->Lock();
-            for(int i = 0; i < _sz; ++i)
-            {
+            strongself->m_TermScrollView.screen.Lock();
+            for(int i = 0; i < _sz; ++i) {
                 int flags = 0;
 
                 strongself->m_Parser->EatByte(((const char*)_d)[i], flags);
@@ -138,14 +94,14 @@
             }
         
             strongself->m_Parser->Flush();
-            strongself->m_Screen->Unlock();
+            strongself->m_TermScrollView.screen.Unlock();
         
             
-            [strongself->m_View.FPSDrawer invalidate];
+            [strongself->m_TermScrollView.view.FPSDrawer invalidate];
             
             //            tmb.Reset("Parsed in: ");
             dispatch_to_main_queue( [=]{
-                [strongself->m_View adjustSizes:false];
+                [strongself->m_TermScrollView.view adjustSizes:false];
                 if(newtitle)
                     [strongself UpdateTitle];
             });
@@ -153,14 +109,13 @@
     });
     
     m_Task->SetOnBashPrompt(^(const char *_cwd){
-        if(MainWindowTerminalState *strongself = weakself)
-        {
-            strongself->m_Screen->SetTitle("");
+        if(MainWindowTerminalState *strongself = weakself) {
+            strongself->m_TermScrollView.screen.SetTitle("");
             [strongself UpdateTitle];
         }
     });
     
-    [self.window makeFirstResponder:m_View];
+    [self.window makeFirstResponder:m_TermScrollView.view];
     [self UpdateTitle];
 }
 
@@ -169,10 +124,10 @@
 {
     NSString *title = 0;
     
-    m_Screen->Lock();
-    if(strlen(m_Screen->Title()) > 0)
-        title = [NSString stringWithUTF8String:m_Screen->Title()];
-    m_Screen->Unlock();
+    m_TermScrollView.screen.Lock();
+    if(strlen(m_TermScrollView.screen.Title()) > 0)
+        title = [NSString stringWithUTF8String:m_TermScrollView.screen.Title()];
+    m_TermScrollView.screen.Unlock();
     
     if(title == 0)
     {
@@ -210,14 +165,6 @@
     m_Task->ExecuteWithFullPath(_full_fn, _params);    
 }
 
-- (void)scrollWheel:(NSEvent *)theEvent
-{
-    NSRect scrollRect;
-    scrollRect = [self documentVisibleRect];
-    scrollRect.origin.y -= theEvent.deltaY * self.verticalLineScroll;
-    [(NSView *)self.documentView scrollRectToVisible:scrollRect];
-}
-
 - (bool)WindowShouldClose:(MainWindowController*)sender
 {
 //    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
@@ -251,19 +198,6 @@
     }];
     
     return false;
-}
-
-- (void)frameDidChange
-{
-    int sy = floor(self.frame.size.height / m_View.fontCache.Height());
-    int sx = floor(m_View.frame.size.width / m_View.fontCache.Width());
-
-    m_Screen->ResizeScreen(sx, sy);
-    m_Task->ResizeWindow(sx, sy);
-    m_Parser->Resized();
-    
-    [m_View adjustSizes:true];
-    [m_View setNeedsDisplay];
 }
 
 - (bool) isAnythingRunning

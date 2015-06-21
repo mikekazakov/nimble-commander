@@ -27,7 +27,6 @@
     if(self) {
         auto rc = self.contentView.bounds;
         
-//        m_View = [[TermView alloc] initWithFrame:self.frame];
         m_View = [[TermView alloc] initWithFrame:rc];
         self.documentView = m_View;
         self.hasVerticalScroller = true;
@@ -63,6 +62,8 @@
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
         
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"Terminal" options:0 context:nil];        
+        
         [self frameDidChange];
         
     }
@@ -72,12 +73,22 @@
 - (void) dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Terminal"];    
 }
 
 - (TermScreen&) screen
 {
     assert(m_Screen);
     return *m_Screen;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    if(object == defaults && [keyPath isEqualToString:@"Terminal"]) {
+        [m_View reloadSettings];
+        [self frameDidChange]; // handle with care - it will cause geometry recalculating
+    }
 }
 
 - (void)frameDidChange
@@ -93,5 +104,12 @@
     [m_View adjustSizes:true];
 }
 
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    NSRect scrollRect;
+    scrollRect = [self documentVisibleRect];
+    scrollRect.origin.y -= theEvent.deltaY * self.verticalLineScroll;
+    [(NSView *)self.documentView scrollRectToVisible:scrollRect];
+}
 
 @end

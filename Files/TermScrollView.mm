@@ -11,12 +11,12 @@
 #import "TermParser.h"
 #import "Common.h"
 
+static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
+
 @implementation TermScrollView
 {
     TermView               *m_View;
     unique_ptr<TermScreen>  m_Screen;
-    
-    
 }
 
 @synthesize view = m_View;
@@ -29,7 +29,7 @@
         
         m_View = [[TermView alloc] initWithFrame:rc];
         self.documentView = m_View;
-        self.hasVerticalScroller = true;
+        self.hasVerticalScroller = ![NSUserDefaults.standardUserDefaults boolForKey:g_HideScrollbarKey];
         self.borderType = NSNoBorder;
         self.verticalScrollElasticity = NSScrollElasticityNone;
         self.scrollsDynamically = true;

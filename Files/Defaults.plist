@@ -409,5 +409,7 @@
 		<key>FramesPerSecond</key>
 		<integer>60</integer>
 	</dict>
+	<key>Terminal_HideScrollbar</key>
+	<false/>
 </dict>
 </plist>
